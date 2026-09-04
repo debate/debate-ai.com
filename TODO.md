@@ -71,8 +71,8 @@ _No task currently in progress._
   route and the new `/api/drill-sets`/`/api/drill-sets/:roundId` routes
   intact; the touched-by-build `app-file-list.ts`/`version.ts`/
   `service-worker.js` churn was reverted before committing, unrelated to
-  this change). **PR:** not yet opened (see below). **Completed:**
-  2026-09-04.
+  this change). **PR:** https://github.com/debate/debate-ai.com/pull/527.
+  **Completed:** 2026-09-04.
 - **Opponent Team Profiles — a side-by-side us-vs-opponent comparison view
   (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
   Profiles" Next item).** Another repeat of the standing prompt ("integrate
