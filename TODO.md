@@ -6,6 +6,51 @@
 _No task currently in progress._
 
 ### Completed
+- **🤝 Team Collaboration Mode — an end-of-sprint retrospective summary (its
+  Next item under Research Crowdsourcing Organizer Features).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead: the Team Collaboration Mode bullet's own "an end-of-sprint
+  retrospective summary" Next item. `TopicSprintPanel`'s quest/routing/
+  progress/notes composition had no backward-looking summary of a sprint's
+  outcomes — a teammate could see the live board but not how the sprint
+  actually went. `debate-team-collaboration`'s `lib/team-collaboration-
+  mode.ts` gains a pure `buildSprintRetrospective(sprint)`, derived entirely
+  from an already-composed `TopicSprint` (no new persistence): quest
+  completion, task routing outcomes (`tasksAssigned`/`tasksUnassigned` from
+  `sprint.routing`, `tasksCompletedByTeam` summed across
+  `sprint.progressBoard`), active-contributor count, and how the sprint's
+  notes resolved (covered/open/needs-follow-up), plus the oldest still-open
+  follow-up notes (capped to 5, oldest first) that would carry into the next
+  sprint. `buildSprintRetrospectiveText`/`sprintRetrospectiveFilename`
+  render it as a downloadable plain-text file, mirroring `research-
+  progress.ts`'s existing `buildResearchProgressReportText` report-download
+  convention rather than introducing a new export format.
+  `panels/TopicSprintPanel.tsx` gained an "End-of-sprint retrospective"
+  section below the note wall — a stat row plus a "Carrying into the next
+  sprint" list — with a "Download retrospective" button using the same
+  anchor+Blob pattern as `ResearchProgressPanel.tsx`'s "Download report"
+  action. See `docs/features/team-collaboration-mode.md`'s new
+  retrospective section. Vitest coverage:
+  `packages/debate-team-collaboration/test/team-collaboration-mode.test.ts`
+  gained `buildSprintRetrospective`/`buildSprintRetrospectiveText`/
+  `sprintRetrospectiveFilename` describe blocks (composed counts across a
+  full sprint, an all-zero empty sprint, the covered-vs-open note split, the
+  5-note carry-over cap, rendered text lines with and without a carry-over
+  section, and filename slugging including a blank/punctuation-only topic
+  falling back to `"topic"`). Ran the full verification gate: `bun run test`
+  (4348 passing, up from 4339 — the 9 new cases above), `bunx turbo run
+  typecheck` (all 15 typecheck-bearing packages green,
+  `debate-team-collaboration` included), and `bun run build:web` (the full
+  production build, `/cards/collaboration` route intact) all pass.
+
 - **📊 Topic Coverage Dashboard — a preview of the quests a coverage gap
   would seed before creating them (its Next item under Research
   Crowdsourcing Organizer Features).** Another repeat of the standing
@@ -16009,7 +16054,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. The before/after-revision-diff-viewer follow-up is also now done: a "Recent revisions" section below the leaderboard lists the 20 most recently recorded revisions with a "View diff" toggle per row, rendering a word-level before/after comparison of the card's argument block, cut text, and citation (`lib/revision-text-diff.ts#buildCardRevisionTextDiff`, `state/revisionHistory.ts#getRevisionTextDiff`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Before/after revision diff viewer" section. Next: a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — the quest-seed-preview follow-up is done: the Daily Quests panel's "Seed from a topic's coverage gaps" section has a "Preview" button showing exactly which quests seeding would add (tagged "New") versus leave alone (tagged "Already on board") before committing, via a new read-only `previewQuestTemplatesFromTopicCoverage` in `debate-team-collaboration`'s `state/dailyQuests.ts` — see the Completed entry above and `docs/features/daily-quests.md`'s "Previewing a coverage-seeded quest set before creating it" section. Next: a coverage-over-time trend chart; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
-* 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
+* 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — the end-of-sprint-retrospective-summary follow-up is done: `TopicSprintPanel`'s "End-of-sprint retrospective" section summarizes a topic sprint's quest/task/contributor/note outcomes and lists the still-open follow-up notes carrying into the next sprint, with a "Download retrospective" action (`lib/team-collaboration-mode.ts#buildSprintRetrospective`/`buildSprintRetrospectiveText`) — see the Completed entry above and `docs/features/team-collaboration-mode.md`'s new retrospective section. Next: a shared whiteboard/canvas for sprint brainstorming; calendar scheduling for sprint sessions.
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. The side-by-side-us-vs-opponent-comparison-view follow-up is also now done: a "Compare vs. opponent" section builds "us" on the fly from `debate-round`'s own round-history log against a chosen opponent's profile, via `rankings/opponent-team-profile.ts#buildOpponentTeamComparison` (`OpponentTeamProfilesPanel.tsx`'s "Compare vs. opponent" section, with a "Download comparison" action) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Comparing us vs. an opponent" section. No further follow-up is currently tracked for this idea beyond the still-blocked bulk-CSV-ballot-history item (see "Confirmed blocker" below); a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The multi-judge-comparison-view-for-panel-rounds follow-up is also now done — it turned out not to actually need the blocked Tabroom data source: a "Compare judges" section checks two or more already-persisted (hand-logged or, once available, bulk-imported) profiles and reads them as a panel via a new `judge/judge-panel-comparison.ts#buildJudgePanelComparison` — see the Completed entry above and `docs/features/judge-profiles.md`'s "Comparing judges on a panel" section. One follow-up remains, and it does stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — the difficulty-slider follow-up is done: a second "Difficulty" radio group (Beginner/Intermediate/Advanced/Elite, `opponent/opponent-personas.ts`'s `opponentDifficulties`) sits alongside persona choice, saved on the same `OpponentPersonaSelection` and shown as a second badge per session; `buildOpponentPersonaPrompt` layers the chosen level's instructions onto the persona's own, and `getOpponentDifficultyForRound`/`requestAiVersusSpeechWithPersona`'s new `difficulty` parameter (both defaulting to `DEFAULT_OPPONENT_DIFFICULTY`/"intermediate" for backward compatibility) carry it through to the AI-versus speech-generation call, with `AiVersusRoundPanel` showing the active difficulty badge next to the persona badge on the AI's turn — see the Completed entry above and `docs/features/practice-opponent.md`'s "Difficulty levels" section. The Practice Round Simulator's own separate persona setup now also carries a difficulty: `PracticeRoundSetup` gained an `opponentDifficulty` field (`round/practice-round-simulator.ts`), and `PracticeRoundSimulatorPanel` gained its own "Difficulty" radio group next to AI opponent persona, wired through to `requestAiVersusSpeechWithPersona` the same way `AiVersusRoundPanel` already does — see the Completed entry above and `docs/features/practice-round-simulator.md`'s "Opponent difficulty" mention. Next: share a custom-authored persona across a team instead of per-user only; post-round feedback tips specific to the persona faced.

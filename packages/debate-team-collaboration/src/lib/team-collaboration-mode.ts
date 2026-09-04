@@ -217,3 +217,97 @@ export function buildTopicSprintSummaryText(sprint: TopicSprint): string {
   ];
   return lines.join("\n");
 }
+
+/** Still-open ("needs-follow-up") notes an end-of-sprint retrospective names individually before capping the rest to a count. */
+const MAX_RETROSPECTIVE_CARRIED_OVER_NOTES = 5;
+
+/**
+ * A backward-looking summary of one topic sprint's outcomes — quest
+ * completion, task routing, contributor activity, and note resolution — for
+ * the "Team Collaboration Mode" end-of-sprint retrospective named as a
+ * follow-up in TODO.md. Purely derived from an already-composed
+ * `TopicSprint`; doesn't persist anything itself.
+ */
+export interface SprintRetrospective {
+  topic: string;
+  questsCompleted: number;
+  questsTotal: number;
+  tasksAssigned: number;
+  tasksUnassigned: number;
+  /** Sum of every active contributor's `totalCompletedTasks` on the progress board — cumulative, not just this sprint's newly routed tasks. */
+  tasksCompletedByTeam: number;
+  contributorsActive: number;
+  notesTotal: number;
+  notesCovered: number;
+  notesOpen: number;
+  notesNeedFollowUp: number;
+  /** The oldest still-open follow-up notes, capped to `MAX_RETROSPECTIVE_CARRIED_OVER_NOTES`, that carry into the next sprint. */
+  carriedOverFollowUps: SprintNote[];
+}
+
+/**
+ * Summarizes a topic sprint's outcomes for an end-of-sprint retrospective:
+ * how many quests/tasks got finished, how many contributors were active, how
+ * many notes got resolved versus still need follow-up, and which open
+ * follow-ups (oldest first, capped) would carry over into the next sprint.
+ */
+export function buildSprintRetrospective(sprint: TopicSprint): SprintRetrospective {
+  const notesCovered = sprint.notes.filter((note) => note.status === "covered").length;
+  const notesOpen = sprint.notes.filter((note) => note.status === "open").length;
+  const followUps = getOpenFollowUps(sprint.notes);
+
+  return {
+    topic: sprint.topic,
+    questsCompleted: sprint.questBoard.filter((quest) => quest.isComplete).length,
+    questsTotal: sprint.questBoard.length,
+    tasksAssigned: sprint.routing.assignments.length,
+    tasksUnassigned: sprint.routing.unassignedTasks.length,
+    tasksCompletedByTeam: sprint.progressBoard.reduce((sum, progress) => sum + progress.totalCompletedTasks, 0),
+    contributorsActive: sprint.progressBoard.length,
+    notesTotal: sprint.notes.length,
+    notesCovered,
+    notesOpen,
+    notesNeedFollowUp: followUps.length,
+    carriedOverFollowUps: followUps.slice(0, MAX_RETROSPECTIVE_CARRIED_OVER_NOTES),
+  };
+}
+
+/**
+ * Filename for a downloaded sprint retrospective — mirrors
+ * `research-progress.ts`'s `researchProgressReportFilename` plain-text-report
+ * convention, slugging the topic so the file name stays filesystem-safe.
+ */
+export function sprintRetrospectiveFilename(topic: string): string {
+  const slug =
+    topic
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "topic";
+  return `sprint-retrospective-${slug}.txt`;
+}
+
+/**
+ * Renders a `SprintRetrospective` as a plain-text file for download,
+ * mirroring `research-progress.ts`'s `buildResearchProgressReportText`
+ * plain-text-report convention.
+ */
+export function buildSprintRetrospectiveText(retro: SprintRetrospective): string {
+  const lines = [
+    `${retro.topic} — end-of-sprint retrospective`,
+    "",
+    `Quests: ${retro.questsCompleted}/${retro.questsTotal} complete`,
+    `Tasks: ${retro.tasksAssigned} assigned, ${retro.tasksUnassigned} unassigned, ${retro.tasksCompletedByTeam} completed by the team`,
+    `Contributors active: ${retro.contributorsActive}`,
+    `Notes: ${retro.notesTotal} total (${retro.notesCovered} covered, ${retro.notesOpen} open, ${retro.notesNeedFollowUp} need follow-up)`,
+  ];
+
+  if (retro.carriedOverFollowUps.length > 0) {
+    lines.push("", "Carrying into the next sprint:");
+    for (const note of retro.carriedOverFollowUps) {
+      lines.push(`- ${note.authorId}: ${note.text}`);
+    }
+  }
+
+  return lines.join("\n");
+}
