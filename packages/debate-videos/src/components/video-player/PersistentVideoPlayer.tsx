@@ -6,6 +6,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
+import { AlertCircle } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../state/videoPlayerPersistence"
 import { useDragResize } from "./useDragResize"
@@ -15,6 +16,7 @@ import { PlayerControls } from "./PlayerControls"
 import { PlayerQueue } from "./PlayerQueue"
 import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
+import { buildEmbedUrl, describePlayerError, startListening, watchUrl } from "./youtubeEmbed"
 
 function VideoPlayerUI() {
   const {
@@ -45,6 +47,13 @@ function VideoPlayerUI() {
 
   const [showSubtitles, setShowSubtitles] = useState(false)
   const [subtitleTime, setSubtitleTime] = useState(0)
+  // Error code reported by the YouTube IFrame API for the current load, if any
+  const [playerError, setPlayerError] = useState<number | null>(null)
+  // Bumped to force a fresh iframe when the user retries after an error
+  const [reloadKey, setReloadKey] = useState(0)
+  // Position to resume from after a reload the app causes itself (popping the
+  // iframe in/out of the PiP window re-creates it, restarting playback at 0)
+  const [resumeSeconds, setResumeSeconds] = useState<number | null>(null)
 
   // Time tracking refs for persisting playback position
   const playStartedAtRef = useRef<number | null>(null) // Date.now() when video last started playing
@@ -122,6 +131,12 @@ function VideoPlayerUI() {
     }
   }, [activeVideoId, startTime])
 
+  // A new video starts from a clean slate: no stale error, no resume offset
+  useEffect(() => {
+    setPlayerError(null)
+    setResumeSeconds(null)
+  }, [activeVideoId])
+
   // When a new video opens, mark that slow mode needs to be applied on first play
   useEffect(() => {
     if (activeVideoId) {
@@ -139,7 +154,13 @@ function VideoPlayerUI() {
       if (event.origin !== "https://www.youtube.com") return
       try {
         const data = JSON.parse(event.data)
+        if (data.event === "onError") {
+          const code = typeof data.info === "number" ? data.info : Number(data.info?.errorCode)
+          if (!Number.isNaN(code)) setPlayerError(code)
+          return
+        }
         if (data.event === "onStateChange") {
+          setPlayerError(null)
           if (data.info === 1 || data.info === 3) {
             // Playing or buffering — start tracking time
             if (playStartedAtRef.current === null) {
@@ -161,6 +182,11 @@ function VideoPlayerUI() {
             persistState()
           }
         }
+        // Older embeds report failures through infoDelivery rather than onError
+        if (data.event === "infoDelivery" && data.info?.errorCode != null) {
+          const code = Number(data.info.errorCode)
+          if (!Number.isNaN(code)) setPlayerError(code)
+        }
         // YouTube infoDelivery includes currentTime when available — use it for accuracy
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           const yt = data.info.currentTime as number
@@ -178,6 +204,21 @@ function VideoPlayerUI() {
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
   }, [setIsPlaying, persistState, showSubtitles])
+
+  // Re-send the "listening" handshake for a few seconds after every embed load.
+  // `onLoad` alone is not enough: React's delegated events stop reaching the
+  // iframe once it is moved into the PiP window, and YouTube ignores commands
+  // until the handshake lands, so retry until the embed is ready.
+  useEffect(() => {
+    if (!activeVideoId) return
+    let attempts = 0
+    startListening(iframeRef.current)
+    const interval = setInterval(() => {
+      startListening(iframeRef.current)
+      if (++attempts >= 12) clearInterval(interval)
+    }, 400)
+    return () => clearInterval(interval)
+  }, [activeVideoId, reloadKey, resumeSeconds, isPipActive])
 
   // Periodically save state while playing (every 10 seconds)
   useEffect(() => {
@@ -211,6 +252,27 @@ function VideoPlayerUI() {
     sendYouTubeCommand("setPlaybackRate", [next ? 0.65 : 1])
   }, [isSlowMode, setSlowMode])
 
+  /**
+   * Moving the iframe into (or out of) the PiP window re-creates it, so capture
+   * where playback is first and hand it back to the fresh embed as `start`.
+   */
+  const handleTogglePip = useCallback(() => {
+    setResumeSeconds(getCurrentTime())
+    void togglePip()
+  }, [getCurrentTime, togglePip])
+
+  /** Re-create the embed after an error, resuming from the tracked position. */
+  const handleRetry = useCallback(() => {
+    setPlayerError(null)
+    setResumeSeconds(getCurrentTime())
+    setReloadKey((key) => key + 1)
+  }, [getCurrentTime])
+
+  /** Register for player events; without the handshake YouTube posts nothing. */
+  const handleIframeLoad = useCallback(() => {
+    startListening(iframeRef.current)
+  }, [])
+
   const handleClose = useCallback(() => {
     // User explicitly closed — clear saved state so it doesn't auto-restore
     exitPip()
@@ -233,8 +295,8 @@ function VideoPlayerUI() {
 
   if (!activeVideoId) return null
 
-  const startParam = startTime > 0 ? `&start=${Math.floor(startTime)}` : ""
-  const iframeSrc = `https://www.youtube.com/embed/${activeVideoId}?autoplay=1&enablejsapi=1&controls=1&rel=0${startParam}`
+  const startSeconds = resumeSeconds ?? startTime
+  const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })
 
   const positionStyle: React.CSSProperties = position
     ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }
@@ -276,7 +338,7 @@ function VideoPlayerUI() {
           onToggleSlowMode={handleToggleSlowMode}
           onPlayNext={playNextInQueue}
           onToggleMinimize={() => setMinimized(!isMinimized)}
-          onTogglePip={togglePip}
+          onTogglePip={handleTogglePip}
           onToggleSubtitles={handleToggleSubtitles}
           onClose={handleClose}
         />
@@ -299,13 +361,39 @@ function VideoPlayerUI() {
         }
       >
         <iframe
+          key={reloadKey}
           ref={setIframeRef}
           src={iframeSrc}
           title={activeVideoTitle ?? "Video"}
+          onLoad={handleIframeLoad}
           className="absolute inset-0 w-full h-full"
+          referrerPolicy="strict-origin-when-cross-origin"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
+
+        {playerError !== null && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/95 p-4 text-center">
+            <AlertCircle className="w-5 h-5 text-destructive" />
+            <p className="text-xs text-muted-foreground">{describePlayerError(playerError)}</p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleRetry}
+                className="rounded-md border border-border px-2.5 py-1 text-xs font-medium hover:bg-muted transition-colors"
+              >
+                Retry
+              </button>
+              <a
+                href={watchUrl(activeVideoId, getCurrentTime())}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md border border-border px-2.5 py-1 text-xs font-medium hover:bg-muted transition-colors"
+              >
+                Watch on YouTube
+              </a>
+            </div>
+          </div>
+        )}
       </div>
 
       {!isMinimized && !isPipActive && <PlayerQueue queue={queue} />}

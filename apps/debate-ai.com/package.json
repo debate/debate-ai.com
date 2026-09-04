@@ -81,7 +81,6 @@
     "docx-preview": "^0.3.7",
     "dompurify": "^3.3.3",
     "drizzle-orm": "^0.45.2",
-    "extract-youtube": "^1.0.256",
     "file-loader": "^6.2.0",
     "framer-motion": "^12.36.0",
     "fuse.js": "^7.1.0",
