@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPrepRoom,
+  buildPrepRoomActivityEventText,
+  buildPrepRoomActivityTimeline,
   buildPrepRoomFromStore,
   buildPrepRoomSummaryText,
   searchPrepRoomEvidence,
@@ -250,5 +252,58 @@ describe("buildPrepRoomSummaryText", () => {
     });
 
     expect(buildPrepRoomSummaryText(room)).toContain("0 draft blocks");
+  });
+});
+
+describe("buildPrepRoomActivityTimeline", () => {
+  it("drops entries with no createdAt timestamp", () => {
+    const room = buildPrepRoom({
+      topic: "Immigration",
+      entries: [IMMIGRATION_CARD, IMMIGRATION_BLOCK],
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    });
+
+    expect(buildPrepRoomActivityTimeline(room)).toEqual([]);
+  });
+
+  it("orders dated entries newest first", () => {
+    const older = { ...IMMIGRATION_CARD, createdAt: 1_000 };
+    const newer = { ...IMMIGRATION_BLOCK, createdAt: 2_000 };
+    const room = buildPrepRoom({
+      topic: "Immigration",
+      entries: [older, newer],
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    });
+
+    expect(buildPrepRoomActivityTimeline(room)).toEqual([
+      { entry: newer, atMs: 2_000 },
+      { entry: older, atMs: 1_000 },
+    ]);
+  });
+
+  it("caps the returned events to the given limit", () => {
+    const dated = { ...IMMIGRATION_CARD, createdAt: 1_000 };
+    const room = buildPrepRoom({
+      topic: "Immigration",
+      entries: [dated, { ...IMMIGRATION_BLOCK, createdAt: 2_000 }],
+      coverageReport: COVERAGE_REPORT,
+      contributors: CONTRIBUTORS,
+    });
+
+    expect(buildPrepRoomActivityTimeline(room, 1)).toHaveLength(1);
+  });
+});
+
+describe("buildPrepRoomActivityEventText", () => {
+  it("renders a card entry with its citation", () => {
+    const text = buildPrepRoomActivityEventText({ entry: { ...IMMIGRATION_CARD, createdAt: 1_000 }, atMs: 1_000 });
+    expect(text).toBe("Evidence added: States CP (Smith 24)");
+  });
+
+  it("renders a block entry without a citation", () => {
+    const text = buildPrepRoomActivityEventText({ entry: { ...IMMIGRATION_BLOCK, createdAt: 1_000 }, atMs: 1_000 });
+    expect(text).toBe("Draft block filed: States CP");
   });
 });

@@ -148,7 +148,7 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       {
         href: "/cards/prep-room", label: "Collaboration Prep Room", icon: Presentation,
         description: "Share a topic's prep space, covering evidence, draft blocks, and routed research tasks.",
-        highlights: ["Keyword search scoped to just this topic's evidence and drafts", "Active-now roster of teammates currently working the topic"],
+        highlights: ["Keyword search scoped to just this topic's evidence and drafts", "Active-now roster of teammates currently working the topic", "Room activity timeline of dated evidence/draft-block submissions"],
       },
       {
         href: "/cards/progress-tracking", label: "Research Progress", icon: ListChecks,

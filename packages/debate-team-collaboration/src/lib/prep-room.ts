@@ -22,6 +22,21 @@
  * already supply an entry list, then delegates to the pure `buildPrepRoom`
  * above.
  *
+ * `buildPrepRoomActivityTimeline`/`buildPrepRoomActivityEventText` close the
+ * "a room activity timeline" follow-up named under the same bullet. The only
+ * genuinely timestamped, append-only signal a prep room already has is each
+ * evidence/draft-block entry's own `createdAt` (stamped once, by
+ * `EvidenceLibraryPanel.tsx`'s submit handler, the same field
+ * `state/newsStream.ts`'s `argumentLibraryNews()` already reads) — routed
+ * task assignments are recomputed live from the current coverage report and
+ * contributor roster rather than logged as discrete events, and presence
+ * heartbeats are an upsert of each contributor's *latest* sighting, not a
+ * history — so neither makes a real "N happened at time T" timeline entry.
+ * The timeline is therefore just the room's own `entries`, newest-`createdAt`
+ * first, capped to a sane length the same way `RevisionIncentivesPanel`'s
+ * "Recent revisions" and the "On Page Card Reuse Search" idea's "Recent
+ * checks" list already cap theirs.
+ *
  * @module lib/prep-room
  */
 
@@ -127,4 +142,40 @@ export function buildPrepRoomSummaryText(room: PrepRoom): string {
     buildRoutingSummaryText(room.routing),
   ];
   return lines.join("\n");
+}
+
+/** How many activity-timeline events `buildPrepRoomActivityTimeline` returns by default. */
+export const DEFAULT_PREP_ROOM_ACTIVITY_LIMIT = 30;
+
+/** One dated event on a prep room's activity timeline: an evidence card or draft block filed under the topic. */
+export interface PrepRoomActivityEvent {
+  entry: EvidenceLibraryEntry;
+  /** Epoch ms this entry was first saved — always present here; `buildPrepRoomActivityTimeline` drops undated entries. */
+  atMs: number;
+}
+
+/**
+ * Builds a prep room's activity timeline: every room entry that carries a
+ * `createdAt` timestamp, newest first, capped to `limit`. Entries persisted
+ * before `createdAt` existed (or supplied directly by a caller/test without
+ * one) have no real submission time to show and are silently dropped rather
+ * than sorted arbitrarily — same convention `argumentLibraryNews()` already
+ * applies to the same field.
+ */
+export function buildPrepRoomActivityTimeline(
+  room: PrepRoom,
+  limit: number = DEFAULT_PREP_ROOM_ACTIVITY_LIMIT,
+): PrepRoomActivityEvent[] {
+  return room.entries
+    .filter((entry): entry is EvidenceLibraryEntry & { createdAt: number } => typeof entry.createdAt === "number")
+    .map((entry) => ({ entry, atMs: entry.createdAt }))
+    .sort((a, b) => b.atMs - a.atMs)
+    .slice(0, limit);
+}
+
+/** Renders one activity-timeline event as a short, human-readable line, e.g. "Evidence added: States CP (Smith 24)". */
+export function buildPrepRoomActivityEventText(event: PrepRoomActivityEvent): string {
+  const verb = event.entry.kind === "block" ? "Draft block filed" : "Evidence added";
+  const cite = event.entry.cite ? ` (${event.entry.cite})` : "";
+  return `${verb}: ${event.entry.argBlock}${cite}`;
 }

@@ -20,6 +20,11 @@
  * follow-ups as the same signal). See `SprintNotesPanel.tsx` for the
  * heartbeat/freshness model this reuses unchanged.
  *
+ * Also renders a "Room activity timeline" below the search results — this
+ * bullet's "a room activity timeline" follow-up — via `lib/prep-room.ts`'s
+ * `buildPrepRoomActivityTimeline`, a read-only, newest-first list of every
+ * dated evidence/draft-block submission filed under the open topic.
+ *
  * An optional `signedInContributorId` prop (mirroring `ReviewQueuePanel`'s
  * identical convention) prefills the "Your ID" presence field with a real
  * signed-in visitor's derived id — a starting value only; typing over the
@@ -38,7 +43,7 @@ import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { buildPersistedPrepRoom, listPrepRoomTopics } from "../state/prepRooms"
-import { buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../lib/prep-room"
+import { buildPrepRoomActivityTimeline, buildPrepRoomActivityEventText, buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../lib/prep-room"
 import type { PrepRoom } from "../lib/prep-room"
 import type { EvidenceSearchResult } from "debate-research-evidence/src/lib/shared-evidence-library"
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
@@ -125,6 +130,7 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
   const results: EvidenceSearchResult[] = room
     ? searchPrepRoomEvidence(room, query.trim() ? { text: query.trim() } : {})
     : []
+  const timeline = room ? buildPrepRoomActivityTimeline(room) : []
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
@@ -273,8 +279,37 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
               </div>
             )}
           </div>
+
+          <div className="rounded-lg border border-border p-4 space-y-2">
+            <h2 className="text-sm font-semibold text-foreground">Room activity timeline</h2>
+            {timeline.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                {room.entries.length === 0
+                  ? "No activity yet — evidence and draft blocks filed under this topic will show up here."
+                  : "This topic's entries predate activity tracking, so there's nothing dated to show."}
+              </p>
+            ) : (
+              <ul className="space-y-1.5">
+                {timeline.map((event) => (
+                  <li
+                    key={event.entry.id}
+                    className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm"
+                  >
+                    <span className="whitespace-nowrap text-xs text-muted-foreground">
+                      {formatActivityTimestamp(event.atMs)}
+                    </span>
+                    <span className="text-foreground">{buildPrepRoomActivityEventText(event)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
     </div>
   )
+}
+
+function formatActivityTimestamp(atMs: number): string {
+  return new Date(atMs).toLocaleString()
 }
