@@ -20,8 +20,10 @@
  * record exists for the same `roundId`) and it's the AI's turn, a "Generate
  * AI opponent speech" action builds the request via the existing
  * `buildAiResponseRequest` and calls `requestAiVersusSpeech` — or, when the
- * round's own saved `setup.opponentPersona` is set, the persona-conditioned
- * `requestAiVersusSpeechWithPersona` — saving the result back through
+ * round's own saved `setup.opponentPersona` is set, the persona- and
+ * difficulty-conditioned `requestAiVersusSpeechWithPersona` (passing the
+ * round's own saved `setup.opponentDifficulty`) — saving the result back
+ * through
  * `aiVersusRounds.ts`, closing the AI-opponent-speech half of follow-up (a).
  * A "Get AI judge decision" action resolves the round's own saved
  * `setup.judgeParadigm` against a saved flow summary (Speech Transcript
@@ -30,6 +32,14 @@
  * `requestJudgeDecision`, and saves the verdict onto the round's own record,
  * closing the AI-judge-decision half of follow-up (a). No new setup
  * composition, speech-order, or judge-paradigm logic is introduced here.
+ *
+ * A second "Difficulty" radio group next to AI opponent persona closes the
+ * "🤖 AI Practice Opponent" idea's "extend the Practice Round Simulator's
+ * own separate persona setup to carry a difficulty too" Next item (TODO.md's
+ * Research Crowdsourcing Organizer Features list) — the same
+ * `opponentDifficulties` axis `OpponentPersonaPickerPanel`/`AiVersusRoundPanel`
+ * already carry, saved on the same `PracticeRoundSetup` and shown as a
+ * second badge per round and on the "Generate AI opponent speech" prompt.
  *
  * A "Generate post-round feedback for current round" form per round reads
  * the round workspace's currently selected flow (`state/store.ts`'s
@@ -76,8 +86,12 @@ import {
   type JudgeParadigm,
 } from "debate-speech-writer/src/judge/judge-paradigms"
 import {
+  DEFAULT_OPPONENT_DIFFICULTY,
+  listOpponentDifficulties,
   listOpponentPersonas,
+  opponentDifficulties,
   type BuiltinOpponentPersonaId,
+  type OpponentDifficulty,
 } from "debate-speech-writer/src/opponent/opponent-personas"
 import { buildAiResponseRequest, type AiVersusSide } from "../round/ai-versus-speech-order"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
@@ -106,6 +120,7 @@ const STYLE_LABELS: Record<DebateStyleKey, string> = debateStyleMap.reduce(
 
 const BUILTIN_PARADIGMS = listJudgeParadigms()
 const BUILTIN_PERSONAS = listOpponentPersonas()
+const DIFFICULTIES = listOpponentDifficulties()
 
 function sideLabel(styleKey: DebateStyleKey, side: AiVersusSide): string {
   const style = debateStyles[styleKey]
@@ -120,6 +135,7 @@ type FormState = {
   customJudgeName: string
   customJudgeNotes: string
   opponentPersonaId: BuiltinOpponentPersonaId | "none"
+  opponentDifficultyId: OpponentDifficulty
 }
 
 const EMPTY_FORM: FormState = {
@@ -130,6 +146,7 @@ const EMPTY_FORM: FormState = {
   customJudgeName: "",
   customJudgeNotes: "",
   opponentPersonaId: "none",
+  opponentDifficultyId: DEFAULT_OPPONENT_DIFFICULTY,
 }
 
 /**
@@ -204,6 +221,7 @@ export function PracticeRoundSimulatorPanel() {
       userSide: form.userSide,
       judgeParadigm,
       opponentPersona,
+      opponentDifficulty: form.opponentDifficultyId,
     })
 
     const existing = getPracticeRound(roundId)
@@ -238,7 +256,11 @@ export function PracticeRoundSimulatorPanel() {
     try {
       const persona = record.setup.opponentPersona
       const text = persona
-        ? await requestAiVersusSpeechWithPersona(request, persona)
+        ? await requestAiVersusSpeechWithPersona(
+            request,
+            persona,
+            record.setup.opponentDifficulty ?? DEFAULT_OPPONENT_DIFFICULTY,
+          )
         : await requestAiVersusSpeech(request)
       saveAiVersusRound({
         ...aiRound,
@@ -437,6 +459,30 @@ export function PracticeRoundSimulatorPanel() {
           </RadioGroup>
         </div>
 
+        <div className="space-y-1.5">
+          <Label>Difficulty</Label>
+          <RadioGroup
+            value={form.opponentDifficultyId}
+            onValueChange={(value) =>
+              setForm((prev) => ({ ...prev, opponentDifficultyId: value as OpponentDifficulty }))
+            }
+          >
+            {DIFFICULTIES.map((level) => (
+              <div key={level.id} className="flex items-start gap-2">
+                <RadioGroupItem
+                  value={level.id}
+                  id={`practice-round-difficulty-${level.id}`}
+                  className="mt-0.5"
+                />
+                <Label htmlFor={`practice-round-difficulty-${level.id}`} className="font-normal">
+                  <span className="text-foreground">{level.name}</span>{" "}
+                  <span className="text-muted-foreground">— {level.description}</span>
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+
         {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button onClick={handleSave}>Save round setup</Button>
@@ -466,6 +512,14 @@ export function PracticeRoundSimulatorPanel() {
                     <Badge variant="outline">
                       {record.setup.opponentPersona ? record.setup.opponentPersona.name : "No AI opponent"}
                     </Badge>
+                    {record.setup.opponentPersona && (
+                      <Badge variant="outline">
+                        {
+                          opponentDifficulties[record.setup.opponentDifficulty ?? DEFAULT_OPPONENT_DIFFICULTY]
+                            .name
+                        }
+                      </Badge>
+                    )}
                     <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
                       Clear
                     </Button>
@@ -482,13 +536,27 @@ export function PracticeRoundSimulatorPanel() {
                 </p>
 
                 {aiSpeechRequest && (
-                  <Button
-                    size="sm"
-                    onClick={() => handleGenerateAiSpeech(record)}
-                    disabled={aiGeneratingId === record.roundId}
-                  >
-                    {aiGeneratingId === record.roundId ? "Generating…" : "Generate AI opponent speech"}
-                  </Button>
+                  <div className="space-y-2">
+                    {record.setup.opponentPersona && (
+                      <p className="text-xs text-muted-foreground">
+                        Arguing as <Badge variant="outline">{record.setup.opponentPersona.name}</Badge>{" "}
+                        <Badge variant="outline">
+                          {
+                            opponentDifficulties[
+                              record.setup.opponentDifficulty ?? DEFAULT_OPPONENT_DIFFICULTY
+                            ].name
+                          }
+                        </Badge>
+                      </p>
+                    )}
+                    <Button
+                      size="sm"
+                      onClick={() => handleGenerateAiSpeech(record)}
+                      disabled={aiGeneratingId === record.roundId}
+                    >
+                      {aiGeneratingId === record.roundId ? "Generating…" : "Generate AI opponent speech"}
+                    </Button>
+                  </div>
                 )}
 
                 <div className="space-y-2">

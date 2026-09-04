@@ -143,9 +143,13 @@ covered: new cases in `packages/debate-speech-writer/test/opponent-personas.test
 - The Practice Round Simulator panel (`/practice-round`,
   `PracticeRoundSimulatorPanel.tsx`) has its own, separate opponent-persona
   selection embedded in `state/practiceRounds.ts`'s `PracticeRoundSetup`
-  (a builtin persona id only, no custom persona and no difficulty) rather
-  than reading through this store — extending that setup form to also carry
-  a difficulty, or unifying it with this store, is a follow-up of its own.
+  (a builtin persona id only, no custom persona) rather than reading through
+  this store — unifying it with this store remains a follow-up of its own.
+  Its setup form does now also carry a difficulty (`opponentDifficulty` on
+  `PracticeRoundSetup`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`), saved
+  alongside its own persona choice — see
+  `docs/features/practice-round-simulator.md`'s "Opponent difficulty"
+  section.
 - This panel only saves/clears a selection; it doesn't itself invoke a
   speech-generation call — that lives in the Online Debate Versus AI panel
   (`AiVersusRoundPanel`, `/versus-ai`) once a round's persona is saved here.

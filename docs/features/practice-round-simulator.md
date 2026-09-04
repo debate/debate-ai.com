@@ -16,28 +16,33 @@ follow-up named under the "🧪 Practice Round Simulator" bullet in
 A form to pick a round ID, `debate-timer` format, side, an AI judge
 paradigm (one of the six built-in paradigms from
 `judge-paradigms.ts`, or a custom paradigm built from a real judge's own
-publicly stated preferences via `buildCustomJudgeParadigm`), and an
+publicly stated preferences via `buildCustomJudgeParadigm`), an
 optional AI opponent persona (one of the four built-in personas from
-`opponent-personas.ts`). Saving composes these into a
+`opponent-personas.ts`), and a difficulty for that opponent (one of the
+four `opponentDifficulties` levels — Beginner/Intermediate/Advanced/Elite —
+defaulting to Intermediate). Saving composes these into a
 `PracticeRoundSetup` via the already-existing `buildPracticeRoundSetup` and
 stores it through `state/practiceRounds.ts`.
 
 Below the form, every persisted round renders as its own card (sorted by
-`roundId`): the judge-paradigm and opponent-persona badges, how many of the
-round's speeches have been submitted (looked up through the existing
-"Online Debate Versus AI" `aiVersusRounds.ts` store, with a link to
-`/versus-ai` to actually submit them), a "Generate AI opponent speech"
-action once it's the AI's turn, the rendered setup sections (speech order,
-judge paradigm, AI opponent), a "Generate post-round feedback for current
-round" form, post-round feedback once one has been generated, and a "Get AI
-judge decision" action — with a "Clear" action per round.
+`roundId`): the judge-paradigm, opponent-persona, and (when a persona is
+set) opponent-difficulty badges, how many of the round's speeches have been
+submitted (looked up through the existing "Online Debate Versus AI"
+`aiVersusRounds.ts` store, with a link to `/versus-ai` to actually submit
+them), a "Generate AI opponent speech" action once it's the AI's turn
+(showing the same persona/difficulty badges above the button when a
+persona is set), the rendered setup sections (speech order, judge paradigm,
+AI opponent), a "Generate post-round feedback for current round" form,
+post-round feedback once one has been generated, and a "Get AI judge
+decision" action — with a "Clear" action per round.
 
 Once a round has been started at `/versus-ai` (so an `aiVersusRounds.ts`
 record exists for the same `roundId`) and it's the AI's turn, "Generate AI
 opponent speech" builds the request via the existing `buildAiResponseRequest`
 and calls `requestAiVersusSpeech` — or, when the round's own saved
-`setup.opponentPersona` is set, the persona-conditioned
-`requestAiVersusSpeechWithPersona` — saving the result back through
+`setup.opponentPersona` is set, the persona- and difficulty-conditioned
+`requestAiVersusSpeechWithPersona` (passing the round's own saved
+`setup.opponentDifficulty`) — saving the result back through
 `aiVersusRounds.ts`.
 
 "Generate post-round feedback for current round" reads the round
@@ -60,7 +65,7 @@ via `round/practice-round-judge-decision-wiring.ts`, calls the existing
 
 ```
 round/practice-round-simulator.ts
-  → buildPracticeRoundSetup({ styleKey, userSide, judgeParadigm, opponentPersona })
+  → buildPracticeRoundSetup({ styleKey, userSide, judgeParadigm, opponentPersona, opponentDifficulty })
       — composes idea #3's buildAiVersusSpeechOrder, debate-speech-writer's
         judge-paradigms.ts / opponent-personas.ts prompt builders
   → buildPracticeRoundFeedback(flow, sideKey, judgeParadigm)
@@ -123,6 +128,26 @@ slice, submitting speeches (at `/versus-ai`) progressed the round but
 post-round feedback was never actually computed anywhere in the app.
 Vitest-covered in `packages/debate-round/test/practiceRounds.test.ts`'s
 `buildAndSavePracticeRoundFeedback` suite.
+
+A further slice added `opponentDifficulty` — the "🤖 AI Practice Opponent"
+idea's "extend the Practice Round Simulator's own separate persona setup to
+carry a difficulty too" Next item. `PracticeRoundSetupInput`/
+`PracticeRoundSetup` gained an `opponentDifficulty` field (an
+`OpponentDifficulty`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`) that
+`buildPracticeRoundSetup` layers onto the persona's own prompt section via
+`buildOpponentPersonaPrompt`'s existing `difficulty` parameter — the same
+mechanism `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` already use.
+The panel's form gained a second "Difficulty" radio group next to AI
+opponent persona, saving the chosen level alongside the persona and showing
+it as a second badge per round and on the "Generate AI opponent speech"
+prompt; "Generate AI opponent speech" now passes the round's own saved
+`setup.opponentDifficulty` through to `requestAiVersusSpeechWithPersona`.
+An older persisted round with no saved `opponentDifficulty` (from before
+this slice) resolves to `DEFAULT_OPPONENT_DIFFICULTY` wherever it's read,
+rather than being backfilled on save. Vitest-covered:
+`packages/debate-round/test/practice-round-simulator.test.ts`'s
+`buildPracticeRoundSetup` suite (the default vs. explicit difficulty, and
+its layering into the "AI opponent" section body).
 
 ## Known gaps
 

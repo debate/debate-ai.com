@@ -12,6 +12,14 @@
  * doesn't call any AI model to actually generate the AI opponent's speeches
  * or a judge decision, isn't wired into any round-simulator UI, and doesn't
  * persist a practice round anywhere; see the follow-ups noted in TODO.md.
+ *
+ * `opponentDifficulty` closes the "🤖 AI Practice Opponent" idea's "extend
+ * the Practice Round Simulator's own separate persona setup to carry a
+ * difficulty too" Next item (TODO.md's Research Crowdsourcing Organizer
+ * Features list): the same `opponentDifficulties` axis
+ * `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` already carry, layered
+ * onto this setup's own persona choice via `buildOpponentPersonaPrompt`'s
+ * existing `difficulty` parameter.
  */
 
 import type { Flow } from "../types/flow";
@@ -26,10 +34,12 @@ import {
 } from "debate-speech-writer/src/judge/judge-paradigms";
 import type {
   BuiltinOpponentPersonaId,
+  OpponentDifficulty,
   OpponentPersona,
 } from "debate-speech-writer/src/opponent/opponent-personas";
 import {
   buildOpponentPersonaPrompt,
+  DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentPersona,
 } from "debate-speech-writer/src/opponent/opponent-personas";
 import type { DebateStyleKey } from "debate-timer/src/formats/debate-format-times";
@@ -85,12 +95,15 @@ export type PracticeRoundSetupInput = {
   judgeParadigm?: JudgeParadigm | BuiltinJudgeParadigmId;
   /** A built-in persona id, or a pre-built persona. Omit for no AI opponent style guidance. */
   opponentPersona?: OpponentPersona | BuiltinOpponentPersonaId;
+  /** How strong the AI opponent should argue within its persona. Defaults to `DEFAULT_OPPONENT_DIFFICULTY`. Only meaningful when `opponentPersona` is set. */
+  opponentDifficulty?: OpponentDifficulty;
 };
 
 export type PracticeRoundSetup = {
   speechOrder: AiVersusSpeechSlot[];
   judgeParadigm: JudgeParadigm;
   opponentPersona: OpponentPersona | null;
+  opponentDifficulty: OpponentDifficulty;
   sections: PracticeRoundSection[];
 };
 
@@ -98,13 +111,15 @@ export type PracticeRoundSetup = {
  * Composes a practice round's setup — the format's speech order tagged by
  * who speaks each slot (reusing idea #3's `buildAiVersusSpeechOrder`), the
  * selected judge paradigm's prompt section, and the selected AI opponent
- * persona's prompt section (if any) — into one renderable document. Throws
- * if a paradigm/persona id is given that isn't a known built-in.
+ * persona's prompt section at the selected difficulty (if any) — into one
+ * renderable document. Throws if a paradigm/persona id is given that isn't a
+ * known built-in.
  */
 export function buildPracticeRoundSetup(input: PracticeRoundSetupInput): PracticeRoundSetup {
   const speechOrder = buildAiVersusSpeechOrder(input.styleKey, input.userSide ?? "primary");
   const judgeParadigm = resolveJudgeParadigm(input.judgeParadigm);
   const opponentPersona = resolveOpponentPersona(input.opponentPersona);
+  const opponentDifficulty = input.opponentDifficulty ?? DEFAULT_OPPONENT_DIFFICULTY;
 
   const sections: PracticeRoundSection[] = [
     { title: "Speech order", body: formatSpeechOrderSection(speechOrder) },
@@ -112,12 +127,12 @@ export function buildPracticeRoundSetup(input: PracticeRoundSetupInput): Practic
     {
       title: "AI opponent",
       body: opponentPersona
-        ? buildOpponentPersonaPrompt(opponentPersona)
+        ? buildOpponentPersonaPrompt(opponentPersona, opponentDifficulty)
         : "No AI opponent persona selected — the AI will argue with no persona-specific style guidance.",
     },
   ];
 
-  return { speechOrder, judgeParadigm, opponentPersona, sections };
+  return { speechOrder, judgeParadigm, opponentPersona, opponentDifficulty, sections };
 }
 
 /** Renders a `PracticeRoundSetup` as a single markdown-ish text document, suitable for a round-setup screen. */
