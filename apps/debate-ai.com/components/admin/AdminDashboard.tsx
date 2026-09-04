@@ -1,257 +1,32 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "debate-ui/src/primitives/button";
 import { Badge } from "debate-ui/src/primitives/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "debate-ui/src/primitives/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "debate-ui/src/primitives/select";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "debate-ui/src/primitives/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-ui/src/primitives/select";
 
-interface YoutubeRoundVideo {
-  id: string;
-  title: string;
-  publishedAt: string;
-  channel: string;
-  views: number;
-  style: number;
-  tournament: string | null;
-  roundLevel: string | null;
-  aff: string | null;
-  neg: string | null;
-  winner: boolean | null;
-  judgeDecision: string | null;
-}
-
-interface SyncRun {
-  id: number;
-  status: "running" | "success" | "error";
-  triggeredBy: string | null;
-  channelsSynced: number;
-  videosFetched: number;
-  videosUpserted: number;
-  error: string | null;
-  startedAt: string;
-  finishedAt: string | null;
-}
-
-const STYLE_NAMES: Record<number, string> = {
-  1: "Policy",
-  2: "PF",
-  3: "LD",
-  4: "College",
-};
-
-const STYLE_OPTIONS = [
-  { value: "all", label: "All styles" },
-  { value: "1", label: "Policy" },
-  { value: "2", label: "PF" },
-  { value: "3", label: "LD" },
-  { value: "4", label: "College" },
-];
+interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
+interface SyncRun { id: number; status: "running" | "success" | "error"; channelsSynced: number; videosUpserted: number; error: string | null; }
+interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
+const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
+const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
 
 export function AdminDashboard() {
-  const [videos, setVideos] = useState<YoutubeRoundVideo[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [style, setStyle] = useState("all");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isResyncing, setIsResyncing] = useState(false);
-  const [lastRun, setLastRun] = useState<SyncRun | null>(null);
-  const [resyncError, setResyncError] = useState<string | null>(null);
-
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  const loadFirstPage = useCallback(async (styleFilter: string) => {
-    setIsLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (styleFilter !== "all") params.set("style", styleFilter);
-      const res = await fetch(`/api/admin/youtube/videos?${params.toString()}`);
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-      const data = await res.json();
-      setVideos(data.videos ?? []);
-      setNextCursor(data.nextCursor ?? null);
-    } catch (error) {
-      console.error("Failed to load videos:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const loadMore = useCallback(async () => {
-    if (!nextCursor || isLoadingMore) return;
-    setIsLoadingMore(true);
-    try {
-      const params = new URLSearchParams({ cursor: nextCursor });
-      if (style !== "all") params.set("style", style);
-      const res = await fetch(`/api/admin/youtube/videos?${params.toString()}`);
-      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-      const data = await res.json();
-      setVideos((prev) => [...prev, ...(data.videos ?? [])]);
-      setNextCursor(data.nextCursor ?? null);
-    } catch (error) {
-      console.error("Failed to load more videos:", error);
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }, [nextCursor, isLoadingMore, style]);
-
-  useEffect(() => {
-    loadFirstPage(style);
-  }, [style, loadFirstPage]);
-
-  useEffect(() => {
-    fetch("/api/admin/youtube/resync")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.runs?.[0]) setLastRun(data.runs[0]);
-      })
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) loadMore();
-      },
-      { rootMargin: "200px" },
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [loadMore]);
-
-  const handleResync = async () => {
-    setIsResyncing(true);
-    setResyncError(null);
-    try {
-      const res = await fetch("/api/admin/youtube/resync", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.details || data?.error || "Resync failed");
-      setLastRun({
-        id: data.runId,
-        status: "success",
-        triggeredBy: null,
-        channelsSynced: data.channelsSynced,
-        videosFetched: data.videosFetched,
-        videosUpserted: data.videosUpserted,
-        error: null,
-        startedAt: new Date().toISOString(),
-        finishedAt: new Date().toISOString(),
-      });
-      await loadFirstPage(style);
-    } catch (error) {
-      setResyncError((error as Error).message);
-    } finally {
-      setIsResyncing(false);
-    }
-  };
-
-  return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
-      <div>
-        <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground text-sm">YouTube round video sync</p>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Resync YouTube rounds</CardTitle>
-          <CardDescription>
-            Refetches every subscribed channel from YouTube, re-classifies rounds, and
-            upserts them into the database.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <Button onClick={handleResync} disabled={isResyncing}>
-              {isResyncing ? "Resyncing…" : "Resync videos"}
-            </Button>
-            {lastRun && (
-              <span className="text-muted-foreground text-sm">
-                Last run: {lastRun.status === "error" ? "failed" : "success"}
-                {lastRun.status !== "error" &&
-                  ` — ${lastRun.videosUpserted} rounds from ${lastRun.channelsSynced} channels`}
-              </span>
-            )}
-          </div>
-          {resyncError && <p className="text-destructive text-sm">{resyncError}</p>}
-          {lastRun?.status === "error" && lastRun.error && (
-            <p className="text-destructive text-sm">{lastRun.error}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium">Round videos</h2>
-        <Select value={style} onValueChange={setStyle}>
-          <SelectTrigger className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {STYLE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        {isLoading && videos.length === 0 && (
-          <p className="text-muted-foreground text-sm">Loading videos…</p>
-        )}
-        {!isLoading && videos.length === 0 && (
-          <p className="text-muted-foreground text-sm">
-            No videos yet — run a resync to populate this list.
-          </p>
-        )}
-        {videos.map((video) => (
-          <a
-            key={video.id}
-            href={`https://www.youtube.com/watch?v=${video.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:bg-accent flex gap-3 rounded-lg border p-3 transition-colors"
-          >
-            <img
-              src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
-              alt=""
-              className="h-20 w-32 shrink-0 rounded object-cover"
-              loading="lazy"
-            />
-            <div className="flex min-w-0 flex-col gap-1">
-              <p className="truncate font-medium">{video.title}</p>
-              <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-xs">
-                <Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge>
-                <span>{video.channel}</span>
-                <span>{video.publishedAt}</span>
-                <span>{video.views.toLocaleString()} views</span>
-                {video.tournament && <span>{video.tournament}</span>}
-              </div>
-            </div>
-          </a>
-        ))}
-        <div ref={sentinelRef} className="h-1" />
-        {isLoadingMore && (
-          <p className="text-muted-foreground text-center text-sm">Loading more…</p>
-        )}
-      </div>
-    </main>
-  );
+  const [videos, setVideos] = useState<YoutubeRoundVideo[]>([]); const [style, setStyle] = useState("all"); const [query, setQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false); const [isResyncing, setIsResyncing] = useState(false); const [isPublishing, setIsPublishing] = useState(false);
+  const [lastRun, setLastRun] = useState<SyncRun | null>(null); const [overview, setOverview] = useState<Overview | null>(null); const [message, setMessage] = useState<string | null>(null);
+  const loadVideos = useCallback(async (filter = style, search = query) => { setIsLoading(true); try { const params = new URLSearchParams({ limit: "100" }); if (filter !== "all") params.set("style", filter); if (search.trim()) params.set("q", search.trim()); const res = await fetch(`/api/admin/youtube/videos?${params}`); if (!res.ok) throw new Error("Could not load videos"); const data = await res.json(); setVideos(data.videos ?? []); } catch (error) { setMessage((error as Error).message); } finally { setIsLoading(false); } }, [style, query]);
+  const loadOverview = useCallback(async () => { const res = await fetch("/api/admin/overview"); if (res.ok) setOverview(await res.json()); }, []);
+  useEffect(() => { void loadVideos(); }, [loadVideos]);
+  useEffect(() => { void loadOverview(); fetch("/api/admin/youtube/resync").then((res) => res.ok ? res.json() : null).then((data) => data?.runs?.[0] && setLastRun(data.runs[0])).catch(() => {}); }, [loadOverview]);
+  const resync = async () => { setIsResyncing(true); setMessage(null); try { const res = await fetch("/api/admin/youtube/resync", { method: "POST" }); const data = await res.json(); if (!res.ok) throw new Error(data.details || data.error); setLastRun({ ...data, status: "success", error: null }); setMessage(`Resynced ${data.videosUpserted} unique rounds.`); await Promise.all([loadVideos(), loadOverview()]); } catch (error) { setMessage((error as Error).message); } finally { setIsResyncing(false); } };
+  const publish = async () => { setIsPublishing(true); setMessage(null); try { const res = await fetch("/api/admin/youtube/videos/publish", { method: "POST" }); const data = await res.json(); if (!res.ok) throw new Error(data.error || "Could not publish videos"); setMessage(data.message); await loadOverview(); } catch (error) { setMessage((error as Error).message); } finally { setIsPublishing(false); } };
+  const remove = async (id: string) => { if (!window.confirm("Remove this video from the admin list and public video grid?")) return; const res = await fetch(`/api/admin/youtube/videos/${id}`, { method: "DELETE" }); const data = await res.json(); if (!res.ok) { setMessage(data.error || "Could not remove video"); return; } setVideos((current) => current.filter((video) => video.id !== id)); setMessage("Video removed and excluded from future resyncs."); await loadOverview(); };
+  return <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10"><div><h1 className="text-2xl font-semibold">Admin</h1><p className="text-muted-foreground text-sm">Manage YouTube round availability and monitor the application.</p></div>
+    <Card><CardHeader><CardTitle>Resync YouTube rounds</CardTitle><CardDescription>Refetch subscribed channels, deduplicate videos by YouTube ID, and stage classified rounds in SQL.</CardDescription></CardHeader><CardContent className="flex flex-wrap items-center gap-3"><Button onClick={resync} disabled={isResyncing}>{isResyncing ? "Resyncing…" : "Resync videos"}</Button><Button variant="secondary" onClick={publish} disabled={isPublishing}>{isPublishing ? "Adding to grid…" : "Add all to video grid"}</Button>{lastRun && <span className="text-muted-foreground text-sm">Last run: {lastRun.status} — {lastRun.videosUpserted} rounds from {lastRun.channelsSynced} channels</span>}{message && <p className="w-full text-sm">{message}</p>}</CardContent></Card>
+    <section><h2 className="mb-3 text-lg font-medium">Video and file statistics</h2><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{Object.entries(overview?.stats ?? {}).map(([label, value]) => <Card key={label}><CardContent className="p-4"><p className="text-muted-foreground text-xs">{label.replace(/([A-Z])/g, " $1")}</p><p className="text-2xl font-semibold">{value}</p></CardContent></Card>)}</div></section>
+    <Card><CardHeader><CardTitle>Most recent users</CardTitle><CardDescription>Newest accounts, including anonymous sessions where applicable.</CardDescription></CardHeader><CardContent><div className="divide-y">{overview?.recentUsers.map((person) => <div className="flex items-center justify-between gap-3 py-3" key={person.id}><div className="min-w-0"><p className="truncate font-medium">{person.name}</p><p className="text-muted-foreground truncate text-sm">{person.email}</p></div><div className="text-muted-foreground shrink-0 text-right text-xs"><p>{person.isAnonymous ? "Anonymous" : "Registered"}</p><p>{new Date(person.createdAt).toLocaleDateString()}</p></div></div>) ?? <p className="text-muted-foreground text-sm">Loading users…</p>}</div></CardContent></Card>
+    <section><div className="mb-3 flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-medium">Available YouTube rounds</h2><div className="flex gap-2"><input aria-label="Search videos" value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => event.key === "Enter" && void loadVideos()} placeholder="Search title or channel" className="h-9 rounded-md border bg-background px-3 text-sm"/><Select value={style} onValueChange={(value) => { setStyle(value); void loadVideos(value, query); }}><SelectTrigger className="w-32"><SelectValue /></SelectTrigger><SelectContent>{STYLE_OPTIONS.map((option) => <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>)}</SelectContent></Select><Button variant="secondary" onClick={() => void loadVideos()}>Search</Button></div></div><div className="flex flex-col gap-3">{isLoading && <p className="text-muted-foreground text-sm">Loading videos…</p>}{!isLoading && videos.length === 0 && <p className="text-muted-foreground text-sm">No matching available videos.</p>}{videos.map((video) => <div key={video.id} className="flex gap-3 rounded-lg border p-3"><a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer"><img src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`} alt="" className="h-20 w-32 rounded object-cover" loading="lazy"/></a><div className="min-w-0 flex-1"><p className="truncate font-medium">{video.title}</p><div className="text-muted-foreground flex flex-wrap gap-2 text-xs"><Badge variant="secondary">{STYLE_NAMES[video.style] ?? "Unknown"}</Badge><span>{video.channel}</span><span>{video.publishedAt}</span><span>{video.views.toLocaleString()} views</span>{video.tournament && <span>{video.tournament}</span>}</div></div><Button variant="destructive" size="sm" onClick={() => void remove(video.id)}>Delete</Button></div>)}</div></section>
+  </main>;
 }
