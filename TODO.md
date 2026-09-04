@@ -62,7 +62,9 @@ _No task currently in progress._
   `bun run build:web` (production build succeeded, `/prep-notes` route
   intact; the touched-by-build `app-file-list.ts`/`version.ts`/
   `service-worker.js`/`bun.lock` churn was reverted before committing,
-  unrelated to this change). **Completed:** 2026-09-04.
+  unrelated to this change). **PR:**
+  https://github.com/debate/debate-ai.com/pull/530. **Completed:**
+  2026-09-04.
 - **AI Drill Generator — account-sync drill sets across devices ("📚 AI
   Drill Generator" bullet's account-sync Next item).** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
