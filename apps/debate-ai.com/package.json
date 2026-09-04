@@ -72,6 +72,7 @@
     "debate-editor": "workspace:*",
     "debate-flow-ebb": "workspace:*",
     "debate-practice-rounds": "workspace:*",
+    "debate-practice-vs-ai": "workspace:*",
     "debate-research-evidence": "workspace:*",
     "debate-round": "workspace:*",
     "debate-speech-writer": "workspace:*",
