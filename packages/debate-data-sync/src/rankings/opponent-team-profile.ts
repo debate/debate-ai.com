@@ -247,3 +247,112 @@ export function buildOpponentScoutingReportText(roster: OpponentTeamProfile[]): 
 export function opponentScoutingReportFilename(): string {
   return "opponent-scouting-report.txt";
 }
+
+/**
+ * A side-by-side comparison of two `OpponentTeamProfile`s — the "a
+ * side-by-side us-vs-opponent comparison view" follow-up named under the
+ * "🕵️ Opponent Team Profiles" bullet in TODO.md's Research Crowdsourcing
+ * Organizer Features list. `a`/`b` are kept generic (not literally
+ * "us"/"opponent") since the comparison math is symmetric; a caller building
+ * an actual us-vs-opponent view supplies its own team's profile (e.g.
+ * `buildOpponentTeamProfile("self", ownRecords)`) as one side.
+ */
+export interface OpponentTeamComparison {
+  a: OpponentTeamProfile;
+  b: OpponentTeamProfile;
+  /** Argument tags recorded for both teams, ranked by combined frequency. */
+  sharedArgumentTags: FrequencyCount[];
+  /** Argument tags recorded for `a` but never recorded for `b`. */
+  aOnlyArgumentTags: FrequencyCount[];
+  /** Argument tags recorded for `b` but never recorded for `a`. */
+  bOnlyArgumentTags: FrequencyCount[];
+}
+
+function sortFrequenciesDesc(entries: FrequencyCount[]): FrequencyCount[] {
+  return [...entries].sort((x, y) =>
+    y.count !== x.count ? y.count - x.count : x.value.localeCompare(y.value),
+  );
+}
+
+/**
+ * Builds a side-by-side comparison of two `OpponentTeamProfile`s: their
+ * argument tags are split into shared ground (ranked by combined frequency
+ * across both teams) and each team's own distinct tags — the scouting-useful
+ * signal of what a team runs that the other doesn't.
+ */
+export function buildOpponentTeamComparison(
+  a: OpponentTeamProfile,
+  b: OpponentTeamProfile,
+): OpponentTeamComparison {
+  const aCounts = new Map(a.topArgumentTags.map((tag) => [tag.value, tag.count]));
+  const bCounts = new Map(b.topArgumentTags.map((tag) => [tag.value, tag.count]));
+
+  const shared: FrequencyCount[] = [];
+  const aOnly: FrequencyCount[] = [];
+  for (const [value, count] of aCounts) {
+    const bCount = bCounts.get(value);
+    if (bCount === undefined) {
+      aOnly.push({ value, count });
+    } else {
+      shared.push({ value, count: count + bCount });
+    }
+  }
+  const bOnly: FrequencyCount[] = [...bCounts.entries()]
+    .filter(([value]) => !aCounts.has(value))
+    .map(([value, count]) => ({ value, count }));
+
+  return {
+    a,
+    b,
+    sharedArgumentTags: sortFrequenciesDesc(shared),
+    aOnlyArgumentTags: sortFrequenciesDesc(aOnly),
+    bOnlyArgumentTags: sortFrequenciesDesc(bOnly),
+  };
+}
+
+function formatComparisonRecord(profile: OpponentTeamProfile): string {
+  return profile.roundsRecorded > 0
+    ? `${profile.record.wins}-${profile.record.losses} (${Math.round(profile.record.winRate * 100)}%)`
+    : "no recorded rounds";
+}
+
+function formatComparisonSideRecord(profile: OpponentTeamProfile, side: DebateSide): string {
+  const split = profile.sideRecord[side];
+  return split.rounds > 0
+    ? `${split.wins}-${split.rounds - split.wins} (${Math.round(split.winRate * 100)}%)`
+    : "—";
+}
+
+function formatComparisonTags(tags: FrequencyCount[]): string {
+  return tags.length > 0 ? tags.map((tag) => `${tag.value} (${tag.count})`).join(", ") : "none";
+}
+
+/** Renders an `OpponentTeamComparison` as a downloadable plain-text document. */
+export function buildOpponentTeamComparisonText(comparison: OpponentTeamComparison): string {
+  const { a, b } = comparison;
+  const lines = [
+    `Opponent Comparison — ${a.teamId} vs. ${b.teamId}`,
+    "",
+    `Rounds recorded: ${a.teamId} ${a.roundsRecorded}, ${b.teamId} ${b.roundsRecorded}`,
+    `Record: ${a.teamId} ${formatComparisonRecord(a)}, ${b.teamId} ${formatComparisonRecord(b)}`,
+    `Aff record: ${a.teamId} ${formatComparisonSideRecord(a, "aff")}, ${b.teamId} ${formatComparisonSideRecord(b, "aff")}`,
+    `Neg record: ${a.teamId} ${formatComparisonSideRecord(a, "neg")}, ${b.teamId} ${formatComparisonSideRecord(b, "neg")}`,
+    `Shared arguments: ${formatComparisonTags(comparison.sharedArgumentTags)}`,
+    `${a.teamId}-only arguments: ${formatComparisonTags(comparison.aOnlyArgumentTags)}`,
+    `${b.teamId}-only arguments: ${formatComparisonTags(comparison.bOnlyArgumentTags)}`,
+  ];
+  return lines.join("\n");
+}
+
+/** A filesystem-safe filename for a comparison download, e.g. `opponent-comparison-us-vs-westlake-ab.txt`. */
+export function opponentTeamComparisonFilename(
+  a: OpponentTeamProfile,
+  b: OpponentTeamProfile,
+): string {
+  const safeId = `${a.teamId}-vs-${b.teamId}`
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `opponent-comparison-${safeId || "teams"}.txt`;
+}

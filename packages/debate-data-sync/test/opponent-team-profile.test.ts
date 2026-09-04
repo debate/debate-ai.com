@@ -2,11 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   buildOpponentScoutingReportText,
   buildOpponentScoutingSummary,
+  buildOpponentTeamComparison,
+  buildOpponentTeamComparisonText,
   buildOpponentTeamProfile,
   buildOpponentTeamProfiles,
   getHeadToHeadRecords,
   groupRecordsByTeam,
   opponentScoutingReportFilename,
+  opponentTeamComparisonFilename,
   type OpponentRoundRecord,
 } from "../src/rankings/opponent-team-profile";
 
@@ -217,6 +220,83 @@ describe("buildOpponentScoutingReportText", () => {
 describe("opponentScoutingReportFilename", () => {
   it("returns a fixed filename", () => {
     expect(opponentScoutingReportFilename()).toBe("opponent-scouting-report.txt");
+  });
+});
+
+describe("buildOpponentTeamComparison", () => {
+  it("splits argument tags into shared, a-only, and b-only, ranked by frequency", () => {
+    const a = buildOpponentTeamProfile("us", [
+      record({ teamId: "us", argumentTags: ["kritik"] }),
+      record({ teamId: "us", argumentTags: ["kritik"] }),
+      record({ teamId: "us", argumentTags: ["topicality"] }),
+    ]);
+    const b = buildOpponentTeamProfile("rival", [
+      record({ teamId: "rival", argumentTags: ["kritik"] }),
+      record({ teamId: "rival", argumentTags: ["counterplan"] }),
+    ]);
+    const comparison = buildOpponentTeamComparison(a, b);
+    expect(comparison.a.teamId).toBe("us");
+    expect(comparison.b.teamId).toBe("rival");
+    expect(comparison.sharedArgumentTags).toEqual([{ value: "kritik", count: 3 }]);
+    expect(comparison.aOnlyArgumentTags).toEqual([{ value: "topicality", count: 1 }]);
+    expect(comparison.bOnlyArgumentTags).toEqual([{ value: "counterplan", count: 1 }]);
+  });
+
+  it("handles a team with no recorded rounds on either side without crashing", () => {
+    const a = buildOpponentTeamProfile("us", []);
+    const b = buildOpponentTeamProfile("rival", []);
+    const comparison = buildOpponentTeamComparison(a, b);
+    expect(comparison.sharedArgumentTags).toEqual([]);
+    expect(comparison.aOnlyArgumentTags).toEqual([]);
+    expect(comparison.bOnlyArgumentTags).toEqual([]);
+  });
+
+  it("ties in shared/only tags alphabetically", () => {
+    const a = buildOpponentTeamProfile("us", [
+      record({ teamId: "us", argumentTags: ["zeta"] }),
+      record({ teamId: "us", argumentTags: ["alpha"] }),
+    ]);
+    const b = buildOpponentTeamProfile("rival", []);
+    const comparison = buildOpponentTeamComparison(a, b);
+    expect(comparison.aOnlyArgumentTags).toEqual([
+      { value: "alpha", count: 1 },
+      { value: "zeta", count: 1 },
+    ]);
+  });
+});
+
+describe("buildOpponentTeamComparisonText", () => {
+  it("renders both teams' records, side records, and tag breakdown", () => {
+    const a = buildOpponentTeamProfile("us", [
+      record({ teamId: "us", side: "aff", won: true, argumentTags: ["kritik"] }),
+    ]);
+    const b = buildOpponentTeamProfile("rival", [
+      record({ teamId: "rival", side: "neg", won: false, argumentTags: ["kritik"] }),
+    ]);
+    const text = buildOpponentTeamComparisonText(buildOpponentTeamComparison(a, b));
+    expect(text).toContain("Opponent Comparison — us vs. rival");
+    expect(text).toContain("Rounds recorded: us 1, rival 1");
+    expect(text).toContain("Record: us 1-0 (100%), rival 0-1 (0%)");
+    expect(text).toContain("Aff record: us 1-0 (100%), rival —");
+    expect(text).toContain("Neg record: us —, rival 0-1 (0%)");
+    expect(text).toContain("Shared arguments: kritik (2)");
+    expect(text).toContain("us-only arguments: none");
+    expect(text).toContain("rival-only arguments: none");
+  });
+
+  it("reports 'no recorded rounds' for a team with an empty history", () => {
+    const a = buildOpponentTeamProfile("us", []);
+    const b = buildOpponentTeamProfile("rival", [record({ teamId: "rival" })]);
+    const text = buildOpponentTeamComparisonText(buildOpponentTeamComparison(a, b));
+    expect(text).toContain("Record: us no recorded rounds, rival 1-0 (100%)");
+  });
+});
+
+describe("opponentTeamComparisonFilename", () => {
+  it("builds a sanitized filename from both team ids", () => {
+    const a = buildOpponentTeamProfile("Us Team!", []);
+    const b = buildOpponentTeamProfile("Westlake AB", []);
+    expect(opponentTeamComparisonFilename(a, b)).toBe("opponent-comparison-us-team-vs-westlake-ab.txt");
   });
 });
 
