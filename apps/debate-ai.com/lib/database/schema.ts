@@ -241,6 +241,15 @@ export const userSettings = sqliteTable("user_settings", {
   // collections per user" follow-up). Null/absent means "no collections
   // saved yet", same semantics as every other nullable column here.
   savedArgumentCollections: text("saved_argument_collections"),
+  // JSON-serialized array of `{ id, name, filters, createdAt, seenEntryIds }`
+  // named saved searches over the Shared Evidence Library (see
+  // packages/debate-search-evidence/src/lib/saved-evidence-searches.ts and
+  // TODO.md's "📋 Shared Evidence Library" bullet's "saved searches with
+  // alerts on new matches" follow-up). `seenEntryIds` is the "already seen"
+  // baseline a re-run diffs fresh results against to compute a "N new
+  // matches" badge. Null/absent means "no searches saved yet", same
+  // semantics as every other nullable column here.
+  savedEvidenceSearches: text("saved_evidence_searches"),
   // JSON-serialized `{ targetCompletedTaskCount, topic?, targetDate? }`
   // personal research-progress goal (see
   // packages/debate-card-search/src/lib/research-progress-goal-sync.ts and

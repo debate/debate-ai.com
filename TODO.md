@@ -6,6 +6,50 @@
 _No task currently in progress._
 
 ### Completed
+- **📋 Shared Evidence Library — saved searches with alerts on new matches
+  (idea 📋's next named follow-up under Research Crowdsourcing Organizer
+  Features).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead: the "📋 Shared Evidence Library" bullet's "saved searches with
+  alerts on new matches" follow-up. A contributor can now save
+  `EvidenceLibraryPanel`'s current search/filter fields (keyword, kind,
+  topic, case area, tags) under a name instead of re-typing the same
+  combination every visit, and see an "N new" badge on each saved search
+  the moment something new matches it. There's no push/cron alerting
+  infrastructure in this repo, so "alerts" are computed on demand rather
+  than delivered: a new pure `diffNewEvidenceSearchMatchIds` (in the new
+  `packages/debate-search-evidence/src/lib/saved-evidence-searches.ts`)
+  diffs a saved search's freshly re-run results against a `seenEntryIds`
+  baseline stamped the last time it was saved or re-run — the same
+  "compute it client-side against a stored baseline" shape this repo
+  already uses elsewhere for staleness/freshness signals. Saved searches
+  are account-synced via a new `savedEvidenceSearches` field on
+  `/api/settings` (a new `saved_evidence_searches` column on `user_settings`,
+  `drizzle/0031_tricky_charles_xavier.sql`), mirroring the existing
+  `savedArgumentCollections` field's shape and "replace the whole list in
+  one PUT" semantics exactly — local-first via the new
+  `hooks/useSavedEvidenceSearches.ts` (works fully signed out), so it
+  follows a signed-in user across devices the same way the Common Argument
+  Library's own "saved collections" already does. See
+  `docs/features/evidence-library.md`'s new "Saved searches with alerts on
+  new matches" section and the new
+  `packages/debate-search-evidence/test/saved-evidence-searches.test.ts`/
+  `test/saved-evidence-searches-client.test.ts` coverage (35 new cases:
+  record/filters validation, duplicate id/name rejection, the
+  settings-patch normalizer, serialize/parse round-tripping including a
+  malformed-JSON/malformed-shape fallback to an empty list, the new/
+  already-seen diffing, and the `/api/settings` fetch/save calls including
+  the signed-out `401`→`null` and error-message-surfacing paths). The full
+  Vitest suite (4454 tests), every workspace package's `tsc --noEmit`, and
+  the production `apps/debate-ai.com` build (`vinext build` +
+  `build:sw`) all pass.
 - **🔄 Shared, AI-Generated Debate Flow — live "who's editing now" presence
   indicators alongside the existing merge preview (one of idea #16's two
   remaining Next items under Product Feature Ideas).** Another repeat of
@@ -16246,7 +16290,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — the room-activity-timeline follow-up is done: a "Room activity timeline" section below the routed-tasks list shows every dated evidence/draft-block submission filed under the topic, newest first (`lib/prep-room.ts#buildPrepRoomActivityTimeline`/`buildPrepRoomActivityEventText`) — see the Completed entry above and `docs/features/collaboration-prep-room.md`'s "Room activity timeline" section. The shared-task-checklist-view follow-up is also now done: a "Shared task checklist" section between "Routed research tasks" and "Room activity timeline" lets any teammate add a freeform todo, toggle it done/open, and remove it, backed by a new `lib/prep-room-checklist.ts`/`state/prepRoomChecklist.ts` (`PrepRoomChecklistItem`, kept separate from the routed coverage-gap task model) — see the Completed entry above and `docs/features/collaboration-prep-room.md`'s "Shared task checklist" section. Next: a shared file/attachment area (needs real file-storage infrastructure this repo doesn't have yet).
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
-* 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
+* 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. The saved-searches-with-alerts-on-new-matches follow-up is also now done: a "Saved searches" section lets a contributor save the current search/filter fields under a name, account-synced via a new `savedEvidenceSearches` field on `/api/settings` (`lib/saved-evidence-searches.ts`, `hooks/useSavedEvidenceSearches.ts`), and shows an "N new" badge per saved search computed on demand by re-running its query and diffing fresh matches against its `seenEntryIds` baseline (`diffNewEvidenceSearchMatchIds`) — see the Completed entry above and `docs/features/evidence-library.md`'s "Saved searches with alerts on new matches" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a one-click citation-format export) if one becomes worth doing.
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.

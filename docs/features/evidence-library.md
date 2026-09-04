@@ -508,6 +508,52 @@ casing unchanged, normalizing several tags independently, resolving a
 tie by first-encountered casing when `knownTags` itself carries more than
 one, and both empty-input cases).
 
+## Saved searches with alerts on new matches
+
+Closes the "saved searches with alerts on new matches" follow-up named under
+the "📋 Shared Evidence Library" bullet in TODO.md's Research Crowdsourcing
+Organizer Features. A contributor can save the panel's current search/filter
+fields under a name instead of re-typing the same keyword/topic/case-area/tag
+combination every visit, and see at a glance whether anything new has been
+cut or drafted that matches it since they last checked.
+
+A "Saved searches" section sits below the filter fields: a name field plus a
+"Save this search" button stores the current `text`/`kind`/`topic`/
+`caseArea`/`tags` values, and every saved search is listed with a "Run"
+action (reapplies its filters to the panel) and a "Delete" action. There's no
+push/cron alerting infrastructure in this repo, so "alerts" are computed
+on demand rather than delivered: each saved search re-runs its query against
+the live repository on every render and shows an "N new" badge for however
+many of its current matches weren't already matches the last time it was
+saved or re-run.
+
+`lib/saved-evidence-searches.ts` (package `debate-search-evidence`, exported
+as `debate-research-evidence`) defines the record shape — `{ id, name,
+filters: EvidenceSearchFormFilters, createdAt, seenEntryIds }` — plus pure
+validation/serialization helpers and `diffNewEvidenceSearchMatchIds(
+currentEntryIds, seenEntryIds)`, the order-preserving diff a saved search's
+"N new" badge is computed from. `hooks/useSavedEvidenceSearches.ts` binds
+this to `EvidenceLibraryPanel`: local-first (works fully signed out, stored
+under the `saved-evidence-searches` `localStorage` key), best-effort synced
+to the account via a new `savedEvidenceSearches` field on `/api/settings`
+(mirroring the existing `savedArgumentCollections` field's shape and
+"replace the whole list in one PUT" semantics exactly) when signed in, so a
+saved search follows a user across devices. Saving seeds `seenEntryIds` from
+whatever currently matches, so a freshly saved search doesn't immediately
+claim every one of its own results as "new"; running a saved search
+refreshes `seenEntryIds` to the query's current results, clearing its badge
+until something new shows up later.
+
+Vitest-covered in
+`packages/debate-search-evidence/test/saved-evidence-searches.test.ts`
+(validation of a saved search's shape and filters, duplicate id/name
+rejection, the settings-patch normalizer, serialize/parse round-tripping
+including a malformed-JSON/malformed-shape fallback to an empty list, and
+`diffNewEvidenceSearchMatchIds`'s new-vs-already-seen diffing) and
+`packages/debate-search-evidence/test/saved-evidence-searches-client.test.ts`
+(the `/api/settings` fetch/save calls, including the signed-out `401`→`null`
+and error-message-surfacing paths).
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is

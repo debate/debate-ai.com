@@ -24,3 +24,17 @@ export {
   type SavedArgumentCollectionsPatchResult,
   type SavedArgumentCollectionsPayload,
 } from "./lib/argument-library-collections";
+export {
+  DEFAULT_SAVED_EVIDENCE_SEARCHES,
+  MAX_SAVED_EVIDENCE_SEARCHES,
+  diffNewEvidenceSearchMatchIds,
+  isValidSavedEvidenceSearchName,
+  isValidSavedEvidenceSearchesList,
+  normalizeSavedEvidenceSearchName,
+  normalizeSavedEvidenceSearchesPatch,
+  parseSavedEvidenceSearches,
+  serializeSavedEvidenceSearches,
+  type SavedEvidenceSearch,
+  type SavedEvidenceSearchesPatchResult,
+  type SavedEvidenceSearchesPayload,
+} from "./lib/saved-evidence-searches";

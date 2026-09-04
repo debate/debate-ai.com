@@ -143,14 +143,18 @@ import {
   suggestTags,
 } from "../lib/argument-library"
 import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
+import { diffNewEvidenceSearchMatchIds } from "../lib/saved-evidence-searches"
+import { useSavedEvidenceSearches } from "../hooks/useSavedEvidenceSearches"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
+  EvidenceSearchFormFilters,
   EvidenceSearchResult,
   PageReuseCheckResult,
 } from "../lib/shared-evidence-library"
 import type { RemotePageReuseCheckResult } from "../lib/evidence-reuse-check-client"
 import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
+import type { SavedEvidenceSearch } from "../lib/saved-evidence-searches"
 
 const KIND_FILTERS: { value: EvidenceEntryKind | "all"; label: string }[] = [
   { value: "all", label: "All" },
@@ -230,7 +234,10 @@ export function EvidenceLibraryPanel() {
   const [bulkTagInput, setBulkTagInput] = useState("")
   const [bulkTagError, setBulkTagError] = useState<string | null>(null)
   const [cardScoreBreakdowns, setCardScoreBreakdowns] = useState<Record<string, CardScoreBreakdown>>({})
+  const [saveSearchName, setSaveSearchName] = useState("")
+  const [saveSearchError, setSaveSearchError] = useState<string | null>(null)
   const searchParams = useSearchParams()
+  const { searches: savedSearches, saveSearch, removeSearch, markSearchSeen } = useSavedEvidenceSearches()
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
@@ -256,14 +263,50 @@ export function EvidenceLibraryPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
-  const buildQuery = () =>
-    buildEvidenceSearchFormQuery({
-      text: queryText,
-      kind: kind === "all" ? undefined : kind,
-      topic: filterTopic,
-      caseArea: filterCaseArea,
-      tags: filterTags,
-    })
+  const buildFormFilters = (): EvidenceSearchFormFilters => ({
+    text: queryText,
+    kind: kind === "all" ? undefined : kind,
+    topic: filterTopic,
+    caseArea: filterCaseArea,
+    tags: filterTags,
+  })
+
+  const buildQuery = () => buildEvidenceSearchFormQuery(buildFormFilters())
+
+  /** New-match count for a saved search, re-run fresh against the current repository — see `diffNewEvidenceSearchMatchIds`. */
+  const countSavedSearchNewMatches = (search: SavedEvidenceSearch) => {
+    const freshIds = searchPersistedEvidenceLibraryWithIndex(buildEvidenceSearchFormQuery(search.filters)).map(
+      ({ entry }) => entry.id,
+    )
+    return diffNewEvidenceSearchMatchIds(freshIds, search.seenEntryIds).length
+  }
+
+  const handleSaveCurrentSearch = () => {
+    const name = saveSearchName.trim()
+    if (!name) {
+      setSaveSearchError("Enter a name for this search.")
+      return
+    }
+    const currentIds = results.map(({ entry }) => entry.id)
+    if (!saveSearch(name, buildFormFilters(), currentIds)) {
+      setSaveSearchError("A saved search with that name already exists, or you've reached the saved-search limit.")
+      return
+    }
+    setSaveSearchName("")
+    setSaveSearchError(null)
+  }
+
+  const handleRunSavedSearch = (search: SavedEvidenceSearch) => {
+    setQueryText(search.filters.text)
+    setKind(search.filters.kind ?? "all")
+    setFilterTopic(search.filters.topic)
+    setFilterCaseArea(search.filters.caseArea)
+    setFilterTags(search.filters.tags)
+    const freshIds = searchPersistedEvidenceLibraryWithIndex(buildEvidenceSearchFormQuery(search.filters)).map(
+      ({ entry }) => entry.id,
+    )
+    markSearchSeen(search.id, freshIds)
+  }
 
   // Looks up each currently-shown card entry's persisted score breakdown, if
   // it's been scored — only `card` entries go through LLM Card Scoring, so
@@ -742,6 +785,47 @@ export function EvidenceLibraryPanel() {
           aria-label="Filter by tags"
           className="sm:max-w-xs"
         />
+      </div>
+      <div className="space-y-2 rounded-lg border border-border p-3">
+        <h2 className="text-sm font-medium text-foreground">Saved searches</h2>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Input
+            value={saveSearchName}
+            onChange={(event) => setSaveSearchName(event.target.value)}
+            placeholder="Name this search…"
+            aria-label="Name this search"
+            className="sm:max-w-xs"
+          />
+          <Button size="sm" variant="outline" onClick={handleSaveCurrentSearch}>
+            Save this search
+          </Button>
+        </div>
+        {saveSearchError && <p className="text-xs text-destructive">{saveSearchError}</p>}
+        {savedSearches.length === 0 ? (
+          <p className="text-xs text-muted-foreground">
+            No saved searches yet — save the filters above to get alerted when new entries match.
+          </p>
+        ) : (
+          <ul className="space-y-1.5">
+            {savedSearches.map((search) => {
+              const newMatchCount = countSavedSearchNewMatches(search)
+              return (
+                <li key={search.id} className="flex flex-wrap items-center gap-2 text-sm">
+                  <span className="font-medium text-foreground">{search.name}</span>
+                  {newMatchCount > 0 && <Badge variant="default">{newMatchCount} new</Badge>}
+                  <div className="ml-auto flex gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => handleRunSavedSearch(search)}>
+                      Run
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => removeSearch(search.id)}>
+                      Delete
+                    </Button>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </div>
       {pendingEntries.length > 0 && (
         <div className="space-y-2">

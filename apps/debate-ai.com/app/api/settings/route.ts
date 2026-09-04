@@ -39,10 +39,15 @@ import {
 } from "debate-team-collaboration"
 import {
   DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
+  DEFAULT_SAVED_EVIDENCE_SEARCHES,
   normalizeSavedArgumentCollectionsPatch,
+  normalizeSavedEvidenceSearchesPatch,
   parseSavedArgumentCollections,
+  parseSavedEvidenceSearches,
   serializeSavedArgumentCollections,
+  serializeSavedEvidenceSearches,
   type SavedArgumentCollection,
+  type SavedEvidenceSearch,
 } from "debate-research-evidence"
 import {
   mergeEditorPreferences,
@@ -71,17 +76,19 @@ import {
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked?,
- *   savedArgumentCollections?, researchProgressGoal? } —
+ *   savedArgumentCollections?, savedEvidenceSearches?, researchProgressGoal? } —
  *   validates and upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeWordLimitPresetsPatch`/
- *   `normalizeOutlineFilterPresetsPatch` and `debate-card-search`'s
- *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
- *   `normalizeResearchProgressGoalPatch`, the same option lists/shape the
- *   picker, favorite-star, word-limit-preset-manager, News Stream, Common
- *   Argument Library "saved collections", and Research Progress "My
- *   research goal" UIs themselves use), returning the resulting full
- *   settings row.
+ *   `normalizeOutlineFilterPresetsPatch` and `debate-research-evidence`'s
+ *   `normalizeSavedArgumentCollectionsPatch`/`normalizeSavedEvidenceSearchesPatch`,
+ *   `debate-community`'s `normalizeNewsSyncPatch`, and
+ *   `debate-team-collaboration`'s `normalizeResearchProgressGoalPatch`, the
+ *   same option lists/shape the picker, favorite-star,
+ *   word-limit-preset-manager, News Stream, Common Argument Library "saved
+ *   collections", Shared Evidence Library "saved searches", and Research
+ *   Progress "My research goal" UIs themselves use), returning the
+ *   resulting full settings row.
  */
 
 type SettingsRow = {
@@ -96,6 +103,7 @@ type SettingsRow = {
   wordLimitPresets: string | null
   outlineFilterPresets: string | null
   savedArgumentCollections: string | null
+  savedEvidenceSearches: string | null
   researchProgressGoal: string | null
 }
 
@@ -109,6 +117,7 @@ type SettingsPayload = UserSettingsPayload & {
   wordLimitPresets: { name: string; wordLimit: number }[]
   outlineFilterPresets: OutlineFilterPreset[]
   savedArgumentCollections: SavedArgumentCollection[]
+  savedEvidenceSearches: SavedEvidenceSearch[]
   researchProgressGoal: ResearchProgressGoalSyncPayload | null
 }
 
@@ -131,6 +140,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     savedArgumentCollections: row?.savedArgumentCollections
       ? parseSavedArgumentCollections(row.savedArgumentCollections)
       : DEFAULT_SAVED_ARGUMENT_COLLECTIONS.savedArgumentCollections,
+    savedEvidenceSearches: row?.savedEvidenceSearches
+      ? parseSavedEvidenceSearches(row.savedEvidenceSearches)
+      : DEFAULT_SAVED_EVIDENCE_SEARCHES.savedEvidenceSearches,
     researchProgressGoal: row?.researchProgressGoal
       ? parseResearchProgressGoal(row.researchProgressGoal)
       : DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC.researchProgressGoal,
@@ -168,6 +180,7 @@ export async function PUT(req: NextRequest) {
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
+  const savedEvidenceSearchesResult = normalizeSavedEvidenceSearchesPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
@@ -181,6 +194,7 @@ export async function PUT(req: NextRequest) {
     ...wordLimitPresetsResult.errors,
     ...outlineFilterPresetsResult.errors,
     ...savedArgumentCollectionsResult.errors,
+    ...savedEvidenceSearchesResult.errors,
     ...researchProgressGoalResult.errors,
     ...newsSyncResult.errors,
     ...editorPreferencesResult.errors,
@@ -195,6 +209,7 @@ export async function PUT(req: NextRequest) {
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
+    savedEvidenceSearchesResult.valid.savedEvidenceSearches === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
@@ -202,7 +217,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, savedEvidenceSearches, researchProgressGoal, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -222,6 +237,7 @@ export async function PUT(req: NextRequest) {
     wordLimitPresets?: string | null
     outlineFilterPresets?: string | null
     savedArgumentCollections?: string | null
+    savedEvidenceSearches?: string | null
     researchProgressGoal?: string | null
   } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
@@ -233,6 +249,11 @@ export async function PUT(req: NextRequest) {
   if (savedArgumentCollectionsResult.valid.savedArgumentCollections !== undefined) {
     dbPatch.savedArgumentCollections = serializeSavedArgumentCollections(
       savedArgumentCollectionsResult.valid.savedArgumentCollections,
+    )
+  }
+  if (savedEvidenceSearchesResult.valid.savedEvidenceSearches !== undefined) {
+    dbPatch.savedEvidenceSearches = serializeSavedEvidenceSearches(
+      savedEvidenceSearchesResult.valid.savedEvidenceSearches,
     )
   }
   if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
