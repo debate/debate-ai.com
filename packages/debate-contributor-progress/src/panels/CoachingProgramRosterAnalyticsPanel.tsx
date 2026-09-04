@@ -13,12 +13,20 @@
  * package's own Quest Streaks panel separately to see the same information
  * for a squad.
  *
+ * Also renders a "Recent challenge results" digest below the roster table —
+ * idea #13's own further follow-up ("a digest notification summarizing
+ * challenge results instead of requiring a panel visit"), scoped to this
+ * program's own roster rather than the feed-wide announcement
+ * `state/newsStream.ts`'s `groupChallengeNews()` already posts — via
+ * `state/coachingProgramRosterAnalytics.ts`'s
+ * `buildPersistedCoachingProgramChallengeDigest`.
+ *
  * Also subscribes to the browser's `storage` event via
  * `state/live-update.ts`'s `isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent`,
  * so a challenge created/completed, a win recorded, or a mission result
- * saved in another browser tab refreshes this panel's rendered roster here
- * too — the `storage` event never fires in the tab that made the write,
- * only in other tabs.
+ * saved in another browser tab refreshes this panel's rendered roster and
+ * digest here too — the `storage` event never fires in the tab that made
+ * the write, only in other tabs.
  *
  * @module panels/CoachingProgramRosterAnalyticsPanel
  */
@@ -38,8 +46,16 @@ import {
 import { isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import { buildCoachingProgramsPanelView } from "debate-team-collaboration/src/state/coachingPrograms"
 import type { CoachingProgramConfig } from "debate-team-collaboration/src/round/coaching-program"
-import { buildPersistedCoachingProgramRosterAnalytics } from "../state/coachingProgramRosterAnalytics"
+import { buildChallengeCompletionAnnouncementText } from "debate-team-collaboration/src/lib/group-challenges"
+import type { CompletedGroupChallengeEvent } from "debate-team-collaboration/src/state/challengeWinEvents"
+import {
+  buildPersistedCoachingProgramChallengeDigest,
+  buildPersistedCoachingProgramRosterAnalytics,
+} from "../state/coachingProgramRosterAnalytics"
 import type { CoachingProgramRosterMemberAnalytics } from "../lib/coaching-program-roster-analytics"
+
+/** How many of the digest's most recent challenge results to render at once. */
+const MAX_VISIBLE_DIGEST_ENTRIES = 10
 
 /**
  * Renders the Coaching Program Roster Analytics panel: a program picker
@@ -55,10 +71,12 @@ export function CoachingProgramRosterAnalyticsPanel() {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [selectedProgramId, setSelectedProgramId] = useState("")
   const [analytics, setAnalytics] = useState<CoachingProgramRosterMemberAnalytics[]>([])
+  const [challengeDigest, setChallengeDigest] = useState<CompletedGroupChallengeEvent[]>([])
 
   const refresh = (programId: string) => {
     setPrograms(buildCoachingProgramsPanelView())
     setAnalytics(programId ? buildPersistedCoachingProgramRosterAnalytics(programId, Date.now()) ?? [] : [])
+    setChallengeDigest(programId ? buildPersistedCoachingProgramChallengeDigest(programId) ?? [] : [])
   }
 
   useEffect(() => {
@@ -68,6 +86,7 @@ export function CoachingProgramRosterAnalyticsPanel() {
     setSelectedProgramId(initialProgramId)
     if (initialProgramId) {
       setAnalytics(buildPersistedCoachingProgramRosterAnalytics(initialProgramId, Date.now()) ?? [])
+      setChallengeDigest(buildPersistedCoachingProgramChallengeDigest(initialProgramId) ?? [])
     }
   }, [])
 
@@ -87,6 +106,7 @@ export function CoachingProgramRosterAnalyticsPanel() {
   const handleSelectProgram = (programId: string) => {
     setSelectedProgramId(programId)
     setAnalytics(programId ? buildPersistedCoachingProgramRosterAnalytics(programId, Date.now()) ?? [] : [])
+    setChallengeDigest(programId ? buildPersistedCoachingProgramChallengeDigest(programId) ?? [] : [])
   }
 
   if (programs === null) {
@@ -185,6 +205,32 @@ export function CoachingProgramRosterAnalyticsPanel() {
               </TableBody>
             </Table>
           )}
+
+          <div className="space-y-2">
+            <h2 className="text-sm font-semibold text-foreground">Recent challenge results</h2>
+            {challengeDigest.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No completed group challenges for this program's roster yet.
+              </p>
+            ) : (
+              <ul className="space-y-1.5 text-sm">
+                {challengeDigest.slice(0, MAX_VISIBLE_DIGEST_ENTRIES).map((entry) => (
+                  <li key={entry.challengeId} className="rounded-md border border-border/60 px-3 py-2">
+                    <span className="text-muted-foreground">
+                      {new Date(entry.completedAt).toLocaleDateString()}
+                    </span>
+                    {" — "}
+                    {buildChallengeCompletionAnnouncementText(entry)}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {challengeDigest.length > MAX_VISIBLE_DIGEST_ENTRIES ? (
+              <p className="text-xs text-muted-foreground">
+                Showing the {MAX_VISIBLE_DIGEST_ENTRIES} most recent of {challengeDigest.length} results.
+              </p>
+            ) : null}
+          </div>
         </>
       )}
     </div>

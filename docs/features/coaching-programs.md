@@ -145,6 +145,46 @@ Also subscribes to the browser's `storage` event via `debate-research-evidence`'
 so a challenge created/completed, a win recorded, or a mission result saved
 in another browser tab refreshes the rendered roster here too.
 
+## Roster challenge digest
+
+Closes idea #13's own further follow-up in `TODO.md`: "A digest notification
+summarizing challenge results instead of requiring a panel visit." Before
+this, seeing a squad's own completed group challenges meant either visiting
+`debate-team-collaboration`'s Group Challenges panel directly or spotting the
+one-line announcement `state/newsStream.ts`'s `groupChallengeNews()` already
+auto-posts to the Community feed for *every* completed challenge across
+every roster — not scoped to any one coaching program. The Roster Analytics
+section now also renders a **Recent challenge results** list below the
+roster table: every completed group challenge whose own roster overlaps the
+selected program's roster, newest first, each line naming the challenge and
+its MVP (`buildChallengeCompletionAnnouncementText`, reused directly from
+`group-challenges.ts` rather than a second summary-text formatter), capped to
+the 10 most recent with a "showing N of M" note once there are more.
+
+```
+panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
+  → buildPersistedCoachingProgramChallengeDigest(programId)  — state/coachingProgramRosterAnalytics.ts
+      → getCoachingProgram(programId)                        — debate-team-collaboration's state/coachingPrograms.ts
+      → buildCompletedGroupChallengeEvents()                  — debate-team-collaboration's state/challengeWinEvents.ts
+                                                                  (feed-wide; each event now also carries the challenge's own memberIds)
+      → buildCoachingProgramChallengeDigest(memberIds, completedEvents)
+                                                                — lib/coaching-program-roster-analytics.ts
+                                                                  (keeps only events whose memberIds overlap the roster)
+  → buildChallengeCompletionAnnouncementText(entry)            — debate-team-collaboration's lib/group-challenges.ts
+```
+
+`CompletedGroupChallengeEvent` (`debate-team-collaboration`'s
+`state/challengeWinEvents.ts`) gained a `memberIds` field — the completed
+challenge's own roster — since the feed-wide event record otherwise had no
+way to tell a coaching-program-scoped digest which roster it belonged to;
+`state/newsStream.ts`'s `groupChallengeNews()` is unaffected by the added
+field. The digest composition lives alongside the existing roster analytics
+in `debate-community` for the same circular-dependency reason described
+above, and refreshes on the same `storage`-event subscription (the digest's
+own two source keys, `groupChallenges`/`challengeWinEvents`, were already in
+`COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS`, so no changes
+were needed there).
+
 ## Known gaps
 
 - The roster analytics table only covers group-challenge standings and

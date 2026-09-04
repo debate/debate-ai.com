@@ -169,8 +169,22 @@ describe("buildCompletedGroupChallengeEvents", () => {
         completedCount: 5,
         targetCount: 5,
         mvpContributorId: "carol",
+        memberIds: ["carol", "dave"],
       },
     ]);
+  });
+
+  it("carries the challenge's own roster on every event, for roster-scoped digest filtering", () => {
+    saveGroupChallenge(SOLVENCY_CHALLENGE);
+    saveContribution(
+      makeContribution({ id: "c1", contributorId: "alice", kind: "card", argBlock: "solvency", submittedAt: 100 }),
+    );
+    saveContribution(
+      makeContribution({ id: "c2", contributorId: "bob", kind: "card", argBlock: "solvency", submittedAt: 200 }),
+    );
+
+    const events = buildCompletedGroupChallengeEvents();
+    expect(events[0].memberIds).toEqual(["alice", "bob"]);
   });
 
   it("reports a contribution_target challenge complete, timed to its targetCount-th contribution", () => {

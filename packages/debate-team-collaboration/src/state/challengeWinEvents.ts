@@ -98,6 +98,8 @@ export interface CompletedGroupChallengeEvent {
   completedCount: number;
   targetCount: number;
   mvpContributorId?: string;
+  /** The challenge's own squad roster — lets a caller (e.g. a coaching-program-scoped digest) filter this feed-wide list down to just the challenges a given roster overlaps. */
+  memberIds: string[];
 }
 
 /**
@@ -129,6 +131,7 @@ export function buildCompletedGroupChallengeEvents(): CompletedGroupChallengeEve
       completedCount: progress.completedCount,
       targetCount: progress.targetCount,
       mvpContributorId: progress.mvpContributorId,
+      memberIds: challenge.memberIds,
     });
   }
 

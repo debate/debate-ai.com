@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { GroupChallengeProgress } from "debate-team-collaboration/src/lib/group-challenges";
+import type { CompletedGroupChallengeEvent } from "debate-team-collaboration/src/state/challengeWinEvents";
 import {
+  buildCoachingProgramChallengeDigest,
   buildCoachingProgramRosterAnalytics,
   buildRosterMemberAnalyticsSummaryText,
   summarizeMemberChallengeStanding,
@@ -176,6 +178,47 @@ describe("buildCoachingProgramRosterAnalytics", () => {
       [{ streakLength: 1, badge: "First Day" }],
     );
     expect(roster[0].questStreak.earnedBadges).toEqual(["First Day"]);
+  });
+});
+
+describe("buildCoachingProgramChallengeDigest", () => {
+  function completedEvent(overrides: Partial<CompletedGroupChallengeEvent>): CompletedGroupChallengeEvent {
+    return {
+      challengeId: "c1",
+      title: "Win 3 rebuttal exercises",
+      completedAt: 100,
+      completedCount: 3,
+      targetCount: 3,
+      memberIds: ["alice", "bob"],
+      ...overrides,
+    };
+  }
+
+  it("returns an empty digest for an empty roster or event list", () => {
+    expect(buildCoachingProgramChallengeDigest([], [])).toEqual([]);
+    expect(buildCoachingProgramChallengeDigest(["alice"], [])).toEqual([]);
+    expect(buildCoachingProgramChallengeDigest([], [completedEvent({})])).toEqual([]);
+  });
+
+  it("includes an event whose roster overlaps the program roster", () => {
+    const event = completedEvent({ memberIds: ["alice", "bob"] });
+    expect(buildCoachingProgramChallengeDigest(["alice", "carol"], [event])).toEqual([event]);
+  });
+
+  it("excludes an event whose roster has no member in common with the program roster", () => {
+    const event = completedEvent({ memberIds: ["dave", "eve"] });
+    expect(buildCoachingProgramChallengeDigest(["alice", "bob"], [event])).toEqual([]);
+  });
+
+  it("filters a mixed list down to just the overlapping events, preserving input order", () => {
+    const varsityWin = completedEvent({ challengeId: "varsity-win", memberIds: ["alice", "bob"], completedAt: 300 });
+    const jvWin = completedEvent({ challengeId: "jv-win", memberIds: ["carol", "dave"], completedAt: 200 });
+    const varsityCards = completedEvent({ challengeId: "varsity-cards", memberIds: ["bob"], completedAt: 100 });
+
+    expect(buildCoachingProgramChallengeDigest(["alice", "bob"], [varsityWin, jvWin, varsityCards])).toEqual([
+      varsityWin,
+      varsityCards,
+    ]);
   });
 });
 

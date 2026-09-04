@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { buildPersistedCoachingProgramRosterAnalytics } from "../src/state/coachingProgramRosterAnalytics";
+import {
+  buildPersistedCoachingProgramChallengeDigest,
+  buildPersistedCoachingProgramRosterAnalytics,
+} from "../src/state/coachingProgramRosterAnalytics";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
 import { saveCoachingProgram } from "debate-team-collaboration/src/state/coachingPrograms";
 import { saveGroupChallenge } from "debate-team-collaboration/src/state/groupChallenges";
@@ -89,5 +92,38 @@ describe("buildPersistedCoachingProgramRosterAnalytics", () => {
     expect(roster).toHaveLength(1);
     expect(roster![0].contributorId).toBe("carol");
     expect(roster![0].challengeStanding.challengesParticipated).toBe(0);
+  });
+});
+
+describe("buildPersistedCoachingProgramChallengeDigest", () => {
+  it("returns undefined for a programId with no stored config", () => {
+    expect(buildPersistedCoachingProgramChallengeDigest("missing")).toBeUndefined();
+  });
+
+  it("returns an empty digest when the program's roster has no completed challenges", () => {
+    saveCoachingProgram(VARSITY);
+    expect(buildPersistedCoachingProgramChallengeDigest("varsity")).toEqual([]);
+  });
+
+  it("includes a completed challenge scoped to the program's roster", () => {
+    saveCoachingProgram(VARSITY);
+    saveGroupChallenge(REBUTTAL_CHALLENGE);
+    recordChallengeWinEvent("alice", 100);
+    recordChallengeWinEvent("alice", 200);
+    recordChallengeWinEvent("alice", 300);
+
+    const digest = buildPersistedCoachingProgramChallengeDigest("varsity");
+    expect(digest).toHaveLength(1);
+    expect(digest![0]).toMatchObject({ challengeId: "challenge-1", completedAt: 300, mvpContributorId: "alice" });
+  });
+
+  it("excludes a completed challenge scoped to a different roster entirely", () => {
+    saveCoachingProgram({ id: "jv", name: "JV Squad", memberIds: ["carol"] });
+    saveGroupChallenge(REBUTTAL_CHALLENGE); // scoped to alice/bob, not carol
+    recordChallengeWinEvent("alice", 100);
+    recordChallengeWinEvent("alice", 200);
+    recordChallengeWinEvent("alice", 300);
+
+    expect(buildPersistedCoachingProgramChallengeDigest("jv")).toEqual([]);
   });
 });

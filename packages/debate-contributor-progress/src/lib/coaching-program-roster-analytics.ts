@@ -28,6 +28,7 @@
  */
 
 import type { GroupChallengeProgress } from "debate-team-collaboration/src/lib/group-challenges";
+import type { CompletedGroupChallengeEvent } from "debate-team-collaboration/src/state/challengeWinEvents";
 import {
   buildContributorQuestStreak,
   buildStreakSummaryText,
@@ -124,6 +125,31 @@ export function buildCoachingProgramRosterAnalytics(
         b.questStreak.streak.currentStreak - a.questStreak.streak.currentStreak ||
         a.contributorId.localeCompare(b.contributorId),
     );
+}
+
+/**
+ * Narrows the feed-wide `buildCompletedGroupChallengeEvents()` list down to
+ * just the challenges that overlap a coaching program's own roster — the
+ * "program-roster-scoped digest, not the feed-wide announcement" follow-up
+ * named under idea #13 ("Coaching Programs and Group Challenges") in
+ * TODO.md. `state/newsStream.ts`'s `groupChallengeNews()` already surfaces
+ * every completed challenge to the whole Community feed; this is the
+ * narrower, program-specific view for a coach who only wants their own
+ * squad's results without a separate feed visit.
+ *
+ * A challenge counts as "this program's" if its own roster (`memberIds` on
+ * the completed-event record) shares at least one member with the program
+ * roster — the same "any overlap counts" rule `summarizeMemberChallengeStanding`
+ * already applies per member, just checked against the whole roster at once
+ * here. Input order (newest completion first, per `buildCompletedGroupChallengeEvents`)
+ * is preserved.
+ */
+export function buildCoachingProgramChallengeDigest(
+  memberIds: string[],
+  completedEvents: CompletedGroupChallengeEvent[],
+): CompletedGroupChallengeEvent[] {
+  const memberSet = new Set(memberIds);
+  return completedEvents.filter((event) => event.memberIds.some((id) => memberSet.has(id)));
 }
 
 /** Renders one roster member's combined analytics as a short human-readable line, for a coaching-space dashboard header. */

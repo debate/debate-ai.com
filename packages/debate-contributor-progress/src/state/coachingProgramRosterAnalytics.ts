@@ -13,9 +13,14 @@
  */
 
 import { getCoachingProgram } from "debate-team-collaboration/src/state/coachingPrograms";
-import { buildPersistedGroupChallengeBoard } from "debate-team-collaboration/src/state/challengeWinEvents";
+import {
+  buildCompletedGroupChallengeEvents,
+  buildPersistedGroupChallengeBoard,
+  type CompletedGroupChallengeEvent,
+} from "debate-team-collaboration/src/state/challengeWinEvents";
 import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
 import {
+  buildCoachingProgramChallengeDigest,
   buildCoachingProgramRosterAnalytics,
   type CoachingProgramRosterMemberAnalytics,
 } from "../lib/coaching-program-roster-analytics";
@@ -46,4 +51,22 @@ export function buildPersistedCoachingProgramRosterAnalytics(
     listDailyMissionResultsForContributor,
     getUtcDayKey(now),
   );
+}
+
+/**
+ * Builds one coaching program's challenge-results digest directly from
+ * persisted state: its saved config (for the roster) and the feed-wide
+ * `buildCompletedGroupChallengeEvents()`, narrowed via
+ * `buildCoachingProgramChallengeDigest` to just the challenges this
+ * program's roster overlaps. Returns `undefined` if no program is stored
+ * under `programId`, mirroring `buildPersistedCoachingProgramRosterAnalytics`'s
+ * identical convention.
+ */
+export function buildPersistedCoachingProgramChallengeDigest(
+  programId: string,
+): CompletedGroupChallengeEvent[] | undefined {
+  const program = getCoachingProgram(programId);
+  if (!program) return undefined;
+
+  return buildCoachingProgramChallengeDigest(program.memberIds, buildCompletedGroupChallengeEvents());
 }
