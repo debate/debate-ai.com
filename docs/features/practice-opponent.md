@@ -58,6 +58,41 @@ reader (`buildOpponentPersonaPrompt`, `getOpponentDifficultyForRound`, the
 picker panel's list) treats a missing value as `intermediate`
 (`DEFAULT_OPPONENT_DIFFICULTY`) rather than requiring a backfill.
 
+## Post-round persona feedback tips
+
+Once a round that used a saved persona is complete, both the panel that
+played it out (Online Debate Versus AI's `AiVersusRoundPanel`, `/versus-ai`)
+and the Practice Round Simulator (`PracticeRoundSimulatorPanel`,
+`/practice-round`) show a "Practice tips for facing ⟨persona name⟩" box: a
+short bullet list from `opponent/opponent-personas.ts`'s
+`buildPersonaFeedbackTips(persona, difficulty)`. This is a pure, deterministic
+function — no AI call — since the built-in personas already carry enough
+structured detail (their style description and priorities) to derive
+concrete, reusable advice from directly:
+
+- Each of the four built-in personas has its own style-specific tip (e.g.
+  facing Kritik suggests drilling framework/representations answers before
+  case-specific responses; facing Fast Flow suggests tightening flowing and
+  extension habits).
+- A custom persona has no built-in style-specific know-how to draw on, so its
+  tip instead points the debater back at the persona's own notes
+  (`instructions`) and its declared pace, rather than inventing advice about
+  a style that was never actually described.
+- A second, difficulty-specific tip is appended for every difficulty except
+  `"intermediate"` (the persona's unmodified baseline has nothing extra to
+  flag) — e.g. Beginner rounds suggest focusing on full speech structure over
+  close exchanges, Elite rounds suggest auditing for every strategic opening
+  left unclaimed.
+
+In `AiVersusRoundPanel`, the tips box appears once a round's `nextSlot` is
+`null` (every speech delivered), reading the same
+`getOpponentPersonaForRound`/`getOpponentDifficultyForRound` lookup already
+used to show the "Arguing as …" badge during the round. In
+`PracticeRoundSimulatorPanel`, it appears once every speech in
+`setup.speechOrder` has been submitted, reading the round's own
+`setup.opponentPersona`/`setup.opponentDifficulty` (its separate,
+builtin-only persona setup — see Known gaps below) rather than this store.
+
 ## Data flow
 
 ```
@@ -137,6 +172,16 @@ covered: new cases in `packages/debate-speech-writer/test/opponent-personas.test
 `packages/debate-round/test/opponent-persona-speech-ai.test.ts`,
 `opponent-persona-speech-wiring.test.ts`, and
 `opponent-persona-speech-client.test.ts`.
+A later slice closed the "post-round feedback tips specific to the persona
+faced" Next item: `opponent/opponent-personas.ts` gains
+`buildPersonaFeedbackTips(persona, difficulty)` (see "Post-round persona
+feedback tips" above), wired into a "Practice tips for facing …" box on both
+`AiVersusRoundPanel.tsx` (shown once the active round or a persisted round is
+complete) and `PracticeRoundSimulatorPanel.tsx` (shown once every speech in
+the round's `speechOrder` is submitted). Vitest-covered: new cases in
+`packages/debate-speech-writer/test/opponent-personas.test.ts` (a distinct
+tip per built-in persona, the custom-persona fallback, and the
+difficulty-tip layering).
 
 ## Known gaps
 

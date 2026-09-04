@@ -87,6 +87,7 @@ import {
   type JudgeParadigm,
 } from "debate-speech-writer/src/judge/judge-paradigms"
 import {
+  buildPersonaFeedbackTips,
   DEFAULT_OPPONENT_DIFFICULTY,
   listOpponentDifficulties,
   listOpponentPersonas,
@@ -619,6 +620,28 @@ export function PracticeRoundSimulatorPanel() {
                 ) : (
                   <p className="text-sm text-muted-foreground">No post-round feedback yet.</p>
                 )}
+
+                {record.setup.opponentPersona &&
+                  submitted.length === record.setup.speechOrder.length &&
+                  (() => {
+                    const persona = record.setup.opponentPersona!
+                    const tips = buildPersonaFeedbackTips(
+                      persona,
+                      record.setup.opponentDifficulty ?? DEFAULT_OPPONENT_DIFFICULTY,
+                    )
+                    return (
+                      <div className="rounded-md border border-border px-3 py-2 text-sm">
+                        <p className="mb-1 font-medium text-foreground">
+                          Practice tips for facing {persona.name}
+                        </p>
+                        <ul className="list-disc space-y-0.5 pl-5 text-muted-foreground">
+                          {tips.map((tip, index) => (
+                            <li key={index}>{tip}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })()}
 
                 <div className="space-y-2">
                   <Button

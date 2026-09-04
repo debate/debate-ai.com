@@ -257,3 +257,57 @@ export function buildOpponentPersonaPrompt(
 
   return lines.join("\n");
 }
+
+/** Practice-focused advice for each built-in persona, keyed by id, describing
+ *  what a debater who just faced that style should drill next. */
+const BUILTIN_PERSONA_FEEDBACK_TIPS: Record<BuiltinOpponentPersonaId, string> = {
+  "policy-heavy":
+    "You faced a Policy Heavy opponent. Drill counterplan net-benefit takeouts and solvency deficits — this style wins with clean counterplan/disad ballots, so practice pressuring the internal link and impact calculus directly.",
+  kritik:
+    "You faced a Kritik opponent. Practice framework and representations answers before your case-specific responses — this style wins by shifting how the round is evaluated before ever engaging your literal claims.",
+  lay: "You faced a Lay opponent. Practice explaining your strongest argument in plain, jargon-free language — persuasive clarity beats technical density against this style.",
+  "fast-flow":
+    "You faced a Fast Flow opponent. Tighten your flowing and extension habits — this style wins by punishing anything you drop or under-cover at high speed.",
+};
+
+/** Practice-focused advice for each difficulty level, or `null` for
+ *  `"intermediate"` (the persona's unmodified baseline — nothing extra to add). */
+const DIFFICULTY_FEEDBACK_TIPS: Record<OpponentDifficulty, string | null> = {
+  beginner:
+    "This was a beginner-level opponent — use the reps to nail your full speech structure rather than optimizing for close, high-pressure exchanges.",
+  intermediate: null,
+  advanced:
+    "This was an advanced opponent that catches drops and extends efficiently — audit your speeches for anything you left unanswered.",
+  elite:
+    "This was a tournament-elite opponent — review the round for every strategic opening you left unclaimed, since this level exploits them fully.",
+};
+
+/**
+ * Builds post-round practice tips tailored to the persona (and difficulty) a
+ * debater just faced, for idea "🤖 AI Practice Opponent"'s "post-round
+ * feedback tips specific to the persona faced" Next item in TODO.md. Pure
+ * and deterministic — no AI call — since the built-in personas already carry
+ * enough structured detail (`preferredArguments`, `pace`, style-specific
+ * know-how) to derive concrete, reusable advice from directly.
+ *
+ * A custom persona has no built-in style-specific know-how to draw on, so
+ * its tip instead points the debater back at their own notes (`instructions`)
+ * and the persona's declared `pace`, rather than fabricating advice about a
+ * style that was never actually described.
+ *
+ * Always returns at least one tip; a second, difficulty-specific tip is
+ * appended for every difficulty except `"intermediate"` (the persona's
+ * unmodified baseline has nothing extra to flag).
+ */
+export function buildPersonaFeedbackTips(
+  persona: OpponentPersona,
+  difficulty: OpponentDifficulty = DEFAULT_OPPONENT_DIFFICULTY,
+): string[] {
+  const personaTip = isBuiltinOpponentPersonaId(persona.id)
+    ? BUILTIN_PERSONA_FEEDBACK_TIPS[persona.id]
+    : `You faced ${persona.name}, arguing at a ${persona.pace} pace. Re-read this persona's own notes to pin down its specific pattern, then drill targeted responses to that pattern: "${persona.instructions}"`;
+
+  const difficultyTip = DIFFICULTY_FEEDBACK_TIPS[difficulty];
+
+  return difficultyTip ? [personaTip, difficultyTip] : [personaTip];
+}

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildCustomOpponentPersona,
   buildOpponentPersonaPrompt,
+  buildPersonaFeedbackTips,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentDifficulty,
   getOpponentPersona,
@@ -213,5 +214,56 @@ describe("buildCustomOpponentPersona", () => {
     expect(prompt).toContain("Opponent Persona: Custom: Speedster");
     expect(prompt).not.toContain("Preferred arguments");
     expect(prompt).toContain("Spreads everything.");
+  });
+});
+
+describe("buildPersonaFeedbackTips", () => {
+  it("gives every built-in persona a distinct, style-specific tip", () => {
+    const tips = new Set<string>();
+    for (const persona of Object.values(opponentPersonas)) {
+      const [tip] = buildPersonaFeedbackTips(persona);
+      expect(tip.length).toBeGreaterThan(0);
+      expect(tip).toContain(persona.name);
+      tips.add(tip);
+    }
+    expect(tips.size).toBe(Object.keys(opponentPersonas).length);
+  });
+
+  it("falls back to a generic, notes-derived tip for a custom persona", () => {
+    const persona = buildCustomOpponentPersona({
+      name: "Coach Amy's K bot",
+      notes: "Opens on framework, spreads fast, extends drops.",
+    });
+    const [tip] = buildPersonaFeedbackTips(persona);
+
+    expect(tip).toContain(persona.name);
+    expect(tip).toContain(persona.pace);
+    expect(tip).toContain(persona.instructions);
+  });
+
+  it("returns only the persona tip at the default (intermediate) difficulty", () => {
+    const tips = buildPersonaFeedbackTips(opponentPersonas.kritik);
+    expect(tips).toHaveLength(1);
+  });
+
+  it("returns only the persona tip when intermediate is passed explicitly", () => {
+    const tips = buildPersonaFeedbackTips(opponentPersonas.kritik, "intermediate");
+    expect(tips).toHaveLength(1);
+  });
+
+  it("appends a second, difficulty-specific tip for beginner, advanced, and elite", () => {
+    for (const difficulty of ["beginner", "advanced", "elite"] as const) {
+      const tips = buildPersonaFeedbackTips(opponentPersonas.kritik, difficulty);
+      expect(tips).toHaveLength(2);
+      expect(tips[1]).not.toBe(tips[0]);
+    }
+  });
+
+  it("varies the difficulty tip by difficulty, holding the persona tip fixed", () => {
+    const beginner = buildPersonaFeedbackTips(opponentPersonas.lay, "beginner");
+    const elite = buildPersonaFeedbackTips(opponentPersonas.lay, "elite");
+
+    expect(beginner[0]).toBe(elite[0]);
+    expect(beginner[1]).not.toBe(elite[1]);
   });
 });

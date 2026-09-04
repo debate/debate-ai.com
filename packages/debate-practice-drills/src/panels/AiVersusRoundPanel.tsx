@@ -87,7 +87,7 @@ import {
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { getOpponentDifficultyForRound, getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
-import { opponentDifficulties } from "debate-speech-writer/src/opponent/opponent-personas"
+import { buildPersonaFeedbackTips, opponentDifficulties } from "debate-speech-writer/src/opponent/opponent-personas"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
 import { aiVersusTranscriptFilename, buildAiVersusTranscriptText } from "../round/ai-versus-transcript"
@@ -406,6 +406,23 @@ export function AiVersusRoundPanel() {
                 <Download className="h-4 w-4 mr-2" />
                 Download transcript
               </Button>
+              {(() => {
+                const persona = getOpponentPersonaForRound(activeRoundId)
+                if (!persona) return null
+                const tips = buildPersonaFeedbackTips(persona, getOpponentDifficultyForRound(activeRoundId))
+                return (
+                  <div className="rounded-md border border-border px-3 py-2 text-sm">
+                    <p className="mb-1 font-medium text-foreground">
+                      Practice tips for facing {persona.name}
+                    </p>
+                    <ul className="list-disc space-y-0.5 pl-5 text-muted-foreground">
+                      {tips.map((tip, index) => (
+                        <li key={index}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              })()}
             </div>
           ) : activeStatus.nextSlot.speaker === "ai" ? (
             <div className="space-y-2">
@@ -513,6 +530,27 @@ export function AiVersusRoundPanel() {
                     ? ` — next: ${status.nextSlot.name} (${status.nextSlot.speaker === "user" ? "you" : "AI"})`
                     : " — complete"}
                 </p>
+                {status?.nextSlot === null &&
+                  (() => {
+                    const persona = getOpponentPersonaForRound(round.roundId)
+                    if (!persona) return null
+                    const tips = buildPersonaFeedbackTips(
+                      persona,
+                      getOpponentDifficultyForRound(round.roundId),
+                    )
+                    return (
+                      <div className="mt-2 rounded-md border border-border px-3 py-2 text-sm">
+                        <p className="mb-1 font-medium text-foreground">
+                          Practice tips for facing {persona.name}
+                        </p>
+                        <ul className="list-disc space-y-0.5 pl-5 text-muted-foreground">
+                          {tips.map((tip, index) => (
+                            <li key={index}>{tip}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })()}
               </div>
             )
           })}
