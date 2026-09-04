@@ -19,6 +19,7 @@ research tasks routed to available contributors.
 | Evidence/draft-block search | `searchPrepRoomEvidence`, scoped to the room's topic only |
 | Routed research tasks | The room's `routing.assignments`/`unassignedTasks`, from `buildRoutingResult` |
 | Active-now roster | `listPersistedActiveContributors(topic, now)` — teammates with a fresh heartbeat for this topic |
+| Room activity timeline | `buildPrepRoomActivityTimeline(room)` — the room's dated entries, newest first |
 
 ## Data flow
 
@@ -31,7 +32,8 @@ state/contributorAvailability.ts (localStorage — contributor profiles)
       → listContributorAvailability()             — state/contributorAvailability.ts
       → buildPrepRoomFromStore()                  — lib/prep-room.ts
           → buildPrepRoom()                       — lib/prep-room.ts (pure)
-  → panels/PrepRoomPanel.tsx (renders the switcher + search + routed tasks)
+  → buildPrepRoomActivityTimeline(room)       — lib/prep-room.ts (pure)
+  → panels/PrepRoomPanel.tsx (renders the switcher + search + routed tasks + activity timeline)
   → apps/debate-ai.com/app/cards/prep-room/page.tsx (mounts the panel as a route)
 
 Presence ("active now"):
@@ -80,6 +82,26 @@ and the rest of the identity-wiring series (PRs #318-#323). The standalone
 `signedInContributorId`), so "Your ID" stays blank there regardless of
 sign-in state.
 
+## Room activity timeline
+
+A "Room activity timeline" section renders below the routed-tasks list,
+backed by `lib/prep-room.ts`'s `buildPrepRoomActivityTimeline(room)`. The
+only genuinely timestamped, append-only signal a prep room already has is
+each evidence/draft-block entry's own `createdAt` — the same field
+`state/newsStream.ts`'s `argumentLibraryNews()` already reads, stamped once
+by `EvidenceLibraryPanel.tsx`'s submit handler. Routed task assignments are
+recomputed live from the current coverage report and contributor roster
+rather than logged as discrete events, and presence heartbeats are an
+upsert of each contributor's *latest* sighting rather than a history, so
+neither makes a real "N happened at time T" timeline entry — the timeline
+is the room's dated entries only, newest-`createdAt` first, capped to 30
+(`DEFAULT_PREP_ROOM_ACTIVITY_LIMIT`). Each row shows a localized date/time
+plus a short line from `buildPrepRoomActivityEventText` (e.g. "Evidence
+added: States CP (Smith 24)" or "Draft block filed: States CP"). An entry
+persisted before `createdAt` existed has no real submission time to show
+and is silently dropped rather than sorted arbitrarily. See
+`packages/debate-team-collaboration/test/prep-room.test.ts`.
+
 ## Known gaps
 
 - The room is per-browser localStorage, not a shared team resource — two
@@ -91,3 +113,6 @@ sign-in state.
   above — there is still no server-side gate on prep-room actions).
 - The `/cards/prep-room` standalone route doesn't get the "Your ID"
   prefill (only the Research hub's Prep Room tab does).
+- The activity timeline only covers evidence/draft-block submissions —
+  there's still no "shared task checklist view" or "shared file/attachment
+  area" (the other two follow-ups named alongside it).
