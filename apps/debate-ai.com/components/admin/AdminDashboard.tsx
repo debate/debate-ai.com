@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
+import { TopicStarterUpload } from "./TopicStarterUpload";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -228,6 +229,8 @@ export function AdminDashboard() {
           )}
         </CardContent>
       </Card>
+
+      <TopicStarterUpload />
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Round videos</h2>
