@@ -11,12 +11,17 @@ import {
 import type { ChallengeWinEvent, GroupChallenge } from "../src/lib/group-challenges";
 import {
   buildCoachingProgramBoard,
+  buildCoachingProgramRosterAnalytics,
   buildCoachingProgramSummaryText,
   buildMemberDrillSummaryText,
   buildMemberPracticeRoundSummaryText,
+  buildRosterAnalyticsRowText,
+  buildRosterAnalyticsText,
+  rosterAnalyticsFilename,
   type CoachingProgramConfig,
   type CoachingProgramMemberFlow,
   type CoachingProgramMemberPracticeRound,
+  type RosterAnalyticsRow,
 } from "../src/round/coaching-program";
 import { buildPracticeRoundSetup } from "debate-round/src/round/practice-round-simulator";
 
@@ -181,6 +186,55 @@ describe("buildCoachingProgramBoard", () => {
     });
 
     expect(board.memberPracticeRounds).toEqual({});
+  });
+
+  it("composes member streaks, scoped to the program roster", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberStreaks: {
+        alex: { currentStreak: 3, longestStreak: 5 },
+        jordan: { currentStreak: 9, longestStreak: 9 }, // not on the roster
+      },
+    });
+
+    expect(Object.keys(board.memberStreaks)).toEqual(["alex"]);
+    expect(board.memberStreaks.alex).toEqual({ currentStreak: 3, longestStreak: 5 });
+  });
+
+  it("defaults memberStreaks to an empty map when none are supplied", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+    });
+
+    expect(board.memberStreaks).toEqual({});
   });
 
   it("ignores a member flow for a contributor outside the program roster", () => {
@@ -506,5 +560,169 @@ describe("buildMemberPracticeRoundSummaryText", () => {
     });
 
     expect(buildMemberPracticeRoundSummaryText(board, "sam")).toBe("No practice round session recorded yet.");
+  });
+});
+
+describe("buildCoachingProgramRosterAnalytics", () => {
+  const baseBoard = () =>
+    buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests,
+        contributions,
+        now: NOW,
+        coverageReport,
+        contributors,
+        assignments,
+        notes: [],
+      },
+      challenges,
+      contributions,
+      winEvents,
+      memberFlows,
+      memberPracticeRounds,
+    });
+
+  it("builds one row per roster member, in roster order", () => {
+    const rows = buildCoachingProgramRosterAnalytics(baseBoard());
+    expect(rows.map((row) => row.contributorId)).toEqual(["alex", "sam"]);
+  });
+
+  it("pulls completion rate and task counts from the topic sprint's progress board", () => {
+    const rows = buildCoachingProgramRosterAnalytics(baseBoard());
+    const [alex, sam] = rows;
+    // No assignments in this fixture, so nothing is "assigned" for either member yet.
+    expect(alex.completionRate).toBe(0);
+    expect(alex.totalAssignedTasks).toBe(0);
+    expect(alex.totalCompletedTasks).toBe(0);
+    expect(sam.completionRate).toBe(0);
+  });
+
+  it("resolves each member's rank on every challenge, from the challenge board's own standings", () => {
+    const rows = buildCoachingProgramRosterAnalytics(baseBoard());
+    const [alex, sam] = rows;
+
+    expect(alex.challengeStandings).toEqual([
+      { challengeId: "find-solvency-cards", challengeTitle: "Find 5 solvency cards", rank: 1, matchingCount: 1 },
+    ]);
+    // sam has no matching contributions on this challenge, so no standing/rank yet.
+    expect(sam.challengeStandings).toEqual([
+      { challengeId: "find-solvency-cards", challengeTitle: "Find 5 solvency cards", rank: undefined, matchingCount: 0 },
+    ]);
+  });
+
+  it("pulls drill counts and practice-round activity from the board's own maps", () => {
+    const rows = buildCoachingProgramRosterAnalytics(baseBoard());
+    const [alex, sam] = rows;
+
+    expect(alex.drillCount).toBeGreaterThan(0);
+    expect(alex.hasPracticeRound).toBe(true);
+    expect(sam.drillCount).toBe(0);
+    expect(sam.hasPracticeRound).toBe(false);
+  });
+
+  it("leaves streak undefined for a member with none supplied, and folds in one that was", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests: [],
+        contributions: [],
+        now: NOW,
+        coverageReport,
+        contributors: [],
+        assignments: [],
+        notes: [],
+      },
+      challenges: [],
+      contributions: [],
+      winEvents: [],
+      memberFlows: [],
+      memberStreaks: { alex: { currentStreak: 3, longestStreak: 5 } },
+    });
+
+    const rows = buildCoachingProgramRosterAnalytics(board);
+    expect(rows.find((row) => row.contributorId === "alex")?.streak).toEqual({ currentStreak: 3, longestStreak: 5 });
+    expect(rows.find((row) => row.contributorId === "sam")?.streak).toBeUndefined();
+  });
+});
+
+describe("buildRosterAnalyticsRowText", () => {
+  const baseRow: RosterAnalyticsRow = {
+    contributorId: "alex",
+    completionRate: 0.5,
+    totalCompletedTasks: 1,
+    totalAssignedTasks: 2,
+    challengeStandings: [],
+    drillCount: 1,
+    hasPracticeRound: false,
+  };
+
+  it("renders completion rate, drill count, and practice-round status without a streak", () => {
+    const text = buildRosterAnalyticsRowText(baseRow);
+    expect(text).toBe("alex: 50% task completion (1/2) — 1 drill — no practice round");
+  });
+
+  it("includes a streak segment when one is present", () => {
+    const text = buildRosterAnalyticsRowText({ ...baseRow, streak: { currentStreak: 3, longestStreak: 5 } });
+    expect(text).toContain("3-day streak (longest 5)");
+  });
+
+  it("pluralizes drill count and reflects a recorded practice round", () => {
+    const text = buildRosterAnalyticsRowText({ ...baseRow, drillCount: 2, hasPracticeRound: true });
+    expect(text).toContain("2 drills");
+    expect(text).toContain("practice round recorded");
+  });
+
+  it("renders a challenge standing with a rank, and one without any activity", () => {
+    const text = buildRosterAnalyticsRowText({
+      ...baseRow,
+      challengeStandings: [
+        { challengeId: "c1", challengeTitle: "Find 5 solvency cards", rank: 2, matchingCount: 3 },
+        { challengeId: "c2", challengeTitle: "Win 2 rebuttals", matchingCount: 0 },
+      ],
+    });
+    expect(text).toContain('#2 on "Find 5 solvency cards" (3)');
+    expect(text).toContain('no activity on "Win 2 rebuttals"');
+  });
+});
+
+describe("buildRosterAnalyticsText", () => {
+  it("renders a header line naming the program, then one line per member", () => {
+    const board = buildCoachingProgramBoard({
+      program,
+      topicSprint: {
+        topic: "Immigration",
+        quests,
+        contributions,
+        now: NOW,
+        coverageReport,
+        contributors,
+        assignments,
+        notes: [],
+      },
+      challenges,
+      contributions,
+      winEvents,
+      memberFlows,
+    });
+
+    const lines = buildRosterAnalyticsText(board).split("\n");
+    expect(lines[0]).toBe("Varsity Squad — roster analytics");
+    expect(lines).toHaveLength(3);
+    expect(lines[1]).toContain("alex:");
+    expect(lines[2]).toContain("sam:");
+  });
+});
+
+describe("rosterAnalyticsFilename", () => {
+  it("slugifies the program id, mirroring preRoundBriefingFilename's rule", () => {
+    expect(rosterAnalyticsFilename("varsity-squad")).toBe("roster-analytics-varsity-squad.txt");
+    expect(rosterAnalyticsFilename("Varsity Squad!!")).toBe("roster-analytics-varsity-squad.txt");
+  });
+
+  it("falls back to a generic name for an empty/blank id", () => {
+    expect(rosterAnalyticsFilename("   ")).toBe("roster-analytics-program.txt");
   });
 });

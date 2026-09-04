@@ -25,6 +25,20 @@
  * optional and per-member/per-session (like `memberFlows`), rather than a
  * fixed part of every program's board.
  *
+ * `buildCoachingProgramRosterAnalytics`/`buildRosterAnalyticsText` close
+ * idea #13's "(b) a coach-facing roster analytics dashboard (completion
+ * rates, streaks, standings in one place)" follow-up — one row per roster
+ * member, pulled straight off the already-composed board (task-completion
+ * rate from `topicSprint.progressBoard`, per-challenge rank from
+ * `challengeBoard.memberStandings`, drill/practice-round activity from
+ * `memberDrills`/`memberPracticeRounds`). A member's quest streak is the one
+ * piece this module can't compute itself — that tracking lives in
+ * `debate-contributor-progress`, which already depends on this package, so
+ * pulling it in here would create a cycle — hence `memberStreaks` on
+ * `CoachingProgramBoard` stays a caller-supplied optional map, like
+ * `memberPracticeRounds`, resolved by whichever app layer can see both
+ * packages.
+ *
  * @module round/coaching-program
  */
 
@@ -73,6 +87,18 @@ export interface CoachingProgramMemberPracticeRound {
   feedback?: PracticeRoundFeedback;
 }
 
+/**
+ * A roster member's current/longest daily-quest-mission streak — the same
+ * shape as `debate-contributor-progress`'s `gamified-quests.ts#StreakStatus`,
+ * duplicated here as a plain structural type rather than imported, since
+ * that package already depends on this one (importing it back would create
+ * a cycle). Caller-supplied, like `CoachingProgramMemberPracticeRound`.
+ */
+export interface MemberQuestStreak {
+  currentStreak: number;
+  longestStreak: number;
+}
+
 export interface BuildCoachingProgramBoardInput {
   program: CoachingProgramConfig;
   /** This program's shared topic sprint (research, quests, task routing, progress, and prep notes). */
@@ -84,6 +110,8 @@ export interface BuildCoachingProgramBoardInput {
   memberFlows: CoachingProgramMemberFlow[];
   /** A member's simulated Practice Round Simulator session, one per member who currently has one. */
   memberPracticeRounds?: CoachingProgramMemberPracticeRound[];
+  /** A member's quest streak, one per member who currently has one — see `MemberQuestStreak`. */
+  memberStreaks?: Record<string, MemberQuestStreak>;
   drillOptions?: { collapseLimit?: number };
 }
 
@@ -96,6 +124,8 @@ export interface CoachingProgramBoard {
   memberDrills: Record<string, Drill[]>;
   /** Keyed by `contributorId`, only for members with a supplied Practice Round Simulator session. */
   memberPracticeRounds: Record<string, CoachingProgramMemberPracticeRound>;
+  /** Keyed by `contributorId`, only for members with a supplied quest streak. */
+  memberStreaks: Record<string, MemberQuestStreak>;
 }
 
 /**
@@ -134,7 +164,12 @@ export function buildCoachingProgramBoard(input: BuildCoachingProgramBoardInput)
     memberPracticeRounds[memberPracticeRound.contributorId] = memberPracticeRound;
   }
 
-  return { program: input.program, topicSprint, challengeBoard, memberDrills, memberPracticeRounds };
+  const memberStreaks: Record<string, MemberQuestStreak> = {};
+  for (const [contributorId, streak] of Object.entries(input.memberStreaks ?? {})) {
+    if (memberSet.has(contributorId)) memberStreaks[contributorId] = streak;
+  }
+
+  return { program: input.program, topicSprint, challengeBoard, memberDrills, memberPracticeRounds, memberStreaks };
 }
 
 /**
@@ -178,4 +213,112 @@ export function buildMemberPracticeRoundSummaryText(board: CoachingProgramBoard,
   const sections = [buildPracticeRoundSetupText(practiceRound.setup)];
   if (practiceRound.feedback) sections.push(buildPracticeRoundFeedbackText(practiceRound.feedback));
   return sections.join("\n\n");
+}
+
+/** One roster member's standing on one of this program's group challenges. */
+export interface MemberChallengeStandingSummary {
+  challengeId: string;
+  challengeTitle: string;
+  /** 1-based rank among that challenge's own ranked `memberStandings`, or `undefined` if this member has no matching activity on it yet. */
+  rank?: number;
+  matchingCount: number;
+}
+
+/** One roster member's row in the coach-facing roster analytics dashboard. */
+export interface RosterAnalyticsRow {
+  contributorId: string;
+  /** From the topic sprint's `progressBoard` — `0` when the member has no tracked topic-sprint tasks yet. */
+  completionRate: number;
+  totalCompletedTasks: number;
+  totalAssignedTasks: number;
+  /** One entry per challenge on this program's `challengeBoard`, in the same order. */
+  challengeStandings: MemberChallengeStandingSummary[];
+  drillCount: number;
+  hasPracticeRound: boolean;
+  /** Absent when no streak was supplied for this member (see `CoachingProgramBoard.memberStreaks`). */
+  streak?: MemberQuestStreak;
+}
+
+/**
+ * Builds the coach-facing roster analytics dashboard for one program's board
+ * — idea #13's "(b) a coach-facing roster analytics dashboard (completion
+ * rates, streaks, standings in one place)" follow-up in TODO.md. One row per
+ * roster member, in `program.memberIds` order: task-completion rate from the
+ * topic sprint's `progressBoard`, per-challenge rank derived from
+ * `challengeBoard`'s own ranked `memberStandings`, and drill/practice-round
+ * activity from `memberDrills`/`memberPracticeRounds` — every input is
+ * already composed onto the board, so this is pure aggregation over it, not
+ * a new data source. `memberStreaks` folds in only for a member the caller
+ * supplied one for.
+ */
+export function buildCoachingProgramRosterAnalytics(board: CoachingProgramBoard): RosterAnalyticsRow[] {
+  return board.program.memberIds.map((contributorId): RosterAnalyticsRow => {
+    const progress = board.topicSprint.progressBoard.find((entry) => entry.contributorId === contributorId);
+
+    const challengeStandings: MemberChallengeStandingSummary[] = board.challengeBoard.map((challenge) => {
+      const standingIndex = challenge.memberStandings.findIndex((s) => s.contributorId === contributorId);
+      return {
+        challengeId: challenge.challengeId,
+        challengeTitle: challenge.title,
+        rank: standingIndex === -1 ? undefined : standingIndex + 1,
+        matchingCount: standingIndex === -1 ? 0 : challenge.memberStandings[standingIndex].matchingCount,
+      };
+    });
+
+    return {
+      contributorId,
+      completionRate: progress?.overallCompletionRate ?? 0,
+      totalCompletedTasks: progress?.totalCompletedTasks ?? 0,
+      totalAssignedTasks: progress?.totalAssignedTasks ?? 0,
+      challengeStandings,
+      drillCount: board.memberDrills[contributorId]?.length ?? 0,
+      hasPracticeRound: Boolean(board.memberPracticeRounds[contributorId]),
+      streak: board.memberStreaks[contributorId],
+    };
+  });
+}
+
+/** Renders one roster analytics row as a single human-readable line. */
+export function buildRosterAnalyticsRowText(row: RosterAnalyticsRow): string {
+  const parts = [
+    `${row.contributorId}: ${Math.round(row.completionRate * 100)}% task completion (${row.totalCompletedTasks}/${row.totalAssignedTasks})`,
+  ];
+  if (row.streak) {
+    parts.push(`${row.streak.currentStreak}-day streak (longest ${row.streak.longestStreak})`);
+  }
+  parts.push(`${row.drillCount} drill${row.drillCount === 1 ? "" : "s"}`);
+  parts.push(row.hasPracticeRound ? "practice round recorded" : "no practice round");
+  for (const standing of row.challengeStandings) {
+    parts.push(
+      standing.rank
+        ? `#${standing.rank} on "${standing.challengeTitle}" (${standing.matchingCount})`
+        : `no activity on "${standing.challengeTitle}"`,
+    );
+  }
+  return parts.join(" — ");
+}
+
+/**
+ * Renders a program's full roster analytics dashboard as a plain-text block
+ * — one line per member — the source text for a "Download roster analytics"
+ * export, mirroring `buildCoachingProgramSummaryText`'s own reuse-the-slice's-
+ * own-line convention.
+ */
+export function buildRosterAnalyticsText(board: CoachingProgramBoard): string {
+  const rows = buildCoachingProgramRosterAnalytics(board);
+  return [`${board.program.name} — roster analytics`, ...rows.map(buildRosterAnalyticsRowText)].join("\n");
+}
+
+/**
+ * A filesystem-safe filename for a roster analytics download, e.g.
+ * `roster-analytics-varsity-squad.txt` — same slugging rule as
+ * `debate-round`'s `pre-round-briefing.ts#preRoundBriefingFilename`.
+ */
+export function rosterAnalyticsFilename(programId: string): string {
+  const safeId = programId
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `roster-analytics-${safeId || "program"}.txt`;
 }

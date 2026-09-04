@@ -96,6 +96,24 @@ up here without a manual reload. Vitest-covered in
 match, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 
+## News Stream integration
+
+A challenge's completion — its goal's `targetCount`-th matching contribution
+or win event landing — posts to the News Stream feed automatically, no
+separate notification path needed: `group-challenges.ts`'s
+`computeChallengeCompletionTimestamp` derives the exact moment (purely from
+the same contributions/win-events every other computation here already
+reads, so no separate "completed at" field is persisted), `state/
+challengeWinEvents.ts`'s `buildCompletedGroupChallengeEvents` turns every
+completed challenge into a `CompletedGroupChallengeEvent`, and `debate-
+community`'s `state/newsStream.ts#groupChallengeNews` renders each as a
+`community`-category `NewsItem` linking back to `/cards/group-challenges`.
+See [`news-stream.md`](./news-stream.md)'s Group Challenges source for the
+full pipeline. This was raised again as a "digest notification summarizing
+challenge results" follow-up under idea #13 ("Coaching Programs and Group
+Challenges") in `TODO.md`, but is already fully covered by this existing
+News Stream item — no further work needed there.
+
 ## Known gaps
 
 - "Record a win (contributor ID)" is still free-form text, not a login — a

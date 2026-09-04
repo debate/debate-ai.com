@@ -35,6 +35,19 @@
  * `state/roundContributorFlows.ts`'s `buildCoachingProgramMemberPracticeRounds`),
  * closing idea #13's remaining "(c)" follow-up in TODO.md.
  *
+ * An open program's board now also renders a "Roster analytics" table —
+ * idea #13's "(b) a coach-facing roster analytics dashboard (completion
+ * rates, streaks, standings in one place)" follow-up — one row per roster
+ * member via `round/coaching-program.ts`'s `buildCoachingProgramRosterAnalytics`,
+ * plus a "Download roster analytics" action (`buildRosterAnalyticsText`/
+ * `rosterAnalyticsFilename`). A member's quest streak (tracked in
+ * `debate-contributor-progress`, downstream of this package — see that
+ * file's header comment) is resolved through an optional `getMemberStreak`
+ * prop rather than importing that package directly, so this panel stays
+ * app-agnostic; the app wires it up in `CoachingProgramsWithStreaks.tsx`.
+ * Omitting the prop still renders the dashboard, just without a streak
+ * column.
+ *
  * @module panels/CoachingProgramsPanel
  */
 
@@ -57,12 +70,32 @@ import {
   deleteRoundContributorFlow,
   listRoundContributorFlows,
 } from "../state/roundContributorFlows"
-import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
+import {
+  buildCoachingProgramRosterAnalytics,
+  buildCoachingProgramSummaryText,
+  buildRosterAnalyticsText,
+  rosterAnalyticsFilename,
+  type CoachingProgramBoard,
+  type CoachingProgramConfig,
+  type MemberQuestStreak,
+} from "../round/coaching-program"
 import { useFlowStore } from "debate-round/src/state/store"
 
 type ProgramDraft = { name: string; memberIds: string }
 
 const EMPTY_DRAFT: ProgramDraft = { name: "", memberIds: "" }
+
+export interface CoachingProgramsPanelProps {
+  /**
+   * Resolves a roster member's current/longest daily-quest-mission streak
+   * for the roster analytics dashboard. Streak tracking lives in
+   * `debate-contributor-progress`, a package downstream of this one, so this
+   * panel takes it as a caller-supplied lookup instead of importing that
+   * package directly (which would create a dependency cycle). Omit to
+   * render the dashboard without a streak column.
+   */
+  getMemberStreak?: (contributorId: string) => MemberQuestStreak | undefined
+}
 
 /**
  * Renders the Coaching Programs panel: a form to create a named coaching
@@ -72,7 +105,7 @@ const EMPTY_DRAFT: ProgramDraft = { name: "", memberIds: "" }
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function CoachingProgramsPanel() {
+export function CoachingProgramsPanel({ getMemberStreak }: CoachingProgramsPanelProps = {}) {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [draft, setDraft] = useState<ProgramDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
@@ -97,7 +130,25 @@ export function CoachingProgramsPanel() {
 
   const refreshBoard = (id: string, rawTopic: string) => {
     const trimmedTopic = rawTopic.trim()
-    setBoard(trimmedTopic ? buildPersistedCoachingProgramBoard(id, trimmedTopic, Date.now()) ?? null : null)
+    if (!trimmedTopic) {
+      setBoard(null)
+      return
+    }
+    const builtBoard = buildPersistedCoachingProgramBoard(id, trimmedTopic, Date.now())
+    if (!builtBoard) {
+      setBoard(null)
+      return
+    }
+    if (!getMemberStreak) {
+      setBoard(builtBoard)
+      return
+    }
+    const memberStreaks: Record<string, MemberQuestStreak> = {}
+    for (const memberId of builtBoard.program.memberIds) {
+      const streak = getMemberStreak(memberId)
+      if (streak) memberStreaks[memberId] = streak
+    }
+    setBoard({ ...builtBoard, memberStreaks })
   }
 
   useEffect(() => {
@@ -156,6 +207,20 @@ export function CoachingProgramsPanel() {
       return next
     })
     if (openProgramId) refreshBoard(openProgramId, topic)
+  }
+
+  const handleDownloadRosterAnalytics = (programId: string, board: CoachingProgramBoard) => {
+    const text = buildRosterAnalyticsText(board)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = rosterAnalyticsFilename(programId)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
   if (programs === null) {
@@ -293,9 +358,70 @@ export function CoachingProgramsPanel() {
                   ) : !board ? (
                     <p className="text-sm text-muted-foreground">Loading board…</p>
                   ) : (
-                    <p className="whitespace-pre-line text-sm text-muted-foreground">
-                      {buildCoachingProgramSummaryText(board)}
-                    </p>
+                    <>
+                      <p className="whitespace-pre-line text-sm text-muted-foreground">
+                        {buildCoachingProgramSummaryText(board)}
+                      </p>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <Label>Roster analytics</Label>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownloadRosterAnalytics(program.id, board)}
+                          >
+                            Download roster analytics
+                          </Button>
+                        </div>
+                        <div className="overflow-x-auto rounded-md border border-border">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                                <th className="p-2">Member</th>
+                                <th className="p-2">Completion</th>
+                                <th className="p-2">Streak</th>
+                                <th className="p-2">Drills</th>
+                                <th className="p-2">Practice round</th>
+                                <th className="p-2">Challenge standings</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {buildCoachingProgramRosterAnalytics(board).map((row) => (
+                                <tr key={row.contributorId} className="border-b border-border last:border-0">
+                                  <td className="p-2 font-medium text-foreground">{row.contributorId}</td>
+                                  <td className="p-2 text-muted-foreground">
+                                    {Math.round(row.completionRate * 100)}% ({row.totalCompletedTasks}/
+                                    {row.totalAssignedTasks})
+                                  </td>
+                                  <td className="p-2 text-muted-foreground">
+                                    {row.streak ? `${row.streak.currentStreak}-day` : "—"}
+                                  </td>
+                                  <td className="p-2 text-muted-foreground">{row.drillCount}</td>
+                                  <td className="p-2 text-muted-foreground">
+                                    {row.hasPracticeRound ? "Recorded" : "—"}
+                                  </td>
+                                  <td className="p-2 text-muted-foreground">
+                                    <div className="flex flex-wrap gap-1">
+                                      {row.challengeStandings.length === 0 ? (
+                                        "—"
+                                      ) : (
+                                        row.challengeStandings.map((standing) => (
+                                          <Badge key={standing.challengeId} variant="outline">
+                                            {standing.challengeTitle}
+                                            {standing.rank ? `: #${standing.rank}` : ": no activity"}
+                                          </Badge>
+                                        ))
+                                      )}
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               )}

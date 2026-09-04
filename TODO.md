@@ -6,6 +6,75 @@
 _No task currently in progress._
 
 ### Completed
+- **Coaching Programs and Group Challenges — a coach-facing roster analytics
+  dashboard (idea #13's Next item).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: idea #13's own Next item, "a coach-facing roster analytics
+  dashboard (completion rates, streaks, standings in one place)." This run
+  first checked idea #13's other Next item, "a digest notification
+  summarizing challenge results instead of requiring a panel visit," and
+  found it was already fully shipped under a different name — a completed
+  group challenge already posts to the News Stream feed
+  (`state/newsStream.ts#groupChallengeNews`, landed with the "News Stream —
+  wire the three remaining Community categories" entry earlier in this
+  log) — so that bullet is struck from idea #13's Next list, and
+  `docs/features/group-challenges.md` gets a new "News Stream integration"
+  section since it had no mention of that pipeline at all. The roster
+  analytics dashboard itself was genuinely open: `round/coaching-program.ts`
+  gains `buildCoachingProgramRosterAnalytics(board)`, a pure aggregation
+  over fields `buildCoachingProgramBoard` already composes — task-
+  completion rate and counts from the topic sprint's `progressBoard`,
+  per-challenge rank derived from `challengeBoard`'s own ranked
+  `memberStandings`, and drill/practice-round activity from
+  `memberDrills`/`memberPracticeRounds` — plus `buildRosterAnalyticsRowText`/
+  `buildRosterAnalyticsText`/`rosterAnalyticsFilename` for a plain-text
+  export. A member's quest streak is the one input this package can't
+  compute itself (that tracking lives in `debate-community`, which already
+  depends on this package, so importing it back would cycle), so
+  `CoachingProgramBoard` gains an optional, caller-supplied `memberStreaks`
+  map (mirroring `memberPracticeRounds`'s own convention) instead.
+  `CoachingProgramsPanel` renders the new "Roster analytics" table below its
+  existing status block, with a "Download roster analytics" action, and
+  takes an optional `getMemberStreak` prop it resolves once per roster
+  member and merges onto the board before rendering (omitting it still
+  renders the dashboard, just without a Streak column, so every existing
+  caller keeps working unmodified). The one place that wires up both
+  packages is a new `apps/debate-ai.com/components/research/
+  CoachingProgramsWithStreaks.tsx` wrapper (mirroring
+  `GroupChallengesWithIdentity.tsx`'s "panel stays app-agnostic, the app
+  layer knows about the rest of the app" convention), resolving each
+  member's streak via `debate-community`'s newly-exported
+  `buildPersistedContributorQuestStreak`; both `/coaching-programs` and the
+  Coach Hub's Coaching tab now render that wrapper instead of the bare
+  panel. See `docs/features/coaching-programs.md`'s new "Roster analytics
+  dashboard" section. Vitest-covered:
+  `buildCoachingProgramRosterAnalytics` (roster order, completion rate off
+  the progress board, per-challenge rank/no-activity resolution, drill
+  count and practice-round activity, and streak folding in only for a
+  member the caller supplied one for), `buildRosterAnalyticsRowText`
+  (with/without a streak, singular/plural drill count, a ranked vs.
+  no-activity challenge standing), `buildRosterAnalyticsText`, and
+  `rosterAnalyticsFilename` (slugging and its blank-id fallback), plus two
+  new `buildCoachingProgramBoard` cases for `memberStreaks` (composed and
+  scoped to the roster; defaults to `{}` when none supplied) —
+  `packages/debate-team-collaboration/test/coaching-program.test.ts`, 30
+  passing cases in that file (up from 16), 4258 passing across the whole
+  suite (up from 4244). `bunx turbo run typecheck --filter=debate-team-
+  collaboration --filter=debate-community --filter=debate-ai-web` (all
+  green) and a full `bun run build:web` (production build succeeded,
+  `/coaching-programs` route intact; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
+  before committing, unrelated to this change) both pass. No lint script is
+  configured anywhere in this repo, so `lint` was not run — consistent with
+  every prior entry in this log.
+
 - **Video-Lecture-Training Coach AI — a reviewer/approval workflow before a
   saved material is available to the team coach (idea #8's Next item).**
   Another repeat of the standing prompt ("integrate all the tools into the
@@ -15732,10 +15801,8 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. The manual pairing/room-assignment entry form follow-up is also now done: a "Pairing schedule" section logs a round's pairing (tournament/division/round label/side/room/opponent label/judge name) as the practical stand-in for still-blocked live Tabroom pairings, account-synced via a new `saved_round_pairings` D1 table plus `/api/round-pairings` routes, with a "Use for briefing" action on each saved pairing that prefills the "create briefing" form from it — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Manual pairing/room assignments" section. No further follow-up is currently tracked for this idea beyond the still-blocked real tournament-results/pairings/ballot data source itself (see "Confirmed blocker" below); a future run should pick a fresh next-step if one becomes worth doing.
 
-13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) —
+13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) — the coach-facing roster analytics dashboard follow-up is done: an open program's board renders a "Roster analytics" table — one row per roster member with task-completion rate, quest streak (when available), drill count, practice-round status, and per-challenge standings in one place (`round/coaching-program.ts#buildCoachingProgramRosterAnalytics`), plus a "Download roster analytics" export — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster analytics dashboard" section. The digest-notification follow-up turned out to already be done, just under a different name: a completed challenge already posts to the News Stream feed automatically (`state/newsStream.ts#groupChallengeNews`, landed as part of the "News Stream — wire the three remaining Community categories" entry) — see `docs/features/group-challenges.md`'s new "News Stream integration" section, which this run added since the doc had no mention of it at all. Next:
     - A calendar/schedule view across a program's drills, sprints, and challenges.
-    - A coach-facing roster analytics dashboard (completion rates, streaks, standings in one place).
-    - A digest notification summarizing challenge results instead of requiring a panel visit.
 
 14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). The onboarding-nudge follow-up is also now done: a one-time `promptForRouteChoice` dialog (`verbatim-nudge.ts`) points whoever the UI tour's own "reference" step doesn't reach — an established profile the tour auto-skips, or a fresh one that left the tour before that step — at the shortcuts reference the first time a document is open, without racing or stacking on top of an in-progress tour. See `docs/features/legacy-verbatim-shortcuts.md`'s "Verbatim onboarding nudge" section. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action.
 

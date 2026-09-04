@@ -42,8 +42,9 @@ import {
   VulnerabilityChartsPanel,
   WordCountRoundsPanel,
 } from "debate-practice-rounds"
-import { CoachingProgramsPanel, PrepNotesPanel } from "debate-team-collaboration"
+import { PrepNotesPanel } from "debate-team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "debate-speech-writer"
+import { CoachingProgramsWithStreaks } from "../research/CoachingProgramsWithStreaks"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import type { FlowEdit } from "debate-round/src/flow/shared-flow-sync"
 
@@ -139,7 +140,7 @@ export function CoachHub() {
       {section === "Coaching" ? (
         <div className="flex flex-col gap-4">
           <CoachingSessionsPanel />
-          <CoachingProgramsPanel />
+          <CoachingProgramsWithStreaks />
           <DrillSetsPanel />
           <CoachMaterialsPanel />
         </div>

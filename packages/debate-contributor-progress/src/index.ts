@@ -21,3 +21,5 @@ export {
   isValidDailyBestCardComment,
   type DailyBestCardComment,
 } from "./state/dailyBestCardComments";
+export { buildPersistedContributorQuestStreak } from "./state/dailyMissionResults";
+export type { ContributorQuestStreak, StreakStatus } from "./lib/gamified-quests";
