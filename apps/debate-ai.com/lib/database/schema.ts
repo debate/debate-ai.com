@@ -647,6 +647,24 @@ export const youtubeRoundVideos = sqliteTable(
 
 export type YoutubeRoundVideo = typeof youtubeRoundVideos.$inferSelect;
 
+// Explicit admin removals are retained so a later YouTube resync does not
+// silently make an unavailable video public again.
+export const youtubeVideoExclusions = sqliteTable(
+  "youtube_video_exclusions",
+  {
+    videoId: text("video_id").primaryKey(),
+    deletedBy: text("deleted_by"),
+    deletedAt: integer("deleted_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    deletedAtIdx: index("idx_youtube_video_exclusions_deleted_at").on(table.deletedAt),
+  }),
+);
+
+export type YoutubeVideoExclusion = typeof youtubeVideoExclusions.$inferSelect;
+
 // One row per admin-triggered resync, so the admin page can show progress
 // and history without re-running the sync to find out what happened.
 export const youtubeSyncRuns = sqliteTable(
