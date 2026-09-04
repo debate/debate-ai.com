@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildAndPersistRoutingResult,
   buildTaskInboxView,
+  buildTeamCapacityView,
   completePersistedRoutedTask,
   deleteRoutedTaskQueue,
   filterTaskInboxViewByContributor,
@@ -470,5 +471,107 @@ describe("setPersistedRoutedTaskPriority", () => {
 
     expect(setPersistedRoutedTaskPriority("topic-ai", "Impacts", "high")).toBeUndefined();
     expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+  });
+});
+
+describe("buildTeamCapacityView", () => {
+  it("returns an empty list when nothing is routed", () => {
+    expect(buildTeamCapacityView()).toEqual([]);
+  });
+
+  it("tallies a contributor's load across every topic they're assigned in", () => {
+    saveRoutedTaskQueue(AT_QUEUE); // alice: Solvency (topic-ai)
+    saveRoutedTaskQueue({
+      topicId: "topic-space",
+      result: { assignments: [{ task: IMPACTS_TASK, contributorId: "alice" }], unassignedTasks: [] },
+    });
+
+    const [row] = buildTeamCapacityView();
+
+    expect(row.contributorId).toBe("alice");
+    expect(row.activeTaskCount).toBe(2);
+    expect(row.topicCounts).toEqual([
+      { topicId: "topic-ai", count: 1 },
+      { topicId: "topic-space", count: 1 },
+    ]);
+  });
+
+  it("counts a contributor with no persisted availability profile — works off arbitrary typed ids", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const [row] = buildTeamCapacityView();
+
+    expect(row).toEqual({
+      contributorId: "alice",
+      activeTaskCount: 1,
+      topicCounts: [{ topicId: "topic-ai", count: 1 }],
+      isOverloaded: false,
+    });
+  });
+
+  it("enriches a row with skillLevel/maxConcurrentTasks when a profile is persisted", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 1 });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const [row] = buildTeamCapacityView();
+
+    expect(row.skillLevel).toBe("advanced");
+    expect(row.maxConcurrentTasks).toBe(5);
+  });
+
+  it("flags a contributor overloaded once their routed load meets their maxConcurrentTasks", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "alice", maxConcurrentTasks: 1 });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const [row] = buildTeamCapacityView();
+
+    expect(row.isOverloaded).toBe(true);
+  });
+
+  it("never flags a contributor with no persisted profile as overloaded — there's no limit to compare against", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const [row] = buildTeamCapacityView();
+
+    expect(row.isOverloaded).toBe(false);
+  });
+
+  it("omits a contributor with a persisted profile but nothing currently routed", () => {
+    saveContributorAvailability({ ...ADVANCED_AMY, contributorId: "idle-ivy" });
+    saveRoutedTaskQueue(AT_QUEUE);
+
+    const rows = buildTeamCapacityView();
+
+    expect(rows.map((row) => row.contributorId)).not.toContain("idle-ivy");
+  });
+
+  it("sorts rows busiest-first, tie-broken by contributorId", () => {
+    saveRoutedTaskQueue({
+      topicId: "topic-mixed",
+      result: {
+        assignments: [
+          { task: SOLVENCY_TASK, contributorId: "bob" },
+          { task: IMPACTS_TASK, contributorId: "alice" },
+        ],
+        unassignedTasks: [],
+      },
+    });
+    saveRoutedTaskQueue({
+      topicId: "topic-space",
+      result: { assignments: [{ task: IMPACTS_TASK, contributorId: "bob" }], unassignedTasks: [] },
+    });
+
+    const rows = buildTeamCapacityView();
+
+    expect(rows.map((row) => row.contributorId)).toEqual(["bob", "alice"]);
+  });
+
+  it("does not count unassignedTasks toward any contributor's load", () => {
+    saveRoutedTaskQueue(AT_QUEUE); // Impacts sits unassigned
+
+    const rows = buildTeamCapacityView();
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0].contributorId).toBe("alice");
   });
 });

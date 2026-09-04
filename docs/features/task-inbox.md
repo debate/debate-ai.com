@@ -277,6 +277,41 @@ Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority` in
 priority-ordering behavior in
 `packages/debate-card-search/test/routedTaskQueues.test.ts`.
 
+## Team capacity view
+
+A "Team capacity" section shows currently-routed load per contributor,
+across every topic, closing the "a capacity-aware view of routing load
+across the team" follow-up named under the "Research Task Routing" bullet
+in TODO.md's Research Crowdsourcing Organizer Features list.
+
+This repo still has no UI to create or manage a `ContributorAvailability`
+profile at all (only tests and the free-form "Reassign"/"Assign to…"
+control touch that store), so rather than requiring one to exist for every
+contributor, `state/routedTaskQueues.ts`'s new `buildTeamCapacityView()`
+tallies load straight from the actually-persisted routed queues — the same
+"work off arbitrary typed ids" convention `reassignPersistedRoutedTask`
+already established — and enriches a row with `skillLevel`/
+`maxConcurrentTasks`/an "Overloaded" badge only for whichever contributors
+happen to have a persisted availability profile. A contributor with zero
+currently-routed tasks (including one with a persisted profile but nothing
+assigned) is omitted; rows are sorted busiest-first.
+
+```
+state/routedTaskQueues.ts
+  → buildTeamCapacityView()
+      ├─ tallies listRoutedTaskQueues()'s assignments by contributorId,
+      │    with a per-topic breakdown
+      └─ enriches each row from listContributorAvailability(), when a
+           profile exists — skillLevel, maxConcurrentTasks, and
+           isOverloaded (activeTaskCount >= maxConcurrentTasks)
+  → panels/TaskInboxPanel.tsx — renders a "Team capacity" section, refreshed
+    alongside topics on mount, on a cross-tab storage event, and after
+    routing/reassigning/marking a task done
+```
+
+Vitest-covered in
+`packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
+
 ## Known gaps
 
 - The "My tasks" filter is still free-form text, not a login — a real
@@ -313,3 +348,8 @@ priority-ordering behavior in
   through with no separate refresh limitation.
 - An unassigned task can't be pre-flagged before it has an assignee —
   assign or reassign it first, then flag it.
+- The "Team capacity" view reads the same `routedTaskQueues`/
+  `contributorAvailability` localStorage stores as the rest of this panel,
+  which aren't account-synced — it reflects this browser's own routed
+  queues only, not a real team-wide roster. Nothing gates who can view it,
+  same as the rest of this panel.
