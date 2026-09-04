@@ -19,6 +19,7 @@ import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
+import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
@@ -261,21 +262,14 @@ export function LecturesVideoGridView({
 
         {searchBarNode(true)}
 
-        <QuickLinksGrid
+        <VideoSidebarTree
           counts={quickLinkCounts}
-          showLectures={showLectureCategories}
-          onToggleLectures={onToggleLectureCategories}
+          lectureCategories={lectureCategories}
+          selectedCategory={selectedCategory}
           activeId={activeQuickLinkId}
-          layout="list"
+          lecturesExpanded={showLectureCategories}
+          onToggleLectures={onToggleLectureCategories}
         />
-
-        {showLectureGallery && (
-          <LectureCategoryGridGallery
-            categories={lectureCategories}
-            selectedCategory={selectedCategory}
-            layout="list"
-          />
-        )}
 
         <Footer />
       </aside>
