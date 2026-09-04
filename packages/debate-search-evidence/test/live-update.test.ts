@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS,
   CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
+  COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTIONS_FEED_LIVE_UPDATE_STORAGE_KEYS,
   CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
@@ -16,6 +17,7 @@ import {
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
   isBrainstormBoardLiveUpdateStorageEvent,
   isCardScoringLiveUpdateStorageEvent,
+  isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent,
   isContributionLeaderboardLiveUpdateStorageEvent,
   isContributionsFeedLiveUpdateStorageEvent,
   isContributorAwardsLiveUpdateStorageEvent,
@@ -375,5 +377,27 @@ describe("isTopicSprintLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isTopicSprintLiveUpdateStorageEvent({ key: "dailyQuestTemplatesBackup" })).toBe(false);
     expect(isTopicSprintLiveUpdateStorageEvent({ key: "old_sprintNotes" })).toBe(false);
+  });
+});
+
+describe("isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: "routedTaskQueues" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: "coachingProgramsBackup" })).toBe(false);
+    expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
   });
 });

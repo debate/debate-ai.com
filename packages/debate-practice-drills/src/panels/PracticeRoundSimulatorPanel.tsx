@@ -13,13 +13,14 @@
  * `deletePracticeRound`). Every persisted round below renders its setup
  * sections, submitted-speech progress (looked up through the existing
  * `getPracticeRoundSubmittedSpeeches`, which reads the "Online Debate Versus
- * AI" `aiVersusRounds.ts` store — speeches are actually submitted at
- * `/versus-ai`), and post-round feedback once one has been generated.
+ * AI" `aiVersusRounds.ts` store — speeches are actually submitted in
+ * `AiVersusRoundPanel` on the Coach hub), and post-round feedback once one
+ * has been generated.
  *
- * Once a round has been started at `/versus-ai` (so an `aiVersusRounds.ts`
- * record exists for the same `roundId`) and it's the AI's turn, a "Generate
- * AI opponent speech" action builds the request via the existing
- * `buildAiResponseRequest` and calls `requestAiVersusSpeech` — or, when the
+ * Once a round has been started in `AiVersusRoundPanel` on `/coach` (so an
+ * `aiVersusRounds.ts` record exists for the same `roundId`) and it's the AI's
+ * turn, a "Generate AI opponent speech" action builds the request via the
+ * existing `buildAiResponseRequest` and calls `requestAiVersusSpeech` — or, when the
  * round's own saved `setup.opponentPersona` is set, the persona- and
  * difficulty-conditioned `requestAiVersusSpeechWithPersona` (passing the
  * round's own saved `setup.opponentDifficulty`) — saving the result back
@@ -529,7 +530,7 @@ export function PracticeRoundSimulatorPanel() {
                 <p className="text-sm text-muted-foreground">
                   {submitted.length} / {record.setup.speechOrder.length} speeches submitted — submit
                   speeches at{" "}
-                  <Link href="/versus-ai" className="underline">
+                  <Link href="/coach" className="underline">
                     Online Debate Versus AI
                   </Link>
                   .

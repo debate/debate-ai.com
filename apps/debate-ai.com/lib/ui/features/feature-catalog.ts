@@ -443,13 +443,13 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["simulation", "format", "side"],
   },
   {
-    id: "online-debate-versus-ai",
-    title: "Online Debate Versus AI",
-    description: "Practice a full round against an AI opponent, format and side of your choice",
+    id: "practice-vs-ai",
+    title: "Practice vs AI",
+    description: "Debate a full timed round against an AI opponent, then get a judged scorecard",
     href: "/versus-ai",
     category: "practice",
-    doc: "ai-versus-rounds.md",
-    tags: ["speeches", "submission", "bot"],
+    doc: "practice-vs-ai.md",
+    tags: ["speeches", "bot", "persona", "judge"],
   },
   {
     id: "opponent-persona-picker",

@@ -37,7 +37,8 @@ import {
   IconRead,
   IconSettings,
   IconRoundsYoutube,
-  IconTools
+  IconTools,
+  IconVsAi
 } from "../../lib/ui/icons"
 
 // Same destinations as packages/debate-videos/src/ui/layout/footer.tsx, split into
@@ -64,6 +65,9 @@ const NAV_ITEMS = [
   { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
   { href: "/cards", label: "Shared", icon: IconCollectiveMind },
   { href: "/debate", label: "Debate", icon: IconFlowFlower },
+  // Practice vs AI — a full timed round against an AI opponent, from the
+  // `debate-practice-vs-ai` package.
+  { href: "/versus-ai", label: "Practice vs AI", icon: IconVsAi },
   { href: "/doc", label: "Docs", icon: IconRead },
   { href: "/tools", label: "Tools", icon: IconTools },
 ]

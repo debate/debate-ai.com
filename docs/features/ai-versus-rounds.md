@@ -8,9 +8,10 @@ speech, calls `validateSpeechSubmission`, and reads/writes through the
 persistence store" follow-up named under idea #3 ("Online Debate Versus
 AI") in `TODO.md`'s Product Feature Ideas list.
 
-- **Route:** `/versus-ai`
-- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
-  Workspace menu (`t versus` in Ctrl/Cmd-Shift-Space's command palette)
+- **Route:** none of its own — the panel renders inside `/coach`. `/versus-ai`
+  now serves [Practice vs AI](./practice-vs-ai.md), the ported full-round
+  feature.
+- **Nav:** the Coach hub
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
 ## What it shows
