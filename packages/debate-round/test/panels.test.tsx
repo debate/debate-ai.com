@@ -71,6 +71,12 @@ describe("SharedFlowSyncPanel", () => {
     expect(html).toContain("Flow 7");
   });
 
+  it("shows a 'Your ID' field for presence, with no presence line while sync is off", () => {
+    const html = renderToStaticMarkup(<SharedFlowSyncPanel flow={flow} edits={edits} />);
+    expect(html).toContain("Your ID");
+    expect(html).not.toContain("flow-presence-summary");
+  });
+
   it("renders a side-by-side diff for a conflict instead of a flat list", () => {
     const html = renderToStaticMarkup(<SharedFlowSyncPanel flow={flow} edits={edits} />);
     // bob's edit landed last, so it's the one that would apply.

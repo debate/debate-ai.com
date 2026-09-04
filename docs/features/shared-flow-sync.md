@@ -359,6 +359,77 @@ content, plus `buildFlowEditConflictDiff`'s winner selection across a
 three-way conflict) and a new case in `packages/debate-round/test/panels.test.tsx`
 asserting the panel renders the diffed columns instead of the old flat list.
 
+## Live "who's editing now" presence
+
+Both `SharedFlowSyncPanel` and `FlowEditLogPanel` now show who else is
+currently active on a flow while their "Live sync" toggle is on — closing
+the "Live 'who's editing now' presence indicators alongside the existing
+merge preview" follow-up named under idea #16 in `TODO.md`.
+
+There is no push transport (WebSocket/Durable Object) in this repo, so
+presence is modeled the same way `debate-team-collaboration`'s topic
+presence is: a caller-recorded heartbeat with a timestamp, and a
+collaborator counts as active only while their most recent heartbeat for a
+flow is within a freshness window (`flow/flow-presence.ts`'s
+`DEFAULT_FLOW_PRESENCE_STALE_AFTER_MS`, 15 seconds — a little under 4x the
+poll interval, so one or two missed polls doesn't immediately drop a still-
+active collaborator). Unlike topic presence, which only tracks local,
+same-browser heartbeats, a flow's heartbeats are pushed/pulled through a new
+server-backed transport, since "who else is editing this flow right now" is
+only useful across different collaborators' devices, not just other tabs in
+the same browser.
+
+While a panel's "Live sync" toggle is on and its "Your ID"/"Author ID" field
+is non-blank, it pushes its own heartbeat and pulls every other
+collaborator's current heartbeat for that Flow ID roughly every 4 seconds
+(the same cadence as the existing `FlowEdit` sync poll), and renders a line
+below the toggle — "2 teammates editing now: alice, bob" or "No one else
+editing right now." — via `flow/flow-presence.ts#buildFlowPresenceSummaryText`.
+`SharedFlowSyncPanel` gained its own "Your ID" field for this purpose (it
+previously had no notion of the viewer's own id at all); `FlowEditLogPanel`
+reuses its existing "Author ID" field.
+
+It adds:
+
+- `flow/flow-presence.ts`: the pure heartbeat model —
+  `recordFlowPresenceHeartbeat` (upserts one collaborator's heartbeat for a
+  flow), `listActiveFlowEditors` (freshness-filtered, optionally excluding
+  the viewer's own id), `buildFlowPresenceSummaryText`.
+- `lib/database/schema.ts`'s `flowPresenceHeartbeats` table — one row per
+  `(flowId, authorId)` pair, upserted on every heartbeat.
+- `app/api/flow-presence/route.ts` — `GET ?flowId` (every collaborator's
+  current heartbeat for that flow) and `POST { flowId, authorId, lastSeenAt }`
+  (upserts one heartbeat), mirroring `app/api/flow-sync/route.ts`'s
+  D1-backed short-poll convention.
+- `flow/flow-presence-client.ts`: `pullFlowPresence`/`pushFlowPresenceHeartbeat`,
+  the fetch layer, mirroring `flow/flow-sync-client.ts`'s pure-module split.
+- `state/flowPresence.ts`: a local cache of the last-pulled heartbeat
+  snapshot per flow — a pull replaces (rather than upserts into) that flow's
+  cached heartbeats wholesale, so a collaborator who stopped polling drops
+  out once the server no longer reports them, not only once their old
+  heartbeat goes stale locally.
+- `hooks/useFlowPresencePolling.ts`: the poll-loop binding — `status`
+  (`"idle" | "syncing" | "error"`), `lastError`, `activeEditors` (self
+  excluded).
+- `panels/SharedFlowSyncPanel.tsx`/`panels/FlowEditLogPanel.tsx`: render the
+  presence summary line while sync is on.
+
+Vitest-covered by `packages/debate-round/test/flow-presence.test.ts`
+(heartbeat upsert semantics, freshness-window filtering including the exact
+boundary and clock-skew cases, self-exclusion, and summary-text
+singular/plural wording), `packages/debate-round/test/flow-presence-client.test.ts`
+(pull/push request shape, endpoint overrides, empty-field fallback,
+server-error-message propagation, non-JSON-error-body fallback, mirroring
+`flow-sync-client.test.ts`), `packages/debate-round/test/flowPresence.test.ts`
+(corrupt/non-array storage, per-flow wholesale-replace-on-pull semantics,
+scoping other flows' cached heartbeats), and a new case in
+`packages/debate-round/test/panels.test.tsx` asserting the "Your ID" field
+renders and no presence line shows while sync is off. The polling hook
+itself and the API route are not directly Vitest-covered — verified instead
+by the package typecheck and the production build (`/api/flow-presence`
+appears in the built route list), matching this repo's existing convention
+for `useFlowSyncPolling`/`/api/flow-sync`.
+
 ## Known gaps
 
 - ~~The `EditBadge` still reads a box's edits from `localStorage` at cell
@@ -419,3 +490,13 @@ asserting the panel renders the diffed columns instead of the old flat list.
   text, not the box's existing content or the flow's topic — a
   contributor gets suggestions only once they've started typing something
   for the matcher to score against.
+- Presence is tied to the same "Live sync" toggle/interval as `FlowEdit`
+  sync, so it shares its limitations: off by default, per-Flow-ID, and a
+  collaborator's heartbeat can take up to one ~4s poll interval to appear
+  or drop off (bounded further by the 15s freshness window before a missed
+  collaborator is treated as inactive regardless). `SharedFlowSyncPanel`'s
+  and `FlowEditLogPanel`'s "Your ID"/"Author ID" fields are independent, not
+  a shared identity — a contributor viewing both panels for the same flow
+  who types a different id into each shows up as two separate "active"
+  entries rather than one, the same caveat `FlowEdit`'s own per-panel
+  `authorId` fields already carry.

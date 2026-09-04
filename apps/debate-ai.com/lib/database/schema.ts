@@ -141,6 +141,31 @@ export const flowSyncEdits = sqliteTable(
 
 export type FlowSyncEditRow = typeof flowSyncEdits.$inferSelect;
 
+// Shared, AI-Generated Debate Flow — server-backed "who's editing now"
+// presence for `debate-round`'s `FlowEdit` collaborators (see
+// packages/debate-round/src/flow/flow-presence.ts and TODO.md idea #16's
+// "Live 'who's editing now' presence indicators alongside the existing
+// merge preview" follow-up). One row per (flowId, authorId) pair, upserted
+// on every heartbeat so a collaborator re-heartbeating updates their
+// existing row rather than accumulating duplicates.
+export const flowPresenceHeartbeats = sqliteTable(
+  "flow_presence_heartbeats",
+  {
+    flowId: integer("flow_id").notNull(),
+    authorId: text("author_id").notNull(),
+    lastSeenAt: integer("last_seen_at").notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: uniqueIndex("idx_flow_presence_heartbeats_flow_author").on(table.flowId, table.authorId),
+    flowIdIdx: index("idx_flow_presence_heartbeats_flow_id").on(table.flowId),
+  }),
+);
+
+export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelect;
+
 // Per-user settings — one row per user, created on first save (see
 // /api/settings and /settings). Account-linked app preferences — TODO.md
 // idea #17 ("User Settings — account-linked debate preferences"), first
