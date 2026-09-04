@@ -6,11 +6,13 @@
 
 async function load() {
   document.getElementById("api-base").value = await getApiBase();
+  document.getElementById("skip-domains").value = await getSkipDomainsRaw();
 }
 
 document.getElementById("save").addEventListener("click", async () => {
   const value = document.getElementById("api-base").value;
   await setApiBase(value);
+  await setSkipDomains(document.getElementById("skip-domains").value);
   const saved = document.getElementById("saved");
   saved.style.display = "block";
   setTimeout(() => {

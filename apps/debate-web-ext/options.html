@@ -16,13 +16,22 @@
         font-weight: 600;
         margin-bottom: 4px;
       }
-      input {
+      input,
+      textarea {
         width: 100%;
         box-sizing: border-box;
         padding: 8px;
         font-size: 13px;
         border: 1px solid #ccc;
         border-radius: 6px;
+        font-family: inherit;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 90px;
+      }
+      .field {
+        margin-top: 16px;
       }
       button {
         margin-top: 10px;
@@ -55,6 +64,19 @@
       permissions error until the extension is re-installed with that host
       added.
     </p>
+    <div class="field">
+      <label for="skip-domains">Skip-check whitelist (one domain per line)</label>
+      <textarea
+        id="skip-domains"
+        placeholder="wikipedia.org&#10;your-team-wiki.example.com"
+      ></textarea>
+      <p class="hint">
+        Sites the reuse check should always skip without a network request —
+        e.g. your own team's internal wiki, or a general reference site
+        that's never itself a cut card's source. A subdomain of a listed
+        domain is skipped too.
+      </p>
+    </div>
     <button id="save">Save</button>
     <p class="saved" id="saved" style="display: none">Saved.</p>
     <script src="api.js"></script>

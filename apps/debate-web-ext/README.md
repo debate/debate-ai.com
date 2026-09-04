@@ -27,11 +27,16 @@ link) and change the API base URL — only the production domain and
 `host_permissions`, so a different host needs the manifest updated (and the
 extension reloaded) first.
 
+The Options page also has a **skip-check whitelist**: one domain per line
+(e.g. an internal team wiki, a general reference site) the popup always
+skips without a network request, showing a neutral "on your skip-check
+whitelist" status instead — a subdomain of a listed domain is skipped too.
+
 ## Files
 
 - `manifest.json` — Manifest V3 declaration (`action` popup, `options_page`, `host_permissions`).
 - `popup.html`/`popup.js` — the toolbar popup: reads the active tab's URL and renders the reuse-check result.
-- `options.html`/`options.js` — lets a contributor change the configured API base URL.
+- `options.html`/`options.js` — lets a contributor change the configured API base URL and the skip-check domain whitelist.
 - `api.js` — shared fetch helper against `/api/evidence-reuse-check`, mirroring `packages/debate-card-search/src/lib/evidence-reuse-check-client.ts`'s request/response shape.
 
 ## Known gaps

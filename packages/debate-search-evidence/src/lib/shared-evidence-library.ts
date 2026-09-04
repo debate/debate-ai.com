@@ -21,9 +21,12 @@
  * ext") — the reuse-check logic a browser extension calls against the
  * current tab's URL, kept a plain, testable function here rather than
  * inside the extension itself. `buildReuseCheckDeepLink` is the second
- * slice — the `extension/card-reuse-checker` browser extension (see its
- * README) calls it to open `/cards/library` with the active tab's URL
- * pre-filled and auto-checked, closing that idea's remaining follow-up.
+ * slice — a generic `?checkUrl=` deep-link into `/cards/library` that
+ * pre-fills and auto-runs the "Check this page" box, closing that idea's
+ * remaining follow-up. The current `apps/debate-web-ext` browser extension
+ * (see its README) doesn't use this deep-link — it calls
+ * `/api/evidence-reuse-check` directly against the shared, server-backed
+ * index instead — but the deep-link stays available for any other caller.
  *
  * `EvidenceLibraryEntry.createdAt` (stamped by `panels/EvidenceLibraryPanel.tsx`'s
  * `handleSubmit` the moment a brand-new entry is first submitted, mirroring

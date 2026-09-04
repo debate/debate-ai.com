@@ -118,9 +118,9 @@ submission form registers a submitted entry's `sourceUrl` into the shared
 index automatically (best-effort — a network failure doesn't block the
 local save).
 
-`apps/browser-extension` is a dependency-free Manifest V3 extension (no
+`apps/debate-web-ext` is a dependency-free Manifest V3 extension (no
 bundler, not part of this repo's `bun`/`turbo` workspaces — see its own
-[README](../../apps/browser-extension/README.md)) whose popup calls the same
+[README](../../apps/debate-web-ext/README.md)) whose popup calls the same
 `GET /api/evidence-reuse-check` route against the active tab's URL,
 configurable to a non-production API base URL via an Options page.
 
@@ -287,8 +287,8 @@ panels/EvidenceLibraryPanel.tsx (submission form, entry.sourceUrl set)
   → registerRemoteReuseEntry(entry)        — lib/evidence-reuse-check-client.ts
       → POST /api/evidence-reuse-check     — app/api/evidence-reuse-check/route.ts (D1 upsert)
 
-apps/browser-extension/popup.js (active tab's URL)
-  → checkPageForExistingCards(pageUrl, apiBase) — apps/browser-extension/api.js
+apps/debate-web-ext/popup.js (active tab's URL)
+  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/api.js
       → GET ${apiBase}/api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
 ```
 
@@ -515,19 +515,19 @@ one, and both empty-input cases).
   invalidation now updates that index incrementally instead of rebuilding it
   (see "Real search index" above) — no further follow-up remains open on
   this bullet.
-- Two separate browser extensions now call the reuse check, and neither
-  supersedes the other: `extension/card-reuse-checker` deep-links into this
-  route's `?checkUrl=` param to run the *local* check against the active
-  tab's URL (see
-  [`on-page-card-reuse-search.md`](./on-page-card-reuse-search.md)), while
-  `apps/browser-extension` calls the *shared* `GET /api/evidence-reuse-check`
-  route (see "Shared, server-backed reuse index + browser extension" above
-  and its own [README](../../apps/browser-extension/README.md)). Folding them
-  into one extension that does both checks is not done.
-- The shared-index extension is check-only — it doesn't register a newly-cut
-  card into the shared reuse index itself (only the web app's submission
-  form does that today), and its `host_permissions` only pre-authorize
-  `debate-ai.com` and `localhost:3000`.
+- The two browser extensions this section used to describe separately
+  (a local-check-only, deep-link-based `extension/card-reuse-checker`, and a
+  shared-index `apps/debate-web-ext`) have since been folded into one:
+  `apps/debate-web-ext` calls the *shared* `GET /api/evidence-reuse-check`
+  route directly (see "Shared, server-backed reuse index + browser
+  extension" above and its own
+  [README](../../apps/debate-web-ext/README.md)) — no separate deep-link
+  extension exists anymore. It's check-only — it doesn't register a
+  newly-cut card into the shared reuse index itself (only the web app's
+  submission form does that today) — and its `host_permissions` only
+  pre-authorize `debate-ai.com` and `localhost:3000`. See
+  [`on-page-card-reuse-search.md`](./on-page-card-reuse-search.md) for its
+  full details, including its Options page's skip-check domain whitelist.
 - The tag rename/merge tool now rewrites both persisted tag stores (see
   "Tag rename/merge" above) and the Contributions Feed form now has the same
   tag autocomplete as the evidence-library form (see "Tag autocomplete on

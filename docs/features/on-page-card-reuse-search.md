@@ -5,10 +5,9 @@ Checks whether a page has already been cut into the
 "Check this page" box, now also automatically from a browser extension —
 before a contributor spends time cutting a duplicate card.
 
-- **Route:** `/cards/library` (the "Check this page" box), plus a
-  `?checkUrl=` query param the extension deep-links into.
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
-- **Extension:** [`extension/card-reuse-checker`](../../extension/card-reuse-checker/README.md)
+- **Route:** `/cards/library` (the "Check this page" box)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
+- **Extension:** [`apps/debate-web-ext`](../../apps/debate-web-ext/README.md)
 
 ## What it does
 
@@ -24,8 +23,7 @@ persisted repository.
 `EvidenceLibraryPanel`'s "Check this page" box (on `/cards/library`) lets a
 contributor paste a URL and see the result. The same box also reads an
 optional `checkUrl` query param (via `next/navigation`'s `useSearchParams`)
-on mount and, when present, pre-fills and auto-runs the check — this is what
-the browser extension deep-links into.
+on mount and, when present, pre-fills and auto-runs the check.
 
 ## Check history
 
@@ -44,29 +42,49 @@ a future run could add a second record once that resolves, if useful.
 
 ## The browser extension
 
-`extension/card-reuse-checker` is an unpacked (not store-published)
-Manifest V3 browser extension. Clicking its toolbar icon reads the active
-tab's URL and opens `/cards/library?checkUrl=<that URL>` in a new tab —
-running the exact same check the manual box runs, just without having to
-copy/paste the URL yourself.
+`apps/debate-web-ext` is an unpacked (not store-published) Manifest V3
+browser extension — plain HTML/JS, no bundler, not part of this repo's
+`bun`/`turbo` workspaces. Clicking its toolbar icon reads the active tab's
+URL and calls a small, dedicated server-backed reuse index —
+`GET /api/evidence-reuse-check?url=` (`apps/debate-ai.com/app/api/
+evidence-reuse-check/route.ts`, D1-backed, mirroring
+`shared-evidence-library.ts`'s `normalizeSourceUrl` matching rules) — so it
+answers "has anyone on the team cut this," not just this one browser's own
+`localStorage` copy. The web app's own `/cards/library` "Check this page"
+box checks the same local-repository match `shared-evidence-library.ts`
+always has; the extension is check-only against the shared index and
+doesn't register new cards into it (only the web app's Evidence Library
+submission form does that).
 
-It can't call the check directly: the evidence repository is persisted in
-`debate-ai.com`'s own browser localStorage, a different origin the
-extension has no access to, and this repo has no server-side API for the
-evidence library. `lib/shared-evidence-library.ts`'s `buildReuseCheckDeepLink`
-builds the deep-link URL; the extension's `deep-link.js` keeps a
-plain-JS mirror of that same function in sync (no build step exists to
-import the TypeScript package directly). See the extension's own README for
-install and settings instructions (it defaults to `https://debate-ai.com`,
-overridable in its Options page for a self-hosted or local-dev deployment).
+### Options: API base and skip-check whitelist
+
+The extension's Options page (the popup's "Settings" link) has two
+settings, both synced via `chrome.storage.sync`:
+
+- **API base URL** — which `debate-ai.com` deployment to check against
+  (defaults to `https://debate-ai.com`; only that host and
+  `http://localhost:3000` are pre-authorized in `manifest.json`'s
+  `host_permissions`).
+- **Skip-check whitelist** — idea #7's "An extension options page for
+  whitelisting sites" follow-up. One domain per line (e.g. an internal team
+  wiki, a general reference site that's never itself a cut card's source).
+  Before calling the reuse-check endpoint, the popup checks the active
+  tab's hostname against this list (`api.js`'s `isUrlDomainSkipped`, an
+  exact or subdomain match) and, when it matches, renders a neutral
+  "on your skip-check whitelist" status without a network request at all.
+
+See the extension's own README for install instructions.
 
 ## Known gaps
 
 - The extension is unpacked/"Load unpacked" only — no Chrome Web Store or
   Firefox Add-ons listing exists (no store-publishing pipeline in this
   repo).
-- The extension has no automated tests of its own — Chrome-extension-API
-  code isn't exercisable in this repo's Vitest/jsdom setup. Its
-  `buildReuseCheckDeepLink` logic is Vitest-covered where it's authoritative,
-  in `packages/debate-card-search/test/shared-evidence-library.test.ts`.
+- The extension has no automated tests of its own (no test runner is wired
+  up for this plain-JS, no-bundler extension) — verified manually via "Load
+  unpacked". Its request/response shape mirrors
+  `evidence-reuse-check-client.ts`, which is Vitest-covered where it's
+  authoritative.
 - No extension icon set — Chrome shows a generic placeholder toolbar icon.
+- No team dashboard of pages flagged as already-cut yet (idea #7's other
+  open Next item) — the reuse check stays a per-page, on-demand lookup.
