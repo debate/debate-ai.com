@@ -6,6 +6,38 @@
 _No task currently in progress._
 
 ### Completed
+- **Broken build: `apps/debate-ai.com/package.json` missing the
+  `debate-practice-vs-ai` workspace dependency (found and fixed while
+  verifying the entry below).** A fresh `bun run build:web` failed outright:
+  `Error: [vite]: Rolldown failed to resolve import "debate-practice-vs-ai"
+  from "/home/user/debate-ai.com/apps/debate-ai.com/lib/practice-vs-ai/
+  backend.ts"`. Root cause: the "Port the Go practice-vs-AI backend to
+  Node/TS and dock it in debate-ai.com" commit added real
+  `import ... from "debate-practice-vs-ai"` usage in
+  `lib/practice-vs-ai/backend.ts`/`store.ts` (the package at
+  `packages/debate-round-practice-ai`, whose `package.json` `name` field is
+  `debate-practice-vs-ai` — a dir-name/package-name mismatch, same
+  convention as `debate-flow`/`debate-flow-ebb` and
+  `debate-search-evidence`/`debate-research-evidence` elsewhere in this
+  repo) but never added the corresponding `"debate-practice-vs-ai":
+  "workspace:*"` line to `apps/debate-ai.com/package.json`'s dependencies
+  (a much older, now-deleted one-file re-export package of the same name
+  did have that line, removed correctly when *that* package was deleted in
+  an earlier fix — this is a fresh, unrelated gap from the new real
+  package). Added the missing dependency line and ran `bun install` to
+  regenerate `bun.lock`. Verified clean: a full `bun run test` (4326
+  passing), `bunx turbo run typecheck --filter=debate-ai-web` (all green,
+  `debate-practice-vs-ai:typecheck` included), and `bunx turbo build
+  --filter=debate-ai-web` (the full production build, `/versus-ai` route
+  intact) all pass — confirmed broken beforehand by reverting just the
+  `package.json`/`bun.lock` change and reproducing the identical Rolldown
+  resolution error. Landed as its own, separate commit rather than folded
+  into the whitelisting-follow-up commit below, since it's an unrelated fix
+  — small, mechanical, and necessary to get a clean build (this repo has no
+  CI gate on this exact build step today, but a broken build blocks any
+  future verification run the same way it blocked this one).
+
+
 - **Coaching Programs and Group Challenges — a coach-facing roster analytics
   dashboard (idea #13's Next item).** Another repeat of the standing prompt
   ("integrate all the tools into the UI... create user settings and link
