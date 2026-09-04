@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { EvidenceLibraryPanel } from "debate-card-search"
+import { EvidenceLibraryPanel } from "debate-research-evidence"
 
 export const metadata: Metadata = {
   title: "Shared Evidence Library",

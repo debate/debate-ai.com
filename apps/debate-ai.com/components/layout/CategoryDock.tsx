@@ -7,7 +7,7 @@ import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, Lay
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
-import { useAccountNotifications } from "debate-round"
+import { useAccountNotifications } from "debate-team-collaboration"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,

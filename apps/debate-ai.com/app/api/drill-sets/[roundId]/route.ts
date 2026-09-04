@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedDrillSets } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidDrillSetRecord, MAX_SAVED_DRILL_SET_BYTES } from "debate-round"
+import { isValidDrillSetRecord, MAX_SAVED_DRILL_SET_BYTES } from "debate-practice-rounds"
 
 /**
  * Account-linked drill-set sync — the "sharing the 'Practice tier' status

@@ -9,7 +9,7 @@
  * `ReviewQueueWithIdentity.tsx`.
  */
 
-import { ContributionsFeedPanel, deriveContributorIdFromSessionIdentity } from "debate-card-search"
+import { ContributionsFeedPanel, deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
 import { useSession } from "@/lib/hooks/useSession"
 
 export function ContributionsFeedWithIdentity() {

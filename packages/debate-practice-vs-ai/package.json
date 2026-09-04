@@ -15,7 +15,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "debate-round": "workspace:*"
+    "debate-practice-rounds": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

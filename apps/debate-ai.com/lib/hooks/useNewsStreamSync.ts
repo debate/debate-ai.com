@@ -18,8 +18,16 @@
  */
 
 import { useCallback, useRef } from "react"
-import { fetchUserSettings, saveUserSettings } from "debate-round"
-import type { NewsStreamSyncAdapter } from "debate-card-search"
+import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "debate-round"
+import type { NewsStreamSyncAdapter, NewsSyncPayload } from "debate-community"
+
+// `FullUserSettingsPayload` (in `debate-round`) no longer carries the News
+// Stream fields itself — `debate-community` (which owns `NewsSyncPayload`)
+// already depends on `debate-round` for its Prep Notes/notifications
+// panels, so folding `NewsSyncPayload` into `debate-round`'s own type would
+// create a package cycle. The `/api/settings` row still reads/writes both
+// on the same record; this hook intersects the two types locally instead.
+type SettingsWithNewsSync = FullUserSettingsPayload & NewsSyncPayload
 
 export function useNewsStreamSync(): NewsStreamSyncAdapter {
   // Whether the hydrate call found a signed-in session — pushes are skipped
@@ -28,7 +36,7 @@ export function useNewsStreamSync(): NewsStreamSyncAdapter {
 
   const hydrate = useCallback(async () => {
     try {
-      const remote = await fetchUserSettings()
+      const remote = (await fetchUserSettings()) as SettingsWithNewsSync | null
       if (!remote) return null
       remoteAvailable.current = true
       return { read: remote.newsRead ?? [], liked: remote.newsLiked ?? [] }
@@ -41,7 +49,8 @@ export function useNewsStreamSync(): NewsStreamSyncAdapter {
 
   const pushRead = useCallback((allReadIds: string[]) => {
     if (!remoteAvailable.current) return
-    saveUserSettings({ newsRead: allReadIds }).catch(() => {
+    const patch: Partial<SettingsWithNewsSync> = { newsRead: allReadIds }
+    saveUserSettings(patch).catch(() => {
       // Best-effort — the read/like already applied locally in the panel,
       // matching useFavoriteTools's/UserSettingsPanel's "local apply is
       // never blocked by a sync failure" convention.
@@ -50,7 +59,8 @@ export function useNewsStreamSync(): NewsStreamSyncAdapter {
 
   const pushLiked = useCallback((allLikedIds: string[]) => {
     if (!remoteAvailable.current) return
-    saveUserSettings({ newsLiked: allLikedIds }).catch(() => {})
+    const patch: Partial<SettingsWithNewsSync> = { newsLiked: allLikedIds }
+    saveUserSettings(patch).catch(() => {})
   }, [])
 
   return { hydrate, pushRead, pushLiked }
