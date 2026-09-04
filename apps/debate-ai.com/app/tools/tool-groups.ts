@@ -251,9 +251,9 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
       },
       {
-        href: "/versus-ai", label: "Online Debate Versus AI", icon: Bot,
-        description: "Practice a full round against an AI opponent, choosing your own format and side.",
-        highlights: ["Speeches submitted one at a time, in real turn order", "Any debate-timer format, aff or neg"],
+        href: "/versus-ai", label: "Practice vs AI", icon: Bot,
+        description: "Debate a full timed round against an AI opponent, then get a judged scorecard.",
+        highlights: ["Thirteen opponent personas across five difficulty tiers", "Timed opening, cross-examination and closing phases with an AI verdict"],
       },
       {
         href: "/practice-round", label: "Practice Round Simulator", icon: PlayCircle,

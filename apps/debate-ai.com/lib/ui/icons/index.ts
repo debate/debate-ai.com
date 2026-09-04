@@ -18,3 +18,4 @@ export { default as IconTools } from "./icon-tools.svg";
 export { default as IconTopRounds } from "./icon-top-rounds.svg";
 export { default as IconTrophy } from "./icon-trophy.svg";
 export { default as IconTrophyGoat } from "./icon-trophy-goat.svg";
+export { default as IconVsAi } from "./icon-vs-ai.svg";

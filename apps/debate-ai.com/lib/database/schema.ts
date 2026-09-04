@@ -873,3 +873,45 @@ export const savedDrillSets = sqliteTable(
 );
 
 export type SavedDrillSetRow = typeof savedDrillSets.$inferSelect;
+
+// Practice vs AI rounds — the storage the ported `debate-practice-vs-ai`
+// backend needs in place of the Go server's Mongo `debatevsbot` collection.
+// One row per round: who owns it, which bot and topic it ran, the transcript
+// so far, the phase clocks, and the outcome once judged or conceded. The
+// whole `DebateVsBotRecord` shape (history and timings included) lives in the
+// `data` JSON blob, matching how `saved_flows`/`saved_rounds` store their
+// records; the columns alongside it are only what queries filter or sort on.
+export const practiceVsAiDebates = sqliteTable(
+  "practice_vs_ai_debates",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** The Go schema keyed debates by email; kept so ported queries match. */
+    email: text("email").notNull().default(""),
+    botName: text("bot_name").notNull().default(""),
+    topic: text("topic").notNull().default(""),
+    /** Free-text outcome: "User conceded", or the judge's raw JSON reply. */
+    outcome: text("outcome").notNull().default(""),
+    /** Judged status — "win" | "loss" | "draw" | "pending". */
+    result: text("result").notNull().default("pending"),
+    /** The full `DebateVsBotRecord`, JSON-encoded. */
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_practice_vs_ai_debates_user_id").on(table.userId),
+    userCreatedIdx: index("idx_practice_vs_ai_debates_user_created").on(
+      table.userId,
+      table.createdAt,
+    ),
+  }),
+);
+
+export type PracticeVsAiDebateRow = typeof practiceVsAiDebates.$inferSelect;
