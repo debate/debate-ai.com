@@ -4,17 +4,20 @@
  *   College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
  *   Favorites (h2, plain link)
  *   Lectures (h2, expandable) -> lecture categories (h3)
+ *   Coaching / Research / Practice (h2, expandable) -> tool links (h3)
  */
 
 "use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Image, { StaticImageData } from "next/image";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { IconTrophy, IconLectures, IconBook, IconLeaderboard } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
+import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
@@ -47,6 +50,14 @@ export function VideoSidebarTree({
   onToggleLectures,
 }: VideoSidebarTreeProps) {
   const [collegeExpanded, setCollegeExpanded] = useState(true);
+  // Tool sections all start collapsed: they sit below the video nav this
+  // sidebar exists for, so they stay one click away rather than pushing it
+  // off-screen.
+  const [expandedToolSections, setExpandedToolSections] = useState<Record<string, boolean>>({});
+  const pathname = usePathname();
+
+  const toggleToolSection = (id: string) =>
+    setExpandedToolSections((prev) => ({ ...prev, [id]: !prev[id] }));
 
   // Re-open the College Debates node if the user navigates straight to one
   // of its children (e.g. via URL) while it happens to be collapsed.
@@ -121,6 +132,28 @@ export function VideoSidebarTree({
         ))}
       </TreeItem>
 
+      {SIDEBAR_TOOL_SECTIONS.map((section) => (
+        <TreeItem
+          key={section.id}
+          level={2}
+          href={section.href}
+          title={section.title}
+          icon={section.icon}
+          expanded={expandedToolSections[section.id] ?? false}
+          onToggleExpand={() => toggleToolSection(section.id)}
+        >
+          {section.tools.map((tool) => (
+            <TreeItem
+              key={tool.href}
+              level={3}
+              href={tool.href}
+              title={tool.title}
+              isActive={pathname === tool.href}
+            />
+          ))}
+        </TreeItem>
+      ))}
+
       <div className="mt-1 flex flex-col gap-0.5 border-t border-border/60 pt-2">
         <TreeItem level={3} href="/videos/dictionary" title="Glossary of Terms" icon={IconBook} muted />
         <TreeItem level={3} href="/videos/rankings" title="Rankings" icon={IconLeaderboard} muted />
@@ -136,7 +169,8 @@ interface TreeItemProps {
   title: string;
   count?: number;
   isActive?: boolean;
-  icon?: string | StaticImageData;
+  /** An imported image (SVG/PNG) or a Lucide component. */
+  icon?: string | StaticImageData | LucideIcon;
   /** Present together with `onToggleExpand` to make this item expandable. */
   expanded?: boolean;
   onToggleExpand?: () => void;
@@ -148,6 +182,9 @@ interface TreeItemProps {
 function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggleExpand, muted, children }: TreeItemProps) {
   const expandable = children != null && onToggleExpand != null;
   const Heading = level === 2 ? "h2" : "span";
+  // Lucide icons come through as components; the icon set in `ui/icons` as
+  // image sources for `next/image`.
+  const LucideGlyph = typeof icon === "function" ? (icon as LucideIcon) : null;
 
   return (
     <div>
@@ -164,7 +201,11 @@ function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggl
             level === 3 ? "pl-7" : "pl-2",
           )}
         >
-          {icon && <Image src={icon} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />}
+          {LucideGlyph ? (
+            <LucideGlyph className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+          ) : icon ? (
+            <Image src={icon as string | StaticImageData} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />
+          ) : null}
           <Heading
             className={cn(
               "min-w-0 flex-1 truncate",
