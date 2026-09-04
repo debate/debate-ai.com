@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **Scout-to-Strategy Workflow — a side-by-side case-option comparison
+  table ("🧭 Scout-to-Strategy Workflow" bullet's Next item).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history, `saved_strategy_recommendations` among them) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the "🧭 Scout-to-Strategy Workflow" bullet's own Next item, "a
+  side-by-side case-option comparison table." Today's "Case rankings" list
+  only ever showed each case's *total* opponent-tag overlap score, not
+  which specific tags drove it, so two cases tied on total score looked
+  identical even when they shared completely different opponent-run tags.
+  `round/scout-to-strategy.ts`'s `RankedCaseOption` gains an optional
+  `tagOverlaps` field — one `TagOverlap` (`{ tag, opponentFrequency }`) per
+  entry of the case's own `argumentTags`, in order — populated by a new
+  `computeCaseTagOverlaps` and wired into `rankCaseOptions` alongside its
+  existing `overlapScore` total (still computed the same way, now derived
+  by summing the breakdown instead of a separate pass). The field is
+  optional rather than required so older persisted recommendations built
+  before it existed, and every pre-existing hand-constructed
+  `RankedCaseOption` test fixture across `case-choice-ai.test.ts`,
+  `case-choice-client.test.ts`, `savedStrategyRecommendations.test.ts`, and
+  `strategyRecommendations.test.ts`, keep typechecking unchanged. A new
+  pure `buildCaseComparisonTable(caseRankings)` pivots every case's
+  breakdown into one row per tag run by at least one case (most
+  opponent-frequent first, alphabetical tie-break) with a column per case,
+  each cell holding the opponent's frequency for that tag when the case
+  runs it (0 otherwise) — gracefully returning no rows for a
+  `RankedCaseOption` with no `tagOverlaps` at all, so an already-persisted
+  recommendation from before this change renders without throwing.
+  `panels/StrategyPanel.tsx` renders the result as a "Case comparison"
+  table beneath each recommendation's existing "Case rankings" list,
+  scrollable on narrow screens, shown only once a recommendation has two or
+  more ranked case options (nothing to compare with just one). See
+  `docs/features/scout-to-strategy.md`'s new "Side-by-side case comparison
+  table" section, which also replaces that doc's now-stale "No other
+  follow-ups remain open" closing line. Vitest-covered:
+  `computeCaseTagOverlaps` (no-profile zeroed breakdown, per-tag frequency
+  pairing preserving argument-tag order, an empty-tags case), the new
+  `tagOverlaps` field on `rankCaseOptions`'s output (with and without an
+  opponent profile), and `buildCaseComparisonTable` (empty input, an
+  all-empty-tags ranked list, a legacy `RankedCaseOption` missing
+  `tagOverlaps` entirely, the full multi-case pivot with per-cell values
+  and most-frequent-first sort order, and an equal-frequency alphabetical
+  tie-break) — `packages/debate-round/test/scout-to-strategy.test.ts`, 51
+  passing cases in that file (up from 41), 4202 passing across the whole
+  suite. `bun run typecheck` and `bun run build` both pass clean.
 - **AI Practice Opponent — extend the Practice Round Simulator's own
   separate persona setup to carry a difficulty too ("🤖 AI Practice
   Opponent" bullet's Next item).** Another repeat of the standing prompt
@@ -15571,7 +15623,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
 * 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
-* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
+* 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. The side-by-side-case-option-comparison-table follow-up is also now done: once a recommendation has two or more ranked case options, a "Case comparison" table renders below it — one row per opponent-run argument tag (most frequent first), one column per case, cells showing the opponent's recorded frequency for that tag when the case runs it (`round/scout-to-strategy.ts#buildCaseComparisonTable`, pivoting a new `tagOverlaps` breakdown field on `RankedCaseOption`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Side-by-side case comparison table" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data
 
