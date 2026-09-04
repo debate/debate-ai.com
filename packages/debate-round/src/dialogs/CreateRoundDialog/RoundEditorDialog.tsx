@@ -11,8 +11,8 @@
  */
 
 import Image from "next/image"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "debate-ui/src/primitives/dialog"
-import { Component as ShatterButton } from "debate-ui/src/effects/shatter-button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/primitives/dialog"
+import { Component as ShatterButton } from "../../ui/effects/shatter-button"
 import { useRoundEditorForm } from "./useRoundEditorForm"
 import { TournamentSection } from "./TournamentSection"
 import { RoundFlowsSection } from "./RoundFlowsSection"
@@ -21,10 +21,10 @@ import { TeamSection } from "./TeamSection"
 import { JudgesSection } from "./JudgesSection"
 import { WinnerSection } from "./WinnerSection"
 import { SpectatorsSection } from "./SpectatorsSection"
-import { IconRounds } from "debate-ui/src/icons"
+import { IconRounds } from "../../ui/icons"
 import { Lock } from "lucide-react"
-import { Label } from "debate-ui/src/primitives/label"
-import { Switch } from "debate-ui/src/primitives/switch"
+import { Label } from "../../ui/primitives/label"
+import { Switch } from "../../ui/primitives/switch"
 
 /**
  * Props for the {@link RoundEditorDialog} component.

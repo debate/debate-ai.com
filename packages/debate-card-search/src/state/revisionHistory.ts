@@ -21,6 +21,11 @@
 import type { CardRevision, ContributorRevisionStats, RevisionRewardWeights } from "../lib/revision-incentives";
 import { buildRevisionIncentiveLeaderboard, DEFAULT_REVISION_REWARD_WEIGHTS } from "../lib/revision-incentives";
 import { getUtcDayKey } from "../lib/daily-best-card";
+import {
+  buildCardRevisionTextDiff,
+  type CardRevisionTextDiff,
+  type EvidenceEntryTextSnapshot,
+} from "../lib/revision-text-diff";
 
 /** A `CardRevision` as persisted: a unique id plus when it was recorded. */
 export interface CardRevisionRecord extends CardRevision {
@@ -28,6 +33,27 @@ export interface CardRevisionRecord extends CardRevision {
   id: string;
   /** ISO timestamp of when this revision was recorded. */
   revisedAt: string;
+  /**
+   * The card's diffable text fields (`argBlock`/`text`/`cite`) just before
+   * this revision, captured alongside the scored `before` snapshot so a
+   * reader can see *what* changed, not just how it scored. Optional: a
+   * record saved before this field existed, or one built from a
+   * caller-supplied `CardRevision` with no source entry to read text from,
+   * simply has no diff available (`getRevisionTextDiff` returns `null`).
+   */
+  beforeText?: EvidenceEntryTextSnapshot;
+  /** The card's diffable text fields just after this revision — see `beforeText`. */
+  afterText?: EvidenceEntryTextSnapshot;
+}
+
+/**
+ * Builds the word-level before/after diff for a persisted revision record,
+ * or `null` when it wasn't recorded with text snapshots (see `beforeText`/
+ * `afterText` above).
+ */
+export function getRevisionTextDiff(record: CardRevisionRecord): CardRevisionTextDiff | null {
+  if (!record.beforeText || !record.afterText) return null;
+  return buildCardRevisionTextDiff(record.beforeText, record.afterText);
 }
 
 const STORAGE_KEY = "revisionHistory";
@@ -56,6 +82,13 @@ function byRevisedAtAscending(a: CardRevisionRecord, b: CardRevisionRecord): num
 /** Lists every persisted revision record, across all cards and contributors, oldest first. */
 export function listRevisionHistory(): CardRevisionRecord[] {
   return readAll().sort(byRevisedAtAscending);
+}
+
+/** Lists the `limit` most recently recorded revisions, across all cards and contributors, newest first. */
+export function listRecentRevisionHistory(limit: number): CardRevisionRecord[] {
+  return readAll()
+    .sort((a, b) => byRevisedAtAscending(b, a))
+    .slice(0, Math.max(0, limit));
 }
 
 /** Lists every persisted revision record for one card, oldest first. */

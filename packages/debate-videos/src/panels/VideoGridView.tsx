@@ -9,7 +9,7 @@
 
 import React from "react"
 import type { VideoType } from "../types/videos"
-import { Footer } from "debate-ui/src/layout/footer"
+import { Footer } from "../ui/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoGrid } from "../components/video-grid/VideoGrid"

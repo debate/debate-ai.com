@@ -41,10 +41,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Bell, Heart, Megaphone, Sparkles, Trophy } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Card, CardContent } from "debate-ui/src/primitives/card"
-import { cn } from "debate-ui/src/lib/utils"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Card, CardContent } from "../ui/primitives/card"
+import { cn } from "../ui/lib/utils"
 import {
   buildNewsFeed,
   isNewsItemLiked,

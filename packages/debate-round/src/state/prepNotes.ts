@@ -38,6 +38,7 @@ import {
   updateNoteStatus,
 } from "../flow/strategy-sync-notes";
 import { recordPrepNoteAssignedNotification } from "./prepNoteNotifications";
+import { deleteRepliesForNote } from "./prepNoteReplies";
 
 const STORAGE_KEY = "prepNotes";
 
@@ -96,9 +97,13 @@ export function savePrepNote(note: PrepNote): void {
   writeAll(notes);
 }
 
-/** Deletes a persisted prep note by id; a no-op if it isn't stored. */
+/**
+ * Deletes a persisted prep note by id (a no-op if it isn't stored), and any
+ * replies posted to its thread (`state/prepNoteReplies.ts`) along with it.
+ */
 export function deletePrepNote(id: string): void {
   writeAll(readAll().filter((note) => note.id !== id));
+  deleteRepliesForNote(id);
 }
 
 /**

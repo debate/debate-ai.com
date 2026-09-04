@@ -6,6 +6,821 @@
 _No task currently in progress._
 
 ### Completed
+- **Strategy Sync Notes — threaded replies on a note instead of flat
+  status ("🔄 Strategy Sync Notes" bullet's Next item).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history)
+  and every tool is already reachable from the Tools page and CardMirror's
+  command palette, so this slice picked the next named, unblocked
+  follow-up instead: the "🔄 Strategy Sync Notes" bullet's own Next item,
+  "threaded replies on a note instead of flat status." New
+  `state/prepNoteReplies.ts` (`packages/debate-round`) is a local-first
+  comment-thread store — `PrepNoteReply { id, noteId, authorId, text,
+  postedAt }` — mirroring `debate-card-search`'s
+  `state/dailyBestCardComments.ts` convention exactly (trim + `"Anonymous"`
+  fallback for `authorId`, trim + cap at `MAX_PREP_NOTE_REPLY_TEXT_LENGTH`
+  for `text`, oldest-first listing via `listRepliesForNote`/
+  `listAllPrepNoteReplies`, `countRepliesForNote`, `deletePrepNoteReply`,
+  and a `deleteRepliesForNote` cascade helper this idea's own
+  `PrepNote`-per-note keying needs but `dailyBestCardComments.ts` doesn't).
+  Unlike that comment-thread precedent, this store has no account-sync
+  counterpart yet, since `state/prepNotes.ts` itself still isn't
+  account-synced (a separate, larger follow-up of its own — see
+  `docs/features/prep-notes.md`'s Known gaps). `state/prepNotes.ts`'s
+  `deletePrepNote` now also calls `deleteRepliesForNote(id)`, so a deleted
+  note doesn't leave orphaned replies no UI can reach. `panels/
+  PrepNotesPanel.tsx` gains a `PrepNoteReplyThread` component (mirroring
+  `debate-card-search`'s `DailyBestCardPanel`'s `CommentThread`) and a
+  "Replies (N)" toggle per note, collapsed by default; the thread reads
+  `state/prepNoteReplies.ts` fresh at render time rather than caching a
+  copy in component state, so any state update (posting, deleting, a
+  cross-tab `storage` event) shows the current thread without extra
+  plumbing. `flow/live-update.ts`'s `PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS`
+  now includes `"prepNoteReplies"` alongside `"prepNotes"`, so a reply
+  posted or deleted in another browser tab refreshes this panel the same
+  way a status/priority/assignment change already did — the existing
+  `isPrepNotesPanelLiveUpdateStorageEvent` test already iterates that
+  array, so no test changes were needed there. See
+  `docs/features/prep-notes.md`'s new "Threaded replies" section.
+  Vitest-covered: new `packages/debate-round/test/prepNoteReplies.test.ts`
+  (24 tests: posting/trimming/the `"Anonymous"` fallback/the text-length
+  cap/distinct ids, oldest-first listing both across and within notes,
+  counting, single-reply deletion, and the `deleteRepliesForNote` cascade
+  helper); `packages/debate-round/test/prepNotes.test.ts`'s `deletePrepNote`
+  suite gains a case asserting a deleted note's replies are removed while
+  another note's replies are kept. Verification: `bunx vitest run
+  packages/debate-round/test/prepNoteReplies.test.ts
+  packages/debate-round/test/prepNotes.test.ts
+  packages/debate-round/test/live-update.test.ts` (3/3 files, 67 tests
+  pass); `bunx turbo run typecheck --filter=debate-round` (9/9 in-scope
+  package tasks pass); full `bun run test` (224 files, 4168 tests pass);
+  `bun run build:web` (production build succeeded, `/prep-notes` route
+  intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js`/`bun.lock` churn was reverted before committing,
+  unrelated to this change). **PR:**
+  https://github.com/debate/debate-ai.com/pull/530. **Completed:**
+  2026-09-04.
+- **AI Drill Generator — account-sync drill sets across devices ("📚 AI
+  Drill Generator" bullet's account-sync Next item).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's history)
+  and every tool is already reachable from the Tools page and CardMirror's
+  command palette, so this slice picked the next named, unblocked
+  follow-up instead: the "📚 AI Drill Generator" bullet's own
+  Known-gaps-suggested next step, "sharing the 'Practice tier' status
+  across devices for a signed-in user" — mirroring the exact
+  local-first/merge-by-key/`updatedAt`-conflict-resolution pattern
+  `state/wordCountRounds.ts`/`hooks/useWordCountRounds.ts` already
+  established. `state/drillSets.ts`'s `DrillSetRecord` gains an optional
+  `updatedAt`, stamped by every mutating function
+  (`saveDrillSet`/`saveDrillAiScript`/`toggleDrillCompletion`/
+  `scheduleDrillReview`); new `adoptDrillSet` (preserves a synced record's
+  own `updatedAt` rather than re-stamping it), `resolveDrillSetConflict`,
+  and `planDrillSetMerge` mirror `adoptWordCountRound`/
+  `resolveWordCountRoundConflict`/`planWordCountRoundMerge` exactly, keyed
+  by `roundId` (this record's existing natural key — `saveDrillSet` already
+  upserted by `roundId` alone). `buildAndSaveDrillSet` now returns the
+  persisted (stamped) record rather than the pre-save draft, so a caller
+  can push exactly what's stored. New `state/savedDrillSets.ts`
+  (`isValidDrillSetRecord`/`MAX_SAVED_DRILL_SET_BYTES`, mirroring
+  `state/savedWordCountRounds.ts`), `round/drill-sets-client.ts` (a
+  `/api/drill-sets` fetch client: list/save/delete, `401`→`null`), and
+  `hooks/useDrillSets.ts` (local-first state, a one-time mount merge, every
+  interactive mutation applying locally first then best-effort pushing to
+  the account) — all three exported from the package's `index.ts`.
+  `DrillSetsPanel` now reads/writes exclusively through `useDrillSets`
+  instead of `state/drillSets.ts`'s mutating functions directly, and shows
+  a one-line synced-status message mirroring `WordCountRoundsPanel`'s own.
+  New D1 `saved_drill_sets` table (one row per `(user, roundId)` pair, same
+  shape as `saved_word_count_rounds`) plus account-only (401 signed-out)
+  `/api/drill-sets` (`GET`) and `/api/drill-sets/[roundId]` (`PUT`/`DELETE`)
+  routes, migration `apps/debate-ai.com/drizzle/0028_aspiring_human_fly.sql`
+  (generated via `drizzle-kit generate`, not hand-written). See
+  `docs/features/drill-sets.md`'s new "Account sync" section (and its
+  updated "Known gaps"). Vitest-covered: `packages/debate-round/test/
+  drillSets.test.ts` gains `updatedAt`-stamping cases for all four mutating
+  functions plus full `adoptDrillSet`/`resolveDrillSetConflict`/
+  `planDrillSetMerge` suites (mirroring `wordCountRounds.test.ts`'s
+  equivalents), and its existing exact-shape `toEqual` assertions against
+  stored records were switched to `toMatchObject` where `updatedAt` is now
+  present but not asserted on; new `test/savedDrillSets.test.ts` (24 tests:
+  well-formed acceptance, each optional field, and each malformed shape);
+  new `test/drill-sets-client.test.ts` (8 tests: list/save/delete, the
+  `401`-to-`null` case, and server-error propagation) — 50 new/changed
+  tests overall. Verification: `bunx vitest run
+  packages/debate-round/test/drillSets.test.ts
+  packages/debate-round/test/savedDrillSets.test.ts
+  packages/debate-round/test/drill-sets-client.test.ts
+  packages/debate-round/test/drillProgressUnlocks.test.ts` (4/4 files, 113
+  tests pass); `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ai-web` (9/9 in-scope package tasks pass — `debate-ai-web`
+  itself has no standalone typecheck script, matching prior runs); full
+  `bun run test` (233 files, 4249 tests passed — up from 231/4199 before
+  this slice); `bun run build:web` (production build succeeded, `/drills`
+  route and the new `/api/drill-sets`/`/api/drill-sets/:roundId` routes
+  intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js` churn was reverted before committing, unrelated to
+  this change). **PR:** https://github.com/debate/debate-ai.com/pull/527.
+  **Completed:** 2026-09-04.
+- **Opponent Team Profiles — a side-by-side us-vs-opponent comparison view
+  (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
+  Profiles" Next item).** Another repeat of the standing prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL...
+  with ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🕵️ Opponent Team Profiles" bullet's own
+  sole remaining item, "a side-by-side us-vs-opponent comparison view" (not
+  blocked by the Tabroom login wall documented below, since it works off
+  already-persisted hand-entered/CSV-imported records, not live scraping).
+  `rankings/opponent-team-profile.ts` gains `buildOpponentTeamComparison(a,
+  b)`, which splits two teams' `topArgumentTags` into shared ground (ranked
+  by combined frequency across both) and each team's own distinct tags —
+  the scouting-useful signal of what a team runs that the other doesn't —
+  plus `buildOpponentTeamComparisonText`/`opponentTeamComparisonFilename`
+  for a plain-text download, mirroring `debate-round`'s existing
+  `state/coachingSessions.ts#buildCoachingSessionComparison` trio exactly.
+  `OpponentTeamProfilesPanel.tsx` gets a new "Compare vs. opponent" section
+  (shown once at least one opponent profile exists): an opponent picker plus
+  a "Compare" button builds "us" on the fly via
+  `buildOpponentTeamProfile("self", listOwnRoundHistory())` — reusing
+  `debate-round`'s already-existing `state/ownRoundHistory.ts` (the same
+  store the Pre-Round Briefings panel's "Log a round"/"Prior meetings"
+  head-to-head feature already populates) rather than introducing a new "our
+  team" data source — against the chosen opponent's already-persisted
+  profile, renders a two-column table of rounds recorded/record/side records
+  plus the shared/us-only/opponent-only argument breakdown, and a "Download
+  comparison" button once a comparison is built, mirroring
+  `CoachingSessionsPanel.tsx`'s "Compare two sessions" section almost
+  exactly. See `docs/features/opponent-team-profiles.md`'s new "Comparing us
+  vs. an opponent" section. Vitest-covered: new `describe` blocks in
+  `packages/debate-data-sync/test/opponent-team-profile.test.ts` for
+  `buildOpponentTeamComparison` (shared/only-tag splitting with frequency
+  ranking, an alphabetical tie-break, and a no-rounds-either-side case),
+  `buildOpponentTeamComparisonText` (record/side-record/tag-breakdown
+  rendering, and the "no recorded rounds" phrasing for an empty history),
+  and `opponentTeamComparisonFilename` (sanitized `a-vs-b.txt` naming) — 7
+  new tests. Verification: `bunx turbo run typecheck --filter=debate-data-sync
+  --filter=debate-round --filter=debate-ai-web` (9/9 in-scope package tasks
+  pass); full `bun run test` (231 files, 4199 tests passed — up from
+  4188/231 before this slice); `bun run build:web` (production build
+  succeeded, `/opponents` route intact; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
+  before committing, unrelated to this change). Updated the "🕵️ Opponent
+  Team Profiles" bullet below to reflect that no further follow-up is
+  currently tracked for this idea beyond the still-open bulk-CSV-ballot-
+  history item, which stays behind the Tabroom blocker. **PR:**
+  https://github.com/debate/debate-ai.com/pull/524. **Completed:**
+  2026-09-04.
+- **Research Progress Tracking — account-sync the personal goal across
+  devices (Research Crowdsourcing Organizer Features bullet, "📈 Research
+  Progress Tracking" Next item).** Yet another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the exact one the prior "personal goal-setting UI" slice (below)
+  left open — "account-syncing the goal across devices" — closing the
+  "Personal goal is local-only, not account-synced" line from this
+  section's own "Known gaps". New `lib/research-progress-goal-sync.ts`
+  (pure): `ResearchProgressGoalSyncPayload` mirrors `ResearchProgressGoal`
+  minus `contributorId` (the `user_settings` row this syncs onto is already
+  scoped to one signed-in user), `normalizeResearchProgressGoalPatch`
+  accepts `null` (clear) or a well-formed goal object — rejecting an
+  unrecognized field like a smuggled `contributorId`, a non-positive/
+  non-integer/over-`MAX_GOAL_TARGET_COMPLETED_TASK_COUNT` target, or a
+  blank `topic`/`targetDate` — and `serializeResearchProgressGoal`/
+  `parseResearchProgressGoal` handle the new `research_progress_goal` D1
+  column (migration `apps/debate-ai.com/drizzle/0026_damp_dragon_man.sql`),
+  `null` meaning "no goal set" like every other nullable column on that
+  row. New `lib/research-progress-goal-sync-client.ts` talks to
+  `/api/settings` directly (mirrors `argument-library-collections-client.ts`
+  — resolves to `null` rather than throwing on a `401`, so a signed-out
+  browser stays local-only). New `hooks/useResearchProgressGoalSync.ts`
+  wraps the existing local store (`state/researchProgressGoals.ts`)
+  unchanged: local-first, best-effort merges the account's synced goal into
+  localStorage on mount (remote wins, mirroring
+  `useWordLimitPresets`/`useSavedArgumentCollections`), and every
+  `saveGoal`/`clearGoal` applies locally first, then best-effort pushes to
+  the account when signed in. `ResearchProgressPanel.tsx`'s "My research
+  goal" section now sources from this hook instead of calling
+  `state/researchProgressGoals.ts` directly, keeping its own
+  roster-triggered re-derive (a completed task can push the goal over its
+  target) via the hook's `refresh()`. `apps/debate-ai.com/app/api/settings/
+  route.ts` and `lib/database/schema.ts` gain the `researchProgressGoal`
+  field/column alongside every other synced setting on that route. See
+  `docs/features/research-progress-tracking.md`'s new "Personal goal
+  account sync" section (and its updated "Known gaps", "Personal
+  goal-setting"). Vitest-covered: new
+  `packages/debate-card-search/test/research-progress-goal-sync.test.ts`
+  (20 tests — payload validation: a target-only goal, topic/targetDate, the
+  max-target boundary, a non-positive/non-integer/missing target, a blank
+  topic, an unrecognized field, non-object input; patch normalization:
+  accepting `null` and a well-formed goal, rejecting a malformed one, an
+  absent field being a no-op, a non-object body; serialize/parse
+  round-tripping, including corrupt JSON and a stored value that fails
+  validation both reading back as `null`). The hook and API route stay
+  untested at the unit level, matching every other synced field's
+  client/hook layer in this repo (`useWordLimitPresets`,
+  `useSavedArgumentCollections`, `/api/settings` itself) — none have
+  hook-level or route-level Vitest coverage. Verification:
+  `bunx vitest run packages/debate-card-search` (73 files, 1713 tests,
+  including the 20 new ones), `bun run test` (231 files, 4188 tests, full
+  repo), `bun run typecheck` (12/12 packages with a typecheck script), and
+  `bun run build` (4/4 tasks) all green.
+
+- **Research Progress Tracking — personal goal-setting UI (Research
+  Crowdsourcing Organizer Features bullet, "📈 Research Progress Tracking"
+  Next item).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, the "user settings / SQL-linked flows, docs, rounds" half
+  is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "📈 Research Progress Tracking" bullet's
+  own explicitly-named next item, "personal goal-setting UI" (left open by
+  the prior "Topic comparison" slice below). `lib/research-progress.ts`
+  gains `ResearchProgressGoal` (a contributor's own target completed-task
+  count, optionally scoped to one topic, with an optional informational
+  target date) and the pure `computeGoalProgress(progress, goal)`, which
+  resolves the goal's current count straight off an already-built
+  `ContributorProgress` — `totalCompletedTasks` when no topic is set, or
+  that one topic's `TopicProgress.completedTaskCount` (0 if the contributor
+  has no assignments there at all) when it is — and clamps `progressRatio`
+  to `[0, 1]`. The new `state/researchProgressGoals.ts` persists at most one
+  goal per contributor in localStorage (array of records filtered by
+  `contributorId`, mirroring `streakFreezes.ts`'s persistence convention,
+  SSR/no-storage-safe and corrupt-JSON-safe), throwing a new
+  `InvalidGoalTargetError` — leaving the store untouched — on a non-positive
+  target; `getPersistedGoalProgressForContributor` composes
+  `computeGoalProgress` directly against
+  `state/researchProgress.ts#buildPersistedResearchProgressBoard`, the same
+  "compose the pure function directly against the persisted stores"
+  convention `streakFreezes.ts#buildContributorQuestStreakWithFreezes`
+  already uses, so a contributor with a goal but no board row yet still
+  resolves to 0 progress instead of `undefined`. `ResearchProgressPanel.tsx`
+  gets a new "My research goal" section (shown only for a signed-in visitor,
+  reusing the same `signedInContributorId` prop the "You" row-highlight
+  already threads through) above the roster: a target-count input plus a
+  topic dropdown (populated from the team's own topic-comparison list) to
+  set or update a goal, and once set, a `MeterBar` meter toward it with a
+  "🎉 Goal reached" badge on completion and "Clear goal"/"Update goal"
+  actions. Deliberately local-only rather than account-synced this slice —
+  mirrors `streakLapseReminders.ts`'s "lightweight per-visitor preference,
+  not a cross-tool record" scoping, left as a named follow-up below rather
+  than adding a new D1 table/`/api/*` route pair speculatively. See
+  `docs/features/research-progress-tracking.md`'s new "Personal
+  goal-setting" section (and its updated "Known gaps"). Vitest-covered: a
+  new `describe("computeGoalProgress", ...)` block in
+  `packages/debate-card-search/test/research-progress.test.ts` (an overall
+  goal, a topic-scoped goal, a topic the contributor has no assignments in,
+  and progressRatio clamping once the count exceeds the target — 4 new
+  tests) and a new `packages/debate-card-search/test/researchProgressGoals.test.ts`
+  (goal CRUD — set/replace/clear, per-contributor isolation, the
+  `InvalidGoalTargetError` guard, corrupt-storage recovery — plus
+  `getPersistedGoalProgressForContributor` composed against the real
+  persisted board, including a goal with no board row yet and a goal that
+  becomes complete once a task is recorded without re-setting it — 15 new
+  tests). Verification: `bunx turbo run typecheck --filter=debate-card-search
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass); full `bun run test` (230 files, 4168 tests passed — up from
+  4149/229 before this slice); `bun run build:web` (production build
+  succeeded, `/cards/progress-tracking` route intact; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
+  before committing, unrelated to this change). Updated the "📈 Research
+  Progress Tracking" bullet below to reflect that no further follow-up is
+  currently tracked. **PR:**
+  https://github.com/debate/debate-ai.com/pull/513. **Completed:**
+  2026-09-03.
+- **Research Progress Tracking — topic-comparison view across the whole
+  team (Research Crowdsourcing Organizer Features bullet, "📈 Research
+  Progress Tracking" Next item).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the "📈 Research Progress Tracking" bullet's own "a
+  topic-comparison view across the whole team" item (the sibling "personal
+  goal-setting UI" follow-up stays open). `lib/research-progress.ts` already
+  had per-contributor `ContributorProgress.topics` (each contributor's own
+  per-topic assigned/completed counts) but nothing rolled that up across
+  the whole roster — the new `buildTeamTopicComparison(roster)` groups
+  every contributor's topic entries by topic name, summing assigned/
+  completed task counts and counting the distinct contributors with an
+  assignment in each topic, sorted by completion rate ascending
+  (least-covered topic first, tie-broken alphabetically — the same
+  most-urgent-first convention `buildStaleEvidenceDigest` already uses).
+  `ResearchProgressPanel.tsx` gets a new "Topic comparison" section below
+  the existing per-contributor roster table, one row per topic with a
+  `MeterBar` completion meter (reusing the same meter component
+  `ProgressUnlocksPanel`'s "Next tier" column already uses), hidden when no
+  contributor has any topic assignment. See
+  `docs/features/research-progress-tracking.md`'s new "Topic comparison"
+  section. Vitest-covered: a new `describe` block in
+  `packages/debate-card-search/test/research-progress.test.ts`
+  (`buildTeamTopicComparison`'s cross-contributor roll-up, least-covered-
+  first sorting, alphabetical tie-break, empty-roster case, and per-topic
+  contributor-count isolation) — 4 new tests. Verification: `bunx turbo run
+  typecheck --filter=debate-card-search --filter=debate-ui` (3/3 in-scope
+  package tasks pass); full `bun run test` (229 files, 4149 tests passed —
+  up from 4144/229 before this slice); `bun run build:web` (production
+  build succeeded, `/cards/progress-tracking` route intact; the
+  touched-by-build `app-file-list.ts`/`version.ts`/`service-worker.js`
+  churn was reverted before committing, unrelated to this change). Updated
+  the "📈 Research Progress Tracking" bullet below to reflect that only the
+  personal-goal-setting-UI follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/512. **Completed:**
+  2026-09-03.
+- **Opponent Team Profiles — printable/exportable scouting report
+  (Research Crowdsourcing Organizer Features bullet, "🕵️ Opponent Team
+  Profiles" Next item).** Another repeat of the standing prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL...
+  with ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🕵️ Opponent Team Profiles" bullet's
+  "a printable/exportable scouting report" item (the sibling "side-by-side
+  us-vs-opponent comparison view" follow-up stays open). Checked the
+  established precedent first — `debate-card-search`'s
+  `lib/research-progress.ts#buildResearchProgressReportText`/
+  `researchProgressReportFilename` (Research Progress Tracking's own
+  "Download report" button) and `debate-round`'s
+  `state/coachingSessions.ts#buildCoachingNotesText` — both build a plain
+  string from already-existing per-record summary logic rather than
+  introducing new report-formatting rules, and both wire into their panel
+  via the same inline anchor+Blob download snippet (`URL.createObjectURL`,
+  a synthetic `<a download>` click, then `URL.revokeObjectURL`) since no
+  shared helper for it exists yet in this repo. `rankings/opponent-team-profile.ts`
+  already had `buildOpponentScoutingSummary(profile)`, rendering one
+  team's profile as human-readable bullet lines for a scouting card — the
+  new `buildOpponentScoutingReportText(roster)` composes that per-team
+  summary across the whole roster (blank-line-separated, in whatever order
+  the caller's roster is already sorted in — rounds-recorded-descending,
+  matching the on-screen table), and `opponentScoutingReportFilename()`
+  returns a fixed `opponent-scouting-report.txt` name, mirroring
+  `research-progress.ts`'s fixed-filename convention exactly since this is
+  also a whole-roster report with no natural single-record id to key a
+  filename on. `panels/OpponentTeamProfilesPanel.tsx` gets a "Download
+  report" button in the header (same placement/styling as
+  `ResearchProgressPanel`'s), wired through the same anchor+Blob pattern.
+  See `docs/features/opponent-team-profiles.md`'s new "Downloading a
+  scouting report" section. Vitest-covered: two new `describe` blocks in
+  `packages/debate-data-sync/test/opponent-team-profile.test.ts`
+  (`buildOpponentScoutingReportText`'s empty-roster and
+  multi-team-ordering/content cases, `opponentScoutingReportFilename`'s
+  fixed value) — 3 new tests. Verification: `bunx turbo run typecheck
+  --filter=debate-data-sync --filter=debate-round --filter=debate-ai-web`
+  (10/10 in-scope package tasks pass); full `bun run test` (229 files,
+  4144 tests passed — up from 4141/229 before this slice); `bun run
+  build:web` (production build succeeded, `/opponents` route intact; the
+  touched-by-build `app-file-list.ts`/`version.ts`/`service-worker.js`
+  churn was reverted before committing, unrelated to this change). Updated
+  the "🕵️ Opponent Team Profiles" bullet below to reflect that only the
+  side-by-side comparison-view follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/511. **Completed:**
+  2026-09-03.
+- **AI Drill Generator — tying completion tracking into the Progress
+  Unlocks tier system (Research Crowdsourcing Organizer Features bullet,
+  "📚 AI Drill Generator" Next item).** Another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice picked the next named, unblocked follow-up
+  instead: the "📚 AI Drill Generator" bullet's own explicitly-named gap,
+  "tying completion into the Progress Unlocks tier system (awarding
+  tiers/badges for practiced drills — the tracking itself is done, but
+  nothing yet feeds it into Progress Unlocks)." Grepped both sides first:
+  `state/drillSets.ts`'s own fileoverview already flagged this exact gap
+  ("This slice tracks completion locally only; tying completion into the
+  separate `debate-card-search` Progress Unlocks tier system stays a named
+  open follow-up"), and `docs/features/drill-sets.md`'s "Known gaps"
+  section said the same, confirming it was genuinely open and unblocked.
+  `packages/debate-card-search`'s `lib/progress-unlocks.ts` (a different
+  package than `debate-round`, where drill sets live — but `debate-round`
+  already depends on `debate-card-search` as a workspace dependency, the
+  same cross-package pattern several existing `debate-round` files already
+  use, e.g. `state/persistedCoachingProgramBoard.ts`) already resolves a
+  contributor's tier via *either* their scored contribution volume/quality
+  *or* a completed-task count alone
+  (`UnlockTierRequirement.minCompletedTaskCount`) — the same
+  either-signal-qualifies OR-path `lib/unlock-streak-status.ts` already
+  uses to fold Research Progress Tracking's topic-checklist completions in.
+  Rather than adding a fourth parallel drill-specific threshold field to
+  `UnlockTierRequirement` (which every existing `debate-card-search` caller
+  of that type would then need to thread through), the new
+  `packages/debate-round/src/state/drillProgressUnlocks.ts` reuses that
+  same `completedTaskCount` path directly: `getTotalCompletedDrillCount`
+  sums `getDrillSetCompletionStats` across every persisted `DrillSetRecord`
+  into one total practiced-drill count, `buildDrillPracticeContributorStats`
+  wraps it in a synthetic, otherwise-all-zero `ContributorStats`, and
+  `buildDrillPracticeUnlockStatus`/`buildDrillPracticeUnlockStatusFromStore`
+  feed that into `debate-card-search`'s own `buildContributorUnlockStatus`
+  unmodified — so a practicing debater earns the exact same tier badges
+  ("Rising Researcher"/"Seasoned Contributor"/"Master Researcher") at the
+  exact same thresholds as the real Contribution Leaderboard-backed
+  roster, without duplicating or drifting from that logic. This status is
+  deliberately local/drill-set-scoped rather than posted into the real,
+  cross-tool `state/contributions.ts`-backed roster — the module's own
+  fileoverview documents why (this panel doesn't know a real signed-in
+  contributor id the way `lib/session-identity.ts` supplies one elsewhere).
+  `panels/DrillSetsPanel.tsx` gets a new "Practice tier" card above the
+  round list — computed straight from the panel's own already-loaded
+  `drillSets` state (no extra store read) — showing the current tier badge
+  (reusing `ProgressUnlocksPanel`'s own tier→badge-variant color mapping so
+  a tier reads the same way in both panels), every badge earned so far, and
+  a `MeterBar` toward the next tier with a "N more practiced drills to
+  reach \<tier\>" caption. See `docs/features/drill-sets.md`'s new
+  "Progress Unlocks tier" section (and its now-closed "Known gaps"
+  section). Vitest-covered: a new
+  `packages/debate-round/test/drillProgressUnlocks.test.ts` (15 tests —
+  `getTotalCompletedDrillCount`'s empty/zero/summed-across-records/
+  stale-index cases, `buildDrillPracticeContributorStats`'s shape and
+  custom-contributorId support, `buildDrillPracticeUnlockStatus`'s
+  novice/apprentice/veteran/expert tier and badge boundaries at the default
+  thresholds, next-tier progress ratios, a caller-supplied requirement
+  table, and `buildDrillPracticeUnlockStatusFromStore`'s aggregation across
+  multiple persisted rounds via the real `state/drillSets.ts` store).
+  Verification: `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-card-search` (10 packages typecheck clean, including both
+  touched ones plus every workspace dependency in between); `bun run test`
+  (229 files, 4141 tests passed — up from 4126 before this slice, i.e. the
+  new 15 tests all landed and the rest of the suite stayed green); `bun run
+  build:web` (production build succeeded; the touched-by-build
+  `app-file-list.ts`/`version.ts`/`service-worker.js` churn was reverted
+  before committing, unrelated to this change). PR:
+  https://github.com/debate/debate-ai.com/pull/510
+
+- **Revision Incentives — before/after revision diff viewer (Research
+  Crowdsourcing Organizer Features bullet, "🔁 Revision Incentives" Next
+  item).** Another repeat of the standing prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL... with ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page
+  and CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🔁 Revision Incentives" bullet's
+  "before/after revision diff viewer" item. Checking
+  `state/revisionHistory.ts` showed the persisted `CardRevisionRecord`
+  already tracked *scored* before/after snapshots (`CardSnapshot`'s
+  `qualitySignals`/`citationCompleteness`/`evidenceYear`/`wordCount`) but no
+  actual *text* — there was no way to show a reader what a revision changed,
+  only how much it scored. Added `lib/revision-text-diff.ts`: an
+  `EvidenceEntryTextSnapshot` (`argBlock`/`text`/`cite`) plus a pure
+  word-level LCS diff (`diffText`, `buildCardRevisionTextDiff`) — the same
+  algorithm `debate-round`'s `flow/flow-edit-diff.ts` uses for its own
+  side-by-side conflict diff (idea #16), reimplemented here since the two
+  packages share no dependency — bounded by a `MAX_DIFF_TOKENS` (6000)
+  fallback so an unusually long cut card can't blow up an O(n·m) comparison.
+  `state/revisionHistory.ts`'s `CardRevisionRecord` gains optional
+  `beforeText`/`afterText` fields (a record saved before this change, or
+  built from a caller-supplied `CardRevision` with no source entry, simply
+  has none — `getRevisionTextDiff` returns `null` for those rather than
+  throwing) plus a new `listRecentRevisionHistory(limit)` for a
+  newest-first, capped listing.
+  `state/evidenceLibraryEntries.ts#saveEvidenceLibraryEntryRevision` — the
+  one real call site that records a revision from an actual card edit — now
+  captures both sides' text snapshots onto the record alongside the
+  existing scored ones. `RevisionIncentivesPanel` gets a new "Recent
+  revisions" section below the leaderboard: the 20 most recent revisions,
+  newest first, each with a "View diff" toggle that expands into a
+  two-column before/after comparison per changed field (unchanged fields
+  are omitted), styled the same way `SharedFlowSyncPanel`'s existing
+  conflict-diff view is (`toneSurfaceClass`/`line-through` on removed
+  words, a positive tone on added ones). See
+  `docs/features/revision-incentives.md`'s new "Before/after revision diff
+  viewer" section. Vitest-covered: a new
+  `packages/debate-card-search/test/revision-text-diff.test.ts` (19 tests —
+  `diffText`'s equal/empty/appended/removed/fully-replaced/long-input-fallback/
+  one-sided-empty-string cases, `buildEvidenceEntryTextSnapshot`, and
+  `buildCardRevisionTextDiff`'s unchanged/partially-changed/word-level/
+  fully-changed cases), plus new tests added to
+  `packages/debate-card-search/test/revisionHistory.test.ts`
+  (`listRecentRevisionHistory`'s cap/order/zero-limit cases,
+  `getRevisionTextDiff`'s null-when-absent/null-when-partial/field-diff
+  cases) and `packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+  (`saveEvidenceLibraryEntryRevision` now capturing the exact before/after
+  text snapshot). Verified: `bun install` (2342 packages), `bunx turbo run
+  typecheck --filter=debate-card-search --filter=debate-ui
+  --filter=debate-ai-web` (10/10 in-scope package tasks pass), full `bun
+  run test` (228 files / 4126 tests, all pass — up from 4107/228 before
+  this slice), and `bun run build:web` (`debate-ai-web` production build
+  succeeds, full route list intact including `/cards/revisions`). Updated
+  the "🔁 Revision Incentives" bullet below to reflect that only the
+  reward-points-redemption/leaderboard-tie-in follow-up remains. **PR:**
+  https://github.com/debate/debate-ai.com/pull/509. **Completed:**
+  2026-09-03.
+- **Judge Profiles — multi-judge comparison view for panel rounds
+  (Research Crowdsourcing Organizer Features bullet, "⚖️ Judge Profiles"
+  Next item).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, the "user settings / SQL-linked flows, docs, rounds" half
+  is already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, so this slice picked the next
+  named, unblocked follow-up instead. The "⚖️ Judge Profiles" bullet listed
+  two remaining follow-ups, both described as blocked behind the same
+  Tabroom login wall as Opponent Team Profiles; checking `judge-profile.ts`
+  showed that description only actually held for one of them (a bulk CSV
+  import for real ballot history, still blocked — see "Confirmed blocker"
+  below) — the other, a multi-judge comparison view, only needs profiles
+  that already exist in this repo today (hand-logged through the panel's
+  own form), so this slice implemented it. Added
+  `judge/judge-panel-comparison.ts` — a new pure `buildJudgePanelComparison`
+  that takes two or more `JudgeProfile`s and derives a panel-level read:
+  which judges carry a notable side lean (reusing `hasNotableSideBias`) and
+  which side; a recommended pace to prep at (the *slowest* tracked average
+  pace among the panel, so the round doesn't lose whichever judge is least
+  speed-tolerant, plus which judge that pace came from); a `theoryRisk`
+  verdict (`safe`/`risky`/`mixed`/`unknown`, from the panel's tracked
+  `theoryReceptiveness` values) plus which judges are theory-averse; and
+  each judge's most-tagged paradigm with a `hasConflictingParadigms` flag
+  once two or more disagree. A matching `buildJudgePanelComparisonSummary`
+  renders it as short bullet lines, mirroring `judge-profile.ts`'s own
+  `buildJudgeTendencySummary`. `JudgeProfilesPanel` gets a checkbox column
+  on the roster table and a new "Compare judges" section below it: checking
+  two or more judges renders the comparison (side leans as badges, the
+  recommended pace, a theory-risk badge with its averse judges listed, and
+  a paradigms line flagged "conflicting" when they disagree), with a "Clear
+  selection" action; checking zero or one shows a prompt instead. See
+  `docs/features/judge-profiles.md`'s new "Comparing judges on a panel"
+  section. Vitest-covered in
+  `packages/debate-speech-writer/test/judge-panel-comparison.test.ts` — 15
+  new tests: `buildJudgePanelComparison` throwing for fewer than two
+  profiles, side-lean detection (and its empty case), the slowest-pace
+  recommendation (and its null case when no judge tracked pace), all four
+  `theoryRisk` branches (`unknown`/`safe`/`risky`/`mixed`) with their
+  averse-judge lists, paradigm-conflict detection (agreeing/single-tagged
+  judges don't false-positive), and input-order preservation; plus
+  `buildJudgePanelComparisonSummary` rendering every section on a
+  fully-known panel, its unknown/no-conflict placeholders, and its
+  mixed/risky theory branches. Verified: `bun install` (2342 packages),
+  `bunx turbo run typecheck --filter=debate-speech-writer
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (227 files / 4107 tests, all pass — up from
+  4092 before this slice), and `bun run build:web` (`debate-ai-web`
+  production build succeeds, full route list intact including `/judges`).
+  Updated the "⚖️ Judge Profiles" bullet in the Research Crowdsourcing
+  Organizer Features list below to reflect that only the bulk-CSV-import
+  follow-up remains, and that it (not the comparison view) is the one still
+  behind the Tabroom blocker. **PR:** https://github.com/debate/debate-ai.com/pull/508.
+  **Completed:** 2026-09-03.
+- **AI Drill Generator — scheduling/reminders (Research Crowdsourcing
+  Organizer Features bullet, "📚 AI Drill Generator" Next item).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, so this slice picked the last
+  remaining named, unblocked follow-up on the "📚 AI Drill Generator"
+  bullet instead: "drill scheduling/reminders" (the other named follow-up,
+  tying completion tracking into the separate `debate-card-search` Progress
+  Unlocks tier system, stays open as a cross-package integration — see
+  below). Added an optional `scheduledReviewAt: Record<number, string>`
+  field to `DrillSetRecord` (`state/drillSets.ts`, additive, keyed by drill
+  index, mirroring the existing `aiScripts` field's shape, storing a
+  `YYYY-MM-DD` day), a `scheduleDrillReview(roundId, drillIndex, dayKey |
+  null)` mutator (sets or clears a schedule; same unknown-roundId/
+  out-of-range-drillIndex no-op guard as `saveDrillAiScript`/
+  `toggleDrillCompletion`), and two pure helpers: `isDrillReviewDue`
+  (string comparison of two `YYYY-MM-DD` days) and `getDueDrillIndexes`
+  (a record's due, in-range drill indexes, sorted ascending). There's no
+  scheduled-job/push-notification infrastructure in this repo (the same
+  known gap `streakLapseReminders.ts` documents), so the "reminder" is an
+  in-app one: `DrillSetsPanel` gets a "Review reminder" date field per
+  drill (auto-saving on change, with a "Clear" button once set), a "Due"
+  badge next to a due drill's kind/difficulty badges, and an aggregate "N
+  due for review" badge on its round card's heading, all computed against
+  the browser's local calendar day. See `docs/features/drill-sets.md`'s new
+  "Scheduling and reminders" section. Vitest-covered in
+  `packages/debate-round/test/drillSets.test.ts` — 16 new tests:
+  `scheduleDrillReview` setting/overwriting/clearing a schedule, leaving
+  other drills'/rounds' records and every other field untouched, and
+  no-ops for an unknown `roundId` or an out-of-range `drillIndex`;
+  `isDrillReviewDue`'s past/today/future comparisons; and
+  `getDueDrillIndexes`'s due-list filtering/sorting and its handling of a
+  stale out-of-range scheduled index. Verified: `bun install` (2342
+  packages), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (226 files / 4092 tests, all pass — up from
+  4076 before this slice), and `bun run build:web` (`debate-ai-web`
+  production build succeeds, full route list intact including `/drills`).
+  Updated `docs/features/drill-sets.md`'s Known gaps section — one
+  follow-up remains open on the "📚 AI Drill Generator" bullet: tying local
+  completion tracking into the Progress Unlocks tier system. **Completed:**
+  2026-09-03.
+- **AI Drill Generator — completion tracking (Research Crowdsourcing
+  Organizer Features bullet, "📚 AI Drill Generator" Next item).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, the "user settings / SQL-linked flows, docs, rounds" half is
+  already fully built and every tool is already reachable from the Tools
+  page and CardMirror's command palette, so this slice picked the next
+  named, unblocked follow-up instead: the "📚 AI Drill Generator" bullet's
+  two remaining items were "drill scheduling/reminders" and "completion
+  tracking tied into Progress Unlocks" — this slice implements the first,
+  independently useful half of the latter (local completion tracking;
+  wiring it into the separate `debate-card-search` Progress Unlocks tier
+  system is a cross-package integration left as a follow-up, see below).
+  Added an optional `completedDrillIndexes: number[]` field to
+  `DrillSetRecord` (`state/drillSets.ts`, additive, mirroring the existing
+  `aiScripts` field's shape), a `toggleDrillCompletion(roundId,
+  drillIndex)` mutator (no-op for an unknown `roundId` or an out-of-range
+  `drillIndex`, same guard convention as `saveDrillAiScript`), and a pure
+  `getDrillSetCompletionStats(record)` helper (`{ completed, total, ratio
+  }`, ignoring stale out-of-range indexes, `ratio: 0` rather than `NaN`
+  for a drill-less record). `DrillSetsPanel` now renders a "Mark
+  practiced"/"✓ Practiced" toggle button next to each drill's "Get AI
+  script" action, and a per-round `MeterBar` ("Practiced — N of M",
+  turning `positive` tone once every drill is marked) above each round's
+  drill list. See `docs/features/drill-sets.md`'s new "Completion
+  tracking" section. Vitest-covered in
+  `packages/debate-round/test/drillSets.test.ts` — 20 new tests:
+  `toggleDrillCompletion` toggling a drill on then off, tracking multiple
+  completed drills sorted by index, leaving `drills`/`aiScripts`/other
+  rounds' records untouched, and no-ops for an unknown `roundId` or an
+  out-of-range `drillIndex`; `getDrillSetCompletionStats`'s zero/partial/
+  full completion counts, ignoring stale out-of-range indexes, and a zero
+  (not `NaN`) ratio for a record with no drills. Verified: `bun install`
+  (2342 packages), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (226 files / 4076 tests, all pass — up from
+  4056 before this slice), and `bun run build:web` (`debate-ai-web`
+  production build succeeds, full route list intact including `/drills`).
+  Updated `docs/features/drill-sets.md`'s Known gaps section. Two
+  follow-ups remain open on the "📚 AI Drill Generator" bullet: drill
+  scheduling/reminders, and tying the now-tracked local completion state
+  into the Progress Unlocks tier system (awarding tiers/badges for
+  practiced drills). **Completed:** 2026-09-03.
+- **AI Drill Generator — difficulty rating with filtering (Research
+  Crowdsourcing Organizer Features bullet).** Another repeat of the standing
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL... with ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built and every tool is already
+  reachable from the Tools page and CardMirror's command palette, so this
+  slice picked the next named, unblocked follow-up instead: the "📚 AI Drill
+  Generator" bullet's "a difficulty rating with filtering" item. Added a
+  `difficulty: "easy" | "medium" | "hard"` field to `flow/drill-generator.ts`'s
+  `Drill` type, derived per-drill from the associated argument's existing
+  `vulnerabilityScore` (`response-outcome.ts`) via a new
+  `vulnerabilityScoreToDifficulty` helper — a highly exposed argument
+  (unanswered, drawing opposing pressure, little same-side defense) rates as
+  "easy" practice material, a well-defended one as "hard"; the whole-round
+  overview drill, which has no single associated argument, always rates
+  "medium". `DrillSetsPanel` shows each drill's difficulty as a badge next
+  to its kind badge and adds a "Difficulty" `Select` dropdown (mirroring
+  `ContributionLeaderboardPanel`'s category filter) that narrows every
+  round's drill list to one difficulty via a new pure
+  `filterDrillsByDifficulty` helper. See
+  `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section
+  and the "AI Drill Generator" bullet in the Research Crowdsourcing
+  Organizer Features list below. Vitest-covered in
+  `packages/debate-round/test/drill-generator.test.ts` (the difficulty
+  computed by each drill builder, `vulnerabilityScoreToDifficulty`'s
+  thresholds, and `filterDrillsByDifficulty`), with the pre-existing
+  `drillSets.test.ts`/`drill-script-ai.test.ts`/`drill-script-client.test.ts`
+  fixtures updated for the now-required field. Two follow-ups remain open on
+  this bullet: drill scheduling/reminders, and completion tracking tied into
+  Progress Unlocks.
+- **debate-round panel UI-polish — migrate 6 hand-rolled list rows to the
+  shared `PanelRow` primitive (idea #17 follow-up (4), `user-settings.md`
+  Known gap).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows docs and debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, the "user settings / SQL-linked flows, docs, rounds"
+  half is already fully built and every tool is already reachable from the
+  Tools page and CardMirror's command palette, so this slice picked the
+  next specific pattern the prior two slices' own named remaining gap
+  suggested (`PanelShell`/`PanelSection`/`StatTile`/`Pill`/`PanelRow`
+  adoption was still unaudited, after the `EmptyState` and `MeterBar`
+  passes) instead: an audit of `packages/debate-round/src/panels/*.tsx` for
+  hand-rolled markup shaped like `PanelRow` (a `rounded-md border
+  border-border px-3 py-{1.5,2}` list row with a title/subtitle block on
+  the left and a trailing badge/button group on the right — only 2 panels,
+  `SharedFlowSyncPanel`/`FlowEditLogPanel`, used the shared primitives
+  before this slice). Migrated six clean matches to `PanelRow`:
+  `PrepNoteNotificationsPanel` (assignment row, title+subtitle+trailing
+  Read badge/button), `AiVersusRoundPanel` (speech-slot row, title +
+  trailing Regenerate button/status badge), `WordCountRoundsPanel` (speech
+  row, title + trailing word-count badge), `VulnerabilityChartsPanel`
+  (side-summary tile, title badge + subtitle argument count + trailing avg
+  metric), `PrepNotesPanel` (note row, title + subtitle byline/assignee
+  badge + trailing priority badge/jump link/action buttons, with the
+  assign-to form kept as `PanelRow` children), and `DrillSetsPanel` (drill
+  row, leading kind badge + title prompt + trailing AI-script button, with
+  the script error/output text kept as children). Several other candidates
+  the search surfaced were deliberately left alone: `AccountNotificationsPanel`
+  wraps its whole title+subtitle block in an optional `<Link>`, which
+  doesn't map onto `PanelRow`'s separate `title`/`subtitle` props without
+  either dropping the subtitle from the link or fighting the primitive's
+  shape; `FlowAnnotationsPanel`'s annotation cards lead with a wrapping row
+  of chips (timestamp/flow/speech/speaker/tag badges) that `PanelRow`'s
+  `truncate` title styling would clip onto one line; `ArgumentTreePanel`'s
+  outline rows use inline `marginLeft` tree indentation with no clear
+  title/trailing split; and `WordLimitPresetsPanel`'s preset rows are a
+  single inline edit control (badge + number input + unit text + remove
+  button), not a title/trailing block. No pure logic changed — only
+  presentational markup swapped for an equivalent already-tested primitive
+  (`PanelRow` itself is covered by `packages/debate-ui/test/panel-shell.test.tsx`)
+  — so no new Vitest cases were needed. Verified: `bun install` (2342
+  packages), `bunx turbo run typecheck --filter=debate-round
+  --filter=debate-ui --filter=debate-ai-web` (10/10 in-scope package tasks
+  pass), full `bun run test` (226 files / 4056 tests, all pass, unchanged),
+  and `bun run build:web` (`debate-ai-web` production build succeeds, full
+  route list intact). Updated `docs/features/user-settings.md`'s Known
+  gaps section. Remaining gap for a future slice: the same idea #17
+  follow-up (4) is still open more broadly — `PanelShell`/`PanelSection`/
+  `StatTile`/`Pill` adoption is still unaudited (this slice covered
+  `PanelRow` only, and even for `PanelRow` the four patterns named above
+  were left as deliberately-not-a-fit, not exhaustively resolved); a future
+  run should pick one of those next. **Completed:** 2026-09-03.
+- **debate-round panel UI-polish — migrate 2 more hand-rolled progress bars
+  to the shared `MeterBar` primitive (idea #17 follow-up (4),
+  `user-settings.md` Known gap).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows docs and debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, the "user settings / SQL-linked
+  flows, docs, rounds" half is already fully built and every tool is
+  already reachable from the Tools page and CardMirror's command palette,
+  so this slice picked the next specific pattern the prior slice's own
+  named remaining gap suggested (`PanelShell`/`PanelSection`/`StatTile`/
+  `MeterBar`/`Pill`/`PanelRow` adoption is still unaudited) instead: a
+  search for hand-rolled progress-bar markup shaped like `MeterBar` (a
+  `h-2 w-full overflow-hidden rounded-full bg-muted` track with an inner
+  width-percentage fill div) across every package. Found two:
+  `VulnerabilityChartsPanel`'s "Most Exposed Arguments" bars (a
+  `point.label`/`point.value` bar out of 100) and `WordCountRoundsPanel`'s
+  "Word-count trend" bars (a `point.count`/`point.wordLimit` bar, tinted
+  destructive when over limit) — both now render the shared `MeterBar`
+  (`value`/`max`/`label`/`caption`/`tone`) instead of duplicating its
+  track/fill markup by hand, matching the `tone="critical"` convention
+  already used by other `MeterBar` consumers for an over-limit/failing
+  state. Two other hits from the same search were deliberately left alone:
+  `SpeechWordCounter`'s in-round word-limit meter (`debate-timer`) and
+  `SpeechHeaderBar`'s speech-progress scrubber (`debate-round`) are core
+  round-chrome widgets, not feature-panel content, with layout needs
+  (a fixed compact `h-1.5` popover meter; a click-to-seek scrubber at a
+  precise `h-[5px]`) `MeterBar` isn't built for. No pure logic changed —
+  only presentational markup swapped for an equivalent already-tested
+  primitive (`MeterBar` itself is covered in
+  `packages/debate-ui/test/panel-shell.test.tsx`) — so no new Vitest cases
+  were needed. Verified: `bun install` (2342 packages), `bunx turbo run
+  typecheck --filter=debate-round --filter=debate-ui` (10/10 in-scope
+  package tasks pass), full `bun run test` (226 files / 4056 tests, all
+  pass, unchanged), and `bun run build:web` (`debate-ai-web` production
+  build succeeds, full route list intact). Updated
+  `docs/features/user-settings.md`'s Known gaps section. Remaining gap for
+  a future slice: the same idea #17 follow-up (4) is still open more
+  broadly — `PanelShell`/`PanelSection`/`StatTile`/`Pill`/`PanelRow`
+  adoption is still unaudited; a future run should pick one of those next.
+  **Completed:** 2026-09-03.
 - **debate-round panel UI-polish — migrate 16 more hand-rolled "no data yet"
   placeholders to the shared `EmptyState` primitive (idea #17 follow-up (4),
   `user-settings.md` Known gap).** Another repeat of the standing prompt
@@ -14591,27 +15406,27 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🎮 **Gamified Quests** (`/cards/streaks`) — the streak-freeze/grace-day-mechanic follow-up is done: a contributor can spend a rolling-allowance "streak freeze" to bridge a single missed day instead of resetting to zero (`lib/gamified-quests.ts#applyStreakFreezes`/`canApplyStreakFreeze`/`findFreezableStreakGapDayKey`, `state/streakFreezes.ts`), surfaced as a "Streak freeze" column with a "Use a grace day for …" action on `QuestStreaksPanel` — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak freeze / grace day" section. The opt-in-streak-lapse-reminder follow-up is also now done: a per-contributor "🔔 Remind me" toggle on the "Reminder" column shows an in-app warning banner whenever that contributor's in-progress streak is at risk of lapsing today (`lib/gamified-quests.ts#getStreakLapseRiskLength`, `state/streakLapseReminders.ts`) — see the Completed entry above and `docs/features/quest-streaks.md`'s "Streak-lapse reminder" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a shareable streak-badge image, or account-syncing reminder opt-ins/streak freezes across devices) if one becomes worth doing.
 * 🔓 **Progress Unlocks** (`/cards/progress`) — the visual next-tier progress bar follow-up is done: the "Next tier" column now leads with a filled `MeterBar` meter instead of a text-only sentence, with the needed-counts text kept underneath as detail (`lib/progress-unlocks.ts#getNextTierProgress`'s new `progressRatio` field) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Next-tier progress bar" section. The unlock-celebration-toast follow-up is also now done: a dismissible "🎉 New badge earned: …" banner shows on the signed-in visitor's own row the moment they newly earn a tier or streak badge, diffed against a persisted per-contributor "last-seen badges" baseline (`state/unlockCelebrations.ts`) — see the Completed entry above and `docs/features/progress-unlocks.md`'s "Unlock celebration toast" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a badge showcase on a contributor's profile) if one becomes worth doing.
 * 🧠 **LLM Card Scoring** (`/cards/scoring`) — the batch-scoring follow-up is done: a "Bulk import" textarea parses a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text entries and persists every well-formed one in a single pass (`lib/llm-card-scoring.ts#parseBulkCardSubmissions`, `state/cardScores.ts#saveScoredCardsBulk`/`bulkImportScoredCards`), reporting an imported/skipped-entry count rather than failing the whole batch on one malformed entry — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Bulk import" section. The inline-Evidence-Library-score-badge follow-up is also now done: each `card`-kind result in `EvidenceLibraryPanel` has a "Score card" action that scores the entry from its own text/argument-block/tags (`state/cardScores.ts#scoreEvidenceLibraryEntry`, composing the existing `deriveArgBlockKeywords`) and shows a "Score N/100" badge once scored, flagging a likely duplicate the same way `CardScoringPanel` does (`state/cardScores.ts#getScoredCardBreakdown`) — see the Completed entry above and `docs/features/llm-card-scoring.md`'s "Evidence Library score badge" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a per-contributor score-trend chart over time) if one becomes worth doing.
-* 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — the printable/exportable-progress-report follow-up is done: a "Download report" button in the panel header exports the whole roster as a plain-text file, one section per contributor (contribution/task summary line plus a per-topic completion breakdown), via `lib/research-progress.ts#buildResearchProgressReportText` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Report download" section. Next: a topic-comparison view across the whole team; personal goal-setting UI.
+* 📈 **Research Progress Tracking** (`/cards/progress-tracking`) — the printable/exportable-progress-report follow-up is done: a "Download report" button in the panel header exports the whole roster as a plain-text file, one section per contributor (contribution/task summary line plus a per-topic completion breakdown), via `lib/research-progress.ts#buildResearchProgressReportText` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Report download" section. The topic-comparison-view-across-the-whole-team follow-up is also now done: a "Topic comparison" section below the roster rolls per-contributor topic counts up into one row per topic team-wide, least-covered topic first, via `lib/research-progress.ts#buildTeamTopicComparison` — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Topic comparison" section. The personal-goal-setting-UI follow-up is also now done: a "My research goal" section lets a signed-in visitor set a personal completed-task target, overall or scoped to one topic, and tracks progress toward it with a meter (`lib/research-progress.ts#computeGoalProgress`, `state/researchProgressGoals.ts`) — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Personal goal-setting" section. The account-syncing-the-goal-across-devices follow-up is also now done: the signed-in visitor's goal now follows them across devices, best-effort synced onto their `user_settings` row (`lib/research-progress-goal-sync.ts`, `hooks/useResearchProgressGoalSync.ts`, a new `/api/settings` `researchProgressGoal` field) — see the Completed entry above and `docs/features/research-progress-tracking.md`'s "Personal goal account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. reaching the goal section before the roster has any tracked work at all) if one becomes worth doing.
 * 📚 **Common Argument Library** (`/cards/argument-library`) — the saved-collections follow-up is done: a "Saved collections" section saves the current tag-chip selection under a name (account-synced via `/api/settings`'s `savedArgumentCollections` field) and reapplies it later — see the Completed entry above and `docs/features/argument-library-collections.md`. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. bulk folder actions (merge/archive), or a tag hierarchy/synonym grouping view on top of the existing case-variant merge tool) if one becomes worth doing.
 * 🕵️ **Daily Best Card Challenge** (`/cards/best-card`) — the comment-thread follow-up is done: every announced day's winner (today's, once frozen, and every past day) carries its own comment thread — a "Your name"/comment form posts to `state/dailyBestCardComments.ts`, rendered oldest-first with a per-comment delete action, account-synced via a new `saved_daily_best_card_comments` D1 table plus `/api/daily-best-card-comments` routes (`hooks/useDailyBestCardComments.ts`, mirroring `debate-round`'s `useJudgeDecisions`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Comment thread" section. The "best of the week" rollup follow-up is also now done: a new "Best of the week" section groups every announced daily winner by ISO week and highlights that week's single highest-helpfulness champion alongside its other announced days (`lib/daily-best-card.ts#buildWeeklyBestCardRollups`, `state/dailyBestCardAnnouncements.ts#buildAnnouncedWeeklyBestCardRollups`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Best of the week" section. The winner-history-calendar-view follow-up is also now done: a "Winner history calendar" section renders a Monday-first month grid with previous/next navigation, highlighting every announced day and showing that day's highlight line plus contributor on click (`lib/daily-best-card.ts#buildDailyBestCardCalendarMonth`, `panels/DailyBestCardPanel.tsx`'s `WinnerHistoryCalendar`) — see the Completed entry above and `docs/features/daily-best-card.md`'s "Winner history calendar" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 🗣️ **Peer Review System** (`/cards/reviews`) — all three originally-tracked follow-ups are now done: gating reviewer identity behind the real signed-in session, the review-aging indicator, and the reviewer-workload balancing view (see Tracker Status above and `docs/features/review-queue.md`'s "Signed-in prefill", "Review aging", and "Reviewer workload" sections). No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. surfacing the workload data as a Coach Workspace roster view, or a "reassign" action for an overloaded reviewer) if one becomes worth doing.
 * 🏆 **Top Contributor Awards** (`/cards/awards`) — the auto-post-to-News-Stream follow-up turned out to already be done (`contributorAwardsNews()` in `state/newsStream.ts`), and the awards-history/hall-of-fame follow-up is now also done: a new "🏅 Hall of Fame" section aggregates every announced day's awards into one all-time per-contributor win ranking with a per-category breakdown (`lib/contributor-awards.ts#buildContributorAwardsHallOfFame`), shown above the existing chronological "Announced history" list — see the Completed entry above and `docs/features/contributor-awards.md`'s "🏅 Hall of Fame" section. The "nominate a peer" follow-up is also now done: a "Peer Nominations" section has a **Nominate a peer** form (category, nominee, your name, optional note), and each live award card shows that category's top nominee(s) by total support — see the Completed entry above and `docs/features/contributor-awards.md`'s "Peer Nominations" section. The per-nomination "seconding"/upvoting follow-up is also now done: a "👍 Second" action on each row in "Recent nominations" lets anyone else add their support to an existing nomination instead of only being able to submit a duplicate one, and the live cards' top-nominee ranking now uses total support (nominations plus seconds) rather than raw nomination count alone (`lib/contributor-awards.ts#canSecondNomination`/`tallyNominationsByKind`, `state/contributorAwardNominations.ts#secondPeerNomination`) — see the Completed entry above and `docs/features/contributor-awards.md`'s "Seconding a nomination" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. folding nominations into the Hall of Fame ranking as a tie-breaker) if one becomes worth doing.
 * 🧭 **Research Task Routing** (`/cards/inbox`) — the coach-facing override/reassign follow-up is done: every assignment and unassigned task has a "Reassign to…"/"Assign to…" field plus button that moves it to a typed contributor id, bypassing `routeTasks`'s own skill/capacity rules and keeping both the outgoing and incoming contributor's `activeTaskCount` accurate (`state/routedTaskQueues.ts#reassignPersistedRoutedTask`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Coach override / reassign control" section. The task-priority-indicator follow-up is also now done: every assignment has a "Flag high priority"/"Unflag" toggle, showing a "High priority" badge and sorting ahead of its topic-mates (`lib/research-task-routing.ts#setAssignmentPriority`/`sortAssignmentsByPriority`, `state/routedTaskQueues.ts#setPersistedRoutedTaskPriority`) — see the Completed entry above and `docs/features/task-inbox.md`'s "Task priority" section. Next: a capacity-aware view of routing load across the team (note: this repo still has no UI to create/manage a `ContributorAvailability` profile at all — only tests and the reassign control's free-form id touch that store — so a capacity view would need either that management UI too, or to work off arbitrary typed ids the same way reassign does).
-* 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. Next: a before/after revision diff viewer; a reward-points redemption or tie-in to the leaderboard.
+* 🔁 **Revision Incentives** (`/cards/revisions`) — the stale-evidence-digest follow-up is done: a "Stale evidence digest" section above the leaderboard lists every persisted stale card, most-urgent (undated, then oldest-cited) first, with a link into the Evidence Library to revise one (`lib/shared-evidence-library.ts#buildStaleEvidenceDigest`, `state/evidenceLibraryEntries.ts#buildPersistedStaleEvidenceDigest`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Stale evidence digest" section. The before/after-revision-diff-viewer follow-up is also now done: a "Recent revisions" section below the leaderboard lists the 20 most recently recorded revisions with a "View diff" toggle per row, rendering a word-level before/after comparison of the card's argument block, cut text, and citation (`lib/revision-text-diff.ts#buildCardRevisionTextDiff`, `state/revisionHistory.ts#getRevisionTextDiff`) — see the Completed entry above and `docs/features/revision-incentives.md`'s "Before/after revision diff viewer" section. Next: a reward-points redemption or tie-in to the leaderboard.
 * 📊 **Topic Coverage Dashboard** (`/cards/coverage`) — a coverage-over-time trend chart; a preview of the quests a coverage gap would seed before creating them; a cross-topic comparison heatmap.
 * 🎯 **Daily Quests and Targets** (`/cards/quests`) — the completion-celebration follow-up is done: recording today's mission on a day that completes every quest on the board now posts to the News Stream automatically, capped to the 20 most recent completions the same way sprint notes and Argument Library submissions are (`state/dailyMissionResults.ts#buildDailyQuestCompletionEvents`, `state/newsStream.ts#dailyQuestCompletionNews`) — see the Completed entry above and `docs/features/daily-quests.md`'s "News Stream celebration" section. Next: quest difficulty tiers; team-vs-team quest competitions.
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
-* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. Next: a side-by-side us-vs-opponent comparison view; a printable/exportable scouting report.
-* ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The remaining two follow-ups stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history; a multi-judge comparison view for panel rounds.
+* 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. The side-by-side-us-vs-opponent-comparison-view follow-up is also now done: a "Compare vs. opponent" section builds "us" on the fly from `debate-round`'s own round-history log against a chosen opponent's profile, via `rankings/opponent-team-profile.ts#buildOpponentTeamComparison` (`OpponentTeamProfilesPanel.tsx`'s "Compare vs. opponent" section, with a "Download comparison" action) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Comparing us vs. an opponent" section. No further follow-up is currently tracked for this idea beyond the still-blocked bulk-CSV-ballot-history item (see "Confirmed blocker" below); a future run should pick a fresh next-step elsewhere if one becomes worth doing.
+* ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The multi-judge-comparison-view-for-panel-rounds follow-up is also now done — it turned out not to actually need the blocked Tabroom data source: a "Compare judges" section checks two or more already-persisted (hand-logged or, once available, bulk-imported) profiles and reads them as a panel via a new `judge/judge-panel-comparison.ts#buildJudgePanelComparison` — see the Completed entry above and `docs/features/judge-profiles.md`'s "Comparing judges on a panel" section. One follow-up remains, and it does stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history.
 * 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
-* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. Next: threaded replies on a note instead of flat status; a digest notification instead of one per assignment.
+* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. Next: a digest notification instead of one per assignment.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
-* 📚 **AI Drill Generator** (`/drills`) — drill scheduling/reminders; a difficulty rating with filtering; completion tracking tied into Progress Unlocks.
+* 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. Next: a side-by-side case-option comparison table.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data

@@ -22,6 +22,12 @@
  * (`state/prepNotes.ts`'s `updatePersistedPrepNotePriority`, backed by
  * `strategy-sync-notes.ts`'s `setNotePriority`/`sortNotesByPriorityThenCreatedAt`).
  *
+ * Each note also has a "Replies (N)" toggle opening a threaded comment
+ * thread, closing the "🔄 Strategy Sync Notes" bullet's "threaded replies
+ * on a note instead of flat status" follow-up — local-first via
+ * `state/prepNoteReplies.ts`, mirroring `debate-card-search`'s
+ * `DailyBestCardPanel` comment-thread UI.
+ *
  * @module panels/PrepNotesPanel
  */
 
@@ -29,11 +35,13 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { ArrowUpRight, MessageSquare } from "lucide-react"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { Textarea } from "../ui/primitives/textarea"
+import { EmptyState, PanelRow } from "../ui/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
@@ -44,6 +52,12 @@ import {
 } from "../state/prepNotes"
 import { buildPrepNoteJumpHref, type PrepNoteStatus } from "../flow/strategy-sync-notes"
 import { isPrepNotesPanelLiveUpdateStorageEvent } from "../flow/live-update"
+import {
+  deletePrepNoteReply,
+  listRepliesForNote,
+  MAX_PREP_NOTE_REPLY_TEXT_LENGTH,
+  postPrepNoteReply,
+} from "../state/prepNoteReplies"
 
 const STATUS_LABEL: Record<PrepNoteStatus, string> = {
   "needs-follow-up": "Needs follow-up",
@@ -57,6 +71,87 @@ const STATUS_VARIANT: Record<PrepNoteStatus, "default" | "secondary" | "outline"
   covered: "outline",
 }
 
+/** A note's reply-draft form state, keyed by `noteId` in the panel's own state. */
+type ReplyDraft = { authorId: string; text: string }
+
+const EMPTY_REPLY_DRAFT: ReplyDraft = { authorId: "", text: "" }
+
+/**
+ * Renders one note's threaded reply list plus its add-reply form. Reads
+ * `state/prepNoteReplies.ts` fresh at render time — no local caching — so
+ * any state update in the parent panel (posting, deleting, a cross-tab
+ * `storage` event) shows the current thread.
+ */
+function PrepNoteReplyThread({
+  noteId,
+  draft,
+  onDraftChange,
+  onPost,
+  onDelete,
+}: {
+  noteId: string
+  draft: ReplyDraft
+  onDraftChange: (patch: Partial<ReplyDraft>) => void
+  onPost: () => void
+  onDelete: (id: string) => void
+}) {
+  const thread = listRepliesForNote(noteId)
+
+  return (
+    <div className="mt-2 border-t border-border pt-2">
+      {thread.length > 0 && (
+        <div className="mb-2 space-y-1.5">
+          {thread.map((reply) => (
+            <div key={reply.id} className="rounded-md bg-muted/50 p-2 text-xs">
+              <div className="mb-0.5 flex items-center justify-between gap-2">
+                <span className="font-medium text-foreground">{reply.authorId}</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-auto px-1.5 py-0.5 text-[11px]"
+                  onClick={() => onDelete(reply.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+              <p className="text-muted-foreground">{reply.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,160px)_1fr_auto] sm:items-end">
+        <div>
+          <Label htmlFor={`prep-note-reply-author-${noteId}`} className="text-xs">
+            Your name
+          </Label>
+          <Input
+            id={`prep-note-reply-author-${noteId}`}
+            value={draft.authorId}
+            onChange={(e) => onDraftChange({ authorId: e.target.value })}
+            className="h-8 text-xs"
+          />
+        </div>
+        <div>
+          <Label htmlFor={`prep-note-reply-text-${noteId}`} className="text-xs">
+            Reply
+          </Label>
+          <Textarea
+            id={`prep-note-reply-text-${noteId}`}
+            value={draft.text}
+            onChange={(e) => onDraftChange({ text: e.target.value })}
+            maxLength={MAX_PREP_NOTE_REPLY_TEXT_LENGTH}
+            rows={1}
+            className="min-h-8 text-xs"
+          />
+        </div>
+        <Button size="sm" onClick={onPost} disabled={!draft.text.trim()}>
+          Post
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 /**
  * Renders the Prep Notes panel: every persisted `PrepNote`, grouped by
  * status (needs follow-up first), with a "cycle status" action and an
@@ -68,6 +163,8 @@ const STATUS_VARIANT: Record<PrepNoteStatus, "default" | "secondary" | "outline"
 export function PrepNotesPanel() {
   const [groups, setGroups] = useState<PrepNotesPanelGroup[] | null>(null)
   const [assigneeDrafts, setAssigneeDrafts] = useState<Record<string, string>>({})
+  const [expandedReplyNoteIds, setExpandedReplyNoteIds] = useState<Record<string, boolean>>({})
+  const [replyDrafts, setReplyDrafts] = useState<Record<string, ReplyDraft>>({})
 
   useEffect(() => {
     setGroups(buildPrepNotesPanelView())
@@ -107,6 +204,27 @@ export function PrepNotesPanel() {
     refresh()
   }
 
+  const handleToggleReplies = (noteId: string) => {
+    setExpandedReplyNoteIds((prev) => ({ ...prev, [noteId]: !prev[noteId] }))
+  }
+
+  const handleReplyDraftChange = (noteId: string, patch: Partial<ReplyDraft>) => {
+    setReplyDrafts((prev) => ({ ...prev, [noteId]: { ...(prev[noteId] ?? EMPTY_REPLY_DRAFT), ...patch } }))
+  }
+
+  const handlePostReply = (noteId: string) => {
+    const draft = replyDrafts[noteId] ?? EMPTY_REPLY_DRAFT
+    if (!draft.text.trim()) return
+    postPrepNoteReply({ noteId, authorId: draft.authorId, text: draft.text })
+    setReplyDrafts((prev) => ({ ...prev, [noteId]: EMPTY_REPLY_DRAFT }))
+  }
+
+  const handleDeleteReply = (id: string) => {
+    deletePrepNoteReply(id)
+    // Force a re-render so the thread (read fresh from localStorage at render time) drops the deleted reply.
+    setExpandedReplyNoteIds((prev) => ({ ...prev }))
+  }
+
   if (groups === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading prep notes…</div>
   }
@@ -141,10 +259,21 @@ export function PrepNotesPanel() {
             </h2>
             <div className="space-y-2">
               {group.notes.map((note) => (
-                <div key={note.id} className="rounded-md border border-border px-3 py-2 space-y-2">
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                    <p className="text-foreground">{note.text}</p>
-                    <div className="flex items-center gap-2">
+                <PanelRow
+                  key={note.id}
+                  title={note.text}
+                  subtitle={
+                    <span className="flex flex-wrap items-center gap-2">
+                      <span>by {note.authorId}</span>
+                      {note.assignedToId && (
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          assigned to {note.assignedToId}
+                        </Badge>
+                      )}
+                    </span>
+                  }
+                  trailing={
+                    <>
                       {note.priority === "high" && <Badge variant="destructive">High priority</Badge>}
                       <Link
                         href={buildPrepNoteJumpHref(note)}
@@ -163,16 +292,18 @@ export function PrepNotesPanel() {
                       <Button size="sm" variant="outline" onClick={() => handleCycleStatus(note.id, note.status)}>
                         Mark {STATUS_LABEL[nextPrepNoteStatus(note.status)].toLowerCase()}
                       </Button>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    <span>by {note.authorId}</span>
-                    {note.assignedToId && (
-                      <Badge variant="outline" className="whitespace-nowrap">
-                        assigned to {note.assignedToId}
-                      </Badge>
-                    )}
-                  </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="gap-1"
+                        onClick={() => handleToggleReplies(note.id)}
+                      >
+                        <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                        Replies ({listRepliesForNote(note.id).length})
+                      </Button>
+                    </>
+                  }
+                >
                   <div className="flex items-center gap-2">
                     <Input
                       value={assigneeDrafts[note.id] ?? ""}
@@ -198,7 +329,16 @@ export function PrepNotesPanel() {
                       </Button>
                     )}
                   </div>
-                </div>
+                  {expandedReplyNoteIds[note.id] && (
+                    <PrepNoteReplyThread
+                      noteId={note.id}
+                      draft={replyDrafts[note.id] ?? EMPTY_REPLY_DRAFT}
+                      onDraftChange={(patch) => handleReplyDraftChange(note.id, patch)}
+                      onPost={() => handlePostReply(note.id)}
+                      onDelete={handleDeleteReply}
+                    />
+                  )}
+                </PanelRow>
               ))}
             </div>
           </div>

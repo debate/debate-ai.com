@@ -2,20 +2,45 @@ import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
-import { videos, youtubeRoundVideos, youtubeVideoExclusions } from "@/lib/database/schema";
+import { youtubeRoundVideos } from "@/lib/database/schema";
+import { publishRoundVideos } from "@/lib/videos/publish-round-video";
 
-/** Makes a YouTube round unavailable immediately and persists that decision so
- * a subsequent resync will not re-add it. */
-export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+/**
+ * Publishes one queued round video to the public `videos` table, then drops
+ * it from the resync queue — matches the bulk `publish-all` route, scoped to
+ * a single video for the admin page's per-row "Publish" action.
+ */
+export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { isAdmin } = await getAdminAccess();
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const { id } = await params;
-  if (!/^[A-Za-z0-9_-]{6,}$/.test(id)) return NextResponse.json({ error: "Invalid video ID" }, { status: 400 });
-
   const db = await getDBFromContext();
-  await db.insert(youtubeVideoExclusions).values({ videoId: id, deletedBy: email })
-    .onConflictDoUpdate({ target: youtubeVideoExclusions.videoId, set: { deletedBy: email, deletedAt: new Date() } });
+
+  const [row] = await db.select().from(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id)).limit(1);
+  if (!row) {
+    return NextResponse.json({ error: "Video not found in queue" }, { status: 404 });
+  }
+
+  await publishRoundVideos(db, [row]);
   await db.delete(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id));
-  await db.delete(videos).where(eq(videos.videoId, id));
-  return NextResponse.json({ deleted: true });
+
+  return NextResponse.json({ ok: true, id });
+}
+
+/** Removes one video from the resync queue without publishing it. */
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { isAdmin } = await getAdminAccess();
+  if (!isAdmin) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const db = await getDBFromContext();
+
+  await db.delete(youtubeRoundVideos).where(eq(youtubeRoundVideos.id, id));
+
+  return NextResponse.json({ ok: true, id });
 }

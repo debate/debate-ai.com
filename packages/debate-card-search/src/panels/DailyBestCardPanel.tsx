@@ -34,12 +34,12 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { CalendarRange, ChevronLeft, ChevronRight, MessageSquare, Sparkles, Trophy } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { Textarea } from "debate-ui/src/primitives/textarea"
-import { cn } from "debate-ui/src/lib/utils"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { Textarea } from "../ui/primitives/textarea"
+import { cn } from "../ui/lib/utils"
 import {
   announceDailyBestCard,
   buildAnnouncedWeeklyBestCardRollups,

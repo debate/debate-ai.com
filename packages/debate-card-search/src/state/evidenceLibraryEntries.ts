@@ -81,6 +81,7 @@ import {
   checkPageForExistingCards,
   searchEvidenceLibrary,
 } from "../lib/shared-evidence-library";
+import { buildEvidenceEntryTextSnapshot } from "../lib/revision-text-diff";
 import {
   addEntryToIndex,
   buildEvidenceSearchIndex,
@@ -176,7 +177,10 @@ export function deleteEvidenceLibraryEntry(id: string): void {
  * `shared-evidence-library.ts`'s pure `buildEvidenceEntryRevision` directly
  * against this store's own before/after entries, so the Revision Incentives
  * leaderboard now reflects real edits instead of only caller-supplied
- * snapshots.
+ * snapshots. Also captures each side's diffable text fields
+ * (`buildEvidenceEntryTextSnapshot`) onto the record's `beforeText`/
+ * `afterText`, so `getRevisionTextDiff` can render a word-level diff of
+ * what actually changed, not just the scored quality/citation deltas.
  */
 export function saveEvidenceLibraryEntryRevision(entry: EvidenceLibraryEntry, contributorId: string): void {
   const previous = getEvidenceLibraryEntry(entry.id);
@@ -188,6 +192,8 @@ export function saveEvidenceLibraryEntryRevision(entry: EvidenceLibraryEntry, co
     ...revision,
     id: `${entry.id}-${contributorId}-${Date.now()}`,
     revisedAt: new Date().toISOString(),
+    beforeText: buildEvidenceEntryTextSnapshot(previous),
+    afterText: buildEvidenceEntryTextSnapshot(entry),
   };
   saveRevisionRecord(record);
 }

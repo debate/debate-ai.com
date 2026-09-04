@@ -10,14 +10,14 @@ import type { Round } from "../types/flow"
 import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio, Type, Columns2 } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
-import { Button } from "debate-ui/src/primitives/button"
-import { Badge } from "debate-ui/src/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Badge } from "../ui/primitives/badge"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "debate-ui/src/primitives/tooltip"
+} from "../ui/primitives/tooltip"
 import { SpeechRecordingPlayer, SpeechRecordingMenu } from "debate-timer/src/recorder/SpeechRecordingPlayer"
 import { useFlowStore } from "../state/store"
 import { SpeechTimer } from "debate-timer/src/timers/SpeechTimer"
@@ -25,7 +25,7 @@ import { SpeechWordCounter } from "debate-timer/src/timers/SpeechWordCounter"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
 import { useWordCountSpeechMode } from "../hooks/useWordCountSpeechMode"
 import { settings } from "../state/settings"
-import { cn } from "debate-ui/src/lib/utils"
+import { cn } from "../ui/lib/utils"
 
 /** Resolve which debater email corresponds to a given speech column name. */
 function getSpeakerEmail(speechName: string, round: Round): string {

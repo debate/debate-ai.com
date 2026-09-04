@@ -49,20 +49,20 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { RadioGroup, RadioGroupItem } from "debate-ui/src/primitives/radio-group"
-import { Textarea } from "debate-ui/src/primitives/textarea"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
+import { Textarea } from "../ui/primitives/textarea"
+import { EmptyState } from "../ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
+} from "../ui/primitives/select"
 import {
   debateStyleMap,
   debateStyleNames,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import { LecturesPage } from "debate-videos"
+import { CategoryDock } from "@/components/layout/CategoryDock"
 
 export const metadata: Metadata = {
   title: "LEARN: Lectures from Educators, Archive of Rounds & Notes",
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export default function VideosCategory() {
   return (
     <Suspense>
-      <LecturesPage />
+      <LecturesPage dockSlot={<CategoryDock embedded />} />
     </Suspense>
   )
 }

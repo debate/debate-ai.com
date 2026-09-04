@@ -11,6 +11,7 @@ const FRONTLINE_DRILL: Drill = {
   kind: "frontline",
   rowIndex: 2,
   prompt: 'Write a frontline response to "Solvency deficit" (2AC) before it\'s extended again.',
+  difficulty: "medium",
 };
 
 const INPUT: DrillScriptAiInput = { sideKey: "AFF", drill: FRONTLINE_DRILL };
@@ -50,7 +51,7 @@ describe("buildDrillScriptAiUserPrompt", () => {
       ["collapse", "Collapse"],
     ];
     for (const [kind, label] of kinds) {
-      const drill: Drill = { kind, rowIndex: null, prompt: "Prompt text." };
+      const drill: Drill = { kind, rowIndex: null, prompt: "Prompt text.", difficulty: "medium" };
       expect(buildDrillScriptAiUserPrompt({ sideKey: "NEG", drill })).toContain(`Drill kind: ${label}`);
     }
   });

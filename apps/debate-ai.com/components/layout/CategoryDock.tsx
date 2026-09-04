@@ -5,8 +5,8 @@ import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
-import { cn } from "debate-ui/src/lib/utils"
-import { Dock, DockIcon, DockItem, DockLabel } from "debate-ui/src/layout/dock"
+import { cn } from "../../lib/ui/lib/utils"
+import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
 import { useAccountNotifications } from "debate-round"
 import {
   useVideoPlayerStore,
@@ -24,8 +24,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "debate-ui/src/primitives/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "debate-ui/src/primitives/avatar"
+} from "../../lib/ui/primitives/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "../../lib/ui/primitives/avatar"
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
@@ -38,9 +38,9 @@ import {
   IconSettings,
   IconRoundsYoutube,
   IconTools
-} from "debate-ui/src/icons"
+} from "../../lib/ui/icons"
 
-// Same destinations as packages/debate-ui/src/layout/footer.tsx, split into
+// Same destinations as packages/debate-videos/src/ui/layout/footer.tsx, split into
 // the two Settings-menu submenus below so they're reachable without
 // scrolling to the page footer.
 const SITE_LINKS = [
@@ -350,8 +350,13 @@ function DockInstance({
  * Unified navigation dock.
  * Desktop (md+): fixed top-left corner, compact width.
  * Mobile: fixed bottom, full-width centered, does not overlap content.
+ *
+ * Pass `embedded` to render just the dock itself, unpositioned, for use at
+ * the top of a page-owned sidebar (e.g. the videos page). In that case the
+ * page is responsible for suppressing the fixed top-left dock so it isn't
+ * shown twice — see the `/videos` check below.
  */
-export function CategoryDock() {
+export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) {
   const pathname = usePathname()
   const router = useRouter()
   const categoryState = useCategoryDockState()
@@ -424,10 +429,29 @@ export function CategoryDock() {
     : allItems
   )
 
+  if (embedded) {
+    return (
+      <>
+        <DockInstance
+          dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
+          side="bottom"
+          allItems={allItems}
+          onSignIn={() => setLoginOpen(true)}
+          unreadNotifications={unreadCount}
+        />
+        <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      </>
+    )
+  }
+
+  // The videos page renders its own embedded dock at the top of its sidebar
+  // (md+), so the fixed top-left dock would otherwise show twice there.
+  const suppressDesktopDock = pathname?.startsWith("/videos")
+
   return (
     <>
       {/* Desktop: top-left corner */}
-      <div className="hidden md:block fixed top-0 left-2 z-50">
+      <div className={cn("fixed top-0 left-2 z-50", suppressDesktopDock ? "hidden" : "hidden md:block")}>
         <DockInstance
           dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
           side="bottom"

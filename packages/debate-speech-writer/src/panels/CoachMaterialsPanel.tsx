@@ -61,18 +61,18 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { Textarea } from "debate-ui/src/primitives/textarea"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { Textarea } from "../ui/primitives/textarea"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
+} from "../ui/primitives/select"
 import {
   buildGroundedCoachPrompt,
   COACH_MATERIAL_KIND_LABELS,

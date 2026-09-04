@@ -25,8 +25,8 @@ import {
   speechSendLogStore,
   type SpeechSendLogEntry,
 } from "debate-editor/engine"
-import { Button } from "debate-ui/src/primitives/button"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { Button } from "../../lib/ui/primitives/button"
+import { EmptyState } from "../../lib/ui/panels/panel-shell"
 import { useSpeechSendLogSync } from "@/lib/hooks/useSpeechSendLogSync"
 
 function formatSentAt(sentAt: number): string {

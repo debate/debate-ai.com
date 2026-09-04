@@ -4,9 +4,12 @@ import {
   buildProgressSummaryText,
   buildResearchProgressBoard,
   buildResearchProgressReportText,
+  buildTeamTopicComparison,
   buildTopicProgress,
+  computeGoalProgress,
   groupAssignmentsByContributor,
   researchProgressReportFilename,
+  type ResearchProgressGoal,
   type TrackedTopicAssignment,
 } from "../src/lib/research-progress";
 import type { AttributedContribution } from "../src/lib/contribution-leaderboard";
@@ -201,5 +204,87 @@ describe("buildResearchProgressReportText", () => {
 describe("researchProgressReportFilename", () => {
   it("returns a fixed filename", () => {
     expect(researchProgressReportFilename()).toBe("research-progress-report.txt");
+  });
+});
+
+describe("buildTeamTopicComparison", () => {
+  it("rolls each topic's task counts up across every contributor with an assignment in it", () => {
+    const board = buildResearchProgressBoard([aliceCard], [aliceWarming, aliceStates, aliceCourts, bobStates]);
+    const comparison = buildTeamTopicComparison(board);
+
+    expect(comparison).toEqual([
+      { topic: "Immigration", contributorCount: 2, assignedTaskCount: 3, completedTaskCount: 1, completionRate: 0.33 },
+      { topic: "Healthcare", contributorCount: 1, assignedTaskCount: 1, completedTaskCount: 1, completionRate: 1 },
+    ]);
+  });
+
+  it("sorts the least-covered topic (lowest completion rate) first", () => {
+    const board = buildResearchProgressBoard([], [aliceStates, aliceCourts]);
+    const comparison = buildTeamTopicComparison(board);
+    expect(comparison.map((c) => c.topic)).toEqual(["Immigration", "Healthcare"]);
+  });
+
+  it("tie-breaks equal completion rates alphabetically by topic", () => {
+    const board = buildResearchProgressBoard([], [aliceWarming, aliceCourts]);
+    const comparison = buildTeamTopicComparison(board);
+    expect(comparison.map((c) => c.topic)).toEqual(["Healthcare", "Immigration"]);
+  });
+
+  it("returns an empty list for a roster with no topic assignments", () => {
+    const board = buildResearchProgressBoard([aliceCard], []);
+    expect(buildTeamTopicComparison(board)).toEqual([]);
+  });
+
+  it("excludes a topic's own contributor from another topic's contributorCount", () => {
+    const board = buildResearchProgressBoard([], [aliceWarming, aliceCourts, bobStates]);
+    const comparison = buildTeamTopicComparison(board);
+    const healthcare = comparison.find((c) => c.topic === "Healthcare");
+    expect(healthcare?.contributorCount).toBe(1);
+  });
+});
+
+describe("computeGoalProgress", () => {
+  const aliceProgress = buildContributorProgress("alice", [aliceCard], [aliceWarming, aliceStates, aliceCourts]);
+
+  it("tracks an overall goal (no topic) against totalCompletedTasks", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 5 };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress).toEqual({
+      goal,
+      currentCompletedTaskCount: 2,
+      progressRatio: 0.4,
+      isComplete: false,
+      remainingTaskCount: 3,
+    });
+  });
+
+  it("scopes to one topic's completedTaskCount when the goal names a topic", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 1, topic: "Healthcare" };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress.currentCompletedTaskCount).toBe(1);
+    expect(progress.isComplete).toBe(true);
+    expect(progress.remainingTaskCount).toBe(0);
+    expect(progress.progressRatio).toBe(1);
+  });
+
+  it("treats a topic the contributor has no assignments in as 0 completed", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 3, topic: "Trade" };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress.currentCompletedTaskCount).toBe(0);
+    expect(progress.isComplete).toBe(false);
+    expect(progress.remainingTaskCount).toBe(3);
+  });
+
+  it("clamps progressRatio to 1 once the current count exceeds the target", () => {
+    const goal: ResearchProgressGoal = { contributorId: "alice", targetCompletedTaskCount: 1 };
+    const progress = computeGoalProgress(aliceProgress, goal);
+
+    expect(progress.currentCompletedTaskCount).toBe(2);
+    expect(progress.progressRatio).toBe(1);
+    expect(progress.isComplete).toBe(true);
+    expect(progress.remainingTaskCount).toBe(0);
   });
 });

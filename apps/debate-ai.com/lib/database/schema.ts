@@ -190,6 +190,14 @@ export const userSettings = sqliteTable("user_settings", {
   // collections per user" follow-up). Null/absent means "no collections
   // saved yet", same semantics as every other nullable column here.
   savedArgumentCollections: text("saved_argument_collections"),
+  // JSON-serialized `{ targetCompletedTaskCount, topic?, targetDate? }`
+  // personal research-progress goal (see
+  // packages/debate-card-search/src/lib/research-progress-goal-sync.ts and
+  // TODO.md's "📈 Research Progress Tracking" bullet's "account-syncing the
+  // goal across devices" follow-up). `contributorId` isn't stored here —
+  // this row already scopes it to one signed-in user. Null/absent means "no
+  // goal set", same semantics as every other nullable column here.
+  researchProgressGoal: text("research_progress_goal"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -809,3 +817,33 @@ export const notifications = sqliteTable(
 );
 
 export type NotificationRow = typeof notifications.$inferSelect;
+
+// Account-linked drill-set sync — the "sharing the 'Practice tier' status
+// across devices for a signed-in user" follow-up named under the "📚 AI
+// Drill Generator" bullet in TODO.md's Research Crowdsourcing Organizer
+// Features. One row per (user, round) pair, keyed by the caller-typed
+// `DrillSetRecord.roundId` — a drill set is looked up/edited by round, not
+// appended to a growing log — same shape as `savedWordCountRounds` above.
+export const savedDrillSets = sqliteTable(
+  "saved_drill_sets",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_drill_sets_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_drill_sets_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedDrillSetRow = typeof savedDrillSets.$inferSelect;

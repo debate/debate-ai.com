@@ -21,11 +21,23 @@
 	"images": {
 		"binding": "IMAGES"
 	},
+	// Weekly YouTube round resync — Mondays at 08:00 UTC. Handled by the
+	// `scheduled` export in worker/index.ts.
+	"triggers": {
+		"crons": [
+			"0 8 * * 1"
+		]
+	},
 	"env": {
 		"production": {
 			"keep_vars": true,
 			"images": {
 				"binding": "IMAGES"
+			},
+			"triggers": {
+				"crons": [
+					"0 8 * * 1"
+				]
 			},
 			"d1_databases": [
 				{

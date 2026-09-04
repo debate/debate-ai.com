@@ -16,12 +16,14 @@ import { EditorLoadingSkeleton } from "./EditorLoadingSkeleton";
  * Fills the gap between the embed mounting and a flow being open.
  *
  * ebb used to hold this moment on its own start screen (New flow / Open /
- * Settings, a list of recents). The host app now owns that role — the
- * pinned "ebb Flow" entry already sits in its own sidebar beside every other
- * flow tab — so ebb no longer needs a page of its own to pick one from. This
- * resumes the flow last worked on, or opens a fresh one when there isn't
- * one, and the toolbar's New/Open/Recent buttons (`RoundHeader`) cover
- * everything else the start screen used to offer.
+ * Join / Settings, a list of recents). The host app now owns that role —
+ * the pinned "ebb Flow" entry already sits in its own sidebar beside every
+ * other flow tab — so ebb no longer needs a page of its own to pick one
+ * from. This resumes the flow last worked on, or opens a fresh one when
+ * there isn't one, and the round workspace's "ebb Flow tools" dropdown
+ * (`EbbFlowToolsMenu`, in debate-round's `FlowPageSidebar`) covers
+ * everything else the start screen used to offer — reachable in one click
+ * whether or not the ebb tab is even the one selected.
  */
 export default function ResumeFlow() {
     const [attempt, setAttempt] = useState(0);

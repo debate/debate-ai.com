@@ -19,11 +19,11 @@ import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
 import type { CategoryType, DebateStyle, VideoType } from "../types/videos"
-import { Footer } from "debate-ui/src/layout/footer"
+import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
 import type { Division } from "./leaderboard/leaderboardUtils"
-import { setStateInURL } from "debate-ui/src/lib/utils"
+import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
@@ -38,6 +38,16 @@ import { useVideoPlayerStore } from "../state/videoPlayerStore"
 /** Number of entries in the debate dictionary, shown on its quick-link card. */
 const DICTIONARY_ENTRY_COUNT = 203
 
+/** Props for the {@link LecturesPage} component. */
+interface LecturesPageProps {
+  /**
+   * App-owned navigation dock, forwarded to {@link LecturesVideoGridView} for
+   * the top of its persistent left sidebar (md+ only). Omitted for the
+   * leaderboard and dictionary branches, which keep their own top layout.
+   */
+  dockSlot?: React.ReactNode
+}
+
 /**
  * Lectures page — top-level coordinator for the /videos route family.
  *
@@ -45,7 +55,7 @@ const DICTIONARY_ENTRY_COUNT = 203
  * API, and rendering is delegated to the three branch view components
  * depending on `state.currentCategory`.
  */
-export function LecturesPage() {
+export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const searchParams = useSearchParams()
   const routeParams = useParams()
 
@@ -433,6 +443,7 @@ export function LecturesPage() {
         actions.setSelectedStyle(style)
         setStateInURL({ style: style ? String(style) : null })
       }}
+      dockSlot={dockSlot}
     />
   )
 }

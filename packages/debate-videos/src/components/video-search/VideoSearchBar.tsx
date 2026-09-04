@@ -5,15 +5,16 @@
 
 import { useState, useEffect } from "react"
 import { Search, X } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Input } from "debate-ui/src/primitives/input"
-import { GlowingEffect } from "debate-ui/src/effects/glowing-effect"
+import { Badge } from "../../ui/primitives/badge"
+import { Input } from "../../ui/primitives/input"
+import { cn } from "../../ui/lib/utils"
+import { GlowingEffect } from "../../ui/effects/glowing-effect"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
   TooltipProvider,
-} from "debate-ui/src/primitives/tooltip"
+} from "../../ui/primitives/tooltip"
 import type { DebateStyle, VideoFacets } from "../../types/videos"
 import type { VideoViewMode } from "../../hooks/useVideoState"
 import { useVideoSearchCounts } from "./useVideoSearchCounts"
@@ -75,6 +76,12 @@ interface VideoSearchBarProps {
   afterSearchElement?: React.ReactNode
   /** Extra icon buttons rendered after the built-in icon buttons. */
   extraButtons?: React.ReactNode
+  /**
+   * Forces vertical stacking of every row regardless of viewport width. Used
+   * in the persistent left sidebar, whose column stays narrow even on wide
+   * viewports where the `sm:` breakpoint would otherwise switch to a row layout.
+   */
+  stacked?: boolean
 }
 
 /**
@@ -115,6 +122,7 @@ export function VideoSearchBar({
   facets = null,
   afterSearchElement,
   extraButtons,
+  stacked = false,
 }: VideoSearchBarProps) {
   /** Mirrors searchTerm locally so the input stays responsive while debouncing. */
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm)
@@ -141,11 +149,38 @@ export function VideoSearchBar({
 
   const { years, yearCounts, styleCounts } = useVideoSearchCounts({ facets })
 
+  const seasonAndIconButtons = (
+    <>
+      {onYearChange && (
+        <SeasonDropdown
+          selectedYear={selectedYear}
+          onYearChange={onYearChange}
+          years={years}
+          yearCounts={yearCounts}
+        />
+      )}
+
+      <SearchBarIconButtons
+        sortOrder={sortOrder}
+        onSortChange={onSortChange}
+        viewMode={viewMode}
+        onViewModeChange={onViewModeChange}
+        showFavoritesOnly={showFavoritesOnly}
+        onToggleFavoritesOnly={onToggleFavoritesOnly}
+        showTopPicksActive={showTopPicksActive}
+        onToggleTopPicks={onToggleTopPicks}
+        showRankingsActive={showRankingsActive}
+        onToggleRankings={onToggleRankings}
+        extraButtons={extraButtons}
+      />
+    </>
+  )
+
   return (
     <TooltipProvider>
-      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 flex-1 min-w-0">
-        {/* Row 1 (mobile) / inline (desktop): search input + season dropdown */}
-        <div className="flex items-center gap-2 flex-1 min-w-0">
+      <div className={cn("flex gap-2 flex-1 min-w-0", stacked ? "flex-col" : "flex-col sm:flex-row sm:flex-wrap")}>
+        {/* Row 1 (mobile/stacked) / inline (desktop): search input + season dropdown */}
+        <div className={cn("flex gap-2 flex-1 min-w-0", stacked ? "flex-col" : "items-center")}>
           <div className="relative min-w-0 flex-1">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -177,32 +212,15 @@ export function VideoSearchBar({
 
           {afterSearchElement}
 
-          {onYearChange && (
-            <SeasonDropdown
-              selectedYear={selectedYear}
-              onYearChange={onYearChange}
-              years={years}
-              yearCounts={yearCounts}
-            />
+          {stacked ? (
+            <div className="flex items-center gap-2 flex-wrap">{seasonAndIconButtons}</div>
+          ) : (
+            seasonAndIconButtons
           )}
-
-          <SearchBarIconButtons
-            sortOrder={sortOrder}
-            onSortChange={onSortChange}
-            viewMode={viewMode}
-            onViewModeChange={onViewModeChange}
-            showFavoritesOnly={showFavoritesOnly}
-            onToggleFavoritesOnly={onToggleFavoritesOnly}
-            showTopPicksActive={showTopPicksActive}
-            onToggleTopPicks={onToggleTopPicks}
-            showRankingsActive={showRankingsActive}
-            onToggleRankings={onToggleRankings}
-            extraButtons={extraButtons}
-          />
         </div>
 
-        {/* Row 2 (mobile) / inline (desktop): style dropdown + count badge */}
-        <div className="flex items-center gap-2 sm:contents">
+        {/* Row 2 (mobile/stacked) / inline (desktop): style dropdown + count badge */}
+        <div className={cn("flex items-center gap-2 flex-wrap", !stacked && "sm:contents")}>
           {onStyleChange && (
             <StyleDropdown
               selectedStyle={selectedStyle}

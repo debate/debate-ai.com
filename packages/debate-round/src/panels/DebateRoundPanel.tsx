@@ -8,13 +8,13 @@
  */
 
 import { useEffect, useState } from "react"
-import { EbbFlowEmbed } from "debate-flow-ebb"
+import { EbbFlowEmbed, type EbbFlowToolAction } from "debate-flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
 import type { Flow } from "../types/flow"
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "debate-ui/src/primitives/resizable"
-import { Sheet, SheetContent } from "debate-ui/src/primitives/sheet"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/primitives/resizable"
+import { Sheet, SheetContent } from "../ui/primitives/sheet"
 
 // Modular components
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
@@ -66,6 +66,24 @@ export function DebateFlowPage() {
   // ebb is a separate local-first editor, not one of the database-backed
   // `flows`, so it isn't tracked via `selected`.
   const [ebbActive, setEbbActive] = useState(false)
+
+  // An "ebb Flow tools" menu choice (New flow / Open / Join / Settings / a
+  // recent flow) made while the ebb tab wasn't the active one — queued here
+  // and handed to `EbbFlowEmbed` once selecting the tab mounts it, then
+  // cleared so it doesn't re-run on the next render.
+  const [ebbPendingAction, setEbbPendingAction] = useState<EbbFlowToolAction | null>(null)
+
+  /**
+   * Switch to the pinned ebb Flow tab and queue an "ebb Flow tools" action
+   * for it to run once mounted — how every item in that dropdown is wired,
+   * regardless of which tab was active when it was chosen.
+   *
+   * @param action - The tool action to run once the ebb tab is mounted.
+   */
+  const handleEbbToolAction = (action: EbbFlowToolAction) => {
+    setEbbActive(true)
+    setEbbPendingAction(action)
+  }
 
   // ============================================================================
   // Timer State (lifted here so it survives mobile sidebar unmount)
@@ -319,7 +337,11 @@ export function DebateFlowPage() {
   const mainContentArea = ebbActive ? (
     <div className="h-full p-2">
       <div className="h-full w-full rounded-lg border border-border overflow-hidden">
-        <EbbFlowEmbed className="h-full w-full" />
+        <EbbFlowEmbed
+          className="h-full w-full"
+          pendingAction={ebbPendingAction}
+          onPendingActionHandled={() => setEbbPendingAction(null)}
+        />
       </div>
     </div>
   ) : (
@@ -444,6 +466,7 @@ export function DebateFlowPage() {
                 onEditRound={handleEditRound}
                 ebbActive={ebbActive}
                 onSelectEbb={() => setEbbActive(true)}
+                onEbbToolAction={handleEbbToolAction}
                 timerState={timerState}
               />
             </ResizablePanel>
@@ -472,6 +495,7 @@ export function DebateFlowPage() {
                   onEditRound={handleEditRound}
                   ebbActive={ebbActive}
                   onSelectEbb={() => setEbbActive(true)}
+                  onEbbToolAction={handleEbbToolAction}
                   onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
                   timerState={timerState}
                 />

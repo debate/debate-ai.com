@@ -2,8 +2,8 @@
  * @fileoverview Player control buttons component for video player UI
  */
 
-import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge, PictureInPicture2 } from "lucide-react"
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "debate-ui/src/primitives/tooltip"
+import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge, PictureInPicture2, Captions } from "lucide-react"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/primitives/tooltip"
 import type { QueueItem } from "../../state/videoPlayerStore"
 
 interface PlayerControlsProps {
@@ -13,11 +13,13 @@ interface PlayerControlsProps {
   queue: QueueItem[]
   isPipSupported: boolean
   isPipActive: boolean
+  isSubtitlesOpen: boolean
   onPlayPause: () => void
   onToggleSlowMode: () => void
   onPlayNext: () => void
   onToggleMinimize: () => void
   onTogglePip: () => void
+  onToggleSubtitles: () => void
   onClose: () => void
 }
 
@@ -28,11 +30,13 @@ export function PlayerControls({
   queue,
   isPipSupported,
   isPipActive,
+  isSubtitlesOpen,
   onPlayPause,
   onToggleSlowMode,
   onPlayNext,
   onToggleMinimize,
   onTogglePip,
+  onToggleSubtitles,
   onClose,
 }: PlayerControlsProps) {
   return (
@@ -85,6 +89,21 @@ export function PlayerControls({
             </TooltipContent>
           </Tooltip>
         )}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onToggleSubtitles}
+              className={`p-1 rounded hover:bg-accent transition-colors ${isSubtitlesOpen ? "text-primary bg-accent" : "text-muted-foreground hover:text-foreground"}`}
+              aria-label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
+            >
+              <Captions className="h-3 w-3" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">
+            {isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
+          </TooltipContent>
+        </Tooltip>
 
         {isPipSupported && (
           <Tooltip>

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { and, desc, eq, like, lt, or } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, isNull, lt, or } from "drizzle-orm";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
-import { youtubeRoundVideos } from "@/lib/database/schema";
+import { videos as videosTable, youtubeRoundVideos } from "@/lib/database/schema";
 
 const DEFAULT_LIMIT = 24;
 const MAX_LIMIT = 100;
@@ -70,10 +70,14 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Left-join against the published `videos` table and drop matches, so a
+  // round already published to the main site clears out of the queue
+  // instead of piling up alongside every future resync.
   const rows = await db
-    .select()
+    .select(getTableColumns(youtubeRoundVideos))
     .from(youtubeRoundVideos)
-    .where(conditions.length ? and(...conditions) : undefined)
+    .leftJoin(videosTable, eq(youtubeRoundVideos.id, videosTable.videoId))
+    .where(and(isNull(videosTable.videoId), ...conditions))
     .orderBy(desc(youtubeRoundVideos.publishedAt), desc(youtubeRoundVideos.id))
     .limit(limit + 1);
 

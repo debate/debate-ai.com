@@ -16,10 +16,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { EmptyState, PanelRow } from "../ui/panels/panel-shell"
 import {
   buildNotificationsPanelView,
   markPersistedNotificationRead,
@@ -120,24 +120,20 @@ export function PrepNoteNotificationsPanel() {
       ) : (
         <div className="space-y-2">
           {notifications.map((notification) => (
-            <div
+            <PanelRow
               key={notification.id}
-              className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-sm"
-            >
-              <div>
-                <p className="text-foreground">
-                  Assigned: "{notification.noteText}"
-                </p>
-                <p className="text-xs text-muted-foreground">from a note by {notification.noteAuthorId}</p>
-              </div>
-              {notification.read ? (
-                <Badge variant="outline">Read</Badge>
-              ) : (
-                <Button size="sm" variant="outline" onClick={() => handleMarkRead(notification.id)}>
-                  Mark read
-                </Button>
-              )}
-            </div>
+              title={`Assigned: "${notification.noteText}"`}
+              subtitle={`from a note by ${notification.noteAuthorId}`}
+              trailing={
+                notification.read ? (
+                  <Badge variant="outline">Read</Badge>
+                ) : (
+                  <Button size="sm" variant="outline" onClick={() => handleMarkRead(notification.id)}>
+                    Mark read
+                  </Button>
+                )
+              }
+            />
           ))}
         </div>
       )}

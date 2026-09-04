@@ -4,6 +4,8 @@ import {
   buildPersistedRevisionIncentiveLeaderboard,
   deleteRevisionRecord,
   getRevisionRecord,
+  getRevisionTextDiff,
+  listRecentRevisionHistory,
   listRevisionHistory,
   listRevisionHistoryForCard,
   listRevisionHistoryForContributor,
@@ -199,6 +201,55 @@ describe("buildPersistedRevisionIncentiveLeaderboard", () => {
       "alice",
       "bob",
     ]);
+  });
+});
+
+describe("listRecentRevisionHistory", () => {
+  it("returns an empty list when nothing is stored", () => {
+    expect(listRecentRevisionHistory(5)).toEqual([]);
+  });
+
+  it("lists the most recently recorded revisions newest first, capped to the limit", () => {
+    saveRevisionRecord(ALICE_FIRST_EDIT); // 2026-01-01
+    saveRevisionRecord(BOB_EDIT); // 2026-01-01T12:00
+    saveRevisionRecord(ALICE_SECOND_EDIT); // 2026-01-02
+
+    expect(listRecentRevisionHistory(2).map((r) => r.id)).toEqual(["rev-2", "rev-3"]);
+    expect(listRecentRevisionHistory(10).map((r) => r.id)).toEqual(["rev-2", "rev-3", "rev-1"]);
+  });
+
+  it("treats a limit of 0 as an empty list rather than throwing", () => {
+    saveRevisionRecord(ALICE_FIRST_EDIT);
+    expect(listRecentRevisionHistory(0)).toEqual([]);
+  });
+});
+
+describe("getRevisionTextDiff", () => {
+  it("returns null when the record has no captured before/after text", () => {
+    saveRevisionRecord(ALICE_FIRST_EDIT);
+    expect(getRevisionTextDiff(ALICE_FIRST_EDIT)).toBeNull();
+  });
+
+  it("returns null when only one side of the text snapshot is present", () => {
+    const partial: CardRevisionRecord = {
+      ...ALICE_FIRST_EDIT,
+      beforeText: { argBlock: "Warming DA", text: "Old text.", cite: "Smith 20" },
+    };
+    expect(getRevisionTextDiff(partial)).toBeNull();
+  });
+
+  it("builds a field-by-field diff when both text snapshots are present", () => {
+    const withText: CardRevisionRecord = {
+      ...ALICE_FIRST_EDIT,
+      beforeText: { argBlock: "Warming DA", text: "Rising emissions cause warming.", cite: "Smith 20" },
+      afterText: { argBlock: "Warming DA", text: "Rising emissions cause catastrophic warming.", cite: "Smith 2024" },
+    };
+
+    const diff = getRevisionTextDiff(withText);
+    expect(diff).not.toBeNull();
+    expect(diff!.find((f) => f.field === "argBlock")?.changed).toBe(false);
+    expect(diff!.find((f) => f.field === "text")?.changed).toBe(true);
+    expect(diff!.find((f) => f.field === "cite")?.changed).toBe(true);
   });
 });
 

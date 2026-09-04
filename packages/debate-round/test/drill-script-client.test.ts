@@ -8,6 +8,7 @@ const INPUT: DrillScriptAiInput = {
     kind: "frontline",
     rowIndex: 2,
     prompt: 'Write a frontline response to "Solvency deficit" before it\'s extended again.',
+    difficulty: "medium",
   },
 };
 

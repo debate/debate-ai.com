@@ -64,16 +64,16 @@
 
 import { Fragment, useEffect, useState } from "react"
 import { Info } from "lucide-react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Label } from "debate-ui/src/primitives/label"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Label } from "../ui/primitives/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
+} from "../ui/primitives/select"
 import {
   Table,
   TableBody,
@@ -81,8 +81,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-ui/src/primitives/table"
-import { Tooltip, TooltipContent, TooltipTrigger } from "debate-ui/src/primitives/tooltip"
+} from "../ui/primitives/table"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 import { buildPersistedLeaderboardWithCompletedTasks } from "../state/researchProgress"
 import { buildContributorUnlockStatusWithStreakFromStore } from "../lib/unlock-streak-status"
 import { isOwnContributorRow } from "../lib/session-identity"

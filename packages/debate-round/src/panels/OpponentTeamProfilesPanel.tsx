@@ -43,26 +43,43 @@
  * count rather than failing the whole batch on one malformed row —
  * mirrors `debate-card-search`'s `CardScoringPanel` "Bulk import" section.
  *
+ * A "Download report" button closes the "a printable/exportable scouting
+ * report" follow-up named under this same bullet: it exports the whole
+ * roster as a plain-text file via
+ * `rankings/opponent-team-profile.ts`'s `buildOpponentScoutingReportText`
+ * (mirrors `debate-card-search`'s `ResearchProgressPanel` "Download report"
+ * button and its anchor+Blob download pattern).
+ *
+ * A "Compare vs. opponent" section closes the "a side-by-side us-vs-opponent
+ * comparison view" follow-up named under this same bullet: an opponent
+ * picker plus a "Compare" button builds a two-column comparison of this
+ * team's own round history (`state/ownRoundHistory.ts#listOwnRoundHistory`,
+ * aggregated on the fly via `buildOpponentTeamProfile("self", ...)`) against
+ * the chosen opponent's profile, via
+ * `rankings/opponent-team-profile.ts`'s `buildOpponentTeamComparison` —
+ * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
+ * "Download comparison" action once a comparison is built.
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
 "use client"
 
 import { useEffect, useState } from "react"
-import { Badge } from "debate-ui/src/primitives/badge"
-import { Button } from "debate-ui/src/primitives/button"
-import { Input } from "debate-ui/src/primitives/input"
-import { Label } from "debate-ui/src/primitives/label"
-import { EmptyState } from "debate-ui/src/panels/panel-shell"
+import { Badge } from "../ui/primitives/badge"
+import { Button } from "../ui/primitives/button"
+import { Input } from "../ui/primitives/input"
+import { Label } from "../ui/primitives/label"
+import { EmptyState } from "../ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "debate-ui/src/primitives/select"
-import { Switch } from "debate-ui/src/primitives/switch"
-import { Textarea } from "debate-ui/src/primitives/textarea"
+} from "../ui/primitives/select"
+import { Switch } from "../ui/primitives/switch"
+import { Textarea } from "../ui/primitives/textarea"
 import {
   Table,
   TableBody,
@@ -70,7 +87,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "debate-ui/src/primitives/table"
+} from "../ui/primitives/table"
 import { buildOpponentTeamProfilesRoster } from "debate-data-sync/src/state/opponentTeamProfiles"
 import {
   bulkImportOpponentRoundRecords,
@@ -87,10 +104,18 @@ import {
   type OpponentRoundRecordEntry,
 } from "debate-data-sync/src/state/opponentRoundRecords"
 import { OPPONENT_ROUND_CSV_TEMPLATE } from "debate-data-sync/src/rankings/opponent-round-csv-import"
-import type {
-  DebateSide,
-  OpponentTeamProfile,
+import {
+  buildOpponentScoutingReportText,
+  buildOpponentTeamComparison,
+  buildOpponentTeamComparisonText,
+  buildOpponentTeamProfile,
+  opponentScoutingReportFilename,
+  opponentTeamComparisonFilename,
+  type DebateSide,
+  type OpponentTeamComparison,
+  type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
+import { listOwnRoundHistory } from "../state/ownRoundHistory"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
@@ -167,6 +192,9 @@ export function OpponentTeamProfilesPanel() {
   const [error, setError] = useState<string | null>(null)
   const [bulkCsv, setBulkCsv] = useState("")
   const [bulkStatus, setBulkStatus] = useState<string | null>(null)
+  const [compareTeamId, setCompareTeamId] = useState("")
+  const [compareError, setCompareError] = useState<string | null>(null)
+  const [comparison, setComparison] = useState<OpponentTeamComparison | null>(null)
 
   useEffect(() => {
     setRoster(buildOpponentTeamProfilesRoster())
@@ -268,6 +296,55 @@ export function OpponentTeamProfilesPanel() {
     refresh()
   }
 
+  /** Mirrors `ResearchProgressPanel.tsx`'s anchor+Blob download pattern. */
+  const handleDownloadReport = () => {
+    if (roster === null) return
+    const text = buildOpponentScoutingReportText(roster)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = opponentScoutingReportFilename()
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleCompare = () => {
+    if (!compareTeamId) {
+      setCompareError("Choose an opponent to compare against.")
+      setComparison(null)
+      return
+    }
+    const opponentProfile = roster?.find((profile) => profile.teamId === compareTeamId)
+    if (!opponentProfile) {
+      setCompareError("That opponent's profile is no longer available.")
+      setComparison(null)
+      return
+    }
+    const ownProfile = buildOpponentTeamProfile("self", listOwnRoundHistory())
+    setCompareError(null)
+    setComparison(buildOpponentTeamComparison(ownProfile, opponentProfile))
+  }
+
+  /** Mirrors `handleDownloadReport`'s anchor+Blob download pattern. */
+  const handleDownloadComparison = () => {
+    if (!comparison) return
+    const text = buildOpponentTeamComparisonText(comparison)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = opponentTeamComparisonFilename(comparison.a, comparison.b)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   const normalizedFilter = teamFilter.trim().toLowerCase()
   const visibleRecords =
     normalizedFilter === ""
@@ -282,13 +359,18 @@ export function OpponentTeamProfilesPanel() {
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Opponent Team Profiles</h1>
-        <p className="text-sm text-muted-foreground">
-          Overall record, side-record tendencies, and common arguments/cases for every opposing
-          team with a saved scouting profile. Log a scouted round below to create or update one —
-          every column is derived from the rounds logged for that team.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="mb-1 text-xl font-semibold text-foreground">Opponent Team Profiles</h1>
+          <p className="text-sm text-muted-foreground">
+            Overall record, side-record tendencies, and common arguments/cases for every opposing
+            team with a saved scouting profile. Log a scouted round below to create or update one —
+            every column is derived from the rounds logged for that team.
+          </p>
+        </div>
+        <Button size="sm" variant="outline" onClick={handleDownloadReport}>
+          Download report
+        </Button>
       </div>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
@@ -467,6 +549,116 @@ export function OpponentTeamProfilesPanel() {
             ))}
           </TableBody>
         </Table>
+      )}
+
+      {roster.length > 0 && (
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div>
+            <Label>Compare vs. opponent</Label>
+            <p className="text-xs text-muted-foreground">
+              See your own team's record (from rounds logged in Pre-Round Briefings' "Prior
+              meetings" history) side by side with a scouted opponent's.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-end gap-2">
+            <div className="space-y-1">
+              <Label htmlFor="opponent-compare-team" className="text-xs">
+                Opponent
+              </Label>
+              <Select value={compareTeamId} onValueChange={setCompareTeamId}>
+                <SelectTrigger id="opponent-compare-team" className="w-56">
+                  <SelectValue placeholder="Choose an opponent" />
+                </SelectTrigger>
+                <SelectContent>
+                  {roster.map((profile) => (
+                    <SelectItem key={profile.teamId} value={profile.teamId}>
+                      {profile.teamId}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button size="sm" onClick={handleCompare}>
+              Compare
+            </Button>
+            {comparison && (
+              <Button size="sm" variant="outline" onClick={handleDownloadComparison}>
+                Download comparison
+              </Button>
+            )}
+          </div>
+          {compareError && <p className="text-sm text-destructive">{compareError}</p>}
+          {comparison && (
+            <div className="space-y-3 border-t border-border pt-3">
+              <div className="grid grid-cols-2 gap-3 text-xs font-semibold text-muted-foreground">
+                <span>Us ({comparison.a.teamId})</span>
+                <span>{comparison.b.teamId}</span>
+              </div>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="text-muted-foreground">Rounds recorded</TableCell>
+                    <TableCell>{comparison.a.roundsRecorded}</TableCell>
+                    <TableCell>{comparison.b.roundsRecorded}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-muted-foreground">Record</TableCell>
+                    <TableCell>
+                      {comparison.a.roundsRecorded > 0
+                        ? `${comparison.a.record.wins}-${comparison.a.record.losses} (${Math.round(comparison.a.record.winRate * 100)}%)`
+                        : "—"}
+                    </TableCell>
+                    <TableCell>
+                      {comparison.b.roundsRecorded > 0
+                        ? `${comparison.b.record.wins}-${comparison.b.record.losses} (${Math.round(comparison.b.record.winRate * 100)}%)`
+                        : "—"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-muted-foreground">Aff record</TableCell>
+                    <TableCell>
+                      {comparison.a.sideRecord.aff.rounds > 0
+                        ? `${comparison.a.sideRecord.aff.wins}-${comparison.a.sideRecord.aff.rounds - comparison.a.sideRecord.aff.wins}`
+                        : "—"}
+                    </TableCell>
+                    <TableCell>
+                      {comparison.b.sideRecord.aff.rounds > 0
+                        ? `${comparison.b.sideRecord.aff.wins}-${comparison.b.sideRecord.aff.rounds - comparison.b.sideRecord.aff.wins}`
+                        : "—"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="text-muted-foreground">Neg record</TableCell>
+                    <TableCell>
+                      {comparison.a.sideRecord.neg.rounds > 0
+                        ? `${comparison.a.sideRecord.neg.wins}-${comparison.a.sideRecord.neg.rounds - comparison.a.sideRecord.neg.wins}`
+                        : "—"}
+                    </TableCell>
+                    <TableCell>
+                      {comparison.b.sideRecord.neg.rounds > 0
+                        ? `${comparison.b.sideRecord.neg.wins}-${comparison.b.sideRecord.neg.rounds - comparison.b.sideRecord.neg.wins}`
+                        : "—"}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <div className="grid gap-2 text-sm">
+                <p>
+                  <span className="text-muted-foreground">Shared arguments: </span>
+                  {formatFrequencyList(comparison.sharedArgumentTags)}
+                </p>
+                <p>
+                  <span className="text-muted-foreground">Us-only arguments: </span>
+                  {formatFrequencyList(comparison.aOnlyArgumentTags)}
+                </p>
+                <p>
+                  <span className="text-muted-foreground">{comparison.b.teamId}-only arguments: </span>
+                  {formatFrequencyList(comparison.bOnlyArgumentTags)}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       {records.length > 0 && (

@@ -6,6 +6,8 @@ import {
   buildDrillSummaryText,
   buildFrontlineDrills,
   buildOverviewDrill,
+  filterDrillsByDifficulty,
+  vulnerabilityScoreToDifficulty,
 } from "../src/flow/drill-generator";
 import type { Box } from "../src/types/flow";
 
@@ -53,6 +55,10 @@ describe("buildOverviewDrill", () => {
     expect(drill?.prompt).toContain("N (");
     expect(drill?.prompt).toContain("vs.");
   });
+
+  it("always rates the whole-round overview drill as medium difficulty", () => {
+    expect(buildOverviewDrill(MIXED_FLOW)?.difficulty).toBe("medium");
+  });
 });
 
 describe("buildFrontlineDrills", () => {
@@ -71,6 +77,12 @@ describe("buildFrontlineDrills", () => {
     expect(drills[0].prompt).toContain("1AC");
   });
 
+  it("rates a highly exposed argument's frontline drill as easy", () => {
+    // Row 0: unanswered with one opposing response and no same-side defense — highly vulnerable.
+    const [drill] = buildFrontlineDrills(MIXED_FLOW, "N");
+    expect(drill.difficulty).toBe("easy");
+  });
+
   it("returns an empty array for an empty flow", () => {
     expect(buildFrontlineDrills(EMPTY_FLOW, "A")).toEqual([]);
   });
@@ -80,7 +92,7 @@ describe("buildCrossExamDrills", () => {
   it("drills every unanswered argument regardless of side", () => {
     const drills = buildCrossExamDrills(MIXED_FLOW);
     expect(drills).toHaveLength(1);
-    expect(drills[0]).toMatchObject({ kind: "cross_ex", rowIndex: 0 });
+    expect(drills[0]).toMatchObject({ kind: "cross_ex", rowIndex: 0, difficulty: "easy" });
     expect(drills[0].prompt).toContain("Case advantage");
   });
 
@@ -97,7 +109,7 @@ describe("buildCollapseDrills", () => {
   it("recommends the opposing side's most vulnerable arguments", () => {
     const drills = buildCollapseDrills(MIXED_FLOW, "N");
     expect(drills).toHaveLength(1);
-    expect(drills[0]).toMatchObject({ kind: "collapse", rowIndex: 0 });
+    expect(drills[0]).toMatchObject({ kind: "collapse", rowIndex: 0, difficulty: "easy" });
     expect(drills[0].prompt).toContain("Case advantage");
     expect(drills[0].prompt).toContain("vulnerability");
   });
@@ -131,6 +143,7 @@ describe("buildCollapseDrills", () => {
     };
     const [drill] = buildCollapseDrills(flow, "N");
     expect(drill.prompt).toContain("only 1 same-side extension(s) since");
+    expect(drill.difficulty).toBe("medium");
   });
 
   it("truncates a very long argument in the collapse prompt", () => {
@@ -170,5 +183,40 @@ describe("buildDrillSummaryText", () => {
     expect(text).toContain("[Frontline]");
     expect(text).toContain("[Cross-Ex]");
     expect(text).toContain("[Collapse]");
+  });
+});
+
+describe("vulnerabilityScoreToDifficulty", () => {
+  it("rates a highly exposed score as easy", () => {
+    expect(vulnerabilityScoreToDifficulty(70)).toBe("easy");
+    expect(vulnerabilityScoreToDifficulty(100)).toBe("easy");
+  });
+
+  it("rates a well-defended score as hard", () => {
+    expect(vulnerabilityScoreToDifficulty(39)).toBe("hard");
+    expect(vulnerabilityScoreToDifficulty(0)).toBe("hard");
+  });
+
+  it("rates everything in between as medium", () => {
+    expect(vulnerabilityScoreToDifficulty(40)).toBe("medium");
+    expect(vulnerabilityScoreToDifficulty(69)).toBe("medium");
+  });
+});
+
+describe("filterDrillsByDifficulty", () => {
+  const drills = buildDrillSet(MIXED_FLOW, "N");
+
+  it("returns every drill unchanged for \"all\"", () => {
+    expect(filterDrillsByDifficulty(drills, "all")).toEqual(drills);
+  });
+
+  it("narrows to only drills matching the given difficulty", () => {
+    const filtered = filterDrillsByDifficulty(drills, "easy");
+    expect(filtered.length).toBeGreaterThan(0);
+    expect(filtered.every((drill) => drill.difficulty === "easy")).toBe(true);
+  });
+
+  it("returns an empty array when no drill matches", () => {
+    expect(filterDrillsByDifficulty([], "hard")).toEqual([]);
   });
 });

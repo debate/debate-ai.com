@@ -48,6 +48,27 @@ ranked list from `getStaleEvidenceEntries` directly; `state/evidenceLibraryEntri
 `buildPersistedStaleEvidenceDigest(currentYear)` composes it against the persisted evidence library
 store. When nothing is stale, the panel shows an empty-state message instead of the table.
 
+## Before/after revision diff viewer
+
+`RevisionIncentivesPanel` also renders a **Recent revisions** section below the leaderboard: the
+20 most recently recorded revisions, newest first, each with a "View diff" toggle. Expanding a row
+shows a word-level before/after comparison of that revision's argument block, cut text, and
+citation — only the fields that actually changed are shown.
+
+This is possible because `saveEvidenceLibraryEntryRevision` (`state/evidenceLibraryEntries.ts`)
+now captures each side's plain diffable text — `lib/revision-text-diff.ts`'s
+`buildEvidenceEntryTextSnapshot(entry)` — onto the persisted `CardRevisionRecord`'s new
+`beforeText`/`afterText` fields, alongside the scored `CardSnapshot` `evaluateRevision` already
+used. `state/revisionHistory.ts`'s `getRevisionTextDiff(record)` composes those two snapshots
+through the pure `buildCardRevisionTextDiff`, which diffs `argBlock`, `text`, and `cite`
+independently via a word-level LCS diff (mirroring `debate-round`'s `flow/flow-edit-diff.ts`
+algorithm, reimplemented here since the two packages share no dependency). A revision recorded
+before this field existed — or one built from a caller-supplied `CardRevision` with no source
+entry to read text from — has no captured snapshot, so `getRevisionTextDiff` returns `null` and
+the panel shows "No before/after text was captured for this revision" instead of a diff. A very
+long card (beyond `MAX_DIFF_TOKENS`, 6000 tokens) falls back to a coarse whole-field removed/added
+pair rather than risking an oversized word-by-word comparison.
+
 ## Data flow
 
 ```
@@ -55,10 +76,13 @@ panels/EvidenceLibraryPanel.tsx (Edit action, /cards/library)
   → saveEvidenceLibraryEntryRevision(entry, contributorId) — state/evidenceLibraryEntries.ts
       → buildEvidenceEntryRevision(before, after, contributorId) — lib/shared-evidence-library.ts (pure)
           → deriveCardSnapshotFromEntry(entry) — lib/shared-evidence-library.ts (pure)
+      → buildEvidenceEntryTextSnapshot(entry) (before + after) — lib/revision-text-diff.ts (pure)
       → saveRevisionRecord(record)         — state/revisionHistory.ts (localStorage)
 state/revisionHistory.ts (localStorage)
   → buildPersistedRevisionIncentiveLeaderboard()   — lib/revision-incentives.ts
-  → panels/RevisionIncentivesPanel.tsx (renders the table)
+  → listRecentRevisionHistory(20) + getRevisionTextDiff(record)
+      → buildCardRevisionTextDiff(beforeText, afterText) — lib/revision-text-diff.ts (pure)
+  → panels/RevisionIncentivesPanel.tsx (renders the leaderboard + recent-revisions diff viewer)
   → apps/debate-ai.com/app/cards/revisions/page.tsx (mounts the panel as a route)
 ```
 

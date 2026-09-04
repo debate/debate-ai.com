@@ -20,7 +20,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "debate-ui/src/primitives/tooltip"
+} from "../../ui/primitives/tooltip"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 

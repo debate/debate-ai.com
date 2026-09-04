@@ -16,8 +16,8 @@ import type React from "react"
 
 import { useState } from "react"
 import { useFlowStore } from "../state/store"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "debate-ui/src/primitives/dialog"
-import { Button } from "debate-ui/src/primitives/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/primitives/dialog"
+import { Button } from "../ui/primitives/button"
 import { Download, Upload } from "lucide-react"
 
 /**

@@ -7,8 +7,8 @@
 
 import { useState, useMemo, useEffect } from "react"
 import grab from "grab-url"
-import { Card } from "debate-ui/src/primitives/card"
-import { Input } from "debate-ui/src/primitives/input"
+import { Card } from "../../ui/primitives/card"
+import { Input } from "../../ui/primitives/input"
 import { Search, ArrowRight } from "lucide-react"
 
 /**

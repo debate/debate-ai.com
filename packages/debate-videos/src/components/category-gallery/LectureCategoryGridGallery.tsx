@@ -25,8 +25,8 @@ import {
   GraduationCap,
   LayoutGrid,
 } from "lucide-react";
-import { GlowingEffect } from "debate-ui/src/effects/glowing-effect";
-import { cn } from "debate-ui/src/lib/utils";
+import { GlowingEffect } from "../../ui/effects/glowing-effect";
+import { cn } from "../../ui/lib/utils";
 import type { LectureCategoryFacet } from "../../types/videos";
 import categoryDescriptions from "../../data/category-descriptions.json";
 

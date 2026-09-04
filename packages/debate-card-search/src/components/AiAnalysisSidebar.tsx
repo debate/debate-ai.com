@@ -6,10 +6,10 @@
 "use client"
 
 
-import { Button } from "debate-ui/src/primitives/button"
-import { Textarea } from "debate-ui/src/primitives/textarea"
+import { Button } from "../ui/primitives/button"
+import { Textarea } from "../ui/primitives/textarea"
 import { Clipboard, ExternalLink, X } from "lucide-react"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "debate-ui/src/primitives/dropdown-menu"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/primitives/dropdown-menu"
 
 /**
  * Type definition for search result data

@@ -28,7 +28,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Input } from "debate-ui/src/primitives/input"
+import { Input } from "../ui/primitives/input"
 import {
   buildCommunityResearchHubSections,
   buildCommunityResearchHubSummaryText,
