@@ -52,7 +52,8 @@ import { JudgeParadigmPickerPanel } from "debate-speech-writer"
 ```
 
 `OpponentPersonaPickerPanel` lets a user save a practice session's AI opponent persona — one
-of the four built-in personas from `opponent-personas.ts` — through
+of the four built-in personas from `opponent-personas.ts` — plus an independent difficulty
+level (Beginner/Intermediate/Advanced/Elite, from `opponentDifficulties`) — through
 `saveOpponentPersonaSelection`, and lists every session with a saved selection, mounted at
 `/practice-opponent` in the web app:
 

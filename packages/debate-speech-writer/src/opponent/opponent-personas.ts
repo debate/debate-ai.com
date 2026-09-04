@@ -13,6 +13,13 @@
  * `judge-paradigms.ts`'s `buildCustomJudgeParadigm` — the "custom
  * opponent-persona authoring flow" follow-up named in
  * `docs/features/practice-opponent.md`'s Known gaps.
+ *
+ * `OpponentDifficulty`/`opponentDifficulties` close the "🤖 AI Practice
+ * Opponent" idea's "a difficulty slider layered on top of persona choice"
+ * Next item (TODO.md's Research Crowdsourcing Organizer Features list): a
+ * second, independent axis from persona choice — how strong the AI opponent
+ * argues within whichever persona is selected — composed into the same
+ * prompt section by `buildOpponentPersonaPrompt`.
  */
 
 export type BuiltinOpponentPersonaId = "policy-heavy" | "kritik" | "lay" | "fast-flow";
@@ -94,6 +101,64 @@ export const opponentPersonas: Record<BuiltinOpponentPersonaId, OpponentPersona>
   },
 };
 
+export type OpponentDifficulty = "beginner" | "intermediate" | "advanced" | "elite";
+
+export type OpponentDifficultyLevel = {
+  id: OpponentDifficulty;
+  name: string;
+  description: string;
+  /** Imperative instructions layered on top of the persona's own, meant to be injected into the same AI speech-generation prompt. */
+  instructions: string;
+};
+
+export const opponentDifficulties: Record<OpponentDifficulty, OpponentDifficultyLevel> = {
+  beginner: {
+    id: "beginner",
+    name: "Beginner",
+    description: "A developing opponent who sometimes drops or under-explains an argument and argues below the persona's usual pace.",
+    instructions:
+      "Argue as a less experienced opponent: occasionally drop or under-explain a weaker argument instead of the persona's usual polish, slow your pace below what the persona would normally use, and prefer simpler, more straightforward extensions over the persona's most technical or strategic options.",
+  },
+  intermediate: {
+    id: "intermediate",
+    name: "Intermediate",
+    description: "A solidly competent opponent who argues in the selected persona's usual style without embellishment.",
+    instructions: "Argue exactly as the persona above describes, with no adjustment for difficulty.",
+  },
+  advanced: {
+    id: "advanced",
+    name: "Advanced",
+    description: "A sharp opponent who catches drops, extends efficiently, and adds well-supported strategic depth beyond the persona's baseline.",
+    instructions:
+      "Argue as a stronger-than-average opponent: catch and punish anything the user drops or under-covers, extend arguments efficiently, and add well-supported strategic depth beyond the persona's baseline description.",
+  },
+  elite: {
+    id: "elite",
+    name: "Elite",
+    description: "A top-tier competitive opponent who plays maximally strategically within the persona and argues at tournament-elite quality.",
+    instructions:
+      "Argue as a top-tier, tournament-elite opponent: play maximally strategically within the chosen persona, exploit every strategic opening or inconsistency the user offers, and hold yourself to the highest technical and rhetorical standard the persona allows.",
+  },
+};
+
+export const opponentDifficultyIds = Object.keys(opponentDifficulties) as OpponentDifficulty[];
+
+export const DEFAULT_OPPONENT_DIFFICULTY: OpponentDifficulty = "intermediate";
+
+export function isOpponentDifficulty(id: string): id is OpponentDifficulty {
+  return Object.prototype.hasOwnProperty.call(opponentDifficulties, id);
+}
+
+/** Looks up a difficulty level by id, or `null` if `id` isn't a known difficulty. */
+export function getOpponentDifficulty(id: string): OpponentDifficultyLevel | null {
+  return isOpponentDifficulty(id) ? opponentDifficulties[id] : null;
+}
+
+/** All difficulty levels, in a stable order — for a difficulty-picker UI. */
+export function listOpponentDifficulties(): OpponentDifficultyLevel[] {
+  return opponentDifficultyIds.map((id) => opponentDifficulties[id]);
+}
+
 export const opponentPersonaIds = Object.keys(opponentPersonas) as BuiltinOpponentPersonaId[];
 
 export function isBuiltinOpponentPersonaId(id: string): id is BuiltinOpponentPersonaId {
@@ -163,11 +228,18 @@ export function buildCustomOpponentPersona(input: CustomOpponentPersonaInput): O
 
 /**
  * Composes a self-contained prompt section describing how the AI opponent
- * should argue under the given persona, suitable for inserting into a future
- * AI speech-generation prompt (see idea #3's `buildAiResponseRequest` in
- * `debate-round/src/round/ai-versus-speech-order.ts`).
+ * should argue under the given persona and difficulty, suitable for
+ * inserting into a future AI speech-generation prompt (see idea #3's
+ * `buildAiResponseRequest` in `debate-round/src/round/ai-versus-speech-order.ts`).
+ *
+ * `difficulty` defaults to `DEFAULT_OPPONENT_DIFFICULTY` ("intermediate") so
+ * every existing caller that doesn't pass one keeps arguing at the
+ * persona's own baseline strength, unmodified.
  */
-export function buildOpponentPersonaPrompt(persona: OpponentPersona): string {
+export function buildOpponentPersonaPrompt(
+  persona: OpponentPersona,
+  difficulty: OpponentDifficulty = DEFAULT_OPPONENT_DIFFICULTY,
+): string {
   const lines = [`Opponent Persona: ${persona.name}`, persona.description];
 
   if (persona.preferredArguments.length > 0) {
@@ -179,6 +251,9 @@ export function buildOpponentPersonaPrompt(persona: OpponentPersona): string {
   }
 
   lines.push("", `Pace: ${persona.pace}.`, "", persona.instructions);
+
+  const level = opponentDifficulties[difficulty];
+  lines.push("", `Difficulty: ${level.name}.`, level.instructions);
 
   return lines.join("\n");
 }

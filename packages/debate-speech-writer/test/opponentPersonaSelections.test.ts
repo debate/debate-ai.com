@@ -82,6 +82,22 @@ describe("saveOpponentPersonaSelection", () => {
     expect(listOpponentPersonaSelections()).toEqual([revised]);
     expect(getOpponentPersonaSelection("session-1")).toEqual(revised);
   });
+
+  it("persists an optional difficulty alongside the persona", () => {
+    const withDifficulty: OpponentPersonaSelection = {
+      sessionId: "session-3",
+      persona: opponentPersonas["fast-flow"],
+      difficulty: "elite",
+    };
+    saveOpponentPersonaSelection(withDifficulty);
+
+    expect(getOpponentPersonaSelection("session-3")).toEqual(withDifficulty);
+  });
+
+  it("leaves difficulty unset when the caller doesn't provide one", () => {
+    saveOpponentPersonaSelection(SESSION_1_POLICY_HEAVY);
+    expect(getOpponentPersonaSelection("session-1")?.difficulty).toBeUndefined();
+  });
 });
 
 describe("deleteOpponentPersonaSelection", () => {
