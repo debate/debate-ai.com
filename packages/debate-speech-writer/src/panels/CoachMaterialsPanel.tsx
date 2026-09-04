@@ -54,6 +54,20 @@
  * for coach materials (and their version history)" follow-up named under
  * idea #8 in TODO.md.
  *
+ * A "Pending review" section lists every material not yet approved (every
+ * new upload, every edit, and every restored version — see
+ * `saveCoachMaterial`/`materialFromVersion`'s doc comments) with
+ * Approve/Reject actions gated behind a typed-in "Reviewer name" (this repo
+ * has no roles system to verify a real "team coach" identity, so the field
+ * is honest free-form input, mirroring `debate-search-evidence`'s
+ * `reviewer-permissions.ts` doc comment on the same limitation), closing the
+ * "reviewer/approval workflow before a saved material is available to the
+ * team coach" follow-up named under idea #8 in TODO.md. Only an
+ * `"approved"`-or-legacy-unset material grounds "Ask the coach" — see
+ * `state/coachMaterials.ts#findRelevantMaterialsFromStore`. Each material's
+ * status shows as a badge in the main grouped list too, with a rejection's
+ * reviewer note shown alongside it.
+ *
  * @module panels/CoachMaterialsPanel
  */
 
@@ -77,8 +91,10 @@ import {
   buildGroundedCoachPrompt,
   COACH_MATERIAL_KIND_LABELS,
   COACH_MATERIAL_KIND_ORDER,
+  COACH_MATERIAL_STATUS_LABELS,
   type CoachMaterialKind,
   type CoachMaterialMatch,
+  type CoachMaterialStatus,
 } from "../coach/team-coach-materials"
 import { requestTeamCoachAnswer } from "../coach/team-coach-client"
 import { extractMaterialTextFromDocument } from "../coach/document-material-extraction"
@@ -89,6 +105,7 @@ import {
   buildCoachMaterialLibraryFromStore,
   findRelevantMaterialsFromStore,
   listCoachMaterialTagsFromStore,
+  listPendingCoachMaterialsFromStore,
 } from "../state/coachMaterials"
 import {
   listVersionsForMaterial,
@@ -131,6 +148,13 @@ function parseTags(raw: string): string[] {
     .filter((tag) => tag.length > 0)
 }
 
+/** Badge variant for a material's review status — approved reads as neutral (the pre-workflow default), pending/rejected stand out. */
+const STATUS_BADGE_VARIANT: Record<CoachMaterialStatus, "secondary" | "outline" | "destructive"> = {
+  pending: "outline",
+  approved: "secondary",
+  rejected: "destructive",
+}
+
 /**
  * Renders the Coach Materials panel: an upload form, every persisted
  * material grouped by kind with a delete action, and an "ask the coach"
@@ -159,16 +183,21 @@ export function CoachMaterialsPanel() {
   const [asking, setAsking] = useState(false)
   const [askError, setAskError] = useState<string | null>(null)
   const [history, setHistory] = useState<CoachConversationTurn[]>([])
+  const [pendingMaterials, setPendingMaterials] = useState<CoachMaterial[]>([])
+  const [reviewerName, setReviewerName] = useState("")
+  const [rejectReasons, setRejectReasons] = useState<Record<string, string>>({})
+  const [reviewError, setReviewError] = useState<string | null>(null)
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) => setForm((prev) => ({ ...prev, text: appendDictatedSegment(prev.text, segment) })),
   })
-  const { synced, ready: syncReady, saveMaterial, deleteMaterial } = useCoachMaterialsSync()
+  const { synced, ready: syncReady, saveMaterial, deleteMaterial, reviewMaterial } = useCoachMaterialsSync()
 
   useEffect(() => {
     setAllTags(listCoachMaterialTagsFromStore())
     setTotalUnfiltered(buildCoachMaterialLibraryFromStore().totalMaterials)
     setHistory(listCoachConversationTurns())
+    setPendingMaterials(listPendingCoachMaterialsFromStore())
   }, [])
 
   useEffect(() => {
@@ -189,6 +218,7 @@ export function CoachMaterialsPanel() {
     )
     setAllTags(listCoachMaterialTagsFromStore())
     setTotalUnfiltered(buildCoachMaterialLibraryFromStore().totalMaterials)
+    setPendingMaterials(listPendingCoachMaterialsFromStore())
   }
 
   // Refreshes the rendered view once the mount-time cross-device merge
@@ -216,6 +246,11 @@ export function CoachMaterialsPanel() {
       topic: form.topic.trim() || undefined,
       tags: parseTags(form.tags),
       text,
+      // Every save (a brand-new upload or an edit to an existing material)
+      // goes back through the reviewer/approval workflow rather than
+      // silently keeping whatever status the record had before — content
+      // just changed, so it needs a fresh review.
+      status: "pending",
     })
     setError(null)
     setForm(EMPTY_FORM)
@@ -283,6 +318,33 @@ export function CoachMaterialsPanel() {
       setHistoryOpenId(null)
       setVersions([])
     }
+    refresh()
+  }
+
+  const handleApprove = (id: string) => {
+    const reviewer = reviewerName.trim()
+    if (!reviewer) {
+      setReviewError("Enter your name to review materials.")
+      return
+    }
+    setReviewError(null)
+    reviewMaterial(id, "approved", reviewer)
+    refresh()
+  }
+
+  const handleReject = (id: string) => {
+    const reviewer = reviewerName.trim()
+    if (!reviewer) {
+      setReviewError("Enter your name to review materials.")
+      return
+    }
+    setReviewError(null)
+    reviewMaterial(id, "rejected", reviewer, rejectReasons[id]?.trim() || undefined)
+    setRejectReasons((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
     refresh()
   }
 
@@ -450,6 +512,58 @@ export function CoachMaterialsPanel() {
         </div>
       </div>
 
+      {pendingMaterials.length > 0 && (
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div>
+            <h2 className="text-sm font-medium text-foreground">
+              Pending review ({pendingMaterials.length})
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              These materials won't ground "Ask the coach" answers until approved.
+            </p>
+          </div>
+
+          <div className="space-y-1.5 max-w-xs">
+            <Label htmlFor="coach-material-reviewer">Reviewer name</Label>
+            <Input
+              id="coach-material-reviewer"
+              value={reviewerName}
+              onChange={(e) => setReviewerName(e.target.value)}
+              placeholder="Your name"
+            />
+          </div>
+          {reviewError && <p className="text-sm text-destructive">{reviewError}</p>}
+
+          <div className="space-y-2">
+            {pendingMaterials.map((material) => (
+              <div key={material.id} className="rounded-md border border-border px-3 py-2 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium text-foreground">{material.title}</span>
+                  <Badge variant="outline">{KIND_LABELS[material.kind]}</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">{material.text.slice(0, 160)}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Input
+                    value={rejectReasons[material.id] ?? ""}
+                    onChange={(e) =>
+                      setRejectReasons((prev) => ({ ...prev, [material.id]: e.target.value }))
+                    }
+                    placeholder="Rejection reason (optional)"
+                    className="max-w-xs"
+                  />
+                  <Button size="sm" onClick={() => handleApprove(material.id)}>
+                    Approve
+                  </Button>
+                  <Button size="sm" variant="destructive" onClick={() => handleReject(material.id)}>
+                    Reject
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {totalUnfiltered > 0 && (
         <div className="flex flex-wrap items-end gap-2">
           <div className="space-y-1.5 flex-1 min-w-[16rem]">
@@ -511,6 +625,9 @@ export function CoachMaterialsPanel() {
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-medium text-foreground">{material.title}</span>
+                          <Badge variant={STATUS_BADGE_VARIANT[material.status ?? "approved"]}>
+                            {COACH_MATERIAL_STATUS_LABELS[material.status ?? "approved"]}
+                          </Badge>
                           {material.topic && <Badge variant="outline">{material.topic}</Badge>}
                           {material.tags.map((tag) => (
                             <Badge key={tag} variant="secondary">
@@ -519,6 +636,9 @@ export function CoachMaterialsPanel() {
                           ))}
                         </div>
                         <p className="text-xs text-muted-foreground">{material.text.slice(0, 160)}</p>
+                        {material.status === "rejected" && material.reviewNote && (
+                          <p className="text-xs text-destructive">Rejected: {material.reviewNote}</p>
+                        )}
                       </div>
                       <div className="flex items-center gap-1">
                         <Button size="sm" variant="ghost" onClick={() => handleToggleHistory(material.id)}>

@@ -71,4 +71,40 @@ describe("isValidCoachMaterialRecord", () => {
   it("rejects a record with a non-string text", () => {
     expect(isValidCoachMaterialRecord(makeRecord({ text: 5 as unknown as string }))).toBe(false);
   });
+
+  it("accepts a record with no status/review fields at all (pre-review-workflow records)", () => {
+    expect(isValidCoachMaterialRecord(makeRecord())).toBe(true);
+  });
+
+  it.each(["pending", "approved", "rejected"])("accepts a record with status %p", (status) => {
+    expect(isValidCoachMaterialRecord(makeRecord({ status: status as CoachMaterial["status"] }))).toBe(true);
+  });
+
+  it("rejects a record whose status isn't one of the known CoachMaterialStatuses", () => {
+    expect(
+      isValidCoachMaterialRecord(makeRecord({ status: "in_review" as unknown as CoachMaterial["status"] })),
+    ).toBe(false);
+  });
+
+  it("accepts a record with reviewedBy, reviewedAt, and reviewNote present", () => {
+    expect(
+      isValidCoachMaterialRecord(
+        makeRecord({ status: "approved", reviewedBy: "Coach K", reviewedAt: 1000, reviewNote: "Looks good" }),
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects a record whose reviewedBy is present but empty/whitespace-only", () => {
+    expect(isValidCoachMaterialRecord(makeRecord({ reviewedBy: "   " }))).toBe(false);
+  });
+
+  it("rejects a record whose reviewedAt is present but not a number", () => {
+    expect(
+      isValidCoachMaterialRecord(makeRecord({ reviewedAt: "yesterday" as unknown as number })),
+    ).toBe(false);
+  });
+
+  it("rejects a record whose reviewNote is present but empty/whitespace-only", () => {
+    expect(isValidCoachMaterialRecord(makeRecord({ reviewNote: "   " }))).toBe(false);
+  });
 });

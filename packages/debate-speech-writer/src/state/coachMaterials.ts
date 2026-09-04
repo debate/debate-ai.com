@@ -19,9 +19,12 @@ import type {
 } from "../coach/team-coach-materials";
 import {
   buildCoachMaterialLibrary,
+  filterApprovedCoachMaterials,
   filterCoachMaterials,
+  filterPendingCoachMaterials,
   findRelevantMaterials,
   listCoachMaterialTags,
+  reviewCoachMaterial,
 } from "../coach/team-coach-materials";
 import {
   appendMaterialVersion,
@@ -146,11 +149,43 @@ export function listCoachMaterialTagsFromStore(): string[] {
  * Finds and ranks the persisted materials most relevant to `query`,
  * composing this store with `team-coach-materials.ts`'s pure
  * `findRelevantMaterials` the same way `buildCoachMaterialLibraryFromStore`
- * composes `buildCoachMaterialLibrary`.
+ * composes `buildCoachMaterialLibrary`. Only draws on
+ * `filterApprovedCoachMaterials` candidates — the reviewer/approval workflow
+ * gate — so a still-`"pending"`/`"rejected"` material never grounds an "Ask
+ * the coach" answer.
  */
 export function findRelevantMaterialsFromStore(
   query: string,
   options: FindRelevantMaterialsOptions = {},
 ): CoachMaterialMatch[] {
-  return findRelevantMaterials(readAll(), query, options);
+  return findRelevantMaterials(filterApprovedCoachMaterials(readAll()), query, options);
+}
+
+/** Every persisted material still awaiting a review decision, in storage order. */
+export function listPendingCoachMaterialsFromStore(): CoachMaterial[] {
+  return filterPendingCoachMaterials(readAll());
+}
+
+/**
+ * Records a review decision (`"approved"`/`"rejected"`) on a persisted
+ * material by id and overwrites it in place — unlike `saveCoachMaterial`,
+ * this never snapshots a version, since a review decision isn't a content
+ * edit. Returns the updated material, or `undefined` if `id` isn't stored
+ * (a caller, `hooks/useCoachMaterialsSync.ts`, uses the return value to know
+ * whether to also push the update to the account).
+ */
+export function setCoachMaterialReviewStatus(
+  id: string,
+  status: "approved" | "rejected",
+  reviewerId: string,
+  note?: string,
+): CoachMaterial | undefined {
+  const materials = readAll();
+  const index = materials.findIndex((material) => material.id === id);
+  if (index === -1) return undefined;
+
+  const updated = reviewCoachMaterial(materials[index] as CoachMaterial, status, reviewerId, note);
+  materials[index] = updated;
+  writeAll(materials);
+  return updated;
 }

@@ -73,7 +73,6 @@
         "debate-editor": "workspace:*",
         "debate-flow-ebb": "workspace:*",
         "debate-practice-rounds": "workspace:*",
-        "debate-practice-vs-ai": "workspace:*",
         "debate-research-evidence": "workspace:*",
         "debate-round": "workspace:*",
         "debate-speech-writer": "workspace:*",
@@ -180,7 +179,7 @@
         "vitest": "^4.1.0",
       },
     },
-    "packages/debate-community": {
+    "packages/debate-contributor-progress": {
       "name": "debate-community",
       "version": "0.1.0",
       "dependencies": {
@@ -270,7 +269,7 @@
         "react-dom": "^18.0.0 || ^19.0.0",
       },
     },
-    "packages/debate-flow-ebb": {
+    "packages/debate-flow": {
       "name": "debate-flow-ebb",
       "version": "0.1.0",
       "dependencies": {
@@ -313,7 +312,7 @@
         "react-dom": "^18.0.0 || ^19.0.0",
       },
     },
-    "packages/debate-practice-rounds": {
+    "packages/debate-practice-drills": {
       "name": "debate-practice-rounds",
       "version": "0.1.0",
       "dependencies": {
@@ -332,60 +331,6 @@
         "debate-timer": "workspace:*",
         "debate-videos": "workspace:*",
         "lucide-react": "^0.577.0",
-        "react-resizable-panels": "^4.7.2",
-        "tailwind-merge": "^3.5.0",
-      },
-      "devDependencies": {
-        "@types/node": "^25.5.0",
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
-        "@vitest/coverage-v8": "^4.1.0",
-        "next": "16.1.6",
-        "typescript": "^5.9.3",
-        "vitest": "^4.1.0",
-      },
-      "peerDependencies": {
-        "next": ">=15",
-        "react": "^18.0.0 || ^19.0.0",
-        "react-dom": "^18.0.0 || ^19.0.0",
-      },
-    },
-    "packages/debate-practice-vs-ai": {
-      "name": "debate-practice-vs-ai",
-      "version": "0.1.0",
-      "dependencies": {
-        "debate-practice-rounds": "workspace:*",
-      },
-      "devDependencies": {
-        "@types/react": "^19.2.14",
-        "@types/react-dom": "^19.2.3",
-        "@vitest/coverage-v8": "^4.1.0",
-        "next": "16.1.6",
-        "typescript": "^5.9.3",
-        "vitest": "^4.1.0",
-      },
-      "peerDependencies": {
-        "react": "^18.0.0 || ^19.0.0",
-        "react-dom": "^18.0.0 || ^19.0.0",
-      },
-    },
-    "packages/debate-research-evidence": {
-      "name": "debate-research-evidence",
-      "version": "0.1.0",
-      "dependencies": {
-        "@radix-ui/react-dropdown-menu": "2.1.16",
-        "@radix-ui/react-label": "2.1.8",
-        "@radix-ui/react-radio-group": "1.3.8",
-        "@radix-ui/react-select": "^2.2.6",
-        "@radix-ui/react-slot": "1.2.4",
-        "@radix-ui/react-tooltip": "^1.2.8",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
-        "debate-card-parser": "workspace:*",
-        "fuse.js": "^7.1.0",
-        "grab-url": "^1.6.7",
-        "lucide-react": "^0.577.0",
-        "react-native-app-buttons": "^0.1.4",
         "react-resizable-panels": "^4.7.2",
         "tailwind-merge": "^3.5.0",
       },
@@ -448,6 +393,41 @@
       "peerDependencies": {
         "next": ">=15",
         "next-themes": "^0.4.6",
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0",
+      },
+    },
+    "packages/debate-search-evidence": {
+      "name": "debate-research-evidence",
+      "version": "0.1.0",
+      "dependencies": {
+        "@radix-ui/react-dropdown-menu": "2.1.16",
+        "@radix-ui/react-label": "2.1.8",
+        "@radix-ui/react-radio-group": "1.3.8",
+        "@radix-ui/react-select": "^2.2.6",
+        "@radix-ui/react-slot": "1.2.4",
+        "@radix-ui/react-tooltip": "^1.2.8",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "debate-card-parser": "workspace:*",
+        "fuse.js": "^7.1.0",
+        "grab-url": "^1.6.7",
+        "lucide-react": "^0.577.0",
+        "react-native-app-buttons": "^0.1.4",
+        "react-resizable-panels": "^4.7.2",
+        "tailwind-merge": "^3.5.0",
+      },
+      "devDependencies": {
+        "@types/node": "^25.5.0",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitest/coverage-v8": "^4.1.0",
+        "next": "16.1.6",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.0",
+      },
+      "peerDependencies": {
+        "next": ">=15",
         "react": "^18.0.0 || ^19.0.0",
         "react-dom": "^18.0.0 || ^19.0.0",
       },
@@ -1746,19 +1726,17 @@
 
     "debate-card-parser": ["debate-card-parser@workspace:packages/debate-card-parser"],
 
-    "debate-community": ["debate-community@workspace:packages/debate-community"],
+    "debate-community": ["debate-community@workspace:packages/debate-contributor-progress"],
 
     "debate-data-sync": ["debate-data-sync@workspace:packages/debate-data-sync"],
 
     "debate-editor": ["debate-editor@workspace:packages/debate-editor"],
 
-    "debate-flow-ebb": ["debate-flow-ebb@workspace:packages/debate-flow-ebb"],
+    "debate-flow-ebb": ["debate-flow-ebb@workspace:packages/debate-flow"],
 
-    "debate-practice-rounds": ["debate-practice-rounds@workspace:packages/debate-practice-rounds"],
+    "debate-practice-rounds": ["debate-practice-rounds@workspace:packages/debate-practice-drills"],
 
-    "debate-practice-vs-ai": ["debate-practice-vs-ai@workspace:packages/debate-practice-vs-ai"],
-
-    "debate-research-evidence": ["debate-research-evidence@workspace:packages/debate-research-evidence"],
+    "debate-research-evidence": ["debate-research-evidence@workspace:packages/debate-search-evidence"],
 
     "debate-round": ["debate-round@workspace:packages/debate-round"],
 
