@@ -294,6 +294,61 @@ and the new return values of `saveCoachMaterial`/`deleteCoachMaterial`/
 existing convention of testing only the pure validators, not the D1-backed
 routes themselves (see e.g. `/api/round-pairings`).
 
+## Reviewer/approval workflow
+
+Closes the "No reviewer/approval workflow before a material is available to
+the team coach" Known gap below — previously any saved material, including a
+brand-new upload or an in-place edit, was immediately eligible to ground an
+"Ask the coach" answer.
+
+- `CoachMaterial` gains an optional `status?: "pending" | "approved" |
+  "rejected"` field (`coach/team-coach-materials.ts`), plus `reviewedBy?`,
+  `reviewedAt?`, and `reviewNote?`. A material with no `status` at all —
+  every record saved before this field existed — is treated the same as
+  `"approved"` (`isCoachMaterialApproved`), so this doesn't retroactively hide
+  anything already trusted.
+- Every save through the panel's upload/edit form now stamps the material
+  `status: "pending"`, and restoring an older version
+  (`state/coachMaterialVersions.ts#materialFromVersion`) does too — a content
+  change, whether a brand-new upload, an edit, or a restore, always goes back
+  through review rather than silently keeping a prior approval.
+- `state/coachMaterials.ts#findRelevantMaterialsFromStore` — what "Ask the
+  coach" draws its grounding materials from — now filters through
+  `filterApprovedCoachMaterials` first, so a `"pending"`/`"rejected"` material
+  never grounds an answer. The main library view
+  (`buildCoachMaterialLibraryFromStore`) is unchanged and still shows every
+  material regardless of status, so a coach can see and act on what's
+  awaiting review.
+- New `state/coachMaterials.ts#setCoachMaterialReviewStatus(id, status,
+  reviewerId, note?)` records a review decision in place — unlike
+  `saveCoachMaterial`, it never snapshots a version, since a review decision
+  isn't a content edit. `listPendingCoachMaterialsFromStore()` lists everything
+  still awaiting a decision.
+- `hooks/useCoachMaterialsSync.ts` gains `reviewMaterial(id, status,
+  reviewerId, note?)`, wrapping the local write with the same best-effort
+  account push `saveMaterial` already does — a review decision follows a
+  signed-in user across devices the same way the material itself does.
+- `CoachMaterialsPanel.tsx` gets a "Pending review (N)" section above the
+  library (shown only once something is pending) with a typed-in "Reviewer
+  name" field and per-material Approve/Reject actions (Reject accepts an
+  optional reason). This repo has no roles/auth system to verify a real "team
+  coach" identity (see `debate-search-evidence`'s `reviewer-permissions.ts`
+  for the same honest limitation elsewhere), so the reviewer field is
+  free-form input, not a permission check. Every material in the main grouped
+  list now also shows a status badge, with a rejected material's reviewer
+  note shown alongside it.
+
+Vitest-covered: `isCoachMaterialApproved`/`filterApprovedCoachMaterials`/
+`filterPendingCoachMaterials`/`reviewCoachMaterial`/`approveCoachMaterial`/
+`rejectCoachMaterial` in `test/team-coach-materials.test.ts`;
+`findRelevantMaterialsFromStore` excluding pending/rejected materials,
+`listPendingCoachMaterialsFromStore`, and `setCoachMaterialReviewStatus`
+(approve, reject with a note, unknown id, no version snapshot recorded) in
+`test/coachMaterials.test.ts`; `materialFromVersion` always coming back
+`"pending"` in `test/coachMaterialVersions.test.ts`; and the new optional
+`status`/`reviewedBy`/`reviewedAt`/`reviewNote` fields in
+`test/savedCoachMaterials.test.ts`'s `isValidCoachMaterialRecord` cases.
+
 ## Known gaps
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
@@ -324,8 +379,11 @@ routes themselves (see e.g. `/api/round-pairings`).
 - `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
   `docx-preview`), so `.docx` upload only works from this `"use client"`
   panel in the browser — not from a server-rendered or Node context.
-- No reviewer/approval workflow before a material is available to the
-  team coach — any saved material is immediately included.
+- ~~No reviewer/approval workflow before a material is available to the
+  team coach — any saved material is immediately included.~~ Closed: a
+  `status` field gates whether a material is live for "Ask the coach", with a
+  "Pending review" panel section for Approve/Reject actions — see "Reviewer/
+  approval workflow" above.
 - ~~No conversation history — each question is answered independently; a
   prior question/answer isn't persisted or fed back into a later one.~~
   Closed: `state/coachConversation.ts` now persists every question/answer

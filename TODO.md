@@ -6,6 +6,97 @@
 _No task currently in progress._
 
 ### Completed
+- **Video-Lecture-Training Coach AI — a reviewer/approval workflow before a
+  saved material is available to the team coach (idea #8's Next item).**
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed
+  in the UI... develop better tool UI") — as with every recent repeat, that
+  half is already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history) and every tool is already reachable from the Tools page and
+  CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: idea #8's own Next item, "a reviewer/approval
+  workflow before a saved material is available to the team coach — any saved
+  material is immediately included today." `CoachMaterial`
+  (`packages/debate-speech-writer/src/coach/team-coach-materials.ts`) gains an
+  optional `status?: "pending" | "approved" | "rejected"` field plus
+  `reviewedBy?`/`reviewedAt?`/`reviewNote?`, with a material carrying no
+  `status` at all (every record saved before this field existed) treated the
+  same as `"approved"` (`isCoachMaterialApproved`) so nothing already trusted
+  gets retroactively hidden. Every save through the panel's upload/edit form
+  now stamps `status: "pending"`, and restoring an older version
+  (`state/coachMaterialVersions.ts#materialFromVersion`) does too, so any
+  content change — new upload, edit, or restore — goes back through review.
+  `state/coachMaterials.ts#findRelevantMaterialsFromStore` — what "Ask the
+  coach" draws its grounding materials from — now filters through the new
+  `filterApprovedCoachMaterials` first, so a pending/rejected material never
+  grounds an answer, while the main library view stays unfiltered so a coach
+  can see and act on what's awaiting review. New
+  `setCoachMaterialReviewStatus`/`listPendingCoachMaterialsFromStore` in that
+  same file back a new `reviewMaterial` action on
+  `hooks/useCoachMaterialsSync.ts` (mirroring `saveMaterial`'s best-effort
+  account push — no new D1 table or route needed, the existing
+  `saved_coach_materials`/`/api/coach-materials` round-trips the new fields
+  as-is once `state/savedCoachMaterials.ts`'s validator accepts them).
+  `CoachMaterialsPanel.tsx` gets a "Pending review (N)" section with a
+  typed-in "Reviewer name" field (this repo has no roles/auth system to
+  verify a real "team coach" identity — see `debate-search-evidence`'s
+  `reviewer-permissions.ts` for the same honest limitation elsewhere) and
+  per-material Approve/Reject actions, plus a status badge on every material
+  in the main list. See `docs/features/coach-materials.md`'s new "Reviewer/
+  approval workflow" section. Vitest-covered:
+  `isCoachMaterialApproved`/`filterApprovedCoachMaterials`/
+  `filterPendingCoachMaterials`/`reviewCoachMaterial`/`approveCoachMaterial`/
+  `rejectCoachMaterial` in `test/team-coach-materials.test.ts`;
+  `findRelevantMaterialsFromStore` excluding pending/rejected materials,
+  `listPendingCoachMaterialsFromStore`, and `setCoachMaterialReviewStatus` in
+  `test/coachMaterials.test.ts`; `materialFromVersion` always coming back
+  pending in `test/coachMaterialVersions.test.ts`; and the new optional
+  fields in `test/savedCoachMaterials.test.ts` — 4244 passing across the
+  whole suite (up from 4212), and `packages/debate-speech-writer`'s own
+  `bun run typecheck` (plus its `debate-ai-web` consumer's dependency-package
+  typechecks) passes clean. **Note:** `bun run build`/a fresh `bun install`
+  could not be verified end-to-end this run — see the new "Broken build:
+  incomplete `debate-flow-ebb`→`debate-flow` migration" entry directly below,
+  an unrelated pre-existing issue confirmed present on `origin/master` too.
+
+- **Broken build: incomplete `debate-flow-ebb`→`debate-flow` migration
+  (found, not fixed, while verifying the entry above).** A fresh `bun
+  install` at the repo root fails outright:
+  `error: Workspace dependency "debate-practice-vs-ai" not found` /
+  `error: debate-practice-vs-ai@workspace:* failed to resolve`. Root cause:
+  commit `fc48501` ("refactor: migrate debate-flow-ebb package to
+  debate-flow...") deleted `packages/debate-practice-vs-ai` outright without
+  removing `apps/debate-ai.com/package.json`'s
+  `"debate-practice-vs-ai": "workspace:*"` dependency or the still-live
+  `import { DebatePracticeVsAi } from "debate-practice-vs-ai"` in
+  `apps/debate-ai.com/app/versus-ai/page.tsx` (the `/versus-ai` route, idea
+  #3 "Online Debate Versus AI"). Confirmed this isn't specific to this
+  session's branch — `origin/master`'s `apps/debate-ai.com/package.json` has
+  the identical stale dependency line. Once that one line is worked around
+  (verified locally, not committed — this is a bigger fix than this slice's
+  scope), a full `turbo build --filter=debate-ai-web` uncovers a second,
+  related breakage from the same commit: `globals.css` still `@import`s
+  `../../../packages/debate-flow-ebb/src/styles/ebb-scope.css` (and
+  `@source`s the same old path), but the directory was renamed to
+  `packages/debate-flow` — the file now lives at
+  `packages/debate-flow/src/styles/ebb-scope.css`, just at the new path,
+  meaning the CSS build itself fails as well
+  (`[postcss] ENOENT: no such file or directory`). Every workspace package's
+  own `tsc --noEmit` (`bun run typecheck`, i.e. `turbo typecheck`) still
+  passes clean — `debate-ai-web` has no `typecheck` script of its own, so
+  this never surfaces there; only a real `bun install` or `bun run build`
+  catches it. **Follow-up (unblocked, small, high-value — the very next run
+  should pick this up first per this file's own task-priority ordering):**
+  (a) fix or remove the dangling `debate-practice-vs-ai` dependency/import —
+  either restore an equivalent export (`DebatePracticeVsAi`) from wherever
+  idea #3's practice-vs-AI logic actually lives now, or rewire
+  `/versus-ai/page.tsx` to it, and (b) repoint `globals.css`'s two
+  `debate-flow-ebb` paths at `packages/debate-flow`. Both are narrowly
+  scoped, mechanical, and would unblock a plain `bun install`/`bun run build`
+  for every future contributor and every future run of this exact routine.
+
 - **Strategy Sync Notes — a digest notification instead of one per
   assignment ("🔄 Strategy Sync Notes" bullet's Next item).** Yet another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -15602,10 +15693,16 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    the new `hooks/useCoachMaterialsSync.ts`, so both the material library and
    its version history now follow a signed-in user across devices — see the
    Completed entry above and `docs/features/coach-materials.md`'s
-   "Account-synced materials and version history" section. Next:
+   "Account-synced materials and version history" section. The
+   reviewer/approval-workflow follow-up is also now done: materials carry a
+   `pending`/`approved`/`rejected` `status` (legacy records with no status at
+   all still count as approved), every save or version restore resets it to
+   `pending`, "Ask the coach" only draws on approved materials, and
+   `CoachMaterialsPanel` has a "Pending review" section with Approve/Reject
+   actions — see the Completed entry above and
+   `docs/features/coach-materials.md`'s "Reviewer/approval workflow" section.
+   Next:
    - Server-side transcription for uploaded audio/video recordings (currently only `.docx`/`.txt`/`.md` extract text).
-   - A reviewer/approval workflow before a saved material is available to the
-     team coach — any saved material is included immediately today.
 
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
