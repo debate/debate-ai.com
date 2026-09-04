@@ -198,6 +198,31 @@ wiring remains intentionally untested, matching every other panel in this
 repo whose wiring is exercised only through the shared pure predicate's own
 tests.
 
+A later slice closes the "an end-of-sprint retrospective summary" follow-up
+named under the "🤝 Team Collaboration Mode" bullet in `TODO.md`.
+`lib/team-collaboration-mode.ts` adds `buildSprintRetrospective(sprint)`, a
+pure derivation off an already-composed `TopicSprint` (no new persistence):
+how many quests finished (`questsCompleted`/`questsTotal`), how the topic's
+tasks landed (`tasksAssigned`/`tasksUnassigned` from `sprint.routing`,
+`tasksCompletedByTeam` summed across `sprint.progressBoard`), how many
+contributors were active, and how the sprint's notes resolved
+(`notesCovered`/`notesOpen`/`notesNeedFollowUp`), plus the oldest still-open
+follow-up notes (capped to 5, oldest first) that would carry into the next
+sprint. `buildSprintRetrospectiveText`/`sprintRetrospectiveFilename` render
+it as a downloadable plain-text file, mirroring
+`research-progress.ts`'s `buildResearchProgressReportText` report-download
+convention. `TopicSprintPanel.tsx` gained an "End-of-sprint retrospective"
+section below the note wall — a stat row (quests complete, tasks completed,
+tasks unassigned, notes covered) plus a "Carrying into the next sprint"
+list, with a "Download retrospective" button using the same anchor+Blob
+pattern as `ResearchProgressPanel.tsx`'s "Download report" action.
+Vitest-covered in `packages/debate-team-collaboration/test/team-collaboration-mode.test.ts`
+(`buildSprintRetrospective`'s composed counts, an all-zero empty sprint, the
+covered-vs-open note split, and the 5-note carry-over cap;
+`buildSprintRetrospectiveText`'s rendered lines with and without a
+carry-over section; `sprintRetrospectiveFilename`'s slugging, including a
+blank/punctuation-only topic falling back to `"topic"`).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on

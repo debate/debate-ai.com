@@ -41,9 +41,12 @@ import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea";
 import {
   buildTopicSprint,
   buildTopicSprintSummaryText,
+  buildSprintRetrospective,
+  buildSprintRetrospectiveText,
   createSprintNote,
   assignSprintNote,
   getOpenFollowUps,
+  sprintRetrospectiveFilename,
   updateSprintNoteStatus,
   type SprintNote,
   type SprintNoteStatus,
@@ -180,6 +183,22 @@ export function TopicSprintPanel({
 
   const followUps = useMemo(() => getOpenFollowUps(sprint.notes), [sprint.notes]);
   const questsComplete = sprint.questBoard.filter((quest) => quest.isComplete).length;
+  const retrospective = useMemo(() => buildSprintRetrospective(sprint), [sprint]);
+
+  /** Mirrors `ResearchProgressPanel.tsx`'s anchor+Blob download pattern. */
+  const downloadRetrospective = () => {
+    const text = buildSprintRetrospectiveText(retrospective);
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = sprintRetrospectiveFilename(topic);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const addNote = () => {
     if (!noteText.trim()) return;
@@ -338,6 +357,47 @@ export function TopicSprintPanel({
             </Button>
           </div>
         ) : null}
+      </PanelSection>
+
+      <PanelSection
+        title="End-of-sprint retrospective"
+        actions={
+          <Button size="sm" variant="outline" onClick={downloadRetrospective}>
+            Download retrospective
+          </Button>
+        }
+      >
+        <StatGrid columns={4}>
+          <StatTile
+            label="Quests complete"
+            value={`${retrospective.questsCompleted}/${retrospective.questsTotal}`}
+          />
+          <StatTile label="Tasks completed" value={retrospective.tasksCompletedByTeam} />
+          <StatTile
+            label="Tasks unassigned"
+            value={retrospective.tasksUnassigned}
+            tone={retrospective.tasksUnassigned > 0 ? "warning" : "neutral"}
+          />
+          <StatTile
+            label="Notes covered"
+            value={`${retrospective.notesCovered}/${retrospective.notesTotal}`}
+            tone={
+              retrospective.notesTotal > 0 && retrospective.notesCovered === retrospective.notesTotal
+                ? "positive"
+                : "neutral"
+            }
+          />
+        </StatGrid>
+        {retrospective.carriedOverFollowUps.length === 0 ? (
+          <EmptyState title="Nothing carrying into the next sprint" />
+        ) : (
+          <div className="flex flex-col gap-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Carrying into the next sprint</p>
+            {retrospective.carriedOverFollowUps.map((note) => (
+              <PanelRow key={note.id} title={note.text} subtitle={note.authorId} />
+            ))}
+          </div>
+        )}
       </PanelSection>
 
       <SummaryText label="Plain-text summary" text={buildTopicSprintSummaryText(sprint)} />

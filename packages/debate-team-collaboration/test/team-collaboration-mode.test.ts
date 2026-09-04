@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   assignSprintNote,
   buildSprintNoteAnnouncementText,
+  buildSprintRetrospective,
+  buildSprintRetrospectiveText,
   buildTopicSprint,
   buildTopicSprintSummaryText,
   createSprintNote,
@@ -9,6 +11,7 @@ import {
   getNotesForTopic,
   getOpenFollowUps,
   sortNotesByCreatedAt,
+  sprintRetrospectiveFilename,
   updateSprintNoteStatus,
   type SprintNote,
 } from "../src/lib/team-collaboration-mode";
@@ -305,5 +308,176 @@ describe("buildTopicSprintSummaryText", () => {
     const text = buildTopicSprintSummaryText(sprint);
     expect(text).toContain("0 contributors active");
     expect(text).toContain("1 note needs follow-up");
+  });
+});
+
+describe("buildSprintRetrospective", () => {
+  it("summarizes quest, task, contributor, and note outcomes for a sprint", () => {
+    const sprint = buildTopicSprint({
+      topic: "Immigration",
+      quests,
+      contributions,
+      now: NOW,
+      coverageReport,
+      contributors: [advancedAmy],
+      assignments,
+      notes: [noteA, noteB, noteC],
+    });
+
+    expect(buildSprintRetrospective(sprint)).toEqual({
+      topic: "Immigration",
+      questsCompleted: 1,
+      questsTotal: 1,
+      tasksAssigned: 1,
+      tasksUnassigned: 0,
+      tasksCompletedByTeam: 0,
+      contributorsActive: 1,
+      notesTotal: 2,
+      notesCovered: 0,
+      notesOpen: 2,
+      notesNeedFollowUp: 0,
+      carriedOverFollowUps: [],
+    });
+  });
+
+  it("returns all zeros and no carried-over notes for a sprint with nothing tracked", () => {
+    const sprint = buildTopicSprint({
+      topic: "Trade",
+      quests: [],
+      contributions: [],
+      now: NOW,
+      coverageReport,
+      contributors: [],
+      assignments: [],
+      notes: [],
+    });
+
+    expect(buildSprintRetrospective(sprint)).toEqual({
+      topic: "Trade",
+      questsCompleted: 0,
+      questsTotal: 0,
+      tasksAssigned: 0,
+      tasksUnassigned: 1,
+      tasksCompletedByTeam: 0,
+      contributorsActive: 0,
+      notesTotal: 0,
+      notesCovered: 0,
+      notesOpen: 0,
+      notesNeedFollowUp: 0,
+      carriedOverFollowUps: [],
+    });
+  });
+
+  it("counts covered notes separately from open ones", () => {
+    const coveredNote = updateSprintNoteStatus(
+      createSprintNote({ id: "cov", topic: "Healthcare", authorId: "dee", text: "done", createdAt: NOW }),
+      "covered",
+      NOW,
+    );
+    const sprint = buildTopicSprint({
+      topic: "Healthcare",
+      quests: [],
+      contributions: [],
+      now: NOW,
+      coverageReport,
+      contributors: [],
+      assignments: [],
+      notes: [coveredNote, noteC],
+    });
+
+    const retro = buildSprintRetrospective(sprint);
+    expect(retro.notesTotal).toBe(2);
+    expect(retro.notesCovered).toBe(1);
+    expect(retro.notesOpen).toBe(0);
+    expect(retro.notesNeedFollowUp).toBe(1);
+  });
+
+  it("caps carried-over follow-ups to 5, oldest first", () => {
+    const followUpNotes: SprintNote[] = Array.from({ length: 7 }, (_, index) =>
+      updateSprintNoteStatus(
+        createSprintNote({
+          id: `f${index}`,
+          topic: "Healthcare",
+          authorId: "dee",
+          text: `follow-up ${index}`,
+          createdAt: NOW + index * 1000,
+        }),
+        "needs-follow-up",
+        NOW,
+      ),
+    );
+    const sprint = buildTopicSprint({
+      topic: "Healthcare",
+      quests: [],
+      contributions: [],
+      now: NOW,
+      coverageReport,
+      contributors: [],
+      assignments: [],
+      notes: followUpNotes,
+    });
+
+    const retro = buildSprintRetrospective(sprint);
+    expect(retro.notesNeedFollowUp).toBe(7);
+    expect(retro.carriedOverFollowUps).toHaveLength(5);
+    expect(retro.carriedOverFollowUps.map((note) => note.id)).toEqual(["f0", "f1", "f2", "f3", "f4"]);
+  });
+});
+
+describe("buildSprintRetrospectiveText", () => {
+  it("renders quest, task, contributor, and note lines without a carry-over section when nothing needs follow-up", () => {
+    const sprint = buildTopicSprint({
+      topic: "Immigration",
+      quests,
+      contributions,
+      now: NOW,
+      coverageReport,
+      contributors: [advancedAmy],
+      assignments,
+      notes: [noteA, noteB],
+    });
+
+    const text = buildSprintRetrospectiveText(buildSprintRetrospective(sprint));
+    const lines = text.split("\n");
+    expect(lines[0]).toBe("Immigration — end-of-sprint retrospective");
+    expect(lines).toContain("Quests: 1/1 complete");
+    expect(lines).toContain("Tasks: 1 assigned, 0 unassigned, 0 completed by the team");
+    expect(lines).toContain("Contributors active: 1");
+    expect(lines).toContain("Notes: 2 total (0 covered, 2 open, 0 need follow-up)");
+    expect(text).not.toContain("Carrying into the next sprint");
+  });
+
+  it("lists carried-over follow-ups when present", () => {
+    const sprint = buildTopicSprint({
+      topic: "Healthcare",
+      quests: [],
+      contributions: [],
+      now: NOW,
+      coverageReport,
+      contributors: [],
+      assignments: [],
+      notes: [noteC],
+    });
+
+    const text = buildSprintRetrospectiveText(buildSprintRetrospective(sprint));
+    expect(text).toContain("Carrying into the next sprint:");
+    expect(text).toContain(`- ${noteC.authorId}: ${noteC.text}`);
+  });
+});
+
+describe("sprintRetrospectiveFilename", () => {
+  it("slugifies the topic into a lowercase, hyphenated filename", () => {
+    expect(sprintRetrospectiveFilename("Immigration")).toBe("sprint-retrospective-immigration.txt");
+  });
+
+  it("collapses punctuation and whitespace into single hyphens", () => {
+    expect(sprintRetrospectiveFilename("  States CP / K Affs!  ")).toBe(
+      "sprint-retrospective-states-cp-k-affs.txt",
+    );
+  });
+
+  it("falls back to 'topic' for a blank or punctuation-only topic", () => {
+    expect(sprintRetrospectiveFilename("   ")).toBe("sprint-retrospective-topic.txt");
+    expect(sprintRetrospectiveFilename("!!!")).toBe("sprint-retrospective-topic.txt");
   });
 });
