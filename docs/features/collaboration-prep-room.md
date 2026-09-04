@@ -102,17 +102,45 @@ persisted before `createdAt` existed has no real submission time to show
 and is silently dropped rather than sorted arbitrarily. See
 `packages/debate-team-collaboration/test/prep-room.test.ts`.
 
+## Shared task checklist
+
+A "Shared task checklist" section renders below "Routed research tasks,"
+backed by `lib/prep-room-checklist.ts`/`state/prepRoomChecklist.ts`. Unlike
+the routed coverage-gap tasks above it (recomputed live from the topic's
+coverage report and contributor roster), a checklist item is a freeform,
+ad-hoc todo any teammate can add — "book the practice room," "print flow
+sheets," anything that doesn't map onto a tracked argument — so it's a
+separate, directly-persisted `PrepRoomChecklistItem` rather than folded into
+`research-task-routing.ts`'s task model.
+
+Typing into the "Add a task…" field (Enter or the "Add task" button) appends
+an open item stamped with the current "Your ID" field's value (or
+`"anonymous"` if it's blank) and the current time. Each item shows as a row
+with a checkbox (toggling done/open, stamping `completedAt`/`completedBy`
+when checked), the task text (struck through once done), an "added by … " /
+"done by … " byline, and a "Remove" action. The header shows a live "N of M
+tasks done" summary via `buildChecklistSummaryText`. Items are ordered open
+tasks first (oldest added first), then done tasks (most recently completed
+first) — see `lib/prep-room-checklist.ts#listChecklistItemsForTopic`.
+Switching topics reloads that topic's own checklist and clears the pending
+"Add a task…" draft. See
+`packages/debate-team-collaboration/test/prep-room-checklist.test.ts` and
+`test/prepRoomChecklist.test.ts`.
+
 ## Known gaps
 
 - The room is per-browser localStorage, not a shared team resource — two
   teammates on different devices see different rooms for the same topic
-  name (this also means presence heartbeats are per-browser, not truly
-  cross-device shared).
+  name (this also means presence heartbeats and the shared task checklist
+  are per-browser, not truly cross-device shared).
 - No reviewer-identity/permission checks (this repo's auth system only
   identifies a signed-in visitor for prefill purposes — see "Your ID"
-  above — there is still no server-side gate on prep-room actions).
+  above — there is still no server-side gate on prep-room actions,
+  checklist included: any visitor typing a different "Your ID" can toggle
+  or remove another contributor's checklist items).
 - The `/cards/prep-room` standalone route doesn't get the "Your ID"
   prefill (only the Research hub's Prep Room tab does).
-- The activity timeline only covers evidence/draft-block submissions —
-  there's still no "shared task checklist view" or "shared file/attachment
-  area" (the other two follow-ups named alongside it).
+- The activity timeline only covers evidence/draft-block submissions, not
+  checklist activity.
+- There's still no "shared file/attachment area" (the other follow-up named
+  alongside the now-done shared task checklist).
