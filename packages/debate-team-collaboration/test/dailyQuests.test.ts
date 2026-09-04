@@ -3,6 +3,7 @@ import {
   buildPersistedDailyQuestBoard,
   deleteQuestTemplate,
   listQuestTemplates,
+  previewQuestTemplatesFromTopicCoverage,
   pruneExpiredQuestTemplates,
   rolloverExpiredRecurringQuestTemplates,
   saveQuestTemplate,
@@ -245,6 +246,68 @@ describe("seedQuestTemplatesFromTopicCoverage", () => {
     seedQuestTemplatesFromTopicCoverage("Energy Policy");
 
     expect(listQuestTemplates().map((template) => template.id).sort()).toEqual(["argblock:Solvency", "custom-2"]);
+  });
+});
+
+describe("previewQuestTemplatesFromTopicCoverage", () => {
+  it("derives the same templates seeding would save, without writing anything", () => {
+    saveTrackedArgument({ id: "tracked-1", topic: "Energy Policy", argBlock: "Solvency" });
+
+    const preview = previewQuestTemplatesFromTopicCoverage("Energy Policy");
+
+    expect(preview).toEqual([
+      {
+        template: {
+          id: "argblock:Solvency",
+          description: 'Find 3 more cards for "Solvency"',
+          target: { kind: "card", argBlock: "Solvency" },
+          targetCount: 3,
+        },
+        alreadySeeded: false,
+      },
+    ]);
+    expect(listQuestTemplates()).toEqual([]);
+  });
+
+  it("flags a previewed template as already seeded when it's already on the stored roster", () => {
+    saveTrackedArgument({ id: "tracked-1", topic: "Energy Policy", argBlock: "Solvency" });
+    seedQuestTemplatesFromTopicCoverage("Energy Policy");
+
+    const preview = previewQuestTemplatesFromTopicCoverage("Energy Policy");
+
+    expect(preview).toHaveLength(1);
+    expect(preview[0].alreadySeeded).toBe(true);
+    expect(preview[0].template.id).toBe("argblock:Solvency");
+  });
+
+  it("returns an empty list for a topic with no under-covered arguments", () => {
+    const card: EvidenceLibraryEntry = {
+      id: "entry-1",
+      argBlock: "Warming DA",
+      wordCount: 700,
+      topic: "Energy Policy",
+      caseArea: "DA",
+      tags: [],
+      kind: "card",
+      text: "Enough cards to be fully covered.",
+      cite: "Smith 24",
+    };
+    saveTrackedArgument({ id: "tracked-1", topic: "Energy Policy", argBlock: "Warming DA" });
+    saveEvidenceLibraryEntry(card);
+    saveEvidenceLibraryEntry({ ...card, id: "entry-2", cite: "Lee 25" });
+    saveEvidenceLibraryEntry({ ...card, id: "entry-3", cite: "Chen 25" });
+
+    expect(previewQuestTemplatesFromTopicCoverage("Energy Policy")).toEqual([]);
+  });
+
+  it("does not consider an unrelated stored template as already seeded", () => {
+    saveQuestTemplate(ADD_ANNOTATIONS);
+    saveTrackedArgument({ id: "tracked-1", topic: "Energy Policy", argBlock: "Solvency" });
+
+    const preview = previewQuestTemplatesFromTopicCoverage("Energy Policy");
+
+    expect(preview).toHaveLength(1);
+    expect(preview[0].alreadySeeded).toBe(false);
   });
 });
 

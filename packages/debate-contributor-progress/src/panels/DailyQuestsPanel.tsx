@@ -12,6 +12,13 @@
  * reusing the existing Topic Coverage Dashboard's coverage report rather
  * than introducing a separate under-coverage signal.
  *
+ * A "Preview" action next to "Seed quests" calls the read-only
+ * `previewQuestTemplatesFromTopicCoverage` first, so a team can see exactly
+ * which quests seeding would add (and which it would just leave alone,
+ * already being on the board) before committing to it — the "a preview of
+ * the quests a coverage gap would seed before creating them" follow-up
+ * named under the "📊 Topic Coverage Dashboard" bullet in TODO.md.
+ *
  * A custom quest can carry an optional expiry day; expired quests drop off
  * the board on their own (`buildDailyQuestBoard` excludes them), and a
  * "Clean up expired quests" action calls `pruneExpiredQuestTemplates` to
@@ -53,10 +60,12 @@ import {
   buildPersistedDailyQuestBoard,
   deleteQuestTemplate,
   listQuestTemplates,
+  previewQuestTemplatesFromTopicCoverage,
   pruneExpiredQuestTemplates,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "debate-team-collaboration/src/state/dailyQuests"
+import type { QuestSeedPreviewEntry } from "debate-team-collaboration/src/state/dailyQuests"
 import {
   buildPersistedContributorQuestStreak,
   computeAndSavePersistedDailyMissionResult,
@@ -135,6 +144,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
   const [board, setBoard] = useState<QuestProgress[]>([])
   const [draft, setDraft] = useState<QuestDraft>(EMPTY_DRAFT)
   const [topic, setTopic] = useState("")
+  const [preview, setPreview] = useState<QuestSeedPreviewEntry[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [contributorId, setContributorId] = useState("")
   const [hasEditedContributorId, setHasEditedContributorId] = useState(false)
@@ -221,6 +231,16 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
     refresh()
   }
 
+  const handlePreview = () => {
+    const activeTopic = topic.trim()
+    if (!activeTopic) {
+      setError("Enter a topic to preview quests from its coverage gaps.")
+      return
+    }
+    setError(null)
+    setPreview(previewQuestTemplatesFromTopicCoverage(activeTopic))
+  }
+
   const handleSeed = () => {
     const activeTopic = topic.trim()
     if (!activeTopic) {
@@ -229,6 +249,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
     }
     seedQuestTemplatesFromTopicCoverage(activeTopic)
     setError(null)
+    setPreview(null)
     refresh()
   }
 
@@ -345,15 +366,48 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
             <Input
               id="quest-seed-topic"
               value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              onChange={(e) => {
+                setTopic(e.target.value)
+                setPreview(null)
+              }}
               placeholder="Energy Policy"
               className="max-w-sm"
             />
+            <Button type="button" variant="outline" onClick={handlePreview}>
+              Preview
+            </Button>
             <Button type="button" variant="outline" onClick={handleSeed}>
               Seed quests
             </Button>
           </div>
         </div>
+        {preview &&
+          (preview.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Nothing under-covered for "{topic.trim()}" — seeding would add no quests.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              <p className="text-xs font-medium uppercase text-muted-foreground">
+                Seeding would add {preview.filter((entry) => !entry.alreadySeeded).length} new quest
+                {preview.filter((entry) => !entry.alreadySeeded).length === 1 ? "" : "s"} ({preview.length} total
+                for this topic's gaps)
+              </p>
+              <div className="space-y-1.5">
+                {preview.map((entry) => (
+                  <div
+                    key={entry.template.id}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-1.5"
+                  >
+                    <span className="text-sm text-foreground">{entry.template.description}</span>
+                    <Badge variant={entry.alreadySeeded ? "outline" : "secondary"} className="whitespace-nowrap">
+                      {entry.alreadySeeded ? "Already on board" : "New"}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
       </div>
 
       <div className="rounded-lg border border-dashed border-border p-4 space-y-3">

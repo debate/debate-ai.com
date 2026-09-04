@@ -22,6 +22,14 @@
  * a team doesn't have to hand-author quests that duplicate what the Topic
  * Coverage Dashboard already knows is missing.
  *
+ * `previewQuestTemplatesFromTopicCoverage` closes the "a preview of the
+ * quests a coverage gap would seed before creating them" follow-up named
+ * under the "📊 Topic Coverage Dashboard" bullet in TODO.md: it derives the
+ * exact same quest templates `seedQuestTemplatesFromTopicCoverage` would
+ * save, but only reads the stored roster (to flag which ones are already on
+ * the board) rather than writing to it, so a team can see what "Seed
+ * quests" would do before committing to it.
+ *
  * `pruneExpiredQuestTemplates` closes the "a quest template has no expiry"
  * Known gap: it removes every persisted template whose `expiresOn` (a
  * `daily-quests.ts` addition) has passed as of a caller-supplied day,
@@ -177,4 +185,29 @@ export function seedQuestTemplatesFromTopicCoverage(
     saveQuestTemplate(template);
   }
   return seeded;
+}
+
+/** One quest template `seedQuestTemplatesFromTopicCoverage` would save, previewed before the write happens. */
+export interface QuestSeedPreviewEntry {
+  template: QuestTemplate;
+  /** Whether a template with this exact id is already in the stored roster — seeding would upsert it in place rather than add a new quest. */
+  alreadySeeded: boolean;
+}
+
+/**
+ * Derives the same quest templates `seedQuestTemplatesFromTopicCoverage`
+ * would save for `topic`, without writing anything to the stored roster —
+ * lets a caller show what seeding would do before committing to it. Each
+ * entry is flagged `alreadySeeded` when a template with that id is already
+ * stored, since seeding an already-present id upserts it in place rather
+ * than adding a new quest to the board.
+ */
+export function previewQuestTemplatesFromTopicCoverage(
+  topic: string,
+  thresholds?: CoverageThresholds,
+): QuestSeedPreviewEntry[] {
+  const report = buildPersistedTopicCoverageReport(topic, thresholds);
+  const derived = buildUnderCoveredArgumentQuests(report, thresholds);
+  const existingIds = new Set(readAll().map((template) => template.id));
+  return derived.map((template) => ({ template, alreadySeeded: existingIds.has(template.id) }));
 }
