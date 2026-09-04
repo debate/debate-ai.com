@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildDigestGroupHeading,
   buildNotificationSummaryText,
   countUnreadForRecipient,
   createPrepNoteAssignedNotification,
   getNotificationsForRecipient,
   getUnreadNotifications,
+  groupNotificationsIntoDigests,
   markNotificationRead,
   sortNotificationsByCreatedAt,
   type PrepNoteNotification,
@@ -149,5 +151,63 @@ describe("buildNotificationSummaryText", () => {
     expect(buildNotificationSummaryText([unread, read], "carol")).toBe(
       '2 notifications: 1 unread\n- "Answer the solvency turn" (from a note by alex)',
     );
+  });
+});
+
+describe("groupNotificationsIntoDigests", () => {
+  const day1Early = Date.UTC(2026, 8, 3, 9, 0, 0); // 2026-09-03T09:00:00Z
+  const day2Early = Date.UTC(2026, 8, 4, 10, 0, 0); // 2026-09-04T10:00:00Z
+  const day2Late = Date.UTC(2026, 8, 4, 15, 0, 0); // 2026-09-04T15:00:00Z
+
+  it("returns no groups for a recipient with no notifications", () => {
+    expect(groupNotificationsIntoDigests([], "carol")).toEqual([]);
+  });
+
+  it("groups same-day notifications into one digest, most recent day first", () => {
+    const oldDay = notification({ id: "n1", createdAt: day1Early, read: true });
+    const newDayFirst = notification({ id: "n2", createdAt: day2Early, read: false });
+    const newDaySecond = notification({ id: "n3", createdAt: day2Late, read: false });
+
+    expect(groupNotificationsIntoDigests([oldDay, newDayFirst, newDaySecond], "carol")).toEqual([
+      {
+        dayKey: "2026-09-04",
+        notifications: [newDaySecond, newDayFirst],
+        unreadCount: 2,
+      },
+      {
+        dayKey: "2026-09-03",
+        notifications: [oldDay],
+        unreadCount: 0,
+      },
+    ]);
+  });
+
+  it("only groups notifications addressed to the given recipient", () => {
+    const forCarol = notification({ id: "n1", recipientId: "carol", createdAt: day2Early });
+    const forBob = notification({ id: "n2", recipientId: "bob", createdAt: day2Early });
+
+    expect(groupNotificationsIntoDigests([forCarol, forBob], "carol")).toEqual([
+      { dayKey: "2026-09-04", notifications: [forCarol], unreadCount: 1 },
+    ]);
+  });
+});
+
+describe("buildDigestGroupHeading", () => {
+  it("reports the day, total count, and unread count", () => {
+    const group = {
+      dayKey: "2026-09-04",
+      notifications: [notification({ read: false }), notification({ id: "n2", read: true })],
+      unreadCount: 1,
+    };
+    expect(buildDigestGroupHeading(group)).toBe("2 notifications on 2026-09-04 (1 unread)");
+  });
+
+  it("uses singular phrasing for exactly one notification", () => {
+    const group = {
+      dayKey: "2026-09-04",
+      notifications: [notification({ read: false })],
+      unreadCount: 1,
+    };
+    expect(buildDigestGroupHeading(group)).toBe("1 notification on 2026-09-04 (1 unread)");
   });
 });

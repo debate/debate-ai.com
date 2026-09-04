@@ -6,6 +6,52 @@
 _No task currently in progress._
 
 ### Completed
+- **Strategy Sync Notes — a digest notification instead of one per
+  assignment ("🔄 Strategy Sync Notes" bullet's Next item).** Yet another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history) and every
+  tool is already reachable from the Tools page and CardMirror's command
+  palette, so this slice again picked the next named, unblocked follow-up:
+  the "🔄 Strategy Sync Notes" bullet's own Next item, "a digest
+  notification instead of one per assignment." `/notifications`
+  (`PrepNoteNotificationsPanel`) previously rendered every
+  `PrepNoteNotification` as its own permanent row, so a teammate assigned
+  several notes in a day accumulated one row per assignment forever. A new
+  pure `groupNotificationsIntoDigests` in
+  `packages/debate-team-collaboration/src/flow/prep-note-notifications.ts`
+  buckets a recipient's notifications by UTC calendar day into a
+  `NotificationDigestGroup` (day key, that day's notifications newest
+  first, a precomputed unread count), most recent day first, alongside a
+  `buildDigestGroupHeading` formatter (`"3 notifications on 2026-09-04 (2
+  unread)"`, singular-aware). `state/prepNoteNotifications.ts` gained the
+  read-side wrapper `buildNotificationDigestView` (composing the grouping
+  with the existing `getNotificationsForRecipient`) and a
+  `markManyPersistedNotificationsRead(ids)` bulk write for a digest's "Mark
+  all read" action — one localStorage write instead of one per
+  notification. `PrepNoteNotificationsPanel` now renders one digest card
+  per day with a "Mark all read" action (hidden once nothing in it is
+  unread) and an "Expand (N)"/"Collapse" toggle revealing the day's
+  individual notifications underneath, each still keeping its own existing
+  "Mark read" action so a teammate can still clear one assignment at a time
+  within a day; the header unread badge now sums every group's unread count
+  instead of counting a flat list. See `docs/features/prep-notes.md`'s new
+  "Digest grouping" section. Vitest-covered:
+  `groupNotificationsIntoDigests` (no notifications, grouping same-day
+  entries with the most recent day first, scoping to one recipient) and
+  `buildDigestGroupHeading` (plural/singular phrasing) in
+  `packages/debate-team-collaboration/test/prep-note-notifications.test.ts`;
+  `buildNotificationDigestView` and `markManyPersistedNotificationsRead` (a
+  bulk write, an empty id list as a no-op, unknown ids ignored without
+  throwing) in
+  `packages/debate-team-collaboration/test/prepNoteNotifications.test.ts` —
+  4212 passing across the whole suite (up from 4202), `bun run typecheck`
+  and `bun run build` both pass clean.
+
 - **Scout-to-Strategy Workflow — a side-by-side case-option comparison
   table ("🧭 Scout-to-Strategy Workflow" bullet's Next item).** Another
   repeat of the standing prompt ("integrate all the tools into the UI...
@@ -15619,7 +15665,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
-* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. Next: a digest notification instead of one per assignment.
+* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
 * 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
 * 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.

@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildNotificationDigestView,
   buildNotificationsPanelView,
   getNotification,
   listNotifications,
   listNotificationsForRecipient,
+  markManyPersistedNotificationsRead,
   markPersistedNotificationRead,
   recordPrepNoteAssignedNotification,
   saveNotification,
@@ -167,5 +169,51 @@ describe("buildNotificationsPanelView", () => {
     saveNotification(NOTIFICATION_FOR_BOB);
 
     expect(buildNotificationsPanelView("carol")).toEqual([NOTIFICATION_FOR_CAROL, olderForCarol]);
+  });
+});
+
+describe("buildNotificationDigestView", () => {
+  it("returns no groups when the recipient has no notifications", () => {
+    expect(buildNotificationDigestView("carol")).toEqual([]);
+  });
+
+  it("groups a recipient's persisted notifications by UTC day, newest day first", () => {
+    const day1 = { ...NOTIFICATION_FOR_CAROL, id: "notif-day1", createdAt: Date.UTC(2026, 8, 3, 9, 0, 0) };
+    const day2 = { ...NOTIFICATION_FOR_CAROL, id: "notif-day2", createdAt: Date.UTC(2026, 8, 4, 9, 0, 0) };
+    saveNotification(day1);
+    saveNotification(day2);
+    saveNotification(NOTIFICATION_FOR_BOB);
+
+    expect(buildNotificationDigestView("carol")).toEqual([
+      { dayKey: "2026-09-04", notifications: [day2], unreadCount: 1 },
+      { dayKey: "2026-09-03", notifications: [day1], unreadCount: 1 },
+    ]);
+  });
+});
+
+describe("markManyPersistedNotificationsRead", () => {
+  it("marks every listed notification read in a single write", () => {
+    const other = { ...NOTIFICATION_FOR_CAROL, id: "notif-other", createdAt: 150 };
+    saveNotification(NOTIFICATION_FOR_CAROL);
+    saveNotification(other);
+    saveNotification(NOTIFICATION_FOR_BOB);
+
+    markManyPersistedNotificationsRead(["notif-1", "notif-other"]);
+
+    expect(getNotification("notif-1")).toEqual({ ...NOTIFICATION_FOR_CAROL, read: true });
+    expect(getNotification("notif-other")).toEqual({ ...other, read: true });
+    expect(getNotification("notif-2")).toEqual(NOTIFICATION_FOR_BOB);
+  });
+
+  it("is a no-op for an empty id list", () => {
+    saveNotification(NOTIFICATION_FOR_CAROL);
+    markManyPersistedNotificationsRead([]);
+    expect(getNotification("notif-1")).toEqual(NOTIFICATION_FOR_CAROL);
+  });
+
+  it("ignores ids that aren't stored, without throwing", () => {
+    saveNotification(NOTIFICATION_FOR_CAROL);
+    markManyPersistedNotificationsRead(["missing", "notif-1"]);
+    expect(getNotification("notif-1")).toEqual({ ...NOTIFICATION_FOR_CAROL, read: true });
   });
 });

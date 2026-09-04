@@ -142,8 +142,44 @@ that don't exist yet.
   so a real assignment always records one — no caller has to remember to.
 - **UI:** `panels/PrepNoteNotificationsPanel.tsx` asks for a recipient id
   (remembered in localStorage across visits) and renders that recipient's
-  notifications newest first, with a "Mark read" action per unread
-  notification.
+  notifications grouped into a digest per day (see "Digest grouping"
+  below), each expandable to its individual "Mark read" actions.
+
+### Digest grouping
+
+Closes the "🔄 Strategy Sync Notes" bullet's "a digest notification instead
+of one per assignment" follow-up. Rather than showing every assignment as
+its own permanent row — unwieldy once a teammate has been assigned several
+notes — `PrepNoteNotificationsPanel` groups a recipient's notifications
+into one digest card per UTC calendar day, most recent day first.
+
+- **Grouping:** `flow/prep-note-notifications.ts#groupNotificationsIntoDigests`
+  is pure: it buckets a recipient's notifications by UTC day and returns a
+  `NotificationDigestGroup` per day (`dayKey`, that day's notifications
+  newest first, and a precomputed `unreadCount`).
+  `state/prepNoteNotifications.ts#buildNotificationDigestView` is the
+  read-side wrapper the panel calls, composing that grouping with the
+  existing `getNotificationsForRecipient`.
+- **Heading:** `buildDigestGroupHeading` renders each card's title, e.g.
+  `"3 notifications on 2026-09-04 (2 unread)"`.
+- **Bulk mark-read:** each digest card has a "Mark all read" action (hidden
+  once nothing in it is unread) backed by
+  `markManyPersistedNotificationsRead`, a single localStorage write instead
+  of one per notification.
+- **Expand:** an "Expand (N)"/"Collapse" toggle reveals the day's
+  individual notifications underneath the card, each still carrying its own
+  "Mark read" action — the per-notification `markPersistedNotificationRead`
+  path is unchanged, so a teammate can still clear one assignment at a time
+  within a day instead of only all-or-nothing.
+- The unread badge next to the recipient lookup now sums every digest
+  group's `unreadCount` instead of counting a flat list.
+
+Vitest-covered: `groupNotificationsIntoDigests` (no notifications, grouping
+same-day entries together with the most recent day first, and scoping to
+one recipient) and `buildDigestGroupHeading` (plural/singular phrasing) in
+`test/prep-note-notifications.test.ts`; `buildNotificationDigestView` and
+`markManyPersistedNotificationsRead` (a bulk write, an empty id list as a
+no-op, and unknown ids being ignored) in `test/prepNoteNotifications.test.ts`.
 
 ### Cross-tab live update
 
