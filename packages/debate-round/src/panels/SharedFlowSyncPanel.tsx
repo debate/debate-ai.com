@@ -37,6 +37,8 @@ import {
 } from "../flow/shared-flow-sync";
 import { buildFlowEditConflictDiff, type DiffSegment } from "../flow/flow-edit-diff";
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling";
+import { useFlowPresencePolling } from "../hooks/useFlowPresencePolling";
+import { buildFlowPresenceSummaryText } from "../flow/flow-presence";
 
 /** Renders one side's diffed words, highlighting this side's own changes. */
 function DiffText({ segments }: { segments: DiffSegment[] }) {
@@ -129,6 +131,7 @@ export function SharedFlowSyncPanel({
     conflictWindowMs === undefined ? "" : String(conflictWindowMs),
   );
   const [syncEnabled, setSyncEnabled] = useState(false);
+  const [viewerId, setViewerId] = useState("");
 
   const parsedWindow = Number.parseInt(windowInput, 10);
   const options = Number.isFinite(parsedWindow) ? { conflictWindowMs: parsedWindow } : {};
@@ -145,6 +148,8 @@ export function SharedFlowSyncPanel({
     onSyncPulled,
     { enabled: syncEnabled },
   );
+
+  const { activeEditors } = useFlowPresencePolling(flow.id, viewerId, { enabled: syncEnabled });
 
   return (
     <PanelShell
@@ -166,6 +171,14 @@ export function SharedFlowSyncPanel({
       }
     >
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <LabeledField label="Your ID" className="w-28">
+          <Input
+            value={viewerId}
+            onChange={(e) => setViewerId(e.target.value)}
+            placeholder="alice"
+            className="h-6 text-xs"
+          />
+        </LabeledField>
         <Button
           size="sm"
           variant={syncEnabled ? "default" : "outline"}
@@ -180,6 +193,11 @@ export function SharedFlowSyncPanel({
           <span>Pulls teammates&apos; edits to Flow {flow.id} from the server while on.</span>
         )}
       </div>
+      {syncEnabled ? (
+        <p className="text-xs text-muted-foreground" data-testid="flow-presence-summary">
+          {buildFlowPresenceSummaryText(activeEditors)}
+        </p>
+      ) : null}
 
       <StatGrid columns={4}>
         <StatTile label="Incoming edits" value={edits.length} />

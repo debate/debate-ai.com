@@ -6,6 +6,60 @@
 _No task currently in progress._
 
 ### Completed
+- **🔄 Shared, AI-Generated Debate Flow — live "who's editing now" presence
+  indicators alongside the existing merge preview (one of idea #16's two
+  remaining Next items under Product Feature Ideas).** Another repeat of
+  the standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that half is
+  already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history, and every tool already reachable from the Tools page and
+  CardMirror's command palette), so this slice picked the next named,
+  unblocked follow-up instead: idea #16's "Live 'who's editing now' presence
+  indicators alongside the existing merge preview" (the other named
+  follow-up under that bullet, upgrading the short-poll sync transport to a
+  WebSocket/Durable Object push channel, is a bigger architectural change
+  and stays open). There is no push transport in this repo, so presence is
+  modeled the same caller-recorded-heartbeat way
+  `debate-team-collaboration`'s `lib/topic-presence.ts` already does for
+  topic sprints — a new `debate-round`-local `flow/flow-presence.ts`
+  (`recordFlowPresenceHeartbeat`/`listActiveFlowEditors`/
+  `buildFlowPresenceSummaryText`) — but unlike topic presence, a flow's
+  heartbeats are pushed/pulled through a new server-backed transport
+  (a new `flowPresenceHeartbeats` D1 table plus `/api/flow-presence` GET/POST
+  routes, mirroring `/api/flow-sync`'s existing short-poll convention;
+  `flow/flow-presence-client.ts` fetch layer; `state/flowPresence.ts` local
+  cache that replaces — not upserts into — a flow's cached heartbeats
+  wholesale on every pull; `hooks/useFlowPresencePolling.ts` poll-loop
+  binding), since "who else is editing this flow right now" is only useful
+  across different collaborators' devices, not just other tabs in one
+  browser. Both `SharedFlowSyncPanel` (which gained its own new "Your ID"
+  field) and `FlowEditLogPanel` (reusing its existing "Author ID" field)
+  now show a "2 teammates editing now: alice, bob"/"No one else editing
+  right now." line beneath their existing "Live sync" toggle while it's on.
+  See `docs/features/shared-flow-sync.md`'s new "Live 'who's editing now'
+  presence" section (plus a Known-gaps note on the shared "Live sync"
+  toggle's limitations and each panel's independent, non-shared identity
+  field) and the new `packages/debate-round/test/flow-presence.test.ts`/
+  `test/flow-presence-client.test.ts`/`test/flowPresence.test.ts` coverage
+  (35 new cases: heartbeat upsert semantics, freshness-window filtering
+  including the exact boundary and clock-skew cases, self-exclusion,
+  summary-text wording, the fetch layer's request shape/error handling
+  mirroring `flow-sync-client.test.ts`, and the local cache's corrupt-
+  storage handling and per-flow wholesale-replace-on-pull semantics), plus a
+  new case in `packages/debate-round/test/panels.test.tsx` asserting the
+  "Your ID" field renders with no presence line while sync is off. Ran the
+  full verification gate: `bun run test` (4419 passing, up from 4384 — the
+  35 new cases above), `bunx turbo run typecheck` (all 15 typecheck-bearing
+  packages green, `debate-round` included), and `bun run build:web` (the
+  full production build, `/api/flow-presence` in the built route list
+  alongside `/api/flow-sync`) all pass. Next: the still-open "Upgrade the
+  short-poll sync transport to a WebSocket/Durable Object push channel"
+  follow-up under idea #16; a future run should pick a fresh next-step
+  elsewhere if that one isn't picked up.
+
 - **🧭 Research Task Routing — a capacity-aware view of routing load across
   the team (its Next item under Product Feature Ideas).** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
@@ -16164,8 +16218,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. Next:
     - A density scrubber on the video timeline showing where annotations cluster.
 
-16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`) — the side-by-side-diff-view follow-up is done: each conflicting box's "Conflicts" section now diffs every competing edit against the one `mergeFlowEdits` would apply, word-level, in two aligned columns instead of a flat list of full-text lines (`flow/flow-edit-diff.ts#buildFlowEditConflictDiff`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Side-by-side conflict diff" section. Next:
-    - Live "who's editing now" presence indicators alongside the existing merge preview.
+16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`) — the side-by-side-diff-view follow-up is done: each conflicting box's "Conflicts" section now diffs every competing edit against the one `mergeFlowEdits` would apply, word-level, in two aligned columns instead of a flat list of full-text lines (`flow/flow-edit-diff.ts#buildFlowEditConflictDiff`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Side-by-side conflict diff" section. The live-presence-indicator follow-up is also now done: both panels show who else is currently active on a flow while their "Live sync" toggle is on — a caller-recorded heartbeat pushed/pulled through a new server-backed transport (`flow/flow-presence.ts`, a new `flowPresenceHeartbeats` D1 table plus `/api/flow-presence` routes, `state/flowPresence.ts`, `hooks/useFlowPresencePolling.ts`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Live 'who's editing now' presence" section. Next:
     - Upgrade the short-poll sync transport to a WebSocket/Durable Object push channel for near-real-time updates.
 
 ## Research Crowdsourcing Organizer Features

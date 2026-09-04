@@ -55,6 +55,8 @@ import { parseBoxPathInput } from "../flow/flow-annotations"
 import { buildFlowNoteFromCard, suggestFlowNotesFromLibrary } from "../flow/flow-note-suggestions"
 import { isFlowEditLogPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling"
+import { useFlowPresencePolling } from "../hooks/useFlowPresencePolling"
+import { buildFlowPresenceSummaryText } from "../flow/flow-presence"
 
 function newFlowEditId(): string {
   return `edit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -130,6 +132,8 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
     refresh,
     { enabled: syncEnabled },
   )
+
+  const { activeEditors } = useFlowPresencePolling(syncFlowId, authorId, { enabled: syncEnabled })
 
   const handleLog = () => {
     if (!trimmedFlowId || !Number.isFinite(parsedFlowId) || !Number.isInteger(parsedFlowId)) {
@@ -216,6 +220,11 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
             <span>Syncs this Flow ID's edits with teammates while on.</span>
           )}
         </div>
+        {syncEnabled ? (
+          <p className="text-xs text-muted-foreground" data-testid="flow-presence-summary">
+            {buildFlowPresenceSummaryText(activeEditors)}
+          </p>
+        ) : null}
         <LabeledField label="Content">
           <Textarea
             value={content}
