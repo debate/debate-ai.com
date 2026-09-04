@@ -97,6 +97,57 @@ recorded" badge — a member starts a Practice Round Simulator session
 separately at `/practice-round`, then records that same round's flow here to
 surface it on the board.
 
+## Roster analytics dashboard
+
+Closes idea #13's own follow-up in `TODO.md`: "A coach-facing roster
+analytics dashboard (completion rates, streaks, standings in one place)."
+Before this, a coach had to visit `debate-team-collaboration`'s Group
+Challenges panel (`/cards/group-challenges`) for a squad's challenge
+standings and `debate-community`'s Quest Streaks panel (`/cards/streaks`)
+for a contributor's daily-quest streak separately. The `/coaching-programs`
+route now also renders a **Roster Analytics** section below the existing
+program list/board panel: pick one of the coach's persisted coaching
+programs and see every roster member's group-challenge standing (challenges
+completed/participated, how many they're currently leading) and daily-quest
+streak (current, longest, milestone badges) in one table, ranked by total
+challenge-matching activity, then current streak length.
+
+```
+panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
+  → buildCoachingProgramsPanelView()                         — debate-team-collaboration's state/coachingPrograms.ts (program picker)
+  → buildPersistedCoachingProgramRosterAnalytics(programId, now) — state/coachingProgramRosterAnalytics.ts
+      → getCoachingProgram(programId)                        — debate-team-collaboration's state/coachingPrograms.ts
+      → buildPersistedGroupChallengeBoard(now)                — debate-team-collaboration's state/challengeWinEvents.ts
+      → buildCoachingProgramRosterAnalytics(memberIds, challengeBoard, missionResultsForContributor, dayKey)
+                                                                — lib/coaching-program-roster-analytics.ts
+          → summarizeMemberChallengeStanding(contributorId, challengeBoard)
+          → buildContributorQuestStreak(contributorId, results, dayKey) — lib/gamified-quests.ts
+      → listDailyMissionResultsForContributor(contributorId)  — state/dailyMissionResults.ts
+```
+
+This composition lives in the `debate-community` package
+(`packages/debate-contributor-progress`), not `debate-team-collaboration`
+(the package the rest of Coaching Programs lives in), because
+`debate-community` already depends on `debate-team-collaboration` (for
+`daily-quests.ts`) — the reverse dependency would be circular. The pure
+`lib/coaching-program-roster-analytics.ts` slice reuses
+`debate-team-collaboration`'s already-computed `GroupChallengeProgress`
+(no separate standings computation) and this package's own
+`gamified-quests.ts` streak logic directly, mirroring this same package's
+existing `unlock-streak-status.ts` "tie two ideas' pure slices together"
+precedent. `apps/debate-ai.com/app/coaching-programs/page.tsx` mounts the
+new panel alongside the existing `CoachingProgramsPanel`, so both are
+reachable from the same already-linked `/coaching-programs` tool page — no
+new nav/catalog entry was needed.
+
+Also subscribes to the browser's `storage` event via `debate-research-evidence`'s
+`state/live-update.ts`'s new `isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent`,
+so a challenge created/completed, a win recorded, or a mission result saved
+in another browser tab refreshes the rendered roster here too.
+
 ## Known gaps
 
-- No known gaps remain for this idea.
+- The roster analytics table only covers group-challenge standings and
+  daily-quest streaks — it doesn't yet fold in drill-completion rate or
+  practice-round counts, both already shown per-member on the program's own
+  board section above. A future run could widen the table to include them.

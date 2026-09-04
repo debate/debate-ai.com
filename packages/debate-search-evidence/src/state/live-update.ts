@@ -4,7 +4,8 @@
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
  * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`,
- * `ContributionsFeedPanel`, and `TopicSprintPanel`, mirroring `debate-round`'s
+ * `ContributionsFeedPanel`, `TopicSprintPanel`, and
+ * `CoachingProgramRosterAnalyticsPanel`, mirroring `debate-round`'s
  * `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
  * change — only in other same-origin tabs — so a panel that reads
@@ -470,5 +471,37 @@ export function isTopicSprintLiveUpdateStorageEvent(event: { key: string | null 
   return (
     event.key === null ||
     (TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `CoachingProgramRosterAnalyticsPanel` reads from:
+ * `state/coachingPrograms.ts`'s `"coachingPrograms"` (the program picker's
+ * roster list), `state/groupChallenges.ts`'s `"groupChallenges"` and
+ * `state/challengeWinEvents.ts`'s `"challengeWinEvents"`/`"contributions"`
+ * (the persisted group-challenge board each member's standing is summarized
+ * from), and `state/dailyMissionResults.ts`'s `"dailyMissionResults"` (each
+ * member's quest streak).
+ */
+export const COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS = [
+  "coachingPrograms",
+  "groupChallenges",
+  "challengeWinEvents",
+  "contributions",
+  "dailyMissionResults",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `CoachingProgramRosterAnalyticsPanel`
+ * to refresh its rendered roster analytics — closes the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
+ * Mirrors `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match
+ * rules.
+ */
+export function isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

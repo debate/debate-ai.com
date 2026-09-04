@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
 import { CoachingProgramsPanel } from "debate-team-collaboration"
+import { CoachingProgramRosterAnalyticsPanel } from "debate-community"
 
 export const metadata: Metadata = {
   title: "Coaching Programs",
@@ -25,6 +26,11 @@ export default function CoachingProgramsPage() {
       <Suspense>
         <CoachingProgramsPanel />
       </Suspense>
+      <div className="mt-6 border-t border-border pt-6">
+        <Suspense>
+          <CoachingProgramRosterAnalyticsPanel />
+        </Suspense>
+      </div>
     </div>
   )
 }
