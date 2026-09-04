@@ -84,8 +84,9 @@ _No task currently in progress._
   `service-worker.js`/`bun.lock` churn was reverted before committing,
   unrelated to this change). No lint script is configured anywhere in this
   repo (root or any package), so `lint` was not run — consistent with
-  every prior entry in this log. **PR:** opened from branch
-  `claude/gifted-babbage-wg294k`. **Completed:** 2026-09-04.
+  every prior entry in this log. **PR:**
+  https://github.com/debate/debate-ai.com/pull/531. **Completed:**
+  2026-09-04.
 - **Strategy Sync Notes — threaded replies on a note instead of flat
   status ("🔄 Strategy Sync Notes" bullet's Next item).** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
