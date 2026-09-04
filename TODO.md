@@ -57,7 +57,8 @@ _No task currently in progress._
   before committing, unrelated to this change). Updated the "🕵️ Opponent
   Team Profiles" bullet below to reflect that no further follow-up is
   currently tracked for this idea beyond the still-open bulk-CSV-ballot-
-  history item, which stays behind the Tabroom blocker. **Completed:**
+  history item, which stays behind the Tabroom blocker. **PR:**
+  https://github.com/debate/debate-ai.com/pull/524. **Completed:**
   2026-09-04.
 - **Research Progress Tracking — account-sync the personal goal across
   devices (Research Crowdsourcing Organizer Features bullet, "📈 Research
