@@ -9,14 +9,22 @@
  * convention (SSR/no-storage-safe, corrupt or missing JSON degrades to an
  * empty list rather than throwing).
  *
+ * `difficulty` is optional and closes the "a difficulty slider layered on
+ * top of persona choice" Next item named under the "🤖 AI Practice
+ * Opponent" idea in TODO.md — a second, independent axis alongside
+ * `persona`. Left unset it resolves to `DEFAULT_OPPONENT_DIFFICULTY`
+ * ("intermediate") wherever it's read, so every selection saved before this
+ * field existed keeps behaving exactly as it did.
+ *
  * @module state/opponentPersonaSelections
  */
 
-import type { OpponentPersona } from "../opponent/opponent-personas";
+import type { OpponentDifficulty, OpponentPersona } from "../opponent/opponent-personas";
 
 export type OpponentPersonaSelection = {
   sessionId: string;
   persona: OpponentPersona;
+  difficulty?: OpponentDifficulty;
 };
 
 const STORAGE_KEY = "opponentPersonaSelections";

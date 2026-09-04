@@ -16,7 +16,11 @@
  * @module round/opponent-persona-speech-client
  */
 
-import type { OpponentPersona } from "debate-speech-writer/src/opponent/opponent-personas";
+import {
+  DEFAULT_OPPONENT_DIFFICULTY,
+  type OpponentDifficulty,
+  type OpponentPersona,
+} from "debate-speech-writer/src/opponent/opponent-personas";
 import { buildAiVersusSpeechUserPrompt, parseAiVersusSpeechResponse } from "./ai-versus-speech-ai";
 import type { AiSpeechRequest } from "./ai-versus-speech-order";
 import { buildPersonaAiVersusSystemPrompt } from "./opponent-persona-speech-ai";
@@ -26,8 +30,11 @@ const MAX_TOKENS = 2048;
 
 /**
  * Requests the AI's next speech text for `request`, written in `persona`'s
- * style, from `/api/reason-ai` (or `endpoint`, if overridden), returning the
- * parsed speech text.
+ * style at the given `difficulty` (defaulting to
+ * `DEFAULT_OPPONENT_DIFFICULTY` — the "a difficulty slider layered on top of
+ * persona choice" Next item named under the "🤖 AI Practice Opponent" idea in
+ * TODO.md), from `/api/reason-ai` (or `endpoint`, if overridden), returning
+ * the parsed speech text.
  *
  * Throws a plain `Error` with a useful message when the request fails
  * (reading `{ error }` from the response body if present — e.g. "Sign in
@@ -38,13 +45,14 @@ const MAX_TOKENS = 2048;
 export async function requestAiVersusSpeechWithPersona(
   request: AiSpeechRequest,
   persona: OpponentPersona,
+  difficulty: OpponentDifficulty = DEFAULT_OPPONENT_DIFFICULTY,
   endpoint = "/api/reason-ai",
 ): Promise<string> {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      system: buildPersonaAiVersusSystemPrompt(persona),
+      system: buildPersonaAiVersusSystemPrompt(persona, difficulty),
       messages: [{ role: "user", content: buildAiVersusSpeechUserPrompt(request) }],
       maxTokens: MAX_TOKENS,
     }),

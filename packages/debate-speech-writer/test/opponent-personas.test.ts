@@ -2,9 +2,15 @@ import { describe, expect, it } from "vitest";
 import {
   buildCustomOpponentPersona,
   buildOpponentPersonaPrompt,
+  DEFAULT_OPPONENT_DIFFICULTY,
+  getOpponentDifficulty,
   getOpponentPersona,
   isBuiltinOpponentPersonaId,
+  isOpponentDifficulty,
+  listOpponentDifficulties,
   listOpponentPersonas,
+  opponentDifficultyIds,
+  opponentDifficulties,
   opponentPersonaIds,
   opponentPersonas,
 } from "../src/opponent/opponent-personas";
@@ -57,6 +63,57 @@ describe("isBuiltinOpponentPersonaId / getOpponentPersona", () => {
   });
 });
 
+describe("opponentDifficulties registry", () => {
+  it("keys every entry by its own id", () => {
+    for (const [key, level] of Object.entries(opponentDifficulties)) {
+      expect(level.id).toBe(key);
+    }
+  });
+
+  it("gives every difficulty level distinct, non-empty content", () => {
+    const names = new Set<string>();
+    for (const level of Object.values(opponentDifficulties)) {
+      expect(level.name.length).toBeGreaterThan(0);
+      expect(level.description.length).toBeGreaterThan(0);
+      expect(level.instructions.length).toBeGreaterThan(0);
+      names.add(level.name);
+    }
+    expect(names.size).toBe(Object.keys(opponentDifficulties).length);
+  });
+
+  it("includes beginner, intermediate, advanced, and elite", () => {
+    const ids = new Set(opponentDifficultyIds);
+    for (const id of ["beginner", "intermediate", "advanced", "elite"]) {
+      expect(ids.has(id as (typeof opponentDifficultyIds)[number])).toBe(true);
+    }
+  });
+
+  it("defaults to intermediate", () => {
+    expect(DEFAULT_OPPONENT_DIFFICULTY).toBe("intermediate");
+  });
+
+  it("listOpponentDifficulties returns every registry entry in id order", () => {
+    expect(listOpponentDifficulties().map((l) => l.id)).toEqual(opponentDifficultyIds);
+  });
+});
+
+describe("isOpponentDifficulty / getOpponentDifficulty", () => {
+  it("accepts known difficulty ids", () => {
+    expect(isOpponentDifficulty("elite")).toBe(true);
+    expect(getOpponentDifficulty("elite")).toBe(opponentDifficulties.elite);
+  });
+
+  it("rejects unknown ids without throwing", () => {
+    expect(isOpponentDifficulty("made-up")).toBe(false);
+    expect(getOpponentDifficulty("made-up")).toBeNull();
+  });
+
+  it("rejects prototype-pollution-style lookups", () => {
+    expect(isOpponentDifficulty("toString")).toBe(false);
+    expect(getOpponentDifficulty("constructor")).toBeNull();
+  });
+});
+
 describe("buildOpponentPersonaPrompt", () => {
   it("includes the persona name, description, priorities, pace, and instructions", () => {
     const prompt = buildOpponentPersonaPrompt(opponentPersonas.kritik);
@@ -66,6 +123,24 @@ describe("buildOpponentPersonaPrompt", () => {
     expect(prompt).toContain("1. Framework arguments over how the round should be evaluated");
     expect(prompt).toContain("Pace: moderate.");
     expect(prompt).toContain(opponentPersonas.kritik.instructions);
+  });
+
+  it("defaults to the intermediate difficulty when none is given", () => {
+    const prompt = buildOpponentPersonaPrompt(opponentPersonas.kritik);
+    expect(prompt).toContain("Difficulty: Intermediate.");
+    expect(prompt).toContain(opponentDifficulties.intermediate.instructions);
+  });
+
+  it("layers the given difficulty's instructions on top of the persona", () => {
+    const prompt = buildOpponentPersonaPrompt(opponentPersonas.kritik, "elite");
+    expect(prompt).toContain("Difficulty: Elite.");
+    expect(prompt).toContain(opponentDifficulties.elite.instructions);
+  });
+
+  it("produces a different prompt for a different difficulty, same persona", () => {
+    const beginner = buildOpponentPersonaPrompt(opponentPersonas.lay, "beginner");
+    const elite = buildOpponentPersonaPrompt(opponentPersonas.lay, "elite");
+    expect(beginner).not.toBe(elite);
   });
 
   it("numbers every preferred argument in priority order", () => {

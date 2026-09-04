@@ -31,4 +31,20 @@ describe("buildPersonaAiVersusSystemPrompt", () => {
     const layPrompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.lay);
     expect(policyPrompt).not.toBe(layPrompt);
   });
+
+  it("defaults to the intermediate difficulty when none is given", () => {
+    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik);
+    expect(prompt).toContain("Difficulty: Intermediate.");
+  });
+
+  it("includes a caller-supplied difficulty's instructions", () => {
+    const prompt = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik, "beginner");
+    expect(prompt).toContain("Difficulty: Beginner.");
+  });
+
+  it("produces a different prompt for a different difficulty, same persona", () => {
+    const beginner = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik, "beginner");
+    const elite = buildPersonaAiVersusSystemPrompt(opponentPersonas.kritik, "elite");
+    expect(beginner).not.toBe(elite);
+  });
 });

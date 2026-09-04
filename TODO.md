@@ -6,6 +6,86 @@
 _No task currently in progress._
 
 ### Completed
+- **AI Practice Opponent — a difficulty slider layered on top of persona
+  choice ("🤖 AI Practice Opponent" bullet's Next item).** Another repeat
+  of the standing prompt ("integrate all the tools into the UI... create
+  user settings and link user db SQL... with ability to save flows/docs/
+  debates in SQL and link to users... add tools into where needed in the
+  UI... develop better tool UI") — as with every recent repeat, the "user
+  settings / SQL-linked flows, docs, rounds" half is already fully built
+  (see `apps/debate-ai.com/app/api/settings/route.ts` and the many
+  `saved_*` D1 tables/`/api/*` routes threaded through this file's
+  history) and every tool is already reachable from the Tools page and
+  CardMirror's command palette, so this slice picked the next named,
+  unblocked follow-up instead: the "🤖 AI Practice Opponent" bullet's own
+  Next item, "a difficulty slider layered on top of persona choice" — a
+  second, independent axis from the existing persona choice, controlling
+  how strong the AI opponent argues within whichever persona is selected.
+  `opponent/opponent-personas.ts` gains an `opponentDifficulties` registry
+  (`beginner`/`intermediate`/`advanced`/`elite`, mirroring the existing
+  `opponentPersonas` registry's shape/helper functions —
+  `isOpponentDifficulty`/`getOpponentDifficulty`/`listOpponentDifficulties`,
+  `DEFAULT_OPPONENT_DIFFICULTY` = `"intermediate"`), each level's
+  `instructions` composed into `buildOpponentPersonaPrompt`'s existing
+  output as a new "Difficulty: …" section after the persona's own, via a
+  new optional `difficulty` parameter defaulting to
+  `DEFAULT_OPPONENT_DIFFICULTY` so every prior caller keeps arguing at the
+  persona's own baseline strength unmodified. `state/
+  opponentPersonaSelections.ts`'s `OpponentPersonaSelection` gains an
+  optional `difficulty` field (left unset for selections saved before this
+  slice, resolved to the default wherever it's read rather than backfilled
+  on save). `OpponentPersonaPickerPanel` gains a second "Difficulty" radio
+  group next to persona choice, saving the chosen level alongside the
+  persona and showing it as a second badge per session in the
+  saved-selection list. `debate-round`'s `opponent-persona-speech-wiring.ts`
+  gains `getOpponentDifficultyForRound` (mirroring the existing
+  `getOpponentPersonaForRound`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`)
+  and `opponent-persona-speech-ai.ts`'s `buildPersonaAiVersusSystemPrompt`/
+  `opponent-persona-speech-client.ts`'s `requestAiVersusSpeechWithPersona`
+  both gain an optional `difficulty` parameter (same default) that's passed
+  straight through to `buildOpponentPersonaPrompt`; `AiVersusRoundPanel`'s
+  two AI-speech-generation call sites now pass
+  `getOpponentDifficultyForRound(activeRoundId)` through, and its "Arguing
+  as …" line on the AI's turn now shows a second "Difficulty" badge next
+  to the persona badge. The Practice Round Simulator's own separate,
+  `PracticeRoundSetup`-embedded persona selection (a builtin id only, no
+  custom persona and now no difficulty either) was deliberately left
+  untouched — it doesn't read through `opponentPersonaSelections.ts` at
+  all, so wiring a difficulty into it is a distinct follow-up (now named
+  in the "🤖 AI Practice Opponent" bullet's Next item and
+  `docs/features/practice-opponent.md`'s Known gaps) rather than part of
+  this slice's scope. See `docs/features/practice-opponent.md`'s new
+  "Difficulty levels" section. Vitest-covered: new cases in
+  `packages/debate-speech-writer/test/opponent-personas.test.ts` (the
+  `opponentDifficulties` registry, `isOpponentDifficulty`/
+  `getOpponentDifficulty`, and `buildOpponentPersonaPrompt`'s
+  default-vs-explicit difficulty layering) and
+  `opponentPersonaSelections.test.ts` (persisting and omitting
+  `difficulty`); `packages/debate-round/test/
+  opponent-persona-speech-ai.test.ts` (default/explicit difficulty in the
+  composed system prompt), `opponent-persona-speech-wiring.test.ts`
+  (`getOpponentDifficultyForRound`'s default/saved/scoped/pre-difficulty-
+  selection cases), and `opponent-persona-speech-client.test.ts` (the
+  difficulty flowing into the posted system prompt, plus updating the
+  existing endpoint-override test for the new parameter order). 22 new
+  test cases across 5 files. Verification: `bunx vitest run
+  packages/debate-speech-writer/test/opponent-personas.test.ts
+  packages/debate-speech-writer/test/opponentPersonaSelections.test.ts
+  packages/debate-round/test/opponent-persona-speech-ai.test.ts
+  packages/debate-round/test/opponent-persona-speech-wiring.test.ts
+  packages/debate-round/test/opponent-persona-speech-client.test.ts` (5/5
+  files, 64 tests pass); `bunx turbo run typecheck
+  --filter=debate-speech-writer --filter=debate-round
+  --filter=debate-ai-web` (9/9 in-scope package tasks pass — `debate-ai-web`
+  itself has no standalone typecheck script, matching prior runs); full
+  `bun run test` (224 files, 4190 tests pass); `bun run build:web`
+  (production build succeeded, `/practice-opponent` and `/versus-ai`
+  routes intact; the touched-by-build `app-file-list.ts`/`version.ts`/
+  `service-worker.js`/`bun.lock` churn was reverted before committing,
+  unrelated to this change). No lint script is configured anywhere in this
+  repo (root or any package), so `lint` was not run — consistent with
+  every prior entry in this log. **PR:** opened from branch
+  `claude/gifted-babbage-wg294k`. **Completed:** 2026-09-04.
 - **Strategy Sync Notes — threaded replies on a note instead of flat
   status ("🔄 Strategy Sync Notes" bullet's Next item).** Another repeat of
   the standing prompt ("integrate all the tools into the UI... create user
@@ -15418,7 +15498,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🤝 **Team Collaboration Mode** (`/cards/collaboration`) — a shared whiteboard/canvas for sprint brainstorming; an end-of-sprint retrospective summary; calendar scheduling for sprint sessions.
 * 🕵️ **Opponent Team Profiles** (`/opponents`) — real round-history data stays blocked (Tabroom login wall, see below). The bulk-CSV-import follow-up is now done: a "Bulk import (CSV)" section on the panel parses a pasted CSV of scouted rounds (header row, any column order; `teamId`/`tournamentName`/`date`/`division`/`side`/`won` required, `argumentTags`/`caseName`/`opponentTeamId` optional) and persists every well-formed row in one pass, skipping and reporting malformed rows rather than failing the whole batch (`debate-data-sync`'s `rankings/opponent-round-csv-import.ts#parseOpponentRoundRecordsCsv`, `state/opponentRoundRecords.ts#bulkImportOpponentRoundRecords`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Bulk CSV import" section. The printable/exportable-scouting-report follow-up is also now done: a "Download report" button exports the whole roster as a plain-text file, one summary block per team (`rankings/opponent-team-profile.ts#buildOpponentScoutingReportText`) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Downloading a scouting report" section. The side-by-side-us-vs-opponent-comparison-view follow-up is also now done: a "Compare vs. opponent" section builds "us" on the fly from `debate-round`'s own round-history log against a chosen opponent's profile, via `rankings/opponent-team-profile.ts#buildOpponentTeamComparison` (`OpponentTeamProfilesPanel.tsx`'s "Compare vs. opponent" section, with a "Download comparison" action) — see the Completed entry above and `docs/features/opponent-team-profiles.md`'s "Comparing us vs. an opponent" section. No further follow-up is currently tracked for this idea beyond the still-blocked bulk-CSV-ballot-history item (see "Confirmed blocker" below); a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * ⚖️ **Judge Profiles** (`/judges`) — the auto-tagged-paradigm confidence-indicator follow-up is done: `mostCommonParadigmConfidence` (the tagged paradigm's share of a judge's paradigm-tagged rounds) shows as a "N% confidence" badge on the roster, and folds into the `buildJudgeTendencySummary`/`buildJudgeAdaptationNotes` lines it's already quoted in — see the Completed entry above and `docs/features/judge-profiles.md`'s "What it shows" section. The multi-judge-comparison-view-for-panel-rounds follow-up is also now done — it turned out not to actually need the blocked Tabroom data source: a "Compare judges" section checks two or more already-persisted (hand-logged or, once available, bulk-imported) profiles and reads them as a panel via a new `judge/judge-panel-comparison.ts#buildJudgePanelComparison` — see the Completed entry above and `docs/features/judge-profiles.md`'s "Comparing judges on a panel" section. One follow-up remains, and it does stay behind the same Tabroom blocker as Opponent Team Profiles (see below): a bulk CSV import for ballot history.
-* 🤖 **AI Practice Opponent** (`/practice-opponent`) — share a custom-authored persona across a team instead of per-user only; a difficulty slider layered on top of persona choice; post-round feedback tips specific to the persona faced.
+* 🤖 **AI Practice Opponent** (`/practice-opponent`) — the difficulty-slider follow-up is done: a second "Difficulty" radio group (Beginner/Intermediate/Advanced/Elite, `opponent/opponent-personas.ts`'s `opponentDifficulties`) sits alongside persona choice, saved on the same `OpponentPersonaSelection` and shown as a second badge per session; `buildOpponentPersonaPrompt` layers the chosen level's instructions onto the persona's own, and `getOpponentDifficultyForRound`/`requestAiVersusSpeechWithPersona`'s new `difficulty` parameter (both defaulting to `DEFAULT_OPPONENT_DIFFICULTY`/"intermediate" for backward compatibility) carry it through to the AI-versus speech-generation call, with `AiVersusRoundPanel` showing the active difficulty badge next to the persona badge on the AI's turn — see the Completed entry above and `docs/features/practice-opponent.md`'s "Difficulty levels" section. Next: share a custom-authored persona across a team instead of per-user only; post-round feedback tips specific to the persona faced; extend the Practice Round Simulator's own separate persona setup (`PracticeRoundSetup`) to carry a difficulty too (see `docs/features/practice-opponent.md`'s Known gaps).
 * 🎙️ **AI Coach Mode** (`/coaching`) — the exportable-coaching-notes-document follow-up is done: each session card has a "Download" action that saves its template prompts plus its AI feedback (if generated) as a plain-text file, headed with the round id and side (`state/coachingSessions.ts#buildCoachingNotesText`/`coachingNotesFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Download" mention. The coaching-session-history-timeline-per-round follow-up is also now done: a "History" toggle on each session card lists every prior version of that round+side's session, newest first, each restorable (`state/coachingSessionHistory.ts#appendCoachingSessionVersion`/`listVersionsForCoachingSession`, wired into `state/coachingSessions.ts#saveCoachingSession`, which now snapshots the record it overwrites before replacing it) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "History" section. The side-by-side-comparison-across-two-rounds follow-up is also now done: a "Compare two sessions" section lets a user pick any two persisted sessions and renders their prompts kind-by-kind in a two-column grid, plus a "Download comparison" action (`state/coachingSessions.ts#buildCoachingSessionComparison`/`buildCoachingSessionComparisonText`/`coachingSessionComparisonFilename`) — see the Completed entry above and `docs/features/coaching-sessions.md`'s "Compare two sessions" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — a shared task checklist view; a shared file/attachment area; a room activity timeline.
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).

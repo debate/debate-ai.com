@@ -14,11 +14,23 @@
  * practice session, so this module treats them as the same key rather than
  * introducing a new persistence field to link them.
  *
+ * `getOpponentDifficultyForRound` closes the same store's `difficulty` field
+ * out to the same key — the "a difficulty slider layered on top of persona
+ * choice" Next item named under the "🤖 AI Practice Opponent" idea in
+ * TODO.md. It always resolves to a concrete `OpponentDifficulty` (falling
+ * back to `DEFAULT_OPPONENT_DIFFICULTY` when no selection is saved, or a
+ * saved selection predates this field), so a caller never has to handle a
+ * missing difficulty itself.
+ *
  * @module round/opponent-persona-speech-wiring
  */
 
 import { getOpponentPersonaSelection } from "debate-speech-writer/src/state/opponentPersonaSelections";
-import type { OpponentPersona } from "debate-speech-writer/src/opponent/opponent-personas";
+import {
+  DEFAULT_OPPONENT_DIFFICULTY,
+  type OpponentDifficulty,
+  type OpponentPersona,
+} from "debate-speech-writer/src/opponent/opponent-personas";
 
 /**
  * Looks up the persisted `OpponentPersona` saved for `roundId` (via the
@@ -27,4 +39,14 @@ import type { OpponentPersona } from "debate-speech-writer/src/opponent/opponent
  */
 export function getOpponentPersonaForRound(roundId: string): OpponentPersona | null {
   return getOpponentPersonaSelection(roundId)?.persona ?? null;
+}
+
+/**
+ * Looks up the persisted `OpponentDifficulty` saved for `roundId` under the
+ * same key as `getOpponentPersonaForRound`, defaulting to
+ * `DEFAULT_OPPONENT_DIFFICULTY` when no selection (or no difficulty on an
+ * existing selection) is saved for it.
+ */
+export function getOpponentDifficultyForRound(roundId: string): OpponentDifficulty {
+  return getOpponentPersonaSelection(roundId)?.difficulty ?? DEFAULT_OPPONENT_DIFFICULTY;
 }
