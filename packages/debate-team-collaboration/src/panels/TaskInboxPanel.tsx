@@ -77,6 +77,14 @@
  * priority-flag control for Strategy Sync Notes. An unassigned task has no
  * flag control — there's no assignee yet to attach a priority to.
  *
+ * A "Team capacity" section closes the "a capacity-aware view of routing
+ * load across the team" follow-up named under the "Research Task Routing"
+ * bullet in TODO.md — one row per contributor who currently has at least
+ * one routed task, via `state/routedTaskQueues.ts`'s `buildTeamCapacityView`,
+ * showing their total load, a per-topic breakdown, and an "Overloaded"
+ * badge once a contributor with a persisted availability profile has met or
+ * exceeded its `maxConcurrentTasks`.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -89,11 +97,13 @@ import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import {
   buildTaskInboxView,
+  buildTeamCapacityView,
   filterTaskInboxViewByContributor,
   reassignPersistedRoutedTask,
   routePersistedTopicTasks,
   setPersistedRoutedTaskPriority,
   type TaskInboxTopic,
+  type TeamCapacityRow,
 } from "../state/routedTaskQueues"
 import { verifyAndRecordResearchTask } from "../state/researchProgress"
 import {
@@ -139,6 +149,7 @@ export interface TaskInboxPanelProps {
  */
 export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = {}) {
   const [topics, setTopics] = useState<TaskInboxTopic[] | null>(null)
+  const [capacity, setCapacity] = useState<TeamCapacityRow[]>([])
   const [pending, setPending] = useState<PendingTaskVerification[]>([])
   const [trackedTopics, setTrackedTopics] = useState<string[]>([])
   const [routeTopic, setRouteTopic] = useState("")
@@ -151,6 +162,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
 
   useEffect(() => {
     setTopics(buildTaskInboxView())
+    setCapacity(buildTeamCapacityView())
     setPending(listPendingTaskVerifications())
     setTrackedTopics(listTrackedTopics())
   }, [])
@@ -170,6 +182,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     const handleStorage = (event: StorageEvent) => {
       if (!isTaskInboxLiveUpdateStorageEvent(event)) return
       setTopics(buildTaskInboxView())
+      setCapacity(buildTeamCapacityView())
       setPending(listPendingTaskVerifications())
       setTrackedTopics(listTrackedTopics())
     }
@@ -182,6 +195,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   const handleMarkDone = (topicId: string, argBlock: string) => {
     markRoutedTaskAwaitingVerification(topicId, argBlock, new Date().toISOString())
     setTopics(buildTaskInboxView())
+    setCapacity(buildTeamCapacityView())
     setPending(listPendingTaskVerifications())
   }
 
@@ -213,6 +227,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     reassignPersistedRoutedTask(topicId, argBlock, newContributorId)
     setReassignInputs((prev) => ({ ...prev, [key]: "" }))
     setTopics(buildTaskInboxView())
+    setCapacity(buildTeamCapacityView())
   }
 
   const handleRoute = (topicId: string) => {
@@ -225,6 +240,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     setRouteError(null)
     setRouteTopic("")
     setTopics(buildTaskInboxView())
+    setCapacity(buildTeamCapacityView())
     setTrackedTopics(listTrackedTopics())
   }
 
@@ -320,6 +336,38 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
       {trimmedMyId && visibleTopics.length === 0 && (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No tasks routed to "{trimmedMyId}" right now.
+        </div>
+      )}
+      {capacity.length > 0 && (
+        <div className="rounded-lg border border-border p-4">
+          <h2 className="mb-1 text-sm font-semibold text-foreground">Team capacity</h2>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Currently-routed load per contributor, across every topic.
+          </p>
+          <div className="space-y-2">
+            {capacity.map((row) => (
+              <div
+                key={row.contributorId}
+                className="flex flex-wrap items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+              >
+                <span className="font-medium text-foreground">{row.contributorId}</span>
+                <Badge variant="outline">
+                  {row.activeTaskCount} task{row.activeTaskCount === 1 ? "" : "s"}
+                </Badge>
+                {row.skillLevel && (
+                  <Badge variant="outline" className="capitalize">
+                    {row.skillLevel}
+                  </Badge>
+                )}
+                {row.isOverloaded && <Badge variant="destructive">Overloaded</Badge>}
+                <span className="text-xs text-muted-foreground">
+                  {row.topicCounts
+                    .map((topic) => `${topic.topicId} (${topic.count})`)
+                    .join(", ")}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       {pending.length > 0 && (

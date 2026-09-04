@@ -58,6 +58,17 @@
  * topic-mates, mirroring `strategy-sync-notes.ts`'s `setNotePriority`/
  * `sortNotesByPriorityThenCreatedAt` convention for Strategy Sync Notes.
  *
+ * `buildTeamCapacityView` closes the "a capacity-aware view of routing load
+ * across the team" follow-up named under the "Research Task Routing" bullet
+ * in TODO.md's Research Crowdsourcing Organizer Features list. This repo
+ * still has no UI to create/manage a `ContributorAvailability` profile, so
+ * rather than depending on one existing for every contributor, load is
+ * tallied straight from the actually-persisted routed queues — the same
+ * "work off arbitrary typed ids" convention `reassignPersistedRoutedTask`
+ * already established — and enriched with `skillLevel`/`maxConcurrentTasks`
+ * only for whichever contributors happen to have a persisted availability
+ * profile.
+ *
  * @module state/routedTaskQueues
  */
 
@@ -357,4 +368,81 @@ export function filterTaskInboxViewByContributor(
       unassignedTasks: [],
     }))
     .filter((topic) => topic.assignments.length > 0);
+}
+
+/** How many of a contributor's currently-routed tasks fall under one topic. */
+export interface TeamCapacityTopicLoad {
+  topicId: string;
+  count: number;
+}
+
+/**
+ * One row of the team capacity view: a contributor who currently has at
+ * least one routed task, their total load across every topic, and a
+ * per-topic breakdown of where that load comes from.
+ */
+export interface TeamCapacityRow {
+  contributorId: string;
+  /** Total routed tasks currently assigned to this contributor, across every topic. */
+  activeTaskCount: number;
+  /** Per-topic breakdown, busiest topic first (tie-broken by topicId). */
+  topicCounts: TeamCapacityTopicLoad[];
+  /** This contributor's persisted skill level, if their availability profile still exists. */
+  skillLevel?: SkillLevel;
+  /** This contributor's persisted concurrency limit, if their availability profile still exists. */
+  maxConcurrentTasks?: number;
+  /**
+   * `true` when a persisted profile exists and `activeTaskCount` has met or
+   * exceeded its `maxConcurrentTasks` — `false` (not "unknown") for a
+   * contributor with no persisted profile, since there's no limit to
+   * compare against.
+   */
+  isOverloaded: boolean;
+}
+
+/**
+ * Builds a capacity-aware view of routing load across the whole team,
+ * closing the "a capacity-aware view of routing load across the team"
+ * follow-up named under the "Research Task Routing" bullet in TODO.md.
+ * Tallies every persisted routed queue's assignments by contributor
+ * (regardless of whether that contributor has a persisted
+ * `ContributorAvailability` profile — see the module docstring), then
+ * enriches each row with `skillLevel`/`maxConcurrentTasks`/`isOverloaded`
+ * for whichever contributors do have one. A contributor with zero currently
+ * routed tasks (including one with a persisted profile but nothing
+ * assigned) is omitted — there's no load to show. Rows are sorted
+ * busiest-first, tie-broken by `contributorId`.
+ */
+export function buildTeamCapacityView(): TeamCapacityRow[] {
+  const profileByContributor = new Map(
+    listContributorAvailability().map((profile) => [profile.contributorId, profile]),
+  );
+
+  const topicCountsByContributor = new Map<string, Map<string, number>>();
+  for (const { topicId, result } of listRoutedTaskQueues()) {
+    for (const assignment of result.assignments) {
+      const byTopic = topicCountsByContributor.get(assignment.contributorId) ?? new Map<string, number>();
+      byTopic.set(topicId, (byTopic.get(topicId) ?? 0) + 1);
+      topicCountsByContributor.set(assignment.contributorId, byTopic);
+    }
+  }
+
+  const rows: TeamCapacityRow[] = Array.from(topicCountsByContributor.entries()).map(([contributorId, byTopic]) => {
+    const topicCounts = Array.from(byTopic.entries())
+      .map(([topicId, count]) => ({ topicId, count }))
+      .sort((a, b) => b.count - a.count || a.topicId.localeCompare(b.topicId));
+    const activeTaskCount = topicCounts.reduce((sum, topic) => sum + topic.count, 0);
+    const profile = profileByContributor.get(contributorId);
+
+    return {
+      contributorId,
+      activeTaskCount,
+      topicCounts,
+      skillLevel: profile?.skillLevel,
+      maxConcurrentTasks: profile?.maxConcurrentTasks,
+      isOverloaded: profile ? activeTaskCount >= profile.maxConcurrentTasks : false,
+    };
+  });
+
+  return rows.sort((a, b) => b.activeTaskCount - a.activeTaskCount || a.contributorId.localeCompare(b.contributorId));
 }
