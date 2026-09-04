@@ -2,6 +2,7 @@ export const APP_FILE_LIST = [
   '/apple-touch-icon.png',
   '/assets/HotGrid-B-qzCohT.js',
   '/assets/HotGrid-DGmBWI03.css',
+  '/assets/HotGrid-Dyi1YM06.js',
   '/assets/app-1W4vm6nu.js',
   '/assets/archiver-web.es-DJsLdCkE.js',
   '/assets/arimo-400-DTxlrzhB.woff2',

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Modal overlaying a YouTube player alongside its transcript
- * (fetched server-side via `extract-youtube`), with the transcript synced to
+ * (fetched server-side from YouTube's caption tracks), with the transcript synced to
  * playback — the currently spoken line is highlighted and auto-scrolled, an
  * approximate per-word highlight sweeps across the active line, and clicking
  * any line seeks the player there.
@@ -18,6 +18,7 @@ import {
 } from "../../ui/primitives/dialog"
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
+import { buildEmbedUrl } from "../video-player/youtubeEmbed"
 import { useTranscript } from "./useTranscript"
 import { TranscriptLine } from "./TranscriptLine"
 
@@ -124,10 +125,11 @@ export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
           <div className="relative w-full bg-black" style={{ paddingTop: "56.25%" }}>
             <iframe
               ref={iframeRef}
-              src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&rel=0`}
+              src={buildEmbedUrl(videoId)}
               title={title}
               onLoad={handleIframeLoad}
               className="absolute inset-0 w-full h-full"
+              referrerPolicy="strict-origin-when-cross-origin"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
