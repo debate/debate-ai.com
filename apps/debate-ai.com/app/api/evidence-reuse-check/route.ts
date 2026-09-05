@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
-import { evidenceReuseIndex } from "@/lib/database/schema"
+import { evidenceReuseIndex, reuseCheckLog } from "@/lib/database/schema"
 
 /**
  * Server-backed reuse index for the "On Page Card Reuse Search" idea (see
@@ -14,7 +14,11 @@ import { evidenceReuseIndex } from "@/lib/database/schema"
  * browser extension (or the web app itself) can call instead, mirroring
  * `app/api/flow-sync/route.ts`'s D1-backed API-route conventions.
  *
- * GET  ?url=<string>   — whether `url` has already been cut, plus matches.
+ * GET  ?url=<string>&source=<"web"|"extension">   — whether `url` has
+ *   already been cut, plus matches. Every call also appends a row to
+ *   `reuseCheckLog` (idea #7's "team dashboard of pages flagged as
+ *   already-cut" follow-up — see `GET /api/evidence-reuse-check/dashboard`),
+ *   best-effort: a logging failure never fails the caller's actual check.
  * POST { id, sourceUrl, cite, argBlock, topic, contributorId } — registers
  *   (upserts by `id`) a cut card's source URL into the shared index.
  */
@@ -51,6 +55,10 @@ function toReuseMatch(row: typeof evidenceReuseIndex.$inferSelect): ReuseMatch {
   }
 }
 
+function toLoggedSource(raw: string | null): "web" | "extension" {
+  return raw === "extension" ? "extension" : "web"
+}
+
 export async function GET(req: NextRequest) {
   const url = req.nextUrl.searchParams.get("url")?.trim() ?? ""
   if (!url) {
@@ -70,7 +78,24 @@ export async function GET(req: NextRequest) {
     .limit(MAX_MATCHES)
 
   const matches = rows.map(toReuseMatch)
-  return NextResponse.json({ url, alreadyCut: matches.length > 0, matches })
+  const alreadyCut = matches.length > 0
+
+  // Best-effort: the reuse dashboard is a nice-to-have view over this log,
+  // so a logging failure must never fail the caller's actual reuse check.
+  try {
+    await db.insert(reuseCheckLog).values({
+      url: url.slice(0, MAX_FIELD_LENGTH),
+      normalizedUrl,
+      alreadyCut,
+      matchCount: matches.length,
+      source: toLoggedSource(req.nextUrl.searchParams.get("source")),
+      checkedAt: Date.now(),
+    })
+  } catch {
+    // Ignored — see comment above.
+  }
+
+  return NextResponse.json({ url, alreadyCut, matches })
 }
 
 export async function POST(req: NextRequest) {

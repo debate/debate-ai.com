@@ -77,6 +77,33 @@ export async function checkRemotePageForExistingCards(
   return (await res.json()) as RemotePageReuseCheckResult;
 }
 
+/** One page's aggregated "flagged as already-cut" reuse pattern, as returned by the dashboard endpoint. */
+export interface RemoteFlaggedPageReuseSummary {
+  normalizedUrl: string;
+  url: string;
+  timesFlagged: number;
+  lastFlaggedAt: number;
+  sources: string[];
+}
+
+/**
+ * Fetches idea #7's ("On Page Card Reuse Search") team dashboard of pages
+ * flagged as already-cut, most frequently flagged first, via GET
+ * `/api/evidence-reuse-check/dashboard`.
+ */
+export async function fetchReuseCheckDashboard(
+  endpoint = `${DEFAULT_ENDPOINT}/dashboard`,
+): Promise<RemoteFlaggedPageReuseSummary[]> {
+  const res = await fetch(endpoint, { method: "GET" });
+
+  if (!res.ok) {
+    return readErrorDetail(res, `Reuse dashboard request failed (${res.status}).`);
+  }
+
+  const payload = (await res.json()) as { dashboard?: RemoteFlaggedPageReuseSummary[] };
+  return payload.dashboard ?? [];
+}
+
 /**
  * Registers a cut card's source URL into the shared reuse index, via POST
  * `/api/evidence-reuse-check`. Upserted by `request.id` on the server, so

@@ -768,6 +768,35 @@ export const evidenceReuseIndex = sqliteTable(
 
 export type EvidenceReuseIndexRow = typeof evidenceReuseIndex.$inferSelect;
 
+// On Page Card Reuse Search — team-wide "reuse patterns" dashboard (TODO.md
+// idea #7's "a team dashboard of pages flagged as already-cut" follow-up). A
+// log of every GET /api/evidence-reuse-check lookup (the web app's "Check
+// this page" box, or the browser extension), not just the registered "cut"
+// facts `evidenceReuseIndex` above tracks — so a coach can see which pages
+// get *checked*, and how often they come back already-cut, across the whole
+// team rather than just this one browser's own `reuseCheckHistory.ts` log.
+// Append-only (never upserted); `checkedAt` is a plain millisecond
+// timestamp stamped server-side, mirroring `flowPresenceHeartbeats.lastSeenAt`
+// above rather than a drizzle `{ mode: "timestamp" }` column.
+export const reuseCheckLog = sqliteTable(
+  "reuse_check_log",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    url: text("url").notNull(),
+    normalizedUrl: text("normalized_url").notNull(),
+    alreadyCut: integer("already_cut", { mode: "boolean" }).notNull(),
+    matchCount: integer("match_count").notNull().default(0),
+    source: text("source").notNull().default("web"),
+    checkedAt: integer("checked_at").notNull(),
+  },
+  (table) => ({
+    normalizedUrlIdx: index("idx_reuse_check_log_normalized_url").on(table.normalizedUrl),
+    alreadyCutIdx: index("idx_reuse_check_log_already_cut").on(table.alreadyCut),
+  }),
+);
+
+export type ReuseCheckLogRow = typeof reuseCheckLog.$inferSelect;
+
 // Video library — the queryable projection of the `data/videos/*.json` assets
 // (rounds-policy/pf/ld/college, debate-lectures, debate-top-picks) that the
 // YouTube sync writes. `/api/videos` pages over this table instead of shipping

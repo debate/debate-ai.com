@@ -77,10 +77,14 @@ function isUrlDomainSkipped(pageUrl, skipDomains) {
 
 /**
  * Checks whether `pageUrl` has already been cut into the shared evidence
- * repository, via GET `${apiBase}/api/evidence-reuse-check?url=`.
+ * repository, via GET `${apiBase}/api/evidence-reuse-check?url=&source=extension`.
+ * The `source=extension` param tags this check in the server's reuse-check
+ * log (TODO.md idea #7's "team dashboard of pages flagged as already-cut"
+ * follow-up) as coming from the extension rather than the web app's own
+ * "Check this page" box.
  */
 async function checkPageForExistingCards(pageUrl, apiBase) {
-  const endpoint = `${apiBase.replace(/\/$/, "")}/api/evidence-reuse-check?url=${encodeURIComponent(pageUrl)}`;
+  const endpoint = `${apiBase.replace(/\/$/, "")}/api/evidence-reuse-check?url=${encodeURIComponent(pageUrl)}&source=extension`;
   const res = await fetch(endpoint, { method: "GET" });
   if (!res.ok) {
     let detail = "";

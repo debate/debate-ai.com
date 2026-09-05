@@ -218,6 +218,13 @@
       "when": 1788561601012,
       "tag": "0030_careful_doctor_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "6",
+      "when": 1788569975347,
+      "tag": "0031_handy_tigra",
+      "breakpoints": true
     }
   ]
 }
