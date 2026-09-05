@@ -12,6 +12,13 @@ export {
   type SessionIdentity,
 } from "./lib/session-identity";
 export {
+  buildReuseCheckDashboard,
+  buildReuseCheckDashboardSummaryText,
+  type FlaggedPageReuseSummary,
+  type ReuseCheckLogRecord,
+  type ReuseCheckSource,
+} from "./lib/shared-evidence-library";
+export {
   DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
   MAX_SAVED_ARGUMENT_COLLECTIONS,
   MAX_TAGS_PER_COLLECTION,

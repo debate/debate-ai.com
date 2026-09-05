@@ -244,6 +244,92 @@ export function buildReuseCheckDeepLink(appOrigin: string, pageUrl: string): str
   return `${origin}/cards/library?checkUrl=${encodeURIComponent(pageUrl.trim())}`;
 }
 
+/** Where a logged reuse check originated — the web app's own "Check this page" box, or the browser extension. */
+export type ReuseCheckSource = "web" | "extension";
+
+/**
+ * One row of the server-side reuse-check log (`GET /api/evidence-reuse-check`
+ * records one of these per lookup) — every check performed, not just the
+ * registered "cut" facts `PageReuseCheckResult`/`evidenceReuseIndex` track.
+ * This is the raw material for the team reuse dashboard below.
+ */
+export interface ReuseCheckLogRecord {
+  url: string;
+  normalizedUrl: string;
+  alreadyCut: boolean;
+  matchCount: number;
+  source: ReuseCheckSource;
+  checkedAt: number;
+}
+
+/** One page's aggregated "flagged as already-cut" pattern across the team, for the reuse dashboard. */
+export interface FlaggedPageReuseSummary {
+  normalizedUrl: string;
+  /** The raw URL from the most recent flagging check (case/scheme/query string as last seen). */
+  url: string;
+  timesFlagged: number;
+  lastFlaggedAt: number;
+  /** Distinct sources ("web", "extension") that have flagged this page, sorted. */
+  sources: ReuseCheckSource[];
+}
+
+/**
+ * Builds idea #7's ("On Page Card Reuse Search") team dashboard of pages
+ * flagged as already-cut, so a coach can see reuse patterns at a glance
+ * instead of the reuse check staying a per-page, on-demand lookup. Groups
+ * every logged check that came back `alreadyCut` by `normalizedUrl`, most
+ * frequently flagged first (ties broken by most recently flagged), and caps
+ * the result at `limit` rows. A page that has never been flagged
+ * already-cut (every check on it came back "new") never appears here.
+ */
+export function buildReuseCheckDashboard(
+  records: ReuseCheckLogRecord[],
+  limit = 25,
+): FlaggedPageReuseSummary[] {
+  const byUrl = new Map<
+    string,
+    { url: string; timesFlagged: number; lastFlaggedAt: number; sources: Set<ReuseCheckSource> }
+  >();
+
+  for (const record of records) {
+    if (!record.alreadyCut) continue;
+    const existing = byUrl.get(record.normalizedUrl);
+    if (!existing) {
+      byUrl.set(record.normalizedUrl, {
+        url: record.url,
+        timesFlagged: 1,
+        lastFlaggedAt: record.checkedAt,
+        sources: new Set([record.source]),
+      });
+      continue;
+    }
+    existing.timesFlagged += 1;
+    existing.sources.add(record.source);
+    if (record.checkedAt > existing.lastFlaggedAt) {
+      existing.lastFlaggedAt = record.checkedAt;
+      existing.url = record.url;
+    }
+  }
+
+  return Array.from(byUrl.entries())
+    .map(([normalizedUrl, entry]) => ({
+      normalizedUrl,
+      url: entry.url,
+      timesFlagged: entry.timesFlagged,
+      lastFlaggedAt: entry.lastFlaggedAt,
+      sources: Array.from(entry.sources).sort(),
+    }))
+    .sort((a, b) => b.timesFlagged - a.timesFlagged || b.lastFlaggedAt - a.lastFlaggedAt)
+    .slice(0, limit);
+}
+
+/** Renders a one-line summary of the reuse dashboard, e.g. an empty-state message. */
+export function buildReuseCheckDashboardSummaryText(dashboard: FlaggedPageReuseSummary[]): string {
+  if (dashboard.length === 0) return "No pages have been flagged as already-cut yet.";
+  const total = dashboard.reduce((sum, entry) => sum + entry.timesFlagged, 0);
+  return `${dashboard.length} ${dashboard.length === 1 ? "page" : "pages"} flagged as already-cut across ${total} team ${total === 1 ? "check" : "checks"}.`;
+}
+
 /**
  * Builds the repository's topic-folder/tag-collection index, reusing
  * `buildArgumentLibrary` directly — an `EvidenceLibraryEntry` is already a

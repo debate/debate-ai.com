@@ -6,6 +6,62 @@
 _No task currently in progress._
 
 ### Completed
+- **🕵️ On Page Card Reuse Search — a team dashboard of pages flagged as
+  already-cut, so a coach can see reuse patterns at a glance (idea #7's last
+  remaining Next item under Product Feature Ideas).** Another repeat of the
+  standing prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL... with ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that half is
+  already fully built (see `apps/debate-ai.com/app/api/settings/route.ts`
+  and the many `saved_*` D1 tables/`/api/*` routes threaded through this
+  file's history, and every tool already reachable from the Tools page and
+  CardMirror's command palette), so this slice picked the next named,
+  unblocked follow-up instead. Before this, the reuse check (`GET
+  /api/evidence-reuse-check`, the server-backed shared index behind the web
+  app's "Check this page" box and the `debate-web-ext` browser extension)
+  only ever answered a one-off "is *this* page already cut" question — there
+  was no record of which pages get checked repeatedly or how often they turn
+  out to already be cut, across the whole team. A new `reuse_check_log` D1
+  table (`apps/debate-ai.com/lib/database/schema.ts`, migration
+  `drizzle/0031_handy_tigra.sql`) now gets one row appended on every GET
+  lookup — `url`, `normalizedUrl`, `alreadyCut`, `matchCount`, `source`
+  ("web" or "extension", the extension's own plain-JS `api.js` now appends
+  `&source=extension` to its request), `checkedAt` — best-effort (a logging
+  failure never fails the caller's actual check). A new `GET
+  /api/evidence-reuse-check/dashboard` route reads the log's flagged rows
+  (capped at the 2000 most recent) and folds them into one ranked row per
+  normalized URL via a new pure `buildReuseCheckDashboard` in
+  `debate-research-evidence`'s `lib/shared-evidence-library.ts` — times
+  flagged, distinct flagging sources, and the most recent raw URL/timestamp
+  — most frequently flagged first, mirroring `buildStaleEvidenceDigest`'s
+  ranked-digest shape. A new `lib/evidence-reuse-check-client.ts#fetchReuseCheckDashboard`
+  plus `hooks/useReuseCheckDashboard.ts` (a plain fetch-on-mount hook — the
+  dashboard is team-wide server data, not a per-user preference, so unlike
+  this package's account-synced hooks there's no local-first/signed-out
+  state to merge) wire it into `EvidenceLibraryPanel`'s new "Team reuse
+  dashboard" section on `/cards/library`, which also refreshes right after a
+  successful "Check this page" shared-index lookup so a page that just
+  crossed into "flagged" shows up without a reload. See
+  `docs/features/on-page-card-reuse-search.md`'s new "Team reuse dashboard"
+  section (plus an updated Known-gaps note: the log is append-only with no
+  retention/purge policy yet, just a fixed row-count cap on the dashboard
+  query) and the new test coverage in
+  `packages/debate-search-evidence/test/shared-evidence-library.test.ts`
+  (`buildReuseCheckDashboard`/`buildReuseCheckDashboardSummaryText`: grouping
+  by normalized URL, excluding non-flagged checks, tie-breaking by
+  recency, tracking the most-recent raw URL/timestamp, collecting distinct
+  sources, the result-limit cap, and the empty-dashboard case) and
+  `evidence-reuse-check-client.test.ts` (`fetchReuseCheckDashboard`'s
+  request shape, empty-field fallback, endpoint override, and error
+  handling). Ran the full verification gate: `bun run test` (4433 passing,
+  up from 4419 — the 14 new cases above), `bunx turbo run typecheck` (all 15
+  typecheck-bearing packages green, `debate-research-evidence` included),
+  and `bun run build:web` (the full production build, `/api/evidence-reuse-check/dashboard`
+  in the built route list alongside `/api/evidence-reuse-check`) all pass.
+  Next: no further follow-up is currently tracked for idea #7; a future run
+  should pick a fresh next-step elsewhere.
+
 - **🔄 Shared, AI-Generated Debate Flow — live "who's editing now" presence
   indicators alongside the existing merge preview (one of idea #16's two
   remaining Next items under Product Feature Ideas).** Another repeat of
@@ -16160,8 +16216,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
      round-anchored note without a box, or adding a `debate-round`-local
      send target, would need to land first.
 
-7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. The extension-options-page follow-up is also now done: the API-base-URL config already existed, and this run added the other half — a "Skip-check whitelist" textarea (one domain per line) on the extension's Options page, so the popup skips the network reuse check entirely (a neutral "on your skip-check whitelist" status) for a whitelisted site or its subdomains — `apps/debate-web-ext`'s `api.js#isUrlDomainSkipped`/`getSkipDomains`/`setSkipDomains`, wired into `popup.js`/`options.js`/`options.html` — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Options: API base and skip-check whitelist" section (which also fixes that doc's stale references to a deleted `extension/card-reuse-checker` deep-link-only design and the renamed `debate-card-search` package — the real current extension is `apps/debate-web-ext`, calling `/api/evidence-reuse-check` directly). Next:
-   - A team dashboard of pages flagged as already-cut, so a coach can see reuse patterns at a glance.
+7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. The extension-options-page follow-up is also now done: the API-base-URL config already existed, and this run added the other half — a "Skip-check whitelist" textarea (one domain per line) on the extension's Options page, so the popup skips the network reuse check entirely (a neutral "on your skip-check whitelist" status) for a whitelisted site or its subdomains — `apps/debate-web-ext`'s `api.js#isUrlDomainSkipped`/`getSkipDomains`/`setSkipDomains`, wired into `popup.js`/`options.js`/`options.html` — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Options: API base and skip-check whitelist" section (which also fixes that doc's stale references to a deleted `extension/card-reuse-checker` deep-link-only design and the renamed `debate-card-search` package — the real current extension is `apps/debate-web-ext`, calling `/api/evidence-reuse-check` directly). The team-dashboard-of-flagged-pages follow-up is also now done: a new `reuse_check_log` D1 table logs every `GET /api/evidence-reuse-check` lookup (web app and extension alike), and a new `GET /api/evidence-reuse-check/dashboard` route folds the flagged ones into one ranked row per page via the pure `buildReuseCheckDashboard` — rendered as `EvidenceLibraryPanel`'s new "Team reuse dashboard" section (`hooks/useReuseCheckDashboard.ts`) — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Team reuse dashboard" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a retention/purge policy for the ever-growing `reuse_check_log`, or per-topic/per-contributor breakdowns on the dashboard) if one becomes worth doing.
 
 8. **Video-Lecture-Training Coach AI** (`/coach-materials`) — the
    tagging/search-filter follow-up is done: `CoachMaterialsPanel` has a

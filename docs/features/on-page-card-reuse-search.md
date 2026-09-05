@@ -56,6 +56,26 @@ always has; the extension is check-only against the shared index and
 doesn't register new cards into it (only the web app's Evidence Library
 submission form does that).
 
+### Team reuse dashboard
+
+Every `GET /api/evidence-reuse-check` lookup — from the web app's own "Check
+this page" box or the extension — now also appends a row to a new
+`reuse_check_log` D1 table (`url`, `normalizedUrl`, `alreadyCut`,
+`matchCount`, `source` ("web" or "extension"), `checkedAt`), best-effort so a
+logging failure never fails the caller's actual check. `GET
+/api/evidence-reuse-check/dashboard` reads the log's flagged
+(`alreadyCut: true`) rows (capped at the 2000 most recent) and folds them,
+via `lib/shared-evidence-library.ts`'s pure `buildReuseCheckDashboard`, into
+one ranked row per normalized URL — times flagged, the sources that flagged
+it, and when it was last flagged — most frequently flagged first.
+
+`EvidenceLibraryPanel`'s new "Team reuse dashboard" section (backed by
+`hooks/useReuseCheckDashboard.ts`) renders this on `/cards/library`, so a
+coach can see reuse patterns across the whole team at a glance instead of
+the reuse check staying a per-page, on-demand lookup — idea #7's last
+previously-open follow-up. It refreshes automatically right after a
+successful "Check this page"/shared-index lookup on the same page.
+
 ### Options: API base and skip-check whitelist
 
 The extension's Options page (the popup's "Settings" link) has two
@@ -86,5 +106,7 @@ See the extension's own README for install instructions.
   `evidence-reuse-check-client.ts`, which is Vitest-covered where it's
   authoritative.
 - No extension icon set — Chrome shows a generic placeholder toolbar icon.
-- No team dashboard of pages flagged as already-cut yet (idea #7's other
-  open Next item) — the reuse check stays a per-page, on-demand lookup.
+- The reuse-check log (`reuse_check_log`) is append-only with no retention
+  policy or admin purge tool yet — it only grows, and the dashboard endpoint
+  guards against unbounded scans with a fixed 2000-row cap rather than a
+  real archival strategy.

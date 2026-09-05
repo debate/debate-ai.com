@@ -96,6 +96,19 @@
  * count, relative time); clicking an entry re-runs that same check. A
  * "Clear history" action removes the whole log.
  *
+ * A "Team reuse dashboard" section below the "Check this page" box closes
+ * idea #7's last remaining follow-up: "A team dashboard of pages flagged as
+ * already-cut, so a coach can see reuse patterns at a glance." Unlike the
+ * local-only history above, this reads a new server-side log
+ * (`reuseCheckLog` in the app's D1 schema) that every `GET
+ * /api/evidence-reuse-check` call appends to — from this panel's own "Check
+ * this page" box and from the `apps/debate-web-ext` browser extension alike
+ * — so it reflects the whole team's checks, not just this browser's. The
+ * pure aggregation (`buildReuseCheckDashboard` in
+ * `lib/shared-evidence-library.ts`) groups by normalized URL, ranking the
+ * most frequently flagged-already-cut pages first, and is fetched via the
+ * new `hooks/useReuseCheckDashboard.ts`.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -129,6 +142,7 @@ import {
   listReuseCheckHistory,
   type ReuseCheckHistoryRecord,
 } from "../state/reuseCheckHistory"
+import { useReuseCheckDashboard } from "../hooks/useReuseCheckDashboard"
 import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
@@ -231,6 +245,7 @@ export function EvidenceLibraryPanel() {
   const [bulkTagError, setBulkTagError] = useState<string | null>(null)
   const [cardScoreBreakdowns, setCardScoreBreakdowns] = useState<Record<string, CardScoreBreakdown>>({})
   const searchParams = useSearchParams()
+  const reuseDashboard = useReuseCheckDashboard()
 
   useEffect(() => {
     setHasEntries(listEvidenceLibraryEntries().length > 0)
@@ -411,7 +426,12 @@ export function EvidenceLibraryPanel() {
     appendReuseCheckHistory(result)
     setCheckHistory(listReuseCheckHistory())
     checkRemotePageForExistingCards(url)
-      .then(setRemoteReuseCheckResult)
+      .then((remoteResult) => {
+        setRemoteReuseCheckResult(remoteResult)
+        // The server just logged this check — refresh the team dashboard so
+        // a page that just crossed into "flagged" shows up without a reload.
+        reuseDashboard.refresh()
+      })
       .catch((err: unknown) => setRemoteReuseCheckError(err instanceof Error ? err.message : "Shared reuse check failed."))
   }
 
@@ -696,6 +716,49 @@ export function EvidenceLibraryPanel() {
               ))}
             </ul>
           </div>
+        )}
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">Team reuse dashboard</h2>
+          <p className="text-xs text-muted-foreground">
+            Pages flagged as already-cut across every "Check this page" lookup the team has run —
+            web app and browser extension alike — so a coach can spot reuse patterns at a glance
+            instead of checking one page at a time.
+          </p>
+        </div>
+        {reuseDashboard.error && (
+          <p className="text-xs text-muted-foreground">Team dashboard unavailable ({reuseDashboard.error}).</p>
+        )}
+        {!reuseDashboard.error && reuseDashboard.loading && (
+          <p className="text-xs text-muted-foreground">Loading…</p>
+        )}
+        {!reuseDashboard.error && !reuseDashboard.loading && reuseDashboard.dashboard.length === 0 && (
+          <p className="text-xs text-muted-foreground">No pages have been flagged as already-cut yet.</p>
+        )}
+        {reuseDashboard.dashboard.length > 0 && (
+          <ul className="space-y-1">
+            {reuseDashboard.dashboard.map((page) => (
+              <li
+                key={page.normalizedUrl}
+                className="flex flex-wrap items-center gap-2 rounded-md border border-dashed border-border px-2 py-1.5 text-xs"
+              >
+                <Badge variant="default">
+                  {page.timesFlagged}× flagged
+                </Badge>
+                <span className="truncate text-foreground">{page.url}</span>
+                {page.sources.map((source) => (
+                  <Badge key={source} variant="outline">
+                    {source}
+                  </Badge>
+                ))}
+                <span className="ml-auto shrink-0 text-muted-foreground">
+                  Last: {new Date(page.lastFlaggedAt).toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 

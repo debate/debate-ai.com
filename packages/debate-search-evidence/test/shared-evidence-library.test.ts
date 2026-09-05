@@ -6,6 +6,8 @@ import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
   buildPageReuseCheckSummaryText,
+  buildReuseCheckDashboard,
+  buildReuseCheckDashboardSummaryText,
   buildReuseCheckDeepLink,
   buildStaleEvidenceDigest,
   checkPageForExistingCards,
@@ -18,6 +20,7 @@ import {
   normalizeSourceUrl,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
+  type ReuseCheckLogRecord,
 } from "../src/lib/shared-evidence-library";
 import { STALE_EVIDENCE_THRESHOLD_YEARS, evaluateRevision } from "../src/lib/revision-incentives";
 
@@ -544,5 +547,104 @@ describe("buildStaleEvidenceDigest", () => {
 
   it("returns an empty array when nothing is stale", () => {
     expect(buildStaleEvidenceDigest([entry({ cite: "Smith 2026" })], 2026)).toEqual([]);
+  });
+});
+
+function logRecord(overrides: Partial<ReuseCheckLogRecord> = {}): ReuseCheckLogRecord {
+  return {
+    url: "https://example.com/article",
+    normalizedUrl: "example.com/article",
+    alreadyCut: true,
+    matchCount: 1,
+    source: "web",
+    checkedAt: 1000,
+    ...overrides,
+  };
+}
+
+describe("buildReuseCheckDashboard", () => {
+  it("groups flagged checks by normalized URL, most frequently flagged first", () => {
+    const dashboard = buildReuseCheckDashboard([
+      logRecord({ normalizedUrl: "a.com", checkedAt: 1 }),
+      logRecord({ normalizedUrl: "b.com", checkedAt: 2 }),
+      logRecord({ normalizedUrl: "a.com", checkedAt: 3 }),
+      logRecord({ normalizedUrl: "a.com", checkedAt: 4 }),
+    ]);
+
+    expect(dashboard.map((d) => d.normalizedUrl)).toEqual(["a.com", "b.com"]);
+    expect(dashboard[0].timesFlagged).toBe(3);
+    expect(dashboard[1].timesFlagged).toBe(1);
+  });
+
+  it("excludes checks that came back new (not already cut)", () => {
+    const dashboard = buildReuseCheckDashboard([
+      logRecord({ normalizedUrl: "a.com", alreadyCut: false }),
+      logRecord({ normalizedUrl: "b.com", alreadyCut: true }),
+    ]);
+
+    expect(dashboard.map((d) => d.normalizedUrl)).toEqual(["b.com"]);
+  });
+
+  it("breaks a tie in flag count by most recently flagged", () => {
+    const dashboard = buildReuseCheckDashboard([
+      logRecord({ normalizedUrl: "old.com", checkedAt: 1 }),
+      logRecord({ normalizedUrl: "new.com", checkedAt: 5 }),
+    ]);
+
+    expect(dashboard.map((d) => d.normalizedUrl)).toEqual(["new.com", "old.com"]);
+  });
+
+  it("tracks the raw URL and timestamp from the most recent flagging check", () => {
+    const dashboard = buildReuseCheckDashboard([
+      logRecord({ normalizedUrl: "a.com", url: "https://a.com/old", checkedAt: 1 }),
+      logRecord({ normalizedUrl: "a.com", url: "https://a.com/new?utm=x", checkedAt: 9 }),
+    ]);
+
+    expect(dashboard[0].url).toBe("https://a.com/new?utm=x");
+    expect(dashboard[0].lastFlaggedAt).toBe(9);
+  });
+
+  it("collects distinct sources across every flagging check, sorted", () => {
+    const dashboard = buildReuseCheckDashboard([
+      logRecord({ normalizedUrl: "a.com", source: "extension" }),
+      logRecord({ normalizedUrl: "a.com", source: "web" }),
+      logRecord({ normalizedUrl: "a.com", source: "extension" }),
+    ]);
+
+    expect(dashboard[0].sources).toEqual(["extension", "web"]);
+  });
+
+  it("caps the result at the given limit", () => {
+    const dashboard = buildReuseCheckDashboard(
+      [logRecord({ normalizedUrl: "a.com" }), logRecord({ normalizedUrl: "b.com" }), logRecord({ normalizedUrl: "c.com" })],
+      2,
+    );
+
+    expect(dashboard).toHaveLength(2);
+  });
+
+  it("returns an empty array when nothing has ever been flagged", () => {
+    expect(buildReuseCheckDashboard([])).toEqual([]);
+  });
+});
+
+describe("buildReuseCheckDashboardSummaryText", () => {
+  it("reports an empty-state message when nothing is flagged", () => {
+    expect(buildReuseCheckDashboardSummaryText([])).toBe("No pages have been flagged as already-cut yet.");
+  });
+
+  it("summarizes the page count and total flag count, singular vs. plural", () => {
+    const dashboard = buildReuseCheckDashboard([
+      logRecord({ normalizedUrl: "a.com", checkedAt: 1 }),
+      logRecord({ normalizedUrl: "a.com", checkedAt: 2 }),
+      logRecord({ normalizedUrl: "b.com", checkedAt: 3 }),
+    ]);
+
+    expect(buildReuseCheckDashboardSummaryText(dashboard)).toBe("2 pages flagged as already-cut across 3 team checks.");
+  });
+
+  it("uses singular wording for exactly one page and one check", () => {
+    const dashboard = buildReuseCheckDashboard([logRecord({ normalizedUrl: "a.com" })]);
+    expect(buildReuseCheckDashboardSummaryText(dashboard)).toBe("1 page flagged as already-cut across 1 team check.");
   });
 });

@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../src/lib/evidence-reuse-check-client";
+import {
+  checkRemotePageForExistingCards,
+  fetchReuseCheckDashboard,
+  registerRemoteReuseEntry,
+} from "../src/lib/evidence-reuse-check-client";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -126,5 +130,57 @@ describe("registerRemoteReuseEntry", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await expect(registerRemoteReuseEntry({ id: "x", sourceUrl: "" })).rejects.toThrow("sourceUrl is required.");
+  });
+});
+
+describe("fetchReuseCheckDashboard", () => {
+  it("GETs /api/evidence-reuse-check/dashboard and returns the parsed dashboard", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        dashboard: [
+          { normalizedUrl: "a.com", url: "https://a.com", timesFlagged: 3, lastFlaggedAt: 100, sources: ["web"] },
+        ],
+      }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchReuseCheckDashboard();
+
+    expect(result).toHaveLength(1);
+    expect(result[0].timesFlagged).toBe(3);
+    const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(endpoint).toBe("/api/evidence-reuse-check/dashboard");
+    expect((init as RequestInit).method).toBe("GET");
+  });
+
+  it("returns an empty array when the server omits the dashboard field", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({}) })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await fetchReuseCheckDashboard()).toEqual([]);
+  });
+
+  it("respects a caller-supplied endpoint override", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ dashboard: [] }) })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await fetchReuseCheckDashboard("https://ext.example/api/evidence-reuse-check/dashboard");
+
+    expect((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe(
+      "https://ext.example/api/evidence-reuse-check/dashboard",
+    );
+  });
+
+  it("throws the server's error message when the request fails", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: "boom" }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(fetchReuseCheckDashboard()).rejects.toThrow("boom");
   });
 });
