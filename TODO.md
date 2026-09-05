@@ -43,6 +43,7 @@ _No task currently in progress._
   worth building. See `docs/features/argument-tree-outline.md`'s "Tagging
   an argument from the Outline panel" section and
   `packages/debate-round/test/argument-tagging.test.ts`.
+  PR: [#577](https://github.com/debate/debate-ai.com/pull/577).
 - **🎞️ Flow-in-Speech Flow Annotations — density scrubber, plus a doc/tracker
   drift audit that found and corrected four stale docs describing deleted
   `FlowSpreadsheet` code (idea #15's "A density scrubber on the video
