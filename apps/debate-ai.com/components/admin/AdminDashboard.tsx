@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
+import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
@@ -38,6 +39,9 @@ export function AdminDashboard() {
   const [publishAllError, setPublishAllError] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const [isPurgingReuseLog, setIsPurgingReuseLog] = useState(false);
+  const [reuseLogPurgeResult, setReuseLogPurgeResult] = useState<string | null>(null);
+  const [reuseLogPurgeError, setReuseLogPurgeError] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -176,6 +180,26 @@ export function AdminDashboard() {
     }
   }, []);
 
+  const handlePurgeReuseCheckLog = async () => {
+    setIsPurgingReuseLog(true);
+    setReuseLogPurgeError(null);
+    setReuseLogPurgeResult(null);
+    try {
+      const res = await fetch("/api/admin/evidence-reuse-check-log/purge", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.details || data?.error || "Purge failed");
+      setReuseLogPurgeResult(
+        data.purgedCount === 0
+          ? "No expired rows to purge."
+          : `Purged ${data.purgedCount} row${data.purgedCount === 1 ? "" : "s"} older than the retention window.`,
+      );
+    } catch (error) {
+      setReuseLogPurgeError((error as Error).message);
+    } finally {
+      setIsPurgingReuseLog(false);
+    }
+  };
+
   const handlePublishAll = async () => {
     setIsPublishingAll(true);
     setPublishAllError(null);
@@ -227,6 +251,28 @@ export function AdminDashboard() {
           {lastRun?.status === "error" && lastRun.error && (
             <p className="text-destructive text-sm">{lastRun.error}</p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Reuse-check log retention</CardTitle>
+          <CardDescription>
+            Purges reuse-check log rows older than {REUSE_CHECK_LOG_RETENTION_DAYS} days. Runs
+            automatically every week; use this to apply it right away instead of waiting for the
+            next run.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <Button onClick={handlePurgeReuseCheckLog} disabled={isPurgingReuseLog} variant="outline">
+              {isPurgingReuseLog ? "Purging…" : "Purge old entries now"}
+            </Button>
+            {reuseLogPurgeResult && (
+              <span className="text-muted-foreground text-sm">{reuseLogPurgeResult}</span>
+            )}
+          </div>
+          {reuseLogPurgeError && <p className="text-destructive text-sm">{reuseLogPurgeError}</p>}
         </CardContent>
       </Card>
 

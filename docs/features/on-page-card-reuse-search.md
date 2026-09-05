@@ -95,6 +95,22 @@ settings, both synced via `chrome.storage.sync`:
 
 See the extension's own README for install instructions.
 
+### Retention / purge policy
+
+The reuse-check log used to be append-only forever. It now has a retention
+window: `debate-research-evidence`'s pure
+`getReuseCheckLogPurgeCutoff(nowMs, retentionDays)` (default
+`REUSE_CHECK_LOG_RETENTION_DAYS`, 180 days) computes the cutoff timestamp,
+and `apps/debate-ai.com/lib/evidence-reuse-check/purge-reuse-check-log.ts`'s
+`purgeOldReuseCheckLogRows` deletes every row older than it. This runs
+automatically every week via the worker's `scheduled` export
+(`worker/index.ts`, piggybacking on the same weekly trigger as the existing
+YouTube resync) and can also be triggered immediately from the admin page
+(`/admin`'s "Reuse-check log retention" card, backed by `POST
+/api/admin/evidence-reuse-check-log/purge`) rather than waiting for the next
+weekly tick. The dashboard endpoint's fixed 2000-row scan cap stays in place
+as a defense-in-depth guard even with the retention policy purging old rows.
+
 ## Known gaps
 
 - The extension is unpacked/"Load unpacked" only — no Chrome Web Store or
@@ -106,7 +122,3 @@ See the extension's own README for install instructions.
   `evidence-reuse-check-client.ts`, which is Vitest-covered where it's
   authoritative.
 - No extension icon set — Chrome shows a generic placeholder toolbar icon.
-- The reuse-check log (`reuse_check_log`) is append-only with no retention
-  policy or admin purge tool yet — it only grows, and the dashboard endpoint
-  guards against unbounded scans with a fixed 2000-row cap rather than a
-  real archival strategy.
