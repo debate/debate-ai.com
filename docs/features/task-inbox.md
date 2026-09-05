@@ -312,6 +312,60 @@ state/routedTaskQueues.ts
 Vitest-covered in
 `packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
 
+## Account-synced routed task queues
+
+Every routed task queue now follows a signed-in user across devices,
+closing the "account-syncing routed queues across devices" follow-up named
+under the "Research Task Routing" bullet in TODO.md's Research
+Crowdsourcing Organizer Features list. Local-first, mirroring
+`hooks/useDrillSets.ts`: the panel keeps reading/writing
+`state/routedTaskQueues.ts`'s localStorage directly and stays fully usable
+signed out; `hooks/useRoutedTaskQueues.ts` layers account sync on top.
+
+On mount, a one-time account merge (deduped across mounts via a
+module-level promise) reconciles local and remote queues by `topicId`: a
+remote-only queue is adopted locally, a local-only queue is best-effort
+pushed up, and a `topicId` present on both sides is resolved by whichever
+copy's `updatedAt` is newer (a record from before this field existed always
+loses). After every mutation that goes through `saveRoutedTaskQueue`
+(routing a topic, marking a task done, reassigning, flagging priority), the
+panel calls `pushTopicToAccount` to best-effort sync the freshly-saved
+queue — the local write is never blocked by a sync failure.
+
+```
+state/routedTaskQueues.ts
+  → adoptRoutedTaskQueue / resolveRoutedTaskQueueConflict /
+    planRoutedTaskQueueMerge — pure merge/conflict helpers, mirroring
+    state/drillSets.ts's identically-named functions
+state/savedRoutedTaskQueues.ts
+  → isValidRoutedTaskQueueRecord / MAX_SAVED_ROUTED_TASK_QUEUE_BYTES —
+    shared structural validation for the D1-backed route and the hook
+lib/routed-task-queues-client.ts
+  → listSavedRoutedTaskQueues / saveRoutedTaskQueueToAccount /
+    deleteSavedRoutedTaskQueueFromAccount — fetch layer against
+    apps/debate-ai.com's /api/routed-task-queues routes
+hooks/useRoutedTaskQueues.ts
+  → one-time account merge on mount + pushTopicToAccount/
+    deleteTopicFromAccount for the panel to call after each mutation
+panels/TaskInboxPanel.tsx
+  → renders a "synced to your account" / "sign in to sync" line, calls
+    pushTopicToAccount after routing/marking-done/reassigning/flagging
+```
+
+`GET /api/routed-task-queues` returns every one of the signed-in user's
+synced queues in full (a queue's payload is small, same convention as
+`/api/drill-sets`); `PUT`/`DELETE /api/routed-task-queues/:topicId` upsert
+or remove one queue, keyed by `(userId, topicId)` in the new
+`saved_routed_task_queues` D1 table. Both routes are account-only — a 401
+without a session, since a synced queue only exists once explicitly routed.
+
+Vitest-covered in
+`packages/debate-team-collaboration/test/routedTaskQueues.test.ts` (the new
+`adoptRoutedTaskQueue`/`resolveRoutedTaskQueueConflict`/
+`planRoutedTaskQueueMerge` cases),
+`test/savedRoutedTaskQueues.test.ts`, and
+`test/routed-task-queues-client.test.ts`.
+
 ## Known gaps
 
 - The "My tasks" filter is still free-form text, not a login — a real
@@ -348,8 +402,16 @@ Vitest-covered in
   through with no separate refresh limitation.
 - An unassigned task can't be pre-flagged before it has an assignee —
   assign or reassign it first, then flag it.
-- The "Team capacity" view reads the same `routedTaskQueues`/
-  `contributorAvailability` localStorage stores as the rest of this panel,
-  which aren't account-synced — it reflects this browser's own routed
-  queues only, not a real team-wide roster. Nothing gates who can view it,
-  same as the rest of this panel.
+- The "Team capacity" view is built from `listRoutedTaskQueues()` (now
+  account-synced, see "Account-synced routed task queues" above) enriched
+  from `listContributorAvailability()` (still local-only, per-browser) — so
+  a signed-in user's own routed queues follow them across devices, but the
+  skill-level/capacity enrichment, and any other contributor's queues, are
+  still whatever this browser happens to have locally, not a real
+  team-wide roster. Nothing gates who can view it, same as the rest of
+  this panel.
+- Account sync merges by `topicId` only — two devices independently routing
+  the *same* topic while both offline, then both coming back online, still
+  resolves to whichever side's `updatedAt` is newer wholesale (the same
+  last-write-wins granularity `saveRoutedTaskQueue` always had), not a
+  per-assignment merge of the two queues' contents.

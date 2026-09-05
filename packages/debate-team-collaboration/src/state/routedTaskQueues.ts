@@ -69,6 +69,14 @@
  * only for whichever contributors happen to have a persisted availability
  * profile.
  *
+ * `updatedAt` is additive and optional (existing records without one stay
+ * valid) — stamped by `saveRoutedTaskQueue` on every save. It exists to
+ * drive `resolveRoutedTaskQueueConflict`/`planRoutedTaskQueueMerge` below,
+ * the "account-syncing routed queues across devices" follow-up named under
+ * the "Research Task Routing" bullet in TODO.md's Research Crowdsourcing
+ * Organizer Features list — see `hooks/useRoutedTaskQueues.ts`, which uses it
+ * the same way `hooks/useDrillSets.ts` uses `DrillSetRecord.updatedAt`.
+ *
  * @module state/routedTaskQueues
  */
 
@@ -89,6 +97,16 @@ import { buildPersistedTopicCoverageReport } from "debate-research-evidence/src/
 export type RoutedTaskQueueRecord = {
   topicId: string;
   result: RoutingResult;
+  /**
+   * Stamped automatically by every mutating call that goes through
+   * `saveRoutedTaskQueue` (`buildAndPersistRoutingResult`,
+   * `completePersistedRoutedTask`, `reassignPersistedRoutedTask`,
+   * `setPersistedRoutedTaskPriority`) with the current time. Optional so a
+   * record persisted before this field existed still parses — such a record
+   * always loses a conflict to one that does carry a timestamp, mirroring
+   * `DrillSetRecord.updatedAt`. See `resolveRoutedTaskQueueConflict` below.
+   */
+  updatedAt?: number;
 };
 
 const STORAGE_KEY = "routedTaskQueues";
@@ -120,8 +138,32 @@ export function getRoutedTaskQueue(topicId: string): RoutedTaskQueueRecord | und
   return readAll().find((record) => record.topicId === topicId);
 }
 
-/** Saves a topic's routed task queue, overwriting any existing record for that `topicId`. */
+/**
+ * Saves a topic's routed task queue, overwriting any existing record for
+ * that `topicId`. Stamps `updatedAt` with the current time on every save, so
+ * cross-device conflict resolution (`resolveRoutedTaskQueueConflict`) can
+ * tell which device saved most recently.
+ */
 export function saveRoutedTaskQueue(record: RoutedTaskQueueRecord): void {
+  const records = readAll();
+  const index = records.findIndex((existing) => existing.topicId === record.topicId);
+  const stamped: RoutedTaskQueueRecord = { ...record, updatedAt: Date.now() };
+  if (index === -1) {
+    records.push(stamped);
+  } else {
+    records[index] = stamped;
+  }
+  writeAll(records);
+}
+
+/**
+ * Adopts a routed task queue record as-is — e.g. one fetched from the
+ * account during cross-device sync (`hooks/useRoutedTaskQueues.ts`) —
+ * preserving its own `updatedAt` rather than stamping a fresh one the way
+ * `saveRoutedTaskQueue` does for an interactive save. Overwrites any
+ * existing local record for the same `topicId`, mirroring `adoptDrillSet`.
+ */
+export function adoptRoutedTaskQueue(record: RoutedTaskQueueRecord): void {
   const records = readAll();
   const index = records.findIndex((existing) => existing.topicId === record.topicId);
   if (index === -1) {
@@ -130,6 +172,67 @@ export function saveRoutedTaskQueue(record: RoutedTaskQueueRecord): void {
     records[index] = record;
   }
   writeAll(records);
+}
+
+export type RoutedTaskQueueConflictResolution = "local" | "remote" | "none";
+
+/**
+ * Decides which of two devices' copies of the same `topicId` is newer, for
+ * `hooks/useRoutedTaskQueues.ts`'s account merge — mirrors
+ * `resolveDrillSetConflict` exactly. A newer `updatedAt` wins; a record with
+ * no `updatedAt` always loses to one that has it; when both are missing or
+ * exactly equal, this returns `"none"` rather than guessing.
+ */
+export function resolveRoutedTaskQueueConflict(
+  local: RoutedTaskQueueRecord,
+  remote: RoutedTaskQueueRecord,
+): RoutedTaskQueueConflictResolution {
+  if (remote.updatedAt !== undefined && (local.updatedAt === undefined || remote.updatedAt > local.updatedAt)) {
+    return "remote";
+  }
+  if (local.updatedAt !== undefined && (remote.updatedAt === undefined || local.updatedAt > remote.updatedAt)) {
+    return "local";
+  }
+  return "none";
+}
+
+export type RoutedTaskQueueMergePlan = {
+  /** Records to adopt locally — new to this device, or the remote copy is newer per `resolveRoutedTaskQueueConflict`. */
+  adopt: RoutedTaskQueueRecord[];
+  /** Local records to best-effort push to the account — new to the account, or the local copy is newer. */
+  pushLocal: RoutedTaskQueueRecord[];
+};
+
+/**
+ * Pure merge-planning step for `hooks/useRoutedTaskQueues.ts`'s account
+ * merge, extracted so it's directly testable without a hook/DOM harness —
+ * mirrors `planDrillSetMerge` exactly, keyed by `topicId`.
+ */
+export function planRoutedTaskQueueMerge(
+  localRecords: RoutedTaskQueueRecord[],
+  remoteRecords: RoutedTaskQueueRecord[],
+): RoutedTaskQueueMergePlan {
+  const localById = new Map(localRecords.map((record) => [record.topicId, record]));
+  const remoteIds = new Set(remoteRecords.map((record) => record.topicId));
+
+  const adopt: RoutedTaskQueueRecord[] = [];
+  const pushLocal: RoutedTaskQueueRecord[] = [];
+
+  for (const remote of remoteRecords) {
+    const local = localById.get(remote.topicId);
+    if (!local) {
+      adopt.push(remote);
+      continue;
+    }
+    const resolution = resolveRoutedTaskQueueConflict(local, remote);
+    if (resolution === "remote") adopt.push(remote);
+    else if (resolution === "local") pushLocal.push(local);
+  }
+  for (const local of localRecords) {
+    if (!remoteIds.has(local.topicId)) pushLocal.push(local);
+  }
+
+  return { adopt, pushLocal };
 }
 
 /** Deletes a topic's persisted routed task queue; a no-op if it isn't stored. */

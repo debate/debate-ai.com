@@ -85,6 +85,17 @@
  * badge once a contributor with a persisted availability profile has met or
  * exceeded its `maxConcurrentTasks`.
  *
+ * Every routed queue is now account-synced across devices for a signed-in
+ * user, via `hooks/useRoutedTaskQueues.ts` — the "account-syncing routed
+ * queues across devices" follow-up named under the "Research Task Routing"
+ * bullet in TODO.md's Research Crowdsourcing Organizer Features. This panel
+ * still reads/writes `state/routedTaskQueues.ts` directly (that module's own
+ * view-building functions are unchanged), but calls the hook's
+ * `pushTopicToAccount` after every mutation that goes through
+ * `saveRoutedTaskQueue` (routing, marking done, reassigning, flagging
+ * priority), and refreshes its view whenever the hook's one-time account
+ * merge on mount adopts a remote copy.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -115,6 +126,7 @@ import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArg
 import { deriveLockedVerifierId, isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import { isTaskInboxLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
+import { useRoutedTaskQueues } from "../hooks/useRoutedTaskQueues"
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
   missing: "default",
@@ -159,6 +171,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   const [verifierIds, setVerifierIds] = useState<Record<string, string>>({})
   const [verifyErrors, setVerifyErrors] = useState<Record<string, string>>({})
   const [reassignInputs, setReassignInputs] = useState<Record<string, string>>({})
+  const { synced, pushTopicToAccount, mergeVersion } = useRoutedTaskQueues()
 
   useEffect(() => {
     setTopics(buildTaskInboxView())
@@ -166,6 +179,15 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     setPending(listPendingTaskVerifications())
     setTrackedTopics(listTrackedTopics())
   }, [])
+
+  // Refreshes the view once the hook's one-time account merge (on mount)
+  // adopts a remote copy of a topic this browser didn't already have.
+  useEffect(() => {
+    if (mergeVersion === 0) return
+    setTopics(buildTaskInboxView())
+    setCapacity(buildTeamCapacityView())
+    setTrackedTopics(listTrackedTopics())
+  }, [mergeVersion])
 
   useEffect(() => {
     if (!hasEditedMyId && signedInContributorId) {
@@ -197,6 +219,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     setTopics(buildTaskInboxView())
     setCapacity(buildTeamCapacityView())
     setPending(listPendingTaskVerifications())
+    pushTopicToAccount(topicId)
   }
 
   const handleVerify = (topicId: string, argBlock: string, verifierIdOverride?: string) => {
@@ -218,6 +241,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   const handleTogglePriority = (topicId: string, argBlock: string, currentPriority?: "normal" | "high") => {
     setPersistedRoutedTaskPriority(topicId, argBlock, currentPriority === "high" ? "normal" : "high")
     setTopics(buildTaskInboxView())
+    pushTopicToAccount(topicId)
   }
 
   const handleReassign = (topicId: string, argBlock: string) => {
@@ -228,6 +252,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     setReassignInputs((prev) => ({ ...prev, [key]: "" }))
     setTopics(buildTaskInboxView())
     setCapacity(buildTeamCapacityView())
+    pushTopicToAccount(topicId)
   }
 
   const handleRoute = (topicId: string) => {
@@ -242,6 +267,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     setTopics(buildTaskInboxView())
     setCapacity(buildTeamCapacityView())
     setTrackedTopics(listTrackedTopics())
+    pushTopicToAccount(trimmed)
   }
 
   if (topics === null) {
@@ -310,6 +336,11 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
             Research tasks routed to contributors, grouped by topic. Mark a task done once it's finished,
             then a different contributor verifies it before it counts as complete.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {synced
+              ? "Routed task queues are synced to your account."
+              : "Sign in to sync routed task queues across devices."}
+          </p>
         </div>
         {routeForm}
         <div className="p-6 text-center text-sm text-muted-foreground">
@@ -329,6 +360,11 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
         <h1 className="mb-1 text-xl font-semibold text-foreground">Task Inbox</h1>
         <p className="text-sm text-muted-foreground">
           Research tasks routed to contributors, grouped by topic. Mark a task complete once it's done.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {synced
+            ? "Routed task queues are synced to your account."
+            : "Sign in to sync routed task queues across devices."}
         </p>
       </div>
       {routeForm}

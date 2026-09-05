@@ -68,7 +68,7 @@ describe("markRoutedTaskAwaitingVerification", () => {
     const assignment = markRoutedTaskAwaitingVerification("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
 
     expect(assignment).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: { assignments: [{ task: IMPACTS_TASK, contributorId: "alice" }], unassignedTasks: [] },
     });

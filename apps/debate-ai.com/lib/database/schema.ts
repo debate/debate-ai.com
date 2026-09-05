@@ -940,3 +940,34 @@ export const practiceVsAiDebates = sqliteTable(
 );
 
 export type PracticeVsAiDebateRow = typeof practiceVsAiDebates.$inferSelect;
+
+// Account-linked routed-task-queue sync — the "account-syncing routed queues
+// across devices" follow-up named under the "🧭 Research Task Routing"
+// bullet in TODO.md's Research Crowdsourcing Organizer Features. One row per
+// (user, topic) pair, keyed by the caller-typed
+// `RoutedTaskQueueRecord.topicId` — a routed queue is looked up/overwritten
+// by topic, not appended to a growing log — same shape as `savedDrillSets`
+// above.
+export const savedRoutedTaskQueues = sqliteTable(
+  "saved_routed_task_queues",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_routed_task_queues_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_routed_task_queues_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedRoutedTaskQueueRow = typeof savedRoutedTaskQueues.$inferSelect;

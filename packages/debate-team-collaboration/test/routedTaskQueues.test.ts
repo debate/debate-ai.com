@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptRoutedTaskQueue,
   buildAndPersistRoutingResult,
   buildTaskInboxView,
   buildTeamCapacityView,
@@ -8,7 +9,9 @@ import {
   filterTaskInboxViewByContributor,
   getRoutedTaskQueue,
   listRoutedTaskQueues,
+  planRoutedTaskQueueMerge,
   reassignPersistedRoutedTask,
+  resolveRoutedTaskQueueConflict,
   routePersistedTopicTasks,
   saveRoutedTaskQueue,
   setPersistedRoutedTaskPriority,
@@ -73,14 +76,14 @@ describe("listRoutedTaskQueues", () => {
   it("lists every saved queue", () => {
     saveRoutedTaskQueue(AT_QUEUE);
     saveRoutedTaskQueue(OTHER_QUEUE);
-    expect(listRoutedTaskQueues()).toEqual([AT_QUEUE, OTHER_QUEUE]);
+    expect(listRoutedTaskQueues()).toMatchObject([AT_QUEUE, OTHER_QUEUE]);
   });
 });
 
 describe("getRoutedTaskQueue", () => {
   it("finds a saved queue by topicId", () => {
     saveRoutedTaskQueue(AT_QUEUE);
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 
   it("returns undefined for a topicId that isn't stored", () => {
@@ -97,8 +100,165 @@ describe("saveRoutedTaskQueue", () => {
     };
     saveRoutedTaskQueue(rerouted);
 
-    expect(listRoutedTaskQueues()).toEqual([rerouted]);
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(rerouted);
+    expect(listRoutedTaskQueues()).toMatchObject([rerouted]);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(rerouted);
+  });
+
+  it("stamps updatedAt with the current time on every save", () => {
+    const before = Date.now();
+    saveRoutedTaskQueue(AT_QUEUE);
+    const after = Date.now();
+
+    const updatedAt = getRoutedTaskQueue("topic-ai")?.updatedAt;
+    expect(updatedAt).toEqual(expect.any(Number));
+    expect(updatedAt).toBeGreaterThanOrEqual(before);
+    expect(updatedAt).toBeLessThanOrEqual(after);
+  });
+
+  it("refreshes updatedAt on a later save to the same topicId", async () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+    const firstUpdatedAt = getRoutedTaskQueue("topic-ai")?.updatedAt;
+
+    await new Promise((resolve) => setTimeout(resolve, 2));
+    saveRoutedTaskQueue({ ...AT_QUEUE, result: { assignments: [], unassignedTasks: [] } });
+
+    const secondUpdatedAt = getRoutedTaskQueue("topic-ai")?.updatedAt;
+    expect(secondUpdatedAt).toEqual(expect.any(Number));
+    expect(secondUpdatedAt).toBeGreaterThan(firstUpdatedAt!);
+  });
+});
+
+describe("adoptRoutedTaskQueue", () => {
+  it("stores a record with its own updatedAt preserved as-is, unlike saveRoutedTaskQueue", () => {
+    const synced: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 12345 };
+    adoptRoutedTaskQueue(synced);
+
+    expect(getRoutedTaskQueue("topic-ai")).toEqual(synced);
+  });
+
+  it("overwrites any existing local record for the same topicId", () => {
+    saveRoutedTaskQueue(AT_QUEUE);
+    const remote: RoutedTaskQueueRecord = {
+      topicId: "topic-ai",
+      result: { assignments: [], unassignedTasks: [] },
+      updatedAt: 999,
+    };
+
+    adoptRoutedTaskQueue(remote);
+
+    const stored = listRoutedTaskQueues();
+    expect(stored).toHaveLength(1);
+    expect(stored[0]).toEqual(remote);
+  });
+});
+
+describe("resolveRoutedTaskQueueConflict", () => {
+  it("picks remote when remote's updatedAt is newer", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 100 };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 200 };
+    expect(resolveRoutedTaskQueueConflict(local, remote)).toBe("remote");
+  });
+
+  it("picks local when local's updatedAt is newer", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 200 };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 100 };
+    expect(resolveRoutedTaskQueueConflict(local, remote)).toBe("local");
+  });
+
+  it("returns none when both sides have the exact same updatedAt", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 150 };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 150 };
+    expect(resolveRoutedTaskQueueConflict(local, remote)).toBe("none");
+  });
+
+  it("returns none when neither side has an updatedAt", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE };
+    expect(resolveRoutedTaskQueueConflict(local, remote)).toBe("none");
+  });
+
+  it("picks remote when only remote has an updatedAt", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 100 };
+    expect(resolveRoutedTaskQueueConflict(local, remote)).toBe("remote");
+  });
+
+  it("picks local when only local has an updatedAt", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 100 };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE };
+    expect(resolveRoutedTaskQueueConflict(local, remote)).toBe("local");
+  });
+});
+
+describe("planRoutedTaskQueueMerge", () => {
+  it("adopts a remote record with no local counterpart", () => {
+    const plan = planRoutedTaskQueueMerge([], [AT_QUEUE]);
+    expect(plan.adopt).toEqual([AT_QUEUE]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("pushes a local-only record to the account", () => {
+    const plan = planRoutedTaskQueueMerge([AT_QUEUE], []);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([AT_QUEUE]);
+  });
+
+  it("adopts the remote copy when it's newer for a shared topicId", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 100 };
+    const remote: RoutedTaskQueueRecord = {
+      ...AT_QUEUE,
+      result: { assignments: [], unassignedTasks: [] },
+      updatedAt: 200,
+    };
+    const plan = planRoutedTaskQueueMerge([local], [remote]);
+    expect(plan.adopt).toEqual([remote]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("pushes the local copy when it's newer for a shared topicId", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE, updatedAt: 200 };
+    const remote: RoutedTaskQueueRecord = {
+      ...AT_QUEUE,
+      result: { assignments: [], unassignedTasks: [] },
+      updatedAt: 100,
+    };
+    const plan = planRoutedTaskQueueMerge([local], [remote]);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([local]);
+  });
+
+  it("does nothing for a shared topicId with no resolvable conflict", () => {
+    const local: RoutedTaskQueueRecord = { ...AT_QUEUE };
+    const remote: RoutedTaskQueueRecord = { ...AT_QUEUE };
+    const plan = planRoutedTaskQueueMerge([local], [remote]);
+    expect(plan.adopt).toEqual([]);
+    expect(plan.pushLocal).toEqual([]);
+  });
+
+  it("handles a mix of new-to-each-side and shared topicIds in one pass", () => {
+    const sharedLocal: RoutedTaskQueueRecord = {
+      topicId: "shared",
+      result: { assignments: [], unassignedTasks: [] },
+      updatedAt: 100,
+    };
+    const sharedRemote: RoutedTaskQueueRecord = {
+      topicId: "shared",
+      result: { assignments: [], unassignedTasks: [] },
+      updatedAt: 200,
+    };
+    const localOnly: RoutedTaskQueueRecord = {
+      topicId: "local-only",
+      result: { assignments: [], unassignedTasks: [] },
+    };
+    const remoteOnly: RoutedTaskQueueRecord = {
+      topicId: "remote-only",
+      result: { assignments: [], unassignedTasks: [] },
+    };
+
+    const plan = planRoutedTaskQueueMerge([sharedLocal, localOnly], [sharedRemote, remoteOnly]);
+
+    expect(plan.adopt).toEqual([sharedRemote, remoteOnly]);
+    expect(plan.pushLocal).toEqual([localOnly]);
   });
 });
 
@@ -108,14 +268,14 @@ describe("deleteRoutedTaskQueue", () => {
     saveRoutedTaskQueue(OTHER_QUEUE);
     deleteRoutedTaskQueue("topic-ai");
 
-    expect(listRoutedTaskQueues()).toEqual([OTHER_QUEUE]);
+    expect(listRoutedTaskQueues()).toMatchObject([OTHER_QUEUE]);
     expect(getRoutedTaskQueue("topic-ai")).toBeUndefined();
   });
 
   it("is a no-op when the topicId isn't stored", () => {
     saveRoutedTaskQueue(OTHER_QUEUE);
     deleteRoutedTaskQueue("missing");
-    expect(listRoutedTaskQueues()).toEqual([OTHER_QUEUE]);
+    expect(listRoutedTaskQueues()).toMatchObject([OTHER_QUEUE]);
   });
 });
 
@@ -145,7 +305,7 @@ describe("buildAndPersistRoutingResult", () => {
     expect(result.assignments).toHaveLength(1);
     expect(result.assignments[0].contributorId).toBe("advanced-amy");
     expect(result.assignments[0].task.argBlock).toBe("Case NEG");
-    expect(getRoutedTaskQueue("topic-warming")).toEqual({ topicId: "topic-warming", result });
+    expect(getRoutedTaskQueue("topic-warming")).toMatchObject({ topicId: "topic-warming", result });
     expect(getContributorAvailability("advanced-amy")).toEqual({ ...ADVANCED_AMY, activeTaskCount: 1 });
   });
 
@@ -183,7 +343,7 @@ describe("routePersistedTopicTasks", () => {
     expect(result.assignments).toHaveLength(1);
     expect(result.assignments[0].contributorId).toBe("advanced-amy");
     expect(result.assignments[0].task.argBlock).toBe("Case NEG");
-    expect(getRoutedTaskQueue("topic-warming")).toEqual({ topicId: "topic-warming", result });
+    expect(getRoutedTaskQueue("topic-warming")).toMatchObject({ topicId: "topic-warming", result });
     expect(getContributorAvailability("advanced-amy")).toEqual({ ...ADVANCED_AMY, activeTaskCount: 1 });
   });
 
@@ -194,7 +354,7 @@ describe("routePersistedTopicTasks", () => {
     const result = routePersistedTopicTasks("topic-warming");
 
     expect(result).toEqual({ assignments: [], unassignedTasks: [] });
-    expect(getRoutedTaskQueue("topic-warming")).toEqual({ topicId: "topic-warming", result });
+    expect(getRoutedTaskQueue("topic-warming")).toMatchObject({ topicId: "topic-warming", result });
   });
 });
 
@@ -206,7 +366,7 @@ describe("completePersistedRoutedTask", () => {
     const completed = completePersistedRoutedTask("topic-ai", "Solvency");
 
     expect(completed).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: { assignments: [], unassignedTasks: [IMPACTS_TASK] },
     });
@@ -233,7 +393,7 @@ describe("completePersistedRoutedTask", () => {
   it("returns undefined and leaves the queue untouched when no assignment matches that argBlock", () => {
     saveRoutedTaskQueue(AT_QUEUE);
     expect(completePersistedRoutedTask("topic-ai", "Nonexistent")).toBeUndefined();
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 });
 
@@ -341,7 +501,7 @@ describe("reassignPersistedRoutedTask", () => {
     const reassigned = reassignPersistedRoutedTask("topic-ai", "Solvency", "carol");
 
     expect(reassigned).toEqual({ task: SOLVENCY_TASK, contributorId: "carol" });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: { assignments: [{ task: SOLVENCY_TASK, contributorId: "carol" }], unassignedTasks: [IMPACTS_TASK] },
     });
@@ -364,7 +524,7 @@ describe("reassignPersistedRoutedTask", () => {
     const reassigned = reassignPersistedRoutedTask("topic-ai", "Impacts", "dana");
 
     expect(reassigned).toEqual({ task: IMPACTS_TASK, contributorId: "dana" });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: {
         assignments: [
@@ -392,14 +552,14 @@ describe("reassignPersistedRoutedTask", () => {
 
     expect(reassigned).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
     expect(getContributorAvailability("alice")).toEqual({ ...ADVANCED_AMY, contributorId: "alice", activeTaskCount: 1 });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 
   it("returns undefined and leaves storage untouched for a blank contributor id", () => {
     saveRoutedTaskQueue(AT_QUEUE);
 
     expect(reassignPersistedRoutedTask("topic-ai", "Solvency", "   ")).toBeUndefined();
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 
   it("returns undefined when the topic has no persisted queue", () => {
@@ -411,7 +571,7 @@ describe("reassignPersistedRoutedTask", () => {
     saveRoutedTaskQueue(AT_QUEUE);
 
     expect(reassignPersistedRoutedTask("topic-ai", "Nonexistent", "carol")).toBeUndefined();
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 
   it("trims whitespace around the new contributor id", () => {
@@ -430,7 +590,7 @@ describe("setPersistedRoutedTaskPriority", () => {
     const updated = setPersistedRoutedTaskPriority("topic-ai", "Solvency", "high");
 
     expect(updated).toEqual({ task: SOLVENCY_TASK, contributorId: "alice", priority: "high" });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: {
         assignments: [{ task: SOLVENCY_TASK, contributorId: "alice", priority: "high" }],
@@ -463,14 +623,14 @@ describe("setPersistedRoutedTaskPriority", () => {
     saveRoutedTaskQueue(AT_QUEUE);
 
     expect(setPersistedRoutedTaskPriority("topic-ai", "Nonexistent", "high")).toBeUndefined();
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 
   it("does not flag an unassigned task — only matches assignments, not unassignedTasks", () => {
     saveRoutedTaskQueue(AT_QUEUE);
 
     expect(setPersistedRoutedTaskPriority("topic-ai", "Impacts", "high")).toBeUndefined();
-    expect(getRoutedTaskQueue("topic-ai")).toEqual(AT_QUEUE);
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject(AT_QUEUE);
   });
 });
 

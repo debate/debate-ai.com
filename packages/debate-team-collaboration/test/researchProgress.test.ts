@@ -76,7 +76,7 @@ describe("completeAndRecordResearchTask", () => {
     const completed = completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
 
     expect(completed).toEqual({ task: SOLVENCY_TASK, contributorId: "alice" });
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: { assignments: [{ task: IMPACTS_TASK, contributorId: "alice" }], unassignedTasks: [] },
     });
@@ -211,7 +211,7 @@ describe("deleteCompletedTaskHistoryForTopic", () => {
 
     deleteCompletedTaskHistoryForTopic("topic-ai");
 
-    expect(getRoutedTaskQueue("topic-ai")).toEqual({
+    expect(getRoutedTaskQueue("topic-ai")).toMatchObject({
       topicId: "topic-ai",
       result: { assignments: [{ task: IMPACTS_TASK, contributorId: "alice" }], unassignedTasks: [] },
     });
