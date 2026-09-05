@@ -6,6 +6,61 @@
 _No task currently in progress._
 
 ### Completed
+- **🍞 Expandable Heading Structure — the sticky heading breadcrumb now
+  works in the multi-pane workspace, not just single-doc.** Idea #9's last
+  open follow-up (`docs/features/reason-editor-outline-nav.md`'s "Known
+  gaps" note that "the breadcrumb is single-doc only; multi-pane and
+  multi-window don't have one yet"). Another repeat of the standing prompt
+  ("integrate all the tools into the UI... add each tool where needed in
+  the live editor... integrate CardMirror better into the editor and have
+  its commands in the central Ctrl/Cmd-Shift-Space menu be menu items on
+  top of the top bar like Google Docs... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... develop better tool UI") — as with every recent repeat, the
+  bulk of it is already fully built: `packages/debate-editor/src/react/
+  MenuBar.tsx` already renders a Google-Docs-style top menu bar
+  (File/Speech/Card/Edit/Format/Color/Insert/AI/View/Panes/Tools/Flow/
+  Workspace/Plugins) above CardMirror's own ribbon, populated from the
+  same `RIBBON_GROUPS`/command registry the Ctrl/Cmd-Shift-Space command
+  palette (`quick-card-search-ui.ts`) searches, with a dedicated
+  "Workspace" category (`WORKSPACE_LINKS`) surfacing every other tool page
+  without leaving the editor; `apps/debate-ai.com/app/api/settings/
+  route.ts` plus dozens of `saved_*` D1 tables/`/api/*` routes already
+  link account settings, flows, docs, and rounds to signed-in users in
+  SQL; and the News Stream (`state/newsStream.ts`) already auto-posts from
+  nearly every tool in the app. So this slice picked the next named,
+  unblocked follow-up instead — the one place idea #9 was still
+  incomplete: the sticky current-heading breadcrumb
+  (`editor/heading-breadcrumb-bar.ts`'s `HeadingBreadcrumbBar`) only ever
+  bound to single-doc's `#app` scroller; the three-slot multi-pane
+  workspace (`editor/multi-pane-shell.ts`) had no breadcrumb at all, even
+  though each of its panes (`.pmd-pane-body`) is its own independent
+  scroller/view exactly like `#app` is. `Slot`'s constructor now builds
+  its own `<div class="pmd-heading-breadcrumb">` as a permanent first
+  child of `bodyEl` (ahead of whichever `DocRecord.editorEl` is currently
+  mounted) and wraps it in its own `HeadingBreadcrumbBar` bound to that
+  pane's `bodyEl`; `mountVisible()` calls `breadcrumbBar.attach(rec.view)`
+  after restoring the pane's scroll position, so opening a doc or
+  switching the slot's visible doc in its stack re-points the bar at the
+  right headings; the existing 200ms debounced heavy-update timer inside
+  each record's `dispatchTransaction` (already driving `navPanel.update`/
+  `refreshWordCount`) now also calls `breadcrumbBar.update(doc)`, gated on
+  `record.owner.visible === record` so a background (non-visible) stacked
+  doc's edits never repaint the pane's on-screen breadcrumb; and the
+  shell's existing settings subscriber now propagates the
+  `showHeadingBreadcrumb` toggle to all three slots' bars, mirroring
+  single-doc's own handler exactly. No new pure-logic surface was added
+  (`heading-breadcrumb.ts`'s `computeBreadcrumbPath`/`shouldShowBreadcrumb`
+  are reused as-is), so no new Vitest cases were needed, consistent with
+  this repo's existing convention of not component-testing DOM-wiring
+  classes like `HeadingBreadcrumbBar`/`MultiPaneShell` themselves. See
+  `docs/features/reason-editor-outline-nav.md`'s updated "What it shows"/
+  "Data flow"/"Known gaps" sections. Ran the full verification gate:
+  `bun run test` (4526 passing, unchanged from before this slice — no
+  tests added or broken), `bunx turbo run typecheck --filter=debate-editor`
+  (green), and `bun run build:web` (the full production build,
+  `/reason-editor` included) all pass.
+  PR: [#579](https://github.com/debate/debate-ai.com/pull/579).
 - **📊 AI Response-Outcome Charts — compare two or more "what if" scenarios
   side by side.** Idea #4's last open follow-up: the existing "what if"
   picker (`response-outcome.ts#applyHypotheticalAdjustments`) only ever
@@ -16573,14 +16628,23 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
    package `OutlineNavPanel` this bullet used to point at; see the Completed
-   entry below and `docs/features/reason-editor-outline-nav.md`). All four
+   entry below and `docs/features/reason-editor-outline-nav.md`). All five
    prior bullets are done: the nav panel's `navPaneVisible` setting already
    defaults to visible; `nav-panel.ts`'s drag/drop already supports
    drag-to-reorder; an earlier run added the sticky current-heading
-   breadcrumb; and this run added its dedicated visibility toggle
+   breadcrumb; a later run added its dedicated visibility toggle
    (`showHeadingBreadcrumb`, Settings → Appearance, independent of
-   `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
-   single-doc only).
+   `navPaneVisible`); and this run extended the breadcrumb itself into the
+   multi-pane workspace — each of the three panes in `multi-pane-shell.ts`
+   now has its own `HeadingBreadcrumbBar` bound to that pane's own
+   `.pmd-pane-body` scroller/view, tracking whichever doc is currently
+   visible in that slot. See the Completed entry above and
+   `docs/features/reason-editor-outline-nav.md`'s updated sections. No
+   further follow-up is currently tracked for this idea (a genuinely
+   separate OS-level window needs no extra wiring — it's an independent
+   module instance that already gets a breadcrumb through whichever of the
+   two paths it's running); a future run should pick a fresh next-step
+   elsewhere if one becomes worth doing.
 
 10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. Tagging itself — this idea's most-impactful open item, since nothing else in the tree ever wrote `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` — is also now done, but not the way the prior run's note assumed: that note pointed at building a "Handsontable-native tagging affordance" into `debate-flow`'s `HotGrid`, but `debate-flow` turned out to be an entirely separate ebb editor package that never reads or writes this repo's `Box`/`Flow` types at all, so a `HotGrid`-based affordance would have tagged the wrong document and done nothing for these filters. Instead, a "Tag…" action was added directly to `ArgumentTreePanel.tsx`'s own rows (scoped to the round workspace's currently-selected flow, same as "Generate outline for current round"), backed by a restored single-row `flow/argument-tagging.ts` in `debate-round` — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Tagging an argument from the Outline panel" section. The multi-select/bulk-section tagging the old AG Grid popover had is *not* restored (no equivalent selection model on this panel's flat row list) — a future run could add a checkbox-selection mode here if that's worth building; otherwise no further follow-up is currently tracked for this idea.
 
