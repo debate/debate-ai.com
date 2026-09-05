@@ -6,6 +6,74 @@
 _No task currently in progress._
 
 ### Completed
+- **📅 Coaching Programs — the program calendar now folds in a coach's own
+  scheduled drill reviews.** Idea #13's ("Coaching Programs and Group
+  Challenges") last open follow-up: the "drills" half of "A calendar/
+  schedule view across a program's drills, sprints, and challenges" — the
+  half the immediately-prior slice deliberately left open, documented as a
+  circular-dependency problem in `docs/features/coaching-programs.md`'s
+  "Known gaps" (`debate-practice-rounds` already depends on
+  `debate-community`, for Progress Unlocks tiers, so composing drill dates
+  the other way round from inside `debate-community` would be circular).
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (`apps/debate-ai.com/app/api/
+  settings/route.ts` plus dozens of `saved_*` D1 tables/`/api/*` routes
+  already link account settings, flows, docs, and rounds to signed-in users
+  in SQL, and every tool is already reachable from the Tools page,
+  CardMirror's own menu/command palette, and this run's own updated
+  panel), so this slice closed out the next named, unblocked follow-up
+  instead, resolving the circular-dependency gap the way that "Known gaps"
+  note itself suggested: at the app/page layer, which already depends on
+  both packages, rather than moving the calendar composition itself.
+  `debate-practice-rounds`' `state/drillSets.ts` gained a new pure
+  `buildDrillReviewCalendarEvents`, turning a set of `DrillSetRecord`s'
+  `scheduledReviewAt` entries into a dependency-free `{dayKey, label,
+  detail}` event per scheduled review (labeled with the drill's kind and
+  round, detailed with its prompt, truncated the same way
+  `coaching-program-calendar.ts`'s own note-preview truncation is) — kept
+  free of `debate-community`'s own calendar types so this direction of
+  import stays a one-way, non-circular street. `debate-community`'s
+  `lib/coaching-program-calendar.ts` gained a new `"drill-review"`
+  `CoachingProgramCalendarEventKind` and a `CoachingProgramCalendarExternalEvent`
+  type, with `buildCoachingProgramCalendarEvents` (and
+  `state/coachingProgramCalendar.ts`'s `buildPersistedCoachingProgramCalendar`)
+  taking a new optional `drillReviews` parameter (default `[]`) merged
+  straight into the sorted event list, unfiltered by roster — unlike a
+  challenge, a drill set has no membership concept, so these are the
+  *viewing coach's own* reviews rather than roster-wide (documented as a
+  new, narrower "Known gaps" entry in place of the old circular-dependency
+  one). `CoachingProgramRosterAnalyticsPanel.tsx` gained a new optional
+  `drillReviewEvents` prop (defaulting to `[]`, so every other caller and
+  every existing test is unaffected), a `"Drill review"` badge label, and a
+  `useEffect` that re-derives the rendered calendar when that prop changes
+  (needed since it resolves asynchronously in the real caller, after this
+  panel's own mount effect already ran with the default). A new
+  `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`
+  client wrapper — mirroring `CommunityHubPageContent.tsx`'s existing
+  "split a client-only prop resolution out of the server `page.tsx`"
+  pattern — resolves the signed-in coach's own drill sets via
+  `debate-practice-rounds`' existing `useDrillSets()` hook and feeds them
+  through `buildDrillReviewCalendarEvents` into the panel, and `page.tsx`
+  now renders it in place of the bare panel. See
+  `docs/features/coaching-programs.md`'s updated "Program calendar" section
+  and "Known gaps". 10 new Vitest cases: 6 in
+  `packages/debate-practice-drills/test/drillSets.test.ts`
+  (`buildDrillReviewCalendarEvents` — no events for nothing scheduled, one
+  event per scheduled drill with the right label/detail, prompt-detail
+  truncation, ignoring an out-of-range scheduled index, chronological sort
+  across records, multiple events within one record) and 4 in
+  `packages/debate-contributor-progress/test/coaching-program-calendar.test.ts`
+  (`buildCoachingProgramCalendarEvents`'s new `drillReviews` parameter —
+  empty when none supplied, one event per supplied review, sorted into the
+  overall chronological order alongside challenges/notes, and a same-day
+  kind tiebreak ordering it between challenge and sprint-note kinds). Ran
+  the full verification gate: `bun x vitest run` (4553 passing, up from
+  4543), `bun run typecheck` (all 17 packages green, `debate-community`/
+  `debate-practice-rounds` included), and `bun run build:web` (the full
+  production build, `/coaching-programs` included) all pass.
 - **📅 Coaching Programs — a program calendar spanning sprints and
   challenges.** Idea #13's ("Coaching Programs and Group Challenges") last
   open follow-up: "A calendar/schedule view across a program's drills,
@@ -16702,8 +16770,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. The manual pairing/room-assignment entry form follow-up is also now done: a "Pairing schedule" section logs a round's pairing (tournament/division/round label/side/room/opponent label/judge name) as the practical stand-in for still-blocked live Tabroom pairings, account-synced via a new `saved_round_pairings` D1 table plus `/api/round-pairings` routes, with a "Use for briefing" action on each saved pairing that prefills the "create briefing" form from it — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Manual pairing/room assignments" section. No further follow-up is currently tracked for this idea beyond the still-blocked real tournament-results/pairings/ballot data source itself (see "Confirmed blocker" below); a future run should pick a fresh next-step if one becomes worth doing.
 
-13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) — the coach-facing roster analytics dashboard follow-up is done: a new **Roster Analytics** section on `/coaching-programs` (`CoachingProgramRosterAnalyticsPanel`, in the `debate-community` package) lets a coach pick a persisted coaching program and see every roster member's group-challenge standing and daily-quest streak in one ranked table, composed via `lib/coaching-program-roster-analytics.ts`'s `buildCoachingProgramRosterAnalytics` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster analytics dashboard" section. The digest-notification follow-up is also now done: the same panel renders a "Recent challenge results" section, a *program-roster-scoped* digest (not `state/newsStream.ts`'s existing feed-wide `groupChallengeNews()` announcement) of every completed group challenge whose roster overlaps the selected program's, via a new `buildCoachingProgramChallengeDigest`/`buildPersistedCoachingProgramChallengeDigest` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster challenge digest" section. The calendar/schedule-view follow-up is also now done, for sprints and challenges: the same panel's new "Program calendar" section renders a day-grouped, chronological list of every roster-scoped group challenge's start/end date, plus — once a topic is typed into the section's own field — that topic's sprint-note dates, via a new `lib/coaching-program-calendar.ts`'s `buildCoachingProgramCalendarEvents`/`groupCoachingProgramCalendarEventsByDay` and `state/coachingProgramCalendar.ts`'s `buildPersistedCoachingProgramCalendar` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Program calendar" section. The "drills" half of that follow-up stays open (see "Known gaps" in that doc section): `debate-practice-rounds` already depends on `debate-community` (for Progress Unlocks tiers), so composing per-drill scheduled-review dates in the other direction from where this calendar lives would be circular. Next:
-    - Fold per-drill scheduled review reminders (`debate-practice-rounds`' `state/drillSets.ts#scheduledReviewAt`) into the program calendar — needs either moving the calendar composition to a package both sides can depend on, or having the app/page layer (which already depends on both packages) supply the resolved drill-review events as an input.
+13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) — the coach-facing roster analytics dashboard follow-up is done: a new **Roster Analytics** section on `/coaching-programs` (`CoachingProgramRosterAnalyticsPanel`, in the `debate-community` package) lets a coach pick a persisted coaching program and see every roster member's group-challenge standing and daily-quest streak in one ranked table, composed via `lib/coaching-program-roster-analytics.ts`'s `buildCoachingProgramRosterAnalytics` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster analytics dashboard" section. The digest-notification follow-up is also now done: the same panel renders a "Recent challenge results" section, a *program-roster-scoped* digest (not `state/newsStream.ts`'s existing feed-wide `groupChallengeNews()` announcement) of every completed group challenge whose roster overlaps the selected program's, via a new `buildCoachingProgramChallengeDigest`/`buildPersistedCoachingProgramChallengeDigest` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster challenge digest" section. The calendar/schedule-view follow-up is also now done, for sprints and challenges: the same panel's new "Program calendar" section renders a day-grouped, chronological list of every roster-scoped group challenge's start/end date, plus — once a topic is typed into the section's own field — that topic's sprint-note dates, via a new `lib/coaching-program-calendar.ts`'s `buildCoachingProgramCalendarEvents`/`groupCoachingProgramCalendarEventsByDay` and `state/coachingProgramCalendar.ts`'s `buildPersistedCoachingProgramCalendar` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Program calendar" section. The "drills" half of that follow-up is also now done: a new app/page-layer client wrapper (`CoachingProgramRosterAnalyticsWithDrills.tsx`) resolves the signed-in coach's own scheduled drill review reminders via `debate-practice-rounds`' `useDrillSets()` and its new `buildDrillReviewCalendarEvents`, into a dependency-free `{dayKey, label, detail}` shape fed into the panel's new `drillReviewEvents` prop and on through `buildCoachingProgramCalendarEvents`'s new `drillReviews` parameter — avoiding the circular-dependency problem the first slice left open by resolving it at the one layer that already depends on both packages, rather than moving the composition itself — see the Completed entry above and `docs/features/coaching-programs.md`'s updated "Program calendar" section. No further follow-up is currently tracked for this idea beyond the now-narrower gap that these drill-review events are the *viewing coach's own*, not roster-wide (see that doc's updated "Known gaps" — a drill set has no owning-contributor id today, so there's no way to look one up across a roster); a future run should pick a fresh next-step (that gap, or elsewhere) if one becomes worth doing.
 
 14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). The onboarding-nudge follow-up is also now done: a one-time `promptForRouteChoice` dialog (`verbatim-nudge.ts`) points whoever the UI tour's own "reference" step doesn't reach — an established profile the tour auto-skips, or a fresh one that left the tour before that step — at the shortcuts reference the first time a document is open, without racing or stacking on top of an in-progress tour. See `docs/features/legacy-verbatim-shortcuts.md`'s "Verbatim onboarding nudge" section. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action.
 

@@ -15,11 +15,15 @@
  * than introducing a second date-bucketing rule.
  *
  * Per-drill scheduled review reminders (`debate-practice-rounds`'
- * `state/drillSets.ts#scheduledReviewAt`) are deliberately left out of this
- * first slice: that package depends on this one (`debate-community`, for
- * Progress Unlocks tiers), so composing drill dates in the other direction
- * here would be circular. See `docs/features/coaching-programs.md`'s "Known
- * gaps" for the follow-up this leaves open.
+ * `state/drillSets.ts#scheduledReviewAt`) are also included, via
+ * `drillReviews` below — a caller-resolved, dependency-free event list
+ * rather than this module reading `debate-practice-rounds` state directly:
+ * that package depends on this one (`debate-community`, for Progress
+ * Unlocks tiers), so importing it back here would be circular. The
+ * app/page layer resolves the current user's own drill review reminders
+ * (`debate-practice-rounds`' `useDrillSets()` plus its
+ * `buildDrillReviewCalendarEvents`) and passes them in — see
+ * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`.
  *
  * This is the first slice only — it works entirely off caller-supplied
  * inputs; it doesn't read persisted state or render a UI. See
@@ -34,7 +38,19 @@ import type { GroupChallenge } from "debate-team-collaboration/src/lib/group-cha
 import type { SprintNote } from "debate-team-collaboration/src/lib/team-collaboration-mode";
 
 /** How a `CoachingProgramCalendarEvent` came about. */
-export type CoachingProgramCalendarEventKind = "challenge-start" | "challenge-end" | "sprint-note";
+export type CoachingProgramCalendarEventKind = "challenge-start" | "challenge-end" | "sprint-note" | "drill-review";
+
+/**
+ * A caller-resolved event to merge into the calendar, kept dependency-free
+ * of whatever package actually owns the underlying data — currently used
+ * for per-drill scheduled review reminders (see the file doc comment
+ * above).
+ */
+export type CoachingProgramCalendarExternalEvent = {
+  dayKey: string;
+  label: string;
+  detail?: string;
+};
 
 /** One dated event on a coaching program's schedule. */
 export interface CoachingProgramCalendarEvent {
@@ -79,12 +95,16 @@ function truncateNoteText(text: string): string {
  * `sprintNotes` is caller-supplied rather than looked up by topic here — a
  * topic sprint isn't itself dated the way a challenge window is, so the
  * caller (`state/coachingProgramCalendar.ts`) resolves which topic's notes
- * to include.
+ * to include. `drillReviews` is likewise caller-supplied (see the file doc
+ * comment above) and unfiltered by roster — unlike challenges, a drill set
+ * has no roster/membership concept, so it's included as-is (typically
+ * already scoped to the viewing coach's own drills by the caller).
  */
 export function buildCoachingProgramCalendarEvents(
   memberIds: string[],
   challenges: GroupChallenge[],
   sprintNotes: SprintNote[],
+  drillReviews: CoachingProgramCalendarExternalEvent[] = [],
 ): CoachingProgramCalendarEvent[] {
   const events: CoachingProgramCalendarEvent[] = [];
 
@@ -108,6 +128,15 @@ export function buildCoachingProgramCalendarEvents(
       kind: "sprint-note",
       label: `${note.authorId} logged a "${note.topic}" note`,
       detail: truncateNoteText(note.text),
+    });
+  }
+
+  for (const drillReview of drillReviews) {
+    events.push({
+      dayKey: drillReview.dayKey,
+      kind: "drill-review",
+      label: drillReview.label,
+      detail: drillReview.detail,
     });
   }
 
