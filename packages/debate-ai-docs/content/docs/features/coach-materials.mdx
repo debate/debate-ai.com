@@ -1,0 +1,39 @@
+---
+title: "Coach Materials"
+---
+
+# Coach Materials
+
+Lets a coach upload grounding materials — lecture transcripts, camp
+materials, instructional documents, and practice-round recordings — for a
+private team coach AI, preview which materials a question would draw on,
+and ask the coach AI a real question grounded strictly in those materials.
+
+- **Route:** `/coach-materials`
+- **Package:** `debate-speech-writer`
+
+## What it shows
+
+An upload form (kind, title, topic, tags, material text), a document/mic
+upload shortcut, a search/filter bar, materials grouped by kind, and an
+"Ask the coach" section with a persisted conversation history.
+
+## Data flow
+
+```
+state/coachMaterials.ts (localStorage)
+  → buildCoachMaterialLibraryFromStore()
+  → findRelevantMaterialsFromStore()
+  → panels/CoachMaterialsPanel.tsx
+  → apps/debate-ai.com/app/coach-materials/page.tsx
+```
+
+Materials are account-synced (D1-backed) with full version history and a
+reviewer/approval workflow (pending/approved/rejected) gating what grounds
+an answer.
+
+## Known gaps
+
+- No transcription of an uploaded audio/video recording file.
+- `.docx` upload only works from the browser (needs `DOMParser`).
+- Conversation history is per-browser localStorage, not shared.

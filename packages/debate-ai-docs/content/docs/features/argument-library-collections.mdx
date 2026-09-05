@@ -1,0 +1,39 @@
+---
+title: "Common Argument Library — Saved Collections"
+---
+
+# Common Argument Library — Saved Collections
+
+- **Route:** `/cards/argument-library`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+`ArgumentLibraryPanel`'s tag-chip filter bar now has a **Saved collections**
+section beneath it, shown whenever the library has at least one tag
+collection:
+
+- Every saved collection renders as a button (its name plus tag count) —
+  clicking it replaces the current tag-chip selection with that
+  collection's saved tags, next to a small "✕" remove button.
+- A "Save current selection as" field + "Save collection" button saves the
+  currently active tag chips under a new name. Disabled until at least one
+  tag is selected and a name is typed.
+
+## Data flow
+
+```
+lib/argument-library-collections.ts (pure validation/(de)serialization)
+  → hooks/useSavedArgumentCollections.ts (localStorage: saved-argument-collections)
+  → panels/ArgumentLibraryPanel.tsx
+```
+
+Local-first (works fully signed out) and best-effort account-synced through
+the same `/api/settings` row every other picker-style setting uses. Up to
+50 collections, each name unique case-insensitively, each holding 1-30 tags.
+
+## Known gaps
+
+- No rename for an existing collection — only add and remove.
+- No editing a saved collection's tag list directly — re-saving under the
+  same name is rejected as a duplicate.

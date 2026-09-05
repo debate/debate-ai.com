@@ -1,0 +1,36 @@
+---
+title: "Review Queue"
+---
+
+# Review Queue
+
+Lets a user move a submitted card through peer review — start a review,
+submit it, leave and resolve comments, request changes, approve, and
+publish — before it goes live in the Shared Evidence Library.
+
+- **Route:** `/cards/reviews`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+Every persisted `CardReview` with its status, lifecycle action buttons, a
+comment thread (with severity and a "Resolve" action), an
+unresolved-blocking warning, a review-aging badge, and a **Reviewer
+workload** table. Approve/reject/publish are gated on the acting
+reviewer's own Progress Unlocks tier and blocked for self-review.
+
+## Data flow
+
+```
+state/peerReviews.ts (localStorage: peerReviews)
+  → buildReviewQueuePanelView()
+  → panels/ReviewQueuePanel.tsx
+```
+
+A review's lifecycle gates the matching Shared Evidence Library entry's
+visibility in search results.
+
+## Known gaps
+
+Reviewer identity is still a free-form id, not an authenticated user — a
+signed-in session only prefills it.

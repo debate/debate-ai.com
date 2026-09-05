@@ -1,0 +1,36 @@
+---
+title: "Practice vs AI"
+---
+
+# Practice vs AI
+
+Lets a debater run a full timed round against an AI opponent: pick one of
+13 opponent personas across five difficulty tiers, set the topic, stance,
+and per-phase clocks, debate through opening statements, cross-examination
+and closing statements, then get an AI-judged scorecard.
+
+- **Route:** `/versus-ai`
+- **Package:** `debate-practice-vs-ai`
+- **API:** `POST /api/vsbot/create`, `/debate`, `/judge`, `/concede`
+
+## What it shows
+
+A bot picker across five difficulty tiers (Easy through Legends), a setup
+panel (topic, stance, per-phase clocks), the live round (two side-by-side
+panels with countdowns, typed or dictated turns), and a scorecard (each
+phase scored out of 10 for both sides, totals, a verdict, and follow-up
+drill recommendations).
+
+## How it works
+
+A port of the Go `arguehub` vs-bot server and its Vite/React client (kept
+as reference sources in the package). The 13 personas carry over field for
+field from the Go `GetBotPersonality` switch. Text generation uses
+`ANTHROPIC_API_KEY`, falling back to `GEMINI_API_KEY`; with neither set,
+each persona answers with an in-character "my systems are offline" line.
+
+## Known gaps
+
+Gamification is computed but not persisted (no `score`/`badges`/`streak`
+columns on the `user` table). A reload during a round returns to the
+picker. Only the vs-bot slice of the Go server is ported.

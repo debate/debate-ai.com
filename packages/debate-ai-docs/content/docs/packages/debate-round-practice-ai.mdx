@@ -1,0 +1,40 @@
+---
+title: "debate-round-practice-ai"
+---
+
+# debate-practice-vs-ai
+
+**Practice vs AI** — a full timed debate round against an AI opponent, mounted
+in debate-ai.com at `/versus-ai` and reachable from the app dock.
+
+This package is the Node/TypeScript port of the Go `arguehub` vs-bot server and
+its Vite/React client. Nothing in the port calls Go, Mongo or Gin: it is plain
+TypeScript, `fetch`-based, and runs under Next.js or a Cloudflare Worker.
+
+## What's in it
+
+| Export | What it is |
+| --- | --- |
+| `./backend` | The vs-bot server: 13 bot personalities, prompt construction, AI judging, gamification rules |
+| `./client` | The browser client for those endpoints |
+| `./ui` | The round screens |
+
+## Using it
+
+```tsx
+import { DebatePracticeVsAi } from "debate-practice-vs-ai"
+
+<DebatePracticeVsAi userId={session.user.id} userDisplayName={session.user.name} />
+```
+
+## Layout
+
+```
+src/
+├── backend/     # the ported Go vs-bot server
+├── client/      # the ported browser client
+├── ui/          # the ported round screens
+└── index.ts
+```
+
+Run `bun run test` for the port's 55 tests and `bun run typecheck` for types.

@@ -1,0 +1,38 @@
+---
+title: "Practice Round Simulator"
+---
+
+# Practice Round Simulator
+
+Lets a debater configure and track a simulated tournament round — format,
+side, AI judge paradigm, and AI opponent persona/difficulty.
+
+- **Route:** `/practice-round`
+- **Package:** `debate-round`
+
+## What it shows
+
+A setup form, plus every persisted round as its own card: judge-paradigm/
+opponent-persona/difficulty badges, submitted-speech progress, a "Generate
+AI opponent speech" action, a "Generate post-round feedback" form, and a
+"Get AI judge decision" action. A **Compare your past attempts** section
+shows a chronological win/loss trend across a debater's rounds.
+
+## Data flow
+
+```
+round/practice-round-simulator.ts
+  → buildPracticeRoundSetup({ styleKey, userSide, judgeParadigm, opponentPersona, opponentDifficulty })
+  → buildPracticeRoundFeedback(flow, sideKey, judgeParadigm)
+
+state/practiceRounds.ts (localStorage: practiceRounds)
+  → buildPracticeRoundsPanelView()
+  → panels/PracticeRoundSimulatorPanel.tsx
+  → apps/debate-ai.com/app/practice-round/page.tsx
+```
+
+## Known gaps
+
+None open. Two open Next items remain in TODO.md beyond this feature: a
+round replay/playback view, and a scoring rubric alongside the AI judge
+decision.
