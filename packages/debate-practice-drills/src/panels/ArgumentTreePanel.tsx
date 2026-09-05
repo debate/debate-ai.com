@@ -40,6 +40,20 @@
  * that round as a plain-text outline file, mirroring
  * `PreRoundBriefingsPanel.tsx`'s anchor+Blob download pattern.
  *
+ * Each non-heading row in a round whose flow is the round workspace's
+ * *currently selected* one also has a "Tag…" action — restoring the only
+ * write path for `Box.argumentType`/`authorId`/`evidenceStatus` after PR
+ * #498 deleted it (see `docs/features/argument-tree-outline.md`'s "Known
+ * regression" note and `debate-round`'s `flow/argument-tagging.ts` for why
+ * this lives here rather than in `debate-flow`'s Handsontable editor).
+ * Saving writes the tags onto the flow's underlying `Box` via
+ * `setRowArgumentTags`, pushes the updated flow back through
+ * `useFlowStore`, best-effort persists it to `localStorage["flows"]`
+ * (mirroring `useFlowEffects.ts#useFlowPersistence`'s own write, which
+ * isn't mounted on this route), and regenerates this round's outline via
+ * `buildAndSaveArgumentTreeFromCurrentFlow` so the filters immediately see
+ * the new tags.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -60,7 +74,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "debate-round/src/ui/primitives/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "debate-round/src/ui/primitives/dialog"
 import { filterArgumentTree, flattenArgumentTree, type ArgumentTreeFilter, type ArgumentTreeNode } from "debate-round/src/flow/argument-tree"
+import {
+  formatArgumentTags,
+  getRowArgumentTags,
+  inferArgumentType,
+  listAuthorIdsInFlow,
+  setRowArgumentTags,
+  type ArgumentTags,
+} from "debate-round/src/flow/argument-tagging"
 import { argumentTreeOutlineFilename, buildArgumentTreeOutlineText } from "../flow/argument-tree-export"
 import {
   buildAndSaveArgumentTreeFromCurrentFlow,
@@ -74,6 +104,9 @@ import {
 } from "../state/argumentTreeFilters"
 import { useOutlineFilterPresets } from "../hooks/useOutlineFilterPresets"
 import { useFlowStore } from "debate-round/src/state/store"
+import type { Flow } from "debate-round/src/types/flow"
+
+const NONE_VALUE = "__none__"
 
 const ANY_VALUE = "__any__"
 
@@ -132,6 +165,10 @@ export function ArgumentTreePanel() {
   const { presets, addPreset, removePreset } = useOutlineFilterPresets()
   const [presetNameDrafts, setPresetNameDrafts] = useState<Record<string, string>>({})
   const [presetErrors, setPresetErrors] = useState<Record<string, string>>({})
+  const [taggingTarget, setTaggingTarget] = useState<{ roundId: string; rowIndex: number; content: string } | null>(
+    null,
+  )
+  const [tagDraft, setTagDraft] = useState<ArgumentTags>({})
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -204,6 +241,42 @@ export function ArgumentTreePanel() {
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
   }
+
+  /** True when `roundId` is the round workspace's currently selected flow — the only flow this panel can write tags onto. */
+  const canTagRound = (roundId: string) => !!currentFlow && String(currentFlow.id) === roundId
+
+  const openTagDialog = (roundId: string, node: ArgumentTreeNode) => {
+    if (!canTagRound(roundId) || !currentFlow) return
+    setTagDraft(getRowArgumentTags(currentFlow, node.rowIndex))
+    setTaggingTarget({ roundId, rowIndex: node.rowIndex, content: node.content })
+  }
+
+  const closeTagDialog = () => setTaggingTarget(null)
+
+  /** Best-effort mirror of `useFlowEffects.ts#useFlowPersistence`'s write, which isn't mounted on this route. */
+  const persistFlows = (updatedFlows: Flow[]) => {
+    try {
+      localStorage.setItem("flows", JSON.stringify(updatedFlows))
+    } catch (e) {
+      console.error("Failed to save flows:", e)
+    }
+  }
+
+  const handleSaveTags = () => {
+    if (!taggingTarget || !currentFlow) return
+    const updatedFlow = setRowArgumentTags(currentFlow, taggingTarget.rowIndex, tagDraft)
+    const updatedFlows = flows.map((flow, index) => (index === selected ? updatedFlow : flow))
+    useFlowStore.getState().setFlows(updatedFlows)
+    persistFlows(updatedFlows)
+    buildAndSaveArgumentTreeFromCurrentFlow(updatedFlow)
+    refresh()
+    closeTagDialog()
+  }
+
+  const suggestedArgumentType =
+    taggingTarget && inferArgumentType(taggingTarget.content) !== tagDraft.argumentType
+      ? inferArgumentType(taggingTarget.content)
+      : undefined
 
   if (records === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading argument outlines…</div>
@@ -531,6 +604,29 @@ export function ArgumentTreePanel() {
                         Unanswered
                       </Badge>
                     )}
+                    {!node.isHeading && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className={`h-6 px-2 text-xs ${node.isUnanswered ? "" : "ml-auto"}`}
+                        disabled={!canTagRound(record.roundId)}
+                        title={
+                          canTagRound(record.roundId)
+                            ? undefined
+                            : "Select this round's flow in the round workspace to tag it."
+                        }
+                        onClick={() => openTagDialog(record.roundId, node)}
+                      >
+                        {(() => {
+                          const label = formatArgumentTags({
+                            argumentType: node.argumentType,
+                            authorId: node.authorId,
+                            evidenceStatus: node.evidenceStatus,
+                          })
+                          return label ? `Tag… (${label})` : "Tag…"
+                        })()}
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -538,6 +634,97 @@ export function ArgumentTreePanel() {
           </div>
         )
       })}
+
+      <Dialog open={taggingTarget !== null} onOpenChange={(open) => !open && closeTagDialog()}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Tag Argument</DialogTitle>
+            <DialogDescription>{taggingTarget?.content}</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="tag-argument-type">Argument type</Label>
+              <Select
+                value={tagDraft.argumentType ?? NONE_VALUE}
+                onValueChange={(value) =>
+                  setTagDraft((prev) => ({
+                    ...prev,
+                    argumentType: value === NONE_VALUE ? undefined : (value as ArgumentTags["argumentType"]),
+                  }))
+                }
+              >
+                <SelectTrigger id="tag-argument-type" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE_VALUE}>None</SelectItem>
+                  <SelectItem value="contention">contention</SelectItem>
+                  <SelectItem value="link">link</SelectItem>
+                  <SelectItem value="impact">impact</SelectItem>
+                  <SelectItem value="turn">turn</SelectItem>
+                  <SelectItem value="answer">answer</SelectItem>
+                  <SelectItem value="extension">extension</SelectItem>
+                </SelectContent>
+              </Select>
+              {suggestedArgumentType && (
+                <button
+                  type="button"
+                  className="text-xs text-primary underline-offset-2 hover:underline"
+                  onClick={() => setTagDraft((prev) => ({ ...prev, argumentType: suggestedArgumentType }))}
+                >
+                  Suggested: {suggestedArgumentType} — use it
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="tag-evidence-status">Evidence status</Label>
+              <Select
+                value={tagDraft.evidenceStatus ?? NONE_VALUE}
+                onValueChange={(value) =>
+                  setTagDraft((prev) => ({
+                    ...prev,
+                    evidenceStatus: value === NONE_VALUE ? undefined : (value as ArgumentTags["evidenceStatus"]),
+                  }))
+                }
+              >
+                <SelectTrigger id="tag-evidence-status" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE_VALUE}>None</SelectItem>
+                  <SelectItem value="cited">cited</SelectItem>
+                  <SelectItem value="contested">contested</SelectItem>
+                  <SelectItem value="unverified">unverified</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="tag-author-id">Contributor</Label>
+              <Input
+                id="tag-author-id"
+                list="tag-author-id-suggestions"
+                value={tagDraft.authorId ?? ""}
+                onChange={(e) => setTagDraft((prev) => ({ ...prev, authorId: e.target.value }))}
+                placeholder="Author id"
+              />
+              <datalist id="tag-author-id-suggestions">
+                {currentFlow &&
+                  listAuthorIdsInFlow(currentFlow).map((authorId) => <option key={authorId} value={authorId} />)}
+              </datalist>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={closeTagDialog}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveTags}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

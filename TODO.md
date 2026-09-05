@@ -6,6 +6,43 @@
 _No task currently in progress._
 
 ### Completed
+- **🗂️ Argument Tree Outline — restored argument tagging, correcting a
+  wrong assumption in the prior run's regression note.** Idea #10's
+  ("Outline Filters and Argument Tree View") most-impactful open item per
+  the prior run: PR #498 deleted the only code that ever wrote
+  `Box.argumentType`/`authorId`/`evidenceStatus`, so `/outline`'s Argument
+  type/Contributor/Evidence status filters had nothing to filter on for any
+  flow touched since. The prior run's note said restoring it needed "a
+  Handsontable-native tagging affordance in the new editor," meaning
+  `debate-flow`'s `EbbFlowEmbed`/`HotGrid`. Investigating that first turned
+  up that the premise was wrong: `debate-flow` (`debate-flow-ebb`) is ebb,
+  an entirely separate local-first flow editor ported in as its own
+  workspace package with its own `FlowSheet`/`CellMeta` document model —
+  it never reads or writes this repo's `Box`/`Flow` types, and nothing
+  bridges the two. A tagging affordance built into `HotGrid` would have
+  tagged ebb's own document, which `/outline` never reads, and would have
+  silently done nothing for these filters. Since PR #498, no editor in the
+  live app touches `Flow.children`'s `Box` tree at all any more (the round
+  page's remaining split view edits `Flow.speechDocs` markdown text
+  instead) — restoring a `Box`-tree grid wasn't in scope for this slice, so
+  tagging was restored where the tags are actually consumed: a new "Tag…"
+  action per row on `ArgumentTreePanel.tsx` itself (`/outline`), enabled
+  when the row's round is the round workspace's currently selected flow
+  (mirroring the existing "Generate outline for current round" action's
+  scope). The dialog offers Argument type/Evidence status selects and a
+  contributor field with autocomplete, plus the original popover's
+  `inferArgumentType` content-based suggestion; saving writes the tags onto
+  the underlying `Box` via a restored, single-row `flow/argument-tagging.ts`
+  (`debate-round`), pushes the updated flow through `useFlowStore`,
+  best-effort mirrors `useFlowEffects.ts`'s `localStorage["flows"]` write
+  (not mounted on the `/outline` route), and regenerates the round's
+  outline so the filters see the new tags immediately. The deleted
+  popover's neighbour-preview/bulk-section and multi-row-selection bulk
+  tagging (both shaped around a grid's row selection) are not restored —
+  left as a follow-up if bulk tagging across this panel's flat row list is
+  worth building. See `docs/features/argument-tree-outline.md`'s "Tagging
+  an argument from the Outline panel" section and
+  `packages/debate-round/test/argument-tagging.test.ts`.
 - **🎞️ Flow-in-Speech Flow Annotations — density scrubber, plus a doc/tracker
   drift audit that found and corrected four stale docs describing deleted
   `FlowSpreadsheet` code (idea #15's "A density scrubber on the video
@@ -16515,7 +16552,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
    single-doc only).
 
-10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. The multi-select bulk-tagging follow-up *was* done, on the since-deleted `FlowSpreadsheet` grid: PR #498 (2026-09-03) removed that grid — and with it `flow/argument-tagging.ts`, `ArgumentTagPopover`, and the whole tagging UI, bulk mode included — in favor of the new Handsontable-based flow editor, which has no tagging affordance at all (see the Completed entry above and `docs/features/argument-tree-outline.md`'s "⚠️ Known regression" note). This is the single most-impactful open item across these ideas: since nothing else in the tree ever wrote `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus`, this idea's own filters (**Argument type**, **Contributor**, **Evidence status**, **Unanswered only**) have had no way to gain data on any flow touched since that date. A future run should prioritize a Handsontable-native tagging affordance over other next-steps here.
+10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. Tagging itself — this idea's most-impactful open item, since nothing else in the tree ever wrote `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` — is also now done, but not the way the prior run's note assumed: that note pointed at building a "Handsontable-native tagging affordance" into `debate-flow`'s `HotGrid`, but `debate-flow` turned out to be an entirely separate ebb editor package that never reads or writes this repo's `Box`/`Flow` types at all, so a `HotGrid`-based affordance would have tagged the wrong document and done nothing for these filters. Instead, a "Tag…" action was added directly to `ArgumentTreePanel.tsx`'s own rows (scoped to the round workspace's currently-selected flow, same as "Generate outline for current round"), backed by a restored single-row `flow/argument-tagging.ts` in `debate-round` — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Tagging an argument from the Outline panel" section. The multi-select/bulk-section tagging the old AG Grid popover had is *not* restored (no equivalent selection model on this panel's flat row list) — a future run could add a checkbox-selection mode here if that's worth building; otherwise no further follow-up is currently tracked for this idea.
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. The "real reviewer-identity/permission checks so a 'given' entry can't be spoofed under an arbitrary reviewer id" follow-up is also now done: `ContributionsFeedPanel` locks the endorsing reviewer id to a real signed-in session (`ContributionsFeedWithIdentity.tsx`, `session-identity.ts#deriveLockedVerifierId`), disables endorsing your own contribution, and `state/contributions.ts#recordPersistedEndorsementFromReviewer` throws `SelfEndorsementNotAllowedError` as a second, store-side guard against self-endorsement — see the Completed entry above and `docs/features/contributions-feed.md`'s "Reviewer-identity checks on endorsing" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a per-contributor "given" history visible to others, not just the signed-in visitor's own, or surfacing an account-level endorsement-fraud signal if this repo ever gets real cross-account abuse detection) if one becomes worth doing.
 
