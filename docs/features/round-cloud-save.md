@@ -166,7 +166,7 @@ cross-round first-referencing-round-wins, and unreferenced-id cases;
 fetch client, the D1 route, and the dialog's
 save/load/remove wiring are not unit-tested, matching every other
 fetch-client/D1-route/UI trio in this repo — `apps/debate-ai.com` still has
-no vitest project wired up (`vitest.config.ts`'s `projects` list is still
+no vitest project wired up (`apps/debate-ai.com/vitest.config.ts`'s `projects` list is still
 `["packages/*"]` only).
 
 ## Known gaps

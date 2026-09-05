@@ -21,7 +21,10 @@
     "db:seed:videos": "bun run scripts/seed-videos.ts",
     "db:seed:videos:d1": "bun run scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",
     "db:studio": "drizzle-kit studio",
-    "favicon": "bun create favicon public/favicon-512.png public/ --overwrite"
+    "favicon": "bun create favicon public/favicon-512.png public/ --overwrite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "^1.4.0",
