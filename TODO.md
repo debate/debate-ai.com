@@ -6,6 +6,54 @@
 _No task currently in progress._
 
 ### Completed
+- **🕵️ On Page Card Reuse Search — a retention/purge policy for the
+  ever-growing `reuse_check_log` (idea #7's last remaining Next item under
+  Product Feature Ideas).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead. Before this, `reuse_check_log` (the append-only audit trail `GET
+  /api/evidence-reuse-check` writes to on every lookup, feeding the "team
+  reuse dashboard" — see the Completed entry above) had no retention policy
+  at all, flagged as a "Known gap" in
+  `docs/features/on-page-card-reuse-search.md`: it would only ever grow,
+  with the dashboard route's fixed 2000-row scan cap as the only guard
+  against it becoming unbounded. `debate-research-evidence`'s
+  `lib/shared-evidence-library.ts` gains a pure
+  `getReuseCheckLogPurgeCutoff(nowMs, retentionDays = REUSE_CHECK_LOG_RETENTION_DAYS)`
+  (180 days by default) computing the cutoff timestamp below which a log row
+  is eligible for purging, and a new
+  `apps/debate-ai.com/lib/evidence-reuse-check/purge-reuse-check-log.ts#purgeOldReuseCheckLogRows`
+  deletes every `reuse_check_log` row older than that cutoff (selecting the
+  expired ids first so the route can report back exactly how many rows it
+  removed). This now runs automatically every week via the worker's
+  `scheduled` export (`worker/index.ts`), piggybacking on the same weekly
+  cron trigger the existing YouTube resync already uses rather than adding a
+  second schedule, and can also be triggered immediately from the admin page
+  — a new "Reuse-check log retention" card on `/admin`
+  (`components/admin/AdminDashboard.tsx`) with a "Purge old entries now"
+  button backed by a new admin-gated `POST
+  /api/admin/evidence-reuse-check-log/purge` route. See
+  `docs/features/on-page-card-reuse-search.md`'s new "Retention / purge
+  policy" section (which also removes the now-closed "Known gap" bullet) and
+  the new test coverage in
+  `packages/debate-search-evidence/test/shared-evidence-library.test.ts`
+  (`getReuseCheckLogPurgeCutoff`'s default vs. custom retention windows, the
+  zero-day edge case, and using the cutoff to classify a log record as
+  expired or not) — 4 new cases. Ran the full verification gate: `bun run
+  test` (4460 passing, up from 4456), `bunx turbo run typecheck` (all 15
+  typecheck-bearing packages green, `debate-research-evidence` included),
+  and `bun run build:web` (the full production build, including the new
+  `/api/admin/evidence-reuse-check-log/purge` route) all pass. No lint
+  script is configured in this repo. No further follow-up is currently
+  tracked for this idea; a future run should pick a fresh next-step
+  elsewhere.
+
 - **🧪 Practice Round Simulator — comparison across a debater's past attempts
   (its last remaining Next item under Research Crowdsourcing Organizer
   Features).** Another repeat of the standing prompt ("integrate all the

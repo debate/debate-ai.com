@@ -10,6 +10,7 @@ import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { runWithContext } from "../lib/database/context";
 import { resyncYouTubeRounds } from "../lib/youtube/resync-rounds";
+import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 
 interface Env {
   ASSETS: Fetcher;
@@ -72,11 +73,19 @@ export default {
 
   // Weekly YouTube round resync (see the `triggers.crons` entry in
   // wrangler.jsonc) — keeps the admin queue current without an admin having
-  // to remember to click "Resync videos".
+  // to remember to click "Resync videos". The same weekly tick also purges
+  // expired `reuse_check_log` rows (idea #7's retention/purge policy
+  // follow-up) — an unrelated, independent job piggybacking on the one cron
+  // trigger this app has, rather than a dedicated schedule of its own.
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil(
       runWithContext(env, () => resyncYouTubeRounds(null)).catch((error) => {
         console.error("Scheduled YouTube resync failed:", error);
+      }),
+    );
+    ctx.waitUntil(
+      runWithContext(env, () => purgeOldReuseCheckLogRows()).catch((error) => {
+        console.error("Scheduled reuse-check log purge failed:", error);
       }),
     );
   },
