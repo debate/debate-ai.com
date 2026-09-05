@@ -96,6 +96,53 @@ describe("buildCoachingProgramCalendarEvents", () => {
   });
 });
 
+describe("buildCoachingProgramCalendarEvents drill reviews", () => {
+  it("returns an empty schedule when no drill reviews are supplied", () => {
+    expect(buildCoachingProgramCalendarEvents(["alice"], [], [], [])).toEqual([]);
+  });
+
+  it("emits one event per caller-supplied drill review", () => {
+    const events = buildCoachingProgramCalendarEvents(["alice"], [], [], [
+      { dayKey: "2026-09-04", label: "Review a Frontline drill for round round-1", detail: "Extend the DA." },
+    ]);
+    expect(events).toEqual([
+      {
+        dayKey: "2026-09-04",
+        kind: "drill-review",
+        label: "Review a Frontline drill for round round-1",
+        detail: "Extend the DA.",
+      },
+    ]);
+  });
+
+  it("sorts drill-review events into the overall chronological order alongside challenges and notes", () => {
+    const events = buildCoachingProgramCalendarEvents(
+      ["alice", "bob"],
+      [challenge({ startsAt: Date.UTC(2026, 8, 5), endsAt: Date.UTC(2026, 8, 10) })],
+      [note({ createdAt: Date.UTC(2026, 8, 12) })],
+      [{ dayKey: "2026-09-02", label: "Review a Collapse drill for round round-2" }],
+    );
+    expect(events.map((event) => event.dayKey)).toEqual(["2026-09-02", "2026-09-05", "2026-09-10", "2026-09-12"]);
+    expect(events[0].kind).toBe("drill-review");
+  });
+
+  it("orders a same-day drill-review event between challenge and sprint-note kinds", () => {
+    const sameDay = Date.UTC(2026, 8, 5);
+    const events = buildCoachingProgramCalendarEvents(
+      ["alice"],
+      [challenge({ startsAt: sameDay, endsAt: sameDay })],
+      [note({ createdAt: sameDay })],
+      [{ dayKey: "2026-09-05", label: "Review a drill" }],
+    );
+    expect(events.map((event) => event.kind)).toEqual([
+      "challenge-end",
+      "challenge-start",
+      "drill-review",
+      "sprint-note",
+    ]);
+  });
+});
+
 describe("groupCoachingProgramCalendarEventsByDay", () => {
   it("returns an empty list for no events", () => {
     expect(groupCoachingProgramCalendarEventsByDay([])).toEqual([]);

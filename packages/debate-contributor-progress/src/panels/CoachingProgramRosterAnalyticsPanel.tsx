@@ -33,7 +33,14 @@
  * and challenges") — a chronological list of the program's roster-scoped
  * group-challenge start/end dates, plus (once a topic is typed) that
  * topic's sprint-note dates, via `state/coachingProgramCalendar.ts`'s
- * `buildPersistedCoachingProgramCalendar`.
+ * `buildPersistedCoachingProgramCalendar`. The "drills" part comes in via
+ * the optional `drillReviewEvents` prop — a caller-resolved
+ * (`debate-practice-rounds`' `useDrillSets()` plus its
+ * `buildDrillReviewCalendarEvents`) list of scheduled drill review
+ * reminders, since this package can't import that one directly (it already
+ * depends on this one, for Progress Unlocks tiers) — see
+ * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`,
+ * the sole real caller; defaults to `[]` for any other caller (e.g. tests).
  *
  * @module panels/CoachingProgramRosterAnalyticsPanel
  */
@@ -66,6 +73,7 @@ import {
   groupCoachingProgramCalendarEventsByDay,
   type CoachingProgramCalendarDay,
   type CoachingProgramCalendarEventKind,
+  type CoachingProgramCalendarExternalEvent,
 } from "../lib/coaching-program-calendar"
 
 /** How many of the digest's most recent challenge results to render at once. */
@@ -75,7 +83,19 @@ const CALENDAR_EVENT_KIND_LABELS: Record<CoachingProgramCalendarEventKind, strin
   "challenge-start": "Challenge starts",
   "challenge-end": "Challenge ends",
   "sprint-note": "Sprint note",
+  "drill-review": "Drill review",
 }
+
+export type CoachingProgramRosterAnalyticsPanelProps = {
+  /** Caller-resolved scheduled drill review reminders to fold into the program calendar — see the file doc comment above. Defaults to none. */
+  drillReviewEvents?: CoachingProgramCalendarExternalEvent[]
+}
+
+// A stable (module-level, not re-created per render) empty-array default for
+// `drillReviewEvents` — a fresh `[]` literal as the default parameter value
+// would get a new reference every render, which would make the effect below
+// (keyed on this prop) re-fire, `setCalendarDays`, and re-render forever.
+const NO_DRILL_REVIEW_EVENTS: CoachingProgramCalendarExternalEvent[] = []
 
 /**
  * Renders the Coaching Program Roster Analytics panel: a program picker
@@ -87,7 +107,9 @@ const CALENDAR_EVENT_KIND_LABELS: Record<CoachingProgramCalendarEventKind, strin
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function CoachingProgramRosterAnalyticsPanel() {
+export function CoachingProgramRosterAnalyticsPanel({
+  drillReviewEvents = NO_DRILL_REVIEW_EVENTS,
+}: CoachingProgramRosterAnalyticsPanelProps = {}) {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [selectedProgramId, setSelectedProgramId] = useState("")
   const [analytics, setAnalytics] = useState<CoachingProgramRosterMemberAnalytics[]>([])
@@ -96,9 +118,20 @@ export function CoachingProgramRosterAnalyticsPanel() {
   const [calendarDays, setCalendarDays] = useState<CoachingProgramCalendarDay[]>([])
 
   const refreshCalendar = (programId: string, topic: string) => {
-    const events = programId ? buildPersistedCoachingProgramCalendar(programId, topic) ?? [] : []
+    const events = programId
+      ? buildPersistedCoachingProgramCalendar(programId, topic, drillReviewEvents) ?? []
+      : []
     setCalendarDays(groupCoachingProgramCalendarEventsByDay(events))
   }
+
+  // Re-derives the calendar whenever the caller-resolved drill review events
+  // change — e.g. once `CoachingProgramRosterAnalyticsWithDrills`'
+  // `useDrillSets()` finishes its initial (async) load, after this panel's
+  // own mount effect below already ran with the `[]` default.
+  useEffect(() => {
+    refreshCalendar(selectedProgramId, calendarTopic)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drillReviewEvents])
 
   const refresh = (programId: string) => {
     setPrograms(buildCoachingProgramsPanelView())
@@ -271,8 +304,8 @@ export function CoachingProgramRosterAnalyticsPanel() {
           <div className="space-y-2">
             <h2 className="text-sm font-semibold text-foreground">Program calendar</h2>
             <p className="text-sm text-muted-foreground">
-              This program's group-challenge start/end dates. Type a topic below to also include that
-              topic's sprint notes.
+              This program's group-challenge start/end dates, plus your own scheduled drill reviews.
+              Type a topic below to also include that topic's sprint notes.
             </p>
             <div className="space-y-1.5">
               <label htmlFor="roster-analytics-calendar-topic" className="text-sm font-medium text-foreground">
@@ -288,8 +321,8 @@ export function CoachingProgramRosterAnalyticsPanel() {
             </div>
             {calendarDays.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No dated events yet — no group challenges scoped to this roster, and no sprint notes
-                for the typed topic.
+                No dated events yet — no group challenges scoped to this roster, no scheduled drill
+                reviews, and no sprint notes for the typed topic.
               </p>
             ) : (
               <ul className="space-y-2">
@@ -301,7 +334,7 @@ export function CoachingProgramRosterAnalyticsPanel() {
                     <ul className="mt-1 space-y-1">
                       {day.events.map((event, index) => (
                         <li key={`${event.kind}-${index}`} className="flex flex-wrap items-start gap-2 text-sm">
-                          <Badge variant={event.kind === "sprint-note" ? "secondary" : "outline"}>
+                          <Badge variant={event.kind === "challenge-start" || event.kind === "challenge-end" ? "outline" : "secondary"}>
                             {CALENDAR_EVENT_KIND_LABELS[event.kind]}
                           </Badge>
                           <span className="text-muted-foreground">

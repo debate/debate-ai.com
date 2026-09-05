@@ -195,21 +195,31 @@ Roster Analytics section's own digest above only ever showed *completed*
 challenges, not the still-open windows a coach might want to plan around. The
 Roster Analytics section now also renders a **Program calendar** section
 below the challenge digest: a day-grouped, chronological list of every
-roster-scoped group challenge's start and end date, plus — once a topic is
-typed into the section's own topic field — that topic's sprint notes,
-dated by when they were logged.
+roster-scoped group challenge's start and end date, the signed-in coach's own
+scheduled drill review reminders, plus — once a topic is typed into the
+section's own topic field — that topic's sprint notes, dated by when they
+were logged.
 
 ```
+app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx  (apps/debate-ai.com, "use client")
+  → useDrillSets()                                            — debate-practice-rounds' hooks/useDrillSets.ts
+  → buildDrillReviewCalendarEvents(drillSets)                 — debate-practice-rounds' state/drillSets.ts
+                                                                 (one { dayKey, label, detail } per scheduled
+                                                                 drill review — dependency-free of debate-community)
+  → <CoachingProgramRosterAnalyticsPanel drillReviewEvents={...} />
+
 panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
-  → buildPersistedCoachingProgramCalendar(programId, topic)  — state/coachingProgramCalendar.ts
+  → buildPersistedCoachingProgramCalendar(programId, topic, drillReviewEvents)  — state/coachingProgramCalendar.ts
       → getCoachingProgram(programId)                        — debate-team-collaboration's state/coachingPrograms.ts
       → listGroupChallenges()                                — debate-team-collaboration's state/groupChallenges.ts
       → listSprintNotesForTopic(topic)                        — debate-team-collaboration's state/sprintNotes.ts (only when topic is non-blank)
-      → buildCoachingProgramCalendarEvents(memberIds, challenges, sprintNotes)
+      → buildCoachingProgramCalendarEvents(memberIds, challenges, sprintNotes, drillReviews)
                                                                 — lib/coaching-program-calendar.ts
                                                                   (challenges narrowed to ones whose own
                                                                   memberIds overlaps the roster, same rule
-                                                                  buildCoachingProgramChallengeDigest uses)
+                                                                  buildCoachingProgramChallengeDigest uses;
+                                                                  drillReviews merged in as-is, unfiltered by
+                                                                  roster — a drill set has no roster concept)
   → groupCoachingProgramCalendarEventsByDay(events)           — lib/coaching-program-calendar.ts
   → panel renders one heading per day, a badge per event kind
 ```
@@ -217,13 +227,31 @@ panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
 A topic sprint isn't itself dated the way a challenge window is (`startsAt`/
 `endsAt`), so the calendar's sprint-note events come from a topic the coach
 types into the section — leaving it blank still shows the program's
-challenge-window events, just with no note events. The composition lives
-alongside the existing roster analytics/digest in `debate-community` for the
-same circular-dependency reason described above, and refreshes on the same
-`storage`-event subscription — `sprintNotes` was added to
-`COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS` so a note logged
-in another tab (or from `debate-team-collaboration`'s own `TopicSprintPanel`)
-refreshes the calendar here too.
+challenge-window and drill-review events, just with no note events. The
+composition lives alongside the existing roster analytics/digest in
+`debate-community` for the same circular-dependency reason described above,
+and refreshes on the same `storage`-event subscription — `sprintNotes` was
+added to `COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS` so a
+note logged in another tab (or from `debate-team-collaboration`'s own
+`TopicSprintPanel`) refreshes the calendar here too.
+
+Per-drill scheduled review reminders (`debate-practice-rounds`'
+`state/drillSets.ts#scheduledReviewAt`) — the "drills" part the original
+follow-up named alongside sprints and challenges — are folded in via the
+panel's optional `drillReviewEvents` prop rather than read inside
+`debate-community` directly: `debate-practice-rounds` already depends on
+`debate-community` (for Progress Unlocks tiers), so importing it back here
+would be circular. Instead `CoachingProgramRosterAnalyticsWithDrills.tsx` (the
+app/page layer, which already depends on both packages) resolves the
+signed-in coach's own drill sets via `useDrillSets()` and
+`buildDrillReviewCalendarEvents`, into a dependency-free
+`{ dayKey, label, detail }` shape `debate-community`'s calendar types accept
+without knowing anything about `Drill`/`DrillSetRecord`. A drill set has no
+roster/membership concept the way a `GroupChallenge` does, so these events
+are the *viewing coach's own* scheduled reviews, not roster-wide — every
+other calendar entry (challenges, sprint notes) is roster/topic-scoped, so a
+coach viewing a program they're not personally drilling for sees no
+drill-review events, which is expected.
 
 ## Known gaps
 
@@ -231,12 +259,8 @@ refreshes the calendar here too.
   daily-quest streaks — it doesn't yet fold in drill-completion rate or
   practice-round counts, both already shown per-member on the program's own
   board section above. A future run could widen the table to include them.
-- The program calendar doesn't include per-drill scheduled review reminders
-  (`debate-practice-rounds`' `state/drillSets.ts#scheduledReviewAt`) even
-  though the original follow-up named "drills" alongside sprints and
-  challenges: `debate-practice-rounds` already depends on `debate-community`
-  (for Progress Unlocks tiers), so composing drill dates in the other
-  direction from here would be circular. Restoring that half would need
-  either moving the calendar composition to a package both sides can depend
-  on, or having the drill review dates supplied by the page/app layer (which
-  already depends on both) rather than computed inside this package.
+- The program calendar's drill-review events are scoped to the viewing
+  coach's own drill sets, not the roster's — there's no per-member drill data
+  a coach can see for teammates today. Widening this to a real roster-wide
+  view would need drill sets to carry an owning contributor id and a way to
+  look them up across the roster, neither of which exists yet.
