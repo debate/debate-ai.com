@@ -733,6 +733,8 @@ export function PracticeRoundSimulatorPanel() {
                     <div className="rounded-md border border-border px-3 py-2 text-sm">
                       <p className="mb-1 font-medium text-foreground">
                         Scoring rubric — {record.setup.judgeParadigm.name}
+                        {judgeDecisionRubric.length > 0 &&
+                          ` (${judgeDecisionRubric.filter((row) => row.addressed).length} of ${judgeDecisionRubric.length} priorities addressed)`}
                       </p>
                       {judgeDecisionRubric.length === 0 ? (
                         <p className="text-muted-foreground">
@@ -741,11 +743,16 @@ export function PracticeRoundSimulatorPanel() {
                       ) : (
                         <ul className="space-y-0.5">
                           {judgeDecisionRubric.map((row) => (
-                            <li key={row.criterion} className="flex items-start gap-1.5">
-                              <span aria-hidden="true">{row.addressed ? "✅" : "⬜"}</span>
-                              <span className={row.addressed ? "text-foreground" : "text-muted-foreground"}>
-                                {row.criterion}
+                            <li key={row.criterion} className="flex flex-col">
+                              <span className="flex items-start gap-1.5">
+                                <span aria-hidden="true">{row.addressed ? "✅" : "⬜"}</span>
+                                <span className={row.addressed ? "text-foreground" : "text-muted-foreground"}>
+                                  {row.criterion}
+                                </span>
                               </span>
+                              {row.matchedIssue && (
+                                <span className="pl-6 text-xs text-muted-foreground">{row.matchedIssue}</span>
+                              )}
                             </li>
                           ))}
                         </ul>

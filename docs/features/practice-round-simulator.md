@@ -184,7 +184,10 @@ Next item. Once a round has a `judgeDecision`, a "Scoring rubric — `<paradigm
 name>`" card renders next to it, listing that round's own judge paradigm's
 `votingPriorities` each with a ✅ (addressed) or ⬜ (not addressed) mark —
 so a debater can see which of the paradigm's own priorities the decision
-actually engaged with, not just the winner and a prose rationale.
+actually engaged with, not just the winner and a prose rationale. The card's
+heading also counts how many of the priorities came out addressed ("N of M
+priorities addressed"), and an addressed row shows the `keyVotingIssues`
+entry that matched it underneath the criterion.
 
 `debate-round`'s new `round/judge-decision-ai.ts#buildJudgeDecisionRubric`
 builds the checklist: for each voting-priority string, it extracts that
