@@ -209,6 +209,20 @@ on this idea.
 > "Outline export" below) is kept for history only — the neighbour-preview/
 > bulk-section and multi-row-selection features it describes are AG-Grid
 > row-selection-shaped and aren't restored (see "Known gaps").
+>
+> **Update, a later run:** the grid-side half of this — a tagging affordance
+> inside the new ebb flow editor rather than the Outline panel — turns out to
+> be a bigger lift than "add a tagging UI to `HotGrid`": `debate-flow-ebb` is
+> a fully separate, CRDT-replicated spreadsheet editor
+> (`lib/collab/types.ts`'s `CollabDoc`/`CollabSheet`/`CollabCell`,
+> rank-ordered cells across columns), with no notion of `debate-round`'s own
+> `Flow`/`Box` tree at all: nothing in `debate-flow-ebb` imports or writes
+> `Box`, and no conversion between the two data models exists anywhere in
+> the tree (confirmed by grepping both packages). So there is no bridge
+> between the two flow editors to hang a tagging UI on, and building one is a
+> real design decision a future run should scope deliberately. See this
+> repo's `TODO.md` "📊 Topic Coverage Dashboard" Completed entry for the
+> investigation that found this.
 
 The three filters above only have something to filter on once a row carries
 tags, and until this slice nothing in the app could set them. Right-clicking
