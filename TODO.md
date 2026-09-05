@@ -60,6 +60,7 @@ _No task currently in progress._
   tests added or broken), `bunx turbo run typecheck --filter=debate-editor`
   (green), and `bun run build:web` (the full production build,
   `/reason-editor` included) all pass.
+  PR: [#579](https://github.com/debate/debate-ai.com/pull/579).
 - **📊 AI Response-Outcome Charts — compare two or more "what if" scenarios
   side by side.** Idea #4's last open follow-up: the existing "what if"
   picker (`response-outcome.ts#applyHypotheticalAdjustments`) only ever
