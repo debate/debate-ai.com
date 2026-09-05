@@ -6,6 +6,35 @@
 _No task currently in progress._
 
 ### Completed
+- **📊 AI Response-Outcome Charts — compare two or more "what if" scenarios
+  side by side.** Idea #4's last open follow-up: the existing "what if"
+  picker (`response-outcome.ts#applyHypotheticalAdjustments`) only ever
+  held one hypothetical per round — picking a different Extend/Answer/
+  Concede choice for a row overwrote the prior pick, so there was no way
+  to explore, say, "what if we answer the drop" against "what if we
+  concede the disad" at the same time. A new
+  `buildHypotheticalScenarioComparison(report, sideKeys, scenarios,
+  options?)` in `debate-round`'s `flow/response-outcome.ts` takes two or
+  more named scenarios (each a full `HypotheticalAdjustment[]`, the same
+  shape the picker already produces) and returns each scenario's own
+  per-side exposure rollup plus a shared "compared arguments" table — the
+  baseline report's top-N arguments (anchored to the *unadjusted* ranking,
+  not each scenario's own, so the same arguments line up as rows across
+  every scenario's column instead of potentially comparing different ones)
+  scored under every scenario. `debate-practice-drills`'
+  `flow/response-outcome-report.ts` gained a matching
+  `buildHypotheticalScenarioComparisonText`/
+  `hypotheticalScenarioComparisonFilename` plain-text export, and
+  `VulnerabilityChartsPanel.tsx` gained a "Compare 'What If' Scenarios"
+  section: name and save the row's currently-active picks as a scenario,
+  see every saved scenario for the round with a "Remove" action, and once
+  two or more are saved, a side-by-side comparison (per-scenario exposure
+  summary plus the shared score table) with its own "Download comparison"
+  action. Saved scenarios are scratch component state only, like the
+  single-hypothetical picker itself — never persisted, and cleared
+  alongside the round's report on "Clear". See
+  `docs/features/response-outcome-charts.md`'s "Comparing 'what if'
+  scenarios side by side" section.
 - **🗂️ Argument Tree Outline — restored argument tagging, correcting a
   wrong assumption in the prior run's regression note.** Idea #10's
   ("Outline Filters and Argument Tree View") most-impactful open item per
@@ -16480,7 +16509,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 3. **Online Debate Versus AI** (`/versus-ai`) — every previously-tracked follow-up is now done: speech submission has a "🎤 Record" microphone-dictation button (mirroring every other panel's dictation UI); every delivered AI speech, not just the most recent one, has its own independent "Regenerate" button (`canRegenerateAiSpeechAt`/`replaceAiSpeechAt` in `state/aiVersusRounds.ts`); and a completed round can now be downloaded as a plain-text transcript — a "Download transcript" button on the active round view and on any complete round in the persisted-round list, backed by the pure `round/ai-versus-transcript.ts#buildAiVersusTranscriptText`. See `docs/features/ai-versus-rounds.md`'s "Download transcript" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. an export format other than plain text, such as a `.docx` Speech Document, or a side-by-side transcript diff between two rounds) if one becomes worth doing.
 
-4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. The chart export/share follow-up is also now done: a "Download report" button next to each round's "Clear" action exports that round's side summary, most-exposed-arguments chart, and latest AI counsel-panel assessment as a plain-text file (`flow/response-outcome-report.ts`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Report download" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a side-by-side view comparing two or more "what if" hypotheticals at once instead of one at a time, or a `.docx`/Speech Document export format alongside the plain-text one) if one becomes worth doing.
+4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. The chart export/share follow-up is also now done: a "Download report" button next to each round's "Clear" action exports that round's side summary, most-exposed-arguments chart, and latest AI counsel-panel assessment as a plain-text file (`flow/response-outcome-report.ts`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Report download" section. The side-by-side "what if" scenario comparison follow-up is also now done: a "Compare 'What If' Scenarios" section lets a user name and save the row's currently-active Extend/Answer/Concede picks as a scenario, and once two or more are saved, renders each scenario's own exposure summary alongside a shared score table (`flow/response-outcome.ts#buildHypotheticalScenarioComparison`), plus a "Download comparison" action (`flow/response-outcome-report.ts#buildHypotheticalScenarioComparisonText`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Comparing 'what if' scenarios side by side" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a `.docx`/Speech Document export format alongside the plain-text ones) if one becomes worth doing.
 
 5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
 
