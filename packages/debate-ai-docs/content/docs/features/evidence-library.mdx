@@ -1,0 +1,48 @@
+---
+title: "Shared Evidence Library"
+---
+
+# Shared Evidence Library
+
+A submission form plus a free-text/kind search panel over the team-wide
+evidence repository — cut cards and reusable analytic blocks.
+
+- **Route:** `/cards/library`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A submission form (kind, topic, case area, argument block, citation, tags,
+body text with a live word count) plus a search box, kind filter, and
+topic/case-area/tags filters over every persisted `EvidenceLibraryEntry`.
+Each result has Edit and Delete actions; editing records a scored
+`CardRevisionRecord` for the Revision Incentives leaderboard. A "Check this
+page" box checks whether a pasted URL has already been cut, both locally
+and against a shared, server-backed reuse index consumed by a browser
+extension (`apps/debate-web-ext`).
+
+The Argument Library browser (`/cards/argument-library`) composes this
+repository with tagged Contributions Feed submissions into topic/case-area
+folders and cross-cutting tag collections, with rename/merge and bulk
+tag-editing tools.
+
+## Real search index
+
+A real inverted-index, TF-IDF-ranked search (`lib/evidence-search-index.ts`)
+replaced the original keyword-overlap scan, cached across calls and updated
+incrementally rather than rebuilt on every write.
+
+## Data flow
+
+```
+panels/EvidenceLibraryPanel.tsx
+  → saveEvidenceLibraryEntry() / saveEvidenceLibraryEntryRevision()
+  → searchPersistedEvidenceLibraryWithIndex(query) — state/evidenceLibraryEntries.ts
+  → checkPersistedPageForExistingCards(url)
+```
+
+## Known gaps
+
+Tag identity is still exact-string, though autocomplete matching is
+case-insensitive, typed tags are normalized to an existing casing, and the
+library browser surfaces/merges any casing variants that slip through.

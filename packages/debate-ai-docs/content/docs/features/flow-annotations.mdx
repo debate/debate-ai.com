@@ -1,0 +1,36 @@
+---
+title: "Flow-in-Speech Flow Annotations"
+---
+
+# Flow-in-Speech Flow Annotations
+
+Lets a viewer drop a timestamped note while watching a streamed or recorded
+round in the `debate-videos` player, tie it to a specific flow argument,
+and jump straight back to it later.
+
+- **Route:** `/annotations`
+- **Package:** `debate-round`
+
+## What it shows
+
+A form to drop a new `FlowAnnotation` (flow ID, speech, box path, timestamp
+defaulting to the player's live position, optional note, speaker, and tag).
+Every persisted annotation renders newest-first with **Jump to** (switches
+videos if needed) and **Clear** actions. Search/filter by speech, speaker,
+or tag, plus a per-flow "Download annotations" export.
+
+Every cell in the live `FlowSpreadsheet` grid whose box has annotations
+shows a clock badge; clicking it jumps to the earliest one.
+
+## Data flow
+
+```
+state/flowAnnotations.ts (localStorage: flowAnnotations)
+  → buildFlowAnnotationsPanelView()
+  → panels/FlowAnnotationsPanel.tsx
+  → apps/debate-ai.com/app/annotations/page.tsx
+```
+
+## Known gaps
+
+No collaborative/live sync — annotations are local `localStorage` only.

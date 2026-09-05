@@ -1,0 +1,40 @@
+---
+title: "Speech Transcript Summaries"
+---
+
+# Speech Transcript Summaries
+
+Shows every persisted flow summary, one card per round — a concise
+per-argument summary of that round's flow, plus suggested cross-examination
+questions and extension ideas for anything still unanswered.
+
+- **Route:** `/summaries`
+- **Package:** `debate-round`
+
+## What it shows
+
+Each persisted `FlowSummaryRecord` renders as its own card with the
+round's per-argument summary and, for unanswered arguments, ranked
+cross-exam questions and extension ideas (strongest opportunity first). A
+"Generate from raw speech text" form lets AI derive a round's summary
+from one or more pasted transcripts, with microphone dictation support and
+bulk multi-speech upload.
+
+## Data flow
+
+```
+state/flowSummaries.ts (localStorage: flowSummaries)
+  → buildFlowSummariesPanelView()
+  → panels/FlowSummariesPanel.tsx
+  → apps/debate-ai.com/app/summaries/page.tsx
+
+Generating from raw text:
+  → extractTranscriptsBulk(...) — round/bulk-transcript-extraction.ts
+      → requestTranscriptExtraction() — round/transcript-extraction-client.ts
+          → POST /api/reason-ai
+```
+
+## Known gaps
+
+Microphone dictation transcribes live speech only — no already-recorded
+audio/video file upload.
