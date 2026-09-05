@@ -18,6 +18,7 @@ import { cn } from "../../ui/lib/utils";
 import { IconTrophy, IconLectures, IconBook, IconLeaderboard } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
+import { isImageIconSource } from "./icon-kind";
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
@@ -182,9 +183,12 @@ interface TreeItemProps {
 function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggleExpand, muted, children }: TreeItemProps) {
   const expandable = children != null && onToggleExpand != null;
   const Heading = level === 2 ? "h2" : "span";
-  // Lucide icons come through as components; the icon set in `ui/icons` as
-  // image sources for `next/image`.
-  const LucideGlyph = typeof icon === "function" ? (icon as LucideIcon) : null;
+  // The icon set in `ui/icons` arrives as image sources for `next/image`;
+  // `sidebar-tool-sections` passes Lucide components. See `isImageIconSource`
+  // for why the two are told apart by the image shape rather than by
+  // `typeof icon === "function"`.
+  const isImageSource = isImageIconSource(icon);
+  const IconGlyph = icon && !isImageSource ? (icon as LucideIcon) : null;
 
   return (
     <div>
@@ -201,9 +205,9 @@ function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggl
             level === 3 ? "pl-7" : "pl-2",
           )}
         >
-          {LucideGlyph ? (
-            <LucideGlyph className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-          ) : icon ? (
+          {IconGlyph ? (
+            <IconGlyph className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+          ) : isImageSource ? (
             <Image src={icon as string | StaticImageData} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />
           ) : null}
           <Heading
