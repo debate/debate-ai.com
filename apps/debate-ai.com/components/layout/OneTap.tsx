@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { createAppAuthClient } from "@/lib/auth/client";
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders";
 import { useSession } from "@/lib/hooks/useSession";
+import { debugLog } from "@/lib/debug-log";
 
 /**
  * Skipped-prompt reasons worth another try on the next page.
@@ -78,7 +79,7 @@ export function OneTap() {
     [googleClientId],
   );
 
-  console.log("[one-tap] state:", {
+  debugLog("[one-tap] state:", {
     pathname,
     isLoading,
     isAuthenticated,
@@ -90,7 +91,7 @@ export function OneTap() {
 
   useEffect(() => {
     if (isLoading || isAuthenticated || !googleReady) {
-      console.log("[one-tap] effect skipped:", {
+      debugLog("[one-tap] effect skipped:", {
         isLoading,
         isAuthenticated,
         googleReady,
@@ -106,7 +107,7 @@ export function OneTap() {
       inFlight.current ||
       promptedPath.current === pathname
     ) {
-      console.log(
+      debugLog(
         "[one-tap] effect skipped (settled/in-flight/already prompted):",
         {
           settled: settled.current,
@@ -120,7 +121,7 @@ export function OneTap() {
     promptedPath.current = pathname;
     inFlight.current = true;
 
-    console.log("[one-tap] calling authClient.oneTap for", pathname);
+    debugLog("[one-tap] calling authClient.oneTap for", pathname);
 
     oneTapAuthClient
       .oneTap({
@@ -130,7 +131,7 @@ export function OneTap() {
           // throttles callers that re-prompt after a dismissal, so a settled
           // outcome ends the prompting for this page load.
           const reason = promptReason(notification);
-          console.log("[one-tap] prompt notification:", {
+          debugLog("[one-tap] prompt notification:", {
             reason,
             notification,
           });
@@ -139,7 +140,7 @@ export function OneTap() {
         },
       })
       .then(() => {
-        console.log(
+        debugLog(
           "[one-tap] oneTap() call resolved (prompt shown or handled)",
         );
       })

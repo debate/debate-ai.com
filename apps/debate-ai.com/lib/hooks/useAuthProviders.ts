@@ -12,6 +12,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { debugLog } from "@/lib/debug-log";
 
 export interface AuthProviders {
   /** Provider ids with usable credentials, e.g. `["google", "discord"]`. */
@@ -39,7 +40,7 @@ export function fetchAuthProviders(): Promise<AuthProviders> {
           googleClientId:
             typeof data?.googleClientId === "string" ? data.googleClientId : "",
         };
-        console.log("[auth] /api/auth/providers resolved:", {
+        debugLog("[auth] /api/auth/providers resolved:", {
           providers: resolved.providers,
           hasGoogleClientId: Boolean(resolved.googleClientId),
         });

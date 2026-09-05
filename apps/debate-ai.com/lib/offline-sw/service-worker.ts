@@ -73,6 +73,32 @@ function isDocumentRequest(request: Request, url: URL): boolean {
   return false;
 }
 
+/**
+ * Speculative fetches the browser makes on its own behalf: `<link
+ * rel="prefetch">` (which vinext's router injects for in-viewport links when
+ * the RSC navigator is unavailable) and Speculation Rules prerenders.
+ *
+ * These must never be answered from this worker. The pass-through branch
+ * below turns a failed `fetch` into a synthetic `502 Network Error`
+ * response, and for a prefetch the browser *stores* that response and hands
+ * it to the real navigation that follows — so one dropped prefetch of
+ * `/videos` (an aborted request, an extension blocking it, a flaky moment)
+ * became a hard 502 on the page the user then clicked through to, which is
+ * exactly the "Pass-through fetch failed … 502 (Network Error)" pair seen in
+ * the console. Declining to call `respondWith` leaves prefetches to the
+ * browser, where a failure is silently discarded the way it is with no
+ * service worker at all.
+ */
+function isSpeculativeRequest(request: Request): boolean {
+  // `Sec-Purpose: prefetch` (current) / `Purpose: prefetch` (legacy) are set
+  // by the browser and are not forgeable by page script.
+  if (request.headers.get("sec-purpose")?.includes("prefetch")) return true;
+  if (request.headers.get("purpose") === "prefetch") return true;
+  // `<link rel="prefetch" as="document">` in browsers that send neither
+  // header: a document request that is not a navigation.
+  return request.destination === "document" && request.mode !== "navigate";
+}
+
 function isNavigationRequest(request: Request): boolean {
   return request.mode === "navigate" ||
          (request.method === 'GET' && request.headers.get("accept")?.includes("text/html") === true);
@@ -175,6 +201,13 @@ sw.addEventListener("fetch", (event) => {
   // failure there is just that page's problem, not a service-worker
   // "FetchEvent resulted in a network error response" failure.
   if (event.request.method !== "GET" || url.origin !== sw.location.origin) {
+    return;
+  }
+
+  // Prefetches and prerenders stay with the browser — see
+  // `isSpeculativeRequest`. Answering them risks caching a synthetic error
+  // response that the following real navigation then reuses.
+  if (isSpeculativeRequest(event.request)) {
     return;
   }
 

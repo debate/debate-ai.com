@@ -11,6 +11,7 @@ import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
 import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "../../ui/icons";
+import { isImageIcon } from "./tree-item-icon";
 
 interface QuickLink {
   id: string;
@@ -128,8 +129,8 @@ function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; sh
       >
         <div className="flex items-center justify-center h-14 w-full">
           <div className={cn("rounded-md p-1.5 flex items-center justify-center transition-transform group-hover:scale-110", link.iconBg)}>
-            {link.logo ? (
-              <Image src={link.logo as string} alt={link.title} width={48} height={48} className="h-10 w-10 object-contain" unoptimized />
+            {isImageIcon(link.logo) ? (
+              <Image src={link.logo} alt={link.title} width={48} height={48} className="h-10 w-10 object-contain" unoptimized />
             ) : (
               link.icon
             )}
@@ -158,8 +159,8 @@ function ListRow({ link, count, isActive }: { link: QuickLink; count?: number; i
     >
       <GlowingEffect spread={30} glow proximity={40} inactiveZone={0.01} borderWidth={1.5} />
       <div className={cn("shrink-0 rounded-md p-1 flex items-center justify-center", link.iconBg)}>
-        {link.logo ? (
-          <Image src={link.logo as string} alt={link.title} width={20} height={20} className="h-5 w-5 object-contain" unoptimized />
+        {isImageIcon(link.logo) ? (
+          <Image src={link.logo} alt={link.title} width={20} height={20} className="h-5 w-5 object-contain" unoptimized />
         ) : (
           link.icon
         )}
