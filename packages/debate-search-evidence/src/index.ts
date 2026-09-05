@@ -14,6 +14,8 @@ export {
 export {
   buildReuseCheckDashboard,
   buildReuseCheckDashboardSummaryText,
+  getReuseCheckLogPurgeCutoff,
+  REUSE_CHECK_LOG_RETENTION_DAYS,
   type FlaggedPageReuseSummary,
   type ReuseCheckLogRecord,
   type ReuseCheckSource,
