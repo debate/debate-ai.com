@@ -4,6 +4,7 @@ import {
   buildTopicCoverageReport,
   buildTopicCoverageSummaryText,
   computeArgumentCoverage,
+  computeCoverageCounts,
   getUnderCoveredArguments,
   groupCardsByArgument,
   type CoverageCardSummary,
@@ -140,5 +141,27 @@ describe("buildTopicCoverageSummaryText", () => {
     expect(buildTopicCoverageSummaryText(report)).toBe(
       "1/3 arguments covered, 0 thin, 2 missing (plus 1 untracked block with submitted cards)",
     );
+  });
+});
+
+describe("computeCoverageCounts", () => {
+  it("tallies missing/thin/covered/total from a mixed report", () => {
+    const report = buildTopicCoverageReport(trackedArguments, [...warmingCards, ...statesCards]);
+    expect(computeCoverageCounts(report)).toEqual({ missing: 1, thin: 1, covered: 1, total: 3 });
+  });
+
+  it("ignores untracked argument blocks", () => {
+    const report = buildTopicCoverageReport(trackedArguments, [...warmingCards, ...surpriseCards]);
+    expect(computeCoverageCounts(report)).toEqual({ missing: 2, thin: 0, covered: 1, total: 3 });
+  });
+
+  it("returns all-zero counts for an empty checklist", () => {
+    const report = buildTopicCoverageReport([], []);
+    expect(computeCoverageCounts(report)).toEqual({ missing: 0, thin: 0, covered: 0, total: 0 });
+  });
+
+  it("counts every tracked argument as covered once each clears the thresholds", () => {
+    const report = buildTopicCoverageReport([{ argBlock: "Warming DA" }], warmingCards);
+    expect(computeCoverageCounts(report)).toEqual({ missing: 0, thin: 0, covered: 1, total: 1 });
   });
 });

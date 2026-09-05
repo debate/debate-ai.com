@@ -153,13 +153,32 @@ export function getUnderCoveredArguments(report: TopicCoverageReport): ArgumentC
     );
 }
 
+/** Tracked-argument counts by coverage level, plus the total tracked count — one point in a coverage-over-time trend. */
+export interface CoverageCounts {
+  missing: number;
+  thin: number;
+  covered: number;
+  total: number;
+}
+
+/**
+ * Tallies `report.tracked` by coverage level — the same counts
+ * {@link buildTopicCoverageSummaryText} renders as a sentence, factored out
+ * so a caller (the coverage-trend snapshot store) can persist them as
+ * structured data instead of parsing that sentence back apart.
+ */
+export function computeCoverageCounts(report: TopicCoverageReport): CoverageCounts {
+  const missing = report.tracked.filter((argument) => argument.level === "missing").length;
+  const thin = report.tracked.filter((argument) => argument.level === "thin").length;
+  const covered = report.tracked.filter((argument) => argument.level === "covered").length;
+  return { missing, thin, covered, total: report.tracked.length };
+}
+
 /** Renders a short summary line for a topic-coverage dashboard header. */
 export function buildTopicCoverageSummaryText(report: TopicCoverageReport): string {
-  const missingCount = report.tracked.filter((argument) => argument.level === "missing").length;
-  const thinCount = report.tracked.filter((argument) => argument.level === "thin").length;
-  const coveredCount = report.tracked.filter((argument) => argument.level === "covered").length;
+  const { missing: missingCount, thin: thinCount, covered: coveredCount, total } = computeCoverageCounts(report);
 
-  const summary = `${coveredCount}/${report.tracked.length} arguments covered, ${thinCount} thin, ${missingCount} missing`;
+  const summary = `${coveredCount}/${total} arguments covered, ${thinCount} thin, ${missingCount} missing`;
   if (report.untracked.length === 0) return summary;
 
   return `${summary} (plus ${report.untracked.length} untracked block${report.untracked.length === 1 ? "" : "s"} with submitted cards)`;
