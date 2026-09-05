@@ -106,6 +106,10 @@ import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildPracticeRoundJudgeDecisionInput } from "../round/practice-round-judge-decision-wiring"
+import {
+  buildJudgeDecisionRubric,
+  countAddressedRubricRows,
+} from "debate-round/src/round/judge-decision-rubric"
 import { buildPracticeRoundSetup } from "debate-round/src/round/practice-round-simulator"
 import { getAiVersusRound, saveAiVersusRound } from "debate-round/src/state/aiVersusRounds"
 import {
@@ -718,6 +722,36 @@ export function PracticeRoundSimulatorPanel() {
                       <p className="mt-1 text-muted-foreground">{record.judgeDecision.rationale}</p>
                     </div>
                   )}
+                  {record.judgeDecision &&
+                    (() => {
+                      const rubricRows = buildJudgeDecisionRubric(
+                        record.setup.judgeParadigm,
+                        record.judgeDecision,
+                      )
+                      return (
+                        <div className="rounded-md border border-border px-3 py-2 text-sm">
+                          <p className="mb-1 font-medium text-foreground">
+                            Scoring rubric ({countAddressedRubricRows(rubricRows)} of{" "}
+                            {rubricRows.length} priorities addressed) —{" "}
+                            {record.setup.judgeParadigm.name}
+                          </p>
+                          <ul className="space-y-1">
+                            {rubricRows.map((row) => (
+                              <li key={row.criterion} className="flex flex-col">
+                                <span className="text-foreground">
+                                  {row.addressed ? "✅" : "—"} {row.criterion}
+                                </span>
+                                {row.matchedIssue && (
+                                  <span className="pl-5 text-xs text-muted-foreground">
+                                    {row.matchedIssue}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )
+                    })()}
                 </div>
 
                 {actionError && <p className="text-sm text-destructive">{actionError}</p>}

@@ -177,9 +177,27 @@ sides, chronological sorting, win/loss/pending tallying and win-rate
 calculation, feedback-issue-count carry-through, and the rendered text's
 summary and per-attempt lines).
 
+A further slice added the "scoring rubric shown alongside the AI judge
+decision" Next item. The AI judge decision itself only ever reported a
+winner, a flat `keyVotingIssues` list, and a prose `rationale` — nothing
+tied those issues back to the selected `JudgeParadigm`'s own ordered
+`votingPriorities`. The new, pure `round/judge-decision-rubric.ts#buildJudgeDecisionRubric`
+closes that gap without a new AI call: for every criterion in the round's
+saved `setup.judgeParadigm.votingPriorities` (in the paradigm's own order),
+it finds whichever reported `keyVotingIssues` entry shares the most
+significant words (a deterministic, local keyword overlap — a tie keeps the
+earlier-listed issue), marking a criterion unaddressed when no issue
+overlaps it at all. `PracticeRoundSimulatorPanel` renders this as a
+"Scoring rubric (N of M priorities addressed) — `<paradigm name>`" section
+right below the existing decision card, each criterion showing a ✅/— marker
+and, when addressed, the matched issue underneath it. Vitest-covered:
+`packages/debate-round/test/judge-decision-rubric.test.ts` (row order and
+count, best-overlap matching, an unaddressed criterion, tie-breaking toward
+the earlier issue, an empty issue list, and that short/common words can't
+drive a false match on their own).
+
 ## Known gaps
 
 No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
-in TODO.md's Research Crowdsourcing Organizer Features list still has two
-open Next items beyond this one: a round replay/playback view, and a scoring
-rubric shown alongside the AI judge decision.
+in TODO.md's Research Crowdsourcing Organizer Features list still has one
+open Next item beyond this one: a round replay/playback view.

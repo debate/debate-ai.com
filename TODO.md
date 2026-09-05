@@ -6,6 +6,70 @@
 _No task currently in progress._
 
 ### Completed
+- **🧪 Practice Round Simulator — a scoring rubric shown alongside the AI
+  judge decision (the "🧪 Practice Round Simulator" bullet's remaining
+  scoring-rubric Next item under Research Crowdsourcing Organizer
+  Features).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead. This run also confirmed the other standing-prompt-adjacent
+  candidate — restoring a Handsontable-native argument-tagging affordance
+  for idea #10/#15/#16's "Known regression" (`FlowSpreadsheet` deleted by
+  PR #498) — does not have a small first slice available: `packages/debate-flow`
+  (published as `debate-flow-ebb`, the Handsontable `HotGrid.tsx` grid
+  embedded in the round page's pinned "ebb Flow" tab) is a wholly separate
+  flow-document tool with its own file format, unrelated to `debate-round`'s
+  own `Flow`/`Box` scouting type that `/outline`, `argument-tree.ts`, flow
+  annotations, prep notes, and shared-flow-sync all read. The round's own
+  `Flow`/`Box` data (the type `argumentType`/`authorId`/`evidenceStatus`
+  actually live on) is edited today through `FlowMainContent.tsx`'s Lexical
+  rich-text speech editors, not a row/grid surface at all — the row-oriented
+  editing surface that kind of per-row tag would attach to no longer exists
+  in the round page, so restoring it is a genuine editor-surface design
+  question (a new grid or a Lexical-native per-paragraph tagging affordance),
+  not a mechanical port of the deleted popover. Left open for a future run
+  that's ready to take on that design decision.
+  This slice instead closed the "🧪 Practice Round Simulator" bullet's other
+  open Next item. The AI judge decision (`round/judge-decision-ai.ts`) only
+  ever reported a winner, a flat `keyVotingIssues` list, and a prose
+  `rationale` — nothing tied those issues back to the selected
+  `JudgeParadigm`'s own ordered `votingPriorities` (`judge-paradigms.ts`),
+  so a debater saw prose but not which of the judge's stated priorities
+  actually drove the vote. The new, pure `debate-round`'s
+  `round/judge-decision-rubric.ts#buildJudgeDecisionRubric` closes that gap
+  without any new AI call: for every criterion in the round's saved
+  `setup.judgeParadigm.votingPriorities`, in that paradigm's own order, it
+  finds whichever reported `keyVotingIssues` entry shares the most
+  significant (≥4-letter, non-stopword) words with it — a deterministic,
+  local keyword-overlap match, ties kept toward the earlier-listed issue —
+  leaving a criterion unaddressed when no issue overlaps it at all.
+  `packages/debate-practice-drills`' `PracticeRoundSimulatorPanel` renders
+  this as a new "Scoring rubric (N of M priorities addressed) — `<paradigm
+  name>`" section directly below the existing AI judge decision card, each
+  criterion shown with a ✅/— marker and, when addressed, the matched issue
+  text underneath it. See `docs/features/practice-round-simulator.md`'s new
+  section. 8 new Vitest cases in
+  `packages/debate-round/test/judge-decision-rubric.test.ts` (row order
+  matching the paradigm's own priority order, best-overlap matching across
+  two criteria/two issues, an unaddressed criterion, tie-breaking toward the
+  earlier-listed issue, an empty issue list leaving every criterion
+  unaddressed, short/common words never driving a false match on their own,
+  and `countAddressedRubricRows`'s counting). Ran the full verification
+  gate: `bun run test` (4506 passing, up from 4498),
+  `bunx turbo run typecheck --filter=debate-practice-rounds --filter=debate-round`
+  (both, plus every package they depend on, green), and `bun run build:web`
+  (the full production build) all pass. This repo has no configured `lint`
+  script (checked `package.json` and every workspace package.json — none
+  define one, and `turbo.json` has no `lint` task), so no lint step was run.
+  The "🧪 Practice Round Simulator" bullet's one remaining Next item (a round
+  replay/playback view) stays open for a future run.
+
 - **🎞️ Flow-in-Speech Flow Annotations — density scrubber, plus a doc/tracker
   drift audit that found and corrected four stale docs describing deleted
   `FlowSpreadsheet` code (idea #15's "A density scrubber on the video
@@ -16559,7 +16623,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`; the `FlowSpreadsheet` grid's own `PrepNoteBadge` this idea used to also mention was deleted by PR #498 on 2026-09-03, with no replacement in the new flow editor — see the Completed entry above and `docs/features/prep-notes.md`'s "⚠️ Known regression" note) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
-* 🧪 **Practice Round Simulator** (`/practice-round`) — the comparison-across-a-debater's-past-attempts follow-up is done: a "Compare your past attempts" section renders a chronological win/loss trend across every persisted round that carries a `createdAt` (stamped on a round's first save), each attempt's outcome derived by comparing its saved judge decision against the side the user actually argued, plus its judge paradigm, opponent, and feedback issue count — with a "Download comparison" action (`state/practiceRounds.ts#buildPracticeRoundAttemptsComparison`/`buildPracticeRoundAttemptsComparisonText`) — see the Completed entry above and `docs/features/practice-round-simulator.md`'s new section. Next: a round replay/playback view; a scoring rubric shown alongside the AI judge decision.
+* 🧪 **Practice Round Simulator** (`/practice-round`) — the comparison-across-a-debater's-past-attempts follow-up is done: a "Compare your past attempts" section renders a chronological win/loss trend across every persisted round that carries a `createdAt` (stamped on a round's first save), each attempt's outcome derived by comparing its saved judge decision against the side the user actually argued, plus its judge paradigm, opponent, and feedback issue count — with a "Download comparison" action (`state/practiceRounds.ts#buildPracticeRoundAttemptsComparison`/`buildPracticeRoundAttemptsComparisonText`) — see the Completed entry above and `docs/features/practice-round-simulator.md`'s new section. The scoring-rubric follow-up is also now done: a "Scoring rubric" section renders below the AI judge decision, matching the round's judge paradigm's own ordered `votingPriorities` against the decision's reported `keyVotingIssues` via the new, pure `debate-round`'s `round/judge-decision-rubric.ts#buildJudgeDecisionRubric` (no new AI call — a deterministic local keyword-overlap match), each criterion shown with a ✅/— marker and its matched issue when addressed — see the Completed entry above and `docs/features/practice-round-simulator.md`'s new section. Next: a round replay/playback view.
 * 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. The side-by-side-case-option-comparison-table follow-up is also now done: once a recommendation has two or more ranked case options, a "Case comparison" table renders below it — one row per opponent-run argument tag (most frequent first), one column per case, cells showing the opponent's recorded frequency for that tag when the case runs it (`round/scout-to-strategy.ts#buildCaseComparisonTable`, pivoting a new `tagOverlaps` breakdown field on `RankedCaseOption`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Side-by-side case comparison table" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
