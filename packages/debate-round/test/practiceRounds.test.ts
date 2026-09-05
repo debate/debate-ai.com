@@ -2,11 +2,14 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { saveAiVersusRound, type AiVersusRoundRecord } from "../src/state/aiVersusRounds";
 import {
   buildAndSavePracticeRoundFeedback,
+  buildPracticeRoundAttemptsComparison,
+  buildPracticeRoundAttemptsComparisonText,
   buildPracticeRoundsPanelView,
   deletePracticeRound,
   getPracticeRound,
   getPracticeRoundSubmittedSpeeches,
   listPracticeRounds,
+  practiceRoundAttemptsComparisonFilename,
   savePracticeRound,
   type PracticeRoundRecord,
 } from "../src/state/practiceRounds";
@@ -82,14 +85,14 @@ describe("listPracticeRounds", () => {
   it("lists every saved practice round", () => {
     savePracticeRound(ROUND_A);
     savePracticeRound(ROUND_B);
-    expect(listPracticeRounds()).toEqual([ROUND_A, ROUND_B]);
+    expect(listPracticeRounds()).toMatchObject([ROUND_A, ROUND_B]);
   });
 });
 
 describe("getPracticeRound", () => {
   it("finds a saved practice round by roundId", () => {
     savePracticeRound(ROUND_A);
-    expect(getPracticeRound("round-1")).toEqual(ROUND_A);
+    expect(getPracticeRound("round-1")).toMatchObject(ROUND_A);
   });
 
   it("returns undefined for a roundId that isn't stored", () => {
@@ -108,8 +111,28 @@ describe("savePracticeRound", () => {
     const updated: PracticeRoundRecord = { ...ROUND_A, feedback };
     savePracticeRound(updated);
 
-    expect(listPracticeRounds()).toEqual([updated]);
-    expect(getPracticeRound("round-1")).toEqual(updated);
+    expect(listPracticeRounds()).toMatchObject([updated]);
+    expect(getPracticeRound("round-1")).toMatchObject(updated);
+  });
+
+  it("stamps createdAt with the current time on a round's first save", () => {
+    const before = Date.now();
+    savePracticeRound(ROUND_A);
+    const after = Date.now();
+
+    const createdAt = getPracticeRound("round-1")?.createdAt;
+    expect(createdAt).toEqual(expect.any(Number));
+    expect(createdAt).toBeGreaterThanOrEqual(before);
+    expect(createdAt).toBeLessThanOrEqual(after);
+  });
+
+  it("preserves the original createdAt across a later update to the same roundId", () => {
+    savePracticeRound(ROUND_A);
+    const firstCreatedAt = getPracticeRound("round-1")?.createdAt;
+
+    savePracticeRound({ ...ROUND_A, judgeDecision: { winner: "primary", keyVotingIssues: ["x"], rationale: "y" } });
+
+    expect(getPracticeRound("round-1")?.createdAt).toBe(firstCreatedAt);
   });
 });
 
@@ -119,14 +142,14 @@ describe("deletePracticeRound", () => {
     savePracticeRound(ROUND_B);
     deletePracticeRound("round-1");
 
-    expect(listPracticeRounds()).toEqual([ROUND_B]);
+    expect(listPracticeRounds()).toMatchObject([ROUND_B]);
     expect(getPracticeRound("round-1")).toBeUndefined();
   });
 
   it("is a no-op when the roundId isn't stored", () => {
     savePracticeRound(ROUND_B);
     deletePracticeRound("missing");
-    expect(listPracticeRounds()).toEqual([ROUND_B]);
+    expect(listPracticeRounds()).toMatchObject([ROUND_B]);
   });
 });
 
@@ -138,14 +161,14 @@ describe("buildPracticeRoundsPanelView", () => {
   it("sorts every persisted practice round by roundId", () => {
     savePracticeRound(ROUND_B);
     savePracticeRound(ROUND_A);
-    expect(buildPracticeRoundsPanelView()).toEqual([ROUND_A, ROUND_B]);
+    expect(buildPracticeRoundsPanelView()).toMatchObject([ROUND_A, ROUND_B]);
   });
 
   it("does not mutate the underlying stored order", () => {
     savePracticeRound(ROUND_B);
     savePracticeRound(ROUND_A);
     buildPracticeRoundsPanelView();
-    expect(listPracticeRounds()).toEqual([ROUND_B, ROUND_A]);
+    expect(listPracticeRounds()).toMatchObject([ROUND_B, ROUND_A]);
   });
 });
 
@@ -205,5 +228,139 @@ describe("buildAndSavePracticeRoundFeedback", () => {
     const secondPass = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-1", "NEG");
 
     expect(getPracticeRound("round-1")!.feedback).toEqual(secondPass!.feedback);
+  });
+});
+
+const SETUP_SECONDARY = buildPracticeRoundSetup({
+  styleKey: "lincolnDouglas",
+  userSide: "secondary",
+  judgeParadigm: "lay",
+});
+
+const JUDGE_DECISION_PRIMARY_WINS = {
+  winner: "primary" as const,
+  keyVotingIssues: ["Turn on case"],
+  rationale: "Aff wins on the turn.",
+};
+const JUDGE_DECISION_SECONDARY_WINS = {
+  winner: "secondary" as const,
+  keyVotingIssues: ["Link outweighs"],
+  rationale: "Neg wins on the link.",
+};
+
+describe("buildPracticeRoundAttemptsComparison", () => {
+  it("returns an empty comparison when nothing is stored", () => {
+    expect(buildPracticeRoundAttemptsComparison()).toEqual({
+      attempts: [],
+      wins: 0,
+      losses: 0,
+      pending: 0,
+      winRate: null,
+    });
+  });
+
+  it("excludes a round with no createdAt (persisted before the field existed)", () => {
+    localStorage.setItem("practiceRounds", JSON.stringify([{ roundId: "round-1", setup: SETUP_A }]));
+    expect(buildPracticeRoundAttemptsComparison().attempts).toEqual([]);
+  });
+
+  it("marks a round pending when no judge decision has been requested yet", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 100 });
+    const [attempt] = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attempt).toMatchObject({ roundId: "round-1", outcome: "pending" });
+    expect(attempt.feedbackIssueCount).toBeUndefined();
+  });
+
+  it("marks a round won when the judge decision favors the side the user argued", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 100, judgeDecision: JUDGE_DECISION_PRIMARY_WINS });
+    const [attempt] = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attempt.outcome).toBe("won");
+  });
+
+  it("marks a round lost when the judge decision favors the opposing side", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 100, judgeDecision: JUDGE_DECISION_SECONDARY_WINS });
+    const [attempt] = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attempt.outcome).toBe("lost");
+  });
+
+  it("accounts for a round where the user argued the secondary side", () => {
+    savePracticeRound({
+      roundId: "round-3",
+      setup: SETUP_SECONDARY,
+      createdAt: 100,
+      judgeDecision: JUDGE_DECISION_SECONDARY_WINS,
+    });
+    const [attempt] = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attempt.outcome).toBe("won");
+  });
+
+  it("sorts attempts chronologically by createdAt", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 200 });
+    savePracticeRound({ ...ROUND_B, createdAt: 100 });
+    const attempts = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attempts.map((attempt) => attempt.roundId)).toEqual(["round-2", "round-1"]);
+  });
+
+  it("tallies wins, losses, pending, and win rate among decided attempts", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 100, judgeDecision: JUDGE_DECISION_PRIMARY_WINS });
+    savePracticeRound({ ...ROUND_B, createdAt: 200, judgeDecision: JUDGE_DECISION_SECONDARY_WINS });
+    savePracticeRound({ roundId: "round-3", setup: SETUP_A, createdAt: 300 });
+
+    const comparison = buildPracticeRoundAttemptsComparison();
+    expect(comparison.wins).toBe(1);
+    expect(comparison.losses).toBe(1);
+    expect(comparison.pending).toBe(1);
+    expect(comparison.winRate).toBe(0.5);
+  });
+
+  it("carries the feedback issue count once feedback has been generated", () => {
+    savePracticeRound({
+      ...ROUND_A,
+      createdAt: 100,
+      feedback: {
+        judgeParadigm: SETUP_A.judgeParadigm,
+        coachingPrompts: [
+          { kind: "extension", rowIndex: 0, prompt: "Extend the turn." },
+          { kind: "refutation", rowIndex: 1, prompt: "Answer the disad." },
+        ],
+        sections: [],
+      },
+    });
+    const [attempt] = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attempt.feedbackIssueCount).toBe(2);
+  });
+
+  it("labels the opponent persona, falling back to 'No AI opponent' when none was set", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 100 });
+    savePracticeRound({ ...ROUND_B, createdAt: 200 });
+    const [attemptA, attemptB] = buildPracticeRoundAttemptsComparison().attempts;
+    expect(attemptA.opponentPersonaName).toBe("No AI opponent");
+    expect(attemptB.opponentPersonaName).toBe(SETUP_B.opponentPersona!.name);
+  });
+});
+
+describe("buildPracticeRoundAttemptsComparisonText", () => {
+  it("renders a placeholder when no attempts are logged", () => {
+    const text = buildPracticeRoundAttemptsComparisonText(buildPracticeRoundAttemptsComparison());
+    expect(text).toContain("No practice round attempts logged yet.");
+  });
+
+  it("renders a summary line and one line per attempt", () => {
+    savePracticeRound({ ...ROUND_A, createdAt: 100, judgeDecision: JUDGE_DECISION_PRIMARY_WINS });
+    savePracticeRound({ ...ROUND_B, createdAt: 200 });
+
+    const text = buildPracticeRoundAttemptsComparisonText(buildPracticeRoundAttemptsComparison());
+
+    expect(text).toContain("2 attempts logged — 1 won, 0 lost, 1 pending (win rate: 100%).");
+    expect(text).toContain("Round round-1");
+    expect(text).toContain("Won");
+    expect(text).toContain("Round round-2");
+    expect(text).toContain("Pending");
+  });
+});
+
+describe("practiceRoundAttemptsComparisonFilename", () => {
+  it("returns a static filename", () => {
+    expect(practiceRoundAttemptsComparisonFilename()).toBe("practice-round-attempts-comparison.txt");
   });
 });

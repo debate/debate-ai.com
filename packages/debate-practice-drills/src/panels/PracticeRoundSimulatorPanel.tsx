@@ -53,6 +53,13 @@
  * the workspace's selected flow's id matches this card's `roundId`, since
  * feedback is judged under that round's own already-saved judge paradigm.
  *
+ * A "Compare your past attempts" section closes the "comparison across a
+ * debater's past attempts" follow-up named under this bullet in TODO.md's
+ * Research Crowdsourcing Organizer Features list: a chronological win/loss
+ * trend across every persisted round via the new `state/practiceRounds.ts`'s
+ * `buildPracticeRoundAttemptsComparison`, with a "Download comparison"
+ * action mirroring `CoachingSessionsPanel`'s anchor+Blob download pattern.
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -103,10 +110,13 @@ import { buildPracticeRoundSetup } from "debate-round/src/round/practice-round-s
 import { getAiVersusRound, saveAiVersusRound } from "debate-round/src/state/aiVersusRounds"
 import {
   buildAndSavePracticeRoundFeedback,
+  buildPracticeRoundAttemptsComparison,
+  buildPracticeRoundAttemptsComparisonText,
   buildPracticeRoundsPanelView,
   deletePracticeRound,
   getPracticeRound,
   getPracticeRoundSubmittedSpeeches,
+  practiceRoundAttemptsComparisonFilename,
   savePracticeRound,
   type PracticeRoundRecord,
 } from "debate-round/src/state/practiceRounds"
@@ -322,6 +332,23 @@ export function PracticeRoundSimulatorPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading practice rounds…</div>
   }
 
+  const comparison = buildPracticeRoundAttemptsComparison()
+
+  /** Mirrors `CoachingSessionsPanel`'s anchor+Blob download pattern. */
+  const handleDownloadAttemptsComparison = () => {
+    const text = buildPracticeRoundAttemptsComparisonText(comparison)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = practiceRoundAttemptsComparisonFilename()
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -488,6 +515,47 @@ export function PracticeRoundSimulatorPanel() {
 
         <Button onClick={handleSave}>Save round setup</Button>
       </div>
+
+      {comparison.attempts.length > 0 && (
+        <div className="rounded-lg border border-border p-4 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-semibold text-foreground">Compare your past attempts</h2>
+            <Button size="sm" variant="outline" onClick={handleDownloadAttemptsComparison}>
+              Download comparison
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            {comparison.attempts.length} attempt{comparison.attempts.length === 1 ? "" : "s"} logged —{" "}
+            {comparison.wins} won, {comparison.losses} lost, {comparison.pending} pending
+            {comparison.winRate !== null && ` (win rate: ${Math.round(comparison.winRate * 100)}%)`}.
+          </p>
+          <div className="space-y-1.5">
+            {comparison.attempts.map((attempt) => (
+              <div
+                key={attempt.roundId}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm"
+              >
+                <div>
+                  <span className="font-medium text-foreground">Round {attempt.roundId}</span>{" "}
+                  <span className="text-muted-foreground">
+                    — {new Date(attempt.createdAt).toLocaleDateString()} vs. {attempt.opponentPersonaName},
+                    judged under {attempt.judgeParadigmName}
+                    {attempt.feedbackIssueCount !== undefined &&
+                      ` — ${attempt.feedbackIssueCount} feedback issue${attempt.feedbackIssueCount === 1 ? "" : "s"}`}
+                  </span>
+                </div>
+                <Badge
+                  variant={
+                    attempt.outcome === "won" ? "default" : attempt.outcome === "lost" ? "destructive" : "outline"
+                  }
+                >
+                  {attempt.outcome === "won" ? "Won" : attempt.outcome === "lost" ? "Lost" : "Pending"}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {rounds.length === 0 ? (
         <EmptyState title="No practice rounds yet." message="Configure one above to see it here." />

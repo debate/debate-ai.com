@@ -149,6 +149,37 @@ rather than being backfilled on save. Vitest-covered:
 `buildPracticeRoundSetup` suite (the default vs. explicit difficulty, and
 its layering into the "AI opponent" section body).
 
+A further slice added the "comparison across a debater's past attempts"
+follow-up: a "Compare your past attempts" section renders once at least one
+persisted round carries a `createdAt` (stamped by `savePracticeRound` on a
+round's first save, mirroring `wordCountRounds.ts`'s `createdAt` convention —
+not backfilled onto a round saved before this field existed, and preserved
+rather than refreshed on a later update to the same `roundId`). The new
+`state/practiceRounds.ts#buildPracticeRoundAttemptsComparison` builds a
+chronological win/loss trend across every such round: each round's outcome
+(`"won"`/`"lost"`/`"pending"`) is derived by comparing its saved
+`judgeDecision.winner` against the side the user actually argued — read off
+`setup.speechOrder` (`PracticeRoundSetup` doesn't store `userSide`
+directly) — staying `"pending"` until a judge decision has been requested for
+that round. Each attempt also carries its judge paradigm, opponent (or "No AI
+opponent"), and its post-round feedback's coaching-prompt count once
+generated. The section shows a summary line (attempts logged, win/loss/
+pending counts, win rate among decided attempts) above one row per attempt
+with a Won/Lost/Pending badge, plus a "Download comparison" action exporting
+the same data as a plain-text file via `buildPracticeRoundAttemptsComparisonText`
+(mirroring `CoachingSessionsPanel`'s anchor+Blob download pattern). No new
+feedback or judging logic is introduced — this reuses each round's
+already-persisted `feedback`/`judgeDecision` directly. Vitest-covered:
+`packages/debate-round/test/practiceRounds.test.ts`'s
+`buildPracticeRoundAttemptsComparison`/`buildPracticeRoundAttemptsComparisonText`
+suites (createdAt stamping/preservation, won/lost/pending derivation for both
+sides, chronological sorting, win/loss/pending tallying and win-rate
+calculation, feedback-issue-count carry-through, and the rendered text's
+summary and per-attempt lines).
+
 ## Known gaps
 
-No known gaps remain for this idea.
+No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
+in TODO.md's Research Crowdsourcing Organizer Features list still has two
+open Next items beyond this one: a round replay/playback view, and a scoring
+rubric shown alongside the AI judge decision.
