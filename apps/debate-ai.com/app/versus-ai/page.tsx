@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { AiVersusRoundPanel as DebatePracticeVsAi } from "debate-practice-rounds"
+import { DebatePracticeVsAi } from "debate-practice-vs-ai"
+import { getSession } from "@/lib/auth/session"
 
 export const metadata: Metadata = {
   title: "Practice vs AI",
