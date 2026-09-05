@@ -35,7 +35,7 @@ export function TopicStarterUpload() {
   return <Card>
     <CardHeader>
       <CardTitle>Topic Starter library</CardTitle>
-      <CardDescription>Upload one DOCX or a ZIP containing up to 100 DOCX files. Every imported folder and file is published to CardMirror for everyone.</CardDescription>
+      <CardDescription>Upload one DOCX or a ZIP containing up to 100 DOCX files. Every imported folder and file is published to the shared-file library for everyone (users can share their own files from /library).</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end">
       <label className="flex flex-1 flex-col gap-1 text-sm font-medium">Folder name (optional)

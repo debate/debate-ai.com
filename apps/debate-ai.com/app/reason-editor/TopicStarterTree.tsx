@@ -5,7 +5,8 @@ import { ChevronDown, ChevronRight, FileText, Folder, Search } from "lucide-reac
 import { Input } from "../../lib/ui/primitives/input"
 import { cn } from "../../lib/ui/lib/utils"
 
-export interface TopicStarterItem { id: number; title: string; content: string; parentId: number | null; isFolder: boolean; tags: string }
+/** One row of the shared-file library as `/api/shared-files` returns it. `ownerId` is null for an admin Topic Starter pack; `published` is false only on the viewer's own private files. */
+export interface TopicStarterItem { id: number; title: string; content: string; parentId: number | null; isFolder: boolean; tags: string; ownerId?: string | null; published?: boolean }
 interface Node { item: TopicStarterItem; children: Node[] }
 function tree(items: TopicStarterItem[]) {
   const children = new Map<number | null, TopicStarterItem[]>()
@@ -29,13 +30,14 @@ export function TopicStarterTree({ items, onSelect }: { items: TopicStarterItem[
         {node.item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
         {node.item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
         <span className="min-w-0 flex-1 truncate">{node.item.title}</span>
+        {node.item.published === false && <span className="rounded border px-1 text-[10px] text-muted-foreground">private</span>}
         {!node.item.isFolder && tags.slice(0, 1).map((tag) => <span key={tag} className="rounded bg-muted px-1 text-[10px] text-muted-foreground">{tag}</span>)}
       </button>
       {node.item.isFolder && open && node.children.map((child) => render(child, depth + 1))}
     </div>
   }
   return <div className="flex min-h-0 flex-1 flex-col border-t">
-    <div className="relative m-2"><Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" /><Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-8 pl-7 text-xs" placeholder="Search topic files" /></div>
-    <div className="min-h-0 flex-1 overflow-auto pb-2">{nodes.map((node) => render(node, 0))}{items.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No public topic starters yet.</p>}</div>
+    <div className="relative m-2"><Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" /><Input value={query} onChange={(event) => setQuery(event.target.value)} className="h-8 pl-7 text-xs" placeholder="Search shared files" /></div>
+    <div className="min-h-0 flex-1 overflow-auto pb-2">{nodes.map((node) => render(node, 0))}{items.length === 0 && <p className="px-3 py-2 text-xs text-muted-foreground">No shared files yet — share a document from the header, or upload files from My Library.</p>}</div>
   </div>
 }

@@ -6,6 +6,42 @@
 _No task currently in progress._
 
 ### Completed
+- **🗂️ My Library + Shared Files + demo account — "total support for users
+  with docs and management of flows and shared files like topic starter;
+  create a demo user to login as".** Every account-linked store already
+  existed (`documents`, `saved_flows`, `saved_rounds`, `topic_starter_items`)
+  but had no user-facing management surface, and Topic Starters were
+  admin-upload-only with no owner. This slice adds `/library`
+  (`apps/debate-ai.com/app/library/LibraryPageContent.tsx`) with Documents /
+  Flows / Shared Files tabs (open, rename, duplicate, share, delete; open a
+  saved flow in `/debate`, export/import flow JSON, remove flows/rounds;
+  publish/unpublish/rename/delete own shared files, upload DOCX/ZIP, save a
+  copy of any public file), gives `topic_starter_items` `owner_id` +
+  `source_document_id` columns (migration `0032_shared_files_owner`) behind
+  a new `/api/shared-files/**` API (list by scope, share a document with
+  upsert-by-source, owner-only PUT/DELETE with folder cascade, `/copy`,
+  `/upload` via the extracted `lib/shared-files/import-docx.ts` the admin
+  route now reuses), renames the editor's sidebar panel to "Shared Files"
+  with Share-to-library / Save-a-copy actions and `?doc=`/`?shared=` deep
+  links, and adds the shared demo account: `emailAndPassword` enabled with
+  `disableSignUp` in `lib/auth/index.ts`, `lib/demo-account/index.ts`
+  (`ensureDemoUser` through better-auth's internal adapter with a password
+  derived from `BETTER_AUTH_SECRET`, idempotent `seedDemoAccount` with a
+  `reset` option), `GET /api/demo` + `POST /api/demo/login` (runs
+  `signInEmail` server-side and forwards `Set-Cookie`), a "Try the demo
+  account" button in `LoginForm`, and a "Reset demo data" banner on
+  `/library`. Pure helpers and fetch clients live in `debate-round`
+  (`state/sharedFiles.ts`, `state/demoAccount.ts`,
+  `round/{documents,shared-files,demo-account}-client.ts`, plus the
+  saved-flows/rounds clients now exported from the package index) with 70
+  new vitest cases. Docs: `docs/features/user-library.md`,
+  `docs/features/shared-files.md` (+ docs-site mirrors), README, CHANGELOG,
+  feature catalog, tool groups, and the dock's Settings menu. Env knobs:
+  `DEMO_ACCOUNT_DISABLED=true`, `DEMO_ACCOUNT_PASSWORD`. Next: a
+  per-visitor demo sandbox (anonymous plugin + per-user seed), selecting
+  the loaded flow as `/debate`'s active tab, drag-to-folder on the
+  Documents tab, and a moderation path for user-published shared files.
+
 - **🕵️ On Page Card Reuse Search — a retention/purge policy for the
   ever-growing `reuse_check_log` (idea #7's last remaining Next item under
   Product Feature Ideas).** Another repeat of the standing prompt

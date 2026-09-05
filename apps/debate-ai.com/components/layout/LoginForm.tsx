@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react"
-import { Mail } from "lucide-react"
+import { Mail, Sparkles } from "lucide-react"
 import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
 import { toast } from "sonner"
@@ -18,6 +18,7 @@ import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
 import { Label } from "../../lib/ui/primitives/label"
 import { authClient } from "@/lib/auth/client"
+import { fetchDemoAccountStatus, signInAsDemoAccount } from "debate-round"
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders"
 import { isNativeWrapper, openInSystemBrowser } from "@/lib/native/tauri"
 
@@ -154,6 +155,70 @@ function MagicLinkSignIn({ callbackURL }: { callbackURL: string }) {
   )
 }
 
+/**
+ * "Try the demo account" — signs in as the shared, pre-seeded demo user
+ * (see docs/features/user-library.md). Rendered only when `GET /api/demo`
+ * reports the feature enabled for this deployment.
+ */
+function DemoAccountSignIn({ callbackURL }: { callbackURL: string }) {
+  const [enabled, setEnabled] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    fetchDemoAccountStatus().then((status) => {
+      if (!cancelled) setEnabled(status.enabled)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (!enabled) return null
+
+  const handleDemo = async () => {
+    setIsLoading(true)
+    try {
+      await signInAsDemoAccount()
+      toast.success("Signed in as the demo account.")
+      // A full navigation (rather than a client-side push) so every
+      // session-aware component re-reads the fresh cookie.
+      window.location.href = callbackURL === "/" ? "/library" : callbackURL
+    } catch (error) {
+      console.error("[auth] demo sign-in failed:", error)
+      toast.error((error as Error).message || "Could not sign in to the demo account.")
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or just look around</span>
+        </div>
+      </div>
+      <Button
+        type="button"
+        variant="secondary"
+        className="w-full flex items-center justify-center gap-2"
+        onClick={handleDemo}
+        disabled={isLoading}
+        data-testid="demo-sign-in"
+      >
+        <Sparkles className="w-4 h-4" />
+        {isLoading ? "Opening the demo…" : "Try the demo account"}
+      </Button>
+      <p className="text-center text-xs text-muted-foreground">
+        A shared account pre-loaded with sample documents, flows, and shared files. Anything you add is visible to other demo visitors.
+      </p>
+    </div>
+  )
+}
+
 export interface LoginFormProps {
   /** Where to land after a successful sign-in. Defaults to the home page. */
   callbackURL?: string
@@ -234,6 +299,8 @@ export function LoginForm({ callbackURL = "/" }: LoginFormProps) {
       )}
 
       <MagicLinkSignIn callbackURL={callbackURL} />
+
+      <DemoAccountSignIn callbackURL={callbackURL} />
 
       {!hasSocialProviders && (
         <p className="text-center text-xs text-muted-foreground">

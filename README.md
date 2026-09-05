@@ -122,6 +122,11 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - 🧩 **Runtime plugin registry**, a 12-category menu bar, customizable keybindings, and per-user preferences synced to account settings
 - 🖥️ **Native desktop/mobile wrapper** ([Tauri](https://tauri.app)) running the identical editor with no browser chrome
 
+**Your library & shared files**
+- 🗂️ **My Library** (`/library`): every document, saved flow, and shared file on your account — open, rename, duplicate, share, upload DOCX/ZIP packs, export/import flow JSON, delete
+- 📦 **Shared Files**: the community library — admin-curated Topic Starter evidence packs plus anything users publish; open read-only in the editor or save an editable copy, keep your own files private until they're ready
+- ✨ **Demo account**: one click on the sign-in page opens a shared, pre-seeded account (case folder, flows, shared files) so you can tour everything before signing up
+
 ## Research & Evidence
 
 - [Evidence Library](https://beta.debate-ai.com/cards/library) — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
@@ -135,6 +140,8 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 
 ## Team Prep & Collaboration
 
+- [My Library](https://beta.debate-ai.com/library) — Manage every document, saved flow, and shared file on your account, and browse the community's shared library.
+- [Shared Files](https://beta.debate-ai.com/library?tab=shared) — Publish documents and DOCX/ZIP packs to everyone (or keep them private), and save a copy of any Topic Starter or user-shared file.
 - [Task Inbox](https://beta.debate-ai.com/cards/inbox) — Review research tasks routed to contributors and organized by topic.
 - [Collaboration Prep Room](https://beta.debate-ai.com/cards/prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
 - [Team Collaboration Mode](https://beta.debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes during shared topic sprints.

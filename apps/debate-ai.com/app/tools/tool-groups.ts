@@ -42,6 +42,16 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     heading: "Workspaces",
     tools: [
       {
+        href: "/library", label: "My Library", icon: FolderTree,
+        description: "Manage every document, saved flow, and shared file on your account — and browse the community's shared library.",
+        highlights: [
+          "Documents: open, rename, duplicate, share to the library, delete",
+          "Flows: open a saved flow in the Debate workspace, export/import JSON, remove",
+          "Shared files: publish or keep private, upload DOCX/ZIP packs, save a copy of anyone's public file",
+          "Try it instantly with the demo account on the sign-in page",
+        ],
+      },
+      {
         href: "/reason-editor", label: "Reason Editor", icon: FileText,
         description: "Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account.",
         highlights: [

@@ -89,11 +89,20 @@ export const documents = sqliteTable(
 
 export type ReasonDocument = typeof documents.$inferSelect;
 
-// Public, admin-curated evidence packs. A row is either a folder or an
-// imported DOCX file; `parentId` preserves the directory structure in an
-// uploaded zip. Content is stored as CardMirror-compatible HTML so selecting
-// a public file can open it directly in the editor without exposing a storage
-// bucket or requiring a signed-in account.
+// Shared files — the public evidence-pack library ("Topic Starters") plus
+// every file a signed-in user shares from their own account. A row is
+// either a folder or a CardMirror-compatible HTML document; `parentId`
+// preserves the directory structure of an uploaded zip. Content is stored
+// inline so selecting a public file can open it directly in the editor
+// without exposing a storage bucket or requiring a signed-in account.
+//
+// `ownerId` is null for the admin-curated Topic Starter packs uploaded from
+// `/admin` and set to the sharing user's id for everything created through
+// `/api/shared-files` (see docs/features/shared-files.md). Only the owner
+// can edit, unpublish, or delete their rows; an unpublished row is visible
+// to its owner alone. `sourceDocumentId` remembers which `documents` row a
+// shared file was published from so re-sharing the same document updates
+// the existing shared copy instead of duplicating it.
 export const topicStarterItems = sqliteTable(
   "topic_starter_items",
   {
@@ -104,14 +113,21 @@ export const topicStarterItems = sqliteTable(
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
     tags: text("tags").notNull().default("[]"),
     published: integer("published", { mode: "boolean" }).notNull().default(true),
+    ownerId: text("owner_id").references(() => user.id, { onDelete: "cascade" }),
+    sourceDocumentId: integer("source_document_id"),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   },
   (table) => ({
     parentIdIdx: index("idx_topic_starter_items_parent_id").on(table.parentId),
     publishedIdx: index("idx_topic_starter_items_published").on(table.published),
+    ownerIdIdx: index("idx_topic_starter_items_owner_id").on(table.ownerId),
   }),
 );
+
+/** Alias: the `topic_starter_items` table is the app's shared-files store. */
+export const sharedFiles = topicStarterItems;
+export type SharedFileRow = typeof topicStarterItems.$inferSelect;
 
 export type TopicStarterItem = typeof topicStarterItems.$inferSelect;
 

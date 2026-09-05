@@ -132,6 +132,26 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["docs", "documents", "notes", "outline"],
   },
   {
+    id: "library",
+    title: "My Library",
+    description:
+      "Every document, saved flow, and shared file linked to your account — open, rename, duplicate, share, upload DOCX/ZIP packs, and delete from one place; try it with the demo account",
+    href: "/library",
+    category: "workspaces",
+    doc: "user-library.md",
+    tags: ["library", "my files", "documents", "flows", "rounds", "shared files", "topic starter", "upload", "docx", "demo account", "demo"],
+  },
+  {
+    id: "shared-files",
+    title: "Shared Files",
+    description:
+      "The community file library — admin-curated Topic Starter evidence packs plus documents and DOCX uploads users publish; browse, open read-only in the Reason Editor, or save an editable copy",
+    href: "/library?tab=shared",
+    category: "collaboration",
+    doc: "shared-files.md",
+    tags: ["shared files", "topic starter", "topic starters", "evidence packs", "docx", "zip", "publish", "library"],
+  },
+  {
     id: "reason-editor",
     title: "Reason Editor",
     description:

@@ -1,0 +1,47 @@
+---
+title: "My Library and the Demo Account"
+---
+
+# My Library (documents, flows, shared files) and the demo account
+
+One page (`/library`) to manage everything linked to your account —
+Reason Editor documents, cloud-saved flows and rounds, and the shared-file
+library — plus a shared demo account anyone can sign in as with one click
+to tour it all with sample content already in place.
+
+- **Route:** `/library` (tabs `?tab=documents|flows|shared`); the Reason
+  Editor accepts `?doc=<id>` / `?shared=<id>` deep links
+- **Nav:** the dock's Settings menu → "My Library"; `/tools` → Workspaces;
+  the sign-in page's "Try the demo account" button
+- **Package:** `debate-round` (pure helpers + fetch clients, unit-tested),
+  `apps/debate-ai.com` (`/library`, `/api/shared-files`, `/api/demo`)
+
+## What it shows
+
+- **Documents** — open, inline rename, duplicate, share to the library,
+  delete (folders cascade), new document/folder.
+- **Flows** — open a saved flow in the Debate workspace, download/import
+  flow JSON, remove from the account; saved rounds listed below.
+- **Shared Files** — your own shared files (publish/unpublish, rename,
+  delete, upload DOCX/ZIP) and the community library (Topic Starter packs
+  plus everyone's published files) with open read-only / save a copy.
+- **Demo account** — `demo@debate-ai.com`, seeded idempotently with a case
+  folder, a prep checklist, three saved flows, and three shared files;
+  "Reset demo data" restores the sample set. `DEMO_ACCOUNT_DISABLED=true`
+  turns it off.
+
+## Data flow
+
+```
+state/sharedFiles.ts, state/demoAccount.ts (pure validation / seed)
+round/documents-client.ts, shared-files-client.ts, demo-account-client.ts (fetch)
+app/library/LibraryPageContent.tsx
+app/api/shared-files/**, app/api/demo/**, lib/demo-account/index.ts
+```
+
+## Known gaps
+
+The demo account is one shared user (visitors see each other's changes
+until a reset). "Open in Debate" loads a flow but doesn't select it as the
+active tab. Saved rounds can be removed here but are loaded from Round
+History. No drag-to-folder in the Documents tab.

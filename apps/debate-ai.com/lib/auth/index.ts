@@ -78,6 +78,18 @@ async function buildAuth() {
       schema,
     }),
     socialProviders: buildSocialProviders(),
+    // Password sign-in exists for exactly one account: the shared demo user
+    // (`lib/demo-account`, `POST /api/demo/login`, "Try the demo account"
+    // on /login). Sign-up stays disabled so no one can create a password
+    // account through the public /api/auth/sign-up/email endpoint — every
+    // real user still arrives through OAuth or a magic link, and the demo
+    // route provisions its own account through better-auth's internal
+    // adapter with a password derived from the deployment secret.
+    emailAndPassword: {
+      enabled: true,
+      disableSignUp: true,
+      requireEmailVerification: false,
+    },
     // A visitor can reach this app through several sign-in methods that share
     // one email (Google, Discord, LinkedIn, magic link), and the same person
     // is expected to end up as one account. By default better-auth refuses to
