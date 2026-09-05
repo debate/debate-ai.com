@@ -6,6 +6,73 @@
 _No task currently in progress._
 
 ### Completed
+- **🏆 CX NDCA Standings — rebuilt as a "Standings" tab inside Team Rankings
+  (idea #1's follow-up (a)/(b)/(c) under Product Feature Ideas).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead. Idea #1 noted the old standalone `/standings` page and
+  `StandingsPanel` were removed Aug 30, 2026, deliberately leaving the
+  underlying `debate-data-sync` scoring helpers
+  (`computeTournamentPoints`/`buildStanding`/`rankStandings` in
+  `rankings/ndca-standings.ts`) and the already-existing
+  `state/tournamentResults.ts`/`state/qualificationPointsTable.ts` stores in
+  place for exactly this rebuild — all three of its named follow-ups are
+  now done. `rankings/tournament-results-csv-import.ts` gains a pure
+  `parseTournamentResultsCsv` (mirroring
+  `rankings/opponent-round-csv-import.ts`'s RFC4180-ish parser and
+  skip-and-report-per-row convention exactly: `teamId`/`tournamentName`/
+  `date`/`division`/`finish` required, `bidLevel`/`prelimWins`/
+  `prelimLosses` optional and defaulting to 0), and
+  `state/tournamentResults.ts` gains a `bulkImportTournamentResults`
+  composing it with the same generated-id convention as
+  `opponentRoundRecords.ts#bulkImportOpponentRoundRecords`. A new
+  `StandingsPanel` (in the `debate-videos` package, alongside the existing
+  `RankingsLeaderboardPanel`) renders a "Log a result" manual-entry form, a
+  "Bulk import (CSV)" section using the new parser, a collapsible
+  qualification-points-table editor wired to the pre-existing
+  `state/qualificationPointsTable.ts` get/save/reset functions, and the
+  ranked standings table itself (rank/team/points/record/best finish/
+  tournaments counted), each row expandable to see and delete its
+  individual logged results. `RankingsLeaderboardPanel` (mounted at `/rank`
+  and embedded in the Videos page's leaderboard category) now opens with a
+  top-level Leaderboard/Standings `Tabs` switcher above its existing
+  division/year content, so Standings sits inside Team Rankings rather than
+  as a separate destination, exactly as the idea asked. See
+  `docs/features/team-rankings.md`'s new "Standings tab" section and the
+  new test coverage in `packages/debate-data-sync/test/
+  tournament-results-csv-import.test.ts` (11 cases: well-formed multi-row
+  parsing, case-insensitive/any-order headers, default optional columns,
+  quoted-field handling, missing-required-field/unrecognized-finish/
+  invalid-numeric-field row skipping with per-row error messages, blank
+  input, blank-line tolerance, and the shipped CSV template) plus 4 new
+  cases appended to `tournamentResults.test.ts` for
+  `bulkImportTournamentResults` (importing and appending to existing
+  history, unique-id generation across a batch, skipped-row reporting, and
+  that newly imported results count toward standings) — 15 new cases. Ran
+  the full verification gate: `bun run test` (4487 passing, up from 4472),
+  `bunx turbo run typecheck` (all packages touched by this change —
+  `debate-data-sync` and `debate-videos` — green; a pre-existing,
+  unrelated `debate-flow-ebb` Handsontable-callback-typing failure in
+  `HotGrid.tsx` reproduces identically on a clean checkout with none of
+  this change's files present, confirming it predates and is untouched by
+  this slice), and `bun run build:web` (the full production build,
+  `/rank` included) all pass. Standings data (logged/imported results and
+  the custom points table) stays `localStorage`-only for now — account
+  sync is a natural next follow-up but wasn't part of what idea #1 named,
+  so it's left as a documented "Known gap" in
+  `docs/features/team-rankings.md` rather than scope-crept in here. No
+  further follow-up is currently tracked for this idea; a future run
+  should pick a fresh next-step (e.g. account-syncing standings data, or a
+  qualification-cutoff/"who's currently qualified" view using the
+  existing `getQualifiedTeams` helper) if one becomes worth doing.
+
 - **🕵️ On Page Card Reuse Search — a retention/purge policy for the
   ever-growing `reuse_check_log` (idea #7's last remaining Next item under
   Product Feature Ideas).** Another repeat of the standing prompt
@@ -16284,10 +16351,7 @@ _No task currently in progress._
 
 Each idea below has a working first-cut implementation already shipped (see Tracker Status above and `docs/features/`). Rather than re-narrate that build history, each entry now outlines the next round of UI features to add for that idea — pick items up here rather than re-deriving them from the Tracker Status log.
 
-1. **CX NDCA Standings** — _Removed Aug 30, 2026_ (`/standings` and `StandingsPanel` deleted; the underlying `debate-data-sync` scoring helpers — `computeTournamentPoints`/`buildStanding`/`rankStandings` — were left in place). Rebuild as a lighter-weight view merged into the Team Rankings tool rather than a standalone page:
-   - A "Standings" tab inside Team Rankings, reusing the surviving scoring helpers.
-   - A manual CSV/paste import for tournament results, since live Tabroom scraping is blocked (see "Confirmed blocker" below) and the old panel's only path in was hand-entry.
-   - Bring back a qualification-points-table editor as a collapsible section rather than its own panel.
+1. **CX NDCA Standings** (`/rank`'s **Standings** tab) — rebuilt as a lighter-weight tab merged into the Team Rankings tool rather than a standalone page, after the old standalone `/standings` page/`StandingsPanel` were removed Aug 30, 2026 leaving the underlying `debate-data-sync` scoring helpers in place for exactly this. All three originally-named follow-ups are now done: a "Standings" tab inside Team Rankings (`RankingsLeaderboardPanel`'s Leaderboard/Standings `Tabs` switcher) reuses the surviving `computeTournamentPoints`/`buildStanding`/`rankStandings` helpers via the already-existing `state/tournamentResults.ts#buildStandingsFromStore`; a manual CSV/paste bulk import (`rankings/tournament-results-csv-import.ts#parseTournamentResultsCsv`, `state/tournamentResults.ts#bulkImportTournamentResults`) covers the still-blocked live-Tabroom-scraping gap (see "Confirmed blocker" below); and a qualification-points-table editor is back as a collapsible section on the new `StandingsPanel`, wired to the already-existing `state/qualificationPointsTable.ts` get/save/reset functions rather than its own panel. See the Completed entry above and `docs/features/team-rankings.md`'s "Standings tab" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. account-syncing standings data across devices, or a qualification-cutoff/"who's currently qualified" view using the existing `getQualifiedTeams` helper) if one becomes worth doing.
 
 2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. The bulk "delete all my synced history" follow-up is also now done: `WordCountRoundsPanel`'s round-history list has a "Delete all synced history" action (`useWordCountRounds().clearAllRounds`) that clears every locally persisted round in one write (`state/wordCountRounds.ts#clearWordCountRounds`) and, when signed in, best-effort issues a single `DELETE /api/word-count-rounds` against the whole collection. The same-`roundId` conflict-resolution follow-up is also now done: `saveWordCountRound` stamps a refreshed `updatedAt` on every save, and a new pure `resolveWordCountRoundConflict` in `state/wordCountRounds.ts` lets `useWordCountRounds.ts`'s account merge pick the newer of two devices' copies of the same round instead of silently skipping both — see the Completed entry above and `docs/features/word-count-rounds.md`'s "Account-synced round history" section. The "synced just now from another device" toast follow-up is also now done: a dismissible "🔄 Synced round … from another device" banner shows above the submission form the moment `useWordCountRounds`'s account merge actually adopts a remote copy, driven by the merge decision now being the pure, directly-tested `planWordCountRoundMerge` in `state/wordCountRounds.ts` — see the Completed entry above and `docs/features/word-count-rounds.md`'s "'Synced from another device' notice" subsection. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
@@ -16417,11 +16481,12 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data
 
-Idea #1 ("CX NDCA Standings") follow-up (a), idea #12 ("Pre-Round
-Intelligence Panel") follow-up (a), and the "Opponent Team Profiles"/"Judge
-Profiles" bullets' follow-up (a) all share the same open dependency: a real
-data source that produces `TournamentResult`/`OpponentRoundRecord`/
-`JudgeRoundRecord`s from Tabroom instead of hand-entered data. This run
+Idea #1's ("CX NDCA Standings") manual-CSV-import workaround (see the
+Completed entry above), idea #12 ("Pre-Round Intelligence Panel")
+follow-up (a), and the "Opponent Team Profiles"/"Judge Profiles" bullets'
+follow-up (a) all share the same open dependency: a real data source that
+produces `TournamentResult`/`OpponentRoundRecord`/`JudgeRoundRecord`s from
+Tabroom instead of hand-entered data. This run
 verified that dependency is genuinely blocked, not merely unstarted:
 `sync-tournaments.ts`'s existing `getTournamentNames()` fetches Tabroom's
 public tournament *index* page successfully (no login required), but a
