@@ -185,9 +185,58 @@ own two source keys, `groupChallenges`/`challengeWinEvents`, were already in
 `COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS`, so no changes
 were needed there).
 
+## Program calendar
+
+Closes idea #13's own further follow-up in `TODO.md`: "A calendar/schedule
+view across a program's drills, sprints, and challenges." Before this, seeing
+a program's actual dated events meant piecing together the Group Challenges
+panel's own start/end dates and a topic sprint's note thread separately — the
+Roster Analytics section's own digest above only ever showed *completed*
+challenges, not the still-open windows a coach might want to plan around. The
+Roster Analytics section now also renders a **Program calendar** section
+below the challenge digest: a day-grouped, chronological list of every
+roster-scoped group challenge's start and end date, plus — once a topic is
+typed into the section's own topic field — that topic's sprint notes,
+dated by when they were logged.
+
+```
+panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
+  → buildPersistedCoachingProgramCalendar(programId, topic)  — state/coachingProgramCalendar.ts
+      → getCoachingProgram(programId)                        — debate-team-collaboration's state/coachingPrograms.ts
+      → listGroupChallenges()                                — debate-team-collaboration's state/groupChallenges.ts
+      → listSprintNotesForTopic(topic)                        — debate-team-collaboration's state/sprintNotes.ts (only when topic is non-blank)
+      → buildCoachingProgramCalendarEvents(memberIds, challenges, sprintNotes)
+                                                                — lib/coaching-program-calendar.ts
+                                                                  (challenges narrowed to ones whose own
+                                                                  memberIds overlaps the roster, same rule
+                                                                  buildCoachingProgramChallengeDigest uses)
+  → groupCoachingProgramCalendarEventsByDay(events)           — lib/coaching-program-calendar.ts
+  → panel renders one heading per day, a badge per event kind
+```
+
+A topic sprint isn't itself dated the way a challenge window is (`startsAt`/
+`endsAt`), so the calendar's sprint-note events come from a topic the coach
+types into the section — leaving it blank still shows the program's
+challenge-window events, just with no note events. The composition lives
+alongside the existing roster analytics/digest in `debate-community` for the
+same circular-dependency reason described above, and refreshes on the same
+`storage`-event subscription — `sprintNotes` was added to
+`COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS` so a note logged
+in another tab (or from `debate-team-collaboration`'s own `TopicSprintPanel`)
+refreshes the calendar here too.
+
 ## Known gaps
 
 - The roster analytics table only covers group-challenge standings and
   daily-quest streaks — it doesn't yet fold in drill-completion rate or
   practice-round counts, both already shown per-member on the program's own
   board section above. A future run could widen the table to include them.
+- The program calendar doesn't include per-drill scheduled review reminders
+  (`debate-practice-rounds`' `state/drillSets.ts#scheduledReviewAt`) even
+  though the original follow-up named "drills" alongside sprints and
+  challenges: `debate-practice-rounds` already depends on `debate-community`
+  (for Progress Unlocks tiers), so composing drill dates in the other
+  direction from here would be circular. Restoring that half would need
+  either moving the calendar composition to a package both sides can depend
+  on, or having the drill review dates supplied by the page/app layer (which
+  already depends on both) rather than computed inside this package.
