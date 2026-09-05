@@ -17,6 +17,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
+import { getYoutubeStats } from "debate-api-client"
+import { apiClient } from "../lib/api-client"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
 import type { CategoryType, DebateStyle, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
@@ -145,10 +147,13 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   }, [searchParams, router])
 
   useEffect(() => {
-    fetch("/api/youtube-stats")
-      .then((res) => res.json())
-      .then((data) => setYoutubeStats(data))
-      .catch((err) => console.error("Failed to load YouTube stats:", err))
+    getYoutubeStats({}, { client: apiClient }).then(({ data, error }) => {
+      if (error) {
+        console.error("Failed to load YouTube stats:", error)
+        return
+      }
+      setYoutubeStats(data)
+    })
   }, [])
 
   // Initialize state from URL parameters on mount

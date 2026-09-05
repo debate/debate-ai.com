@@ -6,18 +6,18 @@
  * existing `checkPageForExistingCards`/`checkPersistedPageForExistingCards`
  * only see one browser's own `localStorage` entries, so they can't answer
  * "has anyone on the team cut this" across devices — this client calls the
- * app's `/api/evidence-reuse-check` route instead, mirroring
- * `lib/team-brainstorm-client.ts`'s fetch-based, endpoint-overridable
- * convention (kept separate from pure logic so a caller like the future
- * browser extension can call it without pulling in `localStorage`-backed
- * state modules).
+ * app's `/api/evidence-reuse-check` route (via `debate-api-client`) instead,
+ * mirroring `lib/team-brainstorm-client.ts`'s client-overridable convention
+ * (kept separate from pure logic so a caller like the future browser
+ * extension can call it without pulling in `localStorage`-backed state
+ * modules).
  *
  * @module lib/evidence-reuse-check-client
  */
 
+import { checkEvidenceReuse, registerEvidenceReuse, type Client } from "debate-api-client";
+import { apiClient } from "./api-client";
 import type { EvidenceEntryKind } from "./shared-evidence-library";
-
-const DEFAULT_ENDPOINT = "/api/evidence-reuse-check";
 
 /** One shared-index match returned by a reuse check, e.g. for rendering in a panel or extension popup. */
 export interface RemoteReuseMatch {
@@ -47,34 +47,23 @@ export interface RegisterReuseEntryRequest {
   kind?: EvidenceEntryKind;
 }
 
-async function readErrorDetail(res: Response, fallback: string): Promise<never> {
-  let detail = "";
-  try {
-    const payload = (await res.json()) as { error?: string };
-    detail = payload?.error ?? "";
-  } catch {
-    // Body wasn't JSON.
-  }
-  throw new Error(detail || fallback);
-}
-
 /**
  * Checks the shared server-backed reuse index for `url`, via GET
- * `/api/evidence-reuse-check?url=` (or `endpoint`, if overridden — the
+ * `/api/evidence-reuse-check?url=` (or `client`, if overridden — the
  * browser extension configures this to a full origin since it has no
  * same-origin default).
  */
 export async function checkRemotePageForExistingCards(
   url: string,
-  endpoint = DEFAULT_ENDPOINT,
+  client: Client = apiClient,
 ): Promise<RemotePageReuseCheckResult> {
-  const res = await fetch(`${endpoint}?url=${encodeURIComponent(url)}`, { method: "GET" });
+  const { data, error } = await checkEvidenceReuse({ query: { url } }, { client });
 
-  if (!res.ok) {
-    return readErrorDetail(res, `Reuse check request failed (${res.status}).`);
+  if (error) {
+    throw new Error("Reuse check request failed.");
   }
 
-  return (await res.json()) as RemotePageReuseCheckResult;
+  return data as RemotePageReuseCheckResult;
 }
 
 /**
@@ -85,22 +74,23 @@ export async function checkRemotePageForExistingCards(
  */
 export async function registerRemoteReuseEntry(
   request: RegisterReuseEntryRequest,
-  endpoint = DEFAULT_ENDPOINT,
+  client: Client = apiClient,
 ): Promise<void> {
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      id: request.id,
-      sourceUrl: request.sourceUrl,
-      cite: request.cite ?? "",
-      argBlock: request.argBlock ?? "",
-      topic: request.topic ?? "",
-      contributorId: request.contributorId ?? "",
-    }),
-  });
+  const { error } = await registerEvidenceReuse(
+    {
+      body: {
+        id: request.id,
+        sourceUrl: request.sourceUrl,
+        cite: request.cite ?? "",
+        argBlock: request.argBlock ?? "",
+        topic: request.topic ?? "",
+        contributorId: request.contributorId ?? "",
+      },
+    },
+    { client },
+  );
 
-  if (!res.ok) {
-    return readErrorDetail(res, `Reuse registration request failed (${res.status}).`);
+  if (error) {
+    throw new Error("Reuse registration request failed.");
   }
 }

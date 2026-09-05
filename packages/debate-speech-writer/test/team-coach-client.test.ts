@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createClient } from "debate-api-client";
 import { requestTeamCoachAnswer } from "../src/coach/team-coach-client";
 import type { CoachMaterialMatch } from "../src/coach/team-coach-materials";
+import { mockFetchError, mockFetchJson } from "./helpers/mock-api-fetch";
 
 const MATCHES: CoachMaterialMatch[] = [
   {
@@ -21,19 +23,14 @@ afterEach(() => {
 
 describe("requestTeamCoachAnswer", () => {
   it("posts to /api/reason-ai with the grounded prompt and returns the parsed answer", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "Answer a T violation by reading your interpretation and standards." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    const fetchMock = mockFetchJson({ text: "Answer a T violation by reading your interpretation and standards." });
 
     const answer = await requestTeamCoachAnswer("How do I answer a topicality violation?", MATCHES);
 
     expect(answer).toBe("Answer a T violation by reading your interpretation and standards.");
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(endpoint).toBe("/api/reason-ai");
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/reason-ai");
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.messages[0].content).toContain("How do I answer a topicality violation?");
     expect(body.messages[0].content).toContain("Topicality Basics");
@@ -41,18 +38,13 @@ describe("requestTeamCoachAnswer", () => {
   });
 
   it("sends prior conversation turns as alternating user/assistant messages before the grounded prompt", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "A follow-up answer." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    const fetchMock = mockFetchJson({ text: "A follow-up answer." });
 
     await requestTeamCoachAnswer("What about a counter-interp?", MATCHES, {
       history: [{ id: "t1", question: "What is topicality?", answer: "A voting issue.", askedAt: 0 }],
     });
 
-    const body = JSON.parse((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][1].body as string);
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
     expect(body.messages).toEqual([
       { role: "user", content: "What is topicality?" },
       { role: "assistant", content: "A voting issue." },
@@ -60,54 +52,23 @@ describe("requestTeamCoachAnswer", () => {
     ]);
   });
 
-  it("posts to a caller-supplied endpoint override", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "An answer." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+  it("posts through a caller-supplied client override", async () => {
+    const fetchMock = mockFetchJson({ text: "An answer." });
+    const client = createClient({ baseUrl: "/custom-endpoint" });
 
-    await requestTeamCoachAnswer("A question?", MATCHES, {}, "/custom-endpoint");
+    await requestTeamCoachAnswer("A question?", MATCHES, {}, client);
 
-    expect((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe("/custom-endpoint");
+    expect(fetchMock.mock.calls[0][0]).toBe("/custom-endpoint/reason-ai");
   });
 
-  it("throws the server's error message when the request fails", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: false,
-      status: 401,
-      json: async () => ({ error: "Sign in to use AI features." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+  it("throws when the request fails", async () => {
+    mockFetchError(401, "Unauthorized");
 
-    await expect(requestTeamCoachAnswer("A question?", MATCHES)).rejects.toThrow(
-      "Sign in to use AI features.",
-    );
-  });
-
-  it("falls back to a status-code message when the error body isn't JSON", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: false,
-      status: 502,
-      json: async () => {
-        throw new Error("not json");
-      },
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
-
-    await expect(requestTeamCoachAnswer("A question?", MATCHES)).rejects.toThrow(
-      "Team coach AI request failed (502).",
-    );
+    await expect(requestTeamCoachAnswer("A question?", MATCHES)).rejects.toThrow("Team coach AI request failed.");
   });
 
   it("throws when the response text is empty or unusable", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "   " }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    mockFetchJson({ text: "   " });
 
     await expect(requestTeamCoachAnswer("A question?", MATCHES)).rejects.toThrow(
       "AI returned an empty or unusable answer.",

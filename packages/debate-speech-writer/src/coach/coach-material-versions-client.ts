@@ -5,56 +5,54 @@
  * conventions exactly, applied to `state/coachMaterialVersions.ts`'s
  * snapshots instead of the materials themselves.
  *
- * Talks to `apps/debate-ai.com`'s `/api/coach-material-versions` routes.
+ * Talks to `apps/debate-ai.com`'s `/api/coach-material-versions` routes via
+ * `debate-api-client`.
  *
  * @module coach/coach-material-versions-client
  */
 
+import {
+  deleteCoachMaterialVersion,
+  listCoachMaterialVersions,
+  syncCoachMaterialVersion,
+  type Client,
+} from "debate-api-client";
+import { apiClient, httpStatus } from "../lib/api-client";
 import type { CoachMaterialVersion } from "../state/coachMaterialVersions";
-
-async function readErrorMessage(res: Response, fallback: string): Promise<string> {
-  try {
-    const payload = (await res.json()) as { error?: string };
-    return payload?.error ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
 
 /** Lists every coach-material version snapshot synced to the current user's account. Returns `null` when signed out (a `401` response). */
 export async function listSavedCoachMaterialVersions(
-  endpoint = "/api/coach-material-versions",
+  client: Client = apiClient,
 ): Promise<CoachMaterialVersion[] | null> {
-  const res = await fetch(endpoint);
-  if (res.status === 401) return null;
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Failed to load your synced coach-material version history."));
+  const { data, error } = await listCoachMaterialVersions({}, { client });
+  if (error) {
+    if (httpStatus(error) === 401) return null;
+    throw new Error("Failed to load your synced coach-material version history.");
   }
-  return (await res.json()) as CoachMaterialVersion[];
+  return (data ?? []) as unknown as CoachMaterialVersion[];
 }
 
 /** Saves (upserts, keyed by `version.id`) a version snapshot to the current user's account. Throws on failure, `401` included. */
 export async function saveCoachMaterialVersionToAccount(
   version: CoachMaterialVersion,
-  endpoint = "/api/coach-material-versions",
+  client: Client = apiClient,
 ): Promise<void> {
-  const res = await fetch(`${endpoint}/${encodeURIComponent(version.id)}`, {
-    method: "PUT",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ record: version }),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Failed to sync this version to your account."));
+  const { error } = await syncCoachMaterialVersion(
+    { path: { versionId: version.id }, body: { record: version as unknown as Record<string, unknown> & { id: string } } },
+    { client },
+  );
+  if (error) {
+    throw new Error("Failed to sync this version to your account.");
   }
 }
 
 /** Deletes a synced version snapshot from the current user's account. Throws on failure, `401` included. */
 export async function deleteSavedCoachMaterialVersionFromAccount(
   id: string,
-  endpoint = "/api/coach-material-versions",
+  client: Client = apiClient,
 ): Promise<void> {
-  const res = await fetch(`${endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Failed to remove this synced version."));
+  const { error } = await deleteCoachMaterialVersion({ path: { versionId: id } }, { client });
+  if (error) {
+    throw new Error("Failed to remove this synced version.");
   }
 }

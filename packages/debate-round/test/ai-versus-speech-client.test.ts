@@ -1,6 +1,9 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { createClient } from "debate-api-client";
 import { requestAiVersusSpeech } from "../src/round/ai-versus-speech-client";
 import type { AiSpeechRequest } from "../src/round/ai-versus-speech-order";
+import { mockFetchError, mockFetchJson } from "./helpers/mock-api-fetch";
+import { vi } from "vitest";
 
 const REQUEST: AiSpeechRequest = {
   slot: { index: 0, name: "1AC", secondary: false, time: 360, speaker: "ai" },
@@ -14,68 +17,36 @@ afterEach(() => {
 
 describe("requestAiVersusSpeech", () => {
   it("posts to /api/reason-ai and returns the parsed speech text", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "  Contention one: warming is real.  " }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    const fetchMock = mockFetchJson({ text: "  Contention one: warming is real.  " });
 
     const speech = await requestAiVersusSpeech(REQUEST);
 
     expect(speech).toBe("Contention one: warming is real.");
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(endpoint).toBe("/api/reason-ai");
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/reason-ai");
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.messages[0].content).toContain('"1AC"');
     expect(body.maxTokens).toBe(2048);
   });
 
-  it("posts to a caller-supplied endpoint override", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "A speech." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+  it("posts through a caller-supplied client override", async () => {
+    const fetchMock = mockFetchJson({ text: "A speech." });
+    const client = createClient({ baseUrl: "/custom-endpoint" });
 
-    await requestAiVersusSpeech(REQUEST, "/custom-endpoint");
+    await requestAiVersusSpeech(REQUEST, client);
 
-    expect((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe("/custom-endpoint");
+    expect(fetchMock.mock.calls[0][0]).toBe("/custom-endpoint/reason-ai");
   });
 
-  it("throws the server's error message when the request fails", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: false,
-      status: 401,
-      json: async () => ({ error: "Sign in to use AI features." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+  it("throws when the request fails", async () => {
+    mockFetchError(401, "Unauthorized");
 
-    await expect(requestAiVersusSpeech(REQUEST)).rejects.toThrow("Sign in to use AI features.");
-  });
-
-  it("falls back to a status-code message when the error body isn't JSON", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: false,
-      status: 502,
-      json: async () => {
-        throw new Error("not json");
-      },
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
-
-    await expect(requestAiVersusSpeech(REQUEST)).rejects.toThrow("AI speech request failed (502).");
+    await expect(requestAiVersusSpeech(REQUEST)).rejects.toThrow("AI speech request failed.");
   });
 
   it("throws when the response text parses to an empty speech", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "   " }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    mockFetchJson({ text: "   " });
 
     await expect(requestAiVersusSpeech(REQUEST)).rejects.toThrow(
       "AI returned an empty or unusable speech.",

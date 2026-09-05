@@ -11,6 +11,8 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
+import { getYoutubeStats } from "debate-api-client"
+import { apiClient } from "../lib/api-client"
 import type { CategoryType, VideoType } from "../types/videos"
 import type { DebateStyle } from "../types/videos"
 import { setStateInURL } from "../ui/lib/utils"
@@ -79,10 +81,13 @@ export function DebateVideosPage() {
 
   const [youtubeStats, setYoutubeStats] = useState<any>(null)
   useEffect(() => {
-    fetch("/api/youtube-stats")
-      .then((res) => res.json())
-      .then((data) => setYoutubeStats(data))
-      .catch((err) => console.error("Failed to load YouTube stats:", err))
+    getYoutubeStats({}, { client: apiClient }).then(({ data, error }) => {
+      if (error) {
+        console.error("Failed to load YouTube stats:", error)
+        return
+      }
+      setYoutubeStats(data)
+    })
   }, [])
 
   // ============================================================================

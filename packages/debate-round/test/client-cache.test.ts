@@ -25,7 +25,13 @@ async function loadModule(
 ): Promise<{ mod: CacheModule; fetchMock: ReturnType<typeof vi.fn> }> {
   const fetchMock = vi.fn(async (url: string) => {
     const { ok, body } = respond(url);
-    return { ok, status: ok ? 200 : 500, json: async () => body } as Response;
+    return {
+      ok,
+      status: ok ? 200 : 500,
+      statusText: ok ? "OK" : "Internal Server Error",
+      headers: { get: () => "application/json" },
+      json: async () => body,
+    } as unknown as Response;
   });
   vi.stubGlobal("fetch", fetchMock);
   vi.resetModules();
@@ -58,7 +64,7 @@ describe("searchTournaments", () => {
     await mod.searchTournaments();
     await mod.searchTournaments("blake");
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledWith("/api/tournaments");
+    expect(fetchMock).toHaveBeenCalledWith("/api/tournaments", expect.anything());
   });
 
   it("degrades to an empty list when the API fails", async () => {

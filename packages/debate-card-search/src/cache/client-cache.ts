@@ -1,16 +1,10 @@
 import Fuse from "fuse.js";
-
-const TOURNAMENTS_ENDPOINT = "/api/tournaments";
-const SCHOOLS_ENDPOINT = "/api/schools";
-const NAMES_ENDPOINT = "/api/names";
+import { listNames, listSchools, listTournaments } from "debate-api-client";
+import { apiClient } from "../lib/api-client";
 
 type SchoolsPayload = {
   all: string[];
   byFormat: Record<string, string[]>;
-};
-
-type TournamentsPayload = {
-  tournaments: string[];
 };
 
 let cachedTournaments: string[] | null = null;
@@ -24,35 +18,24 @@ let namesFuse: Fuse<string> | null = null;
 
 async function loadTournaments(): Promise<string[]> {
   if (cachedTournaments) return cachedTournaments;
-  try {
-    const res = await fetch(TOURNAMENTS_ENDPOINT);
-    if (!res.ok) {
-      throw new Error(`Tournament API returned ${res.status}`);
-    }
-    const data = (await res.json()) as TournamentsPayload;
-    cachedTournaments = data.tournaments ?? [];
-  } catch (error) {
+  const { data, error } = await listTournaments({}, { client: apiClient });
+  if (error) {
     console.error("Unable to load tournament list:", error);
     cachedTournaments = [];
+  } else {
+    cachedTournaments = data?.tournaments ?? [];
   }
   return cachedTournaments;
 }
 
 async function loadSchools(): Promise<SchoolsPayload> {
   if (cachedSchools) return cachedSchools;
-  try {
-    const res = await fetch(SCHOOLS_ENDPOINT);
-    if (!res.ok) {
-      throw new Error(`Schools API returned ${res.status}`);
-    }
-    const data = (await res.json()) as SchoolsPayload;
-    cachedSchools = {
-      all: data.all ?? [],
-      byFormat: data.byFormat ?? {},
-    };
-  } catch (error) {
+  const { data, error } = await listSchools({}, { client: apiClient });
+  if (error) {
     console.error("Unable to load school list:", error);
     cachedSchools = { all: [], byFormat: {} };
+  } else {
+    cachedSchools = { all: data?.all ?? [], byFormat: data?.byFormat ?? {} };
   }
   return cachedSchools;
 }
@@ -86,16 +69,14 @@ export async function searchSchools(query = "", limit = 10): Promise<string[]> {
 
 async function loadNames(): Promise<string[]> {
   if (cachedNames) return cachedNames;
-  try {
-    const res = await fetch(NAMES_ENDPOINT);
-    if (!res.ok) throw new Error(`Names API returned ${res.status}`);
-    const data = await res.json();
-    cachedNames = data.names ?? [];
-  } catch (error) {
+  const { data, error } = await listNames({}, { client: apiClient });
+  if (error) {
     console.error("Unable to load names list:", error);
     cachedNames = [];
+  } else {
+    cachedNames = data?.names ?? [];
   }
-  return cachedNames!;
+  return cachedNames;
 }
 
 export async function searchNames(query = "", limit = 20): Promise<string[]> {

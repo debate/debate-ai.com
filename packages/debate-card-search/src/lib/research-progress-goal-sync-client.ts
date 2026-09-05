@@ -1,10 +1,10 @@
 /**
  * @fileoverview Network calls for the personal research-progress-goal
  * account sync (see `research-progress-goal-sync.ts`). Talks directly to
- * `apps/debate-ai.com`'s `/api/settings` route via `fetch`, mirroring
- * `argument-library-collections-client.ts`'s split exactly (kept separate
- * from the pure validation helpers so those stay unit-testable without
- * mocking `fetch`).
+ * `apps/debate-ai.com`'s `/api/settings` route via `debate-api-client`,
+ * mirroring `argument-library-collections-client.ts`'s split exactly (kept
+ * separate from the pure validation helpers so those stay unit-testable
+ * without mocking the API client).
  *
  * `/api/settings` requires an authenticated session — both functions resolve
  * to `null`/no-op-safe values rather than throwing on a `401`, letting the
@@ -13,16 +13,9 @@
  * @module lib/research-progress-goal-sync-client
  */
 
+import { getUserSettings, updateUserSettings, type Client } from "debate-api-client";
+import { apiClient, httpStatus } from "./api-client";
 import type { ResearchProgressGoalSyncPayload } from "./research-progress-goal-sync";
-
-async function readErrorMessage(res: Response, fallback: string): Promise<string> {
-  try {
-    const payload = (await res.json()) as { error?: string };
-    return payload?.error ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
 
 /**
  * Fetches the current user's synced research-progress goal. Returns `null`
@@ -31,34 +24,29 @@ async function readErrorMessage(res: Response, fallback: string): Promise<string
  * synced yet resolves to `{ goal: null }`, distinct from the signed-out case.
  */
 export async function fetchResearchProgressGoal(
-  endpoint = "/api/settings",
+  client: Client = apiClient,
 ): Promise<{ goal: ResearchProgressGoalSyncPayload | null } | null> {
-  const res = await fetch(endpoint);
-  if (res.status === 401) return null;
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Failed to load account settings."));
+  const { data, error } = await getUserSettings({}, { client });
+  if (error) {
+    if (httpStatus(error) === 401) return null;
+    throw new Error("Failed to load account settings.");
   }
-  const payload = (await res.json()) as { researchProgressGoal?: ResearchProgressGoalSyncPayload | null };
+  const payload = data as { researchProgressGoal?: ResearchProgressGoalSyncPayload | null };
   return { goal: payload.researchProgressGoal ?? null };
 }
 
 /**
  * Saves (or, with `null`, clears) the synced goal for the current user.
- * Throws (with the server's `{ error }` message when present) on a
- * `401`/`400`/other failure — the caller is expected to have already applied
- * the change locally, so a failed account sync is reported but not fatal to
- * the UI.
+ * Throws on a `401`/`400`/other failure — the caller is expected to have
+ * already applied the change locally, so a failed account sync is reported
+ * but not fatal to the UI.
  */
 export async function saveResearchProgressGoal(
   goal: ResearchProgressGoalSyncPayload | null,
-  endpoint = "/api/settings",
+  client: Client = apiClient,
 ): Promise<void> {
-  const res = await fetch(endpoint, {
-    method: "PUT",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ researchProgressGoal: goal }),
-  });
-  if (!res.ok) {
-    throw new Error(await readErrorMessage(res, "Failed to save account settings."));
+  const { error } = await updateUserSettings({ body: { researchProgressGoal: goal } }, { client });
+  if (error) {
+    throw new Error("Failed to save account settings.");
   }
 }

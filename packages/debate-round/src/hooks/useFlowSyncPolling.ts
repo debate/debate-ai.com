@@ -21,6 +21,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { Client } from "debate-api-client";
 import { pullRemoteFlowEdits, pushFlowEditToServer } from "../flow/flow-sync-client";
 import { advanceSyncCursor } from "../flow/flow-sync-cursor";
 import type { FlowEdit } from "../flow/shared-flow-sync";
@@ -36,7 +37,7 @@ export type UseFlowSyncPollingOptions = {
   /** Milliseconds between polls. Defaults to 4000. */
   intervalMs?: number;
   /** Override for tests / non-default deployments. */
-  endpoint?: string;
+  client?: Client;
 };
 
 export type FlowSyncPollingBinding = {
@@ -62,7 +63,7 @@ export function useFlowSyncPolling(
   onPulled?: () => void,
   options: UseFlowSyncPollingOptions = {},
 ): FlowSyncPollingBinding {
-  const { enabled = false, intervalMs = DEFAULT_INTERVAL_MS, endpoint } = options;
+  const { enabled = false, intervalMs = DEFAULT_INTERVAL_MS, client } = options;
 
   const [status, setStatus] = useState<FlowSyncStatus>("idle");
   const [lastError, setLastError] = useState<string | null>(null);
@@ -82,7 +83,7 @@ export function useFlowSyncPolling(
     const poll = async () => {
       setStatus("syncing");
       try {
-        const pulled = await pullRemoteFlowEdits(flowId, cursorRef.current, endpoint);
+        const pulled = await pullRemoteFlowEdits(flowId, cursorRef.current, client);
         if (cancelled) return;
         cursorRef.current = advanceSyncCursor(cursorRef.current, pulled);
         for (const edit of pulled) saveFlowEdit(edit);
@@ -102,19 +103,19 @@ export function useFlowSyncPolling(
       cancelled = true;
       clearInterval(id);
     };
-  }, [enabled, flowId, intervalMs, endpoint]);
+  }, [enabled, flowId, intervalMs, client]);
 
   const pushEdit = useCallback(
     async (edit: FlowEdit) => {
       try {
-        await pushFlowEditToServer(edit, endpoint);
+        await pushFlowEditToServer(edit, client);
         setLastError(null);
       } catch (error) {
         setStatus("error");
         setLastError(error instanceof Error ? error.message : "Flow sync push failed.");
       }
     },
-    [endpoint],
+    [client],
   );
 
   return { status, lastError, pushEdit };

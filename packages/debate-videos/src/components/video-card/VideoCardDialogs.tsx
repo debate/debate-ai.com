@@ -6,6 +6,8 @@
 
 import React, { useState } from "react"
 import { Flag } from "lucide-react"
+import { reportVideoIssue } from "debate-api-client"
+import { apiClient } from "../../lib/api-client"
 import {
   Dialog,
   DialogContent,
@@ -91,18 +93,18 @@ export function HideConfirmDialog({ open, onOpenChange, onConfirm, videoId, titl
 
     // Submit issue to API if there's text
     if (issueText.trim()) {
-      try {
-        await fetch('/api/video-issues', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+      const { error } = await reportVideoIssue(
+        {
+          body: {
             videoId,
             title,
             issue: issueText.trim(),
-            timestamp: new Date().toISOString()
-          })
-        })
-      } catch (error) {
+            timestamp: new Date().toISOString(),
+          },
+        },
+        { client: apiClient },
+      )
+      if (error) {
         console.error('Failed to submit issue:', error)
       }
     }

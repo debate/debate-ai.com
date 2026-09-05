@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createClient } from "debate-api-client";
 import { requestCaseChoiceEvaluation } from "../src/round/case-choice-client";
 import type { CaseChoiceAiInput } from "../src/round/case-choice-ai";
+import { mockFetchError, mockFetchJson } from "./helpers/mock-api-fetch";
 
 const INPUT: CaseChoiceAiInput = {
   caseRankings: [{ name: "Kritik case", argumentTags: ["kritik"], overlapScore: 1 }],
@@ -21,71 +23,37 @@ afterEach(() => {
 
 describe("requestCaseChoiceEvaluation", () => {
   it("posts to /api/reason-ai and returns the parsed evaluation", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: VALID_REPLY_TEXT }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    const fetchMock = mockFetchJson({ text: VALID_REPLY_TEXT });
 
     const result = await requestCaseChoiceEvaluation(INPUT);
 
     expect(result.recommendedCase).toBe("Kritik case");
     expect(result.caseAssessments).toEqual([{ name: "Kritik case", assessment: "Safest available option." }]);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [endpoint, init] = (fetchMock as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(endpoint).toBe("/api/reason-ai");
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/reason-ai");
     const body = JSON.parse((init as RequestInit).body as string);
     expect(body.messages[0].content).toContain("Kritik case");
     expect(body.maxTokens).toBe(1024);
   });
 
-  it("posts to a caller-supplied endpoint override", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: VALID_REPLY_TEXT }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+  it("posts through a caller-supplied client override", async () => {
+    const fetchMock = mockFetchJson({ text: VALID_REPLY_TEXT });
+    const client = createClient({ baseUrl: "/custom-endpoint" });
 
-    await requestCaseChoiceEvaluation(INPUT, "/custom-endpoint");
+    await requestCaseChoiceEvaluation(INPUT, client);
 
-    expect((fetchMock as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe("/custom-endpoint");
+    expect(fetchMock.mock.calls[0][0]).toBe("/custom-endpoint/reason-ai");
   });
 
-  it("throws the server's error message when the request fails", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: false,
-      status: 401,
-      json: async () => ({ error: "Sign in to use AI features." }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+  it("throws when the request fails", async () => {
+    mockFetchError(401, "Unauthorized");
 
-    await expect(requestCaseChoiceEvaluation(INPUT)).rejects.toThrow("Sign in to use AI features.");
-  });
-
-  it("falls back to a status-code message when the error body isn't JSON", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: false,
-      status: 502,
-      json: async () => {
-        throw new Error("not json");
-      },
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
-
-    await expect(requestCaseChoiceEvaluation(INPUT)).rejects.toThrow(
-      "AI case-choice evaluation request failed (502).",
-    );
+    await expect(requestCaseChoiceEvaluation(INPUT)).rejects.toThrow("AI case-choice evaluation request failed.");
   });
 
   it("throws when the response text can't be parsed as an evaluation", async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      status: 200,
-      json: async () => ({ text: "not valid json" }),
-    })) as unknown as typeof fetch;
-    vi.stubGlobal("fetch", fetchMock);
+    mockFetchJson({ text: "not valid json" });
 
     await expect(requestCaseChoiceEvaluation(INPUT)).rejects.toThrow(
       "AI returned a response that couldn't be parsed as a case-choice evaluation.",

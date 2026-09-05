@@ -27,6 +27,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "debate-api-client": "workspace:*",
     "debate-card-search": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
