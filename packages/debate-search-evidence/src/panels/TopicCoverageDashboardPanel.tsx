@@ -25,6 +25,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
+import { MeterBar } from "../ui/panels/panel-shell"
 import {
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
@@ -33,6 +34,12 @@ import {
   saveTrackedArgument,
   type TrackedArgumentRecord,
 } from "../state/trackedArguments"
+import {
+  clearCoverageSnapshots,
+  listCoverageSnapshots,
+  recordCoverageSnapshot,
+  type TopicCoverageSnapshotRecord,
+} from "../state/topicCoverageSnapshots"
 import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
 import type { ArgumentCoverage, CoverageLevel, TopicCoverageReport } from "../lib/topic-coverage"
 
@@ -68,6 +75,7 @@ export function TopicCoverageDashboardPanel() {
   const [records, setRecords] = useState<TrackedArgumentRecord[]>([])
   const [draft, setDraft] = useState<ArgumentDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [snapshots, setSnapshots] = useState<TopicCoverageSnapshotRecord[]>([])
 
   useEffect(() => {
     setTopics(listTrackedTopics())
@@ -77,12 +85,28 @@ export function TopicCoverageDashboardPanel() {
     const activeTopic = topic.trim()
     setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
     setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+    setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
   }, [topic])
 
   const refresh = (activeTopic: string) => {
     setTopics(listTrackedTopics())
     setReport(buildPersistedTopicCoverageReport(activeTopic))
     setRecords(listTrackedArguments(activeTopic))
+    setSnapshots(listCoverageSnapshots(activeTopic))
+  }
+
+  const handleRecordSnapshot = () => {
+    const activeTopic = topic.trim()
+    if (!activeTopic || !report) return
+    recordCoverageSnapshot(activeTopic, report)
+    setSnapshots(listCoverageSnapshots(activeTopic))
+  }
+
+  const handleClearSnapshots = () => {
+    const activeTopic = topic.trim()
+    if (!activeTopic) return
+    clearCoverageSnapshots(activeTopic)
+    setSnapshots([])
   }
 
   const handleAdd = () => {
@@ -187,7 +211,12 @@ export function TopicCoverageDashboardPanel() {
 
           {report && report.tracked.length > 0 ? (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">{buildTopicCoverageSummaryText(report)}</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">{buildTopicCoverageSummaryText(report)}</p>
+                <Button size="sm" variant="outline" onClick={handleRecordSnapshot}>
+                  Record snapshot
+                </Button>
+              </div>
 
               <div className="space-y-2">
                 {report.tracked.map((argument) => {
@@ -226,6 +255,22 @@ export function TopicCoverageDashboardPanel() {
               No tracked arguments yet for {topic.trim()}. Add one above to start the checklist.
             </div>
           )}
+
+          {snapshots.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs font-medium uppercase text-muted-foreground">Coverage trend</p>
+                <Button size="sm" variant="ghost" onClick={handleClearSnapshots}>
+                  Clear trend history
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {snapshots.map((snapshot) => (
+                  <CoverageSnapshotRow key={snapshot.id} snapshot={snapshot} />
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
@@ -248,6 +293,24 @@ function CoverageRow({ argument, onRemove }: { argument: ArgumentCoverage; onRem
           Remove
         </Button>
       )}
+    </div>
+  )
+}
+
+function CoverageSnapshotRow({ snapshot }: { snapshot: TopicCoverageSnapshotRecord }) {
+  return (
+    <div className="rounded-md border border-border px-3 py-2 space-y-1.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>{new Date(snapshot.createdAt).toLocaleString()}</span>
+        <span>
+          {snapshot.covered}/{snapshot.total} covered · {snapshot.thin} thin · {snapshot.missing} missing
+        </span>
+      </div>
+      <MeterBar
+        value={snapshot.covered}
+        max={snapshot.total}
+        tone={snapshot.covered === snapshot.total && snapshot.total > 0 ? "positive" : "info"}
+      />
     </div>
   )
 }

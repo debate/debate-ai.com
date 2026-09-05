@@ -167,6 +167,21 @@ on this idea.
 > editor (cell metadata + a context-menu or toolbar action), not a port of
 > the deleted AG Grid popover. The rest of this section (through "Outline
 > export" below) is kept for history only.
+>
+> **Update, a later run:** scoping this found it's a bigger lift than "add a
+> tagging UI to `HotGrid`" — `debate-flow-ebb` turns out to be a fully
+> separate, CRDT-replicated spreadsheet editor
+> (`lib/collab/types.ts`'s `CollabDoc`/`CollabSheet`/`CollabCell`,
+> rank-ordered cells across columns), with no notion of `debate-round`'s own
+> `Flow`/`Box` tree at all: nothing in `debate-flow-ebb` imports or writes
+> `Box`, and no conversion between the two data models exists anywhere in
+> the tree (confirmed by grepping both packages). So this isn't a missing
+> UI affordance on top of an existing bridge between the two flow editors —
+> there is no bridge, and building one (or an alternative tagging surface
+> that doesn't route through `HotGrid` at all) is a real design decision a
+> future run should scope deliberately rather than assume. See this repo's
+> `TODO.md` "📊 Topic Coverage Dashboard" Completed entry for the
+> investigation that found this.
 
 The three filters above only have something to filter on once a row carries
 tags, and until this slice nothing in the app could set them. Right-clicking
