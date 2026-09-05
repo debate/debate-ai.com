@@ -60,6 +60,13 @@
  * `buildPracticeRoundAttemptsComparison`, with a "Download comparison"
  * action mirroring `CoachingSessionsPanel`'s anchor+Blob download pattern.
  *
+ * A "Scoring rubric" card next to each round's AI judge decision closes this
+ * bullet's "a scoring rubric shown alongside the AI judge decision" Next
+ * item: `debate-round`'s new `round/judge-decision-ai.ts#buildJudgeDecisionRubric`
+ * checks the round's own judge paradigm's `votingPriorities` against the
+ * rendered decision, and each criterion shows ✅/⬜ for whether the decision
+ * actually engaged with it.
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -105,6 +112,7 @@ import { buildAiResponseRequest, type AiVersusSide } from "debate-round/src/roun
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { requestJudgeDecision } from "../round/judge-decision-client"
+import { buildJudgeDecisionRubric } from "debate-round/src/round/judge-decision-ai"
 import { buildPracticeRoundJudgeDecisionInput } from "../round/practice-round-judge-decision-wiring"
 import { buildPracticeRoundSetup } from "debate-round/src/round/practice-round-simulator"
 import { getAiVersusRound, saveAiVersusRound } from "debate-round/src/state/aiVersusRounds"
@@ -571,6 +579,9 @@ export function PracticeRoundSimulatorPanel() {
                   aiRound.submittedSpeeches,
                 )
               : null
+            const judgeDecisionRubric = record.judgeDecision
+              ? buildJudgeDecisionRubric(record.setup.judgeParadigm, record.judgeDecision)
+              : null
             const actionError = actionErrors[record.roundId]
             return (
               <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
@@ -716,6 +727,29 @@ export function PracticeRoundSimulatorPanel() {
                         ))}
                       </ul>
                       <p className="mt-1 text-muted-foreground">{record.judgeDecision.rationale}</p>
+                    </div>
+                  )}
+                  {judgeDecisionRubric && (
+                    <div className="rounded-md border border-border px-3 py-2 text-sm">
+                      <p className="mb-1 font-medium text-foreground">
+                        Scoring rubric — {record.setup.judgeParadigm.name}
+                      </p>
+                      {judgeDecisionRubric.length === 0 ? (
+                        <p className="text-muted-foreground">
+                          This paradigm has no fixed voting priorities to check against.
+                        </p>
+                      ) : (
+                        <ul className="space-y-0.5">
+                          {judgeDecisionRubric.map((row) => (
+                            <li key={row.criterion} className="flex items-start gap-1.5">
+                              <span aria-hidden="true">{row.addressed ? "✅" : "⬜"}</span>
+                              <span className={row.addressed ? "text-foreground" : "text-muted-foreground"}>
+                                {row.criterion}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   )}
                 </div>
