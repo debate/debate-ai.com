@@ -480,8 +480,10 @@ export function isTopicSprintLiveUpdateStorageEvent(event: { key: string | null 
  * roster list), `state/groupChallenges.ts`'s `"groupChallenges"` and
  * `state/challengeWinEvents.ts`'s `"challengeWinEvents"`/`"contributions"`
  * (the persisted group-challenge board each member's standing is summarized
- * from), and `state/dailyMissionResults.ts`'s `"dailyMissionResults"` (each
- * member's quest streak).
+ * from), `state/dailyMissionResults.ts`'s `"dailyMissionResults"` (each
+ * member's quest streak), and `state/sprintNotes.ts`'s `"sprintNotes"` (the
+ * program calendar's sprint-note events — see
+ * `lib/coaching-program-calendar.ts`).
  */
 export const COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS = [
   "coachingPrograms",
@@ -489,6 +491,7 @@ export const COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS = [
   "challengeWinEvents",
   "contributions",
   "dailyMissionResults",
+  "sprintNotes",
 ] as const;
 
 /**
