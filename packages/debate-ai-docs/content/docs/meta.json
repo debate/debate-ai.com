@@ -5,6 +5,8 @@
   "root": true,
   "pages": [
     "index",
+    "---Guides---",
+    "...guides",
     "---Features---",
     "...features",
     "---Packages---",

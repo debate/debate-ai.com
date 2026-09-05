@@ -10,7 +10,12 @@ export const docsConfig: DocsConfig = {
   githubDocs:
     "https://github.com/debate/debate-ai.com/tree/master/packages/debate-ai-docs/content/docs",
   favicon: "/favicon.ico",
+  appUrl: "https://debate-ai.com",
   topLinks: [
+    {
+      text: "Guides",
+      url: "/docs/guides",
+    },
     {
       text: "Docs",
       url: "/docs",
@@ -36,6 +41,8 @@ export interface DocsConfig {
   githubPackages?: string;
   /** Path to the favicon */
   favicon?: string;
+  /** URL of the product these docs describe, for the "App" nav link */
+  appUrl?: string;
   /** Path to the OpenAPI specification file */
   apiDocsPath?: string;
   /** Links to be displayed in the navigation bar */

@@ -4,12 +4,18 @@
  */
 import {
   BookOpen,
+  Compass,
   Search,
   Package,
   Github,
 } from "lucide-react"
 
 const features = [
+  {
+    icon: Compass,
+    title: "Task Guides",
+    description: "Walkthroughs of the training, practice, and research collaboration tools — the same three groups the app's page headers link to.",
+  },
   {
     icon: BookOpen,
     title: "Feature Docs",
@@ -38,7 +44,7 @@ export function FeaturesGrid() {
       <div className="absolute inset-0 animated-grid-bg opacity-30" />
 
       <div className="container mx-auto px-4 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           {features.map((feature, index) => (
             <div
               key={index}

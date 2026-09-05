@@ -6,7 +6,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Github, BookOpen } from "lucide-react"
+import { Github, BookOpen, Compass } from "lucide-react"
 
 export function HeroSection() {
   return (
@@ -26,11 +26,17 @@ export function HeroSection() {
           </h1>
 
           <p className="text-base md:text-lg text-muted-foreground max-w-2xl mb-6 text-pretty">
-            Feature specs and package references for debate-ai.com — CARDS, FIAT, LEARN, STREAM, and REASON.
+            Guides to the training, practice, and research collaboration tools, plus feature specs and package
+            references for debate-ai.com — CARDS, FIAT, LEARN, STREAM, and REASON.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-12">
-            <Button onClick={() => window.location.href = "/docs"} size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={() => window.location.href = "/docs/guides"} size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Compass className="h-4 w-4" />
+              Guides
+            </Button>
+
+            <Button onClick={() => window.location.href = "/docs"} variant="outline" size="lg" className="gap-2 bg-transparent">
               <BookOpen className="h-4 w-4" />
               Documentation
             </Button>
