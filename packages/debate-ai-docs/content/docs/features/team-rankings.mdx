@@ -1,0 +1,22 @@
+---
+title: "Team Rankings"
+---
+
+# Team Rankings
+
+A division-and-season leaderboard of debate teams — TOC score, bid count,
+and Debate Elo rating side by side, for PF, LD, Policy (CX), and NDT.
+
+- **Route:** `/rank`
+- **Package:** `debate-videos`
+
+## What it shows
+
+A division tab and season-year selector drive a sortable table (state,
+bids, TOC score, Debate Elo, Elo rank and derived columns), plus a champion
+banner surfacing recorded champion/topic history.
+
+## Known gaps
+
+Elo and TOC-score computation aren't documented in detail here — see
+`packages/debate-videos/src/panels/leaderboard/leaderboardUtils.ts`.

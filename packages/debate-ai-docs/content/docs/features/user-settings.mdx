@@ -1,0 +1,34 @@
+---
+title: "User Settings"
+---
+
+# User Settings
+
+Gives a signed-in user a real settings page for debate style/font size/
+color theme/light-dark-mode preferences, synced to their account, plus a
+favorite-tools list.
+
+- **Route:** `/settings`
+- **Package:** `debate-round` (panel + validation + fetch client),
+  `apps/debate-ai.com` (`/api/settings`, `user_settings` D1 table)
+
+## What it shows
+
+A form with Debate style/Font size/Color theme/Light-dark-mode pickers, a
+Save button, and a "Favorite tools" section (starred from `/tools` or
+managed here).
+
+## Data flow
+
+```
+state/userSettings.ts / state/themeSettings.ts / state/favoriteTools.ts (pure validation)
+round/user-settings-client.ts (fetch) → GET/PUT /api/settings
+panels/UserSettingsPanel.tsx
+components/theme-dropdown.tsx's useThemeState()
+lib/hooks/useFavoriteTools.ts
+```
+
+## Known gaps
+
+No optimistic-concurrency handling — two tabs editing settings at once has
+the last PUT win, most exposed on `favoriteTools`' whole-list replace.
