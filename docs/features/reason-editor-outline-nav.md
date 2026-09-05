@@ -44,16 +44,23 @@ ask was already true of the live implementation before this slice; the
 `reason-editor` doc above just never got updated to say so.
 
 **Heading breadcrumb** (`editor/heading-breadcrumb-bar.ts`'s
-`HeadingBreadcrumbBar`, new in this slice) — a sticky one-line trail
-(`#heading-breadcrumb-bar`, pinned to the top of `#app`'s own scroll box)
-showing the ancestor chain — e.g. "Case › Advantage 1 › Uniqueness" — for
-whichever heading is at the top of the current scroll position. Each
-segment is clickable and jumps to that heading, reusing the same
-select-then-`scrollToHeadingId` pattern `nav-panel.ts`'s own row clicks
-use. Hidden when scrolled above every heading (nothing to show yet).
-Single-doc only — multi-pane/multi-window each have their own
-`.pmd-pane-body` scroller and view and aren't wired up (a follow-up, not a
-regression: neither had a breadcrumb before this file existed).
+`HeadingBreadcrumbBar`) — a sticky one-line trail showing the ancestor
+chain — e.g. "Case › Advantage 1 › Uniqueness" — for whichever heading is
+at the top of the current scroll position. Each segment is clickable and
+jumps to that heading, reusing the same select-then-`scrollToHeadingId`
+pattern `nav-panel.ts`'s own row clicks use. Hidden when scrolled above
+every heading (nothing to show yet). Single-doc renders one instance
+pinned to `#app`'s own scroll box (`#heading-breadcrumb-bar`); the
+multi-pane workspace (`editor/multi-pane-shell.ts`) renders one
+independent instance per pane — `slot1`/`slot2`/`slot3` each get their own
+`HeadingBreadcrumbBar` pinned to that pane's own `.pmd-pane-body` scroller,
+tracking whichever doc is currently visible in that slot and re-attaching
+on every doc switch within the slot (idea #9's last open follow-up — see
+Tracker Status). A separate OS-level window (the native wrapper, or a
+second browser tab on the same doc) needs no extra wiring: it's a fully
+independent module instance with its own `#app`-or-multi-pane DOM, so it
+already gets a breadcrumb through whichever of the two paths above it's
+running.
 
 **Breadcrumb visibility toggle** — Settings → Appearance → "Show heading
 breadcrumb bar" (`showHeadingBreadcrumb`, default on, persisted). Off hides
@@ -98,11 +105,31 @@ editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
     change handler (mirrors `applyFormatNavPaneByType`'s pattern): off
     hides the bar immediately via render([]); on re-runs refresh() so
     whatever the current scroll position would show reappears
+  → one instance per surface: single-doc's `index.ts` owns one bound to
+    `#app`; multi-pane's `multi-pane-shell.ts` gives each of its three
+    `Slot`s its own, bound to that slot's `.pmd-pane-body`
 
 react/ribbon-template.ts
   → static `#heading-breadcrumb-bar` div, sibling of `.pmd-editor-row`
     inside `#app`, so `position: sticky` pins it to `#app`'s own scroll
     box (single-doc's scroller — see `precise-scroll.ts`'s module doc)
+
+editor/multi-pane-shell.ts (Slot)
+  → constructs its own breadcrumb `<div class="pmd-heading-breadcrumb">`
+    as a permanent first child of `bodyEl` (`.pmd-pane-body`), ahead of
+    whichever `DocRecord.editorEl` is currently mounted, and wraps it in
+    its own `HeadingBreadcrumbBar` bound to `bodyEl` as the scroller
+  → `mountVisible()` calls `breadcrumbBar.attach(rec.view)` after
+    restoring `rec.savedScrollTop`, so switching the slot's visible doc
+    (opening a new one, or cycling the stack) re-points the bar at the
+    newly-visible doc's headings and scroll position
+  → the per-record `dispatchTransaction`'s existing 200ms debounced
+    heavy-update timer (shared with `navPanel.update`/`refreshWordCount`)
+    also calls `breadcrumbBar.update(doc)`, gated on
+    `record.owner.visible === record` so a background stack member's
+    headings never repaint the pane's currently-visible breadcrumb
+  → the shell's settings subscriber propagates `showHeadingBreadcrumb`
+    toggles to all three slots' bars, mirroring single-doc's own handler
 ```
 
 ## Known gaps
@@ -117,10 +144,16 @@ react/ribbon-template.ts
   `wrangler dev` (a real local D1 is required for `/reason-editor`'s
   document create/list calls to succeed; `bun run dev:web`'s plain
   `vinext dev` has no D1 binding at all).
-- The breadcrumb is single-doc only; multi-pane and multi-window don't
-  have one yet (see "What it shows" above).
 - Idea #9's other two follow-ups are already done, just not through the
   `reason-editor` package this doc used to point at: drag-to-reorder
   headings is `nav-panel.ts`'s existing drag/drop (`drag-controller.ts`),
-  and "on by default" is `navPaneVisible`'s own default. Only the sticky
-  breadcrumb follow-up was genuinely missing before this slice.
+  and "on by default" is `navPaneVisible`'s own default.
+- The multi-pane breadcrumb tracks whichever doc is *visible* in a slot;
+  a doc sitting in a slot's stack but not currently shown doesn't repaint
+  the pane's bar until it's switched to (deliberate — see "Data flow"
+  above), so there's no per-stacked-doc breadcrumb history, just the one
+  currently on screen per pane. No further follow-up is currently tracked
+  for this idea; a future run should pick a fresh next-step (e.g. a
+  compact per-pane breadcrumb width budget so three narrow panes don't
+  each need horizontal scrolling for a deep chain) if one becomes worth
+  doing.
