@@ -10,6 +10,16 @@ to a teammate.
   Workspace menu (`t prep notes` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
+> **⚠️ Known regression, discovered 2026-09-05:** PR #498 ("Remove flow
+> spreadsheet grid, show round flows in round editor", merged 2026-09-03)
+> deleted the AG Grid-based `FlowSpreadsheet` view along with
+> `flow/PrepNoteBadge.tsx` and `flow/PrepNotePopover.tsx`. This standalone
+> `/prep-notes` panel is unaffected — it never depended on the grid — but
+> the two references below to a `FlowSpreadsheet`-grid `PrepNoteBadge` (a
+> per-box note badge in the live flow grid, distinct from this cross-flow
+> list view) describe deleted code with no current replacement. See
+> `flow-annotations.md`'s matching notice for the same regression.
+
 ## What it shows
 
 Notes are grouped into three sections, in this order:

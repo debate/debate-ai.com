@@ -146,7 +146,27 @@ selects (populated from the tree's own distinct values) and per-row
 argument-type/contributor/evidence-status badges. No follow-ups remain open
 on this idea.
 
-## Tagging an argument from the flow grid
+## Tagging an argument from the flow grid (removed — see note)
+
+> **⚠️ Known regression, discovered 2026-09-05:** PR #498 ("Remove flow
+> spreadsheet grid, show round flows in round editor", merged 2026-09-03)
+> deleted the AG Grid-based `FlowSpreadsheet` view along with
+> `flow/ArgumentTagPopover.tsx`, `flow/argument-tagging.ts`, and
+> `flow/GridContextMenu.tsx`, in favor of the new "ebb flow" split
+> speech-editor view (`debate-flow`'s `EbbFlowEmbed.tsx`/`HotGrid.tsx`),
+> which exposes no tagging UI. This is more than stale prose: the tagging
+> popover described below was the *only* place in the app that ever wrote
+> `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` (confirmed by
+> searching the current tree — nothing else sets these fields). A flow
+> created or edited since the removal has no way to be tagged, so `/outline`'s
+> **Argument type**/**Contributor**/**Evidence status** filters (see "What it
+> shows" above) and the "Unanswered only" toggle (`evidenceStatus`-driven)
+> have nothing to filter on for it — they still work for flows tagged before
+> 2026-09-03. Left as a "Known gap" below rather than rebuilt in this pass:
+> restoring it needs a Handsontable-native tagging affordance in the new
+> editor (cell metadata + a context-menu or toolbar action), not a port of
+> the deleted AG Grid popover. The rest of this section (through "Outline
+> export" below) is kept for history only.
 
 The three filters above only have something to filter on once a row carries
 tags, and until this slice nothing in the app could set them. Right-clicking
@@ -354,6 +374,10 @@ suites).
 
 ## Known gaps
 
+- No tagging UI exists in the current flow editor at all — see the
+  "Tagging an argument from the flow grid (removed — see note)" section
+  above. This is the actively relevant gap today; the bullets below
+  describe the deleted popover's own limitations and are kept for history.
 - Tagging is row-level, not per-speech: one row carries one
   `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
   written by a different partner than its 1AC claim can't record both.
