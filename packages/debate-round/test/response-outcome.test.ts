@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   applyHypotheticalAdjustments,
   buildCounselPanelTopArguments,
+  buildHypotheticalScenarioComparison,
   buildVulnerabilityChartData,
   buildVulnerabilityChartDataFromReport,
   getArgumentVulnerabilityReport,
@@ -286,6 +287,83 @@ describe("applyHypotheticalAdjustments", () => {
     const sides = summarizeOutcomeBySideFromReport(adjusted, getFlowSideKeys(flow));
     const sideForDropped = sides.find((side) => side.sideKey === dropped.sideKey);
     expect(sideForDropped?.unansweredCount).toBe(0);
+  });
+});
+
+describe("buildHypotheticalScenarioComparison", () => {
+  const flow = {
+    columns: COLUMNS,
+    children: [
+      rowFromContents(["Case advantage", "", "", ""]), // dropped -> 80, unanswered
+      rowFromContents(["Disad link", "Turn", "Extend", "Frontline"]), // fully answered -> 45
+    ],
+  };
+  const report = getArgumentVulnerabilityReport(flow);
+  const dropped = report.find((row) => row.argument === "Case advantage")!;
+  const answered = report.find((row) => row.argument === "Disad link")!;
+  const sideKeys = getFlowSideKeys(flow);
+
+  it("throws when fewer than two scenarios are given", () => {
+    expect(() =>
+      buildHypotheticalScenarioComparison(report, sideKeys, [
+        { name: "Only one", adjustments: [] },
+      ]),
+    ).toThrow(/at least two scenarios/);
+    expect(() => buildHypotheticalScenarioComparison(report, sideKeys, [])).toThrow();
+  });
+
+  it("carries scenario names through in order", () => {
+    const comparison = buildHypotheticalScenarioComparison(report, sideKeys, [
+      { name: "Baseline", adjustments: [] },
+      { name: "Concede the disad", adjustments: [{ rowIndex: answered.rowIndex, action: "concede" }] },
+    ]);
+    expect(comparison.scenarioNames).toEqual(["Baseline", "Concede the disad"]);
+  });
+
+  it("computes each scenario's own per-side rollup", () => {
+    const comparison = buildHypotheticalScenarioComparison(report, sideKeys, [
+      { name: "Baseline", adjustments: [] },
+      { name: "Answer the drop", adjustments: [{ rowIndex: dropped.rowIndex, action: "answer" }] },
+    ]);
+    expect(comparison.sideSummaries[0]).toEqual(summarizeOutcomeBySideFromReport(report, sideKeys));
+    const adjustedReport = applyHypotheticalAdjustments(report, [{ rowIndex: dropped.rowIndex, action: "answer" }]);
+    expect(comparison.sideSummaries[1]).toEqual(summarizeOutcomeBySideFromReport(adjustedReport, sideKeys));
+  });
+
+  it("compares the same baseline top-N arguments across every scenario, scored per scenario", () => {
+    const comparison = buildHypotheticalScenarioComparison(report, sideKeys, [
+      { name: "Baseline", adjustments: [] },
+      { name: "Answer the drop, concede the disad", adjustments: [
+        { rowIndex: dropped.rowIndex, action: "answer" },
+        { rowIndex: answered.rowIndex, action: "concede" },
+      ] },
+    ]);
+
+    expect(comparison.argumentRows.map((row) => row.rowIndex)).toEqual(
+      report.map((row) => row.rowIndex),
+    );
+
+    const droppedRow = comparison.argumentRows.find((row) => row.rowIndex === dropped.rowIndex)!;
+    expect(droppedRow.scenarioScores[0]).toBe(dropped.vulnerabilityScore);
+    expect(droppedRow.scenarioScores[1]).toBeLessThan(dropped.vulnerabilityScore);
+
+    const answeredRow = comparison.argumentRows.find((row) => row.rowIndex === answered.rowIndex)!;
+    expect(answeredRow.scenarioScores[0]).toBe(answered.vulnerabilityScore);
+    expect(answeredRow.scenarioScores[1]).toBeGreaterThan(answered.vulnerabilityScore);
+  });
+
+  it("limits the compared argument set to the given limit, taken from the baseline ranking", () => {
+    const comparison = buildHypotheticalScenarioComparison(
+      report,
+      sideKeys,
+      [
+        { name: "Baseline", adjustments: [] },
+        { name: "Concede the disad", adjustments: [{ rowIndex: answered.rowIndex, action: "concede" }] },
+      ],
+      { limit: 1 },
+    );
+    expect(comparison.argumentRows).toHaveLength(1);
+    expect(comparison.argumentRows[0].rowIndex).toBe(dropped.rowIndex);
   });
 });
 

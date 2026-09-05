@@ -9,6 +9,23 @@ them.
 - **Where:** the Coach hub's Flow section (`/coach`)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
+> **⚠️ Known regression, discovered 2026-09-05:** PR #498 ("Remove flow
+> spreadsheet grid, show round flows in round editor", merged 2026-09-03)
+> deleted the AG Grid-based `FlowSpreadsheet` view — along with
+> `flow/EditBadge.tsx`, `flow/EditReviewPopover.tsx`, `flow/PrepNoteBadge.tsx`,
+> `flow/PrepNotePopover.tsx`, `flow/GridContextMenu.tsx`, and
+> `flow/useFlowGridConfig.ts` — in favor of the new "ebb flow" split
+> speech-editor view (`debate-flow`'s `EbbFlowEmbed.tsx`/`HotGrid.tsx`),
+> which has no equivalent in-grid affordance. Every section below that
+> describes a `FlowSpreadsheet`-grid badge/popover (`EditBadge`,
+> `EditReviewPopover`) is describing deleted code, not current behavior —
+> kept for history only. The standalone **Flow Edit Log** panel described
+> above this notice, and its own cross-tab live-update (see "Cross-tab live
+> update" further down, for the standalone `FlowEditLogPanel` list view
+> specifically, not the grid badge), are unaffected — neither ever depended
+> on the grid. See `flow-annotations.md`'s matching notice for the same
+> regression's effect on that feature's grid badge.
+
 ## What it shows
 
 **Flow Edit Log** — a form to log a `FlowEdit`:

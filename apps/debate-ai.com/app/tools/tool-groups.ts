@@ -283,7 +283,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       {
         href: "/rank", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
-        highlights: ["Elo-based team leaderboard", "Track team ratings and rankings over time"],
+        highlights: [
+          "Elo-based team leaderboard",
+          "Track team ratings and rankings over time",
+          "Standings tab: log or bulk-CSV-import tournament results into NDCA-style qualification standings with an editable points table",
+        ],
       },
       {
         href: "/coaching-programs", label: "Coaching Programs", icon: School,

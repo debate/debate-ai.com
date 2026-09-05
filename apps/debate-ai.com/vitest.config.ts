@@ -19,8 +19,10 @@ export default defineConfig({
   root: repoRoot,
   test: {
     // Exclude packages/README.md, which "packages/*" would otherwise match
-    // as a (non-directory, non-config) project entry.
-    projects: ["packages/*", "!packages/README.md"],
+    // as a (non-directory, non-config) project entry. Exclude debate-ai-docs
+    // too: it's a Fumadocs/Next.js site, not a tested library package (like
+    // apps/*, which this glob never reaches), and has no test/ folder.
+    projects: ["packages/*", "!packages/README.md", "!packages/debate-ai-docs"],
     coverage: {
       provider: "v8",
       reportsDirectory: path.join(repoRoot, "coverage"),

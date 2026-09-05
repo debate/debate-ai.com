@@ -1,0 +1,36 @@
+---
+title: "Scout-to-Strategy Workflow"
+---
+
+# Scout-to-Strategy Workflow
+
+Turns existing opponent-scouting and judge-tendency profiles into a
+deterministic case-choice/risk recommendation for an upcoming matchup.
+
+- **Route:** `/strategy`
+- **Package:** `debate-round`
+
+## What it shows
+
+A form (matchup id, opponent/judge lookup, our side, case options) builds
+a recommendation appended to that matchup's history log: recommended
+case/rankings, judge adaptation notes, risk level/factors, a **Case
+comparison** table, and a "Get AI case-choice evaluation" action. A **Send
+to Pre-Round Briefing** action exports a one-line summary.
+
+## Data flow
+
+```
+round/scout-to-strategy.ts
+  → rankCaseOptions / assessMatchupRisk(opponentProfile, judgeProfile, ourSide)
+  → buildStrategyRecommendationFromStores(...)
+state/strategyRecommendations.ts (localStorage: strategyRecommendations)
+  → panels/StrategyPanel.tsx
+  → apps/debate-ai.com/app/strategy/page.tsx
+```
+
+Recommendation history is account-synced (`/api/strategy-recommendations`).
+
+## Known gaps
+
+None remain open for this idea.

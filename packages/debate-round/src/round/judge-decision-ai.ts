@@ -15,11 +15,29 @@
  * directly in Vitest without mocking `fetch`, mirroring
  * `lib/llm-card-scoring-ai.ts`'s split.
  *
+ * `buildJudgeDecisionRubric` closes the "🧪 Practice Round Simulator" idea's
+ * "a scoring rubric shown alongside the AI judge decision" Next item
+ * (TODO.md's Research Crowdsourcing Organizer Features list): a
+ * paradigm-agnostic checklist of that paradigm's own `votingPriorities`,
+ * each marked addressed/not against the already-parsed decision, reusing
+ * the same `JudgeParadigm`/`JudgeDecisionAiResult` shapes this file already
+ * defines instead of a second AI call.
+ *
  * @module round/judge-decision-ai
  */
 
 import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
 import { buildJudgeParadigmPrompt } from "debate-speech-writer/src/judge/judge-paradigms";
+
+/** One row of a paradigm's scoring rubric, checked against a rendered decision. */
+export type JudgeDecisionRubricRow = {
+  /** The paradigm's own voting-priority text, unmodified. */
+  criterion: string;
+  /** Whether the decision's `keyVotingIssues`/`rationale` appear to speak to this criterion. */
+  addressed: boolean;
+  /** The `keyVotingIssues` entry that matched, if `addressed` is true. */
+  matchedIssue: string | null;
+};
 
 /** Which side of the round the AI judge voted for. */
 export type JudgeDecisionWinner = "primary" | "secondary";
@@ -143,4 +161,45 @@ export function parseJudgeDecisionAiResponse(raw: string): JudgeDecisionAiResult
   } catch {
     return null;
   }
+}
+
+// Only words of 4+ letters ever reach this set (see extractRubricKeywords), so
+// shorter stopwords like "the"/"and"/"or" need no entry here.
+const RUBRIC_STOPWORDS = new Set(["with", "only", "when", "that", "this", "established"]);
+
+/** Lowercased, punctuation-stripped words of 4+ letters, used as this criterion's match keywords. */
+function extractRubricKeywords(text: string): string[] {
+  return text
+    .toLowerCase()
+    .split(/[^a-z]+/)
+    .filter((word) => word.length >= 4 && !RUBRIC_STOPWORDS.has(word));
+}
+
+/**
+ * Builds a scoring-rubric checklist from a paradigm's own `votingPriorities`,
+ * marking each as "addressed" when the decision's `keyVotingIssues` or
+ * `rationale` mention one of that criterion's significant words. This is a
+ * heuristic keyword match rather than a second AI call — good enough to spot
+ * a paradigm criterion the decision never actually engaged with (e.g. a
+ * "framework" judge whose rationale never mentions framework at all), not a
+ * claim that a matched criterion was reasoned about correctly.
+ */
+export function buildJudgeDecisionRubric(
+  paradigm: JudgeParadigm,
+  decision: JudgeDecisionAiResult,
+): JudgeDecisionRubricRow[] {
+  return paradigm.votingPriorities.map((criterion) => {
+    const keywords = extractRubricKeywords(criterion);
+    const matchedIssue =
+      decision.keyVotingIssues.find((issue) => rowMatchesKeywords(issue, keywords)) ?? null;
+    const addressed = matchedIssue !== null || rowMatchesKeywords(decision.rationale, keywords);
+
+    return { criterion, addressed, matchedIssue };
+  });
+}
+
+function rowMatchesKeywords(text: string, keywords: string[]): boolean {
+  if (keywords.length === 0) return false;
+  const lowered = text.toLowerCase();
+  return keywords.some((keyword) => lowered.includes(keyword));
 }

@@ -1,0 +1,32 @@
+---
+title: "Quest Streaks"
+---
+
+# Quest Streaks
+
+A roster of every contributor's daily-quest streak and milestone badges,
+plus an on-demand action to compute today's mission result.
+
+- **Route:** `/cards/streaks`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+Current/longest streak, badges, a **streak freeze** ("grace day") action
+for a missed day (up to 2 per rolling 30 days), and an opt-in
+streak-lapse reminder banner.
+
+## Data flow
+
+```
+state/dailyMissionResults.ts (localStorage: dailyMissionResults)
+state/streakFreezes.ts (localStorage: streakFreezes)
+  → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
+  → panels/QuestStreaksPanel.tsx
+  → apps/debate-ai.com/app/cards/streaks/page.tsx
+```
+
+## Known gaps
+
+The trigger is a manual button click, not a scheduled job. Streak freezes
+and reminder opt-ins are localStorage-only, not account-synced.

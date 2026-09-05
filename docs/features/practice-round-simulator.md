@@ -177,9 +177,36 @@ sides, chronological sorting, win/loss/pending tallying and win-rate
 calculation, feedback-issue-count carry-through, and the rendered text's
 summary and per-attempt lines).
 
+## Scoring rubric alongside the AI judge decision
+
+Closes this bullet's "a scoring rubric shown alongside the AI judge decision"
+Next item. Once a round has a `judgeDecision`, a "Scoring rubric — `<paradigm
+name>`" card renders next to it, listing that round's own judge paradigm's
+`votingPriorities` each with a ✅ (addressed) or ⬜ (not addressed) mark —
+so a debater can see which of the paradigm's own priorities the decision
+actually engaged with, not just the winner and a prose rationale.
+
+`debate-round`'s new `round/judge-decision-ai.ts#buildJudgeDecisionRubric`
+builds the checklist: for each voting-priority string, it extracts that
+criterion's significant words (4+ letters, common stopwords like "the"/"and"
+filtered out) and marks the row addressed when one of those words appears in
+any of the decision's `keyVotingIssues` (recording which issue matched) or
+in its `rationale` (no specific issue to point at, but still addressed).
+This is a heuristic keyword match, not a second AI call — it can miss a
+criterion addressed in different words, or loosely match on a common word,
+but is good enough to flag when a paradigm's own priority (e.g. "framework")
+never comes up in the decision at all. A paradigm with no fixed
+`votingPriorities` (the custom-judge paradigm) renders a note that there's
+nothing to check instead of an empty list.
+
+Vitest-covered in `packages/debate-round/test/judge-decision-ai.test.ts`'s
+`buildJudgeDecisionRubric` suite (per-criterion ordering, matching via a
+`keyVotingIssues` entry with the matched issue recorded, matching via the
+rationale alone with no issue recorded, a criterion neither mentions, and
+the empty-rubric case for a paradigm with no voting priorities).
+
 ## Known gaps
 
 No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
-in TODO.md's Research Crowdsourcing Organizer Features list still has two
-open Next items beyond this one: a round replay/playback view, and a scoring
-rubric shown alongside the AI judge decision.
+in TODO.md's Research Crowdsourcing Organizer Features list still has one
+open Next item beyond this one: a round replay/playback view.

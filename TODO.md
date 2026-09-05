@@ -6,6 +6,432 @@
 _No task currently in progress._
 
 ### Completed
+- **🧪 Practice Round Simulator — a scoring rubric now sits alongside the AI
+  judge decision.** The "🧪 Practice Round Simulator" bullet's next
+  unblocked follow-up after the past-attempts comparison, and — as with
+  every recent repeat of the standing autonomous-routine prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL
+  with the ability to save flows/docs/debates in SQL and link to users...
+  add tools into where needed in the UI... develop better tool UI") — that
+  prompt's own asks are already fully built (`apps/debate-ai.com/app/api/
+  settings/route.ts` plus dozens of `saved_*` D1 tables/`/api/*` routes
+  already link account settings, flows, docs, and rounds to signed-in users
+  in SQL, and every tool is already reachable from the Tools page,
+  CardMirror's own menu/command palette, and the feature catalog checked
+  this run), so this slice closed the next named, unblocked follow-up
+  instead. `debate-round`'s `round/judge-decision-ai.ts` gained a new pure
+  `buildJudgeDecisionRubric(paradigm, decision)`: for each of the round's
+  own saved judge paradigm's `votingPriorities`, it extracts that
+  criterion's significant words (4+ letters, common stopwords filtered) and
+  marks the row addressed when one of those words appears in one of the
+  decision's `keyVotingIssues` (recording which issue matched) or in its
+  `rationale` (addressed, but with no specific issue to point at) — a
+  heuristic keyword match rather than a second AI call, reusing the
+  `JudgeParadigm`/`JudgeDecisionAiResult` shapes this file already defines.
+  `PracticeRoundSimulatorPanel.tsx` renders it as a "Scoring rubric — `<paradigm
+  name>`" card (✅/⬜ per criterion) next to each round's AI judge decision,
+  with a fallback note for the custom paradigm's empty `votingPriorities`.
+  See `docs/features/practice-round-simulator.md`'s new "Scoring rubric
+  alongside the AI judge decision" section. Vitest-covered in
+  `packages/debate-round/test/judge-decision-ai.test.ts`'s new
+  `buildJudgeDecisionRubric` suite (per-criterion ordering; matching via a
+  `keyVotingIssues` entry with the matched issue recorded; matching via the
+  rationale alone with no issue recorded; a criterion neither mentions; and
+  the empty-rubric case for a paradigm with no voting priorities). No
+  further follow-up is currently tracked for this idea beyond the still-open
+  round replay/playback view.
+- **📅 Coaching Programs — the program calendar now folds in a coach's own
+  scheduled drill reviews.** Idea #13's ("Coaching Programs and Group
+  Challenges") last open follow-up: the "drills" half of "A calendar/
+  schedule view across a program's drills, sprints, and challenges" — the
+  half the immediately-prior slice deliberately left open, documented as a
+  circular-dependency problem in `docs/features/coaching-programs.md`'s
+  "Known gaps" (`debate-practice-rounds` already depends on
+  `debate-community`, for Progress Unlocks tiers, so composing drill dates
+  the other way round from inside `debate-community` would be circular).
+  Another repeat of the standing prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (`apps/debate-ai.com/app/api/
+  settings/route.ts` plus dozens of `saved_*` D1 tables/`/api/*` routes
+  already link account settings, flows, docs, and rounds to signed-in users
+  in SQL, and every tool is already reachable from the Tools page,
+  CardMirror's own menu/command palette, and this run's own updated
+  panel), so this slice closed out the next named, unblocked follow-up
+  instead, resolving the circular-dependency gap the way that "Known gaps"
+  note itself suggested: at the app/page layer, which already depends on
+  both packages, rather than moving the calendar composition itself.
+  `debate-practice-rounds`' `state/drillSets.ts` gained a new pure
+  `buildDrillReviewCalendarEvents`, turning a set of `DrillSetRecord`s'
+  `scheduledReviewAt` entries into a dependency-free `{dayKey, label,
+  detail}` event per scheduled review (labeled with the drill's kind and
+  round, detailed with its prompt, truncated the same way
+  `coaching-program-calendar.ts`'s own note-preview truncation is) — kept
+  free of `debate-community`'s own calendar types so this direction of
+  import stays a one-way, non-circular street. `debate-community`'s
+  `lib/coaching-program-calendar.ts` gained a new `"drill-review"`
+  `CoachingProgramCalendarEventKind` and a `CoachingProgramCalendarExternalEvent`
+  type, with `buildCoachingProgramCalendarEvents` (and
+  `state/coachingProgramCalendar.ts`'s `buildPersistedCoachingProgramCalendar`)
+  taking a new optional `drillReviews` parameter (default `[]`) merged
+  straight into the sorted event list, unfiltered by roster — unlike a
+  challenge, a drill set has no membership concept, so these are the
+  *viewing coach's own* reviews rather than roster-wide (documented as a
+  new, narrower "Known gaps" entry in place of the old circular-dependency
+  one). `CoachingProgramRosterAnalyticsPanel.tsx` gained a new optional
+  `drillReviewEvents` prop (defaulting to `[]`, so every other caller and
+  every existing test is unaffected), a `"Drill review"` badge label, and a
+  `useEffect` that re-derives the rendered calendar when that prop changes
+  (needed since it resolves asynchronously in the real caller, after this
+  panel's own mount effect already ran with the default). A new
+  `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`
+  client wrapper — mirroring `CommunityHubPageContent.tsx`'s existing
+  "split a client-only prop resolution out of the server `page.tsx`"
+  pattern — resolves the signed-in coach's own drill sets via
+  `debate-practice-rounds`' existing `useDrillSets()` hook and feeds them
+  through `buildDrillReviewCalendarEvents` into the panel, and `page.tsx`
+  now renders it in place of the bare panel. See
+  `docs/features/coaching-programs.md`'s updated "Program calendar" section
+  and "Known gaps". 10 new Vitest cases: 6 in
+  `packages/debate-practice-drills/test/drillSets.test.ts`
+  (`buildDrillReviewCalendarEvents` — no events for nothing scheduled, one
+  event per scheduled drill with the right label/detail, prompt-detail
+  truncation, ignoring an out-of-range scheduled index, chronological sort
+  across records, multiple events within one record) and 4 in
+  `packages/debate-contributor-progress/test/coaching-program-calendar.test.ts`
+  (`buildCoachingProgramCalendarEvents`'s new `drillReviews` parameter —
+  empty when none supplied, one event per supplied review, sorted into the
+  overall chronological order alongside challenges/notes, and a same-day
+  kind tiebreak ordering it between challenge and sprint-note kinds). Ran
+  the full verification gate: `bun x vitest run` (4553 passing, up from
+  4543), `bun run typecheck` (all 17 packages green, `debate-community`/
+  `debate-practice-rounds` included), and `bun run build:web` (the full
+  production build, `/coaching-programs` included) all pass.
+- **📅 Coaching Programs — a program calendar spanning sprints and
+  challenges.** Idea #13's ("Coaching Programs and Group Challenges") last
+  open follow-up: "A calendar/schedule view across a program's drills,
+  sprints, and challenges." Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that half is already fully built
+  (`apps/debate-ai.com/app/api/settings/route.ts` plus dozens of `saved_*`
+  D1 tables/`/api/*` routes already link account settings, flows, docs, and
+  rounds to signed-in users in SQL, and every tool is already reachable from
+  the Tools page, CardMirror's Google-Docs-style `MenuBar`/command palette,
+  and this run's own new panel section), so this slice picked the next
+  named, unblocked follow-up instead. `debate-contributor-progress`'s new
+  `lib/coaching-program-calendar.ts` (`buildCoachingProgramCalendarEvents`,
+  pure and directly Vitest-covered) turns a program roster's own
+  `GroupChallenge` windows (`startsAt`/`endsAt`, narrowed to challenges whose
+  own roster overlaps the program's — the same "any overlap counts" rule
+  `buildCoachingProgramChallengeDigest` already applies) and a chosen topic's
+  `SprintNote`s (`createdAt`) into one chronological list of dated events,
+  with `groupCoachingProgramCalendarEventsByDay` bucketing them for a
+  day-grouped rendering; `state/coachingProgramCalendar.ts`'s
+  `buildPersistedCoachingProgramCalendar` composes that against the real
+  persisted stores. `CoachingProgramRosterAnalyticsPanel.tsx` gained a new
+  "Program calendar" section below the existing challenge digest — a topic
+  field (optional; blank still shows the roster's challenge windows) plus a
+  day-by-day list, each event tagged with a kind badge ("Challenge starts"/
+  "Challenge ends"/"Sprint note"). Per-drill scheduled-review reminders
+  (named alongside "sprints" and "challenges" in the original follow-up)
+  are deliberately *not* included: `debate-practice-rounds` (which owns that
+  data) already depends on `debate-community` (this calendar's package, for
+  Progress Unlocks tiers), so composing drill dates the other way round here
+  would be circular — left as a fresh, explicit follow-up rather than forcing
+  a same-slice fix. `sprintNotes` was added to
+  `COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS` so a note
+  logged in another tab refreshes the new section too. See
+  `docs/features/coaching-programs.md`'s new "Program calendar" section and
+  updated "Known gaps". 17 new Vitest cases across
+  `packages/debate-contributor-progress/test/coaching-program-calendar.test.ts`
+  (empty input, challenge start/end events, roster-overlap inclusion and
+  exclusion, note-preview truncation, cross-kind chronological sorting, a
+  same-day kind/label tiebreak, and day-grouping) and
+  `packages/debate-contributor-progress/test/coachingProgramCalendar.test.ts`
+  (undefined for a missing program, roster-scoped challenge inclusion and
+  exclusion against real persisted stores, and topic-scoped/topic-blank
+  sprint-note inclusion and exclusion). Ran the full verification gate:
+  `bun run test` (4543 passing, up from 4526), `bun run typecheck` (all 17
+  packages green, `debate-community`/`debate-team-collaboration` included),
+  and `bun run build:web` (the full production build, `/coaching-programs`
+  included) all pass.
+- **🍞 Expandable Heading Structure — the sticky heading breadcrumb now
+  works in the multi-pane workspace, not just single-doc.** Idea #9's last
+  open follow-up (`docs/features/reason-editor-outline-nav.md`'s "Known
+  gaps" note that "the breadcrumb is single-doc only; multi-pane and
+  multi-window don't have one yet"). Another repeat of the standing prompt
+  ("integrate all the tools into the UI... add each tool where needed in
+  the live editor... integrate CardMirror better into the editor and have
+  its commands in the central Ctrl/Cmd-Shift-Space menu be menu items on
+  top of the top bar like Google Docs... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... develop better tool UI") — as with every recent repeat, the
+  bulk of it is already fully built: `packages/debate-editor/src/react/
+  MenuBar.tsx` already renders a Google-Docs-style top menu bar
+  (File/Speech/Card/Edit/Format/Color/Insert/AI/View/Panes/Tools/Flow/
+  Workspace/Plugins) above CardMirror's own ribbon, populated from the
+  same `RIBBON_GROUPS`/command registry the Ctrl/Cmd-Shift-Space command
+  palette (`quick-card-search-ui.ts`) searches, with a dedicated
+  "Workspace" category (`WORKSPACE_LINKS`) surfacing every other tool page
+  without leaving the editor; `apps/debate-ai.com/app/api/settings/
+  route.ts` plus dozens of `saved_*` D1 tables/`/api/*` routes already
+  link account settings, flows, docs, and rounds to signed-in users in
+  SQL; and the News Stream (`state/newsStream.ts`) already auto-posts from
+  nearly every tool in the app. So this slice picked the next named,
+  unblocked follow-up instead — the one place idea #9 was still
+  incomplete: the sticky current-heading breadcrumb
+  (`editor/heading-breadcrumb-bar.ts`'s `HeadingBreadcrumbBar`) only ever
+  bound to single-doc's `#app` scroller; the three-slot multi-pane
+  workspace (`editor/multi-pane-shell.ts`) had no breadcrumb at all, even
+  though each of its panes (`.pmd-pane-body`) is its own independent
+  scroller/view exactly like `#app` is. `Slot`'s constructor now builds
+  its own `<div class="pmd-heading-breadcrumb">` as a permanent first
+  child of `bodyEl` (ahead of whichever `DocRecord.editorEl` is currently
+  mounted) and wraps it in its own `HeadingBreadcrumbBar` bound to that
+  pane's `bodyEl`; `mountVisible()` calls `breadcrumbBar.attach(rec.view)`
+  after restoring the pane's scroll position, so opening a doc or
+  switching the slot's visible doc in its stack re-points the bar at the
+  right headings; the existing 200ms debounced heavy-update timer inside
+  each record's `dispatchTransaction` (already driving `navPanel.update`/
+  `refreshWordCount`) now also calls `breadcrumbBar.update(doc)`, gated on
+  `record.owner.visible === record` so a background (non-visible) stacked
+  doc's edits never repaint the pane's on-screen breadcrumb; and the
+  shell's existing settings subscriber now propagates the
+  `showHeadingBreadcrumb` toggle to all three slots' bars, mirroring
+  single-doc's own handler exactly. No new pure-logic surface was added
+  (`heading-breadcrumb.ts`'s `computeBreadcrumbPath`/`shouldShowBreadcrumb`
+  are reused as-is), so no new Vitest cases were needed, consistent with
+  this repo's existing convention of not component-testing DOM-wiring
+  classes like `HeadingBreadcrumbBar`/`MultiPaneShell` themselves. See
+  `docs/features/reason-editor-outline-nav.md`'s updated "What it shows"/
+  "Data flow"/"Known gaps" sections. Ran the full verification gate:
+  `bun run test` (4526 passing, unchanged from before this slice — no
+  tests added or broken), `bunx turbo run typecheck --filter=debate-editor`
+  (green), and `bun run build:web` (the full production build,
+  `/reason-editor` included) all pass.
+  PR: [#579](https://github.com/debate/debate-ai.com/pull/579).
+- **📊 AI Response-Outcome Charts — compare two or more "what if" scenarios
+  side by side.** Idea #4's last open follow-up: the existing "what if"
+  picker (`response-outcome.ts#applyHypotheticalAdjustments`) only ever
+  held one hypothetical per round — picking a different Extend/Answer/
+  Concede choice for a row overwrote the prior pick, so there was no way
+  to explore, say, "what if we answer the drop" against "what if we
+  concede the disad" at the same time. A new
+  `buildHypotheticalScenarioComparison(report, sideKeys, scenarios,
+  options?)` in `debate-round`'s `flow/response-outcome.ts` takes two or
+  more named scenarios (each a full `HypotheticalAdjustment[]`, the same
+  shape the picker already produces) and returns each scenario's own
+  per-side exposure rollup plus a shared "compared arguments" table — the
+  baseline report's top-N arguments (anchored to the *unadjusted* ranking,
+  not each scenario's own, so the same arguments line up as rows across
+  every scenario's column instead of potentially comparing different ones)
+  scored under every scenario. `debate-practice-drills`'
+  `flow/response-outcome-report.ts` gained a matching
+  `buildHypotheticalScenarioComparisonText`/
+  `hypotheticalScenarioComparisonFilename` plain-text export, and
+  `VulnerabilityChartsPanel.tsx` gained a "Compare 'What If' Scenarios"
+  section: name and save the row's currently-active picks as a scenario,
+  see every saved scenario for the round with a "Remove" action, and once
+  two or more are saved, a side-by-side comparison (per-scenario exposure
+  summary plus the shared score table) with its own "Download comparison"
+  action. Saved scenarios are scratch component state only, like the
+  single-hypothetical picker itself — never persisted, and cleared
+  alongside the round's report on "Clear". See
+  `docs/features/response-outcome-charts.md`'s "Comparing 'what if'
+  scenarios side by side" section.
+- **🗂️ Argument Tree Outline — restored argument tagging, correcting a
+  wrong assumption in the prior run's regression note.** Idea #10's
+  ("Outline Filters and Argument Tree View") most-impactful open item per
+  the prior run: PR #498 deleted the only code that ever wrote
+  `Box.argumentType`/`authorId`/`evidenceStatus`, so `/outline`'s Argument
+  type/Contributor/Evidence status filters had nothing to filter on for any
+  flow touched since. The prior run's note said restoring it needed "a
+  Handsontable-native tagging affordance in the new editor," meaning
+  `debate-flow`'s `EbbFlowEmbed`/`HotGrid`. Investigating that first turned
+  up that the premise was wrong: `debate-flow` (`debate-flow-ebb`) is ebb,
+  an entirely separate local-first flow editor ported in as its own
+  workspace package with its own `FlowSheet`/`CellMeta` document model —
+  it never reads or writes this repo's `Box`/`Flow` types, and nothing
+  bridges the two. A tagging affordance built into `HotGrid` would have
+  tagged ebb's own document, which `/outline` never reads, and would have
+  silently done nothing for these filters. Since PR #498, no editor in the
+  live app touches `Flow.children`'s `Box` tree at all any more (the round
+  page's remaining split view edits `Flow.speechDocs` markdown text
+  instead) — restoring a `Box`-tree grid wasn't in scope for this slice, so
+  tagging was restored where the tags are actually consumed: a new "Tag…"
+  action per row on `ArgumentTreePanel.tsx` itself (`/outline`), enabled
+  when the row's round is the round workspace's currently selected flow
+  (mirroring the existing "Generate outline for current round" action's
+  scope). The dialog offers Argument type/Evidence status selects and a
+  contributor field with autocomplete, plus the original popover's
+  `inferArgumentType` content-based suggestion; saving writes the tags onto
+  the underlying `Box` via a restored, single-row `flow/argument-tagging.ts`
+  (`debate-round`), pushes the updated flow through `useFlowStore`,
+  best-effort mirrors `useFlowEffects.ts`'s `localStorage["flows"]` write
+  (not mounted on the `/outline` route), and regenerates the round's
+  outline so the filters see the new tags immediately. The deleted
+  popover's neighbour-preview/bulk-section and multi-row-selection bulk
+  tagging (both shaped around a grid's row selection) are not restored —
+  left as a follow-up if bulk tagging across this panel's flat row list is
+  worth building. See `docs/features/argument-tree-outline.md`'s "Tagging
+  an argument from the Outline panel" section and
+  `packages/debate-round/test/argument-tagging.test.ts`.
+  PR: [#577](https://github.com/debate/debate-ai.com/pull/577).
+- **🎞️ Flow-in-Speech Flow Annotations — density scrubber, plus a doc/tracker
+  drift audit that found and corrected four stale docs describing deleted
+  `FlowSpreadsheet` code (idea #15's "A density scrubber on the video
+  timeline showing where annotations cluster" follow-up under Product
+  Feature Ideas).** Another repeat of the standing prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL...
+  with ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette — CardMirror also already has a Google-Docs-style `MenuBar`
+  above the editor, populated from the same `RIBBON_GROUPS`/command
+  registry as the Ctrl/Cmd-Shift-Space palette, see
+  `packages/debate-editor/src/react/MenuBar.tsx`), so this slice picked the
+  next named, unblocked follow-up instead.
+  While scoping it, found that `docs/features/flow-annotations.md`'s
+  "FlowSpreadsheet affordance" section (and matching sections in three
+  other docs — `shared-flow-sync.md`'s `EditBadge`/`EditReviewPopover`,
+  `prep-notes.md`'s `PrepNoteBadge`, and `argument-tree-outline.md`'s whole
+  "Tagging an argument from the flow grid" section) describe code that no
+  longer exists: PR #498 ("Remove flow spreadsheet grid, show round flows
+  in round editor", merged 2026-09-03 — two days before this run) deleted
+  the entire AG Grid-based `FlowSpreadsheet` view and everything built
+  exclusively on it (`AnnotationBadge`/`AnnotationCellRenderer`/
+  `annotation-cells.ts`, `EditBadge`/`EditReviewPopover`, `PrepNoteBadge`/
+  `PrepNotePopover`, `ArgumentTagPopover`/`argument-tagging.ts`,
+  `GridContextMenu`, `useFlowGridConfig.ts`) in favor of the new "ebb flow"
+  split speech-editor view (`debate-flow`'s `EbbFlowEmbed.tsx`/`HotGrid.tsx`),
+  confirmed by `git log --diff-filter=D` and by grepping the current tree
+  for every symbol those doc sections name (all zero hits outside the
+  stale docs themselves). This is a real capability regression, not just
+  stale prose: nothing else in the tree ever wrote
+  `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` besides the now-deleted
+  `ArgumentTagPopover`, so `/outline`'s type/contributor/evidence-status
+  filters (idea #10) have had no way to gain new data since 2026-09-03,
+  and no editor surface shows an annotation/edit/prep-note indicator on a
+  box today. All four docs now carry an explicit "⚠️ Known regression"
+  callout pinpointing what's dead, why, and what (if anything) still works,
+  rather than silently deleting the history — restoring real parity in the
+  new Handsontable-based editor is its own slice of work, tracked as a
+  fresh "Known gap" in each doc rather than attempted here.
+  The named follow-up itself — a density visualization — couldn't be built
+  against `FlowSpreadsheet` (gone) or real video duration (never tracked;
+  the YouTube embed only exposes playback position via
+  `useVideoPlayerStore`), so it's built for the still-real, still-working
+  standalone `FlowAnnotationsPanel` (`/annotations`) instead, scaled to the
+  annotations' own timestamp range rather than the recording's actual
+  length: `debate-practice-drills`' new `flow/annotation-density.ts`
+  (`buildAnnotationDensityBuckets`, pure and directly Vitest-covered) splits
+  a flow's annotations into 20 fixed-width buckets across their own
+  min-to-max timestamp span (a single full-range bucket when every
+  annotation shares one timestamp), and a new
+  `flow/AnnotationDensityScrubber.tsx` renders them as a bar strip — taller
+  bars where annotations cluster, each clickable to jump to that cluster's
+  earliest annotation via the panel's existing `handleJump`. Shown above
+  the annotation list once a specific **Flow** filter is selected (the same
+  gate the existing "Download annotations" button uses), scoped to the
+  currently filtered (Flow/Speech/Speaker/Tag) annotation list rather than
+  every annotation on the flow, so the scrubber reflects what's actually
+  visible below it. See `docs/features/flow-annotations.md`'s updated
+  "Known gaps" section. 11 new Vitest cases in
+  `packages/debate-practice-drills/test/annotation-density.test.ts`
+  (empty input, single-shared-timestamp collapse, full bucket-count
+  coverage with correct start/end bounds, correct bucket assignment
+  including the top-boundary/last-bucket edge case, per-bucket ordering,
+  the default bucket count, and `maxAnnotationDensityCount`/
+  `pickBucketJumpAnnotation`'s edge cases). Ran the full verification
+  gate: `bun run test` (4498 passing, up from 4487), `bunx turbo run
+  typecheck --filter=debate-practice-rounds --filter=debate-round` (both,
+  plus every package they depend on, green — the pre-existing, unrelated
+  `debate-flow-ebb` Handsontable-callback-typing failure in `HotGrid.tsx`
+  noted in the prior Completed entry is untouched by this slice, and
+  wasn't hit by this run's typecheck scope since it isn't a dependency of
+  either changed package), and `bun run build:web` (the full production
+  build) all pass. A follow-up for a future run: restore a
+  Handsontable-native annotation/edit/prep-note/tag affordance in the
+  current flow editor, replacing the four now-corrected docs' dead
+  `FlowSpreadsheet`-grid sections with real, working ones again — a bigger
+  slice than fit here, and idea #10's argument-tagging feature in
+  particular (not just its grid badge) needs a real UI again, not only a
+  doc fix, since it's the only way `/outline`'s type/contributor/
+  evidence-status filters gain new data.
+
+- **🏆 CX NDCA Standings — rebuilt as a "Standings" tab inside Team Rankings
+  (idea #1's follow-up (a)/(b)/(c) under Product Feature Ideas).** Another
+  repeat of the standing prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL... with ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead. Idea #1 noted the old standalone `/standings` page and
+  `StandingsPanel` were removed Aug 30, 2026, deliberately leaving the
+  underlying `debate-data-sync` scoring helpers
+  (`computeTournamentPoints`/`buildStanding`/`rankStandings` in
+  `rankings/ndca-standings.ts`) and the already-existing
+  `state/tournamentResults.ts`/`state/qualificationPointsTable.ts` stores in
+  place for exactly this rebuild — all three of its named follow-ups are
+  now done. `rankings/tournament-results-csv-import.ts` gains a pure
+  `parseTournamentResultsCsv` (mirroring
+  `rankings/opponent-round-csv-import.ts`'s RFC4180-ish parser and
+  skip-and-report-per-row convention exactly: `teamId`/`tournamentName`/
+  `date`/`division`/`finish` required, `bidLevel`/`prelimWins`/
+  `prelimLosses` optional and defaulting to 0), and
+  `state/tournamentResults.ts` gains a `bulkImportTournamentResults`
+  composing it with the same generated-id convention as
+  `opponentRoundRecords.ts#bulkImportOpponentRoundRecords`. A new
+  `StandingsPanel` (in the `debate-videos` package, alongside the existing
+  `RankingsLeaderboardPanel`) renders a "Log a result" manual-entry form, a
+  "Bulk import (CSV)" section using the new parser, a collapsible
+  qualification-points-table editor wired to the pre-existing
+  `state/qualificationPointsTable.ts` get/save/reset functions, and the
+  ranked standings table itself (rank/team/points/record/best finish/
+  tournaments counted), each row expandable to see and delete its
+  individual logged results. `RankingsLeaderboardPanel` (mounted at `/rank`
+  and embedded in the Videos page's leaderboard category) now opens with a
+  top-level Leaderboard/Standings `Tabs` switcher above its existing
+  division/year content, so Standings sits inside Team Rankings rather than
+  as a separate destination, exactly as the idea asked. See
+  `docs/features/team-rankings.md`'s new "Standings tab" section and the
+  new test coverage in `packages/debate-data-sync/test/
+  tournament-results-csv-import.test.ts` (11 cases: well-formed multi-row
+  parsing, case-insensitive/any-order headers, default optional columns,
+  quoted-field handling, missing-required-field/unrecognized-finish/
+  invalid-numeric-field row skipping with per-row error messages, blank
+  input, blank-line tolerance, and the shipped CSV template) plus 4 new
+  cases appended to `tournamentResults.test.ts` for
+  `bulkImportTournamentResults` (importing and appending to existing
+  history, unique-id generation across a batch, skipped-row reporting, and
+  that newly imported results count toward standings) — 15 new cases. Ran
+  the full verification gate: `bun run test` (4487 passing, up from 4472),
+  `bunx turbo run typecheck` (all packages touched by this change —
+  `debate-data-sync` and `debate-videos` — green; a pre-existing,
+  unrelated `debate-flow-ebb` Handsontable-callback-typing failure in
+  `HotGrid.tsx` reproduces identically on a clean checkout with none of
+  this change's files present, confirming it predates and is untouched by
+  this slice), and `bun run build:web` (the full production build,
+  `/rank` included) all pass. Standings data (logged/imported results and
+  the custom points table) stays `localStorage`-only for now — account
+  sync is a natural next follow-up but wasn't part of what idea #1 named,
+  so it's left as a documented "Known gap" in
+  `docs/features/team-rankings.md` rather than scope-crept in here. No
+  further follow-up is currently tracked for this idea; a future run
+  should pick a fresh next-step (e.g. account-syncing standings data, or a
+  qualification-cutoff/"who's currently qualified" view using the
+  existing `getQualifiedTeams` helper) if one becomes worth doing.
+
 - **🕵️ On Page Card Reuse Search — a retention/purge policy for the
   ever-growing `reuse_check_log` (idea #7's last remaining Next item under
   Product Feature Ideas).** Another repeat of the standing prompt
@@ -16284,16 +16710,13 @@ _No task currently in progress._
 
 Each idea below has a working first-cut implementation already shipped (see Tracker Status above and `docs/features/`). Rather than re-narrate that build history, each entry now outlines the next round of UI features to add for that idea — pick items up here rather than re-deriving them from the Tracker Status log.
 
-1. **CX NDCA Standings** — _Removed Aug 30, 2026_ (`/standings` and `StandingsPanel` deleted; the underlying `debate-data-sync` scoring helpers — `computeTournamentPoints`/`buildStanding`/`rankStandings` — were left in place). Rebuild as a lighter-weight view merged into the Team Rankings tool rather than a standalone page:
-   - A "Standings" tab inside Team Rankings, reusing the surviving scoring helpers.
-   - A manual CSV/paste import for tournament results, since live Tabroom scraping is blocked (see "Confirmed blocker" below) and the old panel's only path in was hand-entry.
-   - Bring back a qualification-points-table editor as a collapsible section rather than its own panel.
+1. **CX NDCA Standings** (`/rank`'s **Standings** tab) — rebuilt as a lighter-weight tab merged into the Team Rankings tool rather than a standalone page, after the old standalone `/standings` page/`StandingsPanel` were removed Aug 30, 2026 leaving the underlying `debate-data-sync` scoring helpers in place for exactly this. All three originally-named follow-ups are now done: a "Standings" tab inside Team Rankings (`RankingsLeaderboardPanel`'s Leaderboard/Standings `Tabs` switcher) reuses the surviving `computeTournamentPoints`/`buildStanding`/`rankStandings` helpers via the already-existing `state/tournamentResults.ts#buildStandingsFromStore`; a manual CSV/paste bulk import (`rankings/tournament-results-csv-import.ts#parseTournamentResultsCsv`, `state/tournamentResults.ts#bulkImportTournamentResults`) covers the still-blocked live-Tabroom-scraping gap (see "Confirmed blocker" below); and a qualification-points-table editor is back as a collapsible section on the new `StandingsPanel`, wired to the already-existing `state/qualificationPointsTable.ts` get/save/reset functions rather than its own panel. See the Completed entry above and `docs/features/team-rankings.md`'s "Standings tab" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. account-syncing standings data across devices, or a qualification-cutoff/"who's currently qualified" view using the existing `getQualifiedTeams` helper) if one becomes worth doing.
 
 2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. The bulk "delete all my synced history" follow-up is also now done: `WordCountRoundsPanel`'s round-history list has a "Delete all synced history" action (`useWordCountRounds().clearAllRounds`) that clears every locally persisted round in one write (`state/wordCountRounds.ts#clearWordCountRounds`) and, when signed in, best-effort issues a single `DELETE /api/word-count-rounds` against the whole collection. The same-`roundId` conflict-resolution follow-up is also now done: `saveWordCountRound` stamps a refreshed `updatedAt` on every save, and a new pure `resolveWordCountRoundConflict` in `state/wordCountRounds.ts` lets `useWordCountRounds.ts`'s account merge pick the newer of two devices' copies of the same round instead of silently skipping both — see the Completed entry above and `docs/features/word-count-rounds.md`'s "Account-synced round history" section. The "synced just now from another device" toast follow-up is also now done: a dismissible "🔄 Synced round … from another device" banner shows above the submission form the moment `useWordCountRounds`'s account merge actually adopts a remote copy, driven by the merge decision now being the pure, directly-tested `planWordCountRoundMerge` in `state/wordCountRounds.ts` — see the Completed entry above and `docs/features/word-count-rounds.md`'s "'Synced from another device' notice" subsection. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
 3. **Online Debate Versus AI** (`/versus-ai`) — every previously-tracked follow-up is now done: speech submission has a "🎤 Record" microphone-dictation button (mirroring every other panel's dictation UI); every delivered AI speech, not just the most recent one, has its own independent "Regenerate" button (`canRegenerateAiSpeechAt`/`replaceAiSpeechAt` in `state/aiVersusRounds.ts`); and a completed round can now be downloaded as a plain-text transcript — a "Download transcript" button on the active round view and on any complete round in the persisted-round list, backed by the pure `round/ai-versus-transcript.ts#buildAiVersusTranscriptText`. See `docs/features/ai-versus-rounds.md`'s "Download transcript" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. an export format other than plain text, such as a `.docx` Speech Document, or a side-by-side transcript diff between two rounds) if one becomes worth doing.
 
-4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. The chart export/share follow-up is also now done: a "Download report" button next to each round's "Clear" action exports that round's side summary, most-exposed-arguments chart, and latest AI counsel-panel assessment as a plain-text file (`flow/response-outcome-report.ts`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Report download" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a side-by-side view comparing two or more "what if" hypotheticals at once instead of one at a time, or a `.docx`/Speech Document export format alongside the plain-text one) if one becomes worth doing.
+4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. The chart export/share follow-up is also now done: a "Download report" button next to each round's "Clear" action exports that round's side summary, most-exposed-arguments chart, and latest AI counsel-panel assessment as a plain-text file (`flow/response-outcome-report.ts`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Report download" section. The side-by-side "what if" scenario comparison follow-up is also now done: a "Compare 'What If' Scenarios" section lets a user name and save the row's currently-active Extend/Answer/Concede picks as a scenario, and once two or more are saved, renders each scenario's own exposure summary alongside a shared score table (`flow/response-outcome.ts#buildHypotheticalScenarioComparison`), plus a "Download comparison" action (`flow/response-outcome-report.ts#buildHypotheticalScenarioComparisonText`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Comparing 'what if' scenarios side by side" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a `.docx`/Speech Document export format alongside the plain-text ones) if one becomes worth doing.
 
 5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
 
@@ -16357,30 +16780,37 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 9. **Expandable Heading Structure** (`/reason-editor`, CardMirror's native
    `NavigationPanel` + `HeadingBreadcrumbBar` — not the dead `reason-editor`
    package `OutlineNavPanel` this bullet used to point at; see the Completed
-   entry below and `docs/features/reason-editor-outline-nav.md`). All four
+   entry below and `docs/features/reason-editor-outline-nav.md`). All five
    prior bullets are done: the nav panel's `navPaneVisible` setting already
    defaults to visible; `nav-panel.ts`'s drag/drop already supports
    drag-to-reorder; an earlier run added the sticky current-heading
-   breadcrumb; and this run added its dedicated visibility toggle
+   breadcrumb; a later run added its dedicated visibility toggle
    (`showHeadingBreadcrumb`, Settings → Appearance, independent of
-   `navPaneVisible`). Next: a multi-pane/multi-window breadcrumb (today
-   single-doc only).
+   `navPaneVisible`); and this run extended the breadcrumb itself into the
+   multi-pane workspace — each of the three panes in `multi-pane-shell.ts`
+   now has its own `HeadingBreadcrumbBar` bound to that pane's own
+   `.pmd-pane-body` scroller/view, tracking whichever doc is currently
+   visible in that slot. See the Completed entry above and
+   `docs/features/reason-editor-outline-nav.md`'s updated sections. No
+   further follow-up is currently tracked for this idea (a genuinely
+   separate OS-level window needs no extra wiring — it's an independent
+   module instance that already gets a breadcrumb through whichever of the
+   two paths it's running); a future run should pick a fresh next-step
+   elsewhere if one becomes worth doing.
 
-10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. The multi-select bulk-tagging follow-up is also now done: the flow grid's rows carry a checkbox selection column, and right-clicking with two or more checked opens a "Tag Selected Rows… (N)" action that bulk-applies an argument-type/contributor/evidence-status tag to the whole selection in one save (`flow/argument-tagging.ts#getRowPreviewsForIndexes`, `ArgumentTagPopover`'s new `bulkMode="selection"`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Multi-row selection bulk tagging" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
+10. **Outline Filters and Argument Tree View** (`/outline`) — the named-filter-presets follow-up is done: each round card has a "Filter presets" row to apply a saved preset or save its current filter combination under a name, account-synced via `/api/settings`'s `outlineFilterPresets` field (`state/outlineFilterPresets.ts`/`hooks/useOutlineFilterPresets.ts`, mirroring `wordLimitPresets.ts`'s split) — see `docs/features/argument-tree-outline.md`'s "Filter presets" section. The export follow-up is also now done: each round card has a "Download outline" button that saves the flattened, filtered rows as a plain-text outline file (`flow/argument-tree-export.ts#buildArgumentTreeOutlineText`/`argumentTreeOutlineFilename`) — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Outline export" section. Tagging itself — this idea's most-impactful open item, since nothing else in the tree ever wrote `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` — is also now done, but not the way the prior run's note assumed: that note pointed at building a "Handsontable-native tagging affordance" into `debate-flow`'s `HotGrid`, but `debate-flow` turned out to be an entirely separate ebb editor package that never reads or writes this repo's `Box`/`Flow` types at all, so a `HotGrid`-based affordance would have tagged the wrong document and done nothing for these filters. Instead, a "Tag…" action was added directly to `ArgumentTreePanel.tsx`'s own rows (scoped to the round workspace's currently-selected flow, same as "Generate outline for current round"), backed by a restored single-row `flow/argument-tagging.ts` in `debate-round` — see the Completed entry above and `docs/features/argument-tree-outline.md`'s "Tagging an argument from the Outline panel" section. The multi-select/bulk-section tagging the old AG Grid popover had is *not* restored (no equivalent selection model on this panel's flat row list) — a future run could add a checkbox-selection mode here if that's worth building; otherwise no further follow-up is currently tracked for this idea.
 
 11. **Community-Rated Summaries and Highlights** (`/cards/leaderboard`, `/cards/contributions`) — the tooltip/legend follow-up is done: both panels' "helpfulness score" mention now carries an Info-icon tooltip (`lib/community-rating.ts#buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/reviewer-weight blend and the `isPopularityOnlyOutlier` threshold. The moderator-view follow-up is also now done: `ContributionsFeedPanel` has a "Flagged for review (N)" toggle (`state/contributions.ts#filterFlaggedFeedEntries`) that narrows the rendered feed to just the popularity-only-outlier entries. The endorsement-history follow-up is also now done: `ContributionLeaderboardPanel` has a per-row "History" toggle showing that contributor's received endorsements, newest first (`state/contributions.ts#listEndorsementsByContributor`) — see the Completed entry above and `docs/features/contributions-feed.md`/`docs/features/contribution-leaderboard.md`. The "my endorsement activity" follow-up is also now done: a signed-in visitor gets a "My endorsement activity" toggle above the table, listing every endorsement they gave as a reviewer via the same store's `direction: "given"` query (`state/contributions.ts#endorsementHistoryCounterpartId`) — see the Completed entry above. The "real reviewer-identity/permission checks so a 'given' entry can't be spoofed under an arbitrary reviewer id" follow-up is also now done: `ContributionsFeedPanel` locks the endorsing reviewer id to a real signed-in session (`ContributionsFeedWithIdentity.tsx`, `session-identity.ts#deriveLockedVerifierId`), disables endorsing your own contribution, and `state/contributions.ts#recordPersistedEndorsementFromReviewer` throws `SelfEndorsementNotAllowedError` as a second, store-side guard against self-endorsement — see the Completed entry above and `docs/features/contributions-feed.md`'s "Reviewer-identity checks on endorsing" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a per-contributor "given" history visible to others, not just the signed-in visitor's own, or surfacing an account-level endorsement-fraud signal if this repo ever gets real cross-account abuse detection) if one becomes worth doing.
 
 12. **Pre-Round Intelligence Panel** (`/briefings`) — the print/export follow-up is done: each round card has a "Download" action that saves the briefing as a plain-text file, headed with the round id (`round/pre-round-briefing.ts#buildPreRoundBriefingText`/`preRoundBriefingFilename`) — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Download a briefing" section. The freshness-indicator follow-up is also now done: each round card shows a "last updated" badge (turning destructive/stale past 24 hours), backed by `round/pre-round-briefing.ts#getBriefingAgeHours`/`isBriefingStale` and a new `updatedAt` timestamp `savePreRoundBriefing` stamps on every save — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Freshness indicator" section. The manual pairing/room-assignment entry form follow-up is also now done: a "Pairing schedule" section logs a round's pairing (tournament/division/round label/side/room/opponent label/judge name) as the practical stand-in for still-blocked live Tabroom pairings, account-synced via a new `saved_round_pairings` D1 table plus `/api/round-pairings` routes, with a "Use for briefing" action on each saved pairing that prefills the "create briefing" form from it — see the Completed entry above and `docs/features/pre-round-briefings.md`'s "Manual pairing/room assignments" section. No further follow-up is currently tracked for this idea beyond the still-blocked real tournament-results/pairings/ballot data source itself (see "Confirmed blocker" below); a future run should pick a fresh next-step if one becomes worth doing.
 
-13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) — the coach-facing roster analytics dashboard follow-up is done: a new **Roster Analytics** section on `/coaching-programs` (`CoachingProgramRosterAnalyticsPanel`, in the `debate-community` package) lets a coach pick a persisted coaching program and see every roster member's group-challenge standing and daily-quest streak in one ranked table, composed via `lib/coaching-program-roster-analytics.ts`'s `buildCoachingProgramRosterAnalytics` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster analytics dashboard" section. The digest-notification follow-up is also now done: the same panel renders a "Recent challenge results" section, a *program-roster-scoped* digest (not `state/newsStream.ts`'s existing feed-wide `groupChallengeNews()` announcement) of every completed group challenge whose roster overlaps the selected program's, via a new `buildCoachingProgramChallengeDigest`/`buildPersistedCoachingProgramChallengeDigest` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster challenge digest" section. Next:
-    - A calendar/schedule view across a program's drills, sprints, and challenges.
+13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) — the coach-facing roster analytics dashboard follow-up is done: a new **Roster Analytics** section on `/coaching-programs` (`CoachingProgramRosterAnalyticsPanel`, in the `debate-community` package) lets a coach pick a persisted coaching program and see every roster member's group-challenge standing and daily-quest streak in one ranked table, composed via `lib/coaching-program-roster-analytics.ts`'s `buildCoachingProgramRosterAnalytics` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster analytics dashboard" section. The digest-notification follow-up is also now done: the same panel renders a "Recent challenge results" section, a *program-roster-scoped* digest (not `state/newsStream.ts`'s existing feed-wide `groupChallengeNews()` announcement) of every completed group challenge whose roster overlaps the selected program's, via a new `buildCoachingProgramChallengeDigest`/`buildPersistedCoachingProgramChallengeDigest` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster challenge digest" section. The calendar/schedule-view follow-up is also now done, for sprints and challenges: the same panel's new "Program calendar" section renders a day-grouped, chronological list of every roster-scoped group challenge's start/end date, plus — once a topic is typed into the section's own field — that topic's sprint-note dates, via a new `lib/coaching-program-calendar.ts`'s `buildCoachingProgramCalendarEvents`/`groupCoachingProgramCalendarEventsByDay` and `state/coachingProgramCalendar.ts`'s `buildPersistedCoachingProgramCalendar` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Program calendar" section. The "drills" half of that follow-up is also now done: a new app/page-layer client wrapper (`CoachingProgramRosterAnalyticsWithDrills.tsx`) resolves the signed-in coach's own scheduled drill review reminders via `debate-practice-rounds`' `useDrillSets()` and its new `buildDrillReviewCalendarEvents`, into a dependency-free `{dayKey, label, detail}` shape fed into the panel's new `drillReviewEvents` prop and on through `buildCoachingProgramCalendarEvents`'s new `drillReviews` parameter — avoiding the circular-dependency problem the first slice left open by resolving it at the one layer that already depends on both packages, rather than moving the composition itself — see the Completed entry above and `docs/features/coaching-programs.md`'s updated "Program calendar" section. No further follow-up is currently tracked for this idea beyond the now-narrower gap that these drill-review events are the *viewing coach's own*, not roster-wide (see that doc's updated "Known gaps" — a drill set has no owning-contributor id today, so there's no way to look one up across a roster); a future run should pick a fresh next-step (that gap, or elsewhere) if one becomes worth doing.
 
 14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). The onboarding-nudge follow-up is also now done: a one-time `promptForRouteChoice` dialog (`verbatim-nudge.ts`) points whoever the UI tour's own "reference" step doesn't reach — an established profile the tour auto-skips, or a fresh one that left the tour before that step — at the shortcuts reference the first time a document is open, without racing or stacking on top of an in-progress tour. See `docs/features/legacy-verbatim-shortcuts.md`'s "Verbatim onboarding nudge" section. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action.
 
-15. **Flow-in-Speech Flow Annotations** (`/annotations`, `FlowSpreadsheet` badges) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. Next:
-    - A density scrubber on the video timeline showing where annotations cluster.
+15. **Flow-in-Speech Flow Annotations** (`/annotations`; the `FlowSpreadsheet` grid badges this idea used to also mention were deleted by PR #498 on 2026-09-03 — see the Completed entry above and `docs/features/flow-annotations.md`'s "⚠️ Known regression" note) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. The density-scrubber follow-up is also now done: a new **Annotation density** bar strip (`debate-practice-drills`' `flow/annotation-density.ts#buildAnnotationDensityBuckets`, `flow/AnnotationDensityScrubber.tsx`) shows above the annotation list once a specific Flow filter is selected, bucketed across the filtered annotations' own timestamp range (no real video-duration data exists to scale against) and clickable per-bucket to jump to that cluster's earliest annotation — see the Completed entry above and `docs/features/flow-annotations.md`'s updated "Known gaps" section. No further follow-up is currently tracked for this standalone panel; a future run should instead prioritize the "Known regression" above — restoring a real (Handsontable-native) annotation/edit/prep-note/tag affordance in the current flow editor — since that affects idea #10's, idea #16's, and the "Strategy Sync Notes" bullet's docs too, not just this one — see the Completed entry above.
 
-16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`) — the side-by-side-diff-view follow-up is done: each conflicting box's "Conflicts" section now diffs every competing edit against the one `mergeFlowEdits` would apply, word-level, in two aligned columns instead of a flat list of full-text lines (`flow/flow-edit-diff.ts#buildFlowEditConflictDiff`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Side-by-side conflict diff" section. The live-presence-indicator follow-up is also now done: both panels show who else is currently active on a flow while their "Live sync" toggle is on — a caller-recorded heartbeat pushed/pulled through a new server-backed transport (`flow/flow-presence.ts`, a new `flowPresenceHeartbeats` D1 table plus `/api/flow-presence` routes, `state/flowPresence.ts`, `hooks/useFlowPresencePolling.ts`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Live 'who's editing now' presence" section. Next:
+16. **Shared, AI-Generated Debate Flow** (Coach Hub's `SharedFlowSyncPanel`/`FlowEditLogPanel`; the `FlowSpreadsheet` grid's own `EditBadge`/`EditReviewPopover` this idea used to also mention were deleted by PR #498 on 2026-09-03, with no replacement in the new flow editor — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "⚠️ Known regression" note) — the side-by-side-diff-view follow-up is done: each conflicting box's "Conflicts" section now diffs every competing edit against the one `mergeFlowEdits` would apply, word-level, in two aligned columns instead of a flat list of full-text lines (`flow/flow-edit-diff.ts#buildFlowEditConflictDiff`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Side-by-side conflict diff" section. The live-presence-indicator follow-up is also now done: both panels show who else is currently active on a flow while their "Live sync" toggle is on — a caller-recorded heartbeat pushed/pulled through a new server-backed transport (`flow/flow-presence.ts`, a new `flowPresenceHeartbeats` D1 table plus `/api/flow-presence` routes, `state/flowPresence.ts`, `hooks/useFlowPresencePolling.ts`) — see the Completed entry above and `docs/features/shared-flow-sync.md`'s "Live 'who's editing now' presence" section. Next:
     - Upgrade the short-poll sync transport to a WebSocket/Durable Object push channel for near-real-time updates.
 
 ## Research Crowdsourcing Organizer Features
@@ -16409,19 +16839,20 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 🧑‍🤝‍🧑 **Collaboration Prep Room** (`/cards/prep-room`) — the room-activity-timeline follow-up is done: a "Room activity timeline" section below the routed-tasks list shows every dated evidence/draft-block submission filed under the topic, newest first (`lib/prep-room.ts#buildPrepRoomActivityTimeline`/`buildPrepRoomActivityEventText`) — see the Completed entry above and `docs/features/collaboration-prep-room.md`'s "Room activity timeline" section. The shared-task-checklist-view follow-up is also now done: a "Shared task checklist" section between "Routed research tasks" and "Room activity timeline" lets any teammate add a freeform todo, toggle it done/open, and remove it, backed by a new `lib/prep-room-checklist.ts`/`state/prepRoomChecklist.ts` (`PrepRoomChecklistItem`, kept separate from the routed coverage-gap task model) — see the Completed entry above and `docs/features/collaboration-prep-room.md`'s "Shared task checklist" section. Next: a shared file/attachment area (needs real file-storage infrastructure this repo doesn't have yet).
 * 🧠 **Team Brainstorm Assist** (`/cards/brainstorm`) — the "send top idea to Argument Library" follow-up is done: each board's top-ranked idea gets a "Send to Argument Library" action that opens an inline Topic/Case area form and saves it as a `block`-kind Argument Library entry via the new `state/brainstormIdeas.ts#sendBrainstormIdeaToArgumentLibrary` (composing the pure `lib/team-brainstorm-assist.ts#buildEvidenceEntryFromBrainstormIdea` with the existing `evidenceLibraryEntries.ts` store), with a "✓ In Argument Library" badge replacing the action once sent — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Sending a board's top idea to the Argument Library" section. The optional brainstorm-session-timer follow-up is also now done: a "Session timer" widget (duration presets, Start/Pause/Reset, a live `M:SS` countdown) backed by the new `lib/brainstorm-session-timer.ts` pure state machine and `state/brainstormSessionTimer.ts` persistence wrapper, synced live across browser tabs via the panel's existing `storage`-event listener — see the Completed entry above and `docs/features/brainstorm-board.md`'s "Session timer" section. Next: polish the idea-ranking UI (upvote affordance/animation).
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
-* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
+* 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`; the `FlowSpreadsheet` grid's own `PrepNoteBadge` this idea used to also mention was deleted by PR #498 on 2026-09-03, with no replacement in the new flow editor — see the Completed entry above and `docs/features/prep-notes.md`'s "⚠️ Known regression" note) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
-* 🧪 **Practice Round Simulator** (`/practice-round`) — the comparison-across-a-debater's-past-attempts follow-up is done: a "Compare your past attempts" section renders a chronological win/loss trend across every persisted round that carries a `createdAt` (stamped on a round's first save), each attempt's outcome derived by comparing its saved judge decision against the side the user actually argued, plus its judge paradigm, opponent, and feedback issue count — with a "Download comparison" action (`state/practiceRounds.ts#buildPracticeRoundAttemptsComparison`/`buildPracticeRoundAttemptsComparisonText`) — see the Completed entry above and `docs/features/practice-round-simulator.md`'s new section. Next: a round replay/playback view; a scoring rubric shown alongside the AI judge decision.
+* 🧪 **Practice Round Simulator** (`/practice-round`) — the comparison-across-a-debater's-past-attempts follow-up is done: a "Compare your past attempts" section renders a chronological win/loss trend across every persisted round that carries a `createdAt` (stamped on a round's first save), each attempt's outcome derived by comparing its saved judge decision against the side the user actually argued, plus its judge paradigm, opponent, and feedback issue count — with a "Download comparison" action (`state/practiceRounds.ts#buildPracticeRoundAttemptsComparison`/`buildPracticeRoundAttemptsComparisonText`) — see the Completed entry above and `docs/features/practice-round-simulator.md`'s new section. The scoring-rubric follow-up is also now done: a "Scoring rubric — `<paradigm name>`" card renders next to each round's AI judge decision, checking that paradigm's own `votingPriorities` (✅/⬜ per criterion) against the rendered decision via the new `round/judge-decision-ai.ts#buildJudgeDecisionRubric` — see the Completed entry above and `docs/features/practice-round-simulator.md`'s "Scoring rubric alongside the AI judge decision" section. No further follow-up is currently tracked for this idea beyond the still-open round replay/playback view; a future run should pick a fresh next-step there or elsewhere if one becomes worth doing.
 * 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. The side-by-side-case-option-comparison-table follow-up is also now done: once a recommendation has two or more ranked case options, a "Case comparison" table renders below it — one row per opponent-run argument tag (most frequent first), one column per case, cells showing the opponent's recorded frequency for that tag when the case runs it (`round/scout-to-strategy.ts#buildCaseComparisonTable`, pivoting a new `tagOverlaps` breakdown field on `RankedCaseOption`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Side-by-side case comparison table" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
 ## Confirmed blocker: Tabroom results/pairings/ballot data
 
-Idea #1 ("CX NDCA Standings") follow-up (a), idea #12 ("Pre-Round
-Intelligence Panel") follow-up (a), and the "Opponent Team Profiles"/"Judge
-Profiles" bullets' follow-up (a) all share the same open dependency: a real
-data source that produces `TournamentResult`/`OpponentRoundRecord`/
-`JudgeRoundRecord`s from Tabroom instead of hand-entered data. This run
+Idea #1's ("CX NDCA Standings") manual-CSV-import workaround (see the
+Completed entry above), idea #12 ("Pre-Round Intelligence Panel")
+follow-up (a), and the "Opponent Team Profiles"/"Judge Profiles" bullets'
+follow-up (a) all share the same open dependency: a real data source that
+produces `TournamentResult`/`OpponentRoundRecord`/`JudgeRoundRecord`s from
+Tabroom instead of hand-entered data. This run
 verified that dependency is genuinely blocked, not merely unstarted:
 `sync-tournaments.ts`'s existing `getTournamentNames()` fetches Tabroom's
 public tournament *index* page successfully (no login required), but a

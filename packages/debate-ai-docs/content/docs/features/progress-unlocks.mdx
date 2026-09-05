@@ -1,0 +1,33 @@
+---
+title: "Progress Unlocks"
+---
+
+# Progress Unlocks
+
+Shows every contributor's unlock tier, the research-task skill level that
+tier grants, every badge earned, their current streak, and how far they
+are from the next tier.
+
+- **Route:** `/cards/progress`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A roster table (tier, unlocked tasks, streak, tasks completed, badges,
+next-tier progress bar), a signed-in "You" row highlight, and an unlock
+celebration toast when a visitor's own row newly earns a badge.
+
+## Data flow
+
+```
+state/contributions.ts (localStorage)
+state/researchProgress.ts (localStorage: completedResearchTasks)
+  → buildUnlockStatusRoster() — lib/unlock-streak-status.ts
+  → panels/ProgressUnlocksPanel.tsx
+  → apps/debate-ai.com/app/cards/progress/page.tsx
+```
+
+## Known gaps
+
+No contributor identity/permission checks — a signed-in session only
+highlights the visitor's own row.

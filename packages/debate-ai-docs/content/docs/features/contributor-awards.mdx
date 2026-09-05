@@ -1,0 +1,36 @@
+---
+title: "Top Contributor Awards"
+---
+
+# Top Contributor Awards
+
+Recognizes the top contributor in each contribution category by total
+helpfulness score within that category, and lets a day's standings be
+frozen as an official "announced" result.
+
+- **Route:** `/cards/awards`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+One card per `ContributionKind` present among persisted contributions (Best
+Evidence Finder, Best Explainer, etc.), plus **Live standings**, **Announce
+today's awards**, a **Hall of Fame**, **Announced history**, and **Peer
+Nominations** with a "Second" action.
+
+## Data flow
+
+```
+state/contributions.ts (localStorage)
+  → buildTopContributorAwardsFromStore()
+state/contributorAwardAnnouncements.ts
+  → announceContributorAwards()
+  → panels/ContributorAwardsPanel.tsx
+  → apps/debate-ai.com/app/cards/awards/page.tsx
+```
+
+## Known gaps
+
+- No scheduled job announces automatically.
+- No reviewer-identity/permission checks; nominations/seconds aren't
+  account-synced.

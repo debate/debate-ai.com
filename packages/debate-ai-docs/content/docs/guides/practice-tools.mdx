@@ -1,0 +1,62 @@
+---
+title: Practice tools
+description: Debate between tournaments — rounds against the AI, the practice round simulator, judge paradigms, opponent personas, and word-count speeches
+icon: Swords
+---
+
+# Practice tools
+
+The practice tools let you debate when there's no tournament: against an AI opponent, in a simulated round
+with a timer and an AI judge, or as a single speech under a word count. They're the *Practice* section of the
+**[Coach Workspace](https://debate-ai.com/coach?section=practice)** and each has its own page. Unlike the
+[training tools](/docs/guides/training-tools), most of them don't need a flowed round to start from.
+
+## Two ways to run a round
+
+**[Practice vs AI](https://debate-ai.com/versus-ai)** (`/versus-ai`, [feature spec](/docs/features/practice-vs-ai)) is a full,
+timed round against an AI opponent in real turn order. Pick a format and side, a topic, and one of thirteen
+opponent personas across five difficulty tiers, then debate through timed opening, cross-examination, and
+closing phases. At the end an AI judge scores the round and explains its decision. It's also on the dock as
+**Practice vs AI**, and a round in progress can be resumed on the same account.
+
+**[Practice Round Simulator](https://debate-ai.com/practice-round)** (`/practice-round`, [feature spec](/docs/features/practice-round-simulator))
+recreates a tournament round's *conditions* — format, side, a timer, an AI judge paradigm, and an AI opponent
+persona — and keeps your past attempts so you can compare them. Use it when you want to rehearse a specific
+matchup or judge rather than play the AI's game.
+
+## Setting the judge and the opponent
+
+Both round tools draw on the same two pickers, which you can also use on their own:
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Judge Paradigm Picker | [`/paradigms`](/docs/features/judge-paradigm-selections) | Choose one of six built-in AI judge paradigms — Flow, Lay, Policymaker, Kritikal, Educator, Truth Over Tech — or write a custom one from a real judge's stated preferences. |
+| Opponent Persona Picker | [`/practice-opponent`](/docs/features/practice-opponent) | Choose one of four built-in opponent styles — Policy Heavy, Kritik, Lay, Fast Flow — or describe your own opponent's debating style as a custom persona. |
+| AI Judge Decision | `/judge-decision` | Generate an AI decision for a round under its saved paradigm, grounded in the same flow summary the Argument Tree Outline shows. |
+
+A saved paradigm can be deep-linked straight into a judge decision, so "judge this round the way Judge X
+would" is one click from the paradigm list.
+
+## Word-count speeches
+
+**[Word-Count Speeches](https://debate-ai.com/word-count)** (`/word-count`, [feature spec](/docs/features/word-count-rounds))
+replaces the clock with a maximum word count: one text area per speech in the chosen format, with a live
+word-count badge recomputed on every keystroke. It's the right tool for written practice, for formats where
+you'd rather cap length than time, and for drafting speeches you'll later deliver against the timer. Rounds
+are saved to your account when signed in.
+
+## Suggested loop
+
+1. **Scout** the judge and opponent you're preparing for in the
+   [Scouting section](/docs/guides/training-tools#scouting-section), and turn them into a paradigm and a
+   persona.
+2. **Rehearse** in the Practice Round Simulator under that paradigm and persona.
+3. **Pressure-test** by playing the same side in Practice vs AI at a higher difficulty tier.
+4. **Flow the practice round** in the round workspace and run the [training tools](/docs/guides/training-tools)
+   on it — drills and coaching prompts work on practice rounds exactly as on tournament rounds.
+
+## Tips
+
+- **Sharing a section:** `/coach?section=practice` opens the Coach Workspace on the practice tools.
+- **Signed out?** Every practice tool works without an account; signing in is what makes rounds, attempts,
+  and word-count speeches follow you across devices.

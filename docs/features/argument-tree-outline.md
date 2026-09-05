@@ -146,7 +146,69 @@ selects (populated from the tree's own distinct values) and per-row
 argument-type/contributor/evidence-status badges. No follow-ups remain open
 on this idea.
 
-## Tagging an argument from the flow grid
+## Tagging an argument from the Outline panel
+
+> **Restored 2026-09-05, in a different place than first assumed.** The
+> 2026-09-05 note below this one said restoring tagging would need "a
+> Handsontable-native tagging affordance in the new editor" — meaning
+> `debate-flow`'s `EbbFlowEmbed.tsx`/`HotGrid.tsx`. That assumption didn't
+> hold up: `debate-flow` (published as `debate-flow-ebb`) is ebb, an
+> entirely separate local-first flow editor ported in as its own workspace
+> package, mounted in the round page as a self-contained tab with its own
+> `FlowSheet`/`CellMeta` document model. It never reads or writes this
+> package's `Box`/`Flow` types, and nothing bridges the two — so a tagging
+> affordance built into `HotGrid` would tag ebb's own document, which
+> `/outline` never reads, and would silently do nothing for these filters.
+> Since PR #498 (see below), no editor in the live app touches
+> `Flow.children`'s `Box` tree at all any more; the round page's remaining
+> split view edits `Flow.speechDocs` markdown text instead.
+>
+> Given that, this slice restores tagging where the tags are actually
+> consumed — this panel — rather than inventing a new `Box`-tree grid or a
+> `FlowSheet`↔`Box` bridge first. Each non-heading row rendered here now has
+> a **Tag…** button, enabled only when the row's round is the round
+> workspace's *currently selected* flow (the same scope
+> "Generate outline for current round" above already has). It opens a small
+> dialog with an **Argument type** select, an **Evidence status** select,
+> and a **Contributor** field (a `datalist`-backed input suggesting author
+> ids already used elsewhere in the flow). Choosing **None** on a select (or
+> clearing the contributor field) removes that tag. A suggested argument
+> type derived from the row's own content (`inferArgumentType`, the same
+> keyword heuristic the original popover used — see below) shows as a
+> "Suggested: turn — use it" link when it differs from the current
+> selection; clicking it only fills the select, it doesn't save.
+>
+> Saving writes the tags onto the row's *root* `Box` via `setRowArgumentTags`
+> (`debate-round`'s `flow/argument-tagging.ts`), pushes the updated flow back
+> through `useFlowStore`, best-effort mirrors
+> `useFlowEffects.ts#useFlowPersistence`'s `localStorage["flows"]` write
+> (not mounted on this route), and regenerates the round's outline via
+> `buildAndSaveArgumentTreeFromCurrentFlow` so the filters immediately see
+> the new tags.
+>
+> Not restored in this slice: the deleted popover's neighbour-preview/bulk
+> section tagging and multi-row selection tagging (both grid-selection
+> features with no equivalent on this panel's flat row list) — see "Known
+> gaps" below.
+
+## Tagging an argument from the flow grid (removed — see note)
+
+> **⚠️ Known regression, discovered 2026-09-05, tagging itself restored the
+> same day — see "Tagging an argument from the Outline panel" above.** PR
+> #498 ("Remove flow spreadsheet grid, show round flows in round editor",
+> merged 2026-09-03) deleted the AG Grid-based `FlowSpreadsheet` view along
+> with `flow/ArgumentTagPopover.tsx`, `flow/argument-tagging.ts`, and
+> `flow/GridContextMenu.tsx`, in favor of the new "ebb flow" split
+> speech-editor view (`debate-flow`'s `EbbFlowEmbed.tsx`/`HotGrid.tsx`),
+> which exposes no tagging UI of its own (and, per the note above, isn't the
+> right place for one either). This was more than stale prose: the tagging
+> popover described below was the *only* place in the app that ever wrote
+> `Box.argumentType`/`Box.authorId`/`Box.evidenceStatus` (confirmed by
+> searching the current tree — nothing else set these fields, until the
+> restored panel-based tagging above). The rest of this section (through
+> "Outline export" below) is kept for history only — the neighbour-preview/
+> bulk-section and multi-row-selection features it describes are AG-Grid
+> row-selection-shaped and aren't restored (see "Known gaps").
 
 The three filters above only have something to filter on once a row carries
 tags, and until this slice nothing in the app could set them. Right-clicking
@@ -354,18 +416,30 @@ suites).
 
 ## Known gaps
 
+- Tagging only works for the round currently open in the round workspace
+  (`useFlowStore`'s selected flow) — a round's other, not-currently-selected
+  persisted outline records show a disabled "Tag…" button with an
+  explanatory tooltip rather than being editable directly. This mirrors the
+  same scope "Generate outline for current round" already has. See "Tagging
+  an argument from the Outline panel" above.
+- Neighbour-preview/bulk-section tagging and multi-row-selection bulk
+  tagging (the deleted AG Grid popover's other two features, described in
+  "Tagging an argument from the flow grid (removed — see note)" for
+  history) are not restored — both were shaped around a grid's row
+  selection, which this panel's flat row list doesn't have an equivalent
+  of. A future slice could add a checkbox-selection mode to this panel's
+  row list if bulk tagging is worth restoring.
 - Tagging is row-level, not per-speech: one row carries one
   `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
   written by a different partner than its 1AC claim can't record both.
-- No follow-ups remain open on the "nothing infers a tag" gap — see
-  "Suggested argument type" above.
+- No follow-ups remain open on the "nothing infers a tag" gap — the
+  restored tagging dialog carries the same `inferArgumentType` suggestion
+  the deleted popover had (see "Tagging an argument from the Outline panel"
+  above).
 - The contributor field is a free-form typed id, not an authenticated user
   (the same gap `prep-notes.md` and `review-queue.md` record), so the
   Argument Tree Outline's contributor filter is only as reliable as what
   people type.
-- No follow-ups remain open on the "row's tags aren't shown... / no bulk
-  'tag every row in this section' action" gap — see "Neighbour preview and
-  bulk section tagging" above.
 - No follow-ups remain open on the "no saved/reusable filter combinations"
   gap — see "Filter presets" above.
 - Applying a preset only sets the round's filter; it doesn't select or
@@ -374,5 +448,3 @@ suites).
   effect.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.
-- No follow-ups remain open on idea #10's "Multi-select rows to bulk-apply a
-  tag at once" gap — see "Multi-row selection bulk tagging" above.

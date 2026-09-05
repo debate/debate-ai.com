@@ -1,0 +1,32 @@
+---
+title: "Research Progress Tracking"
+---
+
+# Research Progress Tracking
+
+Shows each contributor's progress across topics, task completion, and
+contribution history.
+
+- **Route:** `/cards/progress-tracking`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A roster (contributions, tasks, per-topic breakdown), a "Download report"
+export, a **Topic comparison** section rolling per-topic counts up across
+the whole team (least-covered first), and a signed-in **My research goal**
+section with a progress meter, account-synced across devices.
+
+## Data flow
+
+```
+state/researchProgress.ts (localStorage: completedResearchTasks)
+  → buildPersistedResearchProgressBoard()
+  → panels/ResearchProgressPanel.tsx
+  → apps/debate-ai.com/app/cards/progress-tracking/page.tsx
+```
+
+## Known gaps
+
+No contributor identity/permission checks — a signed-in session only
+highlights the visitor's own row.

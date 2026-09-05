@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildStandingsFromStore,
+  bulkImportTournamentResults,
   deleteTournamentResult,
   listTournamentResults,
   listTournamentResultsForTeam,
@@ -213,5 +214,63 @@ describe("buildStandingsFromStore", () => {
     };
 
     expect(buildStandingsFromStore({ pointsTable: explicitTable })[0].totalPoints).toBe(7);
+  });
+});
+
+describe("bulkImportTournamentResults", () => {
+  it("imports every well-formed row and appends to existing history", () => {
+    saveTournamentResult(WXYZ_BERKELEY);
+    const csv = [
+      "teamId,tournamentName,date,division,bidLevel,finish,prelimWins,prelimLosses",
+      "abcd,Harvard,2026-02-01,PF,1,finalist,5,1",
+    ].join("\n");
+
+    const result = bulkImportTournamentResults(csv);
+
+    expect(result).toEqual({ importedCount: 1, skippedCount: 0, errors: [] });
+    expect(listTournamentResults()).toHaveLength(2);
+    expect(listTournamentResultsForTeam("abcd")[0]).toMatchObject({
+      teamId: "abcd",
+      tournamentName: "Harvard",
+      finish: "finalist",
+    });
+  });
+
+  it("assigns a unique id per imported row so re-importing the same batch doesn't collide", () => {
+    const csv = [
+      "teamId,tournamentName,date,division,finish",
+      "wxyz,Berkeley,2026-01-10,PF,champion",
+      "wxyz,Berkeley,2026-01-10,PF,champion",
+    ].join("\n");
+
+    bulkImportTournamentResults(csv);
+
+    const ids = listTournamentResults().map((record) => record.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it("reports skipped rows without importing anything from them", () => {
+    const csv = ["teamId,tournamentName,date,division,finish", ",Berkeley,2026-01-10,PF,champion"].join(
+      "\n",
+    );
+
+    const result = bulkImportTournamentResults(csv);
+
+    expect(result.importedCount).toBe(0);
+    expect(result.skippedCount).toBe(1);
+    expect(listTournamentResults()).toEqual([]);
+  });
+
+  it("makes newly imported results count toward standings", () => {
+    const csv = ["teamId,tournamentName,date,division,finish", "wxyz,Berkeley,2026-01-10,PF,champion"].join(
+      "\n",
+    );
+
+    bulkImportTournamentResults(csv);
+
+    const standings = buildStandingsFromStore();
+    expect(standings).toHaveLength(1);
+    expect(standings[0].teamId).toBe("wxyz");
+    expect(standings[0].bestFinish).toBe("champion");
   });
 });

@@ -283,6 +283,56 @@ assessed row has no matching chart point, and the filename slugification
 rules (simple id, mixed-case/punctuation, leading/trailing punctuation,
 and an id with no alphanumeric characters at all).
 
+## Comparing "what if" scenarios side by side
+
+Closes idea #4's "a side-by-side view comparing two or more 'what if'
+hypotheticals at once instead of one at a time" follow-up in `TODO.md`'s
+Product Feature Ideas list. The existing "what if" picker only ever holds
+one hypothetical per round at a time — picking a different Extend/Answer/
+Concede choice for a row overwrites its prior pick, so there was no way to
+keep two whole hypothetical strategies around to compare against each
+other.
+
+- `flow/response-outcome.ts#buildHypotheticalScenarioComparison(report,
+  sideKeys, scenarios, options?)` — takes two or more named
+  `HypotheticalScenario`s (`{ name, adjustments }`, the same
+  `HypotheticalAdjustment[]` shape the single-hypothetical picker already
+  produces) and returns each scenario's own per-side rollup
+  (`summarizeOutcomeBySideFromReport` applied to that scenario's
+  `applyHypotheticalAdjustments` result) plus a shared "compared arguments"
+  table: the baseline report's top-N arguments (by unadjusted
+  `vulnerabilityScore`, default 10), each scored under every scenario. The
+  compared-argument set is anchored to the *baseline* ranking rather than
+  each scenario separately picking its own top N, so the same arguments
+  line up as rows across scenario columns instead of columns potentially
+  comparing different arguments. Throws if fewer than two scenarios are
+  given.
+- `flow/response-outcome-report.ts#buildHypotheticalScenarioComparisonText`/
+  `hypotheticalScenarioComparisonFilename` — a plain-text export of a
+  comparison (one section per scenario's side summary, then one line per
+  compared argument showing its score under every scenario), mirroring
+  `buildResponseOutcomeReportText`'s exact pure-builder/thin-caller split.
+- `panels/VulnerabilityChartsPanel.tsx`: a "Compare 'What If' Scenarios"
+  section below the exposure chart lets a user name and save the row's
+  currently-active "what if" picks as a scenario (disabled until at least
+  one Extend/Answer/Concede choice is active and a name is entered), lists
+  every saved scenario for that round with a "Remove" action, and — once
+  two or more are saved — renders the comparison (per-scenario side
+  summary plus the shared argument-score table) with its own "Download
+  comparison" action. Saved scenarios are scratch component state only,
+  like the "what if" picker itself — never persisted, and cleared when the
+  round's report is cleared.
+
+Vitest-covered in `packages/debate-round/test/response-outcome.test.ts`'s
+`buildHypotheticalScenarioComparison` suite (throwing below two scenarios,
+scenario name ordering, each scenario's independent side rollup, the
+shared baseline-anchored argument set scored per scenario, and the
+`limit` option) and
+`packages/debate-practice-drills/test/response-outcome-report.test.ts`'s
+`buildHypotheticalScenarioComparisonText`/`hypotheticalScenarioComparisonFilename`
+suites (the header, per-scenario side-summary sections, per-argument
+score lines, and placeholder text for an empty comparison).
+
 ## Known gaps
 
 - No known gaps remain for this idea.

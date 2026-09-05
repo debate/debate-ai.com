@@ -44,11 +44,25 @@
  * `hooks/useDrillSets.ts`, which uses it the same way
  * `hooks/useWordCountRounds.ts` uses `WordCountRoundRecord.updatedAt`.
  *
+ * `buildDrillReviewCalendarEvents` below is the other half of idea #13's
+ * ("Coaching Programs and Group Challenges") own follow-up in TODO.md ("A
+ * calendar/schedule view across a program's drills, sprints, and
+ * challenges") — the "drills" part that `debate-community`'s
+ * `lib/coaching-program-calendar.ts` deliberately left out of its first
+ * slice, since this package already depends on `debate-community` (for
+ * Progress Unlocks tiers) and importing it back would be circular. Instead
+ * this returns a dependency-free, caller-shaped event
+ * (`dayKey`/`label`/`detail`) that the app/page layer resolves from the
+ * current user's own `useDrillSets()` and feeds into
+ * `buildCoachingProgramCalendarEvents`/`buildPersistedCoachingProgramCalendar`'s
+ * `drillReviews` input — see
+ * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`.
+ *
  * @module state/drillSets
  */
 
 import type { Flow } from "debate-round/src/types/flow";
-import { buildDrillSet, type Drill } from "debate-round/src/flow/drill-generator";
+import { buildDrillSet, type Drill, type DrillKind } from "debate-round/src/flow/drill-generator";
 
 export type DrillSetRecord = {
   roundId: string;
@@ -308,6 +322,58 @@ export function getDueDrillIndexes(
     .filter((drillIndex) => drillIndex >= 0 && drillIndex < record.drills.length)
     .filter((drillIndex) => isDrillReviewDue(scheduled[drillIndex], todayKey))
     .sort((a, b) => a - b);
+}
+
+/** One resolved drill-review reminder, shaped for `debate-community`'s calendar rather than this package's own types — see `buildDrillReviewCalendarEvents` below. */
+export type DrillReviewCalendarEvent = {
+  dayKey: string;
+  label: string;
+  detail?: string;
+};
+
+const DRILL_REVIEW_KIND_LABELS: Record<DrillKind, string> = {
+  overview: "Overview",
+  frontline: "Frontline",
+  cross_ex: "Cross-Ex",
+  collapse: "Collapse",
+};
+
+const DETAIL_PREVIEW_LENGTH = 80;
+
+function truncateDrillPrompt(prompt: string): string {
+  const trimmed = prompt.trim();
+  return trimmed.length > DETAIL_PREVIEW_LENGTH ? `${trimmed.slice(0, DETAIL_PREVIEW_LENGTH).trimEnd()}…` : trimmed;
+}
+
+/**
+ * Builds one calendar event per scheduled drill review across a set of
+ * drill-set records, ignoring a scheduled index that's out of range for its
+ * record's current `drills` (defensive, mirrors `getDueDrillIndexes`'s same
+ * guard). Sorted chronologically (day ascending), then by label, matching
+ * `buildCoachingProgramCalendarEvents`'s own sort. Pure — the caller
+ * supplies whichever records it wants represented (typically the current
+ * user's own, from `useDrillSets()`); this doesn't read persisted state
+ * itself.
+ */
+export function buildDrillReviewCalendarEvents(
+  records: Pick<DrillSetRecord, "roundId" | "drills" | "scheduledReviewAt">[],
+): DrillReviewCalendarEvent[] {
+  const events: DrillReviewCalendarEvent[] = [];
+  for (const record of records) {
+    const scheduled = record.scheduledReviewAt;
+    if (!scheduled) continue;
+    for (const [indexKey, dayKey] of Object.entries(scheduled)) {
+      const drillIndex = Number(indexKey);
+      const drill = record.drills[drillIndex];
+      if (!drill) continue;
+      events.push({
+        dayKey,
+        label: `Review a ${DRILL_REVIEW_KIND_LABELS[drill.kind]} drill for round ${record.roundId}`,
+        detail: truncateDrillPrompt(drill.prompt),
+      });
+    }
+  }
+  return events.sort((a, b) => a.dayKey.localeCompare(b.dayKey) || a.label.localeCompare(b.label));
 }
 
 /**

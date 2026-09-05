@@ -1,0 +1,34 @@
+---
+title: "On-Page Card Reuse Search"
+---
+
+# On-Page Card Reuse Search
+
+Checks whether a page has already been cut into the Shared Evidence
+Library — from a manual "Check this page" box and a browser extension —
+before a contributor spends time cutting a duplicate card.
+
+- **Route:** `/cards/library` (the "Check this page" box)
+- **Package:** `debate-research-evidence`
+- **Extension:** `apps/debate-web-ext`
+
+## What it does
+
+`checkPageForExistingCards` checks a URL against every persisted entry's
+`sourceUrl` (normalized to ignore scheme/`www.`/query/trailing slash). A
+"Recent checks" history log records the last 20 local checks.
+
+The browser extension (`apps/debate-web-ext`, unpacked Manifest V3, no
+bundler) reads the active tab's URL and calls a shared, server-backed
+reuse index (`GET /api/evidence-reuse-check`, D1-backed), answering
+"has anyone on the team cut this" rather than just this browser's own copy.
+Every lookup logs to a `reuse_check_log` table, folded into a "Team reuse
+dashboard" section on `/cards/library`. A weekly job purges log rows older
+than 180 days.
+
+The extension's Options page configures the API base URL and a
+skip-check domain whitelist.
+
+## Known gaps
+
+The extension is unpacked/"Load unpacked" only — no store listing exists.

@@ -1,0 +1,34 @@
+---
+title: "Legacy Verbatim / Cardmirror Compatibility"
+---
+
+# Legacy Verbatim / Cardmirror Compatibility — editor keyboard shortcuts
+
+Documents CardMirror's native Verbatim-parity keyboard shortcuts (the
+editor behind `/reason-editor`), which make the originally-planned
+`Mod-Shift-*` shortcut set redundant.
+
+- **Route:** any CardMirror document (e.g. `/reason-editor`)
+- **Package:** `debate-editor`
+
+## Shortcuts
+
+| Shortcut | Command |
+| --- | --- |
+| `F10` | Apply Emphasis |
+| `F8` | Apply Cite |
+| `F9` / `Mod-u` | Toggle Underline |
+| `F3` family | Condense variants |
+| `Mod-Alt-ArrowUp/Down` | Move card/section |
+| `Alt-F8` | Copy previous cite |
+| `Mod-Shift-k` | Insert short cite tag |
+| `Mod-Shift-x` | AI-format a citation |
+
+Every binding is user-remappable in CardMirror's keybindings editor. The
+shortcuts reference has Print and Export actions, and a one-time onboarding
+nudge points a Verbatim-trained user at it.
+
+## Known gaps
+
+Print/Export always render the full reference, ignoring an active search
+filter.
