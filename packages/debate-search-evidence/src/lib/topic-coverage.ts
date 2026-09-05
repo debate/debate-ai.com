@@ -164,3 +164,94 @@ export function buildTopicCoverageSummaryText(report: TopicCoverageReport): stri
 
   return `${summary} (plus ${report.untracked.length} untracked block${report.untracked.length === 1 ? "" : "s"} with submitted cards)`;
 }
+
+/** Category label used for a tracked argument with no `category` set, in the cross-topic heatmap. */
+export const UNCATEGORIZED_LABEL = "Uncategorized";
+
+/** One topic/category cell in the cross-topic comparison heatmap: tallies over that topic's tracked arguments in that category. */
+export interface TopicCoverageHeatmapCell {
+  category: string;
+  missingCount: number;
+  thinCount: number;
+  coveredCount: number;
+  totalCount: number;
+}
+
+/** One topic's row in the cross-topic comparison heatmap: one cell per `TopicCoverageComparisonHeatmap.categories` entry, plus that topic's overall tallies. */
+export interface TopicCoverageHeatmapRow {
+  topic: string;
+  cells: TopicCoverageHeatmapCell[];
+  coveredCount: number;
+  totalCount: number;
+}
+
+/** A grid comparing tracked-argument coverage across topics (rows) and categories (columns), for the Topic Coverage Dashboard's cross-topic comparison view. */
+export interface TopicCoverageComparisonHeatmap {
+  /** Every distinct category across all input topics' tracked arguments, sorted alphabetically, with `UNCATEGORIZED_LABEL` (if present) sorted last. */
+  categories: string[];
+  /** One row per input topic, sorted alphabetically by topic name. */
+  rows: TopicCoverageHeatmapRow[];
+}
+
+function tallyCoverageCell(argumentsInCell: ArgumentCoverage[]): Omit<TopicCoverageHeatmapCell, "category"> {
+  return {
+    missingCount: argumentsInCell.filter((a) => a.level === "missing").length,
+    thinCount: argumentsInCell.filter((a) => a.level === "thin").length,
+    coveredCount: argumentsInCell.filter((a) => a.level === "covered").length,
+    totalCount: argumentsInCell.length,
+  };
+}
+
+/**
+ * Builds a cross-topic comparison heatmap from a set of already-built topic
+ * coverage reports (only each report's `tracked` arguments are considered —
+ * an `untracked` argument block has no team-planned category to place it in,
+ * so it's excluded here the same way `buildTopicCoverageSummaryText` treats
+ * it as a separate concern). Every topic gets a cell for every category
+ * present anywhere in the input, zero-filled where that topic has no tracked
+ * argument in that category, so the grid renders as a complete rectangle.
+ */
+export function buildTopicCoverageComparisonHeatmap(
+  reports: Array<{ topic: string; report: TopicCoverageReport }>,
+): TopicCoverageComparisonHeatmap {
+  const categorySet = new Set<string>();
+  for (const { report } of reports) {
+    for (const argument of report.tracked) {
+      categorySet.add(argument.category ?? UNCATEGORIZED_LABEL);
+    }
+  }
+  const categories = Array.from(categorySet)
+    .filter((category) => category !== UNCATEGORIZED_LABEL)
+    .sort((a, b) => a.localeCompare(b));
+  if (categorySet.has(UNCATEGORIZED_LABEL)) categories.push(UNCATEGORIZED_LABEL);
+
+  const rows = reports
+    .map(({ topic, report }): TopicCoverageHeatmapRow => {
+      const byCategory = new Map<string, ArgumentCoverage[]>();
+      for (const argument of report.tracked) {
+        const category = argument.category ?? UNCATEGORIZED_LABEL;
+        const group = byCategory.get(category);
+        if (group) group.push(argument);
+        else byCategory.set(category, [argument]);
+      }
+      const cells = categories.map((category) => ({
+        category,
+        ...tallyCoverageCell(byCategory.get(category) ?? []),
+      }));
+      return {
+        topic,
+        cells,
+        coveredCount: report.tracked.filter((a) => a.level === "covered").length,
+        totalCount: report.tracked.length,
+      };
+    })
+    .sort((a, b) => a.topic.localeCompare(b.topic));
+
+  return { categories, rows };
+}
+
+/** Renders a short summary line for the cross-topic comparison heatmap header. */
+export function buildTopicCoverageComparisonSummaryText(heatmap: TopicCoverageComparisonHeatmap): string {
+  if (heatmap.rows.length === 0) return "No topics have a tracked-argument checklist yet.";
+  return `Comparing ${heatmap.rows.length} topic${heatmap.rows.length === 1 ? "" : "s"} across ${heatmap.categories.length} categor${heatmap.categories.length === 1 ? "y" : "ies"}.`;
+}

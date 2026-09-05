@@ -26,6 +26,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import {
+  buildPersistedTopicCoverageComparisonHeatmap,
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
   listTrackedArguments,
@@ -33,8 +34,13 @@ import {
   saveTrackedArgument,
   type TrackedArgumentRecord,
 } from "../state/trackedArguments"
-import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
-import type { ArgumentCoverage, CoverageLevel, TopicCoverageReport } from "../lib/topic-coverage"
+import { buildTopicCoverageComparisonSummaryText, buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
+import type {
+  ArgumentCoverage,
+  CoverageLevel,
+  TopicCoverageComparisonHeatmap,
+  TopicCoverageReport,
+} from "../lib/topic-coverage"
 
 const LEVEL_LABEL: Record<CoverageLevel, string> = {
   missing: "Missing",
@@ -68,9 +74,11 @@ export function TopicCoverageDashboardPanel() {
   const [records, setRecords] = useState<TrackedArgumentRecord[]>([])
   const [draft, setDraft] = useState<ArgumentDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [heatmap, setHeatmap] = useState<TopicCoverageComparisonHeatmap | null>(null)
 
   useEffect(() => {
     setTopics(listTrackedTopics())
+    setHeatmap(buildPersistedTopicCoverageComparisonHeatmap())
   }, [])
 
   useEffect(() => {
@@ -83,6 +91,7 @@ export function TopicCoverageDashboardPanel() {
     setTopics(listTrackedTopics())
     setReport(buildPersistedTopicCoverageReport(activeTopic))
     setRecords(listTrackedArguments(activeTopic))
+    setHeatmap(buildPersistedTopicCoverageComparisonHeatmap())
   }
 
   const handleAdd = () => {
@@ -153,6 +162,8 @@ export function TopicCoverageDashboardPanel() {
           </div>
         )}
       </div>
+
+      {heatmap && heatmap.rows.length >= 2 && <CoverageComparisonHeatmap heatmap={heatmap} />}
 
       {topic.trim() === "" ? (
         <div className="p-6 text-center text-sm text-muted-foreground">
@@ -249,5 +260,64 @@ function CoverageRow({ argument, onRemove }: { argument: ArgumentCoverage; onRem
         </Button>
       )}
     </div>
+  )
+}
+
+/**
+ * Renders the "Topic Coverage Dashboard"'s cross-topic comparison heatmap:
+ * one row per topic with at least one tracked argument, one column per
+ * category seen across those topics' checklists, each cell showing that
+ * topic's covered/total tally for that category. Shown regardless of which
+ * topic is currently selected above, so a coach can spot a systemically
+ * weak category (e.g. every topic thin on "K") at a glance.
+ */
+function CoverageComparisonHeatmap({ heatmap }: { heatmap: TopicCoverageComparisonHeatmap }) {
+  return (
+    <div className="space-y-2">
+      <h2 className="text-sm font-medium text-foreground">Cross-topic comparison</h2>
+      <p className="text-xs text-muted-foreground">{buildTopicCoverageComparisonSummaryText(heatmap)}</p>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full text-left text-xs">
+          <thead>
+            <tr className="border-b border-border bg-muted/50">
+              <th className="px-3 py-2 font-medium text-foreground">Topic</th>
+              {heatmap.categories.map((category) => (
+                <th key={category} className="px-3 py-2 font-medium text-foreground">
+                  {category}
+                </th>
+              ))}
+              <th className="px-3 py-2 font-medium text-foreground">Overall</th>
+            </tr>
+          </thead>
+          <tbody>
+            {heatmap.rows.map((row) => (
+              <tr key={row.topic} className="border-b border-border last:border-b-0">
+                <td className="px-3 py-2 font-medium text-foreground">{row.topic}</td>
+                {row.cells.map((cell) => (
+                  <td key={cell.category} className="px-3 py-2">
+                    <HeatmapCellBadge coveredCount={cell.coveredCount} totalCount={cell.totalCount} />
+                  </td>
+                ))}
+                <td className="px-3 py-2">
+                  <HeatmapCellBadge coveredCount={row.coveredCount} totalCount={row.totalCount} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function HeatmapCellBadge({ coveredCount, totalCount }: { coveredCount: number; totalCount: number }) {
+  if (totalCount === 0) {
+    return <span className="text-muted-foreground">—</span>
+  }
+  const level: CoverageLevel = coveredCount === totalCount ? "covered" : coveredCount === 0 ? "missing" : "thin"
+  return (
+    <Badge variant={LEVEL_VARIANT[level]}>
+      {coveredCount}/{totalCount}
+    </Badge>
   )
 }

@@ -59,6 +59,37 @@ contribution missing either field (both stay optional there, matching the
 rest of that form) is silently excluded rather than counted with a
 fabricated word count.
 
+## Cross-topic comparison heatmap
+
+Closes the "a cross-topic comparison heatmap" follow-up: once at least two
+topics have a tracked-argument checklist, a "Cross-topic comparison" section
+renders below the topic switcher (regardless of which topic, if any, is
+currently selected) showing every such topic against every category seen
+across their checklists — one row per topic, one column per category, each
+cell a `covered/total` badge tallied from that topic's tracked arguments in
+that category. A tracked argument with no `category` set is grouped under an
+"Uncategorized" column, always sorted last. This lets a coach spot a
+systemically weak category (e.g. every topic thin on "K") across the whole
+research effort at a glance, rather than checking one topic at a time.
+
+- `lib/topic-coverage.ts#buildTopicCoverageComparisonHeatmap` — pure pivot
+  over a list of `{ topic, report }` pairs into the grid, zero-filling a
+  topic's cell for a category none of its tracked arguments use so the grid
+  always renders as a complete rectangle. Only each report's `tracked`
+  arguments feed the grid — an `untracked` argument block has no
+  team-planned category to place it in, the same way
+  `buildTopicCoverageSummaryText` treats it as a separate concern.
+- `state/trackedArguments.ts#buildPersistedTopicCoverageComparisonHeatmap` —
+  composes it from persisted stores, defaulting to every topic
+  `listTrackedTopics()` returns (or a caller-supplied subset).
+- `panels/TopicCoverageDashboardPanel.tsx`'s `CoverageComparisonHeatmap`
+  renders the grid as a table, reusing the existing missing/thin/covered
+  `Badge` variants for each cell.
+
+See `packages/debate-search-evidence/test/topic-coverage.test.ts` and
+`test/trackedArguments.test.ts` for coverage. No further follow-up is
+currently tracked for this idea.
+
 ## Known gaps
 
 - The checklist is per-browser localStorage, not a shared team resource — two

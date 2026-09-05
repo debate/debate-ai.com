@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedTopicCoverageComparisonHeatmap,
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
   listTrackedArguments,
@@ -273,5 +274,31 @@ describe("buildPersistedTopicCoverageReport", () => {
     expect(report.tracked).toEqual([
       { argBlock: "Warming DA", category: "DA", cardCount: 0, totalWordCount: 0, level: "missing" },
     ]);
+  });
+});
+
+describe("buildPersistedTopicCoverageComparisonHeatmap", () => {
+  it("returns an empty grid when no topic has a tracked-argument checklist", () => {
+    expect(buildPersistedTopicCoverageComparisonHeatmap()).toEqual({ categories: [], rows: [] });
+  });
+
+  it("compares every tracked topic by default, built from persisted stores", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveTrackedArgument(OTHER_TOPIC);
+
+    const heatmap = buildPersistedTopicCoverageComparisonHeatmap();
+    expect(heatmap.rows.map((row) => row.topic)).toEqual(["Energy Policy", "Immigration Policy"]);
+    // WARMING_DA carries category "DA"; OTHER_TOPIC's "Federalism DA" has none, so it groups as uncategorized.
+    expect(heatmap.categories).toEqual(["DA", "Uncategorized"]);
+    // Neither has any submitted cards yet, so both are fully missing.
+    expect(heatmap.rows.every((row) => row.coveredCount === 0 && row.totalCount === 1)).toBe(true);
+  });
+
+  it("scopes the comparison to a caller-supplied topic subset", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveTrackedArgument(OTHER_TOPIC);
+
+    const heatmap = buildPersistedTopicCoverageComparisonHeatmap(["Energy Policy"]);
+    expect(heatmap.rows.map((row) => row.topic)).toEqual(["Energy Policy"]);
   });
 });

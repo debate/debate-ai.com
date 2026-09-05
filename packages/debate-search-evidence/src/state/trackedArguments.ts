@@ -29,9 +29,11 @@
 
 import type { TrackedArgument } from "../lib/topic-coverage";
 import {
+  buildTopicCoverageComparisonHeatmap,
   buildTopicCoverageReport,
   type CoverageCardSummary,
   type CoverageThresholds,
+  type TopicCoverageComparisonHeatmap,
   type TopicCoverageReport,
 } from "../lib/topic-coverage";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
@@ -116,4 +118,23 @@ export function buildPersistedTopicCoverageReport(
       wordCount: contribution.wordCount,
     }));
   return buildTopicCoverageReport(tracked, [...libraryCards, ...contributionCards], thresholds);
+}
+
+/**
+ * Builds the cross-topic comparison heatmap ("Topic Coverage Dashboard"'s
+ * next named follow-up in TODO.md: "a cross-topic comparison heatmap")
+ * entirely from persisted stores: every topic with at least one tracked
+ * argument (`listTrackedTopics()`), each composed into its own
+ * `buildPersistedTopicCoverageReport`, then pivoted by
+ * `buildTopicCoverageComparisonHeatmap`. Pass an explicit `topics` list to
+ * compare a subset instead of every tracked topic.
+ */
+export function buildPersistedTopicCoverageComparisonHeatmap(
+  topics?: string[],
+  thresholds?: CoverageThresholds,
+): TopicCoverageComparisonHeatmap {
+  const activeTopics = topics ?? listTrackedTopics();
+  return buildTopicCoverageComparisonHeatmap(
+    activeTopics.map((topic) => ({ topic, report: buildPersistedTopicCoverageReport(topic, thresholds) })),
+  );
 }
