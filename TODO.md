@@ -6,6 +6,113 @@
 _No task currently in progress._
 
 ### Completed
+- **🕵️ On Page Card Reuse Search — a retention/purge policy for the
+  ever-growing `reuse_check_log` (idea #7's last remaining Next item under
+  Product Feature Ideas).** Another repeat of the standing prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL... with ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead. Before this, `reuse_check_log` (the append-only audit trail `GET
+  /api/evidence-reuse-check` writes to on every lookup, feeding the "team
+  reuse dashboard" — see the Completed entry above) had no retention policy
+  at all, flagged as a "Known gap" in
+  `docs/features/on-page-card-reuse-search.md`: it would only ever grow,
+  with the dashboard route's fixed 2000-row scan cap as the only guard
+  against it becoming unbounded. `debate-research-evidence`'s
+  `lib/shared-evidence-library.ts` gains a pure
+  `getReuseCheckLogPurgeCutoff(nowMs, retentionDays = REUSE_CHECK_LOG_RETENTION_DAYS)`
+  (180 days by default) computing the cutoff timestamp below which a log row
+  is eligible for purging, and a new
+  `apps/debate-ai.com/lib/evidence-reuse-check/purge-reuse-check-log.ts#purgeOldReuseCheckLogRows`
+  deletes every `reuse_check_log` row older than that cutoff (selecting the
+  expired ids first so the route can report back exactly how many rows it
+  removed). This now runs automatically every week via the worker's
+  `scheduled` export (`worker/index.ts`), piggybacking on the same weekly
+  cron trigger the existing YouTube resync already uses rather than adding a
+  second schedule, and can also be triggered immediately from the admin page
+  — a new "Reuse-check log retention" card on `/admin`
+  (`components/admin/AdminDashboard.tsx`) with a "Purge old entries now"
+  button backed by a new admin-gated `POST
+  /api/admin/evidence-reuse-check-log/purge` route. See
+  `docs/features/on-page-card-reuse-search.md`'s new "Retention / purge
+  policy" section (which also removes the now-closed "Known gap" bullet) and
+  the new test coverage in
+  `packages/debate-search-evidence/test/shared-evidence-library.test.ts`
+  (`getReuseCheckLogPurgeCutoff`'s default vs. custom retention windows, the
+  zero-day edge case, and using the cutoff to classify a log record as
+  expired or not) — 4 new cases. Ran the full verification gate: `bun run
+  test` (4460 passing, up from 4456), `bunx turbo run typecheck` (all 15
+  typecheck-bearing packages green, `debate-research-evidence` included),
+  and `bun run build:web` (the full production build, including the new
+  `/api/admin/evidence-reuse-check-log/purge` route) all pass. No lint
+  script is configured in this repo. No further follow-up is currently
+  tracked for this idea; a future run should pick a fresh next-step
+  elsewhere.
+
+- **🧪 Practice Round Simulator — comparison across a debater's past attempts
+  (its last remaining Next item under Research Crowdsourcing Organizer
+  Features).** Another repeat of the standing prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL... with
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, that half is already fully built (see
+  `apps/debate-ai.com/app/api/settings/route.ts` and the many `saved_*` D1
+  tables/`/api/*` routes threaded through this file's history, and every
+  tool already reachable from the Tools page and CardMirror's command
+  palette), so this slice picked the next named, unblocked follow-up
+  instead. Before this, a debater configuring practice rounds at
+  `/practice-round` had no way to see how they were trending across
+  rounds — each persisted round rendered as an independent card with no
+  link between them. `debate-round`'s `state/practiceRounds.ts` gains a
+  `createdAt` timestamp on `PracticeRoundRecord`, stamped by
+  `savePracticeRound` on a round's first save only (mirroring
+  `wordCountRounds.ts`'s `createdAt` convention — never refreshed on a
+  later update to the same `roundId`, and absent rather than backfilled on
+  a round saved before this field existed) plus a new
+  `buildPracticeRoundAttemptsComparison()`: a chronological win/loss trend
+  across every round that carries one, deriving each attempt's outcome by
+  comparing its saved `judgeDecision.winner` against the side the user
+  actually argued (read off `setup.speechOrder` via a new
+  `deriveUserSideFromSpeechOrder` helper, since `PracticeRoundSetup` doesn't
+  store `userSide` directly) — `"pending"` until a judge decision has been
+  requested — alongside each round's judge paradigm, opponent, and
+  post-round feedback's coaching-prompt count once generated. A new
+  `buildPracticeRoundAttemptsComparisonText` renders the same data as a
+  downloadable plain-text report. `PracticeRoundSimulatorPanel` (in the
+  `debate-practice-rounds` package) gained a "Compare your past attempts"
+  section above the per-round card list — a summary line (attempts logged,
+  win/loss/pending tallies, win rate among decided attempts) plus one row
+  per attempt with a Won/Lost/Pending badge, and a "Download comparison"
+  action mirroring `CoachingSessionsPanel`'s existing anchor+Blob download
+  pattern — rendered only once at least one attempt has a `createdAt`. See
+  `docs/features/practice-round-simulator.md`'s new section (which also
+  notes the idea's two still-open Next items: a round replay/playback view,
+  and a scoring rubric shown alongside the AI judge decision) and the new
+  test coverage in `packages/debate-round/test/practiceRounds.test.ts`
+  (`createdAt` stamping-on-first-save and preservation-across-updates on
+  `savePracticeRound`; `buildPracticeRoundAttemptsComparison`'s exclusion of
+  createdAt-less legacy records, pending/won/lost derivation for both
+  primary- and secondary-side users, chronological sorting, win/loss/
+  pending tallying and win-rate calculation, feedback-issue-count
+  carry-through, and opponent-persona-name fallback; and
+  `buildPracticeRoundAttemptsComparisonText`'s empty-state placeholder and
+  rendered summary/per-attempt lines) — 15 new cases, plus updates to the
+  pre-existing `savePracticeRound`/`buildPracticeRoundsPanelView` tests to
+  use `toMatchObject` instead of `toEqual` now that a saved record carries
+  an extra `createdAt` field, mirroring `wordCountRounds.test.ts`'s own
+  convention. Ran the full verification gate: `bun run test` (4448 passing,
+  up from 4433 — the 15 new cases above), `bunx turbo run typecheck` (all 15
+  typecheck-bearing packages green, `debate-round`/`debate-practice-rounds`
+  included), and `bun run build:web` (the full production build) all pass.
+  Next: the still-open "round replay/playback view" and "scoring rubric
+  shown alongside the AI judge decision" follow-ups under this same idea; a
+  future run should pick one of those or a fresh next-step elsewhere.
+
 - **🕵️ On Page Card Reuse Search — a team dashboard of pages flagged as
   already-cut, so a coach can see reuse patterns at a glance (idea #7's last
   remaining Next item under Product Feature Ideas).** Another repeat of the
@@ -16304,7 +16411,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 * 📋 **Shared Evidence Library** (`/cards/library`) — the bulk-tag-editing follow-up is done: the results list has per-entry checkboxes plus a "Select all N filtered results" checkbox, and checking any reveals an "Add tag to selected"/"Remove tag from selected" toolbar backed by the new `lib/argument-library.ts#applyBulkTagEditToCards`/`state/evidenceLibraryEntries.ts#bulkEditTagsForPersistedEntries` — see the Completed entry above and `docs/features/evidence-library.md`'s "Bulk tag editing across a filtered result set" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. saved searches with alerts on new matches, or a one-click citation-format export) if one becomes worth doing.
 * 🔄 **Strategy Sync Notes** (`/prep-notes`, `/notifications`) — the priority-flag follow-up is done: each note has a "Flag high priority"/"Unflag" toggle (`state/prepNotes.ts#updatePersistedPrepNotePriority`), shows a "High priority" badge, and sorts ahead of its status-mates (`flow/strategy-sync-notes.ts#sortNotesByPriorityThenCreatedAt`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Priority flag" section. The threaded-replies follow-up is also now done: each note has a "Replies (N)" toggle opening a local-first comment thread (`state/prepNoteReplies.ts`, mirroring `debate-card-search`'s `state/dailyBestCardComments.ts`), with deleting a note cascading to delete its replies too — see the Completed entry above and `docs/features/prep-notes.md`'s "Threaded replies" section. The digest-notification follow-up is also now done: `/notifications` now groups a recipient's notifications into one digest card per UTC calendar day instead of a flat per-assignment list, each with a "Mark all read" bulk action and an "Expand"/"Collapse" toggle down to the individual assignments (`flow/prep-note-notifications.ts#groupNotificationsIntoDigests`/`buildDigestGroupHeading`, `state/prepNoteNotifications.ts#buildNotificationDigestView`/`markManyPersistedNotificationsRead`) — see the Completed entry above and `docs/features/prep-notes.md`'s "Digest grouping" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 * 📊 **Matchup Prep Dashboard** — same panel and outline as "Pre-Round Intelligence Panel" above (idea #12); no separate UI work tracked here.
-* 🧪 **Practice Round Simulator** (`/practice-round`) — a round replay/playback view; a scoring rubric shown alongside the AI judge decision; comparison across a debater's past attempts.
+* 🧪 **Practice Round Simulator** (`/practice-round`) — the comparison-across-a-debater's-past-attempts follow-up is done: a "Compare your past attempts" section renders a chronological win/loss trend across every persisted round that carries a `createdAt` (stamped on a round's first save), each attempt's outcome derived by comparing its saved judge decision against the side the user actually argued, plus its judge paradigm, opponent, and feedback issue count — with a "Download comparison" action (`state/practiceRounds.ts#buildPracticeRoundAttemptsComparison`/`buildPracticeRoundAttemptsComparisonText`) — see the Completed entry above and `docs/features/practice-round-simulator.md`'s new section. Next: a round replay/playback view; a scoring rubric shown alongside the AI judge decision.
 * 📚 **AI Drill Generator** (`/drills`) — the difficulty-rating-with-filtering follow-up is done: every generated drill carries an `easy`/`medium`/`hard` `difficulty` rating derived from its argument's vulnerability score (`flow/drill-generator.ts#vulnerabilityScoreToDifficulty`), shown as a badge next to its kind badge, with a "Difficulty" dropdown above the drill list narrowing every round's drills to one difficulty at a time (`filterDrillsByDifficulty`) — see `docs/features/drill-sets.md`'s "Difficulty rating and filtering" section. The local completion-tracking follow-up is also now done: each drill has a "Mark practiced" toggle and each round card shows a `MeterBar` "N of M drills practiced" summary (`state/drillSets.ts#toggleDrillCompletion`/`getDrillSetCompletionStats`) — see the Completed entry above and `docs/features/drill-sets.md`'s "Completion tracking" section. The scheduling/reminders follow-up is also now done: each drill has a "Review reminder" date field (`state/drillSets.ts#scheduleDrillReview`), and once its scheduled day arrives it gets a "Due" badge plus its round card gets an aggregate "N due for review" badge (`getDueDrillIndexes`) — an in-app reminder, since this repo has no push-notification infrastructure — see the Completed entry above and `docs/features/drill-sets.md`'s "Scheduling and reminders" section. The tying-completion-into-Progress-Unlocks follow-up is also now done: a "Practice tier" card above the round list shows the tier/badges `state/drillProgressUnlocks.ts#buildDrillPracticeUnlockStatus` derives from the total practiced-drill count across every persisted round, reusing `debate-card-search`'s `lib/progress-unlocks.ts` tier thresholds and badge names directly via its existing either-signal-qualifies OR-path (rather than a new drill-specific threshold table) — see the Completed entry above and `docs/features/drill-sets.md`'s "Progress Unlocks tier" section. The account-sync follow-up is also now done: every drill set — AI scripts, completion state, and review reminders included — now follows a signed-in user across devices, via a new `saved_drill_sets` D1 table plus `/api/drill-sets` routes merged in by the new `hooks/useDrillSets.ts` (`DrillSetsPanel` now reads/writes exclusively through that hook) — see the Completed entry above and `docs/features/drill-sets.md`'s "Account sync" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. feeding practiced-drill counts into the real Contribution Leaderboard-backed Progress Unlocks roster once this panel knows a real signed-in contributor id) if one becomes worth doing.
 * 🧭 **Scout-to-Strategy Workflow** (`/strategy`) — the history-log-per-matchup follow-up is done: rebuilding a recommendation for a matchup no longer overwrites the prior one — every recommendation is kept, newest-first, with a "Clear" action per entry and a "Clear all history for this matchup" bulk action, account-synced across devices when signed in (`state/strategyRecommendations.ts`'s `appendStrategyRecommendation`, a new `saved_strategy_recommendations` D1 table plus `/api/strategy-recommendations` routes, merged in by `hooks/useStrategyRecommendations.ts`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Recommendation history log" and "Account sync" sections. The one-click-export-into-the-Pre-Round-Briefing follow-up is also now done: each recommendation has a "Send to Pre-Round Briefing" action that appends a one-line summary as a new "Team prep notes" bullet on an already-saved briefing (`round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`, `round/pre-round-briefing.ts#appendNoteToPreRoundBriefing`, `state/preRoundBriefings.ts#appendPrepNoteToPreRoundBriefing`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Exporting a recommendation into a Pre-Round Briefing" section. The side-by-side-case-option-comparison-table follow-up is also now done: once a recommendation has two or more ranked case options, a "Case comparison" table renders below it — one row per opponent-run argument tag (most frequent first), one column per case, cells showing the opponent's recorded frequency for that tag when the case runs it (`round/scout-to-strategy.ts#buildCaseComparisonTable`, pivoting a new `tagOverlaps` breakdown field on `RankedCaseOption`) — see the Completed entry above and `docs/features/scout-to-strategy.md`'s "Side-by-side case comparison table" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 

@@ -12,13 +12,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image, { StaticImageData } from "next/image";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import Image from "next/image";
+import { ChevronRight } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { IconTrophy, IconLectures, IconBook, IconLeaderboard } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
-import { isImageIconSource } from "./icon-kind";
+import { isComponentIcon, isImageIcon, type TreeItemIcon } from "./tree-item-icon";
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
@@ -171,7 +171,7 @@ interface TreeItemProps {
   count?: number;
   isActive?: boolean;
   /** An imported image (SVG/PNG) or a Lucide component. */
-  icon?: string | StaticImageData | LucideIcon;
+  icon?: TreeItemIcon;
   /** Present together with `onToggleExpand` to make this item expandable. */
   expanded?: boolean;
   onToggleExpand?: () => void;
@@ -184,11 +184,12 @@ function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggl
   const expandable = children != null && onToggleExpand != null;
   const Heading = level === 2 ? "h2" : "span";
   // The icon set in `ui/icons` arrives as image sources for `next/image`;
-  // `sidebar-tool-sections` passes Lucide components. See `isImageIconSource`
-  // for why the two are told apart by the image shape rather than by
-  // `typeof icon === "function"`.
-  const isImageSource = isImageIconSource(icon);
-  const IconGlyph = icon && !isImageSource ? (icon as LucideIcon) : null;
+  // Lucide icons as components. `isImageIcon` is the discriminator — a
+  // `typeof icon === "function"` test does not work, because Lucide builds
+  // every icon with `forwardRef` and those are objects. See
+  // `./tree-item-icon`.
+  const imageSrc = isImageIcon(icon) ? icon : null;
+  const Glyph = isComponentIcon(icon) ? icon : null;
 
   return (
     <div>
@@ -205,10 +206,10 @@ function TreeItem({ level, href, title, count, isActive, icon, expanded, onToggl
             level === 3 ? "pl-7" : "pl-2",
           )}
         >
-          {IconGlyph ? (
-            <IconGlyph className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
-          ) : isImageSource ? (
-            <Image src={icon as string | StaticImageData} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />
+          {Glyph ? (
+            <Glyph className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+          ) : imageSrc ? (
+            <Image src={imageSrc} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />
           ) : null}
           <Heading
             className={cn(

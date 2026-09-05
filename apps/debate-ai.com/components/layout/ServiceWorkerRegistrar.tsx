@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { debugLog } from "@/lib/debug-log";
 
 /**
  * Registers the offline service worker built by `npm run build:sw`.
@@ -16,7 +17,7 @@ import { useEffect } from "react";
 export function ServiceWorkerRegistrar() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) {
-      console.log("Service Worker not supported");
+      debugLog("Service Worker not supported");
       return;
     }
 
@@ -28,7 +29,7 @@ export function ServiceWorkerRegistrar() {
     navigator.serviceWorker
       .register("/service-worker.js")
       .then((reg) => {
-        console.log("Service Worker registered:", reg);
+        debugLog("Service Worker registered:", reg);
       })
       .catch((err) => {
         console.error("Service Worker registration failed:", err);

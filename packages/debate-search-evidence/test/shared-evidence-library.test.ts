@@ -16,8 +16,10 @@ import {
   findEntriesByCite,
   findEntriesBySourceUrl,
   getEvidenceStaleness,
+  getReuseCheckLogPurgeCutoff,
   getStaleEvidenceEntries,
   normalizeSourceUrl,
+  REUSE_CHECK_LOG_RETENTION_DAYS,
   searchEvidenceLibrary,
   type EvidenceLibraryEntry,
   type ReuseCheckLogRecord,
@@ -646,5 +648,30 @@ describe("buildReuseCheckDashboardSummaryText", () => {
   it("uses singular wording for exactly one page and one check", () => {
     const dashboard = buildReuseCheckDashboard([logRecord({ normalizedUrl: "a.com" })]);
     expect(buildReuseCheckDashboardSummaryText(dashboard)).toBe("1 page flagged as already-cut across 1 team check.");
+  });
+});
+
+describe("getReuseCheckLogPurgeCutoff", () => {
+  const now = Date.parse("2026-09-05T00:00:00.000Z");
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+  it("subtracts the default retention window from now when none is given", () => {
+    expect(getReuseCheckLogPurgeCutoff(now)).toBe(now - REUSE_CHECK_LOG_RETENTION_DAYS * ONE_DAY_MS);
+  });
+
+  it("supports a custom retention window", () => {
+    expect(getReuseCheckLogPurgeCutoff(now, 30)).toBe(now - 30 * ONE_DAY_MS);
+  });
+
+  it("a zero-day retention window has a cutoff of right now", () => {
+    expect(getReuseCheckLogPurgeCutoff(now, 0)).toBe(now);
+  });
+
+  it("is usable to classify a log record as expired or not", () => {
+    const cutoff = getReuseCheckLogPurgeCutoff(now, 180);
+    const expiredRecord = logRecord({ checkedAt: cutoff - 1 });
+    const freshRecord = logRecord({ checkedAt: cutoff + 1 });
+    expect(expiredRecord.checkedAt < cutoff).toBe(true);
+    expect(freshRecord.checkedAt < cutoff).toBe(false);
   });
 });
