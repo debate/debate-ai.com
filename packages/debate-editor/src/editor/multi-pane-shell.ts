@@ -55,6 +55,7 @@ function formatFromFilename(name: string): DocFormat | null {
   return null;
 }
 import { NavigationPanel, installNavResizeHandle } from './nav-panel.js';
+import { HeadingBreadcrumbBar } from './heading-breadcrumb-bar.js';
 import { EditorDragSurface } from './drag-editor-surface.js';
 import { dragController, rewriteHeadingIds } from './drag-controller.js';
 import { isBenchmarkActive } from './benchmark-state.js';
@@ -541,6 +542,10 @@ class Slot {
   private chipCloseBtn: HTMLButtonElement;
   /** Editor body — DocRecord.editorEl mounts here. */
   private bodyEl: HTMLElement;
+  /** Sticky "current heading" breadcrumb, scoped to this pane's own
+   *  `.pmd-pane-body` scroller/view — the multi-pane counterpart to
+   *  single-doc's `#heading-breadcrumb-bar` (see `heading-breadcrumb-bar.ts`). */
+  readonly breadcrumbBar: HeadingBreadcrumbBar;
   /** Footer word count. */
   private wcEl: HTMLElement;
   /** Footer co-editing indicator — status text + presence dots for THIS slot's
@@ -662,6 +667,21 @@ class Slot {
     this.bodyEl = document.createElement('div');
     this.bodyEl.className = 'pmd-pane-body';
     this.paneEl.appendChild(this.bodyEl);
+
+    // Sticky "current heading" breadcrumb — same component and CSS as
+    // single-doc's `#heading-breadcrumb-bar`, scoped to this pane's own
+    // `.pmd-pane-body` scroller/view instead of `#app`. A permanent first
+    // child of `bodyEl`, ahead of whichever record's `editorEl` is
+    // currently mounted — `mountVisible`/`detachVisible` only ever
+    // append/remove `editorEl` and `navEl`, never touch this.
+    const breadcrumbEl = document.createElement('div');
+    breadcrumbEl.className = 'pmd-heading-breadcrumb';
+    breadcrumbEl.setAttribute('role', 'navigation');
+    breadcrumbEl.setAttribute('aria-label', 'Current heading');
+    breadcrumbEl.hidden = true;
+    this.bodyEl.appendChild(breadcrumbEl);
+    this.breadcrumbBar = new HeadingBreadcrumbBar(breadcrumbEl, this.bodyEl);
+    this.breadcrumbBar.setEnabled(settings.get('showHeadingBreadcrumb'));
 
     // Footer (word-count button + word count + open file button).
     const footer = document.createElement('div');
@@ -1078,6 +1098,9 @@ class Slot {
     this.chipNameEl.textContent = rec.filename;
     this.refreshChip();
     this.refreshWordCount();
+    // After scrollTop is restored, so the breadcrumb's scroll-position
+    // probe reads the doc's actual landing spot rather than 0.
+    this.breadcrumbBar.attach(rec.view);
     this.refreshCopresence();
     // Speech-chip class lives on the pane element and reflects
     // the currently-visible record vs the speech-doc registry;
@@ -1438,6 +1461,9 @@ class MultiPaneShell {
       }
       // Pane word counts depend on reader settings.
       for (const id of SLOT_IDS) this.slots[id].refreshWordCount();
+      // Same setting single-doc's own breadcrumb bar is gated behind —
+      // parity across both surfaces.
+      for (const id of SLOT_IDS) this.slots[id].breadcrumbBar.setEnabled(s.showHeadingBreadcrumb);
       // Editor spellcheck is served by the viewport-spellcheck plugin
       // (in buildEditorPlugins), which subscribes to `editorSpellcheck`
       // itself — nothing to push to the views here.
@@ -3158,6 +3184,12 @@ function buildDocRecord(
           // have moved panes (`sendDocToSlotN`); refreshing the old
           // slot would leave this pane's count stale.
           record.owner.refreshWordCount();
+          // Only when this record is the pane's current visible doc —
+          // a background stack member's headings shouldn't repaint a
+          // breadcrumb that's still showing the visible doc's own path.
+          if (record.owner.visible === record) {
+            record.owner.breadcrumbBar.update(view.state.doc);
+          }
         }, 200);
       }
       // Selection-only changes refresh just this pane's word-count

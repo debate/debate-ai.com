@@ -38,7 +38,7 @@ export type UseResearchProgressGoalSyncResult = {
   /** Set only when the most recent `saveGoal` call failed validation. */
   error: string | null;
   /** Sets (or replaces) `contributorId`'s goal, syncing it to the account when signed in. Returns `false` (and sets `error`) on an invalid target. */
-  saveGoal: (targetCompletedTaskCount: number, topic?: string) => boolean;
+  saveGoal: (targetCompletedTaskCount: number, topic?: string, targetDate?: string) => boolean;
   /** Clears `contributorId`'s goal locally and, when signed in, on the account too. */
   clearGoal: () => void;
   /** Re-derives `goalProgress` against the latest persisted research-progress board, e.g. after a completed task changes the roster. */
@@ -89,18 +89,18 @@ export function useResearchProgressGoalSync(contributorId: string | undefined): 
   }, [contributorId, refresh]);
 
   const saveGoal = useCallback(
-    (targetCompletedTaskCount: number, topic?: string) => {
+    (targetCompletedTaskCount: number, topic?: string, targetDate?: string) => {
       if (!contributorId) return false;
       setError(null);
       try {
-        setGoalForContributor({ contributorId, targetCompletedTaskCount, topic });
+        setGoalForContributor({ contributorId, targetCompletedTaskCount, topic, targetDate });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Could not save goal.");
         return false;
       }
       refresh();
       if (remoteAvailableRef.current) {
-        saveResearchProgressGoal({ targetCompletedTaskCount, topic }).catch(() => {
+        saveResearchProgressGoal({ targetCompletedTaskCount, topic, targetDate }).catch(() => {
           // Best-effort — the local apply above already succeeded.
         });
       }

@@ -373,8 +373,24 @@ export function buildStreakRewardText(
       : "Complete today's quests to start a streak.";
   }
 
-  const freshBadge = milestones.find((milestone) => milestone.streakLength === status.streak.currentStreak)?.badge;
+  const freshBadge = getFreshStreakBadge(status, missionCompleteToday, milestones);
   return freshBadge
     ? `🎉 Mission complete! ${status.streak.currentStreak}-day streak — you just earned "${freshBadge}"!`
     : `🎉 Mission complete! ${status.streak.currentStreak}-day streak.`;
+}
+
+/**
+ * The badge freshly earned today — one whose milestone `streakLength`
+ * exactly matches the current streak, and only when today's mission is
+ * complete — or `undefined`. Shared by `buildStreakRewardText`'s sentence
+ * and `DailyQuestsPanel`'s badge chips, so the fresh badge can be
+ * highlighted separately from badges earned on prior days.
+ */
+export function getFreshStreakBadge(
+  status: ContributorQuestStreak,
+  missionCompleteToday: boolean,
+  milestones: StreakMilestone[] = DEFAULT_STREAK_MILESTONES,
+): string | undefined {
+  if (!missionCompleteToday) return undefined;
+  return milestones.find((milestone) => milestone.streakLength === status.streak.currentStreak)?.badge;
 }

@@ -283,12 +283,11 @@ export function QuestStreaksPanel() {
                     <p className="text-xs text-muted-foreground">
                       {buildStreakFreezeAvailabilityText(freezeInfo.availableFreezes)}
                     </p>
-                    {freezeInfo.gapDayKey && (
+                    {freezeInfo.gapDayKey && freezeInfo.availableFreezes > 0 && (
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        disabled={freezeInfo.availableFreezes <= 0}
                         onClick={() => handleUseFreeze(status.contributorId, freezeInfo.gapDayKey!)}
                       >
                         Use a grace day for {freezeInfo.gapDayKey}

@@ -20,6 +20,26 @@
  * `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` already carry, layered
  * onto this setup's own persona choice via `buildOpponentPersonaPrompt`'s
  * existing `difficulty` parameter.
+ *
+ * `buildPracticeRoundFeedback`'s optional `opponentPersona` option closes
+ * that same idea's "post-round feedback tips specific to the persona faced"
+ * Next item: when the round's setup carried an AI opponent persona, feedback
+ * gets an extra section built from `opponent-personas.ts`'s new
+ * `buildOpponentPersonaFeedbackTips`, naming what to prep before facing that
+ * style again.
+ *
+ * `resolvePracticeRoundOpponentPersonaChoice` closes that same idea's
+ * "unifying the Practice Round Simulator's own separate persona setup with
+ * [the custom-persona] library" Next item: before this, the simulator's own
+ * setup form could only pick a built-in persona id — no custom-persona
+ * authoring, and no way to reuse an entry already saved to "My persona
+ * library" (`opponent-persona-library.ts`) the way `OpponentPersonaPickerPanel`
+ * already lets a user do. This one helper resolves a form's persona choice —
+ * none, a built-in id, or a freshly-typed/library-sourced custom
+ * name+notes pair — into the `opponentPersona` input `buildPracticeRoundSetup`
+ * already accepts, so `PracticeRoundSimulatorPanel` can offer the same
+ * "custom persona" authoring flow and library picker without any change to
+ * `PracticeRoundSetup`/persistence.
  */
 
 import type { Flow } from "../types/flow";
@@ -38,6 +58,8 @@ import type {
   OpponentPersona,
 } from "debate-speech-writer/src/opponent/opponent-personas";
 import {
+  buildCustomOpponentPersona,
+  buildOpponentPersonaFeedbackTips,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentPersona,
@@ -75,6 +97,27 @@ function resolveOpponentPersona(
     throw new Error(`buildPracticeRoundSetup: unknown opponent persona id "${opponentPersona}"`);
   }
   return resolved;
+}
+
+/** A practice-round setup form's opponent-persona choice, before resolution. */
+export type PracticeRoundOpponentPersonaChoice =
+  | { kind: "none" }
+  | { kind: "builtin"; id: BuiltinOpponentPersonaId }
+  | { kind: "custom"; name: string; notes: string };
+
+/**
+ * Resolves a practice-round setup form's opponent-persona choice — including
+ * a freshly-typed or persona-library-sourced custom persona — into the
+ * `opponentPersona` input `buildPracticeRoundSetup` expects. Throws the same
+ * way `buildCustomOpponentPersona` does when a custom persona's `name`/`notes`
+ * are empty after sanitizing.
+ */
+export function resolvePracticeRoundOpponentPersonaChoice(
+  choice: PracticeRoundOpponentPersonaChoice,
+): OpponentPersona | BuiltinOpponentPersonaId | undefined {
+  if (choice.kind === "none") return undefined;
+  if (choice.kind === "builtin") return choice.id;
+  return buildCustomOpponentPersona({ name: choice.name, notes: choice.notes });
 }
 
 function formatSpeechOrderSection(order: AiVersusSpeechSlot[]): string {
@@ -146,22 +189,37 @@ export type PracticeRoundFeedback = {
   sections: PracticeRoundSection[];
 };
 
+export type BuildPracticeRoundFeedbackOptions = {
+  collapseLimit?: number;
+  /**
+   * The AI opponent persona this round's setup faced, if any. When given,
+   * feedback gets an extra "Facing … again" section listing
+   * `buildOpponentPersonaFeedbackTips`' prep tips for that persona. Omitted
+   * (or `null`, matching `PracticeRoundSetup.opponentPersona`) when the round
+   * had no AI opponent persona, or for a caller (e.g. this file's own
+   * existing tests) that doesn't care about persona-specific tips.
+   */
+  opponentPersona?: OpponentPersona | null;
+};
+
 /**
  * Composes post-round feedback for a practice round: a line framing the
  * decision around the paradigm the round was judged under (its voting
  * priorities, or its description when it has none — e.g. a custom
  * paradigm), followed by the existing AI Coach Mode coaching session
- * (`flow/coach-mode.ts`'s `buildCoachingSession`) for the caller's side.
- * Reuses `coach-mode.ts` directly rather than reimplementing any of its
- * flow-vulnerability logic.
+ * (`flow/coach-mode.ts`'s `buildCoachingSession`) for the caller's side, and
+ * — when `options.opponentPersona` is given — a persona-specific prep-tips
+ * section. Reuses `coach-mode.ts` directly rather than reimplementing any of
+ * its flow-vulnerability logic.
  */
 export function buildPracticeRoundFeedback(
   flow: Pick<Flow, "children" | "columns">,
   sideKey: string,
   judgeParadigm: JudgeParadigm,
-  options: { collapseLimit?: number } = {},
+  options: BuildPracticeRoundFeedbackOptions = {},
 ): PracticeRoundFeedback {
-  const coachingPrompts = buildCoachingSession(flow, sideKey, options);
+  const { opponentPersona, ...coachingOptions } = options;
+  const coachingPrompts = buildCoachingSession(flow, sideKey, coachingOptions);
 
   const sections: PracticeRoundSection[] = [
     {
@@ -173,6 +231,15 @@ export function buildPracticeRoundFeedback(
     },
     { title: "Coaching feedback", body: buildCoachingSummaryText(coachingPrompts) },
   ];
+
+  if (opponentPersona) {
+    sections.push({
+      title: `Facing the ${opponentPersona.name} persona again`,
+      body: buildOpponentPersonaFeedbackTips(opponentPersona)
+        .map((tip, index) => `${index + 1}. ${tip}`)
+        .join("\n"),
+    });
+  }
 
   return { judgeParadigm, coachingPrompts, sections };
 }

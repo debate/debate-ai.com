@@ -18,6 +18,7 @@ import {
   findFreezableStreakGapDayKey,
   getAvailableStreakFreezes,
   getEarnedStreakBadges,
+  getFreshStreakBadge,
   buildStreakLapseReminderText,
   getStreakLapseRiskLength,
   type DailyMissionResult,
@@ -33,6 +34,8 @@ function quest(questId: string, isComplete: boolean): QuestProgress {
     completedCount: isComplete ? 5 : 2,
     remainingCount: isComplete ? 0 : 3,
     isComplete,
+    difficulty: "medium",
+    points: 10,
   };
 }
 
@@ -157,6 +160,31 @@ describe("buildStreakSummaryText", () => {
     const results = [day("2026-08-08", true), day("2026-08-09", true), day("2026-08-10", true)];
     const status = buildContributorQuestStreak("alex", results, "2026-08-10");
     expect(buildStreakSummaryText(status)).toBe("alex: 3-day streak (longest 3), badges: 3-Day Streak");
+  });
+});
+
+describe("getFreshStreakBadge", () => {
+  it("returns the badge whose milestone the streak exactly reached today", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", true), day("2026-08-10", true)];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-10");
+    expect(getFreshStreakBadge(status, true)).toBe("3-Day Streak");
+  });
+
+  it("returns undefined for a streak past a milestone (badge earned on a prior day)", () => {
+    const results = [
+      day("2026-08-08", true),
+      day("2026-08-09", true),
+      day("2026-08-10", true),
+      day("2026-08-11", true),
+    ];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-11");
+    expect(getFreshStreakBadge(status, true)).toBeUndefined();
+  });
+
+  it("returns undefined when today's mission isn't complete, even at a milestone length", () => {
+    const results = [day("2026-08-08", true), day("2026-08-09", true), day("2026-08-10", true)];
+    const status = buildContributorQuestStreak("alex", results, "2026-08-10");
+    expect(getFreshStreakBadge(status, false)).toBeUndefined();
   });
 });
 

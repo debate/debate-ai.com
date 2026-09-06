@@ -9,6 +9,7 @@ import {
 } from "../src/lib/unlock-streak-status";
 import { saveContribution } from "debate-research-evidence/src/state/contributions";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
+import { applyPersistedStreakFreeze } from "../src/state/streakFreezes";
 import { completeAndRecordResearchTask } from "debate-team-collaboration/src/state/researchProgress";
 import { saveRoutedTaskQueue, type RoutedTaskQueueRecord } from "debate-team-collaboration/src/state/routedTaskQueues";
 import type { ResearchTask, RoutingResult } from "debate-research-evidence/src/lib/research-task-routing";
@@ -158,6 +159,16 @@ describe("buildContributorUnlockStatusWithStreakFromStore", () => {
 
     expect(status.streak.currentStreak).toBe(2);
     expect(status.tier).toBe("apprentice");
+  });
+
+  it("bridges persisted streak freezes into the streak, matching /cards/streaks' own view", () => {
+    saveDailyMissionResult({ contributorId: "carol", dayKey: "2026-08-14", isComplete: true });
+    saveDailyMissionResult({ contributorId: "carol", dayKey: "2026-08-16", isComplete: true });
+    applyPersistedStreakFreeze("carol", "2026-08-15", "2026-08-16");
+
+    const status = buildContributorUnlockStatusWithStreakFromStore("carol", "2026-08-16");
+
+    expect(status.streak.currentStreak).toBe(3);
   });
 
   it("returns an all-zero novice status for a contributor with no persisted contributions", () => {

@@ -20,6 +20,7 @@ import { Sheet, SheetContent } from "../ui/primitives/sheet"
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
 import { FlowMainContent } from "../layout/FlowMainContent"
 import { SpeechDocPanel } from "../layout/SpeechDocPanel"
+import { SpeechControlsTopBar } from "../layout/SpeechControlsTopBar"
 
 // Dialogs
 import { FlowHistoryDialog } from "../dialogs/FlowHistoryDialog"
@@ -38,6 +39,7 @@ import { useFlowHandlers } from "../hooks/useFlowHandlers"
 import { useSpeechHandlers } from "../hooks/useSpeechHandlers"
 import { useSplitModeHandlers } from "../hooks/useSplitModeHandlers"
 import { useTimerState } from "../hooks/useTimerState"
+import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
@@ -72,6 +74,18 @@ export function DebateFlowPage() {
   // and handed to `EbbFlowEmbed` once selecting the tab mounts it, then
   // cleared so it doesn't re-run on the next render.
   const [ebbPendingAction, setEbbPendingAction] = useState<EbbFlowToolAction | null>(null)
+
+  // CardMirror only ever has one live, editable speech at a time — in split
+  // mode that's whichever panel the user last clicked into. Lifted to page
+  // level (rather than owned inside FlowMainContent) so the sidebar's "round
+  // times" group knows which speech's timer/controls bar to show.
+  const [activeSplitSide, setActiveSplitSide] = useState<"left" | "right">("left")
+
+  // Mic device and recording-enabled flag, shared between the live speech's
+  // recorder (embedded in the sidebar's SpeechHeaderBar) and the global
+  // SpeechControlsTopBar's recording menu, since they act on the same speech.
+  const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
+  const [recordingEnabled, setRecordingEnabled] = useState(true)
 
   /**
    * Switch to the pinned ebb Flow tab and queue an "ebb Flow tools" action
@@ -268,6 +282,37 @@ export function DebateFlowPage() {
   /** Content of the right split pane's speech document. */
   const rightContent = currentFlow?.speechDocs?.[rightSpeech] || ""
 
+  // Both panes are only shown side-by-side on desktop, outside single-pane
+  // mode — every other layout collapses to just the left speech, so that's
+  // the one whose timer/controls bar belongs in the sidebar.
+  const showBothPanes = state.splitMode && !state.isMobile && !state.singlePaneMode
+  const selectedIsRight = showBothPanes && activeSplitSide === "right"
+
+  /** Name of the speech whose timer/controls bar the sidebar shows. */
+  const selectedSpeech = selectedIsRight ? rightSpeech : leftSpeech
+  const selectedViewMode = selectedIsRight ? state.splitViewMode2 : state.splitViewMode1
+  const selectedQuoteView = selectedIsRight ? state.splitQuoteView2 : state.splitQuoteView1
+  const onSelectedViewModeChange = selectedIsRight ? state.setSplitViewMode2 : state.setSplitViewMode1
+  const onSelectedQuoteViewToggle = selectedIsRight
+    ? () => state.setSplitQuoteView2(!state.splitQuoteView2)
+    : () => state.setSplitQuoteView1(!state.splitQuoteView1)
+
+  // Recording status for the speech the global topbar's menu currently targets.
+  const { hasRecording: selectedSpeechHasRecording, deleteRecording: deleteSelectedSpeechRecording } =
+    useSpeechRecordingStatus(selectedSpeech)
+
+  /** Reset the selected speech's timer to its default length. */
+  const handleResetSpeechTime = () => {
+    const entry = timerState.getSpeechTimerState(selectedSpeech)
+    timerState.setSpeechTimerState(selectedSpeech, { time: entry.resetTime, state: { name: "paused" } })
+  }
+
+  /** Switch the selected speech's timer to a 3-minute Cross-X. */
+  const handleSwitchToCrossX = () => {
+    const crossXTime = 3 * 60 * 1000
+    timerState.setSpeechTimerState(selectedSpeech, { time: crossXTime, resetTime: crossXTime, state: { name: "paused" } })
+  }
+
   // Update document.title with timer countdown while a timer is running
   useEffect(() => {
     if (!timerState.activeTimer) {
@@ -327,6 +372,30 @@ export function DebateFlowPage() {
     }
   }, [timerState.activeTimer, currentFlow?.roundId, rounds])
 
+  /** Reset both prep timers to the current debate style's default. */
+  const handleResetPrepTimers = () => {
+    const prepTime = timerState.debateStyle.prepTime
+    if (prepTime) {
+      timerState.setPrepState({
+        resetTime: prepTime * 60 * 1000,
+        time: prepTime * 60 * 1000,
+        state: { name: "paused" },
+      })
+      timerState.setPrepSecondaryState({
+        resetTime: prepTime * 60 * 1000,
+        time: prepTime * 60 * 1000,
+        state: { name: "paused" },
+      })
+    }
+  }
+
+  // Navigation between speeches — single-speech stepping on mobile/single-pane,
+  // pair-at-a-time stepping when both split panels are shown side-by-side.
+  const canNavigatePrev = splitHandlers.canNavigatePrev
+  const canNavigateNext = state.isMobile || state.singlePaneMode ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext
+  const onNavigatePrev = state.isMobile || state.singlePaneMode ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches
+  const onNavigateNext = state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches
+
   /**
    * The main content area containing the resizable flow and speech panels.
    * Rendered for both desktop and mobile layouts. When the pinned ebb Flow
@@ -358,45 +427,15 @@ export function DebateFlowPage() {
             splitMode={state.splitMode}
             isMobile={state.isMobile}
             singlePaneMode={state.singlePaneMode}
-            onToggleLayoutMode={handleToggleLayoutMode}
             leftSpeech={leftSpeech}
             rightSpeech={rightSpeech}
-            leftViewMode={state.splitViewMode1}
-            rightViewMode={state.splitViewMode2}
-            leftQuoteView={state.splitQuoteView1}
-            rightQuoteView={state.splitQuoteView2}
-            onLeftViewModeChange={state.setSplitViewMode1}
-            onRightViewModeChange={state.setSplitViewMode2}
-            onLeftQuoteViewToggle={() => state.setSplitQuoteView1(!state.splitQuoteView1)}
-            onRightQuoteViewToggle={() => state.setSplitQuoteView2(!state.splitQuoteView2)}
             splitWidth={state.splitWidth}
             leftContent={leftContent}
             rightContent={rightContent}
-            onOpenSpeechPanel={handleOpenSpeechPanel}
             onUpdateLeftSpeech={splitHandlers.handleUpdateLeftSpeech}
             onUpdateRightSpeech={splitHandlers.handleUpdateRightSpeech}
-            speechTimerStates={timerState.perSpeechTimerStates}
-            onSpeechTimerStateChange={timerState.setSpeechTimerState}
-            onResetPrepTimers={() => {
-              const prepTime = timerState.debateStyle.prepTime
-              if (prepTime) {
-                timerState.setPrepState({
-                  resetTime: prepTime * 60 * 1000,
-                  time: prepTime * 60 * 1000,
-                  state: { name: "paused" },
-                })
-                timerState.setPrepSecondaryState({
-                  resetTime: prepTime * 60 * 1000,
-                  time: prepTime * 60 * 1000,
-                  state: { name: "paused" },
-                })
-              }
-            }}
-            canNavigatePrev={splitHandlers.canNavigatePrev}
-            canNavigateNext={state.isMobile || state.singlePaneMode ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
-            onNavigatePrev={state.isMobile || state.singlePaneMode ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
-            onNavigateNext={state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
-            onMobileMenuClick={state.isMobile ? () => state.setMobileMenuOpen(true) : undefined}
+            activeSplitSide={activeSplitSide}
+            onActiveSplitSideChange={setActiveSplitSide}
             onMouseDown={() => {
               const handleMouseMove = (e: MouseEvent) => {
                 const container = (e.target as HTMLElement).closest(".split-container")
@@ -446,6 +485,29 @@ export function DebateFlowPage() {
   // ============================================================================
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden">
+      {/* Global speech controls — quote view, view mode, layout, recording
+          menu, and open-speech-doc, formerly duplicated inside each speech's
+          own header bar. */}
+      <SpeechControlsTopBar
+        speechName={selectedSpeech}
+        viewMode={selectedViewMode}
+        quoteView={selectedQuoteView}
+        onViewModeChange={onSelectedViewModeChange}
+        onQuoteViewToggle={onSelectedQuoteViewToggle}
+        layoutMode={state.singlePaneMode ? "single" : "split"}
+        onToggleLayoutMode={handleToggleLayoutMode}
+        onOpenSpeechPanel={handleOpenSpeechPanel}
+        micDeviceId={micDeviceId}
+        onMicDeviceChange={setMicDeviceId}
+        recordingEnabled={recordingEnabled}
+        onRecordingEnabledChange={setRecordingEnabled}
+        onResetSpeechTime={handleResetSpeechTime}
+        onSwitchToCrossX={handleSwitchToCrossX}
+        onResetPrepTimers={handleResetPrepTimers}
+        hasRecording={selectedSpeechHasRecording}
+        onDeleteRecording={deleteSelectedSpeechRecording}
+        recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
+      />
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">
         {!state.isMobile ? (
@@ -468,6 +530,16 @@ export function DebateFlowPage() {
                 onSelectEbb={() => setEbbActive(true)}
                 onEbbToolAction={handleEbbToolAction}
                 timerState={timerState}
+                selectedSpeech={selectedSpeech}
+                onResetPrepTimers={handleResetPrepTimers}
+                canNavigatePrev={canNavigatePrev}
+                canNavigateNext={canNavigateNext}
+                onNavigatePrev={onNavigatePrev}
+                onNavigateNext={onNavigateNext}
+                micDeviceId={micDeviceId}
+                onMicDeviceChange={setMicDeviceId}
+                recordingEnabled={recordingEnabled}
+                onRecordingEnabledChange={setRecordingEnabled}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -498,6 +570,16 @@ export function DebateFlowPage() {
                   onEbbToolAction={handleEbbToolAction}
                   onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
                   timerState={timerState}
+                  selectedSpeech={selectedSpeech}
+                  onResetPrepTimers={handleResetPrepTimers}
+                  canNavigatePrev={canNavigatePrev}
+                  canNavigateNext={canNavigateNext}
+                  onNavigatePrev={onNavigatePrev}
+                  onNavigateNext={onNavigateNext}
+                  micDeviceId={micDeviceId}
+                  onMicDeviceChange={setMicDeviceId}
+                  recordingEnabled={recordingEnabled}
+                  onRecordingEnabledChange={setRecordingEnabled}
                 />
               </SheetContent>
             </Sheet>

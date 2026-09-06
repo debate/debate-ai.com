@@ -15,9 +15,9 @@
     "dev:editor": "turbo dev --filter=reason-editor",
     "build:editor": "turbo build --filter=reason-editor",
     "typecheck": "turbo typecheck",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "test": "vitest run --config apps/debate-ai.com/vitest.config.ts",
+    "test:watch": "vitest --config apps/debate-ai.com/vitest.config.ts",
+    "coverage": "vitest run --coverage --config apps/debate-ai.com/vitest.config.ts"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.0",
@@ -34,5 +34,8 @@
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.1",
     "linkedom": "^0.18.12"
+  },
+  "overrides": {
+    "@ricky0123/vad-web": "^0.0.30"
   }
 }

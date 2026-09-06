@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s
+ * @fileoverview Thin wrapper over `debate-team-collaboration`'s
  * `BrainstormBoardPanel` that prefills the idea form's "Contributor ID"
  * field from this app's real signed-in session, via
  * `deriveContributorIdFromSessionIdentity`. The panel itself stays

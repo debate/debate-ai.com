@@ -9,7 +9,7 @@ needs-follow-up cycle as `PrepNoteStatus`.
 - **Route:** `/cards/collaboration`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t collaboration` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -77,7 +77,7 @@ status-cycle order), and `updatePersistedSprintNoteStatus`/
 `assignPersistedSprintNote` (apply-and-save the already-existing
 `updateSprintNoteStatus`/`assignSprintNote` pure transitions) — rather than
 introducing new note-lifecycle logic. Vitest-covered in
-`packages/debate-card-search/test/sprintNotes.test.ts`.
+`packages/debate-team-collaboration/test/sprintNotes.test.ts`.
 
 A later slice closes follow-up (c), "a presence/live-status signal for who's
 currently active." There's no WebSocket (or similar) live transport
@@ -95,7 +95,7 @@ now.") and gives a contributor a "Your ID" field plus an "I'm active here"
 button per topic to record their own heartbeat; every topic's roster
 re-evaluates staleness on a 30-second client-side timer even without a new
 heartbeat, so someone who goes quiet drops off the list. Vitest-covered in
-`packages/debate-card-search/test/topic-presence.test.ts` (the pure
+`packages/debate-team-collaboration/test/topic-presence.test.ts` (the pure
 heartbeat/freshness logic) and `test/topicPresence.test.ts` (the persisted
 store). No follow-ups remain open on this bullet.
 
@@ -124,7 +124,7 @@ whenever its `topic` prop changes and falling back to it for any prop the
 caller doesn't override; `ResearchHub.tsx`'s Sprint tab (the panel's only
 current caller) now just passes a `topic`, having previously hand-derived a
 coverage report from the evidence library and always passed `contributions:
-[]`. Vitest-covered in `packages/debate-card-search/test/topicSprints.test.ts`
+[]`. Vitest-covered in `packages/debate-team-collaboration/test/topicSprints.test.ts`
 (each input read individually, plus an end-to-end composed sprint) and a new
 `listTrackedAssignmentsForTopic` describe block in `test/researchProgress.test.ts`.
 `sprint.routing` itself is unchanged: it's still a *live* re-route of the
@@ -141,7 +141,7 @@ components/research/SprintNotesWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <SprintNotesPanel signedInContributorId={...} />
       — seeds the note form's "Author ID" initial value only; a visitor who
@@ -191,7 +191,7 @@ This closes the matching entry in
 [`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
 localStorage-backed panel in this repo still has no cross-tab live-update
 mechanism." Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-key
 match, the `null`-key clear-all case, two unrelated keys, and two
 same-prefix substring keys). `TopicSprintPanel.tsx`'s own `storage`-listener
 wiring remains intentionally untested, matching every other panel in this
@@ -222,6 +222,17 @@ covered-vs-open note split, and the 5-note carry-over cap;
 `buildSprintRetrospectiveText`'s rendered lines with and without a
 carry-over section; `sprintRetrospectiveFilename`'s slugging, including a
 blank/punctuation-only topic falling back to `"topic"`).
+
+## Cross-tab live update (SprintNotesPanel)
+
+`SprintNotesPanel` now has the same cross-tab refresh `TopicSprintPanel`
+already had: it subscribes to the browser's `storage` event via
+`debate-research-evidence`'s `state/live-update.ts`
+`isSprintNotesLiveUpdateStorageEvent` (backing keys `sprintNotes`,
+`topicPresenceHeartbeats`) and rebuilds its note wall when one fires, so a
+note logged, advanced, or reassigned in a second tab appears here without a
+manual reload. Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 

@@ -1,11 +1,11 @@
 /**
  * @fileoverview Links from the app into the Fumadocs documentation site
- * (`packages/debate-ai-docs`).
+ * (`packages/debate-help-docs`).
  *
  * Every tool page header (`components/tools/ToolPageHeader.tsx`) and both
  * workspace hubs (`components/research/ResearchHub.tsx`,
  * `components/coach/CoachHub.tsx`) link to the long-form doc for what's on
- * screen. Those docs are published from `packages/debate-ai-docs/content/docs`
+ * screen. Those docs are published from `packages/debate-help-docs/content/docs`
  * — `features/*.mdx` mirrors `docs/features/*.md`, and `guides/*.mdx` are the
  * task-oriented walkthroughs of the training, practice, and research
  * collaboration tools.
@@ -26,7 +26,7 @@ export const DOCS_SITE_URL = (process.env.NEXT_PUBLIC_DOCS_URL ?? "").replace(/\
 
 /** Where the docs site's content lives on GitHub, for the no-deployment fallback. */
 const DOCS_SOURCE_URL =
-  "https://github.com/debate/debate-ai.com/blob/master/packages/debate-ai-docs/content/docs"
+  "https://github.com/debate/debate-ai.com/blob/master/packages/debate-help-docs/content/docs"
 
 /** The task-oriented guides under `content/docs/guides/`. */
 export type DocsGuide = "training-tools" | "practice-tools" | "research-collaboration"

@@ -50,7 +50,11 @@ import {
   updatePersistedPrepNotePriority,
   type PrepNotesPanelGroup,
 } from "../state/prepNotes"
-import { buildPrepNoteJumpHref, type PrepNoteStatus } from "debate-round/src/flow/strategy-sync-notes"
+import {
+  buildPrepNoteJumpHref,
+  isBoxAnchoredPrepNote,
+  type PrepNoteStatus,
+} from "debate-round/src/flow/strategy-sync-notes"
 import { isPrepNotesPanelLiveUpdateStorageEvent } from "debate-round/src/flow/live-update"
 import {
   deletePrepNoteReply,
@@ -275,13 +279,19 @@ export function PrepNotesPanel() {
                   trailing={
                     <>
                       {note.priority === "high" && <Badge variant="destructive">High priority</Badge>}
-                      <Link
-                        href={buildPrepNoteJumpHref(note)}
-                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                      >
-                        Jump to argument
-                        <ArrowUpRight className="h-3 w-3" />
-                      </Link>
+                      {isBoxAnchoredPrepNote(note) ? (
+                        <Link
+                          href={buildPrepNoteJumpHref(note)}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                        >
+                          Jump to argument
+                          <ArrowUpRight className="h-3 w-3" />
+                        </Link>
+                      ) : (
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          Round {note.roundId}
+                        </Badge>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"

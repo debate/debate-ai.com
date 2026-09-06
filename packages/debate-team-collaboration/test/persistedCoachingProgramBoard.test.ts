@@ -99,7 +99,13 @@ describe("buildPersistedCoachingProgramBoard", () => {
     saveContribution(makeContribution({ id: "card-1", contributorId: "alice", argBlock: "solvency" }));
 
     const board = buildPersistedCoachingProgramBoard("varsity", "solvency", NOW);
-    expect(board?.challengeBoard[0].memberStandings).toEqual([]);
+    // No member has countable activity (the contribution lacks submittedAt),
+    // so everyone sits at zero — and no one is MVP.
+    expect(board?.challengeBoard[0].memberStandings).toEqual([
+      { contributorId: "alice", matchingCount: 0, helpfulnessScore: 0 },
+      { contributorId: "bob", matchingCount: 0, helpfulnessScore: 0 },
+    ]);
+    expect(board?.challengeBoard[0].mvpContributorId).toBeUndefined();
   });
 
   it("defaults memberDrills to empty when no memberFlows are supplied and none are stored", () => {

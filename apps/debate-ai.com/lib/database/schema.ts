@@ -928,6 +928,41 @@ export const savedDrillSets = sqliteTable(
 
 export type SavedDrillSetRow = typeof savedDrillSets.$inferSelect;
 
+// Account-linked custom-opponent-persona-library sync — the "🤖 AI Practice
+// Opponent" idea's "share a custom-authored persona across a team instead
+// of per-user only" Next item in TODO.md's Research Crowdsourcing Organizer
+// Features. One row per (user, library entry) pair, keyed by the
+// caller-typed `SavedCustomOpponentPersona.id` — same shape as
+// `savedDrillSets` above. `shared` is broken out of `data` into its own
+// column (rather than only living inside the JSON blob) so
+// `GET /api/custom-opponent-personas/shared` can filter across every user's
+// rows without deserializing each one.
+export const savedCustomOpponentPersonas = sqliteTable(
+  "saved_custom_opponent_personas",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    shared: integer("shared", { mode: "boolean" }).notNull().default(false),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_custom_opponent_personas_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_custom_opponent_personas_user_client").on(table.userId, table.clientId),
+    sharedIdx: index("idx_saved_custom_opponent_personas_shared").on(table.shared),
+  }),
+);
+
+export type SavedCustomOpponentPersonaRow = typeof savedCustomOpponentPersonas.$inferSelect;
+
 // Practice vs AI rounds — the storage the ported `debate-practice-vs-ai`
 // backend needs in place of the Go server's Mongo `debatevsbot` collection.
 // One row per round: who owns it, which bot and topic it ran, the transcript

@@ -138,7 +138,7 @@ Follow-up (a) — the AI speech-generation call — adds
 `round/ai-versus-speech-ai.ts` (pure prompt-building + tolerant response
 parsing, `fetch`-free and directly Vitest-testable) and
 `round/ai-versus-speech-client.ts` (the thin `fetch` client posting to
-`/api/reason-ai`), mirroring `debate-card-search`'s "LLM Card Scoring —
+`/api/reason-ai`), mirroring `debate-research-evidence`'s "LLM Card Scoring —
 real AI-scoring call" slice's `lib/llm-card-scoring-ai.ts` /
 `lib/llm-card-scoring-client.ts` split. No existing turn-order or
 persistence logic changed. Vitest-covered in

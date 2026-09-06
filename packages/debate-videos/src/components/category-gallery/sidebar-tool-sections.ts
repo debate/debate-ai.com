@@ -27,6 +27,21 @@ export interface SidebarToolSection {
   tools: SidebarToolLink[];
 }
 
+/**
+ * Mirrors `CategoryDock`'s `NAV_ITEMS` (the app dock icons shown at the top
+ * of this sidebar via `dockSlot`) — restated here for the same reason as
+ * `SIDEBAR_TOOL_SECTIONS` above, so every dock destination also has a
+ * plain-text nav entry in the tree, not just a hover-labeled dock icon.
+ */
+export const APP_DOCK_LINKS: SidebarToolLink[] = [
+  { href: "/videos", title: "Videos" },
+  { href: "/cards", title: "Shared" },
+  { href: "/debate", title: "Debate" },
+  { href: "/versus-ai", title: "Practice vs AI" },
+  { href: "/doc", title: "Docs" },
+  { href: "/tools", title: "Tools" },
+];
+
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   {
     id: "coaching",

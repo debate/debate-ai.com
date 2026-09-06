@@ -54,6 +54,15 @@ re-deriving them:
   authoritative NDCA point table exists for this app to hardcode, so
   `DEFAULT_QUALIFICATION_POINTS_TABLE` is illustrative only and a team is
   expected to save their own circuit's values here.
+- **Qualification cutoff** — a collapsible section that sets a minimum
+  points threshold and/or a max-qualifiers field cap (either half
+  optional), persisted via the new `state/qualificationCutoff.ts`
+  (get/save/reset, mirroring `qualificationPointsTable.ts`'s shape). Once
+  either half is configured, it's fed straight into the already-existing
+  `rankings/ndca-standings.ts#getQualifiedTeams` (previously unused by any
+  UI) to mark who currently qualifies: a "Qualified" badge next to each
+  qualifying team's name, and a "N of M currently qualify" count in the
+  Standings header.
 - The ranked standings table itself (rank, team, total points, overall
   prelim record, best finish, tournaments counted vs. attended when
   `countBestN` caps which results count), each row expandable to see —
@@ -66,7 +75,8 @@ re-deriving them:
   Workspace menu/command palette — no in-app entry point linked to it.
 - Elo and TOC-score computation aren't documented here in detail; see
   `packages/debate-videos/src/panels/leaderboard/leaderboardUtils.ts`.
-- Standings data (logged/imported tournament results and the custom
-  points table) is stored in `localStorage` only — it doesn't yet follow
-  a signed-in user across devices the way flows/rounds/word-count rounds
-  and the other `saved_*` D1-backed records do.
+- Standings data (logged/imported tournament results, the custom points
+  table, and the qualification cutoff) is stored in `localStorage` only —
+  it doesn't yet follow a signed-in user across devices the way
+  flows/rounds/word-count rounds and the other `saved_*` D1-backed records
+  do.

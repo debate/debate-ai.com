@@ -119,7 +119,29 @@ function buildContributionStandings(
     helpfulnessScore: stats.totalHelpfulnessScore,
   }));
 
-  return { completedCount: matching.length, memberStandings };
+  return {
+    completedCount: matching.length,
+    memberStandings: appendZeroActivityMembers(challenge, memberStandings, { helpfulnessScore: 0 }),
+  };
+}
+
+/**
+ * Appends every rostered member with no matching activity yet (count 0)
+ * after the ranked, active members — alphabetically for a stable order — so
+ * a challenge's standings list always agrees with its roster badges instead
+ * of silently omitting members still at zero.
+ */
+function appendZeroActivityMembers(
+  challenge: GroupChallenge,
+  ranked: MemberChallengeStanding[],
+  zeroExtras: Partial<MemberChallengeStanding> = {},
+): MemberChallengeStanding[] {
+  const rankedIds = new Set(ranked.map((standing) => standing.contributorId));
+  const zeroMembers = challenge.memberIds
+    .filter((memberId) => !rankedIds.has(memberId))
+    .sort((a, b) => a.localeCompare(b))
+    .map((contributorId) => ({ contributorId, matchingCount: 0, ...zeroExtras }));
+  return [...ranked, ...zeroMembers];
 }
 
 function buildWinStandings(
@@ -140,7 +162,10 @@ function buildWinStandings(
     .map(([contributorId, matchingCount]) => ({ contributorId, matchingCount }))
     .sort((a, b) => b.matchingCount - a.matchingCount || a.contributorId.localeCompare(b.contributorId));
 
-  return { completedCount: matching.length, memberStandings };
+  return {
+    completedCount: matching.length,
+    memberStandings: appendZeroActivityMembers(challenge, memberStandings),
+  };
 }
 
 /**
@@ -172,7 +197,9 @@ export function computeGroupChallengeProgress(
     hasEnded: now >= challenge.endsAt,
     daysRemaining: daysRemaining(challenge.endsAt, now),
     memberStandings,
-    mvpContributorId: memberStandings[0]?.contributorId,
+    // Standings now include zero-activity roster members, so "top of the
+    // list" alone isn't enough — an MVP needs actual matching activity.
+    mvpContributorId: memberStandings[0]?.matchingCount ? memberStandings[0].contributorId : undefined,
   };
 }
 

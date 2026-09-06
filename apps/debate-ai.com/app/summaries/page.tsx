@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { FlowSummariesPanel } from "debate-practice-rounds"
 import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
+import { FlowSummariesPanelWithPrepNotes } from "./FlowSummariesPanelWithPrepNotes"
 
 export const metadata: Metadata = {
   title: "Speech Transcript Summaries",
@@ -13,7 +13,7 @@ export default function SummariesPage() {
     <ToolPage>
       <ToolPageHeader href="/summaries" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
-        <FlowSummariesPanel />
+        <FlowSummariesPanelWithPrepNotes />
       </Suspense>
     </ToolPage>
   )

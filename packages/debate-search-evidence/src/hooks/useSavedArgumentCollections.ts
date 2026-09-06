@@ -21,9 +21,12 @@ import { useCallback, useEffect, useState } from "react";
 import { fetchSavedArgumentCollections, saveSavedArgumentCollections } from "../lib/argument-library-collections-client";
 import {
   isValidSavedArgumentCollectionsList,
-  MAX_SAVED_ARGUMENT_COLLECTIONS,
   normalizeSavedArgumentCollectionName,
+  validateNewSavedArgumentCollection,
+  validateSavedArgumentCollectionRename,
+  validateSavedArgumentCollectionTagsUpdate,
   type SavedArgumentCollection,
+  type SavedArgumentCollectionSaveFailure,
 } from "../lib/argument-library-collections";
 
 const STORAGE_KEY = "saved-argument-collections";
@@ -74,9 +77,13 @@ function ensureRemoteLoaded(): Promise<void> {
 export type UseSavedArgumentCollectionsResult = {
   collections: SavedArgumentCollection[];
   loaded: boolean;
-  /** Adds a collection. Fails (returns `false`) if the name is a duplicate, `tags` is empty, or the list is already at capacity. */
-  addCollection: (name: string, tags: string[]) => boolean;
+  /** Adds a collection. Returns `null` on success, or the reason the save was refused (duplicate name, empty/over-limit tags, at capacity, …). */
+  addCollection: (name: string, tags: string[]) => SavedArgumentCollectionSaveFailure | null;
   removeCollection: (name: string) => void;
+  /** Renames an existing collection (case-insensitive identity). Returns `null` on success. */
+  renameCollection: (oldName: string, newName: string) => SavedArgumentCollectionSaveFailure | null;
+  /** Replaces an existing collection's tag list in place. Returns `null` on success. */
+  updateCollection: (name: string, tags: string[]) => SavedArgumentCollectionSaveFailure | null;
 };
 
 /**
@@ -115,14 +122,10 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
 
   const addCollection = useCallback(
     (name: string, tags: string[]) => {
-      if (tags.length === 0) return false;
-      const normalized = normalizeSavedArgumentCollectionName(name);
-      if (collections.some((collection) => normalizeSavedArgumentCollectionName(collection.name) === normalized)) {
-        return false;
-      }
-      if (collections.length >= MAX_SAVED_ARGUMENT_COLLECTIONS) return false;
+      const failure = validateNewSavedArgumentCollection(collections, name, tags);
+      if (failure) return failure;
       persist([...collections, { name: name.trim(), tags }]);
-      return true;
+      return null;
     },
     [collections, persist],
   );
@@ -135,5 +138,37 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
     [collections, persist],
   );
 
-  return { collections, loaded, addCollection, removeCollection };
+  const renameCollection = useCallback(
+    (oldName: string, newName: string) => {
+      const failure = validateSavedArgumentCollectionRename(collections, oldName, newName);
+      if (failure) return failure;
+      const oldNormalized = normalizeSavedArgumentCollectionName(oldName);
+      persist(
+        collections.map((collection) =>
+          normalizeSavedArgumentCollectionName(collection.name) === oldNormalized
+            ? { ...collection, name: newName.trim() }
+            : collection,
+        ),
+      );
+      return null;
+    },
+    [collections, persist],
+  );
+
+  const updateCollection = useCallback(
+    (name: string, tags: string[]) => {
+      const failure = validateSavedArgumentCollectionTagsUpdate(collections, name, tags);
+      if (failure) return failure;
+      const normalized = normalizeSavedArgumentCollectionName(name);
+      persist(
+        collections.map((collection) =>
+          normalizeSavedArgumentCollectionName(collection.name) === normalized ? { ...collection, tags } : collection,
+        ),
+      );
+      return null;
+    },
+    [collections, persist],
+  );
+
+  return { collections, loaded, addCollection, removeCollection, renameCollection, updateCollection };
 }
