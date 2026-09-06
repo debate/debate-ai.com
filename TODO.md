@@ -6,6 +6,46 @@
 _No task currently in progress._
 
 ### Completed
+- **📊 CX NDCA Standings — a "who's currently qualified" view now sits on
+  the Standings tab.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built (`apps/debate-ai.com/app/api/settings/route.ts` plus
+  dozens of `saved_*` D1 tables/`/api/*` routes already link account
+  settings, flows, docs, and rounds to signed-in users in SQL, and every
+  tool is already reachable from the Tools page, CardMirror's own
+  menu/command palette, and the feature catalog checked this run), so this
+  slice closed out idea #1's ("CX NDCA Standings") last open follow-up
+  instead: "a qualification-cutoff/'who's currently qualified' view using
+  the existing `getQualifiedTeams` helper" — a pure function
+  `ndca-standings.ts` already exported and tested but that no UI had ever
+  called. A new `debate-data-sync`'s `state/qualificationCutoff.ts` mirrors
+  `qualificationPointsTable.ts`'s get/save/reset shape exactly (its own
+  `localStorage` key, since a cutoff is a separate concern from the point
+  weights a team can want independently of it): a persisted
+  `{minPoints, maxQualifiers}` pair where either half can be `null` (not
+  configured), plus `isQualificationCutoffConfigured`/
+  `toQualificationOptions` helpers so a caller doesn't have to know the
+  `QualificationOptions` shape `getQualifiedTeams` itself expects.
+  `StandingsPanel.tsx` gained a new collapsible "Qualification cutoff"
+  section (same pattern as the existing "Qualification points table" one)
+  with min-points and max-qualifiers fields, Save/Clear actions; once
+  either half is set, every currently-qualifying team gets a "Qualified"
+  badge next to its name in the standings table, and the section header
+  gains an "N of M currently qualify" count. See
+  `docs/features/team-rankings.md`'s updated "Standings tab" section. 16
+  new Vitest cases in `packages/debate-data-sync/test/
+  qualificationCutoff.test.ts` (persisted-value round-trip, corrupt/invalid
+  JSON, a cutoff with only one half configured, reset, the "effective"
+  fallback, `isQualificationCutoffConfigured`'s three states, and
+  `toQualificationOptions`' key-omission behavior per half). No further
+  follow-up is currently tracked for this idea beyond the still-open
+  account-sync gap noted in that doc's "Known gaps" (standings data,
+  including this new cutoff, stays `localStorage`-only); a future run
+  should pick that up or a fresh next-step elsewhere if one becomes worth
+  doing.
 - **🧪 Practice Round Simulator — a scoring rubric now sits alongside the AI
   judge decision.** The "🧪 Practice Round Simulator" bullet's next
   unblocked follow-up after the past-attempts comparison, and — as with
@@ -16781,7 +16821,7 @@ _No task currently in progress._
 
 Each idea below has a working first-cut implementation already shipped (see Tracker Status above and `docs/features/`). Rather than re-narrate that build history, each entry now outlines the next round of UI features to add for that idea — pick items up here rather than re-deriving them from the Tracker Status log.
 
-1. **CX NDCA Standings** (`/rank`'s **Standings** tab) — rebuilt as a lighter-weight tab merged into the Team Rankings tool rather than a standalone page, after the old standalone `/standings` page/`StandingsPanel` were removed Aug 30, 2026 leaving the underlying `debate-data-sync` scoring helpers in place for exactly this. All three originally-named follow-ups are now done: a "Standings" tab inside Team Rankings (`RankingsLeaderboardPanel`'s Leaderboard/Standings `Tabs` switcher) reuses the surviving `computeTournamentPoints`/`buildStanding`/`rankStandings` helpers via the already-existing `state/tournamentResults.ts#buildStandingsFromStore`; a manual CSV/paste bulk import (`rankings/tournament-results-csv-import.ts#parseTournamentResultsCsv`, `state/tournamentResults.ts#bulkImportTournamentResults`) covers the still-blocked live-Tabroom-scraping gap (see "Confirmed blocker" below); and a qualification-points-table editor is back as a collapsible section on the new `StandingsPanel`, wired to the already-existing `state/qualificationPointsTable.ts` get/save/reset functions rather than its own panel. See the Completed entry above and `docs/features/team-rankings.md`'s "Standings tab" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. account-syncing standings data across devices, or a qualification-cutoff/"who's currently qualified" view using the existing `getQualifiedTeams` helper) if one becomes worth doing.
+1. **CX NDCA Standings** (`/rank`'s **Standings** tab) — rebuilt as a lighter-weight tab merged into the Team Rankings tool rather than a standalone page, after the old standalone `/standings` page/`StandingsPanel` were removed Aug 30, 2026 leaving the underlying `debate-data-sync` scoring helpers in place for exactly this. All three originally-named follow-ups are now done: a "Standings" tab inside Team Rankings (`RankingsLeaderboardPanel`'s Leaderboard/Standings `Tabs` switcher) reuses the surviving `computeTournamentPoints`/`buildStanding`/`rankStandings` helpers via the already-existing `state/tournamentResults.ts#buildStandingsFromStore`; a manual CSV/paste bulk import (`rankings/tournament-results-csv-import.ts#parseTournamentResultsCsv`, `state/tournamentResults.ts#bulkImportTournamentResults`) covers the still-blocked live-Tabroom-scraping gap (see "Confirmed blocker" below); and a qualification-points-table editor is back as a collapsible section on the new `StandingsPanel`, wired to the already-existing `state/qualificationPointsTable.ts` get/save/reset functions rather than its own panel. The qualification-cutoff/"who's currently qualified" follow-up is also now done: a new collapsible "Qualification cutoff" section (min points and/or max qualifiers, either optional) feeds the already-existing but previously UI-less `getQualifiedTeams` helper, marking each currently-qualifying team with a "Qualified" badge and an "N of M currently qualify" count, persisted via the new `state/qualificationCutoff.ts` (mirroring `qualificationPointsTable.ts`'s get/save/reset shape) — see the Completed entry above and `docs/features/team-rankings.md`'s "Standings tab" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. account-syncing standings data, including this cutoff, across devices) if one becomes worth doing.
 
 2. **Word-Count-Only Speech Format** (`/word-count`, in-round meter in `SpeechHeaderBar`) — every previously-tracked follow-up is now done: the live in-round `SpeechWordCounter` popover already has a 🎤 dictation button (mirroring the standalone form's); a per-style word-limit preset manager exists — `/settings`'s **Word limit presets** section (`WordLimitPresetsPanel`/`useWordLimitPresets`/`state/wordLimitPresets.ts`), account-synced via `/api/settings`'s `wordLimitPresets` field, checked ahead of the built-in `wordCountStyles` registry by `resolveSpeechWordLimit` in both this panel and the live meter; a trend view exists — `/word-count`'s **Word-count trend** section (`buildWordCountTrendData` in `state/wordCountRounds.ts`, rendered by `WordCountRoundsPanel`), a chronological bar-per-submission list across every persisted round, filterable by speech name; and that history is now account-synced too — a new `saved_word_count_rounds` D1 table plus `/api/word-count-rounds` routes, merged in by `hooks/useWordCountRounds.ts`, so the trend view (and the persisted-round list it's built from) follows a signed-in user across devices instead of staying per-browser. See `docs/features/word-count-rounds.md`'s "Custom word-limit presets", "Word-count trend view", and "Account-synced round history" sections. The bulk "delete all my synced history" follow-up is also now done: `WordCountRoundsPanel`'s round-history list has a "Delete all synced history" action (`useWordCountRounds().clearAllRounds`) that clears every locally persisted round in one write (`state/wordCountRounds.ts#clearWordCountRounds`) and, when signed in, best-effort issues a single `DELETE /api/word-count-rounds` against the whole collection. The same-`roundId` conflict-resolution follow-up is also now done: `saveWordCountRound` stamps a refreshed `updatedAt` on every save, and a new pure `resolveWordCountRoundConflict` in `state/wordCountRounds.ts` lets `useWordCountRounds.ts`'s account merge pick the newer of two devices' copies of the same round instead of silently skipping both — see the Completed entry above and `docs/features/word-count-rounds.md`'s "Account-synced round history" section. The "synced just now from another device" toast follow-up is also now done: a dismissible "🔄 Synced round … from another device" banner shows above the submission form the moment `useWordCountRounds`'s account merge actually adopts a remote copy, driven by the merge decision now being the pure, directly-tested `planWordCountRoundMerge` in `state/wordCountRounds.ts` — see the Completed entry above and `docs/features/word-count-rounds.md`'s "'Synced from another device' notice" subsection. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step if one becomes worth doing.
 
