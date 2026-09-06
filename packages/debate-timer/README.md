@@ -4,10 +4,15 @@ Round timing: the per-speech timer, the prep timer, per-format speech times, and
 speech recorder (mic selection, live waveform, playback) that records while the timer runs.
 
 ```tsx
-import { SpeechTimer, PrepTimer, useSpeechRecorder } from "debate-timer"
+import { SpeechTimer, PrepTimer, TimerProgressRing, useSpeechRecorder } from "debate-timer"
 import { debateStyles, type DebateStyleKey } from "debate-timer/src/formats/debate-format-times"
 import { wordCountStyles, getWordCountStatus } from "debate-timer/src/formats/word-count-format"
 ```
+
+`TimerProgressRing` is a standalone, state-free SVG progress ring (0 = fresh, 1 =
+time's up), extracted from the `debate-timer-progress` browser extension's timer
+face so other UI — e.g. a nav button — can reuse the same circular-countdown
+visual without pulling in the extension's timer logic.
 
 `formats/word-count-format.ts` holds a second kind of format: speeches bounded by a
 maximum word count instead of a timer, for asynchronous practice rounds. `countWords` and
