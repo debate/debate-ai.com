@@ -234,6 +234,30 @@ note logged, advanced, or reassigned in a second tab appears here without a
 manual reload. Vitest-covered in
 `packages/debate-search-evidence/test/live-update.test.ts`.
 
+A later slice closes the "calendar scheduling for sprint sessions" follow-up
+named under the "🤝 Team Collaboration Mode" bullet in `TODO.md`.
+`lib/team-collaboration-mode.ts` adds a `SprintSession` model (topic, title,
+and a `scheduledDayKey` — a "YYYY-MM-DD" UTC calendar day, mirroring
+`drill-sets.ts`'s date-only "Review reminder" convention rather than a
+precise time, since this repo has no time-zone-aware scheduling anywhere
+else either), with `createSprintSession` validating it and
+`sortSprintSessionsByDay`/`getSessionsForTopic`/`getUpcomingSprintSessions`/
+`getPastSprintSessions` slicing a list of them. `state/sprintSessions.ts`
+persists sessions to `localStorage` (`"sprintSessions"`), mirroring
+`state/sprintNotes.ts`'s exact persistence convention. `TopicSprintPanel`
+gained a "Scheduled sessions" section below the note wall: a form to
+schedule a new session (title + date), an upcoming-sessions list (soonest
+first, with a "Today" badge on same-day sessions and a "Cancel" action per
+row), and a collapsed "Show past sessions (N)" list (most recently past
+first, with a "Remove" action). `"sprintSessions"` was also added to
+`state/live-update.ts`'s `TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`, so a
+session scheduled or canceled in another browser tab refreshes this panel
+too. Vitest-covered in
+`packages/debate-team-collaboration/test/team-collaboration-mode.test.ts`
+(`createSprintSession`'s validation/trimming/clamping and the four slicing
+helpers) and `test/sprintSessions.test.ts` (the persisted store, mirroring
+`sprintNotes.test.ts`'s cases).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -243,5 +267,9 @@ manual reload. Vitest-covered in
   prefill" above), so a visitor can still overwrite any of them. There is
   no server-side session check on `saveSprintNote`/
   `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
-  `TopicSprintPanel`'s note form), the same trust boundary every other
-  localStorage-backed action in this repo has.
+  `TopicSprintPanel`'s note form) or on `saveSprintSession`/
+  `createSprintSession` (the "Scheduled sessions" form), the same trust
+  boundary every other localStorage-backed action in this repo has.
+- Scheduled sessions are local-only (no account sync yet, unlike some other
+  ideas' persisted stores), and scheduling is by calendar day only — no
+  time-of-day, recurrence, or reminder notification.

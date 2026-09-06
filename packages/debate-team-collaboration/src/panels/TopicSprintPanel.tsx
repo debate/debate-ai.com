@@ -44,22 +44,29 @@ import {
   buildSprintRetrospective,
   buildSprintRetrospectiveText,
   createSprintNote,
+  createSprintSession,
   assignSprintNote,
   getOpenFollowUps,
+  getPastSprintSessions,
+  getSessionsForTopic,
+  getUpcomingSprintSessions,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
   type SprintNote,
   type SprintNoteStatus,
+  type SprintSession,
 } from "../lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../lib/daily-quests";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../lib/research-progress";
 import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
 import { deleteSprintNote, listSprintNotes, saveSprintNote } from "../state/sprintNotes";
+import { deleteSprintSession, listSprintSessions, saveSprintSession } from "../state/sprintSessions";
 import {
   readPersistedTopicSprintInputs,
   type PersistedTopicSprintInputs,
 } from "../state/topicSprints";
+import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
 import { isTopicSprintLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update";
 
 /** Everything a topic sprint needs before any persisted store has been read (first render/SSR). */
@@ -79,6 +86,17 @@ const STATUS_TONE: Record<SprintNoteStatus, PanelTone> = {
 };
 
 const STATUSES: SprintNoteStatus[] = ["open", "covered", "needs-follow-up"];
+
+/** Renders a "YYYY-MM-DD" day key as a human-readable UTC calendar date, e.g. "Thu, Sep 10, 2026". */
+function formatSprintSessionDay(dayKey: string): string {
+  return new Date(`${dayKey}T00:00:00Z`).toLocaleDateString(undefined, {
+    timeZone: "UTC",
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 /** Props for {@link TopicSprintPanel}. */
 export interface TopicSprintPanelProps {
@@ -123,10 +141,17 @@ export function TopicSprintPanel({
   className,
 }: TopicSprintPanelProps) {
   const { data: persistedNotes, refresh } = useStoreSnapshot<SprintNote[]>(listSprintNotes, []);
+  const { data: persistedSessions, refresh: refreshSessions } = useStoreSnapshot<SprintSession[]>(
+    listSprintSessions,
+    [],
+  );
   const editable = notes === undefined;
 
   const [noteText, setNoteText] = useState("");
   const [assignTo, setAssignTo] = useState("");
+  const [sessionTitle, setSessionTitle] = useState("");
+  const [sessionDayKey, setSessionDayKey] = useState("");
+  const [showPastSessions, setShowPastSessions] = useState(false);
 
   // `quests`/`contributions`/`coverageReport`/`assignments`/`contributors` are
   // topic-scoped, so — unlike the mount-only `useStoreSnapshot` reads above —
@@ -150,10 +175,11 @@ export function TopicSprintPanel({
       if (!isTopicSprintLiveUpdateStorageEvent(event)) return;
       setPersistedInputs(readPersistedTopicSprintInputs(topic));
       refresh();
+      refreshSessions();
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [topic, refresh]);
+  }, [topic, refresh, refreshSessions]);
 
   const sprint = useMemo(
     () =>
@@ -224,6 +250,41 @@ export function TopicSprintPanel({
   const reassign = (note: SprintNote, assignedToId: string | null) => {
     saveSprintNote(assignSprintNote(note, assignedToId, Date.now()));
     refresh();
+  };
+
+  const sessionsForTopic = useMemo(
+    () => getSessionsForTopic(persistedSessions, topic),
+    [persistedSessions, topic],
+  );
+  const todayKey = useMemo(() => getUtcDayKey(now), [now]);
+  const upcomingSessions = useMemo(
+    () => getUpcomingSprintSessions(sessionsForTopic, todayKey),
+    [sessionsForTopic, todayKey],
+  );
+  const pastSessions = useMemo(
+    () => getPastSprintSessions(sessionsForTopic, todayKey),
+    [sessionsForTopic, todayKey],
+  );
+
+  const addSession = () => {
+    if (!sessionTitle.trim() || !sessionDayKey) return;
+    saveSprintSession(
+      createSprintSession({
+        id: `session-${Date.now()}`,
+        topic,
+        title: sessionTitle.trim(),
+        scheduledDayKey: sessionDayKey,
+        createdAt: now,
+      }),
+    );
+    setSessionTitle("");
+    setSessionDayKey("");
+    refreshSessions();
+  };
+
+  const removeSession = (id: string) => {
+    deleteSprintSession(id);
+    refreshSessions();
   };
 
   return (
@@ -355,6 +416,64 @@ export function TopicSprintPanel({
             <Button size="sm" onClick={addNote} disabled={!noteText.trim()}>
               Add note
             </Button>
+          </div>
+        ) : null}
+      </PanelSection>
+
+      <PanelSection title="Scheduled sessions">
+        {upcomingSessions.length === 0 ? (
+          <EmptyState title="No upcoming sessions" message="Schedule the next one below." />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {upcomingSessions.map((session) => (
+              <PanelRow
+                key={session.id}
+                title={session.title}
+                subtitle={formatSprintSessionDay(session.scheduledDayKey)}
+                trailing={
+                  session.scheduledDayKey === todayKey ? <Pill tone="info">Today</Pill> : undefined
+                }
+              >
+                <Button variant="ghost" size="sm" onClick={() => removeSession(session.id)}>
+                  Cancel
+                </Button>
+              </PanelRow>
+            ))}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[2fr_1fr_auto]">
+          <LabeledField label="New session">
+            <Input value={sessionTitle} onChange={(e) => setSessionTitle(e.target.value)} />
+          </LabeledField>
+          <LabeledField label="Date">
+            <Input type="date" value={sessionDayKey} onChange={(e) => setSessionDayKey(e.target.value)} />
+          </LabeledField>
+          <Button size="sm" onClick={addSession} disabled={!sessionTitle.trim() || !sessionDayKey}>
+            Schedule
+          </Button>
+        </div>
+
+        {pastSessions.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setShowPastSessions((v) => !v)}>
+              {showPastSessions ? "Hide" : "Show"} past sessions ({pastSessions.length})
+            </Button>
+            {showPastSessions ? (
+              <div className="flex flex-col gap-2">
+                {pastSessions.map((session) => (
+                  <PanelRow
+                    key={session.id}
+                    title={session.title}
+                    subtitle={formatSprintSessionDay(session.scheduledDayKey)}
+                  >
+                    <Button variant="ghost" size="sm" onClick={() => removeSession(session.id)}>
+                      Remove
+                    </Button>
+                  </PanelRow>
+                ))}
+              </div>
+            ) : null}
           </div>
         ) : null}
       </PanelSection>

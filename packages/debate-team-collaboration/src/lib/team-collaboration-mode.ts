@@ -288,6 +288,81 @@ export function sprintRetrospectiveFilename(topic: string): string {
 }
 
 /**
+ * A scheduled sprint session — a specific calendar day a team plans to work
+ * together on a topic sprint. Closes the "calendar scheduling for sprint
+ * sessions" follow-up named under the "🤝 Team Collaboration Mode" bullet in
+ * TODO.md. Scheduled by UTC calendar day (`scheduledDayKey`, "YYYY-MM-DD")
+ * rather than a precise time, mirroring `drill-sets.ts`'s "Review reminder"
+ * date-only convention — this repo has no time-zone-aware scheduling
+ * anywhere else either.
+ */
+export interface SprintSession {
+  id: string;
+  topic: string;
+  title: string;
+  /** UTC calendar day this session is scheduled for, "YYYY-MM-DD" (see `getUtcDayKey`). */
+  scheduledDayKey: string;
+  createdAt: number;
+}
+
+const MAX_SESSION_TITLE_LENGTH = 200;
+const DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+export interface CreateSprintSessionInput {
+  id: string;
+  topic: string;
+  title: string;
+  scheduledDayKey: string;
+  createdAt: number;
+}
+
+/**
+ * Builds a `SprintSession`, validating that it names a topic, has a
+ * non-blank title, and carries a well-formed "YYYY-MM-DD" day key. `title`
+ * is trimmed and clamped to `MAX_SESSION_TITLE_LENGTH`.
+ */
+export function createSprintSession(input: CreateSprintSessionInput): SprintSession {
+  if (!input.topic.trim()) {
+    throw new Error("createSprintSession: topic is required");
+  }
+  const title = input.title.trim();
+  if (!title) {
+    throw new Error("createSprintSession: title is required");
+  }
+  if (!DAY_KEY_PATTERN.test(input.scheduledDayKey)) {
+    throw new Error("createSprintSession: scheduledDayKey must be in YYYY-MM-DD format");
+  }
+
+  return {
+    id: input.id,
+    topic: input.topic,
+    title: title.slice(0, MAX_SESSION_TITLE_LENGTH),
+    scheduledDayKey: input.scheduledDayKey,
+    createdAt: input.createdAt,
+  };
+}
+
+/** Ascending by `scheduledDayKey`, without mutating the input array. */
+export function sortSprintSessionsByDay(sessions: SprintSession[]): SprintSession[] {
+  return [...sessions].sort((a, b) => a.scheduledDayKey.localeCompare(b.scheduledDayKey));
+}
+
+/** All sessions scheduled for one specific topic, soonest first. */
+export function getSessionsForTopic(sessions: SprintSession[], topic: string): SprintSession[] {
+  return sortSprintSessionsByDay(sessions.filter((session) => session.topic === topic));
+}
+
+/** Sessions scheduled today (by UTC day key) or later, soonest first. */
+export function getUpcomingSprintSessions(sessions: SprintSession[], todayKey: string): SprintSession[] {
+  return sortSprintSessionsByDay(sessions.filter((session) => session.scheduledDayKey >= todayKey));
+}
+
+/** Sessions scheduled before today (by UTC day key), most recently past first. */
+export function getPastSprintSessions(sessions: SprintSession[], todayKey: string): SprintSession[] {
+  return sortSprintSessionsByDay(sessions.filter((session) => session.scheduledDayKey < todayKey)).reverse();
+}
+
+/**
  * Renders a `SprintRetrospective` as a plain-text file for download,
  * mirroring `research-progress.ts`'s `buildResearchProgressReportText`
  * plain-text-report convention.
