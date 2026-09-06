@@ -6,6 +6,7 @@ import {
   recordPersistedTaskAssigned,
   recordPersistedTaskCompleted,
   saveContributorAvailability,
+  upsertContributorAvailabilityProfile,
 } from "../src/state/contributorAvailability";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
 
@@ -138,5 +139,64 @@ describe("recordPersistedTaskCompleted", () => {
   it("returns undefined and leaves storage untouched when no profile is stored for that contributorId", () => {
     expect(recordPersistedTaskCompleted("ghost")).toBeUndefined();
     expect(listContributorAvailability()).toEqual([]);
+  });
+});
+
+describe("upsertContributorAvailabilityProfile", () => {
+  it("creates a brand-new profile at activeTaskCount 0", () => {
+    const created = upsertContributorAvailabilityProfile({
+      contributorId: "carol",
+      skillLevel: "intermediate",
+      maxConcurrentTasks: 4,
+    });
+
+    expect(created).toEqual({
+      contributorId: "carol",
+      skillLevel: "intermediate",
+      maxConcurrentTasks: 4,
+      activeTaskCount: 0,
+    });
+    expect(getContributorAvailability("carol")).toEqual(created);
+  });
+
+  it("editing an existing profile updates skill/capacity but carries activeTaskCount over unchanged", () => {
+    saveContributorAvailability(ALICE);
+    recordPersistedTaskAssigned("alice");
+    recordPersistedTaskAssigned("alice");
+    expect(getContributorAvailability("alice")?.activeTaskCount).toBe(3);
+
+    const updated = upsertContributorAvailabilityProfile({
+      contributorId: "alice",
+      skillLevel: "novice",
+      maxConcurrentTasks: 10,
+    });
+
+    expect(updated).toEqual({
+      contributorId: "alice",
+      skillLevel: "novice",
+      maxConcurrentTasks: 10,
+      activeTaskCount: 3,
+    });
+    expect(getContributorAvailability("alice")).toEqual(updated);
+  });
+
+  it("trims the contributor id before saving", () => {
+    upsertContributorAvailabilityProfile({ contributorId: "  dana  ", skillLevel: "novice", maxConcurrentTasks: 1 });
+    expect(getContributorAvailability("dana")).toBeDefined();
+  });
+
+  it("throws and leaves storage untouched for a blank contributor id", () => {
+    expect(() =>
+      upsertContributorAvailabilityProfile({ contributorId: "   ", skillLevel: "novice", maxConcurrentTasks: 1 }),
+    ).toThrow("Enter a contributor id.");
+    expect(listContributorAvailability()).toEqual([]);
+  });
+
+  it("throws and leaves storage untouched for an invalid maxConcurrentTasks", () => {
+    saveContributorAvailability(ALICE);
+    expect(() =>
+      upsertContributorAvailabilityProfile({ contributorId: "alice", skillLevel: "novice", maxConcurrentTasks: 0 }),
+    ).toThrow("Max concurrent tasks must be a whole number of at least 1.");
+    expect(getContributorAvailability("alice")).toEqual(ALICE);
   });
 });

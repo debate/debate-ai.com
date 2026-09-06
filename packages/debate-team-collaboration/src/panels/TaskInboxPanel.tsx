@@ -85,6 +85,23 @@
  * badge once a contributor with a persisted availability profile has met or
  * exceeded its `maxConcurrentTasks`.
  *
+ * A "Contributor availability" section closes the "a real
+ * `ContributorAvailability` profile management UI" follow-up named under the
+ * same bullet in TODO.md's Research Crowdsourcing Organizer Features list —
+ * previously the only way a profile ever came to exist was Vitest fixtures
+ * or the free-form "Reassign"/"Assign to…" control, with no way to set or
+ * change a contributor's skill level or concurrency limit at all. A form
+ * (contributor id, skill level, max concurrent tasks) creates a new profile
+ * or, when "Edit" is clicked on an existing row, updates it in place via
+ * `state/contributorAvailability.ts`'s `upsertContributorAvailabilityProfile`
+ * — which always carries the edited profile's current `activeTaskCount`
+ * over unchanged, since that field is auto-tracked by routing/completion
+ * events, not something this form ever sets directly. "Delete" removes a
+ * profile outright (`deleteContributorAvailability`); any tasks already
+ * routed to that contributor id stay routed, just without a
+ * `contributorSkillLevel`/capacity enrichment from then on, same as a
+ * profile that's since expired any other way.
+ *
  * @module panels/TaskInboxPanel
  */
 
@@ -95,6 +112,13 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "debate-research-evidence/src/ui/primitives/select"
 import {
   buildTaskInboxView,
   buildTeamCapacityView,
@@ -111,16 +135,26 @@ import {
   markRoutedTaskAwaitingVerification,
   type PendingTaskVerification,
 } from "../state/pendingTaskVerifications"
+import {
+  deleteContributorAvailability,
+  listContributorAvailability,
+  upsertContributorAvailabilityProfile,
+} from "../state/contributorAvailability"
 import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArguments"
 import { deriveLockedVerifierId, isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import { isTaskInboxLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
+import type { ContributorAvailability, SkillLevel } from "debate-research-evidence/src/lib/research-task-routing"
 
 const LEVEL_VARIANT: Record<CoverageLevel, "default" | "secondary" | "outline"> = {
   missing: "default",
   thin: "secondary",
   covered: "outline",
 }
+
+const SKILL_LEVELS: SkillLevel[] = ["novice", "intermediate", "advanced"]
+
+const EMPTY_AVAILABILITY_FORM = { contributorId: "", skillLevel: "novice" as SkillLevel, maxConcurrentTasks: "2" }
 
 export interface TaskInboxPanelProps {
   /**
@@ -159,12 +193,17 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   const [verifierIds, setVerifierIds] = useState<Record<string, string>>({})
   const [verifyErrors, setVerifyErrors] = useState<Record<string, string>>({})
   const [reassignInputs, setReassignInputs] = useState<Record<string, string>>({})
+  const [profiles, setProfiles] = useState<ContributorAvailability[]>([])
+  const [availabilityForm, setAvailabilityForm] = useState(EMPTY_AVAILABILITY_FORM)
+  const [editingProfileId, setEditingProfileId] = useState<string | null>(null)
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null)
 
   useEffect(() => {
     setTopics(buildTaskInboxView())
     setCapacity(buildTeamCapacityView())
     setPending(listPendingTaskVerifications())
     setTrackedTopics(listTrackedTopics())
+    setProfiles(listContributorAvailability())
   }, [])
 
   useEffect(() => {
@@ -185,6 +224,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
       setCapacity(buildTeamCapacityView())
       setPending(listPendingTaskVerifications())
       setTrackedTopics(listTrackedTopics())
+      setProfiles(listContributorAvailability())
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
@@ -244,6 +284,50 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     setTrackedTopics(listTrackedTopics())
   }
 
+  const handleEditProfile = (profile: ContributorAvailability) => {
+    setEditingProfileId(profile.contributorId)
+    setAvailabilityForm({
+      contributorId: profile.contributorId,
+      skillLevel: profile.skillLevel,
+      maxConcurrentTasks: String(profile.maxConcurrentTasks),
+    })
+    setAvailabilityError(null)
+  }
+
+  const handleCancelEditProfile = () => {
+    setEditingProfileId(null)
+    setAvailabilityForm(EMPTY_AVAILABILITY_FORM)
+    setAvailabilityError(null)
+  }
+
+  const handleSaveProfile = () => {
+    try {
+      upsertContributorAvailabilityProfile({
+        contributorId: availabilityForm.contributorId,
+        skillLevel: availabilityForm.skillLevel,
+        maxConcurrentTasks: Number(availabilityForm.maxConcurrentTasks),
+      })
+      setProfiles(listContributorAvailability())
+      setCapacity(buildTeamCapacityView())
+      setTopics(buildTaskInboxView())
+      setEditingProfileId(null)
+      setAvailabilityForm(EMPTY_AVAILABILITY_FORM)
+      setAvailabilityError(null)
+    } catch (error) {
+      setAvailabilityError(error instanceof Error ? error.message : "Could not save this profile.")
+    }
+  }
+
+  const handleDeleteProfile = (contributorId: string) => {
+    deleteContributorAvailability(contributorId)
+    setProfiles(listContributorAvailability())
+    setCapacity(buildTeamCapacityView())
+    setTopics(buildTaskInboxView())
+    if (editingProfileId === contributorId) {
+      handleCancelEditProfile()
+    }
+  }
+
   if (topics === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading task inbox…</div>
   }
@@ -301,13 +385,103 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     </div>
   )
 
+  const availabilitySection = (
+    <div className="rounded-lg border border-border p-4 space-y-3">
+      <div>
+        <h2 className="mb-1 text-sm font-semibold text-foreground">Contributor availability</h2>
+        <p className="text-xs text-muted-foreground">
+          Manage each contributor's skill level and concurrency limit — routing and the Team capacity
+          view below both read this roster. Active task counts update automatically as tasks are
+          routed, reassigned, and completed; this form never edits them directly.
+        </p>
+      </div>
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="task-inbox-availability-id">Contributor id</Label>
+          <Input
+            id="task-inbox-availability-id"
+            value={availabilityForm.contributorId}
+            onChange={(e) => setAvailabilityForm((prev) => ({ ...prev, contributorId: e.target.value }))}
+            placeholder="alice"
+            className="max-w-[10rem]"
+            disabled={editingProfileId !== null}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="task-inbox-availability-skill">Skill level</Label>
+          <Select
+            value={availabilityForm.skillLevel}
+            onValueChange={(value) => setAvailabilityForm((prev) => ({ ...prev, skillLevel: value as SkillLevel }))}
+          >
+            <SelectTrigger id="task-inbox-availability-skill" className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SKILL_LEVELS.map((level) => (
+                <SelectItem key={level} value={level} className="capitalize">
+                  {level}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="task-inbox-availability-max">Max concurrent tasks</Label>
+          <Input
+            id="task-inbox-availability-max"
+            type="number"
+            min={1}
+            step={1}
+            value={availabilityForm.maxConcurrentTasks}
+            onChange={(e) => setAvailabilityForm((prev) => ({ ...prev, maxConcurrentTasks: e.target.value }))}
+            className="w-32"
+          />
+        </div>
+        <Button onClick={handleSaveProfile}>{editingProfileId ? "Update profile" : "Add profile"}</Button>
+        {editingProfileId && (
+          <Button variant="outline" onClick={handleCancelEditProfile}>
+            Cancel
+          </Button>
+        )}
+      </div>
+      {availabilityError && <p className="text-sm text-destructive">{availabilityError}</p>}
+      {profiles.length > 0 && (
+        <div className="space-y-2 pt-1">
+          {profiles.map((profile) => (
+            <div
+              key={profile.contributorId}
+              className="flex flex-wrap items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+            >
+              <span className="font-medium text-foreground">{profile.contributorId}</span>
+              <Badge variant="outline" className="capitalize">
+                {profile.skillLevel}
+              </Badge>
+              <Badge variant="outline">
+                {profile.activeTaskCount} / {profile.maxConcurrentTasks} tasks
+              </Badge>
+              <div className="ml-auto flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => handleEditProfile(profile)}>
+                  Edit
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => handleDeleteProfile(profile.contributorId)}>
+                  Delete
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+
   const trimmedMyId = myContributorId.trim()
   const visibleTopics = trimmedMyId ? filterTaskInboxViewByContributor(topics, trimmedMyId) : topics
 
-  // The route form, "My tasks" filter, "Team capacity", and "Awaiting
-  // verification" sections all render regardless of whether any topic queue
-  // is persisted — a pending verification lives in its own store and must
-  // stay verifiable even after its queue is gone (e.g. deleted or cleared).
+  // The route form, "My tasks" filter, "Contributor availability", "Team
+  // capacity", and "Awaiting verification" sections all render regardless of
+  // whether any topic queue is persisted — a pending verification lives in
+  // its own store and must stay verifiable even after its queue is gone
+  // (e.g. deleted or cleared).
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
@@ -319,6 +493,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
       </div>
       {routeForm}
       {myTasksFilter}
+      {availabilitySection}
       {topics.length === 0 && (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No research tasks routed yet. Route a topic above, or the inbox fills in once a topic's
