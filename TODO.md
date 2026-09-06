@@ -6,6 +6,54 @@
 _No task currently in progress._
 
 ### Completed
+- **🧭 App dock — tools moved out of it, and the dock bound to the sidebar
+  column instead of reaching over CardMirror.** Two related nav problems.
+  First, the dock carried a "Tools" icon that duplicated three other routes
+  to the same catalog (the sidebar tree's "Apps" heading, its Coaching/
+  Research/Practice sections, and the dock's own Settings menu, which has
+  both an "All Tools" item and a Tools submenu grouped exactly as `/tools`
+  is). Second, and because of that seventh icon, the sidebar-hosted dock did
+  not fit the column it lives in: `Dock` sized itself to its contents
+  (`w-max`), which at 7 icons x 40px plus gaps and padding came to ~344px
+  against the sidebar's 276px of usable width at `md` — so the row either
+  forced the sidebar to scroll sideways or ran over its border onto the page
+  beside it, which on `/reason-editor` and `/doc` is a CardMirror editor.
+  - `CategoryDock`'s `NAV_ITEMS` drops `/tools`, leaving five destinations
+    (Videos, Shared, Debate, Practice vs AI, Docs) and their `Alt+1`…`Alt+5`
+    shortcuts, which already derived their range from `NAV_ITEMS.length`.
+    `APP_DOCK_LINKS` (the plain-text mirror of the dock in the sidebar tree)
+    drops it to match, and a new `TOOLS_ROOT_HREF` takes its place as the
+    tree's own "Apps" heading destination plus an explicit "All Tools" child,
+    so the catalog keeps a named nav entry it no longer has a dock icon for.
+  - `Dock` gains a `fluid` variant and an `iconSize` prop. `fluid` takes its
+    width from the container (`w-full max-w-full min-w-0`) rather than from
+    the item count and wraps an overflowing row (`flex-wrap`) instead of
+    growing past the column, so no future item can escape the sidebar either.
+    `CategoryDock` passes it for the `embedded` form along with a 34px
+    resting icon and 46px magnification: 6 x 34 + gaps + padding = 250px
+    against 276px, +12px for one magnified icon, so it fits without wrapping
+    at every breakpoint and the wrapping is the backstop. `DockIcon` also
+    clamps magnification to at least the resting size, so shrinking the icons
+    can't make one shrink further on hover. Hover labels stay
+    `overflow-visible` — the column is the clipping boundary, and clipping at
+    the dock would hide every tooltip. Both copies of the primitive
+    (`packages/debate-ui/src/layout/dock.tsx` and the app's
+    `lib/ui/layout/dock.tsx`) stay byte-identical, as before.
+  - The "which routes host the dock in a sidebar" predicates moved from the
+    app's `lib/sidebar-routes.ts` into `debate-videos`, next to the link data
+    they derive from, so they are covered by Vitest (`apps/*` is outside the
+    projects glob, `packages/*` is not); the app module is now a re-export.
+    Matching is prefix-based rather than exact while it moved: a nested route
+    under a tree entry (`/cards/awards` under `/cards`, a document route
+    under `/doc` or `/reason-editor`) was falling through to the *fixed*
+    top-left dock, floating over the page — over a CardMirror editor in those
+    last two subtrees — instead of getting a sidebar-hosted one. The trailing
+    `/` in the comparison keeps `/docs` from matching `/doc`.
+  - Both sidebar `<aside>`s (`AppSidebarShell` and `LecturesVideoGridView`)
+    gain `md:min-w-0` so the column is a hard boundary for every child.
+  - New tests: `packages/debate-ui/test/dock.test.tsx` and
+    `packages/debate-videos/test/sidebar-routes.test.ts`. Docs:
+    `docs/features/app-nav-dock.md`.
 - **🔁 Revision Incentives — reward-points tie-in to Progress Unlocks.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with the

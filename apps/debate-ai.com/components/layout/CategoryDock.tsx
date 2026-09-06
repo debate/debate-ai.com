@@ -70,7 +70,12 @@ const NAV_ITEMS = [
   // `debate-practice-vs-ai` package.
   { href: "/versus-ai", label: "Practice vs AI", icon: IconVsAi },
   { href: "/doc", label: "Docs", icon: IconRead },
-  { href: "/tools", label: "Tools", icon: IconTools },
+  // No "Tools" icon here on purpose: the tools catalog is reached from the
+  // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice
+  // sections) and from the Settings menu's "All Tools" entry and Tools
+  // submenu below. Keeping it out holds the dock to five destinations, which
+  // is what lets the sidebar-hosted instance fit inside the sidebar column
+  // instead of reaching across it — see `DockInstance`'s `embedded` prop.
 ]
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
@@ -298,8 +303,28 @@ function SettingsMenu({
 }
 
 /**
+ * Resting icon size and magnification for the sidebar-hosted dock, chosen so
+ * the whole row fits the narrowest sidebar it is rendered in.
+ *
+ * The sidebar is `md:w-[300px]` with `p-3`, i.e. 276px of usable width. Five
+ * nav destinations plus Settings at {@link EMBEDDED_ICON_SIZE}px, with
+ * `gap-1.5` (6px) and `p-2` (8px each side), come to 6*34 + 5*6 + 16 = 250px,
+ * and one magnified icon adds {@link EMBEDDED_MAGNIFICATION} - 34 = 12px more.
+ * That leaves headroom at every breakpoint, and `fluid` wrapping catches any
+ * future item so the dock still cannot grow past the column.
+ */
+const EMBEDDED_ICON_SIZE = 34
+const EMBEDDED_MAGNIFICATION = 46
+
+/**
  * Renders a single dock instance with all items inline as direct children.
  * This ensures Dock's cloneElement passes mousex/magnification/distance properly.
+ *
+ * `embedded` is the sidebar-hosted form. It is the reason the dock is bound to
+ * its column rather than sized to its own contents: a content-sized dock is
+ * wider than the 300px sidebar it sits in, which either forces the sidebar to
+ * scroll sideways or reaches over its border onto the page beside it — the
+ * CardMirror editor, on `/reason-editor` and `/doc`.
  */
 function DockInstance({
   dockClassName,
@@ -307,16 +332,24 @@ function DockInstance({
   allItems,
   onSignIn,
   unreadNotifications,
+  embedded = false,
 }: {
   dockClassName: string
   side: "bottom" | "top"
   allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void }[]
   onSignIn: () => void
   unreadNotifications: number
+  embedded?: boolean
 }) {
   return (
     <DropdownMenu>
-      <Dock direction="middle" className={dockClassName}>
+      <Dock
+        direction="middle"
+        className={dockClassName}
+        fluid={embedded}
+        iconSize={embedded ? EMBEDDED_ICON_SIZE : undefined}
+        magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
+      >
         {allItems.map(({ key, label, icon, active, onClick }) => (
           <DockItem
             key={key}
@@ -391,7 +424,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       : []),
   ]
 
-  // Keyboard shortcuts: Alt+1 through Alt+6 for navigation items
+  // Keyboard shortcuts: Alt+<n> for the nth navigation item
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Check if Alt key is pressed (and not Ctrl/Meta to avoid conflicts)
@@ -399,7 +432,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
         const key = event.key
         const numKey = parseInt(key, 10)
 
-        // Alt+1 through Alt+6 for the first 6 nav items
+        // One shortcut per dock destination, in dock order
         if (numKey >= 1 && numKey <= NAV_ITEMS.length) {
           event.preventDefault()
           const navItem = NAV_ITEMS[numKey - 1]
@@ -438,11 +471,12 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     return (
       <>
         <DockInstance
-          dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
+          dockClassName="shrink-0 min-h-[52px]"
           side="bottom"
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
           unreadNotifications={unreadCount}
+          embedded
         />
         <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
       </>
