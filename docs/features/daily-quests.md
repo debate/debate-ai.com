@@ -254,6 +254,44 @@ panel in this repo still has no cross-tab live-update mechanism" Known gap
 noted in [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
 Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
 
+## Quest difficulty tiers
+
+Closes the "quest difficulty tiers" follow-up named under the "🎯 Daily
+Quests and Targets" bullet in TODO.md. A quest template can now carry an
+`easy`/`medium`/`hard` `difficulty` (`lib/daily-quests.ts`'s
+`QuestDifficulty`, mirroring `drill-generator.ts`'s `DrillDifficulty` naming
+exactly), worth an escalating point value once complete
+(`QUEST_DIFFICULTY_POINTS`: 5/10/20). A template saved before this field
+existed has no `difficulty` at all — `getQuestDifficulty` treats that as
+`"medium"` (`DEFAULT_QUEST_DIFFICULTY`) rather than requiring a one-time
+backfill, and `getQuestDifficultyPoints` composes that fallback directly.
+
+The "Add quest" form gained a "Difficulty" picker (defaulting to Medium),
+and each board row now shows a "`<tier>` · N pts" badge next to its
+progress badge (`computeQuestProgress`'s new `difficulty`/`points` fields
+on `QuestProgress`). A quest seeded from a topic's under-covered arguments
+is rated automatically by how many more cards it still needs
+(`remainingCardsToQuestDifficulty`: 1 remaining is easy, 2 is medium, 3+ is
+hard) rather than always landing on the default tier.
+
+A "Difficulty" filter above the board (All/Easy/Medium/Hard,
+`filterQuestBoardByDifficulty`) narrows the rendered list to one tier at a
+time, mirroring the AI Drill Generator's own difficulty filter. The board
+header also reports a running points tally —
+`buildQuestBoardPointsSummaryText` renders "N/M points earned today",
+summing `points` across every complete quest against every quest's point
+value on the board (`buildQuestBoardPointsSummary`).
+
+Vitest-covered in `packages/debate-team-collaboration/test/daily-quests.test.ts`
+(`remainingCardsToQuestDifficulty`'s three bands; `getQuestDifficulty`/
+`getQuestDifficultyPoints` defaulting an undifficultied template to medium
+and passing an explicit difficulty through; `computeQuestProgress` carrying
+a template's difficulty/points onto its progress; `filterQuestBoardByDifficulty`
+narrowing to one tier or returning everything for "all"; and
+`buildQuestBoardPointsSummary`/`buildQuestBoardPointsSummaryText` tallying
+earned-vs-total points, including the empty-board case) and updated
+`buildUnderCoveredArgumentQuests` cases asserting the seeded difficulty.
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — the "Your streak" field

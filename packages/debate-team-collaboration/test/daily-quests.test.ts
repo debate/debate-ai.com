@@ -1,10 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
   buildDailyQuestBoard,
+  buildQuestBoardPointsSummary,
+  buildQuestBoardPointsSummaryText,
   buildQuestBoardSummaryText,
   buildUnderCoveredArgumentQuests,
   computeQuestProgress,
+  DEFAULT_QUEST_DIFFICULTY,
+  filterQuestBoardByDifficulty,
+  getQuestDifficulty,
+  getQuestDifficultyPoints,
   isQuestTemplateExpired,
+  QUEST_DIFFICULTY_POINTS,
+  remainingCardsToQuestDifficulty,
   rolloverRecurringQuestTemplate,
   type QuestContribution,
   type QuestTemplate,
@@ -210,8 +218,10 @@ describe("buildUnderCoveredArgumentQuests", () => {
     expect(quests.map((q) => q.id)).toEqual(["argblock:Warming DA", "argblock:Solvency"]);
     expect(quests[0].targetCount).toBe(3);
     expect(quests[0].description).toBe('Find 3 more cards for "Warming DA"');
+    expect(quests[0].difficulty).toBe("hard");
     expect(quests[1].targetCount).toBe(2);
     expect(quests[1].description).toBe('Find 2 more cards for "Solvency"');
+    expect(quests[1].difficulty).toBe("medium");
   });
 
   it("uses singular phrasing when only one more card is needed", () => {
@@ -248,5 +258,103 @@ describe("buildUnderCoveredArgumentQuests", () => {
     ];
     const report = buildTopicCoverageReport([{ argBlock: "Solvency" }], fullCards);
     expect(buildUnderCoveredArgumentQuests(report)).toEqual([]);
+  });
+});
+
+describe("remainingCardsToQuestDifficulty", () => {
+  it("rates 1 remaining card as easy", () => {
+    expect(remainingCardsToQuestDifficulty(1)).toBe("easy");
+  });
+
+  it("rates 2 remaining cards as medium", () => {
+    expect(remainingCardsToQuestDifficulty(2)).toBe("medium");
+  });
+
+  it("rates 3 or more remaining cards as hard", () => {
+    expect(remainingCardsToQuestDifficulty(3)).toBe("hard");
+    expect(remainingCardsToQuestDifficulty(10)).toBe("hard");
+  });
+});
+
+describe("getQuestDifficulty / getQuestDifficultyPoints", () => {
+  it("defaults an undifficultied template to the default difficulty", () => {
+    expect(getQuestDifficulty(findSolvencyCards)).toBe(DEFAULT_QUEST_DIFFICULTY);
+    expect(getQuestDifficulty(findSolvencyCards)).toBe("medium");
+  });
+
+  it("returns an explicit difficulty as-is", () => {
+    const easy: QuestTemplate = { ...findSolvencyCards, difficulty: "easy" };
+    const hard: QuestTemplate = { ...findSolvencyCards, difficulty: "hard" };
+    expect(getQuestDifficulty(easy)).toBe("easy");
+    expect(getQuestDifficulty(hard)).toBe("hard");
+  });
+
+  it("maps each difficulty to its point value from QUEST_DIFFICULTY_POINTS", () => {
+    expect(getQuestDifficultyPoints({ ...findSolvencyCards, difficulty: "easy" })).toBe(
+      QUEST_DIFFICULTY_POINTS.easy,
+    );
+    expect(getQuestDifficultyPoints({ ...findSolvencyCards, difficulty: "medium" })).toBe(
+      QUEST_DIFFICULTY_POINTS.medium,
+    );
+    expect(getQuestDifficultyPoints({ ...findSolvencyCards, difficulty: "hard" })).toBe(
+      QUEST_DIFFICULTY_POINTS.hard,
+    );
+    expect(getQuestDifficultyPoints(findSolvencyCards)).toBe(QUEST_DIFFICULTY_POINTS.medium);
+  });
+});
+
+describe("computeQuestProgress difficulty/points", () => {
+  it("carries the quest's difficulty and point value through to its progress", () => {
+    const hardQuest: QuestTemplate = { ...findSolvencyCards, difficulty: "hard" };
+    const progress = computeQuestProgress(hardQuest, [], "2026-08-10");
+    expect(progress.difficulty).toBe("hard");
+    expect(progress.points).toBe(QUEST_DIFFICULTY_POINTS.hard);
+  });
+
+  it("defaults to medium when the template carries no difficulty", () => {
+    const progress = computeQuestProgress(findSolvencyCards, [], "2026-08-10");
+    expect(progress.difficulty).toBe("medium");
+    expect(progress.points).toBe(QUEST_DIFFICULTY_POINTS.medium);
+  });
+});
+
+describe("filterQuestBoardByDifficulty", () => {
+  const board = buildDailyQuestBoard(
+    [
+      { ...findSolvencyCards, id: "e", difficulty: "easy" },
+      { ...findSolvencyCards, id: "m", difficulty: "medium" },
+      { ...findSolvencyCards, id: "h", difficulty: "hard" },
+    ],
+    [],
+    DAY_ONE,
+  );
+
+  it("returns the board unchanged for 'all'", () => {
+    expect(filterQuestBoardByDifficulty(board, "all")).toHaveLength(3);
+  });
+
+  it("narrows the board to one difficulty tier", () => {
+    expect(filterQuestBoardByDifficulty(board, "hard").map((q) => q.questId)).toEqual(["h"]);
+    expect(filterQuestBoardByDifficulty(board, "easy").map((q) => q.questId)).toEqual(["e"]);
+  });
+});
+
+describe("buildQuestBoardPointsSummary / buildQuestBoardPointsSummaryText", () => {
+  it("tallies earned points from complete quests only, against the board's full point value", () => {
+    const easyDone: QuestTemplate = { ...findSolvencyCards, id: "easy-done", targetCount: 1, difficulty: "easy" };
+    const hardPending: QuestTemplate = { ...findSolvencyCards, id: "hard-pending", difficulty: "hard" };
+    const board = buildDailyQuestBoard([easyDone, hardPending], [card("a", "Solvency", DAY_ONE)], DAY_ONE);
+
+    expect(buildQuestBoardPointsSummary(board)).toEqual({
+      earnedPoints: QUEST_DIFFICULTY_POINTS.easy,
+      totalPoints: QUEST_DIFFICULTY_POINTS.easy + QUEST_DIFFICULTY_POINTS.hard,
+    });
+    expect(buildQuestBoardPointsSummaryText(board)).toBe(
+      `${QUEST_DIFFICULTY_POINTS.easy}/${QUEST_DIFFICULTY_POINTS.easy + QUEST_DIFFICULTY_POINTS.hard} points earned today`,
+    );
+  });
+
+  it("returns zero over zero for an empty board", () => {
+    expect(buildQuestBoardPointsSummary([])).toEqual({ earnedPoints: 0, totalPoints: 0 });
   });
 });

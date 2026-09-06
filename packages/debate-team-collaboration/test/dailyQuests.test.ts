@@ -202,6 +202,7 @@ describe("seedQuestTemplatesFromTopicCoverage", () => {
         description: 'Find 3 more cards for "Solvency"',
         target: { kind: "card", argBlock: "Solvency" },
         targetCount: 3,
+        difficulty: "hard",
       },
     ]);
     expect(listQuestTemplates()).toEqual(seeded);
@@ -262,6 +263,7 @@ describe("previewQuestTemplatesFromTopicCoverage", () => {
           description: 'Find 3 more cards for "Solvency"',
           target: { kind: "card", argBlock: "Solvency" },
           targetCount: 3,
+          difficulty: "hard",
         },
         alreadySeeded: false,
       },
@@ -348,6 +350,8 @@ describe("buildPersistedDailyQuestBoard", () => {
         completedCount: 2,
         remainingCount: 0,
         isComplete: true,
+        difficulty: "medium",
+        points: 10,
       },
     ]);
   });
@@ -384,6 +388,8 @@ describe("buildPersistedDailyQuestBoard", () => {
         completedCount: 0,
         remainingCount: 2,
         isComplete: false,
+        difficulty: "medium",
+        points: 10,
       },
     ]);
     expect(listQuestTemplates()).toEqual([{ ...recurring, expiresOn: "2026-08-16" }]);
