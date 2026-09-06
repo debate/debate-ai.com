@@ -10,6 +10,7 @@ import {
   buildPracticeRoundFeedbackText,
   buildPracticeRoundSetup,
   buildPracticeRoundSetupText,
+  resolvePracticeRoundOpponentPersonaChoice,
 } from "../src/round/practice-round-simulator";
 
 const STYLE_KEY = "lincolnDouglas";
@@ -95,6 +96,40 @@ describe("buildPracticeRoundSetup", () => {
   it("numbers the speech order section by delivery position, tagging speaker and time", () => {
     const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY });
     expect(setup.sections[0].body.split("\n")[0]).toBe("1. AC (you, 6s)");
+  });
+});
+
+describe("resolvePracticeRoundOpponentPersonaChoice", () => {
+  it("resolves 'none' to undefined", () => {
+    expect(resolvePracticeRoundOpponentPersonaChoice({ kind: "none" })).toBeUndefined();
+  });
+
+  it("resolves a built-in choice to its id, unresolved", () => {
+    expect(resolvePracticeRoundOpponentPersonaChoice({ kind: "builtin", id: "kritik" })).toBe("kritik");
+  });
+
+  it("resolves a custom choice into a built OpponentPersona, usable directly by buildPracticeRoundSetup", () => {
+    const persona = resolvePracticeRoundOpponentPersonaChoice({
+      kind: "custom",
+      name: "Speedster",
+      notes: "Spreads everything.",
+    });
+    expect(persona).not.toBeUndefined();
+    expect(persona).not.toBe("kritik");
+    const setup = buildPracticeRoundSetup({ styleKey: STYLE_KEY, opponentPersona: persona });
+    expect(setup.opponentPersona?.name).toBe("Custom: Speedster");
+  });
+
+  it("throws for a custom choice with an empty name, mirroring buildCustomOpponentPersona", () => {
+    expect(() =>
+      resolvePracticeRoundOpponentPersonaChoice({ kind: "custom", name: "   ", notes: "Spreads everything." }),
+    ).toThrow(/name is required/);
+  });
+
+  it("throws for a custom choice with empty notes, mirroring buildCustomOpponentPersona", () => {
+    expect(() =>
+      resolvePracticeRoundOpponentPersonaChoice({ kind: "custom", name: "Speedster", notes: "   " }),
+    ).toThrow(/notes are required/);
   });
 });
 

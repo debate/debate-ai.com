@@ -31,6 +31,9 @@ round/opponent-persona-speech-wiring.ts's getOpponentPersonaForRound(roundId)
 
 ## Known gaps
 
-The Practice Round Simulator panel has its own separate opponent-persona
-selection embedded in its own setup, rather than reading through this
-store.
+The Practice Round Simulator panel still saves its opponent-persona
+selection onto its own setup rather than through this store — a practice
+round is keyed by round id, not the session id this store uses — but it now
+reuses this idea's custom-persona library (`useCustomOpponentPersonaLibrary`),
+so a persona saved or shared here can be reused there too. See
+`docs/features/practice-round-simulator.mdx`.

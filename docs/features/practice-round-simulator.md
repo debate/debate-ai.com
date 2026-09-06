@@ -17,8 +17,10 @@ A form to pick a round ID, `debate-timer` format, side, an AI judge
 paradigm (one of the six built-in paradigms from
 `judge-paradigms.ts`, or a custom paradigm built from a real judge's own
 publicly stated preferences via `buildCustomJudgeParadigm`), an
-optional AI opponent persona (one of the four built-in personas from
-`opponent-personas.ts`), and a difficulty for that opponent (one of the
+optional AI opponent persona — one of the four built-in personas from
+`opponent-personas.ts`, a freshly-typed custom persona, or one picked from
+"My persona library"/"Shared by your team" (the "🤖 AI Practice Opponent"
+idea's own custom-persona library) — and a difficulty for that opponent (one of the
 four `opponentDifficulties` levels — Beginner/Intermediate/Advanced/Elite —
 defaulting to Intermediate). Saving composes these into a
 `PracticeRoundSetup` via the already-existing `buildPracticeRoundSetup` and
@@ -207,6 +209,42 @@ Vitest-covered in `packages/debate-round/test/judge-decision-ai.test.ts`'s
 `keyVotingIssues` entry with the matched issue recorded, matching via the
 rationale alone with no issue recorded, a criterion neither mentions, and
 the empty-rubric case for a paradigm with no voting priorities).
+
+## Custom persona library
+
+Closes the "🤖 AI Practice Opponent" idea's "unifying the Practice Round
+Simulator's own separate persona setup with [the custom-persona] library"
+Next item. Before this, the "AI opponent persona" radio group here could
+only pick one of the four built-in personas — no custom-persona authoring,
+and no way to reuse an entry already saved to (or shared through)
+`OpponentPersonaPickerPanel`'s "My persona library". The radio group now
+also has a "Custom opponent persona" option, revealing a name/style-notes
+form (mirroring `OpponentPersonaPickerPanel`'s own) with "Save to my
+persona library"/"Share with my team" checkboxes; below it, a "My persona
+library" list (account-synced when signed in) and a read-only "Shared by
+your team" list each offer a "Use for this round"/"Use this persona" action
+that prefills the custom fields, the same `useCustomOpponentPersonaLibrary`
+hook `OpponentPersonaPickerPanel` already uses.
+
+Saving resolves the form's choice — none, a built-in id, or a custom
+name+notes pair — via `debate-round`'s new
+`round/practice-round-simulator.ts#resolvePracticeRoundOpponentPersonaChoice`
+into the `opponentPersona` input `buildPracticeRoundSetup` already accepted
+(it could already take a pre-built `OpponentPersona` object, not just a
+built-in id, so no change was needed there or to `PracticeRoundSetup`/its
+persistence). A round's persona is still saved directly onto its own
+`PracticeRoundSetup` rather than through
+`state/opponentPersonaSelections.ts` — that split is intentional, not a
+gap: a practice round is keyed by round id, not the session id that store
+uses, and both already resolve a custom persona identically via
+`buildCustomOpponentPersona`.
+
+Vitest-covered: `packages/debate-round/test/practice-round-simulator.test.ts`'s
+new `resolvePracticeRoundOpponentPersonaChoice` suite (resolving "none" to
+`undefined`, a built-in choice to its id unresolved, a custom choice into a
+usable `OpponentPersona` — round-tripped through `buildPracticeRoundSetup` —
+and throwing for an empty name or empty notes, mirroring
+`buildCustomOpponentPersona`'s own validation).
 
 ## Known gaps
 

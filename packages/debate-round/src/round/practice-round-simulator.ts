@@ -27,6 +27,19 @@
  * gets an extra section built from `opponent-personas.ts`'s new
  * `buildOpponentPersonaFeedbackTips`, naming what to prep before facing that
  * style again.
+ *
+ * `resolvePracticeRoundOpponentPersonaChoice` closes that same idea's
+ * "unifying the Practice Round Simulator's own separate persona setup with
+ * [the custom-persona] library" Next item: before this, the simulator's own
+ * setup form could only pick a built-in persona id — no custom-persona
+ * authoring, and no way to reuse an entry already saved to "My persona
+ * library" (`opponent-persona-library.ts`) the way `OpponentPersonaPickerPanel`
+ * already lets a user do. This one helper resolves a form's persona choice —
+ * none, a built-in id, or a freshly-typed/library-sourced custom
+ * name+notes pair — into the `opponentPersona` input `buildPracticeRoundSetup`
+ * already accepts, so `PracticeRoundSimulatorPanel` can offer the same
+ * "custom persona" authoring flow and library picker without any change to
+ * `PracticeRoundSetup`/persistence.
  */
 
 import type { Flow } from "../types/flow";
@@ -45,6 +58,7 @@ import type {
   OpponentPersona,
 } from "debate-speech-writer/src/opponent/opponent-personas";
 import {
+  buildCustomOpponentPersona,
   buildOpponentPersonaFeedbackTips,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
@@ -83,6 +97,27 @@ function resolveOpponentPersona(
     throw new Error(`buildPracticeRoundSetup: unknown opponent persona id "${opponentPersona}"`);
   }
   return resolved;
+}
+
+/** A practice-round setup form's opponent-persona choice, before resolution. */
+export type PracticeRoundOpponentPersonaChoice =
+  | { kind: "none" }
+  | { kind: "builtin"; id: BuiltinOpponentPersonaId }
+  | { kind: "custom"; name: string; notes: string };
+
+/**
+ * Resolves a practice-round setup form's opponent-persona choice — including
+ * a freshly-typed or persona-library-sourced custom persona — into the
+ * `opponentPersona` input `buildPracticeRoundSetup` expects. Throws the same
+ * way `buildCustomOpponentPersona` does when a custom persona's `name`/`notes`
+ * are empty after sanitizing.
+ */
+export function resolvePracticeRoundOpponentPersonaChoice(
+  choice: PracticeRoundOpponentPersonaChoice,
+): OpponentPersona | BuiltinOpponentPersonaId | undefined {
+  if (choice.kind === "none") return undefined;
+  if (choice.kind === "builtin") return choice.id;
+  return buildCustomOpponentPersona({ name: choice.name, notes: choice.notes });
 }
 
 function formatSpeechOrderSection(order: AiVersusSpeechSlot[]): string {

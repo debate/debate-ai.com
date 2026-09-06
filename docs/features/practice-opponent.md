@@ -195,15 +195,18 @@ calls, mocked).
 ## Known gaps
 
 - The Practice Round Simulator panel (`/practice-round`,
-  `PracticeRoundSimulatorPanel.tsx`) has its own, separate opponent-persona
-  selection embedded in `state/practiceRounds.ts`'s `PracticeRoundSetup`
-  (a builtin persona id only, no custom persona) rather than reading through
-  this store — unifying it with this store, and with the new custom-persona
-  library, remains a follow-up of its own. Its setup form does now also
-  carry a difficulty (`opponentDifficulty` on `PracticeRoundSetup`,
-  defaulting to `DEFAULT_OPPONENT_DIFFICULTY`), saved alongside its own
-  persona choice — see `docs/features/practice-round-simulator.md`'s
-  "Opponent difficulty" section.
+  `PracticeRoundSimulatorPanel.tsx`) still saves its persona choice onto its
+  own `state/practiceRounds.ts`'s `PracticeRoundSetup` rather than through
+  this store — a practice round is keyed by round id, not the session id
+  `opponentPersonaSelections.ts` uses, so that split is intentional. It now
+  does reuse this idea's custom-persona library, though: its own "AI
+  opponent persona" picker can author a custom persona or pick one from "My
+  persona library"/"Shared by your team", not just a built-in id — see
+  `docs/features/practice-round-simulator.md`'s "Custom persona library"
+  section. Its setup form does also carry a difficulty (`opponentDifficulty`
+  on `PracticeRoundSetup`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`),
+  saved alongside its own persona choice — see that same doc's "Opponent
+  difficulty" section.
 - This panel only saves/clears a selection; it doesn't itself invoke a
   speech-generation call — that lives in the Online Debate Versus AI panel
   (`AiVersusRoundPanel`, `/versus-ai`) once a round's persona is saved here.
