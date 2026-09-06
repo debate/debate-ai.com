@@ -6,6 +6,58 @@
 _No task currently in progress._
 
 ### Completed
+- **🎓 Coaching Programs and Group Challenges — drill-completion/practice-round
+  columns on the Roster Analytics table.** Yet another repeat of the standing
+  autonomous-routine prompt ("integrate all the tools into the UI... create
+  user settings and link user db SQL with the ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI... develop
+  better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built (account settings, dozens of `saved_*` D1 tables/`/api/*`
+  routes linking flows, docs, and rounds to signed-in users in SQL, and every
+  tool already reachable from the Tools page, CardMirror's own menu/command
+  palette, and the feature catalog, all reconfirmed this run), so this slice
+  picked the first bullet under idea #13's ("Coaching Programs and Group
+  Challenges") "Known gaps" in `docs/features/coaching-programs.md`: "the
+  roster analytics table only covers group-challenge standings and
+  daily-quest streaks — it doesn't yet fold in drill-completion rate or
+  practice-round counts." The `roundId`-to-contributor mapping needed to look
+  this up per roster member already existed
+  (`debate-team-collaboration`'s `state/roundContributorFlows.ts#listRoundContributorFlows`,
+  the same one `CoachingProgramsPanel`'s own board badges already use) — this
+  slice joined it against two more sources: `debate-practice-rounds`' own
+  persisted, completion-tracked `DrillSetRecord`s (a new
+  `state/drillSets.ts#buildContributorDrillCompletionStats`, joining by
+  `roundId`) and `roundContributorFlows.ts`'s existing
+  `buildCoachingProgramMemberPracticeRounds`. Both joins have to happen
+  outside `debate-community` (the package `CoachingProgramRosterAnalyticsPanel`
+  lives in) for the same circular-dependency reason `drillReviewEvents`
+  already documents — `debate-practice-rounds` depends on `debate-community`,
+  not the other way around — so `CoachingProgramRosterAnalyticsWithDrills.tsx`
+  (the app/page layer, which already depends on both packages) resolves both
+  joins into a dependency-free `memberDrillPracticeStatus` map
+  (`{ completedDrills, totalDrills, practiceRoundRecorded, practiceRoundHasFeedback }`,
+  keyed by contributorId) that the panel's new `memberDrillPracticeStatus`
+  prop just renders as two new table columns, "Drills completed" (`N/M`, or
+  "—" with no persisted drill set for that member's recorded round) and
+  "Practice round" ("Recorded" / "+ feedback" / "—") — mirroring
+  `drillReviewEvents`'s exact "optional, caller-resolved, dependency-free
+  shape" prop convention. Unlike `drillReviewEvents`, this isn't scoped to
+  the viewing coach's own account: every contributor's recorded round is
+  resolved regardless of whose it is, since `listRoundContributorFlows`,
+  `buildCoachingProgramMemberPracticeRounds`, and the local persisted
+  `DrillSetRecord` store are all already roster-member-scoped, not
+  viewer-scoped. See `docs/features/coaching-programs.md`'s new "Per-member
+  drill/practice-round status" section (folded the old first Known-gaps
+  bullet into it, leaving the second — real roster-wide drill-review
+  *scheduling* data, which does need an owning-contributor id that doesn't
+  exist yet — as the sole remaining Known gap). Vitest-covered in
+  `packages/debate-practice-drills/test/drillSets.test.ts`'s new
+  `buildContributorDrillCompletionStats` describe block (empty input, a
+  contributor whose recorded round has no persisted drill set, a resolved
+  single contributor's stats, and multiple contributors resolved
+  independently). No further follow-up is currently tracked under idea #13
+  beyond the remaining Known-gaps item; a future run should pick a fresh
+  next-step elsewhere if one becomes worth doing.
 - **🎯 Daily Quests and Targets — team-vs-team quest competitions.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability

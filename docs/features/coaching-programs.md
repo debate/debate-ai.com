@@ -253,12 +253,57 @@ other calendar entry (challenges, sprint notes) is roster/topic-scoped, so a
 coach viewing a program they're not personally drilling for sees no
 drill-review events, which is expected.
 
+## Per-member drill/practice-round status
+
+Closes the first of the two items this doc's Known gaps used to name here:
+"the roster analytics table only covers group-challenge standings and
+daily-quest streaks — it doesn't yet fold in drill-completion rate or
+practice-round counts." The Roster Analytics table now has two more columns
+per member: **Drills completed** (`N/M` from that member's persisted drill
+set, or "—" with none generated yet) and **Practice round** ("Recorded" /
+"+ feedback" / "—"), reusing the exact same `roundId`-to-contributor mapping
+(`debate-team-collaboration`'s `state/roundContributorFlows.ts`) that already
+drives the "Flow recorded"/"Practice round recorded" badges on
+`CoachingProgramsPanel`'s own board above.
+
+```
+app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx  (apps/debate-ai.com, "use client")
+  → listRoundContributorFlows()                               — debate-team-collaboration's state/roundContributorFlows.ts
+                                                                  (every contributor's currently recorded { contributorId, roundId })
+  → buildContributorDrillCompletionStats(contributorRoundIds, drillSets)
+                                                                — debate-practice-rounds' state/drillSets.ts
+                                                                  (joins each contributorId's roundId against that
+                                                                  store's own persisted DrillSetRecords by roundId)
+  → buildCoachingProgramMemberPracticeRounds(contributorIds)   — debate-team-collaboration's state/roundContributorFlows.ts
+                                                                  (same join CoachingProgramsPanel's own board already uses)
+  → <CoachingProgramRosterAnalyticsPanel memberDrillPracticeStatus={...} />
+
+panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
+  → renders "Drills completed"/"Practice round" columns from the
+    caller-resolved memberDrillPracticeStatus map, keyed by contributorId
+```
+
+Like `drillReviewEvents` above, this composition can't live inside
+`debate-community` itself — `debate-practice-rounds` already depends on this
+package (for Progress Unlocks tiers), so importing drill types back here
+would be circular — so the app/page layer, which already depends on both
+`debate-practice-rounds` and `debate-team-collaboration`, resolves it instead
+into a dependency-free `memberDrillPracticeStatus` prop
+(`{ completedDrills, totalDrills, practiceRoundRecorded, practiceRoundHasFeedback }`,
+keyed by contributorId) the panel just renders. Unlike the ad hoc `Drill[]`
+`CoachingProgramsPanel`'s own board generates fresh from a member's flow on
+every render, "Drills completed" reads the actually-persisted, completion-tracked
+`DrillSetRecord` a member gets by separately generating (and practicing
+against) their drill set at `/drills` — a member with a recorded flow but no
+persisted drill set for that same `roundId` still shows "—" here. Every
+contributor's recorded round is resolved regardless of which coaching
+program's roster the viewer currently has selected (the roster filtering
+happens implicitly — the table only ever renders rows for the selected
+program's own `memberIds`), so this isn't scoped to the viewing coach's own
+account the way `drillReviewEvents` is.
+
 ## Known gaps
 
-- The roster analytics table only covers group-challenge standings and
-  daily-quest streaks — it doesn't yet fold in drill-completion rate or
-  practice-round counts, both already shown per-member on the program's own
-  board section above. A future run could widen the table to include them.
 - The program calendar's drill-review events are scoped to the viewing
   coach's own drill sets, not the roster's — there's no per-member drill data
   a coach can see for teammates today. Widening this to a real roster-wide
