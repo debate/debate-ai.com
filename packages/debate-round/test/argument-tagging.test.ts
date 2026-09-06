@@ -5,6 +5,7 @@ import {
   inferArgumentType,
   listAuthorIdsInFlow,
   setRowArgumentTags,
+  setRowsArgumentTags,
 } from "../src/flow/argument-tagging";
 import type { Box, Flow } from "../src/types/flow";
 
@@ -95,6 +96,52 @@ describe("setRowArgumentTags", () => {
     const flow = flowWithRows([box()]);
     expect(setRowArgumentTags(flow, 5, { argumentType: "turn" })).toBe(flow);
     expect(setRowArgumentTags(flow, -1, { argumentType: "turn" })).toBe(flow);
+  });
+});
+
+describe("setRowsArgumentTags", () => {
+  it("applies the same tags to every targeted row, leaving the rest untouched", () => {
+    const flow = flowWithRows([box({ content: "row 0" }), box({ content: "row 1" }), box({ content: "row 2" })]);
+    const updated = setRowsArgumentTags(flow, [0, 2], { argumentType: "link", authorId: "alex" });
+    expect(updated.children[0]).toMatchObject({ content: "row 0", argumentType: "link", authorId: "alex" });
+    expect(updated.children[1]).toEqual(flow.children[1]);
+    expect(updated.children[2]).toMatchObject({ content: "row 2", argumentType: "link", authorId: "alex" });
+  });
+
+  it("dedupes repeated row indexes", () => {
+    const flow = flowWithRows([box()]);
+    const updated = setRowsArgumentTags(flow, [0, 0, 0], { argumentType: "turn" });
+    expect(updated.children[0].argumentType).toBe("turn");
+  });
+
+  it("ignores out-of-range indexes while still applying the valid ones", () => {
+    const flow = flowWithRows([box()]);
+    const updated = setRowsArgumentTags(flow, [-1, 0, 5], { argumentType: "impact" });
+    expect(updated.children[0].argumentType).toBe("impact");
+  });
+
+  it("is a no-op when every index is out of range", () => {
+    const flow = flowWithRows([box()]);
+    expect(setRowsArgumentTags(flow, [5, -1], { argumentType: "turn" })).toBe(flow);
+  });
+
+  it("is a no-op for an empty index list", () => {
+    const flow = flowWithRows([box()]);
+    expect(setRowsArgumentTags(flow, [], { argumentType: "turn" })).toBe(flow);
+  });
+
+  it("clears a tag on every targeted row when the field is omitted from the new tags", () => {
+    const flow = flowWithRows([box({ evidenceStatus: "cited" }), box({ evidenceStatus: "cited" })]);
+    const updated = setRowsArgumentTags(flow, [0, 1], { argumentType: "answer" });
+    expect(updated.children[0].evidenceStatus).toBeUndefined();
+    expect(updated.children[1].evidenceStatus).toBeUndefined();
+  });
+
+  it("does not mutate the original flow or boxes", () => {
+    const original = box({ content: "row 0" });
+    const flow = flowWithRows([original]);
+    setRowsArgumentTags(flow, [0], { argumentType: "link" });
+    expect(original.argumentType).toBeUndefined();
   });
 });
 

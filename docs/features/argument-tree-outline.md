@@ -191,6 +191,24 @@ on this idea.
 > features with no equivalent on this panel's flat row list) — see "Known
 > gaps" below.
 
+> **Update, a later run: checkbox-selection bulk tagging.** Each non-heading
+> row now also has a checkbox (disabled outside the taggable round, same
+> scope as the Tag… button). Checking one or more shows a "Tag selected…"
+> bulk toolbar above the row list; it opens the same dialog — titled "Tag N
+> Arguments" and starting from a blank draft, since a mixed selection has no
+> single "current" value to prefill — and Save applies one set of tags to
+> every checked row at once via `debate-round`'s new
+> `setRowsArgumentTags(flow, rowIndexes, tags)` (a thin bulk wrapper around
+> the same per-row tagging logic: an omitted field, or a whitespace-only
+> Contributor, clears that tag on every selected row, not just where it was
+> already set). A round's header also gains a "Select all"/"Deselect all"
+> toggle scoped to that round's currently filtered, non-heading rows.
+> Selection is cleared whenever the round's filter changes (a checked row may
+> no longer be visible) and after a successful bulk save. The deleted
+> popover's other bulk mode — tagging every row under one heading in a single
+> action ("neighbour-preview/bulk-section tagging") — is still not restored;
+> see "Known gaps" below.
+
 ## Tagging an argument from the flow grid (removed — see note)
 
 > **⚠️ Known regression, discovered 2026-09-05, tagging itself restored the
@@ -436,13 +454,14 @@ suites).
   explanatory tooltip rather than being editable directly. This mirrors the
   same scope "Generate outline for current round" already has. See "Tagging
   an argument from the Outline panel" above.
-- Neighbour-preview/bulk-section tagging and multi-row-selection bulk
-  tagging (the deleted AG Grid popover's other two features, described in
-  "Tagging an argument from the flow grid (removed — see note)" for
-  history) are not restored — both were shaped around a grid's row
-  selection, which this panel's flat row list doesn't have an equivalent
-  of. A future slice could add a checkbox-selection mode to this panel's
-  row list if bulk tagging is worth restoring.
+- Multi-row-selection bulk tagging is now restored — see "Tagging an
+  argument from the Outline panel" above's "checkbox-selection bulk
+  tagging" update. Neighbour-preview/bulk-section tagging (the deleted AG
+  Grid popover's other feature — tagging every row under one heading in a
+  single action, described in "Tagging an argument from the flow grid
+  (removed — see note)" for history) is still not restored; a future slice
+  could add a "select all rows under this heading" action alongside the
+  existing per-row checkboxes if that's worth building.
 - Tagging is row-level, not per-speech: one row carries one
   `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
   written by a different partner than its 1AC claim can't record both.
