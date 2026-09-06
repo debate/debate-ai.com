@@ -4,6 +4,7 @@ import {
   listWhiteboardNotes,
   listWhiteboardNotesForTopic,
   saveWhiteboardNote,
+  updateWhiteboardNotePosition,
 } from "../src/state/sprintWhiteboard";
 import type { WhiteboardNote } from "../src/lib/team-collaboration-mode";
 
@@ -107,5 +108,21 @@ describe("deleteWhiteboardNote", () => {
     saveWhiteboardNote(TOPICALITY_NOTE);
     deleteWhiteboardNote("missing");
     expect(listWhiteboardNotes()).toEqual([TOPICALITY_NOTE]);
+  });
+});
+
+describe("updateWhiteboardNotePosition", () => {
+  it("repositions a stored note", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    saveWhiteboardNote(TOPICALITY_NOTE);
+    updateWhiteboardNotePosition("note-1", 120, 45);
+
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 120, y: 45 }, TOPICALITY_NOTE]);
+  });
+
+  it("is a no-op when the id isn't stored", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    updateWhiteboardNotePosition("missing", 120, 45);
+    expect(listWhiteboardNotes()).toEqual([SOLVENCY_NOTE]);
   });
 });

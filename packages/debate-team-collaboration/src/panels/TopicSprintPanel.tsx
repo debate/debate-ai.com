@@ -19,6 +19,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Users2 } from "lucide-react";
+import { motion, type PanInfo } from "motion/react";
 
 import {
   EmptyState,
@@ -53,8 +54,10 @@ import {
   getPastSprintSessions,
   getSessionsForTopic,
   getUpcomingSprintSessions,
+  getWhiteboardNotePosition,
   getWhiteboardNotesForTopic,
   nextWhiteboardNoteColor,
+  nextWhiteboardNotePosition,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
   WHITEBOARD_NOTE_COLORS,
@@ -74,6 +77,7 @@ import {
   deleteWhiteboardNote,
   listWhiteboardNotes,
   saveWhiteboardNote,
+  updateWhiteboardNotePosition,
 } from "../state/sprintWhiteboard";
 import {
   readPersistedTopicSprintInputs,
@@ -108,6 +112,10 @@ const WHITEBOARD_NOTE_COLOR_CLASSES: Record<WhiteboardNoteColor, string> = {
   green: "bg-emerald-500/15 border-emerald-500/40",
   purple: "bg-purple-500/15 border-purple-500/40",
 };
+
+/** The rendered height of one whiteboard note card, in pixels — used to size the freeform board around its notes' positions. */
+const WHITEBOARD_NOTE_CARD_HEIGHT = 150;
+const WHITEBOARD_MIN_BOARD_HEIGHT = 210;
 
 /** Renders a "YYYY-MM-DD" day key as a human-readable UTC calendar date, e.g. "Thu, Sep 10, 2026". */
 function formatSprintSessionDay(dayKey: string): string {
@@ -325,6 +333,7 @@ export function TopicSprintPanel({
 
   const addWhiteboardNote = () => {
     if (!whiteboardNoteText.trim()) return;
+    const position = nextWhiteboardNotePosition(whiteboardNotesForTopic.length);
     saveWhiteboardNote(
       createWhiteboardNote({
         id: `whiteboard-note-${Date.now()}`,
@@ -333,6 +342,8 @@ export function TopicSprintPanel({
         text: whiteboardNoteText.trim(),
         color: whiteboardNoteColor,
         createdAt: now,
+        x: position.x,
+        y: position.y,
       }),
     );
     setWhiteboardNoteText("");
@@ -344,6 +355,26 @@ export function TopicSprintPanel({
     deleteWhiteboardNote(id);
     refreshWhiteboard();
   };
+
+  /**
+   * Persists a note's new position once a drag gesture ends. `info.offset`
+   * is the drag's total displacement, so the new position is the note's
+   * pre-drag position plus that offset — never `info.point`, which is a page
+   * coordinate unrelated to the board's own origin.
+   */
+  const moveWhiteboardNoteTo = (note: WhiteboardNote, indexInTopic: number, info: PanInfo) => {
+    const position = getWhiteboardNotePosition(note, indexInTopic);
+    updateWhiteboardNotePosition(note.id, position.x + info.offset.x, position.y + info.offset.y);
+    refreshWhiteboard();
+  };
+
+  const whiteboardBoardHeight = useMemo(() => {
+    const maxY = whiteboardNotesForTopic.reduce((max, note, index) => {
+      const position = getWhiteboardNotePosition(note, index);
+      return Math.max(max, position.y);
+    }, 0);
+    return Math.max(WHITEBOARD_MIN_BOARD_HEIGHT, maxY + WHITEBOARD_NOTE_CARD_HEIGHT);
+  }, [whiteboardNotesForTopic]);
 
   return (
     <PanelShell
@@ -485,23 +516,38 @@ export function TopicSprintPanel({
             message={editable ? "Add the first brainstorming note below." : undefined}
           />
         ) : (
-          <div className="flex flex-wrap gap-2" data-testid="whiteboard-note-board">
-            {whiteboardNotesForTopic.map((note) => (
-              <div
-                key={note.id}
-                className={`flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]}`}
-              >
-                <p className="whitespace-pre-wrap break-words">{note.text}</p>
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs text-muted-foreground">{note.authorId}</span>
-                  {editable ? (
-                    <Button variant="ghost" size="sm" onClick={() => removeWhiteboardNote(note.id)}>
-                      Remove
-                    </Button>
-                  ) : null}
-                </div>
-              </div>
-            ))}
+          <div
+            className="relative w-full overflow-auto rounded-md border border-dashed border-border/60 bg-muted/20 p-2"
+            style={{ height: whiteboardBoardHeight }}
+            data-testid="whiteboard-note-board"
+          >
+            {whiteboardNotesForTopic.map((note, index) => {
+              const position = getWhiteboardNotePosition(note, index);
+              return (
+                <motion.div
+                  // Remounting on every position change resets the drag
+                  // transform Motion accumulates during a gesture, so the
+                  // next drag starts fresh from the persisted left/top
+                  // rather than compounding on top of it.
+                  key={`${note.id}-${position.x}-${position.y}`}
+                  drag={editable}
+                  dragMomentum={false}
+                  onDragEnd={(_event, info) => moveWhiteboardNoteTo(note, index, info)}
+                  style={{ position: "absolute", left: position.x, top: position.y }}
+                  className={`flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]} ${editable ? "cursor-grab active:cursor-grabbing" : ""}`}
+                >
+                  <p className="whitespace-pre-wrap break-words">{note.text}</p>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs text-muted-foreground">{note.authorId}</span>
+                    {editable ? (
+                      <Button variant="ghost" size="sm" onClick={() => removeWhiteboardNote(note.id)}>
+                        Remove
+                      </Button>
+                    ) : null}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         )}
 

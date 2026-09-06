@@ -292,6 +292,41 @@ Vitest-covered in
 cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
 mirroring `sprintSessions.test.ts`'s cases).
 
+A later slice closes the "a true freeform (x/y, draggable) whiteboard
+layout" follow-up this bullet used to describe as blocked on the repo
+having no drag-and-drop primitive: that premise turned out to be stale —
+`motion` (Framer Motion's current package name) is already a dependency of
+`debate-ui`, `debate-videos`, `debate-round`, and the app itself, and is
+already used for real pointer-driven dragging elsewhere (`debate-ui`'s
+`card-stack.tsx` swipe gesture, `debate-flow`'s `Sidebar.tsx` drag-to-reorder
+via `motion/react`'s `Reorder`), just not yet as a dependency of
+`debate-team-collaboration`. `WhiteboardNote` gained optional `x`/`y` board
+coordinates — optional so a note saved before this field existed still
+loads, via a new `getWhiteboardNotePosition(note, indexFallback)` that
+returns the note's own position when set or else a staggered grid slot from
+the new `nextWhiteboardNotePosition(existingNoteCountForTopic)` (the same
+per-topic-count-based convention `nextWhiteboardNoteColor` already uses,
+just laid out on a 4-column grid instead of a color cycle). A new
+`moveWhiteboardNote(note, x, y)` repositions a note, rounding to whole
+pixels and clamping to non-negative coordinates so a drag can't push a note
+off the board's top/left edge; `state/sprintWhiteboard.ts`'s new
+`updateWhiteboardNotePosition(id, x, y)` applies it to the persisted store,
+a no-op for an id that isn't stored. `TopicSprintPanel`'s "Shared
+whiteboard" section now renders each note as a `motion.div` absolutely
+positioned at its `getWhiteboardNotePosition` coordinates inside a
+`position: relative` board (sized to fit every note's position, growing
+past its 210px minimum height as notes move further down), with `drag`
+enabled only when `editable` — read-only embeds of this panel keep notes
+fixed. Each note's `key` includes its current `x`/`y` so React remounts it
+after every drop, resetting the drag transform Motion accumulates during a
+gesture; without that, the next drag would compound on top of the previous
+one instead of starting fresh from the persisted position. See the
+Completed entry in `TODO.md` and this package's `test/team-collaboration-mode.test.ts`
+(`nextWhiteboardNotePosition`'s grid layout and wraparound,
+`getWhiteboardNotePosition`'s own-position-vs-fallback branches, and
+`moveWhiteboardNote`'s rounding/clamping) and `test/sprintWhiteboard.test.ts`
+(`updateWhiteboardNotePosition`'s reposition-and-no-op cases).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -309,8 +344,12 @@ mirroring `sprintSessions.test.ts`'s cases).
 - Scheduled sessions and whiteboard notes are both local-only (no account
   sync yet, unlike some other ideas' persisted stores), and scheduling is by
   calendar day only — no time-of-day, recurrence, or reminder notification.
-- The whiteboard has no freeform (x/y, draggable) layout — notes render in
-  creation order only. A true positioned canvas would need a drag-and-drop
-  primitive this repo's UI kit doesn't have yet; worth revisiting if another
-  idea needs the same primitive (see `TODO.md`'s open follow-up on this
-  bullet, since it's still not started).
+- Dragging a note isn't bounded to the board's visible area — Motion's
+  `dragConstraints` was deliberately left off this first slice (it needs a
+  measured container ref, and the board already grows to fit every note's
+  saved `y`), so a note can be dropped to the right of the board's current
+  scroll width. It'll still persist and reload at that position; the board
+  just needs a horizontal scroll to see it again.
+- A note's position is local-only, like the rest of this board (see the
+  "local-only" gap above) — dragging one on your phone won't move it on your
+  laptop.

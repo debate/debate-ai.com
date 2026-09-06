@@ -15,8 +15,11 @@ import {
   getPastSprintSessions,
   getSessionsForTopic,
   getUpcomingSprintSessions,
+  getWhiteboardNotePosition,
   getWhiteboardNotesForTopic,
+  moveWhiteboardNote,
   nextWhiteboardNoteColor,
+  nextWhiteboardNotePosition,
   sortNotesByCreatedAt,
   sortSprintSessionsByDay,
   sprintRetrospectiveFilename,
@@ -726,5 +729,79 @@ describe("nextWhiteboardNoteColor", () => {
     expect(nextWhiteboardNoteColor(1)).toBe(WHITEBOARD_NOTE_COLORS[1]);
     expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length)).toBe(WHITEBOARD_NOTE_COLORS[0]);
     expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length + 2)).toBe(WHITEBOARD_NOTE_COLORS[2]);
+  });
+});
+
+describe("nextWhiteboardNotePosition", () => {
+  it("places the first four notes across one row", () => {
+    expect(nextWhiteboardNotePosition(0)).toEqual({ x: 0, y: 0 });
+    expect(nextWhiteboardNotePosition(1)).toEqual({ x: 176, y: 0 });
+    expect(nextWhiteboardNotePosition(2)).toEqual({ x: 352, y: 0 });
+    expect(nextWhiteboardNotePosition(3)).toEqual({ x: 528, y: 0 });
+  });
+
+  it("wraps into a new row after four notes", () => {
+    expect(nextWhiteboardNotePosition(4)).toEqual({ x: 0, y: 150 });
+    expect(nextWhiteboardNotePosition(5)).toEqual({ x: 176, y: 150 });
+    expect(nextWhiteboardNotePosition(9)).toEqual({ x: 176, y: 300 });
+  });
+});
+
+describe("getWhiteboardNotePosition", () => {
+  const positioned: WhiteboardNote = createWhiteboardNote({
+    id: "n1",
+    topic: "Immigration",
+    text: "Note",
+    authorId: "alice",
+    color: "blue",
+    createdAt: NOW,
+    x: 40,
+    y: 90,
+  });
+  const legacy: WhiteboardNote = createWhiteboardNote({
+    id: "n2",
+    topic: "Immigration",
+    text: "Older note with no saved position",
+    authorId: "bob",
+    color: "pink",
+    createdAt: NOW,
+  });
+
+  it("returns a note's own position when it has one", () => {
+    expect(getWhiteboardNotePosition(positioned, 5)).toEqual({ x: 40, y: 90 });
+  });
+
+  it("falls back to the staggered grid slot for a note with no saved position", () => {
+    expect(getWhiteboardNotePosition(legacy, 4)).toEqual(nextWhiteboardNotePosition(4));
+  });
+});
+
+describe("moveWhiteboardNote", () => {
+  const note: WhiteboardNote = createWhiteboardNote({
+    id: "n1",
+    topic: "Immigration",
+    text: "Note",
+    authorId: "alice",
+    color: "blue",
+    createdAt: NOW,
+    x: 40,
+    y: 90,
+  });
+
+  it("repositions a note, rounding fractional coordinates", () => {
+    expect(moveWhiteboardNote(note, 120.6, 75.4)).toEqual({ ...note, x: 121, y: 75 });
+  });
+
+  it("clamps negative coordinates to zero", () => {
+    expect(moveWhiteboardNote(note, -30, -10)).toEqual({ ...note, x: 0, y: 0 });
+  });
+
+  it("leaves every other field untouched", () => {
+    const moved = moveWhiteboardNote(note, 10, 10);
+    expect(moved.id).toBe(note.id);
+    expect(moved.text).toBe(note.text);
+    expect(moved.color).toBe(note.color);
+    expect(moved.authorId).toBe(note.authorId);
+    expect(moved.createdAt).toBe(note.createdAt);
   });
 });

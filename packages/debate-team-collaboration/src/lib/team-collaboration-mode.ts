@@ -365,11 +365,11 @@ export function getPastSprintSessions(sessions: SprintSession[], todayKey: strin
 /**
  * A shared sticky note on a topic sprint's whiteboard — the "a shared
  * whiteboard/canvas for sprint brainstorming" follow-up named under the "🤝
- * Team Collaboration Mode" bullet in TODO.md. Deliberately not a positioned
- * (x/y) canvas: this repo's panel UI kit has no drag-and-drop primitive
- * anywhere, so the first slice is a colored sticky-note board (order is
- * creation order, not a freeform layout), mirroring every other idea's
- * "smallest useful vertical slice first" convention.
+ * Team Collaboration Mode" bullet in TODO.md. `x`/`y` place it on a freeform,
+ * draggable canvas (pixels from the board's top-left corner); they're
+ * optional so a note saved before this field existed still loads (see
+ * `getWhiteboardNotePosition`'s fallback), but every newly created note
+ * always gets one from `nextWhiteboardNotePosition`.
  */
 export type WhiteboardNoteColor = "yellow" | "pink" | "blue" | "green" | "purple";
 
@@ -389,6 +389,8 @@ export interface WhiteboardNote {
   color: WhiteboardNoteColor;
   authorId: string;
   createdAt: number;
+  x?: number;
+  y?: number;
 }
 
 const MAX_WHITEBOARD_NOTE_LENGTH = 280;
@@ -400,6 +402,9 @@ export interface CreateWhiteboardNoteInput {
   authorId: string;
   color: WhiteboardNoteColor;
   createdAt: number;
+  /** Board position; omit for a caller that doesn't place notes on a freeform canvas (see `getWhiteboardNotePosition`'s fallback). */
+  x?: number;
+  y?: number;
 }
 
 /**
@@ -424,6 +429,8 @@ export function createWhiteboardNote(input: CreateWhiteboardNoteInput): Whiteboa
     color: WHITEBOARD_NOTE_COLORS.includes(input.color) ? input.color : WHITEBOARD_NOTE_COLORS[0],
     authorId: input.authorId.trim() || "me",
     createdAt: input.createdAt,
+    x: input.x,
+    y: input.y,
   };
 }
 
@@ -441,6 +448,57 @@ export function getWhiteboardNotesForTopic(notes: WhiteboardNote[], topic: strin
 export function nextWhiteboardNoteColor(existingNoteCountForTopic: number): WhiteboardNoteColor {
   const index = existingNoteCountForTopic % WHITEBOARD_NOTE_COLORS.length;
   return WHITEBOARD_NOTE_COLORS[index];
+}
+
+export interface WhiteboardNotePosition {
+  x: number;
+  y: number;
+}
+
+const WHITEBOARD_NOTE_GRID_COLUMNS = 4;
+const WHITEBOARD_NOTE_GRID_COLUMN_WIDTH = 176;
+const WHITEBOARD_NOTE_GRID_ROW_HEIGHT = 150;
+
+/**
+ * The board position a newly-added (or legacy, position-less) note should
+ * default to, staggered into a grid by how many notes the topic's board
+ * already has — so notes don't all pile up in the same top-left corner
+ * before a contributor drags them apart.
+ */
+export function nextWhiteboardNotePosition(existingNoteCountForTopic: number): WhiteboardNotePosition {
+  const column = existingNoteCountForTopic % WHITEBOARD_NOTE_GRID_COLUMNS;
+  const row = Math.floor(existingNoteCountForTopic / WHITEBOARD_NOTE_GRID_COLUMNS);
+  return {
+    x: column * WHITEBOARD_NOTE_GRID_COLUMN_WIDTH,
+    y: row * WHITEBOARD_NOTE_GRID_ROW_HEIGHT,
+  };
+}
+
+/**
+ * A note's on-board position — its own `x`/`y` when set, or else a staggered
+ * grid slot derived from `indexFallback` (that note's position within its
+ * topic's list) for a note saved before freeform positions existed.
+ */
+export function getWhiteboardNotePosition(note: WhiteboardNote, indexFallback: number): WhiteboardNotePosition {
+  if (typeof note.x === "number" && typeof note.y === "number") {
+    return { x: note.x, y: note.y };
+  }
+  return nextWhiteboardNotePosition(indexFallback);
+}
+
+const MIN_WHITEBOARD_NOTE_COORDINATE = 0;
+
+/**
+ * Repositions a note on the board, rounding to whole pixels and clamping to
+ * non-negative coordinates so a drag can't push a note off the board's
+ * top/left edge.
+ */
+export function moveWhiteboardNote(note: WhiteboardNote, x: number, y: number): WhiteboardNote {
+  return {
+    ...note,
+    x: Math.max(MIN_WHITEBOARD_NOTE_COORDINATE, Math.round(x)),
+    y: Math.max(MIN_WHITEBOARD_NOTE_COORDINATE, Math.round(y)),
+  };
 }
 
 /**
