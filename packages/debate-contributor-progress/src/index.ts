@@ -21,3 +21,14 @@ export {
   isValidDailyBestCardComment,
   type DailyBestCardComment,
 } from "./state/dailyBestCardComments";
+export {
+  DEFAULT_QUEST_STREAK_SYNC,
+  MAX_QUEST_STREAK_FREEZE_DAY_KEYS,
+  isValidQuestStreakSyncPayload,
+  normalizeQuestStreakSyncPatch,
+  parseQuestStreakSync,
+  serializeQuestStreakSync,
+  type QuestStreakSyncPatch,
+  type QuestStreakSyncPatchResult,
+  type QuestStreakSyncPayload,
+} from "./lib/quest-streak-sync";

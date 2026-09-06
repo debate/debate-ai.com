@@ -48,6 +48,17 @@
  * "notification" is this in-app banner, seen whenever a contributor visits
  * the panel while at risk, not a real push notification.
  *
+ * An optional `signedInContributorId` prop (built from
+ * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
+ * against a real signed-in session) highlights that contributor's own row
+ * with a "You" badge, mirroring `ResearchProgressPanel.tsx`'s convention,
+ * and syncs *that one contributor's* reminder opt-in and spent streak
+ * freezes to their account across devices via
+ * `hooks/useQuestStreakSync.ts` — the "account-syncing reminder
+ * opt-ins/streak freezes across devices" follow-up named under the "🎮
+ * Gamified Quests" bullet in TODO.md. Every other row in this roster stays
+ * local-only, same as before.
+ *
  * @module panels/QuestStreaksPanel
  */
 
@@ -72,6 +83,7 @@ import {
 } from "../state/dailyMissionResults"
 import { listQuestTemplates } from "debate-team-collaboration/src/state/dailyQuests"
 import { isQuestStreaksLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
+import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import {
   applyPersistedStreakFreeze,
   buildQuestStreakRosterWithFreezes,
@@ -88,6 +100,7 @@ import {
   findFreezableStreakGapDayKey,
 } from "../lib/gamified-quests"
 import type { ContributorQuestStreak, StreakFreezeDenialReason } from "../lib/gamified-quests"
+import { useQuestStreakSync } from "../hooks/useQuestStreakSync"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
 function todayUtcDayKey(): string {
@@ -120,6 +133,18 @@ function buildStreakFreezeInfo(contributorId: string, asOfDayKey: string): Strea
   }
 }
 
+export interface QuestStreaksPanelProps {
+  /**
+   * A contributor id whose reminder opt-in and spent streak freezes sync to
+   * their account across devices, typically derived from a real signed-in
+   * session via `deriveContributorIdFromSessionIdentity`. Also highlighted
+   * as "You" in the roster. This roster always shows every contributor —
+   * this only syncs and highlights a matching row, it never filters the
+   * others out.
+   */
+  signedInContributorId?: string
+}
+
 /**
  * Renders the Quest Streaks roster: every contributor with at least one
  * persisted daily mission result or streak freeze, their current and
@@ -131,7 +156,7 @@ function buildStreakFreezeInfo(contributorId: string, asOfDayKey: string): Strea
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function QuestStreaksPanel() {
+export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelProps = {}) {
   const [roster, setRoster] = useState<ContributorQuestStreak[] | null>(null)
   const [contributorId, setContributorId] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -144,6 +169,11 @@ export function QuestStreaksPanel() {
   useEffect(() => {
     refresh()
   }, [])
+
+  // Merges the signed-in visitor's own reminder opt-in/spent freezes down
+  // from their account on mount, then refreshes the roster if that merge
+  // actually changed anything locally.
+  const { pushLocalState: pushQuestStreakSync } = useQuestStreakSync(signedInContributorId, refresh)
 
   /**
    * Live-update the roster when another browser tab logs a daily mission
@@ -178,11 +208,13 @@ export function QuestStreaksPanel() {
     }
     setFreezeError(null)
     refresh()
+    if (id === signedInContributorId) pushQuestStreakSync()
   }
 
   const handleToggleReminder = (id: string, enabled: boolean) => {
     setStreakLapseReminderEnabled(id, enabled)
     refresh()
+    if (id === signedInContributorId) pushQuestStreakSync()
   }
 
   const trigger = (
@@ -255,9 +287,19 @@ export function QuestStreaksPanel() {
             const today = todayUtcDayKey()
             const freezeInfo = buildStreakFreezeInfo(status.contributorId, today)
             const reminderInfo = getPersistedStreakLapseReminderInfo(status.contributorId, today)
+            const isMe = isOwnContributorRow(status.contributorId, signedInContributorId)
             return (
-              <TableRow key={status.contributorId}>
-                <TableCell className="font-medium">{status.contributorId}</TableCell>
+              <TableRow key={status.contributorId} className={isMe ? "bg-primary/5" : undefined}>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-1.5">
+                    {status.contributorId}
+                    {isMe && (
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        You
+                      </Badge>
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell className="text-right">
                   {status.streak.currentStreak > 0 ? `🔥 ${status.streak.currentStreak}` : "—"}
                 </TableCell>
