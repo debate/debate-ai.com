@@ -37,6 +37,12 @@
  * running theory is safe across it, and whether the panel's tagged
  * paradigms conflict.
  *
+ * Also hosts a **Bulk import (CSV)** section — the "a bulk CSV import for
+ * ballot history" follow-up named under this bullet in TODO.md, mirroring
+ * Opponent Team Profiles' own bulk CSV import
+ * (`state/judgeRoundRecords.ts#bulkImportJudgeRoundRecords`, composing the
+ * pure `judge/judge-round-record-csv-import.ts#parseJudgeRoundRecordsCsv`).
+ *
  * @module panels/JudgeProfilesPanel
  */
 
@@ -55,6 +61,7 @@ import {
   SelectValue,
 } from "../ui/primitives/select"
 import { Switch } from "../ui/primitives/switch"
+import { Textarea } from "../ui/primitives/textarea"
 import {
   Table,
   TableBody,
@@ -65,6 +72,7 @@ import {
 } from "../ui/primitives/table"
 import { buildJudgeProfilesRoster } from "../state/judgeProfiles"
 import {
+  bulkImportJudgeRoundRecords,
   deleteJudgeRoundRecord,
   findNearestJudgeId,
   hasJudgeRoundRecordEditHistory,
@@ -81,6 +89,7 @@ import type { DebateSide, JudgeProfile } from "../judge/judge-profile"
 import { judgeParadigms, judgeParadigmIds } from "../judge/judge-paradigms"
 import type { BuiltinJudgeParadigmId } from "../judge/judge-paradigms"
 import { buildJudgePanelComparison } from "../judge/judge-panel-comparison"
+import { JUDGE_ROUND_CSV_TEMPLATE } from "../judge/judge-round-record-csv-import"
 
 /** Sentinel for "no paradigm tagged" — a Radix `SelectItem` can't carry an empty value. */
 const NO_PARADIGM = "none"
@@ -147,6 +156,8 @@ export function JudgeProfilesPanel() {
   const [judgeFilter, setJudgeFilter] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [compareIds, setCompareIds] = useState<string[]>([])
+  const [bulkCsv, setBulkCsv] = useState("")
+  const [bulkStatus, setBulkStatus] = useState<string | null>(null)
 
   useEffect(() => {
     setRoster(buildJudgeProfilesRoster())
@@ -242,6 +253,22 @@ export function JudgeProfilesPanel() {
       setEditingId(null)
       setDraft(EMPTY_DRAFT)
     }
+    refresh()
+  }
+
+  const handleBulkImport = () => {
+    if (!bulkCsv.trim()) {
+      setBulkStatus("Paste a CSV of judged rounds first.")
+      return
+    }
+    const { importedCount, skippedCount, errors } = bulkImportJudgeRoundRecords(bulkCsv)
+    const summary =
+      importedCount === 0
+        ? `No rounds imported.${errors.length > 0 ? ` ${errors[0]}` : ""}`
+        : `Imported ${importedCount} round${importedCount === 1 ? "" : "s"}.` +
+          (skippedCount > 0 ? ` Skipped ${skippedCount} row${skippedCount === 1 ? "" : "s"}: ${errors[0]}` : "")
+    setBulkStatus(summary)
+    if (importedCount > 0) setBulkCsv("")
     refresh()
   }
 
@@ -423,6 +450,31 @@ export function JudgeProfilesPanel() {
             </Button>
           )}
         </div>
+      </div>
+
+      <div className="rounded-lg border border-border p-4 space-y-3">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">Bulk import (CSV)</h2>
+          <p className="text-xs text-muted-foreground">
+            Paste a CSV of judged rounds — a header row naming the columns (any order), then one
+            row per round. Required columns: <code>judgeId</code>, <code>tournamentName</code>,{" "}
+            <code>date</code>, <code>division</code>, <code>winningSide</code> (aff/neg),{" "}
+            <code>affSpeakerPoints</code>, and <code>negSpeakerPoints</code>. Optional:{" "}
+            <code>paceWpm</code>, <code>theoryArgumentRaised</code>, <code>theoryArgumentWon</code>{" "}
+            (true/false), and <code>paradigmId</code> ({judgeParadigmIds.join(", ")}). A row that
+            fails to parse is skipped and reported rather than blocking the rest of the import.
+          </p>
+        </div>
+        <Textarea
+          value={bulkCsv}
+          onChange={(e) => setBulkCsv(e.target.value)}
+          placeholder={JUDGE_ROUND_CSV_TEMPLATE}
+          rows={6}
+        />
+        {bulkStatus && <p className="text-sm text-muted-foreground">{bulkStatus}</p>}
+        <Button variant="outline" onClick={handleBulkImport}>
+          Import rounds
+        </Button>
       </div>
 
       {roster.length === 0 ? (

@@ -229,6 +229,25 @@ describe("buildAndSavePracticeRoundFeedback", () => {
 
     expect(getPracticeRound("round-1")!.feedback).toEqual(secondPass!.feedback);
   });
+
+  it("adds a persona-specific prep-tips section when the round's setup carried an AI opponent persona", () => {
+    savePracticeRound(ROUND_B);
+
+    const updated = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-2", "AFF");
+
+    const sections = updated!.feedback!.sections;
+    expect(sections.at(-1)!.title).toBe("Facing the Kritik persona again");
+  });
+
+  it("omits the persona-tips section when the round's setup had no AI opponent persona", () => {
+    savePracticeRound(ROUND_A);
+
+    const updated = buildAndSavePracticeRoundFeedback(MIXED_FLOW, "round-1", "AFF");
+
+    expect(updated!.feedback!.sections.some((section) => section.title.startsWith("Facing the"))).toBe(
+      false,
+    );
+  });
 });
 
 const SETUP_SECONDARY = buildPracticeRoundSetup({

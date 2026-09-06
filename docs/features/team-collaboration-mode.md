@@ -9,7 +9,7 @@ needs-follow-up cycle as `PrepNoteStatus`.
 - **Route:** `/cards/collaboration`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t collaboration` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -77,7 +77,7 @@ status-cycle order), and `updatePersistedSprintNoteStatus`/
 `assignPersistedSprintNote` (apply-and-save the already-existing
 `updateSprintNoteStatus`/`assignSprintNote` pure transitions) — rather than
 introducing new note-lifecycle logic. Vitest-covered in
-`packages/debate-card-search/test/sprintNotes.test.ts`.
+`packages/debate-team-collaboration/test/sprintNotes.test.ts`.
 
 A later slice closes follow-up (c), "a presence/live-status signal for who's
 currently active." There's no WebSocket (or similar) live transport
@@ -95,7 +95,7 @@ now.") and gives a contributor a "Your ID" field plus an "I'm active here"
 button per topic to record their own heartbeat; every topic's roster
 re-evaluates staleness on a 30-second client-side timer even without a new
 heartbeat, so someone who goes quiet drops off the list. Vitest-covered in
-`packages/debate-card-search/test/topic-presence.test.ts` (the pure
+`packages/debate-team-collaboration/test/topic-presence.test.ts` (the pure
 heartbeat/freshness logic) and `test/topicPresence.test.ts` (the persisted
 store). No follow-ups remain open on this bullet.
 
@@ -124,7 +124,7 @@ whenever its `topic` prop changes and falling back to it for any prop the
 caller doesn't override; `ResearchHub.tsx`'s Sprint tab (the panel's only
 current caller) now just passes a `topic`, having previously hand-derived a
 coverage report from the evidence library and always passed `contributions:
-[]`. Vitest-covered in `packages/debate-card-search/test/topicSprints.test.ts`
+[]`. Vitest-covered in `packages/debate-team-collaboration/test/topicSprints.test.ts`
 (each input read individually, plus an end-to-end composed sprint) and a new
 `listTrackedAssignmentsForTopic` describe block in `test/researchProgress.test.ts`.
 `sprint.routing` itself is unchanged: it's still a *live* re-route of the
@@ -141,7 +141,7 @@ components/research/SprintNotesWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <SprintNotesPanel signedInContributorId={...} />
       — seeds the note form's "Author ID" initial value only; a visitor who
@@ -191,7 +191,7 @@ This closes the matching entry in
 [`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
 localStorage-backed panel in this repo still has no cross-tab live-update
 mechanism." Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-key
 match, the `null`-key clear-all case, two unrelated keys, and two
 same-prefix substring keys). `TopicSprintPanel.tsx`'s own `storage`-listener
 wiring remains intentionally untested, matching every other panel in this
@@ -223,6 +223,75 @@ covered-vs-open note split, and the 5-note carry-over cap;
 carry-over section; `sprintRetrospectiveFilename`'s slugging, including a
 blank/punctuation-only topic falling back to `"topic"`).
 
+## Cross-tab live update (SprintNotesPanel)
+
+`SprintNotesPanel` now has the same cross-tab refresh `TopicSprintPanel`
+already had: it subscribes to the browser's `storage` event via
+`debate-research-evidence`'s `state/live-update.ts`
+`isSprintNotesLiveUpdateStorageEvent` (backing keys `sprintNotes`,
+`topicPresenceHeartbeats`) and rebuilds its note wall when one fires, so a
+note logged, advanced, or reassigned in a second tab appears here without a
+manual reload. Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
+
+A later slice closes the "calendar scheduling for sprint sessions" follow-up
+named under the "🤝 Team Collaboration Mode" bullet in `TODO.md`.
+`lib/team-collaboration-mode.ts` adds a `SprintSession` model (topic, title,
+and a `scheduledDayKey` — a "YYYY-MM-DD" UTC calendar day, mirroring
+`drill-sets.ts`'s date-only "Review reminder" convention rather than a
+precise time, since this repo has no time-zone-aware scheduling anywhere
+else either), with `createSprintSession` validating it and
+`sortSprintSessionsByDay`/`getSessionsForTopic`/`getUpcomingSprintSessions`/
+`getPastSprintSessions` slicing a list of them. `state/sprintSessions.ts`
+persists sessions to `localStorage` (`"sprintSessions"`), mirroring
+`state/sprintNotes.ts`'s exact persistence convention. `TopicSprintPanel`
+gained a "Scheduled sessions" section below the note wall: a form to
+schedule a new session (title + date), an upcoming-sessions list (soonest
+first, with a "Today" badge on same-day sessions and a "Cancel" action per
+row), and a collapsed "Show past sessions (N)" list (most recently past
+first, with a "Remove" action). `"sprintSessions"` was also added to
+`state/live-update.ts`'s `TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`, so a
+session scheduled or canceled in another browser tab refreshes this panel
+too. Vitest-covered in
+`packages/debate-team-collaboration/test/team-collaboration-mode.test.ts`
+(`createSprintSession`'s validation/trimming/clamping and the four slicing
+helpers) and `test/sprintSessions.test.ts` (the persisted store, mirroring
+`sprintNotes.test.ts`'s cases).
+
+A later slice closes the "a shared whiteboard/canvas for sprint
+brainstorming" follow-up named under the "🤝 Team Collaboration Mode" bullet
+in `TODO.md`. Deliberately not a positioned (x/y, draggable) canvas: this
+repo's panel UI kit (`debate-ui`'s `panel-shell`) has no drag-and-drop
+primitive anywhere, so the first slice is a colored sticky-note board
+(creation order, not a freeform layout) — mirroring every other idea's
+"smallest useful vertical slice first" convention rather than introducing
+raw pointer-drag DOM handling with nothing else in the codebase to match its
+styling/theming against. `lib/team-collaboration-mode.ts` adds a
+`WhiteboardNote` model (topic, text, a `color` drawn from a fixed
+`WHITEBOARD_NOTE_COLORS` palette, author, created-at), with
+`createWhiteboardNote` validating/trimming it (an unrecognized color falls
+back to the palette's first entry rather than throwing — a note is still
+worth keeping even with a garbled color) and `getWhiteboardNotesForTopic`/
+`nextWhiteboardNoteColor` slicing/cycling a list of them.
+`state/sprintWhiteboard.ts` persists notes to `localStorage`
+(`"sprintWhiteboardNotes"`), mirroring `state/sprintSessions.ts`'s exact
+persistence convention. `TopicSprintPanel` gained a "Shared whiteboard"
+section between the note wall and scheduled sessions: a wrapping board of
+colored sticky notes (text + author + a "Remove" action), and a form below
+it (note text + a color radio-picker, mirroring `BrainstormBoardPanel`'s
+category picker) that defaults to the next color in the cycle after each
+add. `"sprintWhiteboardNotes"` was also added to `state/live-update.ts`'s
+`TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`, so a note added or removed in
+another browser tab refreshes this panel too — the existing
+`isTopicSprintLiveUpdateStorageEvent` test already iterates that whole
+array, so it covered the new key with no test changes needed there.
+Vitest-covered in
+`packages/debate-team-collaboration/test/team-collaboration-mode.test.ts`
+(`createWhiteboardNote`'s validation/trimming/color-fallback,
+`getWhiteboardNotesForTopic`'s filter-and-sort, and `nextWhiteboardNoteColor`'s
+cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
+mirroring `sprintSessions.test.ts`'s cases).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -232,5 +301,16 @@ blank/punctuation-only topic falling back to `"topic"`).
   prefill" above), so a visitor can still overwrite any of them. There is
   no server-side session check on `saveSprintNote`/
   `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
-  `TopicSprintPanel`'s note form), the same trust boundary every other
-  localStorage-backed action in this repo has.
+  `TopicSprintPanel`'s note form) or on `saveSprintSession`/
+  `createSprintSession` (the "Scheduled sessions" form) or on
+  `saveWhiteboardNote`/`createWhiteboardNote` (the "Shared whiteboard"
+  form), the same trust boundary every other localStorage-backed action in
+  this repo has.
+- Scheduled sessions and whiteboard notes are both local-only (no account
+  sync yet, unlike some other ideas' persisted stores), and scheduling is by
+  calendar day only — no time-of-day, recurrence, or reminder notification.
+- The whiteboard has no freeform (x/y, draggable) layout — notes render in
+  creation order only. A true positioned canvas would need a drag-and-drop
+  primitive this repo's UI kit doesn't have yet; worth revisiting if another
+  idea needs the same primitive (see `TODO.md`'s open follow-up on this
+  bullet, since it's still not started).

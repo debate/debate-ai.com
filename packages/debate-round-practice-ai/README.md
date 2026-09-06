@@ -100,4 +100,9 @@ frontend/        # the original Vite/React source, kept as the port's reference
 UPSTREAM.md      # the upstream project's own README
 ```
 
-Run `bun run test` for the port's 55 tests and `bun run typecheck` for types.
+Run `bun run test` for the port's tests and `bun run typecheck` for types. Coverage for
+every package is merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
+
+Current Codecov package coverage on `master` at commit `50322f5` is **33.19%** (tracked
+under the `debate-round-practice-ai` flag).

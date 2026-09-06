@@ -57,6 +57,15 @@ export interface ReasonEditorProps {
    *  this only needs setting explicitly by hosts showing two docs at
    *  once (Flow split mode). */
   live?: boolean;
+  /** Start with CardMirror's own outline nav pane hidden — for hosts
+   *  that render their own document sidebar beside the embed (the
+   *  /reason-editor page's file tree + open tabs), where the engine's
+   *  default-visible nav pane would claim a second sidebar's worth of
+   *  the column. Goes through the transient `navPaneVisible` setting,
+   *  so the pull-tab / View-menu toggle still re-shows it, nothing is
+   *  persisted, and the previous value is restored on unmount (unless
+   *  the user re-showed the pane themselves in the meantime). */
+  defaultNavPaneHidden?: boolean;
   /** Read-only preview only: fires when the user clicks/focuses it,
    *  requesting to become the live pane. No-op while `live` is true. */
   onActivate?: () => void;
@@ -73,6 +82,7 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       onActivate,
       className,
       showToolbar = true,
+      defaultNavPaneHidden = false,
     },
     ref,
   ) {
@@ -103,6 +113,33 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       // change is handled by the effect below instead.
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [live, key]);
+
+    // Host-supplied-sidebar mode: start the engine's nav pane hidden via
+    // the transient `navPaneVisible` setting. Deliberately keyed off
+    // [defaultNavPaneHidden, live] only — NOT `key` — so switching
+    // documents doesn't re-hide a pane the user pulled back open. The
+    // settings store is a plain module singleton, importable before the
+    // engine boots; setting it early means boot's applyNavPaneVisible()
+    // already sees the hidden state (no flash of the pane).
+    useEffect(() => {
+      if (!defaultNavPaneHidden || !live) return;
+      let alive = true;
+      let didHide = false;
+      void import("../editor/settings.js").then(({ settings }) => {
+        if (!alive || !settings.get("navPaneVisible")) return;
+        didHide = true;
+        settings.set("navPaneVisible", false);
+      });
+      return () => {
+        alive = false;
+        // Restore only what this mount changed, and only if the user
+        // hasn't re-shown the pane themselves in the meantime.
+        if (!didHide) return;
+        void import("../editor/settings.js").then(({ settings }) => {
+          if (!settings.get("navPaneVisible")) settings.set("navPaneVisible", true);
+        });
+      };
+    }, [defaultNavPaneHidden, live]);
 
     // Same-identity external content updates (e.g. a realtime sync
     // overwriting `content` while this key is still the live doc).

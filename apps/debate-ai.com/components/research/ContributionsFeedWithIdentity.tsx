@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s
+ * @fileoverview Thin wrapper over `debate-research-evidence`'s
  * `ContributionsFeedPanel` that locks the endorsing reviewer id to this
  * app's real signed-in session, via `deriveContributorIdFromSessionIdentity`.
  * The panel itself stays app-agnostic (it takes the derived id as a plain

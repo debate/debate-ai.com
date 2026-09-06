@@ -1,0 +1,37 @@
+---
+title: "Shared, AI-Generated Debate Flow"
+---
+
+# Shared, Ai-Generated Debate Flow — Flow Edit Log + Sync
+
+Lets a contributor log a proposed edit to a specific flow argument and
+previews how every logged edit merges into the round's flow, flagging
+genuinely concurrent, diverging edits for a human to resolve.
+
+- **Where:** the Coach hub's Flow section (`/coach`)
+- **Package:** `debate-round`
+
+## What it shows
+
+A **Flow Edit Log** form, grouped by flow, with a merge preview
+(**Shared Flow Sync**) showing how many boxes would update and flagging
+conflicts. A "Live sync" toggle turns on a D1-backed short-poll transport
+sharing edits across contributors' browsers, plus a "who's editing now"
+presence indicator. Conflicts render as a word-level side-by-side diff.
+
+## Data flow
+
+```
+flow/shared-flow-sync.ts — createFlowEdit, mergeFlowEdits, applyMergedEditsToFlow
+state/flowEdits.ts (localStorage: flowEdits)
+  → panels/FlowEditLogPanel.tsx / panels/SharedFlowSyncPanel.tsx
+
+Live sync:
+  flow/flow-sync-client.ts → GET/POST /api/flow-sync
+  flow/flow-presence-client.ts → GET/POST /api/flow-presence
+```
+
+## Known gaps
+
+Live sync is opt-in, per-Flow-ID, off by default, and polls on a ~4s
+interval rather than pushing instantly.

@@ -1,0 +1,36 @@
+---
+title: "Round Workspace — Tools for this round menu"
+---
+
+# Round Workspace — "Tools for this round" menu
+
+Adds a quick-access menu to the round workspace (`/debate`) linking
+straight to the flow-driven analysis tools that act on whatever flow is
+currently selected.
+
+- **Nav:** a wrench-icon button in the round workspace sidebar's
+  quick-action row
+- **Package:** `debate-round`
+
+## What it does
+
+Clicking the wrench icon opens a menu of tools with their own "Generate
+... for current round" action — Argument Tree Outline, AI Response-Outcome
+Charts, Practice Drills, and AI Coach Mode — each disabled until a flow is
+selected. Each target page also renders an "Other round tools" cross-link
+row.
+
+## Data flow
+
+```
+round/flow-tool-links.ts (pure)
+  → FLOW_TOOL_LINKS / buildFlowToolsMenuItems(flow)
+layout/FlowToolsMenu.tsx
+layout/FlowPageSidebar.tsx
+layout/RoundToolsCrossLinks.tsx
+```
+
+## Known gaps
+
+Only covers the four tools with a literal "Generate ... for current round"
+action — narrower flow-reading panels were deliberately left out.

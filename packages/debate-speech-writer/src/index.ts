@@ -59,13 +59,17 @@ export {
 } from "./state/judgeProfiles";
 
 export {
+  bulkImportJudgeRoundRecords,
   deleteJudgeRoundRecord,
   listJudgeRoundRecords,
   listJudgeRoundRecordsForJudge,
   rebuildJudgeProfileFromRecords,
   recordJudgeRound,
 } from "./state/judgeRoundRecords";
-export type { JudgeRoundRecordEntry } from "./state/judgeRoundRecords";
+export type { JudgeRoundCsvImportResult, JudgeRoundRecordEntry } from "./state/judgeRoundRecords";
+
+export { JUDGE_ROUND_CSV_TEMPLATE, parseJudgeRoundRecordsCsv } from "./judge/judge-round-record-csv-import";
+export type { JudgeRoundCsvEntry, JudgeRoundCsvParseResult } from "./judge/judge-round-record-csv-import";
 
 export { JudgeProfilesPanel } from "./panels/JudgeProfilesPanel";
 
@@ -93,6 +97,18 @@ export type {
   OpponentDifficulty,
   OpponentDifficultyLevel,
 } from "./opponent/opponent-personas";
+
+export {
+  buildSavedCustomOpponentPersona,
+  isValidSavedCustomOpponentPersona,
+  MAX_SAVED_CUSTOM_OPPONENT_PERSONA_BYTES,
+  resolveOpponentPersonaFromLibraryEntry,
+  sortCustomOpponentPersonaLibrary,
+} from "./opponent/opponent-persona-library";
+export type {
+  CustomOpponentPersonaLibraryEntryInput,
+  SavedCustomOpponentPersona,
+} from "./opponent/opponent-persona-library";
 
 export {
   approveCoachMaterial,

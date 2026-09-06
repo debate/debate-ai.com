@@ -134,7 +134,12 @@ describe("computeGroupChallengeProgress — win_target", () => {
 
   it("leaves mvpContributorId undefined when nobody has any matching activity", () => {
     const progress = computeGroupChallengeProgress(winChallenge, [], [], WEEK_START + 1000);
-    expect(progress.memberStandings).toEqual([]);
+    // Every rostered member still appears, alphabetically, at zero — the
+    // standings list always agrees with the roster badges.
+    expect(progress.memberStandings).toEqual([
+      { contributorId: "alex", matchingCount: 0 },
+      { contributorId: "sam", matchingCount: 0 },
+    ]);
     expect(progress.mvpContributorId).toBeUndefined();
   });
 });

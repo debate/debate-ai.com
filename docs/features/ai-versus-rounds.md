@@ -85,6 +85,17 @@ panels/AiVersusRoundPanel.tsx
   → new Blob([text]) + anchor download              — same pattern as
                                                         dialogs/FileExportDialog.tsx
 
+Comparing two rounds' transcripts:
+panels/AiVersusRoundPanel.tsx
+  → round/ai-versus-transcript.ts's
+      buildAiVersusTranscriptComparison(recordA, recordB) — zips both
+      rounds' speeches positionally and word-diffs each aligned pair
+  → buildAiVersusTranscriptComparisonText(comparison)     — pure plain-text
+                                                              render, for the
+                                                              download action
+  → aiVersusTranscriptComparisonFilename(recordA, recordB) — a safe download
+                                                               filename
+
 Generating the AI's next speech (follow-up (a)):
 panels/AiVersusRoundPanel.tsx
   → buildAiResponseRequest(order, submittedCount, submittedSpeeches)
@@ -138,7 +149,7 @@ Follow-up (a) — the AI speech-generation call — adds
 `round/ai-versus-speech-ai.ts` (pure prompt-building + tolerant response
 parsing, `fetch`-free and directly Vitest-testable) and
 `round/ai-versus-speech-client.ts` (the thin `fetch` client posting to
-`/api/reason-ai`), mirroring `debate-card-search`'s "LLM Card Scoring —
+`/api/reason-ai`), mirroring `debate-research-evidence`'s "LLM Card Scoring —
 real AI-scoring call" slice's `lib/llm-card-scoring-ai.ts` /
 `lib/llm-card-scoring-client.ts` split. No existing turn-order or
 persistence logic changed. Vitest-covered in
@@ -213,12 +224,36 @@ neither `SpeechRecognition` constructor exists, and a recognition error
 (e.g. mic permission denied) surfaces inline. No new pure logic was added —
 `microphone-transcription.ts`'s existing Vitest coverage already applies.
 
+A "Compare transcripts" section (shown once at least two rounds are
+persisted, regardless of completion state) lets a user pick any two rounds
+from a pair of dropdowns and renders a word-level, side-by-side diff of
+their delivered speeches — closing the "a side-by-side transcript diff
+between two rounds" follow-up named under idea #3. Speeches are aligned
+positionally (round A's Nth submitted speech against round B's Nth) via
+`round/ai-versus-transcript.ts#buildAiVersusTranscriptComparison`, with no
+assumption that the two rounds share a format, side, or length — a row
+where only one round has delivered a speech at that index still renders,
+undiffed, labeled "(not delivered in this round)" on the other side. Each
+aligned pair's actual text is word-diffed via the existing, generic
+`flow-edit-diff.ts#diffFlowEditContent` (already used by `SharedFlowSyncPanel`
+for `FlowEdit` conflicts, and generic over any two strings) rather than a
+second diff implementation, and rendered through the same `DiffText`
+pattern (an added/removed-highlighted, `line-through`-on-removed span). A
+"Download comparison" action mirrors the single-round transcript download,
+via `buildAiVersusTranscriptComparisonText` — one section per aligned
+speech position, both rounds' full undiffed text included (the diff
+highlighting itself is visual-only, since a plain-text file has no faithful
+way to carry it). Vitest-covered in
+`packages/debate-practice-drills/test/ai-versus-transcript.test.ts`.
+
 ## Known gaps
 
 None open. Every delivered AI speech can now be regenerated independently
 in place (see "Regenerating a delivered AI speech at any position" above)
 without discarding any other speech; a completed round's transcript can now
-be downloaded as plain text (see "Download transcript" above); speech
+be downloaded as plain text (see "Download transcript" above); any two
+persisted rounds' transcripts can now be compared side by side with
+word-level diff highlighting (see "Compare transcripts" above); speech
 submission stays text-only beyond microphone dictation, and there is no
 transcription path for an already-recorded audio/video file, matching every
 other panel in this repo that shares that same gap.

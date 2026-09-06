@@ -1,0 +1,32 @@
+---
+title: "Topic Coverage Dashboard"
+---
+
+# Topic Coverage Dashboard
+
+Tracks a topic's argument checklist and shows which arguments are
+well-covered, thin, or missing entirely, based on cards already submitted
+to the shared evidence library.
+
+- **Route:** `/cards/coverage`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A topic switcher, an "Add to checklist" form, coverage rows (missing/
+thin/covered, card count, word count), a "Needs the most work" list, and an
+untracked section for submitted-but-unchecklisted argument blocks.
+
+## Data flow
+
+```
+state/trackedArguments.ts (localStorage — topic checklist)
+  → buildPersistedTopicCoverageReport(topic)
+      → buildTopicCoverageReport() — lib/topic-coverage.ts (pure)
+  → panels/TopicCoverageDashboardPanel.tsx
+  → apps/debate-ai.com/app/cards/coverage/page.tsx
+```
+
+## Known gaps
+
+The checklist is per-browser localStorage, not a shared team resource.

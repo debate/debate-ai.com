@@ -4,7 +4,8 @@
  * `ResearchProgressPanel`, `QuestStreaksPanel`, `NewsStreamPanel`,
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
  * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`,
- * `ContributionsFeedPanel`, `TopicSprintPanel`, and
+ * `ContributionsFeedPanel`, `TopicSprintPanel`, `ReviewQueuePanel`,
+ * `PrepRoomPanel`, `SprintNotesPanel`, and
  * `CoachingProgramRosterAnalyticsPanel`, mirroring `debate-round`'s
  * `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
@@ -25,7 +26,7 @@
  * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
  * repo still has no cross-tab live-update mechanism." (a gap that still
  * applies to the rest of this repo's localStorage-backed panels beyond
- * these fifteen).
+ * the ones listed here).
  *
  * @module state/live-update
  */
@@ -57,12 +58,14 @@ export function isDailyBestCardLiveUpdateStorageEvent(event: { key: string | nul
  * `state/researchProgress.ts#buildPersistedLeaderboardWithCompletedTasks`
  * (`contributions`, `completedResearchTasks`) and
  * `lib/unlock-streak-status.ts#buildContributorUnlockStatusWithStreakFromStore`
- * (`dailyMissionResults`, the streak/streak-badge source).
+ * (`dailyMissionResults` plus `streakFreezes`, the freeze-bridged
+ * streak/streak-badge source).
  */
 export const CONTRIBUTION_LEADERBOARD_LIVE_UPDATE_STORAGE_KEYS = [
   "contributions",
   "completedResearchTasks",
   "dailyMissionResults",
+  "streakFreezes",
 ] as const;
 
 /**
@@ -83,13 +86,16 @@ export function isContributionLeaderboardLiveUpdateStorageEvent(event: { key: st
  * The `localStorage` keys `TaskInboxPanel` reads from, via
  * `state/routedTaskQueues.ts#buildTaskInboxView` (`routedTaskQueues`),
  * `state/pendingTaskVerifications.ts#listPendingTaskVerifications`
- * (`pendingTaskVerifications`), and `state/trackedArguments.ts#listTrackedTopics`
- * (`trackedArguments`, the "Route tasks" quick-pick list).
+ * (`pendingTaskVerifications`), `state/trackedArguments.ts#listTrackedTopics`
+ * (`trackedArguments`, the "Route tasks" quick-pick list), and
+ * `state/contributorAvailability.ts` (`contributorAvailability`, the "Team
+ * capacity" section's per-contributor load view).
  */
 export const TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS = [
   "routedTaskQueues",
   "pendingTaskVerifications",
   "trackedArguments",
+  "contributorAvailability",
 ] as const;
 
 /**
@@ -113,12 +119,14 @@ export function isTaskInboxLiveUpdateStorageEvent(event: { key: string | null })
  * `state/researchProgress.ts#buildPersistedLeaderboardWithCompletedTasks`
  * (`contributions`, `completedResearchTasks`) with
  * `state/dailyMissionResults.ts#listDailyMissionResultsForContributor`
- * (`dailyMissionResults`, the streak/streak-badge source).
+ * (`dailyMissionResults` plus `streakFreezes`, the freeze-bridged
+ * streak/streak-badge source).
  */
 export const PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS = [
   "contributions",
   "completedResearchTasks",
   "dailyMissionResults",
+  "streakFreezes",
 ] as const;
 
 /**
@@ -139,12 +147,16 @@ export function isProgressUnlocksLiveUpdateStorageEvent(event: { key: string | n
  * The `localStorage` keys `ResearchProgressPanel` reads from, via
  * `state/researchProgress.ts#buildPersistedResearchProgressBoard`
  * (`contributions`, `completedResearchTasks`, and `routedTaskQueues` via
- * `state/routedTaskQueues.ts#listRoutedTaskQueues`).
+ * `state/routedTaskQueues.ts#listRoutedTaskQueues`), plus
+ * `state/researchProgressGoals.ts` (`researchProgressGoals`, the "My
+ * research goal" section) so a goal set or cleared in another tab is
+ * reflected here too.
  */
 export const RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS = [
   "contributions",
   "completedResearchTasks",
   "routedTaskQueues",
+  "researchProgressGoals",
 ] as const;
 
 /**
@@ -445,8 +457,11 @@ export function isContributionsFeedLiveUpdateStorageEvent(event: { key: string |
  * coverage report), `state/contributorAvailability.ts`'s
  * `"contributorAvailability"` (the roster), `state/researchProgress.ts`'s
  * `"completedResearchTasks"` and `state/routedTaskQueues.ts`'s
- * `"routedTaskQueues"` (tracked assignments), and `state/sprintNotes.ts`'s
- * `"sprintNotes"` (the note wall).
+ * `"routedTaskQueues"` (tracked assignments), `state/sprintNotes.ts`'s
+ * `"sprintNotes"` (the note wall), `state/sprintSessions.ts`'s
+ * `"sprintSessions"` (scheduled sprint sessions), and
+ * `state/sprintWhiteboard.ts`'s `"sprintWhiteboardNotes"` (the shared
+ * whiteboard).
  */
 export const TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS = [
   "dailyQuestTemplates",
@@ -457,6 +472,8 @@ export const TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS = [
   "completedResearchTasks",
   "routedTaskQueues",
   "sprintNotes",
+  "sprintSessions",
+  "sprintWhiteboardNotes",
 ] as const;
 
 /**
@@ -475,13 +492,96 @@ export function isTopicSprintLiveUpdateStorageEvent(event: { key: string | null 
 }
 
 /**
+ * The `localStorage` keys `ReviewQueuePanel` reads from:
+ * `state/peerReviews.ts`'s own `"peerReviews"` store (every review's status
+ * and comment thread) and `state/evidenceLibraryEntries.ts`'s
+ * `"evidenceLibraryEntries"` (each reviewed card's underlying entry).
+ */
+export const REVIEW_QUEUE_LIVE_UPDATE_STORAGE_KEYS = [
+  "peerReviews",
+  "evidenceLibraryEntries",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `ReviewQueuePanel` to refresh its
+ * rendered queue — closes the "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isReviewQueueLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (REVIEW_QUEUE_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `PrepRoomPanel` reads from, via
+ * `state/prepRooms.ts#buildPersistedPrepRoom` (`trackedArguments` and
+ * `evidenceLibraryEntries` for the coverage report and evidence/draft
+ * blocks, `contributorAvailability` for the routed-task roster),
+ * `state/topicPresence.ts` (`topicPresenceHeartbeats`, the "active now"
+ * roster), and `state/prepRoomChecklist.ts` (`prepRoomChecklist`, the shared
+ * task checklist).
+ */
+export const PREP_ROOM_LIVE_UPDATE_STORAGE_KEYS = [
+  "trackedArguments",
+  "evidenceLibraryEntries",
+  "contributorAvailability",
+  "topicPresenceHeartbeats",
+  "prepRoomChecklist",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `PrepRoomPanel` to refresh its
+ * rendered room — closes the "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isPrepRoomLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PREP_ROOM_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `SprintNotesPanel` reads from:
+ * `state/sprintNotes.ts`'s own `"sprintNotes"` store (every logged prep
+ * note) and `state/topicPresence.ts`'s `"topicPresenceHeartbeats"` (each
+ * topic group's "active now" roster).
+ */
+export const SPRINT_NOTES_LIVE_UPDATE_STORAGE_KEYS = [
+  "sprintNotes",
+  "topicPresenceHeartbeats",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `SprintNotesPanel` to refresh its
+ * rendered note wall — closes the "Every other localStorage-backed panel in
+ * this repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isSprintNotesLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (SPRINT_NOTES_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
  * The `localStorage` keys `CoachingProgramRosterAnalyticsPanel` reads from:
  * `state/coachingPrograms.ts`'s `"coachingPrograms"` (the program picker's
  * roster list), `state/groupChallenges.ts`'s `"groupChallenges"` and
  * `state/challengeWinEvents.ts`'s `"challengeWinEvents"`/`"contributions"`
  * (the persisted group-challenge board each member's standing is summarized
- * from), and `state/dailyMissionResults.ts`'s `"dailyMissionResults"` (each
- * member's quest streak).
+ * from), `state/dailyMissionResults.ts`'s `"dailyMissionResults"` (each
+ * member's quest streak), and `state/sprintNotes.ts`'s `"sprintNotes"` (the
+ * program calendar's sprint-note events — see
+ * `lib/coaching-program-calendar.ts`).
  */
 export const COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS = [
   "coachingPrograms",
@@ -489,6 +589,7 @@ export const COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS = [
   "challengeWinEvents",
   "contributions",
   "dailyMissionResults",
+  "sprintNotes",
 ] as const;
 
 /**

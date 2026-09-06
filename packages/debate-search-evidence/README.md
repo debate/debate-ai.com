@@ -19,3 +19,16 @@ and `debate-community` reach specific modules that aren't re-exported from the p
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+```
+
+Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
+merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
+
+Current Codecov package coverage on `master` at commit `50322f5` is **57.27%** (tracked
+under the `debate-search-evidence` flag).

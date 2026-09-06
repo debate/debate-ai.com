@@ -1,0 +1,37 @@
+---
+title: "Create New Round — Registered-User Invites & Notifications"
+---
+
+# Create New Round — Registered-User Invites & Account Notifications
+
+Links the Create New Round dialog's debater/judge/spectator fields to real
+accounts: typing autocompletes against registered users, and submitting
+the form invites everyone on the round — a registered user in-app, anyone
+else by email.
+
+- **Dialog:** `RoundEditorDialog` (`/debate`'s "Create New Round" action)
+- **Notifications route:** `/notifications`
+- **Package:** `debate-round`
+
+## What it does
+
+Each debater/judge/spectator field is a `UserAutocomplete`. On submit,
+every non-empty, non-self email goes to `POST /api/rounds/invite`: a
+registered user gets an in-app notification, everyone else gets a Resend
+email invite. A polling hook toasts new notifications while a tab is open.
+
+## Data flow
+
+```
+dialogs/CreateRoundDialog/UserAutocomplete.tsx → GET /api/users/search
+dialogs/CreateRoundDialog/useRoundEditorForm.ts#handleSubmit
+  → dispatchRoundInvites(...) → POST /api/rounds/invite
+hooks/useAccountNotifications.ts (polls every 30s)
+  → GET /api/notifications
+panels/AccountNotificationsPanel.tsx → PATCH /api/notifications
+```
+
+## Known gaps
+
+Inviting doesn't sync the round itself server-side. Only round creation
+sends invites, not later edits.

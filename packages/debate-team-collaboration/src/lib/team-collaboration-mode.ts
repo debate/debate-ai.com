@@ -288,6 +288,162 @@ export function sprintRetrospectiveFilename(topic: string): string {
 }
 
 /**
+ * A scheduled sprint session — a specific calendar day a team plans to work
+ * together on a topic sprint. Closes the "calendar scheduling for sprint
+ * sessions" follow-up named under the "🤝 Team Collaboration Mode" bullet in
+ * TODO.md. Scheduled by UTC calendar day (`scheduledDayKey`, "YYYY-MM-DD")
+ * rather than a precise time, mirroring `drill-sets.ts`'s "Review reminder"
+ * date-only convention — this repo has no time-zone-aware scheduling
+ * anywhere else either.
+ */
+export interface SprintSession {
+  id: string;
+  topic: string;
+  title: string;
+  /** UTC calendar day this session is scheduled for, "YYYY-MM-DD" (see `getUtcDayKey`). */
+  scheduledDayKey: string;
+  createdAt: number;
+}
+
+const MAX_SESSION_TITLE_LENGTH = 200;
+const DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+export interface CreateSprintSessionInput {
+  id: string;
+  topic: string;
+  title: string;
+  scheduledDayKey: string;
+  createdAt: number;
+}
+
+/**
+ * Builds a `SprintSession`, validating that it names a topic, has a
+ * non-blank title, and carries a well-formed "YYYY-MM-DD" day key. `title`
+ * is trimmed and clamped to `MAX_SESSION_TITLE_LENGTH`.
+ */
+export function createSprintSession(input: CreateSprintSessionInput): SprintSession {
+  if (!input.topic.trim()) {
+    throw new Error("createSprintSession: topic is required");
+  }
+  const title = input.title.trim();
+  if (!title) {
+    throw new Error("createSprintSession: title is required");
+  }
+  if (!DAY_KEY_PATTERN.test(input.scheduledDayKey)) {
+    throw new Error("createSprintSession: scheduledDayKey must be in YYYY-MM-DD format");
+  }
+
+  return {
+    id: input.id,
+    topic: input.topic,
+    title: title.slice(0, MAX_SESSION_TITLE_LENGTH),
+    scheduledDayKey: input.scheduledDayKey,
+    createdAt: input.createdAt,
+  };
+}
+
+/** Ascending by `scheduledDayKey`, without mutating the input array. */
+export function sortSprintSessionsByDay(sessions: SprintSession[]): SprintSession[] {
+  return [...sessions].sort((a, b) => a.scheduledDayKey.localeCompare(b.scheduledDayKey));
+}
+
+/** All sessions scheduled for one specific topic, soonest first. */
+export function getSessionsForTopic(sessions: SprintSession[], topic: string): SprintSession[] {
+  return sortSprintSessionsByDay(sessions.filter((session) => session.topic === topic));
+}
+
+/** Sessions scheduled today (by UTC day key) or later, soonest first. */
+export function getUpcomingSprintSessions(sessions: SprintSession[], todayKey: string): SprintSession[] {
+  return sortSprintSessionsByDay(sessions.filter((session) => session.scheduledDayKey >= todayKey));
+}
+
+/** Sessions scheduled before today (by UTC day key), most recently past first. */
+export function getPastSprintSessions(sessions: SprintSession[], todayKey: string): SprintSession[] {
+  return sortSprintSessionsByDay(sessions.filter((session) => session.scheduledDayKey < todayKey)).reverse();
+}
+
+/**
+ * A shared sticky note on a topic sprint's whiteboard — the "a shared
+ * whiteboard/canvas for sprint brainstorming" follow-up named under the "🤝
+ * Team Collaboration Mode" bullet in TODO.md. Deliberately not a positioned
+ * (x/y) canvas: this repo's panel UI kit has no drag-and-drop primitive
+ * anywhere, so the first slice is a colored sticky-note board (order is
+ * creation order, not a freeform layout), mirroring every other idea's
+ * "smallest useful vertical slice first" convention.
+ */
+export type WhiteboardNoteColor = "yellow" | "pink" | "blue" | "green" | "purple";
+
+/** Fixed palette a whiteboard note's color is drawn from, in default cycling order. */
+export const WHITEBOARD_NOTE_COLORS: readonly WhiteboardNoteColor[] = [
+  "yellow",
+  "pink",
+  "blue",
+  "green",
+  "purple",
+];
+
+export interface WhiteboardNote {
+  id: string;
+  topic: string;
+  text: string;
+  color: WhiteboardNoteColor;
+  authorId: string;
+  createdAt: number;
+}
+
+const MAX_WHITEBOARD_NOTE_LENGTH = 280;
+
+export interface CreateWhiteboardNoteInput {
+  id: string;
+  topic: string;
+  text: string;
+  authorId: string;
+  color: WhiteboardNoteColor;
+  createdAt: number;
+}
+
+/**
+ * Builds a `WhiteboardNote`, validating that it names a topic and has
+ * non-blank text. `text` is trimmed and clamped to `MAX_WHITEBOARD_NOTE_LENGTH`;
+ * an unrecognized `color` falls back to the palette's first entry rather than
+ * throwing (a note is still worth keeping even with a garbled color).
+ */
+export function createWhiteboardNote(input: CreateWhiteboardNoteInput): WhiteboardNote {
+  if (!input.topic.trim()) {
+    throw new Error("createWhiteboardNote: topic is required");
+  }
+  const text = input.text.trim();
+  if (!text) {
+    throw new Error("createWhiteboardNote: text is required");
+  }
+
+  return {
+    id: input.id,
+    topic: input.topic,
+    text: text.slice(0, MAX_WHITEBOARD_NOTE_LENGTH),
+    color: WHITEBOARD_NOTE_COLORS.includes(input.color) ? input.color : WHITEBOARD_NOTE_COLORS[0],
+    authorId: input.authorId.trim() || "me",
+    createdAt: input.createdAt,
+  };
+}
+
+/** All notes for one specific topic, oldest first. */
+export function getWhiteboardNotesForTopic(notes: WhiteboardNote[], topic: string): WhiteboardNote[] {
+  return notes.filter((note) => note.topic === topic).sort((a, b) => a.createdAt - b.createdAt);
+}
+
+/**
+ * The color a newly-added note should default to, cycling through
+ * `WHITEBOARD_NOTE_COLORS` by how many notes the topic's board already has —
+ * so consecutive notes on the same board read as visually distinct without
+ * requiring every contributor to hand-pick a color.
+ */
+export function nextWhiteboardNoteColor(existingNoteCountForTopic: number): WhiteboardNoteColor {
+  const index = existingNoteCountForTopic % WHITEBOARD_NOTE_COLORS.length;
+  return WHITEBOARD_NOTE_COLORS[index];
+}
+
+/**
  * Renders a `SprintRetrospective` as a plain-text file for download,
  * mirroring `research-progress.ts`'s `buildResearchProgressReportText`
  * plain-text-report convention.

@@ -331,7 +331,7 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
   const [calendarMonthKey, setCalendarMonthKey] = useState(() => getUtcMonthKey(Date.now()))
   const [selectedCalendarDayKey, setSelectedCalendarDayKey] = useState<string | undefined>(undefined)
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
-  const { comments, postComment, deleteComment } = useDailyBestCardComments()
+  const { comments, postComment, deleteComment, refreshComments } = useDailyBestCardComments()
 
   const refresh = () => {
     const now = Date.now()
@@ -355,10 +355,15 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
     const handleStorage = (event: StorageEvent) => {
       if (!isDailyBestCardLiveUpdateStorageEvent(event)) return
       refresh()
+      // The predicate's key list includes `dailyBestCardComments`, but the
+      // comment threads live in the hook's own state — re-read them too, so
+      // a comment posted in another tab actually appears here.
+      refreshComments()
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshComments])
 
   const handleAnnounce = () => {
     announceDailyBestCard(Date.now())
@@ -412,7 +417,7 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
                 <div className="text-xs font-medium uppercase tracking-wide text-amber-600 dark:text-amber-400">
                   Card of the day
                 </div>
-                <div className="mt-1 text-sm font-medium text-foreground">{today.contribution.id}</div>
+                <div className="mt-1 text-sm font-medium text-foreground">{buildDailyBestCardHighlight(today)}</div>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <Badge variant="secondary">{today.contribution.contributorId}</Badge>
                   <span>helpfulness {today.breakdown.helpfulnessScore}/100</span>

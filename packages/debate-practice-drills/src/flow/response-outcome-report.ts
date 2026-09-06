@@ -21,7 +21,11 @@
  */
 
 import type { CounselPanelAssessmentRecord } from "../state/counselPanelAssessments";
-import type { SideOutcomeSummary, VulnerabilityChartPoint } from "debate-round/src/flow/response-outcome";
+import type {
+  HypotheticalScenarioComparison,
+  SideOutcomeSummary,
+  VulnerabilityChartPoint,
+} from "debate-round/src/flow/response-outcome";
 
 export type ResponseOutcomeReportInput = {
   roundId: string;
@@ -106,4 +110,68 @@ export function responseOutcomeReportFilename(roundId: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return `response-outcome-${safeId || "round"}-report.txt`;
+}
+
+/**
+ * Renders a `HypotheticalScenarioComparison` (built by
+ * `response-outcome.ts#buildHypotheticalScenarioComparison`) as plain text
+ * — idea #4's "a side-by-side view comparing two or more 'what if'
+ * hypotheticals at once" follow-up in TODO.md. One section per scenario
+ * with its per-side exposure summary, followed by one line per compared
+ * argument showing that argument's score under every scenario, in the
+ * same scenario order the comparison lists them.
+ */
+export function buildHypotheticalScenarioComparisonText(input: {
+  roundId: string;
+  comparison: HypotheticalScenarioComparison;
+}): string {
+  const { roundId, comparison } = input;
+
+  const header = `AI Response-Outcome Scenario Comparison — Round ${roundId}`;
+
+  const scenarioSections = comparison.scenarioNames.map((name, index) => {
+    const sideSummaries = comparison.sideSummaries[index];
+    const sideLines =
+      sideSummaries.length === 0
+        ? "No flowed arguments to summarize yet."
+        : sideSummaries
+            .map(
+              (side) =>
+                `${side.sideKey}: ${side.averageVulnerability} avg vulnerability, ` +
+                `${side.argumentCount} argument${side.argumentCount === 1 ? "" : "s"}, ` +
+                `${side.unansweredCount} unanswered`,
+            )
+            .join("\n");
+    return `Scenario: ${name}\n${sideLines}`;
+  });
+
+  const argumentSection =
+    comparison.argumentRows.length === 0
+      ? "No flowed arguments to compare yet."
+      : comparison.argumentRows
+          .map((row) => {
+            const scores = row.scenarioScores
+              .map((score, index) => `${comparison.scenarioNames[index]}: ${score}`)
+              .join(", ");
+            return `${row.label} — ${scores}`;
+          })
+          .join("\n");
+
+  const sections = [header, "", ...scenarioSections, "", "Compared arguments:", argumentSection];
+
+  return `${sections.join("\n")}\n`;
+}
+
+/**
+ * A filesystem-safe filename for a round's scenario-comparison download,
+ * e.g. `response-outcome-round-1-scenario-comparison.txt`. Mirrors
+ * `responseOutcomeReportFilename`'s exact slugification rule.
+ */
+export function hypotheticalScenarioComparisonFilename(roundId: string): string {
+  const safeId = roundId
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `response-outcome-${safeId || "round"}-scenario-comparison.txt`;
 }

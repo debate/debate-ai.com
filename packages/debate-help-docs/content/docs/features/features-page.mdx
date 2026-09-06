@@ -1,0 +1,39 @@
+---
+title: "Features Page"
+---
+
+# Features Page
+
+One page that outlines every user-facing surface in the app: each
+feature's name, a one-line description, its route, and a link to its
+long-form doc, grouped into eight categories and filtered by a search box.
+
+- **Route:** `/features`
+- **Package:** `debate-ui`
+
+## Why this exists
+
+Nothing in the app listed everything it does — the dock's Settings menu is
+a flat list of forty-odd items, `/research` and `/coach` each tab across
+one package's panels, and `/community-hub` deliberately omits core
+workspaces and standings. This page is the map.
+
+## What it shows
+
+A header count line, a search box (matching title/description/route/hidden
+tags), a jump-to-category row, and eight category sections (Core
+Workspaces, Evidence & Research, Team Collaboration, Flowing & Round
+Analysis, Pre-Round Intelligence, Practice & Coaching, Recognition &
+Progress, Standings & Rankings), each feature card linking to its route and
+docs page.
+
+## How it works
+
+`packages/debate-ui/src/features/feature-catalog.ts` holds the pure data
+(`APP_FEATURES`, `buildFeatureSections`, `searchFeatures`); `FeaturesPanel.tsx`
+renders it. Titles/descriptions are copied from each route's own metadata.
+
+## Known gaps
+
+The catalog is a hand-maintained registry — a new route has to be added to
+it separately.

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
   listTrackedArguments,
@@ -273,5 +274,40 @@ describe("buildPersistedTopicCoverageReport", () => {
     expect(report.tracked).toEqual([
       { argBlock: "Warming DA", category: "DA", cardCount: 0, totalWordCount: 0, level: "missing" },
     ]);
+  });
+});
+
+describe("buildPersistedCrossTopicCoverageComparison", () => {
+  it("returns an empty list when nothing is tracked", () => {
+    expect(buildPersistedCrossTopicCoverageComparison()).toEqual([]);
+  });
+
+  it("rolls up every tracked topic, worst-covered first", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveTrackedArgument(OTHER_TOPIC);
+
+    const rows = buildPersistedCrossTopicCoverageComparison();
+    expect(rows.map((r) => r.topic)).toEqual(["Energy Policy", "Immigration Policy"]);
+    expect(rows.every((r) => r.coverageRatio === 0)).toBe(true);
+  });
+
+  it("moves a topic to the front once its coverage improves", () => {
+    saveTrackedArgument(WARMING_DA);
+    saveTrackedArgument(OTHER_TOPIC);
+    saveEvidenceLibraryEntry({
+      id: "entry-1",
+      argBlock: "Warming DA",
+      wordCount: 700,
+      topic: "Energy Policy",
+      caseArea: "DA",
+      tags: [],
+      kind: "card",
+      text: "Covers the tracked argument enough to clear the default threshold.",
+      cite: "Smith 24",
+    });
+
+    const rows = buildPersistedCrossTopicCoverageComparison({ minCards: 1, minTotalWords: 500 });
+    expect(rows.map((r) => r.topic)).toEqual(["Immigration Policy", "Energy Policy"]);
+    expect(rows[1].coverageRatio).toBe(1);
   });
 });

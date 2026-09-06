@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import grab from "grab-url";
 import type { SearchFilters } from "../components/ResearchSearchSidebar";
 import type { SearchResult } from "../types";
@@ -19,6 +19,7 @@ import {
   SEARCH_DEBOUNCE_MS,
   buildSearchUrl,
 } from "../lib/search-query";
+import { isTypingTarget, nextSelectionIndex } from "../lib/result-navigation";
 
 /**
  * Manages search state including term, filters, sorting, results, and selection.
@@ -42,6 +43,15 @@ export function useSearchState() {
   const [loading, setLoading] = useState(true);
 
   /**
+   * Sequence number of the most recently issued request.
+   *
+   * Debounced searches can still overlap when one query is slower than the
+   * next, and a late response would otherwise overwrite newer results with
+   * stale ones. Only the newest request is allowed to set state.
+   */
+  const requestId = useRef(0);
+
+  /**
    * Select a search result by reference and index.
    * Also used by keyboard navigation and click handlers.
    */
@@ -50,19 +60,23 @@ export function useSearchState() {
     setSelectedIndex(index);
   }, []);
 
-  /** Arrow-key navigation between search results. */
+  /**
+   * Arrow-key navigation between search results.
+   *
+   * Keystrokes aimed at a text field are left alone — this listener is on
+   * `window`, so without that check every arrow press inside the search box
+   * moved the selection instead of the caret.
+   */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft" && selectedIndex > 0) {
-        e.preventDefault();
-        selectResult(searchResults[selectedIndex - 1], selectedIndex - 1);
-      } else if (
-        e.key === "ArrowRight" &&
-        selectedIndex < searchResults.length - 1
-      ) {
-        e.preventDefault();
-        selectResult(searchResults[selectedIndex + 1], selectedIndex + 1);
-      }
+      if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isTypingTarget(e.target)) return;
+
+      const next = nextSelectionIndex(e.key, selectedIndex, searchResults.length);
+      if (next === null) return;
+
+      e.preventDefault();
+      selectResult(searchResults[next], next);
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -74,24 +88,27 @@ export function useSearchState() {
    * Resets selection on each new fetch.
    */
   const fetchResults = useCallback(async () => {
+    const id = ++requestId.current;
     setLoading(true);
     try {
       const response = await grab(
         buildSearchUrl({ searchTerm, sortBy, filters }),
       );
+      if (id !== requestId.current) return;
       const data = response.data;
       setSearchResults(data?.results ?? []);
       setTotalResults(data?.total ?? 0);
       setSelectedResult(null);
       setSelectedIndex(-1);
     } catch (error) {
+      if (id !== requestId.current) return;
       console.error("Failed to fetch search results:", error);
       setSearchResults([]);
       setTotalResults(0);
       setSelectedResult(null);
       setSelectedIndex(-1);
     } finally {
-      setLoading(false);
+      if (id === requestId.current) setLoading(false);
     }
   }, [sortBy, searchTerm, filters]);
 

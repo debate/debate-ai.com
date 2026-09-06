@@ -88,7 +88,26 @@ one," named under idea #15 ("Flow-in-Speech Flow Annotations") in
 Vitest-covered in `packages/debate-round/test/flow-annotations.test.ts` and
 `packages/debate-round/test/flowAnnotations.test.ts`.
 
-## FlowSpreadsheet affordance
+## FlowSpreadsheet affordance (removed — see note)
+
+> **⚠️ Known regression, discovered 2026-09-05:** PR #498 ("Remove flow
+> spreadsheet grid, show round flows in round editor", merged 2026-09-03)
+> deleted the AG Grid-based `FlowSpreadsheet` view entirely — along with
+> `flow/AnnotationBadge.tsx`, `flow/AnnotationCellRenderer.tsx`,
+> `flow/annotation-cells.ts`, and their tests — in favor of the new "ebb
+> flow" split speech-editor view (`debate-flow`'s `EbbFlowEmbed.tsx`/
+> `HotGrid.tsx`). Round flows are now shown in the round editor's flow tabs
+> instead. The section below describes that deleted grid affordance as
+> still live; it is not — the new flow editor has no equivalent
+> annotation-badge affordance today. This is a real capability gap, not
+> just stale prose: a viewer editing a flow in the current editor has no
+> in-grid indicator that a box already has an annotation, unlike the
+> standalone `FlowAnnotationsPanel` (`/annotations`) documented above,
+> which is unaffected (it never depended on the grid). Left as a "Known
+> gap" below rather than rebuilt in this pass — restoring it means
+> designing a Handsontable-native equivalent (a custom renderer/cell
+> metadata approach), not porting the deleted AG Grid code, which is its
+> own slice of work. The rest of this section is kept for history only.
 
 Every cell in the live `FlowSpreadsheet` grid (`/debate`) whose box already
 has one or more persisted `FlowAnnotation`s shows a small clock badge next
@@ -287,3 +306,7 @@ line, timestamp ordering) and `flowAnnotationsExportFilename`.
   in `packages/debate-round/test/live-update.test.ts`.
 - No collaborative/live sync — annotations are local `localStorage` only,
   same as every other persisted record in this repo today.
+- The current flow editor (the "ebb flow" split speech-editor view that
+  replaced `FlowSpreadsheet` in PR #498) has no in-grid indicator that a
+  box already has an annotation — see the "FlowSpreadsheet affordance
+  (removed — see note)" section above.

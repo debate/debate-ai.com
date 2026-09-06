@@ -1,14 +1,22 @@
 /**
- * @fileoverview Compact card component for displaying individual research search results.
+ * @fileoverview Result card for a single piece of evidence in the CARDS search list.
  */
 
 "use client"
 
-
-import { Card, CardContent } from "../ui/primitives/card"
+import { useEffect, useRef } from "react"
 import { Badge } from "../ui/primitives/badge"
-import { Users, Clock } from "lucide-react"
+import { BookOpen, Highlighter, Users } from "lucide-react"
 import { getBlueShade, getGreenShade } from "debate-card-parser/src/utils/card-utils"
+import {
+  cardAriaLabel,
+  cardPreview,
+  cardProvenance,
+  categoryStyle,
+  formatCompactCount,
+  highlightRatio,
+  splitHighlightSegments,
+} from "../lib/card-display"
 import type { SearchResult } from "../types"
 
 /**
@@ -19,83 +27,178 @@ interface SearchResultCardProps {
   result: SearchResult
   /** Whether this card is currently selected */
   isSelected: boolean
-  /** Callback invoked when the card is clicked */
+  /** Callback invoked when the card is chosen by click or keyboard */
   onClick: () => void
+  /** Zero-based position in the result list, used for the accessible label */
+  index?: number
+  /** Number of results in the list, used for the accessible label */
+  total?: number
+  /** Current search term, so matched words can be marked in the card */
+  searchTerm?: string
 }
 
 /**
- * SearchResultCard - Compact search result display
+ * Renders text with the current query's terms marked.
  *
- * Renders a single research evidence result as a clickable card.
- * Uses color-coded badges for read count and word count metrics.
+ * Showing *why* a card matched is what makes a long result list scannable —
+ * without it, every row looks equally relevant.
+ */
+function Highlighted({ text, query }: { text: string; query: string }) {
+  const segments = splitHighlightSegments(text, query)
+  return (
+    <>
+      {segments.map((segment, index) =>
+        segment.match ? (
+          <mark
+            key={index}
+            className="rounded-[2px] bg-yellow-200 px-0.5 text-inherit dark:bg-yellow-500/30"
+          >
+            {segment.text}
+          </mark>
+        ) : (
+          <span key={index}>{segment.text}</span>
+        ),
+      )}
+    </>
+  )
+}
+
+/**
+ * SearchResultCard — one evidence card in the result list.
+ *
+ * Reads top-down in the order a debater triages evidence: the tag (the claim
+ * the card makes), then who wrote it and when, then a preview of the summary
+ * with the query's terms marked, then where the card has been run, then how
+ * heavy it is to read. The category drives a colour accent so a disadvantage
+ * is distinguishable from a counterplan before any text is read.
+ *
+ * The card is a real listbox option — reachable by Tab, selectable with Enter
+ * or Space, labelled for screen readers, and scrolled back into view when
+ * arrow keys move the selection off-screen.
  *
  * @param props - Component props
- * @param props.result - The search result data to display
- * @param props.isSelected - Whether this card is currently selected
- * @param props.onClick - Callback invoked when the card is clicked
  * @returns The search result card component
  *
  * @example
  * ```tsx
  * <SearchResultCard
  *   result={searchResult}
- *   isSelected={selectedId === searchResult.id}
- *   onClick={() => selectResult(searchResult)}
+ *   isSelected={selectedIndex === index}
+ *   index={index}
+ *   total={results.length}
+ *   searchTerm={searchTerm}
+ *   onClick={() => selectResult(searchResult, index)}
  * />
  * ```
  */
-export function SearchResultCard({ result, isSelected, onClick }: SearchResultCardProps) {
-  return (
-    <Card
-      onClick={onClick}
-      className={`cursor-pointer transition-all hover:shadow-md border-2 ${isSelected ? "border-primary bg-muted" : "border-border hover:border-primary/50"
-        }`}
-    >
-      <CardContent className="p-4">
-        {/* Header row with category, research field, and metrics */}
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Category badge */}
-            <Badge variant="secondary" className="text-xs">
-              {result.category}
-            </Badge>
-            {/* Research field */}
-            <span className="font-bold text-sm">{result.researchField}</span>
-          </div>
+export function SearchResultCard({
+  result,
+  isSelected,
+  onClick,
+  index = 0,
+  total = 1,
+  searchTerm = "",
+}: SearchResultCardProps) {
+  const ref = useRef<HTMLDivElement>(null)
+  const category = categoryStyle(result.category)
+  const headline = result.tag?.trim() || result.argBlock?.trim() || "Untitled card"
+  const preview = cardPreview(result)
+  const provenance = cardProvenance(result)
+  const ratio = highlightRatio(result)
 
-          {/* Metrics badges */}
-          <div className="flex items-center gap-1 flex-shrink-0">
-            {/* Read count with blue color coding */}
-            <Badge variant="outline" className={`gap-1 ${getBlueShade(result.readCount)}`}>
-              <Users className="h-3 w-3" />
-              <span className="text-xs">{result.readCount}</span>
-            </Badge>
-            {/* Word count with green color coding */}
-            <Badge variant="outline" className={`gap-1 ${getGreenShade(result.word_count)}`}>
-              <Clock className="h-3 w-3" />
-              <span className="text-xs">{result.word_count}</span>
-            </Badge>
-          </div>
+  // Arrow-key navigation can move the selection past either end of the
+  // scrollport; without this the selected card is only visible in the reader.
+  useEffect(() => {
+    if (isSelected) ref.current?.scrollIntoView({ block: "nearest" })
+  }, [isSelected])
+
+  return (
+    <div
+      ref={ref}
+      role="option"
+      aria-selected={isSelected}
+      aria-label={cardAriaLabel(result, index + 1, total)}
+      tabIndex={0}
+      data-testid="search-result-card"
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          onClick()
+        }
+      }}
+      className={`group relative flex cursor-pointer gap-0 overflow-hidden rounded-lg border bg-card text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        isSelected
+          ? "border-primary bg-primary/5 shadow-sm"
+          : "border-border hover:border-primary/50 hover:shadow-md"
+      }`}
+    >
+      {/* Category accent — the fastest signal in the list. */}
+      <span aria-hidden="true" className={`w-1 shrink-0 ${category.accent}`} />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-3">
+        {/* Tag: the claim the card makes, and the reason to open it. */}
+        <p className="line-clamp-2 text-sm leading-snug font-semibold">
+          <Highlighted text={headline} query={searchTerm} />
+        </p>
+
+        {/* Citation and category */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Badge variant="secondary" className={`px-1.5 py-0 text-[10px] font-semibold ${category.badge}`}>
+            {category.label}
+          </Badge>
+          {result.cite_short && (
+            <span className="truncate text-xs font-medium text-foreground/80">
+              <Highlighted text={result.cite_short} query={searchTerm} />
+            </span>
+          )}
+          {result.researchField && (
+            <span className="truncate text-xs text-muted-foreground">{result.researchField}</span>
+          )}
         </div>
 
-        {/* Argument block name */}
-        <p className="text-sm text-muted-foreground mb-2 font-medium">{result.argBlock}</p>
-
-        {/* Summary (truncated to 2 lines) */}
-        <p className="text-sm mb-2 line-clamp-2">{result.summary}</p>
-
-        {/* Debate metadata */}
-        {(result as any).school && (
-          <p className="text-xs text-muted-foreground truncate mb-1">
-            {[(result as any).tournament, (result as any).team, (result as any).side, `20${(result as any).year || ""}`]
-              .filter(Boolean)
-              .join(" \u2022 ")}
+        {/* Summary preview with the query's terms marked */}
+        {preview && preview !== headline && (
+          <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+            <Highlighted text={preview} query={searchTerm} />
           </p>
         )}
 
-        {/* Tag line (truncated) */}
-        <p className="text-xs text-muted-foreground truncate">{result.tag}</p>
-      </CardContent>
-    </Card>
+        {/* Where the card has been run */}
+        {provenance.length > 0 && (
+          <p className="truncate text-[11px] text-muted-foreground">{provenance.join(" • ")}</p>
+        )}
+
+        {/* Reading cost: how often it is used, how long it is, how much is highlighted */}
+        <div className="flex flex-wrap items-center gap-1">
+          <Badge
+            variant="outline"
+            className={`gap-1 border-0 px-1.5 py-0 ${getBlueShade(result.readCount)}`}
+            title={`${result.readCount?.toLocaleString() ?? 0} reads`}
+          >
+            <Users className="h-3 w-3" aria-hidden="true" />
+            <span className="text-[10px]">{formatCompactCount(result.readCount)}</span>
+          </Badge>
+          <Badge
+            variant="outline"
+            className={`gap-1 border-0 px-1.5 py-0 ${getGreenShade(result.word_count)}`}
+            title={`${result.word_count?.toLocaleString() ?? 0} words`}
+          >
+            <BookOpen className="h-3 w-3" aria-hidden="true" />
+            <span className="text-[10px]">{formatCompactCount(result.word_count)}</span>
+          </Badge>
+          {ratio !== null && (
+            <Badge
+              variant="outline"
+              className="gap-1 px-1.5 py-0 text-muted-foreground"
+              title={`${Math.round(ratio * 100)}% of the card is highlighted`}
+            >
+              <Highlighter className="h-3 w-3" aria-hidden="true" />
+              <span className="text-[10px]">{Math.round(ratio * 100)}%</span>
+            </Badge>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

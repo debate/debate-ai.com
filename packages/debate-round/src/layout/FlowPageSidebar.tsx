@@ -64,6 +64,27 @@ interface FlowPageSidebarProps {
     getSpeechTimerState: (speechName: string) => SpeechTimerEntry
     setSpeechTimerState: (speechName: string, updates: Partial<SpeechTimerEntry>) => void
   }
+  /** Name of the speech currently open in the main content area — the only
+   *  one whose full timer/controls bar is shown in the live round group. */
+  selectedSpeech: string
+  /** Callback to reset prep timers to their defaults. */
+  onResetPrepTimers?: () => void
+  /** Whether backward speech navigation is available. */
+  canNavigatePrev?: boolean
+  /** Whether forward speech navigation is available. */
+  canNavigateNext?: boolean
+  /** Handler called when the user navigates to the previous speech. */
+  onNavigatePrev?: () => void
+  /** Handler called when the user navigates to the next speech. */
+  onNavigateNext?: () => void
+  /** Selected microphone device ID, shared with the global speech controls topbar. */
+  micDeviceId?: string
+  /** Callback when the microphone device changes. */
+  onMicDeviceChange?: (deviceId: string | undefined) => void
+  /** Whether recording is enabled, shared with the global speech controls topbar. */
+  recordingEnabled?: boolean
+  /** Callback when the recording-enabled flag changes. */
+  onRecordingEnabledChange?: (enabled: boolean) => void
 }
 
 /**
@@ -104,6 +125,16 @@ export function FlowPageSidebar({
   onEbbToolAction,
   onCloseMobileMenu,
   timerState,
+  selectedSpeech,
+  onResetPrepTimers,
+  canNavigatePrev,
+  canNavigateNext,
+  onNavigatePrev,
+  onNavigateNext,
+  micDeviceId,
+  onMicDeviceChange,
+  recordingEnabled,
+  onRecordingEnabledChange,
 }: FlowPageSidebarProps) {
   /**
    * Select a flow tab and close the mobile menu when applicable.
@@ -181,6 +212,16 @@ export function FlowPageSidebar({
           setPrepState={timerState.setPrepState}
           prepSecondaryState={timerState.prepSecondaryState}
           setPrepSecondaryState={timerState.setPrepSecondaryState}
+          selectedSpeech={selectedSpeech}
+          onResetPrepTimers={onResetPrepTimers}
+          canNavigatePrev={canNavigatePrev}
+          canNavigateNext={canNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          micDeviceId={micDeviceId}
+          onMicDeviceChange={onMicDeviceChange}
+          recordingEnabled={recordingEnabled}
+          onRecordingEnabledChange={onRecordingEnabledChange}
         />
       )}
 

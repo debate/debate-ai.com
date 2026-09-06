@@ -89,12 +89,12 @@ so the table above is the *default*, not a fixed contract.
 
 Idea #14's tracked follow-up ("a printable/exportable version of the
 shortcuts reference, since today it's view-only inside the editor") is
-now closed. The reference modal's header (`reference-ui.ts`) carries two
-new actions next to the search box, both built from the same
+now closed. The reference modal's header (`reference-ui.ts`) carries
+three actions next to the search box, all built from the same
 `collectGroups()` snapshot the on-screen list renders from — so the
-printed/exported copy always matches exactly what's on screen (current
-key overrides, available commands only, plugin section included when any
-plugin has registered commands):
+printed/exported/downloaded copy always matches exactly what's on screen
+(current key overrides, available commands only, plugin section included
+when any plugin has registered commands):
 
 - **Print** builds a full, un-filtered copy of the reference (ignores
   any active search) into a `.pmd-reference-print-root` node appended to
@@ -111,11 +111,22 @@ plugin has registered commands):
   through `getHost().saveAs()` — the identical native-picker-or-download
   path Settings → "Export settings…" already uses, so it works the same
   way across the browser-tab, PWA, and Electron hosts.
+- **Download PDF** saves the same data as a paginated
+  `cardmirror-shortcuts.pdf` file, also through `getHost().saveAs()`, so
+  a user gets a portable, shareable document without relying on their
+  browser's own print-to-PDF flow. `reference-pdf-export.ts`'s
+  `buildShortcutsReferencePdf` (built on `pdf-lib`, this repo's first use
+  of a PDF-generation library) lays the title and each non-empty group
+  out as a two-column (key, label) table, starting a new page whenever
+  the next heading or row would run past the bottom margin.
 
 The plain-text formatting itself (`reference-export.ts`'s
 `formatShortcutsReferenceText`) is a pure function decoupled from the DOM
 so it's covered directly by `test/reference-export.test.ts`, independent
-of the modal's DOM-building/overlay-lifecycle code.
+of the modal's DOM-building/overlay-lifecycle code — `reference-pdf-export.ts`
+is split out the same way and covered by `test/reference-pdf-export.test.ts`
+(PDF-magic-header check, a `PDFDocument.load` round trip, and a
+many-rows case that forces a second page).
 
 ## Verbatim onboarding nudge
 
@@ -185,10 +196,12 @@ debate-editor/src/editor/quick-card-search-ui.ts → Ctrl/Cmd-Shift-Space palett
 
 debate-editor/src/editor/reference-ui.ts        — openShortcutsReference's modal; collectGroups()
                                                                is the shared data source for the on-screen list,
-                                                               print(), and exportAsText(); stamps
+                                                               print(), exportAsText(), and exportAsPdf(); stamps
                                                                hasOpenedShortcutsReference on open
 debate-editor/src/editor/reference-export.ts    — formatShortcutsReferenceText(), the pure
                                                                plain-text renderer used by exportAsText()
+debate-editor/src/editor/reference-pdf-export.ts — buildShortcutsReferencePdf(), the pure
+                                                               (pdf-lib-backed) PDF renderer used by exportAsPdf()
 
 debate-editor/src/editor/verbatim-nudge.ts       — maybeShowVerbatimNudge(), wired from index.ts;
                                                                shouldShowVerbatimNudge() is the pure trigger check
@@ -206,11 +219,12 @@ year prompt after already typing an author gets nothing inserted (by
 design — either both fields commit or neither does), so they re-run the
 command rather than only being asked for the year again.
 
-Print and Export always render the full reference — neither respects the
-modal's own search filter. Given the point of printing/exporting a
-reference is usually to have the whole thing on hand, this is treated as
-the right default rather than a gap, but a future run could add a "only
-matching rows" toggle if that turns out to be wanted.
+Print, Export, and Download PDF all render the full reference — none of
+them respects the modal's own search filter. Given the point of
+printing/exporting/downloading a reference is usually to have the whole
+thing on hand, this is treated as the right default rather than a gap,
+but a future run could add a "only matching rows" toggle if that turns
+out to be wanted.
 
 The Verbatim onboarding nudge has no "remind me later" — Not now/Esc marks
 it seen for good, matching `hasSeenUiTour`'s own one-shot convention rather

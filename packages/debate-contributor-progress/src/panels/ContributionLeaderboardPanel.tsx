@@ -138,7 +138,8 @@ function buildLeaderboardRows(range: LeaderboardRange, category: ContributionCat
   })
 }
 
-const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+/** Exported so `ContributorProfilePanel` renders the same tier badge styling. */
+export const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
   novice: "outline",
   apprentice: "secondary",
   veteran: "secondary",
@@ -306,7 +307,12 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
               <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
               <TableCell className="font-medium">
                 <div className="flex items-center gap-1.5">
-                  {row.contributorId}
+                  <a
+                    href={`/cards/leaderboard/${encodeURIComponent(row.contributorId)}`}
+                    className="hover:underline"
+                  >
+                    {row.contributorId}
+                  </a>
                   {isMe && (
                     <Badge variant="outline" className="whitespace-nowrap">
                       You

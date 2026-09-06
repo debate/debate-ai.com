@@ -256,8 +256,11 @@ export function LecturesVideoGridView({
     <div className="min-h-screen bg-background flex">
       {/* Persistent left sidebar (md+): app dock, search controls, video
           categories, lecture categories, footer. Below md the same controls
-          render inline above the grid instead — see the mobile block below. */}
-      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
+          render inline above the grid instead — see the mobile block below.
+          `min-w-0` keeps every child bound to this column; the dock arrives
+          in `dockSlot` already sized to the column rather than to its own
+          contents, so it can't reach across the border onto the grid. */}
+      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
         {dockSlot}
 
         {searchBarNode(true)}

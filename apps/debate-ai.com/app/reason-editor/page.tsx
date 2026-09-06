@@ -5,257 +5,72 @@
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
  *
- * The sidebar (file tree + "Open Tabs") is ported from quick search's
- * REASON editor sidebar (`packages/reason-editor-sidebar`), adapted to this
- * app's document model and primitives — see FileTree.tsx/OpenTabsPanel.tsx.
+ * The docs sidebar (file tree + "Open Tabs", ported from quick search's
+ * REASON editor sidebar) is no longer this page's own `<aside>`: it lives in
+ * the app's persistent sidebar (`AppSidebarShell` →
+ * `ReasonDocsSidebarPanels`), which already wrapped this route and so used to
+ * put a second sidebar beside it. This page now only renders the editor for
+ * whatever that sidebar has active, reading it from `ReasonDocsProvider`.
+ * That sidebar is desktop-only, so the same panels are also mounted here as a
+ * collapsible strip below `md`.
+ *
+ * CardMirror is mounted with `defaultNavPaneHidden` so the engine's own
+ * outline nav pane doesn't claim a second sidebar's worth of the column — the
+ * app sidebar owns the side, and the outline stays one pull-tab / View-menu
+ * toggle away.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { BookOpen, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
+import { useEffect } from "react"
+import { Loader2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
 import { cn } from "../../lib/ui/lib/utils"
-import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
-import { FileTree } from "./FileTree"
-import { OpenTabsPanel } from "./OpenTabsPanel"
-import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
-import type { ReasonDocument } from "./types"
-
-const AUTOSAVE_DELAY_MS = 800
-type SidebarPanel = "files" | "topicStarters" | "openTabs"
+import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
+import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
 
 export default function ReasonEditorPage() {
-  const [documents, setDocuments] = useState<ReasonDocument[]>([])
-  const [openTabs, setOpenTabs] = useState<number[]>([])
-  const [activeId, setActiveId] = useState<number | null>(null)
-  const [sidebarPanel, setSidebarPanel] = useState<SidebarPanel>("files")
-  const [topicItems, setTopicItems] = useState<TopicStarterItem[]>([])
-  const [topicDocument, setTopicDocument] = useState<TopicStarterItem | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const selected = useMemo(
-    () => documents.find((d) => d.id === activeId) ?? null,
-    [documents, activeId],
-  )
-
-  const loadDocuments = useCallback(async (selectFirst = false) => {
-    setLoading(true)
-    try {
-      const res = await fetch("/api/doc/documents")
-      const rows: ReasonDocument[] = await res.json()
-      setDocuments(rows)
-      if (selectFirst) {
-        const firstFile = rows.find((d) => !d.isFolder)
-        if (firstFile) {
-          setOpenTabs([firstFile.id])
-          setActiveId(firstFile.id)
-        }
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const {
+    documents,
+    openTabs,
+    activeId,
+    topicDocument,
+    loading,
+    loaded,
+    saving,
+    ensureLoaded,
+    openDocument,
+    selectTab,
+    closeTab,
+    updateTitle,
+    updateContent,
+  } = useReasonDocs()
 
   useEffect(() => {
-    loadDocuments(true)
-  }, [loadDocuments])
+    ensureLoaded()
+  }, [ensureLoaded])
 
+  // Land on something readable instead of an empty pane: once the documents
+  // are in, open the first file if the sidebar hasn't already picked one.
   useEffect(() => {
-    fetch("/api/topic-starters").then((response) => response.ok ? response.json() : { items: [] })
-      .then((data) => setTopicItems(data.items ?? [])).catch(() => setTopicItems([]))
-  }, [])
+    if (!loaded || activeId != null || topicDocument) return
+    const firstFile = documents.find((d) => !d.isFolder)
+    if (firstFile) openDocument(firstFile.id)
+  }, [loaded, activeId, topicDocument, documents, openDocument])
 
-  const openDocument = useCallback((id: number) => {
-    setTopicDocument(null)
-    setOpenTabs((prev) => (prev.includes(id) ? prev : [...prev, id]))
-    setActiveId(id)
-  }, [])
-
-  const closeTab = useCallback(
-    (id: number) => {
-      setOpenTabs((prev) => {
-        const idx = prev.indexOf(id)
-        const next = prev.filter((tabId) => tabId !== id)
-        if (activeId === id) {
-          const fallback = next[idx] ?? next[idx - 1] ?? next[0] ?? null
-          setActiveId(fallback ?? null)
-        }
-        return next
-      })
-    },
-    [activeId],
-  )
-
-  const createDocument = useCallback(
-    async (parentId: number | null = null, isFolder = false) => {
-      const res = await fetch("/api/doc/documents", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          title: isFolder ? "New Folder" : "Untitled",
-          content: "",
-          parentId,
-          isFolder,
-        }),
-      })
-      const created: ReasonDocument = await res.json()
-      setDocuments((prev) => [created, ...prev])
-      if (!isFolder) openDocument(created.id)
-    },
-    [openDocument],
-  )
-
-  const deleteDocument = useCallback(
-    async (id: number) => {
-      // Folders cascade: this app has no FK-enforced cascade delete, so
-      // gather every descendant client-side before deleting.
-      const idsToDelete: number[] = []
-      const collect = (targetId: number) => {
-        idsToDelete.push(targetId)
-        for (const doc of documents) {
-          if (doc.parentId === targetId) collect(doc.id)
-        }
-      }
-      collect(id)
-
-      await Promise.all(idsToDelete.map((docId) => fetch(`/api/doc/documents/${docId}`, { method: "DELETE" })))
-
-      setDocuments((prev) => prev.filter((d) => !idsToDelete.includes(d.id)))
-      setOpenTabs((prev) => prev.filter((tabId) => !idsToDelete.includes(tabId)))
-      if (activeId != null && idsToDelete.includes(activeId)) setActiveId(null)
-    },
-    [documents, activeId],
-  )
-
-  const moveDocument = useCallback(async (id: number, parentId: number | null) => {
-    setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
-    await fetch(`/api/doc/documents/${id}`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ parentId }),
-    })
-  }, [])
-
-  const saveDocument = useCallback((id: number, patch: { title?: string; content?: string }) => {
-    if (saveTimeout.current) clearTimeout(saveTimeout.current)
-    saveTimeout.current = setTimeout(async () => {
-      setSaving(true)
-      try {
-        await fetch(`/api/doc/documents/${id}`, {
-          method: "PUT",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(patch),
-        })
-      } finally {
-        setSaving(false)
-      }
-    }, AUTOSAVE_DELAY_MS)
-  }, [])
-
-  const updateTitle = useCallback(
-    (id: number, title: string) => {
-      setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, title } : d)))
-      saveDocument(id, { title })
-    },
-    [saveDocument],
-  )
-
-  const updateContent = useCallback(
-    (id: number, content: string) => {
-      setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, content } : d)))
-      saveDocument(id, { content })
-    },
-    [saveDocument],
-  )
+  const selected = documents.find((d) => d.id === activeId) ?? null
 
   return (
-    <div className="h-dvh flex overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
-      <aside className="w-64 shrink-0 border-r flex flex-col">
-        <div className="flex items-center justify-between px-3 py-2 border-b">
-          <h2 className="text-sm font-semibold">Reason Editor</h2>
-          <div className="flex items-center gap-0.5">
-            <Button size="icon" variant="ghost" onClick={() => createDocument(null, false)} title="New document">
-              <FilePlus2 className="h-4 w-4" />
-            </Button>
-            <Button size="icon" variant="ghost" onClick={() => createDocument(null, true)} title="New folder">
-              <FolderPlus className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+    <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
+      {/* The app sidebar carrying these panels is `hidden md:flex`, so below
+          that breakpoint they ride along at the top of the editor instead.
+          No height cap here on purpose: the panels already size themselves
+          (and scroll internally), and a second cap on top would just clip
+          their lower panel out of view. */}
+      <div className="md:hidden shrink-0 border-b px-2 py-1">
+        <ReasonDocsSidebarPanels />
+      </div>
 
-        <div className="flex items-center gap-1 px-2 py-1.5 border-b">
-          <button
-            type="button"
-            onClick={() => setSidebarPanel("files")}
-            className={cn(
-              "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
-              sidebarPanel === "files" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            <PanelLeft className="h-3.5 w-3.5" />
-            Files
-          </button>
-          <button
-            type="button"
-            onClick={() => setSidebarPanel("topicStarters")}
-            className={cn(
-              "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
-              sidebarPanel === "topicStarters" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            <BookOpen className="h-3.5 w-3.5" />
-            Topic Starters
-          </button>
-          <button
-            type="button"
-            onClick={() => setSidebarPanel("openTabs")}
-            className={cn(
-              "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
-              sidebarPanel === "openTabs" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            <PanelsTopLeft className="h-3.5 w-3.5" />
-            Open Tabs
-            {openTabs.length > 0 && <span className="text-muted-foreground">({openTabs.length})</span>}
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-          </div>
-        ) : sidebarPanel === "files" ? (
-          <FileTree
-            documents={documents}
-            activeId={activeId}
-            onSelect={openDocument}
-            onAdd={createDocument}
-            onRename={updateTitle}
-            onDelete={deleteDocument}
-            onMove={moveDocument}
-          />
-        ) : sidebarPanel === "topicStarters" ? (
-          <TopicStarterTree
-            items={topicItems}
-            onSelect={(item) => {
-              setTopicDocument(item)
-              setActiveId(null)
-            }}
-          />
-        ) : (
-          <OpenTabsPanel
-            documents={documents}
-            openTabs={openTabs}
-            activeId={activeId}
-            onSelect={setActiveId}
-            onClose={closeTab}
-          />
-        )}
-      </aside>
-
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0">
         {openTabs.length > 0 && (
           <div className="flex items-center border-b overflow-x-auto shrink-0">
             {openTabs.map((id) => {
@@ -264,7 +79,7 @@ export default function ReasonEditorPage() {
                 <button
                   key={id}
                   type="button"
-                  onClick={() => setActiveId(id)}
+                  onClick={() => selectTab(id)}
                   className={cn(
                     "group flex items-center gap-2 px-3 py-2 text-sm border-r shrink-0 max-w-[180px]",
                     id === activeId ? "bg-background font-medium" : "bg-muted/40 text-muted-foreground hover:bg-muted/70",
@@ -301,21 +116,32 @@ export default function ReasonEditorPage() {
               {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
+              {/* No React `key` here on purpose: `contentKey` already gives
+                  each document a fresh claim (and undo history) inside the
+                  CardMirror singleton, and a keyed remount would also rerun
+                  the editor's mount effects — re-hiding a nav pane the user
+                  pulled back open — on every document switch. */}
               <EditorWithToolbar
-                key={topicDocument ? `topic-${topicDocument.id}` : selected!.id}
                 content={topicDocument?.content ?? selected!.content}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}
                 showOutline
                 showToolbar={!topicDocument}
+                defaultNavPaneHidden
                 onChange={topicDocument ? undefined : (html) => updateContent(selected!.id, html)}
               />
             </div>
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
-            {documents.length === 0 ? "Create a document to start writing." : "Select a file to open it."}
+            {loading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : documents.length === 0 ? (
+              "Create a document to start writing."
+            ) : (
+              "Select a file to open it."
+            )}
           </div>
         )}
       </div>

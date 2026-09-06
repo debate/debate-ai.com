@@ -153,13 +153,59 @@ export function getUnderCoveredArguments(report: TopicCoverageReport): ArgumentC
     );
 }
 
+/** Tracked-argument counts by coverage level, plus the total tracked count — one point in a coverage-over-time trend. */
+export interface CoverageCounts {
+  missing: number;
+  thin: number;
+  covered: number;
+  total: number;
+}
+
+/**
+ * Tallies `report.tracked` by coverage level — the same counts
+ * {@link buildTopicCoverageSummaryText} renders as a sentence, factored out
+ * so a caller (the coverage-trend snapshot store) can persist them as
+ * structured data instead of parsing that sentence back apart.
+ */
+export function computeCoverageCounts(report: TopicCoverageReport): CoverageCounts {
+  const missing = report.tracked.filter((argument) => argument.level === "missing").length;
+  const thin = report.tracked.filter((argument) => argument.level === "thin").length;
+  const covered = report.tracked.filter((argument) => argument.level === "covered").length;
+  return { missing, thin, covered, total: report.tracked.length };
+}
+
+/**
+ * One topic's rolled-up coverage tallies for the cross-topic comparison
+ * heatmap, alongside its overall coverage ratio (covered/total, `0` for a
+ * topic with no tracked arguments at all).
+ */
+export interface CrossTopicCoverageRow extends CoverageCounts {
+  topic: string;
+  coverageRatio: number;
+}
+
+/**
+ * Rolls up each topic's already-built {@link TopicCoverageReport} into one
+ * row for a cross-topic comparison heatmap, sorted worst-covered first
+ * (lowest `coverageRatio`, ties broken alphabetically by topic) so a team
+ * immediately sees which topics need the most work relative to the others.
+ */
+export function buildCrossTopicCoverageComparison(
+  entries: { topic: string; report: TopicCoverageReport }[],
+): CrossTopicCoverageRow[] {
+  return entries
+    .map(({ topic, report }) => {
+      const counts = computeCoverageCounts(report);
+      return { topic, ...counts, coverageRatio: counts.total === 0 ? 0 : counts.covered / counts.total };
+    })
+    .sort((a, b) => a.coverageRatio - b.coverageRatio || a.topic.localeCompare(b.topic));
+}
+
 /** Renders a short summary line for a topic-coverage dashboard header. */
 export function buildTopicCoverageSummaryText(report: TopicCoverageReport): string {
-  const missingCount = report.tracked.filter((argument) => argument.level === "missing").length;
-  const thinCount = report.tracked.filter((argument) => argument.level === "thin").length;
-  const coveredCount = report.tracked.filter((argument) => argument.level === "covered").length;
+  const { missing: missingCount, thin: thinCount, covered: coveredCount, total } = computeCoverageCounts(report);
 
-  const summary = `${coveredCount}/${report.tracked.length} arguments covered, ${thinCount} thin, ${missingCount} missing`;
+  const summary = `${coveredCount}/${total} arguments covered, ${thinCount} thin, ${missingCount} missing`;
   if (report.untracked.length === 0) return summary;
 
   return `${summary} (plus ${report.untracked.length} untracked block${report.untracked.length === 1 ? "" : "s"} with submitted cards)`;

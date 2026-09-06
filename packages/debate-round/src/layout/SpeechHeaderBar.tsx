@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import type { Round } from "../types/flow"
-import { FileText, Quote, ChevronLeft, ChevronRight, Menu, Radio, Type, Columns2 } from "lucide-react"
+import { Quote, ChevronLeft, ChevronRight, Menu } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "../ui/primitives/button"
@@ -21,9 +21,8 @@ import {
 import { SpeechRecordingPlayer, SpeechRecordingMenu } from "debate-timer/src/recorder/SpeechRecordingPlayer"
 import { useFlowStore } from "../state/store"
 import { SpeechTimer } from "debate-timer/src/timers/SpeechTimer"
-import { SpeechWordCounter } from "debate-timer/src/timers/SpeechWordCounter"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
-import { useWordCountSpeechMode } from "../hooks/useWordCountSpeechMode"
+import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
 
@@ -82,26 +81,12 @@ function countBoldedHighlightedWords(markdown: string): number {
   return count
 }
 
-/** Read the recording duration (in seconds) for a speech from localStorage. Returns null if none. */
-function getRecordingDurationSeconds(speechName: string): number | null {
-  try {
-    const raw = localStorage.getItem(`debate-recording-${speechName}`)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as { durationSeconds?: number }
-    return parsed.durationSeconds ?? null
-  } catch {
-    return null
-  }
-}
-
 /** A recording is "near" the speech length if it's at least 60% of the allocated time. */
 const NEAR_SPEECH_RATIO = 0.6
 
 export interface SpeechHeaderBarProps {
   /** The speech/column name, e.g. "1AR", "2NC". */
   speechName: string
-  /** If provided, renders a speech-doc icon button. */
-  onOpenSpeechPanel?: (speechName: string) => void
   /** Active view mode applied to the markdown editor. */
   viewMode?: ViewMode
   /** Whether the quote view overlay is currently active. */
@@ -134,15 +119,22 @@ export interface SpeechHeaderBarProps {
   onNavigateNext?: () => void
   /** When provided, renders a hamburger menu button for mobile sidebar access. */
   onMobileMenuClick?: () => void
-  /** Current layout mode: a single active speech pane, or both shown side-by-side. */
-  layoutMode?: "single" | "split"
-  /** When provided, renders a button toggling between single-pane and split layout. */
-  onToggleLayoutMode?: () => void
+  /** Whether to render the recording ellipsis menu (mic selector, reset, upload, delete).
+   *  Defaults to true; the global {@link SpeechControlsTopBar} renders its own copy for
+   *  the live-round speech, so that instance hides this one to avoid a duplicate. */
+  showRecordingMenu?: boolean
+  /** Controlled selected microphone device ID, shared with an external recording menu. */
+  micDeviceId?: string
+  /** Callback when the microphone device changes. */
+  onMicDeviceChange?: (deviceId: string | undefined) => void
+  /** Controlled recording-enabled flag, shared with an external recording menu. */
+  recordingEnabled?: boolean
+  /** Callback when the recording-enabled flag changes. */
+  onRecordingEnabledChange?: (enabled: boolean) => void
 }
 
 export function SpeechHeaderBar({
   speechName,
-  onOpenSpeechPanel,
   viewMode = "read",
   quoteView = false,
   onViewModeChange,
@@ -159,8 +151,11 @@ export function SpeechHeaderBar({
   onNavigatePrev,
   onNavigateNext,
   onMobileMenuClick,
-  layoutMode,
-  onToggleLayoutMode,
+  showRecordingMenu = true,
+  micDeviceId: controlledMicDeviceId,
+  onMicDeviceChange,
+  recordingEnabled: controlledRecordingEnabled,
+  onRecordingEnabledChange,
 }: SpeechHeaderBarProps) {
   const { rounds, flows, selected } = useFlowStore()
   const currentFlow = flows[selected]
@@ -168,8 +163,14 @@ export function SpeechHeaderBar({
     ? rounds.find((r: any) => r.id === currentFlow.roundId)
     : undefined
 
-  const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
-  const [recordingEnabled, setRecordingEnabled] = useState(true)
+  // Local fallback mic/recording state (used when not controlled by a parent
+  // that shares it with an external recording menu, e.g. SpeechControlsTopBar)
+  const [localMicDeviceId, setLocalMicDeviceId] = useState<string | undefined>()
+  const [localRecordingEnabled, setLocalRecordingEnabled] = useState(true)
+  const micDeviceId = onMicDeviceChange ? controlledMicDeviceId : localMicDeviceId
+  const setMicDeviceId = onMicDeviceChange ?? setLocalMicDeviceId
+  const recordingEnabled = onRecordingEnabledChange ? (controlledRecordingEnabled ?? true) : localRecordingEnabled
+  const setRecordingEnabled = onRecordingEnabledChange ?? setLocalRecordingEnabled
 
   // Portal ref for recording seekable progress bar in top edge
   const progressBarPortalRef = useRef<HTMLDivElement>(null)
@@ -186,14 +187,6 @@ export function SpeechHeaderBar({
   const speechIndex = debateStyle?.timerSpeeches.findIndex((s: any) => s.name.toUpperCase() === speechName.toUpperCase()) ?? -1
   const safeSpeechIndex = speechIndex !== -1 ? speechIndex : 0
   const defaultTimeMs = debateStyle?.timerSpeeches[safeSpeechIndex]?.time * 60 * 1000 || 0
-
-  // -- Word-limit mode: replaces the countdown with a live word-count meter --
-  const wordCountMode = useWordCountSpeechMode(
-    currentFlow?.roundId,
-    speechName,
-    debateStyle?.timerSpeeches[safeSpeechIndex]?.time,
-  )
-  const showWordCounter = wordCountMode.enabled && wordCountMode.status !== undefined
 
   type RunState = { name: "paused" } | { name: "running"; startTime: number } | { name: "done" }
 
@@ -232,35 +225,8 @@ export function SpeechHeaderBar({
     }
   }
 
-  // Track recording duration — re-read when a recording is saved
-  const [recordingDurationSec, setRecordingDurationSec] = useState<number | null>(() =>
-    typeof window !== "undefined" ? getRecordingDurationSeconds(speechName) : null
-  )
-
-  // Track if there's a recording for this speech
-  const [hasRecording, setHasRecording] = useState(() => {
-    if (typeof window === "undefined") return false
-    const key = `debate-recording-${speechName}`
-    return localStorage.getItem(key) !== null
-  })
-
-  useEffect(() => {
-    // Refresh duration and recording status when a new recording is saved
-    const onSaved = () => {
-      setRecordingDurationSec(getRecordingDurationSeconds(speechName))
-      const key = `debate-recording-${speechName}`
-      setHasRecording(localStorage.getItem(key) !== null)
-    }
-    window.addEventListener("debate-recording-saved", onSaved)
-    return () => window.removeEventListener("debate-recording-saved", onSaved)
-  }, [speechName])
-
-  // Also re-read when speechName changes (column switching)
-  useEffect(() => {
-    setRecordingDurationSec(getRecordingDurationSeconds(speechName))
-    const key = `debate-recording-${speechName}`
-    setHasRecording(localStorage.getItem(key) !== null)
-  }, [speechName])
+  // Track recording status/duration for this speech — re-read when a recording is saved
+  const { hasRecording, recordingDurationSec, deleteRecording } = useSpeechRecordingStatus(speechName)
 
   // Update local reset time when speech or debate style changes (for non-controlled mode)
   useEffect(() => {
@@ -455,37 +421,7 @@ export function SpeechHeaderBar({
 
         {/* ── Timer & Controls ── */}
         <div className="flex items-center gap-1 shrink-0">
-          {!hideTimer && currentFlow?.roundId && (
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={wordCountMode.enabled ? "default" : "ghost"}
-                    size="icon"
-                    onClick={() => wordCountMode.setEnabled(!wordCountMode.enabled)}
-                    className="h-6 w-6 shrink-0"
-                  >
-                    <Type className="h-3.5 w-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {wordCountMode.enabled ? "Use the speech timer" : "Use a word limit instead of a timer"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-
-          {!hideTimer && showWordCounter && (
-            <SpeechWordCounter
-              speechName={speechName}
-              wordLimit={wordCountMode.status!.wordLimit}
-              text={wordCountMode.text}
-              onTextChange={wordCountMode.setText}
-              compact={true}
-            />
-          )}
-
-          {!hideTimer && !showWordCounter && (
+          {!hideTimer && (
             <div className="scale-[0.8] origin-right translate-x-1">
               <SpeechTimer
                 speeches={debateStyle?.timerSpeeches || []}
@@ -537,72 +473,33 @@ export function SpeechHeaderBar({
             </div>
           )}
 
-          {/* Layout toggle: single active speech vs. both side-by-side */}
-          {onToggleLayoutMode && (
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={layoutMode === "split" ? "default" : "ghost"}
-                    size="icon"
-                    onClick={onToggleLayoutMode}
-                    className="h-6 w-6 shrink-0"
-                  >
-                    <Columns2 className="h-3.5 w-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {layoutMode === "split" ? "Show one speech at a time" : "Show both speeches side by side"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
-
-          {/* Speech menu — always show ellipsis dropdown */}
-          <div className="shrink-0 scale-[0.8]">
-            <SpeechRecordingMenu
-              speechName={speechName}
-              speechLabel={speechName}
-              micDeviceId={micDeviceId}
-              onMicDeviceChange={setMicDeviceId}
-              recordingEnabled={recordingEnabled}
-              onRecordingEnabledChange={setRecordingEnabled}
-              onResetSpeechTime={() => {
-                setTime(resetTime)
-                setTimerState({ name: "paused" })
-              }}
-              onSwitchToCrossX={() => {
-                const crossXTime = 3 * 60 * 1000
-                setTime(crossXTime)
-                setResetTime(crossXTime)
-                setTimerState({ name: "paused" })
-              }}
-              onResetPrepTimers={onResetPrepTimers}
-              onDeleteRecording={hasRecording ? (key) => {
-                localStorage.removeItem(key)
-                setHasRecording(false)
-                setRecordingDurationSec(null)
-                window.dispatchEvent(new CustomEvent("debate-recording-saved"))
-              } : undefined}
-              recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
-              inHeader={true}
-            />
-          </div>
-
-          {/* Open speech-doc button */}
-          {onOpenSpeechPanel && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 ml-1 shrink-0"
-              onClick={(e) => {
-                e.stopPropagation()
-                onOpenSpeechPanel(speechName)
-              }}
-              title={`Open ${speechName} speech document`}
-            >
-              <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-            </Button>
+          {/* Speech menu — ellipsis dropdown; hidden when a shared external
+              menu (e.g. SpeechControlsTopBar) already covers this speech. */}
+          {showRecordingMenu && (
+            <div className="shrink-0 scale-[0.8]">
+              <SpeechRecordingMenu
+                speechName={speechName}
+                speechLabel={speechName}
+                micDeviceId={micDeviceId}
+                onMicDeviceChange={setMicDeviceId}
+                recordingEnabled={recordingEnabled}
+                onRecordingEnabledChange={setRecordingEnabled}
+                onResetSpeechTime={() => {
+                  setTime(resetTime)
+                  setTimerState({ name: "paused" })
+                }}
+                onSwitchToCrossX={() => {
+                  const crossXTime = 3 * 60 * 1000
+                  setTime(crossXTime)
+                  setResetTime(crossXTime)
+                  setTimerState({ name: "paused" })
+                }}
+                onResetPrepTimers={onResetPrepTimers}
+                onDeleteRecording={hasRecording ? deleteRecording : undefined}
+                recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
+                inHeader={true}
+              />
+            </div>
           )}
         </div>
       </div>

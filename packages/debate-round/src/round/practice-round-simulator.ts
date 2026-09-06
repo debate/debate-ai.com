@@ -20,6 +20,33 @@
  * `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` already carry, layered
  * onto this setup's own persona choice via `buildOpponentPersonaPrompt`'s
  * existing `difficulty` parameter.
+ *
+ * `buildPracticeRoundFeedback`'s optional `opponentPersona` option closes
+ * that same idea's "post-round feedback tips specific to the persona faced"
+ * Next item: when the round's setup carried an AI opponent persona, feedback
+ * gets an extra section built from `opponent-personas.ts`'s new
+ * `buildOpponentPersonaFeedbackTips`, naming what to prep before facing that
+ * style again.
+ *
+ * `resolvePracticeRoundOpponentPersonaChoice` closes that same idea's
+ * "unifying the Practice Round Simulator's own separate persona setup with
+ * [the custom-persona] library" Next item: before this, the simulator's own
+ * setup form could only pick a built-in persona id — no custom-persona
+ * authoring, and no way to reuse an entry already saved to "My persona
+ * library" (`opponent-persona-library.ts`) the way `OpponentPersonaPickerPanel`
+ * already lets a user do. This one helper resolves a form's persona choice —
+ * none, a built-in id, or a freshly-typed/library-sourced custom
+ * name+notes pair — into the `opponentPersona` input `buildPracticeRoundSetup`
+ * already accepts, so `PracticeRoundSimulatorPanel` can offer the same
+ * "custom persona" authoring flow and library picker without any change to
+ * `PracticeRoundSetup`/persistence.
+ *
+ * `buildPracticeRoundReplaySteps` closes the "🧪 Practice Round Simulator"
+ * bullet's last remaining Next item: a round replay/playback view. It zips a
+ * round's speech order with its submitted speeches (already available
+ * through `state/practiceRounds.ts#getPracticeRoundSubmittedSpeeches`, no new
+ * persistence) into one step-per-slot sequence a panel can step through with
+ * Prev/Next controls.
  */
 
 import type { Flow } from "../types/flow";
@@ -38,6 +65,8 @@ import type {
   OpponentPersona,
 } from "debate-speech-writer/src/opponent/opponent-personas";
 import {
+  buildCustomOpponentPersona,
+  buildOpponentPersonaFeedbackTips,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentPersona,
@@ -45,7 +74,12 @@ import {
 import type { DebateStyleKey } from "debate-timer/src/formats/debate-format-times";
 import type { CoachingPrompt } from "../flow/coach-mode";
 import { buildCoachingSession, buildCoachingSummaryText } from "../flow/coach-mode";
-import type { AiVersusSide, AiVersusSpeechSlot } from "./ai-versus-speech-order";
+import type {
+  AiVersusSide,
+  AiVersusSpeaker,
+  AiVersusSpeechSlot,
+  PriorSpeechRecord,
+} from "./ai-versus-speech-order";
 import { buildAiVersusSpeechOrder } from "./ai-versus-speech-order";
 
 /** One labeled section of a rendered setup or feedback document. */
@@ -75,6 +109,27 @@ function resolveOpponentPersona(
     throw new Error(`buildPracticeRoundSetup: unknown opponent persona id "${opponentPersona}"`);
   }
   return resolved;
+}
+
+/** A practice-round setup form's opponent-persona choice, before resolution. */
+export type PracticeRoundOpponentPersonaChoice =
+  | { kind: "none" }
+  | { kind: "builtin"; id: BuiltinOpponentPersonaId }
+  | { kind: "custom"; name: string; notes: string };
+
+/**
+ * Resolves a practice-round setup form's opponent-persona choice — including
+ * a freshly-typed or persona-library-sourced custom persona — into the
+ * `opponentPersona` input `buildPracticeRoundSetup` expects. Throws the same
+ * way `buildCustomOpponentPersona` does when a custom persona's `name`/`notes`
+ * are empty after sanitizing.
+ */
+export function resolvePracticeRoundOpponentPersonaChoice(
+  choice: PracticeRoundOpponentPersonaChoice,
+): OpponentPersona | BuiltinOpponentPersonaId | undefined {
+  if (choice.kind === "none") return undefined;
+  if (choice.kind === "builtin") return choice.id;
+  return buildCustomOpponentPersona({ name: choice.name, notes: choice.notes });
 }
 
 function formatSpeechOrderSection(order: AiVersusSpeechSlot[]): string {
@@ -140,10 +195,67 @@ export function buildPracticeRoundSetupText(setup: PracticeRoundSetup): string {
   return setup.sections.map((section) => `### ${section.title}\n${section.body}`).join("\n\n");
 }
 
+/** One step of a `buildPracticeRoundReplaySteps` sequence — one round speech slot, delivered or not. */
+export type PracticeRoundReplayStep = {
+  /** Position of this speech within the round's speech order (0-based), matching `AiVersusSpeechSlot.index`. */
+  index: number;
+  name: string;
+  speaker: AiVersusSpeaker;
+  secondary: boolean;
+  time: number;
+  /** Whether this slot's speech has actually been submitted yet. */
+  delivered: boolean;
+  /** The delivered speech's text, or `null` while this slot hasn't been reached yet. */
+  text: string | null;
+};
+
+/**
+ * Zips a round's speech order with its submitted speeches (in delivery
+ * order — `submittedSpeeches[i]` is always the speech delivered for
+ * `speechOrder[i]`, since a round's speeches are only ever appended in turn
+ * order; see `state/aiVersusRounds.ts`) into one step-per-slot sequence
+ * suitable for a "round replay/playback view" to step through — the "🧪
+ * Practice Round Simulator" bullet's last remaining Next item in TODO.md's
+ * Research Crowdsourcing Organizer Features list. A slot past however many
+ * speeches have been submitted so far is still included, `delivered: false`
+ * and `text: null`, so a replay view can show "not yet delivered" for the
+ * remainder of an in-progress round rather than truncating the sequence.
+ */
+export function buildPracticeRoundReplaySteps(
+  speechOrder: AiVersusSpeechSlot[],
+  submittedSpeeches: PriorSpeechRecord[],
+): PracticeRoundReplayStep[] {
+  return speechOrder.map((slot) => {
+    const speech = submittedSpeeches[slot.index];
+    return {
+      index: slot.index,
+      name: slot.name,
+      speaker: slot.speaker,
+      secondary: slot.secondary,
+      time: slot.time,
+      delivered: speech !== undefined,
+      text: speech?.text ?? null,
+    };
+  });
+}
+
 export type PracticeRoundFeedback = {
   judgeParadigm: JudgeParadigm;
   coachingPrompts: CoachingPrompt[];
   sections: PracticeRoundSection[];
+};
+
+export type BuildPracticeRoundFeedbackOptions = {
+  collapseLimit?: number;
+  /**
+   * The AI opponent persona this round's setup faced, if any. When given,
+   * feedback gets an extra "Facing … again" section listing
+   * `buildOpponentPersonaFeedbackTips`' prep tips for that persona. Omitted
+   * (or `null`, matching `PracticeRoundSetup.opponentPersona`) when the round
+   * had no AI opponent persona, or for a caller (e.g. this file's own
+   * existing tests) that doesn't care about persona-specific tips.
+   */
+  opponentPersona?: OpponentPersona | null;
 };
 
 /**
@@ -151,17 +263,19 @@ export type PracticeRoundFeedback = {
  * decision around the paradigm the round was judged under (its voting
  * priorities, or its description when it has none — e.g. a custom
  * paradigm), followed by the existing AI Coach Mode coaching session
- * (`flow/coach-mode.ts`'s `buildCoachingSession`) for the caller's side.
- * Reuses `coach-mode.ts` directly rather than reimplementing any of its
- * flow-vulnerability logic.
+ * (`flow/coach-mode.ts`'s `buildCoachingSession`) for the caller's side, and
+ * — when `options.opponentPersona` is given — a persona-specific prep-tips
+ * section. Reuses `coach-mode.ts` directly rather than reimplementing any of
+ * its flow-vulnerability logic.
  */
 export function buildPracticeRoundFeedback(
   flow: Pick<Flow, "children" | "columns">,
   sideKey: string,
   judgeParadigm: JudgeParadigm,
-  options: { collapseLimit?: number } = {},
+  options: BuildPracticeRoundFeedbackOptions = {},
 ): PracticeRoundFeedback {
-  const coachingPrompts = buildCoachingSession(flow, sideKey, options);
+  const { opponentPersona, ...coachingOptions } = options;
+  const coachingPrompts = buildCoachingSession(flow, sideKey, coachingOptions);
 
   const sections: PracticeRoundSection[] = [
     {
@@ -173,6 +287,15 @@ export function buildPracticeRoundFeedback(
     },
     { title: "Coaching feedback", body: buildCoachingSummaryText(coachingPrompts) },
   ];
+
+  if (opponentPersona) {
+    sections.push({
+      title: `Facing the ${opponentPersona.name} persona again`,
+      body: buildOpponentPersonaFeedbackTips(opponentPersona)
+        .map((tip, index) => `${index + 1}. ${tip}`)
+        .join("\n"),
+    });
+  }
 
   return { judgeParadigm, coachingPrompts, sections };
 }

@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
-  Rss, Gauge, Crosshair, Crown, Send,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone,
   type LucideIcon,
 } from "lucide-react"
 
@@ -273,6 +273,20 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     ],
   },
   {
+    heading: "Mobile Setup",
+    tools: [
+      {
+        href: "/tools/mobile-setup", label: "Laptop-less Debating", icon: Smartphone,
+        description: "Gear picks and a step-by-step guide to prepping, flowing, and speaking off just a mobile phone — no laptop.",
+        highlights: [
+          "Recommended phone mount and keyboard gear, with Amazon links",
+          "How to prep speeches, flow, and time rounds from a phone browser",
+          "Speaking-off-your-phone checklist for round day",
+        ],
+      },
+    ],
+  },
+  {
     heading: "Coaching & Analytics",
     tools: [
       {
@@ -283,7 +297,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       {
         href: "/rank", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
-        highlights: ["Elo-based team leaderboard", "Track team ratings and rankings over time"],
+        highlights: [
+          "Elo-based team leaderboard",
+          "Track team ratings and rankings over time",
+          "Standings tab: log or bulk-CSV-import tournament results into NDCA-style qualification standings with an editable points table",
+        ],
       },
       {
         href: "/coaching-programs", label: "Coaching Programs", icon: School,

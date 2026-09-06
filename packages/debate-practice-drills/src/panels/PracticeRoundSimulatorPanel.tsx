@@ -60,6 +60,38 @@
  * `buildPracticeRoundAttemptsComparison`, with a "Download comparison"
  * action mirroring `CoachingSessionsPanel`'s anchor+Blob download pattern.
  *
+ * A "Scoring rubric" card next to each round's AI judge decision closes this
+ * bullet's "a scoring rubric shown alongside the AI judge decision" Next
+ * item: `debate-round`'s new `round/judge-decision-ai.ts#buildJudgeDecisionRubric`
+ * checks the round's own judge paradigm's `votingPriorities` against the
+ * rendered decision, and each criterion shows ✅/⬜ for whether the decision
+ * actually engaged with it.
+ *
+ * The "AI opponent persona" section's "Custom opponent persona" option, "My
+ * persona library" list, and "Shared by your team" list close the "🤖 AI
+ * Practice Opponent" idea's "unifying the Practice Round Simulator's own
+ * separate persona setup with [the custom-persona] library" Next item
+ * (TODO.md's Research Crowdsourcing Organizer Features list;
+ * `docs/features/practice-opponent.md`'s Known gaps): this panel's own
+ * opponent-persona picker could previously only choose a built-in persona,
+ * with no custom-persona authoring and no way to reuse an entry already
+ * saved to (or shared through) `OpponentPersonaPickerPanel`'s "My persona
+ * library". It now reuses that same `useCustomOpponentPersonaLibrary` hook
+ * and mirrors that panel's custom-persona form/library-picker UI, resolving
+ * the choice via `debate-round`'s new
+ * `round/practice-round-simulator.ts#resolvePracticeRoundOpponentPersonaChoice`
+ * before handing it to the already-existing `buildPracticeRoundSetup`.
+ *
+ * A "Replay round" section (once at least one speech has been delivered)
+ * closes this bullet's last remaining Next item — a round replay/playback
+ * view: `debate-round`'s new
+ * `round/practice-round-simulator.ts#buildPracticeRoundReplaySteps` zips the
+ * round's speech order with its already-looked-up `submitted` speeches
+ * (`getPracticeRoundSubmittedSpeeches`, no new persistence) into one
+ * step-per-slot sequence, stepped through here with Prev/Next controls
+ * showing that step's speaker/name and delivered text (or "Not yet
+ * delivered." for a slot beyond how far the round has progressed).
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -98,15 +130,22 @@ import {
   listOpponentDifficulties,
   listOpponentPersonas,
   opponentDifficulties,
-  type BuiltinOpponentPersonaId,
   type OpponentDifficulty,
+  type OpponentPersonaId,
 } from "debate-speech-writer/src/opponent/opponent-personas"
+import type { SavedCustomOpponentPersona } from "debate-speech-writer/src/opponent/opponent-persona-library"
 import { buildAiResponseRequest, type AiVersusSide } from "debate-round/src/round/ai-versus-speech-order"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { requestJudgeDecision } from "../round/judge-decision-client"
+import { buildJudgeDecisionRubric } from "debate-round/src/round/judge-decision-ai"
 import { buildPracticeRoundJudgeDecisionInput } from "../round/practice-round-judge-decision-wiring"
-import { buildPracticeRoundSetup } from "debate-round/src/round/practice-round-simulator"
+import {
+  buildPracticeRoundReplaySteps,
+  buildPracticeRoundSetup,
+  resolvePracticeRoundOpponentPersonaChoice,
+} from "debate-round/src/round/practice-round-simulator"
+import { useCustomOpponentPersonaLibrary } from "../hooks/useCustomOpponentPersonaLibrary"
 import { getAiVersusRound, saveAiVersusRound } from "debate-round/src/state/aiVersusRounds"
 import {
   buildAndSavePracticeRoundFeedback,
@@ -145,7 +184,11 @@ type FormState = {
   judgeParadigmId: BuiltinJudgeParadigmId | "custom"
   customJudgeName: string
   customJudgeNotes: string
-  opponentPersonaId: BuiltinOpponentPersonaId | "none"
+  opponentPersonaId: OpponentPersonaId | "none"
+  customPersonaName: string
+  customPersonaNotes: string
+  saveCustomPersonaToLibrary: boolean
+  shareCustomPersonaWithTeam: boolean
   opponentDifficultyId: OpponentDifficulty
 }
 
@@ -157,6 +200,10 @@ const EMPTY_FORM: FormState = {
   customJudgeName: "",
   customJudgeNotes: "",
   opponentPersonaId: "none",
+  customPersonaName: "",
+  customPersonaNotes: "",
+  saveCustomPersonaToLibrary: false,
+  shareCustomPersonaWithTeam: false,
   opponentDifficultyId: DEFAULT_OPPONENT_DIFFICULTY,
 }
 
@@ -178,7 +225,9 @@ export function PracticeRoundSimulatorPanel() {
   const [judgeLoadingId, setJudgeLoadingId] = useState<string | null>(null)
   const [actionErrors, setActionErrors] = useState<Record<string, string>>({})
   const [feedbackSideKeyByRound, setFeedbackSideKeyByRound] = useState<Record<string, string>>({})
+  const [replayStepByRound, setReplayStepByRound] = useState<Record<string, number>>({})
   const [mounted, setMounted] = useState(false)
+  const { library, synced, sharedByTeam, saveEntry } = useCustomOpponentPersonaLibrary()
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -225,7 +274,19 @@ export function PracticeRoundSimulatorPanel() {
       judgeParadigm = form.judgeParadigmId
     }
 
-    const opponentPersona = form.opponentPersonaId === "none" ? undefined : form.opponentPersonaId
+    let opponentPersona: ReturnType<typeof resolvePracticeRoundOpponentPersonaChoice>
+    try {
+      opponentPersona = resolvePracticeRoundOpponentPersonaChoice(
+        form.opponentPersonaId === "none"
+          ? { kind: "none" }
+          : form.opponentPersonaId === "custom"
+            ? { kind: "custom", name: form.customPersonaName, notes: form.customPersonaNotes }
+            : { kind: "builtin", id: form.opponentPersonaId },
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not build custom opponent persona.")
+      return
+    }
 
     const setup = buildPracticeRoundSetup({
       styleKey: form.styleKey,
@@ -238,9 +299,27 @@ export function PracticeRoundSimulatorPanel() {
     const existing = getPracticeRound(roundId)
     savePracticeRound({ roundId, setup, feedback: existing?.feedback })
 
+    if (form.opponentPersonaId === "custom" && form.saveCustomPersonaToLibrary) {
+      saveEntry({
+        name: form.customPersonaName,
+        notes: form.customPersonaNotes,
+        shared: form.shareCustomPersonaWithTeam,
+      })
+    }
+
     setError(null)
     setForm((prev) => ({ ...EMPTY_FORM, styleKey: prev.styleKey, userSide: prev.userSide }))
     refresh()
+  }
+
+  const handleUseLibraryEntry = (entry: SavedCustomOpponentPersona) => {
+    setForm((prev) => ({
+      ...prev,
+      opponentPersonaId: "custom",
+      customPersonaName: entry.name,
+      customPersonaNotes: entry.notes,
+      saveCustomPersonaToLibrary: false,
+    }))
   }
 
   const handleClear = (roundId: string) => {
@@ -484,8 +563,110 @@ export function PracticeRoundSimulatorPanel() {
                 </Label>
               </div>
             ))}
+            <div className="flex items-start gap-2">
+              <RadioGroupItem value="custom" id="practice-round-persona-custom" className="mt-0.5" />
+              <Label htmlFor="practice-round-persona-custom" className="font-normal text-foreground">
+                Custom opponent persona
+              </Label>
+            </div>
           </RadioGroup>
         </div>
+
+        {form.opponentPersonaId === "custom" && (
+          <div className="space-y-3 rounded-md border border-border p-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="practice-round-custom-persona-name">Persona name</Label>
+              <Input
+                id="practice-round-custom-persona-name"
+                value={form.customPersonaName}
+                onChange={(e) => setForm((prev) => ({ ...prev, customPersonaName: e.target.value }))}
+                placeholder="Coach Amy's aggressive K bot"
+                className="max-w-xs"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="practice-round-custom-persona-notes">Debating style</Label>
+              <Textarea
+                id="practice-round-custom-persona-notes"
+                value={form.customPersonaNotes}
+                onChange={(e) => setForm((prev) => ({ ...prev, customPersonaNotes: e.target.value }))}
+                placeholder="Opens on framework, spreads fast, extends drops…"
+              />
+            </div>
+            <label className="flex items-center gap-1.5 text-sm text-foreground">
+              <input
+                type="checkbox"
+                checked={form.saveCustomPersonaToLibrary}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, saveCustomPersonaToLibrary: e.target.checked }))
+                }
+              />
+              Save to my persona library
+            </label>
+            {form.saveCustomPersonaToLibrary && (
+              <label className="ml-5 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <input
+                  type="checkbox"
+                  checked={form.shareCustomPersonaWithTeam}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, shareCustomPersonaWithTeam: e.target.checked }))
+                  }
+                />
+                Share with my team
+              </label>
+            )}
+          </div>
+        )}
+
+        {library !== null && library.length > 0 && (
+          <div className="space-y-1.5">
+            <Label>My persona library</Label>
+            <p className="text-xs text-muted-foreground">
+              {synced ? "Synced to your account." : "Sign in to sync this library across devices."}
+            </p>
+            <div className="space-y-2">
+              {library.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-foreground">{entry.name}</span>
+                      {entry.shared && <Badge variant="outline">Shared with team</Badge>}
+                    </div>
+                    <p className="truncate text-xs text-muted-foreground">{entry.notes}</p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => handleUseLibraryEntry(entry)}>
+                    Use for this round
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {sharedByTeam !== null && sharedByTeam.length > 0 && (
+          <div className="space-y-1.5">
+            <Label>Shared by your team</Label>
+            <div className="space-y-2">
+              {sharedByTeam.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <span className="text-sm font-medium text-foreground">{entry.name}</span>
+                    <p className="truncate text-xs text-muted-foreground">{entry.notes}</p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => handleUseLibraryEntry(entry)}>
+                    Use this persona
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="space-y-1.5">
           <Label>Difficulty</Label>
@@ -571,6 +752,16 @@ export function PracticeRoundSimulatorPanel() {
                   aiRound.submittedSpeeches,
                 )
               : null
+            const judgeDecisionRubric = record.judgeDecision
+              ? buildJudgeDecisionRubric(record.setup.judgeParadigm, record.judgeDecision)
+              : null
+            const replaySteps = buildPracticeRoundReplaySteps(record.setup.speechOrder, submitted)
+            const hasReplayableSpeech = replaySteps.some((step) => step.delivered)
+            const replayIndex = Math.min(
+              replayStepByRound[record.roundId] ?? 0,
+              Math.max(replaySteps.length - 1, 0),
+            )
+            const replayStep = replaySteps[replayIndex]
             const actionError = actionErrors[record.roundId]
             return (
               <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
@@ -603,6 +794,54 @@ export function PracticeRoundSimulatorPanel() {
                   </Link>
                   .
                 </p>
+
+                {hasReplayableSpeech && replayStep && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-foreground">Replay round</p>
+                    <div className="space-y-2 rounded-md border border-border px-3 py-2 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">
+                            {replayIndex + 1} / {replaySteps.length}
+                          </Badge>
+                          <span className="font-medium text-foreground">{replayStep.name}</span>
+                          <Badge variant="outline">{replayStep.speaker === "user" ? "You" : "AI"}</Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={replayIndex === 0}
+                            onClick={() =>
+                              setReplayStepByRound((prev) => ({
+                                ...prev,
+                                [record.roundId]: replayIndex - 1,
+                              }))
+                            }
+                          >
+                            ← Prev
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={replayIndex >= replaySteps.length - 1}
+                            onClick={() =>
+                              setReplayStepByRound((prev) => ({
+                                ...prev,
+                                [record.roundId]: replayIndex + 1,
+                              }))
+                            }
+                          >
+                            Next →
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="whitespace-pre-line text-muted-foreground">
+                        {replayStep.delivered ? replayStep.text : "Not yet delivered."}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {aiSpeechRequest && (
                   <div className="space-y-2">
@@ -716,6 +955,36 @@ export function PracticeRoundSimulatorPanel() {
                         ))}
                       </ul>
                       <p className="mt-1 text-muted-foreground">{record.judgeDecision.rationale}</p>
+                    </div>
+                  )}
+                  {judgeDecisionRubric && (
+                    <div className="rounded-md border border-border px-3 py-2 text-sm">
+                      <p className="mb-1 font-medium text-foreground">
+                        Scoring rubric — {record.setup.judgeParadigm.name}
+                        {judgeDecisionRubric.length > 0 &&
+                          ` (${judgeDecisionRubric.filter((row) => row.addressed).length} of ${judgeDecisionRubric.length} priorities addressed)`}
+                      </p>
+                      {judgeDecisionRubric.length === 0 ? (
+                        <p className="text-muted-foreground">
+                          This paradigm has no fixed voting priorities to check against.
+                        </p>
+                      ) : (
+                        <ul className="space-y-0.5">
+                          {judgeDecisionRubric.map((row) => (
+                            <li key={row.criterion} className="flex flex-col">
+                              <span className="flex items-start gap-1.5">
+                                <span aria-hidden="true">{row.addressed ? "✅" : "⬜"}</span>
+                                <span className={row.addressed ? "text-foreground" : "text-muted-foreground"}>
+                                  {row.criterion}
+                                </span>
+                              </span>
+                              {row.matchedIssue && (
+                                <span className="pl-6 text-xs text-muted-foreground">{row.matchedIssue}</span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   )}
                 </div>

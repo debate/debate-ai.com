@@ -7,7 +7,7 @@ Awards page, and the Tools page's fine print to find out what's new.
 - **Route:** `/news`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t news` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
@@ -122,7 +122,7 @@ state/evidenceLibraryEntries.ts — existing store, read via listEvidenceLibrary
 
 (a package boundary this diagram can't show in one straight line:)
 debate-round's state/coachingSessions.ts — its own store, read via coachingSessionNews()
-                                            (debate-round already depends on debate-card-search,
+                                            (debate-round already depends on debate-research-evidence,
                                             so it can't be a source *inside* newsStream.ts above
                                             without a cycle — it produces NewsItems itself instead)
   → apps/debate-ai.com/app/news/NewsPageContent.tsx — the one place that depends on both

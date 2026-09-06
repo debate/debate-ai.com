@@ -15,7 +15,7 @@ before a contributor spends time cutting a duplicate card.
 `findEntriesBySourceUrl` / `checkPageForExistingCards` /
 `buildPageReuseCheckSummaryText` check a given page URL against every
 persisted `EvidenceLibraryEntry.sourceUrl`, matched after stripping scheme,
-a leading `www.`, tracking query parameters, and a trailing slash so minor
+a leading `www.`, any query string/fragment, and a trailing slash so minor
 URL differences don't defeat a real match. `state/evidenceLibraryEntries.ts`'s
 `checkPersistedPageForExistingCards` composes that against the real
 persisted repository.
@@ -23,11 +23,13 @@ persisted repository.
 `EvidenceLibraryPanel`'s "Check this page" box (on `/cards/library`) lets a
 contributor paste a URL and see the result. The same box also reads an
 optional `checkUrl` query param (via `next/navigation`'s `useSearchParams`)
-on mount and, when present, pre-fills and auto-runs the check.
+on mount and, when present, pre-fills and auto-runs the same full check
+as the button — the local-repository lookup plus the async team-wide
+shared-index check, recording history and refreshing the team dashboard.
 
 ## Check history
 
-Every local check (manual or `?checkUrl=` deep-linked) is now also recorded
+Every check (manual or `?checkUrl=` deep-linked) is now also recorded
 to a small history log instead of only showing the latest lookup's result —
 `state/reuseCheckHistory.ts`'s `appendReuseCheckHistory`/`listReuseCheckHistory`
 store the last `MAX_REUSE_CHECK_HISTORY` (20) checks in localStorage
@@ -36,9 +38,12 @@ the cap is exceeded — mirrors `state/judgeDecisions.ts`'s
 append-only-with-cap shape. `EvidenceLibraryPanel` renders this as a "Recent
 checks" list under the box; clicking an entry re-runs that same check, and a
 "Clear history" action removes the whole log
-(`clearReuseCheckHistory`). Only the local (this browser's own repository)
-outcome is recorded, not the async team-wide shared-index result below —
-a future run could add a second record once that resolves, if useful.
+(`clearReuseCheckHistory`). Both halves of a lookup are recorded: the
+synchronous local (this browser's own repository) outcome immediately, and
+the async team-wide shared-index result as a second record once it
+resolves, each tagged with a `scope` (`"local"`/`"team"`) rendered as a
+Local/Team badge in the list. Records saved before the `scope` field
+existed read back without one and render as Local.
 
 ## The browser extension
 
