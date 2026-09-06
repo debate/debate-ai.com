@@ -29,13 +29,23 @@ gets a generic tip pointing back at its own described style notes, since its
 free-form `instructions` can't be turned into structured, style-specific
 advice the way a built-in persona's can.
 
+The "AI opponent persona" picker now also reuses the AI Practice Opponent
+idea's custom-persona library: a "Custom opponent persona" option opens a
+name/style-notes form with "Save to my persona library"/"Share with my
+team" checkboxes, and "My persona library"/"Shared by your team" sections
+below it let a saved or team-shared entry prefill that form with one click
+— the same `useCustomOpponentPersonaLibrary` hook `OpponentPersonaPickerPanel`
+already uses.
+
 ## Data flow
 
 ```
 opponent/opponent-personas.ts (debate-speech-writer)
   → buildOpponentPersonaFeedbackTips(persona)
+  → buildCustomOpponentPersona({ name, notes })
 
 round/practice-round-simulator.ts
+  → resolvePracticeRoundOpponentPersonaChoice({ kind: "none" | "builtin" | "custom", ... })
   → buildPracticeRoundSetup({ styleKey, userSide, judgeParadigm, opponentPersona, opponentDifficulty })
   → buildPracticeRoundFeedback(flow, sideKey, judgeParadigm, { opponentPersona })
 
