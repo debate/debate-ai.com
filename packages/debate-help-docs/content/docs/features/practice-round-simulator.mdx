@@ -20,14 +20,28 @@ checks the round's own judge paradigm's voting priorities (✅/⬜) against the
 rendered decision. A **Compare your past attempts** section shows a
 chronological win/loss trend across a debater's rounds.
 
+When a round's setup carried an AI opponent persona, its post-round
+feedback gets an extra "Facing the `<persona name>` persona again" section —
+a short, numbered list of what to prep before facing that style again (e.g.
+pre-writing a framework defense before a Kritik opponent, or drilling
+efficient tagline-first responses before a Fast Flow one). A custom persona
+gets a generic tip pointing back at its own described style notes, since its
+free-form `instructions` can't be turned into structured, style-specific
+advice the way a built-in persona's can.
+
 ## Data flow
 
 ```
+opponent/opponent-personas.ts (debate-speech-writer)
+  → buildOpponentPersonaFeedbackTips(persona)
+
 round/practice-round-simulator.ts
   → buildPracticeRoundSetup({ styleKey, userSide, judgeParadigm, opponentPersona, opponentDifficulty })
-  → buildPracticeRoundFeedback(flow, sideKey, judgeParadigm)
+  → buildPracticeRoundFeedback(flow, sideKey, judgeParadigm, { opponentPersona })
 
 state/practiceRounds.ts (localStorage: practiceRounds)
+  → buildAndSavePracticeRoundFeedback(flow, roundId, sideKey) passes the
+    round's own saved setup.opponentPersona through automatically
   → buildPracticeRoundsPanelView()
   → panels/PracticeRoundSimulatorPanel.tsx
   → apps/debate-ai.com/app/practice-round/page.tsx

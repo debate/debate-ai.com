@@ -127,7 +127,11 @@ export function getPracticeRoundSubmittedSpeeches(roundId: string): PriorSpeechR
  * the "post-round feedback generation isn't wired to a live round flow"
  * Known gap named in `docs/features/practice-round-simulator.md`. Reuses
  * the existing `buildPracticeRoundFeedback` directly rather than
- * reimplementing any of its coaching-session composition.
+ * reimplementing any of its coaching-session composition. Also passes the
+ * round's own already-saved `setup.opponentPersona` through, so feedback
+ * gets the persona-specific prep-tips section whenever the round had an AI
+ * opponent — the "post-round feedback tips specific to the persona faced"
+ * follow-up named under idea "🤖 AI Practice Opponent" in TODO.md.
  *
  * Returns `undefined` (without writing anything) when no
  * `PracticeRoundRecord` is stored for `roundId` yet — feedback is only ever
@@ -143,7 +147,10 @@ export function buildAndSavePracticeRoundFeedback(
   const existing = getPracticeRound(roundId);
   if (!existing) return undefined;
 
-  const feedback = buildPracticeRoundFeedback(flow, sideKey, existing.setup.judgeParadigm, options);
+  const feedback = buildPracticeRoundFeedback(flow, sideKey, existing.setup.judgeParadigm, {
+    ...options,
+    opponentPersona: existing.setup.opponentPersona,
+  });
   const record: PracticeRoundRecord = { ...existing, feedback };
   savePracticeRound(record);
   return record;
