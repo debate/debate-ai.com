@@ -6,6 +6,47 @@
 _No task currently in progress._
 
 ### Completed
+- **🧪 Online Debate Versus AI — a side-by-side transcript diff between two
+  rounds.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built (account settings, and dozens of `saved_*` D1 tables/`/api/*`
+  routes linking flows, docs, and rounds to signed-in users in SQL, plus
+  every tool already reachable from the Tools page, CardMirror's own
+  menu/command palette, and the feature catalog, all reconfirmed this run),
+  so this slice picked the next named, unblocked follow-up instead: idea
+  #3's ("Online Debate Versus AI") other still-open next-step, a
+  side-by-side transcript diff between two rounds (its sibling suggestion,
+  a `.docx` export format, stays open — see below). A new
+  `round/ai-versus-transcript.ts#buildAiVersusTranscriptComparison` in
+  `debate-practice-rounds` (folder `debate-practice-drills`) zips two
+  persisted `AiVersusRoundRecord`s' `submittedSpeeches` positionally (round
+  A's Nth delivered speech against round B's Nth) — no assumption that the
+  two rounds share a format, side, or length, so a row where only one round
+  has a speech at that index is still included, undiffed, rather than
+  dropped. Each row where both rounds have a speech is word-diffed by
+  reusing the existing, generic `flow/flow-edit-diff.ts#diffFlowEditContent`
+  (already Vitest-covered for `SharedFlowSyncPanel`'s `FlowEdit` conflicts,
+  and generic over any two strings — no second diff implementation
+  written). `AiVersusRoundPanel`'s new "Compare transcripts" section (shown
+  once at least two rounds are persisted) renders the aligned pairs through
+  the same `DiffText` highlighted-span pattern `SharedFlowSyncPanel` already
+  uses, plus a "Download comparison" action
+  (`buildAiVersusTranscriptComparisonText`/`aiVersusTranscriptComparisonFilename`)
+  mirroring the existing single-round transcript download — the diff
+  highlighting itself stays visual-only in the panel, since a plain-text
+  file has no faithful way to carry an added/removed marking, so the
+  download includes both rounds' full undiffed text instead. See
+  `docs/features/ai-versus-rounds.md`'s new "Compare transcripts" section
+  and the new test coverage in
+  `packages/debate-practice-drills/test/ai-versus-transcript.test.ts`
+  (18 cases covering the comparison builder, its text renderer, and its
+  filename builder — positional zipping, word-diffing a changed pair,
+  an unchanged pair diffing fully equal, an undiffed row for a speech only
+  one round delivered, the empty-rounds case, and the comparison filename's
+  sanitization).
 - **🧭 App dock — tools moved out of it, and the dock bound to the sidebar
   column instead of reaching over CardMirror.** Two related nav problems.
   First, the dock carried a "Tools" icon that duplicated three other routes
