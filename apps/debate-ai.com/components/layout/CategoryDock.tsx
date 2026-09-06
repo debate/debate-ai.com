@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
 import { useAccountNotifications } from "debate-team-collaboration"
-import { TimerProgressRing } from "debate-timer"
+import { TimerProgressRing } from "debate-timer/src/timers/TimerProgressRing"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
