@@ -33,7 +33,11 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
+      {/* `min-w-0` plus the dock's own `fluid` sizing keep every child bound
+          to this column: the dock is sized to the sidebar rather than to its
+          own contents, so it can't reach across the border onto the page —
+          a CardMirror editor, on `/reason-editor` and `/doc`. */}
+      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
         <CategoryDock embedded />
         {/* Above the nav tree rather than below it: the tree is long enough
             (a section auto-expands to show where you are) that anything under
