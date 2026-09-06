@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   adoptDrillSet,
   buildAndSaveDrillSet,
+  buildContributorDrillCompletionStats,
   buildDrillReviewCalendarEvents,
   buildDrillSetsPanelView,
   deleteDrillSet,
@@ -541,6 +542,40 @@ describe("getDrillSetCompletionStats", () => {
 
   it("returns a zero ratio (not NaN) for a record with no drills", () => {
     expect(getDrillSetCompletionStats({ drills: [] })).toEqual({ completed: 0, total: 0, ratio: 0 });
+  });
+});
+
+describe("buildContributorDrillCompletionStats", () => {
+  it("returns an empty map for no recorded contributor rounds", () => {
+    expect(buildContributorDrillCompletionStats([], [DRILL_SET_A, DRILL_SET_B])).toEqual({});
+  });
+
+  it("omits a contributor whose recorded round has no persisted drill set", () => {
+    expect(
+      buildContributorDrillCompletionStats([{ contributorId: "alice", roundId: "missing-round" }], [DRILL_SET_A]),
+    ).toEqual({});
+  });
+
+  it("resolves a contributor's drill-completion stats via their recorded roundId", () => {
+    const record = { ...DRILL_SET_A, completedDrillIndexes: [0] };
+    expect(
+      buildContributorDrillCompletionStats([{ contributorId: "alice", roundId: "round-1" }], [record]),
+    ).toEqual({ alice: { completed: 1, total: 2, ratio: 0.5 } });
+  });
+
+  it("resolves multiple contributors independently, keyed by contributorId", () => {
+    expect(
+      buildContributorDrillCompletionStats(
+        [
+          { contributorId: "alice", roundId: "round-1" },
+          { contributorId: "bob", roundId: "round-2" },
+        ],
+        [DRILL_SET_A, { ...DRILL_SET_B, completedDrillIndexes: [0] }],
+      ),
+    ).toEqual({
+      alice: { completed: 0, total: 2, ratio: 0 },
+      bob: { completed: 1, total: 1, ratio: 1 },
+    });
   });
 });
 
