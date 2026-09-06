@@ -1,11 +1,15 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   buildPersistedDailyQuestBoard,
+  buildPersistedTeamQuestCompetition,
+  deleteQuestTeam,
   deleteQuestTemplate,
+  listQuestTeams,
   listQuestTemplates,
   previewQuestTemplatesFromTopicCoverage,
   pruneExpiredQuestTemplates,
   rolloverExpiredRecurringQuestTemplates,
+  saveQuestTeam,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "../src/state/dailyQuests";
@@ -13,7 +17,7 @@ import { saveContribution } from "debate-research-evidence/src/state/contributio
 import { saveTrackedArgument } from "debate-research-evidence/src/state/trackedArguments";
 import { saveEvidenceLibraryEntry } from "debate-research-evidence/src/state/evidenceLibraryEntries";
 import type { AttributedContribution } from "debate-research-evidence/src/lib/contribution-leaderboard";
-import type { QuestTemplate } from "../src/lib/daily-quests";
+import type { QuestTeam, QuestTemplate } from "../src/lib/daily-quests";
 import type { EvidenceLibraryEntry } from "debate-research-evidence/src/lib/shared-evidence-library";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
@@ -412,5 +416,90 @@ describe("buildPersistedDailyQuestBoard", () => {
 
     const board = buildPersistedDailyQuestBoard(NOW);
     expect(board[0].completedCount).toBe(1);
+  });
+});
+
+describe("listQuestTeams / saveQuestTeam / deleteQuestTeam", () => {
+  const ALPHA: QuestTeam = { id: "alpha", name: "Team Alpha", contributorIds: ["alex", "jordan"] };
+  const BETA: QuestTeam = { id: "beta", name: "Team Beta", contributorIds: ["sam"] };
+
+  it("returns an empty list when nothing is stored", () => {
+    expect(listQuestTeams()).toEqual([]);
+  });
+
+  it("returns an empty list when the stored value is corrupt JSON", () => {
+    localStorage.setItem("questTeams", "{not json");
+    expect(listQuestTeams()).toEqual([]);
+  });
+
+  it("returns an empty list when the stored value isn't an array", () => {
+    localStorage.setItem("questTeams", JSON.stringify({ not: "an array" }));
+    expect(listQuestTeams()).toEqual([]);
+  });
+
+  it("lists every saved team", () => {
+    saveQuestTeam(ALPHA);
+    saveQuestTeam(BETA);
+    expect(listQuestTeams()).toEqual([ALPHA, BETA]);
+  });
+
+  it("upserts — saving an existing id overwrites rather than duplicating it", () => {
+    saveQuestTeam(ALPHA);
+    const updated: QuestTeam = { ...ALPHA, contributorIds: ["alex", "jordan", "sam"] };
+    saveQuestTeam(updated);
+    expect(listQuestTeams()).toEqual([updated]);
+  });
+
+  it("deletes a team by id", () => {
+    saveQuestTeam(ALPHA);
+    saveQuestTeam(BETA);
+    deleteQuestTeam(ALPHA.id);
+    expect(listQuestTeams()).toEqual([BETA]);
+  });
+
+  it("is a no-op deleting a team that isn't stored", () => {
+    saveQuestTeam(ALPHA);
+    deleteQuestTeam("not-stored");
+    expect(listQuestTeams()).toEqual([ALPHA]);
+  });
+});
+
+describe("buildPersistedTeamQuestCompetition", () => {
+  const NOW = Date.UTC(2026, 7, 16, 12, 0, 0);
+
+  function cardContribution(overrides: Partial<AttributedContribution>): AttributedContribution {
+    return {
+      id: "contrib-1",
+      contributorId: "alex",
+      kind: "card",
+      likes: 0,
+      saves: 0,
+      qualitySignals: [],
+      reviewerEndorsements: [],
+      submittedAt: NOW,
+      argBlock: "Solvency",
+      ...overrides,
+    };
+  }
+
+  it("returns an empty list when no teams are stored", () => {
+    expect(buildPersistedTeamQuestCompetition(NOW)).toEqual([]);
+  });
+
+  it("ranks stored teams by their members' real, persisted contributions against the stored quest roster", () => {
+    saveQuestTemplate(FIND_CARDS); // targetCount 2
+    saveQuestTeam({ id: "alpha", name: "Team Alpha", contributorIds: ["alex", "jordan"] });
+    saveQuestTeam({ id: "beta", name: "Team Beta", contributorIds: ["sam"] });
+
+    // alex completes the quest alone; sam contributes nothing.
+    saveContribution(cardContribution({ id: "c1", contributorId: "alex" }));
+    saveContribution(cardContribution({ id: "c2", contributorId: "alex" }));
+
+    const standings = buildPersistedTeamQuestCompetition(NOW);
+
+    expect(standings.map((s) => ({ teamId: s.teamId, earnedPoints: s.earnedPoints }))).toEqual([
+      { teamId: "alpha", earnedPoints: 10 },
+      { teamId: "beta", earnedPoints: 0 },
+    ]);
   });
 });

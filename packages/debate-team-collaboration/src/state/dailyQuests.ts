@@ -44,6 +44,15 @@
  * loads it — no manual cleanup action needed — and `pruneExpiredQuestTemplates`
  * calls it first too, so a recurring template is never deleted as "expired".
  *
+ * `listQuestTeams`/`saveQuestTeam`/`deleteQuestTeam`/
+ * `buildPersistedTeamQuestCompetition` close the "team-vs-team quest
+ * competitions" follow-up named under the "🎯 Daily Quests and Targets"
+ * bullet in TODO.md: a team roster is stored under its own `"questTeams"`
+ * key (independent of the quest-template roster), and
+ * `buildPersistedTeamQuestCompetition` composes it against the exact same
+ * persisted templates/contributions `buildPersistedDailyQuestBoard` already
+ * reads, via `lib/daily-quests.ts`'s `buildTeamQuestCompetitionStandings`.
+ *
  * @module state/dailyQuests
  */
 
@@ -51,12 +60,15 @@ import type { AttributedContribution } from "debate-research-evidence/src/lib/co
 import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
 import {
   buildDailyQuestBoard,
+  buildTeamQuestCompetitionStandings,
   buildUnderCoveredArgumentQuests,
   isQuestTemplateExpired,
   rolloverRecurringQuestTemplate,
   type QuestContribution,
   type QuestProgress,
+  type QuestTeam,
   type QuestTemplate,
+  type TeamQuestStanding,
 } from "../lib/daily-quests";
 import type { CoverageThresholds } from "debate-research-evidence/src/lib/topic-coverage";
 import { listContributions } from "debate-research-evidence/src/state/contributions";
@@ -210,4 +222,68 @@ export function previewQuestTemplatesFromTopicCoverage(
   const derived = buildUnderCoveredArgumentQuests(report, thresholds);
   const existingIds = new Set(readAll().map((template) => template.id));
   return derived.map((template) => ({ template, alreadySeeded: existingIds.has(template.id) }));
+}
+
+const TEAMS_STORAGE_KEY = "questTeams";
+
+function readAllTeams(): QuestTeam[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(TEAMS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as QuestTeam[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeAllTeams(teams: QuestTeam[]): void {
+  if (typeof localStorage === "undefined") return;
+  localStorage.setItem(TEAMS_STORAGE_KEY, JSON.stringify(teams));
+}
+
+/**
+ * Lists every persisted quest-competition team — the "team-vs-team quest
+ * competitions" follow-up named under the "🎯 Daily Quests and Targets"
+ * bullet in TODO.md. Stored separately from `QuestTemplate`s (own
+ * `"questTeams"` localStorage key) since a team roster and the quest board
+ * itself vary independently.
+ */
+export function listQuestTeams(): QuestTeam[] {
+  return readAllTeams();
+}
+
+/** Saves a quest-competition team, overwriting any existing team with the same id (upsert), mirroring `saveQuestTemplate`. */
+export function saveQuestTeam(team: QuestTeam): void {
+  const teams = readAllTeams();
+  const index = teams.findIndex((existing) => existing.id === team.id);
+  if (index === -1) {
+    teams.push(team);
+  } else {
+    teams[index] = team;
+  }
+  writeAllTeams(teams);
+}
+
+/** Deletes a persisted quest-competition team by id; a no-op if it isn't stored. */
+export function deleteQuestTeam(id: string): void {
+  writeAllTeams(readAllTeams().filter((team) => team.id !== id));
+}
+
+/**
+ * Builds today's (the UTC calendar day of `now`) team standings directly
+ * from the persisted team roster, the persisted quest-template roster, and
+ * the real, persisted contribution feed — mirroring
+ * `buildPersistedDailyQuestBoard`'s composition exactly (including rolling
+ * over any expired recurring template first, and excluding contributions
+ * with no `submittedAt`), just rolled up per team via
+ * `buildTeamQuestCompetitionStandings` instead of one shared board.
+ */
+export function buildPersistedTeamQuestCompetition(now: number): TeamQuestStanding[] {
+  rolloverExpiredRecurringQuestTemplates(now);
+  const teams = readAllTeams();
+  const templates = readAll();
+  const contributions = listContributions().filter(hasSubmittedAt) as QuestContribution[];
+  return buildTeamQuestCompetitionStandings(teams, templates, contributions, now);
 }
