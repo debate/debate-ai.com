@@ -103,6 +103,31 @@ existing `EvidenceLibraryEntry` derives a before/after `CardSnapshot` pair via
 it as a `CardRevisionRecord`, so this leaderboard now reflects real edits rather than only
 caller-supplied snapshots.
 
+## Progress Unlocks tier
+
+Each leaderboard row also shows a **Tier** badge (and any earned badges) from
+the shared `debate-card-search` Progress Unlocks system
+(`lib/progress-unlocks.ts`'s `buildContributorUnlockStatus`) — the same
+`novice`/`apprentice`/`veteran`/`expert` tiers and `Rising Researcher`/
+`Seasoned Contributor`/`Master Researcher` badge names shown on the real
+Contribution Leaderboard.
+
+`lib/revision-progress-unlocks.ts`'s `buildRevisionRewardContributorStats`
+maps a row's own `rewardedRevisionCount` onto `ContributorStats.contributionCount`
+and its `totalRewardPoints` onto `totalHelpfulnessScore` — no synthetic
+placeholder contributor and no new points-threshold table, since reward
+points already sit on the same rough scale `totalHelpfulnessScore` does
+(both ultimately derive from `community-rating.ts`'s `scoreQualitySignal`).
+`buildRevisionRewardUnlockStatus` then runs that through the existing
+`buildContributorUnlockStatus` with the default tier requirements.
+
+This is a Revision-Incentives-scoped tier display, not a post into the real
+cross-tool Contribution Leaderboard/Progress Unlocks roster: this panel's
+`contributorId` is a freely-typed field on `EvidenceLibraryPanel`'s Edit
+form, not yet locked to a real signed-in session, so crediting it onto the
+shared roster would let anyone claim any contributor's tier just by typing
+their id. See `packages/debate-search-evidence/test/revision-progress-unlocks.test.ts`.
+
 ## Cross-tab live update
 
 `RevisionIncentivesPanel` now subscribes to the browser's `storage` event —
