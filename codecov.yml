@@ -25,36 +25,51 @@ coverage:
         informational: true
 
 # One flag per workspace package so the Codecov UI can show which library a
-# change actually moved the needle in.
+# change actually moved the needle in. Kept in sync with `packages/*` (see
+# `packages/README.md`) — every package with a `src/` directory gets a flag,
+# named after its directory rather than its (sometimes stale) package.json
+# `name`, since that's how contributors navigate the repo and Codecov's UI.
 flag_management:
   default_rules:
     carryforward: true
 
 flags:
+  debate-api-client:
+    paths:
+      - packages/debate-api-client/src
   debate-card-parser:
     paths:
       - packages/debate-card-parser/src
-  debate-card-search:
+  debate-contributor-progress:
     paths:
-      - packages/debate-card-search/src
-  debate-core:
-    paths:
-      - packages/debate-core/src
+      - packages/debate-contributor-progress/src
   debate-data-sync:
     paths:
       - packages/debate-data-sync/src
   debate-editor:
     paths:
       - packages/debate-editor/src
-  debate-flow-ebb:
+  debate-flow:
     paths:
-      - packages/debate-flow-ebb/src
+      - packages/debate-flow/src
+  debate-practice-drills:
+    paths:
+      - packages/debate-practice-drills/src
   debate-round:
     paths:
       - packages/debate-round/src
+  debate-round-practice-ai:
+    paths:
+      - packages/debate-round-practice-ai/src
+  debate-search-evidence:
+    paths:
+      - packages/debate-search-evidence/src
   debate-speech-writer:
     paths:
       - packages/debate-speech-writer/src
+  debate-team-collaboration:
+    paths:
+      - packages/debate-team-collaboration/src
   debate-timer:
     paths:
       - packages/debate-timer/src
@@ -64,9 +79,63 @@ flags:
   debate-videos:
     paths:
       - packages/debate-videos/src
-  reason-editor:
-    paths:
-      - packages/reason-editor/src
+
+# Components mirror the flags above so the "components" section of the PR
+# comment (below) actually has something to render, and so each package gets
+# its own informational status check independent of the project-wide one.
+component_management:
+  default_rules:
+    statuses:
+      - type: project
+        target: auto
+        threshold: 2%
+        informational: true
+  individual_components:
+    - component_id: debate-api-client
+      paths:
+        - packages/debate-api-client/src
+    - component_id: debate-card-parser
+      paths:
+        - packages/debate-card-parser/src
+    - component_id: debate-contributor-progress
+      paths:
+        - packages/debate-contributor-progress/src
+    - component_id: debate-data-sync
+      paths:
+        - packages/debate-data-sync/src
+    - component_id: debate-editor
+      paths:
+        - packages/debate-editor/src
+    - component_id: debate-flow
+      paths:
+        - packages/debate-flow/src
+    - component_id: debate-practice-drills
+      paths:
+        - packages/debate-practice-drills/src
+    - component_id: debate-round
+      paths:
+        - packages/debate-round/src
+    - component_id: debate-round-practice-ai
+      paths:
+        - packages/debate-round-practice-ai/src
+    - component_id: debate-search-evidence
+      paths:
+        - packages/debate-search-evidence/src
+    - component_id: debate-speech-writer
+      paths:
+        - packages/debate-speech-writer/src
+    - component_id: debate-team-collaboration
+      paths:
+        - packages/debate-team-collaboration/src
+    - component_id: debate-timer
+      paths:
+        - packages/debate-timer/src
+    - component_id: debate-ui
+      paths:
+        - packages/debate-ui/src
+    - component_id: debate-videos
+      paths:
+        - packages/debate-videos/src
 
 comment:
   layout: "header, diff, flags, components, files, footer"

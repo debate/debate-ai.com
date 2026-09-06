@@ -60,3 +60,16 @@ Publishing to npm is automated by
 push a `debate-api-client@x.y.z` tag (matching this package's `version`) and
 CI builds, tests, and publishes it. This is the only package in the monorepo
 published to npm — every other workspace package stays `"private": true`.
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+```
+
+Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
+merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
+
+Current Codecov package coverage on `master` at commit `50322f5` is **29.70%** (tracked
+under the `debate-api-client` flag).
