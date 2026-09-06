@@ -175,8 +175,8 @@ export function listOpponentPersonas(): OpponentPersona[] {
   return opponentPersonaIds.map((id) => opponentPersonas[id]);
 }
 
-const MAX_CUSTOM_NAME_LENGTH = 80;
-const MAX_CUSTOM_NOTES_LENGTH = 2000;
+export const MAX_CUSTOM_NAME_LENGTH = 80;
+export const MAX_CUSTOM_NOTES_LENGTH = 2000;
 
 export type CustomOpponentPersonaInput = {
   /** Label for the custom persona, e.g. "Coach Amy's aggressive K bot". */
@@ -186,8 +186,10 @@ export type CustomOpponentPersonaInput = {
 };
 
 /** Strips ASCII control characters (keeping tab/newline/carriage-return),
- *  then trims and clamps length for user-supplied text. */
-function sanitizeText(raw: string, maxLength: number): string {
+ *  then trims and clamps length for user-supplied text. Exported for
+ *  `opponent-persona-library.ts`'s saved-library entries, which sanitize
+ *  the same `name`/`notes` fields before a persona is ever built from them. */
+export function sanitizeOpponentPersonaText(raw: string, maxLength: number): string {
   let stripped = "";
   for (const ch of raw) {
     const code = ch.codePointAt(0) ?? 0;
@@ -210,8 +212,8 @@ function sanitizeText(raw: string, maxLength: number): string {
  * persona with no actual style description isn't meaningful.
  */
 export function buildCustomOpponentPersona(input: CustomOpponentPersonaInput): OpponentPersona {
-  const name = sanitizeText(input.name, MAX_CUSTOM_NAME_LENGTH);
-  const notes = sanitizeText(input.notes, MAX_CUSTOM_NOTES_LENGTH);
+  const name = sanitizeOpponentPersonaText(input.name, MAX_CUSTOM_NAME_LENGTH);
+  const notes = sanitizeOpponentPersonaText(input.notes, MAX_CUSTOM_NOTES_LENGTH);
 
   if (!name) throw new Error("buildCustomOpponentPersona: name is required");
   if (!notes) throw new Error("buildCustomOpponentPersona: notes are required");
