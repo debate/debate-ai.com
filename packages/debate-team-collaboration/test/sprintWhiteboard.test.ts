@@ -4,6 +4,7 @@ import {
   listWhiteboardNotes,
   listWhiteboardNotesForTopic,
   saveWhiteboardNote,
+  updatePersistedWhiteboardNotePosition,
 } from "../src/state/sprintWhiteboard";
 import type { WhiteboardNote } from "../src/lib/team-collaboration-mode";
 
@@ -31,6 +32,8 @@ const SOLVENCY_NOTE: WhiteboardNote = {
   color: "yellow",
   authorId: "alice",
   createdAt: 100,
+  x: 4,
+  y: 4,
 };
 const TOPICALITY_NOTE: WhiteboardNote = {
   id: "note-2",
@@ -39,6 +42,8 @@ const TOPICALITY_NOTE: WhiteboardNote = {
   color: "blue",
   authorId: "bob",
   createdAt: 200,
+  x: 26,
+  y: 4,
 };
 
 beforeEach(() => {
@@ -107,5 +112,28 @@ describe("deleteWhiteboardNote", () => {
     saveWhiteboardNote(TOPICALITY_NOTE);
     deleteWhiteboardNote("missing");
     expect(listWhiteboardNotes()).toEqual([TOPICALITY_NOTE]);
+  });
+});
+
+describe("updatePersistedWhiteboardNotePosition", () => {
+  it("persists a note's new x/y position", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    saveWhiteboardNote(TOPICALITY_NOTE);
+    updatePersistedWhiteboardNotePosition("note-1", 60, 75);
+
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 60, y: 75 }, TOPICALITY_NOTE]);
+  });
+
+  it("clamps the position into the 0-100 range", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    updatePersistedWhiteboardNotePosition("note-1", -20, 140);
+
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 0, y: 100 }]);
+  });
+
+  it("is a no-op when the id isn't stored", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    updatePersistedWhiteboardNotePosition("missing", 60, 75);
+    expect(listWhiteboardNotes()).toEqual([SOLVENCY_NOTE]);
   });
 });

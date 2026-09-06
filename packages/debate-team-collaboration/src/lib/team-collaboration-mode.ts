@@ -389,9 +389,19 @@ export interface WhiteboardNote {
   color: WhiteboardNoteColor;
   authorId: string;
   createdAt: number;
+  /** Freeform position on the board, as a percentage (0-100) of its width. */
+  x: number;
+  /** Freeform position on the board, as a percentage (0-100) of its height. */
+  y: number;
 }
 
 const MAX_WHITEBOARD_NOTE_LENGTH = 280;
+const WHITEBOARD_MIN_COORDINATE = 0;
+const WHITEBOARD_MAX_COORDINATE = 100;
+const WHITEBOARD_GRID_COLUMNS = 4;
+const WHITEBOARD_GRID_STEP_X = 22;
+const WHITEBOARD_GRID_STEP_Y = 24;
+const WHITEBOARD_GRID_ORIGIN = 4;
 
 export interface CreateWhiteboardNoteInput {
   id: string;
@@ -400,13 +410,42 @@ export interface CreateWhiteboardNoteInput {
   authorId: string;
   color: WhiteboardNoteColor;
   createdAt: number;
+  x: number;
+  y: number;
+}
+
+/**
+ * Clamps a whiteboard coordinate into the valid `0-100` percentage range,
+ * falling back to the range's lower bound for a non-finite input (e.g. a
+ * pointer-drag computation that briefly produced `NaN`).
+ */
+export function clampWhiteboardCoordinate(value: number): number {
+  if (!Number.isFinite(value)) return WHITEBOARD_MIN_COORDINATE;
+  return Math.min(WHITEBOARD_MAX_COORDINATE, Math.max(WHITEBOARD_MIN_COORDINATE, value));
+}
+
+/**
+ * The position a newly-added note should default to, cascading in a
+ * `WHITEBOARD_GRID_COLUMNS`-wide grid by how many notes the topic's board
+ * already has — mirroring `nextWhiteboardNoteColor`'s existing-count-based
+ * cycling, so a fresh note never lands stacked directly on top of another one
+ * before anyone has dragged it.
+ */
+export function defaultWhiteboardNotePosition(existingNoteCountForTopic: number): { x: number; y: number } {
+  const column = existingNoteCountForTopic % WHITEBOARD_GRID_COLUMNS;
+  const row = Math.floor(existingNoteCountForTopic / WHITEBOARD_GRID_COLUMNS);
+  return {
+    x: clampWhiteboardCoordinate(WHITEBOARD_GRID_ORIGIN + column * WHITEBOARD_GRID_STEP_X),
+    y: clampWhiteboardCoordinate(WHITEBOARD_GRID_ORIGIN + row * WHITEBOARD_GRID_STEP_Y),
+  };
 }
 
 /**
  * Builds a `WhiteboardNote`, validating that it names a topic and has
  * non-blank text. `text` is trimmed and clamped to `MAX_WHITEBOARD_NOTE_LENGTH`;
  * an unrecognized `color` falls back to the palette's first entry rather than
- * throwing (a note is still worth keeping even with a garbled color).
+ * throwing (a note is still worth keeping even with a garbled color); `x`/`y`
+ * are clamped into the valid `0-100` range.
  */
 export function createWhiteboardNote(input: CreateWhiteboardNoteInput): WhiteboardNote {
   if (!input.topic.trim()) {
@@ -424,6 +463,8 @@ export function createWhiteboardNote(input: CreateWhiteboardNoteInput): Whiteboa
     color: WHITEBOARD_NOTE_COLORS.includes(input.color) ? input.color : WHITEBOARD_NOTE_COLORS[0],
     authorId: input.authorId.trim() || "me",
     createdAt: input.createdAt,
+    x: clampWhiteboardCoordinate(input.x),
+    y: clampWhiteboardCoordinate(input.y),
   };
 }
 
@@ -441,6 +482,18 @@ export function getWhiteboardNotesForTopic(notes: WhiteboardNote[], topic: strin
 export function nextWhiteboardNoteColor(existingNoteCountForTopic: number): WhiteboardNoteColor {
   const index = existingNoteCountForTopic % WHITEBOARD_NOTE_COLORS.length;
   return WHITEBOARD_NOTE_COLORS[index];
+}
+
+/**
+ * Moves one note (by id) to a new `x`/`y` position, clamped into the valid
+ * `0-100` range — the pure half of dragging a sticky note on the freeform
+ * whiteboard. Returns `notes` unchanged (same values, new array) when `id`
+ * isn't found, mirroring this file's other id-targeted updates.
+ */
+export function moveWhiteboardNotePosition(notes: WhiteboardNote[], id: string, x: number, y: number): WhiteboardNote[] {
+  return notes.map((note) =>
+    note.id === id ? { ...note, x: clampWhiteboardCoordinate(x), y: clampWhiteboardCoordinate(y) } : note,
+  );
 }
 
 /**
