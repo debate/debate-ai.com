@@ -209,6 +209,24 @@ on this idea.
 > action ("neighbour-preview/bulk-section tagging") — is still not restored;
 > see "Known gaps" below.
 
+> **Update, a later run: "Select section" bulk-heading action.** Every
+> heading row now also has a "Select section"/"Deselect section" button
+> (same taggable-round scope as everything else here), restoring the deleted
+> popover's other bulk mode. Rather than tagging a heading's rows directly,
+> it folds every argument row currently filtered under that heading into the
+> same checkbox selection the per-row checkboxes/"Select all"/"Tag
+> selected…" flow above already uses, via `debate-round`'s new
+> `toggleSectionRowSelection(selected, sectionRowIndexes)`: if every row in
+> the section is already selected, all of them are deselected; otherwise the
+> missing ones are added, without disturbing any other row already checked
+> elsewhere in the round. The button is hidden for a heading with no
+> surviving filtered rows under it (nothing to select). This composes with
+> the existing multi-row "Tag selected…" flow instead of needing its own
+> separate save path — checking a section, then adding or removing a couple
+> of individual rows by hand, then tagging the combined set all works the
+> same way a manual checkbox selection already did. No further follow-up is
+> currently tracked for either bulk-tagging mode; see "Known gaps" below.
+
 ## Tagging an argument from the flow grid (removed — see note)
 
 > **⚠️ Known regression, discovered 2026-09-05, tagging itself restored the
@@ -459,9 +477,11 @@ suites).
   tagging" update. Neighbour-preview/bulk-section tagging (the deleted AG
   Grid popover's other feature — tagging every row under one heading in a
   single action, described in "Tagging an argument from the flow grid
-  (removed — see note)" for history) is still not restored; a future slice
-  could add a "select all rows under this heading" action alongside the
-  existing per-row checkboxes if that's worth building.
+  (removed — see note)" for history) is also now restored, as a "Select
+  section" action that folds a heading's rows into the same checkbox
+  selection rather than tagging them directly — see the "'Select section'
+  bulk-heading action" update above. No further follow-up is currently
+  tracked for bulk tagging on this panel.
 - Tagging is row-level, not per-speech: one row carries one
   `argumentType`/`authorId`/`evidenceStatus`, so a row whose 2AC answer was
   written by a different partner than its 1AC claim can't record both.

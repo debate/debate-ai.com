@@ -40,10 +40,13 @@
  * tagging, adapted to `ArgumentTreePanel`'s flat row list: a caller collects
  * a set of `rowIndex`es via its own checkbox-selection state (rather than an
  * AG Grid selection model) and applies one set of tags to all of them at
- * once. The deleted popover's *neighbour-preview/bulk-section* mode (tagging
- * every row under a heading in one action) isn't restored — see
- * `docs/features/argument-tree-outline.md`'s "Known gaps" for that narrower
- * remaining follow-up.
+ * once. `toggleSectionRowSelection` restores the deleted popover's other
+ * bulk mode — neighbour-preview/bulk-section tagging (tagging every row
+ * under one heading in a single action) — adapted the same way: instead of
+ * tagging a heading's rows directly, it folds them into the caller's
+ * existing checkbox selection (so a "Select section" action composes with
+ * the same "Tag selected…" flow multi-row selection already uses, rather
+ * than needing its own separate tagging path).
  *
  * @module flow/argument-tagging
  */
@@ -127,6 +130,30 @@ export function setRowsArgumentTags<F extends Pick<Flow, "children">>(
     ...flow,
     children: flow.children.map((box, index) => (targets.has(index) ? taggedBox(box, tags) : box)),
   };
+}
+
+/**
+ * Toggles a whole set of row indexes (e.g. every argument row under one
+ * heading) into or out of an existing checkbox selection at once, without
+ * disturbing any other index already selected: if every listed index is
+ * already selected, all of them are removed; otherwise every listed index
+ * is added (deduped against whatever's already selected). Order of already-
+ * selected indexes is preserved; newly-added indexes are appended in the
+ * order given. A no-op (returns `selected` unchanged) for an empty
+ * `sectionRowIndexes`.
+ */
+export function toggleSectionRowSelection(selected: number[], sectionRowIndexes: number[]): number[] {
+  if (sectionRowIndexes.length === 0) return selected;
+  const allSelected = sectionRowIndexes.every((index) => selected.includes(index));
+  if (allSelected) {
+    const excluded = new Set(sectionRowIndexes);
+    return selected.filter((index) => !excluded.has(index));
+  }
+  const next = [...selected];
+  for (const index of sectionRowIndexes) {
+    if (!next.includes(index)) next.push(index);
+  }
+  return next;
 }
 
 /** Formats a row's tags as a compact "link · cited · alex" label; empty string when no tag is set. */

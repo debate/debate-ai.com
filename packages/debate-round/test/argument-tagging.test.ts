@@ -6,6 +6,7 @@ import {
   listAuthorIdsInFlow,
   setRowArgumentTags,
   setRowsArgumentTags,
+  toggleSectionRowSelection,
 } from "../src/flow/argument-tagging";
 import type { Box, Flow } from "../src/types/flow";
 
@@ -142,6 +143,29 @@ describe("setRowsArgumentTags", () => {
     const flow = flowWithRows([original]);
     setRowsArgumentTags(flow, [0], { argumentType: "link" });
     expect(original.argumentType).toBeUndefined();
+  });
+});
+
+describe("toggleSectionRowSelection", () => {
+  it("adds every section index to an empty selection", () => {
+    expect(toggleSectionRowSelection([], [1, 2, 3])).toEqual([1, 2, 3]);
+  });
+
+  it("adds only the section's missing indexes, preserving already-selected ones and their order", () => {
+    expect(toggleSectionRowSelection([5, 1], [1, 2, 3])).toEqual([5, 1, 2, 3]);
+  });
+
+  it("removes every section index when all of them are already selected, leaving unrelated selections alone", () => {
+    expect(toggleSectionRowSelection([5, 1, 2, 3], [1, 2, 3])).toEqual([5]);
+  });
+
+  it("does not add duplicates when a section index already appears earlier", () => {
+    expect(toggleSectionRowSelection([2], [1, 2, 3])).toEqual([2, 1, 3]);
+  });
+
+  it("is a no-op for an empty section", () => {
+    const selected = [1, 2];
+    expect(toggleSectionRowSelection(selected, [])).toBe(selected);
   });
 });
 
