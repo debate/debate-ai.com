@@ -2,8 +2,8 @@
 
 import { type ReactNode, useMemo, useState } from "react"
 import { ChevronDown, ChevronRight, FileText, Folder, Search } from "lucide-react"
-import { Input } from "../../lib/ui/primitives/input"
-import { cn } from "../../lib/ui/lib/utils"
+import { Input } from "@/lib/ui/primitives/input"
+import { cn } from "@/lib/ui/lib/utils"
 
 export interface TopicStarterItem { id: number; title: string; content: string; parentId: number | null; isFolder: boolean; tags: string }
 interface Node { item: TopicStarterItem; children: Node[] }
