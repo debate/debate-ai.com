@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  addRoundPrepNote,
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
   deletePrepNote,
@@ -7,6 +8,7 @@ import {
   listPrepNotes,
   listPrepNotesForBox,
   listPrepNotesForFlow,
+  listPrepNotesForRound,
   nextPrepNoteStatus,
   savePrepNote,
   updatePersistedPrepNotePriority,
@@ -306,5 +308,49 @@ describe("buildPrepNotesPanelView", () => {
 
     const [, openGroup] = buildPrepNotesPanelView();
     expect(openGroup.notes.map((n) => n.id)).toEqual(["note-4", "note-3", "note-1"]);
+  });
+});
+
+describe("listPrepNotesForRound", () => {
+  it("returns an empty list when nothing is stored for that round", () => {
+    savePrepNote(OPEN_NOTE);
+    expect(listPrepNotesForRound("round-1")).toEqual([]);
+  });
+
+  it("returns only notes anchored to the given round, oldest first", () => {
+    savePrepNote(OPEN_NOTE);
+    const roundNoteA = addRoundPrepNote({ roundId: "round-1", authorId: "alice", text: "later note" });
+    const roundNoteB = addRoundPrepNote({ roundId: "round-1", authorId: "bob", text: "earlier note" });
+    addRoundPrepNote({ roundId: "round-2", authorId: "alice", text: "other round" });
+
+    const ids = listPrepNotesForRound("round-1").map((n) => n.id);
+    expect(new Set(ids)).toEqual(new Set([roundNoteA.id, roundNoteB.id]));
+    expect(ids).not.toContain(OPEN_NOTE.id);
+  });
+});
+
+describe("addRoundPrepNote", () => {
+  it("persists a round-anchored note and returns it", () => {
+    const note = addRoundPrepNote({ roundId: "round-1", authorId: "alice", text: "strong on framework" });
+
+    expect(note.roundId).toBe("round-1");
+    expect(note.authorId).toBe("alice");
+    expect(note.text).toBe("strong on framework");
+    expect(note.status).toBe("open");
+    expect("flowId" in note).toBe(false);
+    expect(getPrepNote(note.id)).toEqual(note);
+  });
+
+  it("generates a distinct id for each note, even for the same round", () => {
+    const a = addRoundPrepNote({ roundId: "round-1", authorId: "alice", text: "note a" });
+    const b = addRoundPrepNote({ roundId: "round-1", authorId: "alice", text: "note b" });
+
+    expect(a.id).not.toBe(b.id);
+    expect(listPrepNotesForRound("round-1")).toHaveLength(2);
+  });
+
+  it("throws for blank text, without persisting anything", () => {
+    expect(() => addRoundPrepNote({ roundId: "round-1", authorId: "alice", text: "   " })).toThrow(/text/);
+    expect(listPrepNotesForRound("round-1")).toEqual([]);
   });
 });

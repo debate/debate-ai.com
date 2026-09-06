@@ -81,7 +81,7 @@ same follow-up: "tying completion into the Progress Unlocks tier system
 (awarding tiers/badges for practiced drills)". `state/drillProgressUnlocks.ts`
 sums `getDrillSetCompletionStats` across every persisted `DrillSetRecord`
 into one total practiced-drill count, then feeds it straight into
-`debate-card-search`'s `lib/progress-unlocks.ts#buildContributorUnlockStatus`
+`debate-research-evidence`'s `lib/progress-unlocks.ts#buildContributorUnlockStatus`
 as a synthetic, otherwise-all-zero `ContributorStats` whose only non-zero
 field is `completedTaskCount` — reusing that module's existing
 "either-signal-qualifies" OR-path (a contributor reaches a tier via scored
@@ -199,7 +199,7 @@ panels/DrillSetsPanel.tsx
     → getDrillSetCompletionStats(record) for every round  — state/drillSets.ts
   → buildDrillPracticeUnlockStatus(totalCompletedDrillCount)  — state/drillProgressUnlocks.ts
     → buildDrillPracticeContributorStats(...)  — synthetic ContributorStats
-    → buildContributorUnlockStatus(stats)  — debate-card-search's lib/progress-unlocks.ts
+    → buildContributorUnlockStatus(stats)  — debate-research-evidence's lib/progress-unlocks.ts
 ```
 
 Every drill-generation and persistence rule already existed and was

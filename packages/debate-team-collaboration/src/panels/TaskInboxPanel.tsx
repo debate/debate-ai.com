@@ -301,39 +301,31 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
     </div>
   )
 
-  if (topics.length === 0) {
-    return (
-      <div className="p-4 sm:p-6 space-y-6">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Task Inbox</h1>
-          <p className="text-sm text-muted-foreground">
-            Research tasks routed to contributors, grouped by topic. Mark a task done once it's finished,
-            then a different contributor verifies it before it counts as complete.
-          </p>
-        </div>
-        {routeForm}
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No research tasks routed yet. Route a topic above, or the inbox fills in once a topic's
-          coverage gaps are routed to contributors some other way.
-        </div>
-      </div>
-    )
-  }
-
   const trimmedMyId = myContributorId.trim()
   const visibleTopics = trimmedMyId ? filterTaskInboxViewByContributor(topics, trimmedMyId) : topics
 
+  // The route form, "My tasks" filter, "Team capacity", and "Awaiting
+  // verification" sections all render regardless of whether any topic queue
+  // is persisted — a pending verification lives in its own store and must
+  // stay verifiable even after its queue is gone (e.g. deleted or cleared).
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div>
         <h1 className="mb-1 text-xl font-semibold text-foreground">Task Inbox</h1>
         <p className="text-sm text-muted-foreground">
-          Research tasks routed to contributors, grouped by topic. Mark a task complete once it's done.
+          Research tasks routed to contributors, grouped by topic. Mark a task done once it's finished,
+          then a different contributor verifies it before it counts as complete.
         </p>
       </div>
       {routeForm}
       {myTasksFilter}
-      {trimmedMyId && visibleTopics.length === 0 && (
+      {topics.length === 0 && (
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No research tasks routed yet. Route a topic above, or the inbox fills in once a topic's
+          coverage gaps are routed to contributors some other way.
+        </div>
+      )}
+      {topics.length > 0 && trimmedMyId && visibleTopics.length === 0 && (
         <div className="p-6 text-center text-sm text-muted-foreground">
           No tasks routed to "{trimmedMyId}" right now.
         </div>
@@ -498,6 +490,9 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
                   </div>
                 )
               })}
+              {topic.unassignedTasks.length > 0 && (
+                <p className="pt-1 text-xs font-medium uppercase text-muted-foreground">Unassigned</p>
+              )}
               {topic.unassignedTasks.map((task) => {
                 const key = pendingKey(topic.topicId, task.argBlock)
                 return (

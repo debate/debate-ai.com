@@ -78,7 +78,7 @@ state/coachingSessions.ts
   → apps/debate-ai.com/app/news/NewsPageContent.tsx — passes the result as
                                           NewsStreamPanel's extraItems prop
                                           (see news-stream.md — this package
-                                          already depends on debate-card-search,
+                                          already depends on debate-research-evidence,
                                           so the news source lives here rather
                                           than in that package)
 
@@ -144,7 +144,7 @@ Known gap: a `CoachingSessionRecord` gained an additive, optional
 (existing records without it are silently excluded rather than backdated,
 mirroring `evidenceLibraryEntries.ts`'s `argumentLibraryNews()`
 convention), and `coachingSessionNews()` maps every session that carries
-one straight to a News Stream `NewsItem`. Since `debate-card-search` (where
+one straight to a News Stream `NewsItem`. Since `debate-community` (where
 News Stream's other sources live) can't depend back on this package, this
 helper is composed into the feed at the app layer instead — see
 `news-stream.md`'s "Data flow" for the full path. No follow-ups remain open

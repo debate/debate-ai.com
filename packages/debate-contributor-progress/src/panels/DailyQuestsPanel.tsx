@@ -46,6 +46,18 @@
  * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
  * for this panel.
  *
+ * A custom quest can also carry a difficulty (Easy/Medium/Hard, defaulting
+ * to Medium), worth an escalating point value once complete
+ * (`lib/daily-quests.ts`'s `QUEST_DIFFICULTY_POINTS`) — closing the "quest
+ * difficulty tiers" follow-up named under the "🎯 Daily Quests and Targets"
+ * bullet in TODO.md. Each board row shows a difficulty badge, a "Difficulty"
+ * filter narrows the board to one tier at a time
+ * (`filterQuestBoardByDifficulty`, mirroring the AI Drill Generator's own
+ * difficulty filter), and the header line now also reports today's earned
+ * vs. total points (`buildQuestBoardPointsSummaryText`). A quest seeded from
+ * a topic's coverage gaps is rated automatically by how many cards it's
+ * still short (`remainingCardsToQuestDifficulty`).
+ *
  * @module panels/DailyQuestsPanel
  */
 
@@ -71,9 +83,19 @@ import {
   computeAndSavePersistedDailyMissionResult,
 } from "../state/dailyMissionResults"
 import { isDailyQuestsLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
-import { buildQuestBoardSummaryText } from "debate-team-collaboration/src/lib/daily-quests"
-import type { QuestProgress, QuestRecurrence, QuestTemplate } from "debate-team-collaboration/src/lib/daily-quests"
-import { buildStreakRewardText } from "../lib/gamified-quests"
+import {
+  buildQuestBoardPointsSummaryText,
+  buildQuestBoardSummaryText,
+  DEFAULT_QUEST_DIFFICULTY,
+  filterQuestBoardByDifficulty,
+} from "debate-team-collaboration/src/lib/daily-quests"
+import type {
+  QuestDifficulty,
+  QuestProgress,
+  QuestRecurrence,
+  QuestTemplate,
+} from "debate-team-collaboration/src/lib/daily-quests"
+import { buildStreakRewardText, getFreshStreakBadge } from "../lib/gamified-quests"
 import type { ContributorQuestStreak } from "../lib/gamified-quests"
 import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating"
 
@@ -93,6 +115,7 @@ type QuestDraft = {
   targetCount: string
   expiresOn: string
   recurrence: QuestRecurrence | ""
+  difficulty: QuestDifficulty
 }
 
 const EMPTY_DRAFT: QuestDraft = {
@@ -102,12 +125,24 @@ const EMPTY_DRAFT: QuestDraft = {
   targetCount: "3",
   expiresOn: "",
   recurrence: "",
+  difficulty: DEFAULT_QUEST_DIFFICULTY,
 }
 
 const RECURRENCE_OPTIONS: { value: QuestRecurrence | ""; label: string }[] = [
   { value: "", label: "Doesn't recur" },
   { value: "daily", label: "Daily" },
   { value: "weekly", label: "Weekly" },
+]
+
+const DIFFICULTY_OPTIONS: { value: QuestDifficulty; label: string }[] = [
+  { value: "easy", label: "Easy" },
+  { value: "medium", label: "Medium" },
+  { value: "hard", label: "Hard" },
+]
+
+const DIFFICULTY_FILTER_OPTIONS: { value: QuestDifficulty | "all"; label: string }[] = [
+  { value: "all", label: "All" },
+  ...DIFFICULTY_OPTIONS,
 ]
 
 /** Today's UTC calendar day, as epoch milliseconds — the `now` convention `daily-quests.ts` needs. */
@@ -151,10 +186,15 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
   const [streak, setStreak] = useState<ContributorQuestStreak | null>(null)
   const [streakError, setStreakError] = useState<string | null>(null)
   const [pruneMessage, setPruneMessage] = useState<string | null>(null)
+  const [difficultyFilter, setDifficultyFilter] = useState<QuestDifficulty | "all">("all")
 
   const refresh = () => {
-    setTemplates(listQuestTemplates())
+    // buildPersistedDailyQuestBoard rolls expired recurring templates over
+    // to their next cycle (persisting the advanced expiresOn) — build the
+    // board first so the template list, and each row's "Expires" badge,
+    // reflect the rolled-over dates instead of the stale pre-rollover ones.
     setBoard(buildPersistedDailyQuestBoard(nowMs()))
+    setTemplates(listQuestTemplates())
   }
 
   const refreshStreak = (id: string) => {
@@ -208,6 +248,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
       description,
       target: { kind: draft.kind, ...(argBlock ? { argBlock } : {}) },
       targetCount,
+      difficulty: draft.difficulty,
       ...(expiresOn ? { expiresOn } : {}),
       ...(expiresOn && draft.recurrence ? { recurrence: draft.recurrence } : {}),
     })
@@ -336,6 +377,22 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
               onChange={(e) => setDraft((prev) => ({ ...prev, expiresOn: e.target.value }))}
             />
           </div>
+          <div className="space-y-1.5">
+            <Label>Difficulty</Label>
+            <div className="flex flex-wrap gap-1">
+              {DIFFICULTY_OPTIONS.map((option) => (
+                <Button
+                  key={option.value}
+                  type="button"
+                  size="sm"
+                  variant={draft.difficulty === option.value ? "default" : "outline"}
+                  onClick={() => setDraft((prev) => ({ ...prev, difficulty: option.value }))}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </div>
           {draft.expiresOn && (
             <div className="space-y-1.5">
               <Label>Recurs</Label>
@@ -446,11 +503,20 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
             </span>
             {streak.earnedBadges.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {streak.earnedBadges.map((badge) => (
-                  <Badge key={badge} variant="outline" className="whitespace-nowrap">
-                    {badge}
-                  </Badge>
-                ))}
+                {streak.earnedBadges.map((badge) => {
+                  const isFresh =
+                    badge === getFreshStreakBadge(streak, streak.streak.lastCompletedDayKey === todayUtcDayKey())
+                  return (
+                    <Badge
+                      key={badge}
+                      variant={isFresh ? "default" : "outline"}
+                      className="whitespace-nowrap"
+                      title={isFresh ? "Earned today" : undefined}
+                    >
+                      {isFresh ? `✨ ${badge}` : badge}
+                    </Badge>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -470,9 +536,28 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
         </div>
       ) : (
         <div className="space-y-3">
-          <p className="text-sm text-muted-foreground">{buildQuestBoardSummaryText(board)}</p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="space-y-0.5">
+              <p className="text-sm text-muted-foreground">{buildQuestBoardSummaryText(board)}</p>
+              <p className="text-sm text-muted-foreground">{buildQuestBoardPointsSummaryText(board)}</p>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Label className="text-xs text-muted-foreground">Difficulty</Label>
+              {DIFFICULTY_FILTER_OPTIONS.map((option) => (
+                <Button
+                  key={option.value}
+                  type="button"
+                  size="sm"
+                  variant={difficultyFilter === option.value ? "default" : "outline"}
+                  onClick={() => setDifficultyFilter(option.value)}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </div>
           <div className="space-y-2">
-            {board.map((quest) => {
+            {filterQuestBoardByDifficulty(board, difficultyFilter).map((quest) => {
               const expiresOn = expiresOnByQuestId.get(quest.questId)
               const recurrence = recurrenceByQuestId.get(quest.questId)
               return (
@@ -485,6 +570,9 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
                       {quest.isComplete ? "Complete" : `${quest.completedCount}/${quest.targetCount}`}
                     </Badge>
                     <span className="text-sm font-medium text-foreground">{quest.description}</span>
+                    <Badge variant="outline" className="whitespace-nowrap capitalize">
+                      {quest.difficulty} · {quest.points} pts
+                    </Badge>
                     {expiresOn && (
                       <Badge variant="outline" className="whitespace-nowrap">
                         Expires {expiresOn}

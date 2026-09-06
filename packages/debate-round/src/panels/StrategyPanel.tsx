@@ -136,8 +136,26 @@ export function StrategyPanel() {
   const [briefingSelectionById, setBriefingSelectionById] = useState<Record<string, string>>({})
   const [briefingStatusById, setBriefingStatusById] = useState<Record<string, { ok: boolean; message: string }>>({})
 
-  useEffect(() => {
+  const refreshBriefingRoundIds = () => {
     setBriefingRoundIds(listPreRoundBriefings().map((record) => record.roundId).sort())
+  }
+
+  // Re-read on window focus and on cross-tab `storage` writes (not just on
+  // mount), so a briefing created after this panel loaded — in another tab,
+  // or in a co-rendered Pre-Round Briefings panel (e.g. the Coach hub) —
+  // shows up in the "Send to Pre-Round Briefing" dropdown without a reload.
+  useEffect(() => {
+    refreshBriefingRoundIds()
+    const handleFocus = () => refreshBriefingRoundIds()
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === null || event.key === "preRoundBriefings") refreshBriefingRoundIds()
+    }
+    window.addEventListener("focus", handleFocus)
+    window.addEventListener("storage", handleStorage)
+    return () => {
+      window.removeEventListener("focus", handleFocus)
+      window.removeEventListener("storage", handleStorage)
+    }
   }, [])
 
   const handleSubmit = () => {

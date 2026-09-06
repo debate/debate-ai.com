@@ -157,7 +157,9 @@ wiring is exercised only through the shared pure predicate's own tests.
 
 The "a one-click export into the Pre-Round Briefing" follow-up: each
 recommendation entry has a **Send to Pre-Round Briefing** action — a
-dropdown of every round id with an already-saved
+dropdown, re-read on window focus and on cross-tab `preRoundBriefings`
+`storage` writes so a briefing created after this panel loaded still shows
+up, of every round id with an already-saved
 [Pre-Round Briefing](pre-round-briefings.md) (`state/preRoundBriefings.ts#listPreRoundBriefings`)
 plus a **Send** button. Sending appends
 `round/scout-to-strategy.ts#buildStrategyRecommendationPrepNote`'s one-line

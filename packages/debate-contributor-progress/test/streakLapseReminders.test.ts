@@ -6,6 +6,7 @@ import {
   setStreakLapseReminderEnabled,
 } from "../src/state/streakLapseReminders";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
+import { applyPersistedStreakFreeze } from "../src/state/streakFreezes";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -105,6 +106,21 @@ describe("getPersistedStreakLapseReminderInfo", () => {
     setStreakLapseReminderEnabled("alice", true);
 
     expect(getPersistedStreakLapseReminderInfo("alice", "2026-08-10").riskLength).toBeNull();
+  });
+
+  it("bridges streak freezes into the at-risk length, matching the roster's own freeze-bridged streak", () => {
+    // alice completed 08-07 and 08-09, missed 08-08, then spent a grace day
+    // on the gap — her freeze-bridged streak is 3, and the banner must say
+    // 3, not the raw unfrozen 1.
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-07", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    applyPersistedStreakFreeze("alice", "2026-08-08", "2026-08-09");
+    setStreakLapseReminderEnabled("alice", true);
+
+    expect(getPersistedStreakLapseReminderInfo("alice", "2026-08-10")).toEqual({
+      enabled: true,
+      riskLength: 3,
+    });
   });
 
   it("keeps different contributors' risk independent", () => {

@@ -7,7 +7,7 @@ standings, derived from the real, persisted contribution feed and win-event
 list.
 
 - **Route:** `/cards/group-challenges`
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -17,7 +17,15 @@ description, challenge window, and roster. Below that, its live
 `buildPersistedGroupChallengeBoard`) shows a one-line status
 (`buildGroupChallengeSummaryText` — complete, ended, or `N/target — D days
 left`) and a per-member standings list, best first, with 🏆 marking the
-current MVP.
+current MVP. Every rostered member appears in the standings — members with
+no matching activity yet sit at the bottom at 0, alphabetically, so the
+list always agrees with the roster badges. A `contribution_target`
+challenge's rows also show each member's blended helpfulness score
+("(N pts)"), since that score — not the raw count — is what ranks them (a
+member with fewer but higher-quality contributions can lead). The MVP crown
+requires actual matching activity; an all-zero board has no MVP. A
+challenge whose roster is empty shows a "No one is on the board yet" note
+in place of the list.
 
 A `win_target` challenge additionally gets a "Record a win" action —
 a contributor ID field and button that appends a `ChallengeWinEvent`.
@@ -64,7 +72,7 @@ components/research/GroupChallengesWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <GroupChallengesPanel signedInContributorId={...} />
       — seeds each challenge's own "Record a win" field until that
@@ -92,7 +100,7 @@ panel's existing `refresh()` (both `buildGroupChallengesPanelView()` and
 `buildPersistedGroupChallengeBoard()`), so a challenge created or removed,
 a win recorded, or a matching contribution submitted in another tab shows
 up here without a manual reload. Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-key
 match, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 

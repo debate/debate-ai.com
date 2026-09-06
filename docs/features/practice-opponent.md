@@ -138,18 +138,76 @@ covered: new cases in `packages/debate-speech-writer/test/opponent-personas.test
 `opponent-persona-speech-wiring.test.ts`, and
 `opponent-persona-speech-client.test.ts`.
 
+## Custom persona library and team sharing
+
+Closes the "share a custom-authored persona across a team instead of
+per-user only" Next item named under the "🤖 AI Practice Opponent" idea in
+TODO.md's Research Crowdsourcing Organizer Features. Before this, a custom
+persona only ever existed inline, baked into one session's saved selection
+— there was no way to save a named custom persona once and reuse it across
+sessions, let alone share it with anyone else.
+
+- **`opponent/opponent-persona-library.ts`** (`debate-speech-writer`) adds
+  `SavedCustomOpponentPersona` — an `{ id, name, notes, shared, createdAt,
+  updatedAt }` record — plus `buildSavedCustomOpponentPersona` (sanitizes
+  `name`/`notes` the same way `buildCustomOpponentPersona` does),
+  `resolveOpponentPersonaFromLibraryEntry` (turns a saved entry back into a
+  usable `OpponentPersona`, identical to typing its notes in fresh), and
+  `isValidSavedCustomOpponentPersona` for the D1-backed API routes.
+- **`state/customOpponentPersonaLibrary.ts`** (`debate-practice-drills`)
+  persists the library to `localStorage`, mirroring
+  `opponentPersonaSelections.ts`'s convention, plus
+  `resolveCustomOpponentPersonaLibraryConflict`/
+  `planCustomOpponentPersonaLibraryMerge` for account-merge conflict
+  resolution (the newer `updatedAt` wins) — mirroring
+  `state/drillSets.ts`'s merge helpers exactly.
+- **Account sync**: a new `saved_custom_opponent_personas` D1 table plus
+  `/api/custom-opponent-personas` routes (GET/PUT/DELETE, account-only —
+  401 without a session, mirroring `/api/drill-sets`) sync a signed-in
+  user's own library across devices via `hooks/useCustomOpponentPersonaLibrary.ts`
+  (local-first, same merge-on-mount pattern as `useDrillSets`).
+- **Team sharing**: an entry saved with "Share with my team" checked sets
+  `shared: true`, stored in its own indexed column (not just inside the
+  JSON blob) so `GET /api/custom-opponent-personas/shared` can filter
+  across every user's rows without deserializing each one. That route
+  needs no session — like `GET /api/evidence-reuse-check/dashboard`'s
+  no-auth team dashboard, it's a team-wide, read-only view (this repo has
+  no real team/organization model for crowdsourced content elsewhere
+  either) of every other user's shared entries, excluding the viewer's own
+  (already returned in full by the account-only `GET
+  /api/custom-opponent-personas`).
+- **UI**: `OpponentPersonaPickerPanel` gains a "My persona library" section
+  (name, notes preview, "Use for this session"/"Share with team"/"Unshare"/
+  "Delete" actions) below the existing session list, and a read-only
+  "Shared by your team" section (hidden once empty) with a "Use this
+  persona" action that prefills the custom-persona form. The custom-persona
+  form itself gains "Save to my persona library" and, once checked, "Share
+  with my team" checkboxes.
+
+Vitest-covered: `packages/debate-speech-writer/test/opponent-persona-library.test.ts`
+(building/validating/sorting library entries, resolving one back into a
+usable `OpponentPersona`) and
+`packages/debate-practice-drills/test/customOpponentPersonaLibrary.test.ts`
+(local CRUD, conflict resolution, merge planning) and
+`custom-opponent-persona-library-client.test.ts` (the account/shared HTTP
+calls, mocked).
+
 ## Known gaps
 
 - The Practice Round Simulator panel (`/practice-round`,
   `PracticeRoundSimulatorPanel.tsx`) has its own, separate opponent-persona
   selection embedded in `state/practiceRounds.ts`'s `PracticeRoundSetup`
   (a builtin persona id only, no custom persona) rather than reading through
-  this store — unifying it with this store remains a follow-up of its own.
-  Its setup form does now also carry a difficulty (`opponentDifficulty` on
-  `PracticeRoundSetup`, defaulting to `DEFAULT_OPPONENT_DIFFICULTY`), saved
-  alongside its own persona choice — see
-  `docs/features/practice-round-simulator.md`'s "Opponent difficulty"
-  section.
+  this store — unifying it with this store, and with the new custom-persona
+  library, remains a follow-up of its own. Its setup form does now also
+  carry a difficulty (`opponentDifficulty` on `PracticeRoundSetup`,
+  defaulting to `DEFAULT_OPPONENT_DIFFICULTY`), saved alongside its own
+  persona choice — see `docs/features/practice-round-simulator.md`'s
+  "Opponent difficulty" section.
 - This panel only saves/clears a selection; it doesn't itself invoke a
   speech-generation call — that lives in the Online Debate Versus AI panel
   (`AiVersusRoundPanel`, `/versus-ai`) once a round's persona is saved here.
+- "Shared with your team" is every other signed-in user, not a real
+  team/organization membership — this repo doesn't model one for
+  crowdsourced content elsewhere either (see e.g. the Evidence Reuse Check
+  dashboard). A real team boundary would need that modeling to land first.

@@ -31,8 +31,8 @@
  * `buildPersistedCardScoreRanking`.
  *
  * A "Bulk import" section closes the "batch-score an uploaded set of cards
- * at once" follow-up (listed alongside a per-contributor score-trend chart
- * and an inline Evidence Library score badge, both still open): a textarea
+ * at once" follow-up (the inline Evidence Library score badge listed
+ * alongside it has since shipped too — see `EvidenceLibraryPanel.tsx`): a textarea
  * accepts a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text
  * entries, parsed and persisted in one pass via
  * `state/cardScores.ts`'s `bulkImportScoredCards` (itself a thin composition

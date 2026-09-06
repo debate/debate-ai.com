@@ -7,7 +7,7 @@ doesn't need to already know a route exists to find it.
 - **Route:** `/community-hub`
 - **Nav:** the Tools page's Workspaces group; the Reason Editor's
   Workspace menu (`t hub` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## Why this exists
 

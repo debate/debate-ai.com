@@ -225,6 +225,13 @@
       "when": 1788569975347,
       "tag": "0031_handy_tigra",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "6",
+      "when": 1788662552291,
+      "tag": "0032_fresh_night_thrasher",
+      "breakpoints": true
     }
   ]
 }

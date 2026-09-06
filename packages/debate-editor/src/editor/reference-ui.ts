@@ -31,6 +31,7 @@ import {
   formatShortcutsReferenceText,
   type ShortcutsReferenceGroup,
 } from './reference-export.js';
+import { buildShortcutsReferencePdf } from './reference-pdf-export.js';
 
 
 class ReferenceModal {
@@ -210,6 +211,16 @@ class ReferenceModal {
     });
   }
 
+  /** Saves the reference as a portable, already-paginated PDF file via
+   *  the platform host — for a user who wants a shareable document
+   *  without invoking their browser's own print-to-PDF flow. */
+  private async exportAsPdf(groups: ShortcutsReferenceGroup[]): Promise<void> {
+    const bytes = await buildShortcutsReferencePdf(groups);
+    await getHost().saveAs('cardmirror-shortcuts.pdf', bytes, {
+      filters: [{ name: 'PDF', extensions: ['pdf'] }],
+    });
+  }
+
   private render(): void {
     this.dialog.innerHTML = '';
     const groups = this.collectGroups();
@@ -238,6 +249,14 @@ class ReferenceModal {
     exportBtn.title = 'Save the full shortcuts reference as a text file';
     exportBtn.addEventListener('click', () => void this.exportAsText(groups));
     actions.appendChild(exportBtn);
+
+    const pdfBtn = document.createElement('button');
+    pdfBtn.type = 'button';
+    pdfBtn.className = 'pmd-reference-action-btn';
+    pdfBtn.textContent = 'Download PDF';
+    pdfBtn.title = 'Save the full shortcuts reference as a PDF file';
+    pdfBtn.addEventListener('click', () => void this.exportAsPdf(groups));
+    actions.appendChild(pdfBtn);
 
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';

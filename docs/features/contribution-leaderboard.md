@@ -7,7 +7,7 @@ unlock tier, earned badges, and current daily-quest streak.
 - **Route:** `/cards/leaderboard`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t leaderboard` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
@@ -19,8 +19,10 @@ unlock tier, earned badges, and current daily-quest streak.
 | Contributions | Count of persisted contributions attributed to that contributor |
 | Total score | Sum of each contribution's blended helpfulness score |
 | Avg score | Total score divided by contribution count |
-| Streak | Current consecutive-day quest streak, from `lib/gamified-quests.ts` |
+| Completed tasks | Count of verified routed research tasks, from `debate-team-collaboration`'s `state/researchProgress.ts` (blank when a Category filter other than "All kinds" is active) |
+| Streak | Current consecutive-day quest streak (freeze-bridged, matching `/cards/streaks`), from `lib/gamified-quests.ts` |
 | Badges | Tier badges + streak-milestone badges, merged by `lib/unlock-streak-status.ts` |
+| Endorsements | A per-row "History" toggle expanding that contributor's received-endorsement history |
 
 A signed-in visitor's own row is highlighted with a "You" badge — see
 "Signed-in row highlight" below. Within a chosen range and category (see
@@ -116,7 +118,9 @@ with the actual scoring weights.
 
 ```
 state/contributions.ts (localStorage)
-  → buildPersistedLeaderboard()          — lib/contribution-leaderboard.ts
+  → buildPersistedLeaderboardWithCompletedTasks() — debate-team-collaboration's state/researchProgress.ts
+      (composes lib/contribution-leaderboard.ts's buildLeaderboard with each
+       contributor's verified completed-task history)
   → buildContributorUnlockStatusWithStreakFromStore()  — lib/unlock-streak-status.ts
       ├─ lib/progress-unlocks.ts   (tier, tier badges)
       └─ lib/gamified-quests.ts    (streak, streak badges, via state/dailyMissionResults.ts)
@@ -128,7 +132,7 @@ components/research/ContributionLeaderboardWithIdentity.tsx  — "use client" wr
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <ContributionLeaderboardPanel signedInContributorId={...} />
       → isOwnContributorRow(row.contributorId, signedInContributorId)
@@ -149,7 +153,7 @@ Every scoring/tier/streak rule already existed and was Vitest-covered; this
 feature is a read-only composition and rendering layer over those stores — it
 introduces one new function, `buildPersistedLeaderboard`, which composes the
 existing pure `buildLeaderboard` directly against the persisted contributions
-store (see `packages/debate-card-search/test/contributions.test.ts`), and one
+store (see `packages/debate-search-evidence/test/contributions.test.ts`), and one
 new pure helper, `isOwnContributorRow` (`lib/session-identity.ts`,
 Vitest-covered in `test/session-identity.test.ts`).
 
@@ -170,7 +174,7 @@ live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](shared-flow-sync.md), mirroring the existing
 `DailyBestCardPanel`/`isDailyBestCardLiveUpdateStorageEvent` precedent.
 Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-store
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-store
 key, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 

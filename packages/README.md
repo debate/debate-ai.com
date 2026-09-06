@@ -2,6 +2,11 @@
 
 Workspace packages used by the debate-ai.com apps.
 
+## debate-help-docs
+
+The Debate AI documentation site, built on the Fumadocs starter template. Publishes the
+product's feature specs (`docs/features/`) and package READMEs as a searchable docs site.
+
 ## debate-card-parser
 
 Parser for debate evidence cards, turning Verbatim `.docx` files and HTML into structured

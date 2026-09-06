@@ -2,13 +2,20 @@
 
 /**
  * @fileoverview Research hub — one tabbed app surface over every
- * crowdsourcing panel `debate-card-search` ships.
+ * crowdsourcing panel `debate-research-evidence`, `debate-community`, and
+ * `debate-team-collaboration` ship.
  *
  * Each panel already reads (and writes) its own localStorage store, so this
  * is purely navigation: it groups the panels that describe the same stage of
  * a squad's research cycle and renders one group at a time. The individual
  * `/cards/*` routes still mount the same panels one at a time; this is the
  * view for working across them.
+ *
+ * Navigation chrome (the sticky tab strip, the per-section intro card with
+ * a chip per panel and an "open as its own page" link, `?section=` URL
+ * sync) comes from `components/hubs/HubSectionNav.tsx`; this file owns the
+ * section list ({@link RESEARCH_SECTIONS}) and the workspace identity
+ * fields.
  *
  * {@link TopicSprintPanel} used to be the one exception — it renders the
  * full `buildTopicSprint` composition rather than a single store, so this
@@ -19,6 +26,19 @@
  */
 
 import { useEffect, useMemo, useState } from "react"
+import {
+  Award,
+  CheckSquare,
+  FolderTree,
+  Gauge,
+  Inbox,
+  Library,
+  MessageSquareText,
+  PieChart,
+  Presentation,
+  Trophy,
+  UserRound,
+} from "lucide-react"
 import {
   ArgumentLibraryPanel,
   CardScoringPanel,
@@ -48,24 +68,136 @@ import { listEvidenceLibraryEntries } from "debate-research-evidence/src/state/e
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import { Input } from "../../lib/ui/primitives/input"
 import { LabeledField } from "../../lib/ui/panels/panel-shell"
+import { panel, type HubSection } from "../hubs/hub-sections"
+import {
+  HubPanelAnchor,
+  HubSectionIntro,
+  HubSectionNav,
+  HubSectionPanel,
+  useHubSection,
+} from "../hubs/HubSectionNav"
 
 /** localStorage key holding whoever is using this browser. */
 const CONTRIBUTOR_KEY = "researchHubContributorId"
 
-const SECTIONS = [
-  "Coverage",
-  "Library",
-  "Evidence",
-  "Sprint",
-  "Routing",
-  "Progress",
-  "Quests",
-  "Rewards",
-  "Review",
-  "Scoring",
-] as const
+/** localStorage key remembering the last open section. */
+const SECTION_KEY = "researchHubSection"
 
-type Section = (typeof SECTIONS)[number]
+type SectionId =
+  | "coverage"
+  | "library"
+  | "evidence"
+  | "sprint"
+  | "routing"
+  | "progress"
+  | "quests"
+  | "rewards"
+  | "review"
+  | "scoring"
+
+/** The research cycle, one tab per stage — see the Research collaboration guide. */
+export const RESEARCH_SECTIONS: readonly HubSection<SectionId>[] = [
+  {
+    id: "coverage",
+    label: "Coverage",
+    icon: PieChart,
+    description: "Start here: which arguments are well-covered, thin, or missing, so the squad knows where to work.",
+    guide: "research-collaboration",
+    panels: [panel("Topic Coverage Dashboard", "/cards/coverage")],
+  },
+  {
+    id: "library",
+    label: "Library",
+    icon: FolderTree,
+    description: "Browse shared research by topic folder, case area, and tag-based collection.",
+    guide: "research-collaboration",
+    panels: [panel("Argument Library", "/cards/argument-library")],
+  },
+  {
+    id: "evidence",
+    label: "Evidence",
+    icon: Library,
+    description: "Search every shared cut card and reusable analytic block by keyword, citation, or argument.",
+    guide: "research-collaboration",
+    panels: [panel("Evidence Library", "/cards/library")],
+  },
+  {
+    id: "sprint",
+    label: "Sprint",
+    icon: Presentation,
+    description: "Work a topic together: the prep room, the sprint composition, live prep notes, and the brainstorm board.",
+    guide: "research-collaboration",
+    panels: [
+      panel("Collaboration Prep Room", "/cards/prep-room"),
+      panel("Topic Sprint"),
+      panel("Team Collaboration Mode", "/cards/collaboration"),
+      panel("Team Brainstorm Assist", "/cards/brainstorm"),
+    ],
+  },
+  {
+    id: "routing",
+    label: "Routing",
+    icon: Inbox,
+    description: "Research tasks routed to contributors by skill level, grouped by topic, with peer verification.",
+    guide: "research-collaboration",
+    panels: [panel("Task Inbox", "/cards/inbox")],
+  },
+  {
+    id: "progress",
+    label: "Progress",
+    icon: Award,
+    description: "Each contributor's history, task completion rate, and unlock tier.",
+    guide: "research-collaboration",
+    panels: [panel("Research Progress", "/cards/progress-tracking"), panel("Progress", "/cards/progress")],
+  },
+  {
+    id: "quests",
+    label: "Quests",
+    icon: CheckSquare,
+    description: "Daily team goals, quest streaks, and squad challenges that keep the sprint moving.",
+    guide: "research-collaboration",
+    panels: [
+      panel("Daily Quests", "/cards/quests"),
+      panel("Quest Streaks", "/cards/streaks"),
+      panel("Group Challenges", "/cards/group-challenges"),
+    ],
+  },
+  {
+    id: "rewards",
+    label: "Rewards",
+    icon: Trophy,
+    description: "Recognition for the work: the leaderboard, awards, the contributions feed, and revision rewards.",
+    guide: "research-collaboration",
+    panels: [
+      panel("Leaderboard", "/cards/leaderboard"),
+      panel("Contributor Awards", "/cards/awards"),
+      panel("Contributions Feed", "/cards/contributions"),
+      panel("Daily Best Card", "/cards/best-card"),
+      panel("Revision Incentives", "/cards/revisions"),
+    ],
+  },
+  {
+    id: "review",
+    label: "Review",
+    icon: MessageSquareText,
+    description: "Move submitted cards through peer review: comment, request changes, approve, publish.",
+    guide: "research-collaboration",
+    panels: [panel("Review Queue", "/cards/reviews")],
+  },
+  {
+    id: "scoring",
+    label: "Scoring",
+    icon: Gauge,
+    description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability.",
+    guide: "research-collaboration",
+    panels: [panel("LLM Card Scoring", "/cards/scoring")],
+  },
+]
+
+/** Anchor ids by panel label, for wrapping each mounted panel. */
+const ANCHORS = Object.fromEntries(
+  RESEARCH_SECTIONS.flatMap((section) => section.panels.map((item) => [item.label, item.anchor])),
+) as Record<string, string>
 
 /**
  * Tabbed hub over every research/crowdsourcing panel.
@@ -73,7 +205,7 @@ type Section = (typeof SECTIONS)[number]
  * @returns The research hub element.
  */
 export function ResearchHub() {
-  const [section, setSection] = useState<Section>("Coverage")
+  const [section, setSection] = useHubSection(RESEARCH_SECTIONS, SECTION_KEY)
   const [contributorId, setContributorId] = useState("me")
   const [hasSetContributorId, setHasSetContributorId] = useState(false)
   const [topic, setTopic] = useState("")
@@ -101,10 +233,7 @@ export function ResearchHub() {
     if (typeof localStorage !== "undefined") localStorage.setItem(CONTRIBUTOR_KEY, value)
   }
 
-  const { data: entries } = useStoreSnapshot<EvidenceLibraryEntry[]>(
-    listEvidenceLibraryEntries,
-    [],
-  )
+  const { data: entries } = useStoreSnapshot<EvidenceLibraryEntry[]>(listEvidenceLibraryEntries, [])
 
   // Only used to guess a sensible default topic below — the evidence
   // library's own argBlock/caseArea tagging, not a card corpus for scoring.
@@ -119,92 +248,140 @@ export function ResearchHub() {
   }, [entries])
 
   const activeTopic = topic.trim() || trackedArguments[0]?.category || "Untagged"
+  const active = RESEARCH_SECTIONS.find((entry) => entry.id === section) ?? RESEARCH_SECTIONS[0]
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <LabeledField
-          label="Your contributor id"
-          hint={
-            hasSetContributorId
-              ? undefined
-              : "Prefilled from your signed-in account, if any — edit it to use a different id."
-          }
+      <HubSectionNav sections={RESEARCH_SECTIONS} active={section} onChange={setSection} label="Research sections" />
+
+      <section
+        aria-label="Workspace identity"
+        className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm sm:flex-row sm:items-start"
+      >
+        <span
+          aria-hidden="true"
+          className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted text-muted-foreground sm:flex"
         >
-          <Input value={contributorId} onChange={(e) => updateContributorId(e.target.value)} />
-        </LabeledField>
-        <LabeledField label="Topic" hint="Scopes the sprint composition.">
-          <Input
-            value={topic}
-            placeholder={activeTopic}
-            onChange={(e) => setTopic(e.target.value)}
-          />
-        </LabeledField>
-      </div>
-
-      <nav className="flex flex-wrap gap-1" aria-label="Research sections">
-        {SECTIONS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            aria-current={section === name}
-            onClick={() => setSection(name)}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-              section === name
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border hover:bg-muted"
-            }`}
+          <UserRound className="h-5 w-5" />
+        </span>
+        <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
+          <LabeledField
+            label="Your contributor id"
+            hint={
+              hasSetContributorId
+                ? "Every panel below attributes submissions, tasks, and quests to this id."
+                : "Prefilled from your signed-in account, if any — edit it to use a different id."
+            }
           >
-            {name}
-          </button>
-        ))}
-      </nav>
-
-      {section === "Coverage" ? <TopicCoverageDashboardPanel /> : null}
-
-      {section === "Library" ? <ArgumentLibraryPanel /> : null}
-
-      {section === "Evidence" ? <EvidenceLibraryPanel /> : null}
-
-      {section === "Sprint" ? (
-        <div className="flex flex-col gap-4">
-          <PrepRoomWithIdentity />
-          <TopicSprintPanel topic={activeTopic} authorId={contributorId} />
-          <SprintNotesWithIdentity />
-          <BrainstormBoardWithIdentity />
+            <Input value={contributorId} onChange={(e) => updateContributorId(e.target.value)} />
+          </LabeledField>
+          <LabeledField label="Topic" hint="Scopes the Sprint section's composition; defaults to the first tagged case area.">
+            <Input value={topic} placeholder={activeTopic} onChange={(e) => setTopic(e.target.value)} />
+          </LabeledField>
         </div>
-      ) : null}
+      </section>
 
-      {section === "Routing" ? <TaskInboxWithIdentity /> : null}
+      <HubSectionIntro section={active} />
 
-      {section === "Progress" ? (
-        <div className="flex flex-col gap-4">
-          <ResearchProgressWithIdentity />
-          <ProgressUnlocksWithIdentity />
-        </div>
-      ) : null}
+      <HubSectionPanel id={section}>
+        {section === "coverage" ? (
+          <HubPanelAnchor anchor={ANCHORS["Topic Coverage Dashboard"]}>
+            <TopicCoverageDashboardPanel />
+          </HubPanelAnchor>
+        ) : null}
 
-      {section === "Quests" ? (
-        <div className="flex flex-col gap-4">
-          <DailyQuestsWithIdentity />
-          <QuestStreaksPanel />
-          <GroupChallengesWithIdentity />
-        </div>
-      ) : null}
+        {section === "library" ? (
+          <HubPanelAnchor anchor={ANCHORS["Argument Library"]}>
+            <ArgumentLibraryPanel />
+          </HubPanelAnchor>
+        ) : null}
 
-      {section === "Rewards" ? (
-        <div className="flex flex-col gap-4">
-          <ContributionLeaderboardWithIdentity />
-          <ContributorAwardsPanel />
-          <ContributionsFeedWithIdentity />
-          <DailyBestCardWithIdentity />
-          <RevisionIncentivesPanel />
-        </div>
-      ) : null}
+        {section === "evidence" ? (
+          <HubPanelAnchor anchor={ANCHORS["Evidence Library"]}>
+            <EvidenceLibraryPanel />
+          </HubPanelAnchor>
+        ) : null}
 
-      {section === "Review" ? <ReviewQueueWithIdentity /> : null}
+        {section === "sprint" ? (
+          <>
+            <HubPanelAnchor anchor={ANCHORS["Collaboration Prep Room"]}>
+              <PrepRoomWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Topic Sprint"]}>
+              <TopicSprintPanel topic={activeTopic} authorId={contributorId} />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Team Collaboration Mode"]}>
+              <SprintNotesWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Team Brainstorm Assist"]}>
+              <BrainstormBoardWithIdentity />
+            </HubPanelAnchor>
+          </>
+        ) : null}
 
-      {section === "Scoring" ? <CardScoringPanel /> : null}
+        {section === "routing" ? (
+          <HubPanelAnchor anchor={ANCHORS["Task Inbox"]}>
+            <TaskInboxWithIdentity />
+          </HubPanelAnchor>
+        ) : null}
+
+        {section === "progress" ? (
+          <>
+            <HubPanelAnchor anchor={ANCHORS["Research Progress"]}>
+              <ResearchProgressWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Progress"]}>
+              <ProgressUnlocksWithIdentity />
+            </HubPanelAnchor>
+          </>
+        ) : null}
+
+        {section === "quests" ? (
+          <>
+            <HubPanelAnchor anchor={ANCHORS["Daily Quests"]}>
+              <DailyQuestsWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Quest Streaks"]}>
+              <QuestStreaksPanel />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Group Challenges"]}>
+              <GroupChallengesWithIdentity />
+            </HubPanelAnchor>
+          </>
+        ) : null}
+
+        {section === "rewards" ? (
+          <>
+            <HubPanelAnchor anchor={ANCHORS["Leaderboard"]}>
+              <ContributionLeaderboardWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Contributor Awards"]}>
+              <ContributorAwardsPanel />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Contributions Feed"]}>
+              <ContributionsFeedWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Daily Best Card"]}>
+              <DailyBestCardWithIdentity />
+            </HubPanelAnchor>
+            <HubPanelAnchor anchor={ANCHORS["Revision Incentives"]}>
+              <RevisionIncentivesPanel />
+            </HubPanelAnchor>
+          </>
+        ) : null}
+
+        {section === "review" ? (
+          <HubPanelAnchor anchor={ANCHORS["Review Queue"]}>
+            <ReviewQueueWithIdentity />
+          </HubPanelAnchor>
+        ) : null}
+
+        {section === "scoring" ? (
+          <HubPanelAnchor anchor={ANCHORS["LLM Card Scoring"]}>
+            <CardScoringPanel />
+          </HubPanelAnchor>
+        ) : null}
+      </HubSectionPanel>
     </div>
   )
 }

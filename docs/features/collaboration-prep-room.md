@@ -8,7 +8,7 @@ research tasks routed to available contributors.
 - **Route:** `/cards/prep-room`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t prep room` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -48,7 +48,7 @@ panels/PrepRoomPanel.tsx ("I'm active here" button, next to a "Your ID" field)
 
 Signed-in identity prefill ("Your ID"):
 apps/debate-ai.com/components/research/PrepRoomWithIdentity.tsx
-  → deriveContributorIdFromSessionIdentity(user)  — debate-card-search
+  → deriveContributorIdFromSessionIdentity(user)  — debate-research-evidence
   → panels/PrepRoomPanel.tsx's signedInContributorId prop (seeds "Your ID"
     only if the visitor hasn't typed over it)
 ```
@@ -60,7 +60,7 @@ directly — there was no panel UI. This feature adds `state/prepRooms.ts`,
 which resolves those two remaining inputs from their own already-persisted
 stores so a caller only needs a topic name, and `panels/PrepRoomPanel.tsx`,
 which renders the result. See
-`packages/debate-card-search/test/prepRooms.test.ts`.
+`packages/debate-team-collaboration/test/prepRooms.test.ts`.
 
 This also closes follow-up (b), "a live presence/who's-active signal,"
 reusing `lib/topic-presence.ts`/`state/topicPresence.ts` unchanged — the same
@@ -73,7 +73,7 @@ first, and re-checks staleness every 30 seconds even without a new
 heartbeat. See `docs/features/team-collaboration-mode.md` for the underlying
 model and its Vitest coverage. No follow-ups remain open on this bullet.
 
-In the Research hub (`ResearchHub.tsx`), the Prep Room tab renders
+In the Research hub (`ResearchHub.tsx`), the Sprint section's Prep Room panel renders
 `PrepRoomWithIdentity` instead of the raw panel, prefilling "Your ID" from
 `deriveContributorIdFromSessionIdentity` for a signed-in visitor — the same
 prefill-only convention used by `ReviewQueuePanel`/`GroupChallengesPanel`
@@ -84,7 +84,8 @@ sign-in state.
 
 ## Room activity timeline
 
-A "Room activity timeline" section renders below the routed-tasks list,
+A "Room activity timeline" section renders below the shared task checklist
+(which itself sits below the routed-tasks list),
 backed by `lib/prep-room.ts`'s `buildPrepRoomActivityTimeline(room)`. The
 only genuinely timestamped, append-only signal a prep room already has is
 each evidence/draft-block entry's own `createdAt` — the same field
@@ -127,6 +128,19 @@ Switching topics reloads that topic's own checklist and clears the pending
 `packages/debate-team-collaboration/test/prep-room-checklist.test.ts` and
 `test/prepRoomChecklist.test.ts`.
 
+## Cross-tab live update
+
+`PrepRoomPanel` subscribes to the browser's `storage` event (fires only in
+*other* same-origin tabs/windows, never the one that made the write) via
+`debate-research-evidence`'s `state/live-update.ts`
+`isPrepRoomLiveUpdateStorageEvent` and re-derives the room, its topic list,
+checklist, and "active now" roster when it fires for one of its backing keys
+(`trackedArguments`, `evidenceLibraryEntries`, `contributorAvailability`,
+`topicPresenceHeartbeats`, `prepRoomChecklist`) — so a teammate's evidence
+submission, heartbeat, or checklist toggle in a second tab refreshes this
+tab's room without a manual reload. Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
+
 ## Known gaps
 
 - The room is per-browser localStorage, not a shared team resource — two
@@ -139,7 +153,7 @@ Switching topics reloads that topic's own checklist and clears the pending
   checklist included: any visitor typing a different "Your ID" can toggle
   or remove another contributor's checklist items).
 - The `/cards/prep-room` standalone route doesn't get the "Your ID"
-  prefill (only the Research hub's Prep Room tab does).
+  prefill (only the Research hub's Sprint section does).
 - The activity timeline only covers evidence/draft-block submissions, not
   checklist activity.
 - There's still no "shared file/attachment area" (the other follow-up named

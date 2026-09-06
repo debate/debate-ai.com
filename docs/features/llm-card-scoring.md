@@ -9,7 +9,7 @@ assessment (verdict + per-dimension notes) for any ranked card.
 - **Route:** `/cards/scoring`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t scoring` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
 
 ## What it shows
 
@@ -63,9 +63,9 @@ heuristic ranking above keeps working normally either way. A malformed or
 non-JSON AI reply is handled the same way — `parseCardScoringAiResponse`
 returns `null` rather than throwing, and the panel shows a per-card error.
 
-See `packages/debate-card-search/test/llm-card-scoring-ai.test.ts` for
+See `packages/debate-search-evidence/test/llm-card-scoring-ai.test.ts` for
 prompt-building and response-parsing coverage, and
-`packages/debate-card-search/test/aiCardAssessments.test.ts` for the
+`packages/debate-search-evidence/test/aiCardAssessments.test.ts` for the
 persisted-store coverage.
 
 ## Bulk import
@@ -102,12 +102,12 @@ localStorage key as the single-card form, so the existing cross-tab
 live-update mechanism (below) and ranking/duplicate-flagging both pick up
 a bulk import the same as any other save.
 
-Vitest-covered: `packages/debate-card-search/test/llm-card-scoring.test.ts`'s
+Vitest-covered: `packages/debate-search-evidence/test/llm-card-scoring.test.ts`'s
 `parseBulkCardSubmissions` describe block (blank input, single/multiple
 entries, metadata in any order, a missing id or text, a fully-blank
 trailing block, one malformed entry alongside well-formed ones, multi-line
 text, keyword trimming, and quality clamping/defaulting), and
-`packages/debate-card-search/test/cardScores.test.ts`'s
+`packages/debate-search-evidence/test/cardScores.test.ts`'s
 `saveScoredCardsBulk`/`bulkImportScoredCards` describe blocks (batch
 upsert, same-batch id collisions, empty batches, and end-to-end
 parse-then-persist behavior).
@@ -126,7 +126,7 @@ AI assessment requested, or a topic tracked in another tab shows up here
 without a manual reload. This closes the "Every other localStorage-backed
 panel in this repo still has no cross-tab live-update mechanism" Known gap
 noted in [`shared-flow-sync.md`](shared-flow-sync.md), for this panel.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`
 (every backing-key match, the `null`-key clear-all case, an unrelated key,
 and a same-prefix substring key).
 
@@ -158,7 +158,7 @@ since LLM Card Scoring's dimensions (and this feature's name) are specific
 to cards. `EvidenceLibraryPanel`'s score-lookup runs alongside its existing
 search/filter effect and its `refreshResults` call after any edit/delete, so
 the badge stays in sync with whichever entries are currently on screen.
-Vitest-covered: `packages/debate-card-search/test/cardScores.test.ts`'s
+Vitest-covered: `packages/debate-search-evidence/test/cardScores.test.ts`'s
 `getScoredCardBreakdown` and `scoreEvidenceLibraryEntry` describe blocks
 (undefined for an unscored card, a scored card's breakdown, duplicate
 detection against other persisted cards, deriving keywords from the entry's

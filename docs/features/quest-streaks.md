@@ -7,7 +7,7 @@ result.
 - **Route:** `/cards/streaks`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t streaks` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
@@ -72,7 +72,10 @@ opt-in reminder notification before a streak lapses" follow-up.
 
 - **What "at risk" means:** an in-progress streak coming into today (i.e.
   yesterday's streak was greater than zero) where today's mission hasn't been
-  completed yet — `lib/gamified-quests.ts#getStreakLapseRiskLength`. This is
+  completed yet — `lib/gamified-quests.ts#getStreakLapseRiskLength`, computed
+  over the contributor's freeze-bridged mission history (`applyStreakFreezes`),
+  so the at-risk length always matches the roster's own "Current streak"
+  cell rather than a shorter, unfrozen count. This is
   deliberately proactive: unlike the streak-freeze mechanic above (which
   offers a freeze *after* a gap day has already passed), this fires *while*
   today can still be saved by completing today's mission, so no freeze is
@@ -152,7 +155,7 @@ this tab's roster without a manual reload — closing
 the "Every other localStorage-backed panel in this repo still has no
 cross-tab live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 

@@ -1,0 +1,48 @@
+---
+title: "Team Brainstorm Assist"
+---
+
+# Team Brainstorm Assist
+
+Lets a squad submit, AI-generate, and upvote brainstorm ideas against an
+argument block, grouped into boards by category, each board ranked by
+popularity with a near-duplicate badge.
+
+- **Route:** `/cards/brainstorm`
+- **Nav:** the Tools page's Community & Progress group
+- **Package:** `debate-card-search`
+
+## What it shows
+
+An optional topic switcher, a submission form (argument block, contributor
+ID, category, idea text), and every board, sorted by argument block then
+category, each idea ranked by popularity score with a "possible duplicate"
+badge and a "Merge into…" select. A "Generate AI ideas" button drafts
+candidate ideas via a real Anthropic call.
+
+## Data flow
+
+```
+state/brainstormIdeas.ts (localStorage: brainstormIdeas)
+  → buildBrainstormBoardsPanelView()
+  → panels/BrainstormBoardPanel.tsx
+  → apps/debate-ai.com/app/cards/brainstorm/page.tsx
+
+"Generate AI ideas":
+  → requestTeamBrainstormAiIdeas() — lib/team-brainstorm-client.ts
+      → buildTeamBrainstormAiUserPrompt() — lib/team-brainstorm-ai.ts (pure)
+      → POST /api/reason-ai
+      → parseTeamBrainstormAiResponse()
+```
+
+## Session timer
+
+An optional "Session timer" widget lets a moderator time-box a sprint: pick
+a duration (3/5/10/15 minutes), Start, Pause/resume, or Reset.
+
+## Known gaps
+
+- No reviewer/moderator identity check gates the merge or "Send to Argument
+  Library" actions.
+- "Contributor ID" is still free-form text, not a login.
+- The session timer is `localStorage`-only, not account-synced.

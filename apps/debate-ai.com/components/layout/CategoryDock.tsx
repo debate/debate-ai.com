@@ -31,6 +31,7 @@ import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
 import { TOOL_GROUPS } from "@/app/tools/tool-groups"
+import { hasEmbeddedDock } from "@/lib/sidebar-routes"
 import {
   IconCollectiveMind,
   IconFlowFlower,
@@ -448,9 +449,10 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     )
   }
 
-  // The videos page renders its own embedded dock at the top of its sidebar
-  // (md+), so the fixed top-left dock would otherwise show twice there.
-  const suppressDesktopDock = pathname?.startsWith("/videos")
+  // The videos page (and, via `AppSidebarShell`, every other page the videos
+  // sidebar's tool tree links to) renders its own embedded dock at the top of
+  // its sidebar (md+), so the fixed top-left dock would otherwise show twice.
+  const suppressDesktopDock = hasEmbeddedDock(pathname)
 
   return (
     <>

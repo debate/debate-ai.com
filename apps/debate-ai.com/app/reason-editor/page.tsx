@@ -8,6 +8,12 @@
  * The sidebar (file tree + "Open Tabs") is ported from quick search's
  * REASON editor sidebar (`packages/reason-editor-sidebar`), adapted to this
  * app's document model and primitives — see FileTree.tsx/OpenTabsPanel.tsx.
+ * As in that sidebar, the enabled panels stack vertically (Files above Open
+ * Tabs by default) instead of switching exclusively, and CardMirror is
+ * mounted with `defaultNavPaneHidden` so the engine's own outline nav pane
+ * doesn't claim a second sidebar's worth of the column — this page's docs
+ * sidebar owns the side, and the outline stays one pull-tab / View-menu
+ * toggle away.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
@@ -24,16 +30,60 @@ import type { ReasonDocument } from "./types"
 const AUTOSAVE_DELAY_MS = 800
 type SidebarPanel = "files" | "topicStarters" | "openTabs"
 
+/** Which sidebar panels are shown, stacked top-to-bottom like the REASON
+ *  sidebar this page is ported from (quick search's
+ *  `packages/reason-editor-sidebar` stacks its enabled panels vertically
+ *  rather than switching between them). Files + Open Tabs both visible is
+ *  that sidebar's default view. */
+const DEFAULT_PANELS: SidebarPanel[] = ["files", "openTabs"]
+const PANELS_STORAGE_KEY = "reason-editor-sidebar-panels"
+
+function loadPanels(): SidebarPanel[] {
+  try {
+    const raw = localStorage.getItem(PANELS_STORAGE_KEY)
+    if (!raw) return DEFAULT_PANELS
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return DEFAULT_PANELS
+    const valid = parsed.filter(
+      (p): p is SidebarPanel => p === "files" || p === "topicStarters" || p === "openTabs",
+    )
+    return valid.length > 0 ? valid : DEFAULT_PANELS
+  } catch {
+    return DEFAULT_PANELS
+  }
+}
+
 export default function ReasonEditorPage() {
   const [documents, setDocuments] = useState<ReasonDocument[]>([])
   const [openTabs, setOpenTabs] = useState<number[]>([])
   const [activeId, setActiveId] = useState<number | null>(null)
-  const [sidebarPanel, setSidebarPanel] = useState<SidebarPanel>("files")
+  const [sidebarPanels, setSidebarPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
   const [topicItems, setTopicItems] = useState<TopicStarterItem[]>([])
   const [topicDocument, setTopicDocument] = useState<TopicStarterItem | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Panel choice is a per-device view preference (same as the source
+  // sidebar's persisted panel list); read after mount so SSR markup stays
+  // deterministic.
+  useEffect(() => {
+    setSidebarPanels(loadPanels())
+  }, [])
+
+  const togglePanel = useCallback((panel: SidebarPanel) => {
+    setSidebarPanels((prev) => {
+      const next = prev.includes(panel) ? prev.filter((p) => p !== panel) : [...prev, panel]
+      if (next.length === 0) return prev // always keep at least one panel
+      try {
+        localStorage.setItem(PANELS_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        // Storage unavailable (private mode) — the toggle still works for
+        // this visit, it just won't be remembered.
+      }
+      return next
+    })
+  }, [])
 
   const selected = useMemo(
     () => documents.find((d) => d.id === activeId) ?? null,
@@ -185,13 +235,16 @@ export default function ReasonEditorPage() {
           </div>
         </div>
 
+        {/* Panel toggles — multi-select, so Files and Open Tabs stack
+            together like the source REASON sidebar's default view. */}
         <div className="flex items-center gap-1 px-2 py-1.5 border-b">
           <button
             type="button"
-            onClick={() => setSidebarPanel("files")}
+            onClick={() => togglePanel("files")}
+            aria-pressed={sidebarPanels.includes("files")}
             className={cn(
               "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
-              sidebarPanel === "files" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+              sidebarPanels.includes("files") ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
             <PanelLeft className="h-3.5 w-3.5" />
@@ -199,10 +252,11 @@ export default function ReasonEditorPage() {
           </button>
           <button
             type="button"
-            onClick={() => setSidebarPanel("topicStarters")}
+            onClick={() => togglePanel("topicStarters")}
+            aria-pressed={sidebarPanels.includes("topicStarters")}
             className={cn(
               "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
-              sidebarPanel === "topicStarters" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+              sidebarPanels.includes("topicStarters") ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
             <BookOpen className="h-3.5 w-3.5" />
@@ -210,10 +264,11 @@ export default function ReasonEditorPage() {
           </button>
           <button
             type="button"
-            onClick={() => setSidebarPanel("openTabs")}
+            onClick={() => togglePanel("openTabs")}
+            aria-pressed={sidebarPanels.includes("openTabs")}
             className={cn(
               "flex-1 flex items-center justify-center gap-1.5 rounded-md py-1 text-xs font-medium transition-colors",
-              sidebarPanel === "openTabs" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+              sidebarPanels.includes("openTabs") ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
             <PanelsTopLeft className="h-3.5 w-3.5" />
@@ -226,32 +281,71 @@ export default function ReasonEditorPage() {
           <div className="flex justify-center py-8">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           </div>
-        ) : sidebarPanel === "files" ? (
-          <FileTree
-            documents={documents}
-            activeId={activeId}
-            onSelect={openDocument}
-            onAdd={createDocument}
-            onRename={updateTitle}
-            onDelete={deleteDocument}
-            onMove={moveDocument}
-          />
-        ) : sidebarPanel === "topicStarters" ? (
-          <TopicStarterTree
-            items={topicItems}
-            onSelect={(item) => {
-              setTopicDocument(item)
-              setActiveId(null)
-            }}
-          />
         ) : (
-          <OpenTabsPanel
-            documents={documents}
-            openTabs={openTabs}
-            activeId={activeId}
-            onSelect={setActiveId}
-            onClose={closeTab}
-          />
+          <div className="flex-1 min-h-0 flex flex-col">
+            {sidebarPanels.includes("files") && (
+              <div className="flex-1 min-h-0 flex flex-col">
+                <p className="px-3 pt-2 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide shrink-0">
+                  Files
+                </p>
+                <FileTree
+                  documents={documents}
+                  activeId={activeId}
+                  onSelect={openDocument}
+                  onAdd={createDocument}
+                  onRename={updateTitle}
+                  onDelete={deleteDocument}
+                  onMove={moveDocument}
+                />
+              </div>
+            )}
+            {sidebarPanels.includes("topicStarters") && (
+              <div className="flex-1 min-h-0 flex flex-col border-t first:border-t-0">
+                <p className="px-3 pt-2 pb-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide shrink-0">
+                  Topic Starters
+                </p>
+                <TopicStarterTree
+                  items={topicItems}
+                  onSelect={(item) => {
+                    setTopicDocument(item)
+                    setActiveId(null)
+                  }}
+                />
+              </div>
+            )}
+            {sidebarPanels.includes("openTabs") && (
+              <div
+                className={cn(
+                  "min-h-0 flex flex-col border-t first:border-t-0",
+                  // Alone it fills the sidebar; stacked under another panel
+                  // it keeps to the lower portion like the source sidebar's
+                  // vertical split.
+                  sidebarPanels.length === 1 ? "flex-1" : "shrink-0 max-h-[40%]",
+                )}
+              >
+                <div className="flex items-center justify-between px-3 pt-2 pb-1 shrink-0">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Open Tabs{openTabs.length > 0 && ` (${openTabs.length})`}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => createDocument(null, false)}
+                    title="New File"
+                    className="h-5 w-5 flex items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+                  >
+                    <FilePlus2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <OpenTabsPanel
+                  documents={documents}
+                  openTabs={openTabs}
+                  activeId={activeId}
+                  onSelect={setActiveId}
+                  onClose={closeTab}
+                />
+              </div>
+            )}
+          </div>
         )}
       </aside>
 
@@ -301,14 +395,19 @@ export default function ReasonEditorPage() {
               {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
+              {/* No React `key` here on purpose: `contentKey` already gives
+                  each document a fresh claim (and undo history) inside the
+                  CardMirror singleton, and a keyed remount would also rerun
+                  the editor's mount effects — re-hiding a nav pane the user
+                  pulled back open — on every document switch. */}
               <EditorWithToolbar
-                key={topicDocument ? `topic-${topicDocument.id}` : selected!.id}
                 content={topicDocument?.content ?? selected!.content}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}
                 showOutline
                 showToolbar={!topicDocument}
+                defaultNavPaneHidden
                 onChange={topicDocument ? undefined : (html) => updateContent(selected!.id, html)}
               />
             </div>

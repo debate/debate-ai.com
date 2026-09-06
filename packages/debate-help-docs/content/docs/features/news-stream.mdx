@@ -1,0 +1,38 @@
+---
+title: "News Stream"
+---
+
+# News Stream
+
+A single feed for product updates and community announcements, so a
+debater doesn't have to separately check several pages to find out what's
+new.
+
+- **Route:** `/news`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+Every item, newest first, filterable by category: **Product Updates**
+(hand-maintained, plus auto-generated "Tool spotlight" posts for every
+cataloged feature), **Daily Best Card**, **Contributor Awards**, and five
+**Community** sources — Quest Streak milestones, Group Challenge
+completions, Revision Incentives' daily top reviser, Team Collaboration
+Mode prep notes, new Argument Library submissions, and new AI Coach Mode
+sessions. Each item can be liked and is marked read on hover.
+
+## Data flow
+
+```
+lib/news-stream.ts        — NewsItem type, PRODUCT_NEWS, buildAutoFeatureNews()
+state/newsStream.ts        — buildNewsFeed(extraItems?) merges every source
+panels/NewsStreamPanel.tsx — category filter tabs, read/like UI
+```
+
+Read/like state is account-synced via `/api/settings` as a union merge, not
+a full two-way sync.
+
+## Known gaps
+
+Unliking on one device doesn't clear the like on another device until that
+device's own next toggle overwrites the account row.

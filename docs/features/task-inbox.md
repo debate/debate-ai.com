@@ -8,7 +8,7 @@ contributor verify them before they count as complete.
 - **Route:** `/cards/inbox`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t inbox` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -121,7 +121,7 @@ components/research/TaskInboxWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <TaskInboxPanel signedInContributorId={...} />
       — seeds myContributorId's initial value only; a visitor who edits
@@ -151,7 +151,7 @@ itself stays app-agnostic — it only knows about a plain
 
 Every routing/persistence rule already existed and was Vitest-covered; this
 feature adds three composition functions in
-`packages/debate-card-search/src/state/routedTaskQueues.ts`:
+`packages/debate-team-collaboration/src/state/routedTaskQueues.ts`:
 `buildTaskInboxView`, which flattens the existing persisted routed-queue
 store into a panel-ready shape; `routePersistedTopicTasks`, which chains
 `trackedArguments.ts`'s live coverage report straight into
@@ -161,7 +161,7 @@ panel-ready shape down to one contributor's own assignments (dropping a
 topic entirely once none of its assignments match, and clearing
 `unassignedTasks` since an unassigned task isn't anyone's yet) — no new
 routing or completion logic was introduced.
-Vitest-covered in `packages/debate-card-search/test/routedTaskQueues.test.ts`.
+Vitest-covered in `packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
 
 The verification step added `lib/task-verification.ts`'s
 `assertVerifierAllowed` (mirroring `lib/peer-review.ts`'s identical
@@ -175,8 +175,8 @@ once the guard passes). `state/researchProgress.ts`'s existing
 immediately with no verification required, so every other existing caller
 (and its tests) keeps working exactly as before; only this panel's "Mark
 done"/"Verify" UI uses the new gated path.
-Vitest-covered in `packages/debate-card-search/test/task-verification.test.ts`
-and `packages/debate-card-search/test/pendingTaskVerifications.test.ts`, plus
+Vitest-covered in `packages/debate-team-collaboration/test/task-verification.test.ts`
+and `packages/debate-team-collaboration/test/pendingTaskVerifications.test.ts`, plus
 new cases in `test/researchProgress.test.ts` for `verifyAndRecordResearchTask`.
 
 The signed-in verifier gate added one pure helper, `lib/session-identity.ts`'s
@@ -206,12 +206,15 @@ assignment/completion is: the outgoing assignee (if any) is decremented via
 `recordPersistedTaskCompleted`, and the incoming one is incremented via
 `recordPersistedTaskAssigned` — both no-ops on a contributor id with no
 persisted profile, so reassigning to an arbitrary typed id never throws.
-Reassigning a task to its current assignee is a no-op that returns the
+A high-priority flag on the outgoing
+assignment is carried along to the new assignee — reassigning moves a task,
+it doesn't change how urgent it is. Reassigning a task to its current
+assignee is a no-op that returns the
 existing assignment unchanged, avoiding a spurious decrement/increment of
 the same contributor's count. Returns `undefined` — leaving both stores
 untouched — for a blank contributor id, a topic with no persisted queue, or
 an `argBlock` matching neither an assignment nor an unassigned task.
-Vitest-covered in `packages/debate-card-search/test/routedTaskQueues.test.ts`.
+Vitest-covered in `packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
 
 ## Cross-tab live update
 
@@ -232,7 +235,7 @@ mechanism" Known gap noted in
 `DailyBestCardPanel`/`ContributionLeaderboardPanel` precedent (see
 [`contribution-leaderboard.md`](contribution-leaderboard.md)'s "Cross-tab
 live update"). Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-store
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-store
 key, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 
@@ -272,10 +275,10 @@ panels/TaskInboxPanel.tsx
 ```
 
 Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority` in
-`packages/debate-card-search/test/research-task-routing.test.ts`, and
+`packages/debate-search-evidence/test/research-task-routing.test.ts`, and
 `setPersistedRoutedTaskPriority` plus `buildTaskInboxView`'s new
 priority-ordering behavior in
-`packages/debate-card-search/test/routedTaskQueues.test.ts`.
+`packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
 
 ## Team capacity view
 
@@ -327,7 +330,10 @@ Vitest-covered in
 - The signed-in verifier gate is enforced client-side only (the panel
   disables the input/button); `verifyAndRecordResearchTask`/
   `assertVerifierAllowed` still accept whatever `verifierId` string a
-  caller passes, so a caller bypassing this panel (or a signed-out
+  caller passes (though `assertVerifierAllowed` now matches the assignee
+  case-insensitively after trimming, the same folding the client gate
+  uses, so `Alice` can't self-verify a task assigned to `alice`), so a
+  caller bypassing this panel (or a signed-out
   visitor) is unaffected — the same trust boundary every other
   localStorage-backed action in this repo has, since there is no
   server-side session check on these calls.
@@ -335,11 +341,10 @@ Vitest-covered in
   there's no real "coach" role or permission check gating it, since this
   repo has no roles/permissions system at all. Reassigning also isn't
   captured by the cross-tab live-update mechanism's contributor-load side:
-  a second tab picks up the moved task itself (`routedTaskQueues` is a
-  watched key), but its `contributorAvailability` side (each contributor's
-  `activeTaskCount`) only refreshes on that tab's own next mount/reload —
-  the same limitation `completePersistedRoutedTask`'s "Mark done" already
-  had before this control existed.
+  a second tab picks up both the moved task itself (`routedTaskQueues` is
+  a watched key) and, now that `contributorAvailability` is in
+  `TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS` too, each contributor's
+  `activeTaskCount` in the "Team capacity" section.
 - Same as the Reassign control: the "Flag high priority"/"Unflag" toggle is
   open to anyone viewing the panel, with no real "coach" role gating it —
   this repo has no roles/permissions system at all. Unlike Reassign, the
