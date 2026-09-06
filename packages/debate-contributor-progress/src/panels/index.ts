@@ -7,8 +7,9 @@
 
 export { CoachingProgramRosterAnalyticsPanel } from "./CoachingProgramRosterAnalyticsPanel";
 export { CommunityResearchHubPanel } from "./CommunityResearchHubPanel";
-export { ContributionLeaderboardPanel } from "./ContributionLeaderboardPanel";
+export { ContributionLeaderboardPanel, TIER_VARIANT } from "./ContributionLeaderboardPanel";
 export { ContributorAwardsPanel } from "./ContributorAwardsPanel";
+export { ContributorProfilePanel } from "./ContributorProfilePanel";
 export { DailyBestCardPanel } from "./DailyBestCardPanel";
 export { DailyQuestsPanel } from "./DailyQuestsPanel";
 export { NewsStreamPanel, type NewsStreamSyncAdapter } from "./NewsStreamPanel";
