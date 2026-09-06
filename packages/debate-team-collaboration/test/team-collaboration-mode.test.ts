@@ -8,18 +8,23 @@ import {
   buildTopicSprintSummaryText,
   createSprintNote,
   createSprintSession,
+  createWhiteboardNote,
   getNotesAssignedTo,
   getNotesForTopic,
   getOpenFollowUps,
   getPastSprintSessions,
   getSessionsForTopic,
   getUpcomingSprintSessions,
+  getWhiteboardNotesForTopic,
+  nextWhiteboardNoteColor,
   sortNotesByCreatedAt,
   sortSprintSessionsByDay,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
+  WHITEBOARD_NOTE_COLORS,
   type SprintNote,
   type SprintSession,
+  type WhiteboardNote,
 } from "../src/lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../src/lib/daily-quests";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
@@ -604,5 +609,122 @@ describe("sprintRetrospectiveFilename", () => {
   it("falls back to 'topic' for a blank or punctuation-only topic", () => {
     expect(sprintRetrospectiveFilename("   ")).toBe("sprint-retrospective-topic.txt");
     expect(sprintRetrospectiveFilename("!!!")).toBe("sprint-retrospective-topic.txt");
+  });
+});
+
+describe("createWhiteboardNote", () => {
+  it("creates a note, trimming the text and author id", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "  What if we frame this as a due-process argument?  ",
+      authorId: "  alice  ",
+      color: "blue",
+      createdAt: NOW,
+    });
+
+    expect(note).toEqual({
+      id: "n1",
+      topic: "Immigration",
+      text: "What if we frame this as a due-process argument?",
+      color: "blue",
+      authorId: "alice",
+      createdAt: NOW,
+    });
+  });
+
+  it("clamps overly long text to 280 characters", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "x".repeat(400),
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+    });
+    expect(note.text).toHaveLength(280);
+  });
+
+  it("falls back to a blank author id becoming 'me'", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "   ",
+      color: "blue",
+      createdAt: NOW,
+    });
+    expect(note.authorId).toBe("me");
+  });
+
+  it("falls back to the palette's first color for an unrecognized color", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "chartreuse" as WhiteboardNote["color"],
+      createdAt: NOW,
+    });
+    expect(note.color).toBe(WHITEBOARD_NOTE_COLORS[0]);
+  });
+
+  it("throws when topic is blank", () => {
+    expect(() =>
+      createWhiteboardNote({ id: "n1", topic: "  ", text: "Note", authorId: "alice", color: "blue", createdAt: NOW }),
+    ).toThrow("createWhiteboardNote: topic is required");
+  });
+
+  it("throws when text is blank", () => {
+    expect(() =>
+      createWhiteboardNote({ id: "n1", topic: "Immigration", text: "   ", authorId: "alice", color: "blue", createdAt: NOW }),
+    ).toThrow("createWhiteboardNote: text is required");
+  });
+});
+
+describe("getWhiteboardNotesForTopic", () => {
+  const noteA: WhiteboardNote = createWhiteboardNote({
+    id: "na",
+    topic: "Immigration",
+    text: "First",
+    authorId: "alice",
+    color: "yellow",
+    createdAt: 200,
+  });
+  const noteB: WhiteboardNote = createWhiteboardNote({
+    id: "nb",
+    topic: "Immigration",
+    text: "Second",
+    authorId: "bob",
+    color: "pink",
+    createdAt: 100,
+  });
+  const noteC: WhiteboardNote = createWhiteboardNote({
+    id: "nc",
+    topic: "Healthcare",
+    text: "Unrelated",
+    authorId: "carol",
+    color: "blue",
+    createdAt: 50,
+  });
+
+  it("filters to one topic, oldest first", () => {
+    expect(getWhiteboardNotesForTopic([noteA, noteB, noteC], "Immigration").map((n) => n.id)).toEqual([
+      "nb",
+      "na",
+    ]);
+  });
+
+  it("returns an empty array when no notes match", () => {
+    expect(getWhiteboardNotesForTopic([noteA], "Healthcare")).toEqual([]);
+  });
+});
+
+describe("nextWhiteboardNoteColor", () => {
+  it("cycles through the palette by the existing note count", () => {
+    expect(nextWhiteboardNoteColor(0)).toBe(WHITEBOARD_NOTE_COLORS[0]);
+    expect(nextWhiteboardNoteColor(1)).toBe(WHITEBOARD_NOTE_COLORS[1]);
+    expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length)).toBe(WHITEBOARD_NOTE_COLORS[0]);
+    expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length + 2)).toBe(WHITEBOARD_NOTE_COLORS[2]);
   });
 });

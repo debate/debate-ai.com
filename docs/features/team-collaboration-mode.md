@@ -258,6 +258,40 @@ too. Vitest-covered in
 helpers) and `test/sprintSessions.test.ts` (the persisted store, mirroring
 `sprintNotes.test.ts`'s cases).
 
+A later slice closes the "a shared whiteboard/canvas for sprint
+brainstorming" follow-up named under the "🤝 Team Collaboration Mode" bullet
+in `TODO.md`. Deliberately not a positioned (x/y, draggable) canvas: this
+repo's panel UI kit (`debate-ui`'s `panel-shell`) has no drag-and-drop
+primitive anywhere, so the first slice is a colored sticky-note board
+(creation order, not a freeform layout) — mirroring every other idea's
+"smallest useful vertical slice first" convention rather than introducing
+raw pointer-drag DOM handling with nothing else in the codebase to match its
+styling/theming against. `lib/team-collaboration-mode.ts` adds a
+`WhiteboardNote` model (topic, text, a `color` drawn from a fixed
+`WHITEBOARD_NOTE_COLORS` palette, author, created-at), with
+`createWhiteboardNote` validating/trimming it (an unrecognized color falls
+back to the palette's first entry rather than throwing — a note is still
+worth keeping even with a garbled color) and `getWhiteboardNotesForTopic`/
+`nextWhiteboardNoteColor` slicing/cycling a list of them.
+`state/sprintWhiteboard.ts` persists notes to `localStorage`
+(`"sprintWhiteboardNotes"`), mirroring `state/sprintSessions.ts`'s exact
+persistence convention. `TopicSprintPanel` gained a "Shared whiteboard"
+section between the note wall and scheduled sessions: a wrapping board of
+colored sticky notes (text + author + a "Remove" action), and a form below
+it (note text + a color radio-picker, mirroring `BrainstormBoardPanel`'s
+category picker) that defaults to the next color in the cycle after each
+add. `"sprintWhiteboardNotes"` was also added to `state/live-update.ts`'s
+`TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS`, so a note added or removed in
+another browser tab refreshes this panel too — the existing
+`isTopicSprintLiveUpdateStorageEvent` test already iterates that whole
+array, so it covered the new key with no test changes needed there.
+Vitest-covered in
+`packages/debate-team-collaboration/test/team-collaboration-mode.test.ts`
+(`createWhiteboardNote`'s validation/trimming/color-fallback,
+`getWhiteboardNotesForTopic`'s filter-and-sort, and `nextWhiteboardNoteColor`'s
+cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
+mirroring `sprintSessions.test.ts`'s cases).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -268,8 +302,15 @@ helpers) and `test/sprintSessions.test.ts` (the persisted store, mirroring
   no server-side session check on `saveSprintNote`/
   `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
   `TopicSprintPanel`'s note form) or on `saveSprintSession`/
-  `createSprintSession` (the "Scheduled sessions" form), the same trust
-  boundary every other localStorage-backed action in this repo has.
-- Scheduled sessions are local-only (no account sync yet, unlike some other
-  ideas' persisted stores), and scheduling is by calendar day only — no
-  time-of-day, recurrence, or reminder notification.
+  `createSprintSession` (the "Scheduled sessions" form) or on
+  `saveWhiteboardNote`/`createWhiteboardNote` (the "Shared whiteboard"
+  form), the same trust boundary every other localStorage-backed action in
+  this repo has.
+- Scheduled sessions and whiteboard notes are both local-only (no account
+  sync yet, unlike some other ideas' persisted stores), and scheduling is by
+  calendar day only — no time-of-day, recurrence, or reminder notification.
+- The whiteboard has no freeform (x/y, draggable) layout — notes render in
+  creation order only. A true positioned canvas would need a drag-and-drop
+  primitive this repo's UI kit doesn't have yet; worth revisiting if another
+  idea needs the same primitive (see `TODO.md`'s open follow-up on this
+  bullet, since it's still not started).
