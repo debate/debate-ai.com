@@ -36,6 +36,8 @@ import {
 import { useStoreSnapshot } from "../ui/panels/use-store-snapshot";
 import { Button } from "debate-research-evidence/src/ui/primitives/button";
 import { Input } from "debate-research-evidence/src/ui/primitives/input";
+import { Label } from "debate-research-evidence/src/ui/primitives/label";
+import { RadioGroup, RadioGroupItem } from "debate-research-evidence/src/ui/primitives/radio-group";
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea";
 
 import {
@@ -44,22 +46,40 @@ import {
   buildSprintRetrospective,
   buildSprintRetrospectiveText,
   createSprintNote,
+  createSprintSession,
+  createWhiteboardNote,
   assignSprintNote,
   getOpenFollowUps,
+  getPastSprintSessions,
+  getSessionsForTopic,
+  getUpcomingSprintSessions,
+  getWhiteboardNotesForTopic,
+  nextWhiteboardNoteColor,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
+  WHITEBOARD_NOTE_COLORS,
   type SprintNote,
   type SprintNoteStatus,
+  type SprintSession,
+  type WhiteboardNote,
+  type WhiteboardNoteColor,
 } from "../lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../lib/daily-quests";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../lib/research-progress";
 import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
 import { deleteSprintNote, listSprintNotes, saveSprintNote } from "../state/sprintNotes";
+import { deleteSprintSession, listSprintSessions, saveSprintSession } from "../state/sprintSessions";
+import {
+  deleteWhiteboardNote,
+  listWhiteboardNotes,
+  saveWhiteboardNote,
+} from "../state/sprintWhiteboard";
 import {
   readPersistedTopicSprintInputs,
   type PersistedTopicSprintInputs,
 } from "../state/topicSprints";
+import { getUtcDayKey } from "debate-research-evidence/src/lib/daily-best-card";
 import { isTopicSprintLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update";
 
 /** Everything a topic sprint needs before any persisted store has been read (first render/SSR). */
@@ -79,6 +99,26 @@ const STATUS_TONE: Record<SprintNoteStatus, PanelTone> = {
 };
 
 const STATUSES: SprintNoteStatus[] = ["open", "covered", "needs-follow-up"];
+
+/** Tailwind classes per `WhiteboardNoteColor`, theme-aware via opacity rather than solid fills. */
+const WHITEBOARD_NOTE_COLOR_CLASSES: Record<WhiteboardNoteColor, string> = {
+  yellow: "bg-yellow-500/15 border-yellow-500/40",
+  pink: "bg-pink-500/15 border-pink-500/40",
+  blue: "bg-blue-500/15 border-blue-500/40",
+  green: "bg-emerald-500/15 border-emerald-500/40",
+  purple: "bg-purple-500/15 border-purple-500/40",
+};
+
+/** Renders a "YYYY-MM-DD" day key as a human-readable UTC calendar date, e.g. "Thu, Sep 10, 2026". */
+function formatSprintSessionDay(dayKey: string): string {
+  return new Date(`${dayKey}T00:00:00Z`).toLocaleDateString(undefined, {
+    timeZone: "UTC",
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 /** Props for {@link TopicSprintPanel}. */
 export interface TopicSprintPanelProps {
@@ -123,10 +163,25 @@ export function TopicSprintPanel({
   className,
 }: TopicSprintPanelProps) {
   const { data: persistedNotes, refresh } = useStoreSnapshot<SprintNote[]>(listSprintNotes, []);
+  const { data: persistedSessions, refresh: refreshSessions } = useStoreSnapshot<SprintSession[]>(
+    listSprintSessions,
+    [],
+  );
+  const { data: persistedWhiteboardNotes, refresh: refreshWhiteboard } = useStoreSnapshot<WhiteboardNote[]>(
+    listWhiteboardNotes,
+    [],
+  );
   const editable = notes === undefined;
 
   const [noteText, setNoteText] = useState("");
   const [assignTo, setAssignTo] = useState("");
+  const [sessionTitle, setSessionTitle] = useState("");
+  const [sessionDayKey, setSessionDayKey] = useState("");
+  const [showPastSessions, setShowPastSessions] = useState(false);
+  const [whiteboardNoteText, setWhiteboardNoteText] = useState("");
+  const [whiteboardNoteColor, setWhiteboardNoteColor] = useState<WhiteboardNoteColor>(
+    WHITEBOARD_NOTE_COLORS[0],
+  );
 
   // `quests`/`contributions`/`coverageReport`/`assignments`/`contributors` are
   // topic-scoped, so — unlike the mount-only `useStoreSnapshot` reads above —
@@ -150,10 +205,12 @@ export function TopicSprintPanel({
       if (!isTopicSprintLiveUpdateStorageEvent(event)) return;
       setPersistedInputs(readPersistedTopicSprintInputs(topic));
       refresh();
+      refreshSessions();
+      refreshWhiteboard();
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [topic, refresh]);
+  }, [topic, refresh, refreshSessions, refreshWhiteboard]);
 
   const sprint = useMemo(
     () =>
@@ -224,6 +281,68 @@ export function TopicSprintPanel({
   const reassign = (note: SprintNote, assignedToId: string | null) => {
     saveSprintNote(assignSprintNote(note, assignedToId, Date.now()));
     refresh();
+  };
+
+  const sessionsForTopic = useMemo(
+    () => getSessionsForTopic(persistedSessions, topic),
+    [persistedSessions, topic],
+  );
+  const todayKey = useMemo(() => getUtcDayKey(now), [now]);
+  const upcomingSessions = useMemo(
+    () => getUpcomingSprintSessions(sessionsForTopic, todayKey),
+    [sessionsForTopic, todayKey],
+  );
+  const pastSessions = useMemo(
+    () => getPastSprintSessions(sessionsForTopic, todayKey),
+    [sessionsForTopic, todayKey],
+  );
+
+  const addSession = () => {
+    if (!sessionTitle.trim() || !sessionDayKey) return;
+    saveSprintSession(
+      createSprintSession({
+        id: `session-${Date.now()}`,
+        topic,
+        title: sessionTitle.trim(),
+        scheduledDayKey: sessionDayKey,
+        createdAt: now,
+      }),
+    );
+    setSessionTitle("");
+    setSessionDayKey("");
+    refreshSessions();
+  };
+
+  const removeSession = (id: string) => {
+    deleteSprintSession(id);
+    refreshSessions();
+  };
+
+  const whiteboardNotesForTopic = useMemo(
+    () => getWhiteboardNotesForTopic(persistedWhiteboardNotes, topic),
+    [persistedWhiteboardNotes, topic],
+  );
+
+  const addWhiteboardNote = () => {
+    if (!whiteboardNoteText.trim()) return;
+    saveWhiteboardNote(
+      createWhiteboardNote({
+        id: `whiteboard-note-${Date.now()}`,
+        topic,
+        authorId,
+        text: whiteboardNoteText.trim(),
+        color: whiteboardNoteColor,
+        createdAt: now,
+      }),
+    );
+    setWhiteboardNoteText("");
+    setWhiteboardNoteColor(nextWhiteboardNoteColor(whiteboardNotesForTopic.length + 1));
+    refreshWhiteboard();
+  };
+
+  const removeWhiteboardNote = (id: string) => {
+    deleteWhiteboardNote(id);
+    refreshWhiteboard();
   };
 
   return (
@@ -355,6 +474,124 @@ export function TopicSprintPanel({
             <Button size="sm" onClick={addNote} disabled={!noteText.trim()}>
               Add note
             </Button>
+          </div>
+        ) : null}
+      </PanelSection>
+
+      <PanelSection title="Shared whiteboard">
+        {whiteboardNotesForTopic.length === 0 ? (
+          <EmptyState
+            title="No sticky notes yet"
+            message={editable ? "Add the first brainstorming note below." : undefined}
+          />
+        ) : (
+          <div className="flex flex-wrap gap-2" data-testid="whiteboard-note-board">
+            {whiteboardNotesForTopic.map((note) => (
+              <div
+                key={note.id}
+                className={`flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]}`}
+              >
+                <p className="whitespace-pre-wrap break-words">{note.text}</p>
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-xs text-muted-foreground">{note.authorId}</span>
+                  {editable ? (
+                    <Button variant="ghost" size="sm" onClick={() => removeWhiteboardNote(note.id)}>
+                      Remove
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {editable ? (
+          <div className="flex flex-col gap-2">
+            <LabeledField label="New sticky note">
+              <Textarea
+                rows={2}
+                value={whiteboardNoteText}
+                onChange={(e) => setWhiteboardNoteText(e.target.value)}
+              />
+            </LabeledField>
+            <div className="space-y-1.5">
+              <Label>Color</Label>
+              <RadioGroup
+                value={whiteboardNoteColor}
+                onValueChange={(value) => setWhiteboardNoteColor(value as WhiteboardNoteColor)}
+                className="flex flex-wrap items-center gap-3"
+              >
+                {WHITEBOARD_NOTE_COLORS.map((color) => (
+                  <div key={color} className="flex items-center gap-1.5">
+                    <RadioGroupItem value={color} id={`whiteboard-note-color-${color}`} />
+                    <Label htmlFor={`whiteboard-note-color-${color}`} className="font-normal capitalize">
+                      {color}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+            <Button size="sm" onClick={addWhiteboardNote} disabled={!whiteboardNoteText.trim()}>
+              Add sticky note
+            </Button>
+          </div>
+        ) : null}
+      </PanelSection>
+
+      <PanelSection title="Scheduled sessions">
+        {upcomingSessions.length === 0 ? (
+          <EmptyState title="No upcoming sessions" message="Schedule the next one below." />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {upcomingSessions.map((session) => (
+              <PanelRow
+                key={session.id}
+                title={session.title}
+                subtitle={formatSprintSessionDay(session.scheduledDayKey)}
+                trailing={
+                  session.scheduledDayKey === todayKey ? <Pill tone="info">Today</Pill> : undefined
+                }
+              >
+                <Button variant="ghost" size="sm" onClick={() => removeSession(session.id)}>
+                  Cancel
+                </Button>
+              </PanelRow>
+            ))}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[2fr_1fr_auto]">
+          <LabeledField label="New session">
+            <Input value={sessionTitle} onChange={(e) => setSessionTitle(e.target.value)} />
+          </LabeledField>
+          <LabeledField label="Date">
+            <Input type="date" value={sessionDayKey} onChange={(e) => setSessionDayKey(e.target.value)} />
+          </LabeledField>
+          <Button size="sm" onClick={addSession} disabled={!sessionTitle.trim() || !sessionDayKey}>
+            Schedule
+          </Button>
+        </div>
+
+        {pastSessions.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setShowPastSessions((v) => !v)}>
+              {showPastSessions ? "Hide" : "Show"} past sessions ({pastSessions.length})
+            </Button>
+            {showPastSessions ? (
+              <div className="flex flex-col gap-2">
+                {pastSessions.map((session) => (
+                  <PanelRow
+                    key={session.id}
+                    title={session.title}
+                    subtitle={formatSprintSessionDay(session.scheduledDayKey)}
+                  >
+                    <Button variant="ghost" size="sm" onClick={() => removeSession(session.id)}>
+                      Remove
+                    </Button>
+                  </PanelRow>
+                ))}
+              </div>
+            ) : null}
           </div>
         ) : null}
       </PanelSection>

@@ -457,8 +457,11 @@ export function isContributionsFeedLiveUpdateStorageEvent(event: { key: string |
  * coverage report), `state/contributorAvailability.ts`'s
  * `"contributorAvailability"` (the roster), `state/researchProgress.ts`'s
  * `"completedResearchTasks"` and `state/routedTaskQueues.ts`'s
- * `"routedTaskQueues"` (tracked assignments), and `state/sprintNotes.ts`'s
- * `"sprintNotes"` (the note wall).
+ * `"routedTaskQueues"` (tracked assignments), `state/sprintNotes.ts`'s
+ * `"sprintNotes"` (the note wall), `state/sprintSessions.ts`'s
+ * `"sprintSessions"` (scheduled sprint sessions), and
+ * `state/sprintWhiteboard.ts`'s `"sprintWhiteboardNotes"` (the shared
+ * whiteboard).
  */
 export const TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS = [
   "dailyQuestTemplates",
@@ -469,6 +472,8 @@ export const TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS = [
   "completedResearchTasks",
   "routedTaskQueues",
   "sprintNotes",
+  "sprintSessions",
+  "sprintWhiteboardNotes",
 ] as const;
 
 /**

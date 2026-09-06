@@ -7,13 +7,24 @@ import {
   buildTopicSprint,
   buildTopicSprintSummaryText,
   createSprintNote,
+  createSprintSession,
+  createWhiteboardNote,
   getNotesAssignedTo,
   getNotesForTopic,
   getOpenFollowUps,
+  getPastSprintSessions,
+  getSessionsForTopic,
+  getUpcomingSprintSessions,
+  getWhiteboardNotesForTopic,
+  nextWhiteboardNoteColor,
   sortNotesByCreatedAt,
+  sortSprintSessionsByDay,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
+  WHITEBOARD_NOTE_COLORS,
   type SprintNote,
+  type SprintSession,
+  type WhiteboardNote,
 } from "../src/lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../src/lib/daily-quests";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
@@ -465,6 +476,125 @@ describe("buildSprintRetrospectiveText", () => {
   });
 });
 
+describe("createSprintSession", () => {
+  it("creates a session, trimming the title", () => {
+    const session = createSprintSession({
+      id: "s1",
+      topic: "Immigration",
+      title: "  Kickoff meeting  ",
+      scheduledDayKey: "2026-09-10",
+      createdAt: NOW,
+    });
+
+    expect(session).toEqual({
+      id: "s1",
+      topic: "Immigration",
+      title: "Kickoff meeting",
+      scheduledDayKey: "2026-09-10",
+      createdAt: NOW,
+    });
+  });
+
+  it("clamps an overly long title to 200 characters", () => {
+    const session = createSprintSession({
+      id: "s1",
+      topic: "Immigration",
+      title: "x".repeat(300),
+      scheduledDayKey: "2026-09-10",
+      createdAt: NOW,
+    });
+    expect(session.title).toHaveLength(200);
+  });
+
+  it("throws when topic is blank", () => {
+    expect(() =>
+      createSprintSession({ id: "s1", topic: "  ", title: "Kickoff", scheduledDayKey: "2026-09-10", createdAt: NOW }),
+    ).toThrow("createSprintSession: topic is required");
+  });
+
+  it("throws when title is blank", () => {
+    expect(() =>
+      createSprintSession({ id: "s1", topic: "Immigration", title: "   ", scheduledDayKey: "2026-09-10", createdAt: NOW }),
+    ).toThrow("createSprintSession: title is required");
+  });
+
+  it("throws when scheduledDayKey isn't in YYYY-MM-DD format", () => {
+    expect(() =>
+      createSprintSession({ id: "s1", topic: "Immigration", title: "Kickoff", scheduledDayKey: "9/10/2026", createdAt: NOW }),
+    ).toThrow("createSprintSession: scheduledDayKey must be in YYYY-MM-DD format");
+  });
+});
+
+const sessionA: SprintSession = createSprintSession({
+  id: "sa",
+  topic: "Immigration",
+  title: "Kickoff",
+  scheduledDayKey: "2026-09-15",
+  createdAt: NOW,
+});
+const sessionB: SprintSession = createSprintSession({
+  id: "sb",
+  topic: "Immigration",
+  title: "Midpoint check-in",
+  scheduledDayKey: "2026-09-05",
+  createdAt: NOW,
+});
+const sessionC: SprintSession = createSprintSession({
+  id: "sc",
+  topic: "Healthcare",
+  title: "Wrap-up",
+  scheduledDayKey: "2026-09-10",
+  createdAt: NOW,
+});
+
+describe("sortSprintSessionsByDay", () => {
+  it("sorts ascending by scheduledDayKey without mutating the input", () => {
+    const input = [sessionA, sessionB, sessionC];
+    const sorted = sortSprintSessionsByDay(input);
+    expect(sorted.map((session) => session.id)).toEqual(["sb", "sc", "sa"]);
+    expect(input.map((session) => session.id)).toEqual(["sa", "sb", "sc"]);
+  });
+});
+
+describe("getSessionsForTopic", () => {
+  it("filters to one topic, soonest first", () => {
+    expect(getSessionsForTopic([sessionA, sessionB, sessionC], "Immigration").map((s) => s.id)).toEqual([
+      "sb",
+      "sa",
+    ]);
+  });
+
+  it("returns an empty array when no sessions match", () => {
+    expect(getSessionsForTopic([sessionA], "Healthcare")).toEqual([]);
+  });
+});
+
+describe("getUpcomingSprintSessions", () => {
+  it("returns sessions scheduled today or later, soonest first", () => {
+    expect(getUpcomingSprintSessions([sessionA, sessionB, sessionC], "2026-09-10").map((s) => s.id)).toEqual([
+      "sc",
+      "sa",
+    ]);
+  });
+
+  it("returns an empty array when every session is in the past", () => {
+    expect(getUpcomingSprintSessions([sessionB], "2026-09-30")).toEqual([]);
+  });
+});
+
+describe("getPastSprintSessions", () => {
+  it("returns sessions scheduled before today, most recently past first", () => {
+    expect(getPastSprintSessions([sessionA, sessionB, sessionC], "2026-09-11").map((s) => s.id)).toEqual([
+      "sc",
+      "sb",
+    ]);
+  });
+
+  it("returns an empty array when nothing is in the past", () => {
+    expect(getPastSprintSessions([sessionA], "2026-09-01")).toEqual([]);
+  });
+});
+
 describe("sprintRetrospectiveFilename", () => {
   it("slugifies the topic into a lowercase, hyphenated filename", () => {
     expect(sprintRetrospectiveFilename("Immigration")).toBe("sprint-retrospective-immigration.txt");
@@ -479,5 +609,122 @@ describe("sprintRetrospectiveFilename", () => {
   it("falls back to 'topic' for a blank or punctuation-only topic", () => {
     expect(sprintRetrospectiveFilename("   ")).toBe("sprint-retrospective-topic.txt");
     expect(sprintRetrospectiveFilename("!!!")).toBe("sprint-retrospective-topic.txt");
+  });
+});
+
+describe("createWhiteboardNote", () => {
+  it("creates a note, trimming the text and author id", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "  What if we frame this as a due-process argument?  ",
+      authorId: "  alice  ",
+      color: "blue",
+      createdAt: NOW,
+    });
+
+    expect(note).toEqual({
+      id: "n1",
+      topic: "Immigration",
+      text: "What if we frame this as a due-process argument?",
+      color: "blue",
+      authorId: "alice",
+      createdAt: NOW,
+    });
+  });
+
+  it("clamps overly long text to 280 characters", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "x".repeat(400),
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+    });
+    expect(note.text).toHaveLength(280);
+  });
+
+  it("falls back to a blank author id becoming 'me'", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "   ",
+      color: "blue",
+      createdAt: NOW,
+    });
+    expect(note.authorId).toBe("me");
+  });
+
+  it("falls back to the palette's first color for an unrecognized color", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "chartreuse" as WhiteboardNote["color"],
+      createdAt: NOW,
+    });
+    expect(note.color).toBe(WHITEBOARD_NOTE_COLORS[0]);
+  });
+
+  it("throws when topic is blank", () => {
+    expect(() =>
+      createWhiteboardNote({ id: "n1", topic: "  ", text: "Note", authorId: "alice", color: "blue", createdAt: NOW }),
+    ).toThrow("createWhiteboardNote: topic is required");
+  });
+
+  it("throws when text is blank", () => {
+    expect(() =>
+      createWhiteboardNote({ id: "n1", topic: "Immigration", text: "   ", authorId: "alice", color: "blue", createdAt: NOW }),
+    ).toThrow("createWhiteboardNote: text is required");
+  });
+});
+
+describe("getWhiteboardNotesForTopic", () => {
+  const noteA: WhiteboardNote = createWhiteboardNote({
+    id: "na",
+    topic: "Immigration",
+    text: "First",
+    authorId: "alice",
+    color: "yellow",
+    createdAt: 200,
+  });
+  const noteB: WhiteboardNote = createWhiteboardNote({
+    id: "nb",
+    topic: "Immigration",
+    text: "Second",
+    authorId: "bob",
+    color: "pink",
+    createdAt: 100,
+  });
+  const noteC: WhiteboardNote = createWhiteboardNote({
+    id: "nc",
+    topic: "Healthcare",
+    text: "Unrelated",
+    authorId: "carol",
+    color: "blue",
+    createdAt: 50,
+  });
+
+  it("filters to one topic, oldest first", () => {
+    expect(getWhiteboardNotesForTopic([noteA, noteB, noteC], "Immigration").map((n) => n.id)).toEqual([
+      "nb",
+      "na",
+    ]);
+  });
+
+  it("returns an empty array when no notes match", () => {
+    expect(getWhiteboardNotesForTopic([noteA], "Healthcare")).toEqual([]);
+  });
+});
+
+describe("nextWhiteboardNoteColor", () => {
+  it("cycles through the palette by the existing note count", () => {
+    expect(nextWhiteboardNoteColor(0)).toBe(WHITEBOARD_NOTE_COLORS[0]);
+    expect(nextWhiteboardNoteColor(1)).toBe(WHITEBOARD_NOTE_COLORS[1]);
+    expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length)).toBe(WHITEBOARD_NOTE_COLORS[0]);
+    expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length + 2)).toBe(WHITEBOARD_NOTE_COLORS[2]);
   });
 });

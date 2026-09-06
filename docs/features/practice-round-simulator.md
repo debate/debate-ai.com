@@ -31,12 +31,14 @@ Below the form, every persisted round renders as its own card (sorted by
 set) opponent-difficulty badges, how many of the round's speeches have been
 submitted (looked up through the existing "Online Debate Versus AI"
 `aiVersusRounds.ts` store, with a link to `/versus-ai` to actually submit
-them), a "Generate AI opponent speech" action once it's the AI's turn
-(showing the same persona/difficulty badges above the button when a
-persona is set), the rendered setup sections (speech order, judge paradigm,
-AI opponent), a "Generate post-round feedback for current round" form,
-post-round feedback once one has been generated, and a "Get AI judge
-decision" action — with a "Clear" action per round.
+them), a "Replay round" step-through of the round's speeches once at least
+one has been submitted (see "Round replay/playback view" below), a
+"Generate AI opponent speech" action once it's the AI's turn (showing the
+same persona/difficulty badges above the button when a persona is set), the
+rendered setup sections (speech order, judge paradigm, AI opponent), a
+"Generate post-round feedback for current round" form, post-round feedback
+once one has been generated, and a "Get AI judge decision" action — with a
+"Clear" action per round.
 
 Once a round has been started at `/versus-ai` (so an `aiVersusRounds.ts`
 record exists for the same `roundId`) and it's the AI's turn, "Generate AI
@@ -246,8 +248,37 @@ usable `OpponentPersona` — round-tripped through `buildPracticeRoundSetup` —
 and throwing for an empty name or empty notes, mirroring
 `buildCustomOpponentPersona`'s own validation).
 
+## Round replay/playback view
+
+Closes the "🧪 Practice Round Simulator" bullet's last remaining Next item:
+a round replay/playback view. Once at least one speech has been submitted
+for a round (through `/versus-ai`), its card gains a "Replay round" section
+showing one speech slot at a time — its position ("N / M"), name, a
+You/AI badge, and the delivered text (or "Not yet delivered." for a slot the
+round hasn't reached yet) — with Prev/Next buttons to step through the whole
+sequence, disabled at the first/last step.
+
+`debate-round`'s new `round/practice-round-simulator.ts#buildPracticeRoundReplaySteps`
+zips the round's own `setup.speechOrder` with the submitted speeches already
+looked up via `getPracticeRoundSubmittedSpeeches` (the same "Online Debate
+Versus AI" `aiVersusRounds.ts` store the speech-progress line already reads)
+positionally — `submittedSpeeches[i]` is always the speech delivered for
+`speechOrder[i]`, since a round's speeches are only ever appended in turn
+order — into one step per slot, `delivered: false`/`text: null` for any slot
+beyond how far the round has progressed. No new persistence: the step index
+is local component state (`PracticeRoundSimulatorPanel`'s
+`replayStepByRound`), clamped to the current step count so it never points
+past the end if a round somehow has fewer steps on a later render.
+
+Vitest-covered: `packages/debate-round/test/practice-round-simulator.test.ts`'s
+`buildPracticeRoundReplaySteps` suite (every step undelivered for an
+unstarted round, each slot's index/name/speaker/secondary/time carried
+through unchanged, a delivered prefix matching `submittedSpeeches`
+positionally with the remainder undelivered, every step delivered once the
+round is complete, and the empty-order case).
+
 ## Known gaps
 
-No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
-in TODO.md's Research Crowdsourcing Organizer Features list still has one
-open Next item beyond this one: a round replay/playback view.
+No known gaps remain for this idea, and no further follow-up is currently
+tracked for the "🧪 Practice Round Simulator" bullet in TODO.md's Research
+Crowdsourcing Organizer Features list.
