@@ -79,12 +79,33 @@ covered/thin/missing breakdown, and a `MeterBar` for covered-of-total, plus
 a "Clear trend history" action scoped to that topic. See
 `packages/debate-search-evidence/test/topicCoverageSnapshots.test.ts`.
 
+## Cross-topic comparison heatmap
+
+Closes the "a cross-topic comparison view (a heatmap-style rollup across
+every tracked topic at once)" follow-up. Once a second (or later) topic has
+at least one tracked argument, a "Cross-topic comparison" table renders above
+the topic switcher — independent of whichever topic is currently
+selected — with one row per topic, worst-covered first. Each row shows that
+topic's missing/thin/covered counts as shaded cells (`lib/topic-coverage.ts#buildCrossTopicCoverageComparison`
+tallies each topic's `TopicCoverageReport` via the existing `computeCoverageCounts`
+and adds a `coverageRatio`), plus an overall coverage percentage. Cell shade
+intensity scales with that level's share of the topic's tracked arguments, so
+a topic leaning heavily "missing" reads as a darker red cell than one with
+just one or two missing arguments among many covered ones.
+`state/trackedArguments.ts#buildPersistedCrossTopicCoverageComparison` builds
+the rows entirely from persisted stores — every tracked topic's own
+`buildPersistedTopicCoverageReport` — the same composition
+`TopicCoverageDashboardPanel` already used per-topic, just run once per
+tracked topic instead of once for the active one. See
+`packages/debate-search-evidence/test/topic-coverage.test.ts`'s
+`buildCrossTopicCoverageComparison` suite and
+`test/trackedArguments.test.ts`'s `buildPersistedCrossTopicCoverageComparison`
+suite.
+
 ## Known gaps
 
 - The checklist is per-browser localStorage, not a shared team resource — two
   teammates on different devices see different checklists for the same topic
-  name. Coverage snapshots are the same: per-browser, not account-synced.
+  name. Coverage snapshots and the cross-topic comparison are the same:
+  per-browser, not account-synced.
 - No reviewer-identity/permission checks (no auth/roles in this repo yet).
-- No cross-topic comparison view (a heatmap-style rollup across every
-  tracked topic at once) — still open, a future run's next step for this
-  idea.

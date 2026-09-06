@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_COVERAGE_THRESHOLDS,
+  buildCrossTopicCoverageComparison,
   buildTopicCoverageReport,
   buildTopicCoverageSummaryText,
   computeArgumentCoverage,
@@ -163,5 +164,49 @@ describe("computeCoverageCounts", () => {
   it("counts every tracked argument as covered once each clears the thresholds", () => {
     const report = buildTopicCoverageReport([{ argBlock: "Warming DA" }], warmingCards);
     expect(computeCoverageCounts(report)).toEqual({ missing: 0, thin: 0, covered: 1, total: 1 });
+  });
+});
+
+describe("buildCrossTopicCoverageComparison", () => {
+  it("sorts topics worst-covered first by coverage ratio", () => {
+    const wellCovered = buildTopicCoverageReport([{ argBlock: "Warming DA" }], warmingCards);
+    const poorlyCovered = buildTopicCoverageReport(trackedArguments, []);
+
+    const rows = buildCrossTopicCoverageComparison([
+      { topic: "Energy Policy", report: wellCovered },
+      { topic: "Immigration Policy", report: poorlyCovered },
+    ]);
+
+    expect(rows.map((r) => r.topic)).toEqual(["Immigration Policy", "Energy Policy"]);
+    expect(rows[0].coverageRatio).toBe(0);
+    expect(rows[1].coverageRatio).toBe(1);
+  });
+
+  it("includes full coverage counts alongside the ratio for each row", () => {
+    const report = buildTopicCoverageReport(trackedArguments, [...warmingCards, ...statesCards]);
+    const rows = buildCrossTopicCoverageComparison([{ topic: "Energy Policy", report }]);
+
+    expect(rows).toEqual([
+      { topic: "Energy Policy", missing: 1, thin: 1, covered: 1, total: 3, coverageRatio: 1 / 3 },
+    ]);
+  });
+
+  it("breaks a coverage-ratio tie alphabetically by topic", () => {
+    const report = buildTopicCoverageReport([], []);
+    const rows = buildCrossTopicCoverageComparison([
+      { topic: "Zeta Topic", report },
+      { topic: "Alpha Topic", report },
+    ]);
+    expect(rows.map((r) => r.topic)).toEqual(["Alpha Topic", "Zeta Topic"]);
+  });
+
+  it("treats a topic with no tracked arguments as a zero coverage ratio, not NaN", () => {
+    const report = buildTopicCoverageReport([], []);
+    const rows = buildCrossTopicCoverageComparison([{ topic: "Empty Topic", report }]);
+    expect(rows[0]).toEqual({ topic: "Empty Topic", missing: 0, thin: 0, covered: 0, total: 0, coverageRatio: 0 });
+  });
+
+  it("returns an empty list for an empty entries list", () => {
+    expect(buildCrossTopicCoverageComparison([])).toEqual([]);
   });
 });
