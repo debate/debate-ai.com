@@ -34,10 +34,19 @@
  * `useFlowStore` for its "Generate outline for current round" action, so a
  * "Tag Argument…" affordance sits naturally alongside it — right where
  * these tags are actually filtered on — rather than requiring a new
- * `Box`-tree grid to be rebuilt first. Multi-row/bulk-section tagging (the
- * deleted popover's other features) aren't restored in this slice; see
- * `docs/features/argument-tree-outline.md`'s "Known gaps" for the deferred
- * follow-up.
+ * `Box`-tree grid to be rebuilt first.
+ *
+ * `setRowsArgumentTags` restores the deleted popover's multi-row bulk
+ * tagging, adapted to `ArgumentTreePanel`'s flat row list: a caller collects
+ * a set of `rowIndex`es via its own checkbox-selection state (rather than an
+ * AG Grid selection model) and applies one set of tags to all of them at
+ * once. `toggleSectionRowSelection` restores the deleted popover's other
+ * bulk mode — neighbour-preview/bulk-section tagging (tagging every row
+ * under one heading in a single action) — adapted the same way: instead of
+ * tagging a heading's rows directly, it folds them into the caller's
+ * existing checkbox selection (so a "Select section" action composes with
+ * the same "Tag selected…" flow multi-row selection already uses, rather
+ * than needing its own separate tagging path).
  *
  * @module flow/argument-tagging
  */
@@ -99,6 +108,52 @@ export function setRowArgumentTags<F extends Pick<Flow, "children">>(
     ...flow,
     children: flow.children.map((box, index) => (index === rowIndex ? taggedBox(box, tags) : box)),
   };
+}
+
+/**
+ * Bulk variant of `setRowArgumentTags`: applies the same `tags` to every row
+ * in `rowIndexes` (a "checkbox-selection" tagging action across multiple
+ * rows at once). The same field-clearing rule applies to every targeted row
+ * — an omitted field, or a whitespace-only `authorId`, clears that tag
+ * everywhere it's applied, not just where it was already set. Duplicate and
+ * out-of-range indexes are ignored; a no-op (returns `flow` unchanged) once
+ * no valid index remains.
+ */
+export function setRowsArgumentTags<F extends Pick<Flow, "children">>(
+  flow: F,
+  rowIndexes: number[],
+  tags: ArgumentTags,
+): F {
+  const targets = new Set(rowIndexes.filter((index) => index >= 0 && index < flow.children.length));
+  if (targets.size === 0) return flow;
+  return {
+    ...flow,
+    children: flow.children.map((box, index) => (targets.has(index) ? taggedBox(box, tags) : box)),
+  };
+}
+
+/**
+ * Toggles a whole set of row indexes (e.g. every argument row under one
+ * heading) into or out of an existing checkbox selection at once, without
+ * disturbing any other index already selected: if every listed index is
+ * already selected, all of them are removed; otherwise every listed index
+ * is added (deduped against whatever's already selected). Order of already-
+ * selected indexes is preserved; newly-added indexes are appended in the
+ * order given. A no-op (returns `selected` unchanged) for an empty
+ * `sectionRowIndexes`.
+ */
+export function toggleSectionRowSelection(selected: number[], sectionRowIndexes: number[]): number[] {
+  if (sectionRowIndexes.length === 0) return selected;
+  const allSelected = sectionRowIndexes.every((index) => selected.includes(index));
+  if (allSelected) {
+    const excluded = new Set(sectionRowIndexes);
+    return selected.filter((index) => !excluded.has(index));
+  }
+  const next = [...selected];
+  for (const index of sectionRowIndexes) {
+    if (!next.includes(index)) next.push(index);
+  }
+  return next;
 }
 
 /** Formats a row's tags as a compact "link · cited · alex" label; empty string when no tag is set. */

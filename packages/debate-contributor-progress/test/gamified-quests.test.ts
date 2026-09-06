@@ -34,6 +34,8 @@ function quest(questId: string, isComplete: boolean): QuestProgress {
     completedCount: isComplete ? 5 : 2,
     remainingCount: isComplete ? 0 : 3,
     isComplete,
+    difficulty: "medium",
+    points: 10,
   };
 }
 

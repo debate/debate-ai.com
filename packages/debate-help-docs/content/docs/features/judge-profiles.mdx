@@ -14,9 +14,11 @@ most-tagged paradigm — ordered by rounds judged.
 ## What it shows
 
 A roster table, a "Log a judged round" form (creates/updates a profile from
-ballot history), a logged-rounds list with Edit/Delete/Undo/Redo actions,
-and a **Compare judges** section for prepping a panel round (side leans,
-recommended pace, theory risk, paradigm conflicts).
+ballot history), a **Bulk import (CSV)** section for pasting a whole
+spreadsheet of judged rounds at once, a logged-rounds list with
+Edit/Delete/Undo/Redo actions, and a **Compare judges** section for
+prepping a panel round (side leans, recommended pace, theory risk, paradigm
+conflicts).
 
 ## Data flow
 
@@ -30,5 +32,6 @@ state/judgeProfiles.ts (localStorage: judgeProfiles)
 
 ## Known gaps
 
-No real ballot data source — every round is entered by hand. Profiles are
-per-browser localStorage, with no identity/permission checks.
+No real ballot data source — every round is entered by hand, one at a time
+or in a CSV batch via Bulk import. Profiles are per-browser localStorage,
+with no identity/permission checks.
