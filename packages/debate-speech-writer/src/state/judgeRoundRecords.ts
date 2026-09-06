@@ -37,6 +37,7 @@
 
 import type { JudgeProfile, JudgeRoundRecord } from "../judge/judge-profile";
 import { buildJudgeProfile } from "../judge/judge-profile";
+import { parseJudgeRoundRecordsCsv } from "../judge/judge-round-record-csv-import";
 import { deleteJudgeProfile, saveJudgeProfile } from "./judgeProfiles";
 
 /** A `JudgeRoundRecord` as persisted: a unique id, since a judge decides many rounds. */
@@ -222,6 +223,49 @@ export function recordJudgeRound(record: JudgeRoundRecordEntry): JudgeProfile {
   );
   saveJudgeProfile(profile);
   return profile;
+}
+
+/** Result of a bulk CSV judge-round (ballot history) import. */
+export interface JudgeRoundCsvImportResult {
+  importedCount: number;
+  skippedCount: number;
+  /** One human-readable message per skipped CSV row, in row order. */
+  errors: string[];
+  /** Distinct judge ids whose profile was created or updated by this import. */
+  affectedJudgeIds: string[];
+}
+
+/**
+ * Parses `rawCsv` via `judge/judge-round-record-csv-import.ts`'s
+ * `parseJudgeRoundRecordsCsv` and persists every well-formed row in one
+ * batch: appends each parsed round to the full ballot history, then
+ * re-aggregates every affected judge's profile once each (not once per row)
+ * — mirrors `debate-data-sync`'s `bulkImportOpponentRoundRecords` convention
+ * of composing a pure parser with the store's own persistence, reporting a
+ * skipped-row count/reasons instead of failing the whole batch on one
+ * malformed row.
+ */
+export function bulkImportJudgeRoundRecords(rawCsv: string): JudgeRoundCsvImportResult {
+  const { entries, skippedCount, errors } = parseJudgeRoundRecordsCsv(rawCsv);
+  if (entries.length === 0) {
+    return { importedCount: 0, skippedCount, errors, affectedJudgeIds: [] };
+  }
+
+  const records = readAll();
+  const importedAt = Date.now();
+  const newEntries: JudgeRoundRecordEntry[] = entries.map((entry, index) => ({
+    ...entry,
+    id: `${entry.judgeId}-${entry.tournamentName}-${entry.date}-${importedAt}-${index}`,
+  }));
+  records.push(...newEntries);
+  writeAll(records);
+
+  const affectedJudgeIds = Array.from(new Set(newEntries.map((entry) => entry.judgeId)));
+  for (const judgeId of affectedJudgeIds) {
+    rebuildJudgeProfileFromRecords(judgeId);
+  }
+
+  return { importedCount: newEntries.length, skippedCount, errors, affectedJudgeIds };
 }
 
 /**
