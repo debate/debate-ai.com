@@ -372,16 +372,24 @@ export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesP
                     {buildGroupChallengeSummaryText(progress)}
                   </p>
                 )}
-                {progress && progress.memberStandings.length > 0 && (
+                {progress && progress.memberStandings.length > 0 ? (
                   <ul className="mb-2 space-y-0.5 text-xs text-muted-foreground">
                     {progress.memberStandings.map((standing) => (
                       <li key={standing.contributorId}>
                         {standing.contributorId === progress.mvpContributorId ? "🏆 " : ""}
                         {standing.contributorId}: {standing.matchingCount}
+                        {standing.helpfulnessScore !== undefined && standing.matchingCount > 0
+                          ? ` (${standing.helpfulnessScore} pts)`
+                          : ""}
                       </li>
                     ))}
                   </ul>
-                )}
+                ) : progress ? (
+                  <p className="mb-2 text-xs text-muted-foreground">
+                    No one is on the board yet — the standings fill in as rostered members contribute
+                    {challenge.goal.kind === "win_target" ? " or record wins" : ""}.
+                  </p>
+                ) : null}
                 {challenge.goal.kind === "win_target" && (
                   <div className="flex items-end gap-2">
                     <div className="flex-1 space-y-1.5">

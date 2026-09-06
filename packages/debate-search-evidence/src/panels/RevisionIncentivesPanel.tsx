@@ -212,6 +212,9 @@ export function RevisionIncentivesPanel() {
                   <TableHead>Topic / case area</TableHead>
                   <TableHead>Cite</TableHead>
                   <TableHead className="text-right">Age</TableHead>
+                  <TableHead className="text-right">
+                    <span className="sr-only">Revise</span>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -226,6 +229,15 @@ export function RevisionIncentivesPanel() {
                       <Badge variant="destructive" className="whitespace-nowrap">
                         {staleness.ageYears === null ? "Undated" : `${staleness.ageYears}y old`}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <a
+                        href={`/cards/library?q=${encodeURIComponent(entry.argBlock)}`}
+                        className="whitespace-nowrap text-xs underline underline-offset-2"
+                        aria-label={`Revise "${entry.argBlock}" in the Evidence Library`}
+                      >
+                        Revise
+                      </a>
                     </TableCell>
                   </TableRow>
                 ))}

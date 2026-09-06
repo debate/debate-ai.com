@@ -7,7 +7,7 @@ submissions.
 - **Route:** `/cards/quests`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t quests` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
@@ -29,8 +29,10 @@ A "Your streak" section lets a contributor (identified by free-text id —
 there is no contributor identity/auth in this repo, the same known gap as
 `ContributionsFeedPanel`/`QuestStreaksPanel`) record today's mission result
 on demand and see their reward right on the quest board itself: their
-current streak, a badge freshly earned today (highlighted separately from
-badges earned on prior days), and a nudge to keep the streak going when
+current streak, a badge freshly earned today (called out in the reward
+sentence and rendered as a filled "✨" chip, while badges earned on prior
+days stay outlined — `lib/gamified-quests.ts#getFreshStreakBadge`), and a
+nudge to keep the streak going when
 today's mission isn't complete yet. A signed-in visitor sees this field
 prefilled with their own id — see "Signed-in prefill" below.
 
@@ -94,7 +96,7 @@ components/research/DailyQuestsWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <DailyQuestsPanel signedInContributorId={...} />
       — seeds contributorId's initial value only (and immediately loads that
@@ -134,7 +136,7 @@ this feature adds the persistence and UI it was missing —
 and wiring the board directly to the real, persisted contribution feed
 (closing follow-up (a), "wiring real contribution-submission events into a
 persisted daily feed"). Vitest-covered in
-`packages/debate-card-search/test/dailyQuests.test.ts` (template CRUD,
+`packages/debate-team-collaboration/test/dailyQuests.test.ts` (template CRUD,
 corrupt-storage recovery, topic-coverage seeding — including upsert and
 "nothing under-covered" — and board composition against real persisted
 contributions, including day-scoping and the missing-`submittedAt`
@@ -150,7 +152,7 @@ today from badges already earned on prior days. No changes were needed to
 `state/dailyMissionResults.ts`, `state/dailyQuests.ts`, or any other
 persistence/aggregation logic — this composes existing, already-persisted
 building blocks into a new spot in the UI. Vitest-covered in
-`packages/debate-card-search/test/gamified-quests.test.ts` (no streak yet,
+`packages/debate-contributor-progress/test/gamified-quests.test.ts` (no streak yet,
 continuing an existing streak, a plain non-milestone completion, a
 freshly-earned milestone badge, not re-announcing a badge earned on a prior
 day, and a custom milestone list).
@@ -168,11 +170,11 @@ stored roster entirely, and the panel's new "Clean up expired quests" action
 calls it. The "Add quest" form gained an optional "Expires on" date field,
 and each quest's board row shows an "Expires <date>" badge when its
 template has one. Vitest-covered in
-`packages/debate-card-search/test/daily-quests.test.ts`
+`packages/debate-team-collaboration/test/daily-quests.test.ts`
 (`isQuestTemplateExpired`: no `expiresOn`, on/before/after the expiry day;
 `buildDailyQuestBoard`: excludes an expired template, still includes one on
 its own expiry day) and
-`packages/debate-card-search/test/dailyQuests.test.ts`
+`packages/debate-team-collaboration/test/dailyQuests.test.ts`
 (`pruneExpiredQuestTemplates`: no-op on empty storage, removes an expired
 template and returns the count, leaves a never-expiring or not-yet-expired
 template untouched, and removes only the expired template among several).
@@ -198,12 +200,12 @@ quests" can never delete a recurring template out from under a team). The
 shown once an expiry date is set, and each quest's board row shows a
 "Recurs daily"/"Recurs weekly" badge alongside its "Expires" badge when it
 has one. Vitest-covered in
-`packages/debate-card-search/test/daily-quests.test.ts`
+`packages/debate-team-collaboration/test/daily-quests.test.ts`
 (`rolloverRecurringQuestTemplate`: no recurrence, recurrence with no
 `expiresOn`, not-yet-expired, daily rollover to today, weekly rollover to
 the next 7-day boundary, and a weekly rollover skipping several missed
 cycles at once) and
-`packages/debate-card-search/test/dailyQuests.test.ts`
+`packages/debate-team-collaboration/test/dailyQuests.test.ts`
 (`rolloverExpiredRecurringQuestTemplates`: no-op on empty storage, leaves a
 non-recurring expired template untouched, rolls an expired recurring
 template forward and returns the count, leaves a not-yet-expired recurring
@@ -250,7 +252,7 @@ a mission result recorded in a second tab now refreshes this tab's view
 without a manual reload — closing the "Every other localStorage-backed
 panel in this repo still has no cross-tab live-update mechanism" Known gap
 noted in [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 

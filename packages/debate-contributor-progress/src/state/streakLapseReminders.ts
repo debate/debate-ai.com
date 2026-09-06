@@ -15,8 +15,9 @@
  * @module state/streakLapseReminders
  */
 
-import { getStreakLapseRiskLength } from "../lib/gamified-quests";
+import { applyStreakFreezes, getStreakLapseRiskLength } from "../lib/gamified-quests";
 import { listDailyMissionResultsForContributor } from "./dailyMissionResults";
+import { listStreakFreezeDayKeysForContributor } from "./streakFreezes";
 
 const STORAGE_KEY = "streakLapseReminders";
 
@@ -75,14 +76,21 @@ export interface StreakLapseReminderInfo {
  * persisted mission-result history and opt-in preference — composing
  * `getStreakLapseRiskLength` against the real persisted store, mirroring
  * `streakFreezes.ts#buildContributorQuestStreakWithFreezes`'s "compose the
- * pure function directly against the persisted stores" convention. When
+ * pure function directly against the persisted stores" convention —
+ * including that helper's streak freezes (`applyStreakFreezes`), so the
+ * banner's at-risk length matches the roster's own freeze-bridged "Current
+ * streak" cell instead of contradicting it. When
  * `enabled` is `false`, `riskLength` is still computed (a caller may want to
  * show the risk regardless of opt-in), but the panel itself only renders the
  * reminder banner when `enabled` is `true`.
  */
 export function getPersistedStreakLapseReminderInfo(contributorId: string, asOfDayKey: string): StreakLapseReminderInfo {
+  const effectiveResults = applyStreakFreezes(
+    listDailyMissionResultsForContributor(contributorId),
+    listStreakFreezeDayKeysForContributor(contributorId),
+  );
   return {
     enabled: isStreakLapseReminderEnabled(contributorId),
-    riskLength: getStreakLapseRiskLength(listDailyMissionResultsForContributor(contributorId), asOfDayKey),
+    riskLength: getStreakLapseRiskLength(effectiveResults, asOfDayKey),
   };
 }

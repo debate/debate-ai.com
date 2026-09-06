@@ -32,6 +32,12 @@ import {
   isTaskInboxLiveUpdateStorageEvent,
   isTopicSprintLiveUpdateStorageEvent,
   TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS,
+  PREP_ROOM_LIVE_UPDATE_STORAGE_KEYS,
+  REVIEW_QUEUE_LIVE_UPDATE_STORAGE_KEYS,
+  SPRINT_NOTES_LIVE_UPDATE_STORAGE_KEYS,
+  isPrepRoomLiveUpdateStorageEvent,
+  isReviewQueueLiveUpdateStorageEvent,
+  isSprintNotesLiveUpdateStorageEvent,
 } from "../src/state/live-update";
 
 describe("isDailyBestCardLiveUpdateStorageEvent", () => {
@@ -399,5 +405,81 @@ describe("isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: "coachingProgramsBackup" })).toBe(false);
     expect(isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent({ key: "old_dailyMissionResults" })).toBe(false);
+  });
+});
+
+describe("isReviewQueueLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of REVIEW_QUEUE_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isReviewQueueLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isReviewQueueLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isReviewQueueLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+    expect(isReviewQueueLiveUpdateStorageEvent({ key: "routedTaskQueues" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isReviewQueueLiveUpdateStorageEvent({ key: "peerReviewsBackup" })).toBe(false);
+    expect(isReviewQueueLiveUpdateStorageEvent({ key: "old_evidenceLibraryEntries" })).toBe(false);
+  });
+});
+
+describe("isPrepRoomLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of PREP_ROOM_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isPrepRoomLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isPrepRoomLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isPrepRoomLiveUpdateStorageEvent({ key: "peerReviews" })).toBe(false);
+    expect(isPrepRoomLiveUpdateStorageEvent({ key: "cardScores" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isPrepRoomLiveUpdateStorageEvent({ key: "prepRoomChecklistBackup" })).toBe(false);
+    expect(isPrepRoomLiveUpdateStorageEvent({ key: "old_trackedArguments" })).toBe(false);
+  });
+});
+
+describe("isSprintNotesLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of SPRINT_NOTES_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isSprintNotesLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isSprintNotesLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isSprintNotesLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+    expect(isSprintNotesLiveUpdateStorageEvent({ key: "brainstormIdeas" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isSprintNotesLiveUpdateStorageEvent({ key: "sprintNotesBackup" })).toBe(false);
+    expect(isSprintNotesLiveUpdateStorageEvent({ key: "old_topicPresenceHeartbeats" })).toBe(false);
+  });
+});
+
+describe("extended key sets", () => {
+  it("Task Inbox also refreshes on contributor-availability changes (Team capacity)", () => {
+    expect(isTaskInboxLiveUpdateStorageEvent({ key: "contributorAvailability" })).toBe(true);
+  });
+
+  it("Research Progress also refreshes on goal changes (My research goal)", () => {
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: "researchProgressGoals" })).toBe(true);
   });
 });

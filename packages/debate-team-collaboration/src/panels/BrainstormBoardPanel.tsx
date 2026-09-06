@@ -150,17 +150,16 @@ function boardKey(board: BrainstormBoard): string {
 }
 
 /**
- * Every board's top-ranked idea id that's already been sent to the Argument
- * Library (`isBrainstormIdeaInArgumentLibrary`), so the panel can swap that
- * idea's "Send to Argument Library" action for a confirmation badge instead
- * of offering to send it again. Only the top idea is checked — sending is
- * only ever offered for a board's top idea in the first place.
+ * Every idea id that's already been sent to the Argument Library
+ * (`isBrainstormIdeaInArgumentLibrary`), so the panel can swap that idea's
+ * "Send to Argument Library" action for a confirmation badge instead of
+ * offering to send it again. Any idea can be sent, not just a board's
+ * top-ranked one, so every idea is checked.
  */
-function computeSentTopIdeaIds(boards: BrainstormBoard[]): Set<string> {
+function computeSentIdeaIds(boards: BrainstormBoard[]): Set<string> {
   return new Set(
     boards
-      .map((board) => board.ideas[0])
-      .filter((idea): idea is BrainstormBoard["ideas"][number] => idea !== undefined)
+      .flatMap((board) => board.ideas)
       .filter((idea) => isBrainstormIdeaInArgumentLibrary(idea.id))
       .map((idea) => idea.id),
   )
@@ -197,6 +196,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
   const [sendOpenBoardKey, setSendOpenBoardKey] = useState<string | null>(null)
+  const [sendIdeaId, setSendIdeaId] = useState<string | null>(null)
   const [sendDraft, setSendDraft] = useState<{ topic: string; caseArea: string }>({ topic: "", caseArea: "" })
   const [sendError, setSendError] = useState<string | null>(null)
   const [sentIdeaIds, setSentIdeaIds] = useState<Set<string>>(new Set())
@@ -207,7 +207,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     setTopics(listTrackedTopics())
     const initialBoards = buildBrainstormBoardsPanelView()
     setBoards(initialBoards)
-    setSentIdeaIds(computeSentTopIdeaIds(initialBoards))
+    setSentIdeaIds(computeSentIdeaIds(initialBoards))
     setTimer(loadBrainstormSessionTimer())
   }, [])
 
@@ -229,7 +229,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     const trimmed = activeTopic.trim()
     const nextBoards = trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView()
     setBoards(nextBoards)
-    setSentIdeaIds(computeSentTopIdeaIds(nextBoards))
+    setSentIdeaIds(computeSentIdeaIds(nextBoards))
   }
 
   /**
@@ -271,10 +271,12 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
       upvotes: 0,
     })
     setError(null)
+    // Keep the just-used contributor id (typed or prefilled) so several
+    // ideas can be submitted in a row without retyping it.
     setDraft({
       ...EMPTY_DRAFT,
       category: draft.category,
-      contributorId: hasEditedContributorId ? "" : signedInContributorId ?? "",
+      contributorId,
     })
     refresh()
   }
@@ -351,28 +353,31 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     refresh()
   }
 
-  const handleOpenSend = (board: BrainstormBoard) => {
+  const handleOpenSend = (board: BrainstormBoard, ideaId: string) => {
     setSendOpenBoardKey(boardKey(board))
+    setSendIdeaId(ideaId)
     setSendDraft({ topic, caseArea: "" })
     setSendError(null)
   }
 
   const handleCancelSend = () => {
     setSendOpenBoardKey(null)
+    setSendIdeaId(null)
     setSendError(null)
   }
 
   const handleConfirmSend = (board: BrainstormBoard) => {
-    const topIdea = board.ideas[0]
-    if (!topIdea) return
+    const idea = board.ideas.find((candidate) => candidate.id === sendIdeaId)
+    if (!idea) return
     const sendTopic = sendDraft.topic.trim()
     const caseArea = sendDraft.caseArea.trim()
     if (!sendTopic || !caseArea) {
       setSendError("Topic and case area are both required.")
       return
     }
-    sendBrainstormIdeaToArgumentLibrary(topIdea, sendTopic, caseArea)
+    sendBrainstormIdeaToArgumentLibrary(idea, sendTopic, caseArea)
     setSendOpenBoardKey(null)
+    setSendIdeaId(null)
     setSendError(null)
     refresh()
   }
@@ -602,14 +607,13 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                           </SelectContent>
                         </Select>
                       )}
-                      {index === 0 &&
-                        (sentIdeaIds.has(idea.id) ? (
-                          <Badge variant="outline">✓ In Argument Library</Badge>
-                        ) : (
-                          <Button size="sm" variant="outline" onClick={() => handleOpenSend(board)}>
-                            Send to Argument Library
-                          </Button>
-                        ))}
+                      {sentIdeaIds.has(idea.id) ? (
+                        <Badge variant="outline">✓ In Argument Library</Badge>
+                      ) : (
+                        <Button size="sm" variant="outline" onClick={() => handleOpenSend(board, idea.id)}>
+                          Send to Argument Library
+                        </Button>
+                      )}
                       <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
                         Upvote ({idea.upvotes})
                       </Button>
@@ -620,7 +624,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
               {sendOpenBoardKey === boardKey(board) && (
                 <div className="mt-3 space-y-2 rounded-md border border-border p-3">
                   <p className="text-xs text-muted-foreground">
-                    Send this board's top idea to the Argument Library as a reusable analytic block.
+                    Send this idea to the Argument Library as a reusable analytic block.
                   </p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     <div className="space-y-1">

@@ -57,6 +57,7 @@ import {
   buildReviewSummary,
   createCardReview,
   getReviewAgeDays,
+  getUnresolvedBlockingComments,
   isReviewStale,
   requestChanges,
   resolveReviewComment,
@@ -76,6 +77,7 @@ import {
   rejectPersistedReviewAsReviewer,
   savePeerReview,
 } from "../state/peerReviews"
+import { isReviewQueueLiveUpdateStorageEvent } from "../state/live-update"
 
 const STATUS_LABEL: Record<ReviewStatus, string> = {
   draft: "Draft",
@@ -131,10 +133,26 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
   const [actingReviewerId, setActingReviewerId] = useState("")
   const [hasEditedActingReviewerId, setHasEditedActingReviewerId] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [reviewErrors, setReviewErrors] = useState<Record<string, string>>({})
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
 
   useEffect(() => {
     setReviews(buildReviewQueuePanelView())
+  }, [])
+
+  /**
+   * Live-update the queue when another browser tab starts, advances, or
+   * comments on a review (or edits an underlying evidence entry). A
+   * `storage` event never fires in the tab that made the write, only in
+   * other tabs — same-tab changes already refresh via `refresh()`.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isReviewQueueLiveUpdateStorageEvent(event)) return
+      setReviews(buildReviewQueuePanelView())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   useEffect(() => {
@@ -165,12 +183,16 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
     refresh()
   }
 
+  const setReviewError = (cardId: string, message: string | null) => {
+    setReviewErrors((prev) => ({ ...prev, [cardId]: message ?? "" }))
+  }
+
   const applyTransition = (review: CardReview, transition: (review: CardReview) => CardReview) => {
     try {
       savePeerReview(transition(review))
-      setError(null)
+      setReviewError(review.cardId, null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update the review.")
+      setReviewError(review.cardId, err instanceof Error ? err.message : "Could not update the review.")
     }
     refresh()
   }
@@ -181,14 +203,14 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
   ) => {
     const reviewerId = actingReviewerId.trim()
     if (!reviewerId) {
-      setError(`Enter your reviewer ID above — approving, rejecting, and publishing need a ${MIN_REVIEWER_TIER} contribution record.`)
+      setReviewError(cardId, `Enter your reviewer ID above — approving, rejecting, and publishing need a ${MIN_REVIEWER_TIER} contribution record.`)
       return
     }
     try {
       gatedTransition(cardId, reviewerId)
-      setError(null)
+      setReviewError(cardId, null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update the review.")
+      setReviewError(cardId, err instanceof Error ? err.message : "Could not update the review.")
     }
     refresh()
   }
@@ -198,7 +220,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
     const reviewerId = draft.reviewerId.trim()
     const body = draft.body.trim()
     if (!reviewerId || !body) {
-      setError("Reviewer ID and comment text are required.")
+      setReviewError(review.cardId, "Reviewer ID and comment text are required.")
       return
     }
     savePeerReview(
@@ -209,8 +231,13 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
         severity: draft.severity,
       }),
     )
-    setError(null)
-    setCommentDrafts((prev) => ({ ...prev, [review.cardId]: EMPTY_COMMENT_DRAFT }))
+    setReviewError(review.cardId, null)
+    // Reset the draft but re-seed the signed-in reviewer id — writing a
+    // blank draft back would permanently clobber the prefill for this card.
+    setCommentDrafts((prev) => ({
+      ...prev,
+      [review.cardId]: { ...EMPTY_COMMENT_DRAFT, reviewerId: signedInContributorId ?? "" },
+    }))
     refresh()
   }
 
@@ -338,9 +365,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
         <div className="space-y-3">
           {reviews.map((review) => {
             const draft = commentDraftFor(review.cardId)
-            const unresolvedBlocking = review.comments.filter(
-              (comment) => comment.severity === "blocking" && !comment.resolved,
-            )
+            const unresolvedBlocking = getUnresolvedBlockingComments(review)
             const ageDays = getReviewAgeDays(review)
             const stale = isReviewStale(review)
 
@@ -445,6 +470,10 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
                     {unresolvedBlocking.length} unresolved blocking comment(s) — approval is blocked until they're
                     resolved.
                   </p>
+                )}
+
+                {reviewErrors[review.cardId] && (
+                  <p className="text-xs text-destructive">{reviewErrors[review.cardId]}</p>
                 )}
 
                 <div className="flex flex-wrap items-end gap-3 rounded-md border border-border p-3">

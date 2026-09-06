@@ -506,7 +506,8 @@ export function ContributorAwardsPanel() {
           </div>
         </div>
         {secondError && <p className="mt-2 text-xs text-destructive">{secondError}</p>}
-        <div className="mt-3">
+        <div className="mt-3 space-y-2">
+          <div className="text-xs font-medium uppercase text-muted-foreground">Recent nominations</div>
           <NominationList
             nominations={nominations}
             seconderId={seconderId}

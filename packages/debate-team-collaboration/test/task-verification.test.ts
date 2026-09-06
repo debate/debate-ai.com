@@ -25,6 +25,11 @@ describe("assertVerifierAllowed", () => {
     expect(() => assertVerifierAllowed(ASSIGNMENT, "alice")).toThrow(SelfVerificationNotAllowedError);
   });
 
+  it("throws SelfVerificationNotAllowedError when the verifier id matches the assignee in a different case", () => {
+    expect(() => assertVerifierAllowed(ASSIGNMENT, "Alice")).toThrow(SelfVerificationNotAllowedError);
+    expect(() => assertVerifierAllowed(ASSIGNMENT, "ALICE")).toThrow(SelfVerificationNotAllowedError);
+  });
+
   it("throws SelfVerificationNotAllowedError even when the matching id has surrounding whitespace", () => {
     expect(() => assertVerifierAllowed(ASSIGNMENT, "  alice  ")).toThrow(SelfVerificationNotAllowedError);
   });

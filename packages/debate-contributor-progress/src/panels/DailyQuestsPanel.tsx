@@ -73,7 +73,7 @@ import {
 import { isDailyQuestsLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import { buildQuestBoardSummaryText } from "debate-team-collaboration/src/lib/daily-quests"
 import type { QuestProgress, QuestRecurrence, QuestTemplate } from "debate-team-collaboration/src/lib/daily-quests"
-import { buildStreakRewardText } from "../lib/gamified-quests"
+import { buildStreakRewardText, getFreshStreakBadge } from "../lib/gamified-quests"
 import type { ContributorQuestStreak } from "../lib/gamified-quests"
 import type { ContributionKind } from "debate-research-evidence/src/lib/community-rating"
 
@@ -153,8 +153,12 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
   const [pruneMessage, setPruneMessage] = useState<string | null>(null)
 
   const refresh = () => {
-    setTemplates(listQuestTemplates())
+    // buildPersistedDailyQuestBoard rolls expired recurring templates over
+    // to their next cycle (persisting the advanced expiresOn) — build the
+    // board first so the template list, and each row's "Expires" badge,
+    // reflect the rolled-over dates instead of the stale pre-rollover ones.
     setBoard(buildPersistedDailyQuestBoard(nowMs()))
+    setTemplates(listQuestTemplates())
   }
 
   const refreshStreak = (id: string) => {
@@ -446,11 +450,20 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
             </span>
             {streak.earnedBadges.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {streak.earnedBadges.map((badge) => (
-                  <Badge key={badge} variant="outline" className="whitespace-nowrap">
-                    {badge}
-                  </Badge>
-                ))}
+                {streak.earnedBadges.map((badge) => {
+                  const isFresh =
+                    badge === getFreshStreakBadge(streak, streak.streak.lastCompletedDayKey === todayUtcDayKey())
+                  return (
+                    <Badge
+                      key={badge}
+                      variant={isFresh ? "default" : "outline"}
+                      className="whitespace-nowrap"
+                      title={isFresh ? "Earned today" : undefined}
+                    >
+                      {isFresh ? `✨ ${badge}` : badge}
+                    </Badge>
+                  )
+                })}
               </div>
             )}
           </div>
