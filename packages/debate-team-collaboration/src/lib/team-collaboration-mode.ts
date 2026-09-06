@@ -363,6 +363,87 @@ export function getPastSprintSessions(sessions: SprintSession[], todayKey: strin
 }
 
 /**
+ * A shared sticky note on a topic sprint's whiteboard — the "a shared
+ * whiteboard/canvas for sprint brainstorming" follow-up named under the "🤝
+ * Team Collaboration Mode" bullet in TODO.md. Deliberately not a positioned
+ * (x/y) canvas: this repo's panel UI kit has no drag-and-drop primitive
+ * anywhere, so the first slice is a colored sticky-note board (order is
+ * creation order, not a freeform layout), mirroring every other idea's
+ * "smallest useful vertical slice first" convention.
+ */
+export type WhiteboardNoteColor = "yellow" | "pink" | "blue" | "green" | "purple";
+
+/** Fixed palette a whiteboard note's color is drawn from, in default cycling order. */
+export const WHITEBOARD_NOTE_COLORS: readonly WhiteboardNoteColor[] = [
+  "yellow",
+  "pink",
+  "blue",
+  "green",
+  "purple",
+];
+
+export interface WhiteboardNote {
+  id: string;
+  topic: string;
+  text: string;
+  color: WhiteboardNoteColor;
+  authorId: string;
+  createdAt: number;
+}
+
+const MAX_WHITEBOARD_NOTE_LENGTH = 280;
+
+export interface CreateWhiteboardNoteInput {
+  id: string;
+  topic: string;
+  text: string;
+  authorId: string;
+  color: WhiteboardNoteColor;
+  createdAt: number;
+}
+
+/**
+ * Builds a `WhiteboardNote`, validating that it names a topic and has
+ * non-blank text. `text` is trimmed and clamped to `MAX_WHITEBOARD_NOTE_LENGTH`;
+ * an unrecognized `color` falls back to the palette's first entry rather than
+ * throwing (a note is still worth keeping even with a garbled color).
+ */
+export function createWhiteboardNote(input: CreateWhiteboardNoteInput): WhiteboardNote {
+  if (!input.topic.trim()) {
+    throw new Error("createWhiteboardNote: topic is required");
+  }
+  const text = input.text.trim();
+  if (!text) {
+    throw new Error("createWhiteboardNote: text is required");
+  }
+
+  return {
+    id: input.id,
+    topic: input.topic,
+    text: text.slice(0, MAX_WHITEBOARD_NOTE_LENGTH),
+    color: WHITEBOARD_NOTE_COLORS.includes(input.color) ? input.color : WHITEBOARD_NOTE_COLORS[0],
+    authorId: input.authorId.trim() || "me",
+    createdAt: input.createdAt,
+  };
+}
+
+/** All notes for one specific topic, oldest first. */
+export function getWhiteboardNotesForTopic(notes: WhiteboardNote[], topic: string): WhiteboardNote[] {
+  return notes.filter((note) => note.topic === topic).sort((a, b) => a.createdAt - b.createdAt);
+}
+
+/**
+ * The color a newly-added note should default to, cycling through
+ * `WHITEBOARD_NOTE_COLORS` by how many notes the topic's board already has —
+ * so consecutive notes on the same board read as visually distinct without
+ * requiring every contributor to hand-pick a color.
+ */
+export function nextWhiteboardNoteColor(existingNoteCountForTopic: number): WhiteboardNoteColor {
+  const index = existingNoteCountForTopic % WHITEBOARD_NOTE_COLORS.length;
+  return WHITEBOARD_NOTE_COLORS[index];
+}
+
+/**
  * Renders a `SprintRetrospective` as a plain-text file for download,
  * mirroring `research-progress.ts`'s `buildResearchProgressReportText`
  * plain-text-report convention.
