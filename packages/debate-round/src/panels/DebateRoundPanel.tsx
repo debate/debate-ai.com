@@ -73,6 +73,12 @@ export function DebateFlowPage() {
   // cleared so it doesn't re-run on the next render.
   const [ebbPendingAction, setEbbPendingAction] = useState<EbbFlowToolAction | null>(null)
 
+  // CardMirror only ever has one live, editable speech at a time — in split
+  // mode that's whichever panel the user last clicked into. Lifted to page
+  // level (rather than owned inside FlowMainContent) so the sidebar's "round
+  // times" group knows which speech's timer/controls bar to show.
+  const [activeSplitSide, setActiveSplitSide] = useState<"left" | "right">("left")
+
   /**
    * Switch to the pinned ebb Flow tab and queue an "ebb Flow tools" action
    * for it to run once mounted — how every item in that dropdown is wired,
@@ -268,6 +274,21 @@ export function DebateFlowPage() {
   /** Content of the right split pane's speech document. */
   const rightContent = currentFlow?.speechDocs?.[rightSpeech] || ""
 
+  // Both panes are only shown side-by-side on desktop, outside single-pane
+  // mode — every other layout collapses to just the left speech, so that's
+  // the one whose timer/controls bar belongs in the sidebar.
+  const showBothPanes = state.splitMode && !state.isMobile && !state.singlePaneMode
+  const selectedIsRight = showBothPanes && activeSplitSide === "right"
+
+  /** Name of the speech whose timer/controls bar the sidebar shows. */
+  const selectedSpeech = selectedIsRight ? rightSpeech : leftSpeech
+  const selectedViewMode = selectedIsRight ? state.splitViewMode2 : state.splitViewMode1
+  const selectedQuoteView = selectedIsRight ? state.splitQuoteView2 : state.splitQuoteView1
+  const onSelectedViewModeChange = selectedIsRight ? state.setSplitViewMode2 : state.setSplitViewMode1
+  const onSelectedQuoteViewToggle = selectedIsRight
+    ? () => state.setSplitQuoteView2(!state.splitQuoteView2)
+    : () => state.setSplitQuoteView1(!state.splitQuoteView1)
+
   // Update document.title with timer countdown while a timer is running
   useEffect(() => {
     if (!timerState.activeTimer) {
@@ -327,6 +348,30 @@ export function DebateFlowPage() {
     }
   }, [timerState.activeTimer, currentFlow?.roundId, rounds])
 
+  /** Reset both prep timers to the current debate style's default. */
+  const handleResetPrepTimers = () => {
+    const prepTime = timerState.debateStyle.prepTime
+    if (prepTime) {
+      timerState.setPrepState({
+        resetTime: prepTime * 60 * 1000,
+        time: prepTime * 60 * 1000,
+        state: { name: "paused" },
+      })
+      timerState.setPrepSecondaryState({
+        resetTime: prepTime * 60 * 1000,
+        time: prepTime * 60 * 1000,
+        state: { name: "paused" },
+      })
+    }
+  }
+
+  // Navigation between speeches — single-speech stepping on mobile/single-pane,
+  // pair-at-a-time stepping when both split panels are shown side-by-side.
+  const canNavigatePrev = splitHandlers.canNavigatePrev
+  const canNavigateNext = state.isMobile || state.singlePaneMode ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext
+  const onNavigatePrev = state.isMobile || state.singlePaneMode ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches
+  const onNavigateNext = state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches
+
   /**
    * The main content area containing the resizable flow and speech panels.
    * Rendered for both desktop and mobile layouts. When the pinned ebb Flow
@@ -358,45 +403,15 @@ export function DebateFlowPage() {
             splitMode={state.splitMode}
             isMobile={state.isMobile}
             singlePaneMode={state.singlePaneMode}
-            onToggleLayoutMode={handleToggleLayoutMode}
             leftSpeech={leftSpeech}
             rightSpeech={rightSpeech}
-            leftViewMode={state.splitViewMode1}
-            rightViewMode={state.splitViewMode2}
-            leftQuoteView={state.splitQuoteView1}
-            rightQuoteView={state.splitQuoteView2}
-            onLeftViewModeChange={state.setSplitViewMode1}
-            onRightViewModeChange={state.setSplitViewMode2}
-            onLeftQuoteViewToggle={() => state.setSplitQuoteView1(!state.splitQuoteView1)}
-            onRightQuoteViewToggle={() => state.setSplitQuoteView2(!state.splitQuoteView2)}
             splitWidth={state.splitWidth}
             leftContent={leftContent}
             rightContent={rightContent}
-            onOpenSpeechPanel={handleOpenSpeechPanel}
             onUpdateLeftSpeech={splitHandlers.handleUpdateLeftSpeech}
             onUpdateRightSpeech={splitHandlers.handleUpdateRightSpeech}
-            speechTimerStates={timerState.perSpeechTimerStates}
-            onSpeechTimerStateChange={timerState.setSpeechTimerState}
-            onResetPrepTimers={() => {
-              const prepTime = timerState.debateStyle.prepTime
-              if (prepTime) {
-                timerState.setPrepState({
-                  resetTime: prepTime * 60 * 1000,
-                  time: prepTime * 60 * 1000,
-                  state: { name: "paused" },
-                })
-                timerState.setPrepSecondaryState({
-                  resetTime: prepTime * 60 * 1000,
-                  time: prepTime * 60 * 1000,
-                  state: { name: "paused" },
-                })
-              }
-            }}
-            canNavigatePrev={splitHandlers.canNavigatePrev}
-            canNavigateNext={state.isMobile || state.singlePaneMode ? splitHandlers.canNavigateNextSingle : splitHandlers.canNavigateNext}
-            onNavigatePrev={state.isMobile || state.singlePaneMode ? splitHandlers.handlePreviousSingle : splitHandlers.handlePreviousSpeeches}
-            onNavigateNext={state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches}
-            onMobileMenuClick={state.isMobile ? () => state.setMobileMenuOpen(true) : undefined}
+            activeSplitSide={activeSplitSide}
+            onActiveSplitSideChange={setActiveSplitSide}
             onMouseDown={() => {
               const handleMouseMove = (e: MouseEvent) => {
                 const container = (e.target as HTMLElement).closest(".split-container")
@@ -468,6 +483,19 @@ export function DebateFlowPage() {
                 onSelectEbb={() => setEbbActive(true)}
                 onEbbToolAction={handleEbbToolAction}
                 timerState={timerState}
+                selectedSpeech={selectedSpeech}
+                selectedViewMode={selectedViewMode}
+                selectedQuoteView={selectedQuoteView}
+                onSelectedViewModeChange={onSelectedViewModeChange}
+                onSelectedQuoteViewToggle={onSelectedQuoteViewToggle}
+                onResetPrepTimers={handleResetPrepTimers}
+                canNavigatePrev={canNavigatePrev}
+                canNavigateNext={canNavigateNext}
+                onNavigatePrev={onNavigatePrev}
+                onNavigateNext={onNavigateNext}
+                onOpenSpeechPanel={handleOpenSpeechPanel}
+                layoutMode={state.singlePaneMode ? "single" : "split"}
+                onToggleLayoutMode={handleToggleLayoutMode}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -498,6 +526,17 @@ export function DebateFlowPage() {
                   onEbbToolAction={handleEbbToolAction}
                   onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
                   timerState={timerState}
+                  selectedSpeech={selectedSpeech}
+                  selectedViewMode={selectedViewMode}
+                  selectedQuoteView={selectedQuoteView}
+                  onSelectedViewModeChange={onSelectedViewModeChange}
+                  onSelectedQuoteViewToggle={onSelectedQuoteViewToggle}
+                  onResetPrepTimers={handleResetPrepTimers}
+                  canNavigatePrev={canNavigatePrev}
+                  canNavigateNext={canNavigateNext}
+                  onNavigatePrev={onNavigatePrev}
+                  onNavigateNext={onNavigateNext}
+                  onOpenSpeechPanel={handleOpenSpeechPanel}
                 />
               </SheetContent>
             </Sheet>
