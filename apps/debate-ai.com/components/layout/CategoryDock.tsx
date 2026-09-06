@@ -1,13 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Timer as TimerIcon, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
 import { useAccountNotifications } from "debate-team-collaboration"
+import { TimerProgressRing } from "debate-timer"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -71,6 +72,25 @@ const NAV_ITEMS = [
   { href: "/doc", label: "Docs", icon: IconRead },
   { href: "/tools", label: "Tools", icon: IconTools },
 ]
+
+/** Practice Round Simulator — the tool that pairs a round timer with a judge paradigm and AI opponent. */
+const TIMER_ROUTE = "/practice-round"
+
+/**
+ * Dock art for the Timer nav button: the `debate-timer` package's
+ * `TimerProgressRing` (itself lifted from the debate-timer-progress
+ * extension's timer face) behind a clock glyph. The ring's fill is fixed
+ * rather than live — this button is a shortcut to the timer tool, not a
+ * running timer of its own.
+ */
+function TimerDockIcon() {
+  return (
+    <span className="relative flex h-full w-full items-center justify-center">
+      <TimerProgressRing progress={0.3} className="absolute inset-0 h-full w-full text-current" />
+      <TimerIcon className="relative h-3.5 w-3.5" />
+    </span>
+  )
+}
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
@@ -309,14 +329,14 @@ function DockInstance({
 }: {
   dockClassName: string
   side: "bottom" | "top"
-  allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void }[]
+  allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void; renderIcon?: () => ReactNode }[]
   onSignIn: () => void
   unreadNotifications: number
 }) {
   return (
     <DropdownMenu>
       <Dock direction="middle" className={dockClassName}>
-        {allItems.map(({ key, label, icon, active, onClick }) => (
+        {allItems.map(({ key, label, icon, active, onClick, renderIcon }) => (
           <DockItem
             key={key}
             onClick={onClick}
@@ -329,7 +349,9 @@ function DockInstance({
           >
             <DockLabel>{label}</DockLabel>
             <DockIcon>
-              <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
+              {renderIcon ? renderIcon() : (
+                <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
+              )}
             </DockIcon>
           </DockItem>
         ))}
@@ -379,6 +401,14 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       active: pathname === href,
       onClick: () => router.push(href),
     })),
+    {
+      key: TIMER_ROUTE,
+      label: "Timer",
+      icon: null as any,
+      active: pathname === TIMER_ROUTE,
+      onClick: () => router.push(TIMER_ROUTE),
+      renderIcon: TimerDockIcon,
+    },
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({
         key: `cat-${category}`,
@@ -471,6 +501,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
             {mobileItems.map(({ key, label, icon, active, onClick, ...rest }) => {
               const isPlayingIndicator = (rest as any).isPlayingIndicator
+              const renderIcon = (rest as any).renderIcon as (() => ReactNode) | undefined
               return (
                 <DockItem
                   key={key}
@@ -486,7 +517,9 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                 >
                   <DockLabel>{label}</DockLabel>
                   <DockIcon>
-                    {isPlayingIndicator ? (
+                    {renderIcon ? (
+                      renderIcon()
+                    ) : isPlayingIndicator ? (
                       isPlaying ? (
                         <Pause className="w-5 h-5 text-primary" />
                       ) : (
