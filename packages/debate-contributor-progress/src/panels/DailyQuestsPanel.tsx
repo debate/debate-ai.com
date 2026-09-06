@@ -67,6 +67,14 @@
  * with a 🏆 marking the current leader and a per-member points breakdown
  * underneath each team's row.
  *
+ * The team roster is now also account-synced across devices — the
+ * "account-syncing team rosters across devices" follow-up named under the
+ * same bullet: `useQuestTeamsSync` (from `debate-team-collaboration`) adopts
+ * a signed-in visitor's synced roster on mount and pushes the full roster
+ * back to their account after every local add/remove, via the
+ * `/api/settings` `questTeams` field. A signed-out visitor keeps working
+ * against the local-only roster exactly as before.
+ *
  * @module panels/DailyQuestsPanel
  */
 
@@ -90,6 +98,7 @@ import {
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "debate-team-collaboration/src/state/dailyQuests"
+import { useQuestTeamsSync } from "debate-team-collaboration"
 import type { QuestSeedPreviewEntry } from "debate-team-collaboration/src/state/dailyQuests"
 import {
   buildPersistedContributorQuestStreak,
@@ -218,6 +227,12 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
     setStandings(buildPersistedTeamQuestCompetition(nowMs()))
   }
 
+  // Best-effort account sync for the team roster (see
+  // `hooks/useQuestTeamsSync.ts`): adopts the signed-in visitor's synced
+  // roster on mount (re-rendering via `refresh` if it changed anything
+  // locally) and exposes `pushQuestTeams` to push after each local mutation.
+  const { pushLocalState: pushQuestTeams } = useQuestTeamsSync(() => refresh())
+
   const refreshStreak = (id: string) => {
     setStreak(id ? buildPersistedContributorQuestStreak(id, todayUtcDayKey()) : null)
   }
@@ -301,11 +316,13 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
     setTeamError(null)
     setTeamDraft({ name: "", contributorIds: "" })
     refresh()
+    pushQuestTeams()
   }
 
   const handleRemoveTeam = (id: string) => {
     deleteQuestTeam(id)
     refresh()
+    pushQuestTeams()
   }
 
   const handlePruneExpired = () => {

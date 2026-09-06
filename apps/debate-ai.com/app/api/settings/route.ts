@@ -36,10 +36,15 @@ import {
   type QuestStreakSyncPayload,
 } from "debate-community"
 import {
+  DEFAULT_QUEST_TEAMS_SYNC,
   DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
+  normalizeQuestTeamsPatch,
   normalizeResearchProgressGoalPatch,
+  parseQuestTeams,
   parseResearchProgressGoal,
+  serializeQuestTeams,
   serializeResearchProgressGoal,
+  type QuestTeam,
   type ResearchProgressGoalSyncPayload,
 } from "debate-team-collaboration"
 import {
@@ -76,18 +81,20 @@ import {
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked?,
- *   savedArgumentCollections?, researchProgressGoal?, questStreakSync? } —
+ *   savedArgumentCollections?, researchProgressGoal?, questStreakSync?,
+ *   questTeams? } —
  *   validates and upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeWordLimitPresetsPatch`/
  *   `normalizeOutlineFilterPresetsPatch` and `debate-card-search`'s
  *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
- *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`,
+ *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`/
+ *   `normalizeQuestTeamsPatch`,
  *   the same option lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
- *   collections", Research Progress "My research goal", and Quest Streaks
- *   reminder/freeze UIs themselves use), returning the resulting full
- *   settings row.
+ *   collections", Research Progress "My research goal", Quest Streaks
+ *   reminder/freeze, and Daily Quests "Team competition" UIs themselves
+ *   use), returning the resulting full settings row.
  */
 
 type SettingsRow = {
@@ -104,6 +111,7 @@ type SettingsRow = {
   savedArgumentCollections: string | null
   researchProgressGoal: string | null
   questStreakSync: string | null
+  questTeams: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -118,6 +126,7 @@ type SettingsPayload = UserSettingsPayload & {
   savedArgumentCollections: SavedArgumentCollection[]
   researchProgressGoal: ResearchProgressGoalSyncPayload | null
   questStreakSync: QuestStreakSyncPayload | null
+  questTeams: QuestTeam[]
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -145,6 +154,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     questStreakSync: row?.questStreakSync
       ? parseQuestStreakSync(row.questStreakSync)
       : DEFAULT_QUEST_STREAK_SYNC.questStreakSync,
+    questTeams: row?.questTeams ? parseQuestTeams(row.questTeams) : DEFAULT_QUEST_TEAMS_SYNC.questTeams,
   }
 }
 
@@ -181,6 +191,7 @@ export async function PUT(req: NextRequest) {
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
+  const questTeamsResult = normalizeQuestTeamsPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
@@ -195,6 +206,7 @@ export async function PUT(req: NextRequest) {
     ...savedArgumentCollectionsResult.errors,
     ...researchProgressGoalResult.errors,
     ...questStreakSyncResult.errors,
+    ...questTeamsResult.errors,
     ...newsSyncResult.errors,
     ...editorPreferencesResult.errors,
   ]
@@ -210,13 +222,14 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
+    questTeamsResult.valid.questTeams === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, questTeams, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -238,6 +251,7 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollections?: string | null
     researchProgressGoal?: string | null
     questStreakSync?: string | null
+    questTeams?: string | null
   } = { ...valid }
   if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
@@ -258,6 +272,9 @@ export async function PUT(req: NextRequest) {
   }
   if (questStreakSyncResult.valid.questStreakSync !== undefined) {
     dbPatch.questStreakSync = serializeQuestStreakSync(questStreakSyncResult.valid.questStreakSync)
+  }
+  if (questTeamsResult.valid.questTeams !== undefined) {
+    dbPatch.questTeams = serializeQuestTeams(questTeamsResult.valid.questTeams)
   }
   if (newsSyncResult.valid.newsRead !== undefined) {
     dbPatch.newsRead = serializeNewsIdList(newsSyncResult.valid.newsRead)

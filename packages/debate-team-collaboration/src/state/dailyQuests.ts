@@ -272,6 +272,16 @@ export function deleteQuestTeam(id: string): void {
 }
 
 /**
+ * Overwrites the entire stored team roster — used by
+ * `hooks/useQuestTeamsSync.ts` to adopt the account's synced copy on mount,
+ * mirroring `outlineFilterPresets.ts`'s "remote replaces local" convention
+ * rather than `saveQuestTeam`'s per-team upsert.
+ */
+export function replaceQuestTeams(teams: QuestTeam[]): void {
+  writeAllTeams(teams);
+}
+
+/**
  * Builds today's (the UTC calendar day of `now`) team standings directly
  * from the persisted team roster, the persisted quest-template roster, and
  * the real, persisted contribution feed — mirroring

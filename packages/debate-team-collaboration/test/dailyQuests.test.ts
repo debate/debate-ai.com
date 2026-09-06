@@ -8,6 +8,7 @@ import {
   listQuestTemplates,
   previewQuestTemplatesFromTopicCoverage,
   pruneExpiredQuestTemplates,
+  replaceQuestTeams,
   rolloverExpiredRecurringQuestTemplates,
   saveQuestTeam,
   saveQuestTemplate,
@@ -461,6 +462,24 @@ describe("listQuestTeams / saveQuestTeam / deleteQuestTeam", () => {
     saveQuestTeam(ALPHA);
     deleteQuestTeam("not-stored");
     expect(listQuestTeams()).toEqual([ALPHA]);
+  });
+});
+
+describe("replaceQuestTeams", () => {
+  const ALPHA: QuestTeam = { id: "alpha", name: "Team Alpha", contributorIds: ["alex", "jordan"] };
+  const BETA: QuestTeam = { id: "beta", name: "Team Beta", contributorIds: ["sam"] };
+
+  it("overwrites the entire stored roster", () => {
+    saveQuestTeam(ALPHA);
+    replaceQuestTeams([BETA]);
+    expect(listQuestTeams()).toEqual([BETA]);
+  });
+
+  it("clears the roster when given an empty list", () => {
+    saveQuestTeam(ALPHA);
+    saveQuestTeam(BETA);
+    replaceQuestTeams([]);
+    expect(listQuestTeams()).toEqual([]);
   });
 });
 

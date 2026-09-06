@@ -334,6 +334,37 @@ recovery, listing, upsert, delete, and no-op deleting an unstored id;
 ranking stored teams against the real, persisted quest roster and
 contribution feed).
 
+## Account sync
+
+Closes the "account-syncing team rosters across devices" follow-up named
+under the "🎯 Daily Quests and Targets" bullet in TODO.md. The `questTeams`
+roster now follows a signed-in visitor across devices instead of staying
+per-browser: `debate-team-collaboration`'s `hooks/useQuestTeamsSync.ts`
+(mounted directly in `DailyQuestsPanel`, no signed-in prop required — it's
+a no-op when signed out) fetches the account's synced copy on mount via a
+new `user_settings.quest_teams` D1 column and `/api/settings`'s `questTeams`
+field, and — if it differs from what's already stored locally — overwrites
+the local `"questTeams"` roster with it (`state/dailyQuests.ts`'s new
+`replaceQuestTeams`), refreshing the panel. Every local add/remove
+(`handleAddTeam`/`handleRemoveTeam`) then pushes the *entire* current
+roster back to the account. Unlike the per-contributor `questStreakSync`
+field, this isn't scoped to one contributor's own data — it's the whole
+competition's team list — so a local change simply replaces the synced
+value in full rather than being merged additively, mirroring
+`outlineFilterPresets`'s "remote replaces local, every local write pushes
+the full list back" convention exactly.
+
+Validation/serialization lives in `lib/quest-teams-sync.ts` (bounded to 50
+teams, each with a non-empty id, a name up to 60 characters, and up to 50
+contributor ids — an empty `contributorIds` list is still valid, matching
+`buildTeamQuestCompetitionStandings`'s "a member-less team scores 0/0"
+support), with the `fetch` half split out into `lib/quest-teams-sync-client.ts`
+so the pure validation stays unit-testable without mocking `fetch`. Vitest-covered
+in `packages/debate-team-collaboration/test/quest-teams-sync.test.ts`
+(list/patch validation bounds, rejecting a smuggled field, and
+serialize/parse round-trips) and a `replaceQuestTeams` suite added to
+`dailyQuests.test.ts`.
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — the "Your streak" field
@@ -346,8 +377,8 @@ contribution feed).
 - Contributions saved before this change don't carry `submittedAt`/
   `argBlock` and are excluded from quest scoring (not retroactively
   backfilled).
-- Team rosters are local to a browser, not account-synced — the same known
-  gap as the quest-template roster itself. A team's contributor ids are
-  free-form text with no membership check against a real coaching-program
-  roster (`debate-community`'s `CoachingProgramConfig`) or any other
-  contributor list.
+- Team rosters are now account-synced (see "Account sync" above), but the
+  underlying quest-template roster itself still isn't. A team's contributor
+  ids are free-form text with no membership check against a real
+  coaching-program roster (`debate-community`'s `CoachingProgramConfig`) or
+  any other contributor list.

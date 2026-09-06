@@ -258,6 +258,15 @@ export const userSettings = sqliteTable("user_settings", {
   // Null/absent means "nothing synced yet", same semantics as every other
   // nullable column here.
   questStreakSync: text("quest_streak_sync"),
+  // JSON-serialized array of `{ id, name, contributorIds }` quest-competition
+  // teams (see packages/debate-team-collaboration/src/lib/quest-teams-sync.ts
+  // and TODO.md's "🎯 Daily Quests and Targets" bullet's "account-syncing
+  // team rosters across devices" follow-up). Unlike `questStreakSync`, this
+  // is the whole roster, not one contributor's own preferences — a local
+  // change replaces the full stored list rather than merging into it. Null/
+  // absent means "no teams synced yet", same semantics as every other
+  // nullable column here.
+  questTeams: text("quest_teams"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
