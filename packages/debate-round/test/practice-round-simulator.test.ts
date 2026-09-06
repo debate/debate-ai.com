@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import type { Box } from "../src/types/flow";
 import { buildCustomJudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
 import {
+  buildCustomOpponentPersona,
+  opponentPersonas,
+} from "debate-speech-writer/src/opponent/opponent-personas";
+import {
   buildPracticeRoundFeedback,
   buildPracticeRoundFeedbackText,
   buildPracticeRoundSetup,
@@ -164,6 +168,51 @@ describe("buildPracticeRoundFeedback", () => {
     const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
     const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, { collapseLimit: 0 });
     expect(feedback.coachingPrompts.some((p) => p.kind === "collapse")).toBe(false);
+  });
+
+  it("omits the persona-tips section when no opponentPersona option is given", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom);
+    expect(feedback.sections).toHaveLength(2);
+  });
+
+  it("omits the persona-tips section when opponentPersona is explicitly null", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, { opponentPersona: null });
+    expect(feedback.sections).toHaveLength(2);
+  });
+
+  it("adds a persona-specific prep-tips section when opponentPersona is given", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, {
+      opponentPersona: opponentPersonas.kritik,
+    });
+
+    expect(feedback.sections).toHaveLength(3);
+    expect(feedback.sections[2].title).toBe("Facing the Kritik persona again");
+    expect(feedback.sections[2].body).toContain("1. Pre-write a framework defense");
+  });
+
+  it("still passes collapseLimit through to the coaching session when opponentPersona is also given", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, {
+      collapseLimit: 0,
+      opponentPersona: opponentPersonas.kritik,
+    });
+    expect(feedback.coachingPrompts.some((p) => p.kind === "collapse")).toBe(false);
+    expect(feedback.sections).toHaveLength(3);
+  });
+
+  it("uses the generic tip for a custom opponent persona", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const customPersona = buildCustomOpponentPersona({
+      name: "Speedster",
+      notes: "Spreads everything.",
+    });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, { opponentPersona: customPersona });
+
+    expect(feedback.sections[2].title).toBe("Facing the Custom: Speedster persona again");
+    expect(feedback.sections[2].body).toContain("Re-read this custom opponent's described style notes");
   });
 });
 

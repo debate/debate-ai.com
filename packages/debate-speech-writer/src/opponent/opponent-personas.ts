@@ -20,6 +20,13 @@
  * second, independent axis from persona choice — how strong the AI opponent
  * argues within whichever persona is selected — composed into the same
  * prompt section by `buildOpponentPersonaPrompt`.
+ *
+ * `buildOpponentPersonaFeedbackTips` closes that same idea's "post-round
+ * feedback tips specific to the persona faced" Next item: a short,
+ * persona-specific list of what to prep before facing that style again,
+ * consumed by `debate-round`'s `practice-round-simulator.ts#buildPracticeRoundFeedback`
+ * to add a dedicated section onto a practice round's post-round feedback
+ * whenever an AI opponent persona was set on that round's setup.
  */
 
 export type BuiltinOpponentPersonaId = "policy-heavy" | "kritik" | "lay" | "fast-flow";
@@ -238,6 +245,48 @@ export function buildCustomOpponentPersona(input: CustomOpponentPersonaInput): O
  * every existing caller that doesn't pass one keeps arguing at the
  * persona's own baseline strength, unmodified.
  */
+/**
+ * Actionable prep tips for facing each built-in persona again, most useful
+ * first — what to have ready before the next round against that style,
+ * distinct from `preferredArguments` (which describes what the persona
+ * argues, not what to do about it).
+ */
+export const OPPONENT_PERSONA_FEEDBACK_TIPS: Record<BuiltinOpponentPersonaId, string[]> = {
+  "policy-heavy": [
+    "Pre-write solvency deficits and net-benefit takeouts against the counterplans this persona favors.",
+    "Have impact calculus (magnitude, probability, timeframe) ready to out-weigh — this persona frames every impact that way.",
+  ],
+  kritik: [
+    "Pre-write a framework defense — this persona opens on framework before engaging your case's literal claims.",
+    "Have a permutation or link turn ready against an alternative or praxis argument, not just a traditional counterplan answer.",
+  ],
+  lay: [
+    "Practice explaining your case in plain, jargon-free language — this persona won't reward technical density or speed.",
+    "Lead with common-sense, real-world framing rather than dense evidence citation, which this persona is less persuaded by.",
+  ],
+  "fast-flow": [
+    "Drill efficient, tagline-first responses — this persona punishes anything you under-cover or drop.",
+    "Prioritize covering every independent argument over going deep on just a few, since volume is this persona's main weapon.",
+  ],
+};
+
+/** Generic prep tip for a custom persona, whose free-form `instructions` this module can't structure into style-specific advice. */
+const CUSTOM_PERSONA_FEEDBACK_TIPS: string[] = [
+  "Re-read this custom opponent's described style notes and pre-write responses to the specific tactics they call out.",
+];
+
+/**
+ * Returns `persona`'s post-round prep tips — its own entry in
+ * `OPPONENT_PERSONA_FEEDBACK_TIPS` for a built-in persona, or the generic
+ * `CUSTOM_PERSONA_FEEDBACK_TIPS` for a `"custom"` one (built-in ids always
+ * have an entry, so this never falls through to the generic tip for one).
+ */
+export function buildOpponentPersonaFeedbackTips(persona: OpponentPersona): string[] {
+  return isBuiltinOpponentPersonaId(persona.id)
+    ? OPPONENT_PERSONA_FEEDBACK_TIPS[persona.id]
+    : CUSTOM_PERSONA_FEEDBACK_TIPS;
+}
+
 export function buildOpponentPersonaPrompt(
   persona: OpponentPersona,
   difficulty: OpponentDifficulty = DEFAULT_OPPONENT_DIFFICULTY,
