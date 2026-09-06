@@ -95,6 +95,18 @@ export type {
 } from "./opponent/opponent-personas";
 
 export {
+  buildSavedCustomOpponentPersona,
+  isValidSavedCustomOpponentPersona,
+  MAX_SAVED_CUSTOM_OPPONENT_PERSONA_BYTES,
+  resolveOpponentPersonaFromLibraryEntry,
+  sortCustomOpponentPersonaLibrary,
+} from "./opponent/opponent-persona-library";
+export type {
+  CustomOpponentPersonaLibraryEntryInput,
+  SavedCustomOpponentPersona,
+} from "./opponent/opponent-persona-library";
+
+export {
   approveCoachMaterial,
   buildCoachConversationMessages,
   buildCoachMaterialLibrary,
