@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { Box } from "../src/types/flow";
 import { buildCustomJudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
+import { opponentPersonas } from "debate-speech-writer/src/opponent/opponent-personas";
 import {
   buildPracticeRoundFeedback,
   buildPracticeRoundFeedbackText,
@@ -164,6 +165,29 @@ describe("buildPracticeRoundFeedback", () => {
     const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
     const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, { collapseLimit: 0 });
     expect(feedback.coachingPrompts.some((p) => p.kind === "collapse")).toBe(false);
+  });
+
+  it("omits a persona tips section when no opponentPersona option is given", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom);
+    expect(feedback.sections).toHaveLength(2);
+    expect(feedback.sections.some((s) => s.title.startsWith("Tips vs."))).toBe(false);
+  });
+
+  it("appends a persona-specific tips section when opponentPersona is given", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, {
+      opponentPersona: opponentPersonas.kritik,
+    });
+    expect(feedback.sections).toHaveLength(3);
+    expect(feedback.sections[2].title).toBe("Tips vs. Kritik");
+    expect(feedback.sections[2].body).toContain("1. ");
+  });
+
+  it("omits the persona tips section when opponentPersona is explicitly null", () => {
+    const custom = buildCustomJudgeParadigm({ name: "Judge Smith", notes: "Votes on framing." });
+    const feedback = buildPracticeRoundFeedback(FLOW, "A", custom, { opponentPersona: null });
+    expect(feedback.sections).toHaveLength(2);
   });
 });
 

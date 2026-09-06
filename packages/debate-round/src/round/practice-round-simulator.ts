@@ -20,6 +20,14 @@
  * `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` already carry, layered
  * onto this setup's own persona choice via `buildOpponentPersonaPrompt`'s
  * existing `difficulty` parameter.
+ *
+ * `buildPracticeRoundFeedback`'s optional `opponentPersona` option closes the
+ * "🤖 AI Practice Opponent" idea's "post-round feedback tips specific to the
+ * persona faced" Next item (TODO.md's Product Feature Ideas list): when the
+ * round's own `PracticeRoundSetup.opponentPersona` is threaded through (see
+ * `state/practiceRounds.ts`'s `buildAndSavePracticeRoundFeedback`), the
+ * feedback gets an extra "Tips vs. …" section from
+ * `opponent-personas.ts`'s `buildOpponentPersonaFeedbackText`.
  */
 
 import type { Flow } from "../types/flow";
@@ -38,6 +46,7 @@ import type {
   OpponentPersona,
 } from "debate-speech-writer/src/opponent/opponent-personas";
 import {
+  buildOpponentPersonaFeedbackText,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentPersona,
@@ -151,15 +160,18 @@ export type PracticeRoundFeedback = {
  * decision around the paradigm the round was judged under (its voting
  * priorities, or its description when it has none — e.g. a custom
  * paradigm), followed by the existing AI Coach Mode coaching session
- * (`flow/coach-mode.ts`'s `buildCoachingSession`) for the caller's side.
- * Reuses `coach-mode.ts` directly rather than reimplementing any of its
- * flow-vulnerability logic.
+ * (`flow/coach-mode.ts`'s `buildCoachingSession`) for the caller's side, and
+ * — when `options.opponentPersona` is given — a persona-specific "Tips vs.
+ * …" section (`opponent-personas.ts`'s `buildOpponentPersonaFeedbackText`)
+ * closing the "🤖 AI Practice Opponent" idea's "post-round feedback tips
+ * specific to the persona faced" Next item. Reuses `coach-mode.ts` and
+ * `opponent-personas.ts` directly rather than reimplementing either.
  */
 export function buildPracticeRoundFeedback(
   flow: Pick<Flow, "children" | "columns">,
   sideKey: string,
   judgeParadigm: JudgeParadigm,
-  options: { collapseLimit?: number } = {},
+  options: { collapseLimit?: number; opponentPersona?: OpponentPersona | null } = {},
 ): PracticeRoundFeedback {
   const coachingPrompts = buildCoachingSession(flow, sideKey, options);
 
@@ -173,6 +185,13 @@ export function buildPracticeRoundFeedback(
     },
     { title: "Coaching feedback", body: buildCoachingSummaryText(coachingPrompts) },
   ];
+
+  if (options.opponentPersona) {
+    sections.push({
+      title: `Tips vs. ${options.opponentPersona.name}`,
+      body: buildOpponentPersonaFeedbackText(options.opponentPersona),
+    });
+  }
 
   return { judgeParadigm, coachingPrompts, sections };
 }

@@ -203,7 +203,11 @@ calls, mocked).
   carry a difficulty (`opponentDifficulty` on `PracticeRoundSetup`,
   defaulting to `DEFAULT_OPPONENT_DIFFICULTY`), saved alongside its own
   persona choice — see `docs/features/practice-round-simulator.md`'s
-  "Opponent difficulty" section.
+  "Opponent difficulty" section. That panel's post-round feedback also now
+  carries persona-specific tips (`opponent-personas.ts`'s new
+  `opponentPersonaFeedbackTips` registry) once a round played against a
+  persona is complete — see that doc's "Post-round feedback tips for the
+  persona faced" section.
 - This panel only saves/clears a selection; it doesn't itself invoke a
   speech-generation call — that lives in the Online Debate Versus AI panel
   (`AiVersusRoundPanel`, `/versus-ai`) once a round's persona is saved here.

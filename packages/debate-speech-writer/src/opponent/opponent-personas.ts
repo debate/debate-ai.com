@@ -259,3 +259,57 @@ export function buildOpponentPersonaPrompt(
 
   return lines.join("\n");
 }
+
+/**
+ * Hand-authored post-round feedback tips for facing each built-in persona —
+ * closes the "🤖 AI Practice Opponent" idea's "post-round feedback tips
+ * specific to the persona faced" Next item (TODO.md's Product Feature Ideas
+ * list). Unlike `instructions`/`preferredArguments`, these aren't meant for
+ * the AI opponent's own speech-generation prompt; they're for the human
+ * debater, surfaced by `practice-round-simulator.ts`'s
+ * `buildPracticeRoundFeedback` once a round against a persona is complete.
+ */
+export const opponentPersonaFeedbackTips: Record<BuiltinOpponentPersonaId, string[]> = {
+  "policy-heavy": [
+    "Pre-empt the counterplan's net benefit before it's read, not just after.",
+    "Answer disadvantage link stories directly instead of only contesting the impact.",
+    "Weigh magnitude, probability, and timeframe explicitly — this persona already will.",
+  ],
+  kritik: [
+    "Answer the framework argument before defending your case's literal claims.",
+    "Have a permutation or a framework defense ready, not just substantive extensions.",
+    "Don't let an alternative go unanswered just because it isn't a counterplan.",
+  ],
+  lay: [
+    "Match the plain, jargon-free register — dense theory language reads as evasive here.",
+    "Lead with the clearest real-world impact instead of technical framing.",
+    "Slow down; out-speeding a lay opponent reads as unfair rather than strategic.",
+  ],
+  "fast-flow": [
+    "Flow every independent response — a single drop is this persona's easiest win.",
+    "Group and collapse arguments deliberately rather than trying to out-spread them.",
+    "Answer procedural or theory arguments early; they compound if left for the last speech.",
+  ],
+};
+
+/**
+ * Feedback tips for facing `persona`, or an empty list for a persona with no
+ * hand-authored set (currently only `"custom"`, which has no fixed style to
+ * write tips against ahead of time).
+ */
+export function getOpponentPersonaFeedbackTips(persona: OpponentPersona): string[] {
+  return isBuiltinOpponentPersonaId(persona.id) ? opponentPersonaFeedbackTips[persona.id] : [];
+}
+
+/**
+ * Composes a post-round feedback section's body text for facing `persona`,
+ * for `practice-round-simulator.ts`'s `buildPracticeRoundFeedback` to append
+ * as its own section once a round against that persona is complete.
+ */
+export function buildOpponentPersonaFeedbackText(persona: OpponentPersona): string {
+  const tips = getOpponentPersonaFeedbackTips(persona);
+  if (tips.length === 0) {
+    return `No pre-set tips exist for this custom persona — review its own notes ("${persona.instructions}") for what it emphasized this round.`;
+  }
+  return tips.map((tip, index) => `${index + 1}. ${tip}`).join("\n");
+}

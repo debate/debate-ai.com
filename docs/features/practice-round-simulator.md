@@ -208,6 +208,52 @@ Vitest-covered in `packages/debate-round/test/judge-decision-ai.test.ts`'s
 rationale alone with no issue recorded, a criterion neither mentions, and
 the empty-rubric case for a paradigm with no voting priorities).
 
+## Post-round feedback tips for the persona faced
+
+Closes the "🤖 AI Practice Opponent" idea's "post-round feedback tips
+specific to the persona faced" Next item (TODO.md's Research
+Crowdsourcing Organizer Features list). Until this slice, a round's
+post-round feedback (judge-paradigm framing plus the AI Coach Mode
+coaching session) said nothing about which AI opponent persona the round
+was actually played against — the persona only shaped the AI's own
+speeches, never the human debater's takeaway.
+
+`debate-speech-writer`'s `opponent/opponent-personas.ts` gains a
+hand-authored `opponentPersonaFeedbackTips` registry (a `string[]` per
+built-in persona — e.g. Kritik's tips lead with "answer the framework
+argument before defending your case's literal claims") plus
+`getOpponentPersonaFeedbackTips(persona)` (an empty list for a persona
+with no fixed style to write tips against ahead of time, currently just
+`"custom"`) and `buildOpponentPersonaFeedbackText(persona)`, which numbers
+those tips into one section body (or, for a custom persona, a fallback
+line quoting that persona's own `instructions`).
+
+`buildPracticeRoundFeedback` (`round/practice-round-simulator.ts`) takes a
+new optional `options.opponentPersona`; when given, it appends a
+`"Tips vs. <persona name>"` section built from
+`buildOpponentPersonaFeedbackText`, after the existing "Judged under: …"
+and "Coaching feedback" sections. `state/practiceRounds.ts`'s
+`buildAndSavePracticeRoundFeedback` threads the round's own already-saved
+`setup.opponentPersona` through automatically, so
+`PracticeRoundSimulatorPanel.tsx` needed no changes at all — its existing
+`record.feedback.sections.map(...)` render loop picks up the new section
+the moment a round played against a persona generates feedback. A round
+with no opponent persona set gets no such section, exactly as before this
+slice.
+
+Vitest-covered:
+`packages/debate-speech-writer/test/opponent-personas.test.ts`'s
+`opponentPersonaFeedbackTips`/`getOpponentPersonaFeedbackTips`/
+`buildOpponentPersonaFeedbackText` suites (every built-in persona has its
+own non-empty, distinct tip set; the custom-persona fallback quotes its
+own instructions); `packages/debate-round/test/practice-round-simulator.test.ts`'s
+`buildPracticeRoundFeedback` suite (the section is omitted with no
+`opponentPersona` option or an explicit `null`, and appended with the
+right title/body when one is given); and
+`packages/debate-round/test/practiceRounds.test.ts`'s
+`buildAndSavePracticeRoundFeedback` suite (the section is present only
+for a round whose saved setup actually has a persona).
+
 ## Known gaps
 
 No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
