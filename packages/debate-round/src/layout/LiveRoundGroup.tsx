@@ -16,7 +16,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/
 import { cn } from "../ui/lib/utils"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import type { Round } from "../types/flow"
-import type { ViewMode } from "../types/debate-flow"
 import type { DebateStyle, SpeechTimerState, TimerState } from "debate-timer/src/types"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
@@ -36,14 +35,6 @@ interface LiveRoundGroupProps {
   /** Name of the speech currently open in the main content area — the only
    *  one whose full timer/controls bar is shown here. */
   selectedSpeech: string
-  /** View mode applied to the selected speech's markdown editor. */
-  selectedViewMode: ViewMode
-  /** Whether the selected speech's editor is in quote view. */
-  selectedQuoteView: boolean
-  /** Handler called when the user selects a different view mode for the selected speech. */
-  onSelectedViewModeChange: (mode: ViewMode) => void
-  /** Handler called when the quote view toggle is clicked for the selected speech. */
-  onSelectedQuoteViewToggle: () => void
   /** Callback to reset prep timers to their defaults. */
   onResetPrepTimers?: () => void
   /** Whether backward speech navigation is available. */
@@ -54,12 +45,14 @@ interface LiveRoundGroupProps {
   onNavigatePrev?: () => void
   /** Handler called when the user navigates to the next speech. */
   onNavigateNext?: () => void
-  /** Handler called when a speech panel should be opened from the speech header bar. */
-  onOpenSpeechPanel?: (speech: string) => void
-  /** Current layout mode: a single active speech pane, or both shown side-by-side. */
-  layoutMode?: "single" | "split"
-  /** When provided, renders a button toggling between single-pane and split layout. */
-  onToggleLayoutMode?: () => void
+  /** Selected microphone device ID, shared with the global speech controls topbar. */
+  micDeviceId?: string
+  /** Callback when the microphone device changes. */
+  onMicDeviceChange?: (deviceId: string | undefined) => void
+  /** Whether recording is enabled, shared with the global speech controls topbar. */
+  recordingEnabled?: boolean
+  /** Callback when the recording-enabled flag changes. */
+  onRecordingEnabledChange?: (enabled: boolean) => void
 }
 
 /** The round's display title, falling back to the tournament/level pair. */
@@ -81,18 +74,15 @@ export function LiveRoundGroup({
   prepSecondaryState,
   setPrepSecondaryState,
   selectedSpeech,
-  selectedViewMode,
-  selectedQuoteView,
-  onSelectedViewModeChange,
-  onSelectedQuoteViewToggle,
   onResetPrepTimers,
   canNavigatePrev,
   canNavigateNext,
   onNavigatePrev,
   onNavigateNext,
-  onOpenSpeechPanel,
-  layoutMode,
-  onToggleLayoutMode,
+  micDeviceId,
+  onMicDeviceChange,
+  recordingEnabled,
+  onRecordingEnabledChange,
 }: LiveRoundGroupProps) {
   const [open, setOpen] = useState(true)
 
@@ -199,10 +189,6 @@ export function LiveRoundGroup({
                   >
                     <SpeechHeaderBar
                       speechName={speech.name}
-                      viewMode={selectedViewMode}
-                      quoteView={selectedQuoteView}
-                      onViewModeChange={onSelectedViewModeChange}
-                      onQuoteViewToggle={onSelectedQuoteViewToggle}
                       controlledTime={entry.time}
                       controlledResetTime={entry.resetTime}
                       controlledTimerRunState={entry.state}
@@ -214,9 +200,11 @@ export function LiveRoundGroup({
                       canNavigateNext={canNavigateNext}
                       onNavigatePrev={onNavigatePrev}
                       onNavigateNext={onNavigateNext}
-                      onOpenSpeechPanel={onOpenSpeechPanel}
-                      layoutMode={layoutMode}
-                      onToggleLayoutMode={onToggleLayoutMode}
+                      showRecordingMenu={false}
+                      micDeviceId={micDeviceId}
+                      onMicDeviceChange={onMicDeviceChange}
+                      recordingEnabled={recordingEnabled}
+                      onRecordingEnabledChange={onRecordingEnabledChange}
                     />
                   </div>
                 )

@@ -73,63 +73,6 @@ output for a stable panel display order — rather than introducing new
 word-count logic. Vitest-covered in
 `packages/debate-round/test/wordCountRounds.test.ts`.
 
-## Word-limit mode in the live round
-
-The same round can also be run under a word limit inside the flow page
-(`/debate`) instead of on this standalone form — the "(b) extending
-`useTimerState`/`SpeechTimer` to support a non-timed, word-limited speech
-mode in the live round timer itself" follow-up under the same idea.
-
-Each speech header bar shows a **Type** toggle (next to the countdown) when a
-flow has a round. Turning it on replaces that speech's countdown with a
-`SpeechWordCounter`: a compact `words / limit` readout that opens a popover
-holding the speech text, its remaining-words figure, and a fill bar. The
-readout turns yellow at 90% of the limit and red once over it. Toggling it
-off restores the countdown; the choice persists in localStorage
-(`wordLimitModeEnabled`).
-
-Where the limit comes from:
-
-0. a user's own custom preset whose name matches the live column
-   (case-insensitively) — see "Custom word-limit presets" below; otherwise
-1. the `wordCountStyles` entry whose speech name matches the live column
-   (case-insensitively), e.g. `AC` → 600 words; otherwise
-2. `estimateWordLimit(minutes)` applied to the live timed style's speech
-   length, so word-limit mode works for every debate style rather than only
-   the authored word-count ones.
-
-If neither source resolves a limit, the countdown stays in place rather than
-showing an empty meter.
-
-Text typed here is persisted through the **same** `wordCountRounds` store the
-form uses — keyed by the flow's `roundId`, with untouched speeches dropped —
-so a round typed in the live header bar appears on `/word-count` and a round
-saved there loads back into the header bar.
-
-The popover's textarea also has a "🎤 Record"/"Stop recording" button
-(hidden in a browser without `SpeechRecognition` support) that dictates
-directly into the speech text via the browser's own Web Speech API —
-`debate-timer`'s own local
-`timers/microphone-transcription.ts`/`hooks/useMicrophoneTranscription.ts`
-copy of the same wiring used by the standalone `/word-count` form (a local
-copy rather than a shared import since `debate-timer` has no dependency on
-`debate-round` — the reverse is true). Recording stops automatically if the
-popover is closed while still listening.
-
-```
-hooks/useWordCountSpeechMode.ts        — React state + persistence timing
-  → round/word-count-speech-mode.ts    — resolveSpeechWordLimit,
-                                          getSpeechWordCountStatus,
-                                          load/persistWordCountSpeechMode
-  → state/wordCountRounds.ts           — same localStorage key as the form
-  → debate-timer SpeechWordCounter     — the meter itself
-  → layout/SpeechHeaderBar.tsx         — toggle + swap for SpeechTimer
-```
-
-Vitest-covered in
-`packages/debate-round/test/word-count-speech-mode.test.ts` (limit
-resolution, mode state, live status, and the store round-trip).
-
 ## Custom word-limit presets
 
 TODO.md idea #2's "a per-style word-limit preset manager (add/edit/remove
@@ -148,13 +91,11 @@ uses, so presets follow a signed-in user across devices — mirrors
 `FavoriteToolsSettings`/`useFavoriteTools`'s split for the same reason
 (`hooks/useWordLimitPresets.ts`).
 
-**Where it applies:** both the standalone `/word-count` form
-(`WordCountRoundsPanel`, including its persisted-round list) and the live
-in-round meter (`useWordCountSpeechMode`) resolve a speech's limit through
-`resolveSpeechWordLimit`, which now checks a matching preset (by name,
-case-insensitively) *before* the built-in registry or the timed-speech
-estimate — see "Where the limit comes from" above, now with the preset check
-as step 0.
+**Where it applies:** the standalone `/word-count` form
+(`WordCountRoundsPanel`, including its persisted-round list) resolves a
+speech's limit via `getWordCountRoundStatuses`, which checks a matching
+preset (`findPresetWordLimit`, by name, case-insensitively) before falling
+back to the style's authored `wordLimit`.
 
 A preset's name is matched exactly (case-insensitively) against the live or
 authored speech name; it does not scope to one word-count style, so a preset
@@ -164,9 +105,8 @@ named `AC` applies to every style whose speech list includes an `AC` entry.
 state/wordLimitPresets.ts        — validation, (de)serialization, findPresetWordLimit
 hooks/useWordLimitPresets.ts     — localStorage-first state + account sync
 panels/WordLimitPresetsPanel.tsx — add/edit/remove UI, rendered on /settings
-round/word-count-speech-mode.ts  — resolveSpeechWordLimit checks presets first
-state/wordCountRounds.ts         — getWordCountRoundStatuses accepts presets
-panels/WordCountRoundsPanel.tsx  — passes presets through to both
+state/wordCountRounds.ts         — getWordCountRoundStatuses checks presets first
+panels/WordCountRoundsPanel.tsx  — passes presets through
 ```
 
 Vitest-covered in `packages/debate-round/test/wordLimitPresets.test.ts`

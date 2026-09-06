@@ -20,6 +20,7 @@ import { Sheet, SheetContent } from "../ui/primitives/sheet"
 import { FlowPageSidebar } from "../layout/FlowPageSidebar"
 import { FlowMainContent } from "../layout/FlowMainContent"
 import { SpeechDocPanel } from "../layout/SpeechDocPanel"
+import { SpeechControlsTopBar } from "../layout/SpeechControlsTopBar"
 
 // Dialogs
 import { FlowHistoryDialog } from "../dialogs/FlowHistoryDialog"
@@ -38,6 +39,7 @@ import { useFlowHandlers } from "../hooks/useFlowHandlers"
 import { useSpeechHandlers } from "../hooks/useSpeechHandlers"
 import { useSplitModeHandlers } from "../hooks/useSplitModeHandlers"
 import { useTimerState } from "../hooks/useTimerState"
+import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
@@ -78,6 +80,12 @@ export function DebateFlowPage() {
   // level (rather than owned inside FlowMainContent) so the sidebar's "round
   // times" group knows which speech's timer/controls bar to show.
   const [activeSplitSide, setActiveSplitSide] = useState<"left" | "right">("left")
+
+  // Mic device and recording-enabled flag, shared between the live speech's
+  // recorder (embedded in the sidebar's SpeechHeaderBar) and the global
+  // SpeechControlsTopBar's recording menu, since they act on the same speech.
+  const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
+  const [recordingEnabled, setRecordingEnabled] = useState(true)
 
   /**
    * Switch to the pinned ebb Flow tab and queue an "ebb Flow tools" action
@@ -289,6 +297,22 @@ export function DebateFlowPage() {
     ? () => state.setSplitQuoteView2(!state.splitQuoteView2)
     : () => state.setSplitQuoteView1(!state.splitQuoteView1)
 
+  // Recording status for the speech the global topbar's menu currently targets.
+  const { hasRecording: selectedSpeechHasRecording, deleteRecording: deleteSelectedSpeechRecording } =
+    useSpeechRecordingStatus(selectedSpeech)
+
+  /** Reset the selected speech's timer to its default length. */
+  const handleResetSpeechTime = () => {
+    const entry = timerState.getSpeechTimerState(selectedSpeech)
+    timerState.setSpeechTimerState(selectedSpeech, { time: entry.resetTime, state: { name: "paused" } })
+  }
+
+  /** Switch the selected speech's timer to a 3-minute Cross-X. */
+  const handleSwitchToCrossX = () => {
+    const crossXTime = 3 * 60 * 1000
+    timerState.setSpeechTimerState(selectedSpeech, { time: crossXTime, resetTime: crossXTime, state: { name: "paused" } })
+  }
+
   // Update document.title with timer countdown while a timer is running
   useEffect(() => {
     if (!timerState.activeTimer) {
@@ -461,6 +485,29 @@ export function DebateFlowPage() {
   // ============================================================================
   return (
     <div className="h-screen w-full flex flex-col overflow-hidden">
+      {/* Global speech controls — quote view, view mode, layout, recording
+          menu, and open-speech-doc, formerly duplicated inside each speech's
+          own header bar. */}
+      <SpeechControlsTopBar
+        speechName={selectedSpeech}
+        viewMode={selectedViewMode}
+        quoteView={selectedQuoteView}
+        onViewModeChange={onSelectedViewModeChange}
+        onQuoteViewToggle={onSelectedQuoteViewToggle}
+        layoutMode={state.singlePaneMode ? "single" : "split"}
+        onToggleLayoutMode={handleToggleLayoutMode}
+        onOpenSpeechPanel={handleOpenSpeechPanel}
+        micDeviceId={micDeviceId}
+        onMicDeviceChange={setMicDeviceId}
+        recordingEnabled={recordingEnabled}
+        onRecordingEnabledChange={setRecordingEnabled}
+        onResetSpeechTime={handleResetSpeechTime}
+        onSwitchToCrossX={handleSwitchToCrossX}
+        onResetPrepTimers={handleResetPrepTimers}
+        hasRecording={selectedSpeechHasRecording}
+        onDeleteRecording={deleteSelectedSpeechRecording}
+        recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
+      />
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">
         {!state.isMobile ? (
@@ -484,18 +531,15 @@ export function DebateFlowPage() {
                 onEbbToolAction={handleEbbToolAction}
                 timerState={timerState}
                 selectedSpeech={selectedSpeech}
-                selectedViewMode={selectedViewMode}
-                selectedQuoteView={selectedQuoteView}
-                onSelectedViewModeChange={onSelectedViewModeChange}
-                onSelectedQuoteViewToggle={onSelectedQuoteViewToggle}
                 onResetPrepTimers={handleResetPrepTimers}
                 canNavigatePrev={canNavigatePrev}
                 canNavigateNext={canNavigateNext}
                 onNavigatePrev={onNavigatePrev}
                 onNavigateNext={onNavigateNext}
-                onOpenSpeechPanel={handleOpenSpeechPanel}
-                layoutMode={state.singlePaneMode ? "single" : "split"}
-                onToggleLayoutMode={handleToggleLayoutMode}
+                micDeviceId={micDeviceId}
+                onMicDeviceChange={setMicDeviceId}
+                recordingEnabled={recordingEnabled}
+                onRecordingEnabledChange={setRecordingEnabled}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -527,16 +571,15 @@ export function DebateFlowPage() {
                   onCloseMobileMenu={() => state.setMobileMenuOpen(false)}
                   timerState={timerState}
                   selectedSpeech={selectedSpeech}
-                  selectedViewMode={selectedViewMode}
-                  selectedQuoteView={selectedQuoteView}
-                  onSelectedViewModeChange={onSelectedViewModeChange}
-                  onSelectedQuoteViewToggle={onSelectedQuoteViewToggle}
                   onResetPrepTimers={handleResetPrepTimers}
                   canNavigatePrev={canNavigatePrev}
                   canNavigateNext={canNavigateNext}
                   onNavigatePrev={onNavigatePrev}
                   onNavigateNext={onNavigateNext}
-                  onOpenSpeechPanel={handleOpenSpeechPanel}
+                  micDeviceId={micDeviceId}
+                  onMicDeviceChange={setMicDeviceId}
+                  recordingEnabled={recordingEnabled}
+                  onRecordingEnabledChange={setRecordingEnabled}
                 />
               </SheetContent>
             </Sheet>
