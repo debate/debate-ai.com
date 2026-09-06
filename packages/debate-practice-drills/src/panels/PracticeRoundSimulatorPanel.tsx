@@ -82,6 +82,16 @@
  * `round/practice-round-simulator.ts#resolvePracticeRoundOpponentPersonaChoice`
  * before handing it to the already-existing `buildPracticeRoundSetup`.
  *
+ * A "Replay round" section (once at least one speech has been delivered)
+ * closes this bullet's last remaining Next item — a round replay/playback
+ * view: `debate-round`'s new
+ * `round/practice-round-simulator.ts#buildPracticeRoundReplaySteps` zips the
+ * round's speech order with its already-looked-up `submitted` speeches
+ * (`getPracticeRoundSubmittedSpeeches`, no new persistence) into one
+ * step-per-slot sequence, stepped through here with Prev/Next controls
+ * showing that step's speaker/name and delivered text (or "Not yet
+ * delivered." for a slot beyond how far the round has progressed).
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -131,6 +141,7 @@ import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildJudgeDecisionRubric } from "debate-round/src/round/judge-decision-ai"
 import { buildPracticeRoundJudgeDecisionInput } from "../round/practice-round-judge-decision-wiring"
 import {
+  buildPracticeRoundReplaySteps,
   buildPracticeRoundSetup,
   resolvePracticeRoundOpponentPersonaChoice,
 } from "debate-round/src/round/practice-round-simulator"
@@ -214,6 +225,7 @@ export function PracticeRoundSimulatorPanel() {
   const [judgeLoadingId, setJudgeLoadingId] = useState<string | null>(null)
   const [actionErrors, setActionErrors] = useState<Record<string, string>>({})
   const [feedbackSideKeyByRound, setFeedbackSideKeyByRound] = useState<Record<string, string>>({})
+  const [replayStepByRound, setReplayStepByRound] = useState<Record<string, number>>({})
   const [mounted, setMounted] = useState(false)
   const { library, synced, sharedByTeam, saveEntry } = useCustomOpponentPersonaLibrary()
 
@@ -743,6 +755,13 @@ export function PracticeRoundSimulatorPanel() {
             const judgeDecisionRubric = record.judgeDecision
               ? buildJudgeDecisionRubric(record.setup.judgeParadigm, record.judgeDecision)
               : null
+            const replaySteps = buildPracticeRoundReplaySteps(record.setup.speechOrder, submitted)
+            const hasReplayableSpeech = replaySteps.some((step) => step.delivered)
+            const replayIndex = Math.min(
+              replayStepByRound[record.roundId] ?? 0,
+              Math.max(replaySteps.length - 1, 0),
+            )
+            const replayStep = replaySteps[replayIndex]
             const actionError = actionErrors[record.roundId]
             return (
               <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
@@ -775,6 +794,54 @@ export function PracticeRoundSimulatorPanel() {
                   </Link>
                   .
                 </p>
+
+                {hasReplayableSpeech && replayStep && (
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium text-foreground">Replay round</p>
+                    <div className="space-y-2 rounded-md border border-border px-3 py-2 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline">
+                            {replayIndex + 1} / {replaySteps.length}
+                          </Badge>
+                          <span className="font-medium text-foreground">{replayStep.name}</span>
+                          <Badge variant="outline">{replayStep.speaker === "user" ? "You" : "AI"}</Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={replayIndex === 0}
+                            onClick={() =>
+                              setReplayStepByRound((prev) => ({
+                                ...prev,
+                                [record.roundId]: replayIndex - 1,
+                              }))
+                            }
+                          >
+                            ← Prev
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={replayIndex >= replaySteps.length - 1}
+                            onClick={() =>
+                              setReplayStepByRound((prev) => ({
+                                ...prev,
+                                [record.roundId]: replayIndex + 1,
+                              }))
+                            }
+                          >
+                            Next →
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="whitespace-pre-line text-muted-foreground">
+                        {replayStep.delivered ? replayStep.text : "Not yet delivered."}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {aiSpeechRequest && (
                   <div className="space-y-2">
