@@ -5,6 +5,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&family=Roboto+Slab:wght@400;500;700&family=Source+Code+Pro:wght@400;500;700&family=Source+Sans+3:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
+/* The REASON editor's own component styles (toolbar, tables, code blocks…). */
+@import "react-reason-editor/style.css" layer(vendor);
 @import "./themes.css";
 @import "../../../packages/debate-flow/src/styles/ebb-scope.css";
 
@@ -19,7 +21,46 @@
 @source "../../../packages/debate-editor/src";
 @source "../../../packages/debate-flow/src";
 
+/* The embedded qwksearch workspace (/doc) is built from npm/workspace
+   packages whose Tailwind classes must be registered the same way —
+   without these the chat UI and editor ship unstyled. */
+@source "../node_modules/research-agent-ui/src";
+@source "../node_modules/react-reason-editor/dist";
+@source "../node_modules/shadcn-settings/dist";
+
 @custom-variant dark (:is(.dark) &);
+
+/* Legacy qwksearch color utilities (bg-light-primary, dark:bg-dark-secondary,
+   border-light-200…) used throughout research-agent-ui and the REASON editor,
+   mapped onto the shadcn variables below — ported from qwksearch-web's
+   globals.css so the embedded workspace renders with the host theme. */
+@theme {
+  --color-light-50: var(--background);
+  --color-light-100: var(--secondary);
+  --color-light-200: var(--border);
+  --color-light-300: var(--input);
+
+  --color-light-primary: var(--background);
+  --color-light-secondary: var(--secondary);
+
+  --color-dark-50: var(--background);
+  --color-dark-100: var(--secondary);
+  --color-dark-200: var(--border);
+  --color-dark-300: var(--input);
+
+  --color-dark-primary: var(--background);
+  --color-dark-secondary: var(--secondary);
+
+  --color-border-light-50: var(--background);
+  --color-border-light-100: var(--secondary);
+  --color-border-light-200: var(--border);
+  --color-border-light-300: var(--input);
+
+  --color-border-dark-50: var(--background);
+  --color-border-dark-100: var(--secondary);
+  --color-border-dark-200: var(--border);
+  --color-border-dark-300: var(--input);
+}
 
 :root {
   --background-back: hsl(0, 0%, 95%);
