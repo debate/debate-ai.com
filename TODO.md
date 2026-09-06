@@ -6,6 +6,47 @@
 _No task currently in progress._
 
 ### Completed
+- **⌨️ Legacy Verbatim / CardMirror Compatibility — download the shortcuts
+  reference as a PDF.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built (`apps/debate-ai.com/app/api/settings/route.ts` plus
+  dozens of `saved_*` D1 tables/`/api/*` routes already link account
+  settings, flows, docs, and rounds to signed-in users in SQL, and every
+  tool is already reachable from the Tools page, CardMirror's own
+  menu/command palette, and the feature catalog checked this run), so this
+  slice closed idea #14's ("Legacy Verbatim / Cardmirror Compatibility")
+  last tracked follow-up instead: "a 'download the shortcuts as a
+  printable PDF' option instead of relying on the browser/OS
+  print-to-PDF flow from the Print action." Before this, the in-editor
+  shortcuts reference modal (`reference-ui.ts`) could only Print (via the
+  browser's own print dialog) or Export… (a plain-text `.txt` file) — no
+  format gave a portable, already-paginated document independent of the
+  viewer's own browser/OS print pipeline. A new
+  `debate-editor`'s `reference-pdf-export.ts#buildShortcutsReferencePdf`
+  (this repo's first use of a PDF-generation library, `pdf-lib`, added as
+  a new dependency of that package) renders the same `collectGroups()`
+  snapshot the on-screen list/Print/Export already share into a paginated
+  PDF — a title, then each non-empty group as a heading with its rows laid
+  out in a two-column (key, label) table, starting a new page whenever the
+  next heading or row would run past the bottom margin. The modal's header
+  gained a third "Download PDF" action next to Print/Export… (`reference-ui.ts#exportAsPdf`),
+  saving `cardmirror-shortcuts.pdf` through the identical
+  `getHost().saveAs()` native-picker-or-download path Export… already
+  uses (extended with a `pdf` → `application/pdf` MIME mapping in
+  `browser-host.ts`), so it works the same way across the browser-tab,
+  PWA, and Electron hosts. See
+  `docs/features/legacy-verbatim-shortcuts.md`'s updated "Printable and
+  exportable reference" section. 5 new Vitest cases in
+  `packages/debate-editor/test/reference-pdf-export.test.ts` (PDF-magic-header
+  bytes, a `PDFDocument.load` round trip staying at one page for a short
+  reference, an empty-rows group not breaking generation, a title-only
+  page for an all-empty group list, and pagination onto a second page once
+  rows overflow the first). No further follow-up is currently tracked for
+  this idea; a future run should pick a fresh next-step elsewhere if one
+  becomes worth doing.
 - **🎯 Daily Quests and Targets — quest difficulty tiers.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to
@@ -17061,7 +17102,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 13. **Coaching Programs and Group Challenges** (`/coaching-programs`, `/cards/group-challenges`) — the coach-facing roster analytics dashboard follow-up is done: a new **Roster Analytics** section on `/coaching-programs` (`CoachingProgramRosterAnalyticsPanel`, in the `debate-community` package) lets a coach pick a persisted coaching program and see every roster member's group-challenge standing and daily-quest streak in one ranked table, composed via `lib/coaching-program-roster-analytics.ts`'s `buildCoachingProgramRosterAnalytics` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster analytics dashboard" section. The digest-notification follow-up is also now done: the same panel renders a "Recent challenge results" section, a *program-roster-scoped* digest (not `state/newsStream.ts`'s existing feed-wide `groupChallengeNews()` announcement) of every completed group challenge whose roster overlaps the selected program's, via a new `buildCoachingProgramChallengeDigest`/`buildPersistedCoachingProgramChallengeDigest` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Roster challenge digest" section. The calendar/schedule-view follow-up is also now done, for sprints and challenges: the same panel's new "Program calendar" section renders a day-grouped, chronological list of every roster-scoped group challenge's start/end date, plus — once a topic is typed into the section's own field — that topic's sprint-note dates, via a new `lib/coaching-program-calendar.ts`'s `buildCoachingProgramCalendarEvents`/`groupCoachingProgramCalendarEventsByDay` and `state/coachingProgramCalendar.ts`'s `buildPersistedCoachingProgramCalendar` — see the Completed entry above and `docs/features/coaching-programs.md`'s "Program calendar" section. The "drills" half of that follow-up is also now done: a new app/page-layer client wrapper (`CoachingProgramRosterAnalyticsWithDrills.tsx`) resolves the signed-in coach's own scheduled drill review reminders via `debate-practice-rounds`' `useDrillSets()` and its new `buildDrillReviewCalendarEvents`, into a dependency-free `{dayKey, label, detail}` shape fed into the panel's new `drillReviewEvents` prop and on through `buildCoachingProgramCalendarEvents`'s new `drillReviews` parameter — avoiding the circular-dependency problem the first slice left open by resolving it at the one layer that already depends on both packages, rather than moving the composition itself — see the Completed entry above and `docs/features/coaching-programs.md`'s updated "Program calendar" section. No further follow-up is currently tracked for this idea beyond the now-narrower gap that these drill-review events are the *viewing coach's own*, not roster-wide (see that doc's updated "Known gaps" — a drill set has no owning-contributor id today, so there's no way to look one up across a roster); a future run should pick a fresh next-step (that gap, or elsewhere) if one becomes worth doing.
 
-14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). The onboarding-nudge follow-up is also now done: a one-time `promptForRouteChoice` dialog (`verbatim-nudge.ts`) points whoever the UI tour's own "reference" step doesn't reach — an established profile the tour auto-skips, or a fresh one that left the tour before that step — at the shortcuts reference the first time a document is open, without racing or stacking on top of an in-progress tour. See `docs/features/legacy-verbatim-shortcuts.md`'s "Verbatim onboarding nudge" section. Next: a "download the shortcuts as a printable PDF" option instead of relying on the browser/OS print-to-PDF flow from the Print action.
+14. **Legacy Verbatim / Cardmirror Compatibility** (CardMirror's native shortcut set) — all four prior bullets are done: `insertShortCite` (`Mod-Shift-k`) closes the one missing command; an in-editor shortcuts reference already exists (`openShortcutsReference`, reachable via the menu/palette/toolbar button — not bound to `?` by default, but rebindable like any other command); Settings → Keyboard shortcuts (`keybindings-editor.ts`) already lets a user rebind every command; and the reference itself now has Print and Export… actions (`reference-ui.ts`, `reference-export.ts`). The onboarding-nudge follow-up is also now done: a one-time `promptForRouteChoice` dialog (`verbatim-nudge.ts`) points whoever the UI tour's own "reference" step doesn't reach — an established profile the tour auto-skips, or a fresh one that left the tour before that step — at the shortcuts reference the first time a document is open, without racing or stacking on top of an in-progress tour. See `docs/features/legacy-verbatim-shortcuts.md`'s "Verbatim onboarding nudge" section. The "download the shortcuts as a printable PDF" follow-up is also now done: a "Download PDF" action sits next to Print/Export… on the reference modal's header, saving a paginated `cardmirror-shortcuts.pdf` through the same `getHost().saveAs()` path via the new `reference-pdf-export.ts#buildShortcutsReferencePdf` (this repo's first use of a PDF-generation library, `pdf-lib`) — see the Completed entry above and `docs/features/legacy-verbatim-shortcuts.md`'s updated "Printable and exportable reference" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step elsewhere if one becomes worth doing.
 
 15. **Flow-in-Speech Flow Annotations** (`/annotations`; the `FlowSpreadsheet` grid badges this idea used to also mention were deleted by PR #498 on 2026-09-03 — see the Completed entry above and `docs/features/flow-annotations.md`'s "⚠️ Known regression" note) — the search/filter follow-up is done: the standalone annotations panel has Speech/Speaker/Tag filter dropdowns (populated from the values actually present) plus optional `speaker`/`tag` fields on `FlowAnnotation` itself (`flow/flow-annotations.ts#filterFlowAnnotations`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Search/filter by speech, speaker, or tag" section. The bulk-export follow-up is also now done: a new **Flow** filter dropdown drives a "Download annotations" button that saves every annotation on that flow as a plain-text file, sorted by timestamp (`flow/flow-annotations-export.ts#buildFlowAnnotationsExportText`) — see the Completed entry above and `docs/features/flow-annotations.md`'s "Bulk export" section. The density-scrubber follow-up is also now done: a new **Annotation density** bar strip (`debate-practice-drills`' `flow/annotation-density.ts#buildAnnotationDensityBuckets`, `flow/AnnotationDensityScrubber.tsx`) shows above the annotation list once a specific Flow filter is selected, bucketed across the filtered annotations' own timestamp range (no real video-duration data exists to scale against) and clickable per-bucket to jump to that cluster's earliest annotation — see the Completed entry above and `docs/features/flow-annotations.md`'s updated "Known gaps" section. No further follow-up is currently tracked for this standalone panel; a future run should instead prioritize the "Known regression" above — restoring a real (Handsontable-native) annotation/edit/prep-note/tag affordance in the current flow editor — since that affects idea #10's, idea #16's, and the "Strategy Sync Notes" bullet's docs too, not just this one — see the Completed entry above.
 
