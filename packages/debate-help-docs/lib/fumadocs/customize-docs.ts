@@ -8,7 +8,7 @@ export const docsConfig: DocsConfig = {
   github: "https://github.com/debate/debate-ai.com",
   githubPackages: "https://github.com/debate/debate-ai.com/tree/master/packages",
   githubDocs:
-    "https://github.com/debate/debate-ai.com/tree/master/packages/debate-ai-docs/content/docs",
+    "https://github.com/debate/debate-ai.com/tree/master/packages/debate-help-docs/content/docs",
   favicon: "/favicon.ico",
   appUrl: "https://debate-ai.com",
   topLinks: [
