@@ -67,6 +67,17 @@
  * round's filter changes (a prior selection may no longer be visible) and
  * after a successful bulk save.
  *
+ * Each heading row in a taggable round also has a "Select section" /
+ * "Deselect section" action — the deleted popover's other bulk mode
+ * (neighbour-preview/bulk-section tagging: tagging every row under one
+ * heading in a single action), restored the same composable way the
+ * multi-row checkbox selection above was: rather than tagging the section
+ * directly, it folds every argument row currently filtered under that
+ * heading into the existing checkbox selection via `debate-round`'s
+ * `toggleSectionRowSelection`, so it opens the same "Tag selected…" bulk
+ * dialog as a manually-checked selection would. Hidden for a heading with no
+ * surviving filtered rows under it (nothing to select).
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -102,6 +113,7 @@ import {
   inferArgumentType,
   listAuthorIdsInFlow,
   setRowsArgumentTags,
+  toggleSectionRowSelection,
   type ArgumentTags,
 } from "debate-round/src/flow/argument-tagging"
 import { argumentTreeOutlineFilename, buildArgumentTreeOutlineText } from "../flow/argument-tree-export"
@@ -301,6 +313,14 @@ export function ArgumentTreePanel() {
     })
   }
 
+  /** Folds a heading's section of rows into the round's existing checkbox selection instead of replacing it (unlike "Select all"/"Deselect all" above, which always applies to every filtered row). */
+  const toggleSectionSelected = (roundId: string, sectionRowIndexes: number[]) => {
+    setSelectedRows((prev) => ({
+      ...prev,
+      [roundId]: toggleSectionRowSelection(prev[roundId] ?? [], sectionRowIndexes),
+    }))
+  }
+
   /** Best-effort mirror of `useFlowEffects.ts#useFlowPersistence`'s write, which isn't mounted on this route. */
   const persistFlows = (updatedFlows: Flow[]) => {
     try {
@@ -396,11 +416,18 @@ export function ArgumentTreePanel() {
         const sideKeys = collectSideKeys(record)
         const argumentTypes = collectArgumentTypes(record)
         const authorIds = collectAuthorIds(record)
-        const filtered = flattenArgumentTree(filterArgumentTree(record.tree, filter))
+        const filteredTree = filterArgumentTree(record.tree, filter)
+        const filtered = flattenArgumentTree(filteredTree)
         const taggableRowIndexes = filtered.filter((node) => !node.isHeading).map((node) => node.rowIndex)
         const selectedForRound = selectedRows[record.roundId] ?? []
         const allTaggableSelected =
           taggableRowIndexes.length > 0 && taggableRowIndexes.every((index) => selectedForRound.includes(index))
+        /** Every heading's own surviving filtered argument rows, keyed by the heading node's id — "select all rows under this heading" needs just this heading's rows, not the whole round's. */
+        const sectionRowIndexesByHeadingId = new Map<string, number[]>(
+          filteredTree
+            .filter((node) => node.isHeading)
+            .map((node) => [node.id, node.children.filter((child) => !child.isHeading).map((child) => child.rowIndex)]),
+        )
 
         return (
           <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
@@ -641,7 +668,11 @@ export function ArgumentTreePanel() {
               <p className="text-sm text-muted-foreground">No rows match the current filter.</p>
             ) : (
               <div className="space-y-1">
-                {filtered.map((node) => (
+                {filtered.map((node) => {
+                  const sectionRowIndexes = node.isHeading ? sectionRowIndexesByHeadingId.get(node.id) ?? [] : []
+                  const sectionAllSelected =
+                    sectionRowIndexes.length > 0 && sectionRowIndexes.every((index) => selectedForRound.includes(index))
+                  return (
                   <div
                     key={node.id}
                     className="flex items-start gap-2 rounded-md border border-border px-3 py-1.5 text-sm"
@@ -713,8 +744,19 @@ export function ArgumentTreePanel() {
                         })()}
                       </Button>
                     )}
+                    {node.isHeading && canTagRound(record.roundId) && sectionRowIndexes.length > 0 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="ml-auto h-6 px-2 text-xs"
+                        onClick={() => toggleSectionSelected(record.roundId, sectionRowIndexes)}
+                      >
+                        {sectionAllSelected ? "Deselect section" : "Select section"}
+                      </Button>
+                    )}
                   </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
