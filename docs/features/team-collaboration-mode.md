@@ -292,6 +292,51 @@ Vitest-covered in
 cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
 mirroring `sprintSessions.test.ts`'s cases).
 
+A later slice closes the "true freeform (x/y, draggable) whiteboard layout"
+follow-up the prior slice above deliberately deferred, once it turned out the
+"no drag-and-drop primitive to build against" framing didn't actually block
+it: a freeform board only needs plain Pointer Events on the note itself (no
+shared primitive, no new dependency), the same way `debate-editor`'s
+`nav-panel.ts` already does its own drag-to-reorder independent of any
+`panel-shell` primitive. `WhiteboardNote` gained `x`/`y` fields (a
+percentage, `0-100`, of the board's own width/height, so a position survives
+a resize instead of anchoring to a specific pixel grid); `createWhiteboardNote`
+now clamps them through a new `clampWhiteboardCoordinate`, and a new
+`defaultWhiteboardNotePosition(existingNoteCountForTopic)` cascades a fresh
+note across a 4-column grid (mirroring `nextWhiteboardNoteColor`'s own
+existing-count-based cycling) so it never lands stacked on another note
+before anyone drags it. A new pure `moveWhiteboardNotePosition(notes, id, x,
+y)` is the drag's model-level half, and `state/sprintWhiteboard.ts`'s new
+`updatePersistedWhiteboardNotePosition(id, x, y)` is its persistence half.
+`TopicSprintPanel`'s "Shared whiteboard" board is now a fixed-height
+`position: relative` container with each note `position: absolute` at its
+`x`/`y`; `onPointerDown`/`onPointerMove`/`onPointerUp`/`onPointerCancel` on
+each note track an in-progress drag in a ref (so a move never triggers a
+re-render or a write) and only call `updatePersistedWhiteboardNotePosition`
+once, on release — see the "Freeform positioning" section below.
+Vitest-covered in `team-collaboration-mode.test.ts`
+(`defaultWhiteboardNotePosition`'s grid cascade, `clampWhiteboardCoordinate`'s
+range clamp, `moveWhiteboardNotePosition`'s targeted update/clamp/missing-id
+no-op, and `createWhiteboardNote`'s new `x`/`y` clamping) and
+`sprintWhiteboard.test.ts` (`updatePersistedWhiteboardNotePosition`'s
+persisted write/clamp/missing-id no-op).
+
+### Freeform positioning
+
+Once at least one sticky note exists, the board renders as a fixed-height
+(`h-96`) dashed-border area instead of a flex-wrapped list. Every note sits
+at an absolute `left`/`top` percentage of that area, draggable (in editable
+mode only) by pressing and moving it with a mouse, pen, or touch — Pointer
+Events cover all three. A short "Drag a sticky note to reposition it on the
+board." hint sits above the board in editable mode. Dragging updates a
+component-local "currently dragging" position on every `pointermove` (so the
+note tracks the pointer smoothly) but only persists the final position via
+`updatePersistedWhiteboardNotePosition` on `pointerup`/`pointercancel` — a
+drag that's released without moving costs no write. A note's position is a
+percentage of the board's own width/height rather than a fixed pixel
+coordinate, so it stays proportionally in place across different viewport
+sizes rather than drifting toward one edge.
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -309,8 +354,10 @@ mirroring `sprintSessions.test.ts`'s cases).
 - Scheduled sessions and whiteboard notes are both local-only (no account
   sync yet, unlike some other ideas' persisted stores), and scheduling is by
   calendar day only — no time-of-day, recurrence, or reminder notification.
-- The whiteboard has no freeform (x/y, draggable) layout — notes render in
-  creation order only. A true positioned canvas would need a drag-and-drop
-  primitive this repo's UI kit doesn't have yet; worth revisiting if another
-  idea needs the same primitive (see `TODO.md`'s open follow-up on this
-  bullet, since it's still not started).
+  The freeform whiteboard's `x`/`y` positions are local-only too, for the
+  same reason.
+- The freeform whiteboard has no live "who's dragging what" presence — two
+  contributors editing the same board only see each other's moves after a
+  `storage`-event refresh (or reload) picks up the persisted position, not
+  mid-drag the way `shared-flow-sync.md`'s live presence heartbeat works for
+  flows.

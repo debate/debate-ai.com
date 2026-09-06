@@ -17,7 +17,8 @@
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Users2 } from "lucide-react";
 
 import {
@@ -45,9 +46,11 @@ import {
   buildTopicSprintSummaryText,
   buildSprintRetrospective,
   buildSprintRetrospectiveText,
+  clampWhiteboardCoordinate,
   createSprintNote,
   createSprintSession,
   createWhiteboardNote,
+  defaultWhiteboardNotePosition,
   assignSprintNote,
   getOpenFollowUps,
   getPastSprintSessions,
@@ -74,6 +77,7 @@ import {
   deleteWhiteboardNote,
   listWhiteboardNotes,
   saveWhiteboardNote,
+  updatePersistedWhiteboardNotePosition,
 } from "../state/sprintWhiteboard";
 import {
   readPersistedTopicSprintInputs,
@@ -325,6 +329,7 @@ export function TopicSprintPanel({
 
   const addWhiteboardNote = () => {
     if (!whiteboardNoteText.trim()) return;
+    const position = defaultWhiteboardNotePosition(whiteboardNotesForTopic.length);
     saveWhiteboardNote(
       createWhiteboardNote({
         id: `whiteboard-note-${Date.now()}`,
@@ -333,6 +338,8 @@ export function TopicSprintPanel({
         text: whiteboardNoteText.trim(),
         color: whiteboardNoteColor,
         createdAt: now,
+        x: position.x,
+        y: position.y,
       }),
     );
     setWhiteboardNoteText("");
@@ -342,6 +349,59 @@ export function TopicSprintPanel({
 
   const removeWhiteboardNote = (id: string) => {
     deleteWhiteboardNote(id);
+    refreshWhiteboard();
+  };
+
+  // Freeform whiteboard dragging: `dragStateRef` tracks the in-progress drag
+  // (pointer id, start client coords, note's start position) without
+  // re-rendering on every pointermove, while `draggingNote` holds just the
+  // live x/y the currently-dragged note should render at. Committing to
+  // `updatePersistedWhiteboardNotePosition` only happens on pointerup, so a
+  // drag that never moves the pointer costs no writes.
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const dragStateRef = useRef<{ id: string; startClientX: number; startClientY: number; startX: number; startY: number } | null>(
+    null,
+  );
+  const [draggingNote, setDraggingNote] = useState<{ id: string; x: number; y: number } | null>(null);
+
+  const handleNotePointerDown = (event: React.PointerEvent<HTMLDivElement>, note: WhiteboardNote) => {
+    if (!editable) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStateRef.current = {
+      id: note.id,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startX: note.x,
+      startY: note.y,
+    };
+    setDraggingNote({ id: note.id, x: note.x, y: note.y });
+  };
+
+  const handleNotePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragStateRef.current;
+    const board = boardRef.current;
+    if (!drag || !board) return;
+    const rect = board.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const deltaXPercent = ((event.clientX - drag.startClientX) / rect.width) * 100;
+    const deltaYPercent = ((event.clientY - drag.startClientY) / rect.height) * 100;
+    setDraggingNote({
+      id: drag.id,
+      x: clampWhiteboardCoordinate(drag.startX + deltaXPercent),
+      y: clampWhiteboardCoordinate(drag.startY + deltaYPercent),
+    });
+  };
+
+  const endNoteDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragStateRef.current;
+    if (!drag) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    const finalPosition = draggingNote && draggingNote.id === drag.id ? draggingNote : { x: drag.startX, y: drag.startY };
+    updatePersistedWhiteboardNotePosition(drag.id, finalPosition.x, finalPosition.y);
+    dragStateRef.current = null;
+    setDraggingNote(null);
     refreshWhiteboard();
   };
 
@@ -485,24 +545,42 @@ export function TopicSprintPanel({
             message={editable ? "Add the first brainstorming note below." : undefined}
           />
         ) : (
-          <div className="flex flex-wrap gap-2" data-testid="whiteboard-note-board">
-            {whiteboardNotesForTopic.map((note) => (
-              <div
-                key={note.id}
-                className={`flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]}`}
-              >
-                <p className="whitespace-pre-wrap break-words">{note.text}</p>
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs text-muted-foreground">{note.authorId}</span>
-                  {editable ? (
-                    <Button variant="ghost" size="sm" onClick={() => removeWhiteboardNote(note.id)}>
-                      Remove
-                    </Button>
-                  ) : null}
+          <>
+            {editable ? (
+              <p className="text-xs text-muted-foreground">Drag a sticky note to reposition it on the board.</p>
+            ) : null}
+            <div
+              ref={boardRef}
+              className="relative h-96 w-full overflow-hidden rounded-md border border-dashed border-muted-foreground/30 bg-muted/10"
+              data-testid="whiteboard-note-board"
+            >
+            {whiteboardNotesForTopic.map((note) => {
+              const position = draggingNote && draggingNote.id === note.id ? draggingNote : note;
+              return (
+                <div
+                  key={note.id}
+                  data-testid={`whiteboard-note-${note.id}`}
+                  className={`absolute flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]} ${editable ? "cursor-grab touch-none active:cursor-grabbing" : ""}`}
+                  style={{ left: `${position.x}%`, top: `${position.y}%` }}
+                  onPointerDown={(event) => handleNotePointerDown(event, note)}
+                  onPointerMove={handleNotePointerMove}
+                  onPointerUp={endNoteDrag}
+                  onPointerCancel={endNoteDrag}
+                >
+                  <p className="whitespace-pre-wrap break-words">{note.text}</p>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs text-muted-foreground">{note.authorId}</span>
+                    {editable ? (
+                      <Button variant="ghost" size="sm" onClick={() => removeWhiteboardNote(note.id)}>
+                        Remove
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              );
+            })}
+            </div>
+          </>
         )}
 
         {editable ? (
