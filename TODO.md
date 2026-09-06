@@ -6,6 +6,68 @@
 _No task currently in progress._
 
 ### Completed
+- **Pre-Round Briefings panel — cross-tab live-update (`shared-flow-sync.md`
+  Known gap: "every other localStorage-backed panel in this repo still has
+  no cross-tab live-update mechanism").** Prompted by another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL... with ability to save
+  flows docs and debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built (account settings,
+  dozens of `saved_*` D1 tables/`/api/*` routes linking flows, docs, and
+  rounds to signed-in users in SQL, and every tool already reachable from
+  the Tools page, CardMirror's own menu/command palette, and the feature
+  catalog, all reconfirmed this run), so this slice picked up
+  `shared-flow-sync.md`'s next unclaimed panel from the running list named
+  in the preceding runs' Completed entries (idea #12, "Pre-Round
+  Intelligence Panel"). `PreRoundBriefingsPanel` reads three
+  localStorage-backed stores — `state/preRoundBriefings.ts` (the briefing
+  list itself), `state/ownRoundHistory.ts` (the "Log a round" head-to-head
+  history feeding "Prior meetings"), and, via `hooks/useRoundPairings.ts`,
+  `state/roundPairings.ts` (the "Pairing schedule" section) — and previously
+  only ever refreshed any of them on mount. Added a single combined
+  predicate, `flow/live-update.ts`'s
+  `PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isPreRoundBriefingsPanelLiveUpdateStorageEvent` (covering all three keys,
+  mirroring `isFlowLiveUpdateStorageEvent`'s "one predicate for several
+  keys read by the same panel" convention), and wired a `storage`-event
+  listener into `PreRoundBriefingsPanel.tsx` (re-reading whichever of the
+  briefing list/round history the matched key, or a `null`
+  `localStorage.clear()` key, corresponds to) and a second one directly
+  into `useRoundPairings.ts` (re-reading pairings on any covered key, since
+  that hook is `roundPairings`' sole owner and consumer). Documented in a
+  new "Cross-tab live update" section in `docs/features/pre-round-briefings.md`
+  and added `PreRoundBriefingsPanel` to `docs/features/shared-flow-sync.md`'s
+  running list of panels that already have the mechanism. Vitest-covered: 8
+  new cases in `packages/debate-round/test/live-update.test.ts` (every
+  backing key, the `null`-key clear-all case, and unrelated/substring-
+  matching keys), bringing that file to 28 cases; the panel's and hook's own
+  `storage`-listener wiring remain intentionally untested, matching every
+  other panel/hook in this repo whose wiring is exercised only through the
+  shared pure predicate's own tests. Every other localStorage-backed panel
+  still without the mechanism (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `PrepRoomPanel`, `ReviewQueuePanel`, `SprintNotesPanel`,
+  `TopicCoverageDashboardPanel` in `debate-card-search`; `AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingProgramsPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowSummariesPanel`, `JudgeDecisionPanel`,
+  `OpponentTeamProfilesPanel`, `PracticeRoundSimulatorPanel`,
+  `UserSettingsPanel`, `VulnerabilityChartsPanel`, `WordCountRoundsPanel` in
+  `debate-round`; `CoachMaterialsPanel`, `JudgeParadigmPickerPanel`,
+  `JudgeProfilesPanel`, `OpponentPersonaPickerPanel` in
+  `debate-speech-writer`; and `DebateVideosPanel` in `debate-videos`)
+  remains open for a future run to pick up next. Verified: `bun install`
+  (4399 packages), the touched test file (28/28 pass), the full `bun run
+  test` (263 files / 4996 tests, all pass, up from 4992/263 at HEAD before
+  this change), the whole-repo `bunx turbo run typecheck` (16/16
+  typecheck-bearing packages passing; `debate-ai-web` has no `typecheck`
+  script), and confirmed `bun run build:web` fails identically on this
+  branch and on master before this change (`UNLOADABLE_DEPENDENCY` on the
+  native `canvas` binding during the RSC server-bundle scan — a
+  pre-existing sandbox/toolchain limitation unrelated to this change, not
+  something this run introduced or could fix without rebuilding that native
+  dependency for this container). No `lint`/`format:check` script exists
+  anywhere in this repo (root or per-package `package.json`, and no `lint`
+  task in `turbo.json`), so that step was skipped as not applicable.
 - **🎮 Gamified Quests — account-syncing reminder opt-ins/streak freezes
   across devices.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
