@@ -34,10 +34,16 @@
  * `useFlowStore` for its "Generate outline for current round" action, so a
  * "Tag Argument…" affordance sits naturally alongside it — right where
  * these tags are actually filtered on — rather than requiring a new
- * `Box`-tree grid to be rebuilt first. Multi-row/bulk-section tagging (the
- * deleted popover's other features) aren't restored in this slice; see
- * `docs/features/argument-tree-outline.md`'s "Known gaps" for the deferred
- * follow-up.
+ * `Box`-tree grid to be rebuilt first.
+ *
+ * `setRowsArgumentTags` restores the deleted popover's multi-row bulk
+ * tagging, adapted to `ArgumentTreePanel`'s flat row list: a caller collects
+ * a set of `rowIndex`es via its own checkbox-selection state (rather than an
+ * AG Grid selection model) and applies one set of tags to all of them at
+ * once. The deleted popover's *neighbour-preview/bulk-section* mode (tagging
+ * every row under a heading in one action) isn't restored — see
+ * `docs/features/argument-tree-outline.md`'s "Known gaps" for that narrower
+ * remaining follow-up.
  *
  * @module flow/argument-tagging
  */
@@ -98,6 +104,28 @@ export function setRowArgumentTags<F extends Pick<Flow, "children">>(
   return {
     ...flow,
     children: flow.children.map((box, index) => (index === rowIndex ? taggedBox(box, tags) : box)),
+  };
+}
+
+/**
+ * Bulk variant of `setRowArgumentTags`: applies the same `tags` to every row
+ * in `rowIndexes` (a "checkbox-selection" tagging action across multiple
+ * rows at once). The same field-clearing rule applies to every targeted row
+ * — an omitted field, or a whitespace-only `authorId`, clears that tag
+ * everywhere it's applied, not just where it was already set. Duplicate and
+ * out-of-range indexes are ignored; a no-op (returns `flow` unchanged) once
+ * no valid index remains.
+ */
+export function setRowsArgumentTags<F extends Pick<Flow, "children">>(
+  flow: F,
+  rowIndexes: number[],
+  tags: ArgumentTags,
+): F {
+  const targets = new Set(rowIndexes.filter((index) => index >= 0 && index < flow.children.length));
+  if (targets.size === 0) return flow;
+  return {
+    ...flow,
+    children: flow.children.map((box, index) => (targets.has(index) ? taggedBox(box, tags) : box)),
   };
 }
 
