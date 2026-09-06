@@ -10,12 +10,12 @@
  * persistence convention (SSR/no-storage-safe, corrupt or missing JSON
  * degrades to an empty list rather than throwing).
  *
- * Records only the local (`checkPersistedPageForExistingCards`) outcome —
- * this browser's own evidence repository — not the async team-wide shared
- * index result (`checkRemotePageForExistingCards`), mirroring how the "Check
- * this page" box's local check already runs synchronously ahead of the
- * remote one. A future run could append a second record once the remote
- * check resolves, if that turns out to be useful.
+ * Records both halves of a "Check this page" lookup: the synchronous local
+ * (`checkPersistedPageForExistingCards`) outcome against this browser's own
+ * evidence repository, and — once it resolves — the async team-wide shared
+ * index result (`checkRemotePageForExistingCards`), each as its own record
+ * tagged with a `scope` so the history list can badge which repository
+ * answered. Legacy records saved before `scope` existed read back as local.
  *
  * Follows `judgeDecisions.ts`'s append-only-with-cap shape rather than
  * upserting by URL, so re-checking the same page twice keeps both entries in
@@ -24,7 +24,15 @@
  * @module state/reuseCheckHistory
  */
 
-import type { PageReuseCheckResult } from "../lib/shared-evidence-library";
+/** Which repository answered a recorded check: this browser's own entries, or the server-backed shared team index. */
+export type ReuseCheckScope = "local" | "team";
+
+/** The shared shape of a local `PageReuseCheckResult` and a `RemotePageReuseCheckResult` — all this log needs. */
+export type ReuseCheckOutcome = {
+  url: string;
+  alreadyCut: boolean;
+  matches: readonly unknown[];
+};
 
 export type ReuseCheckHistoryRecord = {
   /** Generated once when the check is recorded; the record's stable identity. */
@@ -33,6 +41,8 @@ export type ReuseCheckHistoryRecord = {
   alreadyCut: boolean;
   matchCount: number;
   checkedAt: number;
+  /** Absent on records saved before team-wide checks were logged; treat as `"local"`. */
+  scope?: ReuseCheckScope;
 };
 
 const STORAGE_KEY = "reuseCheckHistory";
@@ -71,13 +81,15 @@ export function listReuseCheckHistory(): ReuseCheckHistoryRecord[] {
 }
 
 /**
- * Records a completed local reuse check, assigning it a fresh `id`. Once the
- * log exceeds `MAX_REUSE_CHECK_HISTORY` entries, the oldest ones beyond the
- * cap are trimmed away.
+ * Records a completed reuse check, assigning it a fresh `id`. `scope` says
+ * which repository answered — the local browser store (the default) or the
+ * server-backed team index. Once the log exceeds `MAX_REUSE_CHECK_HISTORY`
+ * entries, the oldest ones beyond the cap are trimmed away.
  */
 export function appendReuseCheckHistory(
-  result: PageReuseCheckResult,
+  result: ReuseCheckOutcome,
   checkedAt: number = Date.now(),
+  scope: ReuseCheckScope = "local",
 ): ReuseCheckHistoryRecord {
   const record: ReuseCheckHistoryRecord = {
     id: generateReuseCheckHistoryId(),
@@ -85,6 +97,7 @@ export function appendReuseCheckHistory(
     alreadyCut: result.alreadyCut,
     matchCount: result.matches.length,
     checkedAt,
+    scope,
   };
   const trimmed = [...readAll(), record]
     .sort((a, b) => b.checkedAt - a.checkedAt)

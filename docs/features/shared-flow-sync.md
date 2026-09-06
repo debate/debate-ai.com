@@ -155,7 +155,7 @@ match, excluding prefix/extension paths and other flows).
 
 As a contributor types a `FlowEdit`'s **Content** in `FlowEditLogPanel`, a
 "Suggested from Common Argument Library" list scores the in-progress text
-against every persisted `LibraryCard` (`debate-card-search`'s Common
+against every persisted `LibraryCard` (`debate-research-evidence`'s Common
 Argument Library — the combined Shared Evidence Library plus tagged
 Contributions Feed corpus) and shows the closest matches with an
 **Insert** action per suggestion. Clicking **Insert** fills the Content
@@ -169,13 +169,13 @@ corpus to suggest (not auto-apply) a pre-filled flow note from matching
 evidence." It adds:
 
 - `flow/flow-note-suggestions.ts`: `deriveLibraryCardKeywords` (mirrors
-  `debate-card-search`'s `llm-card-scoring.ts#deriveArgBlockKeywords` —
+  `debate-research-evidence`'s `llm-card-scoring.ts#deriveArgBlockKeywords` —
   each of a card's `argBlock`/`topic`/`caseArea`/`tags` phrases kept whole
   plus its individual words over two characters),
   `suggestFlowNotesFromLibrary` (scores every card against the query by
   reusing `scoreRelevance` directly, dropping zero-score cards and capping
   at a limit), and `buildFlowNoteFromCard` (the inserted note's format).
-- `debate-card-search`'s `state/evidenceLibraryEntries.ts`:
+- `debate-research-evidence`'s `state/evidenceLibraryEntries.ts`:
   `listCombinedPersistedLibraryCards`, the same evidence-library +
   tagged-contributions corpus `buildCombinedPersistedArgumentLibrary`
   already composed, now exposed flat for a caller that scores/searches
@@ -188,7 +188,7 @@ Vitest-covered in `packages/debate-round/test/flow-note-suggestions.test.ts`
 cases for `suggestFlowNotesFromLibrary`, and `buildFlowNoteFromCard`'s
 formatting with and without tags) and a new
 `listCombinedPersistedLibraryCards` describe block in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`.
 
 ## Live sync transport
 

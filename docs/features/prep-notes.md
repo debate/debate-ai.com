@@ -222,7 +222,7 @@ itself without changing its status, and without every discussion having to
 be crammed into the note's own text.
 
 - **Store:** `state/prepNoteReplies.ts` (localStorage: `prepNoteReplies`),
-  local-first, mirroring `debate-card-search`'s
+  local-first, mirroring `debate-research-evidence`'s
   `state/dailyBestCardComments.ts` convention — a `PrepNoteReply` is keyed
   by its own generated id and carries the `noteId` it's attached to, an
   `authorId` (trimmed, falling back to `"Anonymous"` when blank), `text`

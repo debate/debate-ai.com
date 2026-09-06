@@ -6,7 +6,7 @@ evidence, and ranks them by total reward points earned.
 - **Route:** `/cards/revisions`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t revision` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
 
 ## What it shows
 
@@ -38,8 +38,9 @@ not only after.
 `RevisionIncentivesPanel` also renders a **Stale evidence digest** section above the leaderboard:
 every persisted stale `card` entry, ranked most-urgent first (an undated citation before every
 dated one — its evidence could be any age — then oldest-cited first, ties broken by argument
-block name), each row showing its argument block, topic/case area, cite, and age, plus a link into
-the Evidence Library to revise it. This is the proactive counterpart to the leaderboard below: it
+block name), each row showing its argument block, topic/case area, cite, and age, plus a per-row "Revise"
+link into the Evidence Library pre-filtered to that entry's argument block (the library's
+`?q=` search deep link). This is the proactive counterpart to the leaderboard below: it
 surfaces which cards need a refresh *before* a revision happens, rather than only rewarding one
 after the fact.
 
@@ -90,7 +91,7 @@ Every scoring/aggregation rule already existed and was Vitest-covered; this feat
 read-only composition and rendering layer over that store — it introduces one new function,
 `buildPersistedRevisionIncentiveLeaderboard`, which composes the existing pure
 `buildRevisionIncentiveLeaderboard` directly against the persisted revision-history store (see
-`packages/debate-card-search/test/revisionHistory.test.ts`). The stale evidence digest is the
+`packages/debate-search-evidence/test/revisionHistory.test.ts`). The stale evidence digest is the
 same pattern applied to `getStaleEvidenceEntries`: `buildStaleEvidenceDigest` (pure) composed
 against the persisted evidence library store by `buildPersistedStaleEvidenceDigest`.
 
@@ -115,7 +116,7 @@ revision recorded — or a card edited — in another tab shows up here without 
 manual reload. This closes `shared-flow-sync.md`'s "Every other
 localStorage-backed panel in this repo still has no cross-tab live-update
 mechanism" Known gap for this panel. Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts`.
+`packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 

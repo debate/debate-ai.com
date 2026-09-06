@@ -33,16 +33,19 @@ export class SelfVerificationNotAllowedError extends Error {
 
 /**
  * Guards a task-verification action: a verifier id is required, and it
- * can't match the assignment's own `contributorId`. Returns the trimmed
- * verifier id on success; throws `VerifierIdRequiredError` or
- * `SelfVerificationNotAllowedError` otherwise.
+ * can't match the assignment's own `contributorId` — compared
+ * case-insensitively after trimming both sides, matching
+ * `session-identity.ts`'s `isOwnContributorRow`/`deriveLockedVerifierId`
+ * convention (so `Alice` can't self-verify a task assigned to `alice`).
+ * Returns the trimmed verifier id on success; throws
+ * `VerifierIdRequiredError` or `SelfVerificationNotAllowedError` otherwise.
  */
 export function assertVerifierAllowed(assignment: RoutedAssignment, verifierId: string): string {
   const trimmed = verifierId.trim();
   if (!trimmed) {
     throw new VerifierIdRequiredError();
   }
-  if (trimmed === assignment.contributorId) {
+  if (trimmed.toLowerCase() === assignment.contributorId.trim().toLowerCase()) {
     throw new SelfVerificationNotAllowedError(trimmed);
   }
   return trimmed;

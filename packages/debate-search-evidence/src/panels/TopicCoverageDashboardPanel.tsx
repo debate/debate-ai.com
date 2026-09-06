@@ -89,6 +89,7 @@ export function TopicCoverageDashboardPanel() {
     setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
     setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
     setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }, [topic])
 
   const refresh = (activeTopic: string) => {
@@ -157,6 +158,8 @@ export function TopicCoverageDashboardPanel() {
         </p>
       </div>
 
+      {crossTopicRows.length > 1 && <CrossTopicComparisonHeatmap rows={crossTopicRows} />}
+
       <div className="space-y-2">
         <Label htmlFor="coverage-topic">Topic</Label>
         <Input
@@ -181,8 +184,6 @@ export function TopicCoverageDashboardPanel() {
           </div>
         )}
       </div>
-
-      {crossTopicRows.length > 1 && <CrossTopicComparisonHeatmap rows={crossTopicRows} />}
 
       {topic.trim() === "" ? (
         <div className="p-6 text-center text-sm text-muted-foreground">

@@ -7,7 +7,7 @@ publish — before it goes live in the shared evidence library.
 - **Route:** `/cards/reviews`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t review queue` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
 
 ## What it shows
 
@@ -66,10 +66,10 @@ panels/ReviewQueuePanel.tsx
 
 Every review-lifecycle/persistence rule already existed and was
 Vitest-covered; this feature adds one new composition function,
-`buildReviewQueuePanelView` (`packages/debate-card-search/src/state/peerReviews.ts`),
+`buildReviewQueuePanelView` (`packages/debate-search-evidence/src/state/peerReviews.ts`),
 which sorts the existing persisted store into a stable panel-ready shape —
 no new lifecycle or mutation logic was introduced. Vitest-covered in
-`packages/debate-card-search/test/peerReviews.test.ts`.
+`packages/debate-search-evidence/test/peerReviews.test.ts`.
 
 ## Gating the Shared Evidence Library
 
@@ -145,7 +145,7 @@ components/research/ReviewQueueWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <ReviewQueuePanel signedInContributorId={...} />
       — seeds "Your reviewer ID" initial value only; a visitor who edits it
@@ -174,7 +174,7 @@ now?, thresholdDays?)` is `true` once a card sitting in `in_review` or
 `changes_requested` card, switching to a destructive variant once it's
 stale — closing the "a review-aging indicator for stale pending reviews"
 follow-up named under the "🗣️ Peer Review System" bullet in TODO.md.
-Vitest-covered in `packages/debate-card-search/test/peer-review.test.ts`.
+Vitest-covered in `packages/debate-search-evidence/test/peer-review.test.ts`.
 
 ## Reviewer workload
 
@@ -204,10 +204,32 @@ omitted entirely once no reviewer has any recorded activity (a fresh
 queue).
 
 Vitest-covered with 8 new cases in
-`packages/debate-card-search/test/peer-review.test.ts` (empty input,
+`packages/debate-search-evidence/test/peer-review.test.ts` (empty input,
 non-pending vs. pending comments, same-card dedup, cross-card counting,
 `reviewedBy` tallying independent of comments, sort order, and a
 reviewer's comment + action activity combining into one entry).
+
+## Cross-tab live update
+
+`ReviewQueuePanel` subscribes to the browser's `storage` event (fires only
+in *other* same-origin tabs/windows, never the one that made the write) via
+`state/live-update.ts`'s `isReviewQueueLiveUpdateStorageEvent` and re-reads
+`buildReviewQueuePanelView()` when it fires for one of its backing keys
+(`peerReviews`, `evidenceLibraryEntries`) — so a review started, advanced,
+or commented on in a second tab refreshes this tab's queue without a manual
+reload. Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
+
+## Error placement
+
+Lifecycle and comment-form errors (an invalid transition, a tier rejection,
+a missing reviewer id or comment body) render inside the review card whose
+action failed, keyed per card — not as one panel-global message above the
+queue — so a rejection on the tenth review in the list surfaces next to the
+button that was clicked. The start-review form keeps its own error line.
+After posting a comment, the card's draft resets but re-seeds the signed-in
+reviewer id, so a signed-in visitor can comment on the same card repeatedly
+without retyping their id.
 
 ## Known gaps
 

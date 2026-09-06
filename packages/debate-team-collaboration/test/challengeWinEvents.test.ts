@@ -106,7 +106,10 @@ describe("buildPersistedGroupChallengeBoard", () => {
     const board = buildPersistedGroupChallengeBoard(190);
     const progress = board.find((entry) => entry.challengeId === "challenge-2");
     expect(progress?.completedCount).toBe(1);
-    expect(progress?.memberStandings).toEqual([{ contributorId: "carol", matchingCount: 1 }]);
+    expect(progress?.memberStandings).toEqual([
+      { contributorId: "carol", matchingCount: 1 },
+      { contributorId: "dave", matchingCount: 0 },
+    ]);
     expect(progress?.mvpContributorId).toBe("carol");
   });
 
