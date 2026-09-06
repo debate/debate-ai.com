@@ -36,7 +36,10 @@ ideas ranked by popularity score, highest first, with:
   without first merging one of them into the board's top idea
 - an "AI" badge when the idea was drafted by a "Generate AI ideas" action
   rather than typed in by a teammate
-- an "Upvote" button showing the current upvote count
+- a rank badge (🏆 #1 / 🥈 #2 / 🥉 #3 for the top three, a plain `#N` badge
+  otherwise), with the board's top idea's card highlighted
+- an "Upvote" button (with a chevron-up icon) showing the current upvote
+  count, briefly scaling up on click as a click acknowledgement
 
 The form also has a "Generate AI ideas" button (next to "Submit idea") that
 drafts several candidate ideas for the form's current argument block and
@@ -342,6 +345,39 @@ round-tripping each action through `localStorage`, and that a duration
 change while running doesn't persist). The panel's own tick/render wiring
 remains intentionally untested, matching this panel's existing convention
 (only pure logic and persistence wrappers are directly tested).
+
+## Idea-ranking UI polish and upvote affordance
+
+Closes the "polish the idea-ranking UI (upvote affordance/animation)"
+follow-up named under the "🧠 Team Brainstorm Assist" bullet in `TODO.md`.
+Previously an idea's rank was only implicit in `board.ideas`' already-sorted
+order (`rankBrainstormIdeas`) — nothing on the card itself said *why* an
+idea sat where it did, and the "Upvote" button gave no feedback beyond the
+count changing after the panel's next re-render.
+
+- Each idea now gets a rank badge from the new pure
+  `lib/team-brainstorm-assist.ts#buildBrainstormIdeaRankBadge(rank)`: `🏆
+  #1` / `🥈 #2` / `🥉 #3` for the top three ranks, a plain `#N` badge for
+  every rank after that. `BrainstormBoardPanel` passes each idea's
+  1-indexed position within `board.ideas` (already ranked) straight in — no
+  new ranking logic.
+- The board's top-ranked idea's card gets a highlighted border/background
+  (`border-primary/40 bg-primary/5`), mirroring
+  `ResearchProgressPanel`'s existing "this row is you" highlight
+  convention.
+- The "Upvote" button gained a chevron-up icon and briefly scales up
+  (`scale-110`, 300ms) after a click, via a local `bumpedIdeaId` state
+  cleared on a timeout — a presentation-only click acknowledgement; the
+  upvote count itself still only updates once `refresh()` re-reads the
+  saved idea, same as before.
+
+Vitest-covered: `packages/debate-team-collaboration/test/team-brainstorm-assist.test.ts`
+(`buildBrainstormIdeaRankBadge`: the trophy/silver/bronze labels, the plain
+`#N` fallback past rank 3, and throwing on a zero/negative/non-integer
+rank). The panel's own bump-animation timer/state wiring is intentionally
+untested, matching this panel's existing convention (see "Cross-tab live
+update" above — only pure logic and persistence wrappers are directly
+tested here).
 
 ## Known gaps
 

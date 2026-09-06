@@ -88,12 +88,30 @@
  * running and by the same `storage`-event listener as the boards above, so a
  * countdown started in one tab is visible — live — in every other open tab.
  *
+ * Each idea's rank badge (🏆 #1 / 🥈 #2 / 🥉 #3 / plain #N, via
+ * `lib/team-brainstorm-assist.ts`'s `buildBrainstormIdeaRankBadge`) and the
+ * board's top idea getting a highlighted card close the "polish the
+ * idea-ranking UI" half of the "upvote affordance/animation" follow-up named
+ * under the "🧠 Team Brainstorm Assist" bullet in TODO.md — previously
+ * `board.ideas`' already-ranked order was the only ranking signal visible,
+ * with no per-idea indicator of *why* it was ranked where it was. The
+ * "upvote animation" half closes alongside it: clicking "Upvote" now briefly
+ * scales the button up (`bumpedIdeaId`, cleared via `setTimeout` after
+ * `UPVOTE_BUMP_ANIMATION_MS`) as a click acknowledgement, and the button
+ * itself gained a chevron-up icon. Both are presentation-only — no new
+ * ranking, scoring, or persistence logic — so, matching this panel's
+ * existing convention (see "Cross-tab live update" in
+ * `docs/features/brainstorm-board.md`), the animation's own timer/state
+ * wiring is intentionally untested; only the new pure `buildBrainstormIdeaRankBadge`
+ * helper is Vitest-covered.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { ChevronUp } from "lucide-react"
 import {
   BRAINSTORM_SESSION_TIMER_PRESETS_SECONDS,
   formatBrainstormSessionTimerRemaining,
@@ -128,7 +146,10 @@ import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArg
 import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
 import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
 import { isBrainstormBoardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
-import type { BrainstormBoard, BrainstormCategory } from "../lib/team-brainstorm-assist"
+import { buildBrainstormIdeaRankBadge, type BrainstormBoard, type BrainstormCategory } from "../lib/team-brainstorm-assist"
+
+/** How long the upvote button's click "bump" animation stays applied before clearing. */
+const UPVOTE_BUMP_ANIMATION_MS = 300
 
 const CATEGORY_OPTIONS: { value: BrainstormCategory; label: string }[] = [
   { value: "argument", label: "New Arguments" },
@@ -202,6 +223,15 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const [sentIdeaIds, setSentIdeaIds] = useState<Set<string>>(new Set())
   const [timer, setTimer] = useState<BrainstormSessionTimerState | null>(null)
   const [timerNow, setTimerNow] = useState(() => Date.now())
+  const [bumpedIdeaId, setBumpedIdeaId] = useState<string | null>(null)
+  const bumpTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clears any pending "bump" animation timeout on unmount so it never fires a state update after.
+  useEffect(() => {
+    return () => {
+      if (bumpTimeoutRef.current) clearTimeout(bumpTimeoutRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     setTopics(listTrackedTopics())
@@ -284,6 +314,9 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const handleUpvote = (id: string) => {
     upvotePersistedBrainstormIdea(id)
     refresh()
+    if (bumpTimeoutRef.current) clearTimeout(bumpTimeoutRef.current)
+    setBumpedIdeaId(id)
+    bumpTimeoutRef.current = setTimeout(() => setBumpedIdeaId(null), UPVOTE_BUMP_ANIMATION_MS)
   }
 
   const handleGenerateAiIdeas = async () => {
@@ -576,10 +609,15 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                 {board.ideas.map((idea, index) => (
                   <div
                     key={idea.id}
-                    className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
+                    className={`flex items-center justify-between gap-3 rounded-md border px-3 py-2 ${
+                      index === 0 ? "border-primary/40 bg-primary/5" : "border-border"
+                    }`}
                   >
                     <div className="space-y-1 text-sm">
                       <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={index === 0 ? "default" : "outline"}>
+                          {buildBrainstormIdeaRankBadge(index + 1)}
+                        </Badge>
                         <span className="font-medium text-foreground">{idea.contributorId}</span>
                         <span className="text-xs text-muted-foreground">
                           {idea.popularityScore}/100 popularity
@@ -614,7 +652,15 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                           Send to Argument Library
                         </Button>
                       )}
-                      <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleUpvote(idea.id)}
+                        className={`gap-1 transition-transform duration-200 ${
+                          idea.id === bumpedIdeaId ? "scale-110" : "scale-100"
+                        }`}
+                      >
+                        <ChevronUp className="size-3.5" />
                         Upvote ({idea.upvotes})
                       </Button>
                     </div>
