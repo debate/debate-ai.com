@@ -208,6 +208,8 @@ describe("buildPersistedTopicSprint", () => {
         completedCount: 1,
         remainingCount: 1,
         isComplete: false,
+        difficulty: "medium",
+        points: 10,
       },
     ]);
     // `sprint.routing` is a fresh re-route of the topic's *current* coverage
