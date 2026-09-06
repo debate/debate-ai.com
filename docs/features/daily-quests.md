@@ -292,6 +292,48 @@ narrowing to one tier or returning everything for "all"; and
 earned-vs-total points, including the empty-board case) and updated
 `buildUnderCoveredArgumentQuests` cases asserting the seeded difficulty.
 
+## Team-vs-team quest competitions
+
+Closes the "team-vs-team quest competitions" follow-up named under the "🎯
+Daily Quests and Targets" bullet in TODO.md. A "Team competition" section on
+the panel lets a team be created from a name plus a comma-separated list of
+contributor ids (`lib/daily-quests.ts`'s `QuestTeam`, persisted under its own
+`state/dailyQuests.ts` `"questTeams"` localStorage key — independent of the
+quest-template roster, since a team roster and the quest board itself vary
+independently). Once at least one team exists, its standing renders
+alongside any others: each team's score is the sum of its own members' points
+earned today, not just whichever single member is furthest ahead, via a new
+`computeContributorQuestPoints` (scores one contributor's own points by
+narrowing the shared contribution feed to just their own contributions first,
+then reusing `buildDailyQuestBoard`/`buildQuestBoardPointsSummary` exactly as
+the individual board already does) and `buildTeamQuestCompetitionStandings`
+(sums each team's members' points, sorted by earned points descending,
+tie-broken by team id). `state/dailyQuests.ts`'s
+`buildPersistedTeamQuestCompetition` composes this against the exact same
+persisted quest-template roster and real, persisted contribution feed
+`buildPersistedDailyQuestBoard` already reads.
+
+The panel shows a 🏆 next to the current leader (once it has scored above
+zero) and a per-member points breakdown underneath each team's row, so a
+coach can see who on the losing team is pulling their weight. A team can be
+removed with a "Remove" action. The section also participates in the
+existing cross-tab live-update mechanism (`"questTeams"` was added to
+`DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS`), so a team added/removed in another
+tab refreshes the standings here too.
+
+Vitest-covered in `packages/debate-team-collaboration/test/daily-quests.test.ts`
+(`computeContributorQuestPoints`: scores only a contributor's own
+contributions, zero for no matches; `buildTeamQuestCompetitionStandings`:
+sums members' points per team, ranks by earned points descending, tie-breaks
+by team id, scores a member-less team as 0/0, and returns an empty list for
+no teams) and
+`packages/debate-team-collaboration/test/dailyQuests.test.ts`
+(`listQuestTeams`/`saveQuestTeam`/`deleteQuestTeam`: empty/corrupt-storage
+recovery, listing, upsert, delete, and no-op deleting an unstored id;
+`buildPersistedTeamQuestCompetition`: empty list with no stored teams, and
+ranking stored teams against the real, persisted quest roster and
+contribution feed).
+
 ## Known gaps
 
 - No contributor identity/permission *checks* — the "Your streak" field
@@ -304,3 +346,8 @@ earned-vs-total points, including the empty-board case) and updated
 - Contributions saved before this change don't carry `submittedAt`/
   `argBlock` and are excluded from quest scoring (not retroactively
   backfilled).
+- Team rosters are local to a browser, not account-synced — the same known
+  gap as the quest-template roster itself. A team's contributor ids are
+  free-form text with no membership check against a real coaching-program
+  roster (`debate-community`'s `CoachingProgramConfig`) or any other
+  contributor list.

@@ -277,14 +277,16 @@ export function isContributorAwardsLiveUpdateStorageEvent(event: { key: string |
  * The `localStorage` keys `DailyQuestsPanel` reads from: `state/dailyQuests.ts`'s
  * own `"dailyQuestTemplates"` roster, `state/contributions.ts`'s
  * `"contributions"` (each quest's live progress is derived from real
- * submissions via `buildPersistedDailyQuestBoard`), and
+ * submissions via `buildPersistedDailyQuestBoard`),
  * `state/dailyMissionResults.ts`'s `"dailyMissionResults"` (the "Your
- * streak" section).
+ * streak" section), and `state/dailyQuests.ts`'s own `"questTeams"` roster
+ * (the "Team competition" section's team rosters/standings).
  */
 export const DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS = [
   "dailyQuestTemplates",
   "contributions",
   "dailyMissionResults",
+  "questTeams",
 ] as const;
 
 /**
