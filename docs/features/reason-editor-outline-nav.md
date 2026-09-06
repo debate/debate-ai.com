@@ -43,6 +43,18 @@ persisted as the `navPaneVisible` setting, which **defaults to visible**
 ask was already true of the live implementation before this slice; the
 `reason-editor` doc above just never got updated to say so.
 
+**Exception — `/reason-editor` starts with the pane hidden.** That page
+renders its own document sidebar (file tree + Open Tabs, ported from quick
+search's REASON editor sidebar) directly beside the CardMirror embed, so a
+default-visible nav pane claimed a second sidebar's worth of the column
+and squeezed the actual editor. The page mounts `CardMirrorEditor` with
+its `defaultNavPaneHidden` prop, which flips the **transient**
+`navPaneVisible` setting to false for that mount only: the left-edge
+pull-tab and the View-menu/ribbon toggle still re-show the pane, a pane
+the user pulls back open stays open across document switches, nothing is
+persisted, and every other CardMirror host (Flow's speech-doc panels,
+split mode) keeps the default-visible behavior above.
+
 **Heading breadcrumb** (`editor/heading-breadcrumb-bar.ts`'s
 `HeadingBreadcrumbBar`) — a sticky one-line trail showing the ancestor
 chain — e.g. "Case › Advantage 1 › Uniqueness" — for whichever heading is

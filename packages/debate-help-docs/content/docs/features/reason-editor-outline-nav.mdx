@@ -15,7 +15,11 @@ Renders a heading nav/outline panel alongside the document, plus a sticky
 
 **Nav panel** — every heading-anchored node in the live document, indented
 by level, with collapse, drag-and-drop reordering, multi-select, a
-per-level filter, and caret-follow highlighting. Defaults to visible.
+per-level filter, and caret-follow highlighting. Defaults to visible on
+every CardMirror host except `/reason-editor`, which renders its own
+file-tree/Open-Tabs sidebar beside the editor and therefore starts the
+nav pane hidden — the left-edge pull-tab or the View-menu toggle re-shows
+it there.
 
 **Heading breadcrumb** — a sticky one-line ancestor trail (e.g. "Case ›
 Advantage 1 › Uniqueness") for whichever heading is at the top of the
