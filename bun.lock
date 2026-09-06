@@ -151,8 +151,8 @@
         "wrangler": "^4.98.0",
       },
     },
-    "packages/debate-ai-docs": {
-      "name": "debate-ai-docs",
+    "packages/debate-help-docs": {
+      "name": "debate-help-docs",
       "version": "0.1.0",
       "dependencies": {
         "@fumadocs/mdx-remote": "^1.4.3",
@@ -2114,7 +2114,7 @@
 
     "dayjs": ["dayjs@1.11.23", "", {}, "sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ=="],
 
-    "debate-ai-docs": ["debate-ai-docs@workspace:packages/debate-ai-docs"],
+    "debate-help-docs": ["debate-help-docs@workspace:packages/debate-help-docs"],
 
     "debate-ai-web": ["debate-ai-web@workspace:apps/debate-ai.com"],
 

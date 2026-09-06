@@ -1,4 +1,4 @@
-# debate-ai-docs
+# debate-help-docs
 
 The Debate AI documentation site: a Fumadocs-on-Next.js app based on the
 [`template-fumadocs`](https://github.com/OpenSourceAGI/dev-tools-starter-agent/tree/master/starter-templates/template-fumadocs)
@@ -8,9 +8,9 @@ starter template, populated with this monorepo's own documentation.
 
 ```bash
 bun install   # from the repo root
-bun run dev --filter=debate-ai-docs
+bun run dev --filter=debate-help-docs
 # or
-cd packages/debate-ai-docs && bun run dev
+cd packages/debate-help-docs && bun run dev
 ```
 
 `bun run typecheck` regenerates the `.source/` collection and type-checks; `bun run build` produces a

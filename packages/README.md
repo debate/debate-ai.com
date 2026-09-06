@@ -2,7 +2,7 @@
 
 Workspace packages used by the debate-ai.com apps.
 
-## debate-ai-docs
+## debate-help-docs
 
 The Debate AI documentation site, built on the Fumadocs starter template. Publishes the
 product's feature specs (`docs/features/`) and package READMEs as a searchable docs site.

@@ -33,7 +33,7 @@ async function lastEditFor(path: string): Promise<Date | undefined> {
     const date = await getGithubLastEdit({
       owner: 'debate',
       repo: 'debate-ai.com',
-      path: `packages/debate-ai-docs/content/docs/${path}`,
+      path: `packages/debate-help-docs/content/docs/${path}`,
       token: `Bearer ${token}`,
     });
     return date ?? undefined;
