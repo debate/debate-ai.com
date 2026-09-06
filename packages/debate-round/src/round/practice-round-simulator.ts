@@ -40,6 +40,13 @@
  * already accepts, so `PracticeRoundSimulatorPanel` can offer the same
  * "custom persona" authoring flow and library picker without any change to
  * `PracticeRoundSetup`/persistence.
+ *
+ * `buildPracticeRoundReplaySteps` closes the "🧪 Practice Round Simulator"
+ * bullet's last remaining Next item: a round replay/playback view. It zips a
+ * round's speech order with its submitted speeches (already available
+ * through `state/practiceRounds.ts#getPracticeRoundSubmittedSpeeches`, no new
+ * persistence) into one step-per-slot sequence a panel can step through with
+ * Prev/Next controls.
  */
 
 import type { Flow } from "../types/flow";
@@ -67,7 +74,12 @@ import {
 import type { DebateStyleKey } from "debate-timer/src/formats/debate-format-times";
 import type { CoachingPrompt } from "../flow/coach-mode";
 import { buildCoachingSession, buildCoachingSummaryText } from "../flow/coach-mode";
-import type { AiVersusSide, AiVersusSpeechSlot } from "./ai-versus-speech-order";
+import type {
+  AiVersusSide,
+  AiVersusSpeaker,
+  AiVersusSpeechSlot,
+  PriorSpeechRecord,
+} from "./ai-versus-speech-order";
 import { buildAiVersusSpeechOrder } from "./ai-versus-speech-order";
 
 /** One labeled section of a rendered setup or feedback document. */
@@ -181,6 +193,50 @@ export function buildPracticeRoundSetup(input: PracticeRoundSetupInput): Practic
 /** Renders a `PracticeRoundSetup` as a single markdown-ish text document, suitable for a round-setup screen. */
 export function buildPracticeRoundSetupText(setup: PracticeRoundSetup): string {
   return setup.sections.map((section) => `### ${section.title}\n${section.body}`).join("\n\n");
+}
+
+/** One step of a `buildPracticeRoundReplaySteps` sequence — one round speech slot, delivered or not. */
+export type PracticeRoundReplayStep = {
+  /** Position of this speech within the round's speech order (0-based), matching `AiVersusSpeechSlot.index`. */
+  index: number;
+  name: string;
+  speaker: AiVersusSpeaker;
+  secondary: boolean;
+  time: number;
+  /** Whether this slot's speech has actually been submitted yet. */
+  delivered: boolean;
+  /** The delivered speech's text, or `null` while this slot hasn't been reached yet. */
+  text: string | null;
+};
+
+/**
+ * Zips a round's speech order with its submitted speeches (in delivery
+ * order — `submittedSpeeches[i]` is always the speech delivered for
+ * `speechOrder[i]`, since a round's speeches are only ever appended in turn
+ * order; see `state/aiVersusRounds.ts`) into one step-per-slot sequence
+ * suitable for a "round replay/playback view" to step through — the "🧪
+ * Practice Round Simulator" bullet's last remaining Next item in TODO.md's
+ * Research Crowdsourcing Organizer Features list. A slot past however many
+ * speeches have been submitted so far is still included, `delivered: false`
+ * and `text: null`, so a replay view can show "not yet delivered" for the
+ * remainder of an in-progress round rather than truncating the sequence.
+ */
+export function buildPracticeRoundReplaySteps(
+  speechOrder: AiVersusSpeechSlot[],
+  submittedSpeeches: PriorSpeechRecord[],
+): PracticeRoundReplayStep[] {
+  return speechOrder.map((slot) => {
+    const speech = submittedSpeeches[slot.index];
+    return {
+      index: slot.index,
+      name: slot.name,
+      speaker: slot.speaker,
+      secondary: slot.secondary,
+      time: slot.time,
+      delivered: speech !== undefined,
+      text: speech?.text ?? null,
+    };
+  });
 }
 
 export type PracticeRoundFeedback = {
