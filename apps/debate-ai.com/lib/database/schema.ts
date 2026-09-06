@@ -249,6 +249,15 @@ export const userSettings = sqliteTable("user_settings", {
   // this row already scopes it to one signed-in user. Null/absent means "no
   // goal set", same semantics as every other nullable column here.
   researchProgressGoal: text("research_progress_goal"),
+  // JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal
+  // quest-streak preferences (see
+  // packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and
+  // TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder
+  // opt-ins/streak freezes across devices" follow-up). `contributorId`
+  // isn't stored here — this row already scopes it to one signed-in user.
+  // Null/absent means "nothing synced yet", same semantics as every other
+  // nullable column here.
+  questStreakSync: text("quest_streak_sync"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

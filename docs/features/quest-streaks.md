@@ -30,6 +30,11 @@ known gap as `DailyQuestsPanel`/`ContributionsFeedPanel`) compute and save
 their own mission result for the current UTC calendar day on demand, against
 today's saved quest templates and their real, persisted contributions.
 
+A signed-in visitor's own row is highlighted with a "You" badge (derived from
+their real session via `deriveContributorIdFromSessionIdentity`, the same
+convention `ResearchProgressPanel` uses) — see "Account sync" below for what
+that also enables.
+
 ## Streak freeze / grace day
 
 A contributor who misses a day doesn't have to watch their streak reset to
@@ -95,6 +100,43 @@ opt-in reminder notification before a streak lapses" follow-up.
   seen whenever a contributor visits the panel while at risk, not a real push
   notification delivered outside the app.
 
+## Account sync
+
+A signed-in visitor's own reminder opt-in and spent streak freezes follow
+them across devices — the "🎮 Gamified Quests" bullet's
+"account-syncing reminder opt-ins/streak freezes across devices" follow-up.
+Every other row in the roster stays local-only, same as before; this syncs
+only the one row that matches the real signed-in session.
+
+- **What syncs:** a single JSON value, `{ lapseReminderEnabled, freezeDayKeys
+  }`, bundling both preferences together since they're always synced for the
+  same contributor
+  (`packages/debate-contributor-progress/src/lib/quest-streak-sync.ts`),
+  stored on the signed-in user's `user_settings` row (`/api/settings`'s
+  `questStreakSync` field) — mirroring `researchProgressGoal`'s "one JSON
+  value per user, no `contributorId` column needed" shape exactly.
+- **Local-first, additive merge:** `hooks/useQuestStreakSync.ts` fetches the
+  account's copy once on mount and merges it into the local
+  `streakFreezes`/`streakLapseReminders` stores — but never by
+  re-validating: `state/streakFreezes.ts#mergeRemoteStreakFreezeDayKeys` adds
+  any remote freeze dayKeys not already present locally, bypassing
+  `canApplyStreakFreeze` deliberately (a freeze synced from another device
+  was already validated there; re-validating it against *this* device's
+  copy of the mission history could reject a freeze that's already real).
+  `state/streakLapseReminders.ts#mergeRemoteStreakLapseReminderEnabled`
+  mirrors `newsStream.ts#mergeRemoteViewerState`'s "union, never remove"
+  convention for the boolean: it turns the local opt-in on when the account
+  says it's on, but a `false` remote value never turns a locally-enabled
+  reminder back off (that's "not yet synced from elsewhere", not "explicitly
+  disabled").
+- **Pushing local changes:** every "Use a grace day for …" click and every
+  "Remind me"/"Reminder on" toggle on the signed-in visitor's own row also
+  pushes their full current local state (reminder opt-in plus every spent
+  freeze dayKey) back to the account, best-effort, right after the local
+  write succeeds.
+- **Signed out:** the hook is a no-op — the panel behaves exactly as before
+  account sync existed, reading and writing only the local stores.
+
 ## Data flow
 
 ```
@@ -130,6 +172,19 @@ panels/QuestStreaksPanel.tsx
                                                                    — state/streakFreezes.ts
       canApplyStreakFreeze(...)                                   — lib/gamified-quests.ts (validates)
       writeAll([...existing, record])                             — state/streakFreezes.ts (saves)
+
+Account sync (signed-in visitor's own row only):
+hooks/useQuestStreakSync.ts (on mount)
+  → fetchQuestStreakSync()                                        — lib/quest-streak-sync-client.ts
+      GET /api/settings → { questStreakSync }                     — apps/debate-ai.com's route.ts
+  → mergeRemoteStreakFreezeDayKeys(contributorId, freezeDayKeys)   — state/streakFreezes.ts (additive)
+  → mergeRemoteStreakLapseReminderEnabled(contributorId, enabled)  — state/streakLapseReminders.ts (additive)
+
+hooks/useQuestStreakSync.ts's pushLocalState() (after a local freeze/toggle)
+  → listStreakFreezeDayKeysForContributor(contributorId)          — state/streakFreezes.ts
+  → isStreakLapseReminderEnabled(contributorId)                   — state/streakLapseReminders.ts
+  → saveQuestStreakSync({ lapseReminderEnabled, freezeDayKeys })   — lib/quest-streak-sync-client.ts
+      PUT /api/settings { questStreakSync }                       — apps/debate-ai.com's route.ts
 ```
 
 `lib/gamified-quests.ts`'s pure streak/badge computation
@@ -169,9 +224,6 @@ Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
   in `state/dailyQuests.ts` at that moment; a template added after a
   contributor's check runs isn't retroactively counted until they run the
   check again.
-- Streak freezes are localStorage-only, not account-synced across devices —
-  the same known gap as most of this panel's own history, unlike
-  `wordLimitPresets`/coach materials/etc.
 - The "Use a grace day" action only ever surfaces the single most recent
   missed day; a contributor who missed several days in a row needs to spend
   a freeze, refresh, and repeat once each newly-exposed gap becomes the most
@@ -184,5 +236,16 @@ Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
   notification (email, browser push, etc.) that would reach them without
   opening the app, since no such delivery infrastructure exists in this
   repo.
-- Reminder opt-ins are localStorage-only, not account-synced across devices —
-  the same known gap as streak freezes above.
+- Only the signed-in visitor's own reminder opt-in and spent freezes are
+  account-synced — every other roster row (including a not-signed-in
+  contributor's own id typed into the "Run today's mission check" field)
+  stays local-only, the same way the rest of this roster's underlying
+  mission-result history does.
+- The merge *from* the account is additive-only: it turns the local
+  reminder on (or adds a freeze dayKey) when the account has it and this
+  device doesn't yet, but never the reverse. A push *to* the account after a
+  local change does send the reminder's current true value, including
+  turning it off — but if a second device already merged in "enabled" from
+  an earlier sync, disabling it on the first device won't turn it back off
+  on that second device; toggling it off there too is the only way to
+  reconcile that mismatch.

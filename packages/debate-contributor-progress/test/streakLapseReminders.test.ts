@@ -3,6 +3,7 @@ import {
   getPersistedStreakLapseReminderInfo,
   isStreakLapseReminderEnabled,
   listStreakLapseReminderContributorIds,
+  mergeRemoteStreakLapseReminderEnabled,
   setStreakLapseReminderEnabled,
 } from "../src/state/streakLapseReminders";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
@@ -78,6 +79,39 @@ describe("setStreakLapseReminderEnabled", () => {
 
     expect(isStreakLapseReminderEnabled("alice")).toBe(false);
     expect(isStreakLapseReminderEnabled("bob")).toBe(true);
+  });
+});
+
+describe("mergeRemoteStreakLapseReminderEnabled", () => {
+  it("enables locally and reports a change when the account says it's on and this device hasn't caught up", () => {
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", true);
+    expect(changed).toBe(true);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(true);
+  });
+
+  it("is a no-op reporting no change when already enabled locally", () => {
+    setStreakLapseReminderEnabled("alice", true);
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", true);
+    expect(changed).toBe(false);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(true);
+  });
+
+  it("never disables a locally-enabled reminder when the remote value is false", () => {
+    setStreakLapseReminderEnabled("alice", true);
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", false);
+    expect(changed).toBe(false);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(true);
+  });
+
+  it("stays disabled locally when the remote value is false and nothing is enabled yet", () => {
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", false);
+    expect(changed).toBe(false);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(false);
+  });
+
+  it("keeps different contributors' opt-ins independent", () => {
+    mergeRemoteStreakLapseReminderEnabled("alice", true);
+    expect(isStreakLapseReminderEnabled("bob")).toBe(false);
   });
 });
 
