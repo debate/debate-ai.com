@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
-  Rss, Gauge, Crosshair, Crown, Send,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone,
   type LucideIcon,
 } from "lucide-react"
 
@@ -269,6 +269,20 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/speech-documents", label: "Speech Documents", icon: Send,
         description: "A history of evidence sent into your designated speech document from the Reason Editor.",
         highlights: ["Sent via Reason Editor's backtick (`) / Alt-backtick keys, after marking a pane as the speech doc from the File menu's Speech section", "Newest-first list with a per-entry Remove and a Clear history action"],
+      },
+    ],
+  },
+  {
+    heading: "Mobile Setup",
+    tools: [
+      {
+        href: "/tools/mobile-setup", label: "Laptop-less Debating", icon: Smartphone,
+        description: "Gear picks and a step-by-step guide to prepping, flowing, and speaking off just a mobile phone — no laptop.",
+        highlights: [
+          "Recommended phone mount and keyboard gear, with Amazon links",
+          "How to prep speeches, flow, and time rounds from a phone browser",
+          "Speaking-off-your-phone checklist for round day",
+        ],
       },
     ],
   },
