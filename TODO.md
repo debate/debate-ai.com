@@ -6,6 +6,66 @@
 _No task currently in progress._
 
 ### Completed
+- **📝 Speech Transcript Summaries — one-click "send to Prep Notes" action.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built
+  (`apps/debate-ai.com/app/api/settings/route.ts` plus dozens of `saved_*`
+  D1 tables/`/api/*` routes already link account settings, flows, docs, and
+  rounds to signed-in users in SQL, and every tool is already reachable from
+  the Tools page, CardMirror's own menu/command palette, and the feature
+  catalog checked this run), so this slice closed idea #6's ("Speech
+  Transcript Summaries and Answers") last named follow-up instead: "A
+  one-click 'send to Prep Notes / Speech Document' action for a summary" —
+  the Prep Notes half specifically (see below for why the Speech Document
+  half stays open). That follow-up had previously stalled because `PrepNote`
+  (`debate-round`'s `flow/strategy-sync-notes.ts`) required a
+  `flowId`/`boxPath` a `FlowSummaryRecord` doesn't have; this slice took the
+  first of the two options the prior note left open — extending `PrepNote`
+  into a discriminated union of the original `BoxAnchoredPrepNote`
+  (`flowId`/`boxPath`) and a new `RoundAnchoredPrepNote` (`roundId` instead),
+  with `isBoxAnchoredPrepNote`/`isRoundAnchoredPrepNote` type guards,
+  `createRoundPrepNote`/`getNotesForRound` as the round-anchored counterparts
+  to `createPrepNote`/`getNotesForBox`, `getNotesForBox`/`getNotesForFlow`
+  narrowed to only ever match box-anchored notes, `resolvePrepNoteBox`
+  returning `null` for a round-anchored note, and `buildPrepNoteJumpHref`'s
+  parameter narrowed to `BoxAnchoredPrepNote`. `debate-team-collaboration`'s
+  `state/prepNotes.ts` gained the persisted-store counterparts
+  (`addRoundPrepNote`/`listPrepNotesForRound`), and `PrepNotesPanel` now
+  renders a "Round `<roundId>`" badge instead of a "Jump to argument" link
+  for a round-anchored note. `FlowSummariesPanel` (in `debate-practice-rounds`,
+  which has no dependency on `debate-team-collaboration`) gained a "Send to
+  Prep Notes" action per round card behind a new optional
+  `onSendToPrepNotes` prop (mirroring `BrainstormBoardPanel`'s "Send to
+  Argument Library" inline-form pattern), left for the app/page layer to
+  wire up — a new `apps/debate-ai.com/app/summaries/FlowSummariesPanelWithPrepNotes.tsx`
+  client wrapper resolves the composition (mirroring
+  `CoachingProgramRosterAnalyticsWithDrills.tsx`'s own cross-package split),
+  and `app/summaries/page.tsx` now renders that wrapper. See
+  `docs/features/flow-summaries.md`'s new "Sending a summary to Prep Notes"
+  section and `docs/features/prep-notes.md`'s new "Round-anchored notes"
+  section. 22 new Vitest cases across
+  `packages/debate-round/test/strategy-sync-notes.test.ts` (`createRoundPrepNote`'s
+  valid/assignedToId/overlong-text/blank-roundId/blank-authorId/blank-text
+  cases, the `isBoxAnchoredPrepNote`/`isRoundAnchoredPrepNote` guards,
+  `getNotesForRound`, `getNotesForBox`/`getNotesForFlow` excluding
+  round-anchored notes, and `resolvePrepNoteBox` returning `null` for one)
+  and `packages/debate-team-collaboration/test/prepNotes.test.ts`
+  (`listPrepNotesForRound` filtering to one round, `addRoundPrepNote`
+  persisting and returning a note, generating a distinct id per note even
+  for the same round, and throwing without persisting anything for blank
+  text) — plus a pre-existing `prep-note-notifications.test.ts` helper's
+  type annotation fix so its always-box-anchored fixture still satisfies the
+  narrowed `PrepNote` union. `tsc --noEmit` across all 16 typechecked
+  packages, the full Vitest suite (4750 tests), and `turbo build` all pass.
+  The Speech Document half of the original follow-up remains unbuilt (the
+  only existing "speech document" send target, `reason-editor`'s
+  `SpeechDocument`, lives in a package `debate-round`/`debate-practice-rounds`
+  don't depend on, so sending a summary there needs its own bridge) — a
+  future run should pick that up or a fresh next-step elsewhere if one
+  becomes worth doing.
 - **⚖️ Judge Profiles — bulk CSV import for ballot history.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL with the
@@ -17164,16 +17224,18 @@ Each idea below has a working first-cut implementation already shipped (see Trac
    entry's outcome tracked independently so one failed speech doesn't drop
    the rest, and saved to the round's flow summary in one combined
    `saveFlowSummary` call — see the Completed entry above and
-   `docs/features/flow-summaries.md`'s "Bulk transcript upload" section.
+   `docs/features/flow-summaries.md`'s "Bulk transcript upload" section. The
+   "send to Prep Notes" half of the "send to Prep Notes / Speech Document"
+   follow-up is also now done: each round card has a "Send to Prep Notes"
+   action, backed by extending `PrepNote` into a discriminated union with a
+   new round-anchored variant (no `flowId`/`boxPath` required) — see the
+   Completed entry above and `docs/features/flow-summaries.md`'s "Sending a
+   summary to Prep Notes" section.
    Next:
-   - A one-click "send to Prep Notes / Speech Document" action for a
-     summary — doesn't map cleanly onto today's data model yet: `PrepNote`
-     requires a `flowId`/`boxPath` a `FlowSummaryRecord` doesn't have, and
-     the only existing "speech document" send target
-     (`reason-editor`'s `SpeechDocument`) lives in a package `debate-round`
-     doesn't depend on. Either extending `PrepNote` to accept a
-     round-anchored note without a box, or adding a `debate-round`-local
-     send target, would need to land first.
+   - The Speech Document half of that same follow-up remains open: the only
+     existing "speech document" send target (`reason-editor`'s
+     `SpeechDocument`) lives in a package `debate-round`/`debate-practice-rounds`
+     don't depend on, so sending a summary there still needs its own bridge.
 
 7. **On Page Card Reuse Search** (`EvidenceLibraryPanel`'s "Check this page" box, plus the `debate-web-ext` browser extension) — the history-list follow-up is done: a "Recent checks" list under the box shows the last 20 local lookups (`state/reuseCheckHistory.ts`), clickable to re-run and clearable — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Check history" section. The extension-options-page follow-up is also now done: the API-base-URL config already existed, and this run added the other half — a "Skip-check whitelist" textarea (one domain per line) on the extension's Options page, so the popup skips the network reuse check entirely (a neutral "on your skip-check whitelist" status) for a whitelisted site or its subdomains — `apps/debate-web-ext`'s `api.js#isUrlDomainSkipped`/`getSkipDomains`/`setSkipDomains`, wired into `popup.js`/`options.js`/`options.html` — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Options: API base and skip-check whitelist" section (which also fixes that doc's stale references to a deleted `extension/card-reuse-checker` deep-link-only design and the renamed `debate-card-search` package — the real current extension is `apps/debate-web-ext`, calling `/api/evidence-reuse-check` directly). The team-dashboard-of-flagged-pages follow-up is also now done: a new `reuse_check_log` D1 table logs every `GET /api/evidence-reuse-check` lookup (web app and extension alike), and a new `GET /api/evidence-reuse-check/dashboard` route folds the flagged ones into one ranked row per page via the pure `buildReuseCheckDashboard` — rendered as `EvidenceLibraryPanel`'s new "Team reuse dashboard" section (`hooks/useReuseCheckDashboard.ts`) — see the Completed entry above and `docs/features/on-page-card-reuse-search.md`'s "Team reuse dashboard" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. a retention/purge policy for the ever-growing `reuse_check_log`, or per-topic/per-contributor breakdowns on the dashboard) if one becomes worth doing.
 
