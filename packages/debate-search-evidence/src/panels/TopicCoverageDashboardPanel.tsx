@@ -15,14 +15,13 @@
  * here — this is a read/write composition and rendering layer, mirroring the
  * existing `ArgumentLibraryPanel`/`SprintNotesPanel` panel convention.
  *
- * Also live-updates across browser tabs: a `storage`-event listener (see
- * `state/live-update.ts#isTopicCoverageDashboardLiveUpdateStorageEvent`)
- * re-reads the checklist, coverage report, cross-topic heatmap, and trend
- * history whenever another tab edits the tracked-argument checklist, the
- * shared evidence library, or a topic's coverage snapshots — closing the
- * "Every other localStorage-backed panel in this repo still has no
- * cross-tab live-update mechanism" Known gap noted in
- * `shared-flow-sync.md`, for this panel.
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTopicCoverageDashboardLiveUpdateStorageEvent`, so a tracked argument, an
+ * evidence-library entry or tagged contribution, or a coverage snapshot
+ * added/removed in another browser tab refreshes this panel's coverage
+ * report, checklist, snapshot history, and cross-topic comparison here too —
+ * the `storage` event never fires in the tab that made the write, only in
+ * other tabs.
  *
  * @module panels/TopicCoverageDashboardPanel
  */
@@ -104,32 +103,26 @@ export function TopicCoverageDashboardPanel() {
 
   const refresh = (activeTopic: string) => {
     setTopics(listTrackedTopics())
-    setReport(buildPersistedTopicCoverageReport(activeTopic))
-    setRecords(listTrackedArguments(activeTopic))
-    setSnapshots(listCoverageSnapshots(activeTopic))
+    setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
+    setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+    setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
     setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }
 
   /**
-   * Live-update this panel when another browser tab edits the tracked-
-   * argument checklist, the shared evidence library, or a topic's coverage
-   * snapshots — a `storage` event never fires in the tab that made the
-   * write, only in other same-origin tabs. Only the persisted report/
-   * checklist/snapshots/heatmap re-read; the in-progress "add to checklist"
-   * form draft and its error message are left untouched.
+   * Live-update the rendered coverage report, tracked-argument checklist,
+   * snapshot history, and cross-topic comparison when another browser tab
+   * tracks/removes an argument, submits an evidence-library entry or
+   * tagged contribution, or records/clears a coverage snapshot.
    */
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
       if (!isTopicCoverageDashboardLiveUpdateStorageEvent(event)) return
-      const activeTopic = topic.trim()
-      setTopics(listTrackedTopics())
-      setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
-      setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
-      setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
-      setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
+      refresh(topic.trim())
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic])
 
   const handleRecordSnapshot = () => {

@@ -109,6 +109,13 @@
  * most frequently flagged-already-cut pages first, and is fetched via the
  * new `hooks/useReuseCheckDashboard.ts`.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isEvidenceLibraryLiveUpdateStorageEvent`, so an entry submitted, scored,
+ * reviewed, or reuse-checked in another browser tab refreshes this panel's
+ * search results, score badges, pending-review queue, and reuse-check
+ * history here too — the `storage` event never fires in the tab that made
+ * the write, only in other tabs.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -157,6 +164,7 @@ import {
   suggestTags,
 } from "../lib/argument-library"
 import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
+import { isEvidenceLibraryLiveUpdateStorageEvent } from "../state/live-update"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
@@ -319,6 +327,22 @@ export function EvidenceLibraryPanel() {
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
   }
+
+  /**
+   * Live-update the rendered search results, score badges, pending-review
+   * queue, and reuse-check history when another browser tab submits, edits,
+   * scores, reviews, or reuse-checks an entry.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isEvidenceLibraryLiveUpdateStorageEvent(event)) return
+      refreshResults()
+      setCheckHistory(listReuseCheckHistory())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const handleScoreEntry = (entry: EvidenceLibraryEntry) => {
     const breakdown = scoreEvidenceLibraryEntry(entry)

@@ -41,6 +41,12 @@
  * `outlineFilterPresets` is (a `savedArgumentCollections` `/api/settings`
  * field).
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isArgumentLibraryLiveUpdateStorageEvent`, so a card submitted, tagged, or
+ * retagged in another browser tab refreshes this panel's topic folders and
+ * tag collections here too — the `storage` event never fires in the tab that
+ * made the write, only in other tabs.
+ *
  * @module panels/ArgumentLibraryPanel
  */
 
@@ -60,6 +66,7 @@ import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } 
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 import { buildSavedArgumentCollectionFailureMessage } from "../lib/argument-library-collections"
 import { useSavedArgumentCollections } from "../hooks/useSavedArgumentCollections"
+import { isArgumentLibraryLiveUpdateStorageEvent } from "../state/live-update"
 
 /**
  * Renders the Common Argument Library: every persisted evidence entry
@@ -84,6 +91,20 @@ export function ArgumentLibraryPanel() {
 
   useEffect(() => {
     setLibrary(buildCombinedPersistedArgumentLibrary())
+  }, [])
+
+  /**
+   * Live-update the rendered library when another browser tab submits,
+   * tags, or renames a tag on an evidence-library entry or a Contributions
+   * Feed submission.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isArgumentLibraryLiveUpdateStorageEvent(event)) return
+      setLibrary(buildCombinedPersistedArgumentLibrary())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   function renameTag(oldTag: string, newTag: string) {

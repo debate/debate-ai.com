@@ -104,36 +104,25 @@ suite.
 
 ## Cross-tab live update
 
-Until now, `TopicCoverageDashboardPanel` only read its persisted checklist,
-coverage report, cross-topic heatmap, and trend history on mount, or right
-after its own add/remove/record-snapshot/clear-snapshots actions — a
-teammate's second open tab (or a second browser window on the same machine)
-adding a card to the shared evidence library, editing the checklist, or
-logging a snapshot for the same topic showed a stale report until it
-re-rendered for some unrelated reason. The browser's `storage` event fires
-only in *other* same-origin tabs/windows, never the one that made the write,
-so it's exactly the missing cross-tab signal every other closed panel in
-this repo already uses (see
-[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
-section).
+`TopicCoverageDashboardPanel` reads its persisted stores on mount (and on
+topic switch) only, so a change made in one browser tab used to need a
+manual reload to show up in another tab open to the same panel. It now
+subscribes to the browser's `storage` event (which never fires in the tab
+that made the write, only in other same-origin tabs) via
+`isTopicCoverageDashboardLiveUpdateStorageEvent`/
+`TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS` in
+`state/live-update.ts`, covering `trackedArguments` (the checklist itself),
+`evidenceLibraryEntries`/`contributions` (both folded into the coverage
+report as `CoverageCardSummary` sources), and `topicCoverageSnapshots` (the
+recorded trend history) — a tracked argument added or removed, a card
+submitted anywhere the report draws from, or a snapshot recorded/cleared in
+another tab now refreshes the coverage report, checklist, snapshot history,
+and cross-topic comparison here too.
 
-A new pure helper, `state/live-update.ts`'s
-`isTopicCoverageDashboardLiveUpdateStorageEvent`, checks whether the event's
-`key` is one of this panel's three backing stores (`trackedArguments`, the
-per-topic checklist; `evidenceLibraryEntries`, the shared card library the
-coverage report composes against; and `topicCoverageSnapshots`, the
-"Coverage trend" history) or `null` (a `localStorage.clear()`).
-`TopicCoverageDashboardPanel` subscribes to `window`'s `storage` event and
-re-derives the topic list, the active topic's coverage report/checklist/
-trend snapshots (mirroring the same `activeTopic ? ... : null`/`[]` guard
-the topic-change effect already uses, so an empty topic field stays empty
-rather than fetching a report for it), and the cross-topic heatmap — the
-in-progress "Add to checklist" form draft and its error message are left
-untouched.
-
-Vitest-covered in `test/live-update.test.ts` (every backing-store key, the
-`null`-key clear-all case, and unrelated/substring-matching keys staying
-ignored, mirroring every other panel's suite in that file).
+This closes this panel's share of the "Every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](./shared-flow-sync.md). Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 
