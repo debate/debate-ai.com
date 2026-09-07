@@ -74,8 +74,12 @@
  * `setPersistedRoutedTaskPriority`, backed by
  * `research-task-routing.ts`'s `setAssignmentPriority`/
  * `sortAssignmentsByPriority`), mirroring `PrepNotesPanel.tsx`'s identical
- * priority-flag control for Strategy Sync Notes. An unassigned task has no
- * flag control — there's no assignee yet to attach a priority to.
+ * priority-flag control for Strategy Sync Notes. An unassigned task has the
+ * same toggle too (`setPersistedUnassignedTaskPriority`), closing the "An
+ * unassigned task can't be pre-flagged before it has an assignee" Known gap
+ * recorded in `docs/features/task-inbox.md` — flagging it before it has an
+ * assignee carries the flag onto whichever contributor it's later
+ * assigned/reassigned to.
  *
  * A "Team capacity" section closes the "a capacity-aware view of routing
  * load across the team" follow-up named under the "Research Task Routing"
@@ -126,6 +130,7 @@ import {
   reassignPersistedRoutedTask,
   routePersistedTopicTasks,
   setPersistedRoutedTaskPriority,
+  setPersistedUnassignedTaskPriority,
   type TaskInboxTopic,
   type TeamCapacityRow,
 } from "../state/routedTaskQueues"
@@ -257,6 +262,15 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
 
   const handleTogglePriority = (topicId: string, argBlock: string, currentPriority?: "normal" | "high") => {
     setPersistedRoutedTaskPriority(topicId, argBlock, currentPriority === "high" ? "normal" : "high")
+    setTopics(buildTaskInboxView())
+  }
+
+  const handleToggleUnassignedTaskPriority = (
+    topicId: string,
+    argBlock: string,
+    currentPriority?: "normal" | "high",
+  ) => {
+    setPersistedUnassignedTaskPriority(topicId, argBlock, currentPriority === "high" ? "normal" : "high")
     setTopics(buildTaskInboxView())
   }
 
@@ -677,6 +691,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
                   >
                     <span className="font-medium text-foreground">{task.argBlock}</span>
                     <Badge variant={LEVEL_VARIANT[task.level]}>{task.level}</Badge>
+                    {task.priority === "high" && <Badge variant="destructive">High priority</Badge>}
                     <span className="text-muted-foreground">
                       unassigned — no eligible contributor available
                     </span>
@@ -694,6 +709,13 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
                       onClick={() => handleReassign(topic.topicId, task.argBlock)}
                     >
                       Assign
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleToggleUnassignedTaskPriority(topic.topicId, task.argBlock, task.priority)}
+                    >
+                      {task.priority === "high" ? "Unflag" : "Flag high priority"}
                     </Button>
                   </div>
                 )

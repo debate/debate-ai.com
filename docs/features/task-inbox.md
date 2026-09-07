@@ -27,7 +27,12 @@ Per topic (a persisted `RoutedTaskQueueRecord`, keyed by `topicId`):
 Tasks nobody was eligible or available for (`unassignedTasks`) are listed
 separately per topic, with an **Assign to…** field instead of a complete
 action — the same reassign control, since assigning an unassigned task and
-reassigning an already-assigned one are the same underlying operation.
+reassigning an already-assigned one are the same underlying operation. An
+unassigned task can also be flagged high priority — the same "Flag high
+priority"/"Unflag" toggle an assignment has, backed by
+`setPersistedUnassignedTaskPriority(topicId, argBlock, priority)` — and the
+flag carries over onto the resulting assignment's own `priority` the moment
+the task is actually assigned or reassigned.
 
 A task marked done doesn't credit the completion right away — it moves into
 an "Awaiting verification" section, listing every persisted
@@ -255,29 +260,52 @@ the new pure `setAssignmentPriority(assignment, priority)`.
 argBlock, priority)` finds the matching assignment in that topic's persisted
 queue, applies `setAssignmentPriority`, and saves — a no-op that returns
 `undefined` for a topic with no persisted queue, or an `argBlock` that
-doesn't match an *assigned* task (an unassigned task has no assignee to
-attach a priority flag to; assign or reassign it first).
+doesn't match an *assigned* task.
+
+An unassigned task can be flagged the same way, closing the "An unassigned
+task can't be pre-flagged before it has an assignee" Known gap below:
+`lib/research-task-routing.ts`'s `ResearchTask.priority` field (same
+`"normal" | "high"` shape, set via the new pure `setTaskPriority(task,
+priority)`) lives directly on a still-unassigned task, since it has no
+assignee yet to attach a `RoutedAssignment.priority` to. The matching
+`state/routedTaskQueues.ts#setPersistedUnassignedTaskPriority(topicId,
+argBlock, priority)` finds the task in that topic's persisted
+`unassignedTasks` and saves — a no-op for an `argBlock` that matches an
+already-*assigned* task instead (use `setPersistedRoutedTaskPriority` for
+that case). Once the task is actually assigned or reassigned
+(`reassignPersistedRoutedTask`), its `priority` moves from the task onto the
+new `RoutedAssignment.priority` — the task itself no longer carries the
+flag once it has an assignee, so priority always lives in exactly one place
+for any given task.
 
 `buildTaskInboxView` now runs each topic's assignments through the new pure
-`sortAssignmentsByPriority` before tagging them — a stable sort that puts
-`"high"`-priority assignments first while preserving the underlying
+`sortAssignmentsByPriority`, and its `unassignedTasks` through the matching
+`sortTasksByPriority`, before returning them — a stable sort that puts
+`"high"`-priority entries first while preserving the underlying
 most-urgent-first `routeTasks` order within each priority tier — so a
-flagged task surfaces above its topic-mates in `TaskInboxPanel` without
-disturbing routing order otherwise.
+flagged task (assigned or not) surfaces above its topic-mates in
+`TaskInboxPanel` without disturbing routing order otherwise.
 
 ```
 panels/TaskInboxPanel.tsx
   → setPersistedRoutedTaskPriority(topicId, argBlock, "high" | "normal")
       — state/routedTaskQueues.ts
       └─ setAssignmentPriority(assignment, priority) — lib/research-task-routing.ts
+  → setPersistedUnassignedTaskPriority(topicId, argBlock, "high" | "normal")
+      — state/routedTaskQueues.ts
+      └─ setTaskPriority(task, priority) — lib/research-task-routing.ts
   → panel re-reads buildTaskInboxView() to refresh, which now sorts each
-    topic's assignments via sortAssignmentsByPriority before rendering
+    topic's assignments via sortAssignmentsByPriority and its
+    unassignedTasks via sortTasksByPriority before rendering
 ```
 
-Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority` in
+Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority`/
+`setTaskPriority`/`sortTasksByPriority` in
 `packages/debate-search-evidence/test/research-task-routing.test.ts`, and
-`setPersistedRoutedTaskPriority` plus `buildTaskInboxView`'s new
-priority-ordering behavior in
+`setPersistedRoutedTaskPriority`/`setPersistedUnassignedTaskPriority` plus
+`buildTaskInboxView`'s priority-ordering behavior (assignments and
+unassigned tasks alike) and `reassignPersistedRoutedTask`'s task-to-
+assignment priority carry-over in
 `packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
 
 ## Team capacity view
@@ -416,8 +444,9 @@ errors leaving storage untouched).
   priority flag lives entirely inside the routed queue's own record, so a
   second tab's `routedTaskQueues.storage` event already carries the change
   through with no separate refresh limitation.
-- An unassigned task can't be pre-flagged before it has an assignee —
-  assign or reassign it first, then flag it.
+- No further follow-up is currently tracked on the "An unassigned task
+  can't be pre-flagged before it has an assignee" gap — see the "Task
+  priority" section above's `setPersistedUnassignedTaskPriority`.
 - The "Team capacity" view reads the same `routedTaskQueues`/
   `contributorAvailability` localStorage stores as the rest of this panel,
   which aren't account-synced — it reflects this browser's own routed

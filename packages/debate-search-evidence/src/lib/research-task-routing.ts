@@ -33,6 +33,9 @@ export interface ContributorAvailability {
   maxConcurrentTasks: number;
 }
 
+/** Priority levels a coach can flag a task with, independent of its `level`. */
+export type TaskPriority = "normal" | "high";
+
 /** One routable research task derived from a topic-coverage gap. */
 export interface ResearchTask {
   argBlock: string;
@@ -41,6 +44,14 @@ export interface ResearchTask {
   level: CoverageLevel;
   /** Minimum skill level a contributor needs to take this task. */
   requiredSkill: SkillLevel;
+  /**
+   * Coach-set urgency flag for a task that's still sitting in
+   * `RoutingResult.unassignedTasks` — omitted entirely when `"normal"`.
+   * Once the task is routed to a contributor, its flag moves onto the
+   * resulting `RoutedAssignment.priority` instead (see `setAssignmentPriority`);
+   * a task carrying its own `priority` here is always still unassigned.
+   */
+  priority?: TaskPriority;
 }
 
 /**
@@ -65,9 +76,6 @@ export function buildTaskQueue(report: TopicCoverageReport): ResearchTask[] {
     requiredSkill: requiredSkillFor(coverage.level),
   }));
 }
-
-/** Priority levels a coach can flag an already-routed assignment with, independent of its task's `level`. */
-export type TaskPriority = "normal" | "high";
 
 /** One task assigned to a contributor. */
 export interface RoutedAssignment {
@@ -105,6 +113,36 @@ export function sortAssignmentsByPriority(assignments: RoutedAssignment[]): Rout
       return aRank !== bRank ? aRank - bRank : a.index - b.index;
     })
     .map(({ assignment }) => assignment);
+}
+
+/**
+ * Returns a copy of `task` with its priority changed — the still-unassigned
+ * counterpart of `setAssignmentPriority`. Setting `"normal"` omits the
+ * `priority` key entirely rather than storing it explicitly, so a
+ * never-flagged task and an unflagged one serialize identically.
+ */
+export function setTaskPriority(task: ResearchTask, priority: TaskPriority): ResearchTask {
+  if (priority === "normal") {
+    const { priority: _omit, ...rest } = task;
+    return rest;
+  }
+  return { ...task, priority };
+}
+
+/**
+ * Stable-sorts unassigned tasks so high-priority ones come first, preserving
+ * relative order within each priority tier — the still-unassigned
+ * counterpart of `sortAssignmentsByPriority`.
+ */
+export function sortTasksByPriority(tasks: ResearchTask[]): ResearchTask[] {
+  return tasks
+    .map((task, index) => ({ task, index }))
+    .sort((a, b) => {
+      const aRank = a.task.priority === "high" ? 0 : 1;
+      const bRank = b.task.priority === "high" ? 0 : 1;
+      return aRank !== bRank ? aRank - bRank : a.index - b.index;
+    })
+    .map(({ task }) => task);
 }
 
 /** Full routing result: assignments made, and any tasks nobody was eligible/available for. */
