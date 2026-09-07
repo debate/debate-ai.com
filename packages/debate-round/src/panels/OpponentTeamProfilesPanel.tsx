@@ -60,6 +60,17 @@
  * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
  * "Download comparison" action once a comparison is built.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`)
+ * refreshes the roster and logged-round list whenever another tab logs,
+ * edits, undoes/redoes, deletes, or bulk-imports a scouted round — closing
+ * the "every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel. The in-progress "Log a scouted round" form draft, bulk-
+ * import CSV textarea, and any built "Compare vs. opponent" comparison are
+ * left untouched, matching every other closed panel's "refresh the derived
+ * view, not the draft" convention.
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
@@ -80,6 +91,7 @@ import {
 } from "../ui/primitives/select"
 import { Switch } from "../ui/primitives/switch"
 import { Textarea } from "../ui/primitives/textarea"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   Table,
   TableBody,
@@ -205,6 +217,21 @@ export function OpponentTeamProfilesPanel() {
     setRoster(buildOpponentTeamProfilesRoster())
     setRecords(listOpponentRoundRecords())
   }
+
+  /**
+   * Live-update this panel when another browser tab logs, edits, undoes/
+   * redoes, deletes, or bulk-imports a scouted round — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const teamId = draft.teamId.trim()
