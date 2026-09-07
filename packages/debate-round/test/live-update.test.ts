@@ -186,8 +186,8 @@ describe("isOpponentTeamProfilesPanelLiveUpdateStorageEvent", () => {
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
   });
 
-  it("is false for an unrelated store's key", () => {
-    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "judgeProfiles" })).toBe(false);
+  it("is false for an unrelated store's key, including the on-demand-only ownRoundHistory key", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "ownRoundHistory" })).toBe(false);
   });
 

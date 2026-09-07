@@ -14,10 +14,10 @@
  *
  * Also hosts the equivalent per-panel predicates for `PrepNotesPanel`,
  * `PrepNoteNotificationsPanel`, the standalone `FlowAnnotationsPanel` list
- * view, `StrategyPanel`, and `PreRoundBriefingsPanel` — each closes the same
- * "every other localStorage-backed panel in this repo still has no
- * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
- * for its own store.
+ * view, `StrategyPanel`, `PreRoundBriefingsPanel`, and
+ * `OpponentTeamProfilesPanel` — each closes the same "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for its own store.
  */
 
 /** The `localStorage` keys a `FlowSpreadsheet` grid's badges read from (see `state/flowAnnotations.ts`, `state/flowEdits.ts`, `state/prepNotes.ts`). */
@@ -171,16 +171,16 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
 }
 
 /**
- * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads
- * from: `debate-data-sync`'s `state/opponentTeamProfiles.ts`'s own
- * `"opponentTeamProfiles"` store (the aggregated roster
- * `buildOpponentTeamProfilesRoster` renders) and
- * `state/opponentRoundRecords.ts`'s `"opponentRoundRecords"` (the logged-
- * round history feeding the "Logged rounds" list), plus that same module's
- * `"opponentRoundRecordEditHistory"`/`"opponentRoundRecordRedoHistory"`
- * (which rounds show an Undo/Redo action) — mirrors
- * `debate-speech-writer`'s `JudgeProfilesPanel`/`JUDGE_PROFILES_LIVE_UPDATE_STORAGE_KEYS`
- * exactly, one package over.
+ * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads from
+ * for its roster and logged-rounds list — `debate-data-sync`'s
+ * `state/opponentTeamProfiles.ts` (`opponentTeamProfiles`, the aggregated
+ * roster) and `state/opponentRoundRecords.ts` (`opponentRoundRecords`, the
+ * logged-round history, plus `opponentRoundRecordEditHistory`/
+ * `opponentRoundRecordRedoHistory`, which decide whether a logged round shows
+ * an Undo/Redo action). Deliberately excludes `ownRoundHistory`: the panel
+ * only reads it inside the on-demand "Compare vs. opponent" action, not on
+ * refresh, so a cross-tab change there doesn't need to force a re-render —
+ * the user's next "Compare" click already re-reads it fresh.
  */
 export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
   "opponentTeamProfiles",
@@ -191,7 +191,7 @@ export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
 
 /**
  * Whether a `storage` event should trigger `OpponentTeamProfilesPanel` to
- * refresh its rendered roster and logged-round history. A `null` key (e.g.
+ * re-read its persisted roster and logged-round list. A `null` key (e.g.
  * from `localStorage.clear()`) counts too, for the same reason as
  * `isFlowLiveUpdateStorageEvent` above.
  */
