@@ -64,9 +64,12 @@
  * `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`)
  * refreshes the roster and logged-round list whenever another tab logs,
  * edits, undoes/redoes, deletes, or bulk-imports a scouted round — closing
- * the "Every other localStorage-backed panel in this repo still has no
+ * the "every other localStorage-backed panel in this repo still has no
  * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
- * for this panel.
+ * for this panel. The in-progress "Log a scouted round" form draft, bulk-
+ * import CSV textarea, and any built "Compare vs. opponent" comparison are
+ * left untouched, matching every other closed panel's "refresh the derived
+ * view, not the draft" convention.
  *
  * @module panels/OpponentTeamProfilesPanel
  */
@@ -74,7 +77,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -89,6 +91,7 @@ import {
 } from "../ui/primitives/select"
 import { Switch } from "../ui/primitives/switch"
 import { Textarea } from "../ui/primitives/textarea"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   Table,
   TableBody,
@@ -216,10 +219,10 @@ export function OpponentTeamProfilesPanel() {
   }
 
   /**
-   * Cross-tab live update: re-reads the roster and logged-round list when
-   * another tab logs, edits, undoes/redoes, deletes, or bulk-imports a
-   * scouted round — a `storage` event never fires in the tab that made the
-   * write, only in other same-origin tabs.
+   * Live-update this panel when another browser tab logs, edits, undoes/
+   * redoes, deletes, or bulk-imports a scouted round — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
    */
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {

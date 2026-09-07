@@ -172,13 +172,15 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
 
 /**
  * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads from
- * — `opponentTeamProfiles` (the aggregated scouting roster) and
- * `opponentRoundRecords` (the logged-round history), both in
- * `debate-data-sync`'s `state/opponentTeamProfiles.ts`/
- * `state/opponentRoundRecords.ts`, plus that same module's
- * `opponentRoundRecordEditHistory`/`opponentRoundRecordRedoHistory`, which
- * decide whether a round shows an Undo/Redo action — mirroring
- * `debate-speech-writer`'s `JudgeProfilesPanel` set exactly.
+ * for its roster and logged-rounds list — `debate-data-sync`'s
+ * `state/opponentTeamProfiles.ts` (`opponentTeamProfiles`, the aggregated
+ * roster) and `state/opponentRoundRecords.ts` (`opponentRoundRecords`, the
+ * logged-round history, plus `opponentRoundRecordEditHistory`/
+ * `opponentRoundRecordRedoHistory`, which decide whether a logged round shows
+ * an Undo/Redo action). Deliberately excludes `ownRoundHistory`: the panel
+ * only reads it inside the on-demand "Compare vs. opponent" action, not on
+ * refresh, so a cross-tab change there doesn't need to force a re-render —
+ * the user's next "Compare" click already re-reads it fresh.
  */
 export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
   "opponentTeamProfiles",

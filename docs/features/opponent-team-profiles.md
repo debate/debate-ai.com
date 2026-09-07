@@ -273,23 +273,25 @@ cross-tab signal every other closed panel in this repo already uses (see
 [`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
 section).
 
-A new pure helper, `flow/live-update.ts`'s
+A new pure helper, `debate-round`'s `flow/live-update.ts`'s
 `isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, checks whether the
 event's `key` is one of this panel's four backing stores
 (`opponentTeamProfiles`, the aggregated roster; `opponentRoundRecords`, the
 logged-round history; and `opponentRoundRecordEditHistory`/
 `opponentRoundRecordRedoHistory`, which decide whether a round shows an
-Undo/Redo action) or `null` (a `localStorage.clear()`).
-`OpponentTeamProfilesPanel` subscribes to `window`'s `storage` event and
-calls its existing `refresh()` closure when the predicate matches,
-re-deriving the roster and logged-round list the same way its own actions
-already do — the in-progress "Log a scouted round" form draft, the bulk-CSV
-textarea, and the built comparison are left untouched, only the persisted
-roster/history re-reads. Mirrors [Judge Profiles](judge-profiles.md)'s own
-"Cross-tab live update" section exactly.
+Undo/Redo action) or `null` (a `localStorage.clear()`) — deliberately
+excluding `ownRoundHistory`, which the panel only reads inside the on-demand
+"Compare vs. opponent" action, not on refresh. `OpponentTeamProfilesPanel`
+subscribes to `window`'s `storage` event and calls its existing `refresh()`
+closure when the predicate matches, re-deriving the roster and logged-round
+list the same way its own actions already do — the in-progress "Log a
+scouted round" form draft, the "Bulk import (CSV)" textarea, and any built
+"Compare vs. opponent" comparison are left untouched, only the persisted
+roster/history re-reads.
 
-Vitest-covered in `test/live-update.test.ts` (every backing-store key, the
-`null`-key clear-all case, and unrelated/substring-matching keys staying
+Vitest-covered in `debate-round`'s `test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, the excluded
+`ownRoundHistory` key, and unrelated/substring-matching keys staying
 ignored).
 
 ## Known gaps
