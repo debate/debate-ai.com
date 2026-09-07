@@ -670,6 +670,7 @@ _No task currently in progress._
   Simulator's own separate persona setup with this library" — remains open;
   a future run should pick that up or a fresh next-step elsewhere if one
   becomes worth doing.
+  **Merge note (PR [#613](https://github.com/debate/debate-ai.com/pull/613)):** that PR built the same persona-specific feedback tips independently (`opponentPersonaFeedbackTips`/`getOpponentPersonaFeedbackTips`/`buildOpponentPersonaFeedbackText` in `opponent-personas.ts`, surfaced as a "Tips vs. …" feedback section). Since the feature had already landed here (`buildOpponentPersonaFeedbackTips` and the "Facing the … persona again" section), the merge kept the shipped implementation and dropped the duplicate functions, docs, and tests rather than exporting two tip lists.
 - **📝 Speech Transcript Summaries — one-click "send to Prep Notes" action.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
