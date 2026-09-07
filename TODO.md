@@ -6,6 +6,48 @@
 _No task currently in progress._
 
 ### Completed
+- **User Settings — fix the `favoriteTools` lost-update race between
+  tabs/devices.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built (account settings, dozens of `saved_*` D1 tables/`/api/*`
+  routes linking flows, docs, and rounds to signed-in users in SQL, and
+  every tool already reachable from the Tools page, CardMirror's own
+  menu/command palette, and the feature catalog, all reconfirmed this run),
+  so this slice picked a concrete, previously-documented correctness gap
+  instead of a fresh UI feature: `docs/features/user-settings.md`'s Known
+  gaps note that `favoriteTools` was "the field most exposed to" the
+  no-optimistic-concurrency gap on `/api/settings` — since it was a
+  whole-list replace, two tabs/devices each starring a *different* tool in
+  quick succession could have the second PUT's list silently drop the first
+  tab's addition, rather than merging them. Fixed by moving a single
+  star/unstar off the client-computed whole-list replace and onto a
+  server-resolved op: `state/favoriteTools.ts` gained
+  `normalizeFavoriteToolOpPatch`/`applyFavoriteToolOp` (a pure, validated
+  `{ addFavoriteTool }`/`{ removeFavoriteTool }` op applied against a
+  *current* list), `round/user-settings-client.ts` gained
+  `saveFavoriteToolOp`, `lib/hooks/useFavoriteTools.ts`'s
+  `toggleFavorite`/`removeFavorite` now call it instead of
+  `saveUserSettings({ favoriteTools })`, and `/api/settings`'s PUT handler
+  resolves an op by reading the row's current `favoriteTools` and applying
+  it before writing — a read-then-write mirroring how `editorPreferences`
+  already merges onto its existing stored map instead of replacing it,
+  rather than trusting either tab's own (possibly stale) copy of the list.
+  `pruneUnknown`'s bulk stale-favorite cleanup still uses the whole-list
+  replace, since it's a convergent cleanup pass rather than a single
+  star/unstar and isn't exposed to the same race. See
+  `docs/features/user-settings.md`'s updated "Data flow" and "Known gaps"
+  sections, and `packages/debate-round/test/favoriteTools.test.ts`'s new
+  `normalizeFavoriteToolOpPatch`/`applyFavoriteToolOp` coverage (including a
+  test resolving two different concurrent add ops onto the same starting
+  list without either being dropped). This narrows, but — like
+  `editorPreferences` — doesn't fully eliminate, the broader no-version-
+  check gap `docs/features/user-settings.md`'s Known gaps still documents
+  for every other field on this row; a future run could apply the same
+  op-based pattern to another list-shaped field there if one becomes worth
+  it.
 - **🎮 Gamified Quests — account-syncing reminder opt-ins/streak freezes
   across devices.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
