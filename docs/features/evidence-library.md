@@ -511,6 +511,30 @@ casing unchanged, normalizing several tags independently, resolving a
 tie by first-encountered casing when `knownTags` itself carries more than
 one, and both empty-input cases).
 
+## Cross-tab live update
+
+`EvidenceLibraryPanel` now live-updates across browser tabs: the browser's
+`storage` event never fires in the *same* tab that wrote a change — only in
+other same-origin tabs — so a panel that reads `localStorage` on mount (or
+after its own writes) only never reflected another tab's write without a
+manual reload. A new `window`-level `storage` listener (see
+`state/live-update.ts#isEvidenceLibraryLiveUpdateStorageEvent`, covering
+`evidenceLibraryEntries`, `cardScores`, `peerReviews`, and
+`reuseCheckHistory`) re-runs the panel's existing `refreshResults()` and
+re-reads its check history whenever a teammate submits, edits, deletes,
+scores, reviews, or bulk-tags an entry — or logs a page-reuse check — in
+another tab. This closes the "Every other localStorage-backed panel in this
+repo still has no cross-tab live-update mechanism" Known gap noted in
+`shared-flow-sync.md`, for this panel. The in-progress submission/edit form
+draft (`draft`, `editingId`, `editorContributorId`) and the active reuse
+check (`reuseCheckUrl`/`reuseCheckResult`/`remoteReuseCheckResult`) are left
+untouched, matching every other closed panel's "refresh the derived view,
+not the draft" convention.
+
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`
+(every backing-store key, the `null`-key clear-all case, and
+unrelated/substring-matching keys staying ignored).
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is

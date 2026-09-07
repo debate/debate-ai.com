@@ -5,8 +5,9 @@
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
  * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`,
  * `ContributionsFeedPanel`, `TopicSprintPanel`, `ReviewQueuePanel`,
- * `PrepRoomPanel`, `SprintNotesPanel`, and
- * `CoachingProgramRosterAnalyticsPanel`, mirroring `debate-round`'s
+ * `PrepRoomPanel`, `SprintNotesPanel`,
+ * `CoachingProgramRosterAnalyticsPanel`, and `EvidenceLibraryPanel`,
+ * mirroring `debate-round`'s
  * `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
  * change — only in other same-origin tabs — so a panel that reads
@@ -609,5 +610,40 @@ export function isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent(event: { 
   return (
     event.key === null ||
     (COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `EvidenceLibraryPanel` reads from:
+ * `state/evidenceLibraryEntries.ts`'s own `"evidenceLibraryEntries"` store
+ * (every submitted card/block the search results, tag suggestions, and
+ * "Pending review"/"Check this page" lookups are built from),
+ * `state/cardScores.ts`'s `"cardScores"` (each card's persisted LLM Card
+ * Scoring badge), `state/peerReviews.ts`'s `"peerReviews"` (the "Pending
+ * review" section's review-status badge), and `state/reuseCheckHistory.ts`'s
+ * `"reuseCheckHistory"` (the "Recent checks" list).
+ */
+export const EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS = [
+  "evidenceLibraryEntries",
+  "cardScores",
+  "peerReviews",
+  "reuseCheckHistory",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `EvidenceLibraryPanel` to refresh
+ * its rendered search results, tag suggestions, pending-review queue, and
+ * check history — closes the "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ * The in-progress submission/edit form draft is left untouched, matching
+ * every other closed panel's "refresh the derived view, not the draft"
+ * convention.
+ */
+export function isEvidenceLibraryLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

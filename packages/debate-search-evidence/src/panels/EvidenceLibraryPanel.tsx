@@ -143,6 +143,7 @@ import {
   type ReuseCheckHistoryRecord,
 } from "../state/reuseCheckHistory"
 import { useReuseCheckDashboard } from "../hooks/useReuseCheckDashboard"
+import { isEvidenceLibraryLiveUpdateStorageEvent } from "../state/live-update"
 import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
@@ -319,6 +320,25 @@ export function EvidenceLibraryPanel() {
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
   }
+
+  /**
+   * Live-update this panel when another browser tab submits, edits,
+   * deletes, scores, reviews, or bulk-tags an entry — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs. The in-progress submission/edit form draft is left untouched,
+   * only the derived search results/tag list/pending-review queue/check
+   * history re-read.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isEvidenceLibraryLiveUpdateStorageEvent(event)) return
+      refreshResults()
+      setCheckHistory(listReuseCheckHistory())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const handleScoreEntry = (entry: EvidenceLibraryEntry) => {
     const breakdown = scoreEvidenceLibraryEntry(entry)

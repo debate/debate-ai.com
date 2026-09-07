@@ -491,7 +491,9 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   update"), `JudgeProfilesPanel` (see
   [`judge-profiles.md`](judge-profiles.md)'s "Cross-tab live update"),
   `CoachMaterialsPanel` (see [`coach-materials.md`](coach-materials.md)'s
-  "Cross-tab live update"), and `FlowEditLogPanel` itself (see "Cross-tab
+  "Cross-tab live update"), `EvidenceLibraryPanel` (see
+  [`evidence-library.md`](evidence-library.md)'s "Cross-tab live update"),
+  and `FlowEditLogPanel` itself (see "Cross-tab
   live update in `FlowEditLogPanel`" above) have since gained the equivalent
   mechanism for their own stores, but every other localStorage-backed panel
   in this repo still has none (Live Sync

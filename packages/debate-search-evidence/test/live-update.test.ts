@@ -8,6 +8,7 @@ import {
   CONTRIBUTOR_AWARDS_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_BEST_CARD_LIVE_UPDATE_STORAGE_KEYS,
   DAILY_QUESTS_LIVE_UPDATE_STORAGE_KEYS,
+  EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS,
   GROUP_CHALLENGES_LIVE_UPDATE_STORAGE_KEYS,
   NEWS_STREAM_LIVE_UPDATE_STORAGE_KEYS,
   PROGRESS_UNLOCKS_LIVE_UPDATE_STORAGE_KEYS,
@@ -23,6 +24,7 @@ import {
   isContributorAwardsLiveUpdateStorageEvent,
   isDailyBestCardLiveUpdateStorageEvent,
   isDailyQuestsLiveUpdateStorageEvent,
+  isEvidenceLibraryLiveUpdateStorageEvent,
   isGroupChallengesLiveUpdateStorageEvent,
   isNewsStreamLiveUpdateStorageEvent,
   isProgressUnlocksLiveUpdateStorageEvent,
@@ -471,6 +473,28 @@ describe("isSprintNotesLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isSprintNotesLiveUpdateStorageEvent({ key: "sprintNotesBackup" })).toBe(false);
     expect(isSprintNotesLiveUpdateStorageEvent({ key: "old_topicPresenceHeartbeats" })).toBe(false);
+  });
+});
+
+describe("isEvidenceLibraryLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isEvidenceLibraryLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "brainstormIdeas" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "evidenceLibraryEntriesBackup" })).toBe(false);
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "old_cardScores" })).toBe(false);
   });
 });
 
