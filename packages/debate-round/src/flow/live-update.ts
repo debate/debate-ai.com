@@ -169,3 +169,35 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
     (PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
+
+/**
+ * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads
+ * from: `debate-data-sync`'s `state/opponentTeamProfiles.ts`'s own
+ * `"opponentTeamProfiles"` store (the aggregated roster
+ * `buildOpponentTeamProfilesRoster` renders) and
+ * `state/opponentRoundRecords.ts`'s `"opponentRoundRecords"` (the logged-
+ * round history feeding the "Logged rounds" list), plus that same module's
+ * `"opponentRoundRecordEditHistory"`/`"opponentRoundRecordRedoHistory"`
+ * (which rounds show an Undo/Redo action) — mirrors
+ * `debate-speech-writer`'s `JudgeProfilesPanel`/`JUDGE_PROFILES_LIVE_UPDATE_STORAGE_KEYS`
+ * exactly, one package over.
+ */
+export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "opponentTeamProfiles",
+  "opponentRoundRecords",
+  "opponentRoundRecordEditHistory",
+  "opponentRoundRecordRedoHistory",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `OpponentTeamProfilesPanel` to
+ * refresh its rendered roster and logged-round history. A `null` key (e.g.
+ * from `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
