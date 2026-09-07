@@ -511,6 +511,37 @@ casing unchanged, normalizing several tags independently, resolving a
 tie by first-encountered casing when `knownTags` itself carries more than
 one, and both empty-input cases).
 
+## Cross-tab live update
+
+Both `EvidenceLibraryPanel` and `ArgumentLibraryPanel` read their persisted
+stores on mount only, so a change made in one browser tab used to need a
+manual reload to show up in another tab open to the same panel. Both now
+subscribe to the browser's `storage` event (which never fires in the tab
+that made the write, only in other same-origin tabs) via new predicates in
+`state/live-update.ts`:
+
+- `isEvidenceLibraryLiveUpdateStorageEvent`/`EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`
+  cover `EvidenceLibraryPanel`'s own `evidenceLibraryEntries` store, plus
+  `cardScores` (its inline LLM Card Scoring badges), `peerReviews` (each
+  pending entry's review-status badge), and `reuseCheckHistory` (the "Check
+  this page" box's logged history) — a submission, edit, score, review, or
+  reuse check made in another tab now refreshes the search results, score
+  badges, pending-review queue, and history here too.
+- `isArgumentLibraryLiveUpdateStorageEvent`/`ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`
+  cover both sources `buildCombinedPersistedArgumentLibrary` folds together —
+  `evidenceLibraryEntries` and `contributions` — so a card submitted or
+  retagged from either the evidence-library form or the Contributions Feed,
+  in another tab, refreshes the topic folders and tag collections here too.
+  The saved-collections bar is account-synced via `/api/settings`
+  (`hooks/useSavedArgumentCollections.ts`), not `localStorage`, so it isn't
+  covered by this mechanism — it already refreshes on its own account-sync
+  cadence.
+
+This closes both panels' share of the "Every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](./shared-flow-sync.md). Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
+
 ## Known gaps
 
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is

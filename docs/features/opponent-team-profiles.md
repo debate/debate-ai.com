@@ -157,29 +157,6 @@ If we have no logged round history yet, "Us" simply renders as a zero-round
 profile ("no recorded rounds") rather than erroring — log rounds through the
 Pre-Round Briefings panel's own round-logging form to populate it.
 
-## Cross-tab live update
-
-`OpponentTeamProfilesPanel` subscribes to `window`'s `storage` event via
-`debate-round`'s `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`,
-mirroring [Pre-Round Briefings](pre-round-briefings.md)'s and
-[Judge Profiles](judge-profiles.md)'s own cross-tab live update. The browser's
-`storage` event never fires in the tab that made the write, only in other
-same-origin tabs, so this is what makes a scouted round logged, edited,
-undone/redone, deleted, or bulk-imported in one tab show up in every other
-open tab without a manual reload — covering all five of the panel's backing
-stores: `opponentTeamProfiles` (the roster), `opponentRoundRecords` (the
-logged-rounds list), `opponentRoundRecordEditHistory`/
-`opponentRoundRecordRedoHistory` (which decide whether a logged round shows
-an Undo/Redo action), and `ownRoundHistory` (this team's own round history,
-feeding the "Compare vs. opponent" section's "Us" column). Only the
-roster/logged-rounds list re-reads; the in-progress "Log a scouted round"
-form draft and any built comparison are left untouched, matching every other
-closed panel's "refresh the derived view, not the draft" convention.
-
-Vitest-covered in `packages/debate-round/test/live-update.test.ts` (every
-backing-store key, the `null`-key clear-all case, and unrelated/substring-
-matching keys staying ignored).
-
 ## Data flow
 
 ```
@@ -283,6 +260,40 @@ Levenshtein edit-distance search over the same id list, local to
 mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 `opponentRoundRecords.test.ts`.
 
+## Cross-tab live update
+
+Until now, `OpponentTeamProfilesPanel` only read its persisted roster and
+logged-round history on mount, or right after its own log/edit/undo/redo/
+delete/bulk-import actions — a teammate's second open tab (or a second
+browser window on the same machine) logging a scouted round for the same
+team showed a stale roster until it re-rendered for some unrelated reason.
+The browser's `storage` event fires only in *other* same-origin tabs/
+windows, never the one that made the write, so it's exactly the missing
+cross-tab signal every other closed panel in this repo already uses (see
+[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+section).
+
+A new pure helper, `debate-round`'s `flow/live-update.ts`'s
+`isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, checks whether the
+event's `key` is one of this panel's four backing stores
+(`opponentTeamProfiles`, the aggregated roster; `opponentRoundRecords`, the
+logged-round history; and `opponentRoundRecordEditHistory`/
+`opponentRoundRecordRedoHistory`, which decide whether a round shows an
+Undo/Redo action) or `null` (a `localStorage.clear()`) — deliberately
+excluding `ownRoundHistory`, which the panel only reads inside the on-demand
+"Compare vs. opponent" action, not on refresh. `OpponentTeamProfilesPanel`
+subscribes to `window`'s `storage` event and calls its existing `refresh()`
+closure when the predicate matches, re-deriving the roster and logged-round
+list the same way its own actions already do — the in-progress "Log a
+scouted round" form draft, the "Bulk import (CSV)" textarea, and any built
+"Compare vs. opponent" comparison are left untouched, only the persisted
+roster/history re-reads.
+
+Vitest-covered in `debate-round`'s `test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, the excluded
+`ownRoundHistory` key, and unrelated/substring-matching keys staying
+ignored).
+
 ## Known gaps
 
 - No real round-history data source yet (follow-up (a) — no Tabroom/tab-service
@@ -301,6 +312,3 @@ mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round against a
   team (no auth in this repo yet).
-- ~~No cross-tab live update: the panel only re-reads the roster/logged-rounds
-  list on mount, so a scouted round logged in another tab doesn't show up
-  here until a manual reload.~~ Closed — see "Cross-tab live update" above.
