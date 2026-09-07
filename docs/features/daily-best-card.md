@@ -9,7 +9,7 @@ whatever is currently winning.
 - **Route:** `/cards/best-card`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t best card` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
@@ -103,7 +103,7 @@ of those helpers — no new scoring or grouping logic was introduced in either.
 It reuses `ContributionsFeedPanel`'s submission flow, which already stamps
 every submitted contribution's `submittedAt: Date.now()`, so no separate
 timestamp wiring was needed (see
-`packages/debate-card-search/test/dailyBestCardAnnouncements.test.ts`).
+`packages/debate-contributor-progress/test/dailyBestCardAnnouncements.test.ts`).
 
 ## Known gaps
 
@@ -115,8 +115,10 @@ timestamp wiring was needed (see
   browser's `storage` event (which fires only in *other* same-origin tabs,
   never the tab that wrote the change) via
   `state/live-update.ts#isDailyBestCardLiveUpdateStorageEvent` and refreshes
-  today's leader, the weekly rollups, and the announced history when it fires
-  for the `contributions`/`dailyBestCardAnnouncements` keys, mirroring
+  today's leader, the weekly rollups, the announced history, and the comment
+  threads when it fires for the
+  `contributions`/`dailyBestCardAnnouncements`/`dailyBestCardComments` keys,
+  mirroring
   `debate-round`'s identical `flow/live-update.ts` fix (see
   [`flow-annotations.md`](flow-annotations.md)).
 - Any card submitted before `ContributionsFeedPanel.tsx` started stamping

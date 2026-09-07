@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import { CoachingProgramsPanel } from "debate-team-collaboration"
-import { CoachingProgramRosterAnalyticsPanel } from "debate-community"
 import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
+import { CoachingProgramRosterAnalyticsWithDrills } from "./CoachingProgramRosterAnalyticsWithDrills"
 
 export const metadata: Metadata = {
   title: "Coaching Programs",
@@ -18,7 +18,7 @@ export default function CoachingProgramsPage() {
       </Suspense>
       <div className="border-t border-border pt-6">
         <Suspense>
-          <CoachingProgramRosterAnalyticsPanel />
+          <CoachingProgramRosterAnalyticsWithDrills />
         </Suspense>
       </div>
     </ToolPage>

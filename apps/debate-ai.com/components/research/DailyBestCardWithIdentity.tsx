@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s `DailyBestCardPanel`
+ * @fileoverview Thin wrapper over `debate-community`'s `DailyBestCardPanel`
  * that prefills each announced day's comment-thread "Your name" field with a
  * signed-in visitor's derived id, via `deriveContributorIdFromSessionIdentity`.
  * The panel itself stays app-agnostic (it takes the derived id as a plain

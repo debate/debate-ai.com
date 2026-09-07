@@ -31,8 +31,10 @@
 import type { PrepNote, PrepNotePriority, PrepNoteStatus } from "debate-round/src/flow/strategy-sync-notes";
 import {
   assignNote,
+  createRoundPrepNote,
   getNotesForBox,
   getNotesForFlow,
+  getNotesForRound,
   setNotePriority,
   sortNotesByPriorityThenCreatedAt,
   updateNoteStatus,
@@ -80,9 +82,40 @@ export function listPrepNotesForBox(flowId: number, boxPath: number[]): PrepNote
   return getNotesForBox(readAll(), flowId, boxPath);
 }
 
+/** Lists every persisted prep note attached to a round as a whole (no specific box), oldest first. */
+export function listPrepNotesForRound(roundId: string): PrepNote[] {
+  return getNotesForRound(readAll(), roundId);
+}
+
 /** Looks up a single persisted prep note by id, if any. */
 export function getPrepNote(id: string): PrepNote | undefined {
   return readAll().find((note) => note.id === id);
+}
+
+function generateRoundPrepNoteId(): string {
+  return `round-prep-note-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+/**
+ * Creates and persists a round-anchored prep note — closes idea #6's
+ * ("Speech Transcript Summaries and Answers") "one-click send to Prep
+ * Notes" follow-up in TODO.md, letting a source with no `flowId`/`boxPath`
+ * of its own (e.g. `debate-practice-rounds`' `FlowSummaryRecord`, keyed
+ * only by `roundId`) still land as a prep note. Throws if `roundId`,
+ * `authorId`, or `text` is blank (see `createRoundPrepNote`) — callers are
+ * expected to validate non-blank input first, the same way panels already
+ * disable their "send"/"post" actions on blank required fields.
+ */
+export function addRoundPrepNote(input: { roundId: string; authorId: string; text: string }): PrepNote {
+  const note = createRoundPrepNote({
+    id: generateRoundPrepNoteId(),
+    roundId: input.roundId,
+    authorId: input.authorId,
+    text: input.text,
+    createdAt: Date.now(),
+  });
+  savePrepNote(note);
+  return note;
 }
 
 /** Saves a prep note, overwriting any existing record with the same id. */

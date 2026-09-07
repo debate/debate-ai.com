@@ -1,13 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Timer as TimerIcon, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
 import { useAccountNotifications } from "debate-team-collaboration"
+import { TimerProgressRing } from "debate-timer/src/timers/TimerProgressRing"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -31,6 +32,7 @@ import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
 import { TOOL_GROUPS } from "@/app/tools/tool-groups"
+import { hasEmbeddedDock } from "@/lib/sidebar-routes"
 import {
   IconCollectiveMind,
   IconFlowFlower,
@@ -69,8 +71,32 @@ const NAV_ITEMS = [
   // `debate-practice-vs-ai` package.
   { href: "/versus-ai", label: "Practice vs AI", icon: IconVsAi },
   { href: "/doc", label: "Docs", icon: IconRead },
-  { href: "/tools", label: "Tools", icon: IconTools },
+  // No "Tools" icon here on purpose: the tools catalog is reached from the
+  // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice
+  // sections) and from the Settings menu's "All Tools" entry and Tools
+  // submenu below. Keeping it out holds the dock to five destinations, which
+  // is what lets the sidebar-hosted instance fit inside the sidebar column
+  // instead of reaching across it — see `DockInstance`'s `embedded` prop.
 ]
+
+/** Practice Round Simulator — the tool that pairs a round timer with a judge paradigm and AI opponent. */
+const TIMER_ROUTE = "/practice-round"
+
+/**
+ * Dock art for the Timer nav button: the `debate-timer` package's
+ * `TimerProgressRing` (itself lifted from the debate-timer-progress
+ * extension's timer face) behind a clock glyph. The ring's fill is fixed
+ * rather than live — this button is a shortcut to the timer tool, not a
+ * running timer of its own.
+ */
+function TimerDockIcon() {
+  return (
+    <span className="relative flex h-full w-full items-center justify-center">
+      <TimerProgressRing progress={0.3} className="absolute inset-0 h-full w-full text-current" />
+      <TimerIcon className="relative h-3.5 w-3.5" />
+    </span>
+  )
+}
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
@@ -297,8 +323,28 @@ function SettingsMenu({
 }
 
 /**
+ * Resting icon size and magnification for the sidebar-hosted dock, chosen so
+ * the whole row fits the narrowest sidebar it is rendered in.
+ *
+ * The sidebar is `md:w-[300px]` with `p-3`, i.e. 276px of usable width. Five
+ * nav destinations plus Settings at {@link EMBEDDED_ICON_SIZE}px, with
+ * `gap-1.5` (6px) and `p-2` (8px each side), come to 6*34 + 5*6 + 16 = 250px,
+ * and one magnified icon adds {@link EMBEDDED_MAGNIFICATION} - 34 = 12px more.
+ * That leaves headroom at every breakpoint, and `fluid` wrapping catches any
+ * future item so the dock still cannot grow past the column.
+ */
+const EMBEDDED_ICON_SIZE = 34
+const EMBEDDED_MAGNIFICATION = 46
+
+/**
  * Renders a single dock instance with all items inline as direct children.
  * This ensures Dock's cloneElement passes mousex/magnification/distance properly.
+ *
+ * `embedded` is the sidebar-hosted form. It is the reason the dock is bound to
+ * its column rather than sized to its own contents: a content-sized dock is
+ * wider than the 300px sidebar it sits in, which either forces the sidebar to
+ * scroll sideways or reaches over its border onto the page beside it — the
+ * CardMirror editor, on `/reason-editor` and `/doc`.
  */
 function DockInstance({
   dockClassName,
@@ -306,16 +352,24 @@ function DockInstance({
   allItems,
   onSignIn,
   unreadNotifications,
+  embedded = false,
 }: {
   dockClassName: string
   side: "bottom" | "top"
-  allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void }[]
+  allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void; renderIcon?: () => ReactNode }[]
   onSignIn: () => void
   unreadNotifications: number
+  embedded?: boolean
 }) {
   return (
     <DropdownMenu>
-      <Dock direction="middle" className={dockClassName}>
+      <Dock
+        direction="middle"
+        className={dockClassName}
+        fluid={embedded}
+        iconSize={embedded ? EMBEDDED_ICON_SIZE : undefined}
+        magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
+      >
         {allItems.map(({ key, label, icon, active, onClick }) => (
           <DockItem
             key={key}
@@ -329,7 +383,9 @@ function DockInstance({
           >
             <DockLabel>{label}</DockLabel>
             <DockIcon>
-              <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
+              {renderIcon ? renderIcon() : (
+                <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
+              )}
             </DockIcon>
           </DockItem>
         ))}
@@ -379,6 +435,14 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       active: pathname === href,
       onClick: () => router.push(href),
     })),
+    {
+      key: TIMER_ROUTE,
+      label: "Timer",
+      icon: null as any,
+      active: pathname === TIMER_ROUTE,
+      onClick: () => router.push(TIMER_ROUTE),
+      renderIcon: TimerDockIcon,
+    },
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({
         key: `cat-${category}`,
@@ -390,7 +454,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       : []),
   ]
 
-  // Keyboard shortcuts: Alt+1 through Alt+6 for navigation items
+  // Keyboard shortcuts: Alt+<n> for the nth navigation item
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Check if Alt key is pressed (and not Ctrl/Meta to avoid conflicts)
@@ -398,7 +462,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
         const key = event.key
         const numKey = parseInt(key, 10)
 
-        // Alt+1 through Alt+6 for the first 6 nav items
+        // One shortcut per dock destination, in dock order
         if (numKey >= 1 && numKey <= NAV_ITEMS.length) {
           event.preventDefault()
           const navItem = NAV_ITEMS[numKey - 1]
@@ -437,20 +501,22 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     return (
       <>
         <DockInstance
-          dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
+          dockClassName="shrink-0 min-h-[52px]"
           side="bottom"
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
           unreadNotifications={unreadCount}
+          embedded
         />
         <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
       </>
     )
   }
 
-  // The videos page renders its own embedded dock at the top of its sidebar
-  // (md+), so the fixed top-left dock would otherwise show twice there.
-  const suppressDesktopDock = pathname?.startsWith("/videos")
+  // The videos page (and, via `AppSidebarShell`, every other page the videos
+  // sidebar's tool tree links to) renders its own embedded dock at the top of
+  // its sidebar (md+), so the fixed top-left dock would otherwise show twice.
+  const suppressDesktopDock = hasEmbeddedDock(pathname)
 
   return (
     <>
@@ -471,6 +537,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
             {mobileItems.map(({ key, label, icon, active, onClick, ...rest }) => {
               const isPlayingIndicator = (rest as any).isPlayingIndicator
+              const renderIcon = (rest as any).renderIcon as (() => ReactNode) | undefined
               return (
                 <DockItem
                   key={key}
@@ -486,7 +553,9 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                 >
                   <DockLabel>{label}</DockLabel>
                   <DockIcon>
-                    {isPlayingIndicator ? (
+                    {renderIcon ? (
+                      renderIcon()
+                    ) : isPlayingIndicator ? (
                       isPlaying ? (
                         <Pause className="w-5 h-5 text-primary" />
                       ) : (

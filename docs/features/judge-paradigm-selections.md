@@ -32,7 +32,7 @@ inline block (toggled per round, collapsed by default) showing exactly what
 returns for that selection — the same text `round/judge-decision-ai.ts`
 composes into a real AI judge-decision request. A "Copy" button next to it
 calls `navigator.clipboard.writeText` directly (the same pattern
-`AiAnalysisSidebar.tsx` in `debate-card-search` already uses), showing
+`AiAnalysisSidebar.tsx` in `debate-research-evidence` already uses), showing
 "Copied!" for two seconds; a denied clipboard permission fails silently since
 the prompt text is already visible to copy by hand. No new prompt-building
 logic was added — this only renders the existing, already Vitest-covered
@@ -91,7 +91,7 @@ gap below: `state/judgeParadigmSelections.ts`'s new
 link, rendered as a "Get AI judge decision →" button next to each saved
 selection in `JudgeParadigmPickerPanel.tsx`; `JudgeDecisionPanel.tsx` reads
 that `roundId` query param via `next/navigation`'s `useSearchParams` to
-pre-fill its form, mirroring `debate-card-search`'s
+pre-fill its form, mirroring `debate-research-evidence`'s
 `EvidenceLibraryPanel`/`?checkUrl=`/`buildReuseCheckDeepLink` convention.
 Vitest-covered in
 `packages/debate-speech-writer/test/judgeParadigmSelections.test.ts`.

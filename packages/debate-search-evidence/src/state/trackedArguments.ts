@@ -24,14 +24,22 @@
  * missing either field (the common case — both are optional there) is
  * silently excluded rather than counted with a fabricated word count.
  *
+ * `buildPersistedCrossTopicCoverageComparison` closes the "a cross-topic
+ * comparison view (a heatmap-style rollup across every tracked topic at
+ * once)" follow-up named under the same idea's "Known gaps" — it composes
+ * every tracked topic's own `buildPersistedTopicCoverageReport` into one row
+ * per topic via `lib/topic-coverage.ts`'s `buildCrossTopicCoverageComparison`.
+ *
  * @module state/trackedArguments
  */
 
 import type { TrackedArgument } from "../lib/topic-coverage";
 import {
+  buildCrossTopicCoverageComparison,
   buildTopicCoverageReport,
   type CoverageCardSummary,
   type CoverageThresholds,
+  type CrossTopicCoverageRow,
   type TopicCoverageReport,
 } from "../lib/topic-coverage";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
@@ -116,4 +124,18 @@ export function buildPersistedTopicCoverageReport(
       wordCount: contribution.wordCount,
     }));
   return buildTopicCoverageReport(tracked, [...libraryCards, ...contributionCards], thresholds);
+}
+
+/**
+ * Builds the cross-topic comparison heatmap's rows entirely from persisted
+ * stores: every topic with at least one tracked argument, each rolled up via
+ * {@link buildPersistedTopicCoverageReport} and then
+ * {@link buildCrossTopicCoverageComparison}.
+ */
+export function buildPersistedCrossTopicCoverageComparison(thresholds?: CoverageThresholds): CrossTopicCoverageRow[] {
+  const entries = listTrackedTopics().map((topic) => ({
+    topic,
+    report: buildPersistedTopicCoverageReport(topic, thresholds),
+  }));
+  return buildCrossTopicCoverageComparison(entries);
 }

@@ -8,7 +8,7 @@ result rather than always reflecting whatever is currently winning.
 - **Route:** `/cards/awards`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t awards` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
@@ -103,8 +103,8 @@ persisted contributions store, plus `state/contributorAwardAnnouncements.ts`'s
 freeze-on-announce layer on top of it (mirroring
 `state/dailyBestCardAnnouncements.ts`'s identical "Daily Best Card Challenge"
 pattern) — no new scoring or grouping logic (see
-`packages/debate-card-search/test/contributions.test.ts` and
-`packages/debate-card-search/test/contributorAwardAnnouncements.test.ts`).
+`packages/debate-search-evidence/test/contributions.test.ts` and
+`packages/debate-contributor-progress/test/contributorAwardAnnouncements.test.ts`).
 
 `ContributorAwardsPanel` now also live-updates across browser tabs: a
 `storage` event listener (which the browser fires only in *other*
@@ -116,7 +116,7 @@ matches, mirroring `DailyBestCardPanel`'s identical `storage`-listener
 pattern. This closes, for this panel, the "Every other localStorage-backed
 panel in this repo still has no cross-tab live-update mechanism" Known gap
 noted in [`shared-flow-sync.md`](shared-flow-sync.md). Vitest-covered in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-store
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-store
 key, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored); `ContributorAwardsPanel.tsx` itself remains
 intentionally untested, matching every other panel in this repo whose

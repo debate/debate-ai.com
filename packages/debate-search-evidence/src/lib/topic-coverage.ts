@@ -174,6 +174,33 @@ export function computeCoverageCounts(report: TopicCoverageReport): CoverageCoun
   return { missing, thin, covered, total: report.tracked.length };
 }
 
+/**
+ * One topic's rolled-up coverage tallies for the cross-topic comparison
+ * heatmap, alongside its overall coverage ratio (covered/total, `0` for a
+ * topic with no tracked arguments at all).
+ */
+export interface CrossTopicCoverageRow extends CoverageCounts {
+  topic: string;
+  coverageRatio: number;
+}
+
+/**
+ * Rolls up each topic's already-built {@link TopicCoverageReport} into one
+ * row for a cross-topic comparison heatmap, sorted worst-covered first
+ * (lowest `coverageRatio`, ties broken alphabetically by topic) so a team
+ * immediately sees which topics need the most work relative to the others.
+ */
+export function buildCrossTopicCoverageComparison(
+  entries: { topic: string; report: TopicCoverageReport }[],
+): CrossTopicCoverageRow[] {
+  return entries
+    .map(({ topic, report }) => {
+      const counts = computeCoverageCounts(report);
+      return { topic, ...counts, coverageRatio: counts.total === 0 ? 0 : counts.covered / counts.total };
+    })
+    .sort((a, b) => a.coverageRatio - b.coverageRatio || a.topic.localeCompare(b.topic));
+}
+
 /** Renders a short summary line for a topic-coverage dashboard header. */
 export function buildTopicCoverageSummaryText(report: TopicCoverageReport): string {
   const { missing: missingCount, thin: thinCount, covered: coveredCount, total } = computeCoverageCounts(report);

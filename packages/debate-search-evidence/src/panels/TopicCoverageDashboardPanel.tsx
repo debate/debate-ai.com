@@ -27,6 +27,7 @@ import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { MeterBar } from "../ui/panels/panel-shell"
 import {
+  buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
   listTrackedArguments,
@@ -41,7 +42,7 @@ import {
   type TopicCoverageSnapshotRecord,
 } from "../state/topicCoverageSnapshots"
 import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
-import type { ArgumentCoverage, CoverageLevel, TopicCoverageReport } from "../lib/topic-coverage"
+import type { ArgumentCoverage, CoverageLevel, CrossTopicCoverageRow, TopicCoverageReport } from "../lib/topic-coverage"
 
 const LEVEL_LABEL: Record<CoverageLevel, string> = {
   missing: "Missing",
@@ -76,9 +77,11 @@ export function TopicCoverageDashboardPanel() {
   const [draft, setDraft] = useState<ArgumentDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
   const [snapshots, setSnapshots] = useState<TopicCoverageSnapshotRecord[]>([])
+  const [crossTopicRows, setCrossTopicRows] = useState<CrossTopicCoverageRow[]>([])
 
   useEffect(() => {
     setTopics(listTrackedTopics())
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }, [])
 
   useEffect(() => {
@@ -86,6 +89,7 @@ export function TopicCoverageDashboardPanel() {
     setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
     setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
     setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }, [topic])
 
   const refresh = (activeTopic: string) => {
@@ -93,6 +97,7 @@ export function TopicCoverageDashboardPanel() {
     setReport(buildPersistedTopicCoverageReport(activeTopic))
     setRecords(listTrackedArguments(activeTopic))
     setSnapshots(listCoverageSnapshots(activeTopic))
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }
 
   const handleRecordSnapshot = () => {
@@ -152,6 +157,8 @@ export function TopicCoverageDashboardPanel() {
           covered based on the shared evidence library's submitted cards.
         </p>
       </div>
+
+      {crossTopicRows.length > 1 && <CrossTopicComparisonHeatmap rows={crossTopicRows} />}
 
       <div className="space-y-2">
         <Label htmlFor="coverage-topic">Topic</Label>
@@ -294,6 +301,68 @@ function CoverageRow({ argument, onRemove }: { argument: ArgumentCoverage; onRem
         </Button>
       )}
     </div>
+  )
+}
+
+/** RGB channels (no alpha) each coverage level's heatmap cell shades toward as its share of a topic's tracked arguments grows. */
+const LEVEL_HEAT_RGB: Record<CoverageLevel, string> = {
+  missing: "220, 38, 38",
+  thin: "217, 119, 6",
+  covered: "22, 163, 74",
+}
+
+/**
+ * Cross-topic comparison heatmap — the "a cross-topic comparison view (a
+ * heatmap-style rollup across every tracked topic at once)" follow-up named
+ * under the "📊 Topic Coverage Dashboard" idea in TODO.md. One row per
+ * tracked topic (worst-covered first), with a shaded cell per coverage
+ * level — shade intensity scales with that level's share of the topic's
+ * tracked arguments, so a glance at the grid shows which topics lean red
+ * (missing), amber (thin), or green (covered) relative to each other.
+ */
+function CrossTopicComparisonHeatmap({ rows }: { rows: CrossTopicCoverageRow[] }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-medium uppercase text-muted-foreground">Cross-topic comparison</p>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full min-w-[420px] border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-border text-left text-xs text-muted-foreground">
+              <th className="p-2 font-medium">Topic</th>
+              <th className="p-2 text-center font-medium">Missing</th>
+              <th className="p-2 text-center font-medium">Thin</th>
+              <th className="p-2 text-center font-medium">Covered</th>
+              <th className="p-2 text-center font-medium">Coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.topic} className="border-b border-border last:border-b-0">
+                <td className="p-2 font-medium text-foreground">{row.topic}</td>
+                <HeatmapCell count={row.missing} total={row.total} level="missing" />
+                <HeatmapCell count={row.thin} total={row.total} level="thin" />
+                <HeatmapCell count={row.covered} total={row.total} level="covered" />
+                <td className="p-2 text-center text-xs text-muted-foreground">
+                  {row.total === 0 ? "—" : `${Math.round(row.coverageRatio * 100)}%`}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function HeatmapCell({ count, total, level }: { count: number; total: number; level: CoverageLevel }) {
+  const share = total === 0 ? 0 : count / total
+  return (
+    <td
+      className="p-2 text-center text-xs font-medium text-foreground"
+      style={{ backgroundColor: share === 0 ? undefined : `rgba(${LEVEL_HEAT_RGB[level]}, ${0.15 + share * 0.55})` }}
+    >
+      {count}
+    </td>
   )
 }
 

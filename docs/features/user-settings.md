@@ -154,7 +154,7 @@ client, `useThemeState`'s and `useFavoriteTools`' sync wiring, and the
 D1-backed route are not unit-tested, matching every other fetch-client/
 D1-route pair in this repo (e.g. `round/judge-decision-client.ts`,
 `app/api/evidence-reuse-check/route.ts`) — `apps/debate-ai.com` has no
-vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
+vitest project wired up at all (see `apps/debate-ai.com/vitest.config.ts`'s `projects` list).
 
 ## Known gaps
 

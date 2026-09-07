@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   adoptDrillSet,
   buildAndSaveDrillSet,
+  buildDrillReviewCalendarEvents,
   buildDrillSetsPanelView,
   deleteDrillSet,
   getDrillSet,
@@ -468,6 +469,50 @@ describe("getDueDrillIndexes", () => {
   it("ignores an out-of-range scheduled index", () => {
     const record = { ...DRILL_SET_A, scheduledReviewAt: { 0: "2026-09-01", 99: "2026-09-01" } };
     expect(getDueDrillIndexes(record, "2026-09-10")).toEqual([0]);
+  });
+});
+
+describe("buildDrillReviewCalendarEvents", () => {
+  it("returns no events for records with nothing scheduled", () => {
+    expect(buildDrillReviewCalendarEvents([DRILL_SET_A, DRILL_SET_B])).toEqual([]);
+  });
+
+  it("builds one event per scheduled drill, labeled with its kind and round", () => {
+    const record = { ...DRILL_SET_A, scheduledReviewAt: { 1: "2026-09-05" } };
+    expect(buildDrillReviewCalendarEvents([record])).toEqual([
+      {
+        dayKey: "2026-09-05",
+        label: "Review a Frontline drill for round round-1",
+        detail: 'Write a frontline response to "solvency deficit".',
+      },
+    ]);
+  });
+
+  it("truncates a long drill prompt's detail with an ellipsis", () => {
+    const longPrompt = "x".repeat(200);
+    const record = {
+      ...DRILL_SET_A,
+      drills: [{ ...DRILL_SET_A.drills[0], prompt: longPrompt }],
+      scheduledReviewAt: { 0: "2026-09-05" },
+    };
+    expect(buildDrillReviewCalendarEvents([record])[0].detail).toBe(`${"x".repeat(80)}…`);
+  });
+
+  it("ignores an out-of-range scheduled index", () => {
+    const record = { ...DRILL_SET_A, scheduledReviewAt: { 99: "2026-09-05" } };
+    expect(buildDrillReviewCalendarEvents([record])).toEqual([]);
+  });
+
+  it("sorts events across records chronologically, earliest first", () => {
+    const recordA = { ...DRILL_SET_A, scheduledReviewAt: { 0: "2026-09-10" } };
+    const recordB = { ...DRILL_SET_B, scheduledReviewAt: { 0: "2026-09-01" } };
+    const events = buildDrillReviewCalendarEvents([recordA, recordB]);
+    expect(events.map((event) => event.dayKey)).toEqual(["2026-09-01", "2026-09-10"]);
+  });
+
+  it("emits one event per scheduled drill within a single record", () => {
+    const record = { ...DRILL_SET_A, scheduledReviewAt: { 0: "2026-09-01", 1: "2026-09-02" } };
+    expect(buildDrillReviewCalendarEvents([record])).toHaveLength(2);
   });
 });
 

@@ -23,10 +23,24 @@
  *
  * Also subscribes to the browser's `storage` event via
  * `state/live-update.ts`'s `isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent`,
- * so a challenge created/completed, a win recorded, or a mission result
- * saved in another browser tab refreshes this panel's rendered roster and
- * digest here too — the `storage` event never fires in the tab that made
- * the write, only in other tabs.
+ * so a challenge created/completed, a win recorded, a mission result saved,
+ * or a sprint note logged in another browser tab refreshes this panel's
+ * rendered roster, digest, and calendar here too — the `storage` event never
+ * fires in the tab that made the write, only in other tabs.
+ *
+ * Also renders a "Program calendar" section — idea #13's own further
+ * follow-up ("a calendar/schedule view across a program's drills, sprints,
+ * and challenges") — a chronological list of the program's roster-scoped
+ * group-challenge start/end dates, plus (once a topic is typed) that
+ * topic's sprint-note dates, via `state/coachingProgramCalendar.ts`'s
+ * `buildPersistedCoachingProgramCalendar`. The "drills" part comes in via
+ * the optional `drillReviewEvents` prop — a caller-resolved
+ * (`debate-practice-rounds`' `useDrillSets()` plus its
+ * `buildDrillReviewCalendarEvents`) list of scheduled drill review
+ * reminders, since this package can't import that one directly (it already
+ * depends on this one, for Progress Unlocks tiers) — see
+ * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`,
+ * the sole real caller; defaults to `[]` for any other caller (e.g. tests).
  *
  * @module panels/CoachingProgramRosterAnalyticsPanel
  */
@@ -35,6 +49,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
+import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import {
   Table,
   TableBody,
@@ -52,10 +67,35 @@ import {
   buildPersistedCoachingProgramChallengeDigest,
   buildPersistedCoachingProgramRosterAnalytics,
 } from "../state/coachingProgramRosterAnalytics"
+import { buildPersistedCoachingProgramCalendar } from "../state/coachingProgramCalendar"
 import type { CoachingProgramRosterMemberAnalytics } from "../lib/coaching-program-roster-analytics"
+import {
+  groupCoachingProgramCalendarEventsByDay,
+  type CoachingProgramCalendarDay,
+  type CoachingProgramCalendarEventKind,
+  type CoachingProgramCalendarExternalEvent,
+} from "../lib/coaching-program-calendar"
 
 /** How many of the digest's most recent challenge results to render at once. */
 const MAX_VISIBLE_DIGEST_ENTRIES = 10
+
+const CALENDAR_EVENT_KIND_LABELS: Record<CoachingProgramCalendarEventKind, string> = {
+  "challenge-start": "Challenge starts",
+  "challenge-end": "Challenge ends",
+  "sprint-note": "Sprint note",
+  "drill-review": "Drill review",
+}
+
+export type CoachingProgramRosterAnalyticsPanelProps = {
+  /** Caller-resolved scheduled drill review reminders to fold into the program calendar — see the file doc comment above. Defaults to none. */
+  drillReviewEvents?: CoachingProgramCalendarExternalEvent[]
+}
+
+// A stable (module-level, not re-created per render) empty-array default for
+// `drillReviewEvents` — a fresh `[]` literal as the default parameter value
+// would get a new reference every render, which would make the effect below
+// (keyed on this prop) re-fire, `setCalendarDays`, and re-render forever.
+const NO_DRILL_REVIEW_EVENTS: CoachingProgramCalendarExternalEvent[] = []
 
 /**
  * Renders the Coaching Program Roster Analytics panel: a program picker
@@ -67,16 +107,37 @@ const MAX_VISIBLE_DIGEST_ENTRIES = 10
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function CoachingProgramRosterAnalyticsPanel() {
+export function CoachingProgramRosterAnalyticsPanel({
+  drillReviewEvents = NO_DRILL_REVIEW_EVENTS,
+}: CoachingProgramRosterAnalyticsPanelProps = {}) {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [selectedProgramId, setSelectedProgramId] = useState("")
   const [analytics, setAnalytics] = useState<CoachingProgramRosterMemberAnalytics[]>([])
   const [challengeDigest, setChallengeDigest] = useState<CompletedGroupChallengeEvent[]>([])
+  const [calendarTopic, setCalendarTopic] = useState("")
+  const [calendarDays, setCalendarDays] = useState<CoachingProgramCalendarDay[]>([])
+
+  const refreshCalendar = (programId: string, topic: string) => {
+    const events = programId
+      ? buildPersistedCoachingProgramCalendar(programId, topic, drillReviewEvents) ?? []
+      : []
+    setCalendarDays(groupCoachingProgramCalendarEventsByDay(events))
+  }
+
+  // Re-derives the calendar whenever the caller-resolved drill review events
+  // change — e.g. once `CoachingProgramRosterAnalyticsWithDrills`'
+  // `useDrillSets()` finishes its initial (async) load, after this panel's
+  // own mount effect below already ran with the `[]` default.
+  useEffect(() => {
+    refreshCalendar(selectedProgramId, calendarTopic)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drillReviewEvents])
 
   const refresh = (programId: string) => {
     setPrograms(buildCoachingProgramsPanelView())
     setAnalytics(programId ? buildPersistedCoachingProgramRosterAnalytics(programId, Date.now()) ?? [] : [])
     setChallengeDigest(programId ? buildPersistedCoachingProgramChallengeDigest(programId) ?? [] : [])
+    refreshCalendar(programId, calendarTopic)
   }
 
   useEffect(() => {
@@ -87,12 +148,14 @@ export function CoachingProgramRosterAnalyticsPanel() {
     if (initialProgramId) {
       setAnalytics(buildPersistedCoachingProgramRosterAnalytics(initialProgramId, Date.now()) ?? [])
       setChallengeDigest(buildPersistedCoachingProgramChallengeDigest(initialProgramId) ?? [])
+      refreshCalendar(initialProgramId, "")
     }
   }, [])
 
   /**
-   * Live-update the roster analytics when another browser tab creates a
-   * program, changes a challenge, records a win, or saves a mission result.
+   * Live-update the roster analytics, digest, and calendar when another
+   * browser tab creates a program, changes a challenge, records a win,
+   * saves a mission result, or logs a sprint note.
    */
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
@@ -101,12 +164,18 @@ export function CoachingProgramRosterAnalyticsPanel() {
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
-  }, [selectedProgramId])
+  }, [selectedProgramId, calendarTopic])
 
   const handleSelectProgram = (programId: string) => {
     setSelectedProgramId(programId)
     setAnalytics(programId ? buildPersistedCoachingProgramRosterAnalytics(programId, Date.now()) ?? [] : [])
     setChallengeDigest(programId ? buildPersistedCoachingProgramChallengeDigest(programId) ?? [] : [])
+    refreshCalendar(programId, calendarTopic)
+  }
+
+  const handleCalendarTopicChange = (topic: string) => {
+    setCalendarTopic(topic)
+    refreshCalendar(selectedProgramId, topic)
   }
 
   if (programs === null) {
@@ -230,6 +299,55 @@ export function CoachingProgramRosterAnalyticsPanel() {
                 Showing the {MAX_VISIBLE_DIGEST_ENTRIES} most recent of {challengeDigest.length} results.
               </p>
             ) : null}
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-sm font-semibold text-foreground">Program calendar</h2>
+            <p className="text-sm text-muted-foreground">
+              This program's group-challenge start/end dates, plus your own scheduled drill reviews.
+              Type a topic below to also include that topic's sprint notes.
+            </p>
+            <div className="space-y-1.5">
+              <label htmlFor="roster-analytics-calendar-topic" className="text-sm font-medium text-foreground">
+                Topic (optional, for sprint notes)
+              </label>
+              <Input
+                id="roster-analytics-calendar-topic"
+                value={calendarTopic}
+                onChange={(e) => handleCalendarTopicChange(e.target.value)}
+                placeholder="e.g. Warming"
+                className="max-w-sm"
+              />
+            </div>
+            {calendarDays.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No dated events yet — no group challenges scoped to this roster, no scheduled drill
+                reviews, and no sprint notes for the typed topic.
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {calendarDays.map((day) => (
+                  <li key={day.dayKey} className="rounded-md border border-border/60 px-3 py-2">
+                    <div className="text-sm font-medium text-foreground">
+                      {new Date(`${day.dayKey}T00:00:00Z`).toLocaleDateString(undefined, { timeZone: "UTC" })}
+                    </div>
+                    <ul className="mt-1 space-y-1">
+                      {day.events.map((event, index) => (
+                        <li key={`${event.kind}-${index}`} className="flex flex-wrap items-start gap-2 text-sm">
+                          <Badge variant={event.kind === "challenge-start" || event.kind === "challenge-end" ? "outline" : "secondary"}>
+                            {CALENDAR_EVENT_KIND_LABELS[event.kind]}
+                          </Badge>
+                          <span className="text-muted-foreground">
+                            {event.label}
+                            {event.detail ? ` — ${event.detail}` : ""}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </>
       )}

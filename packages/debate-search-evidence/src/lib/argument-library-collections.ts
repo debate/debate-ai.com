@@ -71,6 +71,107 @@ function isValidSavedArgumentCollection(value: unknown): value is SavedArgumentC
   return isValidSavedArgumentCollectionName(collection.name) && isValidTagsList(collection.tags);
 }
 
+/** Why a save/rename/update of a collection was refused — one value per user-visible message. */
+export type SavedArgumentCollectionSaveFailure =
+  | "empty-tags"
+  | "too-many-tags"
+  | "invalid-tag"
+  | "invalid-name"
+  | "duplicate-name"
+  | "at-capacity"
+  | "unknown-collection";
+
+/**
+ * Validates a prospective new collection against the documented limits
+ * *before* it is persisted — the same rules `isValidSavedArgumentCollectionsList`
+ * enforces on read, so an over-limit save can never poison the stored list
+ * (previously a 31-tag save persisted fine and then wiped every collection on
+ * the next read). Returns `null` when the save is allowed.
+ */
+export function validateNewSavedArgumentCollection(
+  existing: SavedArgumentCollection[],
+  name: string,
+  tags: string[],
+): SavedArgumentCollectionSaveFailure | null {
+  if (tags.length === 0) return "empty-tags";
+  if (tags.length > MAX_TAGS_PER_COLLECTION) return "too-many-tags";
+  if (!tags.every((tag) => typeof tag === "string" && tag.trim().length > 0 && tag.length <= MAX_TAG_LENGTH)) {
+    return "invalid-tag";
+  }
+  if (!isValidSavedArgumentCollectionName(name)) return "invalid-name";
+  const normalized = normalizeSavedArgumentCollectionName(name);
+  if (existing.some((collection) => normalizeSavedArgumentCollectionName(collection.name) === normalized)) {
+    return "duplicate-name";
+  }
+  if (existing.length >= MAX_SAVED_ARGUMENT_COLLECTIONS) return "at-capacity";
+  return null;
+}
+
+/** Validates renaming `oldName` to `newName` (case-insensitive identity; a rename to a name another collection holds is refused). Returns `null` when allowed. */
+export function validateSavedArgumentCollectionRename(
+  existing: SavedArgumentCollection[],
+  oldName: string,
+  newName: string,
+): SavedArgumentCollectionSaveFailure | null {
+  const oldNormalized = normalizeSavedArgumentCollectionName(oldName);
+  if (!existing.some((collection) => normalizeSavedArgumentCollectionName(collection.name) === oldNormalized)) {
+    return "unknown-collection";
+  }
+  if (!isValidSavedArgumentCollectionName(newName)) return "invalid-name";
+  const newNormalized = normalizeSavedArgumentCollectionName(newName);
+  if (
+    newNormalized !== oldNormalized &&
+    existing.some((collection) => normalizeSavedArgumentCollectionName(collection.name) === newNormalized)
+  ) {
+    return "duplicate-name";
+  }
+  return null;
+}
+
+/** Validates replacing `name`'s tag list with `tags` in place. Returns `null` when allowed. */
+export function validateSavedArgumentCollectionTagsUpdate(
+  existing: SavedArgumentCollection[],
+  name: string,
+  tags: string[],
+): SavedArgumentCollectionSaveFailure | null {
+  const normalized = normalizeSavedArgumentCollectionName(name);
+  if (!existing.some((collection) => normalizeSavedArgumentCollectionName(collection.name) === normalized)) {
+    return "unknown-collection";
+  }
+  if (tags.length === 0) return "empty-tags";
+  if (tags.length > MAX_TAGS_PER_COLLECTION) return "too-many-tags";
+  if (!tags.every((tag) => typeof tag === "string" && tag.trim().length > 0 && tag.length <= MAX_TAG_LENGTH)) {
+    return "invalid-tag";
+  }
+  return null;
+}
+
+/**
+ * User-facing message for a refused collection save/rename/update. `name` is
+ * the name the user typed, quoted into the messages that reference it.
+ */
+export function buildSavedArgumentCollectionFailureMessage(
+  failure: SavedArgumentCollectionSaveFailure,
+  name: string,
+): string {
+  switch (failure) {
+    case "empty-tags":
+      return "Select at least one tag first.";
+    case "too-many-tags":
+      return `A collection can hold at most ${MAX_TAGS_PER_COLLECTION} tags.`;
+    case "invalid-tag":
+      return `Every tag must be non-empty and at most ${MAX_TAG_LENGTH} characters.`;
+    case "invalid-name":
+      return `Collection names must be 1-${MAX_COLLECTION_NAME_LENGTH} characters.`;
+    case "duplicate-name":
+      return `A collection named "${name.trim()}" already exists.`;
+    case "at-capacity":
+      return `You already have ${MAX_SAVED_ARGUMENT_COLLECTIONS} saved collections — remove one first.`;
+    case "unknown-collection":
+      return `No saved collection named "${name.trim()}" exists.`;
+  }
+}
+
 export function isValidSavedArgumentCollectionsList(value: unknown): value is SavedArgumentCollection[] {
   if (!Array.isArray(value) || value.length > MAX_SAVED_ARGUMENT_COLLECTIONS) return false;
   if (!value.every(isValidSavedArgumentCollection)) return false;

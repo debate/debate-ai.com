@@ -19,6 +19,7 @@ import {
 } from "../../lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
 import { TopicStarterUpload } from "./TopicStarterUpload";
+import { UsersTable } from "./UsersTable";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -220,11 +221,13 @@ export function AdminDashboard() {
   };
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
+    <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground text-sm">YouTube round video sync</p>
+        <p className="text-muted-foreground text-sm">Accounts, usage and YouTube round video sync</p>
       </div>
+
+      <UsersTable />
 
       <Card>
         <CardHeader>

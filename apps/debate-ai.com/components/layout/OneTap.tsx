@@ -22,6 +22,16 @@ const RETRYABLE_SKIP_REASONS = new Set([
 ]);
 
 /**
+ * Names of rejections Google's identity script throws for outcomes outside
+ * our control — the browser aborting a stale FedCM request on navigation, or
+ * FedCM/third-party sign-in being disabled in the browser's own site
+ * settings — rather than an application bug. Google's script already logs
+ * these itself (`[GSI_LOGGER]`), so re-logging them as `console.error` here
+ * would just be alarming, redundant noise on every affected page load.
+ */
+const BENIGN_ONE_TAP_ERROR_NAMES = new Set(["AbortError", "NetworkError"]);
+
+/**
  * The subset of Google's `PromptMomentNotification` this file reads. The
  * one-tap plugin hands the notification through untyped.
  */
@@ -145,7 +155,13 @@ export function OneTap() {
         );
       })
       .catch((error: unknown) => {
-        console.error("[one-tap] prompt failed:", error);
+        const isBenign =
+          error instanceof Error && BENIGN_ONE_TAP_ERROR_NAMES.has(error.name);
+        if (isBenign) {
+          debugLog("[one-tap] prompt failed (expected):", error);
+        } else {
+          console.error("[one-tap] prompt failed:", error);
+        }
         // Let a later navigation try again — this failure was not a dismissal.
         promptedPath.current = null;
       })

@@ -376,6 +376,23 @@ describe("reassignPersistedRoutedTask", () => {
     });
   });
 
+  it("carries a high-priority flag along to the new assignee", () => {
+    saveRoutedTaskQueue({
+      topicId: "topic-ai",
+      result: {
+        assignments: [{ task: SOLVENCY_TASK, contributorId: "alice", priority: "high" }],
+        unassignedTasks: [IMPACTS_TASK],
+      },
+    });
+
+    const reassigned = reassignPersistedRoutedTask("topic-ai", "Solvency", "carol");
+
+    expect(reassigned).toEqual({ task: SOLVENCY_TASK, contributorId: "carol", priority: "high" });
+    expect(getRoutedTaskQueue("topic-ai")?.result.assignments).toEqual([
+      { task: SOLVENCY_TASK, contributorId: "carol", priority: "high" },
+    ]);
+  });
+
   it("applies no skill or capacity check — an override bypasses routeTasks's own eligibility rules", () => {
     saveRoutedTaskQueue(AT_QUEUE);
 

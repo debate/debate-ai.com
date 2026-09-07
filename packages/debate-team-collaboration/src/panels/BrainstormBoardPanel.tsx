@@ -88,12 +88,30 @@
  * running and by the same `storage`-event listener as the boards above, so a
  * countdown started in one tab is visible — live — in every other open tab.
  *
+ * Each idea's rank badge (🏆 #1 / 🥈 #2 / 🥉 #3 / plain #N, via
+ * `lib/team-brainstorm-assist.ts`'s `buildBrainstormIdeaRankBadge`) and the
+ * board's top idea getting a highlighted card close the "polish the
+ * idea-ranking UI" half of the "upvote affordance/animation" follow-up named
+ * under the "🧠 Team Brainstorm Assist" bullet in TODO.md — previously
+ * `board.ideas`' already-ranked order was the only ranking signal visible,
+ * with no per-idea indicator of *why* it was ranked where it was. The
+ * "upvote animation" half closes alongside it: clicking "Upvote" now briefly
+ * scales the button up (`bumpedIdeaId`, cleared via `setTimeout` after
+ * `UPVOTE_BUMP_ANIMATION_MS`) as a click acknowledgement, and the button
+ * itself gained a chevron-up icon. Both are presentation-only — no new
+ * ranking, scoring, or persistence logic — so, matching this panel's
+ * existing convention (see "Cross-tab live update" in
+ * `docs/features/brainstorm-board.md`), the animation's own timer/state
+ * wiring is intentionally untested; only the new pure `buildBrainstormIdeaRankBadge`
+ * helper is Vitest-covered.
+ *
  * @module panels/BrainstormBoardPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
+import { ChevronUp } from "lucide-react"
 import {
   BRAINSTORM_SESSION_TIMER_PRESETS_SECONDS,
   formatBrainstormSessionTimerRemaining,
@@ -128,7 +146,10 @@ import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArg
 import { requestTeamBrainstormAiIdeas } from "../lib/team-brainstorm-client"
 import { buildBrainstormPrompt } from "../lib/team-brainstorm-assist"
 import { isBrainstormBoardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
-import type { BrainstormBoard, BrainstormCategory } from "../lib/team-brainstorm-assist"
+import { buildBrainstormIdeaRankBadge, type BrainstormBoard, type BrainstormCategory } from "../lib/team-brainstorm-assist"
+
+/** How long the upvote button's click "bump" animation stays applied before clearing. */
+const UPVOTE_BUMP_ANIMATION_MS = 300
 
 const CATEGORY_OPTIONS: { value: BrainstormCategory; label: string }[] = [
   { value: "argument", label: "New Arguments" },
@@ -150,17 +171,16 @@ function boardKey(board: BrainstormBoard): string {
 }
 
 /**
- * Every board's top-ranked idea id that's already been sent to the Argument
- * Library (`isBrainstormIdeaInArgumentLibrary`), so the panel can swap that
- * idea's "Send to Argument Library" action for a confirmation badge instead
- * of offering to send it again. Only the top idea is checked — sending is
- * only ever offered for a board's top idea in the first place.
+ * Every idea id that's already been sent to the Argument Library
+ * (`isBrainstormIdeaInArgumentLibrary`), so the panel can swap that idea's
+ * "Send to Argument Library" action for a confirmation badge instead of
+ * offering to send it again. Any idea can be sent, not just a board's
+ * top-ranked one, so every idea is checked.
  */
-function computeSentTopIdeaIds(boards: BrainstormBoard[]): Set<string> {
+function computeSentIdeaIds(boards: BrainstormBoard[]): Set<string> {
   return new Set(
     boards
-      .map((board) => board.ideas[0])
-      .filter((idea): idea is BrainstormBoard["ideas"][number] => idea !== undefined)
+      .flatMap((board) => board.ideas)
       .filter((idea) => isBrainstormIdeaInArgumentLibrary(idea.id))
       .map((idea) => idea.id),
   )
@@ -197,17 +217,27 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
   const [sendOpenBoardKey, setSendOpenBoardKey] = useState<string | null>(null)
+  const [sendIdeaId, setSendIdeaId] = useState<string | null>(null)
   const [sendDraft, setSendDraft] = useState<{ topic: string; caseArea: string }>({ topic: "", caseArea: "" })
   const [sendError, setSendError] = useState<string | null>(null)
   const [sentIdeaIds, setSentIdeaIds] = useState<Set<string>>(new Set())
   const [timer, setTimer] = useState<BrainstormSessionTimerState | null>(null)
   const [timerNow, setTimerNow] = useState(() => Date.now())
+  const [bumpedIdeaId, setBumpedIdeaId] = useState<string | null>(null)
+  const bumpTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clears any pending "bump" animation timeout on unmount so it never fires a state update after.
+  useEffect(() => {
+    return () => {
+      if (bumpTimeoutRef.current) clearTimeout(bumpTimeoutRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     setTopics(listTrackedTopics())
     const initialBoards = buildBrainstormBoardsPanelView()
     setBoards(initialBoards)
-    setSentIdeaIds(computeSentTopIdeaIds(initialBoards))
+    setSentIdeaIds(computeSentIdeaIds(initialBoards))
     setTimer(loadBrainstormSessionTimer())
   }, [])
 
@@ -229,7 +259,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     const trimmed = activeTopic.trim()
     const nextBoards = trimmed ? buildBrainstormBoardsPanelViewForTopic(trimmed) : buildBrainstormBoardsPanelView()
     setBoards(nextBoards)
-    setSentIdeaIds(computeSentTopIdeaIds(nextBoards))
+    setSentIdeaIds(computeSentIdeaIds(nextBoards))
   }
 
   /**
@@ -271,10 +301,12 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
       upvotes: 0,
     })
     setError(null)
+    // Keep the just-used contributor id (typed or prefilled) so several
+    // ideas can be submitted in a row without retyping it.
     setDraft({
       ...EMPTY_DRAFT,
       category: draft.category,
-      contributorId: hasEditedContributorId ? "" : signedInContributorId ?? "",
+      contributorId,
     })
     refresh()
   }
@@ -282,6 +314,9 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const handleUpvote = (id: string) => {
     upvotePersistedBrainstormIdea(id)
     refresh()
+    if (bumpTimeoutRef.current) clearTimeout(bumpTimeoutRef.current)
+    setBumpedIdeaId(id)
+    bumpTimeoutRef.current = setTimeout(() => setBumpedIdeaId(null), UPVOTE_BUMP_ANIMATION_MS)
   }
 
   const handleGenerateAiIdeas = async () => {
@@ -351,28 +386,31 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     refresh()
   }
 
-  const handleOpenSend = (board: BrainstormBoard) => {
+  const handleOpenSend = (board: BrainstormBoard, ideaId: string) => {
     setSendOpenBoardKey(boardKey(board))
+    setSendIdeaId(ideaId)
     setSendDraft({ topic, caseArea: "" })
     setSendError(null)
   }
 
   const handleCancelSend = () => {
     setSendOpenBoardKey(null)
+    setSendIdeaId(null)
     setSendError(null)
   }
 
   const handleConfirmSend = (board: BrainstormBoard) => {
-    const topIdea = board.ideas[0]
-    if (!topIdea) return
+    const idea = board.ideas.find((candidate) => candidate.id === sendIdeaId)
+    if (!idea) return
     const sendTopic = sendDraft.topic.trim()
     const caseArea = sendDraft.caseArea.trim()
     if (!sendTopic || !caseArea) {
       setSendError("Topic and case area are both required.")
       return
     }
-    sendBrainstormIdeaToArgumentLibrary(topIdea, sendTopic, caseArea)
+    sendBrainstormIdeaToArgumentLibrary(idea, sendTopic, caseArea)
     setSendOpenBoardKey(null)
+    setSendIdeaId(null)
     setSendError(null)
     refresh()
   }
@@ -571,10 +609,15 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                 {board.ideas.map((idea, index) => (
                   <div
                     key={idea.id}
-                    className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-2"
+                    className={`flex items-center justify-between gap-3 rounded-md border px-3 py-2 ${
+                      index === 0 ? "border-primary/40 bg-primary/5" : "border-border"
+                    }`}
                   >
                     <div className="space-y-1 text-sm">
                       <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant={index === 0 ? "default" : "outline"}>
+                          {buildBrainstormIdeaRankBadge(index + 1)}
+                        </Badge>
                         <span className="font-medium text-foreground">{idea.contributorId}</span>
                         <span className="text-xs text-muted-foreground">
                           {idea.popularityScore}/100 popularity
@@ -602,15 +645,22 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
                           </SelectContent>
                         </Select>
                       )}
-                      {index === 0 &&
-                        (sentIdeaIds.has(idea.id) ? (
-                          <Badge variant="outline">✓ In Argument Library</Badge>
-                        ) : (
-                          <Button size="sm" variant="outline" onClick={() => handleOpenSend(board)}>
-                            Send to Argument Library
-                          </Button>
-                        ))}
-                      <Button size="sm" variant="outline" onClick={() => handleUpvote(idea.id)}>
+                      {sentIdeaIds.has(idea.id) ? (
+                        <Badge variant="outline">✓ In Argument Library</Badge>
+                      ) : (
+                        <Button size="sm" variant="outline" onClick={() => handleOpenSend(board, idea.id)}>
+                          Send to Argument Library
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleUpvote(idea.id)}
+                        className={`gap-1 transition-transform duration-200 ${
+                          idea.id === bumpedIdeaId ? "scale-110" : "scale-100"
+                        }`}
+                      >
+                        <ChevronUp className="size-3.5" />
                         Upvote ({idea.upvotes})
                       </Button>
                     </div>
@@ -620,7 +670,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
               {sendOpenBoardKey === boardKey(board) && (
                 <div className="mt-3 space-y-2 rounded-md border border-border p-3">
                   <p className="text-xs text-muted-foreground">
-                    Send this board's top idea to the Argument Library as a reusable analytic block.
+                    Send this idea to the Argument Library as a reusable analytic block.
                   </p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     <div className="space-y-1">

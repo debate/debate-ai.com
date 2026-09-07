@@ -172,7 +172,7 @@ panels/PreRoundBriefingsPanel.tsx
 before this field existed still deserializes — `getBriefingAgeHours`/
 `isBriefingStale` simply report no age for it, and the panel hides the
 badge rather than showing a wrong or made-up age. This mirrors
-`debate-card-search`'s Peer Review System review-aging indicator
+`debate-research-evidence`'s Peer Review System review-aging indicator
 (`peer-review.ts#getReviewAgeDays`/`isReviewStale`,
 `ReviewQueuePanel.tsx`'s age badge) almost exactly, down to the
 `now`-injectable pure functions and the `undefined`-age-hides-the-badge

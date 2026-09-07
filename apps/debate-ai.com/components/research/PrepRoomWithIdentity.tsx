@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s `PrepRoomPanel`
+ * @fileoverview Thin wrapper over `debate-team-collaboration`'s `PrepRoomPanel`
  * that prefills the "Your ID" presence field from this app's real
  * signed-in session, via `deriveContributorIdFromSessionIdentity`. The
  * panel itself stays app-agnostic (it takes the derived id as a plain

@@ -243,7 +243,13 @@ export function reassignPersistedRoutedTask(
   if (previousAssignment?.contributorId === trimmedContributorId) return previousAssignment;
 
   const task = previousAssignment ? previousAssignment.task : queue.result.unassignedTasks[unassignedIndex];
-  const reassignment: RoutedAssignment = { task, contributorId: trimmedContributorId };
+  // Carry the previous assignment's priority flag along — reassigning a
+  // task moves it to a new contributor, it doesn't change how urgent it is.
+  const reassignment: RoutedAssignment = {
+    task,
+    contributorId: trimmedContributorId,
+    ...(previousAssignment?.priority ? { priority: previousAssignment.priority } : {}),
+  };
   const updatedResult: RoutingResult = {
     assignments: previousAssignment
       ? queue.result.assignments.map((a, i) => (i === assignedIndex ? reassignment : a))

@@ -8,7 +8,7 @@ Endorse actions per entry.
 - **Route:** `/cards/contributions`
 - **Nav:** the Tools page's Community & Progress group; `ResearchHub.tsx`'s
   Rewards tab
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
 
 ## What it shows
 
@@ -88,7 +88,7 @@ This closes, for this panel, the "Every other localStorage-backed panel in
 this repo still has no cross-tab live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](shared-flow-sync.md), mirroring the existing
 `DailyBestCardPanel`/`isDailyBestCardLiveUpdateStorageEvent` precedent.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`
 (every backing-store key, the `null`-key clear-all case, and unrelated/
 substring-matching keys staying ignored).
 
@@ -121,7 +121,7 @@ self-action guard. This still blocks a signed-out visitor who happens to type
 their own contribution's id, just via an inline error rather than a disabled
 button, since a signed-out visitor has no real identity to lock the field to.
 
-Vitest-covered in `packages/debate-card-search/test/contributions.test.ts`
+Vitest-covered in `packages/debate-search-evidence/test/contributions.test.ts`
 (self-endorsement throws, case-insensitively and across whitespace; endorsing
 someone else's contribution still succeeds).
 

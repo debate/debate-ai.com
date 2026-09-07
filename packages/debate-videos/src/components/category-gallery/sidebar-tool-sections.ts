@@ -27,6 +27,30 @@ export interface SidebarToolSection {
   tools: SidebarToolLink[];
 }
 
+/**
+ * The tools catalog. It heads the "Apps" node of the tree and is listed under
+ * it as "All Tools" — it is deliberately *not* one of the
+ * {@link APP_DOCK_LINKS} below: the app dock no longer carries a Tools icon,
+ * because holding the dock to five destinations is what lets its
+ * sidebar-hosted instance fit inside this column. The tree (and the dock's
+ * own Settings menu) is where tools live instead.
+ */
+export const TOOLS_ROOT_HREF = "/tools";
+
+/**
+ * Mirrors `CategoryDock`'s `NAV_ITEMS` (the app dock icons shown at the top
+ * of this sidebar via `dockSlot`) — restated here for the same reason as
+ * `SIDEBAR_TOOL_SECTIONS` above, so every dock destination also has a
+ * plain-text nav entry in the tree, not just a hover-labeled dock icon.
+ */
+export const APP_DOCK_LINKS: SidebarToolLink[] = [
+  { href: "/videos", title: "Videos" },
+  { href: "/cards", title: "Shared" },
+  { href: "/debate", title: "Debate" },
+  { href: "/versus-ai", title: "Practice vs AI" },
+  { href: "/doc", title: "Docs" },
+];
+
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   {
     id: "coaching",
