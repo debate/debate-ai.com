@@ -6,6 +6,64 @@
 _No task currently in progress._
 
 ### Completed
+- **⚖️ AI Judge Decision Modes — multi-judge panel mode with a side-by-side
+  paradigm comparison.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built (account settings, dozens of `saved_*` D1
+  tables/`/api/*` routes linking flows, docs, and rounds to signed-in users
+  in SQL, and every tool already reachable from the Tools page, CardMirror's
+  own Google-Docs-style `MenuBar`/`Ctrl`/`Cmd`-Shift-Space command palette
+  (`packages/debate-editor/src/react/MenuBar.tsx`, populated from the same
+  `RIBBON_GROUPS` registry as the palette), and the feature catalog, all
+  reconfirmed this run), so this slice picked idea #5's ("AI Judge Decision
+  Modes") one remaining named next-step instead: "a multi-judge 'panel'
+  mode that runs several paradigms against the same round and shows a
+  combined decision, or a side-by-side paradigm comparison view for picking
+  which judge to prep for." Both alternatives are closed by one feature:
+  `JudgeDecisionPanel.tsx`'s new "Multi-judge panel" section lets a user
+  check two or more of the six built-in judge paradigms
+  (`listJudgeParadigms()`) and run them all against the same round in one
+  click — via a new `round/judge-decision-store-wiring.ts#buildJudgeDecisionInputForParadigm`
+  (resolves the round's saved flow summary under a caller-supplied paradigm
+  instead of the round's one saved `judgeParadigmSelections.ts` selection)
+  feeding the existing `requestJudgeDecision` call once per paradigm. A new
+  pure `debate-round`'s `round/judge-decision-panel.ts#combineJudgePanelDecisions`
+  tallies the results into a combined decision — majority `winner` (or
+  `"split"` on an exact tie), each side's vote count, `unanimous`, and a
+  de-duplicated union of every paradigm's `keyVotingIssues` — rendered above
+  a side-by-side table (one row per paradigm: its vote and rationale),
+  which doubles as the "side-by-side paradigm comparison" alternative in
+  the same view. No new D1 table or API route was needed: each panel run's
+  decisions are appended to the existing history log
+  (`hooks/useJudgeDecisions.ts#appendDecision`) tagged with one shared
+  `batchId` — a new optional field on `JudgeDecisionRecord`, validated as an
+  optional string by `state/savedJudgeDecisions.ts#isValidJudgeDecisionRecord`
+  — so panel-run decisions sync to the account exactly like any other
+  decision. `state/judgeDecisions.ts#buildJudgeDecisionHistoryItems` regroups
+  a round's newest-first decisions so every 2+ decisions sharing a `batchId`
+  render as one "panel run" card (combined decision + comparison table)
+  instead of unrelated single-decision cards, exposed as a new
+  `historyItems` field on `buildJudgeDecisionsPanelView`'s existing
+  `JudgeDecisionRoundGroup` (the flat `decisions` list is unchanged, so
+  nothing that already read it needed to change); a "Clear this panel run"
+  action removes every decision in the batch in one click. See
+  `docs/features/judge-paradigm-selections.md`'s new "Multi-judge panel
+  mode" section and the updated idea #5 entry below. 5 new Vitest cases in
+  `packages/debate-round/test/judge-decision-panel.test.ts`
+  (`combineJudgePanelDecisions` — throws below 2 results, majority winner
+  with vote counts, split tie, unanimity, key-voting-issue union/de-dup).
+  Ran the full verification gate: `bunx vitest run --config
+  apps/debate-ai.com/vitest.config.ts` (4997 passing, up from 4992) and
+  `bunx turbo run typecheck` (all 16 packages in scope) both pass;
+  `bun run build:web` fails in this sandbox on a pre-existing,
+  change-unrelated environment issue (the native `canvas` package's
+  compiled `.node` binding fails to load under this container's rolldown
+  build step — reproduced identically on this branch's base commit before
+  any of this slice's changes, via `git stash`), not on anything this slice
+  touched.
 - **🎮 Gamified Quests — account-syncing reminder opt-ins/streak freezes
   across devices.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -17806,7 +17864,7 @@ Each idea below has a working first-cut implementation already shipped (see Trac
 
 4. **AI Response-Outcome Charts** (`/outcomes`) — the counsel-panel-assessment-timeline follow-up is done: every "Get AI counsel panel" request appends to that round's history log instead of overwriting the prior assessment (`state/counselPanelAssessments.ts`'s `CounselPanelAssessmentRecord`, account-synced via a new `saved_counsel_panel_assessments` D1 table plus `/api/counsel-panel-assessments` routes, merged in by `hooks/useCounselPanelAssessments.ts`), with the newest assessment shown expanded and older ones behind a "Show past assessments (N)" toggle — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Counsel-panel assessment history" section. The chart export/share follow-up is also now done: a "Download report" button next to each round's "Clear" action exports that round's side summary, most-exposed-arguments chart, and latest AI counsel-panel assessment as a plain-text file (`flow/response-outcome-report.ts`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Report download" section. The side-by-side "what if" scenario comparison follow-up is also now done: a "Compare 'What If' Scenarios" section lets a user name and save the row's currently-active Extend/Answer/Concede picks as a scenario, and once two or more are saved, renders each scenario's own exposure summary alongside a shared score table (`flow/response-outcome.ts#buildHypotheticalScenarioComparison`), plus a "Download comparison" action (`flow/response-outcome-report.ts#buildHypotheticalScenarioComparisonText`) — see the Completed entry above and `docs/features/response-outcome-charts.md`'s "Comparing 'what if' scenarios side by side" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a `.docx`/Speech Document export format alongside the plain-text ones) if one becomes worth doing.
 
-5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. No further follow-up is currently tracked; a future run should pick a fresh next-step (e.g. a multi-judge "panel" mode that runs several paradigms against the same round and shows a combined decision, or a side-by-side paradigm comparison view for picking which judge to prep for) if one becomes worth doing.
+5. **AI Judge Decision Modes** (`/judge-decision`, `/paradigms`) — a decision history log per round now exists: every requested AI decision is appended (its own generated id) instead of overwriting the round's prior verdict, `JudgeDecisionPanel` renders each round's decisions newest-first, and the history is account-synced (a new `saved_judge_decisions` D1 table plus `/api/judge-decisions` routes, merged in by `hooks/useJudgeDecisions.ts`) so it follows a signed-in user across devices. A "Clear all history for this round" bulk action sits next to each round's heading (`deleteJudgeDecisionsForRound`/`deleteRoundHistory`), clearing that round's full history locally and, when signed in, best-effort from the account too. A per-round decision count cap (`MAX_JUDGE_DECISIONS_PER_ROUND`, 20) is also now enforced — `appendJudgeDecision` trims the oldest entry once a round's log exceeds it, with the trimmed id best-effort deleted from the account too. See `docs/features/judge-paradigm-selections.md`'s "Decision history" section. The multi-judge "panel" mode follow-up is also now done: `JudgeDecisionPanel.tsx`'s new "Multi-judge panel" section runs two or more built-in paradigms against the same round in one action (via a new `round/judge-decision-store-wiring.ts#buildJudgeDecisionInputForParadigm`, reusing the existing `requestJudgeDecision` call per paradigm) and shows a combined decision — majority winner (or "split" on a tie), vote counts, unanimity, and a union of every paradigm's key voting issues, computed by a new pure `debate-round`'s `round/judge-decision-panel.ts#combineJudgePanelDecisions` — alongside a side-by-side table of each paradigm's own vote and rationale, which also closes this bullet's "or a side-by-side paradigm comparison view for picking which judge to prep for" alternative in one feature. No new storage or D1 table was needed: each panel run's decisions are tagged with one shared `batchId` (a new optional field on the already-synced `JudgeDecisionRecord`), and `state/judgeDecisions.ts#buildJudgeDecisionHistoryItems` regroups a round's history so same-`batchId` decisions render as one "panel run" card instead of unrelated single decisions — so panel runs sync to the account and appear in history exactly like any other decision, with a "Clear this panel run" bulk action. See the Completed entry above and `docs/features/judge-paradigm-selections.md`'s new "Multi-judge panel mode" section. No further follow-up is currently tracked for this idea; a future run should pick a fresh next-step (e.g. showing each paradigm's own `buildJudgeDecisionRubric` breakdown within a panel run, not just the raw winner/keyVotingIssues union) if one becomes worth doing.
 
 6. **Speech Transcript Summaries and Answers** (`/summaries`) — the
    ranking follow-up is done: cross-exam questions and extension ideas now

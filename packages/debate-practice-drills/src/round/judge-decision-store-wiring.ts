@@ -18,6 +18,7 @@ import { getJudgeParadigmSelection } from "../state/judgeParadigmSelections";
 import { buildFlowSummaryTextFromRows } from "debate-round/src/flow/flow-transcript-summary";
 import { getFlowSummary } from "../state/flowSummaries";
 import type { JudgeDecisionAiInput, JudgeDecisionSideNames } from "debate-round/src/round/judge-decision-ai";
+import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
 
 /** Which of the two required sources (if any) is missing for a round. */
 export type JudgeDecisionSource = "flowSummary" | "judgeParadigm";
@@ -53,6 +54,35 @@ export function buildJudgeDecisionInputFromStores(
     ok: true,
     input: {
       paradigm: paradigmSelection.paradigm,
+      flowSummaryText: buildFlowSummaryTextFromRows(flowSummary.summaries),
+      sideNames,
+    },
+  };
+}
+
+/**
+ * Resolves `roundId`'s persisted flow summary into a `JudgeDecisionAiInput`
+ * under a caller-supplied `paradigm`, instead of the round's single saved
+ * judge-paradigm selection — the multi-judge "panel" mode's building block
+ * (idea #5's follow-up), since a panel run judges the same round under
+ * several paradigms at once rather than the one selection
+ * `judgeParadigmSelections.ts` stores per round. Only `"flowSummary"` can be
+ * reported missing here.
+ */
+export function buildJudgeDecisionInputForParadigm(
+  roundId: string,
+  paradigm: JudgeParadigm,
+  sideNames: JudgeDecisionSideNames,
+): JudgeDecisionSourcesResult {
+  const flowSummary = getFlowSummary(roundId);
+  if (!flowSummary || flowSummary.summaries.length === 0) {
+    return { ok: false, missing: ["flowSummary"] };
+  }
+
+  return {
+    ok: true,
+    input: {
+      paradigm,
       flowSummaryText: buildFlowSummaryTextFromRows(flowSummary.summaries),
       sideNames,
     },
