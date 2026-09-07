@@ -169,3 +169,38 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
     (PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
+
+/**
+ * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads
+ * from: `debate-data-sync`'s `state/opponentTeamProfiles.ts`'s own
+ * `"opponentTeamProfiles"` store (the roster
+ * `buildOpponentTeamProfilesRoster` renders) and `state/opponentRoundRecords.ts`'s
+ * `"opponentRoundRecords"` (the logged-round history feeding the "Logged
+ * rounds" list), plus that same module's
+ * `"opponentRoundRecordEditHistory"`/`"opponentRoundRecordRedoHistory"`
+ * (which rounds show an Undo last edit/Redo action), mirroring
+ * `debate-speech-writer`'s `JudgeProfilesPanel` convention exactly.
+ */
+export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "opponentTeamProfiles",
+  "opponentRoundRecords",
+  "opponentRoundRecordEditHistory",
+  "opponentRoundRecordRedoHistory",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `OpponentTeamProfilesPanel` to
+ * refresh its rendered roster and logged-round history. A `null` key (e.g.
+ * from `localStorage.clear()`, per the `StorageEvent` spec) counts too — the
+ * safest response to "everything changed" is refreshing. Any other key (an
+ * unrelated store elsewhere in the app) is ignored so an unrelated cross-tab
+ * write doesn't force a needless refresh. Closes the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for this panel.
+ */
+export function isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}

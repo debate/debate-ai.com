@@ -116,6 +116,7 @@ import {
   type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
@@ -205,6 +206,24 @@ export function OpponentTeamProfilesPanel() {
     setRoster(buildOpponentTeamProfilesRoster())
     setRecords(listOpponentRoundRecords())
   }
+
+  /**
+   * Live-update this panel when another browser tab logs, edits,
+   * undoes/redoes, deletes, or bulk-imports a scouted round — a `storage`
+   * event never fires in the tab that made the write, only in other
+   * same-origin tabs. The in-progress "Log a scouted round" form draft is
+   * left untouched, only the persisted roster/history re-reads, mirroring
+   * `JudgeProfilesPanel`'s "refresh the derived view, not the draft"
+   * convention.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const teamId = draft.teamId.trim()
