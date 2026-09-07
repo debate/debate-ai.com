@@ -486,7 +486,9 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`contributions-feed.md`](contributions-feed.md)'s "Cross-tab live
   update"), `StrategyPanel` (see
   [`scout-to-strategy.md`](scout-to-strategy.md)'s "Cross-tab live update"),
-  and `FlowEditLogPanel` itself (see "Cross-tab live update in
+  `PreRoundBriefingsPanel` (see
+  [`pre-round-briefings.md`](pre-round-briefings.md)'s "Cross-tab live
+  update"), and `FlowEditLogPanel` itself (see "Cross-tab live update in
   `FlowEditLogPanel`" above) have since gained the equivalent mechanism for
   their own stores, but every other localStorage-backed panel in this repo
   still has none (Live Sync

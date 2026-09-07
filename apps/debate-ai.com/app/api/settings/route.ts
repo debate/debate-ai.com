@@ -4,11 +4,13 @@ import { getDBFromContext } from "@/lib/database/context"
 import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
+  applyFavoriteToolOp,
   DEFAULT_FAVORITE_TOOLS,
   DEFAULT_OUTLINE_FILTER_PRESETS,
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
+  normalizeFavoriteToolOpPatch,
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetsPatch,
   normalizeThemeSettingsPatch,
@@ -75,19 +77,27 @@ import {
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
- *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked?,
- *   savedArgumentCollections?, researchProgressGoal?, questStreakSync? } —
- *   validates and upserts the given fields (validated by `debate-round`'s
+ *   addFavoriteTool?, removeFavoriteTool?, wordLimitPresets?,
+ *   outlineFilterPresets?, newsRead?, newsLiked?, savedArgumentCollections?,
+ *   researchProgressGoal?, questStreakSync? } — validates and upserts the
+ *   given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
- *   `normalizeFavoriteToolsPatch`/`normalizeWordLimitPresetsPatch`/
- *   `normalizeOutlineFilterPresetsPatch` and `debate-card-search`'s
+ *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
+ *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`
+ *   and `debate-card-search`'s
  *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
  *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`,
  *   the same option lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
  *   collections", Research Progress "My research goal", and Quest Streaks
  *   reminder/freeze UIs themselves use), returning the resulting full
- *   settings row.
+ *   settings row. `addFavoriteTool`/`removeFavoriteTool` resolve a single
+ *   star/unstar against the row's *current* stored `favoriteTools` value
+ *   (read-then-write, like the `editorPreferences` merge below) instead of
+ *   trusting the caller's own copy of the list, which two tabs starring
+ *   different tools in quick succession could otherwise race — a plain
+ *   `favoriteTools` array is still accepted for callers that legitimately
+ *   need a whole-list replace (e.g. pruning stale entries).
  */
 
 type SettingsRow = {
@@ -176,6 +186,7 @@ export async function PUT(req: NextRequest) {
   const userSettingsResult = normalizeUserSettingsPatch(body)
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
+  const favoriteToolOpResult = normalizeFavoriteToolOpPatch(body)
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
@@ -190,6 +201,7 @@ export async function PUT(req: NextRequest) {
     ...userSettingsResult.errors,
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
+    ...favoriteToolOpResult.errors,
     ...wordLimitPresetsResult.errors,
     ...outlineFilterPresetsResult.errors,
     ...savedArgumentCollectionsResult.errors,
@@ -205,6 +217,8 @@ export async function PUT(req: NextRequest) {
   if (
     Object.keys(valid).length === 0 &&
     favoriteToolsResult.valid.favoriteTools === undefined &&
+    favoriteToolOpResult.valid.addFavoriteTool === undefined &&
+    favoriteToolOpResult.valid.removeFavoriteTool === undefined &&
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
@@ -216,7 +230,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -239,7 +253,26 @@ export async function PUT(req: NextRequest) {
     researchProgressGoal?: string | null
     questStreakSync?: string | null
   } = { ...valid }
-  if (favoriteToolsResult.valid.favoriteTools !== undefined) {
+  if (
+    favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
+    favoriteToolOpResult.valid.removeFavoriteTool !== undefined
+  ) {
+    // A single star/unstar op is resolved against the row's *current*
+    // stored list rather than the caller's own copy — see this route's
+    // docstring and `state/favoriteTools.ts#applyFavoriteToolOp`. Narrows,
+    // but doesn't eliminate, the lost-update race two tabs starring
+    // different tools in quick succession used to hit with a plain
+    // `favoriteTools` whole-list replace.
+    const [existing] = await db
+      .select({ favoriteTools: userSettings.favoriteTools })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.favoriteTools
+      ? parseFavoriteTools(existing.favoriteTools)
+      : DEFAULT_FAVORITE_TOOLS.favoriteTools
+    dbPatch.favoriteTools = serializeFavoriteTools(applyFavoriteToolOp(current, favoriteToolOpResult.valid))
+  } else if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
   }
   if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {

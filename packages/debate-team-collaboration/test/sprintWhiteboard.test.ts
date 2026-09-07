@@ -4,7 +4,7 @@ import {
   listWhiteboardNotes,
   listWhiteboardNotesForTopic,
   saveWhiteboardNote,
-  updateWhiteboardNotePosition,
+  updatePersistedWhiteboardNotePosition,
 } from "../src/state/sprintWhiteboard";
 import type { WhiteboardNote } from "../src/lib/team-collaboration-mode";
 
@@ -32,8 +32,8 @@ const SOLVENCY_NOTE: WhiteboardNote = {
   color: "yellow",
   authorId: "alice",
   createdAt: 100,
-  x: 10,
-  y: 20,
+  x: 4,
+  y: 4,
 };
 const TOPICALITY_NOTE: WhiteboardNote = {
   id: "note-2",
@@ -42,8 +42,8 @@ const TOPICALITY_NOTE: WhiteboardNote = {
   color: "blue",
   authorId: "bob",
   createdAt: 200,
-  x: 30,
-  y: 40,
+  x: 26,
+  y: 4,
 };
 
 beforeEach(() => {
@@ -115,25 +115,25 @@ describe("deleteWhiteboardNote", () => {
   });
 });
 
-describe("updateWhiteboardNotePosition", () => {
-  it("moves a stored note to a new position", () => {
+describe("updatePersistedWhiteboardNotePosition", () => {
+  it("persists a note's new x/y position", () => {
     saveWhiteboardNote(SOLVENCY_NOTE);
     saveWhiteboardNote(TOPICALITY_NOTE);
-    updateWhiteboardNotePosition("note-1", { x: 55, y: 60 });
+    updatePersistedWhiteboardNotePosition("note-1", 60, 75);
 
-    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 55, y: 60 }, TOPICALITY_NOTE]);
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 60, y: 75 }, TOPICALITY_NOTE]);
   });
 
-  it("clamps the new position to stay inside the canvas", () => {
+  it("clamps the position into the 0-100 range", () => {
     saveWhiteboardNote(SOLVENCY_NOTE);
-    updateWhiteboardNotePosition("note-1", { x: -50, y: 900 });
+    updatePersistedWhiteboardNotePosition("note-1", -20, 140);
 
-    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 0, y: 78 }]);
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 0, y: 100 }]);
   });
 
   it("is a no-op when the id isn't stored", () => {
-    saveWhiteboardNote(TOPICALITY_NOTE);
-    updateWhiteboardNotePosition("missing", { x: 5, y: 5 });
-    expect(listWhiteboardNotes()).toEqual([TOPICALITY_NOTE]);
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    updatePersistedWhiteboardNotePosition("missing", 60, 75);
+    expect(listWhiteboardNotes()).toEqual([SOLVENCY_NOTE]);
   });
 });

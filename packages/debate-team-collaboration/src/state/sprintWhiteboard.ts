@@ -8,8 +8,8 @@
  * @module state/sprintWhiteboard
  */
 
-import type { WhiteboardNote, WhiteboardNotePosition } from "../lib/team-collaboration-mode";
-import { getWhiteboardNotesForTopic, moveWhiteboardNote } from "../lib/team-collaboration-mode";
+import type { WhiteboardNote } from "../lib/team-collaboration-mode";
+import { getWhiteboardNotesForTopic, moveWhiteboardNotePosition } from "../lib/team-collaboration-mode";
 
 const STORAGE_KEY = "sprintWhiteboardNotes";
 
@@ -58,15 +58,9 @@ export function deleteWhiteboardNote(id: string): void {
 }
 
 /**
- * Moves a persisted whiteboard note to a new freeform (clamped) position —
- * the drag-to-reposition action on `TopicSprintPanel`'s whiteboard canvas.
- * A no-op if the id isn't stored (mirroring `deleteWhiteboardNote`'s own
- * missing-id handling).
+ * Persists a note's new `x`/`y` position on the freeform whiteboard —
+ * the write-side of dragging a sticky note. A no-op if `id` isn't stored.
  */
-export function updateWhiteboardNotePosition(id: string, position: WhiteboardNotePosition): void {
-  const notes = readAll();
-  const index = notes.findIndex((note) => note.id === id);
-  if (index === -1) return;
-  notes[index] = moveWhiteboardNote(notes[index], position);
-  writeAll(notes);
+export function updatePersistedWhiteboardNotePosition(id: string, x: number, y: number): void {
+  writeAll(moveWhiteboardNotePosition(readAll(), id, x, y));
 }

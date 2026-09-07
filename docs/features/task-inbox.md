@@ -27,7 +27,12 @@ Per topic (a persisted `RoutedTaskQueueRecord`, keyed by `topicId`):
 Tasks nobody was eligible or available for (`unassignedTasks`) are listed
 separately per topic, with an **Assign to…** field instead of a complete
 action — the same reassign control, since assigning an unassigned task and
-reassigning an already-assigned one are the same underlying operation.
+reassigning an already-assigned one are the same underlying operation. An
+unassigned task can also be flagged high priority — the same "Flag high
+priority"/"Unflag" toggle an assignment has, backed by
+`setPersistedUnassignedTaskPriority(topicId, argBlock, priority)` — and the
+flag carries over onto the resulting assignment's own `priority` the moment
+the task is actually assigned or reassigned.
 
 A task marked done doesn't credit the completion right away — it moves into
 an "Awaiting verification" section, listing every persisted
@@ -255,29 +260,52 @@ the new pure `setAssignmentPriority(assignment, priority)`.
 argBlock, priority)` finds the matching assignment in that topic's persisted
 queue, applies `setAssignmentPriority`, and saves — a no-op that returns
 `undefined` for a topic with no persisted queue, or an `argBlock` that
-doesn't match an *assigned* task (an unassigned task has no assignee to
-attach a priority flag to; assign or reassign it first).
+doesn't match an *assigned* task.
+
+An unassigned task can be flagged the same way, closing the "An unassigned
+task can't be pre-flagged before it has an assignee" Known gap below:
+`lib/research-task-routing.ts`'s `ResearchTask.priority` field (same
+`"normal" | "high"` shape, set via the new pure `setTaskPriority(task,
+priority)`) lives directly on a still-unassigned task, since it has no
+assignee yet to attach a `RoutedAssignment.priority` to. The matching
+`state/routedTaskQueues.ts#setPersistedUnassignedTaskPriority(topicId,
+argBlock, priority)` finds the task in that topic's persisted
+`unassignedTasks` and saves — a no-op for an `argBlock` that matches an
+already-*assigned* task instead (use `setPersistedRoutedTaskPriority` for
+that case). Once the task is actually assigned or reassigned
+(`reassignPersistedRoutedTask`), its `priority` moves from the task onto the
+new `RoutedAssignment.priority` — the task itself no longer carries the
+flag once it has an assignee, so priority always lives in exactly one place
+for any given task.
 
 `buildTaskInboxView` now runs each topic's assignments through the new pure
-`sortAssignmentsByPriority` before tagging them — a stable sort that puts
-`"high"`-priority assignments first while preserving the underlying
+`sortAssignmentsByPriority`, and its `unassignedTasks` through the matching
+`sortTasksByPriority`, before returning them — a stable sort that puts
+`"high"`-priority entries first while preserving the underlying
 most-urgent-first `routeTasks` order within each priority tier — so a
-flagged task surfaces above its topic-mates in `TaskInboxPanel` without
-disturbing routing order otherwise.
+flagged task (assigned or not) surfaces above its topic-mates in
+`TaskInboxPanel` without disturbing routing order otherwise.
 
 ```
 panels/TaskInboxPanel.tsx
   → setPersistedRoutedTaskPriority(topicId, argBlock, "high" | "normal")
       — state/routedTaskQueues.ts
       └─ setAssignmentPriority(assignment, priority) — lib/research-task-routing.ts
+  → setPersistedUnassignedTaskPriority(topicId, argBlock, "high" | "normal")
+      — state/routedTaskQueues.ts
+      └─ setTaskPriority(task, priority) — lib/research-task-routing.ts
   → panel re-reads buildTaskInboxView() to refresh, which now sorts each
-    topic's assignments via sortAssignmentsByPriority before rendering
+    topic's assignments via sortAssignmentsByPriority and its
+    unassignedTasks via sortTasksByPriority before rendering
 ```
 
-Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority` in
+Vitest-covered: `setAssignmentPriority`/`sortAssignmentsByPriority`/
+`setTaskPriority`/`sortTasksByPriority` in
 `packages/debate-search-evidence/test/research-task-routing.test.ts`, and
-`setPersistedRoutedTaskPriority` plus `buildTaskInboxView`'s new
-priority-ordering behavior in
+`setPersistedRoutedTaskPriority`/`setPersistedUnassignedTaskPriority` plus
+`buildTaskInboxView`'s priority-ordering behavior (assignments and
+unassigned tasks alike) and `reassignPersistedRoutedTask`'s task-to-
+assignment priority carry-over in
 `packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
 
 ## Team capacity view
@@ -287,11 +315,11 @@ across every topic, closing the "a capacity-aware view of routing load
 across the team" follow-up named under the "Research Task Routing" bullet
 in TODO.md's Research Crowdsourcing Organizer Features list.
 
-This repo still has no UI to create or manage a `ContributorAvailability`
-profile at all (only tests and the free-form "Reassign"/"Assign to…"
-control touch that store), so rather than requiring one to exist for every
-contributor, `state/routedTaskQueues.ts`'s new `buildTeamCapacityView()`
-tallies load straight from the actually-persisted routed queues — the same
+A contributor doesn't need a persisted `ContributorAvailability` profile to
+show up here at all (see "Contributor availability profiles" below for how
+one is created) — rather than requiring one to exist for every contributor,
+`state/routedTaskQueues.ts`'s new `buildTeamCapacityView()` tallies load
+straight from the actually-persisted routed queues — the same
 "work off arbitrary typed ids" convention `reassignPersistedRoutedTask`
 already established — and enriches a row with `skillLevel`/
 `maxConcurrentTasks`/an "Overloaded" badge only for whichever contributors
@@ -314,6 +342,71 @@ state/routedTaskQueues.ts
 
 Vitest-covered in
 `packages/debate-team-collaboration/test/routedTaskQueues.test.ts`.
+
+## Contributor availability profiles
+
+A "Contributor availability" section lets anyone viewing the panel create,
+edit, or delete a `ContributorAvailability` profile (contributor id, skill
+level, max concurrent tasks) directly, closing the "a real
+`ContributorAvailability` profile management UI" follow-up named under the
+"Research Task Routing" bullet in TODO.md's Research Crowdsourcing
+Organizer Features list. Previously the only way a profile came to exist
+was a Vitest fixture or an incidental side effect of the free-form
+"Reassign"/"Assign to…" control (which only ever increments/decrements an
+existing profile's `activeTaskCount`, never creates one) — there was no way
+to set or change a contributor's skill level or concurrency limit at all,
+which meant "Route tasks" above had no real eligible contributors to route
+to and "Team capacity" below never showed a skill/limit/"Overloaded" badge
+outside of tests.
+
+`lib/research-task-routing.ts`'s new pure `buildContributorAvailabilityProfile(input,
+existing?)` validates the form (a non-blank contributor id, a whole-number
+`maxConcurrentTasks` of at least 1) and decides the built profile's
+`activeTaskCount`: `0` for a brand-new contributor id, or `existing`'s
+current count carried over unchanged when `existing.contributorId` matches
+— this form only ever edits skill level/concurrency limit, never the
+auto-tracked task count `recordPersistedTaskAssigned`/
+`recordPersistedTaskCompleted` maintain as tasks are actually routed and
+completed. `state/contributorAvailability.ts`'s new
+`upsertContributorAvailabilityProfile(input)` composes that pure builder
+directly against the persisted store (looking up any existing profile for
+the same id first), mirroring `routedTaskQueues.ts`'s "compose the pure
+function directly against the persisted store" convention.
+
+```
+panels/TaskInboxPanel.tsx
+  → upsertContributorAvailabilityProfile({ contributorId, skillLevel, maxConcurrentTasks })
+      — state/contributorAvailability.ts
+      ├─ getContributorAvailability(contributorId.trim()) — looks up any
+      │    existing profile for this id first
+      └─ buildContributorAvailabilityProfile(input, existing) — lib/research-task-routing.ts
+           validates the form and decides activeTaskCount, throwing a
+           human-readable Error (shown inline, storage untouched) on a
+           blank id or an invalid maxConcurrentTasks
+  → panel re-reads listContributorAvailability()/buildTeamCapacityView()/
+    buildTaskInboxView() to refresh
+```
+
+Clicking "Edit" on an existing row prefills the form (locking the
+contributor-id field, since editing changes an existing profile rather than
+renaming it to a new id) and switches the button to "Update profile", with
+a "Cancel" action to discard the in-progress edit. "Delete" removes the
+profile outright via the existing `deleteContributorAvailability` — any
+tasks already routed to that contributor id stay routed, just without a
+skill/capacity enrichment from then on, the same as a profile that expired
+any other way (see `buildTaskInboxView`/`buildTeamCapacityView`'s own
+docstrings). The roster list shows each profile's skill level and a
+`activeTaskCount / maxConcurrentTasks` badge, read-only — there's no way to
+edit `activeTaskCount` directly from this form, by design.
+
+Vitest-covered: `buildContributorAvailabilityProfile` in
+`packages/debate-search-evidence/test/research-task-routing.test.ts`
+(new-profile defaults, trimming, carrying `activeTaskCount` over on a
+matching-id edit, resetting it to `0` for a different id, and every
+validation error), and `upsertContributorAvailabilityProfile` in
+`packages/debate-team-collaboration/test/contributorAvailability.test.ts`
+(create, edit-preserves-activeTaskCount, trimming, and both validation
+errors leaving storage untouched).
 
 ## Known gaps
 
@@ -351,10 +444,18 @@ Vitest-covered in
   priority flag lives entirely inside the routed queue's own record, so a
   second tab's `routedTaskQueues.storage` event already carries the change
   through with no separate refresh limitation.
-- An unassigned task can't be pre-flagged before it has an assignee —
-  assign or reassign it first, then flag it.
+- No further follow-up is currently tracked on the "An unassigned task
+  can't be pre-flagged before it has an assignee" gap — see the "Task
+  priority" section above's `setPersistedUnassignedTaskPriority`.
 - The "Team capacity" view reads the same `routedTaskQueues`/
   `contributorAvailability` localStorage stores as the rest of this panel,
   which aren't account-synced — it reflects this browser's own routed
   queues only, not a real team-wide roster. Nothing gates who can view it,
   same as the rest of this panel.
+- Same as Reassign/priority-flagging: the "Contributor availability" form is
+  open to anyone viewing the panel, with no real "coach" role gating who can
+  create, edit, or delete a profile — this repo has no roles/permissions
+  system at all. It's also local-only, like the rest of this panel's
+  underlying stores — a profile created here lives in this browser's
+  `contributorAvailability` localStorage, not a real account-synced,
+  team-wide roster (see the "Team capacity" gap above).

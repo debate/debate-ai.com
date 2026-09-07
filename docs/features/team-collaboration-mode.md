@@ -260,14 +260,14 @@ helpers) and `test/sprintSessions.test.ts` (the persisted store, mirroring
 
 A later slice closes the "a shared whiteboard/canvas for sprint
 brainstorming" follow-up named under the "🤝 Team Collaboration Mode" bullet
-in `TODO.md`. Deliberately not a positioned (x/y, draggable) canvas at
-first: this repo's panel UI kit (`debate-ui`'s `panel-shell`) had no
-drag-and-drop primitive anywhere, so that first slice was a colored
-sticky-note board (creation order, not a freeform layout) — mirroring every
-other idea's "smallest useful vertical slice first" convention rather than
-introducing raw pointer-drag DOM handling with nothing else in the codebase
-to match its styling/theming against. `lib/team-collaboration-mode.ts` adds
-a `WhiteboardNote` model (topic, text, a `color` drawn from a fixed
+in `TODO.md`. Deliberately not a positioned (x/y, draggable) canvas: this
+repo's panel UI kit (`debate-ui`'s `panel-shell`) has no drag-and-drop
+primitive anywhere, so the first slice is a colored sticky-note board
+(creation order, not a freeform layout) — mirroring every other idea's
+"smallest useful vertical slice first" convention rather than introducing
+raw pointer-drag DOM handling with nothing else in the codebase to match its
+styling/theming against. `lib/team-collaboration-mode.ts` adds a
+`WhiteboardNote` model (topic, text, a `color` drawn from a fixed
 `WHITEBOARD_NOTE_COLORS` palette, author, created-at), with
 `createWhiteboardNote` validating/trimming it (an unrecognized color falls
 back to the palette's first entry rather than throwing — a note is still
@@ -292,43 +292,83 @@ Vitest-covered in
 cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
 mirroring `sprintSessions.test.ts`'s cases).
 
-A later slice closes that gap without ever needing a drag-and-drop
-dependency: a `WhiteboardNote` now carries its own `x`/`y` freeform position
-(a percentage, 0-100, of the canvas's own width/height, so the layout holds
-up at any panel width instead of a fixed pixel size), and `TopicSprintPanel`
-implements the drag itself with plain React pointer events
-(`onPointerDown`/`onPointerMove`/`onPointerUp`, with `setPointerCapture` so a
-fast drag past a note's own edge keeps tracking) rather than reaching for an
-external library — a note has nothing more exotic to drag than its own
-position. `lib/team-collaboration-mode.ts` adds `clampWhiteboardNotePosition`
-(keeps a note fully inside the canvas, reserving its own footprint at the
-edges), `cascadeWhiteboardNotePosition` (the default placement for the Nth
-note on a board, cascading diagonally so consecutive notes don't land
-exactly on top of each other before anyone drags them), and
-`resolveWhiteboardNotePosition` (a note's effective render position — its
-own stored `x`/`y` when present, or a cascade default keyed off its position
-in the board for a note saved before this slice, since this repo's
-localStorage stores are never runtime-validated against a schema and an
-older browser's saved note may simply lack the fields — the same
-"legacy record with no field at all still counts" compatibility every other
-localStorage-backed idea in this repo uses). `state/sprintWhiteboard.ts`
-gained `updateWhiteboardNotePosition(id, position)`, committed once per drag
-(on pointer-up, not on every pixel of movement) so dragging doesn't spam
-localStorage writes; while a drag is in progress the note's live position is
-tracked in the panel's own React state instead. `createWhiteboardNote` gained
-an optional `position` input (defaulting to the canvas's top-left corner),
-with the panel passing `cascadeWhiteboardNotePosition` for a newly added
-note the same way it already passes `nextWhiteboardNoteColor` for its color.
-Vitest-covered in `team-collaboration-mode.test.ts` (`clampWhiteboardNotePosition`,
-`cascadeWhiteboardNotePosition`, `resolveWhiteboardNotePosition`'s legacy
-fallback, `moveWhiteboardNote`, and `createWhiteboardNote`'s new
-position-defaulting/clamping cases) and `sprintWhiteboard.test.ts`
-(`updateWhiteboardNotePosition`'s move/clamp/no-op-on-missing-id cases). The
-pointer-drag interaction itself isn't exercised by a test — this package's
-Vitest environment has no real DOM (see `test/panels.test.tsx`'s own note on
-rendering via `react-dom/server` instead of jsdom) — so it's manual/visual
-only; the underlying position math (clamping, cascading, legacy fallback,
-and the persisted move) is what's actually covered.
+## Account sync (scheduled sessions)
+
+A later slice closes half of the "Scheduled sessions ... are ... local-only
+(no account sync yet)" Known gap below: a signed-in visitor's scheduled
+sprint sessions now follow them across devices, mirroring
+`debate-community`'s `hooks/useDailyBestCardComments.ts` exactly — a session
+is scheduled once and only ever cancelled, never edited, the same
+add/delete-only shape a comment has, so there's nothing to reconcile on a
+shared id beyond filling gaps in either direction.
+
+`state/sprintSessions.ts` gained `isValidSprintSession` (a structural
+validator for untrusted request-body JSON) and `adoptSprintSession` (an
+upsert-by-id used only to adopt a remote copy, never to schedule a new local
+session), both shared with a new `saved_sprint_sessions` D1 table plus
+`/api/sprint-sessions` routes (`GET` returns every one of the signed-in
+user's synced sessions in full; `/api/sprint-sessions/[sessionId]` `PUT`
+upserts one, `DELETE` removes one — the same account-only, 401-without-a-
+session shape as `/api/daily-best-card-comments`). A new
+`hooks/useSprintSessionsSync.ts` replaces `TopicSprintPanel`'s direct
+`state/sprintSessions.ts` reads: local-first (fully usable signed out), with
+a one-time on-mount account merge that adopts a remote session missing
+locally and best-effort pushes a local-only session up, and every
+schedule/cancel best-effort syncing to the account afterward without ever
+blocking the local write. The "Scheduled sessions" section's heading now
+shows "Synced to your account." (or a sign-in prompt) via the hook's
+`synced` flag, mirroring `JudgeDecisionPanel`'s caption. Vitest-covered in
+`packages/debate-team-collaboration/test/sprintSessions.test.ts`
+(`isValidSprintSession`'s acceptance/rejection cases, `adoptSprintSession`)
+and a new `test/sprint-sessions-client.test.ts` (the three network calls,
+mirroring `daily-best-card-comments-client.test.ts`'s cases) — the hook
+itself isn't directly unit-tested, matching this repo's convention of
+testing only the pure state/validation and fetch layers a sync hook composes
+(see e.g. `useDailyBestCardComments`, similarly untested directly).
+A later slice closes the "true freeform (x/y, draggable) whiteboard layout"
+follow-up the prior slice above deliberately deferred, once it turned out the
+"no drag-and-drop primitive to build against" framing didn't actually block
+it: a freeform board only needs plain Pointer Events on the note itself (no
+shared primitive, no new dependency), the same way `debate-editor`'s
+`nav-panel.ts` already does its own drag-to-reorder independent of any
+`panel-shell` primitive. `WhiteboardNote` gained `x`/`y` fields (a
+percentage, `0-100`, of the board's own width/height, so a position survives
+a resize instead of anchoring to a specific pixel grid); `createWhiteboardNote`
+now clamps them through a new `clampWhiteboardCoordinate`, and a new
+`defaultWhiteboardNotePosition(existingNoteCountForTopic)` cascades a fresh
+note across a 4-column grid (mirroring `nextWhiteboardNoteColor`'s own
+existing-count-based cycling) so it never lands stacked on another note
+before anyone drags it. A new pure `moveWhiteboardNotePosition(notes, id, x,
+y)` is the drag's model-level half, and `state/sprintWhiteboard.ts`'s new
+`updatePersistedWhiteboardNotePosition(id, x, y)` is its persistence half.
+`TopicSprintPanel`'s "Shared whiteboard" board is now a fixed-height
+`position: relative` container with each note `position: absolute` at its
+`x`/`y`; `onPointerDown`/`onPointerMove`/`onPointerUp`/`onPointerCancel` on
+each note track an in-progress drag in a ref (so a move never triggers a
+re-render or a write) and only call `updatePersistedWhiteboardNotePosition`
+once, on release — see the "Freeform positioning" section below.
+Vitest-covered in `team-collaboration-mode.test.ts`
+(`defaultWhiteboardNotePosition`'s grid cascade, `clampWhiteboardCoordinate`'s
+range clamp, `moveWhiteboardNotePosition`'s targeted update/clamp/missing-id
+no-op, and `createWhiteboardNote`'s new `x`/`y` clamping) and
+`sprintWhiteboard.test.ts` (`updatePersistedWhiteboardNotePosition`'s
+persisted write/clamp/missing-id no-op).
+
+### Freeform positioning
+
+Once at least one sticky note exists, the board renders as a fixed-height
+(`h-96`) dashed-border area instead of a flex-wrapped list. Every note sits
+at an absolute `left`/`top` percentage of that area, draggable (in editable
+mode only) by pressing and moving it with a mouse, pen, or touch — Pointer
+Events cover all three. A short "Drag a sticky note to reposition it on the
+board." hint sits above the board in editable mode. Dragging updates a
+component-local "currently dragging" position on every `pointermove` (so the
+note tracks the pointer smoothly) but only persists the final position via
+`updatePersistedWhiteboardNotePosition` on `pointerup`/`pointercancel` — a
+drag that's released without moving costs no write. A note's position is a
+percentage of the board's own width/height rather than a fixed pixel
+coordinate, so it stays proportionally in place across different viewport
+sizes rather than drifting toward one edge.
 
 ## Known gaps
 
@@ -340,15 +380,18 @@ and the persisted move) is what's actually covered.
   no server-side session check on `saveSprintNote`/
   `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
   `TopicSprintPanel`'s note form) or on `saveSprintSession`/
-  `createSprintSession` (the "Scheduled sessions" form) or on
-  `saveWhiteboardNote`/`createWhiteboardNote` (the "Shared whiteboard"
-  form), the same trust boundary every other localStorage-backed action in
-  this repo has.
-- Scheduled sessions and whiteboard notes are both local-only (no account
-  sync yet, unlike some other ideas' persisted stores), and scheduling is by
-  calendar day only — no time-of-day, recurrence, or reminder notification.
-- The whiteboard's freeform layout has no z-order/bring-to-front on drag (a
-  dragged note keeps its original DOM order, so an overlapping note can end
-  up visually underneath one it was just dragged on top of) and no
-  collision avoidance — two notes can be dragged to overlap exactly. Neither
-  affects the underlying data, just the visual stacking order.
+  `createSprintSession` (the "Scheduled sessions" form, though a *signed-in*
+  session is now required for a session to sync to an account at all — see
+  "Account sync" above) or on `saveWhiteboardNote`/`createWhiteboardNote`
+  (the "Shared whiteboard" form), the same trust boundary every other
+  localStorage-backed action in this repo has.
+- Whiteboard notes are still local-only (no account sync yet, unlike
+  scheduled sessions now — see "Account sync" above), and session scheduling
+  is by calendar day only — no time-of-day, recurrence, or reminder
+  notification. The freeform whiteboard's `x`/`y` positions are local-only
+  too, for the same reason.
+- The freeform whiteboard has no live "who's dragging what" presence — two
+  contributors editing the same board only see each other's moves after a
+  `storage`-event refresh (or reload) picks up the persisted position, not
+  mid-drag the way `shared-flow-sync.md`'s live presence heartbeat works for
+  flows.

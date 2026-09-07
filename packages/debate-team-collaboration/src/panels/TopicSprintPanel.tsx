@@ -17,7 +17,8 @@
 
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import type React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Users2 } from "lucide-react";
 
 import {
@@ -45,11 +46,11 @@ import {
   buildTopicSprintSummaryText,
   buildSprintRetrospective,
   buildSprintRetrospectiveText,
-  cascadeWhiteboardNotePosition,
-  clampWhiteboardNotePosition,
+  clampWhiteboardCoordinate,
   createSprintNote,
   createSprintSession,
   createWhiteboardNote,
+  defaultWhiteboardNotePosition,
   assignSprintNote,
   getOpenFollowUps,
   getPastSprintSessions,
@@ -57,28 +58,25 @@ import {
   getUpcomingSprintSessions,
   getWhiteboardNotesForTopic,
   nextWhiteboardNoteColor,
-  resolveWhiteboardNotePosition,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
   WHITEBOARD_NOTE_COLORS,
   type SprintNote,
   type SprintNoteStatus,
-  type SprintSession,
   type WhiteboardNote,
   type WhiteboardNoteColor,
-  type WhiteboardNotePosition,
 } from "../lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../lib/daily-quests";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
 import type { TrackedTopicAssignment } from "../lib/research-progress";
 import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
 import { deleteSprintNote, listSprintNotes, saveSprintNote } from "../state/sprintNotes";
-import { deleteSprintSession, listSprintSessions, saveSprintSession } from "../state/sprintSessions";
+import { useSprintSessionsSync } from "../hooks/useSprintSessionsSync";
 import {
   deleteWhiteboardNote,
   listWhiteboardNotes,
   saveWhiteboardNote,
-  updateWhiteboardNotePosition,
+  updatePersistedWhiteboardNotePosition,
 } from "../state/sprintWhiteboard";
 import {
   readPersistedTopicSprintInputs,
@@ -168,10 +166,13 @@ export function TopicSprintPanel({
   className,
 }: TopicSprintPanelProps) {
   const { data: persistedNotes, refresh } = useStoreSnapshot<SprintNote[]>(listSprintNotes, []);
-  const { data: persistedSessions, refresh: refreshSessions } = useStoreSnapshot<SprintSession[]>(
-    listSprintSessions,
-    [],
-  );
+  const {
+    sessions: persistedSessions,
+    synced: sessionsSynced,
+    scheduleSession,
+    cancelSession,
+    refreshSessions,
+  } = useSprintSessionsSync();
   const { data: persistedWhiteboardNotes, refresh: refreshWhiteboard } = useStoreSnapshot<WhiteboardNote[]>(
     listWhiteboardNotes,
     [],
@@ -304,7 +305,7 @@ export function TopicSprintPanel({
 
   const addSession = () => {
     if (!sessionTitle.trim() || !sessionDayKey) return;
-    saveSprintSession(
+    scheduleSession(
       createSprintSession({
         id: `session-${Date.now()}`,
         topic,
@@ -315,12 +316,10 @@ export function TopicSprintPanel({
     );
     setSessionTitle("");
     setSessionDayKey("");
-    refreshSessions();
   };
 
   const removeSession = (id: string) => {
-    deleteSprintSession(id);
-    refreshSessions();
+    cancelSession(id);
   };
 
   const whiteboardNotesForTopic = useMemo(
@@ -330,6 +329,7 @@ export function TopicSprintPanel({
 
   const addWhiteboardNote = () => {
     if (!whiteboardNoteText.trim()) return;
+    const position = defaultWhiteboardNotePosition(whiteboardNotesForTopic.length);
     saveWhiteboardNote(
       createWhiteboardNote({
         id: `whiteboard-note-${Date.now()}`,
@@ -338,7 +338,8 @@ export function TopicSprintPanel({
         text: whiteboardNoteText.trim(),
         color: whiteboardNoteColor,
         createdAt: now,
-        position: cascadeWhiteboardNotePosition(whiteboardNotesForTopic.length),
+        x: position.x,
+        y: position.y,
       }),
     );
     setWhiteboardNoteText("");
@@ -351,72 +352,55 @@ export function TopicSprintPanel({
     refreshWhiteboard();
   };
 
-  // Freeform whiteboard drag-to-reposition: `dragOriginRef` captures the
-  // pointer's starting position and the note's own starting position on
-  // pointer-down, `draggingNote` mirrors the note's live position while it's
-  // being dragged (so the drag reads smoothly without writing to storage on
-  // every pixel of movement), and the drag commits — one `updateWhiteboardNotePosition`
-  // write — on pointer-up.
-  const whiteboardCanvasRef = useRef<HTMLDivElement | null>(null);
-  const dragOriginRef = useRef<{
-    noteId: string;
-    pointerStartX: number;
-    pointerStartY: number;
-    noteStartX: number;
-    noteStartY: number;
-    canvasWidth: number;
-    canvasHeight: number;
-  } | null>(null);
+  // Freeform whiteboard dragging: `dragStateRef` tracks the in-progress drag
+  // (pointer id, start client coords, note's start position) without
+  // re-rendering on every pointermove, while `draggingNote` holds just the
+  // live x/y the currently-dragged note should render at. Committing to
+  // `updatePersistedWhiteboardNotePosition` only happens on pointerup, so a
+  // drag that never moves the pointer costs no writes.
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const dragStateRef = useRef<{ id: string; startClientX: number; startClientY: number; startX: number; startY: number } | null>(
+    null,
+  );
   const [draggingNote, setDraggingNote] = useState<{ id: string; x: number; y: number } | null>(null);
 
-  const handleWhiteboardNotePointerDown = (
-    note: WhiteboardNote,
-    startPosition: WhiteboardNotePosition,
-  ) => (event: ReactPointerEvent<HTMLDivElement>) => {
+  const handleNotePointerDown = (event: React.PointerEvent<HTMLDivElement>, note: WhiteboardNote) => {
     if (!editable) return;
-    const canvasEl = whiteboardCanvasRef.current;
-    if (!canvasEl) return;
-    const rect = canvasEl.getBoundingClientRect();
-    dragOriginRef.current = {
-      noteId: note.id,
-      pointerStartX: event.clientX,
-      pointerStartY: event.clientY,
-      noteStartX: startPosition.x,
-      noteStartY: startPosition.y,
-      canvasWidth: rect.width || 1,
-      canvasHeight: rect.height || 1,
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragStateRef.current = {
+      id: note.id,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startX: note.x,
+      startY: note.y,
     };
-    setDraggingNote({ id: note.id, x: startPosition.x, y: startPosition.y });
-    try {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    } catch {
-      // Not every environment (e.g. older browsers, or a test DOM) implements
-      // pointer capture; dragging still works without it, just without the
-      // guarantee that a fast drag past the note's own edge keeps tracking.
-    }
+    setDraggingNote({ id: note.id, x: note.x, y: note.y });
   };
 
-  const handleWhiteboardNotePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const origin = dragOriginRef.current;
-    if (!origin) return;
-    const deltaXPct = ((event.clientX - origin.pointerStartX) / origin.canvasWidth) * 100;
-    const deltaYPct = ((event.clientY - origin.pointerStartY) / origin.canvasHeight) * 100;
-    const next = clampWhiteboardNotePosition({
-      x: origin.noteStartX + deltaXPct,
-      y: origin.noteStartY + deltaYPct,
+  const handleNotePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragStateRef.current;
+    const board = boardRef.current;
+    if (!drag || !board) return;
+    const rect = board.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const deltaXPercent = ((event.clientX - drag.startClientX) / rect.width) * 100;
+    const deltaYPercent = ((event.clientY - drag.startClientY) / rect.height) * 100;
+    setDraggingNote({
+      id: drag.id,
+      x: clampWhiteboardCoordinate(drag.startX + deltaXPercent),
+      y: clampWhiteboardCoordinate(drag.startY + deltaYPercent),
     });
-    setDraggingNote({ id: origin.noteId, x: next.x, y: next.y });
   };
 
-  const commitWhiteboardNoteDrag = () => {
-    const origin = dragOriginRef.current;
-    dragOriginRef.current = null;
-    if (!origin) return;
-    const finalPosition =
-      draggingNote && draggingNote.id === origin.noteId
-        ? { x: draggingNote.x, y: draggingNote.y }
-        : { x: origin.noteStartX, y: origin.noteStartY };
-    updateWhiteboardNotePosition(origin.noteId, finalPosition);
+  const endNoteDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragStateRef.current;
+    if (!drag) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    const finalPosition = draggingNote && draggingNote.id === drag.id ? draggingNote : { x: drag.startX, y: drag.startY };
+    updatePersistedWhiteboardNotePosition(drag.id, finalPosition.x, finalPosition.y);
+    dragStateRef.current = null;
     setDraggingNote(null);
     refreshWhiteboard();
   };
@@ -561,26 +545,27 @@ export function TopicSprintPanel({
             message={editable ? "Add the first brainstorming note below." : undefined}
           />
         ) : (
-          <div
-            ref={whiteboardCanvasRef}
-            className="relative h-72 w-full overflow-hidden rounded-md border bg-muted/10"
-            data-testid="whiteboard-note-board"
-          >
-            {whiteboardNotesForTopic.map((note, index) => {
-              const position =
-                draggingNote && draggingNote.id === note.id
-                  ? { x: draggingNote.x, y: draggingNote.y }
-                  : resolveWhiteboardNotePosition(note, index);
+          <>
+            {editable ? (
+              <p className="text-xs text-muted-foreground">Drag a sticky note to reposition it on the board.</p>
+            ) : null}
+            <div
+              ref={boardRef}
+              className="relative h-96 w-full overflow-hidden rounded-md border border-dashed border-muted-foreground/30 bg-muted/10"
+              data-testid="whiteboard-note-board"
+            >
+            {whiteboardNotesForTopic.map((note) => {
+              const position = draggingNote && draggingNote.id === note.id ? draggingNote : note;
               return (
                 <div
                   key={note.id}
                   data-testid={`whiteboard-note-${note.id}`}
-                  className={`absolute flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]} ${editable ? "cursor-grab touch-none select-none active:cursor-grabbing" : ""}`}
+                  className={`absolute flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]} ${editable ? "cursor-grab touch-none active:cursor-grabbing" : ""}`}
                   style={{ left: `${position.x}%`, top: `${position.y}%` }}
-                  onPointerDown={handleWhiteboardNotePointerDown(note, position)}
-                  onPointerMove={handleWhiteboardNotePointerMove}
-                  onPointerUp={commitWhiteboardNoteDrag}
-                  onPointerCancel={commitWhiteboardNoteDrag}
+                  onPointerDown={(event) => handleNotePointerDown(event, note)}
+                  onPointerMove={handleNotePointerMove}
+                  onPointerUp={endNoteDrag}
+                  onPointerCancel={endNoteDrag}
                 >
                   <p className="whitespace-pre-wrap break-words">{note.text}</p>
                   <div className="flex items-center justify-between gap-1">
@@ -594,7 +579,8 @@ export function TopicSprintPanel({
                 </div>
               );
             })}
-          </div>
+            </div>
+          </>
         )}
 
         {editable ? (
@@ -630,7 +616,12 @@ export function TopicSprintPanel({
         ) : null}
       </PanelSection>
 
-      <PanelSection title="Scheduled sessions">
+      <PanelSection
+        title="Scheduled sessions"
+        description={
+          sessionsSynced ? "Synced to your account." : "Sign in to sync sessions across your devices."
+        }
+      >
         {upcomingSessions.length === 0 ? (
           <EmptyState title="No upcoming sessions" message="Schedule the next one below." />
         ) : (
