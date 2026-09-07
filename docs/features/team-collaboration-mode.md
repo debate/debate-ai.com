@@ -292,6 +292,40 @@ Vitest-covered in
 cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
 mirroring `sprintSessions.test.ts`'s cases).
 
+## Account sync (scheduled sessions)
+
+A later slice closes half of the "Scheduled sessions ... are ... local-only
+(no account sync yet)" Known gap below: a signed-in visitor's scheduled
+sprint sessions now follow them across devices, mirroring
+`debate-community`'s `hooks/useDailyBestCardComments.ts` exactly — a session
+is scheduled once and only ever cancelled, never edited, the same
+add/delete-only shape a comment has, so there's nothing to reconcile on a
+shared id beyond filling gaps in either direction.
+
+`state/sprintSessions.ts` gained `isValidSprintSession` (a structural
+validator for untrusted request-body JSON) and `adoptSprintSession` (an
+upsert-by-id used only to adopt a remote copy, never to schedule a new local
+session), both shared with a new `saved_sprint_sessions` D1 table plus
+`/api/sprint-sessions` routes (`GET` returns every one of the signed-in
+user's synced sessions in full; `/api/sprint-sessions/[sessionId]` `PUT`
+upserts one, `DELETE` removes one — the same account-only, 401-without-a-
+session shape as `/api/daily-best-card-comments`). A new
+`hooks/useSprintSessionsSync.ts` replaces `TopicSprintPanel`'s direct
+`state/sprintSessions.ts` reads: local-first (fully usable signed out), with
+a one-time on-mount account merge that adopts a remote session missing
+locally and best-effort pushes a local-only session up, and every
+schedule/cancel best-effort syncing to the account afterward without ever
+blocking the local write. The "Scheduled sessions" section's heading now
+shows "Synced to your account." (or a sign-in prompt) via the hook's
+`synced` flag, mirroring `JudgeDecisionPanel`'s caption. Vitest-covered in
+`packages/debate-team-collaboration/test/sprintSessions.test.ts`
+(`isValidSprintSession`'s acceptance/rejection cases, `adoptSprintSession`)
+and a new `test/sprint-sessions-client.test.ts` (the three network calls,
+mirroring `daily-best-card-comments-client.test.ts`'s cases) — the hook
+itself isn't directly unit-tested, matching this repo's convention of
+testing only the pure state/validation and fetch layers a sync hook composes
+(see e.g. `useDailyBestCardComments`, similarly untested directly).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -302,13 +336,15 @@ mirroring `sprintSessions.test.ts`'s cases).
   no server-side session check on `saveSprintNote`/
   `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
   `TopicSprintPanel`'s note form) or on `saveSprintSession`/
-  `createSprintSession` (the "Scheduled sessions" form) or on
-  `saveWhiteboardNote`/`createWhiteboardNote` (the "Shared whiteboard"
-  form), the same trust boundary every other localStorage-backed action in
-  this repo has.
-- Scheduled sessions and whiteboard notes are both local-only (no account
-  sync yet, unlike some other ideas' persisted stores), and scheduling is by
-  calendar day only — no time-of-day, recurrence, or reminder notification.
+  `createSprintSession` (the "Scheduled sessions" form, though a *signed-in*
+  session is now required for a session to sync to an account at all — see
+  "Account sync" above) or on `saveWhiteboardNote`/`createWhiteboardNote`
+  (the "Shared whiteboard" form), the same trust boundary every other
+  localStorage-backed action in this repo has.
+- Whiteboard notes are still local-only (no account sync yet, unlike
+  scheduled sessions now — see "Account sync" above), and session scheduling
+  is by calendar day only — no time-of-day, recurrence, or reminder
+  notification.
 - The whiteboard has no freeform (x/y, draggable) layout — notes render in
   creation order only. A true positioned canvas would need a drag-and-drop
   primitive this repo's UI kit doesn't have yet; worth revisiting if another

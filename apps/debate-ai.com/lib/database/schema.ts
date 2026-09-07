@@ -1013,3 +1013,39 @@ export const practiceVsAiDebates = sqliteTable(
 );
 
 export type PracticeVsAiDebateRow = typeof practiceVsAiDebates.$inferSelect;
+
+// Account-linked scheduled-sprint-session sync — the "🤝 Team Collaboration
+// Mode" bullet's "Scheduled sessions ... are ... local-only (no account
+// sync yet)" Known gap in TODO.md. Same add/delete-only shape as
+// `savedDailyBestCardComments` above (a session is scheduled once and only
+// ever cancelled, never edited): `clientId` holds the session's own
+// generated `SprintSession.id`, and `topic` is a plain (non-unique) indexed
+// column for a future per-topic query, mirroring `dayKey`'s role there.
+export const savedSprintSessions = sqliteTable(
+  "saved_sprint_sessions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    topic: text("topic").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_sprint_sessions_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_sprint_sessions_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    topicIdx: index("idx_saved_sprint_sessions_topic").on(table.topic),
+  }),
+);
+
+export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
