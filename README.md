@@ -20,10 +20,10 @@
     <a href="https://doi.org/10.5281/zenodo.22170412"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.22170412.svg" alt="DOI"></a>
     <a href="https://doi.org/10.5281/zenodo.21881743"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21881743.svg" alt="DOI"></a>
    <br />
-  <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tabroom-Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
   <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_App-debate--ai-blueviolet?style=for-the-badge" "></a>
   <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/🙋_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
   <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Shared-Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
+          <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
   <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Results-Ranks-informational?style=for-the-badge" alt="Results"></a>
     <br/>
   <img src="https://i.imgur.com/c3mT4oo.png"  width="800px" > 
