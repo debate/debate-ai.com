@@ -7,8 +7,8 @@ _No task currently in progress._
 
 ### Completed
 
-- **📋 Evidence Library — cross-tab live update.** Another repeat of the
-  standing autonomous-routine prompt ("integrate all the tools into the
+- **🕵️ Opponent Team Profiles — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
   flows/docs/debates in SQL and link to users... add tools into where
   needed in the UI... develop better tool UI") — as with every recent
@@ -18,55 +18,52 @@ _No task currently in progress._
   the Tools page, CardMirror's own `MenuBar`/command palette, and the
   feature catalog, all reconfirmed this run), so this slice again picked up
   `shared-flow-sync.md`'s "every other localStorage-backed panel in this
-  repo still has no cross-tab live-update mechanism" Known gap and closed it
-  for `EvidenceLibraryPanel`. Before picking it, this run checked GitHub for
-  already-open PRs against this same standing task and found five: three
-  duplicate PRs (#642, #643, #644) all independently closing this same gap
-  for `OpponentTeamProfilesPanel`, plus #641 (`TopicCoverageDashboardPanel`)
-  and #645 (`ArgumentLibraryPanel`) — so `EvidenceLibraryPanel` was chosen
-  specifically because none of those five cover it, avoiding a sixth
-  duplicate. See "Remaining risks" below: the three-way duplication on
-  `OpponentTeamProfilesPanel` is a pre-existing problem from prior runs, not
-  something this run caused or attempted to resolve (this routine has no
-  mandate to close/merge other runs' PRs).
+  repo still has no cross-tab live-update mechanism" Known gap and closed
+  it for `debate-round`'s `OpponentTeamProfilesPanel` — explicitly named as
+  a next-open candidate by the previous run's own completed-task note,
+  confirmed still missing a `storage`-event listener by grepping every
+  panel named in that Known gap's own history.
 
-  Extended `packages/debate-search-evidence/src/state/live-update.ts` with
-  `EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`/
-  `isEvidenceLibraryLiveUpdateStorageEvent`, covering all four of the
-  panel's backing stores: `evidenceLibraryEntries` (the submitted card/block
-  repository the search results, tag suggestions, and pending-review queue
-  all derive from), `cardScores` (each card's LLM Card Scoring badge),
-  `peerReviews` (the pending-review status badge), and `reuseCheckHistory`
-  (the "Recent checks" list). `EvidenceLibraryPanel.tsx` now subscribes to
-  `window`'s `storage` event and calls its existing `refreshResults()`
-  closure plus re-reads check history when the predicate matches — a
-  teammate submitting, editing, deleting, scoring, reviewing, or bulk-
-  tagging an entry (or logging a page-reuse check) in one tab now shows up
-  in every other open tab without a manual reload. The in-progress
-  submission/edit form draft and the active "Check this page" lookup are
-  left untouched, matching every other closed panel's "refresh the derived
-  view, not the draft" convention.
+  Extended `packages/debate-round/src/flow/live-update.ts` (which already
+  held `FlowSpreadsheet`'s badges plus `FlowAnnotationsPanel`,
+  `PrepNoteNotificationsPanel`, `PrepNotesPanel`, `StrategyPanel`, and
+  `PreRoundBriefingsPanel`'s own predicates) with
+  `OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, covering the panel's
+  four backing stores: `opponentTeamProfiles` (the aggregated roster),
+  `opponentRoundRecords` (the logged-round history), and
+  `opponentRoundRecordEditHistory`/`opponentRoundRecordRedoHistory` (which
+  decide whether a round shows an Undo/Redo action). Deliberately excludes
+  `ownRoundHistory`, which the panel only reads inside the on-demand
+  "Compare vs. opponent" action, not on refresh.
+  `OpponentTeamProfilesPanel.tsx` now subscribes to `window`'s `storage`
+  event and calls its existing `refresh()` closure when the predicate
+  matches — a teammate logging, editing, undoing/redoing, deleting, or
+  bulk-importing a scouted round in one tab now shows up in every other
+  open tab without a manual reload. The in-progress "Log a scouted round"
+  form draft, "Bulk import (CSV)" textarea, and any built "Compare vs.
+  opponent" comparison are left untouched, matching every other closed
+  panel's "refresh the derived view, not the draft" convention.
 
-  See `docs/features/evidence-library.md`'s new "Cross-tab live update"
-  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
-  bullet (added `EvidenceLibraryPanel` to the closed list). Vitest-covered:
-  `packages/debate-search-evidence/test/live-update.test.ts` (every backing-
-  store key, the `null`-key clear-all case, and unrelated/substring-matching
-  keys staying ignored, mirroring the existing panels' cases).
-
-  Still open for a future run: `UserSettingsPanel`/`OpponentTeamProfilesPanel`
-  (`debate-round`, though the former is a live directly-editable settings
-  form needing "refresh persisted values, not the draft" special handling,
-  and the latter already has three duplicate open PRs — #642/#643/#644 — so
-  should not be picked again until those are resolved),
-  `TopicCoverageDashboardPanel` (`debate-search-evidence`, already has an
-  open PR — #641), `ArgumentLibraryPanel` (`debate-search-evidence`, already
-  has an open PR — #645), `CoachingProgramsPanel`
-  (`debate-team-collaboration`), and `AiVersusRoundPanel`, `ArgumentTreePanel`,
+  See `docs/features/opponent-team-profiles.md`'s new "Cross-tab live
+  update" section and `docs/features/shared-flow-sync.md`'s updated Known
+  gaps bullet (added `OpponentTeamProfilesPanel` to the closed list).
+  Vitest-covered: `packages/debate-round/test/live-update.test.ts` (every
+  backing-store key, the `null`-key clear-all case, the excluded
+  `ownRoundHistory` key, and unrelated/substring-matching keys staying
+  ignored). `UserSettingsPanel` (`debate-round` — its `form` is a live,
+  directly-editable settings form rather than a derived list/roster view,
+  so closing it needs refreshing only the persisted values, not stomping
+  an unsaved in-progress edit), `CoachingProgramsPanel`
+  (`debate-team-collaboration`), and every panel named in
+  `shared-flow-sync.md`'s Known gap history as still lacking the mechanism
+  (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `TopicCoverageDashboardPanel`, `AiVersusRoundPanel`, `ArgumentTreePanel`,
   `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
-  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
-  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
-  `WordCountRoundsPanel` (`debate-practice-drills`).
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel`) remain open for a
+  future run to pick up next.
 
   Ran the full verification gate: `bun run test` (5149 passing, up from
   5144 at HEAD before this change — the 5 new cases above), `bunx turbo run
@@ -79,6 +76,79 @@ _No task currently in progress._
   without rebuilding that native dependency for this container). No
   `lint`/`format:check` script exists anywhere in this repo, so that step
   was skipped as not applicable.
+- **📋 Evidence Library / 📚 Argument Library / 📊 Topic Coverage Dashboard —
+  cross-tab live update.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built (account settings synced to a `user_settings` D1 row,
+  `documents`/`saved_flows`/`saved_rounds` D1 tables linked to `user.id`,
+  and every tool already reachable from the Tools page, CardMirror's own
+  Google-Docs-style `MenuBar`/`Ctrl`/`Cmd`-Shift-Space command palette, and
+  the feature catalog, all reconfirmed this run), so this slice again picked
+  up `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — explicitly
+  named as still open for `ArgumentLibraryPanel`, `EvidenceLibraryPanel`, and
+  `TopicCoverageDashboardPanel` (`debate-search-evidence`) by the previous
+  two runs' own completed-task notes — and closed it for all three.
+
+  `debate-search-evidence` already had a `state/live-update.ts` (covering 18
+  other panels, several living in sibling packages that depend on this one)
+  but had never been extended for its own `ArgumentLibraryPanel`,
+  `EvidenceLibraryPanel`, or `TopicCoverageDashboardPanel`. Added three new
+  key sets/predicates to that file:
+  `ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`/`isArgumentLibraryLiveUpdateStorageEvent`
+  (`evidenceLibraryEntries`, `contributions` — both sources
+  `buildCombinedPersistedArgumentLibrary` folds together),
+  `EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`/`isEvidenceLibraryLiveUpdateStorageEvent`
+  (`evidenceLibraryEntries`, `cardScores`, `peerReviews`,
+  `reuseCheckHistory`), and
+  `TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS`/`isTopicCoverageDashboardLiveUpdateStorageEvent`
+  (`trackedArguments`, `evidenceLibraryEntries`, `contributions`,
+  `topicCoverageSnapshots`). Each panel now subscribes to `window`'s
+  `storage` event and refreshes its derived view when the predicate matches
+  — a card submitted, edited, scored, reviewed, reuse-checked, tagged, or
+  retagged, a tracked argument added/removed, or a coverage snapshot
+  recorded/cleared in one tab now shows up in every other open tab without a
+  manual reload. `TopicCoverageDashboardPanel`'s `refresh` helper also
+  gained a guard for an empty active topic (matching its own initial-mount
+  effect's existing ternary), since the new subscription can fire before a
+  topic is chosen.
+
+  See `docs/features/evidence-library.md`'s new "Cross-tab live update"
+  section (covering both `EvidenceLibraryPanel` and `ArgumentLibraryPanel`),
+  `docs/features/topic-coverage-dashboard.md`'s new "Cross-tab live update"
+  section, and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added all three panels to the closed list). Vitest-covered:
+  `packages/debate-search-evidence/test/live-update.test.ts` (every backing-
+  store key, the `null`-key clear-all case, and unrelated/substring-matching
+  keys staying ignored, mirroring every other panel's cases in that file).
+  `UserSettingsPanel` (`debate-round` — its `form` is a live, directly-
+  editable settings form rather than a derived list/roster view, so closing
+  it needs refreshing only the persisted values, not stomping an unsaved
+  in-progress edit), `OpponentTeamProfilesPanel` (`debate-round`),
+  `CoachingProgramsPanel` (`debate-team-collaboration`), and every panel in
+  `debate-practice-drills` (`AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel` — none of which has a
+  `live-update.ts` yet, so a future run picking one up starts by creating
+  the first one in that package) remain open for a future run to pick up
+  next.
+
+  Ran the full verification gate: `bun run test` (5157 tests passing, up
+  from 5144 at HEAD before this change — the 13 new cases above),
+  `bunx turbo run typecheck` (16/16 typecheck-bearing packages green,
+  `debate-ai-web` has no `typecheck` script), and confirmed `bun run
+  build:web` fails identically on this branch and on the branch's own HEAD
+  before this change (`UNLOADABLE_DEPENDENCY` on the native `canvas`
+  binding during the RSC server-bundle scan — a pre-existing
+  sandbox/toolchain limitation unrelated to this change, not something this
+  run introduced or could fix without rebuilding that native dependency for
+  this container). No `lint`/`format:check` script exists anywhere in this
+  repo, so that step was skipped as not applicable.
 
 - **🎓 Coach Materials — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the

@@ -109,6 +109,13 @@
  * most frequently flagged-already-cut pages first, and is fetched via the
  * new `hooks/useReuseCheckDashboard.ts`.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isEvidenceLibraryLiveUpdateStorageEvent`, so an entry submitted, scored,
+ * reviewed, or reuse-checked in another browser tab refreshes this panel's
+ * search results, score badges, pending-review queue, and reuse-check
+ * history here too — the `storage` event never fires in the tab that made
+ * the write, only in other tabs.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -143,7 +150,6 @@ import {
   type ReuseCheckHistoryRecord,
 } from "../state/reuseCheckHistory"
 import { useReuseCheckDashboard } from "../hooks/useReuseCheckDashboard"
-import { isEvidenceLibraryLiveUpdateStorageEvent } from "../state/live-update"
 import {
   buildEvidenceSearchFormQuery,
   buildEvidenceSearchSummaryText,
@@ -158,6 +164,7 @@ import {
   suggestTags,
 } from "../lib/argument-library"
 import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
+import { isEvidenceLibraryLiveUpdateStorageEvent } from "../state/live-update"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
@@ -322,12 +329,9 @@ export function EvidenceLibraryPanel() {
   }
 
   /**
-   * Live-update this panel when another browser tab submits, edits,
-   * deletes, scores, reviews, or bulk-tags an entry — a `storage` event
-   * never fires in the tab that made the write, only in other same-origin
-   * tabs. The in-progress submission/edit form draft is left untouched,
-   * only the derived search results/tag list/pending-review queue/check
-   * history re-read.
+   * Live-update the rendered search results, score badges, pending-review
+   * queue, and reuse-check history when another browser tab submits, edits,
+   * scores, reviews, or reuse-checks an entry.
    */
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {

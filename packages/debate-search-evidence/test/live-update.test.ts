@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS,
   BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS,
   CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
   COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS,
@@ -16,6 +17,8 @@ import {
   RESEARCH_PROGRESS_LIVE_UPDATE_STORAGE_KEYS,
   REVISION_INCENTIVES_LIVE_UPDATE_STORAGE_KEYS,
   TASK_INBOX_LIVE_UPDATE_STORAGE_KEYS,
+  TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS,
+  isArgumentLibraryLiveUpdateStorageEvent,
   isBrainstormBoardLiveUpdateStorageEvent,
   isCardScoringLiveUpdateStorageEvent,
   isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent,
@@ -32,6 +35,7 @@ import {
   isResearchProgressLiveUpdateStorageEvent,
   isRevisionIncentivesLiveUpdateStorageEvent,
   isTaskInboxLiveUpdateStorageEvent,
+  isTopicCoverageDashboardLiveUpdateStorageEvent,
   isTopicSprintLiveUpdateStorageEvent,
   TOPIC_SPRINT_LIVE_UPDATE_STORAGE_KEYS,
   PREP_ROOM_LIVE_UPDATE_STORAGE_KEYS,
@@ -476,6 +480,38 @@ describe("isSprintNotesLiveUpdateStorageEvent", () => {
   });
 });
 
+describe("extended key sets", () => {
+  it("Task Inbox also refreshes on contributor-availability changes (Team capacity)", () => {
+    expect(isTaskInboxLiveUpdateStorageEvent({ key: "contributorAvailability" })).toBe(true);
+  });
+
+  it("Research Progress also refreshes on goal changes (My research goal)", () => {
+    expect(isResearchProgressLiveUpdateStorageEvent({ key: "researchProgressGoals" })).toBe(true);
+  });
+});
+
+describe("isArgumentLibraryLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isArgumentLibraryLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "cardScores" })).toBe(false);
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "trackedArguments" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "old_evidenceLibraryEntries" })).toBe(false);
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "contributionsBackup" })).toBe(false);
+  });
+});
+
 describe("isEvidenceLibraryLiveUpdateStorageEvent", () => {
   it("is true for every store key the panel reads", () => {
     for (const key of EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS) {
@@ -488,22 +524,34 @@ describe("isEvidenceLibraryLiveUpdateStorageEvent", () => {
   });
 
   it("is false for an unrelated store's key", () => {
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "trackedArguments" })).toBe(false);
     expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "contributions" })).toBe(false);
-    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "brainstormIdeas" })).toBe(false);
   });
 
   it("is false for a key that merely contains a tracked store name as a substring", () => {
-    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "evidenceLibraryEntriesBackup" })).toBe(false);
     expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "old_cardScores" })).toBe(false);
+    expect(isEvidenceLibraryLiveUpdateStorageEvent({ key: "reuseCheckHistoryBackup" })).toBe(false);
   });
 });
 
-describe("extended key sets", () => {
-  it("Task Inbox also refreshes on contributor-availability changes (Team capacity)", () => {
-    expect(isTaskInboxLiveUpdateStorageEvent({ key: "contributorAvailability" })).toBe(true);
+describe("isTopicCoverageDashboardLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key })).toBe(true);
+    }
   });
 
-  it("Research Progress also refreshes on goal changes (My research goal)", () => {
-    expect(isResearchProgressLiveUpdateStorageEvent({ key: "researchProgressGoals" })).toBe(true);
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "cardScores" })).toBe(false);
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "peerReviews" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "old_trackedArguments" })).toBe(false);
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "topicCoverageSnapshotsBackup" })).toBe(false);
   });
 });
