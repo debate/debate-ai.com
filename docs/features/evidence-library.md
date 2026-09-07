@@ -69,6 +69,17 @@ submission missing `topic` or `caseArea` rather than guessing a fallback
 for `argBlock` and `0` for `wordCount` — a contribution carries no card body
 to measure a real word count from, unlike a dedicated evidence-library entry.
 
+`ArgumentLibraryPanel` also subscribes to the browser's `storage` event via
+`state/live-update.ts`'s `isArgumentLibraryLiveUpdateStorageEvent`
+(`"evidenceLibraryEntries"`/`"contributions"`), so an entry submitted,
+edited, or deleted — or a Contributions Feed submission tagged with a topic
+and case area — in another browser tab refreshes the rendered topic folders
+and tag collections here too, closing the "Every other localStorage-backed
+panel in this repo still has no cross-tab live-update mechanism" Known gap
+noted in [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel. The
+"Saved collections" bar's own store (`hooks/useSavedArgumentCollections.ts`)
+is not covered by this — see that hook's own Known gap below.
+
 ## On-page card reuse check
 
 A "Check this page" box implements the "On Page Card Reuse Search" idea in
@@ -513,6 +524,16 @@ one, and both empty-input cases).
 
 ## Known gaps
 
+- `ArgumentLibraryPanel`'s own library read now live-updates cross-tab (see
+  "Argument Library browser and Contributions Feed tagging" above), but its
+  "Saved collections" bar (`hooks/useSavedArgumentCollections.ts`) does not:
+  like the `useOutlineFilterPresets` hook it mirrors, a save/rename/update/
+  remove only dispatches a same-tab custom event
+  (`saved-argument-collections-changed`), which never fires across tabs the
+  way the native `storage` event does — a collection saved in one tab still
+  needs a manual reload to appear in another tab of the same browser (the
+  account sync itself is unaffected; it just doesn't push a same-browser,
+  other-tab update either).
 - A real inverted-index/TF-IDF search now exists, `EvidenceLibraryPanel` is
   wired to it, the built index is cached across calls, and a cache
   invalidation now updates that index incrementally instead of rebuilding it

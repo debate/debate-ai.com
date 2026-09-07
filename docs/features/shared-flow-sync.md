@@ -491,10 +491,12 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   update"), `JudgeProfilesPanel` (see
   [`judge-profiles.md`](judge-profiles.md)'s "Cross-tab live update"),
   `CoachMaterialsPanel` (see [`coach-materials.md`](coach-materials.md)'s
-  "Cross-tab live update"), and `FlowEditLogPanel` itself (see "Cross-tab
-  live update in `FlowEditLogPanel`" above) have since gained the equivalent
-  mechanism for their own stores, but every other localStorage-backed panel
-  in this repo still has none (Live Sync
+  "Cross-tab live update"), `ArgumentLibraryPanel` (see
+  [`evidence-library.md`](evidence-library.md)'s "Argument Library browser
+  and Contributions Feed tagging" section), and `FlowEditLogPanel` itself
+  (see "Cross-tab live update in `FlowEditLogPanel`" above) have since
+  gained the equivalent mechanism for their own stores, but every other
+  localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

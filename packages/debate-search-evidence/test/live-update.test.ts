@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS,
+  isArgumentLibraryLiveUpdateStorageEvent,
   BRAINSTORM_BOARD_LIVE_UPDATE_STORAGE_KEYS,
   CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS,
   COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS,
@@ -471,6 +473,28 @@ describe("isSprintNotesLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isSprintNotesLiveUpdateStorageEvent({ key: "sprintNotesBackup" })).toBe(false);
     expect(isSprintNotesLiveUpdateStorageEvent({ key: "old_topicPresenceHeartbeats" })).toBe(false);
+  });
+});
+
+describe("isArgumentLibraryLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isArgumentLibraryLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "practiceRounds" })).toBe(false);
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "flowAnnotations" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "evidenceLibraryEntriesBackup" })).toBe(false);
+    expect(isArgumentLibraryLiveUpdateStorageEvent({ key: "old_contributions" })).toBe(false);
   });
 });
 

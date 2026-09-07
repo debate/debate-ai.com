@@ -7,6 +7,79 @@ _No task currently in progress._
 
 ### Completed
 
+- **📚 Argument Library — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built (account settings,
+  dozens of `saved_*` D1 tables/`/api/*` routes linking flows, docs, and
+  rounds to signed-in users in SQL, and every tool already reachable from
+  the Tools page, CardMirror's own Google-Docs-style `MenuBar`/`Ctrl`/`Cmd`-
+  Shift-Space command palette, and the feature catalog, all reconfirmed this
+  run), so this slice again picked up `shared-flow-sync.md`'s "every other
+  localStorage-backed panel in this repo still has no cross-tab live-update
+  mechanism" Known gap and closed it for `ArgumentLibraryPanel` — confirmed
+  still missing a `storage`-event listener by grepping every panel named in
+  that Known gap's own history before picking one.
+
+  Added `ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`/
+  `isArgumentLibraryLiveUpdateStorageEvent` to
+  `packages/debate-search-evidence/src/state/live-update.ts` (which already
+  held this same package's other panels' predicates), covering the two
+  stores `buildCombinedPersistedArgumentLibrary` composes:
+  `evidenceLibraryEntries` (this repository's own submitted cards/blocks)
+  and `contributions` (Contributions Feed submissions tagged with a topic
+  and case area). `ArgumentLibraryPanel.tsx` now subscribes to `window`'s
+  `storage` event and rebuilds the library when the predicate matches — an
+  evidence-library entry submitted, edited, or deleted, or a Contributions
+  Feed submission tagged for the library, in one tab now shows up in every
+  other open tab's topic folders and tag collections without a manual
+  reload. The panel's own "Saved collections" bar
+  (`hooks/useSavedArgumentCollections.ts`) is deliberately left out of scope
+  — like the `useOutlineFilterPresets` hook it mirrors, it only broadcasts a
+  same-tab custom event on write, not a cross-tab `storage` event, so a
+  collection saved in another tab is a separate, pre-existing gap in that
+  hook rather than this panel's own library-read; documented as a new Known
+  gap in `docs/features/evidence-library.md` rather than silently left
+  unmentioned.
+
+  See `docs/features/evidence-library.md`'s "Argument Library browser and
+  Contributions Feed tagging" section (plus its new Known gaps bullet about
+  the saved-collections gap) and `docs/features/shared-flow-sync.md`'s
+  updated Known gaps bullet (added `ArgumentLibraryPanel` to the closed
+  list). Vitest-covered: `packages/debate-search-evidence/test/live-update.test.ts`
+  (every backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file).
+
+  Every other panel named in `shared-flow-sync.md`'s Known gap history as
+  still lacking the mechanism — `EvidenceLibraryPanel`,
+  `TopicCoverageDashboardPanel` (`debate-search-evidence`);
+  `AiVersusRoundPanel`, `ArgumentTreePanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowSummariesPanel`, `JudgeDecisionPanel`,
+  `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel` (`debate-practice-drills`); `CoachingProgramsPanel`
+  (`debate-team-collaboration`); `OpponentTeamProfilesPanel`,
+  `UserSettingsPanel` (`debate-round`, though note `UserSettingsPanel`'s
+  `form` is a live, directly-editable settings form rather than a derived
+  list/roster view, so a future run closing that one should refresh only
+  the persisted values, not stomp an unsaved in-progress edit) — remains
+  open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5149 passing, up from
+  5144 at HEAD before this change — the 5 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
 - **🎓 Coach Materials — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
