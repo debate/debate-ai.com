@@ -28,6 +28,7 @@ import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';
 import { RIBBON_HTML } from './ribbon-template.js';
 import { htmlToDoc } from './html-bridge.js';
+import { setHostPluginsProvider } from '../editor/host-plugins.js';
 
 export interface Binding {
   key: string;
@@ -188,7 +189,13 @@ function scheduleOnChange(view: EditorView): void {
  *  currently live, via `state.reconfigure` (preserves every other
  *  plugin's existing state — history, collab, etc. — so this never
  *  resets undo). Idempotent: only installs once per view lifetime,
- *  so repeated `claim()` calls don't stack duplicate plugins. */
+ *  so repeated `claim()` calls don't stack duplicate plugins.
+ *
+ *  Also registered as the engine's host-plugin provider, so every
+ *  plugin-stack rebuild the engine does on its own (a collab session
+ *  starting, a joined session doc mounting, keymap settings) keeps the
+ *  reporter — without this, `onChange` went silent the moment a
+ *  co-editing session started on the embedded doc. */
 function installOnChangePlugin(view: EditorView): EditorView {
   if (onChangePluginInstalled) return view;
   onChangePluginInstalled = true;
@@ -200,6 +207,7 @@ function installOnChangePlugin(view: EditorView): EditorView {
       },
     }),
   });
+  setHostPluginsProvider(() => [plugin]);
   view.updateState(view.state.reconfigure({ plugins: [...view.state.plugins, plugin] }));
   return view;
 }

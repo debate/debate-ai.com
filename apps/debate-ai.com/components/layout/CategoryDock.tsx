@@ -3,11 +3,11 @@
 import { useEffect, useState, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Timer as TimerIcon, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Bell, Book, BookMarked, Calendar, Code2, Contact, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Timer as TimerIcon, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
-import { useAccountNotifications } from "debate-team-collaboration"
+import { useAccountNotifications, useContacts } from "debate-team-collaboration"
 import { TimerProgressRing } from "debate-timer/src/timers/TimerProgressRing"
 import {
   useVideoPlayerStore,
@@ -171,10 +171,13 @@ function SettingsMenu({
   side,
   onSignIn,
   unreadNotifications,
+  pendingContacts,
 }: {
   side: "bottom" | "top"
   onSignIn: () => void
   unreadNotifications: number
+  /** Incoming contact requests — the "New" badge on the Contacts entry. */
+  pendingContacts: number
 }) {
   const themeState = useThemeState()
   const router = useRouter()
@@ -217,6 +220,15 @@ function SettingsMenu({
         {unreadNotifications > 0 && (
           <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">
             New
+          </span>
+        )}
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/contacts") }}>
+        <Contact className="mr-2 h-4 w-4" />
+        <span className="flex-1">Contacts</span>
+        {pendingContacts > 0 && (
+          <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">
+            {pendingContacts}
           </span>
         )}
       </DropdownMenuItem>
@@ -352,6 +364,7 @@ function DockInstance({
   allItems,
   onSignIn,
   unreadNotifications,
+  pendingContacts,
   embedded = false,
 }: {
   dockClassName: string
@@ -359,6 +372,7 @@ function DockInstance({
   allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void; renderIcon?: () => ReactNode }[]
   onSignIn: () => void
   unreadNotifications: number
+  pendingContacts: number
   embedded?: boolean
 }) {
   return (
@@ -401,7 +415,7 @@ function DockInstance({
           </DockItem>
         </DropdownMenuTrigger>
       </Dock>
-      <SettingsMenu side={side} onSignIn={onSignIn} unreadNotifications={unreadNotifications} />
+      <SettingsMenu side={side} onSignIn={onSignIn} unreadNotifications={unreadNotifications} pendingContacts={pendingContacts} />
     </DropdownMenu>
   )
 }
@@ -426,6 +440,10 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   const [loginOpen, setLoginOpen] = useState(false)
   const { isAuthenticated } = useSession()
   const { unreadCount } = useAccountNotifications(isAuthenticated)
+  // Polled here (not only on /contacts) on purpose: the same GET is the
+  // presence heartbeat that shows this user as online to their contacts
+  // wherever they are in the app.
+  const { incoming: incomingContacts } = useContacts(isAuthenticated)
 
   const allItems = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
@@ -506,6 +524,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
           unreadNotifications={unreadCount}
+          pendingContacts={incomingContacts.length}
           embedded
         />
         <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
@@ -528,6 +547,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
           unreadNotifications={unreadCount}
+          pendingContacts={incomingContacts.length}
         />
       </div>
 
@@ -580,7 +600,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
-          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} unreadNotifications={unreadCount} />
+          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} unreadNotifications={unreadCount} pendingContacts={incomingContacts.length} />
         </DropdownMenu>
       </div>
 

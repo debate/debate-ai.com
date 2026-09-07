@@ -3,7 +3,7 @@ import {
   ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
-  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
+  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass, Contact,
   Rss, Gauge, Crosshair, Crown, Send, Smartphone,
   type LucideIcon,
 } from "lucide-react"
@@ -184,6 +184,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/prep-notes", label: "Prep Notes", icon: NotebookPen,
         description: "Keep live prep notes across every flow, grouped by status.",
         highlights: ["Needs-follow-up notes surfaced first, then open, then covered", "Assign a note to a teammate — they get a real Notifications entry"],
+      },
+      {
+        href: "/contacts", label: "Contacts", icon: Contact,
+        description: "Your contacts list — requests, blocking, who's online, and the live cards contacts shared with you.",
+        highlights: ["Share the open Reason Editor document as a live co-editing card with a contact", "Shared cards show as available on every device you sign in on"],
       },
       {
         href: "/notifications", label: "Notifications", icon: Bell,

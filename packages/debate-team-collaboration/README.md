@@ -7,7 +7,13 @@ Team Prep & Collaboration — task inbox, collaboration prep room, team collabor
 ```tsx
 import { TaskInboxPanel, PrepRoomPanel, TopicSprintPanel, BrainstormBoardPanel, GroupChallengesPanel, ResearchProgressPanel, SprintNotesPanel } from "debate-team-collaboration"
 import { PrepNotesPanel, AccountNotificationsPanel, PrepNoteNotificationsPanel } from "debate-team-collaboration"
+import { ContactsPanel, SharedCardsPanel, useContacts, useCardShares } from "debate-team-collaboration"
 ```
+
+Also home to the account-linked **contacts list** and **shared collab cards**
+(`src/lib/contacts.ts` rules, `src/state/contacts.ts` / `src/state/cardShares.ts`
+clients, the two hooks and panels above) — see
+[docs/features/contacts.md](../../docs/features/contacts.md).
 
 This package split out of `debate-card-search` and `debate-round` alongside
 `debate-research-evidence` and `debate-community`. It depends on `debate-research-evidence`
