@@ -102,6 +102,28 @@ tracked topic instead of once for the active one. See
 `test/trackedArguments.test.ts`'s `buildPersistedCrossTopicCoverageComparison`
 suite.
 
+## Cross-tab live update
+
+`TopicCoverageDashboardPanel` reads its persisted stores on mount (and on
+topic switch) only, so a change made in one browser tab used to need a
+manual reload to show up in another tab open to the same panel. It now
+subscribes to the browser's `storage` event (which never fires in the tab
+that made the write, only in other same-origin tabs) via
+`isTopicCoverageDashboardLiveUpdateStorageEvent`/
+`TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS` in
+`state/live-update.ts`, covering `trackedArguments` (the checklist itself),
+`evidenceLibraryEntries`/`contributions` (both folded into the coverage
+report as `CoverageCardSummary` sources), and `topicCoverageSnapshots` (the
+recorded trend history) — a tracked argument added or removed, a card
+submitted anywhere the report draws from, or a snapshot recorded/cleared in
+another tab now refreshes the coverage report, checklist, snapshot history,
+and cross-topic comparison here too.
+
+This closes this panel's share of the "Every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](./shared-flow-sync.md). Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
+
 ## Known gaps
 
 - The checklist is per-browser localStorage, not a shared team resource — two

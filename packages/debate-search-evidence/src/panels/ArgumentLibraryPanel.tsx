@@ -42,14 +42,10 @@
  * field).
  *
  * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
- * `isArgumentLibraryLiveUpdateStorageEvent`, so an evidence-library entry
- * submitted/edited/deleted or a Contributions Feed submission tagged with a
- * topic/case area in another browser tab refreshes this panel's topic
- * folders and tag collections here too — the `storage` event never fires in
- * the tab that made the write, only in other tabs. Closes the "Every other
- * localStorage-backed panel in this repo still has no cross-tab live-update
- * mechanism" Known gap noted in `docs/features/shared-flow-sync.md`, for
- * this panel.
+ * `isArgumentLibraryLiveUpdateStorageEvent`, so a card submitted, tagged, or
+ * retagged in another browser tab refreshes this panel's topic folders and
+ * tag collections here too — the `storage` event never fires in the tab that
+ * made the write, only in other tabs.
  *
  * @module panels/ArgumentLibraryPanel
  */
@@ -99,8 +95,8 @@ export function ArgumentLibraryPanel() {
 
   /**
    * Live-update the rendered library when another browser tab submits,
-   * edits, or deletes an evidence-library entry, or tags a Contributions
-   * Feed submission with a topic/case area.
+   * tags, or renames a tag on an evidence-library entry or a Contributions
+   * Feed submission.
    */
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {
