@@ -5,9 +5,9 @@
  * `ContributorAwardsPanel`, `DailyQuestsPanel`, `RevisionIncentivesPanel`,
  * `CardScoringPanel`, `BrainstormBoardPanel`, `GroupChallengesPanel`,
  * `ContributionsFeedPanel`, `TopicSprintPanel`, `ReviewQueuePanel`,
- * `PrepRoomPanel`, `SprintNotesPanel`, and
- * `CoachingProgramRosterAnalyticsPanel`, mirroring `debate-round`'s
- * `flow/live-update.ts`.
+ * `PrepRoomPanel`, `SprintNotesPanel`,
+ * `CoachingProgramRosterAnalyticsPanel`, and `TopicCoverageDashboardPanel`,
+ * mirroring `debate-round`'s `flow/live-update.ts`.
  * The browser's `storage` event never fires in the *same* tab that wrote the
  * change — only in other same-origin tabs — so a panel that reads
  * `localStorage` on mount only never reflects another tab's write without a
@@ -20,7 +20,8 @@
  * `isDailyQuestsLiveUpdateStorageEvent`, `isRevisionIncentivesLiveUpdateStorageEvent`,
  * `isCardScoringLiveUpdateStorageEvent`, `isBrainstormBoardLiveUpdateStorageEvent`,
  * `isGroupChallengesLiveUpdateStorageEvent`, `isContributionsFeedLiveUpdateStorageEvent`,
- * and `isTopicSprintLiveUpdateStorageEvent` close the equivalent gap for
+ * `isTopicSprintLiveUpdateStorageEvent`, and
+ * `isTopicCoverageDashboardLiveUpdateStorageEvent` close the equivalent gap for
  * their own panels — the news-stream one noted directly in `news-stream.md`'s
  * "No real-time updates across browser tabs" Known gap, the rest in
  * `shared-flow-sync.md`'s "Every other localStorage-backed panel in this
@@ -609,5 +610,36 @@ export function isCoachingProgramRosterAnalyticsLiveUpdateStorageEvent(event: { 
   return (
     event.key === null ||
     (COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `TopicCoverageDashboardPanel` reads from:
+ * `state/trackedArguments.ts`'s own `"trackedArguments"` store (the per-topic
+ * checklist `buildPersistedTopicCoverageReport` and
+ * `buildPersistedCrossTopicCoverageComparison` both read), the shared
+ * `"evidenceLibraryEntries"` store that same report composes against (every
+ * submitted card, via `buildPersistedTopicCoverageReport`'s
+ * `listEvidenceLibraryEntries` call), and `state/topicCoverageSnapshots.ts`'s
+ * own `"topicCoverageSnapshots"` store (the "Coverage trend" history).
+ */
+export const TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS = [
+  "trackedArguments",
+  "evidenceLibraryEntries",
+  "topicCoverageSnapshots",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `TopicCoverageDashboardPanel` to
+ * refresh its rendered checklist, coverage report, cross-topic heatmap, and
+ * trend history — closes the "Every other localStorage-backed panel in this
+ * repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel. Mirrors
+ * `isDailyBestCardLiveUpdateStorageEvent`'s null-key/exact-key-match rules.
+ */
+export function isTopicCoverageDashboardLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

@@ -38,6 +38,8 @@ import {
   isPrepRoomLiveUpdateStorageEvent,
   isReviewQueueLiveUpdateStorageEvent,
   isSprintNotesLiveUpdateStorageEvent,
+  isTopicCoverageDashboardLiveUpdateStorageEvent,
+  TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS,
 } from "../src/state/live-update";
 
 describe("isDailyBestCardLiveUpdateStorageEvent", () => {
@@ -471,6 +473,28 @@ describe("isSprintNotesLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isSprintNotesLiveUpdateStorageEvent({ key: "sprintNotesBackup" })).toBe(false);
     expect(isSprintNotesLiveUpdateStorageEvent({ key: "old_topicPresenceHeartbeats" })).toBe(false);
+  });
+});
+
+describe("isTopicCoverageDashboardLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "peerReviews" })).toBe(false);
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "cardScores" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "trackedArgumentsBackup" })).toBe(false);
+    expect(isTopicCoverageDashboardLiveUpdateStorageEvent({ key: "old_evidenceLibraryEntries" })).toBe(false);
   });
 });
 

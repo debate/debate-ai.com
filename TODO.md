@@ -7,6 +7,71 @@ _No task currently in progress._
 
 ### Completed
 
+- **📊 Topic Coverage Dashboard — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built (account settings
+  synced to a `user_settings` D1 row, `documents`/`saved_flows`/
+  `saved_rounds` D1 tables each linked to `user.id`, and every tool already
+  reachable from the `/tools` catalog, the dock's Settings→Tools submenu,
+  CardMirror's own `MenuBar`/command palette, and the Features page, all
+  reconfirmed this run), so this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap and closed
+  it for `TopicCoverageDashboardPanel` — explicitly named as still open by
+  the previous run's own completed-task note (alongside
+  `ArgumentLibraryPanel`, `EvidenceLibraryPanel`, and others), confirmed
+  still missing a `storage`-event listener by grepping the panel.
+
+  Extended `packages/debate-search-evidence/src/state/live-update.ts` with
+  `TOPIC_COVERAGE_DASHBOARD_LIVE_UPDATE_STORAGE_KEYS`/
+  `isTopicCoverageDashboardLiveUpdateStorageEvent`, covering all three of
+  the panel's backing stores: `trackedArguments` (the per-topic checklist),
+  `evidenceLibraryEntries` (the shared card library the coverage report
+  composes against), and `topicCoverageSnapshots` (the "Coverage trend"
+  history). `TopicCoverageDashboardPanel.tsx` now subscribes to `window`'s
+  `storage` event and re-derives the topic list, the active topic's
+  coverage report/checklist/trend snapshots, and the cross-topic heatmap
+  when the predicate matches — mirroring the existing topic-change effect's
+  `activeTopic ? ... : null`/`[]` guard so an empty topic field doesn't
+  fetch a report for it. The in-progress "Add to checklist" form draft and
+  its error message are left untouched, matching every other closed
+  panel's "refresh the derived view, not the draft" convention.
+
+  See `docs/features/topic-coverage-dashboard.md`'s new "Cross-tab live
+  update" section and `docs/features/shared-flow-sync.md`'s updated Known
+  gaps bullet (added `TopicCoverageDashboardPanel` to the closed list).
+  Vitest-covered: `packages/debate-search-evidence/test/live-update.test.ts`
+  (every backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, mirroring every other
+  panel's suite in that file). `ArgumentLibraryPanel`, `EvidenceLibraryPanel`
+  (`debate-search-evidence`); `AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel`
+  (`debate-practice-drills`); `CoachingProgramsPanel`
+  (`debate-team-collaboration`); `OpponentTeamProfilesPanel`,
+  `UserSettingsPanel` (`debate-round`, though note `UserSettingsPanel`'s
+  `form` is a live, directly-editable settings form rather than a derived
+  list/roster view, so a future run closing that one should refresh only
+  the persisted values, not stomp an unsaved in-progress edit) remain open
+  for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5149 passing, up from
+  5144 at HEAD before this change — the 5 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
 - **🎓 Coach Materials — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

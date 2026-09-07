@@ -15,6 +15,15 @@
  * here — this is a read/write composition and rendering layer, mirroring the
  * existing `ArgumentLibraryPanel`/`SprintNotesPanel` panel convention.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isTopicCoverageDashboardLiveUpdateStorageEvent`)
+ * re-reads the checklist, coverage report, cross-topic heatmap, and trend
+ * history whenever another tab edits the tracked-argument checklist, the
+ * shared evidence library, or a topic's coverage snapshots — closing the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/TopicCoverageDashboardPanel
  */
 
@@ -43,6 +52,7 @@ import {
 } from "../state/topicCoverageSnapshots"
 import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
 import type { ArgumentCoverage, CoverageLevel, CrossTopicCoverageRow, TopicCoverageReport } from "../lib/topic-coverage"
+import { isTopicCoverageDashboardLiveUpdateStorageEvent } from "../state/live-update"
 
 const LEVEL_LABEL: Record<CoverageLevel, string> = {
   missing: "Missing",
@@ -99,6 +109,28 @@ export function TopicCoverageDashboardPanel() {
     setSnapshots(listCoverageSnapshots(activeTopic))
     setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }
+
+  /**
+   * Live-update this panel when another browser tab edits the tracked-
+   * argument checklist, the shared evidence library, or a topic's coverage
+   * snapshots — a `storage` event never fires in the tab that made the
+   * write, only in other same-origin tabs. Only the persisted report/
+   * checklist/snapshots/heatmap re-read; the in-progress "add to checklist"
+   * form draft and its error message are left untouched.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTopicCoverageDashboardLiveUpdateStorageEvent(event)) return
+      const activeTopic = topic.trim()
+      setTopics(listTrackedTopics())
+      setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
+      setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+      setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
+      setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [topic])
 
   const handleRecordSnapshot = () => {
     const activeTopic = topic.trim()
