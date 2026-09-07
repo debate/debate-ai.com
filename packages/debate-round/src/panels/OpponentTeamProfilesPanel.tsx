@@ -60,12 +60,16 @@
  * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
  * "Download comparison" action once a comparison is built.
  *
- * Also subscribes to `window`'s `storage` event (see `../flow/live-update.ts`'s
- * `isOpponentTeamProfilesPanelLiveUpdateStorageEvent`) so a teammate logging,
- * editing, undoing/redoing, deleting, or bulk-importing a scouted round in
- * another tab shows up here without a manual reload — closing this panel's
- * share of `shared-flow-sync.md`'s "every other localStorage-backed panel in
- * this repo still has no cross-tab live-update mechanism" Known gap.
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`)
+ * refreshes the roster and logged-round list whenever another tab logs,
+ * edits, undoes/redoes, deletes, or bulk-imports a scouted round — closing
+ * the "every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel. The in-progress "Log a scouted round" form draft, bulk-
+ * import CSV textarea, and any built "Compare vs. opponent" comparison are
+ * left untouched, matching every other closed panel's "refresh the derived
+ * view, not the draft" convention.
  *
  * @module panels/OpponentTeamProfilesPanel
  */
@@ -87,6 +91,7 @@ import {
 } from "../ui/primitives/select"
 import { Switch } from "../ui/primitives/switch"
 import { Textarea } from "../ui/primitives/textarea"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   Table,
   TableBody,
@@ -123,7 +128,6 @@ import {
   type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
-import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
@@ -215,14 +219,10 @@ export function OpponentTeamProfilesPanel() {
   }
 
   /**
-   * Live-update this panel when another browser tab logs, edits,
-   * undoes/redoes, deletes, or bulk-imports a scouted round — a `storage`
-   * event never fires in the tab that made the write, only in other
-   * same-origin tabs. Only the persisted roster/logged-rounds list
-   * re-reads; the in-progress "Log a scouted round" form draft, bulk-CSV
-   * textarea, and comparison selection are left untouched, matching every
-   * other closed panel's "refresh the derived view, not the draft"
-   * convention.
+   * Live-update this panel when another browser tab logs, edits, undoes/
+   * redoes, deletes, or bulk-imports a scouted round — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
    */
   useEffect(() => {
     const handleStorage = (event: StorageEvent) => {

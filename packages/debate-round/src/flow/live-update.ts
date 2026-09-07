@@ -171,17 +171,16 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
 }
 
 /**
- * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads
- * from — `opponentTeamProfiles` (the derived scouting roster, in
- * `debate-data-sync`'s `state/opponentTeamProfiles.ts`) and
- * `opponentRoundRecords` (the logged-round history the roster is
- * re-aggregated from, plus the panel's own "Logged rounds" list, in
- * `debate-data-sync`'s `state/opponentRoundRecords.ts`), and its edit/redo
- * undo history (`opponentRoundRecordEditHistory`/
- * `opponentRoundRecordRedoHistory`) which decide whether a round shows an
- * Undo/Redo action. Deliberately excludes `ownRoundHistory` — the "Compare
- * vs. opponent" section only reads it on-demand when the Compare button is
- * clicked, not as part of the panel's persistently-rendered view.
+ * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads from
+ * for its roster and logged-rounds list — `debate-data-sync`'s
+ * `state/opponentTeamProfiles.ts` (`opponentTeamProfiles`, the aggregated
+ * roster) and `state/opponentRoundRecords.ts` (`opponentRoundRecords`, the
+ * logged-round history, plus `opponentRoundRecordEditHistory`/
+ * `opponentRoundRecordRedoHistory`, which decide whether a logged round shows
+ * an Undo/Redo action). Deliberately excludes `ownRoundHistory`: the panel
+ * only reads it inside the on-demand "Compare vs. opponent" action, not on
+ * refresh, so a cross-tab change there doesn't need to force a re-render —
+ * the user's next "Compare" click already re-reads it fresh.
  */
 export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
   "opponentTeamProfiles",
