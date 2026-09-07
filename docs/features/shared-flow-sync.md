@@ -497,10 +497,13 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`topic-coverage-dashboard.md`](topic-coverage-dashboard.md)'s "Cross-tab
   live update"), `OpponentTeamProfilesPanel` (see
   [`opponent-team-profiles.md`](opponent-team-profiles.md)'s "Cross-tab live
-  update"), and `FlowEditLogPanel` itself (see "Cross-tab live update in
-  `FlowEditLogPanel`" above) have since gained the equivalent mechanism for
-  their own stores, but every other localStorage-backed panel in this repo
-  still has none (Live Sync
+  update"), `JudgeParadigmPickerPanel` (see
+  [`judge-paradigm-selections.md`](judge-paradigm-selections.md)'s
+  "Cross-tab live update" — the first `live-update.ts` in
+  `debate-practice-drills`), and `FlowEditLogPanel` itself (see "Cross-tab
+  live update in `FlowEditLogPanel`" above) have since gained the equivalent
+  mechanism for their own stores, but every other localStorage-backed panel
+  in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

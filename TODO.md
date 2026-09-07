@@ -7,6 +7,74 @@ _No task currently in progress._
 
 ### Completed
 
+- **⚖️ Judge Paradigm Picker — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this repo
+  currently has many parallel sessions racing on that same gap (master's
+  history shows `OpponentTeamProfilesPanel`'s cross-tab live update
+  implemented redundantly well over half a dozen times by separate PRs in
+  quick succession), so rather than compete for an already-heavily-picked
+  panel, this run verified via a direct grep of every `panels/*.tsx` file
+  in the repo (not the possibly-stale prose in this file, which several of
+  those parallel PRs' merges evidently dropped) and picked
+  `debate-practice-drills`'s `JudgeParadigmPickerPanel` — a genuinely still-
+  open, previously entirely unclaimed panel in a package that had no
+  `live-update.ts` at all yet.
+
+  Added `packages/debate-practice-drills/src/state/live-update.ts` (the
+  first `live-update.ts` in this package, mirroring `debate-round`'s
+  `flow/live-update.ts`, `debate-search-evidence`'s `state/live-update.ts`,
+  and `debate-speech-writer`'s `state/live-update.ts` exactly) with
+  `JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isJudgeParadigmPickerPanelLiveUpdateStorageEvent`, covering the panel's
+  one backing store: `judgeParadigmSelections` (the round-by-round saved-
+  selection list). `JudgeParadigmPickerPanel.tsx` now subscribes to
+  `window`'s `storage` event and calls its existing `refresh()` closure
+  when the predicate matches — a teammate saving or clearing a round's
+  judge paradigm in one tab now shows up in every other open tab without a
+  manual reload. The in-progress "save a round's paradigm" form draft is
+  left untouched, matching every other closed panel's "refresh the derived
+  view, not the draft" convention.
+
+  See `docs/features/judge-paradigm-selections.md`'s new "Cross-tab live
+  update" section and `docs/features/shared-flow-sync.md`'s updated Known
+  gaps bullet (added `JudgeParadigmPickerPanel` to the closed list).
+  Vitest-covered: `packages/debate-practice-drills/test/live-update.test.ts`
+  (the one backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored). `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit),
+  `CoachingProgramsPanel` (`debate-team-collaboration`), and every other
+  panel in `debate-practice-drills` (`AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingSessionsPanel`, `DrillSetsPanel`,
+  `FlowSummariesPanel`, `JudgeDecisionPanel`, `OpponentPersonaPickerPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel`) remain open for a future run to pick up next —
+  each of those can now extend this same new `live-update.ts` file rather
+  than creating another one.
+
+  Ran the full verification gate: `bun run test` (5165 passing, up from
+  5161 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
 - **🕵️ Opponent Team Profiles — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

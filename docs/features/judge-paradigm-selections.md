@@ -255,6 +255,33 @@ flow summary changes isn't distinguishable from the first run except by
 timestamp. This matches the existing single-decision flow's behavior, so is
 not treated as a new regression.
 
+## Cross-tab live update
+
+`JudgeParadigmPickerPanel` used to only refresh its rendered selection list
+on mount or right after its own save/clear actions — a teammate saving or
+clearing a round's paradigm in a second open tab (or a second browser
+window on the same machine) never showed up without a manual reload, the
+same still-open gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md). This is the first
+`live-update.ts` in `debate-practice-drills`, following the same pattern
+`debate-round`'s `flow/live-update.ts`, `debate-search-evidence`'s
+`state/live-update.ts`, and `debate-speech-writer`'s `state/live-update.ts`
+already use for their own panels.
+
+`state/live-update.ts`'s `isJudgeParadigmPickerPanelLiveUpdateStorageEvent`
+checks whether a `storage` event's `key` is the panel's one backing store
+(`judgeParadigmSelections`) or `null` (a `localStorage.clear()`).
+`JudgeParadigmPickerPanel.tsx` now subscribes to `window`'s `storage` event
+(the browser only fires this in *other* same-origin tabs, never the one
+that made the write) and calls its existing `refresh()` closure when the
+predicate matches. The in-progress "save a round's paradigm" form draft is
+left untouched — only the persisted selection list re-reads, matching every
+other closed panel's "refresh the derived view, not the draft" convention.
+
+Vitest-covered in `packages/debate-practice-drills/test/live-update.test.ts`
+(the one backing-store key, the `null`-key clear-all case, and
+unrelated/substring-matching keys staying ignored).
+
 ## Known gaps
 
 - The multi-judge panel mode above closes idea #5's remaining named
