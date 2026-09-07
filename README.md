@@ -22,7 +22,7 @@
    <br />
   <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_App-debate--ai-blueviolet?style=for-the-badge" "></a>
   <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/🙋_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
-  <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Shared-Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
+  <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
           <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
   <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Ranks-informational?style=for-the-badge" alt="Results"></a>
     <br/>
