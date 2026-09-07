@@ -38,8 +38,10 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { listJudgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms"
 import { requestJudgeDecision } from "../round/judge-decision-client"
-import { buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
+import { buildJudgeDecisionInputForParadigm, buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
+import { generateJudgeDecisionBatchId, type JudgeDecisionRecord } from "../state/judgeDecisions"
 import { useJudgeDecisions } from "../hooks/useJudgeDecisions"
 
 type FormState = {
@@ -55,6 +57,8 @@ const MISSING_SOURCE_LABEL: Record<string, string> = {
   judgeParadigm: "a saved judge paradigm (Judge Paradigm Picker)",
 }
 
+const PANEL_PARADIGMS = listJudgeParadigms()
+
 /**
  * Renders the AI Judge Decision panel: a form to request an AI decision for
  * a round under its saved judge paradigm, plus every persisted decision,
@@ -69,6 +73,9 @@ export function JudgeDecisionPanel() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedParadigmIds, setSelectedParadigmIds] = useState<string[]>([])
+  const [panelLoading, setPanelLoading] = useState(false)
+  const [panelError, setPanelError] = useState<string | null>(null)
 
   useEffect(() => {
     const roundId = searchParams?.get("roundId")
@@ -111,6 +118,53 @@ export function JudgeDecisionPanel() {
       setError(e instanceof Error ? e.message : "AI judge decision failed.")
     } finally {
       setLoading(false)
+    }
+  }
+
+  const toggleParadigm = (id: string) => {
+    setSelectedParadigmIds((prev) => (prev.includes(id) ? prev.filter((existing) => existing !== id) : [...prev, id]))
+  }
+
+  const handleRunPanel = async () => {
+    const roundId = form.roundId.trim()
+    if (!roundId) {
+      setPanelError("Round ID is required.")
+      return
+    }
+    if (selectedParadigmIds.length < 2) {
+      setPanelError("Select at least 2 paradigms to run a multi-judge panel.")
+      return
+    }
+    const sideNames = {
+      primary: form.primarySideName.trim() || "Primary",
+      secondary: form.secondarySideName.trim() || "Secondary",
+    }
+    const selectedParadigms = PANEL_PARADIGMS.filter((paradigm) => selectedParadigmIds.includes(paradigm.id))
+
+    setPanelLoading(true)
+    setPanelError(null)
+    try {
+      const batchId = generateJudgeDecisionBatchId()
+      for (const paradigm of selectedParadigms) {
+        const sources = buildJudgeDecisionInputForParadigm(roundId, paradigm, sideNames)
+        if (!sources.ok) {
+          setPanelError(`Missing ${MISSING_SOURCE_LABEL[sources.missing[0]]} for round "${roundId}".`)
+          return
+        }
+        const result = await requestJudgeDecision(sources.input)
+        appendDecision({
+          roundId,
+          paradigmName: paradigm.name,
+          sideNames,
+          result,
+          generatedAt: Date.now(),
+          batchId,
+        })
+      }
+    } catch (e) {
+      setPanelError(e instanceof Error ? e.message : "Multi-judge panel run failed.")
+    } finally {
+      setPanelLoading(false)
     }
   }
 
@@ -170,6 +224,35 @@ export function JudgeDecisionPanel() {
         </Button>
       </div>
 
+      <div className="rounded-lg border border-border p-4 space-y-4">
+        <div>
+          <h2 className="text-sm font-medium text-foreground">Multi-judge panel</h2>
+          <p className="text-xs text-muted-foreground">
+            Judge the round above under two or more paradigms at once and see a combined decision,
+            using the Round ID and side names entered above.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {PANEL_PARADIGMS.map((paradigm) => (
+            <label key={paradigm.id} className="flex items-center gap-1.5 text-sm text-foreground">
+              <input
+                type="checkbox"
+                className="h-3.5 w-3.5"
+                checked={selectedParadigmIds.includes(paradigm.id)}
+                onChange={() => toggleParadigm(paradigm.id)}
+              />
+              {paradigm.name}
+            </label>
+          ))}
+        </div>
+
+        {panelError && <p className="text-sm text-destructive">{panelError}</p>}
+
+        <Button onClick={handleRunPanel} disabled={panelLoading} variant="secondary">
+          {panelLoading ? "Running panel…" : "Run multi-judge panel"}
+        </Button>
+      </div>
+
       {groups.length === 0 ? (
         <EmptyState title="No AI judge decisions yet." message="Request one above to see it here." />
       ) : (
@@ -184,44 +267,100 @@ export function JudgeDecisionPanel() {
                   Clear all history for this round
                 </Button>
               </div>
-              {group.decisions.map((record) => {
-                const winnerName =
-                  record.result.winner === "primary" ? record.sideNames.primary : record.sideNames.secondary
-                return (
-                  <div key={record.id} className="rounded-lg border border-border p-4 space-y-2">
+              {group.historyItems.map((item) =>
+                item.kind === "single" ? (
+                  <DecisionCard key={item.decision.id} record={item.decision} onClear={() => deleteDecision(item.decision.id)} />
+                ) : (
+                  <div key={item.batchId} className="rounded-lg border-2 border-border p-4 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(record.generatedAt).toLocaleString()}
-                        </span>
-                        <Badge variant="outline">{record.paradigmName}</Badge>
-                        <Badge>{winnerName} wins</Badge>
+                        <Badge variant="outline">
+                          Multi-judge panel ({item.decisions.length} paradigms)
+                        </Badge>
+                        <Badge>
+                          {item.combined.winner === "split"
+                            ? "Split decision"
+                            : `${item.combined.winner === "primary" ? item.decisions[0]!.sideNames.primary : item.decisions[0]!.sideNames.secondary} wins ${item.combined.winner === "primary" ? item.combined.primaryVotes : item.combined.secondaryVotes}-${item.combined.winner === "primary" ? item.combined.secondaryVotes : item.combined.primaryVotes}`}
+                        </Badge>
+                        {item.combined.unanimous && <Badge variant="outline">Unanimous</Badge>}
                       </div>
-                      <Button size="sm" variant="ghost" onClick={() => deleteDecision(record.id)}>
-                        Clear
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => item.decisions.forEach((decision) => deleteDecision(decision.id))}
+                      >
+                        Clear this panel run
                       </Button>
                     </div>
                     <div>
                       <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-                        Key Voting Issues
+                        Combined key voting issues
                       </h3>
                       <ul className="list-disc space-y-0.5 pl-5 text-sm text-foreground">
-                        {record.result.keyVotingIssues.map((issue, index) => (
+                        {item.combined.keyVotingIssues.map((issue, index) => (
                           <li key={index}>{issue}</li>
                         ))}
                       </ul>
                     </div>
-                    <div>
-                      <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Rationale</h3>
-                      <p className="text-sm text-foreground">{record.result.rationale}</p>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border text-left text-xs uppercase text-muted-foreground">
+                            <th className="py-1 pr-3">Paradigm</th>
+                            <th className="py-1 pr-3">Vote</th>
+                            <th className="py-1">Rationale</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {item.decisions.map((decision) => (
+                            <tr key={decision.id} className="border-b border-border/50 align-top">
+                              <td className="py-1.5 pr-3 font-medium text-foreground">{decision.paradigmName}</td>
+                              <td className="py-1.5 pr-3">
+                                {decision.result.winner === "primary" ? decision.sideNames.primary : decision.sideNames.secondary}
+                              </td>
+                              <td className="py-1.5 text-muted-foreground">{decision.result.rationale}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                )
-              })}
+                ),
+              )}
             </div>
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function DecisionCard({ record, onClear }: { record: JudgeDecisionRecord; onClear: () => void }) {
+  const winnerName = record.result.winner === "primary" ? record.sideNames.primary : record.sideNames.secondary
+  return (
+    <div className="rounded-lg border border-border p-4 space-y-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{new Date(record.generatedAt).toLocaleString()}</span>
+          <Badge variant="outline">{record.paradigmName}</Badge>
+          <Badge>{winnerName} wins</Badge>
+        </div>
+        <Button size="sm" variant="ghost" onClick={onClear}>
+          Clear
+        </Button>
+      </div>
+      <div>
+        <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Key Voting Issues</h3>
+        <ul className="list-disc space-y-0.5 pl-5 text-sm text-foreground">
+          {record.result.keyVotingIssues.map((issue, index) => (
+            <li key={index}>{issue}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Rationale</h3>
+        <p className="text-sm text-foreground">{record.result.rationale}</p>
+      </div>
     </div>
   )
 }

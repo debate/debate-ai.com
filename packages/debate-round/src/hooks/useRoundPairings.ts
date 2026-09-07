@@ -33,6 +33,7 @@ import {
   listSavedRoundPairings,
   saveRoundPairingToAccount,
 } from "../round/round-pairings-client";
+import { isPreRoundBriefingsPanelLiveUpdateStorageEvent } from "../flow/live-update";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
 // one page load share one account fetch and one "is this browser signed
@@ -98,6 +99,23 @@ export function useRoundPairings(): UseRoundPairingsResult {
       setSynced(remoteAvailable);
       if (changed) setPairings(buildRoundPairingsPanelView());
     });
+  }, []);
+
+  /**
+   * Live-update pairings when another browser tab saves/removes one — a
+   * `storage` event never fires in the tab that made the write, only in
+   * other same-origin tabs. Shares `PreRoundBriefingsPanel`'s combined
+   * predicate (it also covers `preRoundBriefings`/`ownRoundHistory`, which
+   * this hook doesn't read — an extra re-read of `roundPairings` on those
+   * writes is harmless).
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPreRoundBriefingsPanelLiveUpdateStorageEvent(event)) return;
+      setPairings(buildRoundPairingsPanelView());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const savePairing = useCallback((record: RoundPairingRecord) => {

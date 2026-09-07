@@ -42,6 +42,19 @@
  * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`,
  * the sole real caller; defaults to `[]` for any other caller (e.g. tests).
  *
+ * The roster table also renders each member's drill-completion progress and
+ * Practice Round Simulator status — the other half of
+ * `docs/features/coaching-programs.md`'s Known gaps ("the roster analytics
+ * table ... doesn't yet fold in drill-completion rate or practice-round
+ * counts"). Same as `drillReviewEvents` above, this comes in via an optional,
+ * caller-resolved `memberDrillPracticeStatus` prop rather than being read
+ * inside `debate-community` directly (`debate-practice-rounds` already
+ * depends on this package, so the reverse import would be circular) — see
+ * `CoachingProgramRosterAnalyticsWithDrills.tsx`, which joins
+ * `debate-team-collaboration`'s `roundContributorFlows.ts` against
+ * `debate-practice-rounds`' persisted drill sets and practice rounds.
+ * Defaults to an empty map, so a member with no data renders "—".
+ *
  * @module panels/CoachingProgramRosterAnalyticsPanel
  */
 
@@ -86,16 +99,27 @@ const CALENDAR_EVENT_KIND_LABELS: Record<CoachingProgramCalendarEventKind, strin
   "drill-review": "Drill review",
 }
 
+/** One roster member's drill-completion progress and Practice Round Simulator status — see the file doc comment above. */
+export type MemberDrillPracticeStatus = {
+  completedDrills: number
+  totalDrills: number
+  practiceRoundRecorded: boolean
+  practiceRoundHasFeedback: boolean
+}
+
 export type CoachingProgramRosterAnalyticsPanelProps = {
   /** Caller-resolved scheduled drill review reminders to fold into the program calendar — see the file doc comment above. Defaults to none. */
   drillReviewEvents?: CoachingProgramCalendarExternalEvent[]
+  /** Caller-resolved per-member drill-completion/practice-round status, keyed by contributorId — see the file doc comment above. Defaults to none. */
+  memberDrillPracticeStatus?: Record<string, MemberDrillPracticeStatus>
 }
 
-// A stable (module-level, not re-created per render) empty-array default for
-// `drillReviewEvents` — a fresh `[]` literal as the default parameter value
-// would get a new reference every render, which would make the effect below
-// (keyed on this prop) re-fire, `setCalendarDays`, and re-render forever.
+// Stable (module-level, not re-created per render) empty defaults — a fresh
+// `[]`/`{}` literal as the default parameter value would get a new reference
+// every render, which would make the effect below (keyed on
+// `drillReviewEvents`) re-fire, `setCalendarDays`, and re-render forever.
 const NO_DRILL_REVIEW_EVENTS: CoachingProgramCalendarExternalEvent[] = []
+const NO_MEMBER_DRILL_PRACTICE_STATUS: Record<string, MemberDrillPracticeStatus> = {}
 
 /**
  * Renders the Coaching Program Roster Analytics panel: a program picker
@@ -109,6 +133,7 @@ const NO_DRILL_REVIEW_EVENTS: CoachingProgramCalendarExternalEvent[] = []
  */
 export function CoachingProgramRosterAnalyticsPanel({
   drillReviewEvents = NO_DRILL_REVIEW_EVENTS,
+  memberDrillPracticeStatus = NO_MEMBER_DRILL_PRACTICE_STATUS,
 }: CoachingProgramRosterAnalyticsPanelProps = {}) {
   const [programs, setPrograms] = useState<CoachingProgramConfig[] | null>(null)
   const [selectedProgramId, setSelectedProgramId] = useState("")
@@ -230,47 +255,66 @@ export function CoachingProgramRosterAnalyticsPanel({
                   <TableHead>Streak badges</TableHead>
                   <TableHead className="text-right">Challenges completed</TableHead>
                   <TableHead className="text-right">Challenges leading</TableHead>
+                  <TableHead className="text-right">Drills completed</TableHead>
+                  <TableHead>Practice round</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {analytics.map((row) => (
-                  <TableRow key={row.contributorId}>
-                    <TableCell className="font-medium">{row.contributorId}</TableCell>
-                    <TableCell className="text-right">
-                      {row.questStreak.streak.currentStreak > 0
-                        ? `🔥 ${row.questStreak.streak.currentStreak}`
-                        : "—"}
-                    </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
-                      {row.questStreak.streak.longestStreak}
-                    </TableCell>
-                    <TableCell>
-                      {row.questStreak.earnedBadges.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {row.questStreak.earnedBadges.map((badge) => (
-                            <Badge key={badge} variant="outline" className="whitespace-nowrap">
-                              {badge}
-                            </Badge>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
-                      {row.challengeStanding.challengesParticipated === 0
-                        ? "—"
-                        : `${row.challengeStanding.challengesCompleted}/${row.challengeStanding.challengesParticipated}`}
-                    </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
-                      {row.challengeStanding.challengesLeading > 0 ? (
-                        <Badge variant="default">🏆 {row.challengeStanding.challengesLeading}</Badge>
-                      ) : (
-                        "—"
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {analytics.map((row) => {
+                  const drillPracticeStatus = memberDrillPracticeStatus[row.contributorId]
+                  return (
+                    <TableRow key={row.contributorId}>
+                      <TableCell className="font-medium">{row.contributorId}</TableCell>
+                      <TableCell className="text-right">
+                        {row.questStreak.streak.currentStreak > 0
+                          ? `🔥 ${row.questStreak.streak.currentStreak}`
+                          : "—"}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {row.questStreak.streak.longestStreak}
+                      </TableCell>
+                      <TableCell>
+                        {row.questStreak.earnedBadges.length > 0 ? (
+                          <div className="flex flex-wrap gap-1">
+                            {row.questStreak.earnedBadges.map((badge) => (
+                              <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                                {badge}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {row.challengeStanding.challengesParticipated === 0
+                          ? "—"
+                          : `${row.challengeStanding.challengesCompleted}/${row.challengeStanding.challengesParticipated}`}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {row.challengeStanding.challengesLeading > 0 ? (
+                          <Badge variant="default">🏆 {row.challengeStanding.challengesLeading}</Badge>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {drillPracticeStatus && drillPracticeStatus.totalDrills > 0
+                          ? `${drillPracticeStatus.completedDrills}/${drillPracticeStatus.totalDrills}`
+                          : "—"}
+                      </TableCell>
+                      <TableCell>
+                        {drillPracticeStatus?.practiceRoundRecorded ? (
+                          <Badge variant="default">
+                            {drillPracticeStatus.practiceRoundHasFeedback ? "+ feedback" : "Recorded"}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           )}
