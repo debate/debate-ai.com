@@ -14,10 +14,10 @@
  *
  * Also hosts the equivalent per-panel predicates for `PrepNotesPanel`,
  * `PrepNoteNotificationsPanel`, the standalone `FlowAnnotationsPanel` list
- * view, `StrategyPanel`, and `PreRoundBriefingsPanel` — each closes the same
- * "every other localStorage-backed panel in this repo still has no
- * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
- * for its own store.
+ * view, `StrategyPanel`, `PreRoundBriefingsPanel`, and
+ * `OpponentTeamProfilesPanel` — each closes the same "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for its own store.
  */
 
 /** The `localStorage` keys a `FlowSpreadsheet` grid's badges read from (see `state/flowAnnotations.ts`, `state/flowEdits.ts`, `state/prepNotes.ts`). */
@@ -167,5 +167,36 @@ export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: str
   return (
     event.key === null ||
     (PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads from
+ * (all in `debate-data-sync`, except `ownRoundHistory` which is this
+ * package's own): `opponentTeamProfiles` (the scouting roster table),
+ * `opponentRoundRecords` (the logged-rounds list a team's profile is
+ * re-aggregated from), `opponentRoundRecordEditHistory`/
+ * `opponentRoundRecordRedoHistory` (which decide whether a logged round shows
+ * an Undo/Redo action), and `ownRoundHistory` (this team's own round
+ * history, feeding the "Compare vs. opponent" section's "Us" column).
+ */
+export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "opponentTeamProfiles",
+  "opponentRoundRecords",
+  "opponentRoundRecordEditHistory",
+  "opponentRoundRecordRedoHistory",
+  "ownRoundHistory",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `OpponentTeamProfilesPanel` to
+ * re-read its persisted roster/round-record state. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

@@ -157,6 +157,29 @@ If we have no logged round history yet, "Us" simply renders as a zero-round
 profile ("no recorded rounds") rather than erroring — log rounds through the
 Pre-Round Briefings panel's own round-logging form to populate it.
 
+## Cross-tab live update
+
+`OpponentTeamProfilesPanel` subscribes to `window`'s `storage` event via
+`debate-round`'s `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`,
+mirroring [Pre-Round Briefings](pre-round-briefings.md)'s and
+[Judge Profiles](judge-profiles.md)'s own cross-tab live update. The browser's
+`storage` event never fires in the tab that made the write, only in other
+same-origin tabs, so this is what makes a scouted round logged, edited,
+undone/redone, deleted, or bulk-imported in one tab show up in every other
+open tab without a manual reload — covering all five of the panel's backing
+stores: `opponentTeamProfiles` (the roster), `opponentRoundRecords` (the
+logged-rounds list), `opponentRoundRecordEditHistory`/
+`opponentRoundRecordRedoHistory` (which decide whether a logged round shows
+an Undo/Redo action), and `ownRoundHistory` (this team's own round history,
+feeding the "Compare vs. opponent" section's "Us" column). Only the
+roster/logged-rounds list re-reads; the in-progress "Log a scouted round"
+form draft and any built comparison are left untouched, matching every other
+closed panel's "refresh the derived view, not the draft" convention.
+
+Vitest-covered in `packages/debate-round/test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, and unrelated/substring-
+matching keys staying ignored).
+
 ## Data flow
 
 ```
@@ -278,3 +301,6 @@ mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 - Profiles are per-browser localStorage, not a shared team resource, and
   there are no identity/permission checks on who may log a round against a
   team (no auth in this repo yet).
+- ~~No cross-tab live update: the panel only re-reads the roster/logged-rounds
+  list on mount, so a scouted round logged in another tab doesn't show up
+  here until a manual reload.~~ Closed — see "Cross-tab live update" above.
