@@ -7,7 +7,7 @@ _No task currently in progress._
 
 ### Completed
 
-- **🕵️ Opponent Team Profiles — cross-tab live update.** Another repeat of
+- **🕵️ Opponent Team Profiles — cross-tab live update.** ([PR #647](https://github.com/debate/debate-ai.com/pull/647)) Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
   flows/docs/debates in SQL and link to users... add tools into where
