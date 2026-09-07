@@ -491,7 +491,11 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   update"), `JudgeProfilesPanel` (see
   [`judge-profiles.md`](judge-profiles.md)'s "Cross-tab live update"),
   `CoachMaterialsPanel` (see [`coach-materials.md`](coach-materials.md)'s
-  "Cross-tab live update"), `OpponentTeamProfilesPanel` (see
+  "Cross-tab live update"), `ArgumentLibraryPanel` and `EvidenceLibraryPanel`
+  (see [`evidence-library.md`](evidence-library.md)'s "Cross-tab live
+  update"), `TopicCoverageDashboardPanel` (see
+  [`topic-coverage-dashboard.md`](topic-coverage-dashboard.md)'s "Cross-tab
+  live update"), `OpponentTeamProfilesPanel` (see
   [`opponent-team-profiles.md`](opponent-team-profiles.md)'s "Cross-tab live
   update"), and `FlowEditLogPanel` itself (see "Cross-tab live update in
   `FlowEditLogPanel`" above) have since gained the equivalent mechanism for
