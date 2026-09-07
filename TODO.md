@@ -397,6 +397,7 @@ _No task currently in progress._
   tracked for this idea beyond the still-open account-sync gap shared with
   scheduled sessions (see idea's own "Next" note); a future run should pick a
   fresh next-step if one becomes worth doing.
+  **Merge note (PR [#635](https://github.com/debate/debate-ai.com/pull/635)):** that PR built the same freeform draggable whiteboard independently (a `WhiteboardNotePosition` type, `moveWhiteboardNote`/`clampWhiteboardPosition` in `team-collaboration-mode.ts`, and `state/sprintWhiteboard.ts#updateWhiteboardNotePosition`). Since the feature had already landed here via PR #627, the merge kept the shipped implementation and dropped the duplicate functions, panel wiring, docs, and tests rather than carrying two position models.
 - **🧭 Research Task Routing — a real `ContributorAvailability` profile
   management UI.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools... create user settings and link user db SQL
