@@ -22,6 +22,8 @@ assessment (verdict + per-dimension notes) for any ranked card.
 | "Likely duplicate" badge | `isLikelyDuplicate` — uniqueness score below the near-duplicate threshold, checked against every other persisted card plus the real Shared Evidence Library corpus |
 | "Get AI assessment" button | Requests a real Anthropic verdict + per-dimension notes for that card |
 | AI assessment card | The persisted `overallScore`, one-sentence `verdict`, and a short note per dimension, once requested |
+| "Contributor ID" field (single-card and bulk-import forms) | Optionally attributes a scored card to a contributor, feeding the score-trend chart below |
+| "My score trend" section | A chosen contributor's scoring history over time, one `MeterBar` row per scoring event |
 
 ## Data flow
 
@@ -112,20 +114,58 @@ text, keyword trimming, and quality clamping/defaulting), and
 upsert, same-batch id collisions, empty batches, and end-to-end
 parse-then-persist behavior).
 
+## Per-contributor score trend
+
+Closes the "a per-contributor score-trend chart over time" next-step named
+at the end of the "🧠 LLM Card Scoring" bullet in TODO.md. Both the
+single-card form and the "Bulk import" form gained an optional
+"Contributor ID" field; a card saved with one attaches that id to the
+`ScoredCard` (`lib/llm-card-scoring.ts`'s new optional `contributorId`
+field) and appends a snapshot of the card's freshly computed `overallScore`
+to a new append-only log, `state/cardScoreHistory.ts` (its own
+`cardScoreHistory` localStorage key, mirroring `state/revisionHistory.ts`'s
+"own synthetic id, append rather than overwrite" convention — unlike
+`cardScores.ts`'s own upsert-by-id `ScoredCard` store, a card can be
+(re-)scored many times, and every one of those events is its own point on
+the trend, not just the latest).
+
+A card saved with no `contributorId` — including
+`scoreEvidenceLibraryEntry`'s auto-scored Evidence Library entries — isn't
+recorded in this log at all, since it isn't any one contributor's own
+submission.
+
+`CardScoringPanel`'s "My score trend" section only renders once at least one
+card has been attributed to a contributor: a dropdown (populated from
+`listCardScoreHistoryContributorIds()`) picks which contributor's trend to
+view, and a chronological `MeterBar` list (mirroring
+`WordCountRoundsPanel`'s own trend section) renders that contributor's
+`listCardScoreHistoryForContributor()` history, oldest first, each row
+labeled with the scoring date and card id and capped/colored against the
+0-100 overall-score scale.
+
+Vitest-covered: `packages/debate-search-evidence/test/cardScoreHistory.test.ts`
+(corrupt/missing/non-array storage, append-not-overwrite, distinct ids,
+per-contributor filtering, and the distinct-contributor-id list) and new
+cases in `packages/debate-search-evidence/test/cardScores.test.ts` (a
+history entry recorded only when `contributorId` is set, one entry per
+re-score rather than an overwrite, bulk-import batches attributed to one
+contributor, and bulk imports with no contributor left unset).
+
 ## Cross-tab live update
 
 `CardScoringPanel` subscribes to the browser's `storage` event, which fires
 only in *other* same-origin tabs/windows, never the one that made the write.
 A new pure helper, `state/live-update.ts`'s `isCardScoringLiveUpdateStorageEvent`,
-checks whether the event's `key` is one of the panel's three backing stores
-(`cardScores`, `aiCardAssessments`, `trackedArguments`) or `null` (a
-`localStorage.clear()`); when it is, the panel re-runs its mount-time
-refresh — recomputing the ranking, re-reading each ranked card's persisted
-AI assessment, and refreshing the tracked-topic list — so a card scored, an
-AI assessment requested, or a topic tracked in another tab shows up here
-without a manual reload. This closes the "Every other localStorage-backed
-panel in this repo still has no cross-tab live-update mechanism" Known gap
-noted in [`shared-flow-sync.md`](shared-flow-sync.md), for this panel.
+checks whether the event's `key` is one of the panel's four backing stores
+(`cardScores`, `aiCardAssessments`, `trackedArguments`, `cardScoreHistory`)
+or `null` (a `localStorage.clear()`); when it is, the panel re-runs its
+mount-time refresh — recomputing the ranking, re-reading each ranked card's
+persisted AI assessment, refreshing the tracked-topic list, and refreshing
+the score-trend contributor list — so a card scored, an AI assessment
+requested, or a topic tracked in another tab shows up here without a manual
+reload. This closes the "Every other localStorage-backed panel in this
+repo still has no cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for this panel.
 Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`
 (every backing-key match, the `null`-key clear-all case, an unrelated key,
 and a same-prefix substring key).
@@ -181,3 +221,11 @@ immediately via `getScoredCardBreakdown`).
   alongside the heuristic score — nothing in the heuristic's own blended
   `overallScore` changes when an AI assessment is requested.
 - Assessments are per-browser localStorage, not a shared team resource.
+- The score-trend chart's "Contributor ID" is a free-typed string, like this
+  repo's other contributor-id fields (e.g. `QuestTeam` membership) — it
+  isn't locked to a real signed-in session the way `ContributionsFeedPanel`'s
+  endorsement reviewer id is, so nothing stops one browser from viewing (or
+  contributing to) any contributor's trend by typing their id.
+- `cardScoreHistory` is per-browser localStorage, not account-synced —
+  scoring a card on one device doesn't show up in that contributor's trend
+  on another.
