@@ -63,7 +63,6 @@ import {
   WHITEBOARD_NOTE_COLORS,
   type SprintNote,
   type SprintNoteStatus,
-  type SprintSession,
   type WhiteboardNote,
   type WhiteboardNoteColor,
 } from "../lib/team-collaboration-mode";
@@ -72,7 +71,7 @@ import type { ContributorAvailability } from "debate-research-evidence/src/lib/r
 import type { TrackedTopicAssignment } from "../lib/research-progress";
 import type { TopicCoverageReport } from "debate-research-evidence/src/lib/topic-coverage";
 import { deleteSprintNote, listSprintNotes, saveSprintNote } from "../state/sprintNotes";
-import { deleteSprintSession, listSprintSessions, saveSprintSession } from "../state/sprintSessions";
+import { useSprintSessionsSync } from "../hooks/useSprintSessionsSync";
 import {
   deleteWhiteboardNote,
   listWhiteboardNotes,
@@ -167,10 +166,13 @@ export function TopicSprintPanel({
   className,
 }: TopicSprintPanelProps) {
   const { data: persistedNotes, refresh } = useStoreSnapshot<SprintNote[]>(listSprintNotes, []);
-  const { data: persistedSessions, refresh: refreshSessions } = useStoreSnapshot<SprintSession[]>(
-    listSprintSessions,
-    [],
-  );
+  const {
+    sessions: persistedSessions,
+    synced: sessionsSynced,
+    scheduleSession,
+    cancelSession,
+    refreshSessions,
+  } = useSprintSessionsSync();
   const { data: persistedWhiteboardNotes, refresh: refreshWhiteboard } = useStoreSnapshot<WhiteboardNote[]>(
     listWhiteboardNotes,
     [],
@@ -303,7 +305,7 @@ export function TopicSprintPanel({
 
   const addSession = () => {
     if (!sessionTitle.trim() || !sessionDayKey) return;
-    saveSprintSession(
+    scheduleSession(
       createSprintSession({
         id: `session-${Date.now()}`,
         topic,
@@ -314,12 +316,10 @@ export function TopicSprintPanel({
     );
     setSessionTitle("");
     setSessionDayKey("");
-    refreshSessions();
   };
 
   const removeSession = (id: string) => {
-    deleteSprintSession(id);
-    refreshSessions();
+    cancelSession(id);
   };
 
   const whiteboardNotesForTopic = useMemo(
@@ -616,7 +616,12 @@ export function TopicSprintPanel({
         ) : null}
       </PanelSection>
 
-      <PanelSection title="Scheduled sessions">
+      <PanelSection
+        title="Scheduled sessions"
+        description={
+          sessionsSynced ? "Synced to your account." : "Sign in to sync sessions across your devices."
+        }
+      >
         {upcomingSessions.length === 0 ? (
           <EmptyState title="No upcoming sessions" message="Schedule the next one below." />
         ) : (

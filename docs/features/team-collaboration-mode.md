@@ -292,6 +292,39 @@ Vitest-covered in
 cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
 mirroring `sprintSessions.test.ts`'s cases).
 
+## Account sync (scheduled sessions)
+
+A later slice closes half of the "Scheduled sessions ... are ... local-only
+(no account sync yet)" Known gap below: a signed-in visitor's scheduled
+sprint sessions now follow them across devices, mirroring
+`debate-community`'s `hooks/useDailyBestCardComments.ts` exactly — a session
+is scheduled once and only ever cancelled, never edited, the same
+add/delete-only shape a comment has, so there's nothing to reconcile on a
+shared id beyond filling gaps in either direction.
+
+`state/sprintSessions.ts` gained `isValidSprintSession` (a structural
+validator for untrusted request-body JSON) and `adoptSprintSession` (an
+upsert-by-id used only to adopt a remote copy, never to schedule a new local
+session), both shared with a new `saved_sprint_sessions` D1 table plus
+`/api/sprint-sessions` routes (`GET` returns every one of the signed-in
+user's synced sessions in full; `/api/sprint-sessions/[sessionId]` `PUT`
+upserts one, `DELETE` removes one — the same account-only, 401-without-a-
+session shape as `/api/daily-best-card-comments`). A new
+`hooks/useSprintSessionsSync.ts` replaces `TopicSprintPanel`'s direct
+`state/sprintSessions.ts` reads: local-first (fully usable signed out), with
+a one-time on-mount account merge that adopts a remote session missing
+locally and best-effort pushes a local-only session up, and every
+schedule/cancel best-effort syncing to the account afterward without ever
+blocking the local write. The "Scheduled sessions" section's heading now
+shows "Synced to your account." (or a sign-in prompt) via the hook's
+`synced` flag, mirroring `JudgeDecisionPanel`'s caption. Vitest-covered in
+`packages/debate-team-collaboration/test/sprintSessions.test.ts`
+(`isValidSprintSession`'s acceptance/rejection cases, `adoptSprintSession`)
+and a new `test/sprint-sessions-client.test.ts` (the three network calls,
+mirroring `daily-best-card-comments-client.test.ts`'s cases) — the hook
+itself isn't directly unit-tested, matching this repo's convention of
+testing only the pure state/validation and fetch layers a sync hook composes
+(see e.g. `useDailyBestCardComments`, similarly untested directly).
 A later slice closes the "true freeform (x/y, draggable) whiteboard layout"
 follow-up the prior slice above deliberately deferred, once it turned out the
 "no drag-and-drop primitive to build against" framing didn't actually block
@@ -347,15 +380,16 @@ sizes rather than drifting toward one edge.
   no server-side session check on `saveSprintNote`/
   `recordPersistedPresenceHeartbeat`/`createSprintNote` (via
   `TopicSprintPanel`'s note form) or on `saveSprintSession`/
-  `createSprintSession` (the "Scheduled sessions" form) or on
-  `saveWhiteboardNote`/`createWhiteboardNote` (the "Shared whiteboard"
-  form), the same trust boundary every other localStorage-backed action in
-  this repo has.
-- Scheduled sessions and whiteboard notes are both local-only (no account
-  sync yet, unlike some other ideas' persisted stores), and scheduling is by
-  calendar day only — no time-of-day, recurrence, or reminder notification.
-  The freeform whiteboard's `x`/`y` positions are local-only too, for the
-  same reason.
+  `createSprintSession` (the "Scheduled sessions" form, though a *signed-in*
+  session is now required for a session to sync to an account at all — see
+  "Account sync" above) or on `saveWhiteboardNote`/`createWhiteboardNote`
+  (the "Shared whiteboard" form), the same trust boundary every other
+  localStorage-backed action in this repo has.
+- Whiteboard notes are still local-only (no account sync yet, unlike
+  scheduled sessions now — see "Account sync" above), and session scheduling
+  is by calendar day only — no time-of-day, recurrence, or reminder
+  notification. The freeform whiteboard's `x`/`y` positions are local-only
+  too, for the same reason.
 - The freeform whiteboard has no live "who's dragging what" presence — two
   contributors editing the same board only see each other's moves after a
   `storage`-event refresh (or reload) picks up the persisted position, not
