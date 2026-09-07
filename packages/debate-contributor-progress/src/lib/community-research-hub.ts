@@ -90,7 +90,7 @@ export const COMMUNITY_RESEARCH_HUB_ENTRIES: CommunityHubEntry[] = [
   },
   {
     id: "strategy-sync-notes",
-    title: "Strategy Sync Notes",
+    title: "Prep Notes",
     description: "Live prep notes across every flow, grouped by status",
     href: "/prep-notes",
     category: "collaboration",
@@ -112,14 +112,14 @@ export const COMMUNITY_RESEARCH_HUB_ENTRIES: CommunityHubEntry[] = [
   },
   {
     id: "matchup-prep-dashboard",
-    title: "Matchup Prep Dashboard",
+    title: "Pre-Round Briefings",
     description: "Opponent scouting, judge tendencies, head-to-head record, and prep notes per round",
     href: "/briefings",
     category: "intelligence",
   },
   {
     id: "ai-practice-opponent",
-    title: "AI Practice Opponent",
+    title: "Opponent Persona Picker",
     description: "Pick the AI practice-opponent style for a session",
     href: "/practice-opponent",
     category: "practice",
@@ -140,7 +140,7 @@ export const COMMUNITY_RESEARCH_HUB_ENTRIES: CommunityHubEntry[] = [
   },
   {
     id: "ai-drill-generator",
-    title: "AI Drill Generator",
+    title: "Practice Drills",
     description: "Quick practice drills generated from each round's flow",
     href: "/drills",
     category: "practice",
@@ -154,14 +154,14 @@ export const COMMUNITY_RESEARCH_HUB_ENTRIES: CommunityHubEntry[] = [
   },
   {
     id: "gamified-quests",
-    title: "Gamified Quests",
+    title: "Quest Streaks",
     description: "Every contributor's daily-quest streak and the milestone badges it has earned",
     href: "/cards/streaks",
     category: "recognition",
   },
   {
     id: "daily-quests-and-targets",
-    title: "Daily Quests and Targets",
+    title: "Daily Quests",
     description: "Team goals like \"find 5 solvency cards\" — today's live progress against real contributions",
     href: "/cards/quests",
     category: "recognition",

@@ -1,10 +1,10 @@
 /**
  * @fileoverview Collapsible "live round" tree node for the sidebar: the
- * round currently in progress, its prep timers, and a timer for each of its
- * speeches — a sidebar-resident mirror of the timers driven from the main
- * SpeechHeaderBar toolbar (they share the same per-speech timer state, keyed
- * by speech name, so starting a speech's timer from either place updates
- * both).
+ * round currently in progress, its prep timers, and the full timer/controls
+ * bar for whichever speech is currently selected in the main content area.
+ * Other speeches in the round are listed by name only — the bar (and its
+ * timer) only ever tracks the one speech in view, matching CardMirror, which
+ * only ever has one live editable speech at a time.
  */
 
 "use client"
@@ -14,6 +14,7 @@ import { ChevronDown, ChevronRight, Radio } from "lucide-react"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { cn } from "../ui/lib/utils"
+import { SpeechHeaderBar } from "./SpeechHeaderBar"
 import type { Round } from "../types/flow"
 import type { DebateStyle, SpeechTimerState, TimerState } from "debate-timer/src/types"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
@@ -31,6 +32,27 @@ interface LiveRoundGroupProps {
   setPrepState: React.Dispatch<React.SetStateAction<TimerState | null>>
   prepSecondaryState: TimerState | null
   setPrepSecondaryState: React.Dispatch<React.SetStateAction<TimerState | null>>
+  /** Name of the speech currently open in the main content area — the only
+   *  one whose full timer/controls bar is shown here. */
+  selectedSpeech: string
+  /** Callback to reset prep timers to their defaults. */
+  onResetPrepTimers?: () => void
+  /** Whether backward speech navigation is available. */
+  canNavigatePrev?: boolean
+  /** Whether forward speech navigation is available. */
+  canNavigateNext?: boolean
+  /** Handler called when the user navigates to the previous speech. */
+  onNavigatePrev?: () => void
+  /** Handler called when the user navigates to the next speech. */
+  onNavigateNext?: () => void
+  /** Selected microphone device ID, shared with the global speech controls topbar. */
+  micDeviceId?: string
+  /** Callback when the microphone device changes. */
+  onMicDeviceChange?: (deviceId: string | undefined) => void
+  /** Whether recording is enabled, shared with the global speech controls topbar. */
+  recordingEnabled?: boolean
+  /** Callback when the recording-enabled flag changes. */
+  onRecordingEnabledChange?: (enabled: boolean) => void
 }
 
 /** The round's display title, falling back to the tournament/level pair. */
@@ -51,6 +73,16 @@ export function LiveRoundGroup({
   setPrepState,
   prepSecondaryState,
   setPrepSecondaryState,
+  selectedSpeech,
+  onResetPrepTimers,
+  canNavigatePrev,
+  canNavigateNext,
+  onNavigatePrev,
+  onNavigateNext,
+  micDeviceId,
+  onMicDeviceChange,
+  recordingEnabled,
+  onRecordingEnabledChange,
 }: LiveRoundGroupProps) {
   const [open, setOpen] = useState(true)
 
@@ -144,28 +176,49 @@ export function LiveRoundGroup({
             </TooltipProvider>
           )}
 
-          <div className="grid grid-cols-2 gap-1">
+          <div className="flex flex-col gap-1">
             {speeches.map((speech) => {
-              const entry = getSpeechTimerState(speech.name)
+              const isSelected = speech.name.toUpperCase() === selectedSpeech.toUpperCase()
+
+              if (isSelected) {
+                const entry = getSpeechTimerState(speech.name)
+                return (
+                  <div
+                    key={speech.name}
+                    className="rounded-[var(--border-radius)] border border-border bg-[var(--background-active)] overflow-hidden"
+                  >
+                    <SpeechHeaderBar
+                      speechName={speech.name}
+                      controlledTime={entry.time}
+                      controlledResetTime={entry.resetTime}
+                      controlledTimerRunState={entry.state}
+                      onControlledTimeChange={(time) => setSpeechTimerState(speech.name, { time })}
+                      onControlledResetTimeChange={(resetTime) => setSpeechTimerState(speech.name, { resetTime })}
+                      onControlledTimerRunStateChange={(state) => setSpeechTimerState(speech.name, { state })}
+                      onResetPrepTimers={onResetPrepTimers}
+                      canNavigatePrev={canNavigatePrev}
+                      canNavigateNext={canNavigateNext}
+                      onNavigatePrev={onNavigatePrev}
+                      onNavigateNext={onNavigateNext}
+                      showRecordingMenu={false}
+                      micDeviceId={micDeviceId}
+                      onMicDeviceChange={onMicDeviceChange}
+                      recordingEnabled={recordingEnabled}
+                      onRecordingEnabledChange={onRecordingEnabledChange}
+                    />
+                  </div>
+                )
+              }
+
               return (
                 <div
                   key={speech.name}
                   className={cn(
-                    "rounded-[var(--border-radius)]",
-                    entry.state.name === "running" && "bg-[var(--background-active)]",
+                    "rounded-[var(--border-radius)] px-2 py-1 text-xs font-medium text-muted-foreground",
+                    speech.secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
                   )}
                 >
-                  <PrepTimer
-                    resetTime={entry.resetTime}
-                    time={entry.time}
-                    state={entry.state}
-                    label={speech.name}
-                    color={speech.secondary ? "red" : "blue"}
-                    compact
-                    hideControlsByDefault={isMobile}
-                    onTimeChange={(time) => setSpeechTimerState(speech.name, { time })}
-                    onStateChange={(state) => setSpeechTimerState(speech.name, { state })}
-                  />
+                  {speech.name}
                 </div>
               )
             })}

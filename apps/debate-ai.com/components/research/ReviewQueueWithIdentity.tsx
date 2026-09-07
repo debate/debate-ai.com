@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s `ReviewQueuePanel`
+ * @fileoverview Thin wrapper over `debate-research-evidence`'s `ReviewQueuePanel`
  * that prefills "Your reviewer ID" and each card's comment "Reviewer ID"
  * field from this app's real signed-in session, via
  * `deriveContributorIdFromSessionIdentity`. The panel itself stays

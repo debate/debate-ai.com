@@ -135,9 +135,12 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
 
   if (roster.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No contributors yet. Unlock status fills in as contributors submit cards, summaries, and
-        analytics.
+      <div className="p-4 sm:p-6">
+        <h1 className="mb-1 text-xl font-semibold text-foreground">Progress Unlocks</h1>
+        <div className="p-6 text-center text-sm text-muted-foreground">
+          No contributors yet. Unlock status fills in as contributors submit cards, summaries, and
+          analytics — or complete routed research tasks, which count toward a tier on their own.
+        </div>
       </div>
     )
   }

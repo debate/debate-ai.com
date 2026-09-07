@@ -21,11 +21,8 @@ export type PrepNoteStatus = "open" | "covered" | "needs-follow-up";
 /** Whether a note has been flagged as needing urgent attention. */
 export type PrepNotePriority = "normal" | "high";
 
-export type PrepNote = {
+type PrepNoteCommon = {
   id: string;
-  flowId: number;
-  /** Path from the flow's root children down to the box this note is about (see `boxFromPath`). */
-  boxPath: number[];
   authorId: string;
   text: string;
   status: PrepNoteStatus;
@@ -36,6 +33,38 @@ export type PrepNote = {
   createdAt: number;
   updatedAt: number;
 };
+
+/** A note attached to a specific flow argument. */
+export type BoxAnchoredPrepNote = PrepNoteCommon & {
+  flowId: number;
+  /** Path from the flow's root children down to the box this note is about (see `boxFromPath`). */
+  boxPath: number[];
+  roundId?: undefined;
+};
+
+/**
+ * A note attached to a round as a whole rather than one specific flow
+ * argument — for a source with no `flowId`/`boxPath` of its own (e.g. a
+ * `debate-practice-rounds` `FlowSummaryRecord`, keyed only by `roundId`)
+ * that still wants to land as a prep note. See `createRoundPrepNote`.
+ */
+export type RoundAnchoredPrepNote = PrepNoteCommon & {
+  flowId?: undefined;
+  boxPath?: undefined;
+  roundId: string;
+};
+
+export type PrepNote = BoxAnchoredPrepNote | RoundAnchoredPrepNote;
+
+/** True for a note attached to a specific flow argument (has a `flowId`/`boxPath`). */
+export function isBoxAnchoredPrepNote(note: PrepNote): note is BoxAnchoredPrepNote {
+  return note.flowId !== undefined;
+}
+
+/** True for a note attached to a round as a whole (has a `roundId`, no `flowId`/`boxPath`). */
+export function isRoundAnchoredPrepNote(note: PrepNote): note is RoundAnchoredPrepNote {
+  return note.roundId !== undefined;
+}
 
 const MAX_NOTE_LENGTH = 1000;
 
@@ -70,6 +99,47 @@ export function createPrepNote(input: CreatePrepNoteInput): PrepNote {
     id: input.id,
     flowId: input.flowId,
     boxPath: input.boxPath,
+    authorId: input.authorId,
+    text: text.slice(0, MAX_NOTE_LENGTH),
+    status: "open",
+    createdAt: input.createdAt,
+    updatedAt: input.createdAt,
+    ...(input.assignedToId ? { assignedToId: input.assignedToId } : {}),
+  };
+}
+
+export type CreateRoundPrepNoteInput = {
+  id: string;
+  roundId: string;
+  authorId: string;
+  text: string;
+  createdAt: number;
+  assignedToId?: string;
+};
+
+/**
+ * Builds a `RoundAnchoredPrepNote` in the "open" status — a note attached to
+ * a round as a whole rather than one specific flow argument, for a source
+ * with no `flowId`/`boxPath` of its own (see `RoundAnchoredPrepNote`).
+ * Validates a non-blank `roundId`, author, and text the same way
+ * `createPrepNote` validates a non-empty `boxPath`. `text` is trimmed and
+ * clamped to `MAX_NOTE_LENGTH`.
+ */
+export function createRoundPrepNote(input: CreateRoundPrepNoteInput): PrepNote {
+  if (!input.roundId.trim()) {
+    throw new Error("createRoundPrepNote: roundId is required");
+  }
+  if (!input.authorId.trim()) {
+    throw new Error("createRoundPrepNote: authorId is required");
+  }
+  const text = input.text.trim();
+  if (!text) {
+    throw new Error("createRoundPrepNote: text is required");
+  }
+
+  return {
+    id: input.id,
+    roundId: input.roundId,
     authorId: input.authorId,
     text: text.slice(0, MAX_NOTE_LENGTH),
     status: "open",
@@ -135,13 +205,18 @@ export function sortNotesByPriorityThenCreatedAt(notes: PrepNote[]): PrepNote[] 
 /** All notes attached to one specific box on one specific flow, oldest first. */
 export function getNotesForBox(notes: PrepNote[], flowId: number, boxPath: number[]): PrepNote[] {
   return sortNotesByCreatedAt(
-    notes.filter((note) => note.flowId === flowId && pathsEqual(note.boxPath, boxPath)),
+    notes.filter((note) => isBoxAnchoredPrepNote(note) && note.flowId === flowId && pathsEqual(note.boxPath, boxPath)),
   );
 }
 
 /** All notes on a given flow, oldest first. */
 export function getNotesForFlow(notes: PrepNote[], flowId: number): PrepNote[] {
-  return sortNotesByCreatedAt(notes.filter((note) => note.flowId === flowId));
+  return sortNotesByCreatedAt(notes.filter((note) => isBoxAnchoredPrepNote(note) && note.flowId === flowId));
+}
+
+/** All notes attached to a given round as a whole (no specific box), oldest first. */
+export function getNotesForRound(notes: PrepNote[], roundId: string): PrepNote[] {
+  return sortNotesByCreatedAt(notes.filter((note) => isRoundAnchoredPrepNote(note) && note.roundId === roundId));
 }
 
 /** All notes currently assigned to a teammate as a task, oldest first. */
@@ -164,10 +239,12 @@ export function getHighPriorityNotes(notes: PrepNote[]): PrepNote[] {
 
 /**
  * Resolves the flow `Box` a note points to, for rendering a "jump to
- * argument" link. Returns `null` if the path no longer resolves to a box
- * (e.g. the flow was edited/rows removed after the note was made).
+ * argument" link. Returns `null` if the note is round-anchored (no box to
+ * resolve) or if the path no longer resolves to a box (e.g. the flow was
+ * edited/rows removed after the note was made).
  */
 export function resolvePrepNoteBox(flow: { children: Box[] }, note: PrepNote): Box | null {
+  if (!isBoxAnchoredPrepNote(note)) return null;
   const resolved = boxFromPath(flow, note.boxPath);
   return resolved !== null && "content" in resolved ? (resolved as Box) : null;
 }
@@ -176,14 +253,16 @@ export function resolvePrepNoteBox(flow: { children: Box[] }, note: PrepNote): B
 export type PrepNoteJumpTarget = { flowId: number; boxPath: number[] };
 
 /**
- * Builds the "jump to argument" link for a note — `/debate` with
- * `flowId`/`boxPath` query params `parsePrepNoteJumpParams` reads back to
- * select the note's flow tab and scroll to its box (see
+ * Builds the "jump to argument" link for a box-anchored note — `/debate`
+ * with `flowId`/`boxPath` query params `parsePrepNoteJumpParams` reads back
+ * to select the note's flow tab and scroll to its box (see
  * `hooks/useJumpToPrepNoteBox.ts`), the panel-side counterpart to
  * `resolvePrepNoteBox` for a cross-flow panel that has no live `Flow`
- * mounted to resolve against directly.
+ * mounted to resolve against directly. Callers must check
+ * `isBoxAnchoredPrepNote` first — a round-anchored note has no box to jump
+ * to.
  */
-export function buildPrepNoteJumpHref(note: PrepNote): string {
+export function buildPrepNoteJumpHref(note: BoxAnchoredPrepNote): string {
   return `/debate?flowId=${note.flowId}&boxPath=${note.boxPath.join(",")}`;
 }
 

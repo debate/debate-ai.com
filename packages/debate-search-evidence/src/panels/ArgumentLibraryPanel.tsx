@@ -58,6 +58,7 @@ import {
 } from "../state/evidenceLibraryEntries"
 import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
+import { buildSavedArgumentCollectionFailureMessage } from "../lib/argument-library-collections"
 import { useSavedArgumentCollections } from "../hooks/useSavedArgumentCollections"
 
 /**
@@ -76,7 +77,10 @@ export function ArgumentLibraryPanel() {
   const [renameMessage, setRenameMessage] = useState<string | null>(null)
   const [newCollectionName, setNewCollectionName] = useState("")
   const [collectionMessage, setCollectionMessage] = useState<string | null>(null)
-  const { collections, addCollection, removeCollection } = useSavedArgumentCollections()
+  const [renamingCollection, setRenamingCollection] = useState<string | null>(null)
+  const [renameCollectionValue, setRenameCollectionValue] = useState("")
+  const { collections, addCollection, removeCollection, renameCollection, updateCollection } =
+    useSavedArgumentCollections()
 
   useEffect(() => {
     setLibrary(buildCombinedPersistedArgumentLibrary())
@@ -131,11 +135,37 @@ export function ArgumentLibraryPanel() {
   function handleSaveCollection() {
     const name = newCollectionName.trim()
     if (!name || activeTags.length === 0) return
-    const saved = addCollection(name, activeTags)
+    const failure = addCollection(name, activeTags)
     setCollectionMessage(
-      saved ? `Saved "${name}" (${activeTags.length} tag${activeTags.length === 1 ? "" : "s"}).` : `A collection named "${name}" already exists.`,
+      failure
+        ? buildSavedArgumentCollectionFailureMessage(failure, name)
+        : `Saved "${name}" (${activeTags.length} tag${activeTags.length === 1 ? "" : "s"}).`,
     )
-    if (saved) setNewCollectionName("")
+    if (!failure) setNewCollectionName("")
+  }
+
+  function handleRenameCollection(oldName: string) {
+    const newName = renameCollectionValue.trim()
+    if (!newName) return
+    const failure = renameCollection(oldName, newName)
+    setCollectionMessage(
+      failure
+        ? buildSavedArgumentCollectionFailureMessage(failure, newName)
+        : `Renamed "${oldName}" to "${newName}".`,
+    )
+    if (!failure) {
+      setRenamingCollection(null)
+      setRenameCollectionValue("")
+    }
+  }
+
+  function handleUpdateCollection(name: string) {
+    const failure = updateCollection(name, activeTags)
+    setCollectionMessage(
+      failure
+        ? buildSavedArgumentCollectionFailureMessage(failure, name)
+        : `Updated "${name}" to the current ${activeTags.length}-tag selection.`,
+    )
   }
 
   const allCards = library.topicFolders.flatMap((folder) =>
@@ -182,22 +212,75 @@ export function ArgumentLibraryPanel() {
             <div className="flex flex-wrap items-center gap-2">
               {collections.map((collection) => (
                 <div key={collection.name} className="flex items-center gap-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setActiveTags(collection.tags)}
-                    title={collection.tags.join(", ")}
-                  >
-                    {collection.name} ({collection.tags.length})
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    aria-label={`Remove saved collection "${collection.name}"`}
-                    onClick={() => removeCollection(collection.name)}
-                  >
-                    ✕
-                  </Button>
+                  {renamingCollection === collection.name ? (
+                    <>
+                      <Input
+                        value={renameCollectionValue}
+                        onChange={(e) => setRenameCollectionValue(e.target.value)}
+                        aria-label={`New name for saved collection "${collection.name}"`}
+                        placeholder={collection.name}
+                        className="h-9 w-40"
+                      />
+                      <Button
+                        size="sm"
+                        disabled={!renameCollectionValue.trim()}
+                        onClick={() => handleRenameCollection(collection.name)}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setRenamingCollection(null)
+                          setRenameCollectionValue("")
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setActiveTags(collection.tags)}
+                        title={collection.tags.join(", ")}
+                      >
+                        {collection.name} ({collection.tags.length})
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label={`Rename saved collection "${collection.name}"`}
+                        onClick={() => {
+                          setRenamingCollection(collection.name)
+                          setRenameCollectionValue(collection.name)
+                        }}
+                      >
+                        Rename
+                      </Button>
+                      {activeTags.length > 0 && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          title="Replace this collection's tags with the current selection"
+                          aria-label={`Update saved collection "${collection.name}" to the current selection`}
+                          onClick={() => handleUpdateCollection(collection.name)}
+                        >
+                          Update
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label={`Remove saved collection "${collection.name}"`}
+                        onClick={() => removeCollection(collection.name)}
+                      >
+                        ✕
+                      </Button>
+                    </>
+                  )}
                 </div>
               ))}
             </div>

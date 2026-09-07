@@ -57,6 +57,7 @@ import type { EvidenceSearchResult } from "debate-research-evidence/src/lib/shar
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
+import { isPrepRoomLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import {
   addPersistedChecklistItem,
   deletePersistedChecklistItem,
@@ -139,6 +140,27 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
     if (!activeTopic) return
     const interval = setInterval(() => refreshPresence(activeTopic), PRESENCE_REFRESH_INTERVAL_MS)
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
+
+  /**
+   * Live-update the room when another browser tab submits evidence, edits
+   * the checklist, records a heartbeat, or changes the tracked-argument
+   * checklist/availability roster. A `storage` event never fires in the tab
+   * that made the write, only in other tabs — same-tab changes already
+   * refresh through their own handlers.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPrepRoomLiveUpdateStorageEvent(event)) return
+      const activeTopic = topic.trim()
+      setTopics(listPrepRoomTopics())
+      setRoom(activeTopic ? buildPersistedPrepRoom(activeTopic) : null)
+      refreshChecklist(activeTopic)
+      refreshPresence(activeTopic)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic])
 

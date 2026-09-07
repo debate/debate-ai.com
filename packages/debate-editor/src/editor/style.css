@@ -10503,6 +10503,8 @@ body.pmd-recovery-active.pmd-multi-doc #app {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--pmd-c-divider);
   flex: 0 0 auto;
@@ -10517,6 +10519,7 @@ body.pmd-recovery-active.pmd-multi-doc #app {
 .pmd-reference-header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 

@@ -8,7 +8,7 @@ under an argument block nobody added to the checklist.
 - **Route:** `/cards/coverage`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t coverage` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
 
 ## What it shows
 
@@ -45,7 +45,7 @@ its `buildPersistedTopicCoverageReport`, which composes that checklist with
 the already-persisted evidence library directly — every `EvidenceLibraryEntry`
 is already a `CoverageCardSummary` (it carries `argBlock`/`wordCount`), so no
 new card shape was needed. See
-`packages/debate-card-search/test/trackedArguments.test.ts`.
+`packages/debate-search-evidence/test/trackedArguments.test.ts`.
 
 `buildPersistedTopicCoverageReport` now also folds in every topic-scoped
 `state/contributions.ts` entry that carries both `argBlock` and `wordCount`
@@ -59,40 +59,53 @@ contribution missing either field (both stay optional there, matching the
 rest of that form) is silently excluded rather than counted with a
 fabricated word count.
 
+## Coverage trend snapshots
+
+Closes the "a coverage-over-time trend chart" follow-up. Since this repo has
+no background-job infrastructure to snapshot a topic's coverage on a
+schedule, a "Record snapshot" button next to the summary line lets a
+teammate capture the topic's current missing/thin/covered/total tallies
+on demand — `lib/topic-coverage.ts#computeCoverageCounts` tallies
+`report.tracked` by level (factored out of `buildTopicCoverageSummaryText`,
+which now composes it rather than duplicating the same count), and
+`state/topicCoverageSnapshots.ts#recordCoverageSnapshot` persists the result
+with a timestamp, mirroring `state/reuseCheckHistory.ts`'s
+append-only-with-cap convention but capped per-topic
+(`MAX_COVERAGE_SNAPSHOTS_PER_TOPIC`, 50) rather than globally, so one
+heavily-tracked topic's history can't crowd out another topic's. A
+"Coverage trend" section below the checklist lists every recorded snapshot
+for the active topic oldest-first, each row showing its timestamp, a
+covered/thin/missing breakdown, and a `MeterBar` for covered-of-total, plus
+a "Clear trend history" action scoped to that topic. See
+`packages/debate-search-evidence/test/topicCoverageSnapshots.test.ts`.
+
 ## Cross-topic comparison heatmap
 
-Closes the "a cross-topic comparison heatmap" follow-up: once at least two
-topics have a tracked-argument checklist, a "Cross-topic comparison" section
-renders below the topic switcher (regardless of which topic, if any, is
-currently selected) showing every such topic against every category seen
-across their checklists — one row per topic, one column per category, each
-cell a `covered/total` badge tallied from that topic's tracked arguments in
-that category. A tracked argument with no `category` set is grouped under an
-"Uncategorized" column, always sorted last. This lets a coach spot a
-systemically weak category (e.g. every topic thin on "K") across the whole
-research effort at a glance, rather than checking one topic at a time.
-
-- `lib/topic-coverage.ts#buildTopicCoverageComparisonHeatmap` — pure pivot
-  over a list of `{ topic, report }` pairs into the grid, zero-filling a
-  topic's cell for a category none of its tracked arguments use so the grid
-  always renders as a complete rectangle. Only each report's `tracked`
-  arguments feed the grid — an `untracked` argument block has no
-  team-planned category to place it in, the same way
-  `buildTopicCoverageSummaryText` treats it as a separate concern.
-- `state/trackedArguments.ts#buildPersistedTopicCoverageComparisonHeatmap` —
-  composes it from persisted stores, defaulting to every topic
-  `listTrackedTopics()` returns (or a caller-supplied subset).
-- `panels/TopicCoverageDashboardPanel.tsx`'s `CoverageComparisonHeatmap`
-  renders the grid as a table, reusing the existing missing/thin/covered
-  `Badge` variants for each cell.
-
-See `packages/debate-search-evidence/test/topic-coverage.test.ts` and
-`test/trackedArguments.test.ts` for coverage. No further follow-up is
-currently tracked for this idea.
+Closes the "a cross-topic comparison view (a heatmap-style rollup across
+every tracked topic at once)" follow-up. Once a second (or later) topic has
+at least one tracked argument, a "Cross-topic comparison" table renders above
+the topic switcher — independent of whichever topic is currently
+selected — with one row per topic, worst-covered first. Each row shows that
+topic's missing/thin/covered counts as shaded cells (`lib/topic-coverage.ts#buildCrossTopicCoverageComparison`
+tallies each topic's `TopicCoverageReport` via the existing `computeCoverageCounts`
+and adds a `coverageRatio`), plus an overall coverage percentage. Cell shade
+intensity scales with that level's share of the topic's tracked arguments, so
+a topic leaning heavily "missing" reads as a darker red cell than one with
+just one or two missing arguments among many covered ones.
+`state/trackedArguments.ts#buildPersistedCrossTopicCoverageComparison` builds
+the rows entirely from persisted stores — every tracked topic's own
+`buildPersistedTopicCoverageReport` — the same composition
+`TopicCoverageDashboardPanel` already used per-topic, just run once per
+tracked topic instead of once for the active one. See
+`packages/debate-search-evidence/test/topic-coverage.test.ts`'s
+`buildCrossTopicCoverageComparison` suite and
+`test/trackedArguments.test.ts`'s `buildPersistedCrossTopicCoverageComparison`
+suite.
 
 ## Known gaps
 
 - The checklist is per-browser localStorage, not a shared team resource — two
   teammates on different devices see different checklists for the same topic
-  name.
+  name. Coverage snapshots and the cross-topic comparison are the same:
+  per-browser, not account-synced.
 - No reviewer-identity/permission checks (no auth/roles in this repo yet).

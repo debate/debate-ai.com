@@ -1,4 +1,6 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
+import ResearchAgentEmbed from "./ResearchAgentEmbed"
 
 export const metadata: Metadata = {
   title: "REASON Docs",
@@ -8,14 +10,10 @@ export const metadata: Metadata = {
 export default function EditorPage() {
   return (
     <div className="h-screen flex flex-col pb-20 lg:pb-0">
-      <div className="flex-1">
-        <iframe
-          src="https://qwksearch.com/docs"
-          className="w-full h-full border-0"
-          title="Editor"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <Suspense fallback={null}>
+          <ResearchAgentEmbed />
+        </Suspense>
       </div>
     </div>
   )

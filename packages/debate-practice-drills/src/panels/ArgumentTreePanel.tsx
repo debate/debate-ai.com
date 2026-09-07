@@ -47,12 +47,36 @@
  * regression" note and `debate-round`'s `flow/argument-tagging.ts` for why
  * this lives here rather than in `debate-flow`'s Handsontable editor).
  * Saving writes the tags onto the flow's underlying `Box` via
- * `setRowArgumentTags`, pushes the updated flow back through
+ * `setRowsArgumentTags`, pushes the updated flow back through
  * `useFlowStore`, best-effort persists it to `localStorage["flows"]`
  * (mirroring `useFlowEffects.ts#useFlowPersistence`'s own write, which
  * isn't mounted on this route), and regenerates this round's outline via
  * `buildAndSaveArgumentTreeFromCurrentFlow` so the filters immediately see
  * the new tags.
+ *
+ * Each non-heading row in a taggable round also has a checkbox (idea #10's
+ * "checkbox-selection mode … if bulk tagging is worth restoring" follow-up,
+ * see `docs/features/argument-tree-outline.md`'s "Known gaps"). Once at
+ * least one row is checked, a "Tag selected…" bulk toolbar appears above the
+ * row list; it opens the same dialog (with a blank draft rather than one
+ * row's current tags, since a mixed selection has no single "current" value)
+ * and, on Save, applies one set of tags to every checked row at once via
+ * `debate-round`'s `setRowsArgumentTags`. A "Select all" / "Deselect all"
+ * toggle sits next to the round's Download/Clear actions, scoped to the
+ * currently filtered, non-heading rows. Selection is cleared whenever the
+ * round's filter changes (a prior selection may no longer be visible) and
+ * after a successful bulk save.
+ *
+ * Each heading row in a taggable round also has a "Select section" /
+ * "Deselect section" action — the deleted popover's other bulk mode
+ * (neighbour-preview/bulk-section tagging: tagging every row under one
+ * heading in a single action), restored the same composable way the
+ * multi-row checkbox selection above was: rather than tagging the section
+ * directly, it folds every argument row currently filtered under that
+ * heading into the existing checkbox selection via `debate-round`'s
+ * `toggleSectionRowSelection`, so it opens the same "Tag selected…" bulk
+ * dialog as a manually-checked selection would. Hidden for a heading with no
+ * surviving filtered rows under it (nothing to select).
  *
  * @module panels/ArgumentTreePanel
  */
@@ -88,7 +112,8 @@ import {
   getRowArgumentTags,
   inferArgumentType,
   listAuthorIdsInFlow,
-  setRowArgumentTags,
+  setRowsArgumentTags,
+  toggleSectionRowSelection,
   type ArgumentTags,
 } from "debate-round/src/flow/argument-tagging"
 import { argumentTreeOutlineFilename, buildArgumentTreeOutlineText } from "../flow/argument-tree-export"
@@ -165,10 +190,13 @@ export function ArgumentTreePanel() {
   const { presets, addPreset, removePreset } = useOutlineFilterPresets()
   const [presetNameDrafts, setPresetNameDrafts] = useState<Record<string, string>>({})
   const [presetErrors, setPresetErrors] = useState<Record<string, string>>({})
-  const [taggingTarget, setTaggingTarget] = useState<{ roundId: string; rowIndex: number; content: string } | null>(
-    null,
-  )
+  const [taggingTarget, setTaggingTarget] = useState<{
+    roundId: string
+    rowIndexes: number[]
+    content: string | null
+  } | null>(null)
   const [tagDraft, setTagDraft] = useState<ArgumentTags>({})
+  const [selectedRows, setSelectedRows] = useState<Record<string, number[]>>({})
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -187,16 +215,21 @@ export function ArgumentTreePanel() {
 
   const refresh = () => setRecords(buildArgumentTreesPanelView())
 
+  /** A prior row selection may no longer be visible once the filter narrows or widens which rows are on screen. */
+  const clearSelection = (roundId: string) => setSelectedRows((prev) => ({ ...prev, [roundId]: [] }))
+
   const updateFilter = (roundId: string, update: Partial<ArgumentTreeFilter>) => {
     const filter: ArgumentTreeFilter = { ...filters[roundId], ...update }
     setFilters((prev) => ({ ...prev, [roundId]: filter }))
     saveArgumentTreeFilterSelection({ roundId, filter })
+    clearSelection(roundId)
   }
 
   /** Applies a saved preset's filter combination wholesale, replacing (not merging into) the round's current filter — so a field the preset leaves unset is cleared, matching what re-picking every control by hand would produce. */
   const applyPreset = (roundId: string, filter: ArgumentTreeFilter) => {
     setFilters((prev) => ({ ...prev, [roundId]: filter }))
     saveArgumentTreeFilterSelection({ roundId, filter })
+    clearSelection(roundId)
   }
 
   const handleSavePreset = (roundId: string) => {
@@ -248,10 +281,45 @@ export function ArgumentTreePanel() {
   const openTagDialog = (roundId: string, node: ArgumentTreeNode) => {
     if (!canTagRound(roundId) || !currentFlow) return
     setTagDraft(getRowArgumentTags(currentFlow, node.rowIndex))
-    setTaggingTarget({ roundId, rowIndex: node.rowIndex, content: node.content })
+    setTaggingTarget({ roundId, rowIndexes: [node.rowIndex], content: node.content })
+  }
+
+  /** Opens the tag dialog for every currently checked row in `roundId` at once, with a blank draft since a mixed selection has no single "current" value to prefill. */
+  const openBulkTagDialog = (roundId: string) => {
+    if (!canTagRound(roundId) || !currentFlow) return
+    const rowIndexes = selectedRows[roundId] ?? []
+    if (rowIndexes.length === 0) return
+    setTagDraft({})
+    setTaggingTarget({ roundId, rowIndexes, content: null })
   }
 
   const closeTagDialog = () => setTaggingTarget(null)
+
+  const toggleRowSelected = (roundId: string, rowIndex: number) => {
+    setSelectedRows((prev) => {
+      const current = prev[roundId] ?? []
+      const next = current.includes(rowIndex)
+        ? current.filter((existing) => existing !== rowIndex)
+        : [...current, rowIndex]
+      return { ...prev, [roundId]: next }
+    })
+  }
+
+  const toggleSelectAllForRound = (roundId: string, rowIndexes: number[]) => {
+    setSelectedRows((prev) => {
+      const current = prev[roundId] ?? []
+      const allSelected = rowIndexes.length > 0 && rowIndexes.every((index) => current.includes(index))
+      return { ...prev, [roundId]: allSelected ? [] : rowIndexes }
+    })
+  }
+
+  /** Folds a heading's section of rows into the round's existing checkbox selection instead of replacing it (unlike "Select all"/"Deselect all" above, which always applies to every filtered row). */
+  const toggleSectionSelected = (roundId: string, sectionRowIndexes: number[]) => {
+    setSelectedRows((prev) => ({
+      ...prev,
+      [roundId]: toggleSectionRowSelection(prev[roundId] ?? [], sectionRowIndexes),
+    }))
+  }
 
   /** Best-effort mirror of `useFlowEffects.ts#useFlowPersistence`'s write, which isn't mounted on this route. */
   const persistFlows = (updatedFlows: Flow[]) => {
@@ -264,17 +332,20 @@ export function ArgumentTreePanel() {
 
   const handleSaveTags = () => {
     if (!taggingTarget || !currentFlow) return
-    const updatedFlow = setRowArgumentTags(currentFlow, taggingTarget.rowIndex, tagDraft)
+    const updatedFlow = setRowsArgumentTags(currentFlow, taggingTarget.rowIndexes, tagDraft)
     const updatedFlows = flows.map((flow, index) => (index === selected ? updatedFlow : flow))
     useFlowStore.getState().setFlows(updatedFlows)
     persistFlows(updatedFlows)
     buildAndSaveArgumentTreeFromCurrentFlow(updatedFlow)
+    clearSelection(taggingTarget.roundId)
     refresh()
     closeTagDialog()
   }
 
+  const isBulkTagging = (taggingTarget?.rowIndexes.length ?? 0) > 1
+
   const suggestedArgumentType =
-    taggingTarget && inferArgumentType(taggingTarget.content) !== tagDraft.argumentType
+    taggingTarget?.content != null && inferArgumentType(taggingTarget.content) !== tagDraft.argumentType
       ? inferArgumentType(taggingTarget.content)
       : undefined
 
@@ -345,13 +416,33 @@ export function ArgumentTreePanel() {
         const sideKeys = collectSideKeys(record)
         const argumentTypes = collectArgumentTypes(record)
         const authorIds = collectAuthorIds(record)
-        const filtered = flattenArgumentTree(filterArgumentTree(record.tree, filter))
+        const filteredTree = filterArgumentTree(record.tree, filter)
+        const filtered = flattenArgumentTree(filteredTree)
+        const taggableRowIndexes = filtered.filter((node) => !node.isHeading).map((node) => node.rowIndex)
+        const selectedForRound = selectedRows[record.roundId] ?? []
+        const allTaggableSelected =
+          taggableRowIndexes.length > 0 && taggableRowIndexes.every((index) => selectedForRound.includes(index))
+        /** Every heading's own surviving filtered argument rows, keyed by the heading node's id — "select all rows under this heading" needs just this heading's rows, not the whole round's. */
+        const sectionRowIndexesByHeadingId = new Map<string, number[]>(
+          filteredTree
+            .filter((node) => node.isHeading)
+            .map((node) => [node.id, node.children.filter((child) => !child.isHeading).map((child) => child.rowIndex)]),
+        )
 
         return (
           <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-foreground">Round {record.roundId}</h2>
               <div className="flex items-center gap-2">
+                {canTagRound(record.roundId) && taggableRowIndexes.length > 0 && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => toggleSelectAllForRound(record.roundId, taggableRowIndexes)}
+                  >
+                    {allTaggableSelected ? "Deselect all" : "Select all"}
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="outline"
@@ -365,6 +456,18 @@ export function ArgumentTreePanel() {
                 </Button>
               </div>
             </div>
+
+            {selectedForRound.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 rounded-md border border-dashed border-primary/40 bg-primary/5 p-2 text-sm">
+                <span className="text-foreground">{selectedForRound.length} selected</span>
+                <Button size="sm" onClick={() => openBulkTagDialog(record.roundId)}>
+                  Tag selected…
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => clearSelection(record.roundId)}>
+                  Clear selection
+                </Button>
+              </div>
+            )}
 
             <div className="flex flex-wrap items-end gap-2 rounded-md border border-dashed border-border bg-muted/30 p-2">
               <div className="space-y-1.5">
@@ -565,12 +668,26 @@ export function ArgumentTreePanel() {
               <p className="text-sm text-muted-foreground">No rows match the current filter.</p>
             ) : (
               <div className="space-y-1">
-                {filtered.map((node) => (
+                {filtered.map((node) => {
+                  const sectionRowIndexes = node.isHeading ? sectionRowIndexesByHeadingId.get(node.id) ?? [] : []
+                  const sectionAllSelected =
+                    sectionRowIndexes.length > 0 && sectionRowIndexes.every((index) => selectedForRound.includes(index))
+                  return (
                   <div
                     key={node.id}
                     className="flex items-start gap-2 rounded-md border border-border px-3 py-1.5 text-sm"
                     style={{ marginLeft: node.isHeading ? 0 : 16 }}
                   >
+                    {!node.isHeading && (
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-3.5 w-3.5 shrink-0"
+                        checked={selectedForRound.includes(node.rowIndex)}
+                        disabled={!canTagRound(record.roundId)}
+                        aria-label={`Select "${node.content}" for bulk tagging`}
+                        onChange={() => toggleRowSelected(record.roundId, node.rowIndex)}
+                      />
+                    )}
                     {node.isHeading ? (
                       <Badge variant="secondary" className="whitespace-nowrap">
                         Heading
@@ -627,8 +744,19 @@ export function ArgumentTreePanel() {
                         })()}
                       </Button>
                     )}
+                    {node.isHeading && canTagRound(record.roundId) && sectionRowIndexes.length > 0 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="ml-auto h-6 px-2 text-xs"
+                        onClick={() => toggleSectionSelected(record.roundId, sectionRowIndexes)}
+                      >
+                        {sectionAllSelected ? "Deselect section" : "Select section"}
+                      </Button>
+                    )}
                   </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
@@ -638,8 +766,12 @@ export function ArgumentTreePanel() {
       <Dialog open={taggingTarget !== null} onOpenChange={(open) => !open && closeTagDialog()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Tag Argument</DialogTitle>
-            <DialogDescription>{taggingTarget?.content}</DialogDescription>
+            <DialogTitle>{isBulkTagging ? `Tag ${taggingTarget?.rowIndexes.length} Arguments` : "Tag Argument"}</DialogTitle>
+            <DialogDescription>
+              {isBulkTagging
+                ? "Applies to every selected row. Leaving a field as None clears it on all of them."
+                : taggingTarget?.content}
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3">

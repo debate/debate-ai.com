@@ -8,7 +8,7 @@ completion breakdown.
 - **Route:** `/cards/progress-tracking`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t research progress` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -55,7 +55,7 @@ components/research/ResearchProgressWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <ResearchProgressPanel signedInContributorId={...} />
       → isOwnContributorRow(progress.contributorId, signedInContributorId)
@@ -82,7 +82,7 @@ previously a completed task was only ever removed from its queue, never
 remembered) and `buildPersistedResearchProgressBoard` plus
 `ResearchProgressPanel` (closing follow-up (b), "a progress dashboard/roster
 UI"). Vitest-covered in
-`packages/debate-card-search/test/researchProgress.test.ts` (completion
+`packages/debate-team-collaboration/test/researchProgress.test.ts` (completion
 history persistence, corrupt-storage recovery, and board composition across
 contributors with only contributions, only active tasks, or both).
 
@@ -103,10 +103,10 @@ alone, so the Progress Unlocks panel (`/cards/progress`) reflects real task
 completion and now also lists a contributor who has completed tasks but no
 scored contribution yet. See
 [Progress Unlocks](./progress-unlocks.md). Vitest-covered in
-`packages/debate-card-search/test/progress-unlocks.test.ts` (tier reached
+`packages/debate-search-evidence/test/progress-unlocks.test.ts` (tier reached
 via completed tasks alone, the highest tier across both paths, and
 backward compatibility for contributors with no completed-task data) and
-`packages/debate-card-search/test/unlock-streak-status.test.ts` (real
+`packages/debate-contributor-progress/test/unlock-streak-status.test.ts` (real
 completed-task history feeding a store-backed status, and a task-only
 contributor appearing in the roster).
 
@@ -119,7 +119,7 @@ untouched), and `ResearchProgressPanel` renders a "Clear completed history"
 action next to each topic badge that has at least one completed task. This
 closes the "a completed task's history record is never deleted" Known gap
 previously recorded below. Vitest-covered in
-`packages/debate-card-search/test/researchProgress.test.ts`
+`packages/debate-team-collaboration/test/researchProgress.test.ts`
 (`deleteCompletedTaskHistoryForTopic`: removing a topic's records, leaving
 other topics' history untouched, a no-op on an untracked topic, and not
 touching the active-queue store).
@@ -130,13 +130,14 @@ touching the active-queue store).
 only in *other* same-origin tabs/windows, never the one that made the
 write) via `state/live-update.ts`'s `isResearchProgressLiveUpdateStorageEvent`
 and re-derives the roster when it fires for one of its backing keys
-(`contributions`, `completedResearchTasks`, `routedTaskQueues`), so a
-contribution submitted, task completed, or topic routed in a second tab now
+(`contributions`, `completedResearchTasks`, `routedTaskQueues`,
+`researchProgressGoals`), so a contribution submitted, task completed,
+topic routed, or goal set in a second tab now
 refreshes this tab's roster without a manual reload — closing the "Every
 other localStorage-backed panel in this repo still has no cross-tab
 live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Report download
 
@@ -153,7 +154,7 @@ to the fixed filename `research-progress-report.txt` from
 `researchProgressReportFilename()` — the report covers the whole roster
 rather than a single round or topic, so there's no natural id to key the
 filename on. Vitest-covered in
-`packages/debate-card-search/test/research-progress.test.ts`
+`packages/debate-team-collaboration/test/research-progress.test.ts`
 (`buildResearchProgressReportText`: the empty-roster placeholder, a full
 per-contributor/per-topic render, the "no topic assignments" fallback, and
 multi-contributor section separation).
@@ -174,7 +175,7 @@ time. Each row shows the topic, contributor count, completed/assigned task
 count, and a `MeterBar` completion meter (the same meter component
 `ProgressUnlocksPanel` uses for its "Next tier" column). The section is
 hidden entirely when no contributor has any topic assignment. Vitest-covered
-in `packages/debate-card-search/test/research-progress.test.ts`
+in `packages/debate-team-collaboration/test/research-progress.test.ts`
 (`buildTeamTopicComparison`: rolling counts up across contributors, sorting
 least-covered-first, the alphabetical tie-break, an empty roster, and that a
 topic's contributor count only includes contributors with an assignment in
@@ -186,7 +187,10 @@ A signed-in visitor gets a "My research goal" section above the roster (only
 rendered when `signedInContributorId` is set) — the "personal goal-setting
 UI" follow-up named under the "📈 Research Progress Tracking" bullet in
 TODO.md. They can set a personal target number of completed tasks, either
-overall or scoped to one topic, and track progress toward it with a
+overall or scoped to one topic (the topic picker offers every tracked
+topic, not just topics that already have assignments somewhere in the
+roster, so a forward-looking goal on an untouched topic works too), with an
+optional target date, and track progress toward it with a
 `MeterBar` meter — the same meter component the "Topic comparison" section
 above uses. `lib/research-progress.ts`'s `ResearchProgressGoal`/
 `computeGoalProgress` are pure: `computeGoalProgress` resolves a goal's
@@ -202,10 +206,10 @@ directly against the real, persisted `buildPersistedResearchProgressBoard` so
 the panel doesn't need to look up the contributor's own row itself. A goal
 reached shows a "🎉 Goal reached" badge in place of the meter's remaining-task
 caption. Vitest-covered in
-`packages/debate-card-search/test/research-progress.test.ts`
+`packages/debate-team-collaboration/test/research-progress.test.ts`
 (`computeGoalProgress`: an overall goal, a topic-scoped goal, a topic the
 contributor has no assignments in, and clamping once the count exceeds the
-target) and `packages/debate-card-search/test/researchProgressGoals.test.ts`
+target) and `packages/debate-team-collaboration/test/researchProgressGoals.test.ts`
 (goal CRUD — set/replace/clear, per-contributor isolation, the
 `InvalidGoalTargetError` guard on a non-positive target, corrupt-storage
 recovery — and `getPersistedGoalProgressForContributor` composed against the
@@ -254,7 +258,7 @@ account sync split exactly:
   synced field on that route is.
 
 Vitest-covered in
-`packages/debate-card-search/test/research-progress-goal-sync.test.ts`
+`packages/debate-team-collaboration/test/research-progress-goal-sync.test.ts`
 (payload validation — a target-only goal, topic/targetDate, the max target
 boundary, a non-positive or non-integer target, a blank topic, an
 unrecognized field like a smuggled `contributorId`, non-object input; patch
@@ -275,7 +279,7 @@ helpers do.
   but the roster still shows every contributor, the same "prefill/highlight
   only, not a gate" known gap the Leaderboard, Task Inbox, and Progress
   Unlocks panels carry.
-- The personal goal is only reachable once the roster is non-empty (a
-  signed-in visitor with literally no tracked contribution or task yet sees
-  the panel's "No progress yet" empty state instead of the goal section) —
-  still an open follow-up if this turns out to matter.
+- ~~The personal goal is only reachable once the roster is non-empty~~
+  Closed: the "My research goal" section now renders above the "No progress
+  yet" empty state, so a brand-new signed-in contributor with no tracked
+  work yet — exactly who goal-setting is for — can set one.

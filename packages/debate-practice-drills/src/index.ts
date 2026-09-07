@@ -29,3 +29,6 @@ export * from "./hooks/useCounselPanelAssessments";
 export * from "./state/savedDrillSets";
 export * from "./round/drill-sets-client";
 export * from "./hooks/useDrillSets";
+export * from "./state/customOpponentPersonaLibrary";
+export * from "./round/custom-opponent-persona-library-client";
+export * from "./hooks/useCustomOpponentPersonaLibrary";

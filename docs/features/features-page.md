@@ -58,7 +58,7 @@ it stays a stable "how big is this app" answer while someone types.
 - [`packages/debate-ui/src/features/feature-catalog.ts`](../../packages/debate-ui/src/features/feature-catalog.ts)
   holds the pure data and helpers: `APP_FEATURES`, `buildFeatureSections`,
   `searchFeatures`, `featureDocUrl`, and `buildFeatureCatalogSummaryText`.
-  Like `debate-card-search`'s narrower community-hub directory it has no
+  Like `debate-community`'s narrower community-hub directory it has no
   store — every entry links to a surface that already persists (or doesn't
   need to persist) its own state.
 - [`packages/debate-ui/src/features/FeaturesPanel.tsx`](../../packages/debate-ui/src/features/FeaturesPanel.tsx)
@@ -77,7 +77,7 @@ actually type. "elo" finds Team Rankings, "rfd" finds AI Judge Decision, and
 mention those words on screen.
 
 `debate-ui` is the home for both files because the catalog spans every
-package: it names surfaces from `debate-round`, `debate-card-search`,
+package: it names surfaces from `debate-round`, `debate-research-evidence`,
 `debate-videos`, `debate-speech-writer`, and `reason-editor`, so it can't
 live inside any one of them without inverting the dependency graph, and
 `debate-core` is deliberately React-free (the panel needs React). Putting it

@@ -139,7 +139,7 @@ follow-up (a) — a real AI-panel call — by adding:
   `/api/reason-ai` proxy.
 - `state/counselPanelAssessments.ts`, a localStorage-backed store for a
   round's `CounselPanelAiResult`, keyed by `roundId`, mirroring
-  `debate-card-search`'s `state/aiCardAssessments.ts` convention. (Since
+  `debate-research-evidence`'s `state/aiCardAssessments.ts` convention. (Since
   reworked into an append-only history log — see "Counsel-panel assessment
   history" below.)
 

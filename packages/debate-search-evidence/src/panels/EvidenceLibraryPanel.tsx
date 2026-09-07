@@ -255,20 +255,26 @@ export function EvidenceLibraryPanel() {
   }, [])
 
   // Deep-linked from any caller via a `?checkUrl=` query param — pre-fills
-  // and runs the "Check this page" box automatically against this app's
-  // own localStorage repository (see `buildReuseCheckDeepLink` in
+  // and runs the "Check this page" box automatically, through the same
+  // `handleReuseCheck` path as the button: the local localStorage check plus
+  // the async team-wide shared-index check, recording history and refreshing
+  // the team dashboard (see `buildReuseCheckDeepLink` in
   // `lib/shared-evidence-library.ts`). The current `apps/debate-web-ext`
   // browser extension doesn't use this path — it calls the server-backed
   // `/api/evidence-reuse-check` shared index directly instead.
   useEffect(() => {
     const checkUrl = searchParams?.get("checkUrl")
     if (!checkUrl) return
-    setReuseCheckUrl(checkUrl)
-    const result = checkPersistedPageForExistingCards(checkUrl)
-    setReuseCheckResult(result)
-    appendReuseCheckHistory(result)
-    setCheckHistory(listReuseCheckHistory())
+    handleReuseCheck(checkUrl)
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  // Deep-linked search: `?q=` pre-fills the free-text search box, so other
+  // panels (e.g. Revision Incentives' stale-evidence digest) can link
+  // straight to one entry's argument block instead of the bare library index.
+  useEffect(() => {
+    const q = searchParams?.get("q")
+    if (q) setQueryText(q)
   }, [searchParams])
 
   const buildQuery = () =>
@@ -428,6 +434,10 @@ export function EvidenceLibraryPanel() {
     checkRemotePageForExistingCards(url)
       .then((remoteResult) => {
         setRemoteReuseCheckResult(remoteResult)
+        // Record the team-wide outcome in the history log too, badged with
+        // its scope, so "Recent checks" shows both halves of the lookup.
+        appendReuseCheckHistory(remoteResult, Date.now(), "team")
+        setCheckHistory(listReuseCheckHistory())
         // The server just logged this check — refresh the team dashboard so
         // a page that just crossed into "flagged" shows up without a reload.
         reuseDashboard.refresh()
@@ -538,7 +548,7 @@ export function EvidenceLibraryPanel() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="evidence-cite">Citation {draft.kind === "block" && "(optional)"}</Label>
+            <Label htmlFor="evidence-cite">Citation (optional)</Label>
             <Input
               id="evidence-cite"
               value={draft.cite}
@@ -547,7 +557,7 @@ export function EvidenceLibraryPanel() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="evidence-source-url">Source URL {draft.kind === "block" && "(optional)"}</Label>
+            <Label htmlFor="evidence-source-url">Source URL (optional)</Label>
             <Input
               id="evidence-source-url"
               value={draft.sourceUrl}
@@ -590,21 +600,21 @@ export function EvidenceLibraryPanel() {
             />
             <p className="text-xs text-muted-foreground">{computeWordCount(draft.text)} words</p>
           </div>
-          {editingId && (
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="evidence-editor-id">Your contributor ID</Label>
-              <Input
-                id="evidence-editor-id"
-                value={editorContributorId}
-                onChange={(e) => setEditorContributorId(e.target.value)}
-                placeholder="alex"
-                className="max-w-xs"
-              />
-              <p className="text-xs text-muted-foreground">
-                Saving this edit records a revision credited to this contributor.
-              </p>
-            </div>
-          )}
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label htmlFor="evidence-editor-id">Your contributor ID{editingId ? "" : " (optional)"}</Label>
+            <Input
+              id="evidence-editor-id"
+              value={editorContributorId}
+              onChange={(e) => setEditorContributorId(e.target.value)}
+              placeholder="alex"
+              className="max-w-xs"
+            />
+            <p className="text-xs text-muted-foreground">
+              {editingId
+                ? "Saving this edit records a revision credited to this contributor."
+                : "Credits this submission when its source URL registers into the shared team reuse index."}
+            </p>
+          </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <div className="flex gap-2">
@@ -707,6 +717,7 @@ export function EvidenceLibraryPanel() {
                     <Badge variant={entry.alreadyCut ? "default" : "secondary"}>
                       {entry.alreadyCut ? `Already cut (${entry.matchCount})` : "New"}
                     </Badge>
+                    <Badge variant="outline">{entry.scope === "team" ? "Team" : "Local"}</Badge>
                     <span className="truncate text-foreground">{entry.url}</span>
                     <span className="ml-auto shrink-0 text-muted-foreground">
                       {new Date(entry.checkedAt).toLocaleString()}

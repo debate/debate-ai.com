@@ -86,6 +86,8 @@ export interface UseDailyBestCardCommentsResult {
   commentsForDay: (dayKey: string) => DailyBestCardComment[];
   postComment: (dayKey: string, authorId: string, text: string) => void;
   deleteComment: (id: string) => void;
+  /** Re-reads the local store — for cross-tab `storage`-event refreshes, where another tab already wrote the change. */
+  refreshComments: () => void;
 }
 
 /**
@@ -132,5 +134,9 @@ export function useDailyBestCardComments(): UseDailyBestCardCommentsResult {
     [comments],
   );
 
-  return { comments, synced, commentsForDay, postComment, deleteComment };
+  const refreshComments = useCallback(() => {
+    setComments(listAllDailyBestCardComments());
+  }, []);
+
+  return { comments, synced, commentsForDay, postComment, deleteComment, refreshComments };
 }

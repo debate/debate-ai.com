@@ -12,7 +12,7 @@ anyone has submitted an idea to it.
 - **Route:** `/cards/brainstorm`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t brainstorm` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
 
 ## What it shows
 
@@ -36,7 +36,10 @@ ideas ranked by popularity score, highest first, with:
   without first merging one of them into the board's top idea
 - an "AI" badge when the idea was drafted by a "Generate AI ideas" action
   rather than typed in by a teammate
-- an "Upvote" button showing the current upvote count
+- a rank badge (🏆 #1 / 🥈 #2 / 🥉 #3 for the top three, a plain `#N` badge
+  otherwise), with the board's top idea's card highlighted
+- an "Upvote" button (with a chevron-up icon) showing the current upvote
+  count, briefly scaling up on click as a click acknowledgement
 
 The form also has a "Generate AI ideas" button (next to "Submit idea") that
 drafts several candidate ideas for the form's current argument block and
@@ -125,11 +128,11 @@ additive, optional `isAiGenerated` field (existing records without one stay
 valid) so an AI-drafted idea is saved and displayed through the exact same
 `saveBrainstormIdea`/ranking/upvote path as a human-submitted one, rather
 than needing a parallel storage or rendering path. Vitest-covered in
-`packages/debate-card-search/test/brainstormIdeas.test.ts`,
-`packages/debate-card-search/test/team-brainstorm-ai.test.ts` (prompt
+`packages/debate-team-collaboration/test/brainstormIdeas.test.ts`,
+`packages/debate-team-collaboration/test/team-brainstorm-ai.test.ts` (prompt
 content and response parsing, including a fenced reply, a prose-wrapped
 reply, and an empty/unusable reply), and
-`packages/debate-card-search/test/team-brainstorm-client.test.ts` (the
+`packages/debate-team-collaboration/test/team-brainstorm-client.test.ts` (the
 `fetch` client, mocked via `vi.stubGlobal`, covering the success path, an
 endpoint override, a server error message, a non-JSON error body, and an
 unparseable reply).
@@ -145,7 +148,7 @@ composes the topic's persisted coverage report
 no new coverage-gap or ranking logic is introduced — merged with every other
 board that already has a submitted idea but isn't itself a coverage-gap
 seed, so nothing that was visible before disappears when a topic is chosen.
-Vitest-covered in `packages/debate-card-search/test/brainstormIdeas.test.ts`
+Vitest-covered in `packages/debate-team-collaboration/test/brainstormIdeas.test.ts`
 (a seeded board with no ideas yet, a seeded board populated with an already-
 submitted idea, merging in a non-seed board with a submitted idea, and an
 untracked topic falling back to exactly the topic-less board list).
@@ -164,11 +167,11 @@ whichever idea is chosen and remove the duplicate — a moderator action
 where the badge was previously informational only. `mergeBrainstormIdeas`
 throws on a same-id or cross-board merge attempt rather than silently
 conflating two unrelated ideas' vote counts. Vitest-covered in
-`packages/debate-card-search/test/team-brainstorm-assist.test.ts`
+`packages/debate-team-collaboration/test/team-brainstorm-assist.test.ts`
 (`mergeBrainstormIdeas`: combining upvotes onto a copy of the target, not
 mutating either input, throwing on a same-idea merge, throwing on a
 cross-board merge) and
-`packages/debate-card-search/test/brainstormIdeas.test.ts`
+`packages/debate-team-collaboration/test/brainstormIdeas.test.ts`
 (`mergePersistedBrainstormIdeas`: folding upvotes and deleting the
 duplicate, and a no-op when either id isn't stored).
 
@@ -190,13 +193,13 @@ components/research/BrainstormBoardWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <BrainstormBoardPanel signedInContributorId={...} />
       — seeds "Contributor ID" initial value only; a visitor who edits it
         (hasEditedContributorId) keeps their own typed value from then on,
-        and a successful submission's form reset restores the prefilled
-        value (rather than clearing it to blank) so a signed-in visitor can
+        and a successful submission's form reset keeps the just-used id
+        (typed or prefilled, rather than clearing it to blank) so anyone can
         submit several ideas in a row without retyping their id
 ```
 
@@ -229,19 +232,20 @@ This closes this panel's share of the "every other localStorage-backed panel
 in this repo still has no cross-tab live-update mechanism" Known gap noted
 in [`shared-flow-sync.md`](shared-flow-sync.md). Vitest-covered: 4 new cases
 for `isBrainstormBoardLiveUpdateStorageEvent` in
-`packages/debate-card-search/test/live-update.test.ts` (every backing-key
+`packages/debate-search-evidence/test/live-update.test.ts` (every backing-key
 match, the `null`-key clear-all case, two unrelated keys, and two
 same-prefix substring keys). The panel's own `storage`-listener wiring
 remains intentionally untested, matching every other panel in this repo
 whose wiring is exercised only through the shared pure predicate's own
 tests.
 
-## Sending a board's top idea to the Argument Library
+## Sending an idea to the Argument Library
 
-Each board's top-ranked idea gets a "Send to Argument Library" action next to
-its Upvote button — the "a one-click 'send top idea to Argument Library'
-action" follow-up named under the "🧠 Team Brainstorm Assist" bullet in
-`TODO.md`. Clicking it opens an inline form for Topic and Case area — the
+Every idea gets a "Send to Argument Library" action next to its Upvote
+button — the "a one-click 'send top idea to Argument Library' action"
+follow-up named under the "🧠 Team Brainstorm Assist" bullet in `TODO.md`,
+since widened from the board's top-ranked idea to any idea (the same
+top-idea-to-any-idea widening "Merge into…" already went through). Clicking it opens an inline form for Topic and Case area — the
 Common Argument Library's own required fields, which a `BrainstormIdea`
 doesn't carry (Topic defaults to whichever topic is currently selected in the
 switcher above, if any). Confirming saves the idea as a `block`-kind
@@ -267,12 +271,11 @@ the brainstorm idea's own id, so sending the same idea again overwrites the
 same Argument Library entry (an upsert) instead of creating a duplicate.
 Once sent, that idea's action is replaced with a "✓ In Argument Library"
 badge (`isBrainstormIdeaInArgumentLibrary`) so a squad doesn't re-send it by
-accident. Only a board's top-ranked idea gets this action — sending any
-other idea on the board isn't offered in this first slice. Vitest-covered:
-`packages/debate-card-search/test/team-brainstorm-assist.test.ts`
+accident. Vitest-covered:
+`packages/debate-team-collaboration/test/team-brainstorm-assist.test.ts`
 (`buildEvidenceEntryFromBrainstormIdea`: the converted entry's shape, its
 deterministic id, its category tag, and that it leaves `createdAt` unstamped)
-and `packages/debate-card-search/test/brainstormIdeas.test.ts`
+and `packages/debate-team-collaboration/test/brainstormIdeas.test.ts`
 (`sendBrainstormIdeaToArgumentLibrary`: saving under the given topic/case
 area and overwriting on a repeat send; `isBrainstormIdeaInArgumentLibrary`:
 false before sending, true after).
@@ -332,16 +335,49 @@ argument block/category. `state/live-update.ts`'s
 `"brainstormSessionTimer"` key alongside the existing `"brainstormIdeas"`/
 `"trackedArguments"` ones, so `isBrainstormBoardLiveUpdateStorageEvent`
 already covers it — no separate listener was introduced. Vitest-covered:
-`packages/debate-card-search/test/brainstorm-session-timer.test.ts` (the pure
+`packages/debate-team-collaboration/test/brainstorm-session-timer.test.ts` (the pure
 state machine — starting fresh vs. resuming from paused, pausing/resetting,
 the idle-only duration-change guard, remaining-time clamping to zero,
 expiry, and `M:SS` formatting including padding and negative-clamping) and
-`packages/debate-card-search/test/brainstormSessionTimer.test.ts` (the
+`packages/debate-team-collaboration/test/brainstormSessionTimer.test.ts` (the
 persistence wrapper — defaulting on missing/corrupt/malformed storage,
 round-tripping each action through `localStorage`, and that a duration
 change while running doesn't persist). The panel's own tick/render wiring
 remains intentionally untested, matching this panel's existing convention
 (only pure logic and persistence wrappers are directly tested).
+
+## Idea-ranking UI polish and upvote affordance
+
+Closes the "polish the idea-ranking UI (upvote affordance/animation)"
+follow-up named under the "🧠 Team Brainstorm Assist" bullet in `TODO.md`.
+Previously an idea's rank was only implicit in `board.ideas`' already-sorted
+order (`rankBrainstormIdeas`) — nothing on the card itself said *why* an
+idea sat where it did, and the "Upvote" button gave no feedback beyond the
+count changing after the panel's next re-render.
+
+- Each idea now gets a rank badge from the new pure
+  `lib/team-brainstorm-assist.ts#buildBrainstormIdeaRankBadge(rank)`: `🏆
+  #1` / `🥈 #2` / `🥉 #3` for the top three ranks, a plain `#N` badge for
+  every rank after that. `BrainstormBoardPanel` passes each idea's
+  1-indexed position within `board.ideas` (already ranked) straight in — no
+  new ranking logic.
+- The board's top-ranked idea's card gets a highlighted border/background
+  (`border-primary/40 bg-primary/5`), mirroring
+  `ResearchProgressPanel`'s existing "this row is you" highlight
+  convention.
+- The "Upvote" button gained a chevron-up icon and briefly scales up
+  (`scale-110`, 300ms) after a click, via a local `bumpedIdeaId` state
+  cleared on a timeout — a presentation-only click acknowledgement; the
+  upvote count itself still only updates once `refresh()` re-reads the
+  saved idea, same as before.
+
+Vitest-covered: `packages/debate-team-collaboration/test/team-brainstorm-assist.test.ts`
+(`buildBrainstormIdeaRankBadge`: the trophy/silver/bronze labels, the plain
+`#N` fallback past rank 3, and throwing on a zero/negative/non-integer
+rank). The panel's own bump-animation timer/state wiring is intentionally
+untested, matching this panel's existing convention (see "Cross-tab live
+update" above — only pure logic and persistence wrappers are directly
+tested here).
 
 ## Known gaps
 
@@ -349,14 +385,12 @@ remains intentionally untested, matching this panel's existing convention
   can merge any two ideas on a board, same as every other unauthenticated
   moderator-style action in this repo (upvoting, approving a peer review,
   etc. — no auth system exists here yet). The same applies to "Send to
-  Argument Library" — any visitor can send any board's top idea.
+  Argument Library" — any visitor can send any idea.
 - "Contributor ID" is still free-form text, not a login — a real signed-in
   session only *prefills* it (see "Signed-in prefill" above), so a visitor
   can still overwrite it to submit under any id. There is no server-side
   session check on `saveBrainstormIdea`, the same trust boundary every
   other localStorage-backed action in this repo has.
-- "Send to Argument Library" only ever offers a board's top-ranked idea, not
-  any other idea on the board.
 - The session timer is `localStorage`-only, synced live across tabs on the
   same browser via the `storage` event, but not account-synced — unlike
   `wordLimitPresets`/coach materials/etc., it doesn't follow a signed-in user

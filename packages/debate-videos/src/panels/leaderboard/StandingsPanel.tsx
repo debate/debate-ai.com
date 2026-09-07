@@ -64,11 +64,20 @@ import {
   resetPersistedQualificationPointsTable,
   savePersistedQualificationPointsTable,
 } from "debate-data-sync/src/state/qualificationPointsTable"
+import {
+  getEffectiveQualificationCutoff,
+  isQualificationCutoffConfigured,
+  resetPersistedQualificationCutoff,
+  savePersistedQualificationCutoff,
+  toQualificationOptions,
+  type QualificationCutoffSettings,
+} from "debate-data-sync/src/state/qualificationCutoff"
 import { TOURNAMENT_RESULT_CSV_TEMPLATE } from "debate-data-sync/src/rankings/tournament-results-csv-import"
-import type {
-  OutroundFinish,
-  QualificationPointsTable,
-  RankedTeamStanding,
+import {
+  getQualifiedTeams,
+  type OutroundFinish,
+  type QualificationPointsTable,
+  type RankedTeamStanding,
 } from "debate-data-sync/src/rankings/ndca-standings"
 
 const FINISH_OPTIONS: { value: OutroundFinish; label: string }[] = [
@@ -136,6 +145,11 @@ export function StandingsPanel() {
   )
   const [pointsTableStatus, setPointsTableStatus] = useState<string | null>(null)
 
+  const [cutoff, setCutoff] = useState<QualificationCutoffSettings>(() =>
+    getEffectiveQualificationCutoff(),
+  )
+  const [cutoffStatus, setCutoffStatus] = useState<string | null>(null)
+
   const refresh = () => setStandings(loadStandings())
 
   const handleLogResult = () => {
@@ -195,6 +209,17 @@ export function StandingsPanel() {
     refresh()
   }
 
+  const handleSaveCutoff = () => {
+    savePersistedQualificationCutoff(cutoff)
+    setCutoffStatus("Saved — the qualified list below applies it immediately.")
+  }
+
+  const handleResetCutoff = () => {
+    resetPersistedQualificationCutoff()
+    setCutoff(getEffectiveQualificationCutoff())
+    setCutoffStatus("Cleared — no cutoff is configured.")
+  }
+
   const handleDeleteResult = (id: string) => {
     deleteTournamentResult(id)
     refresh()
@@ -204,6 +229,13 @@ export function StandingsPanel() {
     () => standings.reduce((sum, standing) => sum + standing.tournamentsAttended, 0),
     [standings],
   )
+
+  const cutoffConfigured = isQualificationCutoffConfigured(cutoff)
+  const qualifiedTeamIds = useMemo(() => {
+    if (!cutoffConfigured) return new Set<string>()
+    const qualified = getQualifiedTeams(standings, toQualificationOptions(cutoff))
+    return new Set(qualified.map((standing) => standing.teamId))
+  }, [standings, cutoff, cutoffConfigured])
 
   return (
     <div className="space-y-6">
@@ -368,6 +400,59 @@ export function StandingsPanel() {
         </div>
       </details>
 
+      {/* Qualification cutoff ---------------------------------------------- */}
+      <details className="space-y-3 rounded-lg border border-border p-4">
+        <summary className="cursor-pointer text-sm font-medium text-foreground">
+          Qualification cutoff
+        </summary>
+        <div className="mt-3 space-y-3">
+          <p className="text-xs text-muted-foreground">
+            Set a minimum points threshold and/or a field cap to see who currently qualifies. Leave a
+            field blank to skip that half of the cutoff.
+          </p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+              Min points to qualify
+              <Input
+                type="number"
+                value={cutoff.minPoints ?? ""}
+                placeholder="No minimum"
+                onChange={(e) =>
+                  setCutoff((c) => ({
+                    ...c,
+                    minPoints: e.target.value === "" ? null : Number(e.target.value),
+                  }))
+                }
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+              Max qualifiers (field size)
+              <Input
+                type="number"
+                min={0}
+                value={cutoff.maxQualifiers ?? ""}
+                placeholder="No cap"
+                onChange={(e) =>
+                  setCutoff((c) => ({
+                    ...c,
+                    maxQualifiers: e.target.value === "" ? null : Number(e.target.value),
+                  }))
+                }
+              />
+            </label>
+          </div>
+          {cutoffStatus && <p className="text-sm text-muted-foreground">{cutoffStatus}</p>}
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleSaveCutoff}>
+              Save
+            </Button>
+            <Button variant="ghost" onClick={handleResetCutoff}>
+              Clear cutoff
+            </Button>
+          </div>
+        </div>
+      </details>
+
       {/* Ranked standings -------------------------------------------------- */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -375,6 +460,9 @@ export function StandingsPanel() {
           <span className="text-xs text-muted-foreground">
             {standings.length} team{standings.length === 1 ? "" : "s"}, {totalResultsLogged} result
             {totalResultsLogged === 1 ? "" : "s"} logged
+            {cutoffConfigured
+              ? ` · ${qualifiedTeamIds.size} of ${standings.length} currently qualify`
+              : ""}
           </span>
         </div>
         {standings.length === 0 ? (
@@ -404,7 +492,14 @@ export function StandingsPanel() {
                     }
                   >
                     <TableCell>{standing.rank}</TableCell>
-                    <TableCell className="font-medium">{standing.teamId}</TableCell>
+                    <TableCell className="font-medium">
+                      <span className="flex items-center gap-2">
+                        {standing.teamId}
+                        {cutoffConfigured && qualifiedTeamIds.has(standing.teamId) && (
+                          <Badge variant="default">Qualified</Badge>
+                        )}
+                      </span>
+                    </TableCell>
                     <TableCell className="text-right">{standing.totalPoints}</TableCell>
                     <TableCell>
                       {standing.record.wins}-{standing.record.losses}

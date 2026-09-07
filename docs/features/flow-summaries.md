@@ -221,6 +221,73 @@ rows; a non-`Error` rejection is stringified for the error message; an
 all-failing batch contributes no rows; and `summarizeBulkTranscriptOutcomes`
 counts an empty map, a mixed map, and an all-error map correctly.
 
+## Sending a summary to Prep Notes
+
+Closes idea #6's ("Speech Transcript Summaries and Answers") "a one-click
+'send to Prep Notes / Speech Document' action for a summary" follow-up (the
+Prep Notes half — see this section's last paragraph for the Speech Document
+half's status). Each round card has a "Send to Prep Notes" button that opens
+a small "Your name" form; submitting it sends that round's rendered summary
+text (the same text shown in the `<pre>` block above the cross-exam/extension
+lists) to Prep Notes as one note, replacing the button with a "✓ Sent to Prep
+Notes" badge.
+
+`PrepNote` (`debate-round`'s `flow/strategy-sync-notes.ts`) previously
+required a `flowId`/`boxPath` a `FlowSummaryRecord` doesn't have — this
+slice's data-model change was extending it into a discriminated union of a
+`BoxAnchoredPrepNote` (the original shape) and a new `RoundAnchoredPrepNote`
+(`roundId` instead of `flowId`/`boxPath`), so a note can attach to a round as
+a whole instead of one specific flow argument:
+
+```
+flow/strategy-sync-notes.ts
+  isBoxAnchoredPrepNote(note) / isRoundAnchoredPrepNote(note)
+    — type-guards distinguishing the two PrepNote variants
+  createRoundPrepNote({ id, roundId, authorId, text, createdAt, assignedToId? })
+    — mirrors createPrepNote's validation (non-blank roundId/authorId/text,
+      text trimmed and clamped to MAX_NOTE_LENGTH) for the round-anchored shape
+  getNotesForRound(notes, roundId)
+    — round-anchored notes for one round, oldest first (getNotesForBox/
+      getNotesForFlow now only ever match box-anchored notes)
+  resolvePrepNoteBox(flow, note) / buildPrepNoteJumpHref(note)
+    — resolvePrepNoteBox returns null for a round-anchored note (no box to
+      resolve); buildPrepNoteJumpHref's signature is narrowed to
+      BoxAnchoredPrepNote, so a caller must isBoxAnchoredPrepNote(note) first
+state/prepNotes.ts (debate-team-collaboration)
+  listPrepNotesForRound(roundId) / addRoundPrepNote({ roundId, authorId, text })
+    — the persisted-store counterparts, mirroring listPrepNotesForBox/
+      listPrepNotesForFlow and the createPrepNote+savePrepNote pattern
+```
+
+`PrepNotesPanel` renders a "Round `<roundId>`" badge instead of a "Jump to
+argument" link for a round-anchored note, since there's no specific box to
+jump to.
+
+`FlowSummariesPanel` itself has no dependency on `debate-team-collaboration`
+(where the `PrepNote` store lives) and doesn't gain one for this — it only
+exposes an optional `onSendToPrepNotes` prop (hiding the action entirely when
+omitted). `apps/debate-ai.com/app/summaries/FlowSummariesPanelWithPrepNotes.tsx`
+is the app/page-layer wrapper that resolves the composition (calling
+`addRoundPrepNote` on submit), mirroring
+`app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`'s own
+cross-package split; `app/summaries/page.tsx` renders that wrapper instead of
+`FlowSummariesPanel` directly.
+
+Vitest-covered in `packages/debate-round/test/strategy-sync-notes.test.ts`
+(`createRoundPrepNote`'s valid/blank-`roundId`/blank-`authorId`/blank-text/
+overlong-text cases, `isBoxAnchoredPrepNote`/`isRoundAnchoredPrepNote`,
+`getNotesForRound`, and that `getNotesForBox`/`getNotesForFlow` exclude
+round-anchored notes while `resolvePrepNoteBox` returns null for one) and
+`packages/debate-team-collaboration/test/prepNotes.test.ts`
+(`listPrepNotesForRound`, `addRoundPrepNote` persisting and returning a note,
+generating a distinct id per note, and throwing without persisting anything
+for blank text).
+
+The Speech Document half of the original follow-up remains unbuilt: the only
+existing "speech document" send target (`reason-editor`'s `SpeechDocument`)
+lives in a package `debate-round`/`debate-practice-rounds` don't depend on,
+so sending a summary there would need its own bridge — not attempted here.
+
 ## Known gaps
 
 - Microphone dictation transcribes live speech only — it does not accept an

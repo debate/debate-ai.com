@@ -70,6 +70,33 @@ describe("appendReuseCheckHistory", () => {
     const second = appendReuseCheckHistory(result("https://example.com/b", 0), 1000);
     expect(first.id).not.toBe(second.id);
   });
+
+  it("defaults scope to local when none is given", () => {
+    const record = appendReuseCheckHistory(result("https://example.com/a", 0), 1000);
+    expect(record.scope).toBe("local");
+  });
+
+  it("records a team-wide check with its own scope alongside the local one", () => {
+    appendReuseCheckHistory(result("https://example.com/a", 0), 1000);
+    appendReuseCheckHistory(
+      { url: "https://example.com/a", alreadyCut: true, matches: [{ id: "remote-1" }] },
+      2000,
+      "team",
+    );
+    const history = listReuseCheckHistory();
+    expect(history.map((r) => r.scope)).toEqual(["team", "local"]);
+    expect(history[0]).toMatchObject({ alreadyCut: true, matchCount: 1 });
+  });
+
+  it("reads back a legacy record without a scope field", () => {
+    localStorage.setItem(
+      "reuseCheckHistory",
+      JSON.stringify([{ id: "legacy", url: "https://example.com/a", alreadyCut: false, matchCount: 0, checkedAt: 500 }]),
+    );
+    const [record] = listReuseCheckHistory();
+    expect(record.scope).toBeUndefined();
+    expect(record.url).toBe("https://example.com/a");
+  });
 });
 
 describe("listReuseCheckHistory", () => {

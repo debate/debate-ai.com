@@ -153,105 +153,60 @@ export function getUnderCoveredArguments(report: TopicCoverageReport): ArgumentC
     );
 }
 
-/** Renders a short summary line for a topic-coverage dashboard header. */
-export function buildTopicCoverageSummaryText(report: TopicCoverageReport): string {
-  const missingCount = report.tracked.filter((argument) => argument.level === "missing").length;
-  const thinCount = report.tracked.filter((argument) => argument.level === "thin").length;
-  const coveredCount = report.tracked.filter((argument) => argument.level === "covered").length;
-
-  const summary = `${coveredCount}/${report.tracked.length} arguments covered, ${thinCount} thin, ${missingCount} missing`;
-  if (report.untracked.length === 0) return summary;
-
-  return `${summary} (plus ${report.untracked.length} untracked block${report.untracked.length === 1 ? "" : "s"} with submitted cards)`;
-}
-
-/** Category label used for a tracked argument with no `category` set, in the cross-topic heatmap. */
-export const UNCATEGORIZED_LABEL = "Uncategorized";
-
-/** One topic/category cell in the cross-topic comparison heatmap: tallies over that topic's tracked arguments in that category. */
-export interface TopicCoverageHeatmapCell {
-  category: string;
-  missingCount: number;
-  thinCount: number;
-  coveredCount: number;
-  totalCount: number;
-}
-
-/** One topic's row in the cross-topic comparison heatmap: one cell per `TopicCoverageComparisonHeatmap.categories` entry, plus that topic's overall tallies. */
-export interface TopicCoverageHeatmapRow {
-  topic: string;
-  cells: TopicCoverageHeatmapCell[];
-  coveredCount: number;
-  totalCount: number;
-}
-
-/** A grid comparing tracked-argument coverage across topics (rows) and categories (columns), for the Topic Coverage Dashboard's cross-topic comparison view. */
-export interface TopicCoverageComparisonHeatmap {
-  /** Every distinct category across all input topics' tracked arguments, sorted alphabetically, with `UNCATEGORIZED_LABEL` (if present) sorted last. */
-  categories: string[];
-  /** One row per input topic, sorted alphabetically by topic name. */
-  rows: TopicCoverageHeatmapRow[];
-}
-
-function tallyCoverageCell(argumentsInCell: ArgumentCoverage[]): Omit<TopicCoverageHeatmapCell, "category"> {
-  return {
-    missingCount: argumentsInCell.filter((a) => a.level === "missing").length,
-    thinCount: argumentsInCell.filter((a) => a.level === "thin").length,
-    coveredCount: argumentsInCell.filter((a) => a.level === "covered").length,
-    totalCount: argumentsInCell.length,
-  };
+/** Tracked-argument counts by coverage level, plus the total tracked count — one point in a coverage-over-time trend. */
+export interface CoverageCounts {
+  missing: number;
+  thin: number;
+  covered: number;
+  total: number;
 }
 
 /**
- * Builds a cross-topic comparison heatmap from a set of already-built topic
- * coverage reports (only each report's `tracked` arguments are considered —
- * an `untracked` argument block has no team-planned category to place it in,
- * so it's excluded here the same way `buildTopicCoverageSummaryText` treats
- * it as a separate concern). Every topic gets a cell for every category
- * present anywhere in the input, zero-filled where that topic has no tracked
- * argument in that category, so the grid renders as a complete rectangle.
+ * Tallies `report.tracked` by coverage level — the same counts
+ * {@link buildTopicCoverageSummaryText} renders as a sentence, factored out
+ * so a caller (the coverage-trend snapshot store) can persist them as
+ * structured data instead of parsing that sentence back apart.
  */
-export function buildTopicCoverageComparisonHeatmap(
-  reports: Array<{ topic: string; report: TopicCoverageReport }>,
-): TopicCoverageComparisonHeatmap {
-  const categorySet = new Set<string>();
-  for (const { report } of reports) {
-    for (const argument of report.tracked) {
-      categorySet.add(argument.category ?? UNCATEGORIZED_LABEL);
-    }
-  }
-  const categories = Array.from(categorySet)
-    .filter((category) => category !== UNCATEGORIZED_LABEL)
-    .sort((a, b) => a.localeCompare(b));
-  if (categorySet.has(UNCATEGORIZED_LABEL)) categories.push(UNCATEGORIZED_LABEL);
-
-  const rows = reports
-    .map(({ topic, report }): TopicCoverageHeatmapRow => {
-      const byCategory = new Map<string, ArgumentCoverage[]>();
-      for (const argument of report.tracked) {
-        const category = argument.category ?? UNCATEGORIZED_LABEL;
-        const group = byCategory.get(category);
-        if (group) group.push(argument);
-        else byCategory.set(category, [argument]);
-      }
-      const cells = categories.map((category) => ({
-        category,
-        ...tallyCoverageCell(byCategory.get(category) ?? []),
-      }));
-      return {
-        topic,
-        cells,
-        coveredCount: report.tracked.filter((a) => a.level === "covered").length,
-        totalCount: report.tracked.length,
-      };
-    })
-    .sort((a, b) => a.topic.localeCompare(b.topic));
-
-  return { categories, rows };
+export function computeCoverageCounts(report: TopicCoverageReport): CoverageCounts {
+  const missing = report.tracked.filter((argument) => argument.level === "missing").length;
+  const thin = report.tracked.filter((argument) => argument.level === "thin").length;
+  const covered = report.tracked.filter((argument) => argument.level === "covered").length;
+  return { missing, thin, covered, total: report.tracked.length };
 }
 
-/** Renders a short summary line for the cross-topic comparison heatmap header. */
-export function buildTopicCoverageComparisonSummaryText(heatmap: TopicCoverageComparisonHeatmap): string {
-  if (heatmap.rows.length === 0) return "No topics have a tracked-argument checklist yet.";
-  return `Comparing ${heatmap.rows.length} topic${heatmap.rows.length === 1 ? "" : "s"} across ${heatmap.categories.length} categor${heatmap.categories.length === 1 ? "y" : "ies"}.`;
+/**
+ * One topic's rolled-up coverage tallies for the cross-topic comparison
+ * heatmap, alongside its overall coverage ratio (covered/total, `0` for a
+ * topic with no tracked arguments at all).
+ */
+export interface CrossTopicCoverageRow extends CoverageCounts {
+  topic: string;
+  coverageRatio: number;
+}
+
+/**
+ * Rolls up each topic's already-built {@link TopicCoverageReport} into one
+ * row for a cross-topic comparison heatmap, sorted worst-covered first
+ * (lowest `coverageRatio`, ties broken alphabetically by topic) so a team
+ * immediately sees which topics need the most work relative to the others.
+ */
+export function buildCrossTopicCoverageComparison(
+  entries: { topic: string; report: TopicCoverageReport }[],
+): CrossTopicCoverageRow[] {
+  return entries
+    .map(({ topic, report }) => {
+      const counts = computeCoverageCounts(report);
+      return { topic, ...counts, coverageRatio: counts.total === 0 ? 0 : counts.covered / counts.total };
+    })
+    .sort((a, b) => a.coverageRatio - b.coverageRatio || a.topic.localeCompare(b.topic));
+}
+
+/** Renders a short summary line for a topic-coverage dashboard header. */
+export function buildTopicCoverageSummaryText(report: TopicCoverageReport): string {
+  const { missing: missingCount, thin: thinCount, covered: coveredCount, total } = computeCoverageCounts(report);
+
+  const summary = `${coveredCount}/${total} arguments covered, ${thinCount} thin, ${missingCount} missing`;
+  if (report.untracked.length === 0) return summary;
+
+  return `${summary} (plus ${report.untracked.length} untracked block${report.untracked.length === 1 ? "" : "s"} with submitted cards)`;
 }

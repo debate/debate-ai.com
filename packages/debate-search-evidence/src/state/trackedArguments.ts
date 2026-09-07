@@ -24,16 +24,22 @@
  * missing either field (the common case — both are optional there) is
  * silently excluded rather than counted with a fabricated word count.
  *
+ * `buildPersistedCrossTopicCoverageComparison` closes the "a cross-topic
+ * comparison view (a heatmap-style rollup across every tracked topic at
+ * once)" follow-up named under the same idea's "Known gaps" — it composes
+ * every tracked topic's own `buildPersistedTopicCoverageReport` into one row
+ * per topic via `lib/topic-coverage.ts`'s `buildCrossTopicCoverageComparison`.
+ *
  * @module state/trackedArguments
  */
 
 import type { TrackedArgument } from "../lib/topic-coverage";
 import {
-  buildTopicCoverageComparisonHeatmap,
+  buildCrossTopicCoverageComparison,
   buildTopicCoverageReport,
   type CoverageCardSummary,
   type CoverageThresholds,
-  type TopicCoverageComparisonHeatmap,
+  type CrossTopicCoverageRow,
   type TopicCoverageReport,
 } from "../lib/topic-coverage";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
@@ -121,20 +127,15 @@ export function buildPersistedTopicCoverageReport(
 }
 
 /**
- * Builds the cross-topic comparison heatmap ("Topic Coverage Dashboard"'s
- * next named follow-up in TODO.md: "a cross-topic comparison heatmap")
- * entirely from persisted stores: every topic with at least one tracked
- * argument (`listTrackedTopics()`), each composed into its own
- * `buildPersistedTopicCoverageReport`, then pivoted by
- * `buildTopicCoverageComparisonHeatmap`. Pass an explicit `topics` list to
- * compare a subset instead of every tracked topic.
+ * Builds the cross-topic comparison heatmap's rows entirely from persisted
+ * stores: every topic with at least one tracked argument, each rolled up via
+ * {@link buildPersistedTopicCoverageReport} and then
+ * {@link buildCrossTopicCoverageComparison}.
  */
-export function buildPersistedTopicCoverageComparisonHeatmap(
-  topics?: string[],
-  thresholds?: CoverageThresholds,
-): TopicCoverageComparisonHeatmap {
-  const activeTopics = topics ?? listTrackedTopics();
-  return buildTopicCoverageComparisonHeatmap(
-    activeTopics.map((topic) => ({ topic, report: buildPersistedTopicCoverageReport(topic, thresholds) })),
-  );
+export function buildPersistedCrossTopicCoverageComparison(thresholds?: CoverageThresholds): CrossTopicCoverageRow[] {
+  const entries = listTrackedTopics().map((topic) => ({
+    topic,
+    report: buildPersistedTopicCoverageReport(topic, thresholds),
+  }));
+  return buildCrossTopicCoverageComparison(entries);
 }

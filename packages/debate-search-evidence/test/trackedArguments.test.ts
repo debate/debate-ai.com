@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
-  buildPersistedTopicCoverageComparisonHeatmap,
+  buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
   listTrackedArguments,
@@ -277,28 +277,37 @@ describe("buildPersistedTopicCoverageReport", () => {
   });
 });
 
-describe("buildPersistedTopicCoverageComparisonHeatmap", () => {
-  it("returns an empty grid when no topic has a tracked-argument checklist", () => {
-    expect(buildPersistedTopicCoverageComparisonHeatmap()).toEqual({ categories: [], rows: [] });
+describe("buildPersistedCrossTopicCoverageComparison", () => {
+  it("returns an empty list when nothing is tracked", () => {
+    expect(buildPersistedCrossTopicCoverageComparison()).toEqual([]);
   });
 
-  it("compares every tracked topic by default, built from persisted stores", () => {
+  it("rolls up every tracked topic, worst-covered first", () => {
     saveTrackedArgument(WARMING_DA);
     saveTrackedArgument(OTHER_TOPIC);
 
-    const heatmap = buildPersistedTopicCoverageComparisonHeatmap();
-    expect(heatmap.rows.map((row) => row.topic)).toEqual(["Energy Policy", "Immigration Policy"]);
-    // WARMING_DA carries category "DA"; OTHER_TOPIC's "Federalism DA" has none, so it groups as uncategorized.
-    expect(heatmap.categories).toEqual(["DA", "Uncategorized"]);
-    // Neither has any submitted cards yet, so both are fully missing.
-    expect(heatmap.rows.every((row) => row.coveredCount === 0 && row.totalCount === 1)).toBe(true);
+    const rows = buildPersistedCrossTopicCoverageComparison();
+    expect(rows.map((r) => r.topic)).toEqual(["Energy Policy", "Immigration Policy"]);
+    expect(rows.every((r) => r.coverageRatio === 0)).toBe(true);
   });
 
-  it("scopes the comparison to a caller-supplied topic subset", () => {
+  it("moves a topic to the front once its coverage improves", () => {
     saveTrackedArgument(WARMING_DA);
     saveTrackedArgument(OTHER_TOPIC);
+    saveEvidenceLibraryEntry({
+      id: "entry-1",
+      argBlock: "Warming DA",
+      wordCount: 700,
+      topic: "Energy Policy",
+      caseArea: "DA",
+      tags: [],
+      kind: "card",
+      text: "Covers the tracked argument enough to clear the default threshold.",
+      cite: "Smith 24",
+    });
 
-    const heatmap = buildPersistedTopicCoverageComparisonHeatmap(["Energy Policy"]);
-    expect(heatmap.rows.map((row) => row.topic)).toEqual(["Energy Policy"]);
+    const rows = buildPersistedCrossTopicCoverageComparison({ minCards: 1, minTotalWords: 500 });
+    expect(rows.map((r) => r.topic)).toEqual(["Immigration Policy", "Energy Policy"]);
+    expect(rows[1].coverageRatio).toBe(1);
   });
 });

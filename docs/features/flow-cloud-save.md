@@ -81,7 +81,7 @@ recursion cap, and every `deriveFlowLabel` branch). The fetch client and
 the D1-backed routes are not unit-tested, matching every other fetch-client/
 D1-route pair in this repo (`round/user-settings-client.ts`,
 `app/api/settings/route.ts`) — `apps/debate-ai.com` has no vitest project
-wired up (see `vitest.config.ts`'s `projects` list).
+wired up (see `apps/debate-ai.com/vitest.config.ts`'s `projects` list).
 
 ## Known gaps
 

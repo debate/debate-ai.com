@@ -4,26 +4,45 @@ import {
   buildPrepNoteJumpHref,
   buildPrepNoteSummaryText,
   createPrepNote,
+  createRoundPrepNote,
   getHighPriorityNotes,
   getNotesAssignedTo,
   getNotesForBox,
   getNotesForFlow,
+  getNotesForRound,
   getOpenFollowUps,
+  isBoxAnchoredPrepNote,
+  isRoundAnchoredPrepNote,
   parsePrepNoteJumpParams,
   resolvePrepNoteBox,
   setNotePriority,
   sortNotesByCreatedAt,
   sortNotesByPriorityThenCreatedAt,
   updateNoteStatus,
+  type BoxAnchoredPrepNote,
   type PrepNote,
+  type RoundAnchoredPrepNote,
 } from "../src/flow/strategy-sync-notes";
 import { newBox } from "../src/utils/flow-utils";
 
-function note(overrides: Partial<PrepNote> = {}): PrepNote {
+function note(overrides: Partial<BoxAnchoredPrepNote> = {}): BoxAnchoredPrepNote {
   return {
     id: "n1",
     flowId: 1,
     boxPath: [0],
+    authorId: "alex",
+    text: "check this warrant",
+    status: "open",
+    createdAt: 0,
+    updatedAt: 0,
+    ...overrides,
+  };
+}
+
+function roundNote(overrides: Partial<RoundAnchoredPrepNote> = {}): PrepNote {
+  return {
+    id: "n1",
+    roundId: "round-1",
     authorId: "alex",
     text: "check this warrant",
     status: "open",
@@ -98,6 +117,79 @@ describe("createPrepNote", () => {
     expect(() =>
       createPrepNote({ id: "n1", flowId: 1, boxPath: [0], authorId: "alex", text: "   ", createdAt: 0 }),
     ).toThrow(/text/);
+  });
+});
+
+describe("createRoundPrepNote", () => {
+  it("builds an open, round-anchored note from valid input", () => {
+    expect(
+      createRoundPrepNote({
+        id: "n1",
+        roundId: "round-1",
+        authorId: "alex",
+        text: "  strong on framework, thin on impact  ",
+        createdAt: 1000,
+      }),
+    ).toEqual({
+      id: "n1",
+      roundId: "round-1",
+      authorId: "alex",
+      text: "strong on framework, thin on impact",
+      status: "open",
+      createdAt: 1000,
+      updatedAt: 1000,
+    });
+  });
+
+  it("includes assignedToId when supplied", () => {
+    expect(
+      createRoundPrepNote({
+        id: "n1",
+        roundId: "round-1",
+        authorId: "alex",
+        text: "find a card",
+        createdAt: 0,
+        assignedToId: "sam",
+      }).assignedToId,
+    ).toBe("sam");
+  });
+
+  it("clamps overlong text to the max length", () => {
+    const result = createRoundPrepNote({
+      id: "n1",
+      roundId: "round-1",
+      authorId: "alex",
+      text: "x".repeat(1200),
+      createdAt: 0,
+    });
+    expect(result.text).toHaveLength(1000);
+  });
+
+  it("throws for a blank roundId", () => {
+    expect(() =>
+      createRoundPrepNote({ id: "n1", roundId: "  ", authorId: "alex", text: "hi", createdAt: 0 }),
+    ).toThrow(/roundId/);
+  });
+
+  it("throws for a blank authorId", () => {
+    expect(() =>
+      createRoundPrepNote({ id: "n1", roundId: "round-1", authorId: "  ", text: "hi", createdAt: 0 }),
+    ).toThrow(/authorId/);
+  });
+
+  it("throws for blank text", () => {
+    expect(() =>
+      createRoundPrepNote({ id: "n1", roundId: "round-1", authorId: "alex", text: "   ", createdAt: 0 }),
+    ).toThrow(/text/);
+  });
+});
+
+describe("isBoxAnchoredPrepNote / isRoundAnchoredPrepNote", () => {
+  it("distinguishes a box-anchored note from a round-anchored one", () => {
+    expect(isBoxAnchoredPrepNote(note())).toBe(true);
+    expect(isRoundAnchoredPrepNote(note())).toBe(false);
+    expect(isBoxAnchoredPrepNote(roundNote())).toBe(false);
+    expect(isRoundAnchoredPrepNote(roundNote())).toBe(true);
   });
 });
 
@@ -212,6 +304,11 @@ describe("getNotesForBox", () => {
 
     expect(getNotesForBox(notes, 1, [0, 1]).map((n) => n.id)).toEqual(["match-earlier", "match"]);
   });
+
+  it("excludes round-anchored notes even when a boxPath coincidentally matches", () => {
+    const notes: PrepNote[] = [note({ id: "box", flowId: 1, boxPath: [0, 1] }), roundNote({ id: "round" })];
+    expect(getNotesForBox(notes, 1, [0, 1]).map((n) => n.id)).toEqual(["box"]);
+  });
 });
 
 describe("getNotesForFlow", () => {
@@ -223,6 +320,28 @@ describe("getNotesForFlow", () => {
     ];
 
     expect(getNotesForFlow(notes, 1).map((n) => n.id)).toEqual(["f1-a", "f1-b"]);
+  });
+
+  it("excludes round-anchored notes", () => {
+    const notes: PrepNote[] = [note({ id: "box", flowId: 1 }), roundNote({ id: "round" })];
+    expect(getNotesForFlow(notes, 1).map((n) => n.id)).toEqual(["box"]);
+  });
+});
+
+describe("getNotesForRound", () => {
+  it("filters to the given round, oldest first", () => {
+    const notes: PrepNote[] = [
+      roundNote({ id: "r1-b", roundId: "round-1", createdAt: 2000 }),
+      roundNote({ id: "r2", roundId: "round-2", createdAt: 500 }),
+      roundNote({ id: "r1-a", roundId: "round-1", createdAt: 1000 }),
+    ];
+
+    expect(getNotesForRound(notes, "round-1").map((n) => n.id)).toEqual(["r1-a", "r1-b"]);
+  });
+
+  it("excludes box-anchored notes", () => {
+    const notes: PrepNote[] = [note({ id: "box" }), roundNote({ id: "round", roundId: "round-1" })];
+    expect(getNotesForRound(notes, "round-1").map((n) => n.id)).toEqual(["round"]);
   });
 });
 
@@ -267,6 +386,10 @@ describe("resolvePrepNoteBox", () => {
 
   it("returns null when the path no longer resolves (e.g. rows were removed)", () => {
     expect(resolvePrepNoteBox(flow, note({ boxPath: [5, 0] }))).toBeNull();
+  });
+
+  it("returns null for a round-anchored note (no box to resolve)", () => {
+    expect(resolvePrepNoteBox(flow, roundNote())).toBeNull();
   });
 });
 

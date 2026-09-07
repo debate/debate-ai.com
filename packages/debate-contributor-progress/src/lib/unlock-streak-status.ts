@@ -51,6 +51,7 @@
 
 import type { ContributorStats } from "debate-research-evidence/src/lib/contribution-leaderboard";
 import {
+  applyStreakFreezes,
   buildContributorQuestStreak,
   buildStreakSummaryText,
   DEFAULT_STREAK_MILESTONES,
@@ -66,6 +67,7 @@ import {
   type UnlockTierRequirement,
 } from "debate-research-evidence/src/lib/progress-unlocks";
 import { listDailyMissionResultsForContributor } from "../state/dailyMissionResults";
+import { listStreakFreezeDayKeysForContributor } from "../state/streakFreezes";
 import { buildPersistedLeaderboardWithCompletedTasks } from "debate-team-collaboration/src/state/researchProgress";
 
 /**
@@ -153,7 +155,11 @@ function buildEmptyContributorStats(contributorId: string): ContributorStats {
  * contributor's real completed-research-task count (not just their scored
  * contributions) feeds `progress-unlocks.ts`'s tier computation. A
  * contributor with neither persisted contributions nor completed tasks yet
- * gets an all-zero, `novice` status rather than a thrown error.
+ * gets an all-zero, `novice` status rather than a thrown error. Persisted
+ * streak freezes are applied to the mission-result history
+ * (`applyStreakFreezes`), so this roster's Streak column agrees with
+ * `/cards/streaks`' own freeze-bridged view of the same contributor instead
+ * of showing a shorter, unfrozen streak.
  */
 export function buildContributorUnlockStatusWithStreakFromStore(
   contributorId: string,
@@ -164,7 +170,10 @@ export function buildContributorUnlockStatusWithStreakFromStore(
   const stats =
     buildPersistedLeaderboardWithCompletedTasks().find((row) => row.contributorId === contributorId) ??
     buildEmptyContributorStats(contributorId);
-  const missionResults = listDailyMissionResultsForContributor(contributorId);
+  const missionResults = applyStreakFreezes(
+    listDailyMissionResultsForContributor(contributorId),
+    listStreakFreezeDayKeysForContributor(contributorId),
+  );
 
   return buildContributorUnlockStatusWithStreak(stats, missionResults, asOfDayKey, tierRequirements, streakMilestones);
 }

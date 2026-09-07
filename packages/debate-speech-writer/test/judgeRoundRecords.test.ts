@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  bulkImportJudgeRoundRecords,
   deleteJudgeRoundRecord,
   findNearestJudgeId,
   hasJudgeRoundRecordEditHistory,
@@ -449,5 +450,77 @@ describe("storage resilience", () => {
     localStorage.setItem("judgeRoundRecords", JSON.stringify({ smith: [] }));
 
     expect(listJudgeRoundRecords()).toEqual([]);
+  });
+});
+
+describe("bulkImportJudgeRoundRecords", () => {
+  it("persists every well-formed CSV row and aggregates each affected judge once", () => {
+    const csv = [
+      "judgeId,tournamentName,date,division,winningSide,affSpeakerPoints,negSpeakerPoints",
+      "smith,Berkeley,2026-01-10,PF,aff,28,28",
+      "smith,Glenbrooks,2026-02-01,PF,neg,27,29",
+      "jones,Berkeley,2026-01-10,PF,aff,28,28",
+    ].join("\n");
+
+    const result = bulkImportJudgeRoundRecords(csv);
+
+    expect(result).toMatchObject({ importedCount: 3, skippedCount: 0, errors: [] });
+    expect(result.affectedJudgeIds.sort()).toEqual(["jones", "smith"]);
+    expect(listJudgeRoundRecords()).toHaveLength(3);
+
+    const smithProfile = getJudgeProfile("smith");
+    expect(smithProfile?.roundsJudged).toBe(2);
+    expect(getJudgeProfile("jones")?.roundsJudged).toBe(1);
+  });
+
+  it("assigns every imported row its own id even when judge/tournament/date match", () => {
+    const csv = [
+      "judgeId,tournamentName,date,division,winningSide,affSpeakerPoints,negSpeakerPoints",
+      "smith,Berkeley,2026-01-10,PF,aff,28,28",
+      "smith,Berkeley,2026-01-10,PF,neg,27,29",
+    ].join("\n");
+
+    bulkImportJudgeRoundRecords(csv);
+
+    const ids = listJudgeRoundRecords().map((record) => record.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+
+  it("imports the well-formed rows and reports the skipped ones", () => {
+    const csv = [
+      "judgeId,tournamentName,date,division,winningSide,affSpeakerPoints,negSpeakerPoints",
+      "smith,Berkeley,2026-01-10,PF,aff,28,28",
+      ",Glenbrooks,2026-02-01,PF,neg,27,29",
+    ].join("\n");
+
+    const result = bulkImportJudgeRoundRecords(csv);
+
+    expect(result.importedCount).toBe(1);
+    expect(result.skippedCount).toBe(1);
+    expect(result.errors).toHaveLength(1);
+    expect(listJudgeRoundRecords()).toHaveLength(1);
+  });
+
+  it("does not touch storage or any profile when every row is invalid", () => {
+    const result = bulkImportJudgeRoundRecords(
+      "judgeId,tournamentName,date,division,winningSide,affSpeakerPoints,negSpeakerPoints",
+    );
+
+    expect(result).toMatchObject({ importedCount: 0, skippedCount: 0, affectedJudgeIds: [] });
+    expect(listJudgeRoundRecords()).toEqual([]);
+  });
+
+  it("merges into a judge's existing rounds rather than replacing them", () => {
+    recordJudgeRound(entry({ id: "r1", judgeId: "smith", tournamentName: "Berkeley" }));
+
+    const result = bulkImportJudgeRoundRecords(
+      [
+        "judgeId,tournamentName,date,division,winningSide,affSpeakerPoints,negSpeakerPoints",
+        "smith,Glenbrooks,2026-02-01,PF,neg,27,29",
+      ].join("\n"),
+    );
+
+    expect(result.importedCount).toBe(1);
+    expect(getJudgeProfile("smith")?.roundsJudged).toBe(2);
   });
 });

@@ -190,13 +190,51 @@ back into `research-task-routing.ts`/`progress-unlocks.ts`, and (like the
 roster it draws from) only ever compares judges that already have a saved
 profile logged through this same panel.
 
+## Bulk import (CSV)
+
+Logging one ballot at a time doesn't scale to a coach or scout's existing
+spreadsheet of judged rounds, so a **Bulk import (CSV)** section sits below
+the log form: paste a CSV (a header row naming the columns, in any order,
+then one row per round) and every well-formed row is persisted in one pass.
+
+Required columns: `judgeId`, `tournamentName`, `date`, `division`,
+`winningSide` (`aff`/`neg`), `affSpeakerPoints`, and `negSpeakerPoints`.
+Optional: `paceWpm`, `theoryArgumentRaised`/`theoryArgumentWon`
+(true/false, or yes/no, 1/0 — a blank cell defaults to `false`, and
+"won" is forced false whenever "raised" is false, mirroring the log
+form's own rule that a theory argument can't be won without being raised),
+and `paradigmId` (one of the built-in paradigm ids — `flow`, `lay`,
+`policymaker`, `critic`, `educator`, `truth-tester` — matched
+case-insensitively, or left blank for "not tagged").
+
+A row that fails to parse — a missing required field, an unrecognized
+`winningSide`/boolean/`paradigmId`, or a non-numeric points/pace value — is
+skipped and reported by row number rather than aborting the whole import,
+the same convention [Opponent Team Profiles](opponent-team-profiles.md)'
+bulk CSV import uses. Every imported row gets its own id and is appended to
+the full ballot history (never replacing an existing one), and each
+affected judge's profile is re-aggregated once per import, not once per row.
+
+Implemented by `judge/judge-round-record-csv-import.ts#parseJudgeRoundRecordsCsv`
+(a pure, dependency-free parser) composed with
+`state/judgeRoundRecords.ts#bulkImportJudgeRoundRecords`, which does the
+persistence and re-aggregation. Vitest-covered in
+`test/judge-round-record-csv-import.test.ts` (parsing) and
+`test/judgeRoundRecords.test.ts` (the bulk-import store wrapper).
+
 ## Known gaps
 
 - No real ballot data source yet (follow-up (a) — no `Round`/ballot schema
   in this repo captures speaker points, pace, or theory outcomes today);
-  every round is entered by hand through this panel's form, or supplied by
-  a caller of `recordJudgeRound`/`saveJudgeProfile` directly. This is the
-  same gap the [Opponent Team Profiles](opponent-team-profiles.md) panel has.
+  every round is entered by hand through this panel's form or its Bulk
+  import (CSV) section, or supplied by a caller of
+  `recordJudgeRound`/`bulkImportJudgeRoundRecords`/`saveJudgeProfile`
+  directly. This is the same gap the
+  [Opponent Team Profiles](opponent-team-profiles.md) panel has, and — like
+  that panel's own CSV import — the bulk import above doesn't need the
+  still-blocked live Tabroom scrape (see `TODO.md`'s "Confirmed blocker"
+  section): it's a manual upload path for ballots already in a spreadsheet,
+  not a live fetch.
 - ~~Undo has no matching "redo"~~ Closed: a Redo action now steps forward
   again to whatever version Undo just replaced (see "Correcting a logged
   round" above). Undo (and now redo) history is still capped at the 10 most

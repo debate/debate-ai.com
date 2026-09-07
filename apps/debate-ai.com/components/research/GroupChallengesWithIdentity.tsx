@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s
+ * @fileoverview Thin wrapper over `debate-team-collaboration`'s
  * `GroupChallengesPanel` that prefills each challenge's "Record a win
  * (contributor ID)" field from this app's real signed-in session, via
  * `deriveContributorIdFromSessionIdentity`. The panel itself stays

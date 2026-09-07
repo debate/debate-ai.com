@@ -27,6 +27,28 @@
  * active again with a fresh 0-count (progress is always scored against just
  * today's contributions, so no separate "reset the count" step is needed).
  *
+ * `QuestTemplate.difficulty`/`QUEST_DIFFICULTY_POINTS` close the "quest
+ * difficulty tiers" follow-up named under the "🎯 Daily Quests and Targets"
+ * bullet in TODO.md: a quest can carry an `easy`/`medium`/`hard` difficulty
+ * (mirroring `drill-generator.ts`'s `DrillDifficulty` naming exactly), worth
+ * an escalating point value once complete. A template with no `difficulty`
+ * — every quest saved before this change — is treated as `"medium"` via
+ * `getQuestDifficulty` rather than requiring a one-time backfill.
+ * `buildUnderCoveredArgumentQuests` now rates each seeded quest by how many
+ * more cards it still needs (`remainingCardsToQuestDifficulty`), and
+ * `computeQuestProgress`/`buildQuestBoardPointsSummary` carry that through to
+ * a point total a quest board can display.
+ *
+ * `QuestTeam`/`buildTeamQuestCompetitionStandings` close the "team-vs-team
+ * quest competitions" follow-up named under the "🎯 Daily Quests and
+ * Targets" bullet in TODO.md: a team is just a named roster of contributor
+ * ids, and its standing is the sum of its own members'
+ * `computeContributorQuestPoints` (each member scored against the exact same
+ * quest board, narrowed to their own contributions first) — reusing
+ * `buildDailyQuestBoard`/`buildQuestBoardPointsSummary` rather than a
+ * separate team-scoring rule. See `state/dailyQuests.ts` for the persisted
+ * team roster and `panels/DailyQuestsPanel.tsx` for the UI.
+ *
  * @module lib/daily-quests
  */
 
@@ -61,6 +83,19 @@ export interface QuestTarget {
 /** How often a recurring quest template's cycle resets, once its `expiresOn` passes. */
 export type QuestRecurrence = "daily" | "weekly";
 
+/** A rough effort rating for a quest, mirroring `drill-generator.ts`'s `DrillDifficulty` naming exactly. */
+export type QuestDifficulty = "easy" | "medium" | "hard";
+
+/** A template with no `difficulty` — every quest saved before this field existed — is treated as this. */
+export const DEFAULT_QUEST_DIFFICULTY: QuestDifficulty = "medium";
+
+/** Points a quest is worth once complete, by difficulty tier. */
+export const QUEST_DIFFICULTY_POINTS: Record<QuestDifficulty, number> = {
+  easy: 5,
+  medium: 10,
+  hard: 20,
+};
+
 /** One daily goal: reach `targetCount` matching contributions to complete it. */
 export interface QuestTemplate {
   id: string;
@@ -71,6 +106,18 @@ export interface QuestTemplate {
   expiresOn?: string;
   /** When set alongside `expiresOn`, an expired cycle rolls `expiresOn` forward by this cadence instead of the quest disappearing for good. Has no effect without `expiresOn`. */
   recurrence?: QuestRecurrence;
+  /** How much effort this quest is worth; omitted means `DEFAULT_QUEST_DIFFICULTY` (see `getQuestDifficulty`). */
+  difficulty?: QuestDifficulty;
+}
+
+/** `template.difficulty`, defaulting to `DEFAULT_QUEST_DIFFICULTY` for a template saved before this field existed. */
+export function getQuestDifficulty(template: QuestTemplate): QuestDifficulty {
+  return template.difficulty ?? DEFAULT_QUEST_DIFFICULTY;
+}
+
+/** How many points completing `template` is worth, from `QUEST_DIFFICULTY_POINTS`. */
+export function getQuestDifficultyPoints(template: QuestTemplate): number {
+  return QUEST_DIFFICULTY_POINTS[getQuestDifficulty(template)];
 }
 
 /** One quest's progress for a given day. */
@@ -81,6 +128,9 @@ export interface QuestProgress {
   completedCount: number;
   remainingCount: number;
   isComplete: boolean;
+  difficulty: QuestDifficulty;
+  /** This quest's point value (from `QUEST_DIFFICULTY_POINTS`), regardless of whether it's complete yet. */
+  points: number;
 }
 
 /** Whether `template` has expired as of `dayKey` (a UTC calendar day formatted "YYYY-MM-DD") — a quest with no `expiresOn` never expires; one expires the day *after* `expiresOn`, so it still counts on that day itself. */
@@ -144,7 +194,21 @@ export function computeQuestProgress(
     completedCount,
     remainingCount: Math.max(0, quest.targetCount - completedCount),
     isComplete: completedCount >= quest.targetCount,
+    difficulty: getQuestDifficulty(quest),
+    points: getQuestDifficultyPoints(quest),
   };
+}
+
+/**
+ * Narrows a quest board to one `difficulty`, or returns it unchanged for
+ * `"all"` — mirrors `drill-generator.ts`'s `filterDrillsByDifficulty` exactly.
+ */
+export function filterQuestBoardByDifficulty(
+  board: QuestProgress[],
+  difficulty: QuestDifficulty | "all",
+): QuestProgress[] {
+  if (difficulty === "all") return board;
+  return board.filter((quest) => quest.difficulty === difficulty);
 }
 
 /**
@@ -171,13 +235,135 @@ export function buildQuestBoardSummaryText(board: QuestProgress[]): string {
   return `${completeCount}/${board.length} quests complete today`;
 }
 
+/** Points earned so far today (completed quests only) versus the board's full point value. */
+export interface QuestBoardPointsSummary {
+  earnedPoints: number;
+  totalPoints: number;
+}
+
+/**
+ * Tallies a quest board's points: `earnedPoints` from quests already
+ * complete, `totalPoints` across every quest on the board regardless of
+ * completion — the denominator for a "N/M points today" progress display.
+ */
+export function buildQuestBoardPointsSummary(board: QuestProgress[]): QuestBoardPointsSummary {
+  return board.reduce(
+    (summary, quest) => ({
+      earnedPoints: summary.earnedPoints + (quest.isComplete ? quest.points : 0),
+      totalPoints: summary.totalPoints + quest.points,
+    }),
+    { earnedPoints: 0, totalPoints: 0 },
+  );
+}
+
+/** Renders a short "N/M points today" summary line, mirroring `buildQuestBoardSummaryText`. */
+export function buildQuestBoardPointsSummaryText(board: QuestProgress[]): string {
+  const { earnedPoints, totalPoints } = buildQuestBoardPointsSummary(board);
+  return `${earnedPoints}/${totalPoints} points earned today`;
+}
+
+/**
+ * A named roster of contributor ids competing together on the quest board —
+ * the "team-vs-team quest competitions" follow-up named under the "🎯 Daily
+ * Quests and Targets" bullet in TODO.md. Kept separate from
+ * `CoachingProgramConfig`'s roster (`debate-team-collaboration`'s own
+ * `round/coaching-program.ts`) rather than reusing it: a coaching program is
+ * one squad a coach manages, while a quest competition is two or more squads
+ * competing against each other on the same board, and this module has no
+ * dependency on that one.
+ */
+export interface QuestTeam {
+  id: string;
+  name: string;
+  contributorIds: string[];
+}
+
+/** One team member's own points earned today, same denominator (`totalPoints`) every member and team shares since they're all scored against the same board. */
+export interface TeamMemberQuestPoints extends QuestBoardPointsSummary {
+  contributorId: string;
+}
+
+/** One team's standing in a quest competition: its own board, scored only against its members' contributions, rolled up. */
+export interface TeamQuestStanding {
+  teamId: string;
+  teamName: string;
+  earnedPoints: number;
+  totalPoints: number;
+  members: TeamMemberQuestPoints[];
+}
+
+/**
+ * Scores one contributor's own points earned today: the same quest board
+ * every contributor is scored against, but narrowed first to just this
+ * contributor's own contributions — mirroring `computeQuestProgress`'s
+ * day-scoping via `buildDailyQuestBoard`, then folding it with
+ * `buildQuestBoardPointsSummary`.
+ */
+export function computeContributorQuestPoints(
+  quests: QuestTemplate[],
+  contributions: QuestContribution[],
+  contributorId: string,
+  now: number,
+): QuestBoardPointsSummary {
+  const ownContributions = contributions.filter((contribution) => contribution.contributorId === contributorId);
+  return buildQuestBoardPointsSummary(buildDailyQuestBoard(quests, ownContributions, now));
+}
+
+/**
+ * Builds every team's standing for today's quest board: each team's
+ * `earnedPoints`/`totalPoints` is the sum of its own members'
+ * `computeContributorQuestPoints`, so a team with more active members (or
+ * members further along on today's quests) ranks higher, not just whichever
+ * single contributor is furthest ahead. Sorted by `earnedPoints` descending,
+ * tie-broken by `teamId` for a stable, deterministic order (mirroring
+ * `buildDailyQuestBoard`'s own tie-break convention). A team with no members
+ * scores 0/0.
+ */
+export function buildTeamQuestCompetitionStandings(
+  teams: QuestTeam[],
+  quests: QuestTemplate[],
+  contributions: QuestContribution[],
+  now: number,
+): TeamQuestStanding[] {
+  return teams
+    .map((team) => {
+      const members = team.contributorIds.map((contributorId) => ({
+        contributorId,
+        ...computeContributorQuestPoints(quests, contributions, contributorId, now),
+      }));
+      const totals = members.reduce(
+        (summary, member) => ({
+          earnedPoints: summary.earnedPoints + member.earnedPoints,
+          totalPoints: summary.totalPoints + member.totalPoints,
+        }),
+        { earnedPoints: 0, totalPoints: 0 },
+      );
+      return { teamId: team.id, teamName: team.name, members, ...totals };
+    })
+    .sort((a, b) => b.earnedPoints - a.earnedPoints || a.teamId.localeCompare(b.teamId));
+}
+
+/**
+ * Rates a seeded "find N more cards" quest by how many more cards it still
+ * needs — the more still missing, the harder the quest — mirroring
+ * `drill-generator.ts`'s `vulnerabilityScoreToDifficulty` banding style.
+ */
+export function remainingCardsToQuestDifficulty(remaining: number): QuestDifficulty {
+  if (remaining <= 1) return "easy";
+  if (remaining === 2) return "medium";
+  return "hard";
+}
+
 /**
  * Derives a ready-made daily quest set directly from a topic-coverage report:
  * one "find N more cards for X" quest per under-covered tracked argument
  * (via the existing `topic-coverage.ts` `getUnderCoveredArguments`), asking
  * for just enough additional cards to clear `thresholds.minCards`. Reuses
  * the coverage report's classification directly rather than introducing a
- * separate under-coverage signal.
+ * separate under-coverage signal. Each quest's `difficulty` scales with how
+ * many cards it's still short (`remainingCardsToQuestDifficulty`), so a
+ * barely-thin argument seeds an easy quest while a wholly-missing one seeds
+ * a hard one.
  */
 export function buildUnderCoveredArgumentQuests(
   report: TopicCoverageReport,
@@ -190,6 +376,7 @@ export function buildUnderCoveredArgumentQuests(
       description: `Find ${remaining} more card${remaining === 1 ? "" : "s"} for "${argument.argBlock}"`,
       target: { kind: "card", argBlock: argument.argBlock },
       targetCount: remaining,
+      difficulty: remainingCardsToQuestDifficulty(remaining),
     };
   });
 }

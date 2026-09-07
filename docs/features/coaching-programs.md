@@ -43,10 +43,10 @@ Opening a program's board (topic entered in the panel):
 panels/CoachingProgramsPanel.tsx
   → buildPersistedCoachingProgramBoard(programId, topic, now)  — state/persistedCoachingProgramBoard.ts
       → getCoachingProgram(programId)                          — state/coachingPrograms.ts
-      → readPersistedTopicSprintInputs(topic)                  — debate-card-search's state/topicSprints.ts
-      → listGroupChallenges()                                  — debate-card-search's state/groupChallenges.ts
-      → listContributions() (filtered to a submittedAt timestamp) — debate-card-search's state/contributions.ts
-      → listChallengeWinEvents()                                — debate-card-search's state/challengeWinEvents.ts
+      → readPersistedTopicSprintInputs(topic)                  — debate-team-collaboration's state/topicSprints.ts
+      → listGroupChallenges()                                  — debate-team-collaboration's state/groupChallenges.ts
+      → listContributions() (filtered to a submittedAt timestamp) — debate-research-evidence's state/contributions.ts
+      → listChallengeWinEvents()                                — debate-team-collaboration's state/challengeWinEvents.ts
       → buildCoachingProgramMemberFlows(program.memberIds)      — state/roundContributorFlows.ts (default; overridable)
       → buildCoachingProgramMemberPracticeRounds(program.memberIds) — state/roundContributorFlows.ts (default; overridable)
       → buildCoachingProgramBoard({ program, topicSprint, challenges, contributions, winEvents, memberFlows, memberPracticeRounds })
@@ -67,7 +67,7 @@ Programs and Group Challenges") in `TODO.md`: "wiring `CoachingProgramsPanel`
 (in `debate-round`) to render a program's full `buildCoachingProgramBoard`
 off this and the topic-sprint composition." `state/persistedCoachingProgramBoard.ts`
 composes every one of `buildCoachingProgramBoard`'s inputs directly from its
-own persisted store, mirroring `debate-card-search`'s `state/topicSprints.ts`
+own persisted store, mirroring `debate-team-collaboration`'s `state/topicSprints.ts`
 and `state/prepRooms.ts` "compose every input from its own store"
 convention, so the panel doesn't need to assemble a topic sprint, challenge
 roster, contribution feed, win-event list, or member-flow roster itself. The

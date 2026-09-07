@@ -43,6 +43,17 @@
  * extracted row across the whole batch is saved to the round's flow summary
  * in one `saveFlowSummary` call.
  *
+ * Closes idea #6's "a one-click 'send to Prep Notes' action for a summary"
+ * follow-up: each round card gets a "Send to Prep Notes" action (mirroring
+ * `BrainstormBoardPanel`'s "Send to Argument Library" inline-form pattern)
+ * that hands the round's rendered summary text off to the caller-supplied
+ * `onSendToPrepNotes` prop. This panel has no dependency on
+ * `debate-team-collaboration` (where the actual `PrepNote` store lives), so
+ * the prop is left for the app/page layer that already depends on both to
+ * wire up (mirroring `CoachingProgramRosterAnalyticsWithDrills.tsx`'s own
+ * cross-package composition split) — the action is hidden entirely when no
+ * handler is supplied.
+ *
  * @module panels/FlowSummariesPanel
  */
 
@@ -81,6 +92,16 @@ interface ExtractEntryDraft {
 
 const EMPTY_EXTRACT_ENTRY: ExtractEntryDraft = { speech: "", transcriptText: "" }
 
+export interface FlowSummariesPanelProps {
+  /**
+   * Called with a round's rendered summary text when "Send to Prep Notes"
+   * is submitted. Hidden entirely when omitted — see this file's header
+   * comment for why this panel doesn't call into `debate-team-collaboration`
+   * directly.
+   */
+  onSendToPrepNotes?: (input: { roundId: string; authorId: string; text: string }) => void
+}
+
 /**
  * Renders the Speech Transcript Summaries panel: every persisted
  * `FlowSummaryRecord`, one card per round, with a "Clear" action per round.
@@ -88,7 +109,7 @@ const EMPTY_EXTRACT_ENTRY: ExtractEntryDraft = { speech: "", transcriptText: "" 
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function FlowSummariesPanel() {
+export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProps = {}) {
   const [records, setRecords] = useState<FlowSummaryRecord[] | null>(null)
   const [extractRoundId, setExtractRoundId] = useState("")
   const [extractEntries, setExtractEntries] = useState<ExtractEntryDraft[]>([{ ...EMPTY_EXTRACT_ENTRY }])
@@ -96,6 +117,9 @@ export function FlowSummariesPanel() {
   const [extractLoading, setExtractLoading] = useState(false)
   const [extractError, setExtractError] = useState<string | null>(null)
   const [extractStatus, setExtractStatus] = useState<string | null>(null)
+  const [sendFormOpenRoundId, setSendFormOpenRoundId] = useState<string | null>(null)
+  const [sendAuthorId, setSendAuthorId] = useState("")
+  const [sentToPrepNotesRoundIds, setSentToPrepNotesRoundIds] = useState<Set<string>>(new Set())
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) =>
@@ -117,6 +141,18 @@ export function FlowSummariesPanel() {
   const handleClear = (roundId: string) => {
     deleteFlowSummary(roundId)
     refresh()
+  }
+
+  const handleOpenSendToPrepNotes = (roundId: string) => {
+    setSendFormOpenRoundId(sendFormOpenRoundId === roundId ? null : roundId)
+  }
+
+  const handleSendToPrepNotes = (roundId: string, text: string) => {
+    if (!onSendToPrepNotes || !sendAuthorId.trim()) return
+    onSendToPrepNotes({ roundId, authorId: sendAuthorId.trim(), text })
+    setSentToPrepNotesRoundIds((prev) => new Set(prev).add(roundId))
+    setSendFormOpenRoundId(null)
+    setSendAuthorId("")
   }
 
   const updateEntrySpeech = (index: number, speech: string) =>
@@ -313,13 +349,52 @@ export function FlowSummariesPanel() {
             <div key={record.roundId} className="rounded-lg border border-border p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-semibold text-foreground">Round {record.roundId}</h2>
-                <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
-                  Clear
-                </Button>
+                <div className="flex items-center gap-2">
+                  {onSendToPrepNotes &&
+                    (sentToPrepNotesRoundIds.has(record.roundId) ? (
+                      <Badge variant="outline">✓ Sent to Prep Notes</Badge>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleOpenSendToPrepNotes(record.roundId)}
+                      >
+                        Send to Prep Notes
+                      </Button>
+                    ))}
+                  <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
+                    Clear
+                  </Button>
+                </div>
               </div>
               <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
                 {buildFlowSummaryTextFromRows(rows)}
               </pre>
+              {sendFormOpenRoundId === record.roundId && (
+                <div className="mt-3 space-y-2 rounded-md border border-border p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Send this round's summary above to Prep Notes as a round-anchored note.
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-[minmax(0,220px)_auto] sm:items-end">
+                    <div className="space-y-1">
+                      <Label htmlFor={`flow-summaries-send-author-${record.roundId}`}>Your name</Label>
+                      <Input
+                        id={`flow-summaries-send-author-${record.roundId}`}
+                        value={sendAuthorId}
+                        onChange={(e) => setSendAuthorId(e.target.value)}
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                    <Button
+                      size="sm"
+                      disabled={!sendAuthorId.trim()}
+                      onClick={() => handleSendToPrepNotes(record.roundId, buildFlowSummaryTextFromRows(rows))}
+                    >
+                      Send
+                    </Button>
+                  </div>
+                </div>
+              )}
               {unanswered.length > 0 && (
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>

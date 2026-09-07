@@ -1,0 +1,40 @@
+---
+title: "Expandable Heading Structure"
+---
+
+# Expandable Heading Structure — outline nav panel + heading breadcrumb
+
+Renders a heading nav/outline panel alongside the document, plus a sticky
+"current heading" breadcrumb, in CardMirror (the editor behind
+`/reason-editor`).
+
+- **Route:** `/reason-editor` (and every other CardMirror-hosted surface)
+- **Package:** `debate-editor`
+
+## What it shows
+
+**Nav panel** — every heading-anchored node in the live document, indented
+by level, with collapse, drag-and-drop reordering, multi-select, a
+per-level filter, and caret-follow highlighting. Defaults to visible on
+every CardMirror host except `/reason-editor`, which renders its own
+file-tree/Open-Tabs sidebar beside the editor and therefore starts the
+nav pane hidden — the left-edge pull-tab or the View-menu toggle re-shows
+it there.
+
+**Heading breadcrumb** — a sticky one-line ancestor trail (e.g. "Case ›
+Advantage 1 › Uniqueness") for whichever heading is at the top of the
+current scroll position, each segment clickable.
+
+## Data flow
+
+```
+editor/headings.ts → collectHeadings(doc)
+editor/nav-panel.ts (NavigationPanel)
+editor/heading-breadcrumb.ts → computeBreadcrumbPath(headings, pos)
+editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
+```
+
+## Known gaps
+
+The breadcrumb is single-doc only — multi-pane and multi-window don't have
+one yet.
