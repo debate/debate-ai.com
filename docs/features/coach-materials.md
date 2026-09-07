@@ -349,6 +349,38 @@ Vitest-covered: `isCoachMaterialApproved`/`filterApprovedCoachMaterials`/
 `status`/`reviewedBy`/`reviewedAt`/`reviewNote` fields in
 `test/savedCoachMaterials.test.ts`'s `isValidCoachMaterialRecord` cases.
 
+## Cross-tab live update
+
+Until now, `CoachMaterialsPanel` only read its persisted material library,
+tag list, pending-review queue, an open material's version history, and
+conversation history on mount, or right after its own save/edit/delete/
+review/restore/clear actions — a teammate's second open tab (or a second
+browser window on the same machine) saving or reviewing a material showed a
+stale view until it re-rendered for some unrelated reason. The browser's
+`storage` event fires only in *other* same-origin tabs/windows, never the
+one that made the write, so it's exactly the missing cross-tab signal every
+other closed panel in this repo already uses (see
+[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+section).
+
+A new pure helper, `state/live-update.ts`'s
+`isCoachMaterialsPanelLiveUpdateStorageEvent`, checks whether the event's
+`key` is one of this panel's three backing stores (`coachMaterials`, the
+material library the main list/tag dropdown/Pending review section all
+derive from; `coachMaterialVersions`, a material's "History" toggle; and
+`coachConversation`, the "Ask the coach" conversation history) or `null` (a
+`localStorage.clear()`). `CoachMaterialsPanel` subscribes to `window`'s
+`storage` event and calls its existing `refresh()` closure — plus
+re-reading the conversation history and, if a material's "History" toggle is
+open, that material's version list — when the predicate matches. The
+in-progress upload/edit form draft, "Reviewer name" field, per-material
+reject-reason inputs, and the "Ask the coach" question/answer fields are all
+left untouched, only the persisted views re-read.
+
+Vitest-covered in `test/live-update.test.ts` (every backing-store key, the
+`null`-key clear-all case, and unrelated/substring-matching keys staying
+ignored).
+
 ## Known gaps
 
 - No transcription of an *uploaded* audio/video recording file — follow-up
@@ -393,3 +425,9 @@ Vitest-covered: `isCoachMaterialApproved`/`filterApprovedCoachMaterials`/
   current question's grounded prompt (see "Conversation history" above).
   History is per-browser localStorage, not a shared team resource, the same
   gap every other localStorage-backed panel in this repo has.
+- ~~No cross-tab live update — a teammate's second open tab (or a second
+  browser window on the same machine) saving, editing, deleting, reviewing,
+  or restoring a material showed a stale view until it re-rendered for some
+  unrelated reason.~~ Closed: a `storage`-event listener now refreshes the
+  panel's persisted views when another tab writes to one of its three
+  backing stores — see "Cross-tab live update" above.
