@@ -66,8 +66,10 @@
  * edits, undoes/redoes, deletes, or bulk-imports a scouted round — closing
  * the "every other localStorage-backed panel in this repo still has no
  * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
- * for this panel, mirroring `debate-speech-writer`'s `JudgeProfilesPanel`
- * convention exactly.
+ * for this panel. The in-progress "Log a scouted round" form draft, bulk-
+ * import CSV textarea, and any built "Compare vs. opponent" comparison are
+ * left untouched, matching every other closed panel's "refresh the derived
+ * view, not the draft" convention.
  *
  * @module panels/OpponentTeamProfilesPanel
  */
@@ -89,6 +91,7 @@ import {
 } from "../ui/primitives/select"
 import { Switch } from "../ui/primitives/switch"
 import { Textarea } from "../ui/primitives/textarea"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   Table,
   TableBody,
@@ -125,7 +128,6 @@ import {
   type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
-import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
