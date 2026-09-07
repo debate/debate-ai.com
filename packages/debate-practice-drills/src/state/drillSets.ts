@@ -58,6 +58,16 @@
  * `drillReviews` input — see
  * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`.
  *
+ * `buildContributorDrillCompletionStats` below closes the other Known-gaps
+ * item that same doc names: the Roster Analytics table's own "it doesn't yet
+ * fold in drill-completion rate or practice-round counts" follow-up. It joins
+ * the same `roundId`-to-contributor mapping against this store's persisted
+ * drill sets, dependency-free the same way, resolved by the same app/page
+ * layer alongside a `roundContributorFlows.ts`-driven practice-round lookup
+ * into a `memberDrillPracticeStatus` map — see that same file and
+ * `docs/features/coaching-programs.md`'s "Per-member drill/practice-round
+ * status" section.
+ *
  * @module state/drillSets
  */
 
@@ -388,6 +398,37 @@ export function getDrillSetCompletionStats(record: Pick<DrillSetRecord, "drills"
     (drillIndex) => drillIndex >= 0 && drillIndex < total,
   ).length;
   return { completed, total, ratio: total > 0 ? completed / total : 0 };
+}
+
+/**
+ * Joins a coaching program roster's recorded practice-round flows —
+ * `debate-team-collaboration`'s `state/roundContributorFlows.ts#listRoundContributorFlows`,
+ * duck-typed here as `{ contributorId, roundId }` rather than imported (this
+ * package isn't otherwise a dependent of `debate-team-collaboration`, and a
+ * structural type avoids adding an edge just for two fields) — against this
+ * store's own persisted drill sets by `roundId`, for the "drill-completion
+ * rate" half of `docs/features/coaching-programs.md`'s Known gaps: the
+ * Roster Analytics table only showed challenge standings and quest streaks,
+ * even though the `roundId`-to-contributor mapping needed to look up each
+ * member's drill-completion progress already exists. A member with no
+ * recorded round, or whose recorded round has no persisted drill set here,
+ * is simply absent from the result — mirrors `buildDrillReviewCalendarEvents`'s
+ * "no data, no event" handling above. See
+ * `apps/debate-ai.com/app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`,
+ * the sole caller (same circular-dependency reason `buildDrillReviewCalendarEvents`
+ * documents above).
+ */
+export function buildContributorDrillCompletionStats(
+  contributorRoundIds: { contributorId: string; roundId: string }[],
+  drillSetRecords: Pick<DrillSetRecord, "roundId" | "drills" | "completedDrillIndexes">[],
+): Record<string, DrillSetCompletionStats> {
+  const byRoundId = new Map(drillSetRecords.map((record) => [record.roundId, record]));
+  const stats: Record<string, DrillSetCompletionStats> = {};
+  for (const { contributorId, roundId } of contributorRoundIds) {
+    const record = byRoundId.get(roundId);
+    if (record) stats[contributorId] = getDrillSetCompletionStats(record);
+  }
+  return stats;
 }
 
 /**

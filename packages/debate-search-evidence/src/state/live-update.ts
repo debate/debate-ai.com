@@ -336,14 +336,17 @@ export function isRevisionIncentivesLiveUpdateStorageEvent(event: { key: string 
  * The `localStorage` keys `CardScoringPanel` reads from:
  * `state/cardScores.ts`'s own `"cardScores"` store (every submitted card the
  * ranking is built from), `state/aiCardAssessments.ts`'s `"aiCardAssessments"`
- * (each card's persisted AI verdict, keyed by card id), and
+ * (each card's persisted AI verdict, keyed by card id),
  * `state/trackedArguments.ts`'s `"trackedArguments"` (the topic switcher's
- * "Use tracked keywords" quick-pick list).
+ * "Use tracked keywords" quick-pick list), and `state/cardScoreHistory.ts`'s
+ * `"cardScoreHistory"` (the per-contributor score-trend chart's own
+ * append-only log).
  */
 export const CARD_SCORING_LIVE_UPDATE_STORAGE_KEYS = [
   "cardScores",
   "aiCardAssessments",
   "trackedArguments",
+  "cardScoreHistory",
 ] as const;
 
 /**

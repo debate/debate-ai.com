@@ -102,6 +102,7 @@ import type { OwnRoundHistoryRecord } from "../state/ownRoundHistory"
 import { buildRoundPairingRecordFromDraft } from "../state/roundPairings"
 import type { RoundPairingRecord } from "../state/roundPairings"
 import { useRoundPairings } from "../hooks/useRoundPairings"
+import { isPreRoundBriefingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 const NONE_VALUE = "__none__"
 
@@ -205,6 +206,23 @@ export function PreRoundBriefingsPanel() {
     setOpponentProfiles(listOpponentTeamProfiles())
     setJudgeProfiles(listJudgeProfiles())
     setOwnRoundHistory(listOwnRoundHistory())
+  }, [])
+
+  /**
+   * Live-update this panel when another browser tab saves/clears a
+   * briefing or logs/removes a round in this team's own round history — a
+   * `storage` event never fires in the tab that made the write, only in
+   * other same-origin tabs. `roundPairings` is covered by
+   * `useRoundPairings` itself, not here.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPreRoundBriefingsPanelLiveUpdateStorageEvent(event)) return
+      if (event.key === null || event.key === "preRoundBriefings") refresh()
+      if (event.key === null || event.key === "ownRoundHistory") refreshOwnRoundHistory()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const refresh = () => setBriefings(buildPreRoundBriefingsPanelView())

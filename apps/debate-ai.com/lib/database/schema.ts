@@ -1014,35 +1014,23 @@ export const practiceVsAiDebates = sqliteTable(
 
 export type PracticeVsAiDebateRow = typeof practiceVsAiDebates.$inferSelect;
 
-// ── Contacts, blocks, and shared collab cards ───────────────────────────
-//
-// The account-linked half of the CardMirror editor's real-time collaboration
-// (`packages/debate-editor/src/editor/collab/*`): a session's share code +
-// guest pass used to reach a partner only over the clipboard (or, on desktop,
-// the cardmirror pairing mailbox, which binds to a per-browser key rather
-// than to a person). These tables key everything to better-auth `user.id`s
-// instead, so a signed-in user has a contacts list they can share a live
-// card with directly, and a shared card shows up as available on the
-// recipient's account wherever they sign in. See docs/features/contacts.md.
-
-// One row per unordered pair of users. A request is a `pending` row from
-// `requester` to `addressee`; accepting flips it to `accepted` (the row is
-// then symmetric — either side is "the contact" of the other); declining or
-// removing deletes it. The unique index is on the directed pair, and the
-// route layer checks both directions before inserting so a pair never ends
-// up with two rows.
-export const contacts = sqliteTable(
-  "contacts",
+// Account-linked scheduled-sprint-session sync — the "🤝 Team Collaboration
+// Mode" bullet's "Scheduled sessions ... are ... local-only (no account
+// sync yet)" Known gap in TODO.md. Same add/delete-only shape as
+// `savedDailyBestCardComments` above (a session is scheduled once and only
+// ever cancelled, never edited): `clientId` holds the session's own
+// generated `SprintSession.id`, and `topic` is a plain (non-unique) indexed
+// column for a future per-topic query, mirroring `dayKey`'s role there.
+export const savedSprintSessions = sqliteTable(
+  "saved_sprint_sessions",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
-    requesterId: text("requester_id")
+    userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
-    addresseeId: text("addressee_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    /** "pending" | "accepted". */
-    status: text("status").notNull().default("pending"),
+    clientId: text("client_id").notNull(),
+    topic: text("topic").notNull(),
+    data: text("data").notNull(),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -1051,97 +1039,13 @@ export const contacts = sqliteTable(
       .default(sql`(unixepoch())`),
   },
   (table) => ({
-    pairIdx: uniqueIndex("idx_contacts_pair").on(table.requesterId, table.addresseeId),
-    addresseeIdx: index("idx_contacts_addressee").on(table.addresseeId),
+    userIdIdx: index("idx_saved_sprint_sessions_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_sprint_sessions_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    topicIdx: index("idx_saved_sprint_sessions_topic").on(table.topic),
   }),
 );
 
-export type ContactRow = typeof contacts.$inferSelect;
-
-// A unilateral block: `blocker` no longer receives requests, shares, or
-// contact-list visibility from `blocked`. Blocking also deletes any contact
-// row and revokes any card shares between the two (both directions) in the
-// same request — see /api/contacts/block.
-export const userBlocks = sqliteTable(
-  "user_blocks",
-  {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    blockerId: text("blocker_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    blockedId: text("blocked_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    createdAt: integer("created_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`(unixepoch())`),
-  },
-  (table) => ({
-    pairIdx: uniqueIndex("idx_user_blocks_pair").on(table.blockerId, table.blockedId),
-    blockedIdx: index("idx_user_blocks_blocked").on(table.blockedId),
-  }),
-);
-
-export type UserBlockRow = typeof userBlocks.$inferSelect;
-
-// A live collab card (a CardMirror co-editing session) shared from one
-// account to one contact. `shareCode` is the editor's `cmshare1.<roomId>.
-// <key>` code and `guestPass` the relay's account-less join credential —
-// together exactly what a pasted invite link carries. Storing them here is a
-// deliberate trade: the room key is E2E material the relay itself never
-// sees, but a share that follows a person across devices has to live
-// somewhere their account can read it, and this app's own database is that
-// place (the same trust the `documents` table already holds for the doc's
-// full content). `roomId` is denormalized from the code so re-sharing the
-// same room to the same person upserts (unique on `(room_id, recipient_id)`)
-// rather than duplicating. `revokedAt` is the owner's "stop sharing";
-// `openedAt` is the recipient's first open, for the "new" badge.
-export const cardShares = sqliteTable(
-  "card_shares",
-  {
-    id: integer("id").primaryKey({ autoIncrement: true }),
-    ownerId: text("owner_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    recipientId: text("recipient_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    roomId: text("room_id").notNull(),
-    shareCode: text("share_code").notNull(),
-    guestPass: text("guest_pass"),
-    title: text("title").notNull().default(""),
-    message: text("message"),
-    createdAt: integer("created_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`(unixepoch())`),
-    updatedAt: integer("updated_at", { mode: "timestamp" })
-      .notNull()
-      .default(sql`(unixepoch())`),
-    openedAt: integer("opened_at", { mode: "timestamp" }),
-    revokedAt: integer("revoked_at", { mode: "timestamp" }),
-  },
-  (table) => ({
-    ownerIdx: index("idx_card_shares_owner").on(table.ownerId),
-    recipientIdx: index("idx_card_shares_recipient").on(table.recipientId),
-    roomRecipientIdx: uniqueIndex("idx_card_shares_room_recipient").on(table.roomId, table.recipientId),
-  }),
-);
-
-export type CardShareRow = typeof cardShares.$inferSelect;
-
-// Last-seen heartbeat, one row per user, bumped by the contacts poll
-// (`GET /api/contacts`) — the cheapest possible "is this contact around
-// right now" signal, so a contacts list can show who is online without a
-// push channel (none exists in this repo; see `useAccountNotifications`'s
-// polling note). Threshold lives in `debate-team-collaboration`'s
-// `lib/contacts.ts` (`isPresenceOnline`).
-export const userPresence = sqliteTable("user_presence", {
-  userId: text("user_id")
-    .primaryKey()
-    .references(() => user.id, { onDelete: "cascade" }),
-  lastSeenAt: integer("last_seen_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`(unixepoch())`),
-});
-
-export type UserPresenceRow = typeof userPresence.$inferSelect;
+export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
