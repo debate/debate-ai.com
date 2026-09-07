@@ -259,6 +259,33 @@ briefing already created via the form above (there's no round event info to
 compose a fresh one from a matchup id alone), so create the briefing here
 first if it doesn't exist yet.
 
+## Cross-tab live update
+
+`PreRoundBriefingsPanel` previously read `buildPreRoundBriefingsPanelView`,
+`listOwnRoundHistory`, and (via `useRoundPairings`) `buildRoundPairingsPanelView`
+on mount only, so a briefing saved/cleared, a round logged/removed, or a
+pairing saved/removed in another browser tab left the panel showing a stale
+view until something else forced a re-render. The panel (for the first two)
+and `useRoundPairings` (for the third) now subscribe to the browser's
+`storage` event, which the spec fires only in *other* same-origin
+tabs/windows, never the one that made the write. A pure helper,
+`flow/live-update.ts`'s `isPreRoundBriefingsPanelLiveUpdateStorageEvent`,
+checks whether the event's `key` is one of `state/preRoundBriefings.ts`'s
+`"preRoundBriefings"`, `state/ownRoundHistory.ts`'s `"ownRoundHistory"`,
+`state/roundPairings.ts`'s `"roundPairings"`, or `null` (a
+`localStorage.clear()`); when it is, the panel re-reads whichever of
+`buildPreRoundBriefingsPanelView()`/`listOwnRoundHistory()` the changed key
+(or a `null` key) matches, and `useRoundPairings` re-reads
+`buildRoundPairingsPanelView()`. This closes the matching entry in
+[`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism." Vitest-covered in `packages/debate-round/test/live-update.test.ts`
+(every backing key, the `null`-key clear-all case, and unrelated/substring-
+matching keys). The panel's and `useRoundPairings`'s own `storage`-listener
+wiring remain intentionally untested, matching every other panel/hook in
+this repo whose wiring is exercised only through the shared pure predicate's
+own tests.
+
 ## Known gaps
 
 - No real data source for tournament results, event details, or ballots —

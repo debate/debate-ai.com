@@ -3,12 +3,14 @@ import {
   FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_LIVE_UPDATE_STORAGE_KEYS,
+  PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   STRATEGY_LIVE_UPDATE_STORAGE_KEYS,
   isFlowAnnotationsPanelLiveUpdateStorageEvent,
   isFlowEditLogPanelLiveUpdateStorageEvent,
   isFlowLiveUpdateStorageEvent,
+  isPreRoundBriefingsPanelLiveUpdateStorageEvent,
   isPrepNoteNotificationsLiveUpdateStorageEvent,
   isPrepNotesPanelLiveUpdateStorageEvent,
   isStrategyLiveUpdateStorageEvent,
@@ -145,5 +147,28 @@ describe("isFlowEditLogPanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains the store name as a substring", () => {
     expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "flowEditsBackup" })).toBe(false);
     expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "old_flowEdits" })).toBe(false);
+  });
+});
+
+describe("isPreRoundBriefingsPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel (and useRoundPairings) reads", () => {
+    for (const key of PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "strategyRecommendations" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a covered store name as a substring", () => {
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "preRoundBriefingsBackup" })).toBe(false);
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "old_ownRoundHistory" })).toBe(false);
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "roundPairingsArchive" })).toBe(false);
   });
 });
