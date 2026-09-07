@@ -60,6 +60,13 @@
  * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
  * "Download comparison" action once a comparison is built.
  *
+ * Also subscribes to `window`'s `storage` event (see `../flow/live-update.ts`'s
+ * `isOpponentTeamProfilesPanelLiveUpdateStorageEvent`) so a teammate logging,
+ * editing, undoing/redoing, deleting, or bulk-importing a scouted round in
+ * another tab shows up here without a manual reload — closing this panel's
+ * share of `shared-flow-sync.md`'s "every other localStorage-backed panel in
+ * this repo still has no cross-tab live-update mechanism" Known gap.
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
@@ -116,6 +123,7 @@ import {
   type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
@@ -205,6 +213,25 @@ export function OpponentTeamProfilesPanel() {
     setRoster(buildOpponentTeamProfilesRoster())
     setRecords(listOpponentRoundRecords())
   }
+
+  /**
+   * Live-update this panel when another browser tab logs, edits,
+   * undoes/redoes, deletes, or bulk-imports a scouted round — a `storage`
+   * event never fires in the tab that made the write, only in other
+   * same-origin tabs. Only the persisted roster/logged-rounds list
+   * re-reads; the in-progress "Log a scouted round" form draft, bulk-CSV
+   * textarea, and comparison selection are left untouched, matching every
+   * other closed panel's "refresh the derived view, not the draft"
+   * convention.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const teamId = draft.teamId.trim()

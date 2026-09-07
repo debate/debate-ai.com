@@ -260,6 +260,34 @@ Levenshtein edit-distance search over the same id list, local to
 mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 `opponentRoundRecords.test.ts`.
 
+## Cross-tab live update
+
+The panel subscribes to `window`'s `storage` event and re-reads the
+persisted roster and logged-rounds list whenever another same-origin
+browser tab writes to `opponentTeamProfiles`, `opponentRoundRecords`,
+`opponentRoundRecordEditHistory`, or `opponentRoundRecordRedoHistory` (the
+`storage` event never fires in the tab that made the write itself, only in
+*other* open tabs) — see `../../packages/debate-round/src/flow/live-update.ts`'s
+`isOpponentTeamProfilesPanelLiveUpdateStorageEvent`. A teammate logging,
+editing, undoing/redoing, deleting, or bulk-importing a scouted round in one
+tab now shows up in every other open tab without a manual reload, including
+whether a "Logged rounds" row's Undo/Redo actions are available (those are
+read straight from the edit/redo history at render time, so the same
+re-render that refreshes the roster also picks up the latest history). The
+in-progress "Log a scouted round" form draft, the "Bulk import (CSV)"
+textarea, and the "Compare vs. opponent" selection/result are left
+untouched — only the persisted roster/logged-rounds list re-reads, matching
+[Judge Profiles](judge-profiles.md)'s and every other closed panel's
+"refresh the derived view, not the draft" convention. `ownRoundHistory` is
+deliberately excluded: "Compare vs. opponent" only reads it on demand when
+the **Compare** button is clicked, not as part of the panel's persistently-
+rendered view.
+
+Vitest-covered in `packages/debate-round/test/live-update.test.ts`'s
+`isOpponentTeamProfilesPanelLiveUpdateStorageEvent` describe block (every
+backing-store key, the `null`-key clear-all case, and unrelated/substring-
+matching keys staying ignored).
+
 ## Known gaps
 
 - No real round-history data source yet (follow-up (a) — no Tabroom/tab-service
