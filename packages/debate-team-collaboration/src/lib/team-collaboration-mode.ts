@@ -365,11 +365,12 @@ export function getPastSprintSessions(sessions: SprintSession[], todayKey: strin
 /**
  * A shared sticky note on a topic sprint's whiteboard — the "a shared
  * whiteboard/canvas for sprint brainstorming" follow-up named under the "🤝
- * Team Collaboration Mode" bullet in TODO.md. Deliberately not a positioned
- * (x/y) canvas: this repo's panel UI kit has no drag-and-drop primitive
- * anywhere, so the first slice is a colored sticky-note board (order is
- * creation order, not a freeform layout), mirroring every other idea's
- * "smallest useful vertical slice first" convention.
+ * Team Collaboration Mode" bullet in TODO.md. The first slice was a colored
+ * sticky-note board with creation-order layout only; a later slice added the
+ * freeform (x/y, draggable) canvas this bullet's own `Next:` list had asked
+ * for, once it became clear that needed no new drag-and-drop dependency —
+ * just plain pointer events in `TopicSprintPanel` itself, since a note has
+ * nothing more exotic to drag than its own position.
  */
 export type WhiteboardNoteColor = "yellow" | "pink" | "blue" | "green" | "purple";
 
@@ -382,7 +383,18 @@ export const WHITEBOARD_NOTE_COLORS: readonly WhiteboardNoteColor[] = [
   "purple",
 ];
 
-export interface WhiteboardNote {
+/**
+ * A note's freeform position on the whiteboard canvas, as a percentage
+ * (0-100) of the canvas's own width/height rather than raw pixels — so the
+ * layout holds up at any panel width instead of baking in one fixed canvas
+ * size.
+ */
+export interface WhiteboardNotePosition {
+  x: number;
+  y: number;
+}
+
+export interface WhiteboardNote extends WhiteboardNotePosition {
   id: string;
   topic: string;
   text: string;
@@ -393,6 +405,53 @@ export interface WhiteboardNote {
 
 const MAX_WHITEBOARD_NOTE_LENGTH = 280;
 
+/** Reserves a note's own footprint so a dragged note never lands mostly off-canvas. */
+const WHITEBOARD_NOTE_MAX_X = 82;
+const WHITEBOARD_NOTE_MAX_Y = 78;
+
+/** Clamps a freeform position so the note stays fully inside the whiteboard canvas. */
+export function clampWhiteboardNotePosition(position: WhiteboardNotePosition): WhiteboardNotePosition {
+  return {
+    x: Math.min(WHITEBOARD_NOTE_MAX_X, Math.max(0, position.x)),
+    y: Math.min(WHITEBOARD_NOTE_MAX_Y, Math.max(0, position.y)),
+  };
+}
+
+/**
+ * Default placement for the Nth note added to a topic's board (0-indexed),
+ * cascading diagonally so consecutive notes don't land exactly on top of
+ * each other before anyone drags them, then wrapping back toward the
+ * top-left once the cascade would otherwise run off the canvas.
+ */
+export function cascadeWhiteboardNotePosition(existingNoteCountForTopic: number): WhiteboardNotePosition {
+  const step = Math.max(0, existingNoteCountForTopic) % 8;
+  return clampWhiteboardNotePosition({ x: step * 10, y: step * 9 });
+}
+
+/**
+ * A note's effective render position: its own stored `x`/`y` when present,
+ * or a cascade default (keyed off its position within the already-sorted
+ * board) for a note persisted before freeform positions existed — this
+ * repo's localStorage stores are never runtime-validated against a schema,
+ * so an older browser's saved note may simply lack these fields, the same
+ * "legacy record with no field at all still counts" compatibility every
+ * other localStorage-backed idea in this repo uses.
+ */
+export function resolveWhiteboardNotePosition(
+  note: WhiteboardNote,
+  indexInBoard: number,
+): WhiteboardNotePosition {
+  if (typeof note.x === "number" && typeof note.y === "number") {
+    return clampWhiteboardNotePosition({ x: note.x, y: note.y });
+  }
+  return cascadeWhiteboardNotePosition(indexInBoard);
+}
+
+/** Returns a copy of `note` moved to a new, clamped freeform position. */
+export function moveWhiteboardNote(note: WhiteboardNote, position: WhiteboardNotePosition): WhiteboardNote {
+  return { ...note, ...clampWhiteboardNotePosition(position) };
+}
+
 export interface CreateWhiteboardNoteInput {
   id: string;
   topic: string;
@@ -400,13 +459,18 @@ export interface CreateWhiteboardNoteInput {
   authorId: string;
   color: WhiteboardNoteColor;
   createdAt: number;
+  /** Initial freeform position; defaults to the top-left corner (`{x: 0, y: 0}`) when omitted. */
+  position?: WhiteboardNotePosition;
 }
 
 /**
  * Builds a `WhiteboardNote`, validating that it names a topic and has
  * non-blank text. `text` is trimmed and clamped to `MAX_WHITEBOARD_NOTE_LENGTH`;
  * an unrecognized `color` falls back to the palette's first entry rather than
- * throwing (a note is still worth keeping even with a garbled color).
+ * throwing (a note is still worth keeping even with a garbled color); an
+ * omitted `position` defaults to the canvas's top-left corner (callers
+ * typically pass `cascadeWhiteboardNotePosition` themselves, mirroring how
+ * they already pass `nextWhiteboardNoteColor` for `color`).
  */
 export function createWhiteboardNote(input: CreateWhiteboardNoteInput): WhiteboardNote {
   if (!input.topic.trim()) {
@@ -424,6 +488,7 @@ export function createWhiteboardNote(input: CreateWhiteboardNoteInput): Whiteboa
     color: WHITEBOARD_NOTE_COLORS.includes(input.color) ? input.color : WHITEBOARD_NOTE_COLORS[0],
     authorId: input.authorId.trim() || "me",
     createdAt: input.createdAt,
+    ...clampWhiteboardNotePosition(input.position ?? { x: 0, y: 0 }),
   };
 }
 

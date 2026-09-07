@@ -6,6 +6,8 @@ import {
   buildSprintRetrospectiveText,
   buildTopicSprint,
   buildTopicSprintSummaryText,
+  cascadeWhiteboardNotePosition,
+  clampWhiteboardNotePosition,
   createSprintNote,
   createSprintSession,
   createWhiteboardNote,
@@ -16,7 +18,9 @@ import {
   getSessionsForTopic,
   getUpcomingSprintSessions,
   getWhiteboardNotesForTopic,
+  moveWhiteboardNote,
   nextWhiteboardNoteColor,
+  resolveWhiteboardNotePosition,
   sortNotesByCreatedAt,
   sortSprintSessionsByDay,
   sprintRetrospectiveFilename,
@@ -630,7 +634,48 @@ describe("createWhiteboardNote", () => {
       color: "blue",
       authorId: "alice",
       createdAt: NOW,
+      x: 0,
+      y: 0,
     });
+  });
+
+  it("defaults to the top-left corner when no position is given", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+    });
+    expect(note.x).toBe(0);
+    expect(note.y).toBe(0);
+  });
+
+  it("uses the given position, clamped to stay inside the canvas", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+      position: { x: 40, y: -10 },
+    });
+    expect(note.x).toBe(40);
+    expect(note.y).toBe(0);
+
+    const clamped = createWhiteboardNote({
+      id: "n2",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+      position: { x: 500, y: 500 },
+    });
+    expect(clamped.x).toBe(82);
+    expect(clamped.y).toBe(78);
   });
 
   it("clamps overly long text to 280 characters", () => {
@@ -726,5 +771,86 @@ describe("nextWhiteboardNoteColor", () => {
     expect(nextWhiteboardNoteColor(1)).toBe(WHITEBOARD_NOTE_COLORS[1]);
     expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length)).toBe(WHITEBOARD_NOTE_COLORS[0]);
     expect(nextWhiteboardNoteColor(WHITEBOARD_NOTE_COLORS.length + 2)).toBe(WHITEBOARD_NOTE_COLORS[2]);
+  });
+});
+
+describe("clampWhiteboardNotePosition", () => {
+  it("leaves an already-in-range position untouched", () => {
+    expect(clampWhiteboardNotePosition({ x: 30, y: 40 })).toEqual({ x: 30, y: 40 });
+  });
+
+  it("clamps negative coordinates up to 0", () => {
+    expect(clampWhiteboardNotePosition({ x: -5, y: -100 })).toEqual({ x: 0, y: 0 });
+  });
+
+  it("clamps oversized coordinates down to the note's reserved footprint", () => {
+    expect(clampWhiteboardNotePosition({ x: 1000, y: 1000 })).toEqual({ x: 82, y: 78 });
+  });
+});
+
+describe("cascadeWhiteboardNotePosition", () => {
+  it("cascades diagonally for the first several notes", () => {
+    expect(cascadeWhiteboardNotePosition(0)).toEqual({ x: 0, y: 0 });
+    expect(cascadeWhiteboardNotePosition(1)).toEqual({ x: 10, y: 9 });
+    expect(cascadeWhiteboardNotePosition(2)).toEqual({ x: 20, y: 18 });
+  });
+
+  it("wraps back toward the top-left once the cascade would run off canvas", () => {
+    expect(cascadeWhiteboardNotePosition(8)).toEqual(cascadeWhiteboardNotePosition(0));
+  });
+
+  it("never returns a negative index for a negative count", () => {
+    expect(cascadeWhiteboardNotePosition(-3)).toEqual({ x: 0, y: 0 });
+  });
+});
+
+describe("resolveWhiteboardNotePosition", () => {
+  const positionedNote: WhiteboardNote = createWhiteboardNote({
+    id: "n1",
+    topic: "Immigration",
+    text: "Note",
+    authorId: "alice",
+    color: "blue",
+    createdAt: NOW,
+    position: { x: 25, y: 33 },
+  });
+
+  it("uses the note's own stored position when it has one", () => {
+    expect(resolveWhiteboardNotePosition(positionedNote, 4)).toEqual({ x: 25, y: 33 });
+  });
+
+  it("falls back to a cascade position for a legacy note with no stored x/y", () => {
+    const legacyNote = { ...positionedNote, x: undefined, y: undefined } as unknown as WhiteboardNote;
+    expect(resolveWhiteboardNotePosition(legacyNote, 2)).toEqual(cascadeWhiteboardNotePosition(2));
+  });
+});
+
+describe("moveWhiteboardNote", () => {
+  it("returns a copy of the note with its position updated", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+    });
+    const moved = moveWhiteboardNote(note, { x: 15, y: 20 });
+    expect(moved).toEqual({ ...note, x: 15, y: 20 });
+    expect(note.x).toBe(0); // the original note is untouched
+  });
+
+  it("clamps the new position", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+    });
+    const moved = moveWhiteboardNote(note, { x: -20, y: 900 });
+    expect(moved.x).toBe(0);
+    expect(moved.y).toBe(78);
   });
 });

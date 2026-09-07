@@ -4,6 +4,7 @@ import {
   listWhiteboardNotes,
   listWhiteboardNotesForTopic,
   saveWhiteboardNote,
+  updateWhiteboardNotePosition,
 } from "../src/state/sprintWhiteboard";
 import type { WhiteboardNote } from "../src/lib/team-collaboration-mode";
 
@@ -31,6 +32,8 @@ const SOLVENCY_NOTE: WhiteboardNote = {
   color: "yellow",
   authorId: "alice",
   createdAt: 100,
+  x: 10,
+  y: 20,
 };
 const TOPICALITY_NOTE: WhiteboardNote = {
   id: "note-2",
@@ -39,6 +42,8 @@ const TOPICALITY_NOTE: WhiteboardNote = {
   color: "blue",
   authorId: "bob",
   createdAt: 200,
+  x: 30,
+  y: 40,
 };
 
 beforeEach(() => {
@@ -106,6 +111,29 @@ describe("deleteWhiteboardNote", () => {
   it("is a no-op when the id isn't stored", () => {
     saveWhiteboardNote(TOPICALITY_NOTE);
     deleteWhiteboardNote("missing");
+    expect(listWhiteboardNotes()).toEqual([TOPICALITY_NOTE]);
+  });
+});
+
+describe("updateWhiteboardNotePosition", () => {
+  it("moves a stored note to a new position", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    saveWhiteboardNote(TOPICALITY_NOTE);
+    updateWhiteboardNotePosition("note-1", { x: 55, y: 60 });
+
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 55, y: 60 }, TOPICALITY_NOTE]);
+  });
+
+  it("clamps the new position to stay inside the canvas", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    updateWhiteboardNotePosition("note-1", { x: -50, y: 900 });
+
+    expect(listWhiteboardNotes()).toEqual([{ ...SOLVENCY_NOTE, x: 0, y: 78 }]);
+  });
+
+  it("is a no-op when the id isn't stored", () => {
+    saveWhiteboardNote(TOPICALITY_NOTE);
+    updateWhiteboardNotePosition("missing", { x: 5, y: 5 });
     expect(listWhiteboardNotes()).toEqual([TOPICALITY_NOTE]);
   });
 });
