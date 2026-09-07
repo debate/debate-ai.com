@@ -63,6 +63,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -218,9 +219,10 @@ export function CoachingProgramRosterAnalyticsPanel({
       </div>
 
       {programs.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No coaching programs yet. Create one above to see its roster analytics here.
-        </div>
+        <EmptyState
+          title="No coaching programs yet."
+          message="Create one above to see its roster analytics here."
+        />
       ) : (
         <>
           <div className="space-y-1.5">
@@ -242,9 +244,7 @@ export function CoachingProgramRosterAnalyticsPanel({
           </div>
 
           {analytics.length === 0 ? (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              This program has no roster members yet.
-            </div>
+            <EmptyState title="This program has no roster members yet." />
           ) : (
             <Table>
               <TableHeader>

@@ -120,6 +120,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
+import { EmptyState } from "../ui/panels/panel-shell"
 import { Textarea } from "../ui/primitives/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 import {
@@ -473,11 +474,11 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
       </div>
 
       {visibleFeed.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {showFlaggedOnly
-            ? "No contributions currently flagged as popularity-only."
-            : "No contributions yet. Submit one above to start the feed."}
-        </div>
+        showFlaggedOnly ? (
+          <EmptyState title="No contributions currently flagged as popularity-only." />
+        ) : (
+          <EmptyState title="No contributions yet." message="Submit one above to start the feed." />
+        )
       ) : (
         <div className="space-y-2">
           {visibleFeed.map((entry) => {

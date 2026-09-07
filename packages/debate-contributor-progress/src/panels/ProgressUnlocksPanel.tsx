@@ -41,7 +41,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -137,10 +137,10 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
     return (
       <div className="p-4 sm:p-6">
         <h1 className="mb-1 text-xl font-semibold text-foreground">Progress Unlocks</h1>
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No contributors yet. Unlock status fills in as contributors submit cards, summaries, and
-          analytics — or complete routed research tasks, which count toward a tier on their own.
-        </div>
+        <EmptyState
+          title="No contributors yet."
+          message="Unlock status fills in as contributors submit cards, summaries, and analytics — or complete routed research tasks, which count toward a tier on their own."
+        />
       </div>
     )
   }

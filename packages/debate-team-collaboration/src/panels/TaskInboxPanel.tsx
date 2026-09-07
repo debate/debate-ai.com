@@ -116,6 +116,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -509,15 +510,13 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
       {myTasksFilter}
       {availabilitySection}
       {topics.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No research tasks routed yet. Route a topic above, or the inbox fills in once a topic's
-          coverage gaps are routed to contributors some other way.
-        </div>
+        <EmptyState
+          title="No research tasks routed yet."
+          message="Route a topic above, or the inbox fills in once a topic's coverage gaps are routed to contributors some other way."
+        />
       )}
       {topics.length > 0 && trimmedMyId && visibleTopics.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No tasks routed to "{trimmedMyId}" right now.
-        </div>
+        <EmptyState title={`No tasks routed to "${trimmedMyId}" right now.`} />
       )}
       {capacity.length > 0 && (
         <div className="rounded-lg border border-border p-4">

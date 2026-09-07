@@ -25,7 +25,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { MeterBar } from "../ui/panels/panel-shell"
+import { EmptyState, MeterBar } from "../ui/panels/panel-shell"
 import {
   buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
@@ -186,9 +186,7 @@ export function TopicCoverageDashboardPanel() {
       </div>
 
       {topic.trim() === "" ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          Enter a topic above to view or build its coverage checklist.
-        </div>
+        <EmptyState title="Enter a topic above to view or build its coverage checklist." />
       ) : (
         <>
           <div className="rounded-lg border border-border p-4 space-y-3">
@@ -258,9 +256,10 @@ export function TopicCoverageDashboardPanel() {
               )}
             </div>
           ) : (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              No tracked arguments yet for {topic.trim()}. Add one above to start the checklist.
-            </div>
+            <EmptyState
+              title={`No tracked arguments yet for ${topic.trim()}.`}
+              message="Add one above to start the checklist."
+            />
           )}
 
           {snapshots.length > 0 && (

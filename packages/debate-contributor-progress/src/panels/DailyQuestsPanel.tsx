@@ -77,6 +77,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildPersistedDailyQuestBoard,
   buildPersistedTeamQuestCompetition,
@@ -577,9 +578,10 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
       </div>
 
       {board.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No quests yet. Add one above, or seed a set from a topic's under-covered arguments.
-        </div>
+        <EmptyState
+          title="No quests yet."
+          message="Add one above, or seed a set from a topic's under-covered arguments."
+        />
       ) : (
         <div className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">

@@ -63,7 +63,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -351,10 +351,10 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
       )}
 
       {roster.length === 0 && (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No progress yet. This fills in once contributors submit contributions or have research
-          tasks routed to them.
-        </div>
+        <EmptyState
+          title="No progress yet."
+          message="This fills in once contributors submit contributions or have research tasks routed to them."
+        />
       )}
 
       {roster.length > 0 && (

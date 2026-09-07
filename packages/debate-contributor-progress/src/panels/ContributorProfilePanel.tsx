@@ -24,6 +24,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import { isContributionLeaderboardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import type { ContributorEndorsementHistoryEntry } from "debate-research-evidence/src/state/contributions"
@@ -116,9 +117,7 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
     return (
       <div className="p-4 sm:p-6">
         <h1 className="mb-1 text-xl font-semibold text-foreground">{profile.contributorId}</h1>
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No activity yet for this contributor.
-        </div>
+        <EmptyState title="No activity yet for this contributor." />
       </div>
     )
   }

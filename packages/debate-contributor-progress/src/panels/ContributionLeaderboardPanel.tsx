@@ -67,6 +67,7 @@ import { Info } from "lucide-react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -239,11 +240,17 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
           {rangeSelect}
           {categorySelect}
         </div>
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {isFiltered
-            ? `No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}. Try widening the range or category filter to see the full roster.`
-            : "No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and analytics."}
-        </div>
+        {isFiltered ? (
+          <EmptyState
+            title={`No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}.`}
+            message="Try widening the range or category filter to see the full roster."
+          />
+        ) : (
+          <EmptyState
+            title="No contributions yet."
+            message="The leaderboard fills in as contributors submit cards, summaries, and analytics."
+          />
+        )}
       </div>
     )
   }

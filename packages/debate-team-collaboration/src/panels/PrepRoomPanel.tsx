@@ -240,9 +240,7 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
       </div>
 
       {!room ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          Enter a topic above to open its prep room.
-        </div>
+        <EmptyState title="Enter a topic above to open its prep room." />
       ) : (
         <div className="space-y-4">
           <p className="whitespace-pre-line text-sm text-muted-foreground">{buildPrepRoomSummaryText(room)}</p>

@@ -44,6 +44,7 @@ import { Input } from "debate-speech-writer/src/ui/primitives/input"
 import { Label } from "debate-speech-writer/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
+import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildCustomOpponentPersona,
   DEFAULT_OPPONENT_DIFFICULTY,
@@ -275,9 +276,10 @@ export function OpponentPersonaPickerPanel() {
       </div>
 
       {selections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No opponent persona selections yet. Save one above to see it here.
-        </div>
+        <EmptyState
+          title="No opponent persona selections yet."
+          message="Save one above to see it here."
+        />
       ) : (
         <div className="space-y-2">
           {selections.map((selection) => (
