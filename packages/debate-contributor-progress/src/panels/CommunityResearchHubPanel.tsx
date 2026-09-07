@@ -29,6 +29,7 @@
 
 import { useMemo, useState } from "react"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildCommunityResearchHubSections,
   buildCommunityResearchHubSummaryText,
@@ -116,9 +117,7 @@ export function CommunityResearchHubPanel({ favoriteHrefs = [] }: CommunityResea
       )}
 
       {sections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No spaces match "{query}".
-        </div>
+        <EmptyState title={`No spaces match "${query}".`} />
       ) : (
         <div className="flex flex-col gap-6">
           {sections.map((section) => (

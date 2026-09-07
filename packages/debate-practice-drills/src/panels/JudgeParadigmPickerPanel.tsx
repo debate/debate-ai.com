@@ -25,6 +25,7 @@ import { Input } from "debate-speech-writer/src/ui/primitives/input"
 import { Label } from "debate-speech-writer/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
+import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildCustomJudgeParadigm,
   buildJudgeParadigmPrompt,
@@ -208,9 +209,10 @@ export function JudgeParadigmPickerPanel() {
       </div>
 
       {selections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No judge paradigm selections yet. Save one above to see it here.
-        </div>
+        <EmptyState
+          title="No judge paradigm selections yet."
+          message="Save one above to see it here."
+        />
       ) : (
         <div className="space-y-2">
           {selections.map((selection) => {

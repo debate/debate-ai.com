@@ -118,11 +118,10 @@ export function ArgumentLibraryPanel() {
 
   if (library.topicFolders.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No argument library entries yet. The library fills in as cards and reusable blocks are
-        submitted to the shared evidence repository, or as Contributions Feed submissions are
-        tagged with a topic and case area.
-      </div>
+      <EmptyState
+        title="No argument library entries yet."
+        message="The library fills in as cards and reusable blocks are submitted to the shared evidence repository, or as Contributions Feed submissions are tagged with a topic and case area."
+      />
     )
   }
 

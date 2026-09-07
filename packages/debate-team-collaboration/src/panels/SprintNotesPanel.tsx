@@ -44,6 +44,7 @@ import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   assignPersistedSprintNote,
   buildSprintNotesPanelView,
@@ -274,9 +275,7 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
       </div>
 
       {groups.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No sprint notes yet. Add one above to start a topic sprint.
-        </div>
+        <EmptyState title="No sprint notes yet." message="Add one above to start a topic sprint." />
       ) : (
         <div className="space-y-4">
           {groups.map((group) => {

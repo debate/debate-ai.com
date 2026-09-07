@@ -50,6 +50,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
+import { EmptyState } from "../ui/panels/panel-shell"
 import { Textarea } from "../ui/primitives/textarea"
 import {
   addReviewComment,
@@ -358,9 +359,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
       </div>
 
       {reviews.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No cards in review yet. Start one above to see it here.
-        </div>
+        <EmptyState title="No cards in review yet." message="Start one above to see it here." />
       ) : (
         <div className="space-y-3">
           {reviews.map((review) => {

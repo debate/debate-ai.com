@@ -69,6 +69,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -254,10 +255,10 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
           Every contributor's daily-quest streak and the milestone badges it has earned.
         </p>
         {trigger}
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No streaks yet. A contributor's streak fills in once they complete a full day of daily
-          quests.
-        </div>
+        <EmptyState
+          title="No streaks yet."
+          message="A contributor's streak fills in once they complete a full day of daily quests."
+        />
       </div>
     )
   }

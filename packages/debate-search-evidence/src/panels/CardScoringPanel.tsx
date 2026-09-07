@@ -67,6 +67,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { Textarea } from "../ui/primitives/textarea"
+import { EmptyState } from "../ui/panels/panel-shell"
 import { MeterBar } from "../ui/panels/panel-shell"
 import {
   Select,
@@ -398,9 +399,7 @@ export function CardScoringPanel() {
       </div>
 
       {ranking.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No cards scored yet. Submit one above to start the ranking.
-        </div>
+        <EmptyState title="No cards scored yet." message="Submit one above to start the ranking." />
       ) : (
         <div className="space-y-2">
           {ranking.map((breakdown) => {

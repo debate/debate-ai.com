@@ -42,6 +42,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildGroupChallengesPanelView,
   deleteGroupChallenge,
@@ -341,9 +342,10 @@ export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesP
       </div>
 
       {challenges.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No group challenges yet. Create one above to start a friendly squad challenge.
-        </div>
+        <EmptyState
+          title="No group challenges yet."
+          message="Create one above to start a friendly squad challenge."
+        />
       ) : (
         <div className="space-y-3">
           {challenges.map((challenge) => {

@@ -268,3 +268,35 @@ vitest project wired up at all (see `apps/debate-ai.com/vitest.config.ts`'s `pro
   compared every panel against every shared primitive (e.g.
   `PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
   unaudited).
+  A further slice re-ran the "duplicated empty states" search across every
+  package instead of just `debate-round`/`debate-practice-drills` (the
+  original pass's scope) and found the exact same hand-rolled
+  `<div className="p-6 text-center text-sm text-muted-foreground">…</div>`
+  shape still duplicated in 21 more panels across `debate-ui`,
+  `debate-practice-drills`, `debate-team-collaboration`,
+  `debate-contributor-progress`, and `debate-research-evidence` (several —
+  `ArgumentLibraryPanel`, `ProgressUnlocksPanel`, `PrepRoomPanel`,
+  `TopicCoverageDashboardPanel` — already imported `EmptyState`/`MeterBar`
+  from the same `panel-shell` module for a different empty state in the
+  same file, just missed this one), and migrated all of them to
+  `EmptyState`, splitting each message on its first "…yet." sentence into
+  `title`/`message` the same way prior slices did, or passing a
+  single-sentence/dynamic message as `title` alone when there was no clean
+  split (e.g. `FeaturesPanel`'s `No features match "{query}".`). Two
+  packages' matching panels — `debate-speech-writer`'s `JudgeProfilesPanel`/
+  `CoachMaterialsPanel` and `debate-videos`'s `StandingsPanel` — were left
+  alone: neither package depends on `debate-round` or
+  `debate-research-evidence` (the two packages whose `panel-shell.tsx`
+  exports `EmptyState`), so closing those would first require adding a new
+  cross-package dependency edge, which is out of scope for a markup-only
+  migration. `packages/debate-ui/test/features-panel.test.tsx` gained a new
+  case for `FeaturesPanel`'s empty-search state (previously untested);
+  matching render-test coverage for the other migrated panels was not
+  added, since none of the packages they live in (`debate-practice-drills`,
+  `debate-team-collaboration`, `debate-contributor-progress`,
+  `debate-research-evidence`) have any pre-existing component-render test
+  for these specific panels to extend — each panel's own pure-logic
+  functions are already covered by that package's state/lib test suite,
+  unaffected by a markup-only change, matching how the prior EmptyState
+  migration slices in `debate-round`/`debate-practice-drills` were also
+  verified via typecheck/build rather than new render tests.

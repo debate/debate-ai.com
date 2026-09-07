@@ -133,6 +133,7 @@ import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-research-evidence/src/ui/primitives/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-research-evidence/src/ui/primitives/select"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildBrainstormBoardsPanelView,
   buildBrainstormBoardsPanelViewForTopic,
@@ -577,11 +578,14 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
       </div>
 
       {boards.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {topic.trim() !== ""
-            ? `No coverage-gap boards for "${topic.trim()}" — its checklist has no under-covered arguments.`
-            : "No brainstorm ideas yet. Submit one above to start a board."}
-        </div>
+        topic.trim() !== "" ? (
+          <EmptyState
+            title={`No coverage-gap boards for "${topic.trim()}".`}
+            message="Its checklist has no under-covered arguments."
+          />
+        ) : (
+          <EmptyState title="No brainstorm ideas yet." message="Submit one above to start a board." />
+        )
       ) : (
         <div className="space-y-4">
           {boards.map((board) => (
