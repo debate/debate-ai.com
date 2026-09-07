@@ -7,6 +7,76 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎓 Coach Materials — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built (account settings,
+  dozens of `saved_*` D1 tables/`/api/*` routes linking flows, docs, and
+  rounds to signed-in users in SQL, and every tool already reachable from
+  the Tools page, CardMirror's own `MenuBar`/command palette, and the
+  feature catalog, all reconfirmed this run), so this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap and closed it
+  for `CoachMaterialsPanel` — explicitly named as the next open item by the
+  previous run's own completed-task note ("`CoachMaterialsPanel`,
+  `JudgeProfilesPanel`'s own sibling panels in `debate-speech-writer`...
+  remains open for a future run to pick up next"), confirmed still missing
+  a `storage`-event listener by grepping every panel in the repo.
+
+  Extended `packages/debate-speech-writer/src/state/live-update.ts` (which
+  already held `JudgeProfilesPanel`'s own predicate) with
+  `COACH_MATERIALS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isCoachMaterialsPanelLiveUpdateStorageEvent`, covering all three of the
+  panel's backing stores: `coachMaterials` (the material library the main
+  list, tag dropdown, and Pending review section all derive from),
+  `coachMaterialVersions` (a material's "History" toggle), and
+  `coachConversation` (the "Ask the coach" conversation history).
+  `CoachMaterialsPanel.tsx` now subscribes to `window`'s `storage` event and
+  refreshes the material library, tag list, pending-review queue, an open
+  material's version list, and the conversation history when the predicate
+  matches — a teammate saving, editing, deleting, reviewing, or restoring a
+  material (or clearing the conversation) in one tab now shows up in every
+  other open tab without a manual reload. The in-progress upload/edit form
+  draft, "Reviewer name" field, per-material reject-reason inputs, and the
+  "Ask the coach" question/answer fields are left untouched, matching
+  `JudgeProfilesPanel`'s "refresh the derived view, not the draft"
+  convention.
+
+  See `docs/features/coach-materials.md`'s new "Cross-tab live update"
+  section (plus its Known gaps closure bullet) and
+  `docs/features/shared-flow-sync.md`'s updated Known gaps bullet (added
+  `CoachMaterialsPanel` to the closed list). Vitest-covered:
+  `packages/debate-speech-writer/test/live-update.test.ts` (every backing-
+  store key, the `null`-key clear-all case, and unrelated/substring-matching
+  keys staying ignored, mirroring the existing `JudgeProfilesPanel` cases).
+  `UserSettingsPanel` (`debate-round` — its `form` is a live, directly-
+  editable settings form rather than a derived list/roster view, so closing
+  it needs refreshing only the persisted values, not stomping an unsaved
+  in-progress edit), `OpponentTeamProfilesPanel` (`debate-round`),
+  `CoachingProgramsPanel` (`debate-team-collaboration`), and every panel
+  named in `shared-flow-sync.md`'s Known gap history as still lacking the
+  mechanism (`ArgumentLibraryPanel`, `EvidenceLibraryPanel`,
+  `TopicCoverageDashboardPanel`, `AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel`) remain open for a
+  future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5144 passing, up from
+  5140 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
 - **⚖️ Judge Profiles — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

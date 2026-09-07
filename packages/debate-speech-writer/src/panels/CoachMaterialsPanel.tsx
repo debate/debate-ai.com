@@ -46,6 +46,15 @@
  * for a material that gets re-uploaded/edited" Known gap recorded in
  * `docs/features/coach-materials.md`.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isCoachMaterialsPanelLiveUpdateStorageEvent`)
+ * refreshes the material library, tag list, pending-review queue, an open
+ * material's version history, and the conversation history whenever another
+ * tab saves, edits, deletes, reviews, restores, or clears one of them —
+ * closing the "Every other localStorage-backed panel in this repo still has
+ * no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * Saves/deletes route through the new `hooks/useCoachMaterialsSync.ts`
  * (`saveMaterial`/`deleteMaterial` in place of calling
  * `state/coachMaterials.ts`'s `saveCoachMaterial`/`deleteCoachMaterial`
@@ -117,6 +126,7 @@ import {
   clearCoachConversationHistory,
   listCoachConversationTurns,
 } from "../state/coachConversation"
+import { isCoachMaterialsPanelLiveUpdateStorageEvent } from "../state/live-update"
 import type { CoachConversationTurn, CoachMaterial, CoachMaterialLibrary } from "../coach/team-coach-materials"
 
 // The labels and display order live with the material model itself, so the
@@ -230,6 +240,26 @@ export function CoachMaterialsPanel() {
     if (historyOpenId) setVersions(listVersionsForMaterial(historyOpenId))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [syncReady])
+
+  /**
+   * Live-update this panel when another browser tab saves, edits, deletes,
+   * reviews, or restores a material or version, or clears the conversation
+   * history — a `storage` event never fires in the tab that made the write,
+   * only in other same-origin tabs. Only the persisted views re-read; the
+   * in-progress upload/edit form draft, reviewer name, reject reasons, and
+   * question/answer fields are left untouched.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachMaterialsPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+      setHistory(listCoachConversationTurns())
+      if (historyOpenId) setVersions(listVersionsForMaterial(historyOpenId))
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [historyOpenId, filterQuery, filterTag])
 
   const handleSave = () => {
     const title = form.title.trim()
