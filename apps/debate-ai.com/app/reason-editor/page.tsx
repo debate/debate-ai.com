@@ -20,13 +20,14 @@
  * toggle away.
  */
 
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
 import { cn } from "../../lib/ui/lib/utils"
 import { Input } from "../../lib/ui/primitives/input"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
+import { ShareWithContacts, SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
 
 export default function ReasonEditorPage() {
   const {
@@ -61,6 +62,11 @@ export default function ReasonEditorPage() {
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
+      {/* Opens a card a contact shared (`?share=<id>` from /contacts) and
+          seeds the co-editing display name; mounted once, renders nothing. */}
+      <Suspense>
+        <SharedCardOpener />
+      </Suspense>
       {/* The app sidebar carrying these panels is `hidden md:flex`, so below
           that breakpoint they ride along at the top of the editor instead.
           No height cap here on purpose: the panels already size themselves
@@ -114,6 +120,15 @@ export default function ReasonEditorPage() {
                 placeholder="Untitled"
               />
               {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
+              {selected && (
+                <div className="ml-auto">
+                  {/* Account-linked live sharing (contacts list, /contacts).
+                      Reads `?shareWith=`, hence the Suspense. */}
+                  <Suspense>
+                    <ShareWithContacts title={selected.title} />
+                  </Suspense>
+                </div>
+              )}
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives

@@ -235,6 +235,7 @@ import { isSyncOrigin } from './sync-origin.js';
 import { listSessionRecords, deleteSessionRecord } from './collab/collab-store.js';
 import { collabEnabled } from './collab/collab-gate.js';
 import { parseJoinLinkHash } from './collab/join-link.js';
+import { hostPlugins } from './host-plugins.js';
 import { setRePickOpener, setOpenSourceOpener } from './transclusion-actions.js';
 import { isLiteBuild } from './lite.js';
 import { isTransclusionNode, fragmentHasZone } from './transclusion.js';
@@ -1365,9 +1366,9 @@ function loadCollabUi(): Promise<typeof import('./collab/collab-ui.js')> {
 // user-picked slot; single-pane joins in place (or spawns a window).
 // The returned promise reports success so the pill only consumes the
 // invite (and its share code) when the join actually landed.
-setCollabInviteJoiner((code) =>
+setCollabInviteJoiner((code, opts) =>
   loadCollabUi().then((m) =>
-    m.joinSessionWithCode(multiDocActive ? makeMultiPaneSessionDeps() : collabDeps, code),
+    m.joinSessionWithCode(multiDocActive ? makeMultiPaneSessionDeps() : collabDeps, code, opts),
   ),
 );
 setCollabInviter((target) => {
@@ -1381,9 +1382,7 @@ setCollabInviter((target) => {
 // which start never calls — so using them here bound the session to an
 // empty uid with the window-joined title ("A.docx · B.docx") in the
 // confirm, orphaned from every pane footer (field find, 2026-08-12).
-setCollabSessionStarter(() => {
-  void loadCollabUi().then((m) => m.startSessionFlow(collabDeps));
-});
+setCollabSessionStarter(() => loadCollabUi().then((m) => m.startSessionFlow(collabDeps)));
 // The Receive pill's Join button — same flow (and same deps choice) as
 // the Join Collaboration Session command: multi-pane joins into a
 // user-picked slot; single-pane in place.
@@ -5517,6 +5516,9 @@ export function buildEditorPlugins(targetUid?: string | null): Plugin[] {
   // while a session is active binds to the session's shared LoroDoc and gets
   // overwritten with the session doc (multi-pane document fusion).
   plugins.push(...collabPluginsFor(targetUid));
+  // Last: an embedding host's own plugins (the React shell's onChange
+  // reporter), so they survive this rebuild like every other one.
+  plugins.push(...hostPlugins());
   return plugins;
 }
 

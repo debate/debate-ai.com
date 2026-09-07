@@ -111,7 +111,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - 🔢 **Card numbering**, multiple **condense modes**, and a full editing-utilities set (shrink/regrow, short cites, live-zone refresh, heading move/copy/delete)
 
 **Collaboration & workflow**
-- 👥 **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery
+- 👥 **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery — plus an account-linked **contacts list** (requests, blocking, presence) to share a live card straight to a contact's account
 - 🎤 **Speech-doc targeting**: mark a doc as the live send target and send content at cursor or at end, with a persistent send history
 - 🌊 **Flow integration**: send cards or headings straight to a Flow column or cell, or pull content back
 - 📇 **Dropzone card exchange**, **Quick Cards**, and a unified command-bar search across cards, commands, settings, and ~50 other site tools
@@ -139,6 +139,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [Collaboration Prep Room](https://beta.debate-ai.com/cards/prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
 - [Team Collaboration Mode](https://beta.debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes during shared topic sprints.
 - [Prep Notes](https://beta.debate-ai.com/prep-notes) — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
+- [Contacts](https://beta.debate-ai.com/contacts) — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
 - [Notifications](https://beta.debate-ai.com/notifications) — See and mark read notifications for prep-note assignments and activity.
 - [Team Brainstorm Assist](https://beta.debate-ai.com/cards/brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
 - [Group Challenges](https://beta.debate-ai.com/cards/group-challenges) — Create squad challenges based on contributions or recorded rebuttal wins.
