@@ -177,3 +177,48 @@ export function buildRoutingSummaryText(result: RoutingResult): string {
 
   return lines.join("\n");
 }
+
+/** Form input for creating or editing a `ContributorAvailability` profile. */
+export interface ContributorAvailabilityProfileInput {
+  contributorId: string;
+  skillLevel: SkillLevel;
+  maxConcurrentTasks: number;
+}
+
+/**
+ * Builds a `ContributorAvailability` profile from the contributor-availability
+ * management form, closing the "a real `ContributorAvailability` profile
+ * management UI" follow-up named under the "Research Task Routing" bullet in
+ * TODO.md (this repo previously had no way to create or edit one — only
+ * `routeTasks`/`reassignPersistedRoutedTask` ever touched the store, and only
+ * for contributors already known some other way).
+ *
+ * Trims `contributorId` and requires it non-blank, and requires
+ * `maxConcurrentTasks` be a positive whole number — throwing a plain `Error`
+ * with a human-readable message rather than persisting a broken profile.
+ *
+ * `activeTaskCount` is never taken from the form: it's auto-tracked by
+ * `recordPersistedTaskAssigned`/`recordPersistedTaskCompleted` as tasks are
+ * actually routed/completed, so this always carries over `existing`'s
+ * current count unchanged when editing that same contributor, and starts a
+ * brand-new profile at `0`.
+ */
+export function buildContributorAvailabilityProfile(
+  input: ContributorAvailabilityProfileInput,
+  existing?: ContributorAvailability,
+): ContributorAvailability {
+  const contributorId = input.contributorId.trim();
+  if (!contributorId) {
+    throw new Error("Enter a contributor id.");
+  }
+  if (!Number.isInteger(input.maxConcurrentTasks) || input.maxConcurrentTasks < 1) {
+    throw new Error("Max concurrent tasks must be a whole number of at least 1.");
+  }
+
+  return {
+    contributorId,
+    skillLevel: input.skillLevel,
+    maxConcurrentTasks: input.maxConcurrentTasks,
+    activeTaskCount: existing && existing.contributorId === contributorId ? existing.activeTaskCount : 0,
+  };
+}

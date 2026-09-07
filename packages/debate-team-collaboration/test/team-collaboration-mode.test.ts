@@ -8,7 +8,9 @@ import {
   buildTopicSprintSummaryText,
   createSprintNote,
   createSprintSession,
+  clampWhiteboardCoordinate,
   createWhiteboardNote,
+  defaultWhiteboardNotePosition,
   getNotesAssignedTo,
   getNotesForTopic,
   getOpenFollowUps,
@@ -16,6 +18,7 @@ import {
   getSessionsForTopic,
   getUpcomingSprintSessions,
   getWhiteboardNotesForTopic,
+  moveWhiteboardNotePosition,
   nextWhiteboardNoteColor,
   sortNotesByCreatedAt,
   sortSprintSessionsByDay,
@@ -621,6 +624,8 @@ describe("createWhiteboardNote", () => {
       authorId: "  alice  ",
       color: "blue",
       createdAt: NOW,
+      x: 10,
+      y: 20,
     });
 
     expect(note).toEqual({
@@ -630,6 +635,8 @@ describe("createWhiteboardNote", () => {
       color: "blue",
       authorId: "alice",
       createdAt: NOW,
+      x: 10,
+      y: 20,
     });
   });
 
@@ -641,6 +648,8 @@ describe("createWhiteboardNote", () => {
       authorId: "alice",
       color: "blue",
       createdAt: NOW,
+      x: 10,
+      y: 20,
     });
     expect(note.text).toHaveLength(280);
   });
@@ -653,6 +662,8 @@ describe("createWhiteboardNote", () => {
       authorId: "   ",
       color: "blue",
       createdAt: NOW,
+      x: 10,
+      y: 20,
     });
     expect(note.authorId).toBe("me");
   });
@@ -665,20 +676,104 @@ describe("createWhiteboardNote", () => {
       authorId: "alice",
       color: "chartreuse" as WhiteboardNote["color"],
       createdAt: NOW,
+      x: 10,
+      y: 20,
     });
     expect(note.color).toBe(WHITEBOARD_NOTE_COLORS[0]);
   });
 
+  it("clamps x/y into the 0-100 range", () => {
+    const note = createWhiteboardNote({
+      id: "n1",
+      topic: "Immigration",
+      text: "Note",
+      authorId: "alice",
+      color: "blue",
+      createdAt: NOW,
+      x: -20,
+      y: 140,
+    });
+    expect(note.x).toBe(0);
+    expect(note.y).toBe(100);
+  });
+
   it("throws when topic is blank", () => {
     expect(() =>
-      createWhiteboardNote({ id: "n1", topic: "  ", text: "Note", authorId: "alice", color: "blue", createdAt: NOW }),
+      createWhiteboardNote({
+        id: "n1",
+        topic: "  ",
+        text: "Note",
+        authorId: "alice",
+        color: "blue",
+        createdAt: NOW,
+        x: 10,
+        y: 20,
+      }),
     ).toThrow("createWhiteboardNote: topic is required");
   });
 
   it("throws when text is blank", () => {
     expect(() =>
-      createWhiteboardNote({ id: "n1", topic: "Immigration", text: "   ", authorId: "alice", color: "blue", createdAt: NOW }),
+      createWhiteboardNote({
+        id: "n1",
+        topic: "Immigration",
+        text: "   ",
+        authorId: "alice",
+        color: "blue",
+        createdAt: NOW,
+        x: 10,
+        y: 20,
+      }),
     ).toThrow("createWhiteboardNote: text is required");
+  });
+});
+
+describe("defaultWhiteboardNotePosition", () => {
+  it("places the first four notes across one row, 22 apart, before wrapping to a second row", () => {
+    expect(defaultWhiteboardNotePosition(0)).toEqual({ x: 4, y: 4 });
+    expect(defaultWhiteboardNotePosition(1)).toEqual({ x: 26, y: 4 });
+    expect(defaultWhiteboardNotePosition(2)).toEqual({ x: 48, y: 4 });
+    expect(defaultWhiteboardNotePosition(3)).toEqual({ x: 70, y: 4 });
+    expect(defaultWhiteboardNotePosition(4)).toEqual({ x: 4, y: 28 });
+  });
+});
+
+describe("clampWhiteboardCoordinate", () => {
+  it("clamps into the 0-100 range and falls back to 0 for a non-finite value", () => {
+    expect(clampWhiteboardCoordinate(-5)).toBe(0);
+    expect(clampWhiteboardCoordinate(150)).toBe(100);
+    expect(clampWhiteboardCoordinate(50)).toBe(50);
+    expect(clampWhiteboardCoordinate(Number.NaN)).toBe(0);
+  });
+});
+
+describe("moveWhiteboardNotePosition", () => {
+  const note: WhiteboardNote = createWhiteboardNote({
+    id: "n1",
+    topic: "Immigration",
+    text: "Note",
+    authorId: "alice",
+    color: "blue",
+    createdAt: NOW,
+    x: 10,
+    y: 20,
+  });
+
+  it("updates the matching note's x/y, leaving others untouched", () => {
+    const other: WhiteboardNote = { ...note, id: "n2", x: 50, y: 50 };
+    const moved = moveWhiteboardNotePosition([note, other], "n1", 60, 75);
+
+    expect(moved).toEqual([{ ...note, x: 60, y: 75 }, other]);
+  });
+
+  it("clamps the new position into the 0-100 range", () => {
+    const moved = moveWhiteboardNotePosition([note], "n1", -20, 140);
+    expect(moved).toEqual([{ ...note, x: 0, y: 100 }]);
+  });
+
+  it("returns the list unchanged when the id isn't found", () => {
+    const moved = moveWhiteboardNotePosition([note], "missing", 60, 75);
+    expect(moved).toEqual([note]);
   });
 });
 
@@ -690,6 +785,8 @@ describe("getWhiteboardNotesForTopic", () => {
     authorId: "alice",
     color: "yellow",
     createdAt: 200,
+    x: 4,
+    y: 4,
   });
   const noteB: WhiteboardNote = createWhiteboardNote({
     id: "nb",
@@ -698,6 +795,8 @@ describe("getWhiteboardNotesForTopic", () => {
     authorId: "bob",
     color: "pink",
     createdAt: 100,
+    x: 26,
+    y: 4,
   });
   const noteC: WhiteboardNote = createWhiteboardNote({
     id: "nc",
@@ -706,6 +805,8 @@ describe("getWhiteboardNotesForTopic", () => {
     authorId: "carol",
     color: "blue",
     createdAt: 50,
+    x: 4,
+    y: 4,
   });
 
   it("filters to one topic, oldest first", () => {
