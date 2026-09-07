@@ -1,21 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
   buildCustomOpponentPersona,
-  buildOpponentPersonaFeedbackText,
+  buildOpponentPersonaFeedbackTips,
   buildOpponentPersonaPrompt,
   DEFAULT_OPPONENT_DIFFICULTY,
   getOpponentDifficulty,
   getOpponentPersona,
-  getOpponentPersonaFeedbackTips,
   isBuiltinOpponentPersonaId,
   isOpponentDifficulty,
   listOpponentDifficulties,
   listOpponentPersonas,
   opponentDifficultyIds,
   opponentDifficulties,
-  opponentPersonaFeedbackTips,
   opponentPersonaIds,
   opponentPersonas,
+  OPPONENT_PERSONA_FEEDBACK_TIPS,
 } from "../src/opponent/opponent-personas";
 
 describe("opponentPersonas registry", () => {
@@ -219,54 +218,37 @@ describe("buildCustomOpponentPersona", () => {
   });
 });
 
-describe("opponentPersonaFeedbackTips / getOpponentPersonaFeedbackTips", () => {
-  it("keys every built-in persona to a non-empty list of distinct tips", () => {
+describe("buildOpponentPersonaFeedbackTips", () => {
+  it("gives every built-in persona its own distinct, non-empty tip list", () => {
+    const seen = new Set<string>();
     for (const id of opponentPersonaIds) {
-      const tips = opponentPersonaFeedbackTips[id];
+      const tips = buildOpponentPersonaFeedbackTips(opponentPersonas[id]);
       expect(tips.length).toBeGreaterThan(0);
-      expect(new Set(tips).size).toBe(tips.length);
-      for (const tip of tips) expect(tip.length).toBeGreaterThan(0);
+      for (const tip of tips) {
+        expect(tip.length).toBeGreaterThan(0);
+      }
+      const key = tips.join("|");
+      expect(seen.has(key)).toBe(false);
+      seen.add(key);
     }
   });
 
-  it("gives every built-in persona its own distinct tip set", () => {
-    const serialized = opponentPersonaIds.map((id) => opponentPersonaFeedbackTips[id].join("|"));
-    expect(new Set(serialized).size).toBe(opponentPersonaIds.length);
-  });
-
-  it("looks up a built-in persona's tips by persona object", () => {
-    expect(getOpponentPersonaFeedbackTips(opponentPersonas.kritik)).toBe(
-      opponentPersonaFeedbackTips.kritik,
+  it("returns exactly the registered tips for a built-in persona", () => {
+    expect(buildOpponentPersonaFeedbackTips(opponentPersonas.kritik)).toBe(
+      OPPONENT_PERSONA_FEEDBACK_TIPS.kritik,
     );
   });
 
-  it("returns an empty list for a custom persona with no hand-authored tips", () => {
+  it("falls back to a generic tip for a custom persona", () => {
     const custom = buildCustomOpponentPersona({ name: "Speedster", notes: "Spreads everything." });
-    expect(getOpponentPersonaFeedbackTips(custom)).toEqual([]);
-  });
-});
-
-describe("buildOpponentPersonaFeedbackText", () => {
-  it("numbers every tip for a built-in persona", () => {
-    const text = buildOpponentPersonaFeedbackText(opponentPersonas["fast-flow"]);
-    opponentPersonaFeedbackTips["fast-flow"].forEach((tip, index) => {
-      expect(text).toContain(`${index + 1}. ${tip}`);
-    });
+    const tips = buildOpponentPersonaFeedbackTips(custom);
+    expect(tips.length).toBeGreaterThan(0);
+    expect(tips).not.toEqual(OPPONENT_PERSONA_FEEDBACK_TIPS.kritik);
   });
 
-  it("produces different text for different personas", () => {
-    const kritikText = buildOpponentPersonaFeedbackText(opponentPersonas.kritik);
-    const layText = buildOpponentPersonaFeedbackText(opponentPersonas.lay);
-    expect(kritikText).not.toBe(layText);
-  });
-
-  it("falls back to a note quoting the persona's own instructions for a custom persona", () => {
-    const custom = buildCustomOpponentPersona({
-      name: "Speedster",
-      notes: "Opens on framework, spreads fast.",
-    });
-    const text = buildOpponentPersonaFeedbackText(custom);
-    expect(text).toContain("No pre-set tips exist for this custom persona");
-    expect(text).toContain("Opens on framework, spreads fast.");
+  it("falls back to the generic tip for a persona object labeled 'custom' even if it copies a built-in's other fields", () => {
+    const labeledCustom = { ...opponentPersonas.lay, id: "custom" as const };
+    const tips = buildOpponentPersonaFeedbackTips(labeledCustom);
+    expect(tips).not.toEqual(OPPONENT_PERSONA_FEEDBACK_TIPS.lay);
   });
 });

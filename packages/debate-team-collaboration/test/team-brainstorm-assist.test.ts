@@ -3,6 +3,7 @@ import { buildTopicCoverageReport, type TrackedArgument } from "debate-research-
 import {
   buildBrainstormBoard,
   buildBrainstormBoardsForCoverageGaps,
+  buildBrainstormIdeaRankBadge,
   buildBrainstormPrompt,
   buildBrainstormPromptsForCoverageGaps,
   buildBrainstormSummaryText,
@@ -278,5 +279,33 @@ describe("buildEvidenceEntryFromBrainstormIdea", () => {
   it("does not stamp a createdAt — that's left to the caller", () => {
     const entry = buildEvidenceEntryFromBrainstormIdea(idea, "Energy Policy", "Aff");
     expect(entry.createdAt).toBeUndefined();
+  });
+});
+
+describe("buildBrainstormIdeaRankBadge", () => {
+  it("labels rank 1 with a trophy", () => {
+    expect(buildBrainstormIdeaRankBadge(1)).toBe("🏆 #1");
+  });
+
+  it("labels rank 2 with a silver medal", () => {
+    expect(buildBrainstormIdeaRankBadge(2)).toBe("🥈 #2");
+  });
+
+  it("labels rank 3 with a bronze medal", () => {
+    expect(buildBrainstormIdeaRankBadge(3)).toBe("🥉 #3");
+  });
+
+  it("labels every rank past 3 as a plain #N badge", () => {
+    expect(buildBrainstormIdeaRankBadge(4)).toBe("#4");
+    expect(buildBrainstormIdeaRankBadge(10)).toBe("#10");
+  });
+
+  it("throws on a zero or negative rank", () => {
+    expect(() => buildBrainstormIdeaRankBadge(0)).toThrow();
+    expect(() => buildBrainstormIdeaRankBadge(-1)).toThrow();
+  });
+
+  it("throws on a non-integer rank", () => {
+    expect(() => buildBrainstormIdeaRankBadge(1.5)).toThrow();
   });
 });

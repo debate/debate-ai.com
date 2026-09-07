@@ -178,6 +178,58 @@ Vitest-covered in
 key, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 
+## Contributor profile drill-down page
+
+Each row's contributor name links to `/cards/leaderboard/{contributorId}` —
+closes the "Contribution Leaderboard" bullet's next-named follow-up in
+TODO.md's Research Crowdsourcing Organizer Features section ("a
+per-contributor profile drill-down page"). The page renders one
+contributor's full cross-feature standing in one place instead of scattering
+it across separate panels:
+
+- Leaderboard rank (1-based position on the all-time, all-category board) and
+  raw stats (contributions, total/average score, completed tasks).
+- Unlock tier and merged tier+streak badges, plus current and longest streak,
+  via the same `lib/unlock-streak-status.ts#buildContributorUnlockStatusWithStreakFromStore`
+  the leaderboard table itself uses.
+- Top Contributor Awards: which categories the contributor currently leads
+  (live standings) and their all-time hall-of-fame win record, via
+  `lib/contributor-awards.ts#buildContributorAwardsHallOfFame` folded over
+  `state/contributorAwardAnnouncements.ts#listAnnouncedContributorAwards`.
+- Endorsement history, both received (on the contributor's own
+  contributions) and given (as a reviewer), via the existing
+  `listEndorsementsByContributor` in both directions.
+
+All of this is assembled by one new composition function,
+`lib/contributor-profile.ts#buildContributorProfileFromStore`, rather than
+introducing any new scoring/ranking logic or persisted store — it's a
+read-only fold over the same five slices `ContributionLeaderboardPanel`
+already reads individually. `exists` on the returned `ContributorProfile` is
+`false` only when the id has no footprint anywhere (no contribution,
+completed task, award, or endorsement); `rank` can still be `null` for an
+`exists: true` contributor who has, say, only ever endorsed others or logged
+a completed task with no scored contribution.
+
+`panels/ContributorProfilePanel.tsx` renders the profile (a loading state
+during SSR/hydration, a "No activity yet" state for an unknown id, and the
+full breakdown otherwise), rendered by
+`apps/debate-ai.com/app/cards/leaderboard/[contributorId]/page.tsx` through a
+`ContributorProfileWithIdentity` wrapper (mirroring
+`ContributionLeaderboardWithIdentity`'s "the panel stays app-agnostic, only
+this wrapper knows about `better-auth`" convention) that shows a "You" badge
+when the profile matches the signed-in visitor. Like the leaderboard table,
+it subscribes to the `storage` event via `isContributionLeaderboardLiveUpdateStorageEvent`
+so it refreshes when another tab logs new activity.
+
+Vitest-covered in
+`packages/debate-contributor-progress/test/contributor-profile.test.ts`: an
+unknown contributor returns an all-zero, `exists: false` profile; a ranked
+contributor's stats and tier are surfaced; currently-led award categories are
+listed; announced awards roll up into a hall-of-fame win count; and
+endorsement history (received and given) round-trips correctly, including
+the "endorsement-only activity, no scored contribution" case staying
+`exists: true` with `rank: null`.
+
 ## Known gaps
 
 - The Contributions Feed panel (`/cards/contributions`) now submits

@@ -17,8 +17,10 @@ A form to pick a round ID, `debate-timer` format, side, an AI judge
 paradigm (one of the six built-in paradigms from
 `judge-paradigms.ts`, or a custom paradigm built from a real judge's own
 publicly stated preferences via `buildCustomJudgeParadigm`), an
-optional AI opponent persona (one of the four built-in personas from
-`opponent-personas.ts`), and a difficulty for that opponent (one of the
+optional AI opponent persona — one of the four built-in personas from
+`opponent-personas.ts`, a freshly-typed custom persona, or one picked from
+"My persona library"/"Shared by your team" (the "🤖 AI Practice Opponent"
+idea's own custom-persona library) — and a difficulty for that opponent (one of the
 four `opponentDifficulties` levels — Beginner/Intermediate/Advanced/Elite —
 defaulting to Intermediate). Saving composes these into a
 `PracticeRoundSetup` via the already-existing `buildPracticeRoundSetup` and
@@ -29,12 +31,14 @@ Below the form, every persisted round renders as its own card (sorted by
 set) opponent-difficulty badges, how many of the round's speeches have been
 submitted (looked up through the existing "Online Debate Versus AI"
 `aiVersusRounds.ts` store, with a link to `/versus-ai` to actually submit
-them), a "Generate AI opponent speech" action once it's the AI's turn
-(showing the same persona/difficulty badges above the button when a
-persona is set), the rendered setup sections (speech order, judge paradigm,
-AI opponent), a "Generate post-round feedback for current round" form,
-post-round feedback once one has been generated, and a "Get AI judge
-decision" action — with a "Clear" action per round.
+them), a "Replay round" step-through of the round's speeches once at least
+one has been submitted (see "Round replay/playback view" below), a
+"Generate AI opponent speech" action once it's the AI's turn (showing the
+same persona/difficulty badges above the button when a persona is set), the
+rendered setup sections (speech order, judge paradigm, AI opponent), a
+"Generate post-round feedback for current round" form, post-round feedback
+once one has been generated, and a "Get AI judge decision" action — with a
+"Clear" action per round.
 
 Once a round has been started at `/versus-ai` (so an `aiVersusRounds.ts`
 record exists for the same `roundId`) and it's the AI's turn, "Generate AI
@@ -208,54 +212,73 @@ Vitest-covered in `packages/debate-round/test/judge-decision-ai.test.ts`'s
 rationale alone with no issue recorded, a criterion neither mentions, and
 the empty-rubric case for a paradigm with no voting priorities).
 
-## Post-round feedback tips for the persona faced
+## Custom persona library
 
-Closes the "🤖 AI Practice Opponent" idea's "post-round feedback tips
-specific to the persona faced" Next item (TODO.md's Research
-Crowdsourcing Organizer Features list). Until this slice, a round's
-post-round feedback (judge-paradigm framing plus the AI Coach Mode
-coaching session) said nothing about which AI opponent persona the round
-was actually played against — the persona only shaped the AI's own
-speeches, never the human debater's takeaway.
+Closes the "🤖 AI Practice Opponent" idea's "unifying the Practice Round
+Simulator's own separate persona setup with [the custom-persona] library"
+Next item. Before this, the "AI opponent persona" radio group here could
+only pick one of the four built-in personas — no custom-persona authoring,
+and no way to reuse an entry already saved to (or shared through)
+`OpponentPersonaPickerPanel`'s "My persona library". The radio group now
+also has a "Custom opponent persona" option, revealing a name/style-notes
+form (mirroring `OpponentPersonaPickerPanel`'s own) with "Save to my
+persona library"/"Share with my team" checkboxes; below it, a "My persona
+library" list (account-synced when signed in) and a read-only "Shared by
+your team" list each offer a "Use for this round"/"Use this persona" action
+that prefills the custom fields, the same `useCustomOpponentPersonaLibrary`
+hook `OpponentPersonaPickerPanel` already uses.
 
-`debate-speech-writer`'s `opponent/opponent-personas.ts` gains a
-hand-authored `opponentPersonaFeedbackTips` registry (a `string[]` per
-built-in persona — e.g. Kritik's tips lead with "answer the framework
-argument before defending your case's literal claims") plus
-`getOpponentPersonaFeedbackTips(persona)` (an empty list for a persona
-with no fixed style to write tips against ahead of time, currently just
-`"custom"`) and `buildOpponentPersonaFeedbackText(persona)`, which numbers
-those tips into one section body (or, for a custom persona, a fallback
-line quoting that persona's own `instructions`).
+Saving resolves the form's choice — none, a built-in id, or a custom
+name+notes pair — via `debate-round`'s new
+`round/practice-round-simulator.ts#resolvePracticeRoundOpponentPersonaChoice`
+into the `opponentPersona` input `buildPracticeRoundSetup` already accepted
+(it could already take a pre-built `OpponentPersona` object, not just a
+built-in id, so no change was needed there or to `PracticeRoundSetup`/its
+persistence). A round's persona is still saved directly onto its own
+`PracticeRoundSetup` rather than through
+`state/opponentPersonaSelections.ts` — that split is intentional, not a
+gap: a practice round is keyed by round id, not the session id that store
+uses, and both already resolve a custom persona identically via
+`buildCustomOpponentPersona`.
 
-`buildPracticeRoundFeedback` (`round/practice-round-simulator.ts`) takes a
-new optional `options.opponentPersona`; when given, it appends a
-`"Tips vs. <persona name>"` section built from
-`buildOpponentPersonaFeedbackText`, after the existing "Judged under: …"
-and "Coaching feedback" sections. `state/practiceRounds.ts`'s
-`buildAndSavePracticeRoundFeedback` threads the round's own already-saved
-`setup.opponentPersona` through automatically, so
-`PracticeRoundSimulatorPanel.tsx` needed no changes at all — its existing
-`record.feedback.sections.map(...)` render loop picks up the new section
-the moment a round played against a persona generates feedback. A round
-with no opponent persona set gets no such section, exactly as before this
-slice.
+Vitest-covered: `packages/debate-round/test/practice-round-simulator.test.ts`'s
+new `resolvePracticeRoundOpponentPersonaChoice` suite (resolving "none" to
+`undefined`, a built-in choice to its id unresolved, a custom choice into a
+usable `OpponentPersona` — round-tripped through `buildPracticeRoundSetup` —
+and throwing for an empty name or empty notes, mirroring
+`buildCustomOpponentPersona`'s own validation).
 
-Vitest-covered:
-`packages/debate-speech-writer/test/opponent-personas.test.ts`'s
-`opponentPersonaFeedbackTips`/`getOpponentPersonaFeedbackTips`/
-`buildOpponentPersonaFeedbackText` suites (every built-in persona has its
-own non-empty, distinct tip set; the custom-persona fallback quotes its
-own instructions); `packages/debate-round/test/practice-round-simulator.test.ts`'s
-`buildPracticeRoundFeedback` suite (the section is omitted with no
-`opponentPersona` option or an explicit `null`, and appended with the
-right title/body when one is given); and
-`packages/debate-round/test/practiceRounds.test.ts`'s
-`buildAndSavePracticeRoundFeedback` suite (the section is present only
-for a round whose saved setup actually has a persona).
+## Round replay/playback view
+
+Closes the "🧪 Practice Round Simulator" bullet's last remaining Next item:
+a round replay/playback view. Once at least one speech has been submitted
+for a round (through `/versus-ai`), its card gains a "Replay round" section
+showing one speech slot at a time — its position ("N / M"), name, a
+You/AI badge, and the delivered text (or "Not yet delivered." for a slot the
+round hasn't reached yet) — with Prev/Next buttons to step through the whole
+sequence, disabled at the first/last step.
+
+`debate-round`'s new `round/practice-round-simulator.ts#buildPracticeRoundReplaySteps`
+zips the round's own `setup.speechOrder` with the submitted speeches already
+looked up via `getPracticeRoundSubmittedSpeeches` (the same "Online Debate
+Versus AI" `aiVersusRounds.ts` store the speech-progress line already reads)
+positionally — `submittedSpeeches[i]` is always the speech delivered for
+`speechOrder[i]`, since a round's speeches are only ever appended in turn
+order — into one step per slot, `delivered: false`/`text: null` for any slot
+beyond how far the round has progressed. No new persistence: the step index
+is local component state (`PracticeRoundSimulatorPanel`'s
+`replayStepByRound`), clamped to the current step count so it never points
+past the end if a round somehow has fewer steps on a later render.
+
+Vitest-covered: `packages/debate-round/test/practice-round-simulator.test.ts`'s
+`buildPracticeRoundReplaySteps` suite (every step undelivered for an
+unstarted round, each slot's index/name/speaker/secondary/time carried
+through unchanged, a delivered prefix matching `submittedSpeeches`
+positionally with the remainder undelivered, every step delivered once the
+round is complete, and the empty-order case).
 
 ## Known gaps
 
-No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
-in TODO.md's Research Crowdsourcing Organizer Features list still has one
-open Next item beyond this one: a round replay/playback view.
+No known gaps remain for this idea, and no further follow-up is currently
+tracked for the "🧪 Practice Round Simulator" bullet in TODO.md's Research
+Crowdsourcing Organizer Features list.

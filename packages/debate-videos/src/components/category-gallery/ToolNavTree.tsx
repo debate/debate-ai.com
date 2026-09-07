@@ -17,7 +17,7 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 import { TreeItem } from "./TreeItem";
-import { APP_DOCK_LINKS, SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
+import { APP_DOCK_LINKS, SIDEBAR_TOOL_SECTIONS, TOOLS_ROOT_HREF } from "./sidebar-tool-sections";
 import { IconBook, IconLeaderboard } from "../../ui/icons";
 
 export function ToolNavTree() {
@@ -27,7 +27,7 @@ export function ToolNavTree() {
   // "Practice" open with its active item highlighted instead of requiring an
   // extra click to see where you are.
   const [appsExpanded, setAppsExpanded] = useState(() =>
-    APP_DOCK_LINKS.some((link) => link.href === pathname),
+    pathname === TOOLS_ROOT_HREF || APP_DOCK_LINKS.some((link) => link.href === pathname),
   );
   const [expandedToolSections, setExpandedToolSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
@@ -44,7 +44,7 @@ export function ToolNavTree() {
     <>
       <TreeItem
         level={2}
-        href="/tools"
+        href={TOOLS_ROOT_HREF}
         title="Apps"
         icon={LayoutGrid}
         expanded={appsExpanded}
@@ -59,6 +59,15 @@ export function ToolNavTree() {
             isActive={pathname === link.href}
           />
         ))}
+        {/* The tools catalog has no dock icon of its own (see
+            `TOOLS_ROOT_HREF`), so it needs its own entry here rather than
+            only being reachable by clicking the "Apps" heading. */}
+        <TreeItem
+          level={3}
+          href={TOOLS_ROOT_HREF}
+          title="All Tools"
+          isActive={pathname === TOOLS_ROOT_HREF}
+        />
       </TreeItem>
 
       {SIDEBAR_TOOL_SECTIONS.map((section) => (

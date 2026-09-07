@@ -190,5 +190,5 @@ Suites live in `test/` and mirror the `src/` layout. Coverage for every package 
 at the repo root by `bun run coverage` and uploaded to
 [Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
 
-Current Codecov package coverage on `master` at commit `5b69dad` is **0.14%** (tracked under
+Current Codecov package coverage on `master` at commit `50322f5` is **1.75%** (tracked under
 the `debate-editor` flag).

@@ -22,7 +22,22 @@ export default defineConfig({
     // as a (non-directory, non-config) project entry. Exclude debate-help-docs
     // too: it's a Fumadocs/Next.js site, not a tested library package (like
     // apps/*, which this glob never reaches), and has no test/ folder.
-    projects: ["packages/*", "!packages/README.md", "!packages/debate-help-docs"],
+    projects: [
+      "packages/*",
+      "!packages/README.md",
+      "!packages/debate-help-docs",
+      // The web app has no test/ folder for the glob above to find, but parts
+      // of apps/debate-ai.com/lib are plain Node libraries worth unit testing
+      // (the D1 read-replication session wrapper, for one). Registered inline
+      // rather than as a path, since the app's only Vitest config is this file.
+      {
+        test: {
+          name: "debate-ai-web",
+          environment: "node",
+          include: ["apps/debate-ai.com/lib/**/__tests__/**/*.test.ts"],
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
       reportsDirectory: path.join(repoRoot, "coverage"),

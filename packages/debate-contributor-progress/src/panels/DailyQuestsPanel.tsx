@@ -58,6 +58,15 @@
  * a topic's coverage gaps is rated automatically by how many cards it's
  * still short (`remainingCardsToQuestDifficulty`).
  *
+ * A "Team competition" section closes the "team-vs-team quest competitions"
+ * follow-up named under the "🎯 Daily Quests and Targets" bullet in
+ * TODO.md: a team is a name plus a comma-separated list of contributor ids
+ * (`state/dailyQuests.ts`'s `QuestTeam`), and once two or more exist their
+ * standings render as a ranked table — each team's score is the sum of its
+ * own members' points earned today (`buildPersistedTeamQuestCompetition`),
+ * with a 🏆 marking the current leader and a per-member points breakdown
+ * underneath each team's row.
+ *
  * @module panels/DailyQuestsPanel
  */
 
@@ -70,10 +79,14 @@ import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import {
   buildPersistedDailyQuestBoard,
+  buildPersistedTeamQuestCompetition,
+  deleteQuestTeam,
   deleteQuestTemplate,
+  listQuestTeams,
   listQuestTemplates,
   previewQuestTemplatesFromTopicCoverage,
   pruneExpiredQuestTemplates,
+  saveQuestTeam,
   saveQuestTemplate,
   seedQuestTemplatesFromTopicCoverage,
 } from "debate-team-collaboration/src/state/dailyQuests"
@@ -93,7 +106,9 @@ import type {
   QuestDifficulty,
   QuestProgress,
   QuestRecurrence,
+  QuestTeam,
   QuestTemplate,
+  TeamQuestStanding,
 } from "debate-team-collaboration/src/lib/daily-quests"
 import { buildStreakRewardText, getFreshStreakBadge } from "../lib/gamified-quests"
 import type { ContributorQuestStreak } from "../lib/gamified-quests"
@@ -187,6 +202,10 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
   const [streakError, setStreakError] = useState<string | null>(null)
   const [pruneMessage, setPruneMessage] = useState<string | null>(null)
   const [difficultyFilter, setDifficultyFilter] = useState<QuestDifficulty | "all">("all")
+  const [teams, setTeams] = useState<QuestTeam[]>([])
+  const [standings, setStandings] = useState<TeamQuestStanding[]>([])
+  const [teamDraft, setTeamDraft] = useState({ name: "", contributorIds: "" })
+  const [teamError, setTeamError] = useState<string | null>(null)
 
   const refresh = () => {
     // buildPersistedDailyQuestBoard rolls expired recurring templates over
@@ -195,6 +214,8 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
     // reflect the rolled-over dates instead of the stale pre-rollover ones.
     setBoard(buildPersistedDailyQuestBoard(nowMs()))
     setTemplates(listQuestTemplates())
+    setTeams(listQuestTeams())
+    setStandings(buildPersistedTeamQuestCompetition(nowMs()))
   }
 
   const refreshStreak = (id: string) => {
@@ -259,6 +280,31 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
 
   const handleRemove = (id: string) => {
     deleteQuestTemplate(id)
+    refresh()
+  }
+
+  const handleAddTeam = () => {
+    const name = teamDraft.name.trim()
+    const contributorIds = teamDraft.contributorIds
+      .split(",")
+      .map((id) => id.trim())
+      .filter((id) => id.length > 0)
+    if (!name) {
+      setTeamError("Team name is required.")
+      return
+    }
+    if (contributorIds.length === 0) {
+      setTeamError("Enter at least one contributor id, comma-separated.")
+      return
+    }
+    saveQuestTeam({ id: `team-${Date.now()}`, name, contributorIds })
+    setTeamError(null)
+    setTeamDraft({ name: "", contributorIds: "" })
+    refresh()
+  }
+
+  const handleRemoveTeam = (id: string) => {
+    deleteQuestTeam(id)
     refresh()
   }
 
@@ -593,6 +639,74 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
           </div>
         </div>
       )}
+
+      <div className="space-y-3 rounded-lg border border-dashed border-border p-4">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Team competition</h2>
+          <p className="text-sm text-muted-foreground">
+            Group contributors into teams to compete on today's board — each team's score is the
+            sum of its own members' points earned today.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="quest-team-name">Team name</Label>
+            <Input
+              id="quest-team-name"
+              value={teamDraft.name}
+              onChange={(e) => setTeamDraft((prev) => ({ ...prev, name: e.target.value }))}
+              placeholder="Team Alpha"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="quest-team-members">Contributor ids (comma-separated)</Label>
+            <Input
+              id="quest-team-members"
+              value={teamDraft.contributorIds}
+              onChange={(e) => setTeamDraft((prev) => ({ ...prev, contributorIds: e.target.value }))}
+              placeholder="alex, jordan"
+            />
+          </div>
+        </div>
+        {teamError && <p className="text-sm text-destructive">{teamError}</p>}
+        <Button type="button" variant="outline" onClick={handleAddTeam}>
+          Add team
+        </Button>
+
+        {teams.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No teams yet. Add two or more above to see a head-to-head standings table.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {standings.map((standing, index) => (
+              <div key={standing.teamId} className="rounded-md border border-border px-3 py-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {index === 0 && standing.earnedPoints > 0 && <span aria-hidden="true">🏆</span>}
+                    <span className="text-sm font-medium text-foreground">{standing.teamName}</span>
+                    <Badge variant="secondary" className="whitespace-nowrap">
+                      {standing.earnedPoints}/{standing.totalPoints} pts
+                    </Badge>
+                  </div>
+                  <Button size="sm" variant="ghost" onClick={() => handleRemoveTeam(standing.teamId)}>
+                    Remove
+                  </Button>
+                </div>
+                <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                  {standing.members.map((member) => (
+                    <li key={member.contributorId}>
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        {member.contributorId}: {member.earnedPoints}/{member.totalPoints}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
