@@ -260,6 +260,39 @@ Levenshtein edit-distance search over the same id list, local to
 mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 `opponentRoundRecords.test.ts`.
 
+## Cross-tab live update
+
+Until now, `OpponentTeamProfilesPanel` only read its persisted roster and
+logged-round history on mount, or right after its own log/edit/undo/redo/
+delete/bulk-import actions — a teammate's second open tab (or a second
+browser window on the same machine) logging a scouted round for the same
+team showed a stale roster until it re-rendered for some unrelated reason.
+The browser's `storage` event fires only in *other* same-origin tabs/
+windows, never the one that made the write, so it's exactly the missing
+cross-tab signal every other closed panel in this repo already uses (see
+[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+section).
+
+A new pure helper, `flow/live-update.ts`'s
+`isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, checks whether the
+event's `key` is one of this panel's four backing stores
+(`opponentTeamProfiles`, the aggregated roster; `opponentRoundRecords`, the
+logged-round history; and `opponentRoundRecordEditHistory`/
+`opponentRoundRecordRedoHistory`, which decide whether a round shows an
+Undo/Redo action) or `null` (a `localStorage.clear()`).
+`OpponentTeamProfilesPanel` subscribes to `window`'s `storage` event and
+calls its existing `refresh()` closure when the predicate matches,
+re-deriving the roster and logged-round list the same way its own actions
+already do — the in-progress "Log a scouted round" form draft, the Bulk
+import textarea, and the Compare-vs.-opponent selection are all left
+untouched, only the persisted roster/history re-reads, mirroring
+[Judge Profiles](judge-profiles.md)'s own "refresh the derived view, not the
+draft" convention exactly.
+
+Vitest-covered in `packages/debate-round/test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, and unrelated/substring-
+matching keys staying ignored).
+
 ## Known gaps
 
 - No real round-history data source yet (follow-up (a) — no Tabroom/tab-service

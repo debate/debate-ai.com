@@ -60,6 +60,12 @@
  * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
  * "Download comparison" action once a comparison is built.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`)
+ * refreshes the roster and logged-round list when another tab logs, edits,
+ * undoes/redoes, deletes, or bulk-imports a scouted round for the same
+ * team, mirroring `debate-speech-writer`'s `JudgeProfilesPanel` convention.
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
@@ -116,6 +122,7 @@ import {
   type OpponentTeamProfile,
 } from "debate-data-sync/src/rankings/opponent-team-profile"
 import { listOwnRoundHistory } from "../state/ownRoundHistory"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 
 function formatFrequencyList(entries: { value: string; count: number }[]): string {
   if (entries.length === 0) return "—"
@@ -205,6 +212,21 @@ export function OpponentTeamProfilesPanel() {
     setRoster(buildOpponentTeamProfilesRoster())
     setRecords(listOpponentRoundRecords())
   }
+
+  /**
+   * The `storage` event fires only in *other* same-origin tabs, never the
+   * one that made the write, so it's the missing signal for "a teammate
+   * logs, edits, undoes/redoes, deletes, or bulk-imports a scouted round in
+   * another tab" — see `flow/live-update.ts`.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const teamId = draft.teamId.trim()

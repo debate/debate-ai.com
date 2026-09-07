@@ -3,6 +3,7 @@ import {
   FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_LIVE_UPDATE_STORAGE_KEYS,
+  OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
@@ -10,6 +11,7 @@ import {
   isFlowAnnotationsPanelLiveUpdateStorageEvent,
   isFlowEditLogPanelLiveUpdateStorageEvent,
   isFlowLiveUpdateStorageEvent,
+  isOpponentTeamProfilesPanelLiveUpdateStorageEvent,
   isPreRoundBriefingsPanelLiveUpdateStorageEvent,
   isPrepNoteNotificationsLiveUpdateStorageEvent,
   isPrepNotesPanelLiveUpdateStorageEvent,
@@ -170,5 +172,33 @@ describe("isPreRoundBriefingsPanelLiveUpdateStorageEvent", () => {
     expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "preRoundBriefingsBackup" })).toBe(false);
     expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "old_ownRoundHistory" })).toBe(false);
     expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "roundPairingsArchive" })).toBe(false);
+  });
+});
+
+describe("isOpponentTeamProfilesPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "judgeProfiles" })).toBe(false);
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "ownRoundHistory" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a covered store name as a substring", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentTeamProfilesBackup" })).toBe(false);
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "old_opponentRoundRecords" })).toBe(false);
+    expect(
+      isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentRoundRecordEditHistoryArchive" }),
+    ).toBe(false);
+    expect(
+      isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "old_opponentRoundRecordRedoHistory" }),
+    ).toBe(false);
   });
 });

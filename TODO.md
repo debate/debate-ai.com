@@ -7,6 +7,67 @@ _No task currently in progress._
 
 ### Completed
 
+- **🕵️ Opponent Team Profiles — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built (account settings,
+  dozens of `saved_*` D1 tables/`/api/*` routes linking flows, docs, and
+  rounds to signed-in users in SQL, and every tool already reachable from
+  the Tools page, CardMirror's own `MenuBar`/command palette, and the
+  feature catalog, all reconfirmed this run), so this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap and closed it
+  for `debate-round`'s `OpponentTeamProfilesPanel` — confirmed still missing
+  a `storage`-event listener by grepping it directly, and cross-checked
+  against every panel named in that Known gap's own history.
+
+  Extended `packages/debate-round/src/flow/live-update.ts` with
+  `OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, covering all four of
+  the panel's backing stores (in `debate-data-sync`): `opponentTeamProfiles`
+  (the aggregated roster the main table renders), `opponentRoundRecords`
+  (the logged-round history list), and `opponentRoundRecordEditHistory`/
+  `opponentRoundRecordRedoHistory` (which decide whether a logged round
+  shows an Undo/Redo action) — mirroring `debate-speech-writer`'s
+  `JudgeProfilesPanel` predicate split exactly.
+  `OpponentTeamProfilesPanel.tsx` now subscribes to `window`'s `storage`
+  event and calls its existing `refresh()` closure when the predicate
+  matches — a teammate logging, editing, undoing/redoing, deleting, or
+  bulk-importing a scouted round for a team in one tab now shows up in
+  every other open tab without a manual reload. The in-progress "Log a
+  scouted round" form draft, the Bulk import (CSV) textarea, and the
+  Compare-vs.-opponent selection/comparison are left untouched, matching
+  `JudgeProfilesPanel`'s "refresh the derived view, not the draft"
+  convention.
+
+  See `docs/features/opponent-team-profiles.md`'s new "Cross-tab live
+  update" section (plus its Known gaps note) and
+  `docs/features/shared-flow-sync.md`'s updated Known gaps bullet (added
+  `OpponentTeamProfilesPanel` to the closed list). Vitest-covered:
+  `packages/debate-round/test/live-update.test.ts` (every backing-store
+  key, the `null`-key clear-all case, and unrelated/substring-matching keys
+  staying ignored, mirroring the existing per-panel predicate cases in that
+  file).
+  `debate-round`'s own `UserSettingsPanel` (its `form` is a live,
+  directly-editable settings form rather than a derived list/roster view,
+  so closing it needs refreshing only the persisted values, not stomping an
+  unsaved in-progress edit) and `debate-team-collaboration`'s
+  `CoachingProgramsPanel` remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5149 passing, up from
+  5144 at HEAD before this change — the 5 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
 - **🎓 Coach Materials — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
@@ -189,3 +250,11 @@ _No task currently in progress._
   `docs/features/user-settings.md`'s Known gaps for the full history of
   what's been swept so far (undiscoverable routes, duplicated empty states,
   duplicated progress bars, duplicated list rows) and what hasn't.
+- Close the cross-tab live-update Known gap (`shared-flow-sync.md`) for
+  `debate-round`'s `UserSettingsPanel` and `debate-team-collaboration`'s
+  `CoachingProgramsPanel` — the two still-open panels named in this run's
+  Opponent Team Profiles completed-task note above. `UserSettingsPanel`
+  needs special handling: its `form` is a live, directly-editable settings
+  form rather than a derived list/roster view, so a future run closing it
+  should refresh only the persisted values on a `storage` event, not stomp
+  an unsaved in-progress edit the way a naive `refresh()` call would.
