@@ -260,6 +260,33 @@ Levenshtein edit-distance search over the same id list, local to
 mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 `opponentRoundRecords.test.ts`.
 
+## Cross-tab live update
+
+`OpponentTeamProfilesPanel` previously read `buildOpponentTeamProfilesRoster`
+and `listOpponentRoundRecords` on mount only, so a profile saved/deleted, or a
+round logged/edited/undone/redone/bulk-imported in another browser tab left
+the panel showing a stale roster/history until something forced a
+re-render. The panel now subscribes to the browser's `storage` event, which
+the spec fires only in *other* same-origin tabs/windows, never the one that
+made the write. A pure helper, `flow/live-update.ts`'s
+`isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, checks whether the
+event's `key` is one of `state/opponentTeamProfiles.ts`'s
+`"opponentTeamProfiles"`, `state/opponentRoundRecords.ts`'s
+`"opponentRoundRecords"`, `"opponentRoundRecordEditHistory"`, or
+`"opponentRoundRecordRedoHistory"`, or `null` (a `localStorage.clear()`);
+when it is, the panel's existing `refresh()` closure re-reads both the
+roster and the round-record list — the Undo/Redo button state is read live
+from `hasOpponentRoundRecordEditHistory`/`hasOpponentRoundRecordRedoHistory`
+at render time, so `refresh()`'s re-render picks those up too, without a
+separate state slice. This closes the matching entry in
+[`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism." Vitest-covered in `packages/debate-round/test/live-update.test.ts`
+(every backing key, the `null`-key clear-all case, and unrelated/substring-
+matching keys). The panel's own `storage`-listener wiring remains
+intentionally untested, matching every other panel in this repo whose wiring
+is exercised only through the shared pure predicate's own tests.
+
 ## Known gaps
 
 - No real round-history data source yet (follow-up (a) — no Tabroom/tab-service
