@@ -17,7 +17,7 @@
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { Users2 } from "lucide-react";
 
 import {
@@ -45,24 +45,31 @@ import {
   buildTopicSprintSummaryText,
   buildSprintRetrospective,
   buildSprintRetrospectiveText,
+  clampWhiteboardNotePosition,
   createSprintNote,
   createSprintSession,
   createWhiteboardNote,
   assignSprintNote,
+  defaultWhiteboardNotePosition,
   getOpenFollowUps,
   getPastSprintSessions,
   getSessionsForTopic,
   getUpcomingSprintSessions,
+  getWhiteboardNotePosition,
   getWhiteboardNotesForTopic,
   nextWhiteboardNoteColor,
   sprintRetrospectiveFilename,
   updateSprintNoteStatus,
+  WHITEBOARD_CANVAS_HEIGHT,
+  WHITEBOARD_CANVAS_WIDTH,
   WHITEBOARD_NOTE_COLORS,
+  WHITEBOARD_NOTE_WIDTH,
   type SprintNote,
   type SprintNoteStatus,
   type SprintSession,
   type WhiteboardNote,
   type WhiteboardNoteColor,
+  type WhiteboardNotePosition,
 } from "../lib/team-collaboration-mode";
 import type { QuestContribution, QuestTemplate } from "../lib/daily-quests";
 import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
@@ -74,6 +81,7 @@ import {
   deleteWhiteboardNote,
   listWhiteboardNotes,
   saveWhiteboardNote,
+  updateWhiteboardNotePosition,
 } from "../state/sprintWhiteboard";
 import {
   readPersistedTopicSprintInputs,
@@ -182,6 +190,17 @@ export function TopicSprintPanel({
   const [whiteboardNoteColor, setWhiteboardNoteColor] = useState<WhiteboardNoteColor>(
     WHITEBOARD_NOTE_COLORS[0],
   );
+  // Freeform (x/y, draggable) whiteboard layout: the canvas element itself (for
+  // computing pointer coordinates relative to it), the note currently being
+  // dragged (its own live position, so the drag renders smoothly without
+  // writing to storage on every pointer move), and the cursor's offset from
+  // that note's top-left corner at drag start (so the note doesn't jump to
+  // re-center under the cursor the instant a drag begins).
+  const whiteboardCanvasRef = useRef<HTMLDivElement | null>(null);
+  const [draggingWhiteboardNote, setDraggingWhiteboardNote] = useState<
+    { id: string; position: WhiteboardNotePosition } | null
+  >(null);
+  const whiteboardDragGrabOffsetRef = useRef<{ dx: number; dy: number }>({ dx: 0, dy: 0 });
 
   // `quests`/`contributions`/`coverageReport`/`assignments`/`contributors` are
   // topic-scoped, so — unlike the mount-only `useStoreSnapshot` reads above —
@@ -333,6 +352,7 @@ export function TopicSprintPanel({
         text: whiteboardNoteText.trim(),
         color: whiteboardNoteColor,
         createdAt: now,
+        position: defaultWhiteboardNotePosition(whiteboardNotesForTopic.length),
       }),
     );
     setWhiteboardNoteText("");
@@ -343,6 +363,58 @@ export function TopicSprintPanel({
   const removeWhiteboardNote = (id: string) => {
     deleteWhiteboardNote(id);
     refreshWhiteboard();
+  };
+
+  /**
+   * Starts dragging a note: captures the pointer (so move/up keep firing even
+   * if it leaves the note's bounds) and records the cursor's offset from the
+   * note's current top-left corner, relative to the canvas — so the note
+   * tracks the cursor from wherever it was grabbed instead of re-centering
+   * under it.
+   */
+  const handleWhiteboardNotePointerDown = (
+    event: ReactPointerEvent<HTMLDivElement>,
+    note: WhiteboardNote,
+  ) => {
+    if (!editable) return;
+    const canvas = whiteboardCanvasRef.current;
+    if (!canvas) return;
+    const canvasRect = canvas.getBoundingClientRect();
+    const position = getWhiteboardNotePosition(note);
+    whiteboardDragGrabOffsetRef.current = {
+      dx: event.clientX - canvasRect.left - position.x,
+      dy: event.clientY - canvasRect.top - position.y,
+    };
+    setDraggingWhiteboardNote({ id: note.id, position });
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleWhiteboardNotePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!draggingWhiteboardNote) return;
+    const canvas = whiteboardCanvasRef.current;
+    if (!canvas) return;
+    const canvasRect = canvas.getBoundingClientRect();
+    const { dx, dy } = whiteboardDragGrabOffsetRef.current;
+    const position = clampWhiteboardNotePosition(
+      event.clientX - canvasRect.left - dx,
+      event.clientY - canvasRect.top - dy,
+    );
+    setDraggingWhiteboardNote({ id: draggingWhiteboardNote.id, position });
+  };
+
+  /** Commits the drag's final position to storage and clears the in-flight drag state. */
+  const handleWhiteboardNotePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!draggingWhiteboardNote) return;
+    updateWhiteboardNotePosition(
+      draggingWhiteboardNote.id,
+      draggingWhiteboardNote.position.x,
+      draggingWhiteboardNote.position.y,
+    );
+    setDraggingWhiteboardNote(null);
+    refreshWhiteboard();
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
   };
 
   return (
@@ -485,23 +557,46 @@ export function TopicSprintPanel({
             message={editable ? "Add the first brainstorming note below." : undefined}
           />
         ) : (
-          <div className="flex flex-wrap gap-2" data-testid="whiteboard-note-board">
-            {whiteboardNotesForTopic.map((note) => (
-              <div
-                key={note.id}
-                className={`flex w-40 flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]}`}
-              >
-                <p className="whitespace-pre-wrap break-words">{note.text}</p>
-                <div className="flex items-center justify-between gap-1">
-                  <span className="text-xs text-muted-foreground">{note.authorId}</span>
-                  {editable ? (
-                    <Button variant="ghost" size="sm" onClick={() => removeWhiteboardNote(note.id)}>
-                      Remove
-                    </Button>
-                  ) : null}
+          <div
+            ref={whiteboardCanvasRef}
+            className="relative w-full max-w-full overflow-auto rounded-md border border-dashed border-muted-foreground/30"
+            style={{ height: WHITEBOARD_CANVAS_HEIGHT, minWidth: WHITEBOARD_CANVAS_WIDTH }}
+            data-testid="whiteboard-note-board"
+          >
+            {whiteboardNotesForTopic.map((note) => {
+              const position =
+                draggingWhiteboardNote?.id === note.id
+                  ? draggingWhiteboardNote.position
+                  : getWhiteboardNotePosition(note);
+              return (
+                <div
+                  key={note.id}
+                  className={`absolute flex flex-col gap-1.5 rounded-md border p-2.5 text-sm shadow-sm touch-none ${
+                    editable ? "cursor-grab active:cursor-grabbing" : ""
+                  } ${WHITEBOARD_NOTE_COLOR_CLASSES[note.color]}`}
+                  style={{ left: position.x, top: position.y, width: WHITEBOARD_NOTE_WIDTH }}
+                  onPointerDown={(e) => handleWhiteboardNotePointerDown(e, note)}
+                  onPointerMove={handleWhiteboardNotePointerMove}
+                  onPointerUp={handleWhiteboardNotePointerUp}
+                  onPointerCancel={handleWhiteboardNotePointerUp}
+                >
+                  <p className="whitespace-pre-wrap break-words">{note.text}</p>
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs text-muted-foreground">{note.authorId}</span>
+                    {editable ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={() => removeWhiteboardNote(note.id)}
+                      >
+                        Remove
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

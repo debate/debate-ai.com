@@ -4,8 +4,13 @@ import {
   listWhiteboardNotes,
   listWhiteboardNotesForTopic,
   saveWhiteboardNote,
+  updateWhiteboardNotePosition,
 } from "../src/state/sprintWhiteboard";
-import type { WhiteboardNote } from "../src/lib/team-collaboration-mode";
+import {
+  WHITEBOARD_CANVAS_WIDTH,
+  WHITEBOARD_NOTE_WIDTH,
+  type WhiteboardNote,
+} from "../src/lib/team-collaboration-mode";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -107,5 +112,24 @@ describe("deleteWhiteboardNote", () => {
     saveWhiteboardNote(TOPICALITY_NOTE);
     deleteWhiteboardNote("missing");
     expect(listWhiteboardNotes()).toEqual([TOPICALITY_NOTE]);
+  });
+});
+
+describe("updateWhiteboardNotePosition", () => {
+  it("persists a note's new (clamped) position, leaving other notes untouched", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    saveWhiteboardNote(TOPICALITY_NOTE);
+
+    updateWhiteboardNotePosition("note-1", 99999, 15);
+
+    const [moved, unchanged] = listWhiteboardNotes();
+    expect(moved.position).toEqual({ x: WHITEBOARD_CANVAS_WIDTH - WHITEBOARD_NOTE_WIDTH, y: 15 });
+    expect(unchanged).toEqual(TOPICALITY_NOTE);
+  });
+
+  it("is a no-op when the id isn't stored", () => {
+    saveWhiteboardNote(SOLVENCY_NOTE);
+    updateWhiteboardNotePosition("missing", 5, 5);
+    expect(listWhiteboardNotes()).toEqual([SOLVENCY_NOTE]);
   });
 });

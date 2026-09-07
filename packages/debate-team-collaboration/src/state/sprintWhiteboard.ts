@@ -9,7 +9,7 @@
  */
 
 import type { WhiteboardNote } from "../lib/team-collaboration-mode";
-import { getWhiteboardNotesForTopic } from "../lib/team-collaboration-mode";
+import { getWhiteboardNotesForTopic, moveWhiteboardNote } from "../lib/team-collaboration-mode";
 
 const STORAGE_KEY = "sprintWhiteboardNotes";
 
@@ -55,4 +55,9 @@ export function saveWhiteboardNote(note: WhiteboardNote): void {
 /** Deletes a persisted whiteboard note by id; a no-op if it isn't stored. */
 export function deleteWhiteboardNote(id: string): void {
   writeAll(readAll().filter((note) => note.id !== id));
+}
+
+/** Moves a persisted whiteboard note to a new (clamped) position; a no-op if it isn't stored. */
+export function updateWhiteboardNotePosition(id: string, x: number, y: number): void {
+  writeAll(moveWhiteboardNote(readAll(), id, x, y));
 }

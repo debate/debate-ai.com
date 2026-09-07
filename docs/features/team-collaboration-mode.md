@@ -292,6 +292,46 @@ Vitest-covered in
 cycling) and a new `test/sprintWhiteboard.test.ts` (the persisted store,
 mirroring `sprintSessions.test.ts`'s cases).
 
+A later slice closes the "a true freeform (x/y, draggable) whiteboard
+layout" follow-up named under the "🤝 Team Collaboration Mode" bullet in
+`TODO.md` — the one part of the whiteboard the first slice above
+deliberately deferred, since nothing in this repo's UI kit had a
+drag-and-drop primitive to build it against yet. Rather than adding a new
+dependency, `TopicSprintPanel` builds the drag directly on the DOM's native
+[Pointer Events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events)
+API — the same low-level mechanism any drag-and-drop library would sit on
+top of, with no library-specific styling/theming to match. `lib/team-collaboration-mode.ts`
+adds an optional `position: {x, y}` field to `WhiteboardNote` (optional so a
+note persisted before this field existed still reads back — see
+`getWhiteboardNotePosition`'s `{x: 0, y: 0}` fallback), a fixed
+`WHITEBOARD_CANVAS_WIDTH`/`HEIGHT`/`WHITEBOARD_NOTE_WIDTH`/`HEIGHT` footprint,
+`clampWhiteboardNotePosition` (keeps a note's whole footprint inside the
+canvas — never partially off any edge), `defaultWhiteboardNotePosition`
+(cascades a newly-added note diagonally by the topic board's existing note
+count, mirroring `nextWhiteboardNoteColor`'s "cycle by existing count"
+convention, so consecutive notes don't stack exactly on top of one another),
+and `moveWhiteboardNote` (a pure, clamped position update by note id).
+`TopicSprintPanel`'s "Shared whiteboard" board is now a fixed-size, relatively
+positioned canvas (`data-testid="whiteboard-note-board"`, scrollable on a
+narrow viewport) with each note absolutely positioned at its own `position`;
+pointer-down on a note captures the pointer and records the cursor's offset
+from the note's corner, pointer-move re-clamps and re-positions it live
+(kept in local React state, not written to storage on every move so a drag
+doesn't flood localStorage writes), and pointer-up/-cancel commits the final
+position via `updateWhiteboardNotePosition` (a new `state/sprintWhiteboard.ts`
+export applying `moveWhiteboardNote` and re-saving) and refreshes. The
+"Remove" button on each note stops its own pointer-down from bubbling to the
+note's drag handler, so removing a note never starts (and immediately
+cancels) a drag. Vitest-covered in the same
+`team-collaboration-mode.test.ts` (`clampWhiteboardNotePosition`'s edge/corner
+clamping, `defaultWhiteboardNotePosition`'s cascade-and-wrap, `moveWhiteboardNote`'s
+clamped update and no-op on an unknown id, and `getWhiteboardNotePosition`'s
+fallback for a positionless note) and a new `updateWhiteboardNotePosition`
+case in `sprintWhiteboard.test.ts`. The panel's own pointer-event wiring
+remains intentionally untested, matching every other panel in this repo
+whose DOM event wiring is exercised only through its shared pure predicate's
+own tests (see the "Cross-tab live update" section above).
+
 ## Known gaps
 
 - All three id fields on this tab ("Author ID" and "Your ID" on
@@ -309,8 +349,10 @@ mirroring `sprintSessions.test.ts`'s cases).
 - Scheduled sessions and whiteboard notes are both local-only (no account
   sync yet, unlike some other ideas' persisted stores), and scheduling is by
   calendar day only — no time-of-day, recurrence, or reminder notification.
-- The whiteboard has no freeform (x/y, draggable) layout — notes render in
-  creation order only. A true positioned canvas would need a drag-and-drop
-  primitive this repo's UI kit doesn't have yet; worth revisiting if another
-  idea needs the same primitive (see `TODO.md`'s open follow-up on this
-  bullet, since it's still not started).
+- The whiteboard's freeform (x/y, draggable) layout is per-note only — there
+  is no multi-select/group-drag, no snap-to-grid or alignment guides, and no
+  z-index/bring-to-front ordering (overlapping notes stack in whatever order
+  `whiteboardNotesForTopic` (oldest-created first) renders them, with no way
+  to reorder that stack). The canvas is also a fixed pixel size
+  (`WHITEBOARD_CANVAS_WIDTH`/`HEIGHT`), not responsive to the viewport, so it
+  scrolls rather than resizes on a narrow screen.

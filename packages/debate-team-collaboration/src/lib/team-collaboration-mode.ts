@@ -365,11 +365,14 @@ export function getPastSprintSessions(sessions: SprintSession[], todayKey: strin
 /**
  * A shared sticky note on a topic sprint's whiteboard — the "a shared
  * whiteboard/canvas for sprint brainstorming" follow-up named under the "🤝
- * Team Collaboration Mode" bullet in TODO.md. Deliberately not a positioned
- * (x/y) canvas: this repo's panel UI kit has no drag-and-drop primitive
- * anywhere, so the first slice is a colored sticky-note board (order is
- * creation order, not a freeform layout), mirroring every other idea's
- * "smallest useful vertical slice first" convention.
+ * Team Collaboration Mode" bullet in TODO.md. The first slice was
+ * deliberately not a positioned (x/y) canvas (this repo's panel UI kit had
+ * no drag-and-drop primitive anywhere, so notes rendered in creation order
+ * only); a later slice closed that gap with a freeform, draggable layout
+ * (`position`/`clampWhiteboardNotePosition`/`defaultWhiteboardNotePosition`/
+ * `moveWhiteboardNote` below), built on raw Pointer Events rather than a new
+ * dependency, mirroring every other idea's "smallest useful vertical slice
+ * first" convention.
  */
 export type WhiteboardNoteColor = "yellow" | "pink" | "blue" | "green" | "purple";
 
@@ -382,6 +385,12 @@ export const WHITEBOARD_NOTE_COLORS: readonly WhiteboardNoteColor[] = [
   "purple",
 ];
 
+/** A whiteboard note's freeform position, in pixels relative to the whiteboard canvas's top-left corner. */
+export interface WhiteboardNotePosition {
+  x: number;
+  y: number;
+}
+
 export interface WhiteboardNote {
   id: string;
   topic: string;
@@ -389,6 +398,8 @@ export interface WhiteboardNote {
   color: WhiteboardNoteColor;
   authorId: string;
   createdAt: number;
+  /** Optional so a note persisted before this field existed still reads back — see `getWhiteboardNotePosition`. */
+  position?: WhiteboardNotePosition;
 }
 
 const MAX_WHITEBOARD_NOTE_LENGTH = 280;
@@ -400,6 +411,49 @@ export interface CreateWhiteboardNoteInput {
   authorId: string;
   color: WhiteboardNoteColor;
   createdAt: number;
+  /** Defaults to `{x: 0, y: 0}` (clamped) when omitted. */
+  position?: WhiteboardNotePosition;
+}
+
+/** The whiteboard canvas's fixed footprint and a note's assumed footprint within it, in pixels. */
+export const WHITEBOARD_CANVAS_WIDTH = 720;
+export const WHITEBOARD_CANVAS_HEIGHT = 360;
+export const WHITEBOARD_NOTE_WIDTH = 160;
+export const WHITEBOARD_NOTE_HEIGHT = 110;
+
+/**
+ * Clamps a candidate position so a note's whole footprint stays within the
+ * whiteboard canvas — never partially off its top/left edge (negative
+ * coordinates) or its bottom/right edge (`x`/`y` past what leaves room for
+ * the note's own width/height). Coordinates are rounded to whole pixels.
+ */
+export function clampWhiteboardNotePosition(x: number, y: number): WhiteboardNotePosition {
+  const maxX = Math.max(0, WHITEBOARD_CANVAS_WIDTH - WHITEBOARD_NOTE_WIDTH);
+  const maxY = Math.max(0, WHITEBOARD_CANVAS_HEIGHT - WHITEBOARD_NOTE_HEIGHT);
+  return {
+    x: Math.min(Math.max(0, Math.round(x)), maxX),
+    y: Math.min(Math.max(0, Math.round(y)), maxY),
+  };
+}
+
+const WHITEBOARD_CASCADE_STEP = 28;
+const WHITEBOARD_CASCADE_WRAP = 8;
+
+/**
+ * The position a newly-added note should default to, cascading diagonally by
+ * how many notes the topic's board already has (mirroring
+ * `nextWhiteboardNoteColor`'s "cycle by existing count" convention) so
+ * consecutive notes don't stack exactly on top of one another, wrapping back
+ * to the top-left corner every `WHITEBOARD_CASCADE_WRAP` notes.
+ */
+export function defaultWhiteboardNotePosition(existingNoteCountForTopic: number): WhiteboardNotePosition {
+  const offset = (Math.max(0, existingNoteCountForTopic) % WHITEBOARD_CASCADE_WRAP) * WHITEBOARD_CASCADE_STEP;
+  return clampWhiteboardNotePosition(offset, offset);
+}
+
+/** A note's position, falling back to the canvas's top-left corner for a note persisted before `position` existed. */
+export function getWhiteboardNotePosition(note: WhiteboardNote): WhiteboardNotePosition {
+  return note.position ?? { x: 0, y: 0 };
 }
 
 /**
@@ -424,7 +478,18 @@ export function createWhiteboardNote(input: CreateWhiteboardNoteInput): Whiteboa
     color: WHITEBOARD_NOTE_COLORS.includes(input.color) ? input.color : WHITEBOARD_NOTE_COLORS[0],
     authorId: input.authorId.trim() || "me",
     createdAt: input.createdAt,
+    position: clampWhiteboardNotePosition(input.position?.x ?? 0, input.position?.y ?? 0),
   };
+}
+
+/**
+ * Moves one whiteboard note to a new (clamped) position, leaving every other
+ * note untouched. A no-op (returns the same list) when `id` isn't found.
+ */
+export function moveWhiteboardNote(notes: WhiteboardNote[], id: string, x: number, y: number): WhiteboardNote[] {
+  if (!notes.some((note) => note.id === id)) return notes;
+  const position = clampWhiteboardNotePosition(x, y);
+  return notes.map((note) => (note.id === id ? { ...note, position } : note));
 }
 
 /** All notes for one specific topic, oldest first. */
