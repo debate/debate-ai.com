@@ -305,7 +305,8 @@ export interface SprintSession {
   createdAt: number;
 }
 
-const MAX_SESSION_TITLE_LENGTH = 200;
+/** Hard cap on a `SprintSession`'s title length — shared with `state/sprintSessions.ts#isValidSprintSession`. */
+export const MAX_SESSION_TITLE_LENGTH = 200;
 const DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 export interface CreateSprintSessionInput {
