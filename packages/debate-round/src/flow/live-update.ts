@@ -14,9 +14,10 @@
  *
  * Also hosts the equivalent per-panel predicates for `PrepNotesPanel`,
  * `PrepNoteNotificationsPanel`, the standalone `FlowAnnotationsPanel` list
- * view, and `StrategyPanel` — each closes the same "every other
- * localStorage-backed panel in this repo still has no cross-tab live-update
- * mechanism" Known gap noted in `shared-flow-sync.md`, for its own store.
+ * view, `StrategyPanel`, and `PreRoundBriefingsPanel` — each closes the same
+ * "every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for its own store.
  */
 
 /** The `localStorage` keys a `FlowSpreadsheet` grid's badges read from (see `state/flowAnnotations.ts`, `state/flowEdits.ts`, `state/prepNotes.ts`). */
@@ -140,5 +141,31 @@ export function isFlowEditLogPanelLiveUpdateStorageEvent(event: { key: string | 
   return (
     event.key === null ||
     (FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `panels/PreRoundBriefingsPanel.tsx` reads from —
+ * `state/preRoundBriefings.ts` (the briefing list itself), `ownRoundHistory`
+ * (its "Log a round" head-to-head history feeding "Prior meetings"), and
+ * `roundPairings` (its "Pairing schedule" section, read via
+ * `hooks/useRoundPairings.ts`).
+ */
+export const PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "preRoundBriefings",
+  "ownRoundHistory",
+  "roundPairings",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `PreRoundBriefingsPanel` (or
+ * `useRoundPairings`) to re-read its persisted state. A `null` key (e.g.
+ * from `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
