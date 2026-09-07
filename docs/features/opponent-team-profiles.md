@@ -262,30 +262,37 @@ mean `<id>`?" prompt that refills the filter. Both are Vitest-covered in
 
 ## Cross-tab live update
 
-`OpponentTeamProfilesPanel` previously read `buildOpponentTeamProfilesRoster`
-and `listOpponentRoundRecords` on mount only, so a profile saved/deleted, or a
-round logged/edited/undone/redone/bulk-imported in another browser tab left
-the panel showing a stale roster/history until something forced a
-re-render. The panel now subscribes to the browser's `storage` event, which
-the spec fires only in *other* same-origin tabs/windows, never the one that
-made the write. A pure helper, `flow/live-update.ts`'s
+Until now, `OpponentTeamProfilesPanel` only read its persisted roster and
+logged-round history on mount, or right after its own log/edit/undo/redo/
+delete/bulk-import actions — a teammate's second open tab (or a second
+browser window on the same machine) logging a scouted round for the same
+team showed a stale roster until it re-rendered for some unrelated reason.
+The browser's `storage` event fires only in *other* same-origin tabs/
+windows, never the one that made the write, so it's exactly the missing
+cross-tab signal every other closed panel in this repo already uses (see
+[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+section).
+
+A new pure helper, `debate-round`'s `flow/live-update.ts`'s
 `isOpponentTeamProfilesPanelLiveUpdateStorageEvent`, checks whether the
-event's `key` is one of `state/opponentTeamProfiles.ts`'s
-`"opponentTeamProfiles"`, `state/opponentRoundRecords.ts`'s
-`"opponentRoundRecords"`, `"opponentRoundRecordEditHistory"`, or
-`"opponentRoundRecordRedoHistory"`, or `null` (a `localStorage.clear()`);
-when it is, the panel's existing `refresh()` closure re-reads both the
-roster and the round-record list — the Undo/Redo button state is read live
-from `hasOpponentRoundRecordEditHistory`/`hasOpponentRoundRecordRedoHistory`
-at render time, so `refresh()`'s re-render picks those up too, without a
-separate state slice. This closes the matching entry in
-[`shared-flow-sync.md`](shared-flow-sync.md)'s Known gap: "every other
-localStorage-backed panel in this repo still has no cross-tab live-update
-mechanism." Vitest-covered in `packages/debate-round/test/live-update.test.ts`
-(every backing key, the `null`-key clear-all case, and unrelated/substring-
-matching keys). The panel's own `storage`-listener wiring remains
-intentionally untested, matching every other panel in this repo whose wiring
-is exercised only through the shared pure predicate's own tests.
+event's `key` is one of this panel's four backing stores
+(`opponentTeamProfiles`, the aggregated roster; `opponentRoundRecords`, the
+logged-round history; and `opponentRoundRecordEditHistory`/
+`opponentRoundRecordRedoHistory`, which decide whether a round shows an
+Undo/Redo action) or `null` (a `localStorage.clear()`) — deliberately
+excluding `ownRoundHistory`, which the panel only reads inside the on-demand
+"Compare vs. opponent" action, not on refresh. `OpponentTeamProfilesPanel`
+subscribes to `window`'s `storage` event and calls its existing `refresh()`
+closure when the predicate matches, re-deriving the roster and logged-round
+list the same way its own actions already do — the in-progress "Log a
+scouted round" form draft, the "Bulk import (CSV)" textarea, and any built
+"Compare vs. opponent" comparison are left untouched, only the persisted
+roster/history re-reads.
+
+Vitest-covered in `debate-round`'s `test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, the excluded
+`ownRoundHistory` key, and unrelated/substring-matching keys staying
+ignored).
 
 ## Known gaps
 

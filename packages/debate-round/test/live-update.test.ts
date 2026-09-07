@@ -186,16 +186,16 @@ describe("isOpponentTeamProfilesPanelLiveUpdateStorageEvent", () => {
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
   });
 
-  it("is false for an unrelated store's key", () => {
+  it("is false for an unrelated store's key, including the on-demand-only ownRoundHistory key", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "ownRoundHistory" })).toBe(false);
-    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "preRoundBriefings" })).toBe(false);
   });
 
   it("is false for a key that merely contains a covered store name as a substring", () => {
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentTeamProfilesBackup" })).toBe(false);
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "old_opponentRoundRecords" })).toBe(false);
-    expect(
-      isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentRoundRecordEditHistoryArchive" }),
-    ).toBe(false);
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentRoundRecordEditHistoryArchive" })).toBe(
+      false,
+    );
   });
 });

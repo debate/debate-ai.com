@@ -15,6 +15,14 @@
  * here — this is a read/write composition and rendering layer, mirroring the
  * existing `ArgumentLibraryPanel`/`SprintNotesPanel` panel convention.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTopicCoverageDashboardLiveUpdateStorageEvent`, so a tracked argument, an
+ * evidence-library entry or tagged contribution, or a coverage snapshot
+ * added/removed in another browser tab refreshes this panel's coverage
+ * report, checklist, snapshot history, and cross-topic comparison here too —
+ * the `storage` event never fires in the tab that made the write, only in
+ * other tabs.
+ *
  * @module panels/TopicCoverageDashboardPanel
  */
 
@@ -43,6 +51,7 @@ import {
 } from "../state/topicCoverageSnapshots"
 import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
 import type { ArgumentCoverage, CoverageLevel, CrossTopicCoverageRow, TopicCoverageReport } from "../lib/topic-coverage"
+import { isTopicCoverageDashboardLiveUpdateStorageEvent } from "../state/live-update"
 
 const LEVEL_LABEL: Record<CoverageLevel, string> = {
   missing: "Missing",
@@ -94,11 +103,27 @@ export function TopicCoverageDashboardPanel() {
 
   const refresh = (activeTopic: string) => {
     setTopics(listTrackedTopics())
-    setReport(buildPersistedTopicCoverageReport(activeTopic))
-    setRecords(listTrackedArguments(activeTopic))
-    setSnapshots(listCoverageSnapshots(activeTopic))
+    setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
+    setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+    setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
     setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }
+
+  /**
+   * Live-update the rendered coverage report, tracked-argument checklist,
+   * snapshot history, and cross-topic comparison when another browser tab
+   * tracks/removes an argument, submits an evidence-library entry or
+   * tagged contribution, or records/clears a coverage snapshot.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTopicCoverageDashboardLiveUpdateStorageEvent(event)) return
+      refresh(topic.trim())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
 
   const handleRecordSnapshot = () => {
     const activeTopic = topic.trim()
