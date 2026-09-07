@@ -57,6 +57,15 @@
  * first (`sortAssignmentsByPriority`) so a flagged task surfaces above its
  * topic-mates, mirroring `strategy-sync-notes.ts`'s `setNotePriority`/
  * `sortNotesByPriorityThenCreatedAt` convention for Strategy Sync Notes.
+ * `setPersistedUnassignedTaskPriority` closes the "An unassigned task can't
+ * be pre-flagged before it has an assignee" Known gap recorded in
+ * `docs/features/task-inbox.md` — the same flag, applied directly to a
+ * still-unassigned `ResearchTask` (`lib/research-task-routing.ts`'s
+ * `setTaskPriority`) instead of requiring it to be assigned first;
+ * `buildTaskInboxView` sorts `unassignedTasks` high-priority first too
+ * (`sortTasksByPriority`), and `reassignPersistedRoutedTask` carries the
+ * flag onto the resulting assignment's own `priority` the moment the task
+ * is actually assigned.
  *
  * `buildTeamCapacityView` closes the "a capacity-aware view of routing load
  * across the team" follow-up named under the "Research Task Routing" bullet
@@ -75,7 +84,9 @@
 import {
   buildRoutingResult,
   setAssignmentPriority,
+  setTaskPriority,
   sortAssignmentsByPriority,
+  sortTasksByPriority,
   type RoutedAssignment,
   type ResearchTask,
   type RoutingResult,
@@ -245,10 +256,14 @@ export function reassignPersistedRoutedTask(
   const task = previousAssignment ? previousAssignment.task : queue.result.unassignedTasks[unassignedIndex];
   // Carry the previous assignment's priority flag along — reassigning a
   // task moves it to a new contributor, it doesn't change how urgent it is.
+  // A still-unassigned task's own `priority` (see `setPersistedUnassignedTaskPriority`)
+  // carries the same way once it's assigned for the first time, moving onto
+  // the new `RoutedAssignment.priority` instead of staying on the task.
+  const carriedPriority = previousAssignment?.priority ?? task.priority;
   const reassignment: RoutedAssignment = {
-    task,
+    task: task.priority ? setTaskPriority(task, "normal") : task,
     contributorId: trimmedContributorId,
-    ...(previousAssignment?.priority ? { priority: previousAssignment.priority } : {}),
+    ...(carriedPriority ? { priority: carriedPriority } : {}),
   };
   const updatedResult: RoutingResult = {
     assignments: previousAssignment
@@ -301,6 +316,43 @@ export function setPersistedRoutedTaskPriority(
   return updated;
 }
 
+/**
+ * Flags (or unflags) one still-unassigned task high priority, closing the
+ * "An unassigned task can't be pre-flagged before it has an assignee" Known
+ * gap recorded in `docs/features/task-inbox.md` — the unassigned
+ * counterpart of `setPersistedRoutedTaskPriority`, matching by `argBlock`
+ * against `unassignedTasks` instead of `assignments` via
+ * `research-task-routing.ts`'s `setTaskPriority`. The flag carries over onto
+ * the resulting `RoutedAssignment.priority` the moment the task is later
+ * assigned or reassigned (see `reassignPersistedRoutedTask`), exactly the
+ * way an already-assigned task's own flag already does.
+ *
+ * Returns the updated `ResearchTask`, or `undefined` — leaving storage
+ * untouched — when the topic has no persisted queue or no unassigned task
+ * matches that `argBlock` (an already-assigned task doesn't match here; use
+ * `setPersistedRoutedTaskPriority` for that case).
+ */
+export function setPersistedUnassignedTaskPriority(
+  topicId: string,
+  argBlock: string,
+  priority: TaskPriority,
+): ResearchTask | undefined {
+  const queue = getRoutedTaskQueue(topicId);
+  if (!queue) return undefined;
+
+  const index = queue.result.unassignedTasks.findIndex((task) => task.argBlock === argBlock);
+  if (index === -1) return undefined;
+
+  const updated = setTaskPriority(queue.result.unassignedTasks[index], priority);
+  const updatedResult: RoutingResult = {
+    ...queue.result,
+    unassignedTasks: queue.result.unassignedTasks.map((task, i) => (i === index ? updated : task)),
+  };
+
+  saveRoutedTaskQueue({ topicId, result: updatedResult });
+  return updated;
+}
+
 /** One assignment in the task-inbox view, tagged with the topic it was routed under and the assignee's current skill level (if their profile is still persisted). */
 export interface TaskInboxAssignment extends RoutedAssignment {
   topicId: string;
@@ -329,7 +381,10 @@ export interface TaskInboxTopic {
  * Each topic's assignments are ordered high-priority first via
  * `sortAssignmentsByPriority` (stable, so the underlying most-urgent-first
  * routing order survives within a priority tier) — closing the "a
- * task-priority indicator" follow-up named under the same bullet.
+ * task-priority indicator" follow-up named under the same bullet. Its
+ * `unassignedTasks` are ordered the same way via `sortTasksByPriority`, so a
+ * task flagged via `setPersistedUnassignedTaskPriority` surfaces above its
+ * still-unassigned topic-mates too.
  */
 export function buildTaskInboxView(): TaskInboxTopic[] {
   const skillByContributor = new Map(
@@ -343,7 +398,7 @@ export function buildTaskInboxView(): TaskInboxTopic[] {
       topicId,
       contributorSkillLevel: skillByContributor.get(assignment.contributorId),
     })),
-    unassignedTasks: result.unassignedTasks,
+    unassignedTasks: sortTasksByPriority(result.unassignedTasks),
   }));
 }
 

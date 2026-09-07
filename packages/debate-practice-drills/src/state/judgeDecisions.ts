@@ -13,6 +13,7 @@
  */
 
 import type { JudgeDecisionAiResult, JudgeDecisionSideNames } from "debate-round/src/round/judge-decision-ai";
+import { combineJudgePanelDecisions, type JudgePanelCombinedDecision } from "debate-round/src/round/judge-decision-panel";
 
 export type JudgeDecisionRecord = {
   /** Generated once when the decision is first requested; the record's stable cross-device identity. */
@@ -22,6 +23,14 @@ export type JudgeDecisionRecord = {
   sideNames: JudgeDecisionSideNames;
   result: JudgeDecisionAiResult;
   generatedAt: number;
+  /**
+   * Set when this decision was requested as part of a multi-judge "panel"
+   * run (idea #5's follow-up) — every decision from the same panel run
+   * shares one `batchId` so `buildJudgeDecisionHistoryItems` can group them
+   * back together and show a combined decision alongside each paradigm's
+   * individual verdict. Absent for a regular single-paradigm decision.
+   */
+  batchId?: string;
 };
 
 const STORAGE_KEY = "judgeDecisions";
@@ -54,6 +63,11 @@ function writeAll(records: JudgeDecisionRecord[]): void {
 
 function generateJudgeDecisionId(): string {
   return `decision-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** Generates a fresh `batchId` for a new multi-judge panel run, stamped onto every decision it requests. */
+export function generateJudgeDecisionBatchId(): string {
+  return `panel-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 /** Lists every persisted judge decision, across every round. */
@@ -158,7 +172,60 @@ export type JudgeDecisionRoundGroup = {
   roundId: string;
   /** Newest-first. */
   decisions: JudgeDecisionRecord[];
+  /** Newest-first, `decisions` regrouped into single decisions and multi-judge panel runs — see `buildJudgeDecisionHistoryItems`. */
+  historyItems: JudgeDecisionHistoryItem[];
 };
+
+/** One entry in a round's rendered decision history: either a lone decision, or a multi-judge panel run's decisions plus their combined verdict. */
+export type JudgeDecisionHistoryItem =
+  | { kind: "single"; decision: JudgeDecisionRecord }
+  | { kind: "panel"; batchId: string; decisions: JudgeDecisionRecord[]; combined: JudgePanelCombinedDecision };
+
+/**
+ * Regroups a round's newest-first `decisions` list so every 2+ decisions
+ * sharing a `batchId` (a multi-judge panel run) render as one grouped item
+ * with a combined decision, instead of as unrelated single-decision cards.
+ * A `batchId` shared by only one surviving decision (e.g. every other
+ * member of that panel run was individually cleared) falls back to
+ * rendering as a plain single decision, since `combineJudgePanelDecisions`
+ * needs at least two.
+ *
+ * Each group's position is the position of its newest member, so panel
+ * runs interleave correctly with single decisions in the newest-first
+ * order the panel already relies on.
+ */
+export function buildJudgeDecisionHistoryItems(decisions: readonly JudgeDecisionRecord[]): JudgeDecisionHistoryItem[] {
+  const byBatch = new Map<string, JudgeDecisionRecord[]>();
+  for (const decision of decisions) {
+    if (!decision.batchId) continue;
+    const existing = byBatch.get(decision.batchId);
+    if (existing) existing.push(decision);
+    else byBatch.set(decision.batchId, [decision]);
+  }
+
+  const items: JudgeDecisionHistoryItem[] = [];
+  const consumedBatchIds = new Set<string>();
+
+  for (const decision of decisions) {
+    const batch = decision.batchId ? byBatch.get(decision.batchId) : undefined;
+    if (batch && batch.length >= 2) {
+      if (consumedBatchIds.has(decision.batchId!)) continue;
+      consumedBatchIds.add(decision.batchId!);
+      items.push({
+        kind: "panel",
+        batchId: decision.batchId!,
+        decisions: batch,
+        combined: combineJudgePanelDecisions(
+          batch.map((record) => ({ paradigmName: record.paradigmName, result: record.result })),
+        ),
+      });
+    } else {
+      items.push({ kind: "single", decision });
+    }
+  }
+
+  return items;
+}
 
 /**
  * Every persisted judge decision grouped by round for `panels/JudgeDecisionPanel.tsx`'s
@@ -176,9 +243,9 @@ export function buildJudgeDecisionsPanelView(): JudgeDecisionRoundGroup[] {
     }
   }
   return [...byRound.entries()]
-    .map(([roundId, decisions]) => ({
-      roundId,
-      decisions: [...decisions].sort((a, b) => b.generatedAt - a.generatedAt),
-    }))
+    .map(([roundId, decisions]) => {
+      const sorted = [...decisions].sort((a, b) => b.generatedAt - a.generatedAt);
+      return { roundId, decisions: sorted, historyItems: buildJudgeDecisionHistoryItems(sorted) };
+    })
     .sort((a, b) => a.roundId.localeCompare(b.roundId));
 }

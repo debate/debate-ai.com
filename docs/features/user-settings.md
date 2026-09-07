@@ -86,8 +86,11 @@ state/favoriteTools.ts (pure — no fetch, no localStorage writes)
                                                  tolerating malformed input
 
 round/user-settings-client.ts (fetch — shared by every settings surface)
-  → fetchUserSettings()   — GET /api/settings; null on 401 (signed out)
-  → saveUserSettings()    — PUT /api/settings; throws on failure
+  → fetchUserSettings()    — GET /api/settings; null on 401 (signed out)
+  → saveUserSettings()     — PUT /api/settings, whole-field replace; throws on failure
+  → saveFavoriteToolOp()   — PUT /api/settings { addFavoriteTool | removeFavoriteTool };
+    resolved against the row's current favoriteTools server-side instead of
+    a client-computed list — see useFavoriteTools.ts below
 
 panels/UserSettingsPanel.tsx
   → apps/debate-ai.com/app/settings/page.tsx  — mounts the panel, plus
@@ -112,7 +115,12 @@ lib/hooks/useFavoriteTools.ts (app-layer — mirrors useThemeState's
   → toggleFavorite/removeFavorite: applies to localStorage immediately,
     dispatches a same-tab `favorite-tools-changed` window event (every
     other mounted instance re-reads and stays in sync), then best-effort
-    saveUserSettings({ favoriteTools }) when signed in
+    saveFavoriteToolOp({ addFavoriteTool | removeFavoriteTool }) when signed
+    in — a single op, not a whole-list saveUserSettings({ favoriteTools })
+    replace, so two tabs starring different tools in quick succession don't
+    race each other's addition away (see Known gaps)
+  → pruneUnknown: still a whole-list saveUserSettings({ favoriteTools })
+    replace — a bulk cleanup pass, not a single star/unstar
   → components/tools/FavoriteToolButton.tsx   — the star toggle rendered on
     every /tools card and every favorites-strip chip
   → components/tools/FavoritesController.tsx  — shows/hides the /tools
@@ -132,10 +140,14 @@ apps/debate-ai.com/app/api/settings/route.ts
   → GET  — current user's row, or the matching DEFAULT_USER_SETTINGS/
     DEFAULT_THEME_SETTINGS/DEFAULT_FAVORITE_TOOLS value for any unset field
   → PUT  — validates via normalizeUserSettingsPatch AND
-    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch (a caller
-    can patch any subset of the three concerns in one request), serializes
-    a valid favoriteTools list before merging it in, then upserts
-    (insert ... onConflictDoUpdate on userId)
+    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch AND
+    normalizeFavoriteToolOpPatch (a caller can patch any subset of these in
+    one request). An addFavoriteTool/removeFavoriteTool op reads the row's
+    current favoriteTools first and resolves the op against it via
+    applyFavoriteToolOp (read-then-write, like the editorPreferences merge
+    below) before serializing; a plain favoriteTools array still replaces
+    the whole list as before. Then upserts (insert ... onConflictDoUpdate
+    on userId)
 ```
 
 Both API handlers require a session (401 without one) — unlike
@@ -167,11 +179,23 @@ vitest project wired up at all (see `apps/debate-ai.com/vitest.config.ts`'s `pro
   `fontSize`/`colorTheme`/`themeMode` change from `UserSettingsPanel` can
   all PUT the same row from different tabs — but no client reads back
   another's fields before its own PUT, so a race only ever loses the
-  losing tab's own edited field(s), never corrupts the row. `favoriteTools`
-  is the field most exposed to this: it's a whole-list replace (see
-  `state/favoriteTools.ts`), so two tabs each starring a *different* tool
-  in quick succession can have the second PUT's list silently drop the
-  first tab's addition, rather than merging them.
+  losing tab's own edited field(s), never corrupts the row.
+  **Update:** `favoriteTools` — previously the field most exposed to this,
+  since it was a whole-list replace where two tabs each starring a
+  *different* tool in quick succession could have the second PUT's list
+  silently drop the first tab's addition — is now fixed: `toggleFavorite`/
+  `removeFavorite` (`lib/hooks/useFavoriteTools.ts`) send a single
+  `{ addFavoriteTool }`/`{ removeFavoriteTool }` op
+  (`round/user-settings-client.ts#saveFavoriteToolOp`) instead of a
+  client-computed list, and `/api/settings`'s PUT handler resolves it
+  against the row's *current* stored value with a read-then-write
+  (`state/favoriteTools.ts#applyFavoriteToolOp`), mirroring how
+  `editorPreferences` already merges onto its existing stored map instead
+  of replacing it — see this route's own docstring. This narrows, but (like
+  `editorPreferences`) doesn't fully eliminate, the underlying no-version-
+  check gap this bullet describes; a whole-list `favoriteTools` PUT is still
+  accepted for legitimate bulk replaces (`pruneUnknown`'s stale-favorite
+  cleanup), which stays subject to the general gap above.
 - `ThemeDropdown` (the standalone exported component in
   `theme-dropdown.tsx`, distinct from `useThemeState` the hook) is dead
   code — unused anywhere in the app, which actually renders `CategoryDock`'s
