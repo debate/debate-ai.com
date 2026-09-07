@@ -1048,6 +1048,7 @@ _No task currently in progress._
   improves). No further follow-up is currently tracked for this idea; a
   future run should pick a fresh next-step elsewhere if one becomes worth
   doing.
+  **Merge note (PR [#588](https://github.com/debate/debate-ai.com/pull/588)):** that PR built a cross-topic comparison independently, as a topic × category grid (`buildTopicCoverageComparisonHeatmap`/`buildPersistedTopicCoverageComparisonHeatmap`, one column per category with a covered/total badge per cell) rendered below the topic switcher. Since the feature had already landed here (the per-topic worst-covered-first table above), the merge kept the shipped implementation and dropped the duplicate functions, panel section, and tests rather than rendering two "Cross-topic comparison" sections; the category-pivot view remains a possible future refinement of the shipped table if per-category breakdowns become worth showing.
 - **📊 CX NDCA Standings — a "who's currently qualified" view now sits on
   the Standings tab.** Another repeat of the standing autonomous-routine
   prompt ("integrate all the tools into the UI... create user settings and
