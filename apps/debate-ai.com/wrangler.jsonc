@@ -1,6 +1,9 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "debate-ai",
+	// Must match the Cloudflare Workers Builds project name, otherwise CI
+	// overrides it at deploy time and a manual `wrangler deploy` from this
+	// directory targets a different Worker than production.
+	"name": "debate-ai-com",
 	"main": "./worker/index.ts",
 	"compatibility_date": "2026-03-10",
 	"compatibility_flags": [
