@@ -3,7 +3,7 @@
 ## Local desktop dev
 
 ```bash
-cd packages/native-wrapper
+cd apps/debate-native-wrapper
 npm run dev          # regenerates tauri.conf.json from the debate-ai profile, then `tauri dev`
 ```
 

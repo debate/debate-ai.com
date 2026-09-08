@@ -61,7 +61,7 @@ clobbering them.
 
 ## CI
 
-The Android job in `.github/workflows/native-wrapper-build.yml` builds a signed `.aab` when
+The Android job in `.github/workflows/native-wrapper-release.yml` builds a signed `.aab` when
 release-signing secrets are configured, and is skipped otherwise (see that workflow's comments).
 There is currently no iOS CI job — GitHub's hosted `macos-*` runners can build one (see
 `docs/APP_STORES.md` for the Xcode/signing steps involved), but wiring up certificate and

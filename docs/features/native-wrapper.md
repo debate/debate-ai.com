@@ -6,7 +6,7 @@ Google-OAuth-compatible sign-in flow despite Google blocking OAuth inside embedd
 with [Tauri](https://tauri.app) as `native-wrapper`, a generic wrapper package that happens to
 ship pre-configured for this site rather than something debate-ai.com-specific.
 
-- **Package:** [native-wrapper](../../packages/native-wrapper/README.md) — the Tauri shell itself
+- **Package:** [native-wrapper](../../apps/debate-native-wrapper/README.md) — the Tauri shell itself
   (window setup, icons, OAuth handoff, build/release CI).
 - **Auth integration:** [`lib/auth/index.ts`](../../apps/debate-ai.com/lib/auth/index.ts) and
   [`lib/auth/client.ts`](../../apps/debate-ai.com/lib/auth/client.ts) (better-auth's
@@ -38,7 +38,7 @@ apps/debate-ai.com (website, unmodified for everything except auth)
     -- authClient.oneTimeToken.verify({ token }) -> session cookie set in the wrapper's
        own cookie jar -> router.replace("/")
 
-packages/native-wrapper (Tauri shell, generic — see its own README for the profile mechanism)
+apps/debate-native-wrapper (Tauri shell, generic — see its own README for the profile mechanism)
   src-tauri/src/lib.rs
     -- tauri_plugin_deep_link catches debateai://auth-callback, navigates the window to
        /auth/native-callback (same-origin from there on)
@@ -50,18 +50,18 @@ packages/native-wrapper (Tauri shell, generic — see its own README for the pro
 
 Full mechanics, including why the token hand-off is shaped this way (better-auth's verify
 endpoint is a same-origin POST, not something a plain navigation can hit), are in
-[`packages/native-wrapper/docs/OAUTH.md`](../../packages/native-wrapper/docs/OAUTH.md).
+[`apps/debate-native-wrapper/docs/OAUTH.md`](../../apps/debate-native-wrapper/docs/OAUTH.md).
 
 ## Known gaps
 
 - No auto-update yet — `tauri-plugin-updater` is wired into the Rust side but left inactive
   (`plugins.updater.active: false` in `tauri.conf.json`) until a signing keypair and update
-  endpoint are set up. See `packages/native-wrapper/docs/BUILDING.md`'s "Auto-update" section.
+  endpoint are set up. See `apps/debate-native-wrapper/docs/BUILDING.md`'s "Auto-update" section.
 - Android/iOS mobile projects (`gen/android`, `gen/apple`) aren't generated or checked in — this
   environment had neither an Android SDK/NDK nor a macOS+Xcode host available, so mobile support
   is scaffolded (the Rust core is mobile-ready) but not exercised end-to-end. See
-  `packages/native-wrapper/docs/MOBILE.md`.
-- No store submissions have been made for any platform — `packages/native-wrapper/docs/APP_STORES.md`
+  `apps/debate-native-wrapper/docs/MOBILE.md`.
+- No store submissions have been made for any platform — `apps/debate-native-wrapper/docs/APP_STORES.md`
   documents what each store needs (including the real Guideline 4.2 "minimum functionality"
   rejection risk a webview-wrapper app should expect specifically on iOS), but every store needs
   a human-held developer account and credentials this environment doesn't have.
