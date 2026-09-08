@@ -14,6 +14,8 @@
  * for `JudgeParadigmPickerPanel`. `isVulnerabilityChartsPanelLiveUpdateStorageEvent`/
  * `isCounselPanelAssessmentsLiveUpdateStorageEvent` close the same gap for
  * `VulnerabilityChartsPanel` and its `useCounselPanelAssessments` hook.
+ * `isArgumentTreePanelLiveUpdateStorageEvent` closes it for
+ * `ArgumentTreePanel`.
  *
  * @module state/live-update
  */
@@ -85,5 +87,35 @@ export function isCounselPanelAssessmentsLiveUpdateStorageEvent(event: { key: st
   return (
     event.key === null ||
     (COUNSEL_PANEL_ASSESSMENTS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `ArgumentTreePanel` reads directly:
+ * `debate-round`'s `state/argumentTrees.ts` `"argumentTrees"` store (the
+ * per-round derived outline records the panel renders) and this package's
+ * own `state/argumentTreeFilters.ts` `"argumentTreeFilters"` store (each
+ * round's saved speech/side/kind/unanswered-only filter selection). The
+ * panel's saved filter *presets* (`hooks/useOutlineFilterPresets.ts`,
+ * `"outline-filter-presets"`) are deliberately excluded — that hook already
+ * has its own same-tab `CHANGE_EVENT` sync but no cross-tab `storage`
+ * listener yet, matching every other `use*Presets` hook in this repo (e.g.
+ * `debate-round`'s `useWordLimitPresets`); closing that separate, wider gap
+ * is left for a future run.
+ */
+export const ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["argumentTrees", "argumentTreeFilters"] as const;
+
+/**
+ * Whether a `storage` event should trigger `ArgumentTreePanel` to refresh
+ * its rendered outlines and per-round filter selections. A `null` key (e.g.
+ * from `localStorage.clear()`, per the `StorageEvent` spec) counts too — the
+ * safest response to "everything changed" is refreshing. Any other key (an
+ * unrelated store elsewhere in the app) is ignored so an unrelated cross-tab
+ * write doesn't force a needless refresh.
+ */
+export function isArgumentTreePanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
