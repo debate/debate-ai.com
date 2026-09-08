@@ -7,7 +7,7 @@ _No task currently in progress._
 
 ### Completed
 
-- **🎓 Coaching Programs — cross-tab live update.** Another repeat of the
+- **⚖️ AI Judge Decision — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
   flows/docs/debates in SQL and link to users... add tools into where
