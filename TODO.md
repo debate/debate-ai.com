@@ -7,6 +7,60 @@ _No task currently in progress._
 
 ### Completed
 
+- **📝 Outline Filters and Argument Tree View — cross-tab live update.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — with many
+  parallel sessions racing on this same gap (five open PRs and half a dozen
+  unmerged branches touching neighboring panels at the start of this run),
+  this run cross-checked both the open-PR list and every unmerged branch's
+  diff before picking a genuinely unclaimed panel: `debate-practice-drills`'s
+  `ArgumentTreePanel` (`JudgeDecisionPanel` and `OpponentPersonaPickerPanel`
+  already had open PRs, `FlowSummariesPanel` was mid-flight on an unmerged
+  branch, and `debate-team-collaboration` had multiple unmerged branches
+  mid-refactor on conflicting files, so that whole package was avoided).
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isArgumentTreePanelLiveUpdateStorageEvent`, covering both stores the
+  panel reads directly: `debate-round`'s `argumentTrees` (the derived
+  per-round outline records) and this package's own `argumentTreeFilters`
+  (each round's saved filter selection). `ArgumentTreePanel.tsx` now
+  subscribes to `window`'s `storage` event and re-reads both when the
+  predicate matches — a teammate generating, clearing, or tagging an
+  outline, or saving/clearing a round's filter, in one tab now shows up in
+  every other open tab without a manual reload. Deliberately excluded:
+  `hooks/useOutlineFilterPresets.ts`'s own `outline-filter-presets` store —
+  that hook already has a same-tab `CHANGE_EVENT` sync but no cross-tab
+  `storage` listener yet, matching every other `use*Presets` hook in this
+  repo (e.g. `debate-round`'s `useWordLimitPresets`); closing that separate,
+  wider gap across every preset hook is left for a future run.
+
+  See `docs/features/argument-tree-outline.md`'s new "Cross-tab live
+  update" section (plus its Known gaps entry noting the excluded presets
+  hook) and `docs/features/shared-flow-sync.md`'s updated Known gaps bullet
+  (added `ArgumentTreePanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (both tracked
+  keys, the `null`-key clear-all case, and unrelated/substring-matching keys
+  staying ignored, mirroring every other panel's cases in that file).
+
+  Ran the full verification gate: `bun run test` (5177 passing, up from
+  5173 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run — no repro of the earlier sandbox-only
+  `UNLOADABLE_DEPENDENCY` canvas-binding failure some previous runs hit; not
+  something this change could have caused either way). No `lint`/
+  `format:check` script exists anywhere in this repo, so that step was
+  skipped as not applicable.
 - **📈 AI Response-Outcome Charts — cross-tab live update.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to

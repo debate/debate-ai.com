@@ -503,7 +503,9 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   `debate-practice-drills`), `VulnerabilityChartsPanel` (see
   [`response-outcome-charts.md`](response-outcome-charts.md)'s "Cross-tab
   live update" — also covers its `useCounselPanelAssessments` hook's
-  `counselPanelAssessments` store), and `FlowEditLogPanel` itself (see
+  `counselPanelAssessments` store), `ArgumentTreePanel` (see
+  [`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
+  update"), and `FlowEditLogPanel` itself (see
   "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
   equivalent mechanism for their own stores, but every other
   localStorage-backed panel in this repo still has none (Live Sync
