@@ -63,7 +63,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -209,15 +209,10 @@ export function CoachingProgramRosterAnalyticsPanel({
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Roster Analytics</h1>
-        <p className="text-sm text-muted-foreground">
-          A coaching program's group-challenge standings and daily-quest streaks, side by side, for
-          the whole squad.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Roster Analytics"
+      description="A coaching program's group-challenge standings and daily-quest streaks, side by side, for the whole squad."
+    >
       {programs.length === 0 ? (
         <EmptyState
           title="No coaching programs yet."
@@ -319,8 +314,7 @@ export function CoachingProgramRosterAnalyticsPanel({
             </Table>
           )}
 
-          <div className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">Recent challenge results</h2>
+          <PanelSection title="Recent challenge results">
             {challengeDigest.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 No completed group challenges for this program's roster yet.
@@ -343,14 +337,12 @@ export function CoachingProgramRosterAnalyticsPanel({
                 Showing the {MAX_VISIBLE_DIGEST_ENTRIES} most recent of {challengeDigest.length} results.
               </p>
             ) : null}
-          </div>
+          </PanelSection>
 
-          <div className="space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">Program calendar</h2>
-            <p className="text-sm text-muted-foreground">
-              This program's group-challenge start/end dates, plus your own scheduled drill reviews.
-              Type a topic below to also include that topic's sprint notes.
-            </p>
+          <PanelSection
+            title="Program calendar"
+            description="This program's group-challenge start/end dates, plus your own scheduled drill reviews. Type a topic below to also include that topic's sprint notes."
+          >
             <div className="space-y-1.5">
               <label htmlFor="roster-analytics-calendar-topic" className="text-sm font-medium text-foreground">
                 Topic (optional, for sprint notes)
@@ -392,9 +384,9 @@ export function CoachingProgramRosterAnalyticsPanel({
                 ))}
               </ul>
             )}
-          </div>
+          </PanelSection>
         </>
       )}
-    </div>
+    </PanelShell>
   )
 }

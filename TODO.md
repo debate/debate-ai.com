@@ -7,6 +7,74 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 `PanelShell`/`PanelSection` adoption across `debate-contributor-progress`
+  panels.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked
+  to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), and every tool
+  already reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette (`Mod-Shift-Space`), and the feature catalog. So this slice
+  continued idea #17's still-open follow-up (4) — the "`PanelShell`/
+  `PanelSection` adoption is still unaudited" half named in
+  `docs/features/user-settings.md`'s Known gaps — picking
+  `debate-contributor-progress` (npm package name `debate-community`) next,
+  the first of the two packages the prior `debate-round` slice left open (the
+  other, `debate-practice-drills`, remains unaudited). The open PRs at the
+  start of this run (#693 `debate-team-collaboration` `PanelShell` pass, #694
+  video search-suggestion chips, #695 D1-migration/account-sync error
+  handling) don't touch this package.
+
+  `debate-contributor-progress` already depends on `debate-research-evidence`
+  (the same `./ui/panels/panel-shell` module every one of its panels already
+  imported `EmptyState`/`StatGrid`/`StatTile`/`MeterBar` from), so no new
+  cross-package dependency was needed. Migrated all 9 panels that hand-rolled
+  a top-level `<h1>`-title-plus-description header onto `PanelShell`:
+  `ContributionLeaderboardPanel`, `CoachingProgramRosterAnalyticsPanel`,
+  `ContributorAwardsPanel`, `DailyBestCardPanel`, `ProgressUnlocksPanel`,
+  `QuestStreaksPanel`, `ContributorProfilePanel`, `CommunityResearchHubPanel`,
+  and `DailyQuestsPanel` (`NewsStreamPanel`, the package's 10th panel, has no
+  matching header shape, so it was left alone). Each panel's genuinely
+  singular, non-repeated `<h2>`-titled sub-section also moved onto
+  `PanelSection`: `CoachingProgramRosterAnalyticsPanel`'s "Recent challenge
+  results"/"Program calendar", `ContributorProfilePanel`'s "Badges"/"Top
+  Contributor Awards"/"Endorsements received"/"Endorsements given",
+  `CommunityResearchHubPanel`'s conditional "For You" strip, and
+  `DailyQuestsPanel`'s "Team competition" (kept its own `border-dashed`
+  styling via `PanelSection`'s `className` prop). A description containing
+  embedded markup (`ContributionLeaderboardPanel`'s tooltip-carrying
+  paragraph, `CommunityResearchHubPanel`'s second machine-generated summary
+  line) was kept as a plain child element rather than forced through
+  `PanelShell`'s string-only `description` prop. `ContributorAwardsPanel` and
+  `DailyBestCardPanel` had no `<h2>`-titled sub-section to migrate (their
+  labeled blocks use a plain `<div>` label, not a heading), so only their
+  top-level header moved. `ContributorProfilePanel`'s header carried a
+  "You"/tier `Badge` pair inline next to its per-contributor-id `<h1>` rather
+  than a plain description — moved into `PanelShell`'s `actions` slot
+  (right-aligned) instead of leaving that header unmigrated, the one
+  deliberate layout adjustment in this slice. Per-category/per-day loop
+  `<h2>`s in `CommunityResearchHubPanel`/`CoachingProgramRosterAnalyticsPanel`
+  were left alone as repeated row headings, not panel/section headers.
+
+  Only `debate-practice-drills` remains open for a future run to pick up
+  next — see `docs/features/user-settings.md`'s updated Known gaps section
+  for the full breakdown.
+
+  No new tests added — markup-only change, each panel's pure-logic functions
+  stay covered by the package's existing state/lib test suite, matching
+  every prior `PanelShell`/`PanelSection` migration slice in this repo. Ran
+  the full verification gate: `bun run test` (340 files, 7064 tests
+  passing), `bun run typecheck` (16/17 packages green; the sole failure,
+  `debate-ai-web`, is a pre-existing `write-language`/`@ai-sdk` provider
+  version-mismatch type error reproduced identically on master before this
+  change, unrelated to this diff), `debate-community`'s own `bunx vitest
+  run` (21 test files, 420 tests passing), and `bun run build:web`
+  (production build, succeeded). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
 - **🧩 `PanelShell`/`PanelSection` adoption across `debate-round` panels.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
@@ -1436,10 +1504,10 @@ _No task currently in progress._
   description header (the shape `PanelShell`'s `title`/`description` props
   already cover) and/or a bordered `<h2>`-titled sub-section (closer to
   `PanelSection`, though it has no border of its own to match); this run
-  closed `debate-search-evidence`'s 7 panels and `debate-round`'s 3 (see the
-  Tracker Status entries above), and an open PR (#693) covers
-  `debate-team-collaboration`'s 13. `debate-contributor-progress` and
-  `debate-practice-drills` remain unaudited; `debate-speech-writer` stays
+  closed `debate-search-evidence`'s 7 panels, `debate-round`'s 3, and
+  `debate-contributor-progress`'s 9 (see the Tracker Status entries above),
+  and an open PR (#693) covers `debate-team-collaboration`'s 13. Only
+  `debate-practice-drills` remains unaudited; `debate-speech-writer` stays
   blocked on the same cross-package-dependency gap named in the bullet
   above. Left open because
   adopting `PanelShell` is a visible design change, not a pure refactor — it

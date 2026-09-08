@@ -67,7 +67,7 @@ import { Info } from "lucide-react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -234,9 +234,8 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   if (rows.length === 0) {
     const isFiltered = range !== "all-time" || category !== "all"
     return (
-      <div className="p-4 sm:p-6">
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
-        <div className="mb-4 flex flex-wrap gap-3">
+      <PanelShell title="Contribution Leaderboard">
+        <div className="flex flex-wrap gap-3">
           {rangeSelect}
           {categorySelect}
         </div>
@@ -251,14 +250,13 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
             message="The leaderboard fills in as contributors submit cards, summaries, and analytics."
           />
         )}
-      </div>
+      </PanelShell>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
-      <p className="mb-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+    <PanelShell title="Contribution Leaderboard">
+      <p className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
         Ranked by total
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
@@ -273,12 +271,12 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
         </Tooltip>
         — a blend of popularity, quality, and reviewer signals.
       </p>
-      <div className="mb-4 flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3">
         {rangeSelect}
         {categorySelect}
       </div>
       {signedInContributorId && (
-        <div className="mb-4">
+        <div>
           <Button size="sm" variant="outline" onClick={() => setShowMyActivity((expanded) => !expanded)}>
             {showMyActivity ? "Hide my endorsement activity" : "My endorsement activity"}
           </Button>
@@ -372,7 +370,7 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
           })}
         </TableBody>
       </Table>
-    </div>
+    </PanelShell>
   )
 }
 
