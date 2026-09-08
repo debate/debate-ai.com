@@ -351,3 +351,39 @@ new render test.
   unaffected by a markup-only change, matching how the prior EmptyState
   migration slices in `debate-round`/`debate-practice-drills` were also
   verified via typecheck/build rather than new render tests.
+  A further slice started on the "`PanelShell`/`PanelSection` adoption is
+  still unaudited" half named above, picking `debate-team-collaboration` as
+  the first package-scoped pass: of its 13 panels, only `TopicSprintPanel`
+  already used `PanelShell`/`PanelSection` (both already reachable via the
+  package's existing `debate-research-evidence`/`debate-round` dependency,
+  the same module each panel already imported `EmptyState` from — no new
+  cross-package dependency needed here, unlike the empty-state gap above).
+  The other 12 (`AccountNotificationsPanel`, `BrainstormBoardPanel`,
+  `CoachingProgramsPanel`, `ContactsPanel`, `GroupChallengesPanel`,
+  `PrepNoteNotificationsPanel`, `PrepNotesPanel`, `PrepRoomPanel`,
+  `ResearchProgressPanel`, `SharedCardsPanel`, `SprintNotesPanel`, and
+  `TaskInboxPanel`) hand-rolled their own top-level `<h1>`-title-plus-
+  description header; every one of those was migrated onto `PanelShell`,
+  moving any header-row controls (unread/online counts, a "Download report"
+  button) into its `actions` prop. Each panel's genuinely singular, non-repeated
+  bordered/`<h2>`-titled sub-sections (e.g. `ContactsPanel`'s "Your
+  contacts"/"Blocked", `TaskInboxPanel`'s "Team capacity"/"Awaiting
+  verification"/"Contributor availability", `PrepRoomPanel`'s "Routed
+  research tasks"/"Shared task checklist"/"Room activity timeline",
+  `ResearchProgressPanel`'s "My research goal"/"Topic comparison",
+  `BrainstormBoardPanel`'s "Session timer") were migrated onto
+  `PanelSection` too, following `TopicSprintPanel`'s own existing
+  convention of leaving `PanelSection` unbordered rather than preserving
+  each section's prior `rounded-lg border` wrapper. Per-item/per-group
+  `<h2>` headings inside a `.map()` (a board's own title in
+  `BrainstormBoardPanel`, a program's name in `CoachingProgramsPanel`, a
+  challenge's title in `GroupChallengesPanel`, a status/topic group's
+  heading in `PrepNotesPanel`/`SprintNotesPanel`/`TaskInboxPanel`'s
+  per-topic queue) were deliberately left as hand-rolled markup, matching
+  this same Known gap's own caution above that not every panel `<h1>`/`<h2>`
+  is a `PanelShell`/`PanelSection`-shaped fit. The remaining packages named
+  in the "roughly 45 panel files" survey above (`debate-round`,
+  `debate-search-evidence`, `debate-contributor-progress`,
+  `debate-practice-drills`, `debate-speech-writer`) are still unaudited —
+  left for a further package-scoped slice each, per this Known gap's own
+  guidance to do this "package by package," not as one blanket pass.

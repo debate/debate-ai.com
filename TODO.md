@@ -7,6 +7,76 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 `PanelShell`/`PanelSection` adoption — `debate-team-collaboration`
+  package pass.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked
+  to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), and every
+  tool already reachable from the Tools page, CardMirror's own
+  `MenuBar`/`Ctrl`/`Cmd`-Shift-Space command palette
+  (`packages/debate-editor/src/react/MenuBar.tsx`, populated from the same
+  `RIBBON_GROUPS` registry as the palette), and the feature catalog. So
+  this slice again picked up idea #17's still-open follow-up (4): the
+  "`PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
+  unaudited" half named in `docs/features/user-settings.md`'s Known gaps —
+  the `StatTile`/`StatGrid` half closed by a prior slice, but the ~45
+  panel files (across `debate-round`, `debate-search-evidence`,
+  `debate-contributor-progress`, `debate-practice-drills`,
+  `debate-speech-writer`, and `debate-team-collaboration`) hand-rolling a
+  `PanelShell`/`PanelSection`-shaped header/sub-section were still
+  unmigrated. Checked the open-PR list first (only #692 — the unrelated
+  `debate-videos` leaderboard dead-code question — and #687/#663 were open
+  against this repo), so this slice was unclaimed. Per that Known gap's own
+  guidance to do this "package by package," this slice scoped to one
+  package: `debate-team-collaboration`, whose 13 panels already had the
+  primitive one import away (`EmptyState` from
+  `debate-research-evidence`/`debate-round`'s `panel-shell.tsx`) with no new
+  cross-package dependency needed, unlike the still-blocked empty-state gap
+  for `debate-speech-writer`/`debate-videos`.
+
+  Of the 13, only `TopicSprintPanel` already used `PanelShell`/
+  `PanelSection`. Migrated the other 12 —  `AccountNotificationsPanel`,
+  `BrainstormBoardPanel`, `CoachingProgramsPanel`, `ContactsPanel`,
+  `GroupChallengesPanel`, `PrepNoteNotificationsPanel`, `PrepNotesPanel`,
+  `PrepRoomPanel`, `ResearchProgressPanel`, `SharedCardsPanel`,
+  `SprintNotesPanel`, and `TaskInboxPanel` — off their hand-rolled
+  top-level `<h1>`-title-plus-description header onto `PanelShell`, moving
+  header-row controls (unread/online counts, a "Download report" button)
+  into its `actions` prop. Each panel's genuinely singular, non-repeated
+  bordered/`<h2>`-titled sub-section was also migrated onto `PanelSection`
+  (e.g. `ContactsPanel`'s "Your contacts"/"Blocked" lists,
+  `TaskInboxPanel`'s "Team capacity"/"Awaiting verification"/"Contributor
+  availability", `PrepRoomPanel`'s "Routed research tasks"/"Shared task
+  checklist"/"Room activity timeline", `ResearchProgressPanel`'s "My
+  research goal"/"Topic comparison", `BrainstormBoardPanel`'s "Session
+  timer"), following `TopicSprintPanel`'s own existing convention of
+  leaving `PanelSection` unbordered rather than preserving each section's
+  prior `rounded-lg border` wrapper — a deliberate visual-weight trade-off
+  the Known gap itself calls out. Left every per-item/per-group `<h2>`
+  heading inside a `.map()` alone (a board's own title in
+  `BrainstormBoardPanel`, a program's name in `CoachingProgramsPanel`, a
+  challenge's title in `GroupChallengesPanel`, a status/topic group's
+  heading in `PrepNotesPanel`/`SprintNotesPanel`/`TaskInboxPanel`'s
+  per-topic queue) — not a clean `PanelShell`/`PanelSection` fit, matching
+  the Known gap's own caution that not every panel `<h1>`/`<h2>` is one.
+
+  See `docs/features/user-settings.md`'s updated Known gaps bullet for the
+  full per-panel breakdown. No new tests added — this is a markup-only
+  change, and each panel's own pure-logic functions stay covered by the
+  package's existing state/lib test suite, matching how prior
+  `PanelShell`/`EmptyState`/`PanelRow` migration slices in this repo were
+  also verified via typecheck/tests rather than new render tests. Ran the
+  full verification gate: `npx vitest run --config
+  apps/debate-ai.com/vitest.config.ts` (full repo suite, all passing),
+  `bun run typecheck` (all packages green), and the
+  `debate-team-collaboration` package's own `npx vitest run` (45 test
+  files, 827 tests passing) and `bunx turbo typecheck
+  --filter=debate-team-collaboration` (10/10 tasks green) individually.
+
 - **📋 Speech Transcript Summaries — cross-tab live update.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to

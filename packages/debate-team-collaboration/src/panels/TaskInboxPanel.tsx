@@ -116,7 +116,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -401,15 +401,10 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   )
 
   const availabilitySection = (
-    <div className="rounded-lg border border-border p-4 space-y-3">
-      <div>
-        <h2 className="mb-1 text-sm font-semibold text-foreground">Contributor availability</h2>
-        <p className="text-xs text-muted-foreground">
-          Manage each contributor's skill level and concurrency limit — routing and the Team capacity
-          view below both read this roster. Active task counts update automatically as tasks are
-          routed, reassigned, and completed; this form never edits them directly.
-        </p>
-      </div>
+    <PanelSection
+      title="Contributor availability"
+      description="Manage each contributor's skill level and concurrency limit — routing and the Team capacity view below both read this roster. Active task counts update automatically as tasks are routed, reassigned, and completed; this form never edits them directly."
+    >
       <div className="flex flex-wrap items-end gap-2">
         <div className="space-y-1.5">
           <Label htmlFor="task-inbox-availability-id">Contributor id</Label>
@@ -486,7 +481,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
           ))}
         </div>
       )}
-    </div>
+    </PanelSection>
   )
 
   const trimmedMyId = myContributorId.trim()
@@ -498,14 +493,10 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
   // its own store and must stay verifiable even after its queue is gone
   // (e.g. deleted or cleared).
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Task Inbox</h1>
-        <p className="text-sm text-muted-foreground">
-          Research tasks routed to contributors, grouped by topic. Mark a task done once it's finished,
-          then a different contributor verifies it before it counts as complete.
-        </p>
-      </div>
+    <PanelShell
+      title="Task Inbox"
+      description="Research tasks routed to contributors, grouped by topic. Mark a task done once it's finished, then a different contributor verifies it before it counts as complete."
+    >
       {routeForm}
       {myTasksFilter}
       {availabilitySection}
@@ -519,11 +510,10 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
         <EmptyState title={`No tasks routed to "${trimmedMyId}" right now.`} />
       )}
       {capacity.length > 0 && (
-        <div className="rounded-lg border border-border p-4">
-          <h2 className="mb-1 text-sm font-semibold text-foreground">Team capacity</h2>
-          <p className="mb-3 text-xs text-muted-foreground">
-            Currently-routed load per contributor, across every topic.
-          </p>
+        <PanelSection
+          title="Team capacity"
+          description="Currently-routed load per contributor, across every topic."
+        >
           <div className="space-y-2">
             {capacity.map((row) => (
               <div
@@ -548,14 +538,13 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
               </div>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
       {pending.length > 0 && (
-        <div className="rounded-lg border border-border p-4">
-          <h2 className="mb-1 text-sm font-semibold text-foreground">Awaiting verification</h2>
-          <p className="mb-3 text-xs text-muted-foreground">
-            A task marked done doesn't count as complete until a different contributor verifies it.
-          </p>
+        <PanelSection
+          title="Awaiting verification"
+          description="A task marked done doesn't count as complete until a different contributor verifies it."
+        >
           <div className="space-y-2">
             {pending.map((record) => {
               const key = pendingKey(record.topicId, record.assignment.task.argBlock)
@@ -614,7 +603,7 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
               )
             })}
           </div>
-        </div>
+        </PanelSection>
       )}
       {visibleTopics.map((topic) => (
         <div key={topic.topicId} className="rounded-lg border border-border p-4">
@@ -723,6 +712,6 @@ export function TaskInboxPanel({ signedInContributorId }: TaskInboxPanelProps = 
           )}
         </div>
       ))}
-    </div>
+    </PanelShell>
   )
 }
