@@ -30,7 +30,7 @@
  * browser, so it can't answer "has anyone on the team cut this" across
  * devices; the shared index can. This closes the last open follow-up (a)
  * under TODO.md idea #7 ("On Page Card Reuse Search") together with the new
- * `apps/browser-extension`, which calls the same API against the active
+ * `apps/debate-web-ext`, which calls the same API against the active
  * tab's URL.
  *
  * Reads the persisted evidence repository via

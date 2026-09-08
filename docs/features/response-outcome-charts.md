@@ -333,6 +333,35 @@ shared baseline-anchored argument set scored per scenario, and the
 suites (the header, per-scenario side-summary sections, per-argument
 score lines, and placeholder text for an empty comparison).
 
+## Cross-tab live update
+
+`VulnerabilityChartsPanel` used to only refresh its rendered report list and
+counsel-panel assessment history on mount or right after its own
+generate/clear/request actions — a teammate generating or clearing a round's
+vulnerability report, or requesting or clearing an AI counsel-panel
+assessment, in a second open tab (or a second browser window on the same
+machine) never showed up without a manual reload, the same still-open gap
+noted in [`shared-flow-sync.md`](shared-flow-sync.md).
+
+`state/live-update.ts`'s `isVulnerabilityChartsPanelLiveUpdateStorageEvent`
+checks whether a `storage` event's `key` is the panel's directly-read
+backing store (`vulnerabilityReports`) or `null` (a `localStorage.clear()`);
+the panel itself subscribes to `window`'s `storage` event and calls its
+existing `refresh()` closure when it matches. The counsel-panel assessment
+history is read through `useCounselPanelAssessments` instead, so that hook
+subscribes separately using `isCounselPanelAssessmentsLiveUpdateStorageEvent`
+(covering `counselPanelAssessments`), mirroring
+`useStrategyRecommendations`'s own `storage`-event subscription. The "what
+if" hypothetical picks and saved scenario comparisons stay scratch component
+state, untouched by either refresh — only the persisted report/assessment
+data re-reads, matching every other closed panel's "refresh the derived
+view, not the draft" convention.
+
+Vitest-covered in
+`packages/debate-practice-drills/test/live-update.test.ts` (every backing-
+store key for both predicates, the `null`-key clear-all case, and
+unrelated/substring-matching keys staying ignored for each).
+
 ## Known gaps
 
 - No known gaps remain for this idea.

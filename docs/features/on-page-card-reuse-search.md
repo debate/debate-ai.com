@@ -48,9 +48,11 @@ existed read back without one and render as Local.
 ## The browser extension
 
 `apps/debate-web-ext` is an unpacked (not store-published) Manifest V3
-browser extension — plain HTML/JS, no bundler, not part of this repo's
-`bun`/`turbo` workspaces. Clicking its toolbar icon reads the active tab's
-URL and calls a small, dedicated server-backed reuse index —
+browser extension — WXT + React + TypeScript, not part of this repo's
+`bun`/`turbo` workspaces — which also carries the debate round timer (the two
+were separate extensions until they were merged). Clicking its toolbar icon
+opens a popup that reads the active tab's URL and calls a small, dedicated
+server-backed reuse index —
 `GET /api/evidence-reuse-check?url=` (`apps/debate-ai.com/app/api/
 evidence-reuse-check/route.ts`, D1-backed, mirroring
 `shared-evidence-library.ts`'s `normalizeSourceUrl` matching rules) — so it
@@ -59,7 +61,10 @@ answers "has anyone on the team cut this," not just this one browser's own
 box checks the same local-repository match `shared-evidence-library.ts`
 always has; the extension is check-only against the shared index and
 doesn't register new cards into it (only the web app's Evidence Library
-submission form does that).
+submission form does that). The same check is also on the page's right-click
+menu ("Check this page for existing cards"), and its Options page carries both
+the API base URL and a skip-check domain whitelist the popup honors without
+hitting the network.
 
 ### Team reuse dashboard
 

@@ -19,61 +19,486 @@ _No task currently in progress._
   reachable from the Tools page, CardMirror's own `MenuBar`/command
   palette, and the feature catalog. So this slice again picked up
   `shared-flow-sync.md`'s "every other localStorage-backed panel in this
-  repo still has no cross-tab live-update mechanism" Known gap. Checked the
-  currently open PR list first (only #657, `VulnerabilityChartsPanel`/
-  response-outcome-charts, was in flight) and then grepped every
-  `panels/*.tsx` file in `debate-practice-drills` directly (not the
-  possibly-stale prose in this file) for a `storage`-event listener to find
-  a genuinely still-open, unclaimed panel: `JudgeDecisionPanel` (the AI
-  Judge Decision panel).
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this panel) and every
+  unmerged branch's diff (none touch `CoachingProgramsPanel.tsx` or its
+  backing stores — `state/coachingPrograms.ts`,
+  `state/persistedCoachingProgramBoard.ts`, `state/roundContributorFlows.ts`
+  — so the "multiple parallel branches mid-refactor" note that left this
+  panel unclaimed in a prior run no longer applies) before confirming via a
+  direct grep of every panel in `debate-team-collaboration` for an existing
+  `storage`-event listener that `CoachingProgramsPanel` was still genuinely
+  open and unclaimed, alongside `UserSettingsPanel` (`debate-round` — left
+  for a future run, since its `form` is a live, directly-editable settings
+  form rather than a derived list/roster view, so closing it needs
+  refreshing only the persisted values, not stomping an unsaved in-progress
+  edit).
 
-  `JudgeDecisionPanel` reads its history through
-  `hooks/useJudgeDecisions.ts` rather than `localStorage` directly, so
-  unlike every prior panel in this series (which each wire the listener
-  straight into the panel component), this slice added the listener inside
-  the hook itself — the hook is the sole owner of the `groups` state the
-  panel renders, and the panel's own state (Round ID, side names, selected
-  multi-judge paradigms) lives entirely outside the hook, so a refresh
-  there can never stomp an in-progress form. Extended
-  `packages/debate-practice-drills/src/state/live-update.ts` (previously
-  holding only `JudgeParadigmPickerPanel`'s predicate) with
-  `JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
-  `isJudgeDecisionPanelLiveUpdateStorageEvent`, covering the hook's one
-  backing store: `judgeDecisions` (`state/judgeDecisions.ts`).
-  `useJudgeDecisions` now subscribes to `window`'s `storage` event and
-  calls `setGroups(buildJudgeDecisionsPanelView())` when the predicate
-  matches — a decision requested, cleared, or bulk-cleared for a round in
-  one tab now shows up in every other open tab's already-rendered history
-  without a manual reload.
+  Added `packages/debate-team-collaboration/src/state/live-update.ts` (the
+  first `live-update.ts` in this package) with
+  `COACHING_PROGRAMS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isCoachingProgramsPanelLiveUpdateStorageEvent`, covering the two stores
+  `CoachingProgramsPanel` reads directly regardless of which board is open:
+  `coachingPrograms` (the persisted program-config list) and
+  `roundContributorFlows` (each roster member's "Flow recorded" badge).
+  `CoachingProgramsPanel.tsx` now subscribes to `window`'s `storage` event
+  and, when the predicate matches, refreshes the program list, re-derives
+  the roster's recorded-contributor set, and — if a board is currently open
+  — recomposes it. A program's expanded board also transitively depends on
+  several other packages' stores (topic-sprint inputs, the group-challenge
+  roster, the contribution feed, win events, and practice-round records,
+  all read through `state/persistedCoachingProgramBoard.ts`); those are
+  deliberately left out of this predicate, matching every other panel's
+  "cover the store(s) this panel reads directly, not everything a composed
+  view transitively depends on" convention (e.g. `JudgeDecisionPanel`'s
+  hook-scoped predicate) — a change to one of those deeper stores in
+  another tab still shows up the next time the board is reopened. This is
+  recorded as a follow-up in `docs/features/coaching-programs.md`'s Known
+  gaps rather than silently left unmentioned.
 
-  See `docs/features/judge-paradigm-selections.md`'s "Cross-tab live
-  update" section (extended with `JudgeDecisionPanel`'s own case) and
-  `docs/features/shared-flow-sync.md`'s updated Known gaps bullet (added
-  `JudgeDecisionPanel` to the closed list). Vitest-covered:
+  See `docs/features/coaching-programs.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `CoachingProgramsPanel` to the closed list).
+  Vitest-covered: `packages/debate-team-collaboration/test/live-update.test.ts`
+  (every backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, mirroring every other
+  panel's cases in that file).
+
+  Ran the full verification gate: `bun run test` (5232 passing, up from
+  5228 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+- **🧪 Practice Round Simulator — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this panel) and every
+  unmerged branch's diff (one, `claude/gifted-babbage-i2zvcr`, claims
+  `FlowSummariesPanel`; the rest touch unrelated features or other
+  packages) before a direct grep of every panel in `debate-practice-drills`
+  for a `storage`-event listener confirmed `PracticeRoundSimulatorPanel`
+  was still genuinely open and unclaimed.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isPracticeRoundSimulatorPanelLiveUpdateStorageEvent`, covering both
+  stores the panel reads directly: `debate-round`'s `practiceRounds` (the
+  saved-round-setup list the panel's form, per-round sections, and "Compare
+  your past attempts" section all derive from) and `debate-round`'s
+  `aiVersusRounds` (read via `getAiVersusRound`/
+  `getPracticeRoundSubmittedSpeeches` for each round's submitted-speech
+  progress and "Generate AI opponent speech" availability).
+  `PracticeRoundSimulatorPanel.tsx` now subscribes to `window`'s `storage`
+  event and calls its existing `refresh()` closure when the predicate
+  matches — a teammate saving or clearing a round's setup, submitting or
+  generating a speech, or getting an AI judge decision in one tab now shows
+  up in every other open tab without a manual reload. The account-synced
+  custom opponent persona library ("My persona library"/"Shared by your
+  team", via `useCustomOpponentPersonaLibrary`) is deliberately excluded —
+  it manages its own refresh through that hook rather than a raw
+  `localStorage` read, matching `OpponentPersonaPickerPanel`'s own
+  exclusion of the same hook (PR #659). The in-progress round-setup form
+  draft, feedback side-key fields, and replay-step selections are left
+  untouched, matching every other closed panel's "refresh the derived
+  view, not the draft" convention.
+
+  See `docs/features/practice-round-simulator.md`'s new "Cross-tab live
+  update" section and `docs/features/shared-flow-sync.md`'s updated Known
+  gaps bullet (added `PracticeRoundSimulatorPanel` to the closed list).
+  Vitest-covered: `packages/debate-practice-drills/test/live-update.test.ts`
+  (both backing-store keys, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, mirroring every other
+  panel's cases in that file). `CoachingProgramsPanel`
+  (`debate-team-collaboration` — that package currently has multiple
+  parallel branches mid-refactor on conflicting files) and `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit)
+  remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5223 passing, up from
+  5219 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+- **🎙️ AI Coach Mode — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this panel) and every
+  unmerged branch's diff before a direct grep of every panel in
+  `debate-practice-drills` for a `storage`-event listener confirmed
+  `CoachingSessionsPanel` was still genuinely open and unclaimed.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isCoachingSessionsPanelLiveUpdateStorageEvent`, covering the panel's one
+  backing store: `coachingSessions` (`state/coachingSessions.ts` — the
+  round+side coaching-session list the panel's rendered sessions, "Compare
+  two sessions" dropdowns, and comparison view all derive from).
+  `CoachingSessionsPanel.tsx` now subscribes to `window`'s `storage` event
+  and calls its existing `refresh()` closure when the predicate matches — a
+  session saved, restored, or cleared in one tab now shows up in every
+  other open tab without a manual reload. The "Generate coaching session"
+  side-key field, any in-progress "Compare two sessions" result, and an
+  open History panel's contents are left untouched, matching every other
+  closed panel's "refresh the derived view, not the draft" convention. The
+  sibling `coachingSessionHistory` store (read only when a session's
+  History toggle is opened, not part of the main derived view) is
+  deliberately left out of the tracked key set, mirroring how every other
+  closed panel in this file tracks only its main list's own store.
+
+  See `docs/features/coaching-sessions.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `CoachingSessionsPanel` to the closed list). Vitest-covered:
   `packages/debate-practice-drills/test/live-update.test.ts` (the one
-  backing-store key, the `null`-key clear-all case, and
-  unrelated/substring-matching keys staying ignored, mirroring the existing
-  `JudgeParadigmPickerPanel` cases in the same file). `UserSettingsPanel`
-  (`debate-round`), `VulnerabilityChartsPanel` (`debate-practice-drills` —
-  claimed by open PR #657), `CoachingProgramsPanel`
-  (`debate-team-collaboration`), and every other panel in
-  `debate-practice-drills` still missing a `storage`-event listener
-  (`AiVersusRoundPanel`, `ArgumentTreePanel`, `CoachingSessionsPanel`,
-  `DrillSetsPanel`, `FlowSummariesPanel`, `OpponentPersonaPickerPanel`,
-  `PracticeRoundSimulatorPanel`, `WordCountRoundsPanel`) remain open for a
-  future run to pick up next.
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `PracticeRoundSimulatorPanel` (`debate-practice-drills`,
+  confirmed still missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
 
-  Ran the full verification gate: `bun run test` (5169 passing, up from
+  Ran the full verification gate: `bun run test` (5219 passing, up from
+  5215 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
+  PR: [#674](https://github.com/debate/debate-ai.com/pull/674).
+- **⚔️ Online Debate Versus AI — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked both the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this package's remaining
+  panels) and every unmerged branch's log before a direct grep of every
+  panel in `debate-practice-drills` for a `storage`-event listener
+  confirmed `AiVersusRoundPanel` was still genuinely open and unclaimed.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `AI_VERSUS_ROUND_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isAiVersusRoundPanelLiveUpdateStorageEvent`, covering the panel's one
+  backing store: `aiVersusRounds` (`debate-round`'s
+  `state/aiVersusRounds.ts` — the persisted-round list the panel's active
+  round, round history, and "Compare transcripts" section all derive
+  from). `AiVersusRoundPanel.tsx` now subscribes to `window`'s `storage`
+  event and calls its existing `refresh()` closure when the predicate
+  matches — a round saved, cleared, or regenerated in one tab now shows up
+  in every other open tab without a manual reload. The in-progress
+  speech-text draft, round-ID/format/side form fields, and "Compare
+  transcripts" dropdown selections are left untouched, matching every
+  other closed panel's "refresh the derived view, not the draft"
+  convention.
+
+  See `docs/features/ai-versus-rounds.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `AiVersusRoundPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `CoachingSessionsPanel` and
+  `PracticeRoundSimulatorPanel` (`debate-practice-drills`, confirmed still
+  missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5211 passing, up from
+  5203 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
+  PR: [#670](https://github.com/debate/debate-ai.com/pull/670).
+- **📚 Practice Drills — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this repo
+  again has several parallel sessions racing on that same gap (four open
+  PRs at the start of this run — `#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel` — plus half a dozen unmerged, mostly stale branches
+  based on old `master` HEADs), so this run cross-checked both the open-PR
+  list and every unmerged branch's log (one, `claude/gifted-babbage-i2zvcr`,
+  claims `FlowSummariesPanel`) before a direct grep of every panel in
+  `debate-practice-drills` for a `storage`-event listener confirmed
+  `DrillSetsPanel` (backed by its `useDrillSets` hook, not read directly by
+  the panel) was still genuinely open and unclaimed.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isDrillSetsPanelLiveUpdateStorageEvent`, covering the hook's one backing
+  store: `drillSets` (the per-round drill-set list the panel derives its
+  round cards, completion meters, and Practice-tier card from).
+  `useDrillSets` (`hooks/useDrillSets.ts`) now subscribes to `window`'s
+  `storage` event and re-reads `buildDrillSetsPanelView()` when the
+  predicate matches — mirroring `useWordCountRounds`'s own `storage`-event
+  subscription (the "panel reads through a hook, not directly" pattern) —
+  so a drill set generated, completed, scripted, review-scheduled, cleared,
+  or synced from the account in one tab now shows up in every other open
+  `/drills` tab without a manual reload. The in-progress "Generate drills
+  for current round" form's side-key field is left untouched, matching
+  every other closed panel's "refresh the derived view, not the draft"
+  convention.
+
+  See `docs/features/drill-sets.md`'s new "Cross-tab live update" section
+  and `docs/features/shared-flow-sync.md`'s updated Known gaps bullet
+  (added `DrillSetsPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `AiVersusRoundPanel`, `CoachingSessionsPanel`, and
+  `PracticeRoundSimulatorPanel` (`debate-practice-drills`, confirmed still
+  missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5203 passing, up from
+  5199 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
+  PR: [#669](https://github.com/debate/debate-ai.com/pull/669).
+- **🔢 Word-Count-Only Speech Format — cross-tab live update.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this repo
+  currently has many parallel sessions racing on that same gap (four open
+  PRs at the start of this run, plus half a dozen unmerged branches), so
+  this run cross-checked both the open-PR list (`#658` JudgeDecisionPanel,
+  `#659` OpponentPersonaPickerPanel, plus two unrelated PRs) and every
+  unmerged branch's diff (one mid-flight on `FlowSummariesPanel`, others on
+  unrelated features in `debate-team-collaboration`) before picking a
+  genuinely unclaimed panel: a direct grep of every panel in
+  `debate-practice-drills` for a `storage`-event listener confirmed
+  `WordCountRoundsPanel` (backed by its `useWordCountRounds` hook, not read
+  directly by the panel) was still open and unclaimed by any in-flight
+  branch.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS`/
+  `isWordCountRoundsLiveUpdateStorageEvent`, covering the hook's one backing
+  store: `wordCountRounds` (the persisted-round list both the round-history
+  cards and the word-count trend view derive from). `useWordCountRounds`
+  (`hooks/useWordCountRounds.ts`) now subscribes to `window`'s `storage`
+  event and re-reads `buildWordCountRoundsPanelView()` when the predicate
+  matches — mirroring this same package's `useCounselPanelAssessments`
+  hook's own `storage`-event subscription (the "panel reads through a hook,
+  not directly" pattern) — so a round saved, cleared, or synced from the
+  account in one tab now shows up in every other open `/word-count` tab
+  without a manual reload. The in-progress speech drafts, round-ID field,
+  and dictation state are left untouched, matching every other closed
+  panel's "refresh the derived view, not the draft" convention.
+
+  See `docs/features/word-count-rounds.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `WordCountRoundsPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `AiVersusRoundPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, and `PracticeRoundSimulatorPanel` (`debate-practice-drills`,
+  confirmed still missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5199 passing, up from
+  5195 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+- **📝 Outline Filters and Argument Tree View — cross-tab live update.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — with many
+  parallel sessions racing on this same gap (five open PRs and half a dozen
+  unmerged branches touching neighboring panels at the start of this run),
+  this run cross-checked both the open-PR list and every unmerged branch's
+  diff before picking a genuinely unclaimed panel: `debate-practice-drills`'s
+  `ArgumentTreePanel` (`JudgeDecisionPanel` and `OpponentPersonaPickerPanel`
+  already had open PRs, `FlowSummariesPanel` was mid-flight on an unmerged
+  branch, and `debate-team-collaboration` had multiple unmerged branches
+  mid-refactor on conflicting files, so that whole package was avoided).
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isArgumentTreePanelLiveUpdateStorageEvent`, covering both stores the
+  panel reads directly: `debate-round`'s `argumentTrees` (the derived
+  per-round outline records) and this package's own `argumentTreeFilters`
+  (each round's saved filter selection). `ArgumentTreePanel.tsx` now
+  subscribes to `window`'s `storage` event and re-reads both when the
+  predicate matches — a teammate generating, clearing, or tagging an
+  outline, or saving/clearing a round's filter, in one tab now shows up in
+  every other open tab without a manual reload. Deliberately excluded:
+  `hooks/useOutlineFilterPresets.ts`'s own `outline-filter-presets` store —
+  that hook already has a same-tab `CHANGE_EVENT` sync but no cross-tab
+  `storage` listener yet, matching every other `use*Presets` hook in this
+  repo (e.g. `debate-round`'s `useWordLimitPresets`); closing that separate,
+  wider gap across every preset hook is left for a future run.
+
+  See `docs/features/argument-tree-outline.md`'s new "Cross-tab live
+  update" section (plus its Known gaps entry noting the excluded presets
+  hook) and `docs/features/shared-flow-sync.md`'s updated Known gaps bullet
+  (added `ArgumentTreePanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (both tracked
+  keys, the `null`-key clear-all case, and unrelated/substring-matching keys
+  staying ignored, mirroring every other panel's cases in that file).
+
+  Ran the full verification gate: `bun run test` (5177 passing, up from
+  5173 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run — no repro of the earlier sandbox-only
+  `UNLOADABLE_DEPENDENCY` canvas-binding failure some previous runs hit; not
+  something this change could have caused either way). No `lint`/
+  `format:check` script exists anywhere in this repo, so that step was
+  skipped as not applicable.
+- **📈 AI Response-Outcome Charts — cross-tab live update.** Another repeat
+  of the standing autonomous-routine prompt ("integrate all the tools into
+  the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — a direct
+  grep of every `panels/*.tsx` file for a `storage`-event listener (not the
+  possibly-stale prose in this file) found a parallel session's branch
+  already mid-flight on `FlowSummariesPanel`, so this run picked a different,
+  genuinely unclaimed panel in the same package instead:
+  `debate-practice-drills`'s `VulnerabilityChartsPanel`.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` (which
+  already held `JudgeParadigmPickerPanel`'s own predicate) with two new
+  predicates: `isVulnerabilityChartsPanelLiveUpdateStorageEvent` (covering
+  the panel's directly-read `vulnerabilityReports` store) and
+  `isCounselPanelAssessmentsLiveUpdateStorageEvent` (covering
+  `counselPanelAssessments`, read through the panel's
+  `useCounselPanelAssessments` hook rather than directly). Both
+  `VulnerabilityChartsPanel.tsx` and `useCounselPanelAssessments.ts` now
+  subscribe to `window`'s `storage` event and refresh their own state when
+  the matching predicate fires — mirroring `useStrategyRecommendations`'s
+  existing hook-level `storage`-event subscription for the
+  `debate-round`/`useCounselPanelAssessments` split of "panel reads one
+  store directly, a hook reads another" — so a teammate generating or
+  clearing a round's vulnerability report, or requesting or clearing an AI
+  counsel-panel assessment, in one tab now shows up in every other open tab
+  without a manual reload. The "what if" hypothetical picks and saved
+  scenario comparisons stay scratch component state, untouched by either
+  refresh, matching every other closed panel's "refresh the derived view,
+  not the draft" convention.
+
+  See `docs/features/response-outcome-charts.md`'s new "Cross-tab live
+  update" section and `docs/features/shared-flow-sync.md`'s updated Known
+  gaps bullet (added `VulnerabilityChartsPanel` to the closed list).
+  Vitest-covered: `packages/debate-practice-drills/test/live-update.test.ts`
+  (both new predicates' full key sets, each `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored for each). Every other
+  panel in `debate-practice-drills` (`AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingSessionsPanel`, `DrillSetsPanel`,
+  `FlowSummariesPanel` — mid-flight on a parallel branch as of this run,
+  `JudgeDecisionPanel`, `OpponentPersonaPickerPanel`,
+  `PracticeRoundSimulatorPanel`, `WordCountRoundsPanel`),
+  `CoachingProgramsPanel` (`debate-team-collaboration` — deliberately
+  skipped this run since that package currently has multiple parallel
+  branches mid-refactor on conflicting files), and `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit)
+  remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5173 passing, up from
   5165 at HEAD before this change — the 8 new cases above), `bunx turbo run
-  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
-  no `typecheck` script), and confirmed `bun run build:web` fails
-  identically on this branch and on the branch's own HEAD before this
-  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
-  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
-  unrelated to this change, not something this run introduced or could fix
-  without rebuilding that native dependency for this container). No
-  `lint`/`format:check` script exists anywhere in this repo, so that step
-  was skipped as not applicable.
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has no
+  `typecheck` script), and confirmed `bun run build:web` fails identically
+  on this branch and on master before this change (`UNLOADABLE_DEPENDENCY`
+  on the native `canvas` binding during the RSC server-bundle scan — a
+  pre-existing sandbox/toolchain limitation unrelated to this change, not
+  something this run introduced or could fix without rebuilding that native
+  dependency for this container). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
 - **⚖️ Judge Paradigm Picker — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
