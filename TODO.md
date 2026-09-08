@@ -7,6 +7,70 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 Standing tool-panel/nav UI-polish audit (idea #17, follow-up (4)) — StatTile/StatGrid adoption pass.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. This run's shared-flow-sync.md-tracked
+  "every other localStorage-backed panel... still has no cross-tab
+  live-update mechanism" Known gap is also now fully closed (confirmed via
+  a fresh read of that bullet's closed-panel list, which now names every
+  panel this repo has). So this slice instead picked up
+  `user-settings.md`'s still-open half of idea #17's follow-up (4):
+  "`PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
+  unaudited" — the one shared-primitive pattern none of the prior
+  `EmptyState`/`MeterBar`/`PanelRow` audit passes had searched for yet.
+
+  A repo-wide search for `StatTile`/`StatGrid`-shaped markup (a small
+  bordered box with a label + large metric value, usually gridded) found
+  exactly one hand-rolled duplicate:
+  `packages/debate-contributor-progress/src/panels/ContributorProfilePanel.tsx`'s
+  local `StatTile` function, rendering its six-tile stat row (Contributions,
+  Total score, Avg score, Completed tasks, Current streak, Longest streak)
+  — despite the same file already importing `EmptyState` from
+  `debate-research-evidence/src/ui/panels/panel-shell`. Replaced the local
+  `StatTile` with `StatGrid`/`StatTile` imported from that same module
+  (which, like `debate-round`'s own `src/ui/panels/panel-shell.tsx`, is a
+  byte-identical local copy of `debate-ui/src/panels/panel-shell.tsx` — this
+  repo's shared-primitive modules are per-package copies, not one
+  cross-package import, so "the right import" is always whichever copy the
+  panel's own package already depends on). This drops the tiles' `<dl>`/
+  `<dt>`/`<dd>` semantics and moves from a fixed `grid-cols-2` mobile layout
+  to `StatGrid`'s own responsive default (`grid-cols-1` below `sm:`,
+  `sm:grid-cols-3` at and above), matching every other `StatGrid` consumer
+  in this repo (`SharedFlowSyncPanel`, `TopicSprintPanel`) — the same
+  "adopt the shared primitive's own presentation, not just its markup"
+  trade every prior slice of this audit accepted for `EmptyState`'s
+  border/padding and `PanelRow`'s row shape.
+
+  No behavior changed, so this is verified via typecheck/build rather than
+  a new test — `packages/debate-contributor-progress`'s Vitest project runs
+  in a plain `node` environment with no `jsdom`/React-render setup at all
+  (unlike `debate-round`'s `test/panels.test.tsx`), so there was no render
+  test to update and adding one from scratch for a single non-behavioral
+  JSX swap was judged out of proportion to this slice. See
+  `docs/features/contribution-leaderboard.md`'s updated write-up.
+
+  The broader survey (see Follow-ups below) found the `PanelShell`/
+  `PanelSection` half of this same follow-up is a much larger, genuinely
+  unaudited surface — roughly 45 panel files across six packages hand-roll
+  a bordered-card-with-title header or sub-section shape instead of the
+  primitive — but confirmed adopting `PanelShell` there is a visible design
+  change (it adds a card background/border/shadow no un-migrated panel
+  currently has), not a pure refactor, so it needs its own scoped follow-up
+  slice(s) rather than folding into this one.
+
+  Ran the full verification gate: `bun run test` (5286 passing, unchanged —
+  no behavior changed), `bunx turbo run typecheck` (16/16 packages green),
+  and `bun run build:web` (passed cleanly). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+  PR: #683.
 - **fix(judge-decision): restore a lost cross-tab live-update export that broke `bun run build:web`.**
   Before picking a new item, this run's routine "inspect the repository's
   current development state" step ran the full verification gate
@@ -1011,4 +1075,31 @@ _No task currently in progress._
   still unaudited" half of idea #17's follow-up (4) remains open — see
   `docs/features/user-settings.md`'s Known gaps for the full history of
   what's been swept so far (undiscoverable routes, duplicated empty states,
-  duplicated progress bars, duplicated list rows) and what hasn't.
+  duplicated progress bars, duplicated list rows, and now duplicated stat
+  tiles) and what hasn't. The `StatTile`/`StatGrid` half is now closed (see
+  the Tracker Status entry above); `PanelShell`/`PanelSection` is not — a
+  repo-wide survey found roughly 45 panel files across `debate-round`,
+  `debate-search-evidence`, `debate-contributor-progress`,
+  `debate-practice-drills`, `debate-speech-writer`, and
+  `debate-team-collaboration` hand-roll a top-level `<h1>`-title-plus-
+  description header (the shape `PanelShell`'s `title`/`description` props
+  already cover) and/or a bordered `<h2>`-titled sub-section (closer to
+  `PanelSection`, though it has no border of its own to match). Left open
+  because adopting `PanelShell` is a visible design change, not a pure
+  refactor — it adds a card background/border/shadow no un-migrated panel
+  currently renders — so it needs a deliberate scoped slice (or several,
+  package by package) with that trade-off called out up front, not a
+  blanket find-replace. Not every panel `<h1>`/`<h2>` is a clean fit either
+  (some are per-item/per-group loop headings, not panel/section headers) —
+  see the historical `PanelRow` audit's four deliberately-skipped panels
+  for the same kind of judgment call.
+- `debate-videos`' leaderboard panels appear to exist as a duplicated tree:
+  `packages/debate-videos/src/panels/leaderboard/` and
+  `packages/debate-videos/src/panels/rankings/` both contain
+  `StandingsPanel.tsx`, `LeaderboardChampionBanner.tsx`,
+  `LeaderboardFilterBar.tsx`, `LeaderboardTable.tsx`,
+  `LeaderboardTableHeader.tsx`, and `LeaderboardDataRow.tsx` — surfaced
+  incidentally while searching for `PanelShell`-shaped headers above, not
+  yet investigated for which tree (if either) is dead code versus which is
+  actually wired up to a route. Needs its own slice to confirm before
+  deleting anything.
