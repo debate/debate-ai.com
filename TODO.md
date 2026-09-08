@@ -7,6 +7,79 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 `PanelShell`/`PanelSection` adoption across `debate-practice-drills`
+  panels.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked
+  to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), and every tool
+  already reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette (`Mod-Shift-Space`), and the feature catalog. So this slice closed
+  idea #17's still-open follow-up (4) — the "`PanelShell`/`PanelSection`
+  adoption is still unaudited" half named in
+  `docs/features/user-settings.md`'s Known gaps — picking
+  `debate-practice-drills` (npm package name `debate-practice-rounds`), the
+  last of the packages that half's original repo-wide survey left open (the
+  open PRs at the start of this run — #695 D1-migration/account-sync error
+  handling, #694 video search-suggestion chips, #693
+  `debate-team-collaboration`'s `PanelShell` pass — don't touch this
+  package).
+
+  `debate-practice-drills` already depends on `debate-round` and every one
+  of its 12 panels already imported `EmptyState` (several also `MeterBar`/
+  `PanelRow`) from its `./ui/panels/panel-shell` module, so no new
+  cross-package dependency was needed. All 12 panels hand-rolled the same
+  top-level `<h1 className="mb-1 text-xl font-semibold text-foreground">`
+  header and were migrated onto `PanelShell`: `AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingSessionsPanel`, `DrillSetsPanel`,
+  `FlowAnnotationsPanel`, `FlowSummariesPanel`, `JudgeDecisionPanel`,
+  `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`, and
+  `WordCountRoundsPanel`. Each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section was also migrated onto `PanelSection`:
+  `AiVersusRoundPanel`'s "Compare transcripts", `DrillSetsPanel`'s "Practice
+  tier" (its tier `Badge` moved into `PanelSection`'s `actions` slot),
+  `FlowSummariesPanel`'s "Generate from raw speech text",
+  `JudgeDecisionPanel`'s "Multi-judge panel", `OpponentPersonaPickerPanel`'s
+  "My persona library" and "Shared by your team", `PracticeRoundSimulatorPanel`'s
+  "Compare your past attempts" (its "Download comparison" button moved into
+  `actions`), and `WordCountRoundsPanel`'s "Round history" (its "Delete all
+  synced history" button moved into `actions`) and "Word-count trend" (its
+  conditional speech-filter `Select` moved into `actions`). A header or
+  section carrying a second paragraph with embedded markup or dynamic
+  sign-in-status copy (`DrillSetsPanel`'s and `JudgeDecisionPanel`'s
+  sync-status line, `WordCountRoundsPanel`'s custom-word-limit/sync-status
+  lines, `OpponentPersonaPickerPanel`'s sync-status sentence) was kept as a
+  plain child element rather than forced through the string-only
+  `description` prop, matching every prior slice's judgment call.
+  `CoachingSessionsPanel`, `FlowAnnotationsPanel`, and
+  `JudgeParadigmPickerPanel` had no singular `<h2>` sub-section to migrate
+  (their only `<h2>`s are per-item loop headings, or they have none), so
+  only their top-level header moved; `ArgumentTreePanel`'s and
+  `VulnerabilityChartsPanel`'s sole `<h2>` (a per-item "Round {id}" loop
+  heading) was likewise left alone, matching the historical `PanelRow`
+  audit's judgment call for the same shape.
+
+  This closes the last package left open by the repo-wide `PanelShell`/
+  `PanelSection` survey — see `docs/features/user-settings.md`'s Known gaps
+  and this file's Follow-ups section for the full history of what's been
+  swept.
+
+  No new tests added — markup-only change, each panel's own pure-logic
+  functions stay covered by `debate-practice-drills`'s existing state/lib
+  test suite, matching every prior `PanelShell`/`PanelSection` migration
+  slice in this repo. Ran the full verification gate: `bun run test` (340
+  files, 7064 tests passing), `bun run typecheck` (16/17 packages green;
+  the sole failure, `debate-ai-web`, is a pre-existing `write-language`/
+  `@ai-sdk` provider version-mismatch type error reproduced identically on
+  master before this change, unrelated to this diff), `debate-practice-drills`'s
+  own `bunx vitest run` (46 test files, 698 tests passing), and `bun run
+  build:web` (production build, succeeded). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
 - **🧩 `PanelShell`/`PanelSection` adoption across `debate-contributor-progress`
   panels.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -1518,3 +1591,16 @@ _No task currently in progress._
   are per-item/per-group loop headings, not panel/section headers) —
   see the historical `PanelRow` audit's four deliberately-skipped panels
   for the same kind of judgment call.
+  **Update:** two further slices closed `debate-team-collaboration`'s 13
+  panels (PR #693) and `debate-round`'s 3 and `debate-contributor-progress`'s
+  9 (see the Tracker Status entries above), and this slice closed the last
+  remaining package, `debate-practice-drills`'s 12 panels — see the Tracker
+  Status entry above. Every package from the original ~45-panel survey that
+  depends on a package exporting `PanelShell`/`PanelSection` is now closed;
+  only `debate-speech-writer`'s two panels remain, still blocked on the same
+  cross-package-dependency gap named above. The "`PanelShell`/`PanelSection`
+  adoption is still unaudited" half of follow-up (4) is effectively closed;
+  the broader "bring every weaker panel UI up to every shared `debate-ui`
+  primitive convention" half of follow-up (4) remains open more generally
+  (each pass so far has searched for one specific pattern, not exhaustively
+  compared every panel against every shared primitive).

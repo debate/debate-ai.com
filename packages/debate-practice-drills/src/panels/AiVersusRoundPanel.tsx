@@ -85,7 +85,13 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelRow, toneSurfaceClass } from "debate-round/src/ui/panels/panel-shell"
+import {
+  EmptyState,
+  PanelRow,
+  PanelSection,
+  PanelShell,
+  toneSurfaceClass,
+} from "debate-round/src/ui/panels/panel-shell"
 import { cn } from "debate-round/src/ui/lib/utils"
 import { Download } from "lucide-react"
 import {
@@ -383,15 +389,10 @@ export function AiVersusRoundPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Online Debate Versus AI</h1>
-        <p className="text-sm text-muted-foreground">
-          Practice a full round against an AI opponent — pick a format and side, then submit your
-          speeches in turn order.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Online Debate Versus AI"
+      description="Practice a full round against an AI opponent — pick a format and side, then submit your speeches in turn order."
+    >
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">
           <div className="space-y-1.5">
@@ -616,8 +617,7 @@ export function AiVersusRoundPanel() {
       )}
 
       {rounds.length >= 2 && (
-        <div className="rounded-lg border border-border p-4 space-y-4">
-          <h2 className="text-sm font-semibold text-foreground">Compare transcripts</h2>
+        <PanelSection title="Compare transcripts" className="rounded-lg border border-border p-4 space-y-4">
           <div className="flex flex-wrap gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="ai-versus-compare-a">Round A</Label>
@@ -702,8 +702,8 @@ export function AiVersusRoundPanel() {
               })}
             </div>
           )}
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }

@@ -37,7 +37,7 @@ import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import { listJudgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms"
 import { requestJudgeDecision } from "../round/judge-decision-client"
 import { buildJudgeDecisionInputForParadigm, buildJudgeDecisionInputFromStores } from "../round/judge-decision-store-wiring"
@@ -173,18 +173,13 @@ export function JudgeDecisionPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">AI Judge Decision</h1>
-        <p className="text-sm text-muted-foreground">
-          Get an AI-generated decision for a round, judged under its saved paradigm from the Judge
-          Paradigm Picker and its saved flow from Speech Transcript Summaries. Every decision
-          requested for a round is kept as history, newest first.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {synced ? "Decision history is synced to your account." : "Sign in to sync your decision history."}
-        </p>
-      </div>
+    <PanelShell
+      title="AI Judge Decision"
+      description="Get an AI-generated decision for a round, judged under its saved paradigm from the Judge Paradigm Picker and its saved flow from Speech Transcript Summaries. Every decision requested for a round is kept as history, newest first."
+    >
+      <p className="-mt-3 text-xs text-muted-foreground">
+        {synced ? "Decision history is synced to your account." : "Sign in to sync your decision history."}
+      </p>
 
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="grid gap-3 sm:grid-cols-3">
@@ -224,14 +219,11 @@ export function JudgeDecisionPanel() {
         </Button>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-4">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Multi-judge panel</h2>
-          <p className="text-xs text-muted-foreground">
-            Judge the round above under two or more paradigms at once and see a combined decision,
-            using the Round ID and side names entered above.
-          </p>
-        </div>
+      <PanelSection
+        title="Multi-judge panel"
+        description="Judge the round above under two or more paradigms at once and see a combined decision, using the Round ID and side names entered above."
+        className="rounded-lg border border-border p-4 space-y-4"
+      >
         <div className="flex flex-wrap gap-3">
           {PANEL_PARADIGMS.map((paradigm) => (
             <label key={paradigm.id} className="flex items-center gap-1.5 text-sm text-foreground">
@@ -251,7 +243,7 @@ export function JudgeDecisionPanel() {
         <Button onClick={handleRunPanel} disabled={panelLoading} variant="secondary">
           {panelLoading ? "Running panel…" : "Run multi-judge panel"}
         </Button>
-      </div>
+      </PanelSection>
 
       {groups.length === 0 ? (
         <EmptyState title="No AI judge decisions yet." message="Request one above to see it here." />
@@ -331,7 +323,7 @@ export function JudgeDecisionPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
 
