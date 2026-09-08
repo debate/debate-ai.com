@@ -243,8 +243,6 @@ describe("isPracticeRoundSimulatorPanelLiveUpdateStorageEvent", () => {
     expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key: "practiceRoundsBackup" })).toBe(false);
   });
 });
-  });
-});
 
 describe("isOpponentPersonaPickerPanelLiveUpdateStorageEvent", () => {
   it("is true for every store key the panel reads", () => {
