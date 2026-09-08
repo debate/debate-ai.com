@@ -59,6 +59,11 @@ async function buildAuth() {
         baseURL,
         APP_ORIGIN,
         "https://*.debate-ai.com",
+        // Short-domain rebrand — the production deployment is now reachable
+        // at ebate.app (debate-ai.com may still resolve, so both stay
+        // trusted rather than swapping one hardcoded host for another).
+        "https://ebate.app",
+        "https://*.ebate.app",
         "https://*.workers.dev",
         "https://*.vercel.app",
         "http://localhost:3000",
