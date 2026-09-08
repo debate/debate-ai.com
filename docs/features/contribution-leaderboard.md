@@ -230,6 +230,31 @@ endorsement history (received and given) round-trips correctly, including
 the "endorsement-only activity, no scored contribution" case staying
 `exists: true` with `rank: null`.
 
+The panel's six-tile stat row (Contributions, Total score, Avg score,
+Completed tasks, Current streak, Longest streak) used to be a hand-rolled
+`StatTile` function duplicating `debate-ui`'s shared panel-primitive shape —
+one of the last unaudited hits from the "standing tool-panel/nav UI-polish
+audit" (idea #17, follow-up (4); see
+[`user-settings.md`](user-settings.md)'s Known gaps for that audit's
+history). It now imports `StatGrid`/`StatTile` from
+`debate-research-evidence/src/ui/panels/panel-shell` — the same module this
+panel already used for `EmptyState` — instead of defining its own. This
+drops the tiles' `<dl>`/`<dt>`/`<dd>` semantics and switches from a fixed
+`grid-cols-2` mobile layout to `StatGrid`'s own responsive default
+(`grid-cols-1` below `sm:`, `sm:grid-cols-3` at and above it, matching every
+other `StatGrid` consumer in this repo), the same "adopt the shared
+primitive's own presentation, not just its markup" trade every prior slice
+of this audit accepted (see `user-settings.md`'s Known gaps entry on the
+`EmptyState`/`MeterBar`/`PanelRow` passes).
+
+No behavior changed — `contributor-profile.test.ts`'s existing coverage of
+`buildContributorProfileFromStore`'s stat values is unaffected — so this is
+verified via the package's `typecheck` and the repo-wide `build:web`, not a
+new test; this package's Vitest project runs in a plain `node` environment
+with no `jsdom`/React-render setup (unlike `debate-round`'s
+`test/panels.test.tsx`), matching how every other pure JSX-shape swap in
+this audit was verified.
+
 ## Known gaps
 
 - The Contributions Feed panel (`/cards/contributions`) now submits
