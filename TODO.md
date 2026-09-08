@@ -7,6 +7,47 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗑️ Removed the dead `debate-videos` "rankings" leaderboard tree.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run (`user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`, every tool
+  already reachable from the Tools page, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), and the repo-wide per-panel cross-tab
+  live-update sweep (this run's fresh grep of every `*Panel.tsx` for a
+  `storage`-event listener, cross-checked against the panels' backing hooks)
+  turned up nothing new — every remaining hit resolved to a panel whose
+  cross-tab sync already lives in its data hook (`useDrillSets`,
+  `useWordCountRounds`, `useJudgeDecisions`, etc.), not the panel file
+  itself. So this slice picked up the Follow-ups list's other open item:
+  confirming which of `packages/debate-videos/src/panels/leaderboard/` and
+  `packages/debate-videos/src/panels/rankings/` (both added in the same
+  commit, #607) was dead code.
+
+  Confirmed `rankings/`'s `DebateRankingsPanel` and its
+  `LeaderboardChampionBanner`/`LeaderboardDataRow`/`LeaderboardFilterBar`/
+  `LeaderboardTable`/`LeaderboardTableHeader`/`leaderboardTypes`/
+  `leaderboardUtils` siblings had zero importers anywhere in the repo (only
+  the file's own module-doc comment and export referenced its name) and no
+  test coverage — `debate-videos/index.ts` exports `LeaderboardPanel` from
+  `leaderboard/RankingsLeaderboardPanel` only, and the one shared-name test
+  file (`test/leaderboard-utils.test.ts`) imports from
+  `../src/panels/leaderboard/leaderboardUtils`, never `rankings/`. Every
+  file the two trees have in common is byte-identical except
+  `LeaderboardFilterBar.tsx` (`rankings/`'s copy has older, pre-polish
+  Tailwind classes), confirming `rankings/` was simply never wired up after
+  `leaderboard/` superseded it. Deleted the entire
+  `packages/debate-videos/src/panels/rankings/` directory.
+
+  Ran the full verification gate: `bunx turbo typecheck --filter=debate-videos`
+  (2/2 tasks green), `npx vitest run --config apps/debate-ai.com/vitest.config.ts`
+  (331 test files, 6989 tests passing), and `bun run build:web` (production
+  build, including the service-worker asset-list generation step, completes
+  successfully). No `lint`/`format:check` script exists anywhere in this
+  repo, so that step was skipped as not applicable.
 - **📋 Speech Transcript Summaries — cross-tab live update.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to
@@ -1205,13 +1246,8 @@ _No task currently in progress._
   (some are per-item/per-group loop headings, not panel/section headers) —
   see the historical `PanelRow` audit's four deliberately-skipped panels
   for the same kind of judgment call.
-- `debate-videos`' leaderboard panels appear to exist as a duplicated tree:
-  `packages/debate-videos/src/panels/leaderboard/` and
-  `packages/debate-videos/src/panels/rankings/` both contain
-  `StandingsPanel.tsx`, `LeaderboardChampionBanner.tsx`,
-  `LeaderboardFilterBar.tsx`, `LeaderboardTable.tsx`,
-  `LeaderboardTableHeader.tsx`, and `LeaderboardDataRow.tsx` — surfaced
-  incidentally while searching for `PanelShell`-shaped headers above, not
-  yet investigated for which tree (if either) is dead code versus which is
-  actually wired up to a route. Needs its own slice to confirm before
-  deleting anything.
+- ~~`debate-videos`' leaderboard panels appear to exist as a duplicated
+  tree...~~ Closed — see the Tracker Status entry above:
+  `packages/debate-videos/src/panels/rankings/` was confirmed to be dead
+  code (no importers, no test coverage) and deleted; the live tree is
+  `packages/debate-videos/src/panels/leaderboard/`.
