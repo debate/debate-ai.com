@@ -121,11 +121,12 @@ index automatically (best-effort — a network failure doesn't block the
 local save), crediting the optional "Your contributor ID" field's value as
 the registration's `contributorId`.
 
-`apps/debate-web-ext` is a dependency-free Manifest V3 extension (no
-bundler, not part of this repo's `bun`/`turbo` workspaces — see its own
+`apps/debate-web-ext` is a WXT-built Manifest V3 extension (not part of this
+repo's `bun`/`turbo` workspaces — see its own
 [README](../../apps/debate-web-ext/README.md)) whose popup calls the same
 `GET /api/evidence-reuse-check` route against the active tab's URL,
-configurable to a non-production API base URL via an Options page.
+configurable to a non-production API base URL via its Options page — which
+also configures the debate round timer the same extension ships.
 
 ## Real search index
 
@@ -290,8 +291,8 @@ panels/EvidenceLibraryPanel.tsx (submission form, entry.sourceUrl set)
   → registerRemoteReuseEntry(entry)        — lib/evidence-reuse-check-client.ts
       → POST /api/evidence-reuse-check     — app/api/evidence-reuse-check/route.ts (D1 upsert)
 
-apps/debate-web-ext/popup.js (active tab's URL)
-  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/api.js
+apps/debate-web-ext/entrypoints/popup/App.tsx (active tab's URL)
+  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/src/reuse/api.ts
       → GET ${apiBase}/api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
 ```
 
