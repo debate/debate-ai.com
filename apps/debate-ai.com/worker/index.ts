@@ -9,6 +9,7 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { runWithContext } from "../lib/database/context";
+import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
 import { resyncYouTubeRounds } from "../lib/youtube/resync-rounds";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
@@ -96,12 +97,12 @@ export default {
     // each runs in its own session started on the primary.
     ctx.waitUntil(
       runWithPrimaryD1Session(() => runWithContext(env, () => resyncYouTubeRounds(null))).catch((error) => {
-        console.error("Scheduled YouTube resync failed:", error);
+        console.error("Scheduled YouTube resync failed:", describeError(error), error);
       }),
     );
     ctx.waitUntil(
       runWithPrimaryD1Session(() => runWithContext(env, () => purgeOldReuseCheckLogRows())).catch((error) => {
-        console.error("Scheduled reuse-check log purge failed:", error);
+        console.error("Scheduled reuse-check log purge failed:", describeError(error), error);
       }),
     );
   },
