@@ -62,6 +62,18 @@
  * "Download comparison" action mirroring the single-round transcript
  * download.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isAiVersusRoundPanelLiveUpdateStorageEvent`)
+ * refreshes the rendered round list when another tab saves, clears, or
+ * regenerates a speech in a round — closing the "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for
+ * `AiVersusRoundPanel`. The active round's turn-order display re-derives
+ * from the same refreshed `rounds` list, but the in-progress speech-text
+ * draft, round-ID/format/side form fields, and "Compare transcripts"
+ * selections are left untouched, matching every other closed panel's
+ * "refresh the derived view, not the draft" convention.
+ *
  * @module panels/AiVersusRoundPanel
  */
 
@@ -118,6 +130,7 @@ import {
   saveAiVersusRound,
   type AiVersusRoundRecord,
 } from "debate-round/src/state/aiVersusRounds"
+import { isAiVersusRoundPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const STYLE_LABELS: Record<DebateStyleKey, string> = debateStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: debateStyleNames[index] }),
@@ -188,6 +201,20 @@ export function AiVersusRoundPanel() {
   }, [])
 
   const refresh = () => setRounds(buildAiVersusRoundsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves, clears, or
+   * regenerates a speech in an AI-versus round — a `storage` event never
+   * fires in the tab that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isAiVersusRoundPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const style = debateStyles[styleKey]
   const hasSecondarySide = Boolean(style.secondary)
