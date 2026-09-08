@@ -13,7 +13,8 @@
     "./styles.css": "./src/editor/style.css",
     "./settings": "./src/editor/settings.ts",
     "./settings-ui": "./src/editor/settings-ui.ts",
-    "./settings-categories": "./src/editor/settings-categories.ts"
+    "./settings-categories": "./src/editor/settings-categories.ts",
+    "./collab-bridge": "./src/react/collab-bridge.ts"
   },
   "files": [
     "src"

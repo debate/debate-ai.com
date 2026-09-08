@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { sendRoundInvites, type RoundInviteRequest } from "../src/round/round-invite-client";
+import {
+  sendRoundInvites,
+  computeAddedInviteEmails,
+  type RoundInviteRequest,
+} from "../src/round/round-invite-client";
 
 const REQUEST: RoundInviteRequest = {
   emails: ["a@example.com", "b@example.com"],
@@ -44,5 +48,56 @@ describe("sendRoundInvites", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     expect(await sendRoundInvites(REQUEST)).toBeNull();
+  });
+});
+
+describe("computeAddedInviteEmails", () => {
+  it("returns only emails present in nextEmails but not previousEmails", () => {
+    const added = computeAddedInviteEmails(
+      ["a@example.com", "b@example.com"],
+      ["a@example.com", "b@example.com", "c@example.com"],
+    );
+    expect(added).toEqual(["c@example.com"]);
+  });
+
+  it("returns an empty array when nothing new was added", () => {
+    const added = computeAddedInviteEmails(
+      ["a@example.com", "b@example.com"],
+      ["b@example.com", "a@example.com"],
+    );
+    expect(added).toEqual([]);
+  });
+
+  it("is case-insensitive when comparing against previousEmails", () => {
+    const added = computeAddedInviteEmails(
+      ["A@Example.com"],
+      ["a@example.com", "new@example.com"],
+    );
+    expect(added).toEqual(["new@example.com"]);
+  });
+
+  it("ignores blank/whitespace-only entries in both lists", () => {
+    const added = computeAddedInviteEmails(
+      ["a@example.com", "", "   "],
+      ["a@example.com", "", "  ", "b@example.com"],
+    );
+    expect(added).toEqual(["b@example.com"]);
+  });
+
+  it("dedupes nextEmails, keeping the first-seen casing", () => {
+    const added = computeAddedInviteEmails(
+      [],
+      ["New@Example.com", "new@example.com", " new@example.com "],
+    );
+    expect(added).toEqual(["New@Example.com"]);
+  });
+
+  it("trims surrounding whitespace from a returned added email", () => {
+    const added = computeAddedInviteEmails([], ["  new@example.com  "]);
+    expect(added).toEqual(["new@example.com"]);
+  });
+
+  it("returns an empty array when both lists are empty", () => {
+    expect(computeAddedInviteEmails([], [])).toEqual([]);
   });
 });

@@ -41,6 +41,12 @@
  * `outlineFilterPresets` is (a `savedArgumentCollections` `/api/settings`
  * field).
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isArgumentLibraryLiveUpdateStorageEvent`, so a card submitted, tagged, or
+ * retagged in another browser tab refreshes this panel's topic folders and
+ * tag collections here too — the `storage` event never fires in the tab that
+ * made the write, only in other tabs.
+ *
  * @module panels/ArgumentLibraryPanel
  */
 
@@ -51,7 +57,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "../ui/panels/panel-shell"
 import {
   buildCombinedPersistedArgumentLibrary,
   renameTagAcrossCombinedPersistedStores,
@@ -60,6 +66,7 @@ import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } 
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
 import { buildSavedArgumentCollectionFailureMessage } from "../lib/argument-library-collections"
 import { useSavedArgumentCollections } from "../hooks/useSavedArgumentCollections"
+import { isArgumentLibraryLiveUpdateStorageEvent } from "../state/live-update"
 
 /**
  * Renders the Common Argument Library: every persisted evidence entry
@@ -84,6 +91,20 @@ export function ArgumentLibraryPanel() {
 
   useEffect(() => {
     setLibrary(buildCombinedPersistedArgumentLibrary())
+  }, [])
+
+  /**
+   * Live-update the rendered library when another browser tab submits,
+   * tags, or renames a tag on an evidence-library entry or a Contributions
+   * Feed submission.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isArgumentLibraryLiveUpdateStorageEvent(event)) return
+      setLibrary(buildCombinedPersistedArgumentLibrary())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   function renameTag(oldTag: string, newTag: string) {
@@ -118,11 +139,10 @@ export function ArgumentLibraryPanel() {
 
   if (library.topicFolders.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No argument library entries yet. The library fills in as cards and reusable blocks are
-        submitted to the shared evidence repository, or as Contributions Feed submissions are
-        tagged with a topic and case area.
-      </div>
+      <EmptyState
+        title="No argument library entries yet."
+        message="The library fills in as cards and reusable blocks are submitted to the shared evidence repository, or as Contributions Feed submissions are tagged with a topic and case area."
+      />
     )
   }
 
@@ -175,12 +195,7 @@ export function ArgumentLibraryPanel() {
   const caseVariantGroups = findTagCaseVariantGroups(library.tagCollections)
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Common Argument Library</h1>
-        <p className="text-sm text-muted-foreground">{buildLibrarySummaryText(library)}</p>
-      </div>
-
+    <PanelShell title="Common Argument Library" description={buildLibrarySummaryText(library)}>
       {library.tagCollections.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           {library.tagCollections.map((collection) => (
@@ -423,7 +438,7 @@ export function ArgumentLibraryPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
 

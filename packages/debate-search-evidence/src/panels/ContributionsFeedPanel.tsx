@@ -120,6 +120,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import { Textarea } from "../ui/primitives/textarea"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/primitives/tooltip"
 import {
@@ -313,26 +314,23 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
   const visibleFeed = showFlaggedOnly ? filterFlaggedFeedEntries(feed) : feed
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Contributions Feed</h1>
-        <p className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-          Submit a contribution, then like, save, or endorse the community's cards, summaries,
-          highlights, and annotations — ranked by blended
-          <Tooltip delayDuration={200}>
-            <TooltipTrigger asChild>
-              <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">
-                helpfulness score
-                <Info className="h-3.5 w-3.5" />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="max-w-xs">
-              <p className="text-xs leading-relaxed">{HELPFULNESS_SCORE_EXPLANATION}</p>
-            </TooltipContent>
-          </Tooltip>
-          .
-        </p>
-      </div>
+    <PanelShell title="Contributions Feed">
+      <p className="-mt-2 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+        Submit a contribution, then like, save, or endorse the community's cards, summaries,
+        highlights, and annotations — ranked by blended
+        <Tooltip delayDuration={200}>
+          <TooltipTrigger asChild>
+            <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">
+              helpfulness score
+              <Info className="h-3.5 w-3.5" />
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-xs">
+            <p className="text-xs leading-relaxed">{HELPFULNESS_SCORE_EXPLANATION}</p>
+          </TooltipContent>
+        </Tooltip>
+        .
+      </p>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
@@ -458,87 +456,87 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
         {endorseError && <p className="text-sm text-destructive">{endorseError}</p>}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-sm font-medium text-foreground">
-          {showFlaggedOnly ? `Flagged for review (${flaggedCount})` : `All contributions (${feed.length})`}
-        </h2>
-        <Button
-          type="button"
-          size="sm"
-          variant={showFlaggedOnly ? "default" : "outline"}
-          onClick={() => setShowFlaggedOnly((prev) => !prev)}
-        >
-          {showFlaggedOnly ? "Show all" : `Flagged for review (${flaggedCount})`}
-        </Button>
-      </div>
-
-      {visibleFeed.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {showFlaggedOnly
-            ? "No contributions currently flagged as popularity-only."
-            : "No contributions yet. Submit one above to start the feed."}
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {visibleFeed.map((entry) => {
-            const isOwnEntry = isOwnContributorRow(entry.contributorId, signedInContributorId)
-            const lockedReviewerId = deriveLockedVerifierId(entry.contributorId, signedInContributorId)
-            return (
-              <div key={entry.id} className="rounded-lg border border-border p-3 space-y-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">
-                    {entry.kind}
-                  </Badge>
-                  <span className="font-medium text-foreground">{entry.contributorId}</span>
-                  <span className="text-xs text-muted-foreground">
-                    helpfulness {entry.helpfulnessScore}
-                  </span>
-                  {entry.isPopularityOnlyOutlier && (
-                    <Badge variant="destructive">Popularity-only</Badge>
+      <PanelSection
+        title={showFlaggedOnly ? `Flagged for review (${flaggedCount})` : `All contributions (${feed.length})`}
+        actions={
+          <Button
+            type="button"
+            size="sm"
+            variant={showFlaggedOnly ? "default" : "outline"}
+            onClick={() => setShowFlaggedOnly((prev) => !prev)}
+          >
+            {showFlaggedOnly ? "Show all" : `Flagged for review (${flaggedCount})`}
+          </Button>
+        }
+      >
+        {visibleFeed.length === 0 ? (
+          showFlaggedOnly ? (
+            <EmptyState title="No contributions currently flagged as popularity-only." />
+          ) : (
+            <EmptyState title="No contributions yet." message="Submit one above to start the feed." />
+          )
+        ) : (
+          <div className="space-y-2">
+            {visibleFeed.map((entry) => {
+              const isOwnEntry = isOwnContributorRow(entry.contributorId, signedInContributorId)
+              const lockedReviewerId = deriveLockedVerifierId(entry.contributorId, signedInContributorId)
+              return (
+                <div key={entry.id} className="rounded-lg border border-border p-3 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={KIND_VARIANT[entry.kind]} className="capitalize">
+                      {entry.kind}
+                    </Badge>
+                    <span className="font-medium text-foreground">{entry.contributorId}</span>
+                    <span className="text-xs text-muted-foreground">
+                      helpfulness {entry.helpfulnessScore}
+                    </span>
+                    {entry.isPopularityOnlyOutlier && (
+                      <Badge variant="destructive">Popularity-only</Badge>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span>{entry.likes} likes</span>
+                    <span>{entry.saves} saves</span>
+                    <span>{entry.reviewerEndorsements.length} endorsements</span>
+                  </div>
+                  {(entry.topic || entry.caseArea || (entry.tags && entry.tags.length > 0)) && (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {entry.topic && <Badge variant="outline">{entry.topic}</Badge>}
+                      {entry.caseArea && <Badge variant="outline">{entry.caseArea}</Badge>}
+                      {entry.tags?.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleLike(entry.id)}>
+                      Like
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => handleSave(entry.id)}>
+                      Save
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={isOwnEntry}
+                      onClick={() => handleEndorse(entry.id, lockedReviewerId)}
+                    >
+                      Endorse
+                    </Button>
+                  </div>
+                  {isOwnEntry && (
+                    <p className="text-xs text-muted-foreground">
+                      You can't endorse your own contribution.
+                    </p>
                   )}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                  <span>{entry.likes} likes</span>
-                  <span>{entry.saves} saves</span>
-                  <span>{entry.reviewerEndorsements.length} endorsements</span>
-                </div>
-                {(entry.topic || entry.caseArea || (entry.tags && entry.tags.length > 0)) && (
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {entry.topic && <Badge variant="outline">{entry.topic}</Badge>}
-                    {entry.caseArea && <Badge variant="outline">{entry.caseArea}</Badge>}
-                    {entry.tags?.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" onClick={() => handleLike(entry.id)}>
-                    Like
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => handleSave(entry.id)}>
-                    Save
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={isOwnEntry}
-                    onClick={() => handleEndorse(entry.id, lockedReviewerId)}
-                  >
-                    Endorse
-                  </Button>
-                </div>
-                {isOwnEntry && (
-                  <p className="text-xs text-muted-foreground">
-                    You can't endorse your own contribution.
-                  </p>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
+              )
+            })}
+          </div>
+        )}
+      </PanelSection>
+    </PanelShell>
   )
 }

@@ -43,6 +43,14 @@
  * (`state/judgeRoundRecords.ts#bulkImportJudgeRoundRecords`, composing the
  * pure `judge/judge-round-record-csv-import.ts#parseJudgeRoundRecordsCsv`).
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isJudgeProfilesLiveUpdateStorageEvent`) refreshes
+ * the roster and logged-round list whenever another tab logs, edits,
+ * undoes/redoes, deletes, or bulk-imports a judged round — closing the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel.
+ *
  * @module panels/JudgeProfilesPanel
  */
 
@@ -90,6 +98,7 @@ import { judgeParadigms, judgeParadigmIds } from "../judge/judge-paradigms"
 import type { BuiltinJudgeParadigmId } from "../judge/judge-paradigms"
 import { buildJudgePanelComparison } from "../judge/judge-panel-comparison"
 import { JUDGE_ROUND_CSV_TEMPLATE } from "../judge/judge-round-record-csv-import"
+import { isJudgeProfilesLiveUpdateStorageEvent } from "../state/live-update"
 
 /** Sentinel for "no paradigm tagged" — a Radix `SelectItem` can't carry an empty value. */
 const NO_PARADIGM = "none"
@@ -168,6 +177,21 @@ export function JudgeProfilesPanel() {
     setRoster(buildJudgeProfilesRoster())
     setRecords(listJudgeRoundRecords())
   }
+
+  /**
+   * Live-update this panel when another browser tab logs, edits, undoes/
+   * redoes, deletes, or bulk-imports a judged round — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isJudgeProfilesLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const judgeId = draft.judgeId.trim()

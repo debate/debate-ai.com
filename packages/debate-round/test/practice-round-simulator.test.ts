@@ -5,9 +5,12 @@ import {
   buildCustomOpponentPersona,
   opponentPersonas,
 } from "debate-speech-writer/src/opponent/opponent-personas";
+import { buildAiVersusSpeechOrder } from "../src/round/ai-versus-speech-order";
+import type { PriorSpeechRecord } from "../src/round/ai-versus-speech-order";
 import {
   buildPracticeRoundFeedback,
   buildPracticeRoundFeedbackText,
+  buildPracticeRoundReplaySteps,
   buildPracticeRoundSetup,
   buildPracticeRoundSetupText,
   resolvePracticeRoundOpponentPersonaChoice,
@@ -258,5 +261,56 @@ describe("buildPracticeRoundFeedbackText", () => {
     const text = buildPracticeRoundFeedbackText(feedback);
     expect(text).toContain("### Judged under: Custom: Judge Smith");
     expect(text).toContain("### Coaching feedback");
+  });
+});
+
+describe("buildPracticeRoundReplaySteps", () => {
+  const order = buildAiVersusSpeechOrder(STYLE_KEY);
+
+  it("marks every step undelivered when no speeches have been submitted yet", () => {
+    const steps = buildPracticeRoundReplaySteps(order, []);
+    expect(steps).toHaveLength(order.length);
+    expect(steps.every((step) => !step.delivered && step.text === null)).toBe(true);
+  });
+
+  it("carries each slot's index/name/speaker/secondary/time through unchanged", () => {
+    const steps = buildPracticeRoundReplaySteps(order, []);
+    steps.forEach((step, i) => {
+      expect(step.index).toBe(order[i].index);
+      expect(step.name).toBe(order[i].name);
+      expect(step.speaker).toBe(order[i].speaker);
+      expect(step.secondary).toBe(order[i].secondary);
+      expect(step.time).toBe(order[i].time);
+    });
+  });
+
+  it("marks a prefix of steps delivered, matching submittedSpeeches positionally", () => {
+    const submitted: PriorSpeechRecord[] = [
+      { name: order[0].name, speaker: order[0].speaker, text: "First speech text." },
+      { name: order[1].name, speaker: order[1].speaker, text: "Second speech text." },
+    ];
+    const steps = buildPracticeRoundReplaySteps(order, submitted);
+
+    expect(steps[0].delivered).toBe(true);
+    expect(steps[0].text).toBe("First speech text.");
+    expect(steps[1].delivered).toBe(true);
+    expect(steps[1].text).toBe("Second speech text.");
+    expect(steps[2].delivered).toBe(false);
+    expect(steps[2].text).toBeNull();
+  });
+
+  it("marks every step delivered once every speech has been submitted", () => {
+    const submitted: PriorSpeechRecord[] = order.map((slot) => ({
+      name: slot.name,
+      speaker: slot.speaker,
+      text: `Text for ${slot.name}`,
+    }));
+    const steps = buildPracticeRoundReplaySteps(order, submitted);
+    expect(steps.every((step) => step.delivered)).toBe(true);
+    expect(steps.map((step) => step.text)).toEqual(order.map((slot) => `Text for ${slot.name}`));
+  });
+
+  it("returns an empty sequence for an empty speech order", () => {
+    expect(buildPracticeRoundReplaySteps([], [])).toEqual([]);
   });
 });

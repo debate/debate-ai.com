@@ -24,6 +24,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
+import { EmptyState, PanelSection, PanelShell, StatGrid, StatTile } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import { isContributionLeaderboardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import type { ContributorEndorsementHistoryEntry } from "debate-research-evidence/src/state/contributions"
@@ -43,16 +44,6 @@ export interface ContributorProfilePanelProps {
    * Shows a "You" badge when the two match.
    */
   signedInContributorId?: string
-}
-
-/** One small stat display: a label above a value. */
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-border p-3">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-lg font-semibold text-foreground">{value}</dd>
-    </div>
-  )
 }
 
 function EndorsementList({
@@ -114,12 +105,9 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
 
   if (!profile.exists) {
     return (
-      <div className="p-4 sm:p-6">
-        <h1 className="mb-1 text-xl font-semibold text-foreground">{profile.contributorId}</h1>
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No activity yet for this contributor.
-        </div>
-      </div>
+      <PanelShell title={profile.contributorId}>
+        <EmptyState title="No activity yet for this contributor." />
+      </PanelShell>
     )
   }
 
@@ -131,21 +119,19 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
     : ""
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
-      <div>
+    <PanelShell
+      title={profile.contributorId}
+      description={profile.rank !== null ? `Ranked #${profile.rank} on the leaderboard` : "Not yet ranked on the leaderboard"}
+      actions={
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-xl font-semibold text-foreground">{profile.contributorId}</h1>
           {isMe && <Badge variant="outline">You</Badge>}
           <Badge variant={TIER_VARIANT[unlockStatus.tier] ?? "outline"} className="capitalize">
             {unlockStatus.tier}
           </Badge>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {profile.rank !== null ? `Ranked #${profile.rank} on the leaderboard` : "Not yet ranked on the leaderboard"}
-        </p>
-      </div>
-
-      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      }
+    >
+      <StatGrid>
         <StatTile label="Contributions" value={profile.stats.contributionCount} />
         <StatTile label="Total score" value={profile.stats.totalHelpfulnessScore} />
         <StatTile label="Avg score" value={profile.stats.averageHelpfulnessScore} />
@@ -155,10 +141,9 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
           value={unlockStatus.streak.currentStreak > 0 ? `🔥 ${unlockStatus.streak.currentStreak}` : "—"}
         />
         <StatTile label="Longest streak" value={unlockStatus.streak.longestStreak} />
-      </dl>
+      </StatGrid>
 
-      <section>
-        <h2 className="mb-2 text-sm font-semibold text-foreground">Badges</h2>
+      <PanelSection title="Badges">
         {unlockStatus.badges.length > 0 ? (
           <div className="flex flex-wrap gap-1">
             {unlockStatus.badges.map((badge) => (
@@ -170,10 +155,9 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
         ) : (
           <p className="text-sm text-muted-foreground">No badges earned yet.</p>
         )}
-      </section>
+      </PanelSection>
 
-      <section>
-        <h2 className="mb-2 text-sm font-semibold text-foreground">Top Contributor Awards</h2>
+      <PanelSection title="Top Contributor Awards">
         {profile.currentAwards.length > 0 && (
           <p className="mb-2 text-sm text-muted-foreground">
             Currently leading: {profile.currentAwards.map((award) => award.label).join(", ")}
@@ -187,10 +171,9 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
         ) : (
           <p className="text-sm text-muted-foreground">No award wins yet.</p>
         )}
-      </section>
+      </PanelSection>
 
-      <section>
-        <h2 className="mb-2 text-sm font-semibold text-foreground">Endorsements received</h2>
+      <PanelSection title="Endorsements received">
         <EndorsementList
           entries={profile.endorsementsReceived}
           emptyText="No endorsements received yet."
@@ -198,10 +181,9 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
             `${entry.reviewerId} endorsed a ${entry.contributionKind} (weight ${entry.reviewerWeight.toFixed(2)}) · ${new Date(entry.endorsedAt).toLocaleDateString()}`
           }
         />
-      </section>
+      </PanelSection>
 
-      <section>
-        <h2 className="mb-2 text-sm font-semibold text-foreground">Endorsements given</h2>
+      <PanelSection title="Endorsements given">
         <EndorsementList
           entries={profile.endorsementsGiven}
           emptyText="No endorsements given yet."
@@ -209,7 +191,7 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
             `Endorsed ${entry.contributionContributorId}'s ${entry.contributionKind} (weight ${entry.reviewerWeight.toFixed(2)}) · ${new Date(entry.endorsedAt).toLocaleDateString()}`
           }
         />
-      </section>
-    </div>
+      </PanelSection>
+    </PanelShell>
   )
 }

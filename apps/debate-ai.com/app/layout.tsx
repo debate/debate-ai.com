@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { CategoryDockProvider, PersistentVideoPlayer } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { AppSidebarShell } from "@/components/layout/AppSidebarShell"
+import { ReasonDocsProvider } from "@/components/reason-docs/ReasonDocsProvider"
 import { OneTap } from "@/components/layout/OneTap"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { Toaster } from "sonner"
@@ -37,6 +38,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Applies the persisted colour theme's `theme-<name>` class to <html>
+            before paint. `useThemeState` re-applies the same class on mount,
+            but only after hydration — and since `globals.css` now takes the
+            body typeface from the theme's `--font-sans`, waiting for that
+            effect would show a flash of the fallback font (and of the fallback
+            palette) on every load. The name is read back from localStorage, so
+            it is sanitised to the kebab-case shape `THEME_NAMES` uses before
+            being turned into a class. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('color-theme');if(!t||!/^[a-z0-9-]+$/.test(t))t='modern-minimal';document.documentElement.classList.add('theme-'+t);}catch(e){document.documentElement.classList.add('theme-modern-minimal');}})();`,
+          }}
+        />
         {/* Applies the persisted font-family choice before paint (avoiding a
             flash of the default font) and keeps it in sync with the picker in
             `UserSettingsPanel` — ported from qwksearch-research-agent's
@@ -55,10 +69,15 @@ export default function RootLayout({
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <CategoryDockProvider>
-            <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
-              <CategoryDock />
-              <AppSidebarShell>{children}</AppSidebarShell>
-            </div>
+            {/* The REASON docs tree/tabs live in the sidebar (rendered by
+                AppSidebarShell) while the editor that opens them is a page
+                below it, so their shared state has to be owned above both. */}
+            <ReasonDocsProvider>
+              <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
+                <CategoryDock />
+                <AppSidebarShell>{children}</AppSidebarShell>
+              </div>
+            </ReasonDocsProvider>
             <PersistentVideoPlayer />
             <OneTap />
             <ServiceWorkerRegistrar />

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { LecturesPage } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
+import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 
 export const metadata: Metadata = {
   title: "LEARN: Lectures from Educators, Archive of Rounds & Notes",
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
 export default function VideosCategory() {
   return (
     <Suspense>
-      <LecturesPage dockSlot={<CategoryDock embedded />} />
+      <LecturesPage
+        dockSlot={<CategoryDock embedded />}
+        docsSlot={<ReasonDocsSidebarPanels className="shrink-0" />}
+      />
     </Suspense>
   )
 }

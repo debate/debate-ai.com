@@ -84,16 +84,25 @@ export function collabPluginsFor(targetUid: string | null | undefined): Plugin[]
  *  share code from a `room-invite` inbox item to the lazily-loaded collab
  *  module. Registered from editor/index.ts alongside the other collab
  *  ribbon wiring; null while the collab gate is closed. */
-let inviteJoiner: ((shareCode: string) => Promise<boolean>) | null = null;
+/** `guestPass` is the relay's account-less join credential — what an invite
+ *  LINK carries beside the code (join-link.ts). The Receive pill's mailbox
+ *  invites never have one (desktop peers hold their own credentials); the
+ *  app-level contacts share (react/collab-bridge.ts) always passes it. */
+export type CollabInviteJoiner = (
+  shareCode: string,
+  opts?: { guestPass?: string | null },
+) => Promise<boolean>;
+
+let inviteJoiner: CollabInviteJoiner | null = null;
 
 /** The resolved boolean reports whether the join landed (or was handed off
  *  to a spawned window) — the Receive pill consumes the invite row only
  *  then, so a cancelled or failed join keeps the share code retryable. */
-export function setCollabInviteJoiner(fn: ((shareCode: string) => Promise<boolean>) | null): void {
+export function setCollabInviteJoiner(fn: CollabInviteJoiner | null): void {
   inviteJoiner = fn;
 }
 
-export function collabInviteJoiner(): ((shareCode: string) => Promise<boolean>) | null {
+export function collabInviteJoiner(): CollabInviteJoiner | null {
   return inviteJoiner;
 }
 
@@ -122,13 +131,15 @@ export function collabInviter(): ((target: CollabInviteTarget) => void) | null {
 /** Start-session seam: the Send pill's click mode triggers the same
  *  flow as the Start Collaboration Session command on the current doc.
  *  Null while the collab gate is closed. */
-let sessionStarter: (() => void) | null = null;
+/** Returns the flow's promise so a caller that needs the resulting share
+ *  code (react/collab-bridge.ts) can await it; the pills ignore the value. */
+let sessionStarter: (() => void | Promise<void>) | null = null;
 
-export function setCollabSessionStarter(fn: (() => void) | null): void {
+export function setCollabSessionStarter(fn: (() => void | Promise<void>) | null): void {
   sessionStarter = fn;
 }
 
-export function collabSessionStarter(): (() => void) | null {
+export function collabSessionStarter(): (() => void | Promise<void>) | null {
   return sessionStarter;
 }
 

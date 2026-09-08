@@ -90,16 +90,19 @@ export const documents = sqliteTable(
 export type ReasonDocument = typeof documents.$inferSelect;
 
 // Public, admin-curated evidence packs. A row is either a folder or an
-// imported DOCX file; `parentId` preserves the directory structure in an
-// uploaded zip. Content is stored as CardMirror-compatible HTML so selecting
-// a public file can open it directly in the editor without exposing a storage
-// bucket or requiring a signed-in account.
+// imported file; `parentId` preserves the directory structure in an uploaded
+// zip. Content is stored inline rather than in a storage bucket so selecting
+// a public file can open it directly in the editor without a signed-in
+// account: an uploaded DOCX is converted to CardMirror's native `.cmir`
+// (gzipped JSON, base64-encoded to fit this text column), which `format`
+// records. Rows imported before that carry card HTML and say so.
 export const topicStarterItems = sqliteTable(
   "topic_starter_items",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull(),
     content: text("content").notNull().default(""),
+    format: text("format").notNull().default("html"),
     parentId: integer("parent_id"),
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
     tags: text("tags").notNull().default("[]"),
@@ -249,6 +252,15 @@ export const userSettings = sqliteTable("user_settings", {
   // this row already scopes it to one signed-in user. Null/absent means "no
   // goal set", same semantics as every other nullable column here.
   researchProgressGoal: text("research_progress_goal"),
+  // JSON-serialized `{ lapseReminderEnabled, freezeDayKeys }` personal
+  // quest-streak preferences (see
+  // packages/debate-contributor-progress/src/lib/quest-streak-sync.ts and
+  // TODO.md's "🎮 Gamified Quests" bullet's "account-syncing reminder
+  // opt-ins/streak freezes across devices" follow-up). `contributorId`
+  // isn't stored here — this row already scopes it to one signed-in user.
+  // Null/absent means "nothing synced yet", same semantics as every other
+  // nullable column here.
+  questStreakSync: text("quest_streak_sync"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -1004,3 +1016,254 @@ export const practiceVsAiDebates = sqliteTable(
 );
 
 export type PracticeVsAiDebateRow = typeof practiceVsAiDebates.$inferSelect;
+
+// Account-linked scheduled-sprint-session sync — the "🤝 Team Collaboration
+// Mode" bullet's "Scheduled sessions ... are ... local-only (no account
+// sync yet)" Known gap in TODO.md. Same add/delete-only shape as
+// `savedDailyBestCardComments` above (a session is scheduled once and only
+// ever cancelled, never edited): `clientId` holds the session's own
+// generated `SprintSession.id`, and `topic` is a plain (non-unique) indexed
+// column for a future per-topic query, mirroring `dayKey`'s role there.
+export const savedSprintSessions = sqliteTable(
+  "saved_sprint_sessions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    topic: text("topic").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_sprint_sessions_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_sprint_sessions_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+    topicIdx: index("idx_saved_sprint_sessions_topic").on(table.topic),
+  }),
+);
+
+export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
+
+// ── Contacts, blocks, and shared collab cards ───────────────────────────
+//
+// The account-linked half of the CardMirror editor's real-time collaboration
+// (`packages/debate-editor/src/editor/collab/*`): a session's share code +
+// guest pass used to reach a partner only over the clipboard (or, on desktop,
+// the cardmirror pairing mailbox, which binds to a per-browser key rather
+// than to a person). These tables key everything to better-auth `user.id`s
+// instead, so a signed-in user has a contacts list they can share a live
+// card with directly, and a shared card shows up as available on the
+// recipient's account wherever they sign in. See docs/features/contacts.md.
+
+// One row per unordered pair of users. A request is a `pending` row from
+// `requester` to `addressee`; accepting flips it to `accepted` (the row is
+// then symmetric — either side is "the contact" of the other); declining or
+// removing deletes it. The unique index is on the directed pair, and the
+// route layer checks both directions before inserting so a pair never ends
+// up with two rows.
+export const contacts = sqliteTable(
+  "contacts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    requesterId: text("requester_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    addresseeId: text("addressee_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** "pending" | "accepted". */
+    status: text("status").notNull().default("pending"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pairIdx: uniqueIndex("idx_contacts_pair").on(table.requesterId, table.addresseeId),
+    addresseeIdx: index("idx_contacts_addressee").on(table.addresseeId),
+  }),
+);
+
+export type ContactRow = typeof contacts.$inferSelect;
+
+// A unilateral block: `blocker` no longer receives requests, shares, or
+// contact-list visibility from `blocked`. Blocking also deletes any contact
+// row and revokes any card shares between the two (both directions) in the
+// same request — see /api/contacts/block.
+export const userBlocks = sqliteTable(
+  "user_blocks",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    blockerId: text("blocker_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    blockedId: text("blocked_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pairIdx: uniqueIndex("idx_user_blocks_pair").on(table.blockerId, table.blockedId),
+    blockedIdx: index("idx_user_blocks_blocked").on(table.blockedId),
+  }),
+);
+
+export type UserBlockRow = typeof userBlocks.$inferSelect;
+
+// A live collab card (a CardMirror co-editing session) shared from one
+// account to one contact. `shareCode` is the editor's `cmshare1.<roomId>.
+// <key>` code and `guestPass` the relay's account-less join credential —
+// together exactly what a pasted invite link carries. Storing them here is a
+// deliberate trade: the room key is E2E material the relay itself never
+// sees, but a share that follows a person across devices has to live
+// somewhere their account can read it, and this app's own database is that
+// place (the same trust the `documents` table already holds for the doc's
+// full content). `roomId` is denormalized from the code so re-sharing the
+// same room to the same person upserts (unique on `(room_id, recipient_id)`)
+// rather than duplicating. `revokedAt` is the owner's "stop sharing";
+// `openedAt` is the recipient's first open, for the "new" badge.
+export const cardShares = sqliteTable(
+  "card_shares",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    recipientId: text("recipient_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    roomId: text("room_id").notNull(),
+    shareCode: text("share_code").notNull(),
+    guestPass: text("guest_pass"),
+    title: text("title").notNull().default(""),
+    message: text("message"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    openedAt: integer("opened_at", { mode: "timestamp" }),
+    revokedAt: integer("revoked_at", { mode: "timestamp" }),
+  },
+  (table) => ({
+    ownerIdx: index("idx_card_shares_owner").on(table.ownerId),
+    recipientIdx: index("idx_card_shares_recipient").on(table.recipientId),
+    roomRecipientIdx: uniqueIndex("idx_card_shares_room_recipient").on(table.roomId, table.recipientId),
+  }),
+);
+
+export type CardShareRow = typeof cardShares.$inferSelect;
+
+// Last-seen heartbeat, one row per user, bumped by the contacts poll
+// (`GET /api/contacts`) — the cheapest possible "is this contact around
+// right now" signal, so a contacts list can show who is online without a
+// push channel (none exists in this repo; see `useAccountNotifications`'s
+// polling note). Threshold lives in `debate-team-collaboration`'s
+// `lib/contacts.ts` (`isPresenceOnline`).
+export const userPresence = sqliteTable("user_presence", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  lastSeenAt: integer("last_seen_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type UserPresenceRow = typeof userPresence.$inferSelect;
+
+// Debate card library — the searchable corpus behind /cards, loaded from the
+// published Parquet shards by `debate-cards-upload` (the CLI in
+// packages/debate-search-evidence/src/cli) or by the admin panel's Parquet
+// uploader. Both post batches to /api/admin/debate-cards, which upserts here.
+//
+// `id` is the dump's own card id rather than an autoincrement, so re-importing
+// a shard updates the rows it already wrote instead of duplicating the corpus
+// — importing the same file twice is a no-op, and a corrected shard can be
+// replayed over the old one.
+//
+// The three text projections are stored side by side because search hits and
+// card display need different ones: `spoken` is the highlighted text as read
+// aloud, `fulltext` the unhighlighted body, and `markup` the card HTML with
+// its <mark>/<u> highlighting intact. `pocket`/`hat`/`block` are the dump's
+// three outline levels, which the search UI shows as one argument-block path.
+export const debateCards = sqliteTable(
+  "debate_cards",
+  {
+    id: integer("id").primaryKey(),
+    tag: text("tag").notNull().default(""),
+    cite: text("cite").notNull().default(""),
+    fullcite: text("fullcite").notNull().default(""),
+    summary: text("summary").notNull().default(""),
+    spoken: text("spoken").notNull().default(""),
+    fulltext: text("fulltext").notNull().default(""),
+    textLength: integer("text_length").notNull().default(0),
+    markup: text("markup").notNull().default(""),
+    pocket: text("pocket").notNull().default(""),
+    hat: text("hat").notNull().default(""),
+    block: text("block").notNull().default(""),
+    bucketId: integer("bucket_id").notNull().default(0),
+    duplicateCount: integer("duplicate_count").notNull().default(0),
+    side: text("side").notNull().default(""),
+    caselistDisplayName: text("caselist_display_name").notNull().default(""),
+    year: integer("year").notNull().default(0),
+    event: text("event").notNull().default(""),
+    level: text("level").notNull().default(""),
+    /** Shard the row came from, so one file's import can be audited or replaced. */
+    sourceFile: text("source_file").notNull().default(""),
+    importedAt: integer("imported_at")
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    yearIdx: index("idx_debate_cards_year").on(table.year),
+    eventIdx: index("idx_debate_cards_event").on(table.event),
+    levelIdx: index("idx_debate_cards_level").on(table.level),
+    sideIdx: index("idx_debate_cards_side").on(table.side),
+    caselistIdx: index("idx_debate_cards_caselist").on(table.caselistDisplayName),
+    bucketIdx: index("idx_debate_cards_bucket").on(table.bucketId),
+    sourceFileIdx: index("idx_debate_cards_source_file").on(table.sourceFile),
+  }),
+);
+
+export type DebateCardRow = typeof debateCards.$inferSelect;
+
+// One row per Parquet shard an admin has imported, so the admin panel can show
+// what the library is made of and the operator can tell a re-import from a
+// first import. Written by the same endpoint that upserts `debate_cards`;
+// `rows_imported` accumulates across the many batches one shard arrives in.
+export const debateCardImports = sqliteTable(
+  "debate_card_imports",
+  {
+    fileName: text("file_name").primaryKey(),
+    /** Cards written from this shard, summed across every batch. */
+    rowsImported: integer("rows_imported").notNull().default(0),
+    /** Rows the importer refused, summed the same way. */
+    rowsSkipped: integer("rows_skipped").notNull().default(0),
+    /** Run id shared by the batches, for correlating with the server logs. */
+    lastImportId: text("last_import_id").notNull().default(""),
+    /** Admin who started the most recent batch. */
+    lastImportedBy: text("last_imported_by").notNull().default(""),
+    firstImportedAt: integer("first_imported_at")
+      .notNull()
+      .default(sql`(unixepoch())`),
+    lastImportedAt: integer("last_imported_at")
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+);
+
+export type DebateCardImportRow = typeof debateCardImports.$inferSelect;

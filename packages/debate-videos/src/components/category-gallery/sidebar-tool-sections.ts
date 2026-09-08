@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Coaching / Research / Practice tool sections rendered in
- * the videos sidebar underneath the "Lectures" node. Mirrors the entries of
+ * the videos sidebar underneath the "Videos" node. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
  * three headings the sidebar shows and trimmed to the label + href the tree
  * needs — the sidebar lives in this package, which cannot import app-local
@@ -21,11 +21,26 @@ export interface SidebarToolSection {
   /** Stable id, used to key the section's expanded state. */
   id: string;
   title: string;
-  /** Destination of the section heading itself — its flagship tool. */
+  /**
+   * The section's flagship tool. The heading itself no longer links anywhere
+   * — it only toggles the section (see `ToolNavTree`) — so this is here for
+   * `sidebar-routes`, which folds it into the set of paths that get the tool
+   * sidebar. The same href is always listed in `tools` as well.
+   */
   href: string;
   icon: LucideIcon;
   tools: SidebarToolLink[];
 }
+
+/**
+ * The tools catalog. It heads the "Apps" node of the tree and is listed under
+ * it as "All Tools" — it is deliberately *not* one of the
+ * {@link APP_DOCK_LINKS} below: the app dock no longer carries a Tools icon,
+ * because holding the dock to five destinations is what lets its
+ * sidebar-hosted instance fit inside this column. The tree (and the dock's
+ * own Settings menu) is where tools live instead.
+ */
+export const TOOLS_ROOT_HREF = "/tools";
 
 /**
  * Mirrors `CategoryDock`'s `NAV_ITEMS` (the app dock icons shown at the top
@@ -39,7 +54,6 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
   { href: "/debate", title: "Debate" },
   { href: "/versus-ai", title: "Practice vs AI" },
   { href: "/doc", title: "Docs" },
-  { href: "/tools", title: "Tools" },
 ];
 
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [

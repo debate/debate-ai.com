@@ -42,6 +42,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildGroupChallengesPanelView,
   deleteGroupChallenge,
@@ -223,15 +224,10 @@ export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesP
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Group Challenges</h1>
-        <p className="text-sm text-muted-foreground">
-          Create a squad-scoped friendly challenge, like completing a set of blocks or winning a
-          rebuttal exercise.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Group Challenges"
+      description="Create a squad-scoped friendly challenge, like completing a set of blocks or winning a rebuttal exercise."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -341,9 +337,10 @@ export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesP
       </div>
 
       {challenges.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No group challenges yet. Create one above to start a friendly squad challenge.
-        </div>
+        <EmptyState
+          title="No group challenges yet."
+          message="Create one above to start a friendly squad challenge."
+        />
       ) : (
         <div className="space-y-3">
           {challenges.map((challenge) => {
@@ -413,6 +410,6 @@ export function GroupChallengesPanel({ signedInContributorId }: GroupChallengesP
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

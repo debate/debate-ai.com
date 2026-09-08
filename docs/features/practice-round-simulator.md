@@ -31,12 +31,14 @@ Below the form, every persisted round renders as its own card (sorted by
 set) opponent-difficulty badges, how many of the round's speeches have been
 submitted (looked up through the existing "Online Debate Versus AI"
 `aiVersusRounds.ts` store, with a link to `/versus-ai` to actually submit
-them), a "Generate AI opponent speech" action once it's the AI's turn
-(showing the same persona/difficulty badges above the button when a
-persona is set), the rendered setup sections (speech order, judge paradigm,
-AI opponent), a "Generate post-round feedback for current round" form,
-post-round feedback once one has been generated, and a "Get AI judge
-decision" action — with a "Clear" action per round.
+them), a "Replay round" step-through of the round's speeches once at least
+one has been submitted (see "Round replay/playback view" below), a
+"Generate AI opponent speech" action once it's the AI's turn (showing the
+same persona/difficulty badges above the button when a persona is set), the
+rendered setup sections (speech order, judge paradigm, AI opponent), a
+"Generate post-round feedback for current round" form, post-round feedback
+once one has been generated, and a "Get AI judge decision" action — with a
+"Clear" action per round.
 
 Once a round has been started at `/versus-ai` (so an `aiVersusRounds.ts`
 record exists for the same `roundId`) and it's the AI's turn, "Generate AI
@@ -246,8 +248,79 @@ usable `OpponentPersona` — round-tripped through `buildPracticeRoundSetup` —
 and throwing for an empty name or empty notes, mirroring
 `buildCustomOpponentPersona`'s own validation).
 
+## Round replay/playback view
+
+Closes the "🧪 Practice Round Simulator" bullet's last remaining Next item:
+a round replay/playback view. Once at least one speech has been submitted
+for a round (through `/versus-ai`), its card gains a "Replay round" section
+showing one speech slot at a time — its position ("N / M"), name, a
+You/AI badge, and the delivered text (or "Not yet delivered." for a slot the
+round hasn't reached yet) — with Prev/Next buttons to step through the whole
+sequence, disabled at the first/last step.
+
+`debate-round`'s new `round/practice-round-simulator.ts#buildPracticeRoundReplaySteps`
+zips the round's own `setup.speechOrder` with the submitted speeches already
+looked up via `getPracticeRoundSubmittedSpeeches` (the same "Online Debate
+Versus AI" `aiVersusRounds.ts` store the speech-progress line already reads)
+positionally — `submittedSpeeches[i]` is always the speech delivered for
+`speechOrder[i]`, since a round's speeches are only ever appended in turn
+order — into one step per slot, `delivered: false`/`text: null` for any slot
+beyond how far the round has progressed. No new persistence: the step index
+is local component state (`PracticeRoundSimulatorPanel`'s
+`replayStepByRound`), clamped to the current step count so it never points
+past the end if a round somehow has fewer steps on a later render.
+
+Vitest-covered: `packages/debate-round/test/practice-round-simulator.test.ts`'s
+`buildPracticeRoundReplaySteps` suite (every step undelivered for an
+unstarted round, each slot's index/name/speaker/secondary/time carried
+through unchanged, a delivered prefix matching `submittedSpeeches`
+positionally with the remainder undelivered, every step delivered once the
+round is complete, and the empty-order case).
+
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for
+`PracticeRoundSimulatorPanel`.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, saving a round's setup,
+clearing a round, generating an AI opponent speech, or getting an AI judge
+decision in one tab left every other open `/practice-round` tab showing a
+stale round list until a manual reload.
+
+`PracticeRoundSimulatorPanel.tsx` now subscribes to `window`'s `storage`
+event and calls its existing `refresh()` closure whenever
+`state/live-update.ts`'s `isPracticeRoundSimulatorPanelLiveUpdateStorageEvent`
+matches — covering both stores the panel reads directly:
+`practiceRounds` (the saved-round-setup list itself) and `aiVersusRounds`
+(read via `getAiVersusRound`/`getPracticeRoundSubmittedSpeeches` for each
+round's submitted-speech progress and "Generate AI opponent speech"
+availability). A teammate saving or clearing a round's setup, submitting or
+generating a speech, or getting an AI judge decision in one tab now shows up
+in every other open tab without a manual reload. The account-synced custom
+opponent persona library ("My persona library"/"Shared by your team", via
+`useCustomOpponentPersonaLibrary`) is deliberately excluded — it manages its
+own refresh through that hook rather than a raw `localStorage` read,
+matching `OpponentPersonaPickerPanel`'s own exclusion of the same hook. The
+in-progress round-setup form draft, feedback side-key fields, and replay-step
+selections are left untouched, matching every other closed panel's "refresh
+the derived view, not the draft" convention.
+
+```
+state/live-update.ts (debate-practice-drills)  — PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS, isPracticeRoundSimulatorPanelLiveUpdateStorageEvent
+panels/PracticeRoundSimulatorPanel.tsx          — storage-event subscription, refreshes rounds
+```
+
+Vitest-covered:
+`packages/debate-practice-drills/test/live-update.test.ts` (both backing-
+store keys, the `null`-key clear-all case, and unrelated/substring-matching
+keys staying ignored).
+
 ## Known gaps
 
-No known gaps remain for this idea. The "🧪 Practice Round Simulator" bullet
-in TODO.md's Research Crowdsourcing Organizer Features list still has one
-open Next item beyond this one: a round replay/playback view.
+No further known gaps remain for this idea beyond the cross-tab live update
+above, and no further follow-up is currently tracked for the "🧪 Practice
+Round Simulator" bullet in TODO.md's Research Crowdsourcing Organizer
+Features list.

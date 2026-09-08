@@ -38,6 +38,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
 import { cn } from "debate-research-evidence/src/ui/lib/utils"
 import {
@@ -391,13 +392,10 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
   const pastAnnouncements = history.filter((announcement) => announcement.dayKey !== announcedToday?.dayKey)
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Daily Best Card Challenge</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Today's highest-helpfulness card among submitted evidence, and the history of previously announced
-        daily winners.
-      </p>
-
+    <PanelShell
+      title="Daily Best Card Challenge"
+      description="Today's highest-helpfulness card among submitted evidence, and the history of previously announced daily winners."
+    >
       <div className="mb-6 rounded-lg border border-border bg-card p-4">
         <div className="mb-2 text-sm font-medium text-foreground">Today's leader</div>
         {announcedToday ? (
@@ -476,6 +474,6 @@ export function DailyBestCardPanel({ signedInContributorId }: DailyBestCardPanel
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

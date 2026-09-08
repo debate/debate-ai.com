@@ -1,0 +1,1 @@
+ALTER TABLE `user_settings` ADD `quest_streak_sync` text;

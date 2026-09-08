@@ -222,6 +222,35 @@ persistence and re-aggregation. Vitest-covered in
 `test/judge-round-record-csv-import.test.ts` (parsing) and
 `test/judgeRoundRecords.test.ts` (the bulk-import store wrapper).
 
+## Cross-tab live update
+
+Until now, `JudgeProfilesPanel` only read its persisted roster and logged-
+round history on mount, or right after its own log/edit/undo/redo/delete/
+bulk-import actions — a teammate's second open tab (or a second browser
+window on the same machine) logging a ballot for the same judge showed a
+stale roster until it re-rendered for some unrelated reason. The browser's
+`storage` event fires only in *other* same-origin tabs/windows, never the
+one that made the write, so it's exactly the missing cross-tab signal every
+other closed panel in this repo already uses (see
+[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+section).
+
+A new pure helper, `state/live-update.ts`'s
+`isJudgeProfilesLiveUpdateStorageEvent`, checks whether the event's `key` is
+one of this panel's four backing stores (`judgeProfiles`, the aggregated
+roster; `judgeRoundRecords`, the logged-ballot history; and
+`judgeRoundRecordEditHistory`/`judgeRoundRecordRedoHistory`, which decide
+whether a round shows an Undo/Redo action) or `null` (a
+`localStorage.clear()`). `JudgeProfilesPanel` subscribes to `window`'s
+`storage` event and calls its existing `refresh()` closure when the
+predicate matches, re-deriving the roster and logged-round list the same
+way its own actions already do — the in-progress "Log a judged round" form
+draft is left untouched, only the persisted roster/history re-reads.
+
+Vitest-covered in `test/live-update.test.ts` (every backing-store key, the
+`null`-key clear-all case, and unrelated/substring-matching keys staying
+ignored).
+
 ## Known gaps
 
 - No real ballot data source yet (follow-up (a) — no `Round`/ballot schema

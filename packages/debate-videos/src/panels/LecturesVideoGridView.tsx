@@ -10,16 +10,18 @@
 
 import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
-import type { CategoryType, TopicType, VideoFacets } from "../types/videos"
+import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
+import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
@@ -47,6 +49,8 @@ interface LecturesVideoGridViewProps {
   totalVideos: number
   /** Season/style counts for the filter dropdowns, or `null` before they load. */
   facets: VideoFacets | null
+  /** Popular keyword and tournament searches offered under the grid. */
+  searchSuggestions: VideoSuggestions
 
   // ---- Load state ----
   /** `true` while the initial video data is loading. */
@@ -132,6 +136,16 @@ interface LecturesVideoGridViewProps {
    * (auth session, routing, settings menu).
    */
   dockSlot?: React.ReactNode
+  /**
+   * App-owned REASON document panels (file tree, topic starters, open tabs),
+   * rendered under the dock in the same sidebar column the other tool routes
+   * put them in (`AppSidebarShell`). Supplied by the page for the same reason
+   * as {@link LecturesVideoGridViewProps.dockSlot}: the panels read app-level
+   * document state and route into `/reason-editor`, neither of which this
+   * package can reach. Without it `/videos` was the one route with a sidebar
+   * but no files in it.
+   */
+  docsSlot?: React.ReactNode
 }
 
 /**
@@ -154,6 +168,7 @@ export function LecturesVideoGridView({
   currentCategory,
   totalVideos,
   facets,
+  searchSuggestions,
   isLoading,
   errorMessage,
   isLoadingMore,
@@ -188,6 +203,7 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
   dockSlot,
+  docsSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
   const slug = useMemo(() => {
@@ -256,11 +272,19 @@ export function LecturesVideoGridView({
     <div className="min-h-screen bg-background flex">
       {/* Persistent left sidebar (md+): app dock, search controls, video
           categories, lecture categories, footer. Below md the same controls
-          render inline above the grid instead — see the mobile block below. */}
-      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
+          render inline above the grid instead — see the mobile block below.
+          `min-w-0` keeps every child bound to this column; the dock arrives
+          in `dockSlot` already sized to the column rather than to its own
+          contents, so it can't reach across the border onto the grid. */}
+      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
         {dockSlot}
 
         {searchBarNode(true)}
+
+        {/* Above the nav tree, matching `AppSidebarShell`'s order on every
+            other tool route: the tree is long enough that anything under it
+            starts below the fold. */}
+        {docsSlot}
 
         <VideoSidebarTree
           counts={quickLinkCounts}
@@ -295,10 +319,30 @@ export function LecturesVideoGridView({
             </div>
           )}
 
+          {/* The rest of the sidebar tree — Apps / Coaching / Research /
+              Practice and the glossary/rankings pair. The tiles above cover
+              only its Videos section, so without this the tool sections had
+              no counterpart on a phone anywhere on the page (the dock's
+              Settings menu carries them too, as its Videos/Apps/… submenus).
+              Sections start collapsed here: expanded, forty rows would push
+              the video grid off the screen. */}
+          <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
+            <ToolNavTree defaultExpanded={false} />
+          </nav>
+
           <Footer />
         </div>
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
+
+        {/* One-click searches drawn from the library: popular debate terms and
+            the tournaments with the most rounds. */}
+        <VideoSearchSuggestions
+          suggestions={searchSuggestions}
+          searchTerm={searchTerm}
+          onSelect={onSearchChange}
+          className="mb-6"
+        />
 
         {isLoading ? (
           <div className="text-center py-12">
@@ -310,7 +354,24 @@ export function LecturesVideoGridView({
           </div>
         ) : currentVideos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No videos found matching your filters.</p>
+            {showFavoritesOnly && favorites.size === 0 ? (
+              <>
+                <p className="text-muted-foreground">
+                  Star videos to add them to My Favorites.
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Click the star on any video and it will show up here.
+                </p>
+              </>
+            ) : showFavoritesOnly ? (
+              <p className="text-muted-foreground">
+                None of My Favorites match your filters.
+              </p>
+            ) : (
+              <p className="text-muted-foreground">
+                No videos found matching your filters — try one of the searches above.
+              </p>
+            )}
           </div>
         ) : (
           <>

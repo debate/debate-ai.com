@@ -121,11 +121,12 @@ index automatically (best-effort — a network failure doesn't block the
 local save), crediting the optional "Your contributor ID" field's value as
 the registration's `contributorId`.
 
-`apps/debate-web-ext` is a dependency-free Manifest V3 extension (no
-bundler, not part of this repo's `bun`/`turbo` workspaces — see its own
+`apps/debate-web-ext` is a WXT-built Manifest V3 extension (not part of this
+repo's `bun`/`turbo` workspaces — see its own
 [README](../../apps/debate-web-ext/README.md)) whose popup calls the same
 `GET /api/evidence-reuse-check` route against the active tab's URL,
-configurable to a non-production API base URL via an Options page.
+configurable to a non-production API base URL via its Options page — which
+also configures the debate round timer the same extension ships.
 
 ## Real search index
 
@@ -290,8 +291,8 @@ panels/EvidenceLibraryPanel.tsx (submission form, entry.sourceUrl set)
   → registerRemoteReuseEntry(entry)        — lib/evidence-reuse-check-client.ts
       → POST /api/evidence-reuse-check     — app/api/evidence-reuse-check/route.ts (D1 upsert)
 
-apps/debate-web-ext/popup.js (active tab's URL)
-  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/api.js
+apps/debate-web-ext/entrypoints/popup/App.tsx (active tab's URL)
+  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/src/reuse/api.ts
       → GET ${apiBase}/api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
 ```
 
@@ -510,6 +511,37 @@ casing, leaving an unmatched tag unchanged, leaving an already-correct
 casing unchanged, normalizing several tags independently, resolving a
 tie by first-encountered casing when `knownTags` itself carries more than
 one, and both empty-input cases).
+
+## Cross-tab live update
+
+Both `EvidenceLibraryPanel` and `ArgumentLibraryPanel` read their persisted
+stores on mount only, so a change made in one browser tab used to need a
+manual reload to show up in another tab open to the same panel. Both now
+subscribe to the browser's `storage` event (which never fires in the tab
+that made the write, only in other same-origin tabs) via new predicates in
+`state/live-update.ts`:
+
+- `isEvidenceLibraryLiveUpdateStorageEvent`/`EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`
+  cover `EvidenceLibraryPanel`'s own `evidenceLibraryEntries` store, plus
+  `cardScores` (its inline LLM Card Scoring badges), `peerReviews` (each
+  pending entry's review-status badge), and `reuseCheckHistory` (the "Check
+  this page" box's logged history) — a submission, edit, score, review, or
+  reuse check made in another tab now refreshes the search results, score
+  badges, pending-review queue, and history here too.
+- `isArgumentLibraryLiveUpdateStorageEvent`/`ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`
+  cover both sources `buildCombinedPersistedArgumentLibrary` folds together —
+  `evidenceLibraryEntries` and `contributions` — so a card submitted or
+  retagged from either the evidence-library form or the Contributions Feed,
+  in another tab, refreshes the topic folders and tag collections here too.
+  The saved-collections bar is account-synced via `/api/settings`
+  (`hooks/useSavedArgumentCollections.ts`), not `localStorage`, so it isn't
+  covered by this mechanism — it already refreshes on its own account-sync
+  cadence.
+
+This closes both panels' share of the "Every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](./shared-flow-sync.md). Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 

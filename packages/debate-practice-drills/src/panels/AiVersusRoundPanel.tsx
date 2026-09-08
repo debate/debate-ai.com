@@ -53,18 +53,46 @@
  * already uses, closing the "a transcript export/download action for a
  * completed round" follow-up named under idea #3 in TODO.md.
  *
+ * A "Compare transcripts" section (shown once at least two persisted rounds
+ * exist) lets a user pick any two rounds and renders a word-level,
+ * side-by-side diff of their delivered speeches, aligned by delivery
+ * position — closing idea #3's other named next-step, "a side-by-side
+ * transcript diff between two rounds" — via the pure, Vitest-covered
+ * `round/ai-versus-transcript.ts#buildAiVersusTranscriptComparison`, plus a
+ * "Download comparison" action mirroring the single-round transcript
+ * download.
+ *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isAiVersusRoundPanelLiveUpdateStorageEvent`)
+ * refreshes the rendered round list when another tab saves, clears, or
+ * regenerates a speech in a round — closing the "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap noted in `shared-flow-sync.md`, for
+ * `AiVersusRoundPanel`. The active round's turn-order display re-derives
+ * from the same refreshed `rounds` list, but the in-progress speech-text
+ * draft, round-ID/format/side form fields, and "Compare transcripts"
+ * selections are left untouched, matching every other closed panel's
+ * "refresh the derived view, not the draft" convention.
+ *
  * @module panels/AiVersusRoundPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelRow } from "debate-round/src/ui/panels/panel-shell"
+import {
+  EmptyState,
+  PanelRow,
+  PanelSection,
+  PanelShell,
+  toneSurfaceClass,
+} from "debate-round/src/ui/panels/panel-shell"
+import { cn } from "debate-round/src/ui/lib/utils"
 import { Download } from "lucide-react"
 import {
   Select,
@@ -84,13 +112,20 @@ import {
   validateSpeechSubmission,
   type AiVersusSide,
 } from "debate-round/src/round/ai-versus-speech-order"
+import type { DiffSegment } from "debate-round/src/flow/flow-edit-diff"
 import { requestAiVersusSpeech } from "../round/ai-versus-speech-client"
 import { requestAiVersusSpeechWithPersona } from "../round/opponent-persona-speech-client"
 import { getOpponentDifficultyForRound, getOpponentPersonaForRound } from "../round/opponent-persona-speech-wiring"
 import { opponentDifficulties } from "debate-speech-writer/src/opponent/opponent-personas"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
-import { aiVersusTranscriptFilename, buildAiVersusTranscriptText } from "../round/ai-versus-transcript"
+import {
+  aiVersusTranscriptComparisonFilename,
+  aiVersusTranscriptFilename,
+  buildAiVersusTranscriptComparison,
+  buildAiVersusTranscriptComparisonText,
+  buildAiVersusTranscriptText,
+} from "../round/ai-versus-transcript"
 import {
   buildAiVersusRoundsPanelView,
   canRegenerateAiSpeechAt,
@@ -101,6 +136,7 @@ import {
   saveAiVersusRound,
   type AiVersusRoundRecord,
 } from "debate-round/src/state/aiVersusRounds"
+import { isAiVersusRoundPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const STYLE_LABELS: Record<DebateStyleKey, string> = debateStyleMap.reduce(
   (labels, key, index) => ({ ...labels, [key]: debateStyleNames[index] }),
@@ -110,6 +146,33 @@ const STYLE_LABELS: Record<DebateStyleKey, string> = debateStyleMap.reduce(
 function sideLabel(styleKey: DebateStyleKey, side: AiVersusSide): string {
   const style = debateStyles[styleKey]
   return side === "primary" ? style.primary.name : (style.secondary?.name ?? side)
+}
+
+/** Renders one side's diffed words, highlighting this side's own changes — mirrors `SharedFlowSyncPanel`'s `DiffText`. */
+function DiffText({ segments }: { segments: DiffSegment[] }) {
+  if (segments.length === 0) {
+    return <span className="italic text-muted-foreground">(not delivered in this round)</span>
+  }
+  return (
+    <>
+      {segments.map((segment, i) =>
+        segment.type === "equal" ? (
+          <span key={i}>{segment.text}</span>
+        ) : (
+          <span
+            key={i}
+            className={cn(
+              "rounded-sm px-0.5",
+              toneSurfaceClass(segment.type === "removed" ? "critical" : "positive"),
+              segment.type === "removed" && "line-through",
+            )}
+          >
+            {segment.text}
+          </span>
+        ),
+      )}
+    </>
+  )
 }
 
 /**
@@ -132,6 +195,8 @@ export function AiVersusRoundPanel() {
   const [error, setError] = useState<string | null>(null)
   const [aiGenerating, setAiGenerating] = useState(false)
   const [regeneratingIndex, setRegeneratingIndex] = useState<number | null>(null)
+  const [compareRoundIdA, setCompareRoundIdA] = useState("")
+  const [compareRoundIdB, setCompareRoundIdB] = useState("")
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) => setSpeechText((prev) => appendDictatedSegment(prev, segment)),
@@ -142,6 +207,20 @@ export function AiVersusRoundPanel() {
   }, [])
 
   const refresh = () => setRounds(buildAiVersusRoundsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves, clears, or
+   * regenerates a speech in an AI-versus round — a `storage` event never
+   * fires in the tab that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isAiVersusRoundPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const style = debateStyles[styleKey]
   const hasSecondarySide = Boolean(style.secondary)
@@ -282,20 +361,38 @@ export function AiVersusRoundPanel() {
     URL.revokeObjectURL(url)
   }
 
+  const compareRecordA = compareRoundIdA ? rounds?.find((r) => r.roundId === compareRoundIdA) : undefined
+  const compareRecordB = compareRoundIdB ? rounds?.find((r) => r.roundId === compareRoundIdB) : undefined
+  const comparison = useMemo(
+    () => (compareRecordA && compareRecordB ? buildAiVersusTranscriptComparison(compareRecordA, compareRecordB) : null),
+    [compareRecordA, compareRecordB],
+  )
+
+  /** Mirrors `handleDownloadTranscript`'s anchor+Blob download pattern for a two-round comparison. */
+  const handleDownloadComparison = () => {
+    if (!comparison) return
+    const text = buildAiVersusTranscriptComparisonText(comparison)
+    const blob = new Blob([text], { type: "text/plain" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = aiVersusTranscriptComparisonFilename(comparison.a, comparison.b)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   if (rounds === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading AI-versus rounds…</div>
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Online Debate Versus AI</h1>
-        <p className="text-sm text-muted-foreground">
-          Practice a full round against an AI opponent — pick a format and side, then submit your
-          speeches in turn order.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Online Debate Versus AI"
+      description="Practice a full round against an AI opponent — pick a format and side, then submit your speeches in turn order."
+    >
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">
           <div className="space-y-1.5">
@@ -518,6 +615,95 @@ export function AiVersusRoundPanel() {
           })}
         </div>
       )}
-    </div>
+
+      {rounds.length >= 2 && (
+        <PanelSection title="Compare transcripts" className="rounded-lg border border-border p-4 space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="ai-versus-compare-a">Round A</Label>
+              <Select value={compareRoundIdA} onValueChange={setCompareRoundIdA}>
+                <SelectTrigger id="ai-versus-compare-a" className="w-56">
+                  <SelectValue placeholder="Pick a round" />
+                </SelectTrigger>
+                <SelectContent>
+                  {rounds.map((round) => (
+                    <SelectItem key={round.roundId} value={round.roundId}>
+                      Round {round.roundId}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="ai-versus-compare-b">Round B</Label>
+              <Select value={compareRoundIdB} onValueChange={setCompareRoundIdB}>
+                <SelectTrigger id="ai-versus-compare-b" className="w-56">
+                  <SelectValue placeholder="Pick a round" />
+                </SelectTrigger>
+                <SelectContent>
+                  {rounds.map((round) => (
+                    <SelectItem key={round.roundId} value={round.roundId}>
+                      Round {round.roundId}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {compareRoundIdA && compareRoundIdA === compareRoundIdB && (
+            <p className="text-sm text-muted-foreground">Pick two different rounds to compare.</p>
+          )}
+
+          {comparison && compareRoundIdA !== compareRoundIdB && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">
+                  Round {comparison.a.roundId} vs. Round {comparison.b.roundId}, aligned by delivery position.
+                </p>
+                <Button size="sm" variant="outline" onClick={handleDownloadComparison}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download comparison
+                </Button>
+              </div>
+              {comparison.rows.map((row) => {
+                const leftSegments = row.diff
+                  ? row.diff.left
+                  : row.a
+                    ? [{ text: row.a.text, type: "equal" as const }]
+                    : []
+                const rightSegments = row.diff
+                  ? row.diff.right
+                  : row.b
+                    ? [{ text: row.b.text, type: "equal" as const }]
+                    : []
+                return (
+                  <div key={row.index} className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
+                    <div className="rounded-md border border-border bg-muted/30 p-2">
+                      <div className="mb-1 font-medium text-muted-foreground">
+                        Round {comparison.a.roundId}
+                        {row.a && ` — ${row.a.speaker === "user" ? "You" : "AI"} — ${row.a.name}`}
+                      </div>
+                      <p className="whitespace-pre-wrap break-words">
+                        <DiffText segments={leftSegments} />
+                      </p>
+                    </div>
+                    <div className="rounded-md border border-border bg-muted/30 p-2">
+                      <div className="mb-1 font-medium text-muted-foreground">
+                        Round {comparison.b.roundId}
+                        {row.b && ` — ${row.b.speaker === "user" ? "You" : "AI"} — ${row.b.name}`}
+                      </div>
+                      <p className="whitespace-pre-wrap break-words">
+                        <DiffText segments={rightSegments} />
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </PanelSection>
+      )}
+    </PanelShell>
   )
 }

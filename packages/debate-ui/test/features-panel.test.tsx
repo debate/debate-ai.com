@@ -39,4 +39,15 @@ describe("FeaturesPanel", () => {
     // A single section means no jump-to-category row.
     expect(single).not.toContain('aria-label="Jump to a category"');
   });
+
+  it("renders the shared EmptyState when no feature matches the search query", () => {
+    const single = renderToStaticMarkup(
+      <FeaturesPanel entries={[APP_FEATURES.find((f) => f.id === "task-inbox")!]} />,
+    );
+    expect(single).not.toContain('data-slot="empty-state"');
+
+    const empty = renderToStaticMarkup(<FeaturesPanel entries={[]} />);
+    expect(empty).toContain('data-slot="empty-state"');
+    expect(empty).toContain("No features match &quot;&quot;.");
+  });
 });

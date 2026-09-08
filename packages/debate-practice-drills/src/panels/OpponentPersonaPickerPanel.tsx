@@ -32,6 +32,13 @@
  * and optionally marked "Share with my team" so it shows up (read-only) in
  * every other signed-in user's "Shared by your team" list.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts`) refreshes the rendered selection list whenever
+ * another tab saves or clears a session's persona selection, closing the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in
+ * `docs/features/shared-flow-sync.md` for this panel.
+ *
  * @module panels/OpponentPersonaPickerPanel
  */
 
@@ -44,6 +51,7 @@ import { Input } from "debate-speech-writer/src/ui/primitives/input"
 import { Label } from "debate-speech-writer/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
+import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildCustomOpponentPersona,
   DEFAULT_OPPONENT_DIFFICULTY,
@@ -61,6 +69,7 @@ import {
   type OpponentPersonaSelection,
 } from "../state/opponentPersonaSelections"
 import { useCustomOpponentPersonaLibrary } from "../hooks/useCustomOpponentPersonaLibrary"
+import { isOpponentPersonaPickerPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const BUILTIN_PERSONAS = listOpponentPersonas()
 const DIFFICULTIES = listOpponentDifficulties()
@@ -104,6 +113,20 @@ export function OpponentPersonaPickerPanel() {
   }, [])
 
   const refresh = () => setSelections(buildOpponentPersonaSelectionsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves or clears a
+   * session's opponent persona selection — a `storage` event never fires in
+   * the tab that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentPersonaPickerPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSave = () => {
     const sessionId = form.sessionId.trim()
@@ -161,14 +184,10 @@ export function OpponentPersonaPickerPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Opponent Persona Picker</h1>
-        <p className="text-sm text-muted-foreground">
-          Pick the AI practice-opponent style for a session — policy heavy, kritik, lay, or fast-flow.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Opponent Persona Picker"
+      description="Pick the AI practice-opponent style for a session — policy heavy, kritik, lay, or fast-flow."
+    >
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="persona-session-id">Session ID</Label>
@@ -275,9 +294,10 @@ export function OpponentPersonaPickerPanel() {
       </div>
 
       {selections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No opponent persona selections yet. Save one above to see it here.
-        </div>
+        <EmptyState
+          title="No opponent persona selections yet."
+          message="Save one above to see it here."
+        />
       ) : (
         <div className="space-y-2">
           {selections.map((selection) => (
@@ -300,14 +320,11 @@ export function OpponentPersonaPickerPanel() {
         </div>
       )}
 
-      <div className="space-y-2">
-        <div>
-          <h2 className="text-base font-semibold text-foreground">My persona library</h2>
-          <p className="text-sm text-muted-foreground">
-            Custom personas saved here can be reused across sessions instead of retyping their style every time.
-            {synced ? " Synced to your account." : " Sign in to sync this library across devices."}
-          </p>
-        </div>
+      <PanelSection title="My persona library">
+        <p className="-mt-2 text-sm text-muted-foreground">
+          Custom personas saved here can be reused across sessions instead of retyping their style every time.
+          {synced ? " Synced to your account." : " Sign in to sync this library across devices."}
+        </p>
         {library === null || library.length === 0 ? (
           <div className="p-4 text-center text-sm text-muted-foreground">
             No saved personas yet — check "Save to my persona library" above when authoring a custom persona.
@@ -339,16 +356,13 @@ export function OpponentPersonaPickerPanel() {
             </div>
           ))
         )}
-      </div>
+      </PanelSection>
 
       {sharedByTeam !== null && sharedByTeam.length > 0 && (
-        <div className="space-y-2">
-          <div>
-            <h2 className="text-base font-semibold text-foreground">Shared by your team</h2>
-            <p className="text-sm text-muted-foreground">
-              Custom personas other signed-in users have shared. Read-only — use one to prefill your own form.
-            </p>
-          </div>
+        <PanelSection
+          title="Shared by your team"
+          description="Custom personas other signed-in users have shared. Read-only — use one to prefill your own form."
+        >
           {sharedByTeam.map((entry) => (
             <div
               key={entry.id}
@@ -363,8 +377,8 @@ export function OpponentPersonaPickerPanel() {
               </Button>
             </div>
           ))}
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }
