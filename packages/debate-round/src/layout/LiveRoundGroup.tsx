@@ -1,7 +1,11 @@
 /**
- * @fileoverview Collapsible "live round" tree node for the sidebar: the
- * round currently in progress, its prep timers, and the full timer/controls
- * bar for whichever speech is currently selected in the main content area.
+ * @fileoverview Collapsible round tree node for the sidebar: the selected
+ * round (the one the active flow tab belongs to, or the live round when the
+ * tab isn't tied to one), its prep timers, and the full timer/controls bar
+ * for whichever speech is currently selected in the main content area.
+ *
+ * This is the app's only round-timer surface — the dock's Timer shortcut was
+ * removed in favour of timing a round from the round it belongs to.
  * Other speeches in the round are listed by name only — the bar (and its
  * timer) only ever tracks the one speech in view, matching CardMirror, which
  * only ever has one live editable speech at a time.
@@ -10,7 +14,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronRight, Radio } from "lucide-react"
+import { ChevronDown, ChevronRight, Radio, Timer } from "lucide-react"
 import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { cn } from "../ui/lib/utils"
@@ -20,8 +24,10 @@ import type { DebateStyle, SpeechTimerState, TimerState } from "debate-timer/src
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 
 interface LiveRoundGroupProps {
-  /** The round currently in progress. */
+  /** The round the sidebar is showing — selected, and not necessarily live. */
   round: Round
+  /** Whether that round is in progress; drives the red "on air" marker. */
+  isLive?: boolean
   /** Whether this is rendered inside the mobile sidebar sheet. */
   isMobile: boolean
   debateStyle: DebateStyle
@@ -56,14 +62,16 @@ interface LiveRoundGroupProps {
 }
 
 /** The round's display title, falling back to the tournament/level pair. */
-function roundLabel(round: Round): string {
+function roundLabel(round: Round, isLive: boolean): string {
   if (round.title) return round.title
   const parts = [round.tournamentName, round.roundLevel].filter(Boolean)
-  return parts.length ? parts.join(" - ") : "Live Round"
+  if (parts.length) return parts.join(" - ")
+  return isLive ? "Live Round" : "Round"
 }
 
 export function LiveRoundGroup({
   round,
+  isLive = false,
   isMobile,
   debateStyle,
   getSpeechTimerState,
@@ -99,8 +107,12 @@ export function LiveRoundGroup({
         aria-expanded={open}
       >
         {open ? <ChevronDown className="h-3.5 w-3.5 shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 shrink-0" />}
-        <Radio className="h-3.5 w-3.5 shrink-0 text-red-500 dark:text-red-400" aria-hidden="true" />
-        <span className="flex-1 truncate text-sm font-bold">{roundLabel(round)}</span>
+        {isLive ? (
+          <Radio className="h-3.5 w-3.5 shrink-0 text-red-500 dark:text-red-400" aria-hidden="true" />
+        ) : (
+          <Timer className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+        )}
+        <span className="flex-1 truncate text-sm font-bold">{roundLabel(round, isLive)}</span>
       </button>
 
       {open && (

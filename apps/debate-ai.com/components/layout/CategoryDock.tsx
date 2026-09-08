@@ -3,12 +3,11 @@
 import { useEffect, useState, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, Contact, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Timer as TimerIcon, Trophy, UserCircle2 } from "lucide-react"
+import { Activity, Bell, Book, BookMarked, Calendar, Code2, Contact, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
 import { useAccountNotifications, useContacts } from "debate-team-collaboration"
-import { TimerProgressRing } from "debate-timer/src/timers/TimerProgressRing"
 import {
   useVideoPlayerStore,
   sendYouTubeCommand,
@@ -79,24 +78,11 @@ const NAV_ITEMS = [
   // instead of reaching across it — see `DockInstance`'s `embedded` prop.
 ]
 
-/** Practice Round Simulator — the tool that pairs a round timer with a judge paradigm and AI opponent. */
-const TIMER_ROUTE = "/practice-round"
-
-/**
- * Dock art for the Timer nav button: the `debate-timer` package's
- * `TimerProgressRing` (itself lifted from the debate-timer-progress
- * extension's timer face) behind a clock glyph. The ring's fill is fixed
- * rather than live — this button is a shortcut to the timer tool, not a
- * running timer of its own.
- */
-function TimerDockIcon() {
-  return (
-    <span className="relative flex h-full w-full items-center justify-center">
-      <TimerProgressRing progress={0.3} className="absolute inset-0 h-full w-full text-current" />
-      <TimerIcon className="relative h-3.5 w-3.5" />
-    </span>
-  )
-}
+// No Timer button here on purpose: the round timers live in the rounds
+// sidebar, on the selected round (`LiveRoundGroup`, in debate-round's
+// `FlowPageSidebar`), where the speech they are timing is in view. A dock
+// shortcut to a standalone timer page duplicated that surface without the
+// round context, so it was removed.
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
 
@@ -453,14 +439,6 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       active: pathname === href,
       onClick: () => router.push(href),
     })),
-    {
-      key: TIMER_ROUTE,
-      label: "Timer",
-      icon: null as any,
-      active: pathname === TIMER_ROUTE,
-      onClick: () => router.push(TIMER_ROUTE),
-      renderIcon: TimerDockIcon,
-    },
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({
         key: `cat-${category}`,
