@@ -150,6 +150,29 @@ interface D1SessionScope {
 
 const scopeStorage = new AsyncLocalStorage<D1SessionScope>();
 
+/**
+ * A cookie value, percent-decoded, or null when it is not a usable bookmark.
+ *
+ * `decodeURIComponent` *throws* on a malformed escape — a bare `%`, `%zz`, a
+ * value some other software truncated mid-escape — and this runs in the Worker
+ * entry, before any route handler and outside every try/catch there is. An
+ * unguarded decode therefore turns one unparseable cookie into a thrown
+ * exception on *every* request that browser makes, D1-backed or not
+ * (`/api/auth/providers` reads no database and 500s all the same), and the
+ * browser keeps re-sending the cookie, so the site stays down for that browser
+ * until it ages out. A value that will not decode is simply not a bookmark, so
+ * it is dropped exactly like one that decodes but is the wrong shape.
+ */
+function decodeClientBookmark(raw: string): string | null {
+  let value: string;
+  try {
+    value = decodeURIComponent(raw);
+  } catch {
+    return null;
+  }
+  return BOOKMARK_PATTERN.test(value) ? value : null;
+}
+
 /** A bookmark from the untrusted client, or null if missing or malformed. */
 function readClientBookmark(request: Request): string | null {
   const header = request.headers.get(D1_BOOKMARK_HEADER);
@@ -161,8 +184,7 @@ function readClientBookmark(request: Request): string | null {
     const eq = pair.indexOf("=");
     if (eq === -1) continue;
     if (pair.slice(0, eq).trim() !== D1_BOOKMARK_COOKIE) continue;
-    const value = decodeURIComponent(pair.slice(eq + 1).trim());
-    return BOOKMARK_PATTERN.test(value) ? value : null;
+    return decodeClientBookmark(pair.slice(eq + 1).trim());
   }
   return null;
 }
