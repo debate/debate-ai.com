@@ -57,6 +57,7 @@ import type { EvidenceSearchResult } from "debate-research-evidence/src/lib/shar
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
+import { isPrepRoomLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import {
   addPersistedChecklistItem,
   deletePersistedChecklistItem,
@@ -142,6 +143,27 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic])
 
+  /**
+   * Live-update the room when another browser tab submits evidence, edits
+   * the checklist, records a heartbeat, or changes the tracked-argument
+   * checklist/availability roster. A `storage` event never fires in the tab
+   * that made the write, only in other tabs — same-tab changes already
+   * refresh through their own handlers.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPrepRoomLiveUpdateStorageEvent(event)) return
+      const activeTopic = topic.trim()
+      setTopics(listPrepRoomTopics())
+      setRoom(activeTopic ? buildPersistedPrepRoom(activeTopic) : null)
+      refreshChecklist(activeTopic)
+      refreshPresence(activeTopic)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
+
   const handleMarkActive = () => {
     const activeTopic = topic.trim()
     const contributorId = myId.trim()
@@ -218,9 +240,7 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
       </div>
 
       {!room ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          Enter a topic above to open its prep room.
-        </div>
+        <EmptyState title="Enter a topic above to open its prep room." />
       ) : (
         <div className="space-y-4">
           <p className="whitespace-pre-line text-sm text-muted-foreground">{buildPrepRoomSummaryText(room)}</p>

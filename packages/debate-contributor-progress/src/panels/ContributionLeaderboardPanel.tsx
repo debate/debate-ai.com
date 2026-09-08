@@ -67,6 +67,7 @@ import { Info } from "lucide-react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -138,7 +139,8 @@ function buildLeaderboardRows(range: LeaderboardRange, category: ContributionCat
   })
 }
 
-const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+/** Exported so `ContributorProfilePanel` renders the same tier badge styling. */
+export const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
   novice: "outline",
   apprentice: "secondary",
   veteran: "secondary",
@@ -238,11 +240,17 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
           {rangeSelect}
           {categorySelect}
         </div>
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {isFiltered
-            ? `No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}. Try widening the range or category filter to see the full roster.`
-            : "No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and analytics."}
-        </div>
+        {isFiltered ? (
+          <EmptyState
+            title={`No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}.`}
+            message="Try widening the range or category filter to see the full roster."
+          />
+        ) : (
+          <EmptyState
+            title="No contributions yet."
+            message="The leaderboard fills in as contributors submit cards, summaries, and analytics."
+          />
+        )}
       </div>
     )
   }
@@ -306,7 +314,12 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
               <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
               <TableCell className="font-medium">
                 <div className="flex items-center gap-1.5">
-                  {row.contributorId}
+                  <a
+                    href={`/cards/leaderboard/${encodeURIComponent(row.contributorId)}`}
+                    className="hover:underline"
+                  >
+                    {row.contributorId}
+                  </a>
                   {isMe && (
                     <Badge variant="outline" className="whitespace-nowrap">
                       You

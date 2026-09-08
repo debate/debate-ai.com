@@ -1,0 +1,11 @@
+/* Options page shell — a normal, scrollable extension page (unlike the popup
+ * and the timer window, both of which are pinned to a fixed size). */
+body {
+  margin: 0;
+  padding: 24px 16px 48px;
+}
+
+.options {
+  max-width: 560px;
+  margin: 0 auto;
+}

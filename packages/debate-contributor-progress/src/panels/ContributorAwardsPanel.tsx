@@ -60,6 +60,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -435,9 +436,11 @@ export function ContributorAwardsPanel() {
       </p>
 
       {awardsToShow.length === 0 ? (
-        <div className="mb-6 rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground">
-          No awards yet. Categories fill in as contributors submit cards, summaries, highlights,
-          annotations, original arguments, and refutations.
+        <div className="mb-6">
+          <EmptyState
+            title="No awards yet."
+            message="Categories fill in as contributors submit cards, summaries, highlights, annotations, original arguments, and refutations."
+          />
         </div>
       ) : (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -506,7 +509,8 @@ export function ContributorAwardsPanel() {
           </div>
         </div>
         {secondError && <p className="mt-2 text-xs text-destructive">{secondError}</p>}
-        <div className="mt-3">
+        <div className="mt-3 space-y-2">
+          <div className="text-xs font-medium uppercase text-muted-foreground">Recent nominations</div>
           <NominationList
             nominations={nominations}
             seconderId={seconderId}

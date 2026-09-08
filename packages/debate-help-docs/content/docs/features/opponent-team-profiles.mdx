@@ -1,0 +1,36 @@
+---
+title: "Opponent Team Profiles"
+---
+
+# Opponent Team Profiles
+
+Shows every persisted opponent scouting profile as a roster — overall and
+Aff/Neg side record, a "notably stronger" side badge, and the team's most
+commonly run argument tags and cases.
+
+- **Route:** `/opponents`
+- **Package:** `debate-round`
+
+## What it shows
+
+A roster table (rounds recorded, record, side record, common
+arguments/cases), a "Log a scouted round" form, a **Bulk import (CSV)**
+section, a logged-rounds list with Edit/Delete/Undo/Redo, a "Download
+report" export, and a **Compare vs. opponent** section (shared arguments,
+us-only/opponent-only arguments) with its own download.
+
+## Data flow
+
+```
+state/opponentRoundRecords.ts (localStorage: opponentRoundRecords)
+  → rebuildOpponentTeamProfileFromRecords(teamId)
+state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles)
+  → buildOpponentTeamProfilesRoster()
+  → panels/OpponentTeamProfilesPanel.tsx
+  → apps/debate-ai.com/app/opponents/page.tsx
+```
+
+## Known gaps
+
+No real round-history data source — every round is entered by hand or via
+CSV import. Profiles are per-browser localStorage.

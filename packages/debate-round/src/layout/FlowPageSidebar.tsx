@@ -12,6 +12,7 @@ import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
 import { OpenTabsGroup } from "./OpenTabsGroup"
+import { selectSidebarRound } from "../utils/sidebar-round"
 import type { Flow, Round } from "../types/flow"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
 import type { TimerState, SpeechTimerState, DebateStyle } from "debate-timer/src/types"
@@ -22,7 +23,8 @@ interface FlowPageSidebarProps {
   flows: Flow[]
   /** Index of the currently selected flow. */
   selected: number
-  /** All rounds available for the current session. */
+  /** All rounds available for the current session; the one matching the
+   *  active flow's `roundId` is the round whose timers the sidebar shows. */
   rounds: Round[]
   /** The currently active flow, or null if none is selected. */
   currentFlow: Flow | null
@@ -64,16 +66,39 @@ interface FlowPageSidebarProps {
     getSpeechTimerState: (speechName: string) => SpeechTimerEntry
     setSpeechTimerState: (speechName: string, updates: Partial<SpeechTimerEntry>) => void
   }
+  /** Name of the speech currently open in the main content area — the only
+   *  one whose full timer/controls bar is shown in the live round group. */
+  selectedSpeech: string
+  /** Callback to reset prep timers to their defaults. */
+  onResetPrepTimers?: () => void
+  /** Whether backward speech navigation is available. */
+  canNavigatePrev?: boolean
+  /** Whether forward speech navigation is available. */
+  canNavigateNext?: boolean
+  /** Handler called when the user navigates to the previous speech. */
+  onNavigatePrev?: () => void
+  /** Handler called when the user navigates to the next speech. */
+  onNavigateNext?: () => void
+  /** Selected microphone device ID, shared with the global speech controls topbar. */
+  micDeviceId?: string
+  /** Callback when the microphone device changes. */
+  onMicDeviceChange?: (deviceId: string | undefined) => void
+  /** Whether recording is enabled, shared with the global speech controls topbar. */
+  recordingEnabled?: boolean
+  /** Callback when the recording-enabled flag changes. */
+  onRecordingEnabledChange?: (enabled: boolean) => void
 }
 
 /**
- * Sidebar panel containing quick action buttons, a live round group (when a
- * debate is in progress), and a collapsible list of open tabs.
+ * Sidebar panel containing quick action buttons, the selected round's group
+ * — its prep timers and the timer/controls bar for the speech in view, the
+ * app's only round-timer surface now that the dock has no Timer button — and
+ * a collapsible list of open tabs.
  *
  * @param props - Component props.
  * @param props.flows - Array of all flows; sorted internally (active first, then archived).
  * @param props.selected - Index of the currently active flow, used to highlight the matching tab.
- * @param props.rounds - Every round in the session; searched for the one currently live.
+ * @param props.rounds - Every round in the session; searched for the selected round (the active flow's), falling back to the live one.
  * @param props.currentFlow - Active flow; used to determine whether Edit Round is available.
  * @param props.isMobile - When true, selecting a flow also closes the mobile menu overlay.
  * @param props.onSelectFlow - Callback invoked with the flow index when a tab is clicked.
@@ -104,6 +129,16 @@ export function FlowPageSidebar({
   onEbbToolAction,
   onCloseMobileMenu,
   timerState,
+  selectedSpeech,
+  onResetPrepTimers,
+  canNavigatePrev,
+  canNavigateNext,
+  onNavigatePrev,
+  onNavigateNext,
+  micDeviceId,
+  onMicDeviceChange,
+  recordingEnabled,
+  onRecordingEnabledChange,
 }: FlowPageSidebarProps) {
   /**
    * Select a flow tab and close the mobile menu when applicable.
@@ -127,10 +162,9 @@ export function FlowPageSidebar({
     }
   }
 
-  // A debate is "started" the moment its round goes active — that's the
-  // round the live round group tracks, independent of which tab happens to
-  // be selected right now.
-  const liveRound = rounds.find((r) => r.status === "active")
+  // The round whose timers the sidebar shows: the one the active flow tab
+  // belongs to, falling back to the live round — see `selectSidebarRound`.
+  const selectedRound = selectSidebarRound(rounds, currentFlow)
 
   return (
     <div className="mt-[50px]  bg-[var(--background)] w-full h-full md:h-[var(--main-height)] rounded-[var(--border-radius)] p-[var(--padding)] flex flex-col box-border">
@@ -169,9 +203,10 @@ export function FlowPageSidebar({
         </TooltipProvider>
       </div>
 
-      {liveRound && (
+      {selectedRound && (
         <LiveRoundGroup
-          round={liveRound}
+          round={selectedRound}
+          isLive={selectedRound.status === "active"}
           isMobile={isMobile}
           debateStyle={timerState.debateStyle}
           getSpeechTimerState={timerState.getSpeechTimerState}
@@ -181,6 +216,16 @@ export function FlowPageSidebar({
           setPrepState={timerState.setPrepState}
           prepSecondaryState={timerState.prepSecondaryState}
           setPrepSecondaryState={timerState.setPrepSecondaryState}
+          selectedSpeech={selectedSpeech}
+          onResetPrepTimers={onResetPrepTimers}
+          canNavigatePrev={canNavigatePrev}
+          canNavigateNext={canNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          micDeviceId={micDeviceId}
+          onMicDeviceChange={onMicDeviceChange}
+          recordingEnabled={recordingEnabled}
+          onRecordingEnabledChange={onRecordingEnabledChange}
         />
       )}
 

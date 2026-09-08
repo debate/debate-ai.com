@@ -9,6 +9,23 @@ them.
 - **Where:** the Coach hub's Flow section (`/coach`)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
+> **⚠️ Known regression, discovered 2026-09-05:** PR #498 ("Remove flow
+> spreadsheet grid, show round flows in round editor", merged 2026-09-03)
+> deleted the AG Grid-based `FlowSpreadsheet` view — along with
+> `flow/EditBadge.tsx`, `flow/EditReviewPopover.tsx`, `flow/PrepNoteBadge.tsx`,
+> `flow/PrepNotePopover.tsx`, `flow/GridContextMenu.tsx`, and
+> `flow/useFlowGridConfig.ts` — in favor of the new "ebb flow" split
+> speech-editor view (`debate-flow`'s `EbbFlowEmbed.tsx`/`HotGrid.tsx`),
+> which has no equivalent in-grid affordance. Every section below that
+> describes a `FlowSpreadsheet`-grid badge/popover (`EditBadge`,
+> `EditReviewPopover`) is describing deleted code, not current behavior —
+> kept for history only. The standalone **Flow Edit Log** panel described
+> above this notice, and its own cross-tab live-update (see "Cross-tab live
+> update" further down, for the standalone `FlowEditLogPanel` list view
+> specifically, not the grid badge), are unaffected — neither ever depended
+> on the grid. See `flow-annotations.md`'s matching notice for the same
+> regression's effect on that feature's grid badge.
+
 ## What it shows
 
 **Flow Edit Log** — a form to log a `FlowEdit`:
@@ -138,7 +155,7 @@ match, excluding prefix/extension paths and other flows).
 
 As a contributor types a `FlowEdit`'s **Content** in `FlowEditLogPanel`, a
 "Suggested from Common Argument Library" list scores the in-progress text
-against every persisted `LibraryCard` (`debate-card-search`'s Common
+against every persisted `LibraryCard` (`debate-research-evidence`'s Common
 Argument Library — the combined Shared Evidence Library plus tagged
 Contributions Feed corpus) and shows the closest matches with an
 **Insert** action per suggestion. Clicking **Insert** fills the Content
@@ -152,13 +169,13 @@ corpus to suggest (not auto-apply) a pre-filled flow note from matching
 evidence." It adds:
 
 - `flow/flow-note-suggestions.ts`: `deriveLibraryCardKeywords` (mirrors
-  `debate-card-search`'s `llm-card-scoring.ts#deriveArgBlockKeywords` —
+  `debate-research-evidence`'s `llm-card-scoring.ts#deriveArgBlockKeywords` —
   each of a card's `argBlock`/`topic`/`caseArea`/`tags` phrases kept whole
   plus its individual words over two characters),
   `suggestFlowNotesFromLibrary` (scores every card against the query by
   reusing `scoreRelevance` directly, dropping zero-score cards and capping
   at a limit), and `buildFlowNoteFromCard` (the inserted note's format).
-- `debate-card-search`'s `state/evidenceLibraryEntries.ts`:
+- `debate-research-evidence`'s `state/evidenceLibraryEntries.ts`:
   `listCombinedPersistedLibraryCards`, the same evidence-library +
   tagged-contributions corpus `buildCombinedPersistedArgumentLibrary`
   already composed, now exposed flat for a caller that scores/searches
@@ -171,7 +188,7 @@ Vitest-covered in `packages/debate-round/test/flow-note-suggestions.test.ts`
 cases for `suggestFlowNotesFromLibrary`, and `buildFlowNoteFromCard`'s
 formatting with and without tags) and a new
 `listCombinedPersistedLibraryCards` describe block in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`.
 
 ## Live sync transport
 
@@ -469,10 +486,50 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`contributions-feed.md`](contributions-feed.md)'s "Cross-tab live
   update"), `StrategyPanel` (see
   [`scout-to-strategy.md`](scout-to-strategy.md)'s "Cross-tab live update"),
-  and `FlowEditLogPanel` itself (see "Cross-tab live update in
-  `FlowEditLogPanel`" above) have since gained the equivalent mechanism for
-  their own stores, but every other localStorage-backed panel in this repo
-  still has none (Live Sync
+  `PreRoundBriefingsPanel` (see
+  [`pre-round-briefings.md`](pre-round-briefings.md)'s "Cross-tab live
+  update"), `JudgeProfilesPanel` (see
+  [`judge-profiles.md`](judge-profiles.md)'s "Cross-tab live update"),
+  `CoachMaterialsPanel` (see [`coach-materials.md`](coach-materials.md)'s
+  "Cross-tab live update"), `ArgumentLibraryPanel` and `EvidenceLibraryPanel`
+  (see [`evidence-library.md`](evidence-library.md)'s "Cross-tab live
+  update"), `TopicCoverageDashboardPanel` (see
+  [`topic-coverage-dashboard.md`](topic-coverage-dashboard.md)'s "Cross-tab
+  live update"), `OpponentTeamProfilesPanel` (see
+  [`opponent-team-profiles.md`](opponent-team-profiles.md)'s "Cross-tab live
+  update"), `JudgeParadigmPickerPanel` and `JudgeDecisionPanel` (see
+  [`judge-paradigm-selections.md`](judge-paradigm-selections.md)'s
+  "Cross-tab live update" — the first `live-update.ts` in
+  `debate-practice-drills`), `VulnerabilityChartsPanel` (see
+  [`response-outcome-charts.md`](response-outcome-charts.md)'s "Cross-tab
+  live update" — also covers its `useCounselPanelAssessments` hook's
+  `counselPanelAssessments` store), `ArgumentTreePanel` (see
+  [`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
+  update"), `WordCountRoundsPanel` (see
+  [`word-count-rounds.md`](word-count-rounds.md)'s "Cross-tab live update" —
+  covers its `useWordCountRounds` hook's `wordCountRounds` store),
+  `DrillSetsPanel` (see [`drill-sets.md`](drill-sets.md)'s "Cross-tab live
+  update" — covers its `useDrillSets` hook's `drillSets` store),
+  `AiVersusRoundPanel` (see [`ai-versus-rounds.md`](ai-versus-rounds.md)'s
+  "Cross-tab live update"), `CoachingSessionsPanel` (see
+  [`coaching-sessions.md`](coaching-sessions.md)'s "Cross-tab live update"),
+  `PracticeRoundSimulatorPanel` (see
+  [`practice-round-simulator.md`](practice-round-simulator.md)'s "Cross-tab
+  live update"), `CoachingProgramsPanel` (see
+  [`coaching-programs.md`](coaching-programs.md)'s "Cross-tab live update" —
+  the first `live-update.ts` in `debate-team-collaboration`), `UserSettingsPanel`
+  (see [`user-settings.md`](user-settings.md)'s "Cross-tab live update" — the
+  one panel in this closed list whose `form` is a live, directly-editable
+  draft rather than a derived list/roster view, so only fields untouched
+  since they were last loaded/saved are refreshed, never an in-progress
+  edit), `OpponentPersonaPickerPanel` (see
+  [`practice-opponent.md`](practice-opponent.md)'s "Cross-tab live update"),
+  `FlowEditLogPanel` itself (see
+  "Cross-tab live update in `FlowEditLogPanel`" above), and
+  `FlowSummariesPanel` (see [`flow-summaries.md`](flow-summaries.md)'s
+  "Cross-tab live update") have since gained the equivalent mechanism for
+  their own stores, but every other
+  localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

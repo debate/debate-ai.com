@@ -19,7 +19,7 @@
 
 import type { UserSettingsPayload } from "../state/userSettings";
 import type { ThemeSettingsPayload } from "../state/themeSettings";
-import type { FavoriteToolsPayload } from "../state/favoriteTools";
+import type { FavoriteToolOp, FavoriteToolsPayload } from "../state/favoriteTools";
 import type { WordLimitPresetsPayload } from "../state/wordLimitPresets";
 import type { OutlineFilterPresetsPayload } from "../state/outlineFilterPresets";
 
@@ -65,6 +65,26 @@ export async function saveUserSettings(
   patch: Partial<FullUserSettingsPayload>,
   endpoint = "/api/settings",
 ): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(patch, endpoint);
+}
+
+/**
+ * Saves a single star/unstar op — `{ addFavoriteTool }` or
+ * `{ removeFavoriteTool }` — instead of a whole-list `favoriteTools`
+ * replace. The route resolves it against the account's currently stored
+ * list rather than the caller's own (possibly stale) copy, closing the
+ * "two tabs star different tools in quick succession" lost-update gap
+ * `saveUserSettings({ favoriteTools })` is exposed to — see
+ * `state/favoriteTools.ts#applyFavoriteToolOp`'s docstring.
+ */
+export async function saveFavoriteToolOp(
+  op: FavoriteToolOp,
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+async function putSettingsPatch(patch: unknown, endpoint: string): Promise<FullUserSettingsPayload> {
   const res = await fetch(endpoint, {
     method: "PUT",
     headers: { "content-type": "application/json" },

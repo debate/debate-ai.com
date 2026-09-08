@@ -9,6 +9,7 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import type { ImageConfig } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { runWithContext } from "../lib/database/context";
+import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
 import { resyncYouTubeRounds } from "../lib/youtube/resync-rounds";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 
@@ -22,6 +23,12 @@ interface Env {
     };
   };
   debate_db: D1Database;
+  // See lib/database/d1-session.ts — "auto" (default), "primary",
+  // "unconstrained" or "off". Settable as a plain Variable in the dashboard.
+  D1_SESSION_MODE?: string;
+  // When set, responses carry x-d1-served-by-region / -primary so you can see
+  // which D1 instance answered.
+  D1_SESSION_DEBUG?: string;
   BETTER_AUTH_SECRET?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
@@ -51,24 +58,31 @@ interface ScheduledEvent {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    // Run with Cloudflare context to make D1 and env vars available throughout the app
-    return runWithContext(env, async () => {
-      const url = new URL(request.url);
+    // Two nested scopes for the request: `runWithContext` publishes the
+    // bindings, and `runWithD1Session` pins every D1 query the request makes
+    // to one read-replication session (lib/database/d1-session.ts). The
+    // session's closing bookmark rides back on the response so the client's
+    // next request never reads an older version of the database than this one.
+    return runWithD1Session(request, env.D1_SESSION_MODE, () =>
+      runWithContext(env, async () => {
+        const url = new URL(request.url);
 
-      // Image optimization via Cloudflare Images binding.
-      if (url.pathname === "/_vinext/image") {
-        const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
-        return handleImageOptimization(request, {
-          fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
-          transformImage: async (body, { width, format, quality }) => {
-            const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
-            return result.response();
-          },
-        }, allowedWidths);
-      }
+        // Image optimization via Cloudflare Images binding.
+        if (url.pathname === "/_vinext/image") {
+          const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
+          return handleImageOptimization(request, {
+            fetchAsset: (path) => env.ASSETS.fetch(new Request(new URL(path, request.url))),
+            transformImage: async (body, { width, format, quality }) => {
+              const result = await env.IMAGES.input(body).transform(width > 0 ? { width } : {}).output({ format, quality });
+              return result.response();
+            },
+          }, allowedWidths);
+        }
 
-      return handler.fetch(request, env, ctx);
-    });
+        const response = await handler.fetch(request, env, ctx);
+        return applyD1Bookmark(response, { debug: Boolean(env.D1_SESSION_DEBUG) });
+      }),
+    );
   },
 
   // Weekly YouTube round resync (see the `triggers.crons` entry in
@@ -78,13 +92,15 @@ export default {
   // follow-up) — an unrelated, independent job piggybacking on the one cron
   // trigger this app has, rather than a dedicated schedule of its own.
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    // Both jobs write, and neither has a client bookmark to resume from, so
+    // each runs in its own session started on the primary.
     ctx.waitUntil(
-      runWithContext(env, () => resyncYouTubeRounds(null)).catch((error) => {
+      runWithPrimaryD1Session(() => runWithContext(env, () => resyncYouTubeRounds(null))).catch((error) => {
         console.error("Scheduled YouTube resync failed:", error);
       }),
     );
     ctx.waitUntil(
-      runWithContext(env, () => purgeOldReuseCheckLogRows()).catch((error) => {
+      runWithPrimaryD1Session(() => runWithContext(env, () => purgeOldReuseCheckLogRows())).catch((error) => {
         console.error("Scheduled reuse-check log purge failed:", error);
       }),
     );

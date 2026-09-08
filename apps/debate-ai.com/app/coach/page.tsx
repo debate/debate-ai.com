@@ -1,9 +1,7 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { Suspense } from "react"
-import { ArrowLeft } from "lucide-react"
-
 import { CoachHub } from "@/components/coach/CoachHub"
+import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
   title: "Coach",
@@ -13,21 +11,11 @@ export const metadata: Metadata = {
 
 export default function CoachPage() {
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <Link
-          href="/debate"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
-          aria-label="Back to the round workspace"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
-        <h1 className="text-lg font-semibold">Coach Workspace</h1>
-      </div>
+    <ToolPage>
+      <ToolPageHeader href="/coach" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
         <CoachHub />
       </Suspense>
-    </div>
+    </ToolPage>
   )
 }

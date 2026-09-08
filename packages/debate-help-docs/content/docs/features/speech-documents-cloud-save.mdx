@@ -1,0 +1,27 @@
+---
+title: "Speech Documents Cloud Save"
+---
+
+# Speech Documents Cloud Save
+
+Syncs `/speech-documents`' send-log history to a signed-in user's account,
+closing the last account-linking gap for debate preferences (flows,
+rounds, word-count history, judge decisions, and Reason Editor documents
+were already synced).
+
+- **Package:** `debate-editor` (validator), `apps/debate-ai.com`
+  (`/api/speech-send-log`, `saved_speech_send_log` D1 table)
+
+## What it does
+
+`useSpeechSendLogSync` layers a one-time account merge plus ongoing sync
+on top of the existing IndexedDB `speechSendLogStore`. It subscribes to
+the store directly and diffs every fired entry list against a known-synced
+set, pushing anything new — so a send made in any tab gets synced, not
+just the panel's own tab.
+
+## Known gaps
+
+No optimistic-concurrency handling (not reachable in practice — an entry
+is generated once and never edited). An entry adopted during merge isn't
+re-sorted by `sentAt`.

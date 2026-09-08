@@ -1,0 +1,28 @@
+---
+title: "Native Wrapper"
+---
+
+# Native Wrapper
+
+A native desktop (Windows/macOS/Linux) and mobile (Android/iOS) app that
+opens debate-ai.com in its own window instead of a browser tab, with a
+Google-OAuth-compatible sign-in flow despite Google blocking OAuth inside
+embedded webviews. Built with [Tauri](https://tauri.app) as `native-wrapper`,
+a generic wrapper package pre-configured to ship Debate AI.
+
+- **Package:** `native-wrapper` (the Tauri shell)
+
+## What it shows
+
+Functionally identical to the website — the wrapper's window loads
+`https://debate-ai.com` directly. The one difference is sign-in: inside
+the wrapper, a "Continue in your browser" button replaces the normal
+social/magic-link buttons, since OAuth providers refuse to run inside an
+embedded webview. A deep link (`debateai://auth-callback`) hands a
+one-time token back to the wrapper's window after the browser completes
+sign-in.
+
+## Known gaps
+
+No auto-update yet. Android/iOS projects are scaffolded but not generated
+or exercised end-to-end. No store submissions have been made.

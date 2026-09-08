@@ -57,3 +57,10 @@ apps/debate-ai.com/drizzle/seed/
 # debate-api-client: types generated from debate-openapi.yml (regenerate with `bun run generate`)
 packages/debate-api-client/src/generated/
 packages/debate-api-client/dist/
+
+# macOS Finder metadata
+.DS_Store
+
+# debate-help-docs: Next.js build output and fumadocs-mdx generated files
+packages/debate-help-docs/.next/
+packages/debate-help-docs/.source/

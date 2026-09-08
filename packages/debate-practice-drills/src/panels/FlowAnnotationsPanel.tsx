@@ -56,6 +56,7 @@ import {
   parseBoxPathInput,
 } from "debate-round/src/flow/flow-annotations"
 import { buildFlowAnnotationsExportText, flowAnnotationsExportFilename } from "../flow/flow-annotations-export"
+import { AnnotationDensityScrubber } from "../flow/AnnotationDensityScrubber"
 import { isFlowAnnotationsPanelLiveUpdateStorageEvent } from "debate-round/src/flow/live-update"
 import {
   buildFlowAnnotationsPanelView,
@@ -475,6 +476,10 @@ export function FlowAnnotationsPanel() {
               </Button>
             )}
           </div>
+
+          {filter.flowId !== undefined && filteredAnnotations.length > 0 && (
+            <AnnotationDensityScrubber annotations={filteredAnnotations} onJump={handleJump} />
+          )}
 
           {filteredAnnotations.length === 0 ? (
             <EmptyState title="No annotations match the current filter." />

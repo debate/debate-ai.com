@@ -1,0 +1,53 @@
+---
+title: Guides
+description: How the app's tools fit together, grouped by the job you're doing
+icon: Compass
+---
+
+# Guides
+
+The app ships around fifty tool pages. The [Features](/docs/features) section documents each one on
+its own; these guides describe how they work together, one workflow at a time.
+
+<Cards>
+  <Card title="Training tools" href="/docs/guides/training-tools" description="Coach a flowed round: argument trees, AI coaching prompts, drills, coach materials, scouting, and briefings — the Coach Workspace end to end." />
+  <Card title="Practice tools" href="/docs/guides/practice-tools" description="Debate between tournaments: rounds against the AI, the practice round simulator, judge paradigms, opponent personas, and word-count speeches." />
+  <Card title="Research collaboration" href="/docs/guides/research-collaboration" description="Run a squad's research sprint: topic coverage, the prep room, task routing, brainstorming, peer review, quests, and the leaderboard — the Research Workspace end to end." />
+</Cards>
+
+## How the app is organized
+
+Two **workspace hubs** tab across the panels of one workflow each:
+
+- **[Coach Workspace](https://debate-ai.com/coach)** (`/coach`) — the training and practice tools, in five sections: Flow, Coaching, Prep, Scouting, and Practice.
+- **[Research Workspace](https://debate-ai.com/research)** (`/research`) — the research collaboration tools, in ten sections following a squad's research cycle: Coverage, Library, Evidence, Sprint, Routing, Progress, Quests, Rewards, Review, and Scoring.
+
+Every panel a hub mounts also has its **own page** (for example `/drills` or `/cards/inbox`) that shows just that
+panel. Both views read and write the same stores, so nothing is lost by switching between them. Inside a hub,
+the section heading lists each panel as a chip: clicking the chip scrolls to the panel, and the arrow beside it
+opens the panel's standalone page.
+
+### Deep links
+
+A hub's open section is part of its URL, so a section can be bookmarked or shared:
+
+```
+/coach?section=coaching      # Coach Workspace, Coaching section
+/coach?section=practice      # Coach Workspace, Practice section
+/research?section=sprint     # Research Workspace, Sprint section
+```
+
+Without a `section` parameter, a hub reopens whichever section you used last on that device.
+
+### Page headers
+
+Every standalone tool page opens with the same header: a back link that names where it goes, the tool's
+icon, title, and description, an eyebrow naming which of these three guides it belongs to, a **Docs** link to
+the tool's feature spec, a **Guide** link to the guide, and a star to add the tool to your favorites (which
+also appear on the [Tools](https://debate-ai.com/tools) catalog and in Settings).
+
+### Documentation links from the app
+
+The app's Docs and Guide links point at this site when the app is built with `NEXT_PUBLIC_DOCS_URL` set to
+this site's origin. Without it, the same links open the page's `.mdx` source on GitHub, so a development
+build never links to a missing page.

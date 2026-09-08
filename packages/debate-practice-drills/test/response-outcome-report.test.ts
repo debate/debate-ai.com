@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildHypotheticalScenarioComparisonText,
   buildResponseOutcomeReportText,
+  hypotheticalScenarioComparisonFilename,
   responseOutcomeReportFilename,
   type ResponseOutcomeReportInput,
 } from "../src/flow/response-outcome-report";
 import type { CounselPanelAssessmentRecord } from "../src/state/counselPanelAssessments";
+import type { HypotheticalScenarioComparison } from "debate-round/src/flow/response-outcome";
 
 const BASE_INPUT: ResponseOutcomeReportInput = {
   roundId: "round-1",
@@ -90,6 +93,69 @@ describe("buildResponseOutcomeReportText", () => {
       latestAssessment: ASSESSMENT,
     });
     expect(text).toContain("- Row 0 (Weighing Counsel)");
+  });
+});
+
+const COMPARISON: HypotheticalScenarioComparison = {
+  scenarioNames: ["Baseline", "Answer the drop"],
+  sideSummaries: [
+    [{ sideKey: "Aff", argumentCount: 2, unansweredCount: 1, averageVulnerability: 60 }],
+    [{ sideKey: "Aff", argumentCount: 2, unansweredCount: 0, averageVulnerability: 45 }],
+  ],
+  argumentRows: [
+    { rowIndex: 0, label: "1AC: Warming is real", sideKey: "Aff", scenarioScores: [80, 65] },
+    { rowIndex: 1, label: "1AC: Second advantage", sideKey: "Aff", scenarioScores: [40, 40] },
+  ],
+};
+
+describe("buildHypotheticalScenarioComparisonText", () => {
+  it("renders a header with the round id", () => {
+    const text = buildHypotheticalScenarioComparisonText({ roundId: "round-1", comparison: COMPARISON });
+    expect(text).toContain("AI Response-Outcome Scenario Comparison — Round round-1");
+  });
+
+  it("renders one section per scenario with its own side summary", () => {
+    const text = buildHypotheticalScenarioComparisonText({ roundId: "round-1", comparison: COMPARISON });
+    expect(text).toContain("Scenario: Baseline");
+    expect(text).toContain("Aff: 60 avg vulnerability, 2 arguments, 1 unanswered");
+    expect(text).toContain("Scenario: Answer the drop");
+    expect(text).toContain("Aff: 45 avg vulnerability, 2 arguments, 0 unanswered");
+  });
+
+  it("renders each compared argument's score under every scenario", () => {
+    const text = buildHypotheticalScenarioComparisonText({ roundId: "round-1", comparison: COMPARISON });
+    expect(text).toContain("1AC: Warming is real — Baseline: 80, Answer the drop: 65");
+    expect(text).toContain("1AC: Second advantage — Baseline: 40, Answer the drop: 40");
+  });
+
+  it("renders placeholder text when there are no compared arguments", () => {
+    const text = buildHypotheticalScenarioComparisonText({
+      roundId: "round-2",
+      comparison: { ...COMPARISON, argumentRows: [] },
+    });
+    expect(text).toContain("No flowed arguments to compare yet.");
+  });
+
+  it("renders placeholder text for a scenario with no side summaries", () => {
+    const text = buildHypotheticalScenarioComparisonText({
+      roundId: "round-2",
+      comparison: { ...COMPARISON, sideSummaries: [[], []] },
+    });
+    expect(text).toContain("No flowed arguments to summarize yet.");
+  });
+});
+
+describe("hypotheticalScenarioComparisonFilename", () => {
+  it("builds a lowercase, hyphenated filename from a simple round id", () => {
+    expect(hypotheticalScenarioComparisonFilename("round-1")).toBe(
+      "response-outcome-round-1-scenario-comparison.txt",
+    );
+  });
+
+  it("falls back to a generic name when the round id has no alphanumeric characters", () => {
+    expect(hypotheticalScenarioComparisonFilename("###")).toBe(
+      "response-outcome-round-scenario-comparison.txt",
+    );
   });
 });
 

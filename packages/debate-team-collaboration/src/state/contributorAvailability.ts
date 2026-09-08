@@ -19,10 +19,24 @@
  * `completePersistedRoutedTask` call these on the actual assignment/
  * completion events (routing a task, marking one done).
  *
+ * `upsertContributorAvailabilityProfile` closes the "a real
+ * `ContributorAvailability` profile management UI" follow-up named under the
+ * "Research Task Routing" bullet in TODO.md — it composes the pure
+ * `buildContributorAvailabilityProfile` (validation, `activeTaskCount`
+ * carry-over) directly against this store, mirroring
+ * `routedTaskQueues.ts`'s "compose the pure function directly against the
+ * persisted store" convention, so `panels/TaskInboxPanel.tsx`'s new
+ * "Contributor availability" section can create or edit a profile in one
+ * call instead of reading, validating, and saving it separately.
+ *
  * @module state/contributorAvailability
  */
 
-import type { ContributorAvailability } from "debate-research-evidence/src/lib/research-task-routing";
+import {
+  buildContributorAvailabilityProfile,
+  type ContributorAvailability,
+  type ContributorAvailabilityProfileInput,
+} from "debate-research-evidence/src/lib/research-task-routing";
 
 const STORAGE_KEY = "contributorAvailability";
 
@@ -68,6 +82,23 @@ export function saveContributorAvailability(profile: ContributorAvailability): v
 /** Deletes a persisted contributor-availability profile by `contributorId`; a no-op if it isn't stored. */
 export function deleteContributorAvailability(contributorId: string): void {
   writeAll(readAll().filter((profile) => profile.contributorId !== contributorId));
+}
+
+/**
+ * Creates or updates a contributor's availability profile from the
+ * management form. Looks up any existing profile for the (trimmed) id first
+ * so `buildContributorAvailabilityProfile` can carry its `activeTaskCount`
+ * over unchanged, then saves the built profile. Throws the same validation
+ * error `buildContributorAvailabilityProfile` does — leaving storage
+ * untouched — for a blank id or a non-positive-integer concurrency limit.
+ */
+export function upsertContributorAvailabilityProfile(
+  input: ContributorAvailabilityProfileInput,
+): ContributorAvailability {
+  const existing = getContributorAvailability(input.contributorId.trim());
+  const profile = buildContributorAvailabilityProfile(input, existing);
+  saveContributorAvailability(profile);
+  return profile;
 }
 
 /**

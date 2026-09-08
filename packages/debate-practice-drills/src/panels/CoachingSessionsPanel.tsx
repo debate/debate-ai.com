@@ -51,6 +51,17 @@
  * `state/coachingSessions.ts#buildCoachingSessionComparison`, plus a
  * "Download comparison" action mirroring the per-session Download button.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isCoachingSessionsPanelLiveUpdateStorageEvent`)
+ * refreshes the rendered session list when another tab saves, restores, or
+ * clears a coaching session, closing `shared-flow-sync.md`'s "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap for `CoachingSessionsPanel`. The "Compare two
+ * sessions" dropdowns re-derive from the same refreshed `sessions` list; the
+ * "Generate coaching session" side field, any in-progress comparison result,
+ * and an open History panel's contents are left untouched, matching every
+ * other closed panel's "refresh the derived view, not the draft" convention.
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -88,6 +99,7 @@ import {
   listVersionsForCoachingSession,
   type CoachingSessionHistoryEntry,
 } from "../state/coachingSessionHistory"
+import { isCoachingSessionsPanelLiveUpdateStorageEvent } from "../state/live-update"
 import type { CoachingPromptKind } from "debate-round/src/flow/coach-mode"
 import { requestCoachFeedback } from "../round/coach-feedback-client"
 import { useFlowStore } from "debate-round/src/state/store"
@@ -130,6 +142,20 @@ export function CoachingSessionsPanel() {
   }, [])
 
   const refresh = () => setSessions(buildCoachingSessionsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves, restores, or
+   * clears a coaching session — a `storage` event never fires in the tab
+   * that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachingSessionsPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleClear = (roundId: string, sideKey: string) => {
     deleteCoachingSession(roundId, sideKey)

@@ -19,6 +19,7 @@ import type {
 } from "../rankings/ndca-standings";
 import { buildStandings, rankStandings } from "../rankings/ndca-standings";
 import { getEffectiveQualificationPointsTable } from "./qualificationPointsTable";
+import { parseTournamentResultsCsv } from "../rankings/tournament-results-csv-import";
 
 /** A `TournamentResult` as persisted: a unique id, since a team can attend many tournaments. */
 export interface TournamentResultRecord extends TournamentResult {
@@ -64,6 +65,39 @@ export function saveTournamentResult(record: TournamentResultRecord): void {
 /** Deletes a persisted tournament result by `id`; a no-op if it isn't stored. */
 export function deleteTournamentResult(id: string): void {
   writeAll(readAll().filter((record) => record.id !== id));
+}
+
+/** Result of a bulk CSV import of tournament results. */
+export interface TournamentResultCsvImportResult {
+  importedCount: number;
+  skippedCount: number;
+  errors: string[];
+}
+
+/**
+ * Parses a bulk CSV of tournament results (`rankings/tournament-results-csv-import.ts#parseTournamentResultsCsv`)
+ * and appends every well-formed row to the persisted history in one pass,
+ * mirroring `opponentRoundRecords.ts#bulkImportOpponentRoundRecords`'s
+ * generated-id convention (`teamId-tournamentName-date-importedAt-index`, so
+ * a result can be told apart from another row imported in the same batch for
+ * the same team/tournament/date).
+ */
+export function bulkImportTournamentResults(rawCsv: string): TournamentResultCsvImportResult {
+  const { entries, skippedCount, errors } = parseTournamentResultsCsv(rawCsv);
+  if (entries.length === 0) {
+    return { importedCount: 0, skippedCount, errors };
+  }
+
+  const records = readAll();
+  const importedAt = Date.now();
+  const newEntries: TournamentResultRecord[] = entries.map((entry, index) => ({
+    ...entry,
+    id: `${entry.teamId}-${entry.tournamentName}-${entry.date}-${importedAt}-${index}`,
+  }));
+  records.push(...newEntries);
+  writeAll(records);
+
+  return { importedCount: newEntries.length, skippedCount, errors };
 }
 
 /** Groups every persisted tournament result by `teamId`, in the shape `buildStandings` expects. */

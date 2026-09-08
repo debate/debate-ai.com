@@ -2,6 +2,23 @@
 export { htmlToCards } from "./parsers/html-to-cards";
 export { convertDocxToHTML, styleMap } from "./parsers/docx-to-html";
 export { docxToCards, docxToHtml } from "./parsers/docx-to-cards";
+export {
+  DOCX_IMPORT_LIMITS,
+  DocxImportError,
+  assertReadableDocxBytes,
+  collectDocxEntries,
+  decodeXmlEntities,
+  describeDocxImportError,
+  detectFileSignature,
+  documentXmlToHtml,
+  docxBytesToHtml,
+  escapeHtml,
+  formatBytes,
+  isImportableDocxEntry,
+  normalizeImportPath,
+  paragraphTagForStyle,
+  summarizeImportOutcome,
+} from "./parsers/docx-import";
 export { FORMAT_PROFILES } from "./utils/format-profiles";
 export {
   extractCiteInfo,
@@ -17,6 +34,12 @@ export {
   moveOutlineNode,
   toggleEmphasisHtml,
 } from "./utils/verbatim-shortcuts";
+
+export type {
+  DocxImportEntry,
+  DocxImportErrorCode,
+  DocxImportFailure,
+} from "./parsers/docx-import";
 
 export type {
   Card,

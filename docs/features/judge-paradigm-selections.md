@@ -32,7 +32,7 @@ inline block (toggled per round, collapsed by default) showing exactly what
 returns for that selection — the same text `round/judge-decision-ai.ts`
 composes into a real AI judge-decision request. A "Copy" button next to it
 calls `navigator.clipboard.writeText` directly (the same pattern
-`AiAnalysisSidebar.tsx` in `debate-card-search` already uses), showing
+`AiAnalysisSidebar.tsx` in `debate-research-evidence` already uses), showing
 "Copied!" for two seconds; a denied clipboard permission fails silently since
 the prompt text is already visible to copy by hand. No new prompt-building
 logic was added — this only renders the existing, already Vitest-covered
@@ -91,7 +91,7 @@ gap below: `state/judgeParadigmSelections.ts`'s new
 link, rendered as a "Get AI judge decision →" button next to each saved
 selection in `JudgeParadigmPickerPanel.tsx`; `JudgeDecisionPanel.tsx` reads
 that `roundId` query param via `next/navigation`'s `useSearchParams` to
-pre-fill its form, mirroring `debate-card-search`'s
+pre-fill its form, mirroring `debate-research-evidence`'s
 `EvidenceLibraryPanel`/`?checkUrl=`/`buildReuseCheckDeepLink` convention.
 Vitest-covered in
 `packages/debate-speech-writer/test/judgeParadigmSelections.test.ts`.
@@ -182,10 +182,125 @@ in `JudgeDecisionPanel` remain intentionally untested, matching this
 package's existing convention for account-synced, `localStorage`-backed
 hooks and their UI (`useWordCountRounds` follows the same pattern).
 
+## Multi-judge panel mode
+
+Idea #5's "a multi-judge 'panel' mode that runs several paradigms against
+the same round and shows a combined decision" fresh next-step. Until now, a
+round could only be judged under the one paradigm saved for it in
+`state/judgeParadigmSelections.ts` (which still upserts one selection per
+`roundId`, unchanged) — there was no way to see how the same flow summary
+reads under several judging styles at once, or how much a decision would
+have changed under a different judge.
+
+`JudgeDecisionPanel.tsx` gained a **Multi-judge panel** section below the
+existing single-decision form, reusing that form's Round ID and side-name
+fields. It offers a checkbox per built-in paradigm (`listJudgeParadigms()`);
+picking two or more and clicking "Run multi-judge panel" requests one AI
+decision per selected paradigm — via the same `requestJudgeDecision` call
+the single-decision flow uses, just built against a caller-supplied
+paradigm instead of the round's one saved selection through a new
+`round/judge-decision-store-wiring.ts#buildJudgeDecisionInputForParadigm`
+— and appends each result to the round's history log
+(`hooks/useJudgeDecisions.ts#appendDecision`) tagged with one shared
+`batchId` (`state/judgeDecisions.ts#generateJudgeDecisionBatchId`). No new
+storage layer, D1 table, or API route was needed: `JudgeDecisionRecord`
+just gained an optional `batchId` field (validated as an optional string by
+`state/savedJudgeDecisions.ts#isValidJudgeDecisionRecord`), so a panel run's
+decisions sync to the account exactly like any other decision.
+
+The combined decision itself is derived, not separately stored:
+`state/judgeDecisions.ts#buildJudgeDecisionHistoryItems` regroups a round's
+newest-first decisions so every 2+ decisions sharing a `batchId` render as
+one **panel run** card instead of unrelated single-decision cards (a lone
+surviving member of a batch — e.g. after clearing its batch-mates
+individually — falls back to a plain single-decision card, since combining
+needs at least two). `buildJudgeDecisionsPanelView` now exposes this as
+`historyItems` alongside the existing flat `decisions` list, so nothing
+that already reads `.decisions` needs to change.
+`debate-round`'s new `round/judge-decision-panel.ts#combineJudgePanelDecisions`
+is the pure combination logic: it tallies each paradigm's vote into a
+majority `winner` (`"split"` on an exact tie), reports the vote counts and
+whether every paradigm agreed (`unanimous`), and unions every paradigm's
+`keyVotingIssues` (de-duplicated, first-seen order) — this also doubles as
+the "side-by-side paradigm comparison" half of the same TODO.md bullet,
+since the panel run's card renders a table with one row per paradigm
+(vote and rationale) below the combined summary, so a user can see exactly
+where the paradigms agreed or split before picking which judge to prep
+for. A "Clear this panel run" action removes every decision in the batch
+in one click (looping `deleteDecision` per id — no new bulk-delete route).
+
+```
+round/judge-decision-panel.ts (debate-round)     — combineJudgePanelDecisions (pure)
+round/judge-decision-store-wiring.ts             — buildJudgeDecisionInputForParadigm
+state/judgeDecisions.ts                          — batchId field, generateJudgeDecisionBatchId,
+                                                    buildJudgeDecisionHistoryItems
+state/savedJudgeDecisions.ts                     — isValidJudgeDecisionRecord accepts optional batchId
+panels/JudgeDecisionPanel.tsx                    — "Multi-judge panel" section + panel-run cards
+```
+
+Vitest-covered: `packages/debate-round/test/judge-decision-panel.test.ts`
+(`combineJudgePanelDecisions` — throws below 2 results, majority winner,
+split tie, unanimity, key-voting-issue union/de-dup). The grouping and UI
+wiring (`buildJudgeDecisionHistoryItems`, the panel's own state) follow
+this doc's existing "intentionally untested" convention for
+`localStorage`-backed hooks and their UI, though `buildJudgeDecisionHistoryItems`
+itself is a pure function a future slice could cover directly if it grows
+more edge cases.
+
+**Known gap:** a panel run always judges every selected paradigm against
+the round's *current* saved flow summary and the side names typed into the
+form at run time — it doesn't snapshot which flow summary version was used
+the way a single decision doesn't either, so re-running a panel after the
+flow summary changes isn't distinguishable from the first run except by
+timestamp. This matches the existing single-decision flow's behavior, so is
+not treated as a new regression.
+
+## Cross-tab live update
+
+`JudgeParadigmPickerPanel` used to only refresh its rendered selection list
+on mount or right after its own save/clear actions — a teammate saving or
+clearing a round's paradigm in a second open tab (or a second browser
+window on the same machine) never showed up without a manual reload, the
+same still-open gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md). This is the first
+`live-update.ts` in `debate-practice-drills`, following the same pattern
+`debate-round`'s `flow/live-update.ts`, `debate-search-evidence`'s
+`state/live-update.ts`, and `debate-speech-writer`'s `state/live-update.ts`
+already use for their own panels.
+
+`state/live-update.ts`'s `isJudgeParadigmPickerPanelLiveUpdateStorageEvent`
+checks whether a `storage` event's `key` is the panel's one backing store
+(`judgeParadigmSelections`) or `null` (a `localStorage.clear()`).
+`JudgeParadigmPickerPanel.tsx` now subscribes to `window`'s `storage` event
+(the browser only fires this in *other* same-origin tabs, never the one
+that made the write) and calls its existing `refresh()` closure when the
+predicate matches. The in-progress "save a round's paradigm" form draft is
+left untouched — only the persisted selection list re-reads, matching every
+other closed panel's "refresh the derived view, not the draft" convention.
+
+Vitest-covered in `packages/debate-practice-drills/test/live-update.test.ts`
+(the one backing-store key, the `null`-key clear-all case, and
+unrelated/substring-matching keys staying ignored).
+
+`JudgeDecisionPanel` had the same gap through its own
+`hooks/useJudgeDecisions.ts`: a decision requested, cleared, or bulk-cleared
+for a round in one tab never showed up in another tab's already-rendered
+history without a manual reload. `state/live-update.ts`'s
+`isJudgeDecisionPanelLiveUpdateStorageEvent` checks whether a `storage`
+event's `key` is the hook's one backing store (`judgeDecisions`, from
+`state/judgeDecisions.ts`) or `null`. `useJudgeDecisions` now subscribes to
+`window`'s `storage` event and re-derives `groups` via
+`buildJudgeDecisionsPanelView()` when the predicate matches — since the
+panel's form state (Round ID, side names, selected panel paradigms) lives
+in the panel component itself, not the hook, this refresh never touches an
+in-progress "request a decision" form. Vitest-covered alongside the case
+above in the same `live-update.test.ts` file.
+
 ## Known gaps
 
-- No known gaps remain for this idea. The panel now shows the resulting
-  `buildJudgeParadigmPrompt` text inline per saved selection (see "Inline
-  prompt preview" above); the "Get AI judge decision →" link remains the
-  path to an actual decision, since generating one calls the AI proxy and
-  belongs on `JudgeDecisionPanel.tsx`, not this picker.
+- The multi-judge panel mode above closes idea #5's remaining named
+  next-step. No further follow-up is currently tracked for this idea; a
+  future run should pick a fresh next-step (e.g. letting a panel run
+  reuse each paradigm's own scoring rubric via `buildJudgeDecisionRubric`
+  to show a rubric-based agreement breakdown, not just the raw
+  winner/keyVotingIssues union) if one becomes worth doing.

@@ -22,6 +22,16 @@
  * This is CardMirror's OWN ribbon/toolbar — the debate-editor React shell
  * adds a NEW menu bar (`MenuBar.tsx`) ABOVE this markup rather than
  * replacing it, so every ribbon command stays reachable both ways.
+ *
+ * One deliberate deviation from upstream's order: `.ribbon-right` (the
+ * shortcuts / settings / timer grid) sits directly after `.ribbon-left`
+ * instead of after `.ribbon-center`, so the two button clusters read as a
+ * single unbroken strip rather than one pinned to each edge with a gulf
+ * between them. `.ribbon-center` — the flex-grow section holding the
+ * opt-in doc-name chip — trails them and soaks up the leftover width.
+ * The strip scrolls horizontally when it outgrows the window; see
+ * `#ribbon` in `editor/style.css` and `initRibbonScroller` in
+ * `editor/index.ts`.
  */
 export const RIBBON_HTML = `
 <header id="ribbon">
@@ -171,17 +181,17 @@ export const RIBBON_HTML = `
     </div>
     <div id="custom-ribbon-panel" class="ribbon-doc-ops-panel ribbon-doc-ops-panel-3col" role="group" aria-label="Custom buttons" hidden></div>
   </div>
-  <div class="ribbon-section ribbon-center">
-    <div id="doc-name-chip" class="pmd-doc-name-chip" title="" hidden>
-      <span class="pmd-doc-name-chip-text" id="doc-name-chip-text"></span>
-    </div>
-  </div>
   <div class="ribbon-section ribbon-right">
     <div class="ribbon-right-grid">
       <button id="reference-btn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts"><span class="pmd-icon pmd-icon-shortcuts" aria-hidden="true"></span></button>
       <button id="settings-btn" type="button" title="Settings" aria-label="Settings"><span class="pmd-icon pmd-icon-settings" aria-hidden="true"></span></button>
       <button id="timer-toggle-btn" type="button" aria-pressed="false"
               title="Show / hide the timer panel" aria-label="Toggle timer panel"><span class="pmd-icon pmd-icon-timer" aria-hidden="true"></span></button>
+    </div>
+  </div>
+  <div class="ribbon-section ribbon-center">
+    <div id="doc-name-chip" class="pmd-doc-name-chip" title="" hidden>
+      <span class="pmd-doc-name-chip-text" id="doc-name-chip-text"></span>
     </div>
   </div>
 </header>

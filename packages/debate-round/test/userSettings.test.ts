@@ -8,6 +8,7 @@ import {
   isValidFontSize,
   normalizeUserSettingsPatch,
   readLocalUserSettings,
+  refreshLocalUserSettingsFromStorage,
 } from "../src/state/userSettings";
 import { settings } from "../src/state/settings";
 
@@ -131,5 +132,22 @@ describe("applyUserSettingsToLocalStore / readLocalUserSettings", () => {
     const stored = JSON.parse(localStorage.getItem("settings")!);
     expect(stored.debateStyle).toBe(1);
     expect(stored.fontSize).toBe(FONT_SIZE_OPTIONS[0]);
+  });
+});
+
+describe("refreshLocalUserSettingsFromStorage", () => {
+  it("picks up a value written straight to localStorage (e.g. by another tab), unlike readLocalUserSettings", () => {
+    // Simulates a second tab's `applyUserSettingsToLocalStore` — this
+    // tab's `settings` singleton never finds out until something re-reads
+    // localStorage, which `readLocalUserSettings` alone doesn't do.
+    localStorage.setItem("settings", JSON.stringify({ debateStyle: 2, fontSize: FONT_SIZE_OPTIONS[2] }));
+    expect(readLocalUserSettings()).toEqual(DEFAULT_USER_SETTINGS);
+
+    expect(refreshLocalUserSettingsFromStorage()).toEqual({ debateStyle: 2, fontSize: FONT_SIZE_OPTIONS[2] });
+    expect(readLocalUserSettings()).toEqual({ debateStyle: 2, fontSize: FONT_SIZE_OPTIONS[2] });
+  });
+
+  it("returns the current values when localStorage has nothing stored", () => {
+    expect(refreshLocalUserSettingsFromStorage()).toEqual(DEFAULT_USER_SETTINGS);
   });
 });

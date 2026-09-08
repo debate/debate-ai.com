@@ -44,6 +44,7 @@ import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   assignPersistedSprintNote,
   buildSprintNotesPanelView,
@@ -53,6 +54,7 @@ import {
   type SprintNotesPanelGroup,
 } from "../state/sprintNotes"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
+import { isSprintNotesLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
 import type { SprintNoteStatus } from "../lib/team-collaboration-mode"
 
@@ -119,6 +121,23 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
   }, [signedInContributorId, hasEditedAuthorId, hasEditedMyId])
 
   const refresh = () => setGroups(buildSprintNotesPanelView())
+
+  /**
+   * Live-update the note wall when another browser tab logs, advances, or
+   * reassigns a note, or records a presence heartbeat. A `storage` event
+   * never fires in the tab that made the write, only in other tabs —
+   * same-tab changes already refresh through their own handlers (and the
+   * `[groups]` presence effect below re-derives the roster whenever the
+   * groups change).
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isSprintNotesLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const refreshPresence = (topics: string[]) => {
     const now = Date.now()
@@ -256,9 +275,7 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
       </div>
 
       {groups.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No sprint notes yet. Add one above to start a topic sprint.
-        </div>
+        <EmptyState title="No sprint notes yet." message="Add one above to start a topic sprint." />
       ) : (
         <div className="space-y-4">
           {groups.map((group) => {

@@ -24,6 +24,19 @@ import { getUserId } from "@/lib/auth/session"
 
 const LIST_LIMIT = 50
 
+// A missing `notifications` table means the D1 migration for it just hasn't
+// run against this environment yet (see the deploy-ordering note in the
+// route handlers below) — an expected, self-resolving condition, not a bug,
+// so it's worth keeping out of error-level alerting.
+function logNotificationsDBError(message: string, error: unknown) {
+  const text = error instanceof Error ? error.message : String(error)
+  if (/no such table/i.test(text)) {
+    console.warn(message, error)
+  } else {
+    console.error(message, error)
+  }
+}
+
 export async function GET(req: NextRequest) {
   const userId = await getUserId()
   if (!userId) {
@@ -51,7 +64,10 @@ export async function GET(req: NextRequest) {
     // Degrade to an empty feed instead of a raw 500 — e.g. right after a
     // deploy that hasn't run its D1 migration yet, so the `notifications`
     // table doesn't exist there. Same fallback shape /api/videos uses.
-    console.error("Failed to load notifications", error)
+    // That specific case is expected and self-resolves once the migration
+    // runs, so it's logged as a warning rather than an error to avoid
+    // paging on a known, non-actionable condition.
+    logNotificationsDBError("Failed to load notifications", error)
     return NextResponse.json({ notifications: [], unreadCount: 0 })
   }
 }
@@ -98,7 +114,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ ok: true })
   } catch (error) {
-    console.error("Failed to update notifications", error)
+    logNotificationsDBError("Failed to update notifications", error)
     return NextResponse.json({ error: "Failed to update notifications." }, { status: 500 })
   }
 }

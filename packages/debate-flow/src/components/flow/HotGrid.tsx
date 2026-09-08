@@ -3,6 +3,7 @@
 import { HotTable } from "@handsontable/react-wrapper";
 import type { HotTableRef } from "@handsontable/react-wrapper";
 import type Handsontable from "handsontable";
+import type { CellCoords, CellValue } from "handsontable";
 import { registerAllModules } from "handsontable/registry";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 
@@ -940,7 +941,7 @@ export default memo(function HotGrid({ sheetId, pane }: { sheetId: string; pane:
     const pasteClasses = useRef<ClassEntry[]>([]);
 
     const beforePaste = useCallback(
-        (data: string[][]) => {
+        (data: CellValue[][]) => {
             pasteShift.current = null;
             const hot = hotRef.current?.hotInstance;
             const sel = hot?.getSelectedRangeLast();
@@ -1240,9 +1241,9 @@ export default memo(function HotGrid({ sheetId, pane }: { sheetId: string; pane:
     // the cursor in a column that refuses every keystroke. A header click
     // arrives with a negative row and is redirected the same way.
     const beforeOnCellMouseDown = useCallback(
-        (_event: unknown, coords: { row: number; col: number }) => {
+        (_event: unknown, coords: CellCoords) => {
             const lead = loadedSpacersRef.current;
-            if (coords.col >= 0 && coords.col < lead) coords.col = lead;
+            if (coords.col != null && coords.col >= 0 && coords.col < lead) coords.col = lead;
         },
         [],
     );
@@ -1252,9 +1253,9 @@ export default memo(function HotGrid({ sheetId, pane }: { sheetId: string; pane:
     // pad decorates it, and collectMeta refuses to save a spacer's cells, so
     // the bolding would sit on the grid with nothing stored to clear it by.
     const beforeOnCellMouseOver = useCallback(
-        (_event: unknown, coords: { row: number; col: number }) => {
+        (_event: unknown, coords: CellCoords) => {
             const lead = loadedSpacersRef.current;
-            if (coords.col >= 0 && coords.col < lead) coords.col = lead;
+            if (coords.col != null && coords.col >= 0 && coords.col < lead) coords.col = lead;
         },
         [],
     );

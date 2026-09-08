@@ -26,6 +26,14 @@
  * its account delete failed) can still be adopted back on a later mount —
  * an accepted edge case for this slice, not actively defended against.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isJudgeDecisionPanelLiveUpdateStorageEvent`)
+ * refreshes the rendered decision history when another tab requests,
+ * clears, or bulk-clears a round's decisions — closing the "Every other
+ * localStorage-backed panel in this repo still has no cross-tab
+ * live-update mechanism" Known gap noted in `shared-flow-sync.md`, for
+ * `JudgeDecisionPanel`.
+ *
  * @module hooks/useJudgeDecisions
  */
 
@@ -40,6 +48,7 @@ import {
   type JudgeDecisionRecord,
   type JudgeDecisionRoundGroup,
 } from "../state/judgeDecisions";
+import { isJudgeDecisionPanelLiveUpdateStorageEvent } from "../state/live-update";
 import {
   deleteSavedJudgeDecisionFromAccount,
   listSavedJudgeDecisions,
@@ -112,6 +121,19 @@ export function useJudgeDecisions(): UseJudgeDecisionsResult {
       setSynced(remoteAvailable);
       if (changed) setGroups(buildJudgeDecisionsPanelView());
     });
+  }, []);
+
+  // `storage` never fires in the tab that made the write — only in other
+  // same-origin tabs — so this is what lets a decision requested/cleared in
+  // one tab show up in another without a manual reload.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (isJudgeDecisionPanelLiveUpdateStorageEvent(event)) {
+        setGroups(buildJudgeDecisionsPanelView());
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const appendDecision = useCallback((input: Omit<JudgeDecisionRecord, "id">) => {

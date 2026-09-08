@@ -16,3 +16,16 @@ state that the leaderboard and news stream compose against.
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+```
+
+Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
+merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
+
+Current Codecov package coverage on `master` at commit `50322f5` is **45.51%** (tracked
+under the `debate-contributor-progress` flag).

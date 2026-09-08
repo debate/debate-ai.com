@@ -60,8 +60,10 @@ export type FavoriteToolsPatchResult = {
  * Validates an untrusted (e.g. parsed request-body JSON) patch: the whole
  * `favoriteTools` array is accepted or rejected as one field, mirroring
  * `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`'s per-field
- * shape — a caller replaces its full favorites list in one PUT rather than
- * this module diffing add/remove operations server-side.
+ * shape. Kept for callers that legitimately need to replace the whole list
+ * in one PUT (e.g. `pruneUnknown`'s bulk cleanup) — a single star/unstar
+ * toggle should use `normalizeFavoriteToolOpPatch`/`applyFavoriteToolOp`
+ * instead, which avoids this path's lost-update race (see their docstring).
  */
 export function normalizeFavoriteToolsPatch(input: unknown): FavoriteToolsPatchResult {
   if (typeof input !== "object" || input === null || Array.isArray(input)) {
@@ -83,6 +85,73 @@ export function normalizeFavoriteToolsPatch(input: unknown): FavoriteToolsPatchR
   }
 
   return { valid, errors };
+}
+
+/** A single star/unstar operation, applied server-side against the caller's currently stored list rather than a client-computed whole-list replacement. */
+export type FavoriteToolOp = { addFavoriteTool?: string; removeFavoriteTool?: string };
+
+export type FavoriteToolOpPatchResult = {
+  valid: FavoriteToolOp;
+  errors: string[];
+};
+
+/**
+ * Validates an untrusted `{ addFavoriteTool }` / `{ removeFavoriteTool }`
+ * patch — the fix for the "two tabs star different tools in quick
+ * succession" lost-update race `normalizeFavoriteToolsPatch`'s whole-list
+ * replace is exposed to (see `docs/features/user-settings.md`'s Known
+ * gaps): the caller sends just the one href being added or removed, and
+ * `/api/settings`'s route resolves it against the row's current value
+ * (read-then-write, mirroring how `editorPreferences` already merges onto
+ * its existing stored map instead of replacing it) via
+ * {@link applyFavoriteToolOp} rather than trusting a client-computed list
+ * that may already be stale by the time it lands.
+ */
+export function normalizeFavoriteToolOpPatch(input: unknown): FavoriteToolOpPatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+
+  const record = input as Record<string, unknown>;
+  const hasAdd = "addFavoriteTool" in record;
+  const hasRemove = "removeFavoriteTool" in record;
+
+  if (hasAdd && hasRemove) {
+    return {
+      valid: {},
+      errors: ['Provide only one of "addFavoriteTool" or "removeFavoriteTool" per request.'],
+    };
+  }
+  if (hasAdd) {
+    return isValidToolHref(record.addFavoriteTool)
+      ? { valid: { addFavoriteTool: record.addFavoriteTool }, errors: [] }
+      : { valid: {}, errors: ['"addFavoriteTool" must be a single in-app path (e.g. "/reason-editor").'] };
+  }
+  if (hasRemove) {
+    return isValidToolHref(record.removeFavoriteTool)
+      ? { valid: { removeFavoriteTool: record.removeFavoriteTool }, errors: [] }
+      : { valid: {}, errors: ['"removeFavoriteTool" must be a single in-app path (e.g. "/reason-editor").'] };
+  }
+  return { valid: {}, errors: [] };
+}
+
+/**
+ * Applies one validated add/remove op to a currently stored favorites list.
+ * Pure and idempotent: adding an already-present href, or removing an
+ * absent one, returns the same array reference unchanged; adding past
+ * {@link MAX_FAVORITE_TOOLS} is silently dropped, mirroring
+ * `useFavoriteTools.ts#toggleFavorite`'s own client-side cap guard.
+ */
+export function applyFavoriteToolOp(current: string[], op: FavoriteToolOp): string[] {
+  if (op.addFavoriteTool) {
+    if (current.includes(op.addFavoriteTool) || current.length >= MAX_FAVORITE_TOOLS) return current;
+    return [...current, op.addFavoriteTool];
+  }
+  if (op.removeFavoriteTool) {
+    if (!current.includes(op.removeFavoriteTool)) return current;
+    return current.filter((href) => href !== op.removeFavoriteTool);
+  }
+  return current;
 }
 
 /** Serializes a favorites list for the `favorite_tools` D1 column: `null` when empty, matching the "no saved value yet" semantics every other nullable column here uses. */

@@ -1,0 +1,37 @@
+---
+title: "Word-Count-Only Speech Format"
+---
+
+# Word-Count-Only Speech Format
+
+Lets a debater type each speech of a word-count-limited practice round
+against a live word-count readout, and save the round.
+
+- **Route:** `/word-count`
+- **Package:** `debate-round`
+
+## What it shows
+
+A form (round ID, word-count style) with one text area per speech showing
+a live word-count badge, recomputed via `debate-timer`'s
+`getWordCountStatus`. The same word-limit mode also works inside the live
+round timer (`/debate`) via a **Type** toggle. Custom per-style word-limit
+presets are managed on `/settings`. A **Word-count trend** section charts
+history across submissions. Round history is account-synced with
+last-write-wins conflict resolution and a "synced from another device"
+notice.
+
+## Data flow
+
+```
+debate-timer/src/formats/word-count-format.ts → getWordCountStatus(text, wordLimit)
+state/wordCountRounds.ts (localStorage: wordCountRounds)
+  → buildWordCountRoundsPanelView()
+  → panels/WordCountRoundsPanel.tsx
+  → apps/debate-ai.com/app/word-count/page.tsx
+```
+
+## Known gaps
+
+None remain open — the mobile/dictation gaps this doc previously tracked
+are both closed.

@@ -317,3 +317,81 @@ export function applyHypotheticalAdjustments(
     return action ? applyHypotheticalAction(row, action) : row;
   });
 }
+
+/**
+ * A named "what if" scenario: a full set of per-row hypothetical
+ * adjustments (see `HypotheticalAdjustment`) a user has saved so it can be
+ * compared against other saved scenarios, instead of only ever exploring
+ * one hypothetical at a time. Idea #4's "a side-by-side view comparing two
+ * or more 'what if' hypotheticals at once" follow-up in TODO.md.
+ */
+export type HypotheticalScenario = {
+  name: string;
+  adjustments: readonly HypotheticalAdjustment[];
+};
+
+/** One compared argument's `vulnerabilityScore` under every scenario, in `scenarios` order. */
+export type ScenarioArgumentComparisonRow = {
+  rowIndex: number;
+  label: string;
+  sideKey: string | null;
+  scenarioScores: number[];
+};
+
+export type HypotheticalScenarioComparison = {
+  scenarioNames: string[];
+  /** Each scenario's per-side rollup, in `scenarios` order. */
+  sideSummaries: SideOutcomeSummary[][];
+  /**
+   * The top `limit` arguments from the *baseline* (unadjusted) report —
+   * the same set of arguments compared across every scenario, so a given
+   * argument's score can be read across columns, rather than each
+   * scenario independently picking its own top N (which could compare
+   * different arguments column to column).
+   */
+  argumentRows: ScenarioArgumentComparisonRow[];
+};
+
+/**
+ * Builds a side-by-side comparison of two or more named "what if"
+ * scenarios against the same baseline report: each scenario's per-side
+ * exposure rollup, plus every compared argument's score under each
+ * scenario.
+ *
+ * @throws if fewer than two scenarios are supplied — a comparison isn't
+ * meaningful for a single scenario (the existing single-hypothetical "what
+ * if" picker already covers that case).
+ */
+export function buildHypotheticalScenarioComparison(
+  report: readonly ArgumentVulnerability[],
+  sideKeys: string[],
+  scenarios: readonly HypotheticalScenario[],
+  options: { limit?: number } = {},
+): HypotheticalScenarioComparison {
+  if (scenarios.length < 2) {
+    throw new Error("buildHypotheticalScenarioComparison needs at least two scenarios to compare.");
+  }
+  const limit = options.limit ?? 10;
+
+  const effectiveReports = scenarios.map((scenario) => applyHypotheticalAdjustments(report, scenario.adjustments));
+
+  const anchorRows = report
+    .slice()
+    .sort((a, b) => b.vulnerabilityScore - a.vulnerabilityScore || a.rowIndex - b.rowIndex)
+    .slice(0, limit);
+
+  const argumentRows: ScenarioArgumentComparisonRow[] = anchorRows.map((anchor) => ({
+    rowIndex: anchor.rowIndex,
+    label: `${anchor.originSpeech}: ${truncateForDisplay(anchor.argument)}`,
+    sideKey: anchor.sideKey,
+    scenarioScores: effectiveReports.map(
+      (effective) => effective.find((row) => row.rowIndex === anchor.rowIndex)?.vulnerabilityScore ?? anchor.vulnerabilityScore,
+    ),
+  }));
+
+  return {
+    scenarioNames: scenarios.map((scenario) => scenario.name),
+    sideSummaries: effectiveReports.map((effective) => summarizeOutcomeBySideFromReport(effective, sideKeys)),
+    argumentRows,
+  };
+}

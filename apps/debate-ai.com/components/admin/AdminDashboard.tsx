@@ -18,10 +18,13 @@ import {
   SelectValue,
 } from "../../lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
+import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { TopicStarterUpload } from "./TopicStarterUpload";
+import { UsersTable } from "./UsersTable";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; channelsSynced: number; videosUpserted: number; error: string | null; }
+interface ViewCountStatus { publishedVideos: number; queuedVideos: number; }
 interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
 const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
@@ -39,6 +42,10 @@ export function AdminDashboard() {
   const [publishAllError, setPublishAllError] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<Set<string>>(new Set());
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const [isResyncingViews, setIsResyncingViews] = useState(false);
+  const [viewResyncResult, setViewResyncResult] = useState<string | null>(null);
+  const [viewResyncError, setViewResyncError] = useState<string | null>(null);
+  const [viewCountStatus, setViewCountStatus] = useState<ViewCountStatus | null>(null);
   const [isPurgingReuseLog, setIsPurgingReuseLog] = useState(false);
   const [reuseLogPurgeResult, setReuseLogPurgeResult] = useState<string | null>(null);
   const [reuseLogPurgeError, setReuseLogPurgeError] = useState<string | null>(null);
@@ -93,6 +100,20 @@ export function AdminDashboard() {
       .catch(() => {});
   }, []);
 
+  const loadViewCountStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/videos/view-counts");
+      if (!res.ok) return;
+      setViewCountStatus(await res.json());
+    } catch {
+      // The card still works without the count; it only sizes the run.
+    }
+  }, []);
+
+  useEffect(() => {
+    loadViewCountStatus();
+  }, [loadViewCountStatus]);
+
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -115,22 +136,42 @@ export function AdminDashboard() {
       const res = await fetch("/api/admin/youtube/resync", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.details || data?.error || "Resync failed");
+      // Only the fields `SyncRun` declares — the rest of the run row the API
+      // returns is not read here.
       setLastRun({
         id: data.runId,
         status: "success",
-        triggeredBy: null,
         channelsSynced: data.channelsSynced,
-        videosFetched: data.videosFetched,
         videosUpserted: data.videosUpserted,
         error: null,
-        startedAt: new Date().toISOString(),
-        finishedAt: new Date().toISOString(),
       });
       await loadFirstPage(style);
     } catch (error) {
       setResyncError((error as Error).message);
     } finally {
       setIsResyncing(false);
+    }
+  };
+
+  const handleResyncViewCounts = async () => {
+    setIsResyncingViews(true);
+    setViewResyncError(null);
+    setViewResyncResult(null);
+    try {
+      const res = await fetch("/api/admin/videos/view-counts", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.details || data?.error || "View count resync failed");
+      const missing = data.missing > 0 ? `, ${data.missing} unavailable on YouTube` : "";
+      setViewResyncResult(
+        data.updated === 0
+          ? `All ${data.videosChecked.toLocaleString()} view counts were already current${missing}.`
+          : `Updated ${data.updated.toLocaleString()} of ${data.videosChecked.toLocaleString()} view counts${missing}.`,
+      );
+      await Promise.all([loadViewCountStatus(), loadFirstPage(style)]);
+    } catch (error) {
+      setViewResyncError((error as Error).message);
+    } finally {
+      setIsResyncingViews(false);
     }
   };
 
@@ -220,11 +261,13 @@ export function AdminDashboard() {
   };
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-10">
+    <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground text-sm">YouTube round video sync</p>
+        <p className="text-muted-foreground text-sm">Accounts, usage and YouTube round video sync</p>
       </div>
+
+      <UsersTable />
 
       <Card>
         <CardHeader>
@@ -256,6 +299,39 @@ export function AdminDashboard() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Resync video view counts</CardTitle>
+          <CardDescription>
+            Refetches the watch count of every stored video from YouTube — both published
+            videos and the queue below — and writes back the ones that moved. Counts are
+            captured once, at ingest, so they only fall behind; the video library sorts on
+            them.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <Button onClick={handleResyncViewCounts} disabled={isResyncingViews} variant="outline">
+              {isResyncingViews ? "Resyncing view counts…" : "Resync view counts"}
+            </Button>
+            {viewResyncResult ? (
+              <span className="text-muted-foreground text-sm">{viewResyncResult}</span>
+            ) : (
+              viewCountStatus && (
+                <span className="text-muted-foreground text-sm">
+                  Up to{" "}
+                  {(
+                    viewCountStatus.publishedVideos + viewCountStatus.queuedVideos
+                  ).toLocaleString()}{" "}
+                  videos to check
+                </span>
+              )
+            )}
+          </div>
+          {viewResyncError && <p className="text-destructive text-sm">{viewResyncError}</p>}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Reuse-check log retention</CardTitle>
           <CardDescription>
             Purges reuse-check log rows older than {REUSE_CHECK_LOG_RETENTION_DAYS} days. Runs
@@ -277,6 +353,8 @@ export function AdminDashboard() {
       </Card>
 
       <TopicStarterUpload />
+
+      <DebateCardParquetUpload />
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Round videos</h2>

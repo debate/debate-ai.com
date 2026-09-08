@@ -78,7 +78,7 @@ state/coachingSessions.ts
   → apps/debate-ai.com/app/news/NewsPageContent.tsx — passes the result as
                                           NewsStreamPanel's extraItems prop
                                           (see news-stream.md — this package
-                                          already depends on debate-card-search,
+                                          already depends on debate-research-evidence,
                                           so the news source lives here rather
                                           than in that package)
 
@@ -144,7 +144,7 @@ Known gap: a `CoachingSessionRecord` gained an additive, optional
 (existing records without it are silently excluded rather than backdated,
 mirroring `evidenceLibraryEntries.ts`'s `argumentLibraryNews()`
 convention), and `coachingSessionNews()` maps every session that carries
-one straight to a News Stream `NewsItem`. Since `debate-card-search` (where
+one straight to a News Stream `NewsItem`. Since `debate-community` (where
 News Stream's other sources live) can't depend back on this package, this
 helper is composed into the feed at the app layer instead — see
 `news-stream.md`'s "Data flow" for the full path. No follow-ups remain open
@@ -241,6 +241,29 @@ panels/CoachingSessionsPanel.tsx ("Download comparison")
   → coachingSessionComparisonFilename(a, b)          — state/coachingSessions.ts
   → anchor+Blob download, mirroring the per-session Download action's pattern
 ```
+
+## Cross-tab live update
+
+`CoachingSessionsPanel` now subscribes to the browser's `storage` event —
+which the spec fires only in *other* same-origin tabs/windows, never the one
+that made the write — and refreshes its rendered session list when another
+tab saves, restores, or clears a coaching session. A new pure helper,
+`state/live-update.ts`'s `isCoachingSessionsPanelLiveUpdateStorageEvent`,
+checks whether the event's `key` is the panel's one backing store
+(`coachingSessions`, from this package's own `state/coachingSessions.ts`) or
+`null` (a `localStorage.clear()`), closing the "every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `CoachingSessionsPanel`.
+The "Compare two sessions" dropdowns re-derive from the same refreshed
+`sessions` list; the "Generate coaching session" side field, any
+in-progress comparison result, and an open History panel's contents are
+left untouched, matching every other closed panel's "refresh the derived
+view, not the draft" convention.
+
+Vitest-covered by four new cases for
+`isCoachingSessionsPanelLiveUpdateStorageEvent` in
+`packages/debate-practice-drills/test/live-update.test.ts`.
 
 ## Known gaps
 

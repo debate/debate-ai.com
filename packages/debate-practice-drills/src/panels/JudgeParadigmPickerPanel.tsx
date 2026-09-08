@@ -13,6 +13,14 @@
  * selection via `buildJudgeParadigmSelectionsPanelView`. No new
  * paradigm-resolution logic is introduced here.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isJudgeParadigmPickerPanelLiveUpdateStorageEvent`)
+ * refreshes the rendered selection list when another tab saves or clears a
+ * round's paradigm — the first `live-update.ts` in this package, closing
+ * the "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel.
+ *
  * @module panels/JudgeParadigmPickerPanel
  */
 
@@ -25,6 +33,7 @@ import { Input } from "debate-speech-writer/src/ui/primitives/input"
 import { Label } from "debate-speech-writer/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
+import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildCustomJudgeParadigm,
   buildJudgeParadigmPrompt,
@@ -38,6 +47,7 @@ import {
   saveJudgeParadigmSelection,
   type JudgeParadigmSelection,
 } from "../state/judgeParadigmSelections"
+import { isJudgeParadigmPickerPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const BUILTIN_PARADIGMS = listJudgeParadigms()
 
@@ -75,6 +85,20 @@ export function JudgeParadigmPickerPanel() {
   }, [])
 
   const refresh = () => setSelections(buildJudgeParadigmSelectionsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves or clears a
+   * round's judge-paradigm selection — a `storage` event never fires in the
+   * tab that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isJudgeParadigmPickerPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSave = () => {
     const roundId = form.roundId.trim()
@@ -208,9 +232,10 @@ export function JudgeParadigmPickerPanel() {
       </div>
 
       {selections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No judge paradigm selections yet. Save one above to see it here.
-        </div>
+        <EmptyState
+          title="No judge paradigm selections yet."
+          message="Save one above to see it here."
+        />
       ) : (
         <div className="space-y-2">
           {selections.map((selection) => {

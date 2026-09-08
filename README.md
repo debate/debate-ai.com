@@ -6,24 +6,25 @@
     <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com" target="_blank" rel="noopener noreferrer"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
     <a href="https://github.com/debate/debate-ai.com/discussions"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/debate/debate-ai.com" /></a>
 <br />
+            <a href="https://app.codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/branch/master/graph/badge.svg" alt="Coverage" /></a>
     <a href="https://github.com/debate/debate-ai.com/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/debate/debate-ai.com" /></a>
     <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
-    <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime-Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
     <a href="https://github.com/debate/debate-ai.com/actions/workflows/test.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg" alt="Test debate-ai.com status for master" /></a>
     <br />
-    <a href="https://app.codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/branch/master/graph/badge.svg" alt="Coverage" /></a>
-    <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>
+            <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>
+            <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime-Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
     <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
-<img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff" alt="Claude AI"> <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=Cloudflare&logoColor=white" alt="Cloudflare"> <img src="https://img.shields.io/badge/Next.js-black" alt="Next.js" />
+<img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff" alt="Claude AI"> <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=Cloudflare&logoColor=white" alt="Cloudflare"> <img src="https://img.shields.io/badge/Next.js-black" alt="Next.js" /> <a href="https://grab.js.org"><img src="https://i.imgur.com/EWze7Ew.png" height="20" alt="grab.js.org" /></a>
    <br />
     <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI"></a>
     <a href="https://doi.org/10.5281/zenodo.22170412"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.22170412.svg" alt="DOI"></a>
     <a href="https://doi.org/10.5281/zenodo.21881743"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21881743.svg" alt="DOI"></a>
    <br />
-  <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_App-debate--ai.com-blueviolet?style=for-the-badge" "></a>
-  <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/🙋_Reddit-Forum-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
-  <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Shared-Research-2ea44f?style=for-the-badge" alt="Shared Research"></a>
-  <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Results-debate.land-informational?style=for-the-badge" alt="Results"></a>
+  <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" "></a>
+  <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
+  <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
+          <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
+  <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Ranks-informational?style=for-the-badge" alt="Results"></a>
     <br/>
   <img src="https://i.imgur.com/c3mT4oo.png"  width="800px" > 
     <br/>
@@ -111,7 +112,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - 🔢 **Card numbering**, multiple **condense modes**, and a full editing-utilities set (shrink/regrow, short cites, live-zone refresh, heading move/copy/delete)
 
 **Collaboration & workflow**
-- 👥 **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery
+- 👥 **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery — plus an account-linked **contacts list** (requests, blocking, presence) to share a live card straight to a contact's account
 - 🎤 **Speech-doc targeting**: mark a doc as the live send target and send content at cursor or at end, with a persistent send history
 - 🌊 **Flow integration**: send cards or headings straight to a Flow column or cell, or pull content back
 - 📇 **Dropzone card exchange**, **Quick Cards**, and a unified command-bar search across cards, commands, settings, and ~50 other site tools
@@ -139,6 +140,7 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [Collaboration Prep Room](https://beta.debate-ai.com/cards/prep-room) — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
 - [Team Collaboration Mode](https://beta.debate-ai.com/cards/collaboration) — Leave, assign, and track live prep notes during shared topic sprints.
 - [Prep Notes](https://beta.debate-ai.com/prep-notes) — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
+- [Contacts](https://beta.debate-ai.com/contacts) — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
 - [Notifications](https://beta.debate-ai.com/notifications) — See and mark read notifications for prep-note assignments and activity.
 - [Team Brainstorm Assist](https://beta.debate-ai.com/cards/brainstorm) — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
 - [Group Challenges](https://beta.debate-ai.com/cards/group-challenges) — Create squad challenges based on contributions or recorded rebuttal wins.

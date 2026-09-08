@@ -8,6 +8,10 @@ import {
   normalizeSavedArgumentCollectionsPatch,
   parseSavedArgumentCollections,
   serializeSavedArgumentCollections,
+  buildSavedArgumentCollectionFailureMessage,
+  validateNewSavedArgumentCollection,
+  validateSavedArgumentCollectionRename,
+  validateSavedArgumentCollectionTagsUpdate,
   type SavedArgumentCollection,
 } from "../src/lib/argument-library-collections";
 
@@ -139,5 +143,103 @@ describe("serializeSavedArgumentCollections / parseSavedArgumentCollections", ()
 describe("DEFAULT_SAVED_ARGUMENT_COLLECTIONS", () => {
   it("is an empty list", () => {
     expect(DEFAULT_SAVED_ARGUMENT_COLLECTIONS.savedArgumentCollections).toEqual([]);
+  });
+});
+
+describe("validateNewSavedArgumentCollection", () => {
+  const existing: SavedArgumentCollection[] = [{ name: "Topicality", tags: ["t"] }];
+
+  it("allows a well-formed new collection", () => {
+    expect(validateNewSavedArgumentCollection(existing, "Warming", ["climate", "impact"])).toBeNull();
+  });
+
+  it("refuses an empty tag selection", () => {
+    expect(validateNewSavedArgumentCollection(existing, "Warming", [])).toBe("empty-tags");
+  });
+
+  it("refuses more than MAX_TAGS_PER_COLLECTION tags (previously wiped every stored collection on next read)", () => {
+    const tags = Array.from({ length: MAX_TAGS_PER_COLLECTION + 1 }, (_, i) => `tag-${i}`);
+    expect(validateNewSavedArgumentCollection(existing, "Warming", tags)).toBe("too-many-tags");
+  });
+
+  it("allows exactly MAX_TAGS_PER_COLLECTION tags", () => {
+    const tags = Array.from({ length: MAX_TAGS_PER_COLLECTION }, (_, i) => `tag-${i}`);
+    expect(validateNewSavedArgumentCollection(existing, "Warming", tags)).toBeNull();
+  });
+
+  it("refuses a blank or over-long name", () => {
+    expect(validateNewSavedArgumentCollection(existing, "   ", ["t"])).toBe("invalid-name");
+    expect(validateNewSavedArgumentCollection(existing, "x".repeat(61), ["t"])).toBe("invalid-name");
+  });
+
+  it("refuses a duplicate name case-insensitively", () => {
+    expect(validateNewSavedArgumentCollection(existing, "  topicality ", ["t"])).toBe("duplicate-name");
+  });
+
+  it("refuses a save at capacity", () => {
+    const full = Array.from({ length: MAX_SAVED_ARGUMENT_COLLECTIONS }, (_, i) => ({
+      name: `c${i}`,
+      tags: ["t"],
+    }));
+    expect(validateNewSavedArgumentCollection(full, "one more", ["t"])).toBe("at-capacity");
+  });
+});
+
+describe("validateSavedArgumentCollectionRename", () => {
+  const existing: SavedArgumentCollection[] = [
+    { name: "Topicality", tags: ["t"] },
+    { name: "Warming", tags: ["climate"] },
+  ];
+
+  it("allows renaming to a fresh name", () => {
+    expect(validateSavedArgumentCollectionRename(existing, "Warming", "Climate answers")).toBeNull();
+  });
+
+  it("allows a case-only rename of the same collection", () => {
+    expect(validateSavedArgumentCollectionRename(existing, "Warming", "WARMING")).toBeNull();
+  });
+
+  it("refuses renaming a collection that does not exist", () => {
+    expect(validateSavedArgumentCollectionRename(existing, "Missing", "Anything")).toBe("unknown-collection");
+  });
+
+  it("refuses renaming onto another collection's name", () => {
+    expect(validateSavedArgumentCollectionRename(existing, "Warming", "topicality")).toBe("duplicate-name");
+  });
+
+  it("refuses an invalid new name", () => {
+    expect(validateSavedArgumentCollectionRename(existing, "Warming", " ")).toBe("invalid-name");
+  });
+});
+
+describe("validateSavedArgumentCollectionTagsUpdate", () => {
+  const existing: SavedArgumentCollection[] = [{ name: "Topicality", tags: ["t"] }];
+
+  it("allows replacing an existing collection's tags", () => {
+    expect(validateSavedArgumentCollectionTagsUpdate(existing, "topicality", ["a", "b"])).toBeNull();
+  });
+
+  it("refuses an unknown collection", () => {
+    expect(validateSavedArgumentCollectionTagsUpdate(existing, "Missing", ["a"])).toBe("unknown-collection");
+  });
+
+  it("refuses an empty or over-limit tag list", () => {
+    expect(validateSavedArgumentCollectionTagsUpdate(existing, "Topicality", [])).toBe("empty-tags");
+    const tags = Array.from({ length: MAX_TAGS_PER_COLLECTION + 1 }, (_, i) => `tag-${i}`);
+    expect(validateSavedArgumentCollectionTagsUpdate(existing, "Topicality", tags)).toBe("too-many-tags");
+  });
+});
+
+describe("buildSavedArgumentCollectionFailureMessage", () => {
+  it("names the typed collection in the duplicate-name message", () => {
+    expect(buildSavedArgumentCollectionFailureMessage("duplicate-name", " Warming ")).toBe(
+      'A collection named "Warming" already exists.',
+    );
+  });
+
+  it("distinguishes the at-capacity message from the duplicate-name one", () => {
+    expect(buildSavedArgumentCollectionFailureMessage("at-capacity", "Warming")).toContain(
+      `${MAX_SAVED_ARGUMENT_COLLECTIONS} saved collections`,
+    );
   });
 });

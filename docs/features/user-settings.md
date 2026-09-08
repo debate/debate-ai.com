@@ -86,8 +86,11 @@ state/favoriteTools.ts (pure — no fetch, no localStorage writes)
                                                  tolerating malformed input
 
 round/user-settings-client.ts (fetch — shared by every settings surface)
-  → fetchUserSettings()   — GET /api/settings; null on 401 (signed out)
-  → saveUserSettings()    — PUT /api/settings; throws on failure
+  → fetchUserSettings()    — GET /api/settings; null on 401 (signed out)
+  → saveUserSettings()     — PUT /api/settings, whole-field replace; throws on failure
+  → saveFavoriteToolOp()   — PUT /api/settings { addFavoriteTool | removeFavoriteTool };
+    resolved against the row's current favoriteTools server-side instead of
+    a client-computed list — see useFavoriteTools.ts below
 
 panels/UserSettingsPanel.tsx
   → apps/debate-ai.com/app/settings/page.tsx  — mounts the panel, plus
@@ -112,7 +115,12 @@ lib/hooks/useFavoriteTools.ts (app-layer — mirrors useThemeState's
   → toggleFavorite/removeFavorite: applies to localStorage immediately,
     dispatches a same-tab `favorite-tools-changed` window event (every
     other mounted instance re-reads and stays in sync), then best-effort
-    saveUserSettings({ favoriteTools }) when signed in
+    saveFavoriteToolOp({ addFavoriteTool | removeFavoriteTool }) when signed
+    in — a single op, not a whole-list saveUserSettings({ favoriteTools })
+    replace, so two tabs starring different tools in quick succession don't
+    race each other's addition away (see Known gaps)
+  → pruneUnknown: still a whole-list saveUserSettings({ favoriteTools })
+    replace — a bulk cleanup pass, not a single star/unstar
   → components/tools/FavoriteToolButton.tsx   — the star toggle rendered on
     every /tools card and every favorites-strip chip
   → components/tools/FavoritesController.tsx  — shows/hides the /tools
@@ -132,10 +140,14 @@ apps/debate-ai.com/app/api/settings/route.ts
   → GET  — current user's row, or the matching DEFAULT_USER_SETTINGS/
     DEFAULT_THEME_SETTINGS/DEFAULT_FAVORITE_TOOLS value for any unset field
   → PUT  — validates via normalizeUserSettingsPatch AND
-    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch (a caller
-    can patch any subset of the three concerns in one request), serializes
-    a valid favoriteTools list before merging it in, then upserts
-    (insert ... onConflictDoUpdate on userId)
+    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch AND
+    normalizeFavoriteToolOpPatch (a caller can patch any subset of these in
+    one request). An addFavoriteTool/removeFavoriteTool op reads the row's
+    current favoriteTools first and resolves the op against it via
+    applyFavoriteToolOp (read-then-write, like the editorPreferences merge
+    below) before serializing; a plain favoriteTools array still replaces
+    the whole list as before. Then upserts (insert ... onConflictDoUpdate
+    on userId)
 ```
 
 Both API handlers require a session (401 without one) — unlike
@@ -154,7 +166,58 @@ client, `useThemeState`'s and `useFavoriteTools`' sync wiring, and the
 D1-backed route are not unit-tested, matching every other fetch-client/
 D1-route pair in this repo (e.g. `round/judge-decision-client.ts`,
 `app/api/evidence-reuse-check/route.ts`) — `apps/debate-ai.com` has no
-vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
+vitest project wired up at all (see `apps/debate-ai.com/vitest.config.ts`'s `projects` list).
+
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `UserSettingsPanel` — the
+last panel that bullet's closed list didn't yet cover, since (unlike every
+other panel closed so far) its `form` is a live, directly-editable draft
+rather than a derived list/roster view.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, saving `debateStyle`/
+`fontSize`/`colorTheme`/`themeMode` here, picking a color theme from
+`theme-dropdown.tsx`'s dock picker, or picking a font family (also read by
+this panel, though it's local-only and never synced to `/api/settings`)
+left every other open `UserSettingsPanel` tab showing stale values until a
+manual reload.
+
+`UserSettingsPanel.tsx` now subscribes to `window`'s `storage` event (see
+`flow/live-update.ts`'s `isUserSettingsPanelLiveUpdateStorageEvent`,
+covering `settings`, `color-theme`, `theme` — next-themes' own storage key
+— and `fontFamily`) and, on a match, refreshes `fontFamily` unconditionally
+(it isn't Save-gated; it always applies immediately, so there's nothing to
+protect) plus each `form` field *individually* — but only a field whose
+current value still matches `baselineRef` (what was last loaded or saved
+here), so an in-progress, not-yet-saved edit on any field is never
+overwritten by another tab's change. A refreshed `colorTheme` also reapplies
+the `theme-*` class on `<html>` in this tab, since that's per-tab DOM state
+a `storage` event alone doesn't update (`themeMode`'s equivalent DOM effect
+is already handled by next-themes' own storage listener). Saving here also
+updates `baselineRef` to the just-saved values, so a field isn't treated as
+"dirty" forever after a successful Save.
+
+`state/userSettings.ts` gained `refreshLocalUserSettingsFromStorage`, which
+re-reads `localStorage`'s `"settings"` key into the local `settings`
+singleton (via its existing `loadFromLocalStorage`) before returning its
+`debateStyle`/`fontSize` values — unlike `readLocalUserSettings`, which only
+reflects whatever the singleton last loaded, and would otherwise miss
+another tab's `applyUserSettingsToLocalStore` write.
+
+Vitest-covered: `packages/debate-round/test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, and unrelated/substring-
+matching keys staying ignored, mirroring every other panel's cases in that
+file) and `packages/debate-round/test/userSettings.test.ts`
+(`refreshLocalUserSettingsFromStorage` picking up a value written straight
+to `localStorage`, unlike `readLocalUserSettings`). The per-field
+"don't stomp an unsaved edit" behavior itself has no dedicated render
+test — this repo has no component-render test for any `debate-round`
+panel — matching how every prior cross-tab live-update slice in this repo
+was verified via its pure predicate function plus typecheck/build, not a
+new render test.
 
 ## Known gaps
 
@@ -167,11 +230,23 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   `fontSize`/`colorTheme`/`themeMode` change from `UserSettingsPanel` can
   all PUT the same row from different tabs — but no client reads back
   another's fields before its own PUT, so a race only ever loses the
-  losing tab's own edited field(s), never corrupts the row. `favoriteTools`
-  is the field most exposed to this: it's a whole-list replace (see
-  `state/favoriteTools.ts`), so two tabs each starring a *different* tool
-  in quick succession can have the second PUT's list silently drop the
-  first tab's addition, rather than merging them.
+  losing tab's own edited field(s), never corrupts the row.
+  **Update:** `favoriteTools` — previously the field most exposed to this,
+  since it was a whole-list replace where two tabs each starring a
+  *different* tool in quick succession could have the second PUT's list
+  silently drop the first tab's addition — is now fixed: `toggleFavorite`/
+  `removeFavorite` (`lib/hooks/useFavoriteTools.ts`) send a single
+  `{ addFavoriteTool }`/`{ removeFavoriteTool }` op
+  (`round/user-settings-client.ts#saveFavoriteToolOp`) instead of a
+  client-computed list, and `/api/settings`'s PUT handler resolves it
+  against the row's *current* stored value with a read-then-write
+  (`state/favoriteTools.ts#applyFavoriteToolOp`), mirroring how
+  `editorPreferences` already merges onto its existing stored map instead
+  of replacing it — see this route's own docstring. This narrows, but (like
+  `editorPreferences`) doesn't fully eliminate, the underlying no-version-
+  check gap this bullet describes; a whole-list `favoriteTools` PUT is still
+  accepted for legitimate bulk replaces (`pruneUnknown`'s stale-favorite
+  cleanup), which stays subject to the general gap above.
 - `ThemeDropdown` (the standalone exported component in
   `theme-dropdown.tsx`, distinct from `useThemeState` the hook) is dead
   code — unused anywhere in the app, which actually renders `CategoryDock`'s
@@ -244,3 +319,35 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   compared every panel against every shared primitive (e.g.
   `PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
   unaudited).
+  A further slice re-ran the "duplicated empty states" search across every
+  package instead of just `debate-round`/`debate-practice-drills` (the
+  original pass's scope) and found the exact same hand-rolled
+  `<div className="p-6 text-center text-sm text-muted-foreground">…</div>`
+  shape still duplicated in 21 more panels across `debate-ui`,
+  `debate-practice-drills`, `debate-team-collaboration`,
+  `debate-contributor-progress`, and `debate-research-evidence` (several —
+  `ArgumentLibraryPanel`, `ProgressUnlocksPanel`, `PrepRoomPanel`,
+  `TopicCoverageDashboardPanel` — already imported `EmptyState`/`MeterBar`
+  from the same `panel-shell` module for a different empty state in the
+  same file, just missed this one), and migrated all of them to
+  `EmptyState`, splitting each message on its first "…yet." sentence into
+  `title`/`message` the same way prior slices did, or passing a
+  single-sentence/dynamic message as `title` alone when there was no clean
+  split (e.g. `FeaturesPanel`'s `No features match "{query}".`). Two
+  packages' matching panels — `debate-speech-writer`'s `JudgeProfilesPanel`/
+  `CoachMaterialsPanel` and `debate-videos`'s `StandingsPanel` — were left
+  alone: neither package depends on `debate-round` or
+  `debate-research-evidence` (the two packages whose `panel-shell.tsx`
+  exports `EmptyState`), so closing those would first require adding a new
+  cross-package dependency edge, which is out of scope for a markup-only
+  migration. `packages/debate-ui/test/features-panel.test.tsx` gained a new
+  case for `FeaturesPanel`'s empty-search state (previously untested);
+  matching render-test coverage for the other migrated panels was not
+  added, since none of the packages they live in (`debate-practice-drills`,
+  `debate-team-collaboration`, `debate-contributor-progress`,
+  `debate-research-evidence`) have any pre-existing component-render test
+  for these specific panels to extend — each panel's own pure-logic
+  functions are already covered by that package's state/lib test suite,
+  unaffected by a markup-only change, matching how the prior EmptyState
+  migration slices in `debate-round`/`debate-practice-drills` were also
+  verified via typecheck/build rather than new render tests.

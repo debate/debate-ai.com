@@ -1,7 +1,7 @@
 "use client"
 
 /**
- * @fileoverview Thin wrapper over `debate-card-search`'s
+ * @fileoverview Thin wrapper over `debate-community`'s
  * `ProgressUnlocksPanel` that highlights a signed-in visitor's own row, via
  * `deriveContributorIdFromSessionIdentity`. The panel itself stays
  * app-agnostic (it takes the derived id as a plain prop); this is the only

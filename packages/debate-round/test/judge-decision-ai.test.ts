@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   buildJudgeDecisionAiUserPrompt,
+  buildJudgeDecisionRubric,
   parseJudgeDecisionAiResponse,
   type JudgeDecisionAiInput,
+  type JudgeDecisionAiResult,
 } from "../src/round/judge-decision-ai";
 import { judgeParadigms } from "debate-speech-writer/src/judge/judge-paradigms";
 
@@ -100,5 +102,69 @@ describe("parseJudgeDecisionAiResponse", () => {
       rationale: "rationale",
     });
     expect(parseJudgeDecisionAiResponse(raw)?.keyVotingIssues).toEqual(["real issue"]);
+  });
+});
+
+describe("buildJudgeDecisionRubric", () => {
+  const DECISION: JudgeDecisionAiResult = {
+    winner: "primary",
+    keyVotingIssues: [
+      "The negative dropped the case turn",
+      "Aff's impact calculus outweighs on magnitude",
+    ],
+    rationale:
+      "The negative never engaged the framework debate at all, so it wasn't decisive here.",
+  };
+
+  it("returns one row per voting priority, in the paradigm's own order", () => {
+    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+
+    expect(rubric.map((row) => row.criterion)).toEqual(judgeParadigms.flow.votingPriorities);
+  });
+
+  it("marks a criterion addressed and names the matching issue when a keyVotingIssue mentions it", () => {
+    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+
+    const dropped = rubric.find((row) => row.criterion === "Dropped or conceded arguments");
+    expect(dropped).toEqual({
+      criterion: "Dropped or conceded arguments",
+      addressed: true,
+      matchedIssue: "The negative dropped the case turn",
+    });
+
+    const impact = rubric.find((row) =>
+      row.criterion.startsWith("Impact calculus"),
+    );
+    expect(impact?.addressed).toBe(true);
+    expect(impact?.matchedIssue).toBe("Aff's impact calculus outweighs on magnitude");
+  });
+
+  it("marks a criterion addressed via the rationale even with no matching keyVotingIssue", () => {
+    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+
+    const framework = rubric.find((row) => row.criterion.startsWith("Framework/weighing"));
+    expect(framework?.addressed).toBe(true);
+    expect(framework?.matchedIssue).toBeNull();
+  });
+
+  it("marks a criterion unaddressed when neither the issues nor the rationale mention it", () => {
+    const rubric = buildJudgeDecisionRubric(judgeParadigms.flow, DECISION);
+
+    const clash = rubric.find((row) => row.criterion === "Argument interaction and clash");
+    expect(clash).toEqual({
+      criterion: "Argument interaction and clash",
+      addressed: false,
+      matchedIssue: null,
+    });
+  });
+
+  it("returns an empty rubric for a paradigm with no voting priorities", () => {
+    const customParadigm = {
+      ...judgeParadigms.flow,
+      id: "custom" as const,
+      votingPriorities: [],
+    };
+
+    expect(buildJudgeDecisionRubric(customParadigm, DECISION)).toEqual([]);
   });
 });

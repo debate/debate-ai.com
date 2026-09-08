@@ -1,6 +1,6 @@
 name: Native Wrapper CI
 
-# Fast correctness check for packages/native-wrapper on every push/PR that
+# Fast correctness check for apps/debate-native-wrapper on every push/PR that
 # touches it (or the auth code its OAuth handoff depends on) — a Rust
 # `cargo check` plus a debug build, no bundling/signing/release. The full
 # 5-platform release build lives in native-wrapper-release.yml and only runs
@@ -11,13 +11,13 @@ on:
   push:
     branches: [master]
     paths:
-      - "packages/native-wrapper/**"
+      - "apps/debate-native-wrapper/**"
       - "apps/debate-ai.com/lib/auth/**"
       - "apps/debate-ai.com/lib/native/**"
       - "apps/debate-ai.com/app/auth/**"
   pull_request:
     paths:
-      - "packages/native-wrapper/**"
+      - "apps/debate-native-wrapper/**"
       - "apps/debate-ai.com/lib/auth/**"
       - "apps/debate-ai.com/lib/native/**"
       - "apps/debate-ai.com/app/auth/**"
@@ -45,11 +45,11 @@ jobs:
       # generated_scheme.rs) without updating its profile, which would
       # silently drift the two apart.
       - name: Regenerate from profiles/debate-ai.json and diff
-        working-directory: packages/native-wrapper
+        working-directory: apps/debate-native-wrapper
         run: |
           node scripts/configure.mjs
           git diff --exit-code -- src-tauri/tauri.conf.json src-tauri/src/generated_scheme.rs || {
-            echo "::error::src-tauri/tauri.conf.json or generated_scheme.rs is out of date with profiles/debate-ai.json — run 'npm run configure' in packages/native-wrapper and commit the result." >&2
+            echo "::error::src-tauri/tauri.conf.json or generated_scheme.rs is out of date with profiles/debate-ai.json — run 'npm run configure' in apps/debate-native-wrapper and commit the result." >&2
             exit 1
           }
 
@@ -69,12 +69,12 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: packages/native-wrapper/src-tauri
+          workspaces: apps/debate-native-wrapper/src-tauri
 
       - name: cargo check
-        working-directory: packages/native-wrapper/src-tauri
+        working-directory: apps/debate-native-wrapper/src-tauri
         run: cargo check --all-targets
 
       - name: cargo clippy
-        working-directory: packages/native-wrapper/src-tauri
+        working-directory: apps/debate-native-wrapper/src-tauri
         run: cargo clippy --all-targets -- -D warnings
