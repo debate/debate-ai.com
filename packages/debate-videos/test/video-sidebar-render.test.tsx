@@ -119,6 +119,51 @@ describe("VideoSidebarTree", () => {
   });
 });
 
+describe("the sidebar's heading structure", () => {
+  it("puts College Debates under a Videos h1", () => {
+    const html = renderSidebar();
+    expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
+    expect(html).toMatch(/<h2[^>]*>College Debates<\/h2>/);
+    // The h1 comes first: College Debates is nested inside it, not a sibling.
+    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Debates<"));
+  });
+
+  it("renders Coaching / Research / Practice as h1 sections", () => {
+    const html = renderSidebar();
+    for (const title of ["Apps", "Coaching", "Research", "Practice"]) {
+      expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
+    }
+  });
+
+  it("never wraps an h1 section heading in a link", () => {
+    // Clicking a section heading toggles it and nothing else — the heading is
+    // a grouping, not a destination, so it must not be an anchor.
+    const html = renderSidebar();
+    for (const [anchor] of html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)) {
+      expect(anchor).not.toContain("<h1");
+    }
+  });
+
+  it("makes every h1 section a toggle button that starts expanded", () => {
+    const html = renderSidebar();
+    for (const title of ["Videos", "Apps", "Coaching", "Research", "Practice"]) {
+      expect(html).toMatch(
+        new RegExp(`<button[^>]*aria-expanded="true"[^>]*>(?:(?!</button>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+      );
+    }
+  });
+
+  it("shows every section's tools up front, on a page in none of them", () => {
+    // `usePathname` is mocked to `/videos`, which is in no tool section — the
+    // sections used to open only for the section holding the current page.
+    const html = renderSidebar();
+    expect(html).toContain("Coaching Programs");
+    expect(html).toContain("Evidence Library");
+    expect(html).toContain("Judge Paradigm Picker");
+    expect(html).toContain("All Tools");
+  });
+});
+
 describe("QuickLinksGrid", () => {
   it("renders both layouts without throwing and with usable image sources", () => {
     for (const layout of ["grid", "list"] as const) {
