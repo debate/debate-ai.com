@@ -7,6 +7,69 @@ _No task currently in progress._
 
 ### Completed
 
+- **📚 Practice Drills — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this repo
+  again has several parallel sessions racing on that same gap (four open
+  PRs at the start of this run — `#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel` — plus half a dozen unmerged, mostly stale branches
+  based on old `master` HEADs), so this run cross-checked both the open-PR
+  list and every unmerged branch's log (one, `claude/gifted-babbage-i2zvcr`,
+  claims `FlowSummariesPanel`) before a direct grep of every panel in
+  `debate-practice-drills` for a `storage`-event listener confirmed
+  `DrillSetsPanel` (backed by its `useDrillSets` hook, not read directly by
+  the panel) was still genuinely open and unclaimed.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isDrillSetsPanelLiveUpdateStorageEvent`, covering the hook's one backing
+  store: `drillSets` (the per-round drill-set list the panel derives its
+  round cards, completion meters, and Practice-tier card from).
+  `useDrillSets` (`hooks/useDrillSets.ts`) now subscribes to `window`'s
+  `storage` event and re-reads `buildDrillSetsPanelView()` when the
+  predicate matches — mirroring `useWordCountRounds`'s own `storage`-event
+  subscription (the "panel reads through a hook, not directly" pattern) —
+  so a drill set generated, completed, scripted, review-scheduled, cleared,
+  or synced from the account in one tab now shows up in every other open
+  `/drills` tab without a manual reload. The in-progress "Generate drills
+  for current round" form's side-key field is left untouched, matching
+  every other closed panel's "refresh the derived view, not the draft"
+  convention.
+
+  See `docs/features/drill-sets.md`'s new "Cross-tab live update" section
+  and `docs/features/shared-flow-sync.md`'s updated Known gaps bullet
+  (added `DrillSetsPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `AiVersusRoundPanel`, `CoachingSessionsPanel`, and
+  `PracticeRoundSimulatorPanel` (`debate-practice-drills`, confirmed still
+  missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5203 passing, up from
+  5199 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
+  PR: [#669](https://github.com/debate/debate-ai.com/pull/669).
 - **🔢 Word-Count-Only Speech Format — cross-tab live update.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability
