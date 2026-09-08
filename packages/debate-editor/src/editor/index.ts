@@ -1296,6 +1296,24 @@ export function getActiveView(): EditorView | null {
   return view;
 }
 
+/** Tell the engine which document is mounted, for an embedder that put it
+ *  there itself.
+ *
+ *  The React shell (`../react/singleton.ts`) loads the host app's document by
+ *  replacing this view's editor state directly — it owns the document
+ *  identity, not the engine's file machinery. That path never runs
+ *  `mountView`, so without this `currentDoc` kept pointing at the last doc
+ *  the ENGINE mounted, which in an embed is the blank starter from boot. Any
+ *  later `mountView(currentDoc)` — a spawned-session mount, a damaged-file
+ *  fallback — then remounted that blank starter over the host's document, and
+ *  the file the user had open went blank. `currentDoc` is only ever a
+ *  remount's fallback content, so declaring it is enough; nothing else about
+ *  the doc's identity (filename, handle, dirty state) belongs to the engine
+ *  in an embed. */
+export function adoptEmbeddedDoc(doc: PMNode): void {
+  currentDoc = doc;
+}
+
 /** Benchmark lifecycle (Settings → Benchmark). The mutating editing test runs
  *  on the live doc, but `dispatchTransaction` checks `isBenchmarkActive()` and
  *  skips the autosave / dirty / nav-rebuild side effects, so nothing touches

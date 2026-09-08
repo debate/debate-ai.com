@@ -40,6 +40,8 @@ export default function ReasonEditorPage() {
     topicDocument,
     loading,
     saving,
+    unsaved,
+    saveFailed,
     ensureLoaded,
     selectTab,
     closeTab,

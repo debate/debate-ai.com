@@ -21,6 +21,7 @@ import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
+import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
@@ -317,6 +318,17 @@ export function LecturesVideoGridView({
               />
             </div>
           )}
+
+          {/* The rest of the sidebar tree — Apps / Coaching / Research /
+              Practice and the glossary/rankings pair. The tiles above cover
+              only its Videos section, so without this the tool sections had
+              no counterpart on a phone anywhere on the page (the dock's
+              Settings menu carries them too, as its Videos/Apps/… submenus).
+              Sections start collapsed here: expanded, forty rows would push
+              the video grid off the screen. */}
+          <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
+            <ToolNavTree defaultExpanded={false} />
+          </nav>
 
           <Footer />
         </div>

@@ -7,6 +7,51 @@ _No task currently in progress._
 
 ### Completed
 
+- **🩹 CardMirror embed: a loaded file can no longer go blank — or save itself
+  blank.** Reported from the field: "after a file is loaded sometimes it
+  disappears and goes blank." It was never only a display bug. The web hosts
+  (`/reason-editor`, Flow's speech-doc panels) persist whatever the embed's
+  `onChange` reports, and the reporter fired on ANY doc change — including
+  the ones the engine makes on its own initiative, which in an embed means
+  its blank starter doc. The blank was written to `documents` and the file
+  was gone.
+
+  Four failures, each proven and each now covered by a test:
+
+  1. **Every doc change counted as a user edit.** `change-reporter.ts` now
+     tells a transaction (a real edit) apart from a whole-state replacement
+     (the engine's `mountView` — boot, New/Open, crash recovery, a joined
+     session) using plugin state, which `apply`s for transactions only. Only
+     the first is reported. A blank replacement the user didn't ask for is
+     restored from the loaded document instead of left on screen, and the
+     engine is told which doc is mounted (`adoptEmbeddedDoc`) so its own
+     `currentDoc` — the fallback content for any remount it does itself —
+     stops pointing at the blank starter from boot.
+  2. **Unreadable stored content mounted as blank.** `htmlToDoc` answered
+     "this didn't parse" and "this document is empty" with the same blank
+     doc. `parseHtml` now reports which; a failed load keeps what's on
+     screen, files a durable notice, and blocks all reporting for that
+     document so the intact copy on the server survives.
+  3. **Footnotes were dropped by every HTML round trip.** A footnote ref
+     serializes to an empty `<sup>`; ProseMirror collects mark rules before
+     node rules, so the generic `superscript` mark rule matched first and the
+     footnote came back as a mark on no text. The node rule now carries
+     `priority: 60`.
+  4. **Edits went to the wrong document, or nowhere.** The change debounce is
+     flushed before the live binding changes and on page hide; the provider's
+     single shared save timer — which cancelled a *different* document's
+     pending write, so renaming a file and then typing in another silently
+     dropped the rename — is replaced by `lib/reason-docs/save-queue.ts`: one
+     debounce per document, merged patches, `keepalive` flush on `pagehide`
+     and tab-hide, retry with backoff, queued writes cancelled on delete, and
+     a real `Saving…`/`Unsaved changes`/`Couldn't save — retrying…` indicator
+     instead of a `Saving…` that never resolved.
+
+  See `docs/features/cardmirror-embed-persistence.md`. Tests:
+  `packages/debate-editor/test/change-reporter.test.ts`,
+  `packages/debate-editor/test/html-bridge.test.ts`,
+  `apps/debate-ai.com/lib/reason-docs/__tests__/save-queue.test.ts`.
+
 - **🧩 `PanelShell`/`PanelSection` adoption — `debate-search-evidence` package
   pass.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
