@@ -31,6 +31,13 @@ export default defineConfig({
       // (the D1 read-replication session wrapper, for one). Registered inline
       // rather than as a path, since the app's only Vitest config is this file.
       {
+        // The app's own `@/…` alias, so a lib module under test resolves its
+        // imports the same way the app does rather than only under `next build`.
+        resolve: {
+          alias: {
+            "@/": `${path.join(import.meta.dirname, "")}/`,
+          },
+        },
         test: {
           name: "debate-ai-web",
           environment: "node",

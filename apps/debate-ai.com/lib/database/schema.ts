@@ -1049,3 +1049,86 @@ export const savedSprintSessions = sqliteTable(
 );
 
 export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
+
+// Debate card library — the searchable corpus behind /cards, loaded from the
+// published Parquet shards by `debate-cards-upload` (the CLI in
+// packages/debate-search-evidence/src/cli) or by the admin panel's Parquet
+// uploader. Both post batches to /api/admin/debate-cards, which upserts here.
+//
+// `id` is the dump's own card id rather than an autoincrement, so re-importing
+// a shard updates the rows it already wrote instead of duplicating the corpus
+// — importing the same file twice is a no-op, and a corrected shard can be
+// replayed over the old one.
+//
+// The three text projections are stored side by side because search hits and
+// card display need different ones: `spoken` is the highlighted text as read
+// aloud, `fulltext` the unhighlighted body, and `markup` the card HTML with
+// its <mark>/<u> highlighting intact. `pocket`/`hat`/`block` are the dump's
+// three outline levels, which the search UI shows as one argument-block path.
+export const debateCards = sqliteTable(
+  "debate_cards",
+  {
+    id: integer("id").primaryKey(),
+    tag: text("tag").notNull().default(""),
+    cite: text("cite").notNull().default(""),
+    fullcite: text("fullcite").notNull().default(""),
+    summary: text("summary").notNull().default(""),
+    spoken: text("spoken").notNull().default(""),
+    fulltext: text("fulltext").notNull().default(""),
+    textLength: integer("text_length").notNull().default(0),
+    markup: text("markup").notNull().default(""),
+    pocket: text("pocket").notNull().default(""),
+    hat: text("hat").notNull().default(""),
+    block: text("block").notNull().default(""),
+    bucketId: integer("bucket_id").notNull().default(0),
+    duplicateCount: integer("duplicate_count").notNull().default(0),
+    side: text("side").notNull().default(""),
+    caselistDisplayName: text("caselist_display_name").notNull().default(""),
+    year: integer("year").notNull().default(0),
+    event: text("event").notNull().default(""),
+    level: text("level").notNull().default(""),
+    /** Shard the row came from, so one file's import can be audited or replaced. */
+    sourceFile: text("source_file").notNull().default(""),
+    importedAt: integer("imported_at")
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    yearIdx: index("idx_debate_cards_year").on(table.year),
+    eventIdx: index("idx_debate_cards_event").on(table.event),
+    levelIdx: index("idx_debate_cards_level").on(table.level),
+    sideIdx: index("idx_debate_cards_side").on(table.side),
+    caselistIdx: index("idx_debate_cards_caselist").on(table.caselistDisplayName),
+    bucketIdx: index("idx_debate_cards_bucket").on(table.bucketId),
+    sourceFileIdx: index("idx_debate_cards_source_file").on(table.sourceFile),
+  }),
+);
+
+export type DebateCardRow = typeof debateCards.$inferSelect;
+
+// One row per Parquet shard an admin has imported, so the admin panel can show
+// what the library is made of and the operator can tell a re-import from a
+// first import. Written by the same endpoint that upserts `debate_cards`;
+// `rows_imported` accumulates across the many batches one shard arrives in.
+export const debateCardImports = sqliteTable(
+  "debate_card_imports",
+  {
+    fileName: text("file_name").primaryKey(),
+    /** Cards written from this shard, summed across every batch. */
+    rowsImported: integer("rows_imported").notNull().default(0),
+    /** Rows the importer refused, summed the same way. */
+    rowsSkipped: integer("rows_skipped").notNull().default(0),
+    /** Run id shared by the batches, for correlating with the server logs. */
+    lastImportId: text("last_import_id").notNull().default(""),
+    /** Admin who started the most recent batch. */
+    lastImportedBy: text("last_imported_by").notNull().default(""),
+    firstImportedAt: integer("first_imported_at")
+      .notNull()
+      .default(sql`(unixepoch())`),
+    lastImportedAt: integer("last_imported_at")
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+);
+
+export type DebateCardImportRow = typeof debateCardImports.$inferSelect;

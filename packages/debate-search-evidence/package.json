@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "upload:cards": "bun run src/cli/upload-parquet.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "2.1.16",
@@ -26,6 +27,8 @@
     "debate-card-parser": "workspace:*",
     "fuse.js": "^7.1.0",
     "grab-url": "^1.6.7",
+    "hyparquet": "^1.30.0",
+    "hyparquet-compressors": "^1.1.1",
     "lucide-react": "^0.577.0",
     "react-native-app-buttons": "^0.1.4",
     "react-resizable-panels": "^4.7.2",
@@ -44,5 +47,8 @@
     "next": "16.1.6",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
+  },
+  "bin": {
+    "debate-cards-upload": "./src/cli/upload-parquet.ts"
   }
 }
