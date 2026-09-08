@@ -70,6 +70,7 @@ _No task currently in progress._
   no behavior changed), `bunx turbo run typecheck` (16/16 packages green),
   and `bun run build:web` (passed cleanly). No `lint`/`format:check` script
   exists anywhere in this repo, so that step was skipped as not applicable.
+  PR: #683.
 - **fix(judge-decision): restore a lost cross-tab live-update export that broke `bun run build:web`.**
   Before picking a new item, this run's routine "inspect the repository's
   current development state" step ran the full verification gate
