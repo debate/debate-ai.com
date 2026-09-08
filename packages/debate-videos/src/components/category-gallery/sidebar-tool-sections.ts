@@ -1,6 +1,6 @@
 /**
  * @fileoverview The Coaching / Research / Practice tool sections rendered in
- * the videos sidebar underneath the "Lectures" node. Mirrors the entries of
+ * the videos sidebar underneath the "Videos" node. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
  * three headings the sidebar shows and trimmed to the label + href the tree
  * needs — the sidebar lives in this package, which cannot import app-local
@@ -21,7 +21,12 @@ export interface SidebarToolSection {
   /** Stable id, used to key the section's expanded state. */
   id: string;
   title: string;
-  /** Destination of the section heading itself — its flagship tool. */
+  /**
+   * The section's flagship tool. The heading itself no longer links anywhere
+   * — it only toggles the section (see `ToolNavTree`) — so this is here for
+   * `sidebar-routes`, which folds it into the set of paths that get the tool
+   * sidebar. The same href is always listed in `tools` as well.
+   */
   href: string;
   icon: LucideIcon;
   tools: SidebarToolLink[];

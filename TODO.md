@@ -7,54 +7,70 @@ _No task currently in progress._
 
 ### Completed
 
-- **📁 Docs sidebar — files in every sidebar, opened in CardMirror.**
-  Two gaps in the REASON docs panels (Files / Topic Starters / Open Tabs),
-  reported from `/debate`: the files were missing from `/videos`, and a
-  click on one was only guaranteed to load that file into CardMirror when
-  the hop happened to stay client-side.
+- **🎓 Coaching Programs — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this panel) and every
+  unmerged branch's diff (none touch `CoachingProgramsPanel.tsx` or its
+  backing stores — `state/coachingPrograms.ts`,
+  `state/persistedCoachingProgramBoard.ts`, `state/roundContributorFlows.ts`
+  — so the "multiple parallel branches mid-refactor" note that left this
+  panel unclaimed in a prior run no longer applies) before confirming via a
+  direct grep of every panel in `debate-team-collaboration` for an existing
+  `storage`-event listener that `CoachingProgramsPanel` was still genuinely
+  open and unclaimed, alongside `UserSettingsPanel` (`debate-round` — left
+  for a future run, since its `form` is a live, directly-editable settings
+  form rather than a derived list/roster view, so closing it needs
+  refreshing only the persisted values, not stomping an unsaved in-progress
+  edit).
 
-  `/videos` renders its own sidebar (`LecturesVideoGridView`'s `<aside>`)
-  rather than the app's `AppSidebarShell`, so it was the one route with a
-  sidebar but no files in it — the panels simply had nowhere to mount.
-  `LecturesPage`/`LecturesVideoGridView` now take a `docsSlot` alongside
-  the existing `dockSlot`, for the same reason: the panels read app-level
-  document state and route into `/reason-editor`, neither of which
-  `debate-videos` can reach. `app/videos/page.tsx` and
-  `app/videos/[category]/page.tsx` pass `<ReasonDocsSidebarPanels />` into
-  it, under the dock and above the nav tree — the same order
-  `AppSidebarShell` uses, since the tree is long enough that anything
-  below it starts under the fold.
+  Added `packages/debate-team-collaboration/src/state/live-update.ts` (the
+  first `live-update.ts` in this package) with
+  `COACHING_PROGRAMS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isCoachingProgramsPanelLiveUpdateStorageEvent`, covering the two stores
+  `CoachingProgramsPanel` reads directly regardless of which board is open:
+  `coachingPrograms` (the persisted program-config list) and
+  `roundContributorFlows` (each roster member's "Flow recorded" badge).
+  `CoachingProgramsPanel.tsx` now subscribes to `window`'s `storage` event
+  and, when the predicate matches, refreshes the program list, re-derives
+  the roster's recorded-contributor set, and — if a board is currently open
+  — recomposes it. A program's expanded board also transitively depends on
+  several other packages' stores (topic-sprint inputs, the group-challenge
+  roster, the contribution feed, win events, and practice-round records,
+  all read through `state/persistedCoachingProgramBoard.ts`); those are
+  deliberately left out of this predicate, matching every other panel's
+  "cover the store(s) this panel reads directly, not everything a composed
+  view transitively depends on" convention (e.g. `JudgeDecisionPanel`'s
+  hook-scoped predicate) — a change to one of those deeper stores in
+  another tab still shows up the next time the board is reopened. This is
+  recorded as a follow-up in `docs/features/coaching-programs.md`'s Known
+  gaps rather than silently left unmentioned.
 
-  Selections now travel in the URL as well as in provider state:
-  `/reason-editor?doc=<id>` for an owned document, `?topic=<id>` for a
-  public topic starter. Provider state covers a client-side hop but not a
-  reload, a pasted link, or a hard navigation — `/videos` is its own
-  layout branch and can boot the editor with an empty provider, which is
-  exactly the case the report came from. New
-  `apps/debate-ai.com/lib/reason-docs/route-selection.ts` owns both ends of
-  that round trip as pure functions (`editorHrefForSelection`,
-  `parseSelectionParams`, `resolveSelection`) so the sidebar and the editor
-  route cannot drift; `ReasonDocsRouteSync` is the thin React wrapper that
-  applies it on `/reason-editor`. A stale or foreign id falls through to
-  the first-file fallback rather than erroring, and the deep link applies
-  once per URL so a reader who then picks something else isn't dragged
-  back.
+  See `docs/features/coaching-programs.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `CoachingProgramsPanel` to the closed list).
+  Vitest-covered: `packages/debate-team-collaboration/test/live-update.test.ts`
+  (every backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, mirroring every other
+  panel's cases in that file).
 
-  The first-file fallback moved out of `app/reason-editor/page.tsx` into
-  that same function, which is the actual bug fix behind "opens with that
-  file loaded": as two sibling effects they raced — the fallback's closure
-  still saw no selection in the commit where the deep link opened its file,
-  and opened the first file over the top of it.
-
-  See the new `docs/features/reason-docs-sidebar.md`. Vitest-covered:
-  `apps/debate-ai.com/lib/reason-docs/__tests__/route-selection.test.ts`
-  (href round trip, malformed ids, deep link beating the fallback, stale
-  ids falling through to it, the applied-once rule, and topic/document id
-  namespaces staying separate) and
-  `packages/debate-videos/test/lectures-sidebar-docs-slot.test.tsx` (the
-  slot renders, sits above the nav tree and below the dock, and the
-  sidebar still renders when no panels are supplied).
-
+  Ran the full verification gate: `bun run test` (5232 passing, up from
+  5228 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
 - **🧪 Practice Round Simulator — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
