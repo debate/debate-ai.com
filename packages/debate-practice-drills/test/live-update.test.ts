@@ -5,6 +5,7 @@ import {
   COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   COUNSEL_PANEL_ASSESSMENTS_LIVE_UPDATE_STORAGE_KEYS,
   DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
+  FLOW_SUMMARIES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   OPPONENT_PERSONA_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS,
@@ -16,6 +17,7 @@ import {
   isCoachingSessionsPanelLiveUpdateStorageEvent,
   isCounselPanelAssessmentsLiveUpdateStorageEvent,
   isDrillSetsPanelLiveUpdateStorageEvent,
+  isFlowSummariesPanelLiveUpdateStorageEvent,
   isJudgeDecisionPanelLiveUpdateStorageEvent,
   isJudgeParadigmPickerPanelLiveUpdateStorageEvent,
   isOpponentPersonaPickerPanelLiveUpdateStorageEvent,
@@ -263,5 +265,27 @@ describe("isOpponentPersonaPickerPanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains the tracked store name as a substring", () => {
     expect(isOpponentPersonaPickerPanelLiveUpdateStorageEvent({ key: "old_opponentPersonaSelections" })).toBe(false);
     expect(isOpponentPersonaPickerPanelLiveUpdateStorageEvent({ key: "opponentPersonaSelectionsBackup" })).toBe(false);
+  });
+});
+
+describe("isFlowSummariesPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads directly", () => {
+    for (const key of FLOW_SUMMARIES_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isFlowSummariesPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isFlowSummariesPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isFlowSummariesPanelLiveUpdateStorageEvent({ key: "drillSets" })).toBe(false);
+    expect(isFlowSummariesPanelLiveUpdateStorageEvent({ key: "judgeDecisions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains the tracked store name as a substring", () => {
+    expect(isFlowSummariesPanelLiveUpdateStorageEvent({ key: "old_flowSummaries" })).toBe(false);
+    expect(isFlowSummariesPanelLiveUpdateStorageEvent({ key: "flowSummariesBackup" })).toBe(false);
   });
 });

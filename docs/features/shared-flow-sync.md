@@ -524,9 +524,11 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   since they were last loaded/saved are refreshed, never an in-progress
   edit), `OpponentPersonaPickerPanel` (see
   [`practice-opponent.md`](practice-opponent.md)'s "Cross-tab live update"),
-  and `FlowEditLogPanel` itself (see
-  "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
-  equivalent mechanism for their own stores, but every other
+  `FlowEditLogPanel` itself (see
+  "Cross-tab live update in `FlowEditLogPanel`" above), and
+  `FlowSummariesPanel` (see [`flow-summaries.md`](flow-summaries.md)'s
+  "Cross-tab live update") have since gained the equivalent mechanism for
+  their own stores, but every other
   localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to

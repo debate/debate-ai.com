@@ -21,6 +21,14 @@
  * so an extracted argument renders exactly like one derived from a manually
  * flowed grid.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isFlowSummariesPanelLiveUpdateStorageEvent` —
+ * closing the "every other localStorage-backed panel in this repo still has
+ * no cross-tab live-update mechanism" Known gap noted in
+ * `docs/features/shared-flow-sync.md`, for `FlowSummariesPanel` — so a
+ * summary generated, extracted, or cleared in another same-origin tab shows
+ * up here without a manual reload.
+ *
  * A "🎤 Record" button next to the transcript field closes the "recording"
  * half of follow-up (a) — `hooks/useMicrophoneTranscription.ts` dictates
  * directly into the same field via the browser's own Web Speech API, with
@@ -83,6 +91,7 @@ import { extractTranscriptsBulk, summarizeBulkTranscriptOutcomes } from "../roun
 import { requestTranscriptExtraction } from "../round/transcript-extraction-client"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { isFlowSummariesPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 /** One speech/transcript entry in the bulk-extraction form, before trimming/validation. */
 interface ExtractEntryDraft {
@@ -137,6 +146,18 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
   }, [])
 
   const refresh = () => setRecords(buildFlowSummariesPanelView())
+
+  // A `storage` event never fires in the tab that made the write, only in
+  // other same-origin tabs — this is the cross-tab signal a mount-only read
+  // can't catch on its own.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowSummariesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleClear = (roundId: string) => {
     deleteFlowSummary(roundId)
