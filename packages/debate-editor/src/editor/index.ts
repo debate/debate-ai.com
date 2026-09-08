@@ -1636,7 +1636,9 @@ const ribbonContext: RibbonContext = {
   openShortcutsReference: () => openReference(),
   toggleCommentsVisible: () => {
     if (!commentsColumn || !commentsColumnEl) return;
-    const next = commentsColumnEl.hidden;
+    // `hidden` reflects an attribute that can also be the string
+    // "until-found", so coerce rather than pass it straight to setVisible().
+    const next = Boolean(commentsColumnEl.hidden);
     commentsColumn.setVisible(next);
     commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
     commentsColumn.render();
@@ -2736,7 +2738,7 @@ export function notifyCommentsForActiveTransaction(
 }
 if (commentsToggleBtn && commentsColumn) {
   commentsToggleBtn.addEventListener('click', () => {
-    const next = commentsColumnEl?.hidden ?? true;
+    const next = commentsColumnEl ? Boolean(commentsColumnEl.hidden) : true;
     commentsColumn.setVisible(next);
     commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
     commentsColumn.render();

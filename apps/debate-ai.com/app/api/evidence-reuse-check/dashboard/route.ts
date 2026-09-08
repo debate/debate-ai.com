@@ -30,7 +30,7 @@ export async function GET() {
     .orderBy(desc(reuseCheckLog.checkedAt))
     .limit(MAX_LOG_ROWS_SCANNED)
 
-  const records: ReuseCheckLogRecord[] = rows.map((row) => ({
+  const records: ReuseCheckLogRecord[] = rows.map((row: typeof reuseCheckLog.$inferSelect) => ({
     url: row.url,
     normalizedUrl: row.normalizedUrl,
     alreadyCut: row.alreadyCut,
