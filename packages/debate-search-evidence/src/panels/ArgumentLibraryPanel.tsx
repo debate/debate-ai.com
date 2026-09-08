@@ -57,7 +57,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "../ui/panels/panel-shell"
 import {
   buildCombinedPersistedArgumentLibrary,
   renameTagAcrossCombinedPersistedStores,
@@ -195,12 +195,7 @@ export function ArgumentLibraryPanel() {
   const caseVariantGroups = findTagCaseVariantGroups(library.tagCollections)
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Common Argument Library</h1>
-        <p className="text-sm text-muted-foreground">{buildLibrarySummaryText(library)}</p>
-      </div>
-
+    <PanelShell title="Common Argument Library" description={buildLibrarySummaryText(library)}>
       {library.tagCollections.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           {library.tagCollections.map((collection) => (
@@ -443,7 +438,7 @@ export function ArgumentLibraryPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
 

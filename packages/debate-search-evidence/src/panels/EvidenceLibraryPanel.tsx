@@ -128,7 +128,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { Textarea } from "../ui/primitives/textarea"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import {
   bulkEditTagsForPersistedEntries,
   checkPersistedPageForExistingCards,
@@ -515,15 +515,10 @@ export function EvidenceLibraryPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Shared Evidence Library</h1>
-        <p className="text-sm text-muted-foreground">
-          Submit a cut card or reusable analytic block, then search the team repository by
-          keyword, citation, or argument.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Shared Evidence Library"
+      description="Submit a cut card or reusable analytic block, then search the team repository by keyword, citation, or argument."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         {editingId && (
           <p className="text-sm font-medium text-foreground">
@@ -653,15 +648,12 @@ export function EvidenceLibraryPanel() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Check this page</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste a page URL to see whether anyone has already cut a card from it before you start
-            cutting. The Debate AI browser extension runs this same check automatically for the
-            page you're on — see <code>apps/debate-web-ext</code> in the repo to install it.
-          </p>
-        </div>
+      <PanelSection title="Check this page" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste a page URL to see whether anyone has already cut a card from it before you start
+          cutting. The Debate AI browser extension runs this same check automatically for the
+          page you're on — see <code>apps/debate-web-ext</code> in the repo to install it.
+        </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             value={reuseCheckUrl}
@@ -752,17 +744,15 @@ export function EvidenceLibraryPanel() {
             </ul>
           </div>
         )}
-      </div>
+      </PanelSection>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Team reuse dashboard</h2>
-          <p className="text-xs text-muted-foreground">
-            Pages flagged as already-cut across every "Check this page" lookup the team has run —
-            web app and browser extension alike — so a coach can spot reuse patterns at a glance
-            instead of checking one page at a time.
-          </p>
-        </div>
+      <PanelSection
+        title="Team reuse dashboard"
+        description={
+          'Pages flagged as already-cut across every "Check this page" lookup the team has run — web app and browser extension alike — so a coach can spot reuse patterns at a glance instead of checking one page at a time.'
+        }
+        className="rounded-lg border border-border p-4"
+      >
         {reuseDashboard.error && (
           <p className="text-xs text-muted-foreground">Team dashboard unavailable ({reuseDashboard.error}).</p>
         )}
@@ -795,7 +785,7 @@ export function EvidenceLibraryPanel() {
             ))}
           </ul>
         )}
-      </div>
+      </PanelSection>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Input
@@ -842,10 +832,7 @@ export function EvidenceLibraryPanel() {
         />
       </div>
       {pendingEntries.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-foreground">
-            Pending review ({pendingEntries.length})
-          </h2>
+        <PanelSection title={`Pending review (${pendingEntries.length})`}>
           <p className="text-xs text-muted-foreground">
             These entries have an in-progress <code>CardReview</code> and won&apos;t appear in
             search results until the review reaches &quot;Published&quot; in the Review Queue.
@@ -872,7 +859,7 @@ export function EvidenceLibraryPanel() {
               </div>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
       <p className="text-sm text-muted-foreground">{buildEvidenceSearchSummaryText(results, summaryQuery)}</p>
       {results.length === 0 ? (
@@ -971,6 +958,6 @@ export function EvidenceLibraryPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
