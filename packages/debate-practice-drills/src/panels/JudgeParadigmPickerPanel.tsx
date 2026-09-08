@@ -33,7 +33,7 @@ import { Input } from "debate-speech-writer/src/ui/primitives/input"
 import { Label } from "debate-speech-writer/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildCustomJudgeParadigm,
   buildJudgeParadigmPrompt,
@@ -155,15 +155,10 @@ export function JudgeParadigmPickerPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Judge Paradigm Picker</h1>
-        <p className="text-sm text-muted-foreground">
-          Pick a built-in AI judge paradigm for a round, or enter a real judge's own publicly stated
-          preferences as a custom paradigm.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Judge Paradigm Picker"
+      description="Pick a built-in AI judge paradigm for a round, or enter a real judge's own publicly stated preferences as a custom paradigm."
+    >
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="space-y-1.5">
           <Label htmlFor="paradigm-round-id">Round ID</Label>
@@ -282,6 +277,6 @@ export function JudgeParadigmPickerPanel() {
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

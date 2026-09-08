@@ -81,7 +81,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "debate-round/src/ui/primitives/select"
-import { EmptyState, MeterBar, PanelRow } from "debate-round/src/ui/panels/panel-shell"
+import {
+  EmptyState,
+  MeterBar,
+  PanelRow,
+  PanelSection,
+  PanelShell,
+} from "debate-round/src/ui/panels/panel-shell"
 import { getDrillSetCompletionStats, getDueDrillIndexes, type DrillSetRecord } from "../state/drillSets"
 import { buildDrillPracticeUnlockStatus, getTotalCompletedDrillCount } from "../state/drillProgressUnlocks"
 import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "debate-round/src/flow/drill-generator"
@@ -215,19 +221,15 @@ export function DrillSetsPanel() {
   const unlockStatus = buildDrillPracticeUnlockStatus(totalCompletedDrills)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Practice Drills</h1>
-        <p className="text-sm text-muted-foreground">
-          Quick practice drills generated from each round's flow — overview, frontline, cross-ex,
-          and collapse-scenario prompts.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {synced
-            ? "Drill sets — including AI scripts, completion, and review reminders — are synced to your account."
-            : "Sign in to sync your drill sets across devices."}
-        </p>
-      </div>
+    <PanelShell
+      title="Practice Drills"
+      description="Quick practice drills generated from each round's flow — overview, frontline, cross-ex, and collapse-scenario prompts."
+    >
+      <p className="-mt-3 text-xs text-muted-foreground">
+        {synced
+          ? "Drill sets — including AI scripts, completion, and review reminders — are synced to your account."
+          : "Sign in to sync your drill sets across devices."}
+      </p>
 
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div>
@@ -263,13 +265,15 @@ export function DrillSetsPanel() {
         />
       )}
       {drillSets.length > 0 && (
-        <div className="rounded-lg border border-border p-4">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">Practice tier</h2>
+        <PanelSection
+          title="Practice tier"
+          className="rounded-lg border border-border p-4"
+          actions={
             <Badge variant={TIER_BADGE_VARIANT[unlockStatus.tier] ?? "outline"} className="capitalize">
               {unlockStatus.tier}
             </Badge>
-          </div>
+          }
+        >
           <p className="mb-2 text-xs text-muted-foreground">
             {totalCompletedDrills} drill{totalCompletedDrills === 1 ? "" : "s"} practiced across every round —
             shares the same Progress Unlocks tiers and badges as the rest of the site.
@@ -298,7 +302,7 @@ export function DrillSetsPanel() {
           ) : (
             <p className="text-xs text-muted-foreground">Top tier reached.</p>
           )}
-        </div>
+        </PanelSection>
       )}
       {drillSets.length > 0 && (
         <div className="flex items-center gap-2">
@@ -446,6 +450,6 @@ export function DrillSetsPanel() {
           </div>
         )
       })}
-    </div>
+    </PanelShell>
   )
 }
