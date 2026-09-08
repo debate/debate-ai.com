@@ -513,7 +513,9 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   `AiVersusRoundPanel` (see [`ai-versus-rounds.md`](ai-versus-rounds.md)'s
   "Cross-tab live update"), `CoachingSessionsPanel` (see
   [`coaching-sessions.md`](coaching-sessions.md)'s "Cross-tab live update"),
-  and `FlowEditLogPanel` itself (see
+  `PracticeRoundSimulatorPanel` (see
+  [`practice-round-simulator.md`](practice-round-simulator.md)'s "Cross-tab
+  live update"), and `FlowEditLogPanel` itself (see
   "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
   equivalent mechanism for their own stores, but every other
   localStorage-backed panel in this repo still has none (Live Sync

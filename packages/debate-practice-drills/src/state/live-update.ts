@@ -22,6 +22,8 @@
  * `isAiVersusRoundPanelLiveUpdateStorageEvent` closes it for
  * `AiVersusRoundPanel`. `isCoachingSessionsPanelLiveUpdateStorageEvent`
  * closes it for `CoachingSessionsPanel`.
+ * `isPracticeRoundSimulatorPanelLiveUpdateStorageEvent` closes it for
+ * `PracticeRoundSimulatorPanel`.
  *
  * @module state/live-update
  */
@@ -215,5 +217,39 @@ export function isCoachingSessionsPanelLiveUpdateStorageEvent(event: { key: stri
   return (
     event.key === null ||
     (COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `PracticeRoundSimulatorPanel` reads directly:
+ * `debate-round`'s `state/practiceRounds.ts` own `"practiceRounds"` store
+ * (the saved-round-setup list the panel's form, per-round sections, and
+ * "Compare your past attempts" section all derive from) and `debate-round`'s
+ * `state/aiVersusRounds.ts` own `"aiVersusRounds"` store (read directly via
+ * `getAiVersusRound`/`getPracticeRoundSubmittedSpeeches` for each round's
+ * submitted-speech progress and "Generate AI opponent speech" availability).
+ * The account-synced custom opponent persona library
+ * (`useCustomOpponentPersonaLibrary`, "My persona library"/"Shared by your
+ * team") is deliberately excluded — it manages its own refresh through that
+ * hook rather than a raw `localStorage` read, matching
+ * `OpponentPersonaPickerPanel`'s own exclusion of the same hook.
+ */
+export const PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "practiceRounds",
+  "aiVersusRounds",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `PracticeRoundSimulatorPanel` to
+ * refresh its rendered round list. A `null` key (e.g. from
+ * `localStorage.clear()`, per the `StorageEvent` spec) counts too — the
+ * safest response to "everything changed" is refreshing. Any other key (an
+ * unrelated store elsewhere in the app) is ignored so an unrelated cross-tab
+ * write doesn't force a needless refresh.
+ */
+export function isPracticeRoundSimulatorPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

@@ -6,6 +6,7 @@ import {
   COUNSEL_PANEL_ASSESSMENTS_LIVE_UPDATE_STORAGE_KEYS,
   DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS,
+  PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   VULNERABILITY_CHARTS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS,
   isAiVersusRoundPanelLiveUpdateStorageEvent,
@@ -14,6 +15,7 @@ import {
   isCounselPanelAssessmentsLiveUpdateStorageEvent,
   isDrillSetsPanelLiveUpdateStorageEvent,
   isJudgeParadigmPickerPanelLiveUpdateStorageEvent,
+  isPracticeRoundSimulatorPanelLiveUpdateStorageEvent,
   isVulnerabilityChartsPanelLiveUpdateStorageEvent,
   isWordCountRoundsLiveUpdateStorageEvent,
 } from "../src/state/live-update";
@@ -191,5 +193,27 @@ describe("isCoachingSessionsPanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: "old_coachingSessions" })).toBe(false);
     expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: "coachingSessionsBackup" })).toBe(false);
+  });
+});
+
+describe("isPracticeRoundSimulatorPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads directly", () => {
+    for (const key of PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key: "wordCountRounds" })).toBe(false);
+    expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key: "judgeDecisions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key: "old_practiceRounds" })).toBe(false);
+    expect(isPracticeRoundSimulatorPanelLiveUpdateStorageEvent({ key: "practiceRoundsBackup" })).toBe(false);
   });
 });
