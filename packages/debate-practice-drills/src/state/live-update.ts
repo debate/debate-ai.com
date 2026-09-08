@@ -17,6 +17,8 @@
  * `isArgumentTreePanelLiveUpdateStorageEvent` closes it for
  * `ArgumentTreePanel`. `isWordCountRoundsLiveUpdateStorageEvent` closes it
  * for `WordCountRoundsPanel`'s `useWordCountRounds` hook.
+ * `isDrillSetsPanelLiveUpdateStorageEvent` closes it for
+ * `DrillSetsPanel`'s `useDrillSets` hook.
  *
  * @module state/live-update
  */
@@ -141,5 +143,28 @@ export function isWordCountRoundsLiveUpdateStorageEvent(event: { key: string | n
   return (
     event.key === null ||
     (WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `useDrillSets` reads/writes through:
+ * `state/drillSets.ts`'s own `"drillSets"` store (the per-round drill-set
+ * list `DrillSetsPanel` renders, including each drill's completion,
+ * AI-script, and review-reminder state).
+ */
+export const DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["drillSets"] as const;
+
+/**
+ * Whether a `storage` event should trigger `useDrillSets` to refresh its
+ * rendered drill-set list. A `null` key (e.g. from `localStorage.clear()`,
+ * per the `StorageEvent` spec) counts too — the safest response to
+ * "everything changed" is refreshing. Any other key (an unrelated store
+ * elsewhere in the app) is ignored so an unrelated cross-tab write doesn't
+ * force a needless refresh.
+ */
+export function isDrillSetsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
