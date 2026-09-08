@@ -7,6 +7,246 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗑️ Remove dead `debate-videos` `panels/rankings/` duplicate tree
+  (Follow-up item).** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/
+  `documents`/`saved_flows`/`saved_rounds` and 25+ other `saved_*` D1
+  tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice picked up the open
+  Follow-up: "`debate-videos`' leaderboard panels appear to exist as a
+  duplicated tree... not yet investigated for which tree (if either) is
+  dead code versus which is actually wired up to a route. Needs its own
+  slice to confirm before deleting anything."
+
+  Confirmed via a repo-wide grep of every `RankingsLeaderboardPanel`/
+  `DebateRankingsPanel`/`StandingsPanel`/`panels/rankings` reference that
+  `packages/debate-videos/src/panels/leaderboard/RankingsLeaderboardPanel`
+  is the tree `debate-videos`' `index.ts` exports as `LeaderboardPanel` and
+  that `apps/debate-ai.com/app/rank/page.tsx` (the live `/rank` route)
+  renders. `packages/debate-videos/src/panels/rankings/DebateRankingsPanel`
+  and its five sibling files (`LeaderboardChampionBanner.tsx`,
+  `LeaderboardDataRow.tsx`, `LeaderboardFilterBar.tsx`,
+  `LeaderboardTable.tsx`, `LeaderboardTableHeader.tsx`,
+  `leaderboardTypes.ts`, `leaderboardUtils.ts`) had zero references anywhere
+  outside their own directory — not `index.ts`, not any route, not any doc,
+  not any test. A file-by-file diff against the `leaderboard/` tree showed
+  5 of 7 shared filenames were byte-identical duplicates, and the main
+  panel (`DebateRankingsPanel` vs. `RankingsLeaderboardPanel`) was a strict
+  subset missing the later-added "Standings" tab (`StandingsPanel`) — i.e.
+  `rankings/` was `leaderboard/`'s predecessor, left behind as dead code
+  after the rename/rebuild rather than deleted. Deleted the entire
+  `packages/debate-videos/src/panels/rankings/` directory (8 files, ~1,090
+  lines). No doc referenced the dead directory, so no doc updates were
+  needed; no new tests were needed since this removes unreferenced code
+  rather than changing behavior — the existing `leaderboard-utils.test.ts`
+  (which already imports only from `leaderboard/`) continues to cover the
+  live tree.
+
+  Ran the full verification gate against a clean `bun install` (removed and
+  reinstalled all `node_modules`): `bun run test` (331 test files, 6,989
+  tests passing), `bunx turbo run typecheck` (16/17 tasks green —
+  `debate-ai-web#typecheck` fails identically with this change reverted, in
+  a git worktree of `origin/master`, and in a fresh `bun install` of this
+  same branch, all with an unrelated `@ai-sdk/provider` v2-vs-v3 type
+  conflict pulled in transitively through `write-language`; the resolution
+  bun's flat-node_modules hoisting picks for that conflicting transitive
+  dependency appears to vary between separate `bun install` runs — same
+  `bun.lock`, same `package.json` in every case checked — independent of
+  this change), and `bun run build:web` (production build completes
+  successfully, including the service-worker asset-list generation step and
+  the `/rank` route). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable.
+
+  **Follow-up:** the `debate-ai-web#typecheck` / `write-language` /
+  `@ai-sdk/provider` version-conflict flakiness above is pre-existing and
+  unrelated to this change, but is newly documented here (not previously
+  called out in this tracker) — worth a dedicated slice to either pin
+  `write-language`'s `@ai-sdk/provider` peer to the same major version the
+  rest of the app uses, or otherwise make the hoisted resolution
+  deterministic, so `typecheck` stops being install-order-dependent.
+
+- **📋 Speech Transcript Summaries — cross-tab live update.** Another repeat
+  of the standing autonomous-routine prompt ("integrate all the tools into
+  the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap. The prior
+  run's list of still-open panels (`AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel`) turned out to be stale — a fresh grep of every
+  `panels/*.tsx` file (and the hooks they read through) for an existing
+  `storage`-event listener, cross-checked against the open PR list (none
+  open against this Known gap at the start of this run), showed all but
+  `FlowSummariesPanel` had already been closed by intervening runs, so this
+  slice picked `FlowSummariesPanel` as the one genuinely still-unclaimed
+  panel.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `FLOW_SUMMARIES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isFlowSummariesPanelLiveUpdateStorageEvent`, covering the panel's one
+  direct backing store: `flowSummaries` (the per-round flow-summary list).
+  `FlowSummariesPanel.tsx` now subscribes to `window`'s `storage` event and
+  calls its existing `refresh()` closure when the predicate matches — a
+  summary generated (manually or via AI transcript extraction), or cleared,
+  in one tab now shows up in every other open tab without a manual reload.
+
+  See `docs/features/flow-summaries.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `FlowSummariesPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored).
+
+  Ran the full verification gate: `npx vitest run --config
+  apps/debate-ai.com/vitest.config.ts` (331 test files, 6980 tests passing),
+  `bunx turbo typecheck --filter=debate-practice-rounds` (12/12 tasks
+  green), and `bun run build:web` (production build completes
+  successfully, including the service-worker asset-list generation step).
+  No `lint`/`format:check` script exists anywhere in this repo, so that
+  step was skipped as not applicable.
+- **🎭 Opponent Persona Picker — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap. Two other
+  sessions had open PRs against the same Known gap for `JudgeDecisionPanel`
+  (#658) and `ResponseOutcomeChartsPanel` (#657) at the start of this run,
+  so this slice cross-checked the open-PR list first and picked
+  `debate-practice-drills`'s `OpponentPersonaPickerPanel` instead — a
+  genuinely still-unclaimed panel confirmed via a direct grep of every
+  `panels/*.tsx` file in the repo for an existing `storage`-event listener.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` (which
+  already held `JudgeParadigmPickerPanel`'s own predicate) with
+  `OPPONENT_PERSONA_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isOpponentPersonaPickerPanelLiveUpdateStorageEvent`, covering the panel's
+  one direct backing store: `opponentPersonaSelections` (the per-session
+  saved-persona list). `OpponentPersonaPickerPanel.tsx` now subscribes to
+  `window`'s `storage` event and calls its existing `refresh()` closure when
+  the predicate matches — a teammate saving or clearing a session's opponent
+  persona in one tab now shows up in every other open tab without a manual
+  reload. The account-synced custom-persona library ("My persona library"/
+  "Shared by your team", via `useCustomOpponentPersonaLibrary`) is
+  deliberately excluded — it manages its own refresh through that hook
+  rather than a raw `localStorage` read — and the in-progress session-
+  selection form draft is left untouched, matching every other closed
+  panel's "refresh the derived view, not the draft" convention.
+
+  See `docs/features/practice-opponent.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `OpponentPersonaPickerPanel` to the closed list).
+  Vitest-covered: `packages/debate-practice-drills/test/live-update.test.ts`
+  (the one backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored). `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit),
+  `CoachingProgramsPanel` (`debate-team-collaboration`), and the remaining
+  panels in `debate-practice-drills` not already covered by this run or the
+  two open PRs above (`AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel`) remain open for a future run to pick up next —
+  each of those can now extend this same `live-update.ts` file rather than
+  creating another one.
+
+  Ran the full verification gate: `bun run test` (5169 passing, up from
+  5165 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+- **🧩 Standing tool-panel/nav UI-polish audit (idea #17, follow-up (4)) — StatTile/StatGrid adoption pass.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. This run's shared-flow-sync.md-tracked
+  "every other localStorage-backed panel... still has no cross-tab
+  live-update mechanism" Known gap is also now fully closed (confirmed via
+  a fresh read of that bullet's closed-panel list, which now names every
+  panel this repo has). So this slice instead picked up
+  `user-settings.md`'s still-open half of idea #17's follow-up (4):
+  "`PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
+  unaudited" — the one shared-primitive pattern none of the prior
+  `EmptyState`/`MeterBar`/`PanelRow` audit passes had searched for yet.
+
+  A repo-wide search for `StatTile`/`StatGrid`-shaped markup (a small
+  bordered box with a label + large metric value, usually gridded) found
+  exactly one hand-rolled duplicate:
+  `packages/debate-contributor-progress/src/panels/ContributorProfilePanel.tsx`'s
+  local `StatTile` function, rendering its six-tile stat row (Contributions,
+  Total score, Avg score, Completed tasks, Current streak, Longest streak)
+  — despite the same file already importing `EmptyState` from
+  `debate-research-evidence/src/ui/panels/panel-shell`. Replaced the local
+  `StatTile` with `StatGrid`/`StatTile` imported from that same module
+  (which, like `debate-round`'s own `src/ui/panels/panel-shell.tsx`, is a
+  byte-identical local copy of `debate-ui/src/panels/panel-shell.tsx` — this
+  repo's shared-primitive modules are per-package copies, not one
+  cross-package import, so "the right import" is always whichever copy the
+  panel's own package already depends on). This drops the tiles' `<dl>`/
+  `<dt>`/`<dd>` semantics and moves from a fixed `grid-cols-2` mobile layout
+  to `StatGrid`'s own responsive default (`grid-cols-1` below `sm:`,
+  `sm:grid-cols-3` at and above), matching every other `StatGrid` consumer
+  in this repo (`SharedFlowSyncPanel`, `TopicSprintPanel`) — the same
+  "adopt the shared primitive's own presentation, not just its markup"
+  trade every prior slice of this audit accepted for `EmptyState`'s
+  border/padding and `PanelRow`'s row shape.
+
+  No behavior changed, so this is verified via typecheck/build rather than
+  a new test — `packages/debate-contributor-progress`'s Vitest project runs
+  in a plain `node` environment with no `jsdom`/React-render setup at all
+  (unlike `debate-round`'s `test/panels.test.tsx`), so there was no render
+  test to update and adding one from scratch for a single non-behavioral
+  JSX swap was judged out of proportion to this slice. See
+  `docs/features/contribution-leaderboard.md`'s updated write-up.
+
+  The broader survey (see Follow-ups below) found the `PanelShell`/
+  `PanelSection` half of this same follow-up is a much larger, genuinely
+  unaudited surface — roughly 45 panel files across six packages hand-roll
+  a bordered-card-with-title header or sub-section shape instead of the
+  primitive — but confirmed adopting `PanelShell` there is a visible design
+  change (it adds a card background/border/shadow no un-migrated panel
+  currently has), not a pure refactor, so it needs its own scoped follow-up
+  slice(s) rather than folding into this one.
+
+  Ran the full verification gate: `bun run test` (5286 passing, unchanged —
+  no behavior changed), `bunx turbo run typecheck` (16/16 packages green),
+  and `bun run build:web` (passed cleanly). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+  PR: #683.
 - **fix(judge-decision): restore a lost cross-tab live-update export that broke `bun run build:web`.**
   Before picking a new item, this run's routine "inspect the repository's
   current development state" step ran the full verification gate
@@ -1011,4 +1251,31 @@ _No task currently in progress._
   still unaudited" half of idea #17's follow-up (4) remains open — see
   `docs/features/user-settings.md`'s Known gaps for the full history of
   what's been swept so far (undiscoverable routes, duplicated empty states,
-  duplicated progress bars, duplicated list rows) and what hasn't.
+  duplicated progress bars, duplicated list rows, and now duplicated stat
+  tiles) and what hasn't. The `StatTile`/`StatGrid` half is now closed (see
+  the Tracker Status entry above); `PanelShell`/`PanelSection` is not — a
+  repo-wide survey found roughly 45 panel files across `debate-round`,
+  `debate-search-evidence`, `debate-contributor-progress`,
+  `debate-practice-drills`, `debate-speech-writer`, and
+  `debate-team-collaboration` hand-roll a top-level `<h1>`-title-plus-
+  description header (the shape `PanelShell`'s `title`/`description` props
+  already cover) and/or a bordered `<h2>`-titled sub-section (closer to
+  `PanelSection`, though it has no border of its own to match). Left open
+  because adopting `PanelShell` is a visible design change, not a pure
+  refactor — it adds a card background/border/shadow no un-migrated panel
+  currently renders — so it needs a deliberate scoped slice (or several,
+  package by package) with that trade-off called out up front, not a
+  blanket find-replace. Not every panel `<h1>`/`<h2>` is a clean fit either
+  (some are per-item/per-group loop headings, not panel/section headers) —
+  see the historical `PanelRow` audit's four deliberately-skipped panels
+  for the same kind of judgment call.
+- `debate-videos`' leaderboard panels appear to exist as a duplicated tree:
+  `packages/debate-videos/src/panels/leaderboard/` and
+  `packages/debate-videos/src/panels/rankings/` both contain
+  `StandingsPanel.tsx`, `LeaderboardChampionBanner.tsx`,
+  `LeaderboardFilterBar.tsx`, `LeaderboardTable.tsx`,
+  `LeaderboardTableHeader.tsx`, and `LeaderboardDataRow.tsx` — surfaced
+  incidentally while searching for `PanelShell`-shaped headers above, not
+  yet investigated for which tree (if either) is dead code versus which is
+  actually wired up to a route. Needs its own slice to confirm before
+  deleting anything.

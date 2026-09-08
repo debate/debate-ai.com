@@ -34,8 +34,21 @@ function fakeD1() {
   const ranOnBinding: string[] = [];
   const ranInSession: string[] = [];
   let bookmark: string | null = null;
+  // Constraints the fake refuses to serve, and the error it raises when a
+  // statement runs on such a session — D1 only rejects a bookmark it cannot
+  // honour once a query actually runs, since `withSession()` does no I/O.
+  const rejected = new Map<string, string>();
 
-  const statement = (sql: string, sink: string[], meta: Record<string, unknown>): FakeStatement => {
+  const statement = (
+    sql: string,
+    sink: string[],
+    meta: Record<string, unknown>,
+    constraint?: string,
+  ): FakeStatement => {
+    const check = () => {
+      const message = constraint === undefined ? undefined : rejected.get(constraint);
+      if (message) throw new Error(message);
+    };
     const self: FakeStatement = {
       bind: (...values: unknown[]) => {
         sink.push(`bind:${sql}:${values.join(",")}`);
@@ -43,18 +56,22 @@ function fakeD1() {
       },
       run: async () => {
         sink.push(`run:${sql}`);
+        check();
         return { results: [], success: true, meta };
       },
       all: async () => {
         sink.push(`all:${sql}`);
+        check();
         return { results: [], success: true, meta };
       },
       first: async () => {
         sink.push(`first:${sql}`);
+        check();
         return null;
       },
       raw: async () => {
         sink.push(`raw:${sql}`);
+        check();
         return [];
       },
     };
@@ -75,7 +92,7 @@ function fakeD1() {
       opened.push(constraint ?? "<none>");
       return {
         prepare: (sql: string) =>
-          statement(sql, ranInSession, { served_by_region: "WEUR", served_by_primary: false }),
+          statement(sql, ranInSession, { served_by_region: "WEUR", served_by_primary: false }, constraint),
         batch: async (statements: FakeStatement[]): Promise<FakeResult[]> => {
           // The runtime only accepts its own statement objects here, so assert
           // the wrapper unwrapped its tracking layer before forwarding.
@@ -83,6 +100,8 @@ function fakeD1() {
             expect(Object.getOwnPropertySymbols(candidate)).toHaveLength(0);
           }
           ranInSession.push(`batch:${statements.length}`);
+          const refusal = constraint === undefined ? undefined : rejected.get(constraint);
+          if (refusal) throw new Error(refusal);
           return statements.map(() => ({
             results: [],
             success: true,
@@ -101,6 +120,9 @@ function fakeD1() {
     ranInSession,
     setBookmark: (value: string | null) => {
       bookmark = value;
+    },
+    reject: (constraint: string, message = "D1_ERROR: Invalid bookmark") => {
+      rejected.set(constraint, message);
     },
   };
 }
@@ -146,6 +168,29 @@ describe("session constraints", () => {
     );
 
     expect(d1.opened).toEqual(["first-unconstrained"]);
+  });
+
+  /**
+   * `decodeURIComponent` throws on a malformed escape, and the cookie is read
+   * in the Worker entry ahead of every route handler — so before this was
+   * guarded, one unparseable `d1_bookmark` cookie was an exception on every
+   * request that browser made, including routes that never touch D1.
+   */
+  it("ignores a bookmark cookie that cannot be percent-decoded", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    for (const value of ["%", "%zz", "0000001-000000%E0%A4%A"]) {
+      await runWithD1Session(get({ cookie: `${D1_BOOKMARK_COOKIE}=${value}` }), undefined, () =>
+        db.prepare("select 1").run(),
+      );
+    }
+
+    expect(d1.opened).toEqual([
+      "first-unconstrained",
+      "first-unconstrained",
+      "first-unconstrained",
+    ]);
   });
 
   it("honours the D1_SESSION_MODE override", async () => {
@@ -295,6 +340,21 @@ describe("bookmark propagation", () => {
     expect(debug.headers.get("x-d1-served-by-primary")).toBe("false");
   });
 
+  it("expires the cookie when the client's bookmark had to be dropped", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark");
+    const db = sessionedD1(d1.binding);
+
+    const response = await runWithD1Session(get({ cookie: `${D1_BOOKMARK_COOKIE}=stale-bookmark` }), undefined, async () => {
+      await db.prepare("select 1").run();
+      return applyD1Bookmark(new Response("ok"));
+    });
+
+    expect(response.headers.getSetCookie()).toEqual([
+      `${D1_BOOKMARK_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax; Secure; HttpOnly`,
+    ]);
+  });
+
   it("round-trips a bookmark from one request into the next", async () => {
     const d1 = fakeD1();
     d1.setBookmark("0000007-0000008");
@@ -309,5 +369,120 @@ describe("bookmark propagation", () => {
     await runWithD1Session(get({ cookie }), undefined, () => db.prepare("select 1").run());
 
     expect(d1.opened).toEqual(["first-primary", "0000007-0000008"]);
+  });
+});
+
+/**
+ * A bookmark reaches the Worker in a cookie the browser keeps re-sending, so a
+ * bookmark D1 will not honour — minted before a restore, older than D1 keeps,
+ * or simply not this database's — used to fail every D1-backed route for that
+ * one browser until the cookie aged out. It is only ever a consistency floor,
+ * so the request continues without it instead.
+ */
+describe("recovering from a bookmark D1 refuses", () => {
+  it("retries a read on a fresh session and returns the row", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark");
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(get({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, () =>
+      db.prepare("select 1").all(),
+    );
+
+    expect(d1.opened).toEqual(["stale-bookmark", "first-unconstrained"]);
+    expect(d1.ranInSession).toEqual(["all:select 1", "all:select 1"]);
+  });
+
+  it("replays the statement with its bindings intact", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark");
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(get({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, () =>
+      db.prepare("select ?").bind("alice").first(),
+    );
+
+    expect(d1.ranInSession).toEqual([
+      "bind:select ?:alice",
+      "first:select ?",
+      "bind:select ?:alice",
+      "first:select ?",
+    ]);
+  });
+
+  it("drops the bookmark once, not once per statement", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark");
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(get({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, async () => {
+      await db.prepare("select 1").all();
+      await db.prepare("select 2").all();
+    });
+
+    expect(d1.opened).toEqual(["stale-bookmark", "first-unconstrained"]);
+  });
+
+  it("gives up rather than looping when the fresh session fails too", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark");
+    d1.reject("first-unconstrained", "D1_ERROR: no such table");
+    const db = sessionedD1(d1.binding);
+
+    await expect(
+      runWithD1Session(get({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, () =>
+        db.prepare("select 1").all(),
+      ),
+    ).rejects.toThrow("no such table");
+    expect(d1.opened).toEqual(["stale-bookmark", "first-unconstrained"]);
+  });
+
+  it("retries a batch on a fresh session", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark");
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(get({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, () =>
+      db.batch([db.prepare("select 1"), db.prepare("select 2")]),
+    );
+
+    expect(d1.opened).toEqual(["stale-bookmark", "first-unconstrained"]);
+    expect(d1.ranInSession).toEqual(["batch:2", "batch:2"]);
+  });
+
+  it("does not replay a write unless D1 blamed the bookmark", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark", "D1_ERROR: UNIQUE constraint failed");
+    const db = sessionedD1(d1.binding);
+
+    await expect(
+      runWithD1Session(post({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, () =>
+        db.prepare("insert 1").run(),
+      ),
+    ).rejects.toThrow("UNIQUE constraint failed");
+    expect(d1.opened).toEqual(["stale-bookmark"]);
+  });
+
+  it("replays a write on the primary when D1 blamed the bookmark", async () => {
+    const d1 = fakeD1();
+    d1.reject("stale-bookmark", "D1_ERROR: Invalid bookmark");
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(post({ [D1_BOOKMARK_HEADER]: "stale-bookmark" }), undefined, () =>
+      db.prepare("insert 1").run(),
+    );
+
+    expect(d1.opened).toEqual(["stale-bookmark", "first-primary"]);
+  });
+
+  it("leaves a failure alone when the request sent no bookmark", async () => {
+    const d1 = fakeD1();
+    d1.reject("first-unconstrained", "D1_ERROR: no such table");
+    const db = sessionedD1(d1.binding);
+
+    await expect(
+      runWithD1Session(get(), undefined, () => db.prepare("select 1").all()),
+    ).rejects.toThrow("no such table");
+    expect(d1.opened).toEqual(["first-unconstrained"]);
   });
 });

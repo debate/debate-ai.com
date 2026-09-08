@@ -94,6 +94,36 @@ namespace (`topic-<id>`) so the engine treats it as a distinct claim from an
 owned document that happens to share the id — the same reason `?doc=7` and
 `?topic=7` are different URLs.
 
+## Topic starters are stored as `.cmir`
+
+The admin importer on `/admin` takes a `.docx` (or a `.zip` of them) and
+stores each one as a CardMirror native file — `.cmir`, gzipped JSON,
+base64-encoded into the row's `content` column, with `format` set to
+`"cmir"`.
+
+The conversion is CardMirror's own OOXML importer (`docxToCmir` in
+`packages/debate-editor/src/native/convert.ts` — `fromDocxFull` piped into
+`serializeNative`, the same pair the desktop bulk converter runs), wrapped
+for the route by `apps/debate-ai.com/lib/topic-starters/import.ts`. What that
+buys over the card HTML the importer used to store is everything HTML has no
+element for: the Verbatim outline (pocket / hat / block / tag / analytic) as
+typed nodes rather than `<h1>`…`<h4>`, comment threads, inline images, and
+the named character styles that distinguish a cite from an emphasis from a
+plain underline.
+
+Reading it back is client-side: `topicStarterHtml`
+(`lib/topic-starters/content.ts`) parses the file with `parseNative` and
+serializes it through the schema's own `toDOM` specs for the embed's
+`content` prop, memoized per file on `/reason-editor`. Doing it in the
+browser keeps the catalogue endpoint — which returns up to 100 rows — from
+converting files nobody opens.
+
+Rows imported before this carry HTML and still open: `format` says which a
+row is (`lib/topic-starters/format.ts`), and content that arrives without
+its row falls back to sniffing the bytes for the gzip magic. A `.cmir` that
+will not parse renders a notice naming the failure rather than a blank
+document.
+
 ## Known gaps
 
 - The docs section starts collapsed everywhere except `/reason-editor`, so
@@ -104,3 +134,11 @@ owned document that happens to share the id — the same reason `?doc=7` and
   `/reason-editor`, dropping any `?doc=`/`?topic=` alongside it. The two
   never travel together in practice (a share link comes from `/contacts`),
   but nothing enforces that.
+- Conversion runs in the import request, so a 100-file ZIP converts 100
+  documents inside one Worker invocation — heavier than the regex pass it
+  replaces. A batch large enough to hit the CPU limit fails as a dead
+  request, leaving the files converted before it in the library. Splitting
+  the archive is the workaround; moving the conversion into the browser (as
+  the Parquet card importer does) is the fix.
+- There is no way to download a topic starter's `.cmir`. The file is stored
+  and opened in the editor, but the library exposes no file endpoint.

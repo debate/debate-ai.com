@@ -522,9 +522,13 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   one panel in this closed list whose `form` is a live, directly-editable
   draft rather than a derived list/roster view, so only fields untouched
   since they were last loaded/saved are refreshed, never an in-progress
-  edit), and `FlowEditLogPanel` itself (see
-  "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
-  equivalent mechanism for their own stores, but every other
+  edit), `OpponentPersonaPickerPanel` (see
+  [`practice-opponent.md`](practice-opponent.md)'s "Cross-tab live update"),
+  `FlowEditLogPanel` itself (see
+  "Cross-tab live update in `FlowEditLogPanel`" above), and
+  `FlowSummariesPanel` (see [`flow-summaries.md`](flow-summaries.md)'s
+  "Cross-tab live update") have since gained the equivalent mechanism for
+  their own stores, but every other
   localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to

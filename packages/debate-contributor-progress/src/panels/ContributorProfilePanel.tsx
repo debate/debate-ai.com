@@ -24,7 +24,7 @@
 
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, StatGrid, StatTile } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import { isContributionLeaderboardLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import type { ContributorEndorsementHistoryEntry } from "debate-research-evidence/src/state/contributions"
@@ -44,16 +44,6 @@ export interface ContributorProfilePanelProps {
    * Shows a "You" badge when the two match.
    */
   signedInContributorId?: string
-}
-
-/** One small stat display: a label above a value. */
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-md border border-border p-3">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-lg font-semibold text-foreground">{value}</dd>
-    </div>
-  )
 }
 
 function EndorsementList({
@@ -144,7 +134,7 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
         </p>
       </div>
 
-      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <StatGrid>
         <StatTile label="Contributions" value={profile.stats.contributionCount} />
         <StatTile label="Total score" value={profile.stats.totalHelpfulnessScore} />
         <StatTile label="Avg score" value={profile.stats.averageHelpfulnessScore} />
@@ -154,7 +144,7 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
           value={unlockStatus.streak.currentStreak > 0 ? `🔥 ${unlockStatus.streak.currentStreak}` : "—"}
         />
         <StatTile label="Longest streak" value={unlockStatus.streak.longestStreak} />
-      </dl>
+      </StatGrid>
 
       <section>
         <h2 className="mb-2 text-sm font-semibold text-foreground">Badges</h2>

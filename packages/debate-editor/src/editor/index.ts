@@ -1636,7 +1636,9 @@ const ribbonContext: RibbonContext = {
   openShortcutsReference: () => openReference(),
   toggleCommentsVisible: () => {
     if (!commentsColumn || !commentsColumnEl) return;
-    const next = commentsColumnEl.hidden;
+    // `hidden` reflects an attribute that can also be the string
+    // "until-found", so coerce rather than pass it straight to setVisible().
+    const next = Boolean(commentsColumnEl.hidden);
     commentsColumn.setVisible(next);
     commentsToggleBtn?.setAttribute('aria-pressed', next ? 'true' : 'false');
     commentsColumn.render();
@@ -2736,7 +2738,7 @@ export function notifyCommentsForActiveTransaction(
 }
 if (commentsToggleBtn && commentsColumn) {
   commentsToggleBtn.addEventListener('click', () => {
-    const next = commentsColumnEl?.hidden ?? true;
+    const next = commentsColumnEl ? Boolean(commentsColumnEl.hidden) : true;
     commentsColumn.setVisible(next);
     commentsToggleBtn.setAttribute('aria-pressed', next ? 'true' : 'false');
     commentsColumn.render();
@@ -3465,8 +3467,8 @@ systemDarkMedia.addEventListener('change', () => {
 
 /** Apply the `showDocNameChip` setting to `<html>`. The chip's CSS
  *  display is gated on this class — without it, the chip is
- *  force-hidden with `!important` and the ribbon resizer can't
- *  override it back on. Off by default.
+ *  force-hidden with `!important` and takes no layout space in the
+ *  ribbon's button strip. Off by default.
  *
  *  Deliberately does NOT call `updateWindowTitle`: at boot this
  *  runs before `currentDocFilename`'s module-level declaration
@@ -3875,145 +3877,77 @@ settings.subscribe((s) => {
   notifyEditorLayoutChanged();
 });
 
-/** ResizeObserver-driven progressive ribbon hiding. Watches the
- *  ribbon's intrinsic content width (`scrollWidth`) against its
- *  available width (`clientWidth`); when content overflows, hides
- *  the next panel in the priority list (least-essential first).
- *  When the ribbon grows, optimistically un-hides one panel and
- *  checks for overflow; if it fits, leaves it visible; otherwise
- *  hides it again. Converges in O(panel count) iterations.
+/** Ribbon overflow = horizontal scroll, not vanishing buttons.
  *
- *  Measured, not media-queried: panels hide only when they
- *  LITERALLY don't fit, at any chrome scale / OS font size /
- *  visible-panel-mix combination. */
-function initRibbonResizer(): void {
+ *  The ribbon used to progressively `display: none` whole panels
+ *  (least-essential first, measured against `clientWidth`) as the
+ *  window narrowed, so in a narrow window most of the toolbar simply
+ *  wasn't there — and the remaining buttons sat in two clusters with
+ *  a gulf between them, the file/edit panels pinned left and the
+ *  shortcuts/settings/timer grid pinned right. The strip is now one
+ *  unbroken row (see `#ribbon` in style.css) that overflows and
+ *  scrolls left ↔ right: every command stays reachable at every
+ *  width, it is just a scroll away.
+ *
+ *  This wires up the two parts CSS can't do alone:
+ *   - `.pmd-ribbon-scrollable` while the strip actually overflows, so
+ *     the scrollbar gutter (and the 6px it costs the button row) only
+ *     appears when there is somewhere to scroll;
+ *   - vertical mouse wheel → horizontal scroll, the convention for a
+ *     single-row scrolling toolbar. Trackpads and shift-wheel already
+ *     send horizontal deltas and are left to the browser.
+ *
+ *  Keyboard users need nothing extra beyond the `focusin` handler:
+ *  tabbing to a button that is scrolled out of view brings it back
+ *  into view. */
+function initRibbonScroller(): void {
   const ribbon = document.getElementById('ribbon');
   if (!ribbon) return;
-  // Hide order from "least essential" to "most essential".
-  // Each entry is the set of element IDs to hide/show together.
-  // Adding a new group? Just append to this list.
-  const panelIds: string[][] = [
-    ['cite-panel'],              // (a) Character styles
-    ['formatting-panel'],        // (b) Structural styles
-    ['numbering-panel'],         // (c) Card numbering cluster — hide THIRD
-    ['custom-ribbon-panel'],     // (d) User custom buttons
-    ['doc-name-chip'],           // (d) Active-doc filename pill (opt-in)
-    ['format-menu-panel'],       // (d) Table / image / sub / sup / strike
-    ['doc-ops-panel'],           // (e) Paragraph integrity
-    ['font-size-up-btn',         // (f) Font-size step buttons
-     'font-size-down-btn'],
-    ['color-panel'],             // (g) Highlight / shading / font color
-                                 //     / font-size input + picker. Hiding
-                                 //     the whole color-panel also covers
-                                 //     the step buttons in (f), which is
-                                 //     fine — display:none is idempotent.
-    ['comments-ops-panel'],      // (h) Comments toggle + add-comment.
-    ['open-btn', 'new-btn',      // (i) File ops: open, new, save,
-     'export-btn', 'autosave-btn'], //     autosave-toggle.
-    ['view-ops-panel'],          // (j) Read mode + nav-pane toggle.
-    ['settings-btn',             // (k) Settings + keyboard-shortcuts
-     'reference-btn'],           //     reference. Genuinely last —
-                                 //     reaching them requires user
-                                 //     intent and they don't compete
-                                 //     for ribbon real estate during
-                                 //     normal editing.
-  ];
-  let hideCount = 0;
-  function setVisible(idx: number, visible: boolean): void {
-    for (const id of panelIds[idx]!) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = visible ? '' : 'none';
-    }
-  }
-  // Reserve a small buffer between the rightmost visible panel
-  // (in `.ribbon-left`) and the pinned-right elements (in
-  // `.ribbon-right`, e.g. timer toggle). Without the buffer the
-  // rightmost panel button can sit flush against the timer button
-  // just before the next panel hides. The buffer matches the
-  // column-gap inside a panel — same spacing intra-panel buttons
-  // get from each other — so the visual rhythm reads as the same
-  // unit on both sides.
-  //
-  // Can't piggyback on `scrollWidth > clientWidth + 1` for this:
-  // `.ribbon-center` is `flex: 1 1 auto`, so when the ribbon
-  // isn't actually overflowing, the center grows to fill remaining
-  // space and `scrollWidth === clientWidth`. Subtracting a buffer
-  // from `clientWidth` in that predicate would fire the overflow
-  // trigger unconditionally and hide every panel. Instead, measure
-  // the actual visual gap between `.ribbon-left`'s right edge and
-  // `.ribbon-right`'s left edge, minus any visible center content
-  // (doc-name chip) — that's the real free space and shrinks
-  // monotonically as panels are added back.
-  function measureIntraPanelGap(): number {
-    for (const id of ['cite-panel', 'formatting-panel', 'color-panel']) {
-      const el = document.getElementById(id);
-      if (!el) continue;
-      const cs = getComputedStyle(el);
-      const raw = cs.columnGap === 'normal' ? cs.gap : cs.columnGap;
-      const n = parseFloat(raw);
-      if (Number.isFinite(n) && n > 0) return n;
-    }
-    return 4;
-  }
-  const overflowBuffer = measureIntraPanelGap();
-  const leftSection = ribbon.querySelector<HTMLElement>('.ribbon-left');
-  const rightSection = ribbon.querySelector<HTMLElement>('.ribbon-right');
-  const centerSection = ribbon.querySelector<HTMLElement>('.ribbon-center');
-  const isOverflowing = (): boolean => {
-    if (!leftSection || !rightSection) {
-      // Structure not present (shouldn't happen, but defensive):
-      // fall back to the old true-overflow check.
-      return ribbon.scrollWidth > ribbon.clientWidth + 1;
-    }
-    const leftRight = leftSection.getBoundingClientRect().right;
-    const rightLeft = rightSection.getBoundingClientRect().left;
-    let centerWidth = 0;
-    if (centerSection) {
-      for (const child of Array.from(centerSection.children)) {
-        centerWidth += (child as HTMLElement).getBoundingClientRect().width;
-      }
-    }
-    return rightLeft - leftRight - centerWidth < overflowBuffer;
+  // 1px slack: sub-pixel layout rounding otherwise reports a permanent
+  // fractional "overflow" at some zoom levels / OS font sizes, which
+  // would leave the scrollbar gutter showing with nothing to scroll.
+  const overflows = (): boolean => ribbon.scrollWidth > ribbon.clientWidth + 1;
+  const syncOverflow = (): void => {
+    ribbon.classList.toggle('pmd-ribbon-scrollable', overflows());
   };
-  let reflowing = false;
-  function reflow(): void {
-    if (reflowing) return;
-    reflowing = true;
-    try {
-      // Hide more panels until the ribbon fits.
-      while (hideCount < panelIds.length && isOverflowing()) {
-        setVisible(hideCount, false);
-        hideCount++;
-      }
-      // Try to bring panels back when there's room.
-      while (hideCount > 0) {
-        setVisible(hideCount - 1, true);
-        if (isOverflowing()) {
-          setVisible(hideCount - 1, false);
-          break;
-        }
-        hideCount--;
-      }
-    } finally {
-      reflowing = false;
-    }
-  }
-  const observer = new ResizeObserver(reflow);
+  const observer = new ResizeObserver(syncOverflow);
   observer.observe(ribbon);
-  // ALSO observe the elements whose visibility can change while
-  // the ribbon's own width stays constant (window-driven). When
-  // the user toggles the timer panel or the doc-name chip, the
-  // ribbon's `scrollWidth` jumps but `clientWidth` doesn't, so a
-  // ribbon-only observer never fires. Observing these specific
-  // elements catches the show / hide → 0 ↔ N transition and
-  // re-runs the cascade.
+  // ALSO observe the elements whose width can change while the
+  // ribbon's own width stays constant (window-driven). When the user
+  // toggles the timer panel or the doc-name chip, the ribbon's
+  // `scrollWidth` jumps but `clientWidth` doesn't, so a ribbon-only
+  // observer never fires.
   for (const id of ['timer-panel', 'doc-name-chip', 'custom-ribbon-panel', 'numbering-panel']) {
     const el = document.getElementById(id);
     if (el) observer.observe(el);
   }
-  reflow();
+  ribbon.addEventListener(
+    'wheel',
+    (e: WheelEvent) => {
+      // Horizontal intent (trackpad swipe, shift-wheel) already
+      // scrolls this axis natively — don't double-apply it.
+      if (e.deltaX !== 0 || e.deltaY === 0) return;
+      if (!overflows()) return;
+      // deltaMode: 0 = pixels, 1 = lines, 2 = pages. Firefox reports
+      // lines for a classic mouse wheel, so a raw `deltaY` of 3 would
+      // crawl 3px per notch.
+      const step =
+        e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * ribbon.clientWidth : e.deltaY;
+      ribbon.scrollLeft += step;
+      e.preventDefault();
+    },
+    { passive: false },
+  );
+  // Tab / arrow focus onto an off-screen button scrolls it into the
+  // strip. `nearest` on both axes means an already-visible button
+  // doesn't move, and the page never scrolls vertically for this.
+  ribbon.addEventListener('focusin', (e) => {
+    const target = e.target;
+    if (target instanceof HTMLElement) target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  });
+  syncOverflow();
 }
-initRibbonResizer();
+initRibbonScroller();
 
 applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
 applyShowDocNameChip(settings.get('showDocNameChip'));

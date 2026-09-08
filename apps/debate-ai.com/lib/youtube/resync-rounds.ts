@@ -65,7 +65,7 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
     let videosUpserted = 0;
     const excludedIds = new Set(
       (await db.select({ videoId: youtubeVideoExclusions.videoId }).from(youtubeVideoExclusions))
-        .map((row) => row.videoId),
+        .map((row: { videoId: string }) => row.videoId),
     );
 
     // A channel can surface a video more than once. Deduplicate before the
