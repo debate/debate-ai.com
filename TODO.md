@@ -7,6 +7,72 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 `PanelShell`/`PanelSection` adoption for `debate-speech-writer`'s
+  `JudgeProfilesPanel`/`CoachMaterialsPanel` and `debate-videos`'s
+  `StandingsPanel`.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/
+  `documents`/`saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables
+  all linked to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`),
+  and every tool already reachable from the Tools page, CardMirror's own
+  `MenuBar`/command palette (`Mod-Shift-Space`), and the feature catalog.
+  So this slice picked the one concretely-scoped item left open under idea
+  #17's follow-up (4) — now that both `debate-speech-writer` and
+  `debate-videos` depend on `debate-research-evidence` (closed by #708's
+  `EmptyState` cross-package-dependency fix), the last three panels the
+  repo-wide `PanelShell`/`PanelSection` survey had left blocked could
+  finally adopt the shared primitives, the same way every other package's
+  panels already had.
+
+  `JudgeProfilesPanel.tsx`'s top-level `<h1>`/description header became
+  `PanelShell`; its "Log a judged round"/"Edit logged round" (dynamic
+  title), "Bulk import (CSV)", "Compare judges" (dynamic title with a
+  selected-count suffix, its conditional "Clear selection" button moved
+  into `PanelSection`'s `actions` slot), and "Logged rounds" `<h2>`
+  sub-sections became `PanelSection`. `CoachMaterialsPanel.tsx`'s top
+  header became `PanelShell` (its dynamic sync-status sentence kept as a
+  plain child paragraph rather than forced through the string-only
+  `description` prop, matching every prior slice's judgment call for the
+  same shape); its "Pending review" and "Ask the coach" (conditional
+  "Clear conversation" button moved into `actions`) sub-sections became
+  `PanelSection`. Its upload-form section and per-kind material-group
+  headings have no singular panel/section title to migrate (the latter are
+  per-item loop headings), so were left alone, matching the historical
+  `PanelRow`/`PanelShell` audits' judgment call for the same shape.
+  `StandingsPanel.tsx` mounts as a tab inside `RankingsLeaderboardPanel`
+  rather than a standalone page (see its own doc comment) and so has no
+  top-level header to wrap in `PanelShell`; its "Log a result", "Bulk
+  import (CSV)", and "Standings" (its team/result-count `<span>` moved
+  into `actions`, mirroring how `DrillSetsPanel`'s tier `Badge` moved into
+  `actions`) `<h2>` sub-sections became `PanelSection`. Its two
+  `<details>`/`<summary>` collapsible sections (qualification points table,
+  qualification cutoff) were left as-is — a different collapsible pattern
+  `PanelSection` has no equivalent for. Every section carrying a
+  description paragraph with embedded `<code>` markup (both packages' "Bulk
+  import (CSV)" sections) kept that paragraph as a plain child element
+  rather than the string-only `description` prop, matching precedent.
+
+  This closes the last still-open piece of the "`PanelShell`/`PanelSection`
+  adoption is still unaudited" half of idea #17's follow-up (4) — see this
+  file's Follow-ups section and `docs/features/user-settings.md`'s Known
+  gaps for the full history of what's been swept.
+
+  No new tests added — markup-only change; neither package has any
+  component-rendering test that touches these three panels' markup (only
+  `debate-speech-writer/test/live-update.test.ts`'s pure
+  `isCoachMaterialsPanelLiveUpdateStorageEvent`/-adjacent helpers, which
+  don't render the panel), matching every prior `PanelShell`/`PanelSection`
+  migration slice in this repo. Ran the full verification gate: `bun
+  install`, `bun run test` (341 files, 7084 tests passing),
+  `bun run typecheck` (17/17 packages green), `debate-speech-writer`'s own
+  `bunx vitest run` (20 test files, 401 tests) and `bunx tsc --noEmit`,
+  `debate-videos`'s own `bunx vitest run` (12 test files, 139 tests) and
+  `bunx tsc --noEmit`, and `bun run build:web` (production build,
+  succeeded).
+
 - **🧩 Close the `debate-speech-writer`/`debate-videos` `EmptyState` cross-package-dependency
   gap.** Another repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability to save
@@ -1686,3 +1752,14 @@ _No task currently in progress._
   `debate-videos` package this slice just unblocked but hasn't yet migrated.
   So `Pill` adoption stays open, folded into the same not-yet-picked-up
   follow-up above rather than tracked separately.
+  **Update:** the `PanelShell`/`PanelSection` half of this follow-up is now
+  closed — see the Tracker Status entry above. `JudgeProfilesPanel`/
+  `CoachMaterialsPanel` (`debate-speech-writer`) and `StandingsPanel`
+  (`debate-videos`) all now render `PanelShell`/`PanelSection` the same way
+  every other package's panels do; `StandingsPanel`'s two `<details>`
+  sections were deliberately left alone (a different collapsible pattern
+  with no `PanelSection` equivalent). `Pill` adoption for
+  `debate-videos`'s `LeaderboardDataRow` tournament chips — spot-checked
+  above but not migrated — remains open as a small, separately-scoped
+  follow-up; so does the broader "bring every weaker panel UI up to every
+  shared `debate-ui` primitive convention" half noted above.

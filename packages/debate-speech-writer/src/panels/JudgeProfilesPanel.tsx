@@ -57,7 +57,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -319,21 +319,14 @@ export function JudgeProfilesPanel() {
   const panelComparison = compareProfiles.length >= 2 ? buildJudgePanelComparison(compareProfiles) : null
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Judge Profiles</h1>
-        <p className="text-sm text-muted-foreground">
-          Side-vote bias, average speaker points, delivery-speed tolerance, and
-          theory receptiveness for every judge with a saved profile. Log a
-          judged round below to create or update one — every field is derived
-          from the rounds logged for that judge.
-        </p>
-      </div>
-
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <h2 className="text-sm font-medium text-foreground">
-          {editingId ? "Edit logged round" : "Log a judged round"}
-        </h2>
+    <PanelShell
+      title="Judge Profiles"
+      description="Side-vote bias, average speaker points, delivery-speed tolerance, and theory receptiveness for every judge with a saved profile. Log a judged round below to create or update one — every field is derived from the rounds logged for that judge."
+    >
+      <PanelSection
+        title={editingId ? "Edit logged round" : "Log a judged round"}
+        className="rounded-lg border border-border p-4"
+      >
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="judge-round-judge-id">Judge ID</Label>
@@ -475,21 +468,18 @@ export function JudgeProfilesPanel() {
             </Button>
           )}
         </div>
-      </div>
+      </PanelSection>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Bulk import (CSV)</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste a CSV of judged rounds — a header row naming the columns (any order), then one
-            row per round. Required columns: <code>judgeId</code>, <code>tournamentName</code>,{" "}
-            <code>date</code>, <code>division</code>, <code>winningSide</code> (aff/neg),{" "}
-            <code>affSpeakerPoints</code>, and <code>negSpeakerPoints</code>. Optional:{" "}
-            <code>paceWpm</code>, <code>theoryArgumentRaised</code>, <code>theoryArgumentWon</code>{" "}
-            (true/false), and <code>paradigmId</code> ({judgeParadigmIds.join(", ")}). A row that
-            fails to parse is skipped and reported rather than blocking the rest of the import.
-          </p>
-        </div>
+      <PanelSection title="Bulk import (CSV)" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste a CSV of judged rounds — a header row naming the columns (any order), then one
+          row per round. Required columns: <code>judgeId</code>, <code>tournamentName</code>,{" "}
+          <code>date</code>, <code>division</code>, <code>winningSide</code> (aff/neg),{" "}
+          <code>affSpeakerPoints</code>, and <code>negSpeakerPoints</code>. Optional:{" "}
+          <code>paceWpm</code>, <code>theoryArgumentRaised</code>, <code>theoryArgumentWon</code>{" "}
+          (true/false), and <code>paradigmId</code> ({judgeParadigmIds.join(", ")}). A row that
+          fails to parse is skipped and reported rather than blocking the rest of the import.
+        </p>
         <Textarea
           value={bulkCsv}
           onChange={(e) => setBulkCsv(e.target.value)}
@@ -500,7 +490,7 @@ export function JudgeProfilesPanel() {
         <Button variant="outline" onClick={handleBulkImport}>
           Import rounds
         </Button>
-      </div>
+      </PanelSection>
 
       {roster.length === 0 ? (
         <EmptyState title="No judge profiles yet." message="Log a judged round above to build one." />
@@ -573,22 +563,18 @@ export function JudgeProfilesPanel() {
       )}
 
       {roster.length >= 2 && (
-        <div className="space-y-3 rounded-lg border border-border p-4">
-          <div>
-            <h2 className="text-sm font-medium text-foreground">
-              Compare judges {compareIds.length > 0 && `(${compareIds.length} selected)`}
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Check two or more judges above to see a panel-level read: side leans, the pace to
-              prep at for the whole panel, whether theory is safe to run in front of it, and
-              whether the panel's tagged paradigms conflict.
-            </p>
-          </div>
-          {compareIds.length > 0 && (
-            <Button variant="ghost" size="sm" onClick={() => setCompareIds([])}>
-              Clear selection
-            </Button>
-          )}
+        <PanelSection
+          title={`Compare judges${compareIds.length > 0 ? ` (${compareIds.length} selected)` : ""}`}
+          description="Check two or more judges above to see a panel-level read: side leans, the pace to prep at for the whole panel, whether theory is safe to run in front of it, and whether the panel's tagged paradigms conflict."
+          className="space-y-3 rounded-lg border border-border p-4"
+          actions={
+            compareIds.length > 0 ? (
+              <Button variant="ghost" size="sm" onClick={() => setCompareIds([])}>
+                Clear selection
+              </Button>
+            ) : undefined
+          }
+        >
           {panelComparison === null ? (
             <p className="text-sm text-muted-foreground">
               {compareIds.length === 1
@@ -657,17 +643,14 @@ export function JudgeProfilesPanel() {
               </p>
             </div>
           )}
-        </div>
+        </PanelSection>
       )}
 
       {records.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
-          <p className="text-sm text-muted-foreground">
-            Editing a round rewrites it in place, keeping the version it held before the edit so
-            it can be undone; deleting one re-derives that judge's profile from whatever rounds
-            remain, and removes the profile entirely once its last round is gone.
-          </p>
+        <PanelSection
+          title="Logged rounds"
+          description="Editing a round rewrites it in place, keeping the version it held before the edit so it can be undone; deleting one re-derives that judge's profile from whatever rounds remain, and removes the profile entirely once its last round is gone."
+        >
           <div className="max-w-xs space-y-1.5">
             <Label htmlFor="judge-round-filter">Filter by judge ID</Label>
             <Input
@@ -766,8 +749,8 @@ export function JudgeProfilesPanel() {
               </TableBody>
             </Table>
           )}
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }

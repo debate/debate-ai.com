@@ -33,7 +33,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../../ui/primitives/badge"
 import { Button } from "../../ui/primitives/button"
 import { Input } from "../../ui/primitives/input"
@@ -241,8 +241,7 @@ export function StandingsPanel() {
   return (
     <div className="space-y-6">
       {/* Log a result ------------------------------------------------- */}
-      <div className="space-y-3 rounded-lg border border-border p-4">
-        <h2 className="text-sm font-medium text-foreground">Log a result</h2>
+      <PanelSection title="Log a result" className="rounded-lg border border-border p-4">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Input
             placeholder="Team"
@@ -303,22 +302,19 @@ export function StandingsPanel() {
         </div>
         {entryError && <p className="text-sm text-destructive">{entryError}</p>}
         <Button onClick={handleLogResult}>Log result</Button>
-      </div>
+      </PanelSection>
 
       {/* Bulk import (CSV) ---------------------------------------------- */}
-      <div className="space-y-3 rounded-lg border border-border p-4">
-        <div className="space-y-1">
-          <h2 className="text-sm font-medium text-foreground">Bulk import (CSV)</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste a CSV of tournament results — a header row naming the columns (any order), then
-            one row per result. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
-            <code>date</code>, <code>division</code>, and <code>finish</code> (one of{" "}
-            {FINISH_OPTIONS.map((option) => option.value).join(", ")}). Optional:{" "}
-            <code>bidLevel</code>, <code>prelimWins</code>, <code>prelimLosses</code> (default 0). A
-            row that fails to parse is skipped and reported rather than blocking the rest of the
-            import.
-          </p>
-        </div>
+      <PanelSection title="Bulk import (CSV)" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste a CSV of tournament results — a header row naming the columns (any order), then
+          one row per result. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
+          <code>date</code>, <code>division</code>, and <code>finish</code> (one of{" "}
+          {FINISH_OPTIONS.map((option) => option.value).join(", ")}). Optional:{" "}
+          <code>bidLevel</code>, <code>prelimWins</code>, <code>prelimLosses</code> (default 0). A
+          row that fails to parse is skipped and reported rather than blocking the rest of the
+          import.
+        </p>
         <Textarea
           value={bulkCsv}
           onChange={(e) => setBulkCsv(e.target.value)}
@@ -329,7 +325,7 @@ export function StandingsPanel() {
         <Button variant="outline" onClick={handleBulkImport}>
           Import results
         </Button>
-      </div>
+      </PanelSection>
 
       {/* Qualification points table -------------------------------------- */}
       <details className="space-y-3 rounded-lg border border-border p-4">
@@ -455,9 +451,9 @@ export function StandingsPanel() {
       </details>
 
       {/* Ranked standings -------------------------------------------------- */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-foreground">Standings</h2>
+      <PanelSection
+        title="Standings"
+        actions={
           <span className="text-xs text-muted-foreground">
             {standings.length} team{standings.length === 1 ? "" : "s"}, {totalResultsLogged} result
             {totalResultsLogged === 1 ? "" : "s"} logged
@@ -465,7 +461,8 @@ export function StandingsPanel() {
               ? ` · ${qualifiedTeamIds.size} of ${standings.length} currently qualify`
               : ""}
           </span>
-        </div>
+        }
+      >
         {standings.length === 0 ? (
           <EmptyState title="No tournament results logged yet." message="Log one above, or bulk-import a CSV." />
         ) : (
@@ -549,7 +546,7 @@ export function StandingsPanel() {
             </TableBody>
           </Table>
         )}
-      </div>
+      </PanelSection>
     </div>
   )
 }
