@@ -67,7 +67,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { Textarea } from "../ui/primitives/textarea"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import { MeterBar } from "../ui/panels/panel-shell"
 import {
   Select,
@@ -268,15 +268,10 @@ export function CardScoringPanel() {
   const trendPoints = trendContributorId ? listCardScoreHistoryForContributor(trendContributorId) : []
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">LLM Card Scoring</h1>
-        <p className="text-sm text-muted-foreground">
-          Submit a card to score it for relevance, clarity, uniqueness, evidence quality, and
-          usability — ranked by overall score, with likely duplicates flagged.
-        </p>
-      </div>
-
+    <PanelShell
+      title="LLM Card Scoring"
+      description="Submit a card to score it for relevance, clarity, uniqueness, evidence quality, and usability — ranked by overall score, with likely duplicates flagged."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="space-y-1.5">
           <Label htmlFor="card-score-topic">Topic (optional — for tracked keywords)</Label>
@@ -368,15 +363,12 @@ export function CardScoringPanel() {
         <Button onClick={handleSubmit}>Score card</Button>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Bulk import</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste multiple cards separated by a line of dashes (<code>---</code>). Each entry may
-            start with optional <code>id:</code>, <code>keywords:</code>, and <code>quality:</code>{" "}
-            lines, followed by the card text.
-          </p>
-        </div>
+      <PanelSection title="Bulk import" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste multiple cards separated by a line of dashes (<code>---</code>). Each entry may
+          start with optional <code>id:</code>, <code>keywords:</code>, and <code>quality:</code>{" "}
+          lines, followed by the card text.
+        </p>
         <div className="space-y-1.5 sm:max-w-xs">
           <Label htmlFor="card-score-bulk-contributor">Attribute this batch to contributor (optional)</Label>
           <Input
@@ -396,7 +388,7 @@ export function CardScoringPanel() {
         <Button variant="outline" onClick={handleBulkImport}>
           Import cards
         </Button>
-      </div>
+      </PanelSection>
 
       {ranking.length === 0 ? (
         <EmptyState title="No cards scored yet." message="Submit one above to start the ranking." />
@@ -468,9 +460,10 @@ export function CardScoringPanel() {
       )}
 
       {trendContributorIds.length > 0 && (
-        <div className="rounded-lg border border-border p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">My score trend</h2>
+        <PanelSection
+          title="My score trend"
+          className="rounded-lg border border-border p-4"
+          actions={
             <Select value={trendContributorId} onValueChange={setTrendContributorId}>
               <SelectTrigger className="h-8 w-48 text-xs">
                 <SelectValue />
@@ -483,7 +476,8 @@ export function CardScoringPanel() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          }
+        >
           {trendPoints.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No scoring history yet for this contributor.
@@ -502,8 +496,8 @@ export function CardScoringPanel() {
               ))}
             </div>
           )}
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }

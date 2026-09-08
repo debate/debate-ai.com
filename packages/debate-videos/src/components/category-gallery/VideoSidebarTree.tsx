@@ -21,8 +21,13 @@ import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
 import { ToolNavTree } from "./ToolNavTree";
+import {
+  VIDEO_COLLEGE_LINK,
+  VIDEO_FORMAT_LINKS,
+  SIDEBAR_VIDEO_LINKS_BY_ID,
+} from "./sidebar-video-links";
 
-const COLLEGE_CHILD_IDS = ["policy", "pf", "ld", "topPicks"];
+const COLLEGE_CHILD_IDS = VIDEO_FORMAT_LINKS.map((link) => link.id);
 
 interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
@@ -85,23 +90,29 @@ export function VideoSidebarTree({
       >
         <TreeItem
           level={2}
-          href="/videos/college"
-          title="College Debates"
-          count={counts?.college}
-          isActive={activeId === "college"}
+          href={VIDEO_COLLEGE_LINK.href}
+          title={VIDEO_COLLEGE_LINK.title}
+          count={counts?.[VIDEO_COLLEGE_LINK.id]}
+          isActive={activeId === VIDEO_COLLEGE_LINK.id}
           expanded={collegeExpanded}
           onToggleExpand={() => setCollegeExpanded((v) => !v)}
         >
-          <TreeItem level={3} href="/videos/policy" title="Policy Debates" count={counts?.policy} isActive={activeId === "policy"} />
-          <TreeItem level={3} href="/videos/pf" title="PF Debates" count={counts?.pf} isActive={activeId === "pf"} />
-          <TreeItem level={3} href="/videos/ld" title="LD Debates" count={counts?.ld} isActive={activeId === "ld"} />
-          <TreeItem level={3} href="/videos/topPicks" title="Greatest of All-Time" isActive={activeId === "topPicks"} />
+          {VIDEO_FORMAT_LINKS.map((link) => (
+            <TreeItem
+              key={link.id}
+              level={3}
+              href={link.href}
+              title={link.title}
+              count={counts?.[link.id]}
+              isActive={activeId === link.id}
+            />
+          ))}
         </TreeItem>
 
         <TreeItem
           level={2}
-          href="/videos/favorites"
-          title="Favorites"
+          href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
+          title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
           count={counts?.favorites}
           isActive={activeId === "favorites"}
           icon={IconTrophy}
@@ -109,8 +120,8 @@ export function VideoSidebarTree({
 
         <TreeItem
           level={2}
-          href="/videos/lectures"
-          title="Lectures"
+          href={SIDEBAR_VIDEO_LINKS_BY_ID.lectures.href}
+          title={SIDEBAR_VIDEO_LINKS_BY_ID.lectures.title}
           count={counts?.lectures}
           isActive={activeId === "lectures"}
           expanded={lecturesExpanded}

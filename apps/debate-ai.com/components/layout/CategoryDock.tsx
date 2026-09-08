@@ -3,7 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, Contact, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Bell, Contact, Globe, LayoutGrid, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -32,6 +32,7 @@ import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
 import { TOOL_GROUPS } from "@/app/tools/tool-groups"
 import { hasEmbeddedDock } from "@/lib/sidebar-routes"
+import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "@/lib/nav/dock-menu-sections"
 import {
   IconCollectiveMind,
   IconFlowFlower,
@@ -41,26 +42,6 @@ import {
   IconTools,
   IconVsAi
 } from "../../lib/ui/icons"
-
-// Same destinations as packages/debate-videos/src/ui/layout/footer.tsx, split into
-// the two Settings-menu submenus below so they're reachable without
-// scrolling to the page footer.
-const SITE_LINKS = [
-  { url: "https://github.com/debate", text: "Github", icon: Code2 },
-  { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle },
-  { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity },
-  { url: "/legal/privacy", text: "Privacy", icon: Shield },
-  { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
-]
-
-const DEBATE_LINKS = [
-  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare },
-  { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
-  { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
-  { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
-  { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
-  { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book },
-]
 
 const NAV_ITEMS = [
   { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
@@ -169,7 +150,16 @@ function SettingsMenu({
   const router = useRouter()
 
   return (
-    <DropdownMenuContent side={side} align="end" className="w-48">
+    <DropdownMenuContent
+      side={side}
+      align="end"
+      // Tall enough now (six nav submenus above the account block) to run past
+      // a phone viewport, which would otherwise cut the account rows off with
+      // no way to reach them.
+      className="w-48 max-h-[min(560px,80vh)] overflow-y-auto"
+      collisionPadding={8}
+      avoidCollisions
+    >
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/features") }}>
         <LayoutGrid className="mr-2 h-4 w-4" />
         All Features
@@ -199,6 +189,27 @@ function SettingsMenu({
           ))}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
+      <DropdownMenuSeparator />
+      {/* The desktop sidebar's own sections, one submenu each. The sidebar is
+          md+ only, so on a phone this is the only place its Videos links and
+          the glossary/rankings pair below its tree can be reached — see
+          `lib/nav/dock-menu-sections.ts`, which derives these from the same
+          data the sidebar renders. */}
+      {SIDEBAR_MENU_SECTIONS.map((section) => (
+        <DropdownMenuSub key={section.id}>
+          <DropdownMenuSubTrigger>
+            <section.icon className="mr-2 h-4 w-4 shrink-0" />
+            {section.title}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="w-56 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+            {section.links.map((link) => (
+              <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
+                {link.title}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      ))}
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/notifications") }}>
         <Bell className="mr-2 h-4 w-4" />

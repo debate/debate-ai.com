@@ -69,7 +69,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -249,26 +249,24 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
 
   if (roster.length === 0) {
     return (
-      <div className="p-4 sm:p-6">
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Quest Streaks</h1>
-        <p className="mb-4 text-sm text-muted-foreground">
-          Every contributor's daily-quest streak and the milestone badges it has earned.
-        </p>
+      <PanelShell
+        title="Quest Streaks"
+        description="Every contributor's daily-quest streak and the milestone badges it has earned."
+      >
         {trigger}
         <EmptyState
           title="No streaks yet."
           message="A contributor's streak fills in once they complete a full day of daily quests."
         />
-      </div>
+      </PanelShell>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Quest Streaks</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Every contributor's daily-quest streak and the milestone badges it has earned.
-      </p>
+    <PanelShell
+      title="Quest Streaks"
+      description="Every contributor's daily-quest streak and the milestone badges it has earned."
+    >
       {trigger}
       {freezeError && <p className="mb-3 text-sm text-destructive">{freezeError}</p>}
       <Table>
@@ -360,6 +358,6 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
           })}
         </TableBody>
       </Table>
-    </div>
+    </PanelShell>
   )
 }

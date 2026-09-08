@@ -74,7 +74,7 @@ import {
   SelectValue,
 } from "../ui/primitives/select"
 import { Textarea } from "../ui/primitives/textarea"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import { listOpponentTeamProfiles } from "debate-data-sync/src/state/opponentTeamProfiles"
 import { listJudgeProfiles } from "debate-speech-writer/src/state/judgeProfiles"
 import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-profile"
@@ -341,15 +341,10 @@ export function PreRoundBriefingsPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Pre-Round Briefings</h1>
-        <p className="text-sm text-muted-foreground">
-          Opponent scouting, judge tendencies, head-to-head record, and prep notes, combined into
-          one focused briefing per round.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Pre-Round Briefings"
+      description="Opponent scouting, judge tendencies, head-to-head record, and prep notes, combined into one focused briefing per round."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -474,20 +469,20 @@ export function PreRoundBriefingsPanel() {
         <Button onClick={handleSubmit}>Save briefing</Button>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">Pairing schedule</h2>
-          <p className="text-xs text-muted-foreground">
-            Log a round&apos;s pairing/room assignment by hand once it&apos;s posted — live tournament
-            pairings aren&apos;t available from Tabroom yet. Each saved pairing has a &quot;Use for
-            briefing&quot; action that prefills the form above.
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {pairingsSynced
-              ? "Pairings are synced to your account."
-              : "Sign in to sync pairings across devices."}
-          </p>
-        </div>
+      <PanelSection
+        title="Pairing schedule"
+        description={
+          "Log a round's pairing/room assignment by hand once it's posted — live tournament " +
+          'pairings aren\'t available from Tabroom yet. Each saved pairing has a "Use for ' +
+          'briefing" action that prefills the form above.'
+        }
+        className="rounded-lg border border-border p-4"
+      >
+        <p className="text-xs text-muted-foreground">
+          {pairingsSynced
+            ? "Pairings are synced to your account."
+            : "Sign in to sync pairings across devices."}
+        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="pairing-round-id">Round ID</Label>
@@ -601,16 +596,16 @@ export function PreRoundBriefingsPanel() {
             ))}
           </ul>
         )}
-      </div>
+      </PanelSection>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">Log a round</h2>
-          <p className="text-xs text-muted-foreground">
-            Log this team&apos;s own past rounds against an opponent so a future briefing for that
-            opponent can show a head-to-head &quot;Prior meetings&quot; record.
-          </p>
-        </div>
+      <PanelSection
+        title="Log a round"
+        description={
+          "Log this team's own past rounds against an opponent so a future briefing for that " +
+          'opponent can show a head-to-head "Prior meetings" record.'
+        }
+        className="rounded-lg border border-border p-4"
+      >
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="round-log-tournament">Tournament</Label>
@@ -720,7 +715,7 @@ export function PreRoundBriefingsPanel() {
             ))}
           </ul>
         )}
-      </div>
+      </PanelSection>
 
       {briefings.length === 0 && (
         <EmptyState
@@ -783,6 +778,6 @@ export function PreRoundBriefingsPanel() {
           </div>
         )
       })}
-    </div>
+    </PanelShell>
   )
 }

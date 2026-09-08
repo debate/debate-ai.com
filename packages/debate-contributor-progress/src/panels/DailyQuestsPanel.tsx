@@ -77,7 +77,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildPersistedDailyQuestBoard,
   buildPersistedTeamQuestCompetition,
@@ -360,15 +360,10 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
   const recurrenceByQuestId = new Map(templates.map((template) => [template.id, template.recurrence]))
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Daily Quests</h1>
-        <p className="text-sm text-muted-foreground">
-          Team goals like "find 5 solvency cards" — progress tracks today's real submissions
-          from the Contributions Feed.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Daily Quests"
+      description={'Team goals like "find 5 solvency cards" — progress tracks today\'s real submissions from the Contributions Feed.'}
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -642,14 +637,11 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
         </div>
       )}
 
-      <div className="space-y-3 rounded-lg border border-dashed border-border p-4">
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">Team competition</h2>
-          <p className="text-sm text-muted-foreground">
-            Group contributors into teams to compete on today's board — each team's score is the
-            sum of its own members' points earned today.
-          </p>
-        </div>
+      <PanelSection
+        title="Team competition"
+        description="Group contributors into teams to compete on today's board — each team's score is the sum of its own members' points earned today."
+        className="rounded-lg border border-dashed border-border p-4"
+      >
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor="quest-team-name">Team name</Label>
@@ -708,7 +700,7 @@ export function DailyQuestsPanel({ signedInContributorId }: DailyQuestsPanelProp
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </PanelSection>
+    </PanelShell>
   )
 }

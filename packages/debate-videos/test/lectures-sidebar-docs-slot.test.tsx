@@ -111,3 +111,40 @@ describe("the videos sidebar's docs slot", () => {
     expect(render({})).toContain('href="/videos/college"');
   });
 });
+
+describe("the mobile block below md", () => {
+  /** The `md:hidden` column, which is what a phone actually sees. */
+  function mobileMarkup(): string {
+    const markup = render({});
+    const start = markup.indexOf('class="md:hidden"');
+    expect(start).toBeGreaterThan(-1);
+    // Up to the video grid that follows the block.
+    const end = markup.indexOf('class="scroll-mt-20"', start);
+    return markup.slice(start, end === -1 ? undefined : end);
+  }
+
+  it("carries the tool sections the sidebar shows", () => {
+    // The quick-link tiles cover the tree's Videos section only; without the
+    // tool nav below them, Apps / Coaching / Research / Practice had no
+    // counterpart on a phone anywhere on this page.
+    const mobile = mobileMarkup();
+    for (const heading of ["Apps", "Coaching", "Research", "Practice"]) {
+      expect(mobile).toMatch(new RegExp(`<h1[^>]*>${heading}</h1>`));
+    }
+  });
+
+  it("starts those sections collapsed so the grid stays in view", () => {
+    const mobile = mobileMarkup();
+    for (const heading of ["Apps", "Coaching", "Research", "Practice"]) {
+      expect(mobile).toMatch(
+        new RegExp(`<button[^>]*aria-expanded="false"[^>]*>(?:(?!</button>)[\\s\\S])*<h1[^>]*>${heading}</h1>`),
+      );
+    }
+  });
+
+  it("still reaches the glossary and rankings pair", () => {
+    const mobile = mobileMarkup();
+    expect(mobile).toContain('href="/videos/dictionary"');
+    expect(mobile).toContain('href="/videos/rankings"');
+  });
+});

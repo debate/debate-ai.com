@@ -41,7 +41,7 @@
 import { useEffect, useState } from "react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
-import { EmptyState, MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, MeterBar, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Table,
   TableBody,
@@ -135,23 +135,20 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
 
   if (roster.length === 0) {
     return (
-      <div className="p-4 sm:p-6">
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Progress Unlocks</h1>
+      <PanelShell title="Progress Unlocks">
         <EmptyState
           title="No contributors yet."
           message="Unlock status fills in as contributors submit cards, summaries, and analytics — or complete routed research tasks, which count toward a tier on their own."
         />
-      </div>
+      </PanelShell>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Progress Unlocks</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Every contributor's unlock tier, badges, and streak — and how far they are from the next
-        tier.
-      </p>
+    <PanelShell
+      title="Progress Unlocks"
+      description="Every contributor's unlock tier, badges, and streak — and how far they are from the next tier."
+    >
       {newlyEarnedBadges.length > 0 && (
         <div className="mb-4 flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
           <span>{buildUnlockCelebrationMessage(newlyEarnedBadges)}</span>
@@ -231,6 +228,6 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
           })}
         </TableBody>
       </Table>
-    </div>
+    </PanelShell>
   )
 }

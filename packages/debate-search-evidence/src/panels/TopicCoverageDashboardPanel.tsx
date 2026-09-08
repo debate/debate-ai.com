@@ -33,7 +33,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { EmptyState, MeterBar } from "../ui/panels/panel-shell"
+import { EmptyState, MeterBar, PanelShell } from "../ui/panels/panel-shell"
 import {
   buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
@@ -174,15 +174,10 @@ export function TopicCoverageDashboardPanel() {
   const underCovered = report ? getUnderCoveredArguments(report) : []
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Topic Coverage Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Track which arguments a topic's checklist calls for, and see which are missing, thin, or
-          covered based on the shared evidence library's submitted cards.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Topic Coverage Dashboard"
+      description="Track which arguments a topic's checklist calls for, and see which are missing, thin, or covered based on the shared evidence library's submitted cards."
+    >
       {crossTopicRows.length > 1 && <CrossTopicComparisonHeatmap rows={crossTopicRows} />}
 
       <div className="space-y-2">
@@ -304,7 +299,7 @@ export function TopicCoverageDashboardPanel() {
           )}
         </>
       )}
-    </div>
+    </PanelShell>
   )
 }
 

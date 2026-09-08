@@ -105,6 +105,10 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
         });
       return () => {
         cancelled = true;
+        // `release` flushes whatever edit is still inside the change
+        // debounce, under THIS key — otherwise switching documents (or
+        // closing the pane) inside that window either drops the last edits
+        // or files them under the document that comes next.
         singleton.release(key);
       };
       // Re-claim when the document identity changes; `content` is applied
@@ -161,7 +165,11 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           (singleton.isLiveKey(key) ? singleton.getEngineModule()?.getActiveView() : null)?.state.doc.toJSON() ??
           null,
         setHTML: (html: string) => {
-          void singleton.claim({ key, onChange: (h) => onChangeRef.current?.(h) }, html);
+          void singleton.claim(
+            { key, onChange: (h) => onChangeRef.current?.(h) },
+            html,
+            { report: true },
+          );
         },
         focus: () => {
           singleton.getEngineModule()?.getActiveView()?.focus();
@@ -170,7 +178,11 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           const engineApi = await import("../index.js");
           const doc = await engineApi.fromDocx(bytes);
           const bridge = await import("./html-bridge.js");
-          await singleton.claim({ key, onChange: (h) => onChangeRef.current?.(h) }, bridge.docToHtml(doc));
+          await singleton.claim(
+            { key, onChange: (h) => onChangeRef.current?.(h) },
+            bridge.docToHtml(doc),
+            { report: true },
+          );
         },
         exportDocx: async () => {
           const view = singleton.isLiveKey(key) ? singleton.getEngineModule()?.getActiveView() : null;
@@ -182,7 +194,11 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           const engineApi = await import("../index.js");
           const { doc } = engineApi.parseNative(bytes);
           const bridge = await import("./html-bridge.js");
-          await singleton.claim({ key, onChange: (h) => onChangeRef.current?.(h) }, bridge.docToHtml(doc));
+          await singleton.claim(
+            { key, onChange: (h) => onChangeRef.current?.(h) },
+            bridge.docToHtml(doc),
+            { report: true },
+          );
         },
         exportCmir: async () => {
           const view = singleton.isLiveKey(key) ? singleton.getEngineModule()?.getActiveView() : null;

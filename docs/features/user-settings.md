@@ -352,38 +352,88 @@ new render test.
   migration slices in `debate-round`/`debate-practice-drills` were also
   verified via typecheck/build rather than new render tests.
   A further slice started on the "`PanelShell`/`PanelSection` adoption is
-  still unaudited" half named above, picking `debate-team-collaboration` as
-  the first package-scoped pass: of its 13 panels, only `TopicSprintPanel`
-  already used `PanelShell`/`PanelSection` (both already reachable via the
-  package's existing `debate-research-evidence`/`debate-round` dependency,
-  the same module each panel already imported `EmptyState` from — no new
-  cross-package dependency needed here, unlike the empty-state gap above).
-  The other 12 (`AccountNotificationsPanel`, `BrainstormBoardPanel`,
-  `CoachingProgramsPanel`, `ContactsPanel`, `GroupChallengesPanel`,
-  `PrepNoteNotificationsPanel`, `PrepNotesPanel`, `PrepRoomPanel`,
-  `ResearchProgressPanel`, `SharedCardsPanel`, `SprintNotesPanel`, and
-  `TaskInboxPanel`) hand-rolled their own top-level `<h1>`-title-plus-
-  description header; every one of those was migrated onto `PanelShell`,
-  moving any header-row controls (unread/online counts, a "Download report"
-  button) into its `actions` prop. Each panel's genuinely singular, non-repeated
-  bordered/`<h2>`-titled sub-sections (e.g. `ContactsPanel`'s "Your
-  contacts"/"Blocked", `TaskInboxPanel`'s "Team capacity"/"Awaiting
-  verification"/"Contributor availability", `PrepRoomPanel`'s "Routed
-  research tasks"/"Shared task checklist"/"Room activity timeline",
-  `ResearchProgressPanel`'s "My research goal"/"Topic comparison",
-  `BrainstormBoardPanel`'s "Session timer") were migrated onto
-  `PanelSection` too, following `TopicSprintPanel`'s own existing
-  convention of leaving `PanelSection` unbordered rather than preserving
-  each section's prior `rounded-lg border` wrapper. Per-item/per-group
-  `<h2>` headings inside a `.map()` (a board's own title in
-  `BrainstormBoardPanel`, a program's name in `CoachingProgramsPanel`, a
-  challenge's title in `GroupChallengesPanel`, a status/topic group's
-  heading in `PrepNotesPanel`/`SprintNotesPanel`/`TaskInboxPanel`'s
-  per-topic queue) were deliberately left as hand-rolled markup, matching
-  this same Known gap's own caution above that not every panel `<h1>`/`<h2>`
-  is a `PanelShell`/`PanelSection`-shaped fit. The remaining packages named
-  in the "roughly 45 panel files" survey above (`debate-round`,
-  `debate-search-evidence`, `debate-contributor-progress`,
-  `debate-practice-drills`, `debate-speech-writer`) are still unaudited —
-  left for a further package-scoped slice each, per this Known gap's own
-  guidance to do this "package by package," not as one blanket pass.
+  still unaudited" half named above, package by package: `debate-search-evidence`
+  (npm package name `debate-research-evidence`) was picked next — its 7 panels
+  (`ArgumentLibraryPanel`, `CardScoringPanel`, `ContributionsFeedPanel`,
+  `EvidenceLibraryPanel`, `ReviewQueuePanel`, `RevisionIncentivesPanel`,
+  `TopicCoverageDashboardPanel`) all hand-rolled a top-level `<h1>`-title-
+  plus-description header and none used `PanelShell`/`PanelSection` yet, and
+  the primitive was already one import away (the same `./ui/panels/panel-shell`
+  module each panel already imported `EmptyState`/`MeterBar` from — no new
+  cross-package dependency needed). All 7 were migrated onto `PanelShell`.
+  Each panel's genuinely singular, non-repeated `<h2>`-titled sub-section was
+  also migrated onto `PanelSection` where one existed: `CardScoringPanel`'s
+  "Bulk import"/"My score trend", `ContributionsFeedPanel`'s dynamic
+  "Flagged for review (N)"/"All contributions (N)" list header,
+  `EvidenceLibraryPanel`'s "Check this page"/"Team reuse dashboard"/"Pending
+  review (N)", `ReviewQueuePanel`'s "Reviewer workload", and
+  `RevisionIncentivesPanel`'s "Stale evidence digest"/"Leaderboard"/"Recent
+  revisions". A description containing embedded markup (a `<code>` tag, or
+  `ContributionsFeedPanel`'s tooltip-carrying paragraph) was kept as a plain
+  child element instead of forced through `PanelShell`/`PanelSection`'s
+  `description` prop, which only accepts a plain string. `ArgumentLibraryPanel`
+  and `TopicCoverageDashboardPanel` had no `<h2>`-titled sub-section to
+  migrate (their bordered blocks use a plain `<div>` label, not a heading),
+  so only their top-level header moved onto `PanelShell`; `TopicCoverageDashboardPanel`'s
+  "Cross-topic comparison"/"Coverage trend" labels use the same non-`<h2>`
+  shape and were deliberately left alone for the same reason. Of the
+  remaining packages named in the "roughly 45 panel files" survey above,
+  `debate-team-collaboration` had an open PR against this same follow-up at
+  the start of this slice (checked first to avoid duplicating work), and
+  `debate-speech-writer`'s two panels (`JudgeProfilesPanel`,
+  `CoachMaterialsPanel`) are blocked the same way they are for the
+  `EmptyState` gap above — neither `debate-round` nor
+  `debate-research-evidence` is a dependency of that package, so `PanelShell`/
+  `PanelSection` aren't reachable without first adding a new cross-package
+  dependency edge, out of scope for a markup-only migration. `debate-round`,
+  `debate-contributor-progress`, and `debate-practice-drills` are still
+  unaudited — left for a further package-scoped slice each.
+  A further slice closed `debate-round`: its own `ui/panels/panel-shell.tsx`
+  (already used by `FlowEditLogPanel`/`SharedFlowSyncPanel`) needed no new
+  dependency, and three panels hand-rolled the same top-level header shape
+  while already importing `EmptyState` from it —
+  `OpponentTeamProfilesPanel`, `PreRoundBriefingsPanel`, `StrategyPanel` —
+  all migrated onto `PanelShell`, plus each panel's singular `<h2>`-titled
+  sub-section (`OpponentTeamProfilesPanel`'s "Bulk import (CSV)"/"Logged
+  rounds"; `PreRoundBriefingsPanel`'s "Pairing schedule"/"Log a round") onto
+  `PanelSection`. `WordLimitPresetsPanel` (a `/settings`-page section, not a
+  standalone panel card) and `UserSettingsPanel` (a live, directly-editable
+  form, not a derived list/roster view) were left out of scope; each panel's
+  per-item loop `<h2>` (one per matchup/briefing/round) was left alone as a
+  repeated row heading, not a panel/section header. `debate-contributor-
+  progress` and `debate-practice-drills` remain unaudited.
+  A further slice closed `debate-contributor-progress` (npm package name
+  `debate-community`): it already depends on `debate-research-evidence` (the
+  same `./ui/panels/panel-shell` module every one of its 9 panels already
+  imported `EmptyState`/`StatGrid`/`StatTile`/`MeterBar` from), so no new
+  cross-package dependency was needed. All 9 panels' top-level `<h1>`-title-
+  plus-description header moved onto `PanelShell`: `ContributionLeaderboardPanel`,
+  `CoachingProgramRosterAnalyticsPanel`, `ContributorAwardsPanel`,
+  `DailyBestCardPanel`, `ProgressUnlocksPanel`, `QuestStreaksPanel`,
+  `ContributorProfilePanel`, `CommunityResearchHubPanel`, and
+  `DailyQuestsPanel` (`NewsStreamPanel`, the package's 10th panel, has no
+  matching header shape). Each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section was also migrated onto `PanelSection`:
+  `CoachingProgramRosterAnalyticsPanel`'s "Recent challenge results"/"Program
+  calendar", `ContributorProfilePanel`'s "Badges"/"Top Contributor
+  Awards"/"Endorsements received"/"Endorsements given", `CommunityResearchHubPanel`'s
+  conditional "For You" strip, and `DailyQuestsPanel`'s "Team competition"
+  (kept its own `border-dashed` styling via `PanelSection`'s `className` prop,
+  mirroring `OpponentTeamProfilesPanel`'s bordered-section convention). A
+  description containing embedded markup (`ContributionLeaderboardPanel`'s
+  tooltip-carrying paragraph, `CommunityResearchHubPanel`'s second
+  machine-generated summary line) was kept as a plain child element instead of
+  forced through `PanelShell`'s `description` prop. `ContributorAwardsPanel`
+  and `DailyBestCardPanel` had no `<h2>`-titled sub-section to migrate (their
+  labeled blocks — "Hall of Fame", "Peer Nominations", "Today's leader",
+  "Best of the week", "Announced history" — use a plain `<div>` label, not a
+  heading), so only their top-level header moved onto `PanelShell`, matching
+  `TopicCoverageDashboardPanel`'s precedent for the same shape.
+  `ContributorProfilePanel`'s title is a per-contributor id rather than a
+  fixed panel name, and its header also carried a "You"/tier `Badge` pair
+  inline next to the `<h1>` rather than in a separate description — moved
+  into `PanelShell`'s `actions` slot (right-aligned) instead of leaving the
+  header unmigrated, the one deliberate layout adjustment in this slice.
+  `CommunityResearchHubPanel`'s and `CoachingProgramRosterAnalyticsPanel`'s
+  per-category/per-day loop `<h2>`s were left alone as repeated row headings,
+  not panel/section headers. Only `debate-practice-drills` remains unaudited.
