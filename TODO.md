@@ -7,6 +7,45 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 `Pill` adoption for `debate-videos`'s `LeaderboardDataRow` tournament chips.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the
+  feature catalog. Two open PRs (#709 `PanelShell`/`PanelSection` for the last three
+  `debate-speech-writer`/`debate-videos` panels, #695 D1-migration/account-sync error
+  handling) already cover the other concretely-scoped items left open under idea #17's
+  follow-up (4), so this slice closed the one remaining named-but-unclaimed item: the
+  `Pill` adoption spot-check's `debate-videos` half (see this file's Follow-ups section).
+
+  `LeaderboardDataRow`'s mobile tournament chips (`entry.details.map(...)`) hand-rolled
+  `<span className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground
+  rounded-full px-2 py-0.5">` — the same shape the shared `Pill` primitive
+  (`debate-research-evidence/src/ui/panels/panel-shell`) already covers, and now
+  reachable from `debate-videos` since #708 added the `debate-research-evidence`
+  dependency edge for the `EmptyState` migration (the earlier `Pill` spot-check had found
+  this exact chip but left it open only because that edge didn't exist yet at the time).
+  Swapped the `<span>` for `<Pill className="gap-1 font-normal">`, keeping the icon +
+  `"{tournament} · {placement}"` children unchanged; `font-normal` overrides `Pill`'s
+  default `font-medium` (via `cn`'s `tailwind-merge`) to match the original chip's
+  unweighted text, since nothing else about the original styling called for emphasis.
+  `Pill`'s own `neutral`-tone background/border reads close enough to the original
+  `bg-muted`/no-border look to not need a `tone` override either.
+
+  No new tests added — markup-only change; no component-rendering test in
+  `debate-videos` touches this panel's markup, matching every prior `Pill`/`EmptyState`/
+  `PanelShell` migration slice in this repo. Ran the full verification gate: `bun install`,
+  `debate-videos`'s own `bunx vitest run` (12 files, 139 tests) and `bunx tsc --noEmit`,
+  `bun run test` (341 files, 7084 tests passing), `bun run typecheck` (17/17 packages
+  green), and `bun run build:web` (production build, succeeded).
+
+  This closes the last item named in the "`Pill` adoption" follow-up under idea #17's
+  follow-up (4) — see this file's Follow-ups section for the full history.
+
 - **🧩 Close the `debate-speech-writer`/`debate-videos` `EmptyState` cross-package-dependency
   gap.** Another repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability to save
@@ -1686,3 +1725,10 @@ _No task currently in progress._
   `debate-videos` package this slice just unblocked but hasn't yet migrated.
   So `Pill` adoption stays open, folded into the same not-yet-picked-up
   follow-up above rather than tracked separately.
+  **Update:** the `debate-videos` half is now closed — see the Tracker Status
+  entry above. `LeaderboardDataRow`'s tournament chips now render `Pill`.
+  `debate-team-collaboration`'s `SharedCardsPanel` toggle-button chips remain
+  open — still not a clean fit, since `Pill`'s display-only `<span>` has no
+  selected/hover-state vocabulary for an interactive toggle. The
+  `JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
+  `PanelSection` migration named just above is covered by open PR #709.
