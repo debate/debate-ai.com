@@ -587,6 +587,7 @@ button {
   --pmd-c-surface: #f3f3f3;            /* ribbon, status bar, nav scrolled-bg */
   --pmd-c-surface-alt: #ececec;        /* editor viewport bg, code bg, divider */
   --pmd-c-overlay: rgba(0, 0, 0, 0.4); /* modal scrim */
+  --pmd-c-scroll-shadow: rgba(0, 0, 0, 0.16); /* "more this way" edge fade */
 
   /* Borders & dividers */
   --pmd-c-border: #c8c8c8;             /* button borders */
@@ -833,6 +834,7 @@ button {
   --pmd-c-surface: #262626;
   --pmd-c-surface-alt: #2f2f2f;
   --pmd-c-overlay: rgba(0, 0, 0, 0.55);
+  --pmd-c-scroll-shadow: rgba(0, 0, 0, 0.5);
 
   /* Borders & dividers — slightly lighter than surface so they
      register as edges against the dark backgrounds. */
@@ -1213,22 +1215,90 @@ html:has(body.pmd-speech-banner-visible) {
   border-bottom: 1px solid var(--pmd-c-border-soft);
   display: flex;
   align-items: center;
+  /* One unbroken strip: every button group sits shoulder-to-shoulder
+     (the shortcuts/settings/timer grid included — it used to be pinned
+     to the far right with a gulf of blank space in between), and the
+     whole strip scrolls left↔right when it outgrows the window rather
+     than dropping panels out of reach. `flex-wrap: nowrap` is explicit
+     because the whole point is that a narrow ribbon overflows
+     horizontally instead of stacking into a second row. */
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 0 0.5rem;
   /* Above editor-surface decorations (.pmd-editor-pickup-highlight z=90
      and .pmd-editor-drop-indicator z=100) so they don't bleed over the
      ribbon when scrolled into the chrome's bounds. */
   z-index: 200;
   font-size: 0.85rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--pmd-c-border) transparent;
+  /* Scrolling past either end stays here: no chaining to the page and,
+     more to the point, no browser back/forward swipe gesture fired by
+     panning a toolbar. initRibbonScroller() maps a vertical mouse
+     wheel onto this axis. */
+  overscroll-behavior-x: contain;
+}
+#ribbon::-webkit-scrollbar {
+  height: 6px;
+}
+#ribbon::-webkit-scrollbar-track {
+  background: transparent;
+}
+#ribbon::-webkit-scrollbar-thumb {
+  background: var(--pmd-c-border);
+  border-radius: 3px;
+}
+#ribbon::-webkit-scrollbar-thumb:hover {
+  background: var(--pmd-c-text-secondary);
+}
+/* No overflow, no track: the scrollbar gutter only appears when the
+   strip actually has somewhere to scroll (class set by
+   initRibbonScroller). */
+#ribbon:not(.pmd-ribbon-scrollable)::-webkit-scrollbar {
+  height: 0;
+}
+#ribbon:not(.pmd-ribbon-scrollable) {
+  scrollbar-width: none;
+}
+/* "There's more this way" — a shadow at each end that the strip can
+   still scroll toward. The classic four-layer background trick: the two
+   `local` cover layers are painted in the ribbon's own surface color and
+   scroll WITH the content, so at scroll-left = 0 the left cover sits over
+   the left shadow and hides it; scroll right and the cover slides away,
+   revealing the shadow. The `scroll` shadow layers stay pinned to the
+   viewport edges. Needed because the 6px scrollbar above is easy to miss
+   (and is an invisible overlay bar on macOS / touch devices), and a
+   toolbar that silently hides half its buttons is exactly what this
+   replaced. */
+#ribbon.pmd-ribbon-scrollable {
+  background-image:
+    linear-gradient(to right, var(--pmd-c-surface), transparent),
+    linear-gradient(to left, var(--pmd-c-surface), transparent),
+    linear-gradient(to right, var(--pmd-c-scroll-shadow), transparent),
+    linear-gradient(to left, var(--pmd-c-scroll-shadow), transparent);
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-size: 2rem 100%, 2rem 100%, 1rem 100%, 1rem 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 .ribbon-section {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  /* Sections keep their intrinsic width so the strip overflows (and
+     scrolls) rather than squeezing buttons together. */
+  flex: 0 0 auto;
 }
 
 .ribbon-left { flex: 0 0 auto; }
-.ribbon-center { flex: 1 1 auto; justify-content: center; }
+/* Last in DOM order now that the right-hand grid has joined the strip:
+   it soaks up whatever width is left over and centers the doc-name chip
+   in it, and collapses to nothing (min-width: 0) once the buttons
+   overflow. */
+.ribbon-center { flex: 1 1 auto; justify-content: center; min-width: 0; }
 .ribbon-right { flex: 0 0 auto; }
 
 /* All ribbon buttons share the same icon-button look: square, centered
@@ -1264,11 +1334,12 @@ html:has(body.pmd-speech-banner-visible) {
   background: var(--pmd-c-hover);
 }
 
-/* Ribbon-right 2×2 grid: shortcuts / settings on top, timer /
-   home on the bottom. Uses the same 2px×3px intra-panel gap as
-   the left-side panels so spacing reads consistently. All four
-   buttons are sized uniformly, overriding the default 1.7rem
-   square. */
+/* Shortcuts / settings / timer 2×2 grid: shortcuts / settings on
+   top, timer / home on the bottom. Sits inline at the end of the
+   button strip — it is no longer pinned to the ribbon's right edge.
+   Uses the same 2px×3px intra-panel gap as the panels before it so
+   spacing reads consistently. All four buttons are sized uniformly,
+   overriding the default 1.7rem square. */
 .ribbon-right-grid {
   display: grid;
   grid-template-columns: repeat(2, auto);
@@ -1428,13 +1499,14 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
   margin-left: 0.2rem;
 }
 
-/* Active-doc filename chip. Lives in the ribbon-center section
-   so it sits in the blank space between the comments-toggle
-   (left of center) and the settings button (right of center).
-   Opt-in via Settings → Appearance; CSS-gated below.
-   `max-width` caps a long filename so the chip doesn't shove the
-   right-side controls; ellipsis-truncates with the full name in
-   the `title` tooltip. */
+/* Active-doc filename chip. Lives in the ribbon-center section,
+   which trails the button strip and soaks up the leftover ribbon
+   width — so the chip sits in the blank space after the last
+   button, and disappears into the overflow once the strip fills
+   the ribbon. Opt-in via Settings → Appearance; CSS-gated below.
+   `max-width` caps a long filename so the chip can't widen the
+   ribbon's scrollable content on its own; ellipsis-truncates with
+   the full name in the `title` tooltip. */
 .pmd-doc-name-chip {
   display: inline-flex;
   align-items: center;
@@ -1455,9 +1527,8 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
 }
 /* Visibility cascade:
    - Off by default — the setting class on <html> is absent, so this
-     `!important` rule force-hides the chip and the ribbon resizer
-     can't override it back on. The chip also takes no layout space,
-     which keeps the resizer's overflow math accurate.
+     `!important` rule force-hides the chip. The chip also takes no
+     layout space, so the button strip keeps the full ribbon width.
    - On + no filename (untitled / fresh doc) — JS sets [hidden].
    - On + filename + multi-pane — the body class hides it because
      each per-pane chip already shows the slot's filename.

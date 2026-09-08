@@ -28,7 +28,7 @@ export async function purgeOldReuseCheckLogRows(nowMs: number = Date.now()) {
     await db.delete(reuseCheckLog).where(
       inArray(
         reuseCheckLog.id,
-        expired.map((row) => row.id),
+        expired.map((row: { id: number }) => row.id),
       ),
     );
   }

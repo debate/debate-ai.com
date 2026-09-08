@@ -92,6 +92,13 @@
  * showing that step's speaker/name and delivered text (or "Not yet
  * delivered." for a slot beyond how far the round has progressed).
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts`) refreshes the rendered round list whenever another
+ * tab saves, clears, or advances a round's `practiceRounds` or
+ * `aiVersusRounds` record, closing the "Every other localStorage-backed
+ * panel in this repo still has no cross-tab live-update mechanism" Known gap
+ * noted in `docs/features/shared-flow-sync.md` for this panel.
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -160,6 +167,7 @@ import {
   type PracticeRoundRecord,
 } from "debate-round/src/state/practiceRounds"
 import { useFlowStore } from "debate-round/src/state/store"
+import { isPracticeRoundSimulatorPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const JUDGE_DECISION_SIDE_NAMES = { primary: "Primary", secondary: "Secondary" }
 
@@ -239,6 +247,20 @@ export function PracticeRoundSimulatorPanel() {
   }, [])
 
   const refresh = () => setRounds(buildPracticeRoundsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves, clears, or
+   * advances a practice round — a `storage` event never fires in the tab
+   * that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPracticeRoundSimulatorPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const style = debateStyles[form.styleKey]
   const hasSecondarySide = Boolean(style.secondary)

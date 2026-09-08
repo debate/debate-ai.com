@@ -288,6 +288,26 @@ existing "speech document" send target (`reason-editor`'s `SpeechDocument`)
 lives in a package `debate-round`/`debate-practice-rounds` don't depend on,
 so sending a summary there would need its own bridge — not attempted here.
 
+## Cross-tab live update
+
+`FlowSummariesPanel` now subscribes to the browser's `storage` event, which
+the spec fires only in *other* same-origin tabs/windows, never the one that
+made the write — closing the "every other localStorage-backed panel in this
+repo still has no cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for this panel. A new pure
+helper, `state/live-update.ts`'s `isFlowSummariesPanelLiveUpdateStorageEvent`
+(mirroring every other panel's own predicate in that module), checks whether
+the event's `key` is the panel's one backing store (`flowSummaries`, or
+`null` for a `localStorage.clear()`); when it is, the panel's existing
+`refresh()` closure re-reads `buildFlowSummariesPanelView()`. A summary
+generated (manually or via AI transcript extraction), or cleared, in another
+tab now shows up here without a manual reload.
+
+Vitest-covered by four new cases for `isFlowSummariesPanelLiveUpdateStorageEvent`
+in `packages/debate-practice-drills/test/live-update.test.ts` (every backing-store
+key, the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Known gaps
 
 - Microphone dictation transcribes live speech only — it does not accept an

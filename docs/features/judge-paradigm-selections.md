@@ -282,6 +282,20 @@ Vitest-covered in `packages/debate-practice-drills/test/live-update.test.ts`
 (the one backing-store key, the `null`-key clear-all case, and
 unrelated/substring-matching keys staying ignored).
 
+`JudgeDecisionPanel` had the same gap through its own
+`hooks/useJudgeDecisions.ts`: a decision requested, cleared, or bulk-cleared
+for a round in one tab never showed up in another tab's already-rendered
+history without a manual reload. `state/live-update.ts`'s
+`isJudgeDecisionPanelLiveUpdateStorageEvent` checks whether a `storage`
+event's `key` is the hook's one backing store (`judgeDecisions`, from
+`state/judgeDecisions.ts`) or `null`. `useJudgeDecisions` now subscribes to
+`window`'s `storage` event and re-derives `groups` via
+`buildJudgeDecisionsPanelView()` when the predicate matches — since the
+panel's form state (Round ID, side names, selected panel paradigms) lives
+in the panel component itself, not the hook, this refresh never touches an
+in-progress "request a decision" form. Vitest-covered alongside the case
+above in the same `live-update.test.ts` file.
+
 ## Known gaps
 
 - The multi-judge panel mode above closes idea #5's remaining named

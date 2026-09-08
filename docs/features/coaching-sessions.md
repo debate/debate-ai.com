@@ -242,6 +242,29 @@ panels/CoachingSessionsPanel.tsx ("Download comparison")
   → anchor+Blob download, mirroring the per-session Download action's pattern
 ```
 
+## Cross-tab live update
+
+`CoachingSessionsPanel` now subscribes to the browser's `storage` event —
+which the spec fires only in *other* same-origin tabs/windows, never the one
+that made the write — and refreshes its rendered session list when another
+tab saves, restores, or clears a coaching session. A new pure helper,
+`state/live-update.ts`'s `isCoachingSessionsPanelLiveUpdateStorageEvent`,
+checks whether the event's `key` is the panel's one backing store
+(`coachingSessions`, from this package's own `state/coachingSessions.ts`) or
+`null` (a `localStorage.clear()`), closing the "every other
+localStorage-backed panel in this repo still has no cross-tab live-update
+mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `CoachingSessionsPanel`.
+The "Compare two sessions" dropdowns re-derive from the same refreshed
+`sessions` list; the "Generate coaching session" side field, any
+in-progress comparison result, and an open History panel's contents are
+left untouched, matching every other closed panel's "refresh the derived
+view, not the draft" convention.
+
+Vitest-covered by four new cases for
+`isCoachingSessionsPanelLiveUpdateStorageEvent` in
+`packages/debate-practice-drills/test/live-update.test.ts`.
+
 ## Known gaps
 
 None open.

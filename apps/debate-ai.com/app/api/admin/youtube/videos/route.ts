@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { and, desc, eq, getTableColumns, isNull, lt, or } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, isNull, like, lt, or } from "drizzle-orm";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos as videosTable, youtubeRoundVideos } from "@/lib/database/schema";

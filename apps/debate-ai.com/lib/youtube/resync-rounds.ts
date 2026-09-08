@@ -50,7 +50,7 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
     // every resync into a 30-second request that ended in a 500.)
     const excludedIds = new Set(
       (await db.select({ videoId: youtubeVideoExclusions.videoId }).from(youtubeVideoExclusions))
-        .map((row) => row.videoId),
+        .map((row: { videoId: string }) => row.videoId),
     );
 
     const allVideos: any[] = [];

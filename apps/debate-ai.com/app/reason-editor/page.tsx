@@ -10,7 +10,9 @@
  * the app's persistent sidebar (`AppSidebarShell` →
  * `ReasonDocsSidebarPanels`), which already wrapped this route and so used to
  * put a second sidebar beside it. This page now only renders the editor for
- * whatever that sidebar has active, reading it from `ReasonDocsProvider`.
+ * whatever that sidebar has active, reading it from `ReasonDocsProvider` —
+ * or, on a cold load, from the `?doc=`/`?topic=` link that sidebar routes to
+ * (`ReasonDocsRouteSync`).
  * That sidebar is desktop-only, so the same panels are also mounted here as a
  * collapsible strip below `md`.
  *
@@ -20,13 +22,15 @@
  * toggle away.
  */
 
-import { Suspense, useEffect } from "react"
+import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
+import { topicStarterHtml } from "@/lib/topic-starters/content"
 import { cn } from "../../lib/ui/lib/utils"
 import { Input } from "../../lib/ui/primitives/input"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
+import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
 import { ShareWithContacts, SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
 
 export default function ReasonEditorPage() {
@@ -36,10 +40,8 @@ export default function ReasonEditorPage() {
     activeId,
     topicDocument,
     loading,
-    loaded,
     saving,
     ensureLoaded,
-    openDocument,
     selectTab,
     closeTab,
     updateTitle,
@@ -50,15 +52,15 @@ export default function ReasonEditorPage() {
     ensureLoaded()
   }, [ensureLoaded])
 
-  // Land on something readable instead of an empty pane: once the documents
-  // are in, open the first file if the sidebar hasn't already picked one.
-  useEffect(() => {
-    if (!loaded || activeId != null || topicDocument) return
-    const firstFile = documents.find((d) => !d.isFolder)
-    if (firstFile) openDocument(firstFile.id)
-  }, [loaded, activeId, topicDocument, documents, openDocument])
-
   const selected = documents.find((d) => d.id === activeId) ?? null
+
+  // Topic Starters are stored as `.cmir`, so opening one means gunzipping and
+  // reparsing it — once per file, not once per keystroke elsewhere on the
+  // page.
+  const topicHtml = useMemo(
+    () => (topicDocument ? topicStarterHtml(topicDocument) : null),
+    [topicDocument],
+  )
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
@@ -66,6 +68,13 @@ export default function ReasonEditorPage() {
           seeds the co-editing display name; mounted once, renders nothing. */}
       <Suspense>
         <SharedCardOpener />
+      </Suspense>
+      {/* Opens whichever file the sidebar's `?doc=`/`?topic=` link names —
+          and, failing that, the first one — so a click from any sidebar
+          (including `/videos`, which is its own layout branch) brings this
+          column up with that file loaded. Renders nothing. */}
+      <Suspense>
+        <ReasonDocsRouteSync />
       </Suspense>
       {/* The app sidebar carrying these panels is `hidden md:flex`, so below
           that breakpoint they ride along at the top of the editor instead.
@@ -137,7 +146,7 @@ export default function ReasonEditorPage() {
                   the editor's mount effects — re-hiding a nav pane the user
                   pulled back open — on every document switch. */}
               <EditorWithToolbar
-                content={topicDocument?.content ?? selected!.content}
+                content={topicHtml ?? selected!.content}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}

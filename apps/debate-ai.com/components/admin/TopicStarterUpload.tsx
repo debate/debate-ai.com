@@ -3,6 +3,11 @@
 /**
  * @fileoverview Admin-only Topic Starter importer UI.
  *
+ * Uploads are DOCX; what the library keeps is CardMirror's native `.cmir`,
+ * converted server-side (see `app/api/admin/topic-starters/route.ts`), which
+ * the copy below says plainly — an operator who uploads a Verbatim file
+ * should know which format their teammates will open.
+ *
  * Reports what actually happened to an upload: which files landed, which
  * failed, why each one failed, and the import id to quote when reading server
  * logs. A bulk DOCX import that silently drops half a camp file is worse than
@@ -120,11 +125,11 @@ export function TopicStarterUpload() {
         tone: failures.length > 0 ? "partial" : "success",
         summary:
           data.summary ||
-          `${data.imported} DOCX file${data.imported === 1 ? "" : "s"} added to Topic Starters.`,
+          `${data.imported} file${data.imported === 1 ? "" : "s"} converted to .cmir and added to Topic Starters.`,
         detail:
           failures.length > 0
             ? `${data.found} file${data.found === 1 ? "" : "s"} found in the upload — the ones below were skipped and can be fixed and re-uploaded on their own.`
-            : "Published to CardMirror for everyone.",
+            : "Stored as .cmir and published to CardMirror for everyone.",
         failures,
         importId: data.importId,
       })
@@ -150,7 +155,7 @@ export function TopicStarterUpload() {
   return <Card>
     <CardHeader>
       <CardTitle>Topic Starter library</CardTitle>
-      <CardDescription>Upload one DOCX or a ZIP containing up to 100 DOCX files (100MB max, 25MB per file). Every imported folder and file is published to CardMirror for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
+      <CardDescription>Upload one DOCX or a ZIP containing up to 100 DOCX files (100MB max, 25MB per file). Each file is converted to CardMirror&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to CardMirror for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">

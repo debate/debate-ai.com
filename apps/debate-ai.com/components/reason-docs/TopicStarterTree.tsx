@@ -5,7 +5,11 @@ import { ChevronDown, ChevronRight, FileText, Folder, Search } from "lucide-reac
 import { Input } from "@/lib/ui/primitives/input"
 import { cn } from "@/lib/ui/lib/utils"
 
-export interface TopicStarterItem { id: number; title: string; content: string; parentId: number | null; isFolder: boolean; tags: string }
+/** A row of the public catalogue. `content` is the stored file — a base64
+ *  `.cmir` for anything imported since the library switched to CardMirror's
+ *  native format, HTML for rows older than that — and `format` says which,
+ *  so a reader never has to guess (see `lib/topic-starters/format.ts`). */
+export interface TopicStarterItem { id: number; title: string; content: string; format?: string; parentId: number | null; isFolder: boolean; tags: string }
 interface Node { item: TopicStarterItem; children: Node[] }
 function tree(items: TopicStarterItem[]) {
   const children = new Map<number | null, TopicStarterItem[]>()

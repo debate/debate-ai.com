@@ -108,22 +108,70 @@ interface D1DatabaseLike {
  */
 const NATIVE_STATEMENT = Symbol("d1.nativeStatement");
 
+/**
+ * How to build the same statement again — same SQL, same bindings — against a
+ * different session. A statement belongs to the session that prepared it, so
+ * abandoning a session (see {@link dropClientBookmark}) means re-preparing
+ * every statement that was about to run on it.
+ */
+const REBUILD_STATEMENT = Symbol("d1.rebuildStatement");
+
+type StatementFactory = (target: D1DatabaseLike | D1SessionLike) => D1StatementLike;
+
 interface TrackedStatement extends D1StatementLike {
   [NATIVE_STATEMENT]: D1StatementLike;
+  [REBUILD_STATEMENT]: StatementFactory;
 }
 
 interface D1SessionScope {
   /** Bookmark or constraint this request's sessions start from. */
   start: string;
+  /**
+   * Where to start over if `start` turns out to be unusable — the constraint
+   * this request would have used had the client sent no bookmark at all.
+   */
+  fallback: string;
+  /** `start` is a client-supplied bookmark rather than a constraint we chose. */
+  resumed: boolean;
+  /**
+   * The request is safe to replay (GET/HEAD), so a failed statement can be
+   * retried on a fresh session without risking a half-applied write.
+   */
+  replayable: boolean;
   /** Sessions API disabled for this request (`D1_SESSION_MODE=off`). */
   bypass: boolean;
   /** Created on first use and keyed by binding, so one scope can span bindings. */
   sessions: Map<D1DatabaseLike, D1SessionLike>;
   /** `meta` of the most recent query, for the replica-routing debug headers. */
   lastMeta?: D1Meta;
+  /** The client's bookmark was abandoned, so the response must not keep it. */
+  bookmarkDropped?: boolean;
 }
 
 const scopeStorage = new AsyncLocalStorage<D1SessionScope>();
+
+/**
+ * A cookie value, percent-decoded, or null when it is not a usable bookmark.
+ *
+ * `decodeURIComponent` *throws* on a malformed escape — a bare `%`, `%zz`, a
+ * value some other software truncated mid-escape — and this runs in the Worker
+ * entry, before any route handler and outside every try/catch there is. An
+ * unguarded decode therefore turns one unparseable cookie into a thrown
+ * exception on *every* request that browser makes, D1-backed or not
+ * (`/api/auth/providers` reads no database and 500s all the same), and the
+ * browser keeps re-sending the cookie, so the site stays down for that browser
+ * until it ages out. A value that will not decode is simply not a bookmark, so
+ * it is dropped exactly like one that decodes but is the wrong shape.
+ */
+function decodeClientBookmark(raw: string): string | null {
+  let value: string;
+  try {
+    value = decodeURIComponent(raw);
+  } catch {
+    return null;
+  }
+  return BOOKMARK_PATTERN.test(value) ? value : null;
+}
 
 /** A bookmark from the untrusted client, or null if missing or malformed. */
 function readClientBookmark(request: Request): string | null {
@@ -136,28 +184,37 @@ function readClientBookmark(request: Request): string | null {
     const eq = pair.indexOf("=");
     if (eq === -1) continue;
     if (pair.slice(0, eq).trim() !== D1_BOOKMARK_COOKIE) continue;
-    const value = decodeURIComponent(pair.slice(eq + 1).trim());
-    return BOOKMARK_PATTERN.test(value) ? value : null;
+    return decodeClientBookmark(pair.slice(eq + 1).trim());
   }
   return null;
 }
 
 /**
- * Where this request's session should start. A bookmark always wins: it is
- * both the fastest option (any replica that has caught up can answer it) and
- * the strictest one (never older than what this client already saw). Without
- * one, mutations start on the primary so a handler that writes and then reads
- * back cannot miss its own write, and plain reads start anywhere.
+ * Where this request's session should start, and where to start over if that
+ * turns out not to work. A bookmark always wins: it is both the fastest option
+ * (any replica that has caught up can answer it) and the strictest one (never
+ * older than what this client already saw). Without one, mutations start on
+ * the primary so a handler that writes and then reads back cannot miss its own
+ * write, and plain reads start anywhere.
  */
-function resolveStart(request: Request, mode: D1SessionMode): string {
-  if (mode === "primary") return FIRST_PRIMARY;
-  if (mode === "unconstrained") return FIRST_UNCONSTRAINED;
+function resolveStartpoint(
+  request: Request,
+  mode: D1SessionMode,
+): { start: string; fallback: string; resumed: boolean; replayable: boolean } {
+  const method = request.method.toUpperCase();
+  const replayable = method === "GET" || method === "HEAD";
+  const fallback =
+    mode === "primary" || !replayable ? FIRST_PRIMARY : FIRST_UNCONSTRAINED;
+
+  if (mode === "primary") return { start: FIRST_PRIMARY, fallback, resumed: false, replayable };
+  if (mode === "unconstrained") {
+    return { start: FIRST_UNCONSTRAINED, fallback, resumed: false, replayable };
+  }
 
   const bookmark = readClientBookmark(request);
-  if (bookmark) return bookmark;
+  if (bookmark) return { start: bookmark, fallback, resumed: true, replayable };
 
-  const method = request.method.toUpperCase();
-  return method === "GET" || method === "HEAD" ? FIRST_UNCONSTRAINED : FIRST_PRIMARY;
+  return { start: fallback, fallback, resumed: false, replayable };
 }
 
 function normalizeMode(raw: unknown): D1SessionMode {
@@ -171,8 +228,9 @@ function normalizeMode(raw: unknown): D1SessionMode {
  */
 export function runWithD1Session<T>(request: Request, mode: unknown, fn: () => T): T {
   const resolved = normalizeMode(mode);
+  const { start, fallback, resumed, replayable } = resolveStartpoint(request, resolved);
   return scopeStorage.run(
-    { start: resolveStart(request, resolved), bypass: resolved === "off", sessions: new Map() },
+    { start, fallback, resumed, replayable, bypass: resolved === "off", sessions: new Map() },
     fn,
   );
 }
@@ -182,7 +240,17 @@ export function runWithD1Session<T>(request: Request, mode: unknown, fn: () => T
  * client bookmark to resume from and generally write.
  */
 export function runWithPrimaryD1Session<T>(fn: () => T): T {
-  return scopeStorage.run({ start: FIRST_PRIMARY, bypass: false, sessions: new Map() }, fn);
+  return scopeStorage.run(
+    {
+      start: FIRST_PRIMARY,
+      fallback: FIRST_PRIMARY,
+      resumed: false,
+      replayable: false,
+      bypass: false,
+      sessions: new Map(),
+    },
+    fn,
+  );
 }
 
 function currentTarget(binding: D1DatabaseLike): D1DatabaseLike | D1SessionLike {
@@ -201,32 +269,100 @@ function record(scope: D1SessionScope | undefined, meta: D1Meta | undefined) {
   if (scope && meta) scope.lastMeta = meta;
 }
 
+/** Errors in which D1 names the session or the bookmark as the problem. */
+const BOOKMARK_ERROR_PATTERN = /bookmark|session/i;
+
+/**
+ * D1 refuses a bookmark it cannot honour — one minted before a restore, one
+ * from another database, one older than the service keeps — and it refuses it
+ * at *query* time, because `withSession()` itself does no I/O. The bookmark
+ * arrives in a cookie the client keeps re-sending, so without this an
+ * unusable bookmark takes down every D1-backed route for that browser until
+ * the cookie ages out: `/api/settings`, `/api/topic-starters` and
+ * `/api/auth/get-session` all 500 at once while the database itself is
+ * perfectly healthy.
+ *
+ * A bookmark is only ever a consistency *floor*, so continuing without one
+ * costs nothing but the guarantee it bought. The session is therefore
+ * abandoned and restarted from the constraint the request would have used had
+ * the client sent no bookmark at all, and the caller replays the statement
+ * there.
+ *
+ * Returns whether the caller should replay what it was doing on the new
+ * session.
+ */
+function dropClientBookmark(scope: D1SessionScope | undefined, error: unknown): boolean {
+  if (!scope || scope.bypass || !scope.resumed || scope.bookmarkDropped) return false;
+  // A replayable (GET/HEAD) request can retry whatever the error was — the
+  // worst case is one wasted round trip that fails the same way. Anything that
+  // may have written is retried only when D1 names the session or the
+  // bookmark, so a statement that got through is never applied twice.
+  if (!scope.replayable && !BOOKMARK_ERROR_PATTERN.test(String((error as Error)?.message ?? error))) {
+    return false;
+  }
+
+  console.warn("D1 session: discarding the client's bookmark and retrying without it:", error);
+  scope.bookmarkDropped = true;
+  scope.resumed = false;
+  scope.start = scope.fallback;
+  scope.sessions.clear();
+  return true;
+}
+
 /**
  * Re-expose a prepared statement so the `meta` D1 attaches to every remote
  * query — including the region that served it — reaches `getD1ReplicaInfo()`.
  * `bind()` returns a fresh statement, so the result is re-wrapped.
+ *
+ * `rebuild` reproduces the statement against another session, which is what
+ * lets a query that failed on a bad bookmark run again on a clean session
+ * (see {@link dropClientBookmark}) instead of surfacing as a 500.
  */
-function trackStatement(statement: D1StatementLike, scope: D1SessionScope | undefined): TrackedStatement {
+function trackStatement(
+  raw: D1DatabaseLike,
+  scope: D1SessionScope | undefined,
+  statement: D1StatementLike,
+  rebuild: StatementFactory,
+): TrackedStatement {
+  const attempt = async <T>(op: (target: D1StatementLike) => Promise<T>): Promise<T> => {
+    try {
+      return await op(statement);
+    } catch (error) {
+      if (!dropClientBookmark(scope, error)) throw error;
+      return op(rebuild(currentTarget(raw)));
+    }
+  };
+
   return {
     [NATIVE_STATEMENT]: statement,
-    bind: (...values: unknown[]) => trackStatement(statement.bind(...values), scope),
-    first: (colName?: string) => statement.first(colName),
-    raw: (options?: unknown) => statement.raw(options),
-    run: async () => {
-      const result = await statement.run();
-      record(scope, result?.meta);
-      return result;
-    },
-    all: async () => {
-      const result = await statement.all();
-      record(scope, result?.meta);
-      return result;
-    },
+    [REBUILD_STATEMENT]: rebuild,
+    bind: (...values: unknown[]) =>
+      trackStatement(raw, scope, statement.bind(...values), (target) => rebuild(target).bind(...values)),
+    first: (colName?: string) => attempt((s) => s.first(colName)),
+    raw: (options?: unknown) => attempt((s) => s.raw(options)),
+    run: () =>
+      attempt(async (s) => {
+        const result = await s.run();
+        record(scope, result?.meta);
+        return result;
+      }),
+    all: () =>
+      attempt(async (s) => {
+        const result = await s.all();
+        record(scope, result?.meta);
+        return result;
+      }),
   };
 }
 
 function unwrapStatement(statement: D1StatementLike): D1StatementLike {
   return (statement as TrackedStatement)[NATIVE_STATEMENT] ?? statement;
+}
+
+/** The same statement prepared against `target`, for a retry on a new session. */
+function rebuildStatement(statement: D1StatementLike, target: D1DatabaseLike | D1SessionLike): D1StatementLike {
+  const rebuild = (statement as TrackedStatement)[REBUILD_STATEMENT];
+  return rebuild ? rebuild(target) : unwrapStatement(statement);
 }
 
 /**
@@ -245,13 +381,26 @@ export function sessionedD1<T>(binding: T): T {
   const overrides: D1DatabaseLike = {
     prepare(query: string) {
       const scope = scopeStorage.getStore();
-      return trackStatement(currentTarget(raw).prepare(query), scope);
+      const build: StatementFactory = (target) => target.prepare(query);
+      return trackStatement(raw, scope, build(currentTarget(raw)), build);
     },
     async batch(statements: D1StatementLike[]) {
       const scope = scopeStorage.getStore();
-      const results = await currentTarget(raw).batch(statements.map(unwrapStatement));
-      record(scope, results?.[results.length - 1]?.meta);
-      return results;
+      const run = async (target: D1DatabaseLike | D1SessionLike, prepared: D1StatementLike[]) => {
+        const results = await target.batch(prepared);
+        record(scope, results?.[results.length - 1]?.meta);
+        return results;
+      };
+      try {
+        return await run(currentTarget(raw), statements.map(unwrapStatement));
+      } catch (error) {
+        if (!dropClientBookmark(scope, error)) throw error;
+        const target = currentTarget(raw);
+        return run(
+          target,
+          statements.map((statement) => unwrapStatement(rebuildStatement(statement, target))),
+        );
+      }
     },
   };
 
@@ -290,24 +439,37 @@ export function getD1ReplicaInfo(): { region?: string; primary?: boolean } | nul
  * Hand this request's bookmark back to the client so its next request resumes
  * from the same database version — as a header for API clients, as a cookie
  * for browser navigations. No-ops when D1 was not used, which is what keeps
- * the `Set-Cookie` off static and otherwise cacheable responses.
+ * the `Set-Cookie` off static and otherwise cacheable responses. When the
+ * bookmark the client sent had to be abandoned and nothing replaced it, the
+ * cookie is expired instead so the client stops sending it.
  *
  * Returns the response to send: headers are set in place where the response
  * allows it, and on a copy where it does not.
  */
 export function applyD1Bookmark(response: Response, options?: { debug?: boolean }): Response {
   const bookmark = getD1Bookmark();
-  if (!bookmark) return response;
+  // A bookmark D1 would not accept has to be taken off the client as well as
+  // out of this request, or the next request resumes the same failure — see
+  // `dropClientBookmark`. Expiring the cookie is the only way to say so.
+  const dropped = Boolean(scopeStorage.getStore()?.bookmarkDropped);
+  if (!bookmark && !dropped) return response;
   // A 101 cannot be reconstructed and carries no headers worth setting.
   if (response.status === 101) return response;
 
   let target = response;
   const set = () => {
-    target.headers.set(D1_BOOKMARK_HEADER, bookmark);
-    target.headers.append(
-      "set-cookie",
-      `${D1_BOOKMARK_COOKIE}=${encodeURIComponent(bookmark)}; Path=/; Max-Age=${BOOKMARK_MAX_AGE_SECONDS}; SameSite=Lax; Secure; HttpOnly`,
-    );
+    if (bookmark) {
+      target.headers.set(D1_BOOKMARK_HEADER, bookmark);
+      target.headers.append(
+        "set-cookie",
+        `${D1_BOOKMARK_COOKIE}=${encodeURIComponent(bookmark)}; Path=/; Max-Age=${BOOKMARK_MAX_AGE_SECONDS}; SameSite=Lax; Secure; HttpOnly`,
+      );
+    } else {
+      target.headers.append(
+        "set-cookie",
+        `${D1_BOOKMARK_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax; Secure; HttpOnly`,
+      );
+    }
     if (options?.debug) {
       const info = getD1ReplicaInfo();
       if (info?.region) target.headers.set("x-d1-served-by-region", info.region);

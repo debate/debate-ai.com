@@ -82,6 +82,44 @@ export async function getVideosByIds(videoIds: string[]): Promise<any[]> {
   return allVideos;
 }
 
+/**
+ * Fetches the current view count for each video id.
+ *
+ * Requests only the `statistics` part — a view-count refresh has no use for
+ * the snippet, and leaving it out keeps the response small on runs that cover
+ * the whole library. Ids the API does not return (deleted or private videos)
+ * are simply absent from the result rather than reported as zero views.
+ *
+ * @param videoIds - YouTube video ids, in any quantity; batched by 50.
+ * @returns View count keyed by video id.
+ */
+export async function fetchViewCounts(videoIds: string[]): Promise<Record<string, number>> {
+  const viewCounts: Record<string, number> = {};
+
+  // YouTube API allows max 50 IDs per request
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+    const ids = batch.join(",");
+
+    const res: any = await YoutubeAPI("/videos", {
+      part: "statistics",
+      id: ids,
+    });
+    const data = res?.data || res;
+
+    if (data?.items) {
+      for (const item of data.items) {
+        const views = Number.parseInt(item.statistics?.viewCount ?? "", 10);
+        if (Number.isFinite(views)) viewCounts[item.id] = views;
+      }
+    }
+
+    console.log(`Fetched view counts ${Math.min(i + 50, videoIds.length)}/${videoIds.length}`);
+  }
+
+  return viewCounts;
+}
+
 export async function fetchFullDescriptions(videoIds: string[]): Promise<Record<string, string>> {
   const descriptions: Record<string, string> = {};
 

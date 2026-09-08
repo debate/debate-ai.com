@@ -32,6 +32,13 @@
  * and optionally marked "Share with my team" so it shows up (read-only) in
  * every other signed-in user's "Shared by your team" list.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts`) refreshes the rendered selection list whenever
+ * another tab saves or clears a session's persona selection, closing the
+ * "Every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in
+ * `docs/features/shared-flow-sync.md` for this panel.
+ *
  * @module panels/OpponentPersonaPickerPanel
  */
 
@@ -62,6 +69,7 @@ import {
   type OpponentPersonaSelection,
 } from "../state/opponentPersonaSelections"
 import { useCustomOpponentPersonaLibrary } from "../hooks/useCustomOpponentPersonaLibrary"
+import { isOpponentPersonaPickerPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const BUILTIN_PERSONAS = listOpponentPersonas()
 const DIFFICULTIES = listOpponentDifficulties()
@@ -105,6 +113,20 @@ export function OpponentPersonaPickerPanel() {
   }, [])
 
   const refresh = () => setSelections(buildOpponentPersonaSelectionsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves or clears a
+   * session's opponent persona selection — a `storage` event never fires in
+   * the tab that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentPersonaPickerPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSave = () => {
     const sessionId = form.sessionId.trim()

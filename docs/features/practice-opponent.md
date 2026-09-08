@@ -192,6 +192,32 @@ usable `OpponentPersona`) and
 `custom-opponent-persona-library-client.test.ts` (the account/shared HTTP
 calls, mocked).
 
+## Cross-tab live update
+
+`OpponentPersonaPickerPanel` used to only refresh its rendered session list
+on mount or right after its own save/clear actions — a teammate saving or
+clearing a session's persona selection in a second open tab (or a second
+browser window on the same machine) never showed up without a manual
+reload, the same still-open gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md). `state/live-update.ts`'s
+`isOpponentPersonaPickerPanelLiveUpdateStorageEvent` checks whether a
+`storage` event's `key` is the panel's one backing store
+(`opponentPersonaSelections`) or `null` (a `localStorage.clear()`), and the
+panel now subscribes to `window`'s `storage` event and calls its existing
+`refresh()` closure when the predicate matches.
+
+The custom-persona library (`useCustomOpponentPersonaLibrary`, "My persona
+library"/"Shared by your team") is intentionally not covered by this
+predicate — it's account-synced through its own hook rather than a raw
+`localStorage` read, and manages its own refresh independently. The
+in-progress session-selection form draft is also left untouched, matching
+every other closed panel's "refresh the derived view, not the draft"
+convention.
+
+Vitest-covered: `packages/debate-practice-drills/test/live-update.test.ts`
+(the one backing-store key, the `null`-key clear-all case, and unrelated/
+substring-matching keys staying ignored).
+
 ## Known gaps
 
 - The Practice Round Simulator panel (`/practice-round`,
