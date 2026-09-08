@@ -1,7 +1,7 @@
 {
   "name": "debate-research-evidence",
   "version": "0.1.0",
-  "description": "Evidence card search UI and the community research-and-evidence layer \u2014 search interface, evidence/argument libraries, LLM card scoring, revision incentives, review queue and topic coverage",
+  "description": "Evidence card search UI and the community research-and-evidence layer — search interface, evidence/argument libraries, LLM card scoring, revision incentives, review queue and topic coverage",
   "private": true,
   "type": "module",
   "author": "vtempest",
@@ -44,6 +44,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "^4.1.0",
+    "hyparquet-writer": "^0.16.9",
     "next": "16.1.6",
     "typescript": "^5.9.3",
     "vitest": "^4.1.0"
