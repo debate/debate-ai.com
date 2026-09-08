@@ -7,7 +7,13 @@ Team Prep & Collaboration — task inbox, collaboration prep room, team collabor
 ```tsx
 import { TaskInboxPanel, PrepRoomPanel, TopicSprintPanel, BrainstormBoardPanel, GroupChallengesPanel, ResearchProgressPanel, SprintNotesPanel } from "debate-team-collaboration"
 import { PrepNotesPanel, AccountNotificationsPanel, PrepNoteNotificationsPanel } from "debate-team-collaboration"
+import { ContactsPanel, SharedCardsPanel, useContacts, useCardShares } from "debate-team-collaboration"
 ```
+
+Also home to the account-linked **contacts list** and **shared collab cards**
+(`src/lib/contacts.ts` rules, `src/state/contacts.ts` / `src/state/cardShares.ts`
+clients, the two hooks and panels above) — see
+[docs/features/contacts.md](../../docs/features/contacts.md).
 
 This package split out of `debate-card-search` and `debate-round` alongside
 `debate-research-evidence` and `debate-community`. It depends on `debate-research-evidence`
@@ -17,3 +23,16 @@ round primitives the notifications and prep-notes panels still need).
 ## Package layout
 
 Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+```
+
+Suites live in `test/` and mirror the `src/` layout. Coverage for every package is
+merged at the repo root by `bun run coverage` and uploaded to
+[Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
+
+Current Codecov package coverage on `master` at commit `50322f5` is **54.37%** (tracked
+under the `debate-team-collaboration` flag).

@@ -6,6 +6,7 @@ import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
 import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "../config/site";
+import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
 import { getEnv } from "../env";
 
 /**
@@ -38,40 +39,59 @@ function buildSocialProviders() {
 async function buildAuth() {
   const db = await getDBFromContext();
 
-  // Prefer an explicitly configured URL, then whatever the deployment exposes.
-  // When nothing is set, leave it undefined so better-auth derives the origin
-  // from the incoming request instead of pinning callbacks and cookies to a
-  // hardcoded host.
-  const baseURL =
+  // An explicitly configured URL, when there is one. It is no longer the only
+  // origin this instance answers on — see `baseURL` below — but it still wins
+  // as the fallback and is always allowed.
+  const configuredBaseURL =
     getEnv("BETTER_AUTH_URL") ||
     getEnv("NEXT_PUBLIC_APP_URL") ||
     getEnv("NEXT_PUBLIC_BASE_URL") ||
     NEXT_PUBLIC_BASE_URL ||
     undefined;
 
-  // Hosts allowed to make authenticated requests. Preview deployments and
-  // localhost share this backend, and better-auth rejects requests (and omits
-  // the CORS headers) from any origin not listed here. Extra origins can be
-  // supplied via BETTER_AUTH_TRUSTED_ORIGINS (comma-separated).
-  const trustedOrigins = Array.from(
-    new Set(
-      [
-        baseURL,
-        APP_ORIGIN,
-        "https://*.debate-ai.com",
-        "https://*.workers.dev",
-        "https://*.vercel.app",
-        "http://localhost:3000",
-        ...(getEnv("BETTER_AUTH_TRUSTED_ORIGINS")?.split(",") ?? []),
-      ]
-        .map((origin) => origin?.trim())
-        .filter((origin): origin is string => Boolean(origin)),
-    ),
-  );
+  // Hosts this deployment answers on (lib/auth/hosts.ts), extendable via
+  // BETTER_AUTH_ALLOWED_HOSTS.
+  const allowedHosts = buildAllowedHosts({
+    configuredBaseURL,
+    extraHosts: getEnv("BETTER_AUTH_ALLOWED_HOSTS"),
+  });
+
+  // Extra origin patterns for the CSRF origin check, on top of the ones
+  // better-auth derives from `allowedHosts`. Comma-separated additions can be
+  // supplied via BETTER_AUTH_TRUSTED_ORIGINS.
+  const trustedOrigins = buildTrustedOrigins({
+    configuredBaseURL,
+    extraOrigins: getEnv("BETTER_AUTH_TRUSTED_ORIGINS"),
+  });
 
   return betterAuth({
-    ...(baseURL ? { baseURL } : {}),
+    // Resolved per request against `allowedHosts` rather than pinned to one
+    // origin. A single string here (or leaving it unset, which makes
+    // better-auth latch onto whichever host happened to warm the Worker
+    // isolate first) means every request arriving on any other domain this app
+    // is served from is rejected by the CSRF origin check with a 403 "Invalid
+    // origin" before it reaches the sign-in handler — which is what broke
+    // Google sign-in, and so /admin, on ebate.app. Resolving per request also
+    // keeps the OAuth callback, the session cookie and magic links on the
+    // domain the visitor is actually using.
+    baseURL: {
+      allowedHosts,
+      // Used when the host is missing (a direct `auth.api` call with no
+      // headers) or not allowlisted; the origin check then rejects the
+      // unknown host, which is the intended answer.
+      fallback: configuredBaseURL || APP_ORIGIN,
+    },
     trustedOrigins,
+    advanced: {
+      // Per-request base URLs are derived from the Host header, and better-auth
+      // prefers `x-forwarded-host` over it whenever proxy headers are trusted —
+      // which it does by default. Nothing sits in front of this Worker to set
+      // that header, so an attacker could supply their own and have the magic
+      // link we email built for their domain. Cloudflare routes on Host, so
+      // taking the host from the request itself is both correct and forgeable
+      // only by someone who already controls a routed hostname.
+      trustedProxyHeaders: false,
+    },
     secret: getEnv("BETTER_AUTH_SECRET") || "dev-secret-change-in-production",
     database: drizzleAdapter(db, {
       provider: "sqlite",

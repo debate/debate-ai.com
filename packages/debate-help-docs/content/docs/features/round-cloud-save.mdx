@@ -1,0 +1,37 @@
+---
+title: "Round Cloud Save"
+---
+
+# Round Cloud Save
+
+Lets a signed-in user save a whole round (the tournament/debaters/judges
+wrapper around a set of flows) to their account and load it back on any
+device.
+
+- **Nav:** `FlowHistoryDialog`'s "Rounds" tab — a cloud-upload icon per
+  round, "Save all rounds" and "Save flows not in a round" buttons
+- **Package:** `debate-round` (dialog + validation + fetch client),
+  `apps/debate-ai.com` (`/api/rounds`, `saved_rounds` D1 table)
+
+## What it does
+
+A `Round` only references its flows indirectly via `flowIds`, so saving a
+round also saves each flow it references first. "Save all rounds" and
+"Save flows not in a round" cover the bulk cases. The "Saved to account"
+tab's Flows section badges a flow "via round" when it was only saved as
+part of a round's cascade.
+
+## Data flow
+
+```
+state/bulkRoundSave.ts (pure) — collectFlowsForRounds / collectUnreferencedFlows
+state/savedRounds.ts (pure) — isValidRound / deriveRoundLabel
+round/saved-rounds-client.ts (fetch) — list/fetch/save/delete
+apps/debate-ai.com/app/api/rounds/[route.ts, [clientId]/route.ts]
+```
+
+## Known gaps
+
+"Save all rounds"/"Save flows not in a round" save every item
+unconditionally — no dirty tracking to skip an unchanged item. No
+optimistic-concurrency handling.

@@ -21,6 +21,14 @@
  * so an extracted argument renders exactly like one derived from a manually
  * flowed grid.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isFlowSummariesPanelLiveUpdateStorageEvent` —
+ * closing the "every other localStorage-backed panel in this repo still has
+ * no cross-tab live-update mechanism" Known gap noted in
+ * `docs/features/shared-flow-sync.md`, for `FlowSummariesPanel` — so a
+ * summary generated, extracted, or cleared in another same-origin tab shows
+ * up here without a manual reload.
+ *
  * A "🎤 Record" button next to the transcript field closes the "recording"
  * half of follow-up (a) — `hooks/useMicrophoneTranscription.ts` dictates
  * directly into the same field via the browser's own Web Speech API, with
@@ -43,6 +51,17 @@
  * extracted row across the whole batch is saved to the round's flow summary
  * in one `saveFlowSummary` call.
  *
+ * Closes idea #6's "a one-click 'send to Prep Notes' action for a summary"
+ * follow-up: each round card gets a "Send to Prep Notes" action (mirroring
+ * `BrainstormBoardPanel`'s "Send to Argument Library" inline-form pattern)
+ * that hands the round's rendered summary text off to the caller-supplied
+ * `onSendToPrepNotes` prop. This panel has no dependency on
+ * `debate-team-collaboration` (where the actual `PrepNote` store lives), so
+ * the prop is left for the app/page layer that already depends on both to
+ * wire up (mirroring `CoachingProgramRosterAnalyticsWithDrills.tsx`'s own
+ * cross-package composition split) — the action is hidden entirely when no
+ * handler is supplied.
+ *
  * @module panels/FlowSummariesPanel
  */
 
@@ -54,7 +73,7 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildFlowSummariesPanelView,
   deleteFlowSummary,
@@ -72,6 +91,7 @@ import { extractTranscriptsBulk, summarizeBulkTranscriptOutcomes } from "../roun
 import { requestTranscriptExtraction } from "../round/transcript-extraction-client"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { isFlowSummariesPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 /** One speech/transcript entry in the bulk-extraction form, before trimming/validation. */
 interface ExtractEntryDraft {
@@ -81,6 +101,16 @@ interface ExtractEntryDraft {
 
 const EMPTY_EXTRACT_ENTRY: ExtractEntryDraft = { speech: "", transcriptText: "" }
 
+export interface FlowSummariesPanelProps {
+  /**
+   * Called with a round's rendered summary text when "Send to Prep Notes"
+   * is submitted. Hidden entirely when omitted — see this file's header
+   * comment for why this panel doesn't call into `debate-team-collaboration`
+   * directly.
+   */
+  onSendToPrepNotes?: (input: { roundId: string; authorId: string; text: string }) => void
+}
+
 /**
  * Renders the Speech Transcript Summaries panel: every persisted
  * `FlowSummaryRecord`, one card per round, with a "Clear" action per round.
@@ -88,7 +118,7 @@ const EMPTY_EXTRACT_ENTRY: ExtractEntryDraft = { speech: "", transcriptText: "" 
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function FlowSummariesPanel() {
+export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProps = {}) {
   const [records, setRecords] = useState<FlowSummaryRecord[] | null>(null)
   const [extractRoundId, setExtractRoundId] = useState("")
   const [extractEntries, setExtractEntries] = useState<ExtractEntryDraft[]>([{ ...EMPTY_EXTRACT_ENTRY }])
@@ -96,6 +126,9 @@ export function FlowSummariesPanel() {
   const [extractLoading, setExtractLoading] = useState(false)
   const [extractError, setExtractError] = useState<string | null>(null)
   const [extractStatus, setExtractStatus] = useState<string | null>(null)
+  const [sendFormOpenRoundId, setSendFormOpenRoundId] = useState<string | null>(null)
+  const [sendAuthorId, setSendAuthorId] = useState("")
+  const [sentToPrepNotesRoundIds, setSentToPrepNotesRoundIds] = useState<Set<string>>(new Set())
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) =>
@@ -114,9 +147,33 @@ export function FlowSummariesPanel() {
 
   const refresh = () => setRecords(buildFlowSummariesPanelView())
 
+  // A `storage` event never fires in the tab that made the write, only in
+  // other same-origin tabs — this is the cross-tab signal a mount-only read
+  // can't catch on its own.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowSummariesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
   const handleClear = (roundId: string) => {
     deleteFlowSummary(roundId)
     refresh()
+  }
+
+  const handleOpenSendToPrepNotes = (roundId: string) => {
+    setSendFormOpenRoundId(sendFormOpenRoundId === roundId ? null : roundId)
+  }
+
+  const handleSendToPrepNotes = (roundId: string, text: string) => {
+    if (!onSendToPrepNotes || !sendAuthorId.trim()) return
+    onSendToPrepNotes({ roundId, authorId: sendAuthorId.trim(), text })
+    setSentToPrepNotesRoundIds((prev) => new Set(prev).add(roundId))
+    setSendFormOpenRoundId(null)
+    setSendAuthorId("")
   }
 
   const updateEntrySpeech = (index: number, speech: string) =>
@@ -192,23 +249,15 @@ export function FlowSummariesPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Speech Transcript Summaries</h1>
-        <p className="text-sm text-muted-foreground">
-          Per-argument summaries derived from each round's flow, with suggested
-          cross-examination questions and extension ideas for anything still unanswered.
-        </p>
-      </div>
-
-      <div className="rounded-lg border border-border p-4 space-y-4">
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">Generate from raw speech text</h2>
-          <p className="text-sm text-muted-foreground">
-            Paste one or more speech transcripts and let AI extract each one's claims, warrants,
-            impacts, and evidence into this round's flow summary — no manually flowed grid required.
-          </p>
-        </div>
+    <PanelShell
+      title="Speech Transcript Summaries"
+      description="Per-argument summaries derived from each round's flow, with suggested cross-examination questions and extension ideas for anything still unanswered."
+    >
+      <PanelSection
+        title="Generate from raw speech text"
+        description="Paste one or more speech transcripts and let AI extract each one's claims, warrants, impacts, and evidence into this round's flow summary — no manually flowed grid required."
+        className="rounded-lg border border-border p-4 space-y-4"
+      >
         <div className="space-y-1.5">
           <Label htmlFor="flow-summaries-extract-round-id">Round ID</Label>
           <Input
@@ -295,7 +344,7 @@ export function FlowSummariesPanel() {
               ? `Extract ${extractEntries.length} speeches with AI`
               : "Extract with AI"}
         </Button>
-      </div>
+      </PanelSection>
 
       {records.length === 0 ? (
         <EmptyState
@@ -313,13 +362,52 @@ export function FlowSummariesPanel() {
             <div key={record.roundId} className="rounded-lg border border-border p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-semibold text-foreground">Round {record.roundId}</h2>
-                <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
-                  Clear
-                </Button>
+                <div className="flex items-center gap-2">
+                  {onSendToPrepNotes &&
+                    (sentToPrepNotesRoundIds.has(record.roundId) ? (
+                      <Badge variant="outline">✓ Sent to Prep Notes</Badge>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleOpenSendToPrepNotes(record.roundId)}
+                      >
+                        Send to Prep Notes
+                      </Button>
+                    ))}
+                  <Button size="sm" variant="ghost" onClick={() => handleClear(record.roundId)}>
+                    Clear
+                  </Button>
+                </div>
               </div>
               <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
                 {buildFlowSummaryTextFromRows(rows)}
               </pre>
+              {sendFormOpenRoundId === record.roundId && (
+                <div className="mt-3 space-y-2 rounded-md border border-border p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Send this round's summary above to Prep Notes as a round-anchored note.
+                  </p>
+                  <div className="grid gap-2 sm:grid-cols-[minmax(0,220px)_auto] sm:items-end">
+                    <div className="space-y-1">
+                      <Label htmlFor={`flow-summaries-send-author-${record.roundId}`}>Your name</Label>
+                      <Input
+                        id={`flow-summaries-send-author-${record.roundId}`}
+                        value={sendAuthorId}
+                        onChange={(e) => setSendAuthorId(e.target.value)}
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                    <Button
+                      size="sm"
+                      disabled={!sendAuthorId.trim()}
+                      onClick={() => handleSendToPrepNotes(record.roundId, buildFlowSummaryTextFromRows(rows))}
+                    >
+                      Send
+                    </Button>
+                  </div>
+                </div>
+              )}
               {unanswered.length > 0 && (
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
@@ -372,6 +460,6 @@ export function FlowSummariesPanel() {
           )
         })
       )}
-    </div>
+    </PanelShell>
   )
 }

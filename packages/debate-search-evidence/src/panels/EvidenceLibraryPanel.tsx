@@ -30,7 +30,7 @@
  * browser, so it can't answer "has anyone on the team cut this" across
  * devices; the shared index can. This closes the last open follow-up (a)
  * under TODO.md idea #7 ("On Page Card Reuse Search") together with the new
- * `apps/browser-extension`, which calls the same API against the active
+ * `apps/debate-web-ext`, which calls the same API against the active
  * tab's URL.
  *
  * Reads the persisted evidence repository via
@@ -109,6 +109,13 @@
  * most frequently flagged-already-cut pages first, and is fetched via the
  * new `hooks/useReuseCheckDashboard.ts`.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isEvidenceLibraryLiveUpdateStorageEvent`, so an entry submitted, scored,
+ * reviewed, or reuse-checked in another browser tab refreshes this panel's
+ * search results, score badges, pending-review queue, and reuse-check
+ * history here too — the `storage` event never fires in the tab that made
+ * the write, only in other tabs.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -121,7 +128,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { Textarea } from "../ui/primitives/textarea"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import {
   bulkEditTagsForPersistedEntries,
   checkPersistedPageForExistingCards,
@@ -157,6 +164,7 @@ import {
   suggestTags,
 } from "../lib/argument-library"
 import { checkRemotePageForExistingCards, registerRemoteReuseEntry } from "../lib/evidence-reuse-check-client"
+import { isEvidenceLibraryLiveUpdateStorageEvent } from "../state/live-update"
 import type {
   EvidenceEntryKind,
   EvidenceLibraryEntry,
@@ -255,20 +263,26 @@ export function EvidenceLibraryPanel() {
   }, [])
 
   // Deep-linked from any caller via a `?checkUrl=` query param — pre-fills
-  // and runs the "Check this page" box automatically against this app's
-  // own localStorage repository (see `buildReuseCheckDeepLink` in
+  // and runs the "Check this page" box automatically, through the same
+  // `handleReuseCheck` path as the button: the local localStorage check plus
+  // the async team-wide shared-index check, recording history and refreshing
+  // the team dashboard (see `buildReuseCheckDeepLink` in
   // `lib/shared-evidence-library.ts`). The current `apps/debate-web-ext`
   // browser extension doesn't use this path — it calls the server-backed
   // `/api/evidence-reuse-check` shared index directly instead.
   useEffect(() => {
     const checkUrl = searchParams?.get("checkUrl")
     if (!checkUrl) return
-    setReuseCheckUrl(checkUrl)
-    const result = checkPersistedPageForExistingCards(checkUrl)
-    setReuseCheckResult(result)
-    appendReuseCheckHistory(result)
-    setCheckHistory(listReuseCheckHistory())
+    handleReuseCheck(checkUrl)
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  // Deep-linked search: `?q=` pre-fills the free-text search box, so other
+  // panels (e.g. Revision Incentives' stale-evidence digest) can link
+  // straight to one entry's argument block instead of the bare library index.
+  useEffect(() => {
+    const q = searchParams?.get("q")
+    if (q) setQueryText(q)
   }, [searchParams])
 
   const buildQuery = () =>
@@ -313,6 +327,22 @@ export function EvidenceLibraryPanel() {
     setKnownTags(listPersistedTags())
     setPendingEntries(listPendingReviewEntries())
   }
+
+  /**
+   * Live-update the rendered search results, score badges, pending-review
+   * queue, and reuse-check history when another browser tab submits, edits,
+   * scores, reviews, or reuse-checks an entry.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isEvidenceLibraryLiveUpdateStorageEvent(event)) return
+      refreshResults()
+      setCheckHistory(listReuseCheckHistory())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryText, kind, filterTopic, filterCaseArea, filterTags])
 
   const handleScoreEntry = (entry: EvidenceLibraryEntry) => {
     const breakdown = scoreEvidenceLibraryEntry(entry)
@@ -428,6 +458,10 @@ export function EvidenceLibraryPanel() {
     checkRemotePageForExistingCards(url)
       .then((remoteResult) => {
         setRemoteReuseCheckResult(remoteResult)
+        // Record the team-wide outcome in the history log too, badged with
+        // its scope, so "Recent checks" shows both halves of the lookup.
+        appendReuseCheckHistory(remoteResult, Date.now(), "team")
+        setCheckHistory(listReuseCheckHistory())
         // The server just logged this check — refresh the team dashboard so
         // a page that just crossed into "flagged" shows up without a reload.
         reuseDashboard.refresh()
@@ -481,15 +515,10 @@ export function EvidenceLibraryPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Shared Evidence Library</h1>
-        <p className="text-sm text-muted-foreground">
-          Submit a cut card or reusable analytic block, then search the team repository by
-          keyword, citation, or argument.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Shared Evidence Library"
+      description="Submit a cut card or reusable analytic block, then search the team repository by keyword, citation, or argument."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         {editingId && (
           <p className="text-sm font-medium text-foreground">
@@ -538,7 +567,7 @@ export function EvidenceLibraryPanel() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="evidence-cite">Citation {draft.kind === "block" && "(optional)"}</Label>
+            <Label htmlFor="evidence-cite">Citation (optional)</Label>
             <Input
               id="evidence-cite"
               value={draft.cite}
@@ -547,7 +576,7 @@ export function EvidenceLibraryPanel() {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="evidence-source-url">Source URL {draft.kind === "block" && "(optional)"}</Label>
+            <Label htmlFor="evidence-source-url">Source URL (optional)</Label>
             <Input
               id="evidence-source-url"
               value={draft.sourceUrl}
@@ -590,21 +619,21 @@ export function EvidenceLibraryPanel() {
             />
             <p className="text-xs text-muted-foreground">{computeWordCount(draft.text)} words</p>
           </div>
-          {editingId && (
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label htmlFor="evidence-editor-id">Your contributor ID</Label>
-              <Input
-                id="evidence-editor-id"
-                value={editorContributorId}
-                onChange={(e) => setEditorContributorId(e.target.value)}
-                placeholder="alex"
-                className="max-w-xs"
-              />
-              <p className="text-xs text-muted-foreground">
-                Saving this edit records a revision credited to this contributor.
-              </p>
-            </div>
-          )}
+          <div className="space-y-1.5 sm:col-span-2">
+            <Label htmlFor="evidence-editor-id">Your contributor ID{editingId ? "" : " (optional)"}</Label>
+            <Input
+              id="evidence-editor-id"
+              value={editorContributorId}
+              onChange={(e) => setEditorContributorId(e.target.value)}
+              placeholder="alex"
+              className="max-w-xs"
+            />
+            <p className="text-xs text-muted-foreground">
+              {editingId
+                ? "Saving this edit records a revision credited to this contributor."
+                : "Credits this submission when its source URL registers into the shared team reuse index."}
+            </p>
+          </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <div className="flex gap-2">
@@ -619,15 +648,12 @@ export function EvidenceLibraryPanel() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Check this page</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste a page URL to see whether anyone has already cut a card from it before you start
-            cutting. The Debate AI browser extension runs this same check automatically for the
-            page you're on — see <code>apps/debate-web-ext</code> in the repo to install it.
-          </p>
-        </div>
+      <PanelSection title="Check this page" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste a page URL to see whether anyone has already cut a card from it before you start
+          cutting. The Debate AI browser extension runs this same check automatically for the
+          page you're on — see <code>apps/debate-web-ext</code> in the repo to install it.
+        </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             value={reuseCheckUrl}
@@ -707,6 +733,7 @@ export function EvidenceLibraryPanel() {
                     <Badge variant={entry.alreadyCut ? "default" : "secondary"}>
                       {entry.alreadyCut ? `Already cut (${entry.matchCount})` : "New"}
                     </Badge>
+                    <Badge variant="outline">{entry.scope === "team" ? "Team" : "Local"}</Badge>
                     <span className="truncate text-foreground">{entry.url}</span>
                     <span className="ml-auto shrink-0 text-muted-foreground">
                       {new Date(entry.checkedAt).toLocaleString()}
@@ -717,17 +744,15 @@ export function EvidenceLibraryPanel() {
             </ul>
           </div>
         )}
-      </div>
+      </PanelSection>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Team reuse dashboard</h2>
-          <p className="text-xs text-muted-foreground">
-            Pages flagged as already-cut across every "Check this page" lookup the team has run —
-            web app and browser extension alike — so a coach can spot reuse patterns at a glance
-            instead of checking one page at a time.
-          </p>
-        </div>
+      <PanelSection
+        title="Team reuse dashboard"
+        description={
+          'Pages flagged as already-cut across every "Check this page" lookup the team has run — web app and browser extension alike — so a coach can spot reuse patterns at a glance instead of checking one page at a time.'
+        }
+        className="rounded-lg border border-border p-4"
+      >
         {reuseDashboard.error && (
           <p className="text-xs text-muted-foreground">Team dashboard unavailable ({reuseDashboard.error}).</p>
         )}
@@ -760,7 +785,7 @@ export function EvidenceLibraryPanel() {
             ))}
           </ul>
         )}
-      </div>
+      </PanelSection>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Input
@@ -807,10 +832,7 @@ export function EvidenceLibraryPanel() {
         />
       </div>
       {pendingEntries.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-foreground">
-            Pending review ({pendingEntries.length})
-          </h2>
+        <PanelSection title={`Pending review (${pendingEntries.length})`}>
           <p className="text-xs text-muted-foreground">
             These entries have an in-progress <code>CardReview</code> and won&apos;t appear in
             search results until the review reaches &quot;Published&quot; in the Review Queue.
@@ -837,7 +859,7 @@ export function EvidenceLibraryPanel() {
               </div>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
       <p className="text-sm text-muted-foreground">{buildEvidenceSearchSummaryText(results, summaryQuery)}</p>
       {results.length === 0 ? (
@@ -936,6 +958,6 @@ export function EvidenceLibraryPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

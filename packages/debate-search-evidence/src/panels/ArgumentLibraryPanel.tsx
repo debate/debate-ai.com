@@ -41,6 +41,12 @@
  * `outlineFilterPresets` is (a `savedArgumentCollections` `/api/settings`
  * field).
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isArgumentLibraryLiveUpdateStorageEvent`, so a card submitted, tagged, or
+ * retagged in another browser tab refreshes this panel's topic folders and
+ * tag collections here too — the `storage` event never fires in the tab that
+ * made the write, only in other tabs.
+ *
  * @module panels/ArgumentLibraryPanel
  */
 
@@ -51,14 +57,16 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "../ui/panels/panel-shell"
 import {
   buildCombinedPersistedArgumentLibrary,
   renameTagAcrossCombinedPersistedStores,
 } from "../state/evidenceLibraryEntries"
 import { buildLibrarySummaryText, filterCardsByTags, findTagCaseVariantGroups } from "../lib/argument-library"
 import type { ArgumentLibrary, LibraryCard } from "../lib/argument-library"
+import { buildSavedArgumentCollectionFailureMessage } from "../lib/argument-library-collections"
 import { useSavedArgumentCollections } from "../hooks/useSavedArgumentCollections"
+import { isArgumentLibraryLiveUpdateStorageEvent } from "../state/live-update"
 
 /**
  * Renders the Common Argument Library: every persisted evidence entry
@@ -76,10 +84,27 @@ export function ArgumentLibraryPanel() {
   const [renameMessage, setRenameMessage] = useState<string | null>(null)
   const [newCollectionName, setNewCollectionName] = useState("")
   const [collectionMessage, setCollectionMessage] = useState<string | null>(null)
-  const { collections, addCollection, removeCollection } = useSavedArgumentCollections()
+  const [renamingCollection, setRenamingCollection] = useState<string | null>(null)
+  const [renameCollectionValue, setRenameCollectionValue] = useState("")
+  const { collections, addCollection, removeCollection, renameCollection, updateCollection } =
+    useSavedArgumentCollections()
 
   useEffect(() => {
     setLibrary(buildCombinedPersistedArgumentLibrary())
+  }, [])
+
+  /**
+   * Live-update the rendered library when another browser tab submits,
+   * tags, or renames a tag on an evidence-library entry or a Contributions
+   * Feed submission.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isArgumentLibraryLiveUpdateStorageEvent(event)) return
+      setLibrary(buildCombinedPersistedArgumentLibrary())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   function renameTag(oldTag: string, newTag: string) {
@@ -114,11 +139,10 @@ export function ArgumentLibraryPanel() {
 
   if (library.topicFolders.length === 0) {
     return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No argument library entries yet. The library fills in as cards and reusable blocks are
-        submitted to the shared evidence repository, or as Contributions Feed submissions are
-        tagged with a topic and case area.
-      </div>
+      <EmptyState
+        title="No argument library entries yet."
+        message="The library fills in as cards and reusable blocks are submitted to the shared evidence repository, or as Contributions Feed submissions are tagged with a topic and case area."
+      />
     )
   }
 
@@ -131,11 +155,37 @@ export function ArgumentLibraryPanel() {
   function handleSaveCollection() {
     const name = newCollectionName.trim()
     if (!name || activeTags.length === 0) return
-    const saved = addCollection(name, activeTags)
+    const failure = addCollection(name, activeTags)
     setCollectionMessage(
-      saved ? `Saved "${name}" (${activeTags.length} tag${activeTags.length === 1 ? "" : "s"}).` : `A collection named "${name}" already exists.`,
+      failure
+        ? buildSavedArgumentCollectionFailureMessage(failure, name)
+        : `Saved "${name}" (${activeTags.length} tag${activeTags.length === 1 ? "" : "s"}).`,
     )
-    if (saved) setNewCollectionName("")
+    if (!failure) setNewCollectionName("")
+  }
+
+  function handleRenameCollection(oldName: string) {
+    const newName = renameCollectionValue.trim()
+    if (!newName) return
+    const failure = renameCollection(oldName, newName)
+    setCollectionMessage(
+      failure
+        ? buildSavedArgumentCollectionFailureMessage(failure, newName)
+        : `Renamed "${oldName}" to "${newName}".`,
+    )
+    if (!failure) {
+      setRenamingCollection(null)
+      setRenameCollectionValue("")
+    }
+  }
+
+  function handleUpdateCollection(name: string) {
+    const failure = updateCollection(name, activeTags)
+    setCollectionMessage(
+      failure
+        ? buildSavedArgumentCollectionFailureMessage(failure, name)
+        : `Updated "${name}" to the current ${activeTags.length}-tag selection.`,
+    )
   }
 
   const allCards = library.topicFolders.flatMap((folder) =>
@@ -145,12 +195,7 @@ export function ArgumentLibraryPanel() {
   const caseVariantGroups = findTagCaseVariantGroups(library.tagCollections)
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Common Argument Library</h1>
-        <p className="text-sm text-muted-foreground">{buildLibrarySummaryText(library)}</p>
-      </div>
-
+    <PanelShell title="Common Argument Library" description={buildLibrarySummaryText(library)}>
       {library.tagCollections.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
           {library.tagCollections.map((collection) => (
@@ -182,22 +227,75 @@ export function ArgumentLibraryPanel() {
             <div className="flex flex-wrap items-center gap-2">
               {collections.map((collection) => (
                 <div key={collection.name} className="flex items-center gap-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setActiveTags(collection.tags)}
-                    title={collection.tags.join(", ")}
-                  >
-                    {collection.name} ({collection.tags.length})
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    aria-label={`Remove saved collection "${collection.name}"`}
-                    onClick={() => removeCollection(collection.name)}
-                  >
-                    ✕
-                  </Button>
+                  {renamingCollection === collection.name ? (
+                    <>
+                      <Input
+                        value={renameCollectionValue}
+                        onChange={(e) => setRenameCollectionValue(e.target.value)}
+                        aria-label={`New name for saved collection "${collection.name}"`}
+                        placeholder={collection.name}
+                        className="h-9 w-40"
+                      />
+                      <Button
+                        size="sm"
+                        disabled={!renameCollectionValue.trim()}
+                        onClick={() => handleRenameCollection(collection.name)}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          setRenamingCollection(null)
+                          setRenameCollectionValue("")
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setActiveTags(collection.tags)}
+                        title={collection.tags.join(", ")}
+                      >
+                        {collection.name} ({collection.tags.length})
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label={`Rename saved collection "${collection.name}"`}
+                        onClick={() => {
+                          setRenamingCollection(collection.name)
+                          setRenameCollectionValue(collection.name)
+                        }}
+                      >
+                        Rename
+                      </Button>
+                      {activeTags.length > 0 && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          title="Replace this collection's tags with the current selection"
+                          aria-label={`Update saved collection "${collection.name}" to the current selection`}
+                          onClick={() => handleUpdateCollection(collection.name)}
+                        >
+                          Update
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        aria-label={`Remove saved collection "${collection.name}"`}
+                        onClick={() => removeCollection(collection.name)}
+                      >
+                        ✕
+                      </Button>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
@@ -340,7 +438,7 @@ export function ArgumentLibraryPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
 

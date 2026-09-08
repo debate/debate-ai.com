@@ -32,6 +32,13 @@ export interface ScoredCard {
   argBlockKeywords: string[];
   /** Popularity-independent quality signals, each 0-1 — same shape `community-rating.ts` scores. */
   qualitySignals: number[];
+  /**
+   * The contributor who submitted this card, if attributed — powers the
+   * per-contributor score-trend chart in `state/cardScoreHistory.ts`.
+   * Optional: a card auto-scored from another feature (e.g.
+   * `scoreEvidenceLibraryEntry`) isn't any one contributor's own submission.
+   */
+  contributorId?: string;
 }
 
 /** Relative share of each dimension in the blended overall score. Should sum to 1. */

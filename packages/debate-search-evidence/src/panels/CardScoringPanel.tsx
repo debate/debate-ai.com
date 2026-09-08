@@ -31,8 +31,8 @@
  * `buildPersistedCardScoreRanking`.
  *
  * A "Bulk import" section closes the "batch-score an uploaded set of cards
- * at once" follow-up (listed alongside a per-contributor score-trend chart
- * and an inline Evidence Library score badge, both still open): a textarea
+ * at once" follow-up (the inline Evidence Library score badge listed
+ * alongside it has since shipped too — see `EvidenceLibraryPanel.tsx`): a textarea
  * accepts a `---`-delimited batch of `id:`/`keywords:`/`quality:` + text
  * entries, parsed and persisted in one pass via
  * `state/cardScores.ts`'s `bulkImportScoredCards` (itself a thin composition
@@ -46,6 +46,16 @@
  * panel's ranking, AI assessments, and topic list here too — the `storage`
  * event never fires in the tab that made the write, only in other tabs.
  *
+ * A "My score trend" section closes the "a per-contributor score-trend chart
+ * over time" next-step named at the end of the "🧠 LLM Card Scoring" bullet
+ * in TODO.md: an optional "Contributor ID" field on both the single-card and
+ * bulk-import forms attributes a scored card to a contributor, and once at
+ * least one card has been attributed, a contributor picker plus a
+ * chronological `MeterBar` list (mirroring `WordCountRoundsPanel`'s own
+ * trend section) renders that contributor's `state/cardScoreHistory.ts`
+ * scoring history — every scoring event, not just the latest, since
+ * `cardScoreHistory.ts` appends rather than overwrites.
+ *
  * @module panels/CardScoringPanel
  */
 
@@ -57,6 +67,15 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { Textarea } from "../ui/primitives/textarea"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
+import { MeterBar } from "../ui/panels/panel-shell"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/primitives/select"
 import {
   bulkImportScoredCards,
   buildPersistedCardScoreRanking,
@@ -64,6 +83,10 @@ import {
   getScoredCard,
   saveScoredCard,
 } from "../state/cardScores"
+import {
+  listCardScoreHistoryContributorIds,
+  listCardScoreHistoryForContributor,
+} from "../state/cardScoreHistory"
 import { listTrackedTopics } from "../state/trackedArguments"
 import { getAiAssessment, saveAiAssessment } from "../state/aiCardAssessments"
 import { requestCardScoringAiAssessment } from "../lib/llm-card-scoring-client"
@@ -71,9 +94,9 @@ import { isCardScoringLiveUpdateStorageEvent } from "../state/live-update"
 import type { CardScoreBreakdown } from "../lib/llm-card-scoring"
 import type { CardScoringAiAssessment } from "../lib/llm-card-scoring-ai"
 
-type CardDraft = { id: string; text: string; argBlockKeywords: string; quality: string }
+type CardDraft = { id: string; text: string; argBlockKeywords: string; quality: string; contributorId: string }
 
-const EMPTY_DRAFT: CardDraft = { id: "", text: "", argBlockKeywords: "", quality: "0.5" }
+const EMPTY_DRAFT: CardDraft = { id: "", text: "", argBlockKeywords: "", quality: "0.5", contributorId: "" }
 
 const DIMENSIONS: { key: keyof CardScoreBreakdown; label: string }[] = [
   { key: "relevanceScore", label: "Relevance" },
@@ -114,7 +137,10 @@ export function CardScoringPanel() {
   const [topics, setTopics] = useState<string[]>([])
   const [topic, setTopic] = useState("")
   const [bulkText, setBulkText] = useState("")
+  const [bulkContributorId, setBulkContributorId] = useState("")
   const [bulkStatus, setBulkStatus] = useState<string | null>(null)
+  const [trendContributorIds, setTrendContributorIds] = useState<string[]>([])
+  const [trendContributorId, setTrendContributorId] = useState("")
 
   const refreshAll = () => {
     const persisted = buildPersistedCardScoreRanking()
@@ -126,6 +152,10 @@ export function CardScoringPanel() {
       if (assessment) assessments[breakdown.cardId] = assessment
     }
     setAiAssessments(assessments)
+
+    const contributorIds = listCardScoreHistoryContributorIds()
+    setTrendContributorIds(contributorIds)
+    setTrendContributorId((prev) => (prev && contributorIds.includes(prev) ? prev : contributorIds[0] ?? ""))
   }
 
   useEffect(() => {
@@ -161,7 +191,12 @@ export function CardScoringPanel() {
     setDraft((prev) => ({ ...prev, argBlockKeywords: keywords.join(", ") }))
   }
 
-  const refresh = () => setRanking(buildPersistedCardScoreRanking())
+  const refresh = () => {
+    setRanking(buildPersistedCardScoreRanking())
+    const contributorIds = listCardScoreHistoryContributorIds()
+    setTrendContributorIds(contributorIds)
+    setTrendContributorId((prev) => (prev && contributorIds.includes(prev) ? prev : contributorIds[0] ?? ""))
+  }
 
   const handleGetAiAssessment = async (cardId: string) => {
     const card = getScoredCard(cardId)
@@ -196,11 +231,13 @@ export function CardScoringPanel() {
       setError("Card text is required.")
       return
     }
+    const contributorId = draft.contributorId.trim()
     saveScoredCard({
       id,
       text,
       argBlockKeywords: parseKeywords(draft.argBlockKeywords),
       qualitySignals: [parseQuality(draft.quality)],
+      ...(contributorId ? { contributorId } : {}),
     })
     setError(null)
     setDraft(EMPTY_DRAFT)
@@ -212,7 +249,8 @@ export function CardScoringPanel() {
       setBulkStatus("Paste at least one card first.")
       return
     }
-    const { importedCount, skippedCount } = bulkImportScoredCards(bulkText)
+    const contributorId = bulkContributorId.trim()
+    const { importedCount, skippedCount } = bulkImportScoredCards(bulkText, 0.5, contributorId || undefined)
     setBulkStatus(
       importedCount === 0
         ? `No cards imported — ${skippedCount} entr${skippedCount === 1 ? "y was" : "ies were"} missing an id or text.`
@@ -227,16 +265,13 @@ export function CardScoringPanel() {
     return <div className="p-6 text-sm text-muted-foreground">Loading card scores…</div>
   }
 
-  return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">LLM Card Scoring</h1>
-        <p className="text-sm text-muted-foreground">
-          Submit a card to score it for relevance, clarity, uniqueness, evidence quality, and
-          usability — ranked by overall score, with likely duplicates flagged.
-        </p>
-      </div>
+  const trendPoints = trendContributorId ? listCardScoreHistoryForContributor(trendContributorId) : []
 
+  return (
+    <PanelShell
+      title="LLM Card Scoring"
+      description="Submit a card to score it for relevance, clarity, uniqueness, evidence quality, and usability — ranked by overall score, with likely duplicates flagged."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="space-y-1.5">
           <Label htmlFor="card-score-topic">Topic (optional — for tracked keywords)</Label>
@@ -298,30 +333,50 @@ export function CardScoringPanel() {
             rows={4}
           />
         </div>
-        <div className="space-y-1.5 sm:max-w-xs">
-          <Label htmlFor="card-score-quality">Quality signal (0-1)</Label>
-          <Input
-            id="card-score-quality"
-            type="number"
-            min={0}
-            max={1}
-            step={0.1}
-            value={draft.quality}
-            onChange={(e) => setDraft((prev) => ({ ...prev, quality: e.target.value }))}
-          />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5 sm:max-w-xs">
+            <Label htmlFor="card-score-quality">Quality signal (0-1)</Label>
+            <Input
+              id="card-score-quality"
+              type="number"
+              min={0}
+              max={1}
+              step={0.1}
+              value={draft.quality}
+              onChange={(e) => setDraft((prev) => ({ ...prev, quality: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="card-score-contributor">Contributor ID (optional)</Label>
+            <Input
+              id="card-score-contributor"
+              value={draft.contributorId}
+              onChange={(e) => setDraft((prev) => ({ ...prev, contributorId: e.target.value }))}
+              placeholder="alex"
+            />
+            <p className="text-xs text-muted-foreground">
+              Attributing a card to a contributor adds it to that contributor's score trend below.
+            </p>
+          </div>
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button onClick={handleSubmit}>Score card</Button>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Bulk import</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste multiple cards separated by a line of dashes (<code>---</code>). Each entry may
-            start with optional <code>id:</code>, <code>keywords:</code>, and <code>quality:</code>{" "}
-            lines, followed by the card text.
-          </p>
+      <PanelSection title="Bulk import" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste multiple cards separated by a line of dashes (<code>---</code>). Each entry may
+          start with optional <code>id:</code>, <code>keywords:</code>, and <code>quality:</code>{" "}
+          lines, followed by the card text.
+        </p>
+        <div className="space-y-1.5 sm:max-w-xs">
+          <Label htmlFor="card-score-bulk-contributor">Attribute this batch to contributor (optional)</Label>
+          <Input
+            id="card-score-bulk-contributor"
+            value={bulkContributorId}
+            onChange={(e) => setBulkContributorId(e.target.value)}
+            placeholder="alex"
+          />
         </div>
         <Textarea
           value={bulkText}
@@ -333,12 +388,10 @@ export function CardScoringPanel() {
         <Button variant="outline" onClick={handleBulkImport}>
           Import cards
         </Button>
-      </div>
+      </PanelSection>
 
       {ranking.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No cards scored yet. Submit one above to start the ranking.
-        </div>
+        <EmptyState title="No cards scored yet." message="Submit one above to start the ranking." />
       ) : (
         <div className="space-y-2">
           {ranking.map((breakdown) => {
@@ -405,6 +458,46 @@ export function CardScoringPanel() {
           })}
         </div>
       )}
-    </div>
+
+      {trendContributorIds.length > 0 && (
+        <PanelSection
+          title="My score trend"
+          className="rounded-lg border border-border p-4"
+          actions={
+            <Select value={trendContributorId} onValueChange={setTrendContributorId}>
+              <SelectTrigger className="h-8 w-48 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {trendContributorIds.map((contributorId) => (
+                  <SelectItem key={contributorId} value={contributorId}>
+                    {contributorId}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          }
+        >
+          {trendPoints.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No scoring history yet for this contributor.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {trendPoints.map((point) => (
+                <MeterBar
+                  key={point.id}
+                  value={point.overallScore}
+                  max={100}
+                  tone={point.overallScore < 50 ? "critical" : "info"}
+                  label={`${new Date(point.scoredAt).toLocaleDateString()} — ${point.cardId}`}
+                  caption={`${point.overallScore}/100`}
+                />
+              ))}
+            </div>
+          )}
+        </PanelSection>
+      )}
+    </PanelShell>
   )
 }

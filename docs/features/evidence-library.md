@@ -8,12 +8,14 @@ researching a duplicate.
 - **Route:** `/cards/library`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t library` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-research-evidence`](../../packages/debate-search-evidence/README.md)
 
 ## What it shows
 
-A submission form (kind, topic, case area, argument block, citation,
-comma-separated tags, and a body text area with a live word-count readout),
+A submission form (kind, topic, case area, argument block, optional
+citation and source URL, comma-separated tags, a body text area with a live
+word-count readout, and an optional "Your contributor ID" field — required
+only when editing, where it credits the revision),
 plus a search box (matched against an entry's full-text body, argument
 block, and citation), a card/block kind filter, and topic/case-area/tags
 filter fields, over every persisted `EvidenceLibraryEntry`. Each result also
@@ -116,13 +118,15 @@ alongside the existing local one (rendered as a separate "Team-wide check"
 section, degrading gracefully to a note if the request fails), and the
 submission form registers a submitted entry's `sourceUrl` into the shared
 index automatically (best-effort — a network failure doesn't block the
-local save).
+local save), crediting the optional "Your contributor ID" field's value as
+the registration's `contributorId`.
 
-`apps/debate-web-ext` is a dependency-free Manifest V3 extension (no
-bundler, not part of this repo's `bun`/`turbo` workspaces — see its own
+`apps/debate-web-ext` is a WXT-built Manifest V3 extension (not part of this
+repo's `bun`/`turbo` workspaces — see its own
 [README](../../apps/debate-web-ext/README.md)) whose popup calls the same
 `GET /api/evidence-reuse-check` route against the active tab's URL,
-configurable to a non-production API base URL via an Options page.
+configurable to a non-production API base URL via its Options page — which
+also configures the debate round timer the same extension ships.
 
 ## Real search index
 
@@ -147,12 +151,12 @@ outranks one nearly every entry shares. It's a drop-in alternative to
 composes this against the persisted repository, added alongside —
 `searchPersistedEvidenceLibrary` stays exported, unchanged, for any other
 caller. Vitest-covered in
-`packages/debate-card-search/test/evidence-search-index.test.ts` (index
+`packages/debate-search-evidence/test/evidence-search-index.test.ts` (index
 construction, postings/term-frequency correctness, TF-IDF ranking including
 a dedicated case showing a rarer term outranks a common one, every filter
 combination, and candidate-set parity against `searchEvidenceLibrary` on a
 shared fixture) and cases in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (mirroring
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts` (mirroring
 `searchPersistedEvidenceLibrary`'s own test suite: peer-review gating,
 empty-repository, kind filtering, empty-text-query).
 
@@ -162,7 +166,7 @@ panel's search box, kind filter, and topic/case-area/tags filters all read
 from the indexed, TF-IDF-ranked search. That exact call shape
 (`buildEvidenceSearchFormQuery`'s output fed into
 `searchPersistedEvidenceLibraryWithIndex`) is Vitest-covered in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`.
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`.
 
 ### Cached across calls
 
@@ -181,11 +185,11 @@ compares each store's raw persisted JSON string
 strings it was built from — a cheap fingerprint that catches any change to
 either store's underlying data before doing the expensive tokenize-and-build
 work again. Vitest-covered in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (a repeat
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts` (a repeat
 call with nothing changed reuses the cached index; saving, deleting, and a
 peer-review transition that flips an entry's live status each force a
 rebuild whose results reflect the change) and
-`packages/debate-card-search/test/peerReviews.test.ts` (`getPeerReviewsRawSnapshot`
+`packages/debate-search-evidence/test/peerReviews.test.ts` (`getPeerReviewsRawSnapshot`
 changes on save/delete and stays stable across repeat calls with no
 changes).
 
@@ -213,7 +217,7 @@ functions only for entries that were actually added, removed, or edited:
 
 `buildEvidenceSearchIndex` itself is now only ever called for the very
 first index build; every later fingerprint change is handled incrementally.
-Vitest-covered in `packages/debate-card-search/test/evidence-search-index.test.ts`
+Vitest-covered in `packages/debate-search-evidence/test/evidence-search-index.test.ts`
 (`addEntryToIndex` adds/replaces without duplicating postings,
 `removeEntryFromIndex` drops only the removed entry's own terms while
 leaving a shared term's other postings intact — including dropping a term
@@ -221,7 +225,7 @@ from the postings map entirely once its last entry is removed — and is a
 no-op for an unindexed id, `updateEntryInIndex` drops stale terms and adds
 new ones, and an index built purely via repeated `addEntryToIndex` calls
 matches one built directly) and
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts` (each of
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts` (each of
 save/delete/peer-review-transition/edit now asserts `buildEvidenceSearchIndex`
 is *not* called again and that the matching incremental function *is*,
 alongside the existing result-correctness assertions).
@@ -287,8 +291,8 @@ panels/EvidenceLibraryPanel.tsx (submission form, entry.sourceUrl set)
   → registerRemoteReuseEntry(entry)        — lib/evidence-reuse-check-client.ts
       → POST /api/evidence-reuse-check     — app/api/evidence-reuse-check/route.ts (D1 upsert)
 
-apps/debate-web-ext/popup.js (active tab's URL)
-  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/api.js
+apps/debate-web-ext/entrypoints/popup/App.tsx (active tab's URL)
+  → checkPageForExistingCards(pageUrl, apiBase) — apps/debate-web-ext/src/reuse/api.ts
       → GET ${apiBase}/api/evidence-reuse-check?url= — app/api/evidence-reuse-check/route.ts (D1)
 ```
 
@@ -306,14 +310,14 @@ panel wired to it — `searchPersistedEvidenceLibraryWithIndex`,
 used directly, with no new search logic introduced; only the
 `buildEvidenceSearchFormQuery` helper (narrowing the panel's five raw filter
 fields into an `EvidenceSearchQuery`) is new, and is Vitest-covered in
-`packages/debate-card-search/test/shared-evidence-library.test.ts`. The
+`packages/debate-search-evidence/test/shared-evidence-library.test.ts`. The
 panel calls the persisted indexed search with an explicit (possibly empty)
 `text` field alongside optional `kind`/`topic`/`caseArea`/`tags` filters;
 that exact call shape is covered in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`. The
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`. The
 submission form's only new logic is `computeWordCount` (a plain whitespace
 tokenizer, Vitest-covered in
-`packages/debate-card-search/test/shared-evidence-library.test.ts`), which
+`packages/debate-search-evidence/test/shared-evidence-library.test.ts`), which
 stamps `wordCount` from the submitted body text rather than asking the
 submitter to count it themselves — this is also the field the Topic Coverage
 Dashboard's `missing`/`thin`/`covered` classification scores against, so a
@@ -364,18 +368,18 @@ message when neither store carried the tag). Validation happens before
 either store is written, so a blank or identical tag pair throws with both
 stores untouched.
 
-Vitest-covered in `packages/debate-card-search/test/argument-library.test.ts`
+Vitest-covered in `packages/debate-search-evidence/test/argument-library.test.ts`
 (`renameTagInList`/`renameTagAcrossCards`: rename across multiple cards
 leaving others untouched by reference, merge-dedup into an existing tag,
 no-op when the tag is unused, and throwing on a blank or identical
 old/new tag) and
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`
 (`renameTagAcrossPersistedEntries`: rewrite-and-persist, merge, a true
 no-write no-op, and throwing on a blank new tag;
 `renameTagAcrossCombinedPersistedStores`: both stores rewritten with
 per-store counts, one store changed while the other carries nothing, a
 both-stores no-op, and a throw leaving both stores untouched) and
-`packages/debate-card-search/test/contributions.test.ts`
+`packages/debate-search-evidence/test/contributions.test.ts`
 (`renameTagAcrossPersistedContributions`: rewrite-and-persist, merge-dedup,
 a true no-write no-op, and throwing on a blank or identical tag pair).
 
@@ -417,12 +421,12 @@ never touches `localStorage` and never invalidates
 the number of entries changed.
 
 Vitest-covered in
-`packages/debate-card-search/test/argument-library.test.ts`
+`packages/debate-search-evidence/test/argument-library.test.ts`
 (`applyBulkTagEditToCards`: adding a tag to only the selected cards while
 leaving others untouched by reference, skipping a card that already carries
 the tag being added, removing a tag from only the selected cards that carry
 it, throwing on a blank tag, and a no-op when no ids are selected) and
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`
 (`bulkEditTagsForPersistedEntries`: add-and-persist scoped to the selected
 ids, remove across a selection, a true no-write no-op when nothing selected
 changes, and throwing on a blank tag).
@@ -450,7 +454,7 @@ into a submission form is normalized separately (see "Typed-tag
 normalization" below).
 
 Vitest-covered in
-`packages/debate-card-search/test/argument-library.test.ts`
+`packages/debate-search-evidence/test/argument-library.test.ts`
 (`findTagCaseVariantGroups`: grouping case variants, most-used-first
 ordering, an alphabetical tie-break, excluding single-casing tags,
 multiple groups sorted by their own merge target, and an empty input).
@@ -475,10 +479,10 @@ collections. A contribution's tags count toward the corpus even when it
 carries no `topic`/`caseArea` (and so is excluded from the library itself).
 
 Vitest-covered in
-`packages/debate-card-search/test/evidenceLibraryEntries.test.ts`
+`packages/debate-search-evidence/test/evidenceLibraryEntries.test.ts`
 (`listCombinedPersistedTags`: empty stores, the deduped union across both,
 and a contribution excluded from the library still contributing its tags)
-and `packages/debate-card-search/test/contributions.test.ts`
+and `packages/debate-search-evidence/test/contributions.test.ts`
 (`listContributionTags`: empty store, contributions carrying no tags, and
 the deduped sorted list).
 
@@ -501,12 +505,43 @@ lands on `Warming` if that's the casing already in use — the same outcome
 autocomplete already gave a contributor who picked a suggestion.
 
 Vitest-covered in
-`packages/debate-card-search/test/argument-library.test.ts`
+`packages/debate-search-evidence/test/argument-library.test.ts`
 (`normalizeTagsToKnownCasing`: rewriting a typed tag to its existing
 casing, leaving an unmatched tag unchanged, leaving an already-correct
 casing unchanged, normalizing several tags independently, resolving a
 tie by first-encountered casing when `knownTags` itself carries more than
 one, and both empty-input cases).
+
+## Cross-tab live update
+
+Both `EvidenceLibraryPanel` and `ArgumentLibraryPanel` read their persisted
+stores on mount only, so a change made in one browser tab used to need a
+manual reload to show up in another tab open to the same panel. Both now
+subscribe to the browser's `storage` event (which never fires in the tab
+that made the write, only in other same-origin tabs) via new predicates in
+`state/live-update.ts`:
+
+- `isEvidenceLibraryLiveUpdateStorageEvent`/`EVIDENCE_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`
+  cover `EvidenceLibraryPanel`'s own `evidenceLibraryEntries` store, plus
+  `cardScores` (its inline LLM Card Scoring badges), `peerReviews` (each
+  pending entry's review-status badge), and `reuseCheckHistory` (the "Check
+  this page" box's logged history) — a submission, edit, score, review, or
+  reuse check made in another tab now refreshes the search results, score
+  badges, pending-review queue, and history here too.
+- `isArgumentLibraryLiveUpdateStorageEvent`/`ARGUMENT_LIBRARY_LIVE_UPDATE_STORAGE_KEYS`
+  cover both sources `buildCombinedPersistedArgumentLibrary` folds together —
+  `evidenceLibraryEntries` and `contributions` — so a card submitted or
+  retagged from either the evidence-library form or the Contributions Feed,
+  in another tab, refreshes the topic folders and tag collections here too.
+  The saved-collections bar is account-synced via `/api/settings`
+  (`hooks/useSavedArgumentCollections.ts`), not `localStorage`, so it isn't
+  covered by this mechanism — it already refreshes on its own account-sync
+  cadence.
+
+This closes both panels' share of the "Every other localStorage-backed panel
+in this repo still has no cross-tab live-update mechanism" Known gap noted
+in [`shared-flow-sync.md`](./shared-flow-sync.md). Vitest-covered in
+`packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Known gaps
 

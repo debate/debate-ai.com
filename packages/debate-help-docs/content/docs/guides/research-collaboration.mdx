@@ -1,0 +1,102 @@
+---
+title: Research collaboration
+description: Run a squad's research sprint — topic coverage, the prep room, task routing, brainstorming, peer review, quests, and the leaderboard
+icon: Users
+---
+
+# Research collaboration
+
+The research collaboration tools organize a squad's evidence work as one cycle: find the gaps, assign the
+work, do it together, review it, and recognize who did it. They all live in the
+**[Research Workspace](https://debate-ai.com/research)** (`/research`), whose ten sections follow that cycle
+in order, and each also has its own page under `/cards/*`.
+
+## Identity and topic
+
+Two fields at the top of the Research Workspace scope everything below them:
+
+- **Your contributor id** — the id every panel attributes submissions, completed tasks, and quest progress to.
+  It's prefilled from your signed-in account and remembered on this device; edit it to work as a different id.
+- **Topic** — scopes the *Sprint* section's composition. Defaults to the first tagged case area in the
+  evidence library.
+
+## The cycle, section by section
+
+### 1. Coverage — where does the squad need work?
+
+**[Topic Coverage Dashboard](https://debate-ai.com/cards/coverage)** (`/cards/coverage`, [spec](/docs/features/topic-coverage-dashboard))
+lists every tracked argument as missing, thin, or covered, by card count and word count, plus an *untracked*
+section for submitted cards nobody added to the checklist. Start here: the gaps it finds become the tasks and
+quests in later sections.
+
+### 2–3. Library and Evidence — what do we already have?
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Argument Library | [`/cards/argument-library`](/docs/features/argument-library-collections) | Shared research organized into topic folders, case-area subgroups, and cross-cutting tag collections. |
+| Evidence Library | [`/cards/library`](/docs/features/evidence-library) | Full-text search across every shared cut card and reusable analytic, with kind, topic, case-area, and tag filters. Edits here score toward Revision Incentives. |
+
+### 4. Sprint — work a topic together
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Collaboration Prep Room | [`/cards/prep-room`](/docs/features/collaboration-prep-room) | A topic's shared space: its evidence, draft blocks, and routed tasks, a keyword search scoped to just this topic, an active-now roster, and an activity timeline. |
+| Topic Sprint | — | The sprint composition for the selected topic — see the [Team collaboration mode](/docs/features/team-collaboration-mode) spec. |
+| Team Collaboration Mode | [`/cards/collaboration`](/docs/features/team-collaboration-mode) | Live prep notes on the shared sprint, grouped by topic, each cycling open → covered → needs-follow-up, and assignable to a teammate from the board. |
+| Team Brainstorm Assist | [`/cards/brainstorm`](/docs/features/brainstorm-board) | Idea boards for new arguments, impact framing, frontlines, and turns, with upvotes, a near-duplicate badge, and AI-generated idea seeding. |
+
+### 5. Routing — who does what?
+
+**[Task Inbox](https://debate-ai.com/cards/inbox)** (`/cards/inbox`, [spec](/docs/features/task-inbox)) routes coverage-gap
+tasks to contributors by skill level, grouped by topic. A task marked done is verified by a *different*
+contributor before it counts.
+
+### 6. Progress — how is everyone doing?
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Research Progress | [`/cards/progress-tracking`](/docs/features/research-progress-tracking) | Each contributor's contribution history, task completion rate, and per-topic breakdown. |
+| Progress | [`/cards/progress`](/docs/features/progress-unlocks) | Unlock tiers, the task skill level each tier unlocks, badges, and daily-quest streaks — with how far each contributor is from the next tier. |
+
+### 7. Quests — keep the sprint moving
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Daily Quests | [`/cards/quests`](/docs/features/daily-quests) | Team goals like "find 5 solvency cards", tracked live against today's real contributions; bulk-seed them from a topic's under-covered arguments. |
+| Quest Streaks | [`/cards/streaks`](/docs/features/quest-streaks) | Current and longest streaks with 3/7/14/30-day milestone badges. |
+| Group Challenges | [`/cards/group-challenges`](/docs/features/group-challenges) | Squad-scoped challenges on contribution counts or recorded rebuttal wins, with live standings and an MVP badge. |
+
+### 8. Rewards — recognize the work
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Leaderboard | [`/cards/leaderboard`](/docs/features/contribution-leaderboard) | Contributors ranked by total helpfulness score, with tier, streak, and milestone badges. |
+| Contributor Awards | [`/cards/awards`](/docs/features/contributor-awards) | Category winners — best evidence finder, best explainer, and so on — with a freeze action to announce a day's standings. |
+| Contributions Feed | [`/cards/contributions`](/docs/features/contributions-feed) | Every contribution kind in one scored feed; likes, saves, and endorsements feed the Leaderboard. |
+| Daily Best Card | [`/cards/best-card`](/docs/features/daily-best-card) | Today's highest-helpfulness card and every past day's winner. |
+| Revision Incentives | [`/cards/revisions`](/docs/features/revision-incentives) | Points for improving weak cards, strengthening citations, and refreshing stale evidence. |
+
+### 9. Review — is it ready to publish?
+
+**[Review Queue](https://debate-ai.com/cards/reviews)** (`/cards/reviews`, [spec](/docs/features/review-queue)) moves a card
+through draft → in review → changes requested → approved → published. Blocking comments must be resolved
+before approval.
+
+### 10. Scoring — how good is it?
+
+**[LLM Card Scoring](https://debate-ai.com/cards/scoring)** (`/cards/scoring`, [spec](/docs/features/llm-card-scoring)) scores
+cards on relevance, clarity, uniqueness, evidence quality, and usability, flags likely duplicates against the
+shared evidence library, and can add an AI-written qualitative verdict per card.
+
+## Across squads
+
+**[Community Research Hub](https://debate-ai.com/community-hub)** (`/community-hub`, [spec](/docs/features/community-research-hub))
+is a searchable directory of every shared research, collaboration, and pre-round or practice space across the
+community, filterable by topic, format, and space type, with a *For You* section built from your favorite tools.
+
+## Tips
+
+- **Sharing a section:** the URL carries the open section, e.g. `/research?section=sprint`.
+- **One panel at a time:** every chip in a section heading has an arrow that opens that panel's own page.
+- **Notifications:** assigning a prep note or a task to a teammate creates a
+  [notification](/docs/features/round-invites-and-notifications) for them at `/notifications`.

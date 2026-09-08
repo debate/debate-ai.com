@@ -60,6 +60,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -428,16 +429,16 @@ export function ContributorAwardsPanel() {
   const hallOfFame = buildContributorAwardsHallOfFame(history.flatMap((announcement) => announcement.awards))
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Top Contributor Awards</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Current category winners, ranked by total helpfulness score within each contribution kind.
-      </p>
-
+    <PanelShell
+      title="Top Contributor Awards"
+      description="Current category winners, ranked by total helpfulness score within each contribution kind."
+    >
       {awardsToShow.length === 0 ? (
-        <div className="mb-6 rounded-lg border border-border bg-card p-6 text-center text-sm text-muted-foreground">
-          No awards yet. Categories fill in as contributors submit cards, summaries, highlights,
-          annotations, original arguments, and refutations.
+        <div className="mb-6">
+          <EmptyState
+            title="No awards yet."
+            message="Categories fill in as contributors submit cards, summaries, highlights, annotations, original arguments, and refutations."
+          />
         </div>
       ) : (
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -506,7 +507,8 @@ export function ContributorAwardsPanel() {
           </div>
         </div>
         {secondError && <p className="mt-2 text-xs text-destructive">{secondError}</p>}
-        <div className="mt-3">
+        <div className="mt-3 space-y-2">
+          <div className="text-xs font-medium uppercase text-muted-foreground">Recent nominations</div>
           <NominationList
             nominations={nominations}
             seconderId={seconderId}
@@ -524,6 +526,6 @@ export function ContributorAwardsPanel() {
           <AnnouncementGroup key={announcement.dayKey} announcement={announcement} />
         ))
       )}
-    </div>
+    </PanelShell>
   )
 }

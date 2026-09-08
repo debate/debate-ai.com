@@ -44,6 +44,7 @@ import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   assignPersistedSprintNote,
   buildSprintNotesPanelView,
@@ -53,6 +54,7 @@ import {
   type SprintNotesPanelGroup,
 } from "../state/sprintNotes"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
+import { isSprintNotesLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
 import type { SprintNoteStatus } from "../lib/team-collaboration-mode"
 
@@ -120,6 +122,23 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
 
   const refresh = () => setGroups(buildSprintNotesPanelView())
 
+  /**
+   * Live-update the note wall when another browser tab logs, advances, or
+   * reassigns a note, or records a presence heartbeat. A `storage` event
+   * never fires in the tab that made the write, only in other tabs —
+   * same-tab changes already refresh through their own handlers (and the
+   * `[groups]` presence effect below re-derives the roster whenever the
+   * groups change).
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isSprintNotesLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
+
   const refreshPresence = (topics: string[]) => {
     const now = Date.now()
     setActiveByTopic(
@@ -184,15 +203,10 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Team Collaboration Mode</h1>
-        <p className="text-sm text-muted-foreground">
-          Leave live prep notes on a shared topic sprint, grouped by topic. Cycle a note's status
-          or assign it to a teammate as a task.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Team Collaboration Mode"
+      description="Leave live prep notes on a shared topic sprint, grouped by topic. Cycle a note's status or assign it to a teammate as a task."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -256,9 +270,7 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
       </div>
 
       {groups.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No sprint notes yet. Add one above to start a topic sprint.
-        </div>
+        <EmptyState title="No sprint notes yet." message="Add one above to start a topic sprint." />
       ) : (
         <div className="space-y-4">
           {groups.map((group) => {
@@ -345,6 +357,6 @@ export function SprintNotesPanel({ signedInContributorId }: SprintNotesPanelProp
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

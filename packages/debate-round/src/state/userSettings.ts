@@ -125,3 +125,21 @@ export function readLocalUserSettings(): UserSettingsPayload {
     fontSize: fontSizeSetting.value,
   };
 }
+
+/**
+ * Re-reads `localStorage`'s `"settings"` key into the local `settings`
+ * singleton before returning its values — unlike `readLocalUserSettings`,
+ * which only reflects whatever the singleton last loaded (its own `init()`
+ * call, or a same-tab `applyUserSettingsToLocalStore`). A different tab's
+ * `applyUserSettingsToLocalStore` writes straight to `localStorage` without
+ * this tab's singleton ever finding out, so `UserSettingsPanel`'s cross-tab
+ * `storage`-event handler calls this instead of `readLocalUserSettings` to
+ * pick up that other tab's save. No-op outside the browser, returning
+ * whatever the singleton already has.
+ */
+export function refreshLocalUserSettingsFromStorage(): UserSettingsPayload {
+  if (typeof localStorage !== "undefined") {
+    settings.loadFromLocalStorage();
+  }
+  return readLocalUserSettings();
+}

@@ -2,6 +2,36 @@ export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
+export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
+export {
+  SIDEBAR_TOOL_SECTIONS,
+  APP_DOCK_LINKS,
+  TOOLS_ROOT_HREF,
+  type SidebarToolLink,
+  type SidebarToolSection,
+} from "./components/category-gallery/sidebar-tool-sections";
+export {
+  SIDEBAR_VIDEO_LINKS,
+  SIDEBAR_VIDEO_LINKS_BY_ID,
+  VIDEO_COLLEGE_LINK,
+  VIDEO_FORMAT_LINKS,
+  VIDEO_LIBRARY_LINKS,
+  VIDEO_REFERENCE_LINKS,
+  type SidebarVideoLink,
+} from "./components/category-gallery/sidebar-video-links";
+export {
+  FOOTER_LINKS,
+  SITE_FOOTER_LINKS,
+  DEBATE_FOOTER_LINKS,
+  type FooterLink,
+} from "./ui/layout/footer-links";
+export {
+  TOOL_SIDEBAR_HREFS,
+  matchesToolSidebarHref,
+  hasEmbeddedDock,
+  isGenericToolSidebarRoute,
+} from "./components/category-gallery/sidebar-routes";
+export { Footer as ToolSidebarFooter } from "./ui/layout/footer";
 export {
   CategoryDockProvider,
   useCategoryDock,

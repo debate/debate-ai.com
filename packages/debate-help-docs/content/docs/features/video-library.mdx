@@ -1,0 +1,36 @@
+---
+title: "Video Library"
+---
+
+# Video Library — SQL-backed feed with scroll pagination
+
+The debate video library (rounds, lectures, top picks) is stored in SQL and
+served one page at a time, instead of downloading the entire ~1.1 MB
+dataset before a single card renders.
+
+- **Where:** `/videos`, `/videos/[category]`, and the rounds grid
+- **Package:** `debate-videos`, `debate-data-sync`
+
+## How it fits together
+
+JSON assets under `debate-data-sync/data/videos/` are projected into a
+`videos` SQL table via `buildVideoRows()`. `GET /api/videos` pushes
+filtering, search, sorting, and pagination into SQL; `GET /api/videos/meta`
+is a small fetch-once companion for counts/topics/champions. If the table
+is missing or unseeded, both endpoints fall back to rebuilding from the
+JSON assets in memory with identical semantics.
+
+## Client paging
+
+```
+hooks/useVideoFeed.ts — useVideoFeed(filters) / useVideoMeta()
+hooks/useInfiniteScroll.ts — loads the next page as the grid is scrolled
+```
+
+Favourites and hidden videos stay client-side (an explicit `ids` allow-list
+and a client-side filter, respectively).
+
+## Known gaps
+
+Search is `LIKE`-based token matching, not fuzzy. A seed run is not atomic
+— an interrupted run leaves partial rows served as if complete.

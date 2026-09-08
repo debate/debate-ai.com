@@ -1,0 +1,15 @@
+{
+  "title": "Debate AI Docs",
+  "description": "Documentation for the debate-ai.com monorepo",
+  "icon": "Book",
+  "root": true,
+  "pages": [
+    "index",
+    "---Guides---",
+    "...guides",
+    "---Features---",
+    "...features",
+    "---Packages---",
+    "...packages"
+  ]
+}

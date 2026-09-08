@@ -67,6 +67,7 @@ import { Info } from "lucide-react"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -138,7 +139,8 @@ function buildLeaderboardRows(range: LeaderboardRange, category: ContributionCat
   })
 }
 
-const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+/** Exported so `ContributorProfilePanel` renders the same tier badge styling. */
+export const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
   novice: "outline",
   apprentice: "secondary",
   veteran: "secondary",
@@ -232,25 +234,29 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   if (rows.length === 0) {
     const isFiltered = range !== "all-time" || category !== "all"
     return (
-      <div className="p-4 sm:p-6">
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
-        <div className="mb-4 flex flex-wrap gap-3">
+      <PanelShell title="Contribution Leaderboard">
+        <div className="flex flex-wrap gap-3">
           {rangeSelect}
           {categorySelect}
         </div>
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {isFiltered
-            ? `No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}. Try widening the range or category filter to see the full roster.`
-            : "No contributions yet. The leaderboard fills in as contributors submit cards, summaries, and analytics."}
-        </div>
-      </div>
+        {isFiltered ? (
+          <EmptyState
+            title={`No ${category === "all" ? "contributions" : CATEGORY_LABELS[category].toLowerCase()} ${range === "all-time" ? "yet" : `in ${RANGE_LABELS[range].toLowerCase()}`}.`}
+            message="Try widening the range or category filter to see the full roster."
+          />
+        ) : (
+          <EmptyState
+            title="No contributions yet."
+            message="The leaderboard fills in as contributors submit cards, summaries, and analytics."
+          />
+        )}
+      </PanelShell>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Contribution Leaderboard</h1>
-      <p className="mb-4 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+    <PanelShell title="Contribution Leaderboard">
+      <p className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
         Ranked by total
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
@@ -265,12 +271,12 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
         </Tooltip>
         — a blend of popularity, quality, and reviewer signals.
       </p>
-      <div className="mb-4 flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3">
         {rangeSelect}
         {categorySelect}
       </div>
       {signedInContributorId && (
-        <div className="mb-4">
+        <div>
           <Button size="sm" variant="outline" onClick={() => setShowMyActivity((expanded) => !expanded)}>
             {showMyActivity ? "Hide my endorsement activity" : "My endorsement activity"}
           </Button>
@@ -306,7 +312,12 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
               <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
               <TableCell className="font-medium">
                 <div className="flex items-center gap-1.5">
-                  {row.contributorId}
+                  <a
+                    href={`/cards/leaderboard/${encodeURIComponent(row.contributorId)}`}
+                    className="hover:underline"
+                  >
+                    {row.contributorId}
+                  </a>
                   {isMe && (
                     <Badge variant="outline" className="whitespace-nowrap">
                       You
@@ -359,7 +370,7 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
           })}
         </TableBody>
       </Table>
-    </div>
+    </PanelShell>
   )
 }
 

@@ -81,7 +81,7 @@ same follow-up: "tying completion into the Progress Unlocks tier system
 (awarding tiers/badges for practiced drills)". `state/drillProgressUnlocks.ts`
 sums `getDrillSetCompletionStats` across every persisted `DrillSetRecord`
 into one total practiced-drill count, then feeds it straight into
-`debate-card-search`'s `lib/progress-unlocks.ts#buildContributorUnlockStatus`
+`debate-research-evidence`'s `lib/progress-unlocks.ts#buildContributorUnlockStatus`
 as a synthetic, otherwise-all-zero `ContributorStats` whose only non-zero
 field is `completedTaskCount` — reusing that module's existing
 "either-signal-qualifies" OR-path (a contributor reaches a tier via scored
@@ -199,7 +199,7 @@ panels/DrillSetsPanel.tsx
     → getDrillSetCompletionStats(record) for every round  — state/drillSets.ts
   → buildDrillPracticeUnlockStatus(totalCompletedDrillCount)  — state/drillProgressUnlocks.ts
     → buildDrillPracticeContributorStats(...)  — synthetic ContributorStats
-    → buildContributorUnlockStatus(stats)  — debate-card-search's lib/progress-unlocks.ts
+    → buildContributorUnlockStatus(stats)  — debate-research-evidence's lib/progress-unlocks.ts
 ```
 
 Every drill-generation and persistence rule already existed and was
@@ -280,6 +280,30 @@ optional field, and each malformed shape); new
 and server error propagation). The hook (`hooks/useDrillSets.ts`) and API
 routes stay untested at the unit level, matching every other synced field's
 client/hook layer in this repo.
+
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `DrillSetsPanel`.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, generating, completing,
+scripting, review-scheduling, clearing, or account-syncing a drill set in
+one tab left every other open `/drills` tab showing a stale drill-set list
+until a manual reload.
+
+`useDrillSets` (`hooks/useDrillSets.ts`, in the `debate-practice-drills`
+package) now subscribes to `window`'s `storage` event and re-reads
+`buildDrillSetsPanelView()` whenever `state/live-update.ts`'s
+`isDrillSetsPanelLiveUpdateStorageEvent` matches — covering the hook's one
+backing store, `drillSets` (mirroring `useWordCountRounds`'s own
+`storage`-event subscription). A teammate generating, completing, scripting,
+review-scheduling, or clearing a drill set — or an account merge adopting a
+synced one — in one tab now shows up in every other open tab without a
+manual reload. The in-progress "Generate drills for current round" form's
+side-key field is untouched, matching every other closed panel's "refresh
+the derived view, not the draft" convention.
 
 ## Known gaps
 

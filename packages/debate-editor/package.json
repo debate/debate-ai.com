@@ -13,7 +13,8 @@
     "./styles.css": "./src/editor/style.css",
     "./settings": "./src/editor/settings.ts",
     "./settings-ui": "./src/editor/settings-ui.ts",
-    "./settings-categories": "./src/editor/settings-categories.ts"
+    "./settings-categories": "./src/editor/settings-categories.ts",
+    "./collab-bridge": "./src/react/collab-bridge.ts"
   },
   "files": [
     "src"
@@ -38,6 +39,7 @@
     "loro-prosemirror": "0.4.3",
     "lucide-react": "^0.577.0",
     "nspell": "^2.1.5",
+    "pdf-lib": "^1.17.1",
     "prosemirror-commands": "^1.6.2",
     "prosemirror-history": "^1.4.1",
     "prosemirror-keymap": "^1.2.2",

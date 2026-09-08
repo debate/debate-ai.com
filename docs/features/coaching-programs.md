@@ -43,10 +43,10 @@ Opening a program's board (topic entered in the panel):
 panels/CoachingProgramsPanel.tsx
   → buildPersistedCoachingProgramBoard(programId, topic, now)  — state/persistedCoachingProgramBoard.ts
       → getCoachingProgram(programId)                          — state/coachingPrograms.ts
-      → readPersistedTopicSprintInputs(topic)                  — debate-card-search's state/topicSprints.ts
-      → listGroupChallenges()                                  — debate-card-search's state/groupChallenges.ts
-      → listContributions() (filtered to a submittedAt timestamp) — debate-card-search's state/contributions.ts
-      → listChallengeWinEvents()                                — debate-card-search's state/challengeWinEvents.ts
+      → readPersistedTopicSprintInputs(topic)                  — debate-team-collaboration's state/topicSprints.ts
+      → listGroupChallenges()                                  — debate-team-collaboration's state/groupChallenges.ts
+      → listContributions() (filtered to a submittedAt timestamp) — debate-research-evidence's state/contributions.ts
+      → listChallengeWinEvents()                                — debate-team-collaboration's state/challengeWinEvents.ts
       → buildCoachingProgramMemberFlows(program.memberIds)      — state/roundContributorFlows.ts (default; overridable)
       → buildCoachingProgramMemberPracticeRounds(program.memberIds) — state/roundContributorFlows.ts (default; overridable)
       → buildCoachingProgramBoard({ program, topicSprint, challenges, contributions, winEvents, memberFlows, memberPracticeRounds })
@@ -67,7 +67,7 @@ Programs and Group Challenges") in `TODO.md`: "wiring `CoachingProgramsPanel`
 (in `debate-round`) to render a program's full `buildCoachingProgramBoard`
 off this and the topic-sprint composition." `state/persistedCoachingProgramBoard.ts`
 composes every one of `buildCoachingProgramBoard`'s inputs directly from its
-own persisted store, mirroring `debate-card-search`'s `state/topicSprints.ts`
+own persisted store, mirroring `debate-team-collaboration`'s `state/topicSprints.ts`
 and `state/prepRooms.ts` "compose every input from its own store"
 convention, so the panel doesn't need to assemble a topic sprint, challenge
 roster, contribution feed, win-event list, or member-flow roster itself. The
@@ -185,9 +185,172 @@ own two source keys, `groupChallenges`/`challengeWinEvents`, were already in
 `COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS`, so no changes
 were needed there).
 
+## Program calendar
+
+Closes idea #13's own further follow-up in `TODO.md`: "A calendar/schedule
+view across a program's drills, sprints, and challenges." Before this, seeing
+a program's actual dated events meant piecing together the Group Challenges
+panel's own start/end dates and a topic sprint's note thread separately — the
+Roster Analytics section's own digest above only ever showed *completed*
+challenges, not the still-open windows a coach might want to plan around. The
+Roster Analytics section now also renders a **Program calendar** section
+below the challenge digest: a day-grouped, chronological list of every
+roster-scoped group challenge's start and end date, the signed-in coach's own
+scheduled drill review reminders, plus — once a topic is typed into the
+section's own topic field — that topic's sprint notes, dated by when they
+were logged.
+
+```
+app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx  (apps/debate-ai.com, "use client")
+  → useDrillSets()                                            — debate-practice-rounds' hooks/useDrillSets.ts
+  → buildDrillReviewCalendarEvents(drillSets)                 — debate-practice-rounds' state/drillSets.ts
+                                                                 (one { dayKey, label, detail } per scheduled
+                                                                 drill review — dependency-free of debate-community)
+  → <CoachingProgramRosterAnalyticsPanel drillReviewEvents={...} />
+
+panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
+  → buildPersistedCoachingProgramCalendar(programId, topic, drillReviewEvents)  — state/coachingProgramCalendar.ts
+      → getCoachingProgram(programId)                        — debate-team-collaboration's state/coachingPrograms.ts
+      → listGroupChallenges()                                — debate-team-collaboration's state/groupChallenges.ts
+      → listSprintNotesForTopic(topic)                        — debate-team-collaboration's state/sprintNotes.ts (only when topic is non-blank)
+      → buildCoachingProgramCalendarEvents(memberIds, challenges, sprintNotes, drillReviews)
+                                                                — lib/coaching-program-calendar.ts
+                                                                  (challenges narrowed to ones whose own
+                                                                  memberIds overlaps the roster, same rule
+                                                                  buildCoachingProgramChallengeDigest uses;
+                                                                  drillReviews merged in as-is, unfiltered by
+                                                                  roster — a drill set has no roster concept)
+  → groupCoachingProgramCalendarEventsByDay(events)           — lib/coaching-program-calendar.ts
+  → panel renders one heading per day, a badge per event kind
+```
+
+A topic sprint isn't itself dated the way a challenge window is (`startsAt`/
+`endsAt`), so the calendar's sprint-note events come from a topic the coach
+types into the section — leaving it blank still shows the program's
+challenge-window and drill-review events, just with no note events. The
+composition lives alongside the existing roster analytics/digest in
+`debate-community` for the same circular-dependency reason described above,
+and refreshes on the same `storage`-event subscription — `sprintNotes` was
+added to `COACHING_PROGRAM_ROSTER_ANALYTICS_LIVE_UPDATE_STORAGE_KEYS` so a
+note logged in another tab (or from `debate-team-collaboration`'s own
+`TopicSprintPanel`) refreshes the calendar here too.
+
+Per-drill scheduled review reminders (`debate-practice-rounds`'
+`state/drillSets.ts#scheduledReviewAt`) — the "drills" part the original
+follow-up named alongside sprints and challenges — are folded in via the
+panel's optional `drillReviewEvents` prop rather than read inside
+`debate-community` directly: `debate-practice-rounds` already depends on
+`debate-community` (for Progress Unlocks tiers), so importing it back here
+would be circular. Instead `CoachingProgramRosterAnalyticsWithDrills.tsx` (the
+app/page layer, which already depends on both packages) resolves the
+signed-in coach's own drill sets via `useDrillSets()` and
+`buildDrillReviewCalendarEvents`, into a dependency-free
+`{ dayKey, label, detail }` shape `debate-community`'s calendar types accept
+without knowing anything about `Drill`/`DrillSetRecord`. A drill set has no
+roster/membership concept the way a `GroupChallenge` does, so these events
+are the *viewing coach's own* scheduled reviews, not roster-wide — every
+other calendar entry (challenges, sprint notes) is roster/topic-scoped, so a
+coach viewing a program they're not personally drilling for sees no
+drill-review events, which is expected.
+
+## Per-member drill/practice-round status
+
+Closes the first of the two items this doc's Known gaps used to name here:
+"the roster analytics table only covers group-challenge standings and
+daily-quest streaks — it doesn't yet fold in drill-completion rate or
+practice-round counts." The Roster Analytics table now has two more columns
+per member: **Drills completed** (`N/M` from that member's persisted drill
+set, or "—" with none generated yet) and **Practice round** ("Recorded" /
+"+ feedback" / "—"), reusing the exact same `roundId`-to-contributor mapping
+(`debate-team-collaboration`'s `state/roundContributorFlows.ts`) that already
+drives the "Flow recorded"/"Practice round recorded" badges on
+`CoachingProgramsPanel`'s own board above.
+
+```
+app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx  (apps/debate-ai.com, "use client")
+  → listRoundContributorFlows()                               — debate-team-collaboration's state/roundContributorFlows.ts
+                                                                  (every contributor's currently recorded { contributorId, roundId })
+  → buildContributorDrillCompletionStats(contributorRoundIds, drillSets)
+                                                                — debate-practice-rounds' state/drillSets.ts
+                                                                  (joins each contributorId's roundId against that
+                                                                  store's own persisted DrillSetRecords by roundId)
+  → buildCoachingProgramMemberPracticeRounds(contributorIds)   — debate-team-collaboration's state/roundContributorFlows.ts
+                                                                  (same join CoachingProgramsPanel's own board already uses)
+  → <CoachingProgramRosterAnalyticsPanel memberDrillPracticeStatus={...} />
+
+panels/CoachingProgramRosterAnalyticsPanel.tsx  (debate-community package)
+  → renders "Drills completed"/"Practice round" columns from the
+    caller-resolved memberDrillPracticeStatus map, keyed by contributorId
+```
+
+Like `drillReviewEvents` above, this composition can't live inside
+`debate-community` itself — `debate-practice-rounds` already depends on this
+package (for Progress Unlocks tiers), so importing drill types back here
+would be circular — so the app/page layer, which already depends on both
+`debate-practice-rounds` and `debate-team-collaboration`, resolves it instead
+into a dependency-free `memberDrillPracticeStatus` prop
+(`{ completedDrills, totalDrills, practiceRoundRecorded, practiceRoundHasFeedback }`,
+keyed by contributorId) the panel just renders. Unlike the ad hoc `Drill[]`
+`CoachingProgramsPanel`'s own board generates fresh from a member's flow on
+every render, "Drills completed" reads the actually-persisted, completion-tracked
+`DrillSetRecord` a member gets by separately generating (and practicing
+against) their drill set at `/drills` — a member with a recorded flow but no
+persisted drill set for that same `roundId` still shows "—" here. Every
+contributor's recorded round is resolved regardless of which coaching
+program's roster the viewer currently has selected (the roster filtering
+happens implicitly — the table only ever renders rows for the selected
+program's own `memberIds`), so this isn't scoped to the viewing coach's own
+account the way `drillReviewEvents` is.
+
+## Cross-tab live update
+
+`CoachingProgramsPanel` (the program list/board panel this doc otherwise
+covers, as opposed to the roster analytics panel above, which already had its
+own `storage`-event subscription) only refreshed its program list, roster
+"Flow recorded" badges, and open board on mount or right after its own
+create/remove/record/clear actions — a coach creating or removing a coaching
+program, or recording/clearing a roster member's flow, in another open tab
+never showed up here without a manual reload. This is the recurring "every
+other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" gap tracked in `shared-flow-sync.md`.
+
+New `state/live-update.ts` (the first in this package) adds
+`COACHING_PROGRAMS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+`isCoachingProgramsPanelLiveUpdateStorageEvent`, covering the two stores the
+panel reads directly regardless of which board is open: `coachingPrograms`
+(the persisted program-config list) and `roundContributorFlows` (each roster
+member's recorded-flow badge). `CoachingProgramsPanel.tsx` now subscribes to
+`window`'s `storage` event and, when the predicate matches, refreshes the
+program list, re-derives the roster's recorded-contributor set, and — if a
+board is currently open — recomposes it.
+
+An open board also transitively depends on several other packages' stores
+(topic-sprint inputs, the group-challenge roster, the contribution feed, win
+events, and practice-round records, all read through
+`state/persistedCoachingProgramBoard.ts`) that this predicate deliberately
+leaves out, matching every other panel's "cover the store(s) this panel reads
+directly, not everything a composed view transitively depends on" convention
+(e.g. `JudgeDecisionPanel`'s hook-scoped predicate). A change to one of those
+deeper stores in another tab still shows up the next time the board is
+reopened (toggle "Hide board" then "View board" again) or the topic field is
+re-entered — it just doesn't force a live recompose while already open.
+
+Vitest-covered by `packages/debate-team-collaboration/test/live-update.test.ts`
+(every backing-store key, the `null`-key clear-all case, and
+unrelated/substring-matching keys staying ignored, mirroring every other
+package's `live-update.test.ts` cases).
+
 ## Known gaps
 
-- The roster analytics table only covers group-challenge standings and
-  daily-quest streaks — it doesn't yet fold in drill-completion rate or
-  practice-round counts, both already shown per-member on the program's own
-  board section above. A future run could widen the table to include them.
+- The program calendar's drill-review events are scoped to the viewing
+  coach's own drill sets, not the roster's — there's no per-member drill data
+  a coach can see for teammates today. Widening this to a real roster-wide
+  view would need drill sets to carry an owning contributor id and a way to
+  look them up across the roster, neither of which exists yet.
+- An open program board does not live-update against the topic-sprint,
+  group-challenge, contribution, win-event, or practice-round stores it
+  transitively composes (see "Cross-tab live update" above) — only the
+  program list and roster "Flow recorded" badges do. Widening the predicate
+  to cover the full composed board would need `state/live-update.ts` to
+  import every one of those stores' own keys (several from other packages),
+  left as a follow-up.

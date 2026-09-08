@@ -49,7 +49,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { buildPersistedPrepRoom, listPrepRoomTopics } from "../state/prepRooms"
 import { buildPrepRoomActivityTimeline, buildPrepRoomActivityEventText, buildPrepRoomSummaryText, searchPrepRoomEvidence } from "../lib/prep-room"
 import type { PrepRoom } from "../lib/prep-room"
@@ -57,6 +57,7 @@ import type { EvidenceSearchResult } from "debate-research-evidence/src/lib/shar
 import type { CoverageLevel } from "debate-research-evidence/src/lib/topic-coverage"
 import { listPersistedActiveContributors, recordPersistedPresenceHeartbeat } from "../state/topicPresence"
 import { buildPresenceSummaryText, type ActiveContributor } from "../lib/topic-presence"
+import { isPrepRoomLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
 import {
   addPersistedChecklistItem,
   deletePersistedChecklistItem,
@@ -142,6 +143,27 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [topic])
 
+  /**
+   * Live-update the room when another browser tab submits evidence, edits
+   * the checklist, records a heartbeat, or changes the tracked-argument
+   * checklist/availability roster. A `storage` event never fires in the tab
+   * that made the write, only in other tabs — same-tab changes already
+   * refresh through their own handlers.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPrepRoomLiveUpdateStorageEvent(event)) return
+      const activeTopic = topic.trim()
+      setTopics(listPrepRoomTopics())
+      setRoom(activeTopic ? buildPersistedPrepRoom(activeTopic) : null)
+      refreshChecklist(activeTopic)
+      refreshPresence(activeTopic)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
+
   const handleMarkActive = () => {
     const activeTopic = topic.trim()
     const contributorId = myId.trim()
@@ -183,15 +205,10 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
   const timeline = room ? buildPrepRoomActivityTimeline(room) : []
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Collaboration Prep Room</h1>
-        <p className="text-sm text-muted-foreground">
-          A topic's shared prep space: its evidence and draft blocks, plus coverage-gap research
-          tasks routed to available contributors.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Collaboration Prep Room"
+      description="A topic's shared prep space: its evidence and draft blocks, plus coverage-gap research tasks routed to available contributors."
+    >
       <div className="space-y-2">
         <Label htmlFor="prep-room-topic">Topic</Label>
         <Input
@@ -218,9 +235,7 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
       </div>
 
       {!room ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          Enter a topic above to open its prep room.
-        </div>
+        <EmptyState title="Enter a topic above to open its prep room." />
       ) : (
         <div className="space-y-4">
           <p className="whitespace-pre-line text-sm text-muted-foreground">{buildPrepRoomSummaryText(room)}</p>
@@ -295,8 +310,7 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
             </div>
           )}
 
-          <div className="rounded-lg border border-border p-4 space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">Routed research tasks</h2>
+          <PanelSection title="Routed research tasks">
             {room.routing.assignments.length === 0 && room.routing.unassignedTasks.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 No coverage-gap tasks routed for this topic yet.
@@ -328,13 +342,12 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
                 ))}
               </div>
             )}
-          </div>
+          </PanelSection>
 
-          <div className="rounded-lg border border-border p-4 space-y-2">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-sm font-semibold text-foreground">Shared task checklist</h2>
-              <span className="text-xs text-muted-foreground">{buildChecklistSummaryText(checklistItems, topic.trim())}</span>
-            </div>
+          <PanelSection
+            title="Shared task checklist"
+            actions={<span className="text-xs text-muted-foreground">{buildChecklistSummaryText(checklistItems, topic.trim())}</span>}
+          >
             <div className="flex flex-wrap gap-2">
               <Input
                 value={newChecklistText}
@@ -382,10 +395,9 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
                 ))}
               </ul>
             )}
-          </div>
+          </PanelSection>
 
-          <div className="rounded-lg border border-border p-4 space-y-2">
-            <h2 className="text-sm font-semibold text-foreground">Room activity timeline</h2>
+          <PanelSection title="Room activity timeline">
             {timeline.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {room.entries.length === 0
@@ -407,10 +419,10 @@ export function PrepRoomPanel({ signedInContributorId }: PrepRoomPanelProps = {}
                 ))}
               </ul>
             )}
-          </div>
+          </PanelSection>
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
 

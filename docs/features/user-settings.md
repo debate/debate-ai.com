@@ -86,8 +86,11 @@ state/favoriteTools.ts (pure — no fetch, no localStorage writes)
                                                  tolerating malformed input
 
 round/user-settings-client.ts (fetch — shared by every settings surface)
-  → fetchUserSettings()   — GET /api/settings; null on 401 (signed out)
-  → saveUserSettings()    — PUT /api/settings; throws on failure
+  → fetchUserSettings()    — GET /api/settings; null on 401 (signed out)
+  → saveUserSettings()     — PUT /api/settings, whole-field replace; throws on failure
+  → saveFavoriteToolOp()   — PUT /api/settings { addFavoriteTool | removeFavoriteTool };
+    resolved against the row's current favoriteTools server-side instead of
+    a client-computed list — see useFavoriteTools.ts below
 
 panels/UserSettingsPanel.tsx
   → apps/debate-ai.com/app/settings/page.tsx  — mounts the panel, plus
@@ -112,7 +115,12 @@ lib/hooks/useFavoriteTools.ts (app-layer — mirrors useThemeState's
   → toggleFavorite/removeFavorite: applies to localStorage immediately,
     dispatches a same-tab `favorite-tools-changed` window event (every
     other mounted instance re-reads and stays in sync), then best-effort
-    saveUserSettings({ favoriteTools }) when signed in
+    saveFavoriteToolOp({ addFavoriteTool | removeFavoriteTool }) when signed
+    in — a single op, not a whole-list saveUserSettings({ favoriteTools })
+    replace, so two tabs starring different tools in quick succession don't
+    race each other's addition away (see Known gaps)
+  → pruneUnknown: still a whole-list saveUserSettings({ favoriteTools })
+    replace — a bulk cleanup pass, not a single star/unstar
   → components/tools/FavoriteToolButton.tsx   — the star toggle rendered on
     every /tools card and every favorites-strip chip
   → components/tools/FavoritesController.tsx  — shows/hides the /tools
@@ -132,10 +140,14 @@ apps/debate-ai.com/app/api/settings/route.ts
   → GET  — current user's row, or the matching DEFAULT_USER_SETTINGS/
     DEFAULT_THEME_SETTINGS/DEFAULT_FAVORITE_TOOLS value for any unset field
   → PUT  — validates via normalizeUserSettingsPatch AND
-    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch (a caller
-    can patch any subset of the three concerns in one request), serializes
-    a valid favoriteTools list before merging it in, then upserts
-    (insert ... onConflictDoUpdate on userId)
+    normalizeThemeSettingsPatch AND normalizeFavoriteToolsPatch AND
+    normalizeFavoriteToolOpPatch (a caller can patch any subset of these in
+    one request). An addFavoriteTool/removeFavoriteTool op reads the row's
+    current favoriteTools first and resolves the op against it via
+    applyFavoriteToolOp (read-then-write, like the editorPreferences merge
+    below) before serializing; a plain favoriteTools array still replaces
+    the whole list as before. Then upserts (insert ... onConflictDoUpdate
+    on userId)
 ```
 
 Both API handlers require a session (401 without one) — unlike
@@ -154,7 +166,58 @@ client, `useThemeState`'s and `useFavoriteTools`' sync wiring, and the
 D1-backed route are not unit-tested, matching every other fetch-client/
 D1-route pair in this repo (e.g. `round/judge-decision-client.ts`,
 `app/api/evidence-reuse-check/route.ts`) — `apps/debate-ai.com` has no
-vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
+vitest project wired up at all (see `apps/debate-ai.com/vitest.config.ts`'s `projects` list).
+
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `UserSettingsPanel` — the
+last panel that bullet's closed list didn't yet cover, since (unlike every
+other panel closed so far) its `form` is a live, directly-editable draft
+rather than a derived list/roster view.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, saving `debateStyle`/
+`fontSize`/`colorTheme`/`themeMode` here, picking a color theme from
+`theme-dropdown.tsx`'s dock picker, or picking a font family (also read by
+this panel, though it's local-only and never synced to `/api/settings`)
+left every other open `UserSettingsPanel` tab showing stale values until a
+manual reload.
+
+`UserSettingsPanel.tsx` now subscribes to `window`'s `storage` event (see
+`flow/live-update.ts`'s `isUserSettingsPanelLiveUpdateStorageEvent`,
+covering `settings`, `color-theme`, `theme` — next-themes' own storage key
+— and `fontFamily`) and, on a match, refreshes `fontFamily` unconditionally
+(it isn't Save-gated; it always applies immediately, so there's nothing to
+protect) plus each `form` field *individually* — but only a field whose
+current value still matches `baselineRef` (what was last loaded or saved
+here), so an in-progress, not-yet-saved edit on any field is never
+overwritten by another tab's change. A refreshed `colorTheme` also reapplies
+the `theme-*` class on `<html>` in this tab, since that's per-tab DOM state
+a `storage` event alone doesn't update (`themeMode`'s equivalent DOM effect
+is already handled by next-themes' own storage listener). Saving here also
+updates `baselineRef` to the just-saved values, so a field isn't treated as
+"dirty" forever after a successful Save.
+
+`state/userSettings.ts` gained `refreshLocalUserSettingsFromStorage`, which
+re-reads `localStorage`'s `"settings"` key into the local `settings`
+singleton (via its existing `loadFromLocalStorage`) before returning its
+`debateStyle`/`fontSize` values — unlike `readLocalUserSettings`, which only
+reflects whatever the singleton last loaded, and would otherwise miss
+another tab's `applyUserSettingsToLocalStore` write.
+
+Vitest-covered: `packages/debate-round/test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, and unrelated/substring-
+matching keys staying ignored, mirroring every other panel's cases in that
+file) and `packages/debate-round/test/userSettings.test.ts`
+(`refreshLocalUserSettingsFromStorage` picking up a value written straight
+to `localStorage`, unlike `readLocalUserSettings`). The per-field
+"don't stomp an unsaved edit" behavior itself has no dedicated render
+test — this repo has no component-render test for any `debate-round`
+panel — matching how every prior cross-tab live-update slice in this repo
+was verified via its pure predicate function plus typecheck/build, not a
+new render test.
 
 ## Known gaps
 
@@ -167,11 +230,23 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   `fontSize`/`colorTheme`/`themeMode` change from `UserSettingsPanel` can
   all PUT the same row from different tabs — but no client reads back
   another's fields before its own PUT, so a race only ever loses the
-  losing tab's own edited field(s), never corrupts the row. `favoriteTools`
-  is the field most exposed to this: it's a whole-list replace (see
-  `state/favoriteTools.ts`), so two tabs each starring a *different* tool
-  in quick succession can have the second PUT's list silently drop the
-  first tab's addition, rather than merging them.
+  losing tab's own edited field(s), never corrupts the row.
+  **Update:** `favoriteTools` — previously the field most exposed to this,
+  since it was a whole-list replace where two tabs each starring a
+  *different* tool in quick succession could have the second PUT's list
+  silently drop the first tab's addition — is now fixed: `toggleFavorite`/
+  `removeFavorite` (`lib/hooks/useFavoriteTools.ts`) send a single
+  `{ addFavoriteTool }`/`{ removeFavoriteTool }` op
+  (`round/user-settings-client.ts#saveFavoriteToolOp`) instead of a
+  client-computed list, and `/api/settings`'s PUT handler resolves it
+  against the row's *current* stored value with a read-then-write
+  (`state/favoriteTools.ts#applyFavoriteToolOp`), mirroring how
+  `editorPreferences` already merges onto its existing stored map instead
+  of replacing it — see this route's own docstring. This narrows, but (like
+  `editorPreferences`) doesn't fully eliminate, the underlying no-version-
+  check gap this bullet describes; a whole-list `favoriteTools` PUT is still
+  accepted for legitimate bulk replaces (`pruneUnknown`'s stale-favorite
+  cleanup), which stays subject to the general gap above.
 - `ThemeDropdown` (the standalone exported component in
   `theme-dropdown.tsx`, distinct from `useThemeState` the hook) is dead
   code — unused anywhere in the app, which actually renders `CategoryDock`'s
@@ -244,3 +319,155 @@ vitest project wired up at all (see `vitest.config.ts`'s `projects` list).
   compared every panel against every shared primitive (e.g.
   `PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is still
   unaudited).
+  A further slice re-ran the "duplicated empty states" search across every
+  package instead of just `debate-round`/`debate-practice-drills` (the
+  original pass's scope) and found the exact same hand-rolled
+  `<div className="p-6 text-center text-sm text-muted-foreground">…</div>`
+  shape still duplicated in 21 more panels across `debate-ui`,
+  `debate-practice-drills`, `debate-team-collaboration`,
+  `debate-contributor-progress`, and `debate-research-evidence` (several —
+  `ArgumentLibraryPanel`, `ProgressUnlocksPanel`, `PrepRoomPanel`,
+  `TopicCoverageDashboardPanel` — already imported `EmptyState`/`MeterBar`
+  from the same `panel-shell` module for a different empty state in the
+  same file, just missed this one), and migrated all of them to
+  `EmptyState`, splitting each message on its first "…yet." sentence into
+  `title`/`message` the same way prior slices did, or passing a
+  single-sentence/dynamic message as `title` alone when there was no clean
+  split (e.g. `FeaturesPanel`'s `No features match "{query}".`). Two
+  packages' matching panels — `debate-speech-writer`'s `JudgeProfilesPanel`/
+  `CoachMaterialsPanel` and `debate-videos`'s `StandingsPanel` — were left
+  alone: neither package depends on `debate-round` or
+  `debate-research-evidence` (the two packages whose `panel-shell.tsx`
+  exports `EmptyState`), so closing those would first require adding a new
+  cross-package dependency edge, which is out of scope for a markup-only
+  migration. `packages/debate-ui/test/features-panel.test.tsx` gained a new
+  case for `FeaturesPanel`'s empty-search state (previously untested);
+  matching render-test coverage for the other migrated panels was not
+  added, since none of the packages they live in (`debate-practice-drills`,
+  `debate-team-collaboration`, `debate-contributor-progress`,
+  `debate-research-evidence`) have any pre-existing component-render test
+  for these specific panels to extend — each panel's own pure-logic
+  functions are already covered by that package's state/lib test suite,
+  unaffected by a markup-only change, matching how the prior EmptyState
+  migration slices in `debate-round`/`debate-practice-drills` were also
+  verified via typecheck/build rather than new render tests.
+  A further slice started on the "`PanelShell`/`PanelSection` adoption is
+  still unaudited" half named above, package by package: `debate-search-evidence`
+  (npm package name `debate-research-evidence`) was picked next — its 7 panels
+  (`ArgumentLibraryPanel`, `CardScoringPanel`, `ContributionsFeedPanel`,
+  `EvidenceLibraryPanel`, `ReviewQueuePanel`, `RevisionIncentivesPanel`,
+  `TopicCoverageDashboardPanel`) all hand-rolled a top-level `<h1>`-title-
+  plus-description header and none used `PanelShell`/`PanelSection` yet, and
+  the primitive was already one import away (the same `./ui/panels/panel-shell`
+  module each panel already imported `EmptyState`/`MeterBar` from — no new
+  cross-package dependency needed). All 7 were migrated onto `PanelShell`.
+  Each panel's genuinely singular, non-repeated `<h2>`-titled sub-section was
+  also migrated onto `PanelSection` where one existed: `CardScoringPanel`'s
+  "Bulk import"/"My score trend", `ContributionsFeedPanel`'s dynamic
+  "Flagged for review (N)"/"All contributions (N)" list header,
+  `EvidenceLibraryPanel`'s "Check this page"/"Team reuse dashboard"/"Pending
+  review (N)", `ReviewQueuePanel`'s "Reviewer workload", and
+  `RevisionIncentivesPanel`'s "Stale evidence digest"/"Leaderboard"/"Recent
+  revisions". A description containing embedded markup (a `<code>` tag, or
+  `ContributionsFeedPanel`'s tooltip-carrying paragraph) was kept as a plain
+  child element instead of forced through `PanelShell`/`PanelSection`'s
+  `description` prop, which only accepts a plain string. `ArgumentLibraryPanel`
+  and `TopicCoverageDashboardPanel` had no `<h2>`-titled sub-section to
+  migrate (their bordered blocks use a plain `<div>` label, not a heading),
+  so only their top-level header moved onto `PanelShell`; `TopicCoverageDashboardPanel`'s
+  "Cross-topic comparison"/"Coverage trend" labels use the same non-`<h2>`
+  shape and were deliberately left alone for the same reason. Of the
+  remaining packages named in the "roughly 45 panel files" survey above,
+  `debate-team-collaboration` had an open PR against this same follow-up at
+  the start of this slice (checked first to avoid duplicating work), and
+  `debate-speech-writer`'s two panels (`JudgeProfilesPanel`,
+  `CoachMaterialsPanel`) are blocked the same way they are for the
+  `EmptyState` gap above — neither `debate-round` nor
+  `debate-research-evidence` is a dependency of that package, so `PanelShell`/
+  `PanelSection` aren't reachable without first adding a new cross-package
+  dependency edge, out of scope for a markup-only migration. `debate-round`,
+  `debate-contributor-progress`, and `debate-practice-drills` are still
+  unaudited — left for a further package-scoped slice each.
+  A further slice closed `debate-round`: its own `ui/panels/panel-shell.tsx`
+  (already used by `FlowEditLogPanel`/`SharedFlowSyncPanel`) needed no new
+  dependency, and three panels hand-rolled the same top-level header shape
+  while already importing `EmptyState` from it —
+  `OpponentTeamProfilesPanel`, `PreRoundBriefingsPanel`, `StrategyPanel` —
+  all migrated onto `PanelShell`, plus each panel's singular `<h2>`-titled
+  sub-section (`OpponentTeamProfilesPanel`'s "Bulk import (CSV)"/"Logged
+  rounds"; `PreRoundBriefingsPanel`'s "Pairing schedule"/"Log a round") onto
+  `PanelSection`. `WordLimitPresetsPanel` (a `/settings`-page section, not a
+  standalone panel card) and `UserSettingsPanel` (a live, directly-editable
+  form, not a derived list/roster view) were left out of scope; each panel's
+  per-item loop `<h2>` (one per matchup/briefing/round) was left alone as a
+  repeated row heading, not a panel/section header. `debate-contributor-
+  progress` and `debate-practice-drills` remain unaudited.
+  A further slice closed `debate-contributor-progress` (npm package name
+  `debate-community`): it already depends on `debate-research-evidence` (the
+  same `./ui/panels/panel-shell` module every one of its 9 panels already
+  imported `EmptyState`/`StatGrid`/`StatTile`/`MeterBar` from), so no new
+  cross-package dependency was needed. All 9 panels' top-level `<h1>`-title-
+  plus-description header moved onto `PanelShell`: `ContributionLeaderboardPanel`,
+  `CoachingProgramRosterAnalyticsPanel`, `ContributorAwardsPanel`,
+  `DailyBestCardPanel`, `ProgressUnlocksPanel`, `QuestStreaksPanel`,
+  `ContributorProfilePanel`, `CommunityResearchHubPanel`, and
+  `DailyQuestsPanel` (`NewsStreamPanel`, the package's 10th panel, has no
+  matching header shape). Each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section was also migrated onto `PanelSection`:
+  `CoachingProgramRosterAnalyticsPanel`'s "Recent challenge results"/"Program
+  calendar", `ContributorProfilePanel`'s "Badges"/"Top Contributor
+  Awards"/"Endorsements received"/"Endorsements given", `CommunityResearchHubPanel`'s
+  conditional "For You" strip, and `DailyQuestsPanel`'s "Team competition"
+  (kept its own `border-dashed` styling via `PanelSection`'s `className` prop,
+  mirroring `OpponentTeamProfilesPanel`'s bordered-section convention). A
+  description containing embedded markup (`ContributionLeaderboardPanel`'s
+  tooltip-carrying paragraph, `CommunityResearchHubPanel`'s second
+  machine-generated summary line) was kept as a plain child element instead of
+  forced through `PanelShell`'s `description` prop. `ContributorAwardsPanel`
+  and `DailyBestCardPanel` had no `<h2>`-titled sub-section to migrate (their
+  labeled blocks — "Hall of Fame", "Peer Nominations", "Today's leader",
+  "Best of the week", "Announced history" — use a plain `<div>` label, not a
+  heading), so only their top-level header moved onto `PanelShell`, matching
+  `TopicCoverageDashboardPanel`'s precedent for the same shape.
+  `ContributorProfilePanel`'s title is a per-contributor id rather than a
+  fixed panel name, and its header also carried a "You"/tier `Badge` pair
+  inline next to the `<h1>` rather than in a separate description — moved
+  into `PanelShell`'s `actions` slot (right-aligned) instead of leaving the
+  header unmigrated, the one deliberate layout adjustment in this slice.
+  `CommunityResearchHubPanel`'s and `CoachingProgramRosterAnalyticsPanel`'s
+  per-category/per-day loop `<h2>`s were left alone as repeated row headings,
+  not panel/section headers.
+  A further slice closed the last remaining package, `debate-practice-drills`
+  (npm package name `debate-practice-rounds`): it already depends on
+  `debate-round` and every one of its 12 panels already imported `EmptyState`
+  (several also `MeterBar`/`PanelRow`) from that same `panel-shell` module, so
+  no new cross-package dependency was needed. All 12 panels' top-level
+  `<h1>`-title-plus-description header moved onto `PanelShell`
+  (`AiVersusRoundPanel`, `ArgumentTreePanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowAnnotationsPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel`), and each panel's
+  genuinely singular, non-repeated `<h2>`-titled sub-section onto
+  `PanelSection`: `AiVersusRoundPanel`'s "Compare transcripts",
+  `DrillSetsPanel`'s "Practice tier" (tier `Badge` moved into `actions`),
+  `FlowSummariesPanel`'s "Generate from raw speech text",
+  `JudgeDecisionPanel`'s "Multi-judge panel", `OpponentPersonaPickerPanel`'s
+  "My persona library"/"Shared by your team", `PracticeRoundSimulatorPanel`'s
+  "Compare your past attempts" (its "Download comparison" button moved into
+  `actions`), and `WordCountRoundsPanel`'s "Round history" (its "Delete all
+  synced history" button moved into `actions`) and "Word-count trend" (its
+  conditional speech-filter `Select` moved into `actions`). A header/section
+  carrying a second paragraph with embedded markup or dynamic sign-in-status
+  copy was kept as a plain child element instead of forced through the
+  string-only `description` prop, matching every prior slice's judgment call.
+  `CoachingSessionsPanel`, `FlowAnnotationsPanel`, and
+  `JudgeParadigmPickerPanel` had no singular `<h2>` sub-section to migrate;
+  `ArgumentTreePanel`'s and `VulnerabilityChartsPanel`'s sole `<h2>` (a
+  per-item "Round {id}" loop heading) was left alone as a repeated row
+  heading, not a panel/section header, matching the historical `PanelRow`
+  audit's judgment call for the same shape. This closes the last package
+  left open by this survey — every package that depends on a package
+  exporting `PanelShell`/`PanelSection` is now migrated; only
+  `debate-speech-writer`'s two panels remain, still blocked on the
+  cross-package-dependency gap named earlier in this section.

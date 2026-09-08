@@ -14,6 +14,7 @@ import {
 } from "../src/state/cardScores";
 import { saveEvidenceLibraryEntry } from "../src/state/evidenceLibraryEntries";
 import { saveTrackedArgument } from "../src/state/trackedArguments";
+import { listCardScoreHistoryForContributor } from "../src/state/cardScoreHistory";
 import type { EvidenceLibraryEntry } from "../src/lib/shared-evidence-library";
 import type { ScoredCard } from "../src/lib/llm-card-scoring";
 
@@ -95,6 +96,29 @@ describe("saveScoredCard", () => {
   });
 });
 
+describe("saveScoredCard score-history recording", () => {
+  it("records a score-history entry when the card carries a contributorId", () => {
+    saveScoredCard({ ...WARMING_CARD, contributorId: "alice" });
+
+    const history = listCardScoreHistoryForContributor("alice");
+    expect(history).toHaveLength(1);
+    expect(history[0]).toMatchObject({ cardId: "card-1", contributorId: "alice" });
+    expect(history[0].overallScore).toBeGreaterThan(0);
+  });
+
+  it("does not record a score-history entry for a card with no contributorId", () => {
+    saveScoredCard(WARMING_CARD);
+    expect(listCardScoreHistoryForContributor("")).toEqual([]);
+  });
+
+  it("appends a new history entry on every re-score rather than overwriting the prior one", () => {
+    saveScoredCard({ ...WARMING_CARD, contributorId: "alice" });
+    saveScoredCard({ ...WARMING_CARD, contributorId: "alice", qualitySignals: [0.1] });
+
+    expect(listCardScoreHistoryForContributor("alice")).toHaveLength(2);
+  });
+});
+
 describe("deleteScoredCard", () => {
   it("removes a stored card by id", () => {
     saveScoredCard(WARMING_CARD);
@@ -138,6 +162,15 @@ describe("saveScoredCardsBulk", () => {
     saveScoredCardsBulk([]);
     expect(listScoredCards()).toEqual([WARMING_CARD]);
   });
+
+  it("records a score-history entry for every card in the batch that carries a contributorId", () => {
+    saveScoredCardsBulk([
+      { ...WARMING_CARD, contributorId: "alice" },
+      SOLVENCY_CARD,
+    ]);
+
+    expect(listCardScoreHistoryForContributor("alice")).toHaveLength(1);
+  });
 });
 
 describe("bulkImportScoredCards", () => {
@@ -178,6 +211,19 @@ describe("bulkImportScoredCards", () => {
   it("immediately reflects in buildPersistedCardScoreRanking", () => {
     bulkImportScoredCards("id: card-1\nCard text about warming.");
     expect(buildPersistedCardScoreRanking().map((entry) => entry.cardId)).toEqual(["card-1"]);
+  });
+
+  it("attributes every imported card to the given contributor when provided", () => {
+    const raw = ["id: card-1", "First card text.", "---", "id: card-2", "Second card text."].join("\n");
+    bulkImportScoredCards(raw, 0.5, "alice");
+
+    expect(listScoredCards().every((card) => card.contributorId === "alice")).toBe(true);
+    expect(listCardScoreHistoryForContributor("alice")).toHaveLength(2);
+  });
+
+  it("leaves contributorId unset when none is provided", () => {
+    bulkImportScoredCards("id: card-1\nCard text.");
+    expect(getScoredCard("card-1")).not.toHaveProperty("contributorId");
   });
 });
 

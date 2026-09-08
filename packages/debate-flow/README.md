@@ -22,4 +22,5 @@ bun run typecheck   # or: npx tsc --noEmit
 Coverage for every package is merged at the repo root by `bun run coverage` and uploaded
 to [Codecov](https://app.codecov.io/gh/debate/debate-ai.com) by CI.
 
-Current Codecov package coverage on `master` at commit `5b69dad` is **0.00%**.
+Current Codecov package coverage on `master` at commit `50322f5` is **0.00%** (tracked under
+the `debate-flow` flag) — this package has no `test/` directory yet.

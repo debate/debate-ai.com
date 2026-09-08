@@ -331,6 +331,29 @@ export function buildReuseCheckDashboardSummaryText(dashboard: FlaggedPageReuseS
 }
 
 /**
+ * How long a `reuse_check_log` row is kept before the retention/purge policy
+ * (idea #7's "a retention/purge policy for the ever-growing reuse_check_log"
+ * follow-up) removes it. The log is an append-only audit trail with no
+ * natural cap of its own, so without this it would grow forever.
+ */
+export const REUSE_CHECK_LOG_RETENTION_DAYS = 180;
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * The cutoff timestamp (ms since epoch, same unit as `ReuseCheckLogRecord`'s
+ * `checkedAt`): any log row older than this is eligible for purging. Pure so
+ * the retention window's arithmetic is directly testable — the actual DELETE
+ * query lives server-side, where a real DB connection is available.
+ */
+export function getReuseCheckLogPurgeCutoff(
+  nowMs: number,
+  retentionDays: number = REUSE_CHECK_LOG_RETENTION_DAYS,
+): number {
+  return nowMs - retentionDays * MS_PER_DAY;
+}
+
+/**
  * Builds the repository's topic-folder/tag-collection index, reusing
  * `buildArgumentLibrary` directly — an `EvidenceLibraryEntry` is already a
  * `LibraryCard`, so no separate grouping logic is needed here.

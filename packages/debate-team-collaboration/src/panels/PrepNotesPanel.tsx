@@ -41,7 +41,7 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelRow } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelRow, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
@@ -50,7 +50,11 @@ import {
   updatePersistedPrepNotePriority,
   type PrepNotesPanelGroup,
 } from "../state/prepNotes"
-import { buildPrepNoteJumpHref, type PrepNoteStatus } from "debate-round/src/flow/strategy-sync-notes"
+import {
+  buildPrepNoteJumpHref,
+  isBoxAnchoredPrepNote,
+  type PrepNoteStatus,
+} from "debate-round/src/flow/strategy-sync-notes"
 import { isPrepNotesPanelLiveUpdateStorageEvent } from "debate-round/src/flow/live-update"
 import {
   deletePrepNoteReply,
@@ -241,14 +245,10 @@ export function PrepNotesPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Prep Notes</h1>
-        <p className="text-sm text-muted-foreground">
-          Live prep notes across every flow, grouped by status. Cycle a note's status, flag it high
-          priority, or assign it to a teammate as a task.
-        </p>
-      </div>
+    <PanelShell
+      title="Prep Notes"
+      description="Live prep notes across every flow, grouped by status. Cycle a note's status, flag it high priority, or assign it to a teammate as a task."
+    >
       {groups
         .filter((group) => group.notes.length > 0)
         .map((group) => (
@@ -275,13 +275,19 @@ export function PrepNotesPanel() {
                   trailing={
                     <>
                       {note.priority === "high" && <Badge variant="destructive">High priority</Badge>}
-                      <Link
-                        href={buildPrepNoteJumpHref(note)}
-                        className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                      >
-                        Jump to argument
-                        <ArrowUpRight className="h-3 w-3" />
-                      </Link>
+                      {isBoxAnchoredPrepNote(note) ? (
+                        <Link
+                          href={buildPrepNoteJumpHref(note)}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                        >
+                          Jump to argument
+                          <ArrowUpRight className="h-3 w-3" />
+                        </Link>
+                      ) : (
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          Round {note.roundId}
+                        </Badge>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
@@ -343,6 +349,6 @@ export function PrepNotesPanel() {
             </div>
           </div>
         ))}
-    </div>
+    </PanelShell>
   )
 }

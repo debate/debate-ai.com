@@ -1,0 +1,39 @@
+---
+title: "Practice Drills"
+---
+
+# Practice Drills
+
+Shows every persisted "AI Drill Generator" `Drill` set, grouped by round —
+overview, frontline, cross-ex, and collapse-scenario prompts derived from
+that round's flow.
+
+- **Route:** `/drills`
+- **Package:** `debate-round`
+
+## What it shows
+
+Each persisted `DrillSetRecord` renders as its own card with kind badges
+(Overview/Frontline/Cross-Ex/Collapse) and a difficulty rating
+(easy/medium/hard, derived from the argument's vulnerability score). Each
+drill has a "Get AI script" action, a "Mark practiced" toggle with a
+progress meter, and a "Review reminder" date field with a "Due" badge. A
+"Practice tier" card feeds practiced-drill counts into the Progress
+Unlocks tier system.
+
+## Data flow
+
+```
+state/drillSets.ts (localStorage: drillSets)
+  → buildDrillSetsPanelView()
+  → panels/DrillSetsPanel.tsx
+  → apps/debate-ai.com/app/drills/page.tsx
+```
+
+Every drill set — scripts, completion state, reminders — is account-synced
+across devices (`saved_drill_sets` D1 table, `/api/drill-sets`).
+
+## Known gaps
+
+The "Practice tier" card still feeds a synthetic, drill-set-scoped stats
+object rather than the real cross-tool Progress Unlocks roster.

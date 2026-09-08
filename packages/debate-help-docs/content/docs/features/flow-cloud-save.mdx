@@ -1,0 +1,34 @@
+---
+title: "Flow Cloud Save"
+---
+
+# Flow Cloud Save
+
+Lets a signed-in user save an individual flow to their account and load it
+back on any device.
+
+- **Nav:** `FlowHistoryDialog`'s "Saved to account" tab; a cloud-upload icon
+  on each flow chip in the "Rounds" tab
+- **Package:** `debate-round` (dialog + validation + fetch client),
+  `apps/debate-ai.com` (`/api/flows`, `saved_flows` D1 table)
+
+## What it does
+
+Clicking a flow's cloud icon PUTs that flow to the account, keyed by its
+local id. The "Saved to account" tab lists every saved flow with Load and
+Remove actions. A signed-out user sees a sign-in prompt instead of a fetch
+attempt; local behavior is never blocked.
+
+## Data flow
+
+```
+state/savedFlows.ts (pure validation)
+round/saved-flows-client.ts (fetch: list/fetch/save/delete)
+dialogs/FlowHistoryDialog.tsx
+apps/debate-ai.com/app/api/flows/[route.ts, [clientId]/route.ts]
+```
+
+## Known gaps
+
+No optimistic-concurrency handling — the same flow edited from two
+devices at once has the last PUT win.

@@ -63,7 +63,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, MeterBar, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -83,6 +83,7 @@ import {
   buildPersistedResearchProgressBoard,
   deleteCompletedTaskHistoryForTopic,
 } from "../state/researchProgress"
+import { listTrackedTopics } from "debate-research-evidence/src/state/trackedArguments"
 import { useResearchProgressGoalSync } from "../hooks/useResearchProgressGoalSync"
 import { isOwnContributorRow } from "debate-research-evidence/src/lib/session-identity"
 import { isResearchProgressLiveUpdateStorageEvent } from "debate-research-evidence/src/state/live-update"
@@ -135,6 +136,16 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
   }, [])
 
   const handleClearTopicHistory = (topic: string) => {
+    // This deletes every contributor's completed-task history for the topic,
+    // not just the row it was clicked from — confirm before the wipe.
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm(
+        `Clear the completed-task history for "${topic}" for every contributor? This can't be undone.`,
+      )
+    ) {
+      return
+    }
     deleteCompletedTaskHistoryForTopic(topic)
     setRoster(buildPersistedResearchProgressBoard())
   }
@@ -149,6 +160,7 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
   const [isEditingGoal, setIsEditingGoal] = useState(false)
   const [draftTarget, setDraftTarget] = useState("")
   const [draftTopic, setDraftTopic] = useState(ALL_TOPICS_VALUE)
+  const [draftTargetDate, setDraftTargetDate] = useState("")
   const [goalError, setGoalError] = useState<string | null>(null)
 
   // Re-reads the goal whenever the underlying board changes (a completed
@@ -163,6 +175,7 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
   const openGoalForm = () => {
     setDraftTarget(goalProgress ? String(goalProgress.goal.targetCompletedTaskCount) : "")
     setDraftTopic(goalProgress?.goal.topic ?? ALL_TOPICS_VALUE)
+    setDraftTargetDate(goalProgress?.goal.targetDate ?? "")
     setGoalError(null)
     setIsEditingGoal(true)
   }
@@ -174,7 +187,11 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
       setGoalError("Enter a target number of tasks greater than 0.")
       return
     }
-    const saved = saveGoal(Math.round(target), draftTopic === ALL_TOPICS_VALUE ? undefined : draftTopic)
+    const saved = saveGoal(
+      Math.round(target),
+      draftTopic === ALL_TOPICS_VALUE ? undefined : draftTopic,
+      draftTargetDate.trim() || undefined,
+    )
     if (!saved) {
       setGoalError(goalSyncError ?? "Could not save goal.")
       return
@@ -209,34 +226,29 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
     return <div className="p-6 text-sm text-muted-foreground">Loading research progress…</div>
   }
 
-  if (roster.length === 0) {
-    return (
-      <div className="p-6 text-center text-sm text-muted-foreground">
-        No progress yet. This fills in once contributors submit contributions or have research
-        tasks routed to them.
-      </div>
-    )
-  }
-
   const topicComparison = buildTeamTopicComparison(roster)
+  // A goal can be set for a topic no one has an assignment in yet — offer
+  // every tracked topic alongside the roster-derived ones.
+  const goalTopicOptions = Array.from(
+    new Set([...topicComparison.map((topic) => topic.topic), ...listTrackedTopics()]),
+  ).sort((a, b) => a.localeCompare(b))
 
+  // The goal section renders even on an empty roster — a brand-new signed-in
+  // contributor with no tracked work yet is exactly who goal-setting is for.
   return (
-    <div className="p-4 sm:p-6">
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Research Progress</h1>
-          <p className="text-sm text-muted-foreground">
-            Each contributor's contribution history and per-topic task completion.
-          </p>
-        </div>
-        <Button size="sm" variant="outline" onClick={handleDownloadReport}>
-          Download report
-        </Button>
-      </div>
-
+    <PanelShell
+      title="Research Progress"
+      description="Each contributor's contribution history and per-topic task completion."
+      actions={
+        roster.length > 0 ? (
+          <Button size="sm" variant="outline" onClick={handleDownloadReport}>
+            Download report
+          </Button>
+        ) : undefined
+      }
+    >
       {signedInContributorId && (
-        <div className="mb-6 rounded-lg border border-border bg-muted/30 p-4">
-          <h2 className="mb-1 text-sm font-semibold text-foreground">My research goal</h2>
+        <PanelSection title="My research goal">
           {isEditingGoal ? (
             <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:flex-wrap">
               <div className="space-y-1.5">
@@ -259,13 +271,23 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={ALL_TOPICS_VALUE}>All topics</SelectItem>
-                    {topicComparison.map((topic) => (
-                      <SelectItem key={topic.topic} value={topic.topic}>
-                        {topic.topic}
+                    {goalTopicOptions.map((topic) => (
+                      <SelectItem key={topic} value={topic}>
+                        {topic}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="research-goal-target-date">Target date (optional)</Label>
+                <Input
+                  id="research-goal-target-date"
+                  type="date"
+                  className="w-40"
+                  value={draftTargetDate}
+                  onChange={(e) => setDraftTargetDate(e.target.value)}
+                />
               </div>
               <div className="flex gap-2">
                 <Button size="sm" onClick={handleSaveGoal}>
@@ -283,11 +305,7 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
                   {goalProgress.goal.topic
                     ? `${goalProgress.currentCompletedTaskCount}/${goalProgress.goal.targetCompletedTaskCount} tasks completed in ${goalProgress.goal.topic}`
                     : `${goalProgress.currentCompletedTaskCount}/${goalProgress.goal.targetCompletedTaskCount} tasks completed`}
-                  {goalProgress.isComplete && (
-                    <Badge variant="outline" className="ml-2 whitespace-nowrap">
-                      🎉 Goal reached
-                    </Badge>
-                  )}
+                  {goalProgress.goal.targetDate ? ` by ${goalProgress.goal.targetDate}` : ""}
                 </p>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={openGoalForm}>
@@ -303,10 +321,15 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
                 max={100}
                 caption={
                   goalProgress.isComplete
-                    ? "Complete"
+                    ? undefined
                     : `${goalProgress.remainingTaskCount} more task${goalProgress.remainingTaskCount === 1 ? "" : "s"} to go`
                 }
               />
+              {goalProgress.isComplete && (
+                <Badge variant="outline" className="whitespace-nowrap">
+                  🎉 Goal reached
+                </Badge>
+              )}
             </div>
           ) : (
             <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
@@ -319,9 +342,17 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
             </div>
           )}
           {goalError && <p className="mt-2 text-sm text-destructive">{goalError}</p>}
-        </div>
+        </PanelSection>
       )}
 
+      {roster.length === 0 && (
+        <EmptyState
+          title="No progress yet."
+          message="This fills in once contributors submit contributions or have research tasks routed to them."
+        />
+      )}
+
+      {roster.length > 0 && (
       <Table>
         <TableHeader>
           <TableRow>
@@ -386,13 +417,13 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
           })}
         </TableBody>
       </Table>
+      )}
 
       {topicComparison.length > 0 && (
-        <div className="mt-6">
-          <h2 className="mb-1 text-lg font-semibold text-foreground">Topic comparison</h2>
-          <p className="mb-3 text-sm text-muted-foreground">
-            Task completion rolled up across the whole team, least-covered topic first.
-          </p>
+        <PanelSection
+          title="Topic comparison"
+          description="Task completion rolled up across the whole team, least-covered topic first."
+        >
           <Table>
             <TableHeader>
               <TableRow>
@@ -421,8 +452,8 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
               ))}
             </TableBody>
           </Table>
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }

@@ -15,6 +15,14 @@
  * here — this is a read/write composition and rendering layer, mirroring the
  * existing `ArgumentLibraryPanel`/`SprintNotesPanel` panel convention.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTopicCoverageDashboardLiveUpdateStorageEvent`, so a tracked argument, an
+ * evidence-library entry or tagged contribution, or a coverage snapshot
+ * added/removed in another browser tab refreshes this panel's coverage
+ * report, checklist, snapshot history, and cross-topic comparison here too —
+ * the `storage` event never fires in the tab that made the write, only in
+ * other tabs.
+ *
  * @module panels/TopicCoverageDashboardPanel
  */
 
@@ -25,7 +33,9 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
+import { EmptyState, MeterBar, PanelShell } from "../ui/panels/panel-shell"
 import {
+  buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
   deleteTrackedArgument,
   listTrackedArguments,
@@ -33,8 +43,15 @@ import {
   saveTrackedArgument,
   type TrackedArgumentRecord,
 } from "../state/trackedArguments"
+import {
+  clearCoverageSnapshots,
+  listCoverageSnapshots,
+  recordCoverageSnapshot,
+  type TopicCoverageSnapshotRecord,
+} from "../state/topicCoverageSnapshots"
 import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
-import type { ArgumentCoverage, CoverageLevel, TopicCoverageReport } from "../lib/topic-coverage"
+import type { ArgumentCoverage, CoverageLevel, CrossTopicCoverageRow, TopicCoverageReport } from "../lib/topic-coverage"
+import { isTopicCoverageDashboardLiveUpdateStorageEvent } from "../state/live-update"
 
 const LEVEL_LABEL: Record<CoverageLevel, string> = {
   missing: "Missing",
@@ -68,21 +85,58 @@ export function TopicCoverageDashboardPanel() {
   const [records, setRecords] = useState<TrackedArgumentRecord[]>([])
   const [draft, setDraft] = useState<ArgumentDraft>(EMPTY_DRAFT)
   const [error, setError] = useState<string | null>(null)
+  const [snapshots, setSnapshots] = useState<TopicCoverageSnapshotRecord[]>([])
+  const [crossTopicRows, setCrossTopicRows] = useState<CrossTopicCoverageRow[]>([])
 
   useEffect(() => {
     setTopics(listTrackedTopics())
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }, [])
 
   useEffect(() => {
     const activeTopic = topic.trim()
     setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
     setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+    setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }, [topic])
 
   const refresh = (activeTopic: string) => {
     setTopics(listTrackedTopics())
-    setReport(buildPersistedTopicCoverageReport(activeTopic))
-    setRecords(listTrackedArguments(activeTopic))
+    setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
+    setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+    setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
+    setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
+  }
+
+  /**
+   * Live-update the rendered coverage report, tracked-argument checklist,
+   * snapshot history, and cross-topic comparison when another browser tab
+   * tracks/removes an argument, submits an evidence-library entry or
+   * tagged contribution, or records/clears a coverage snapshot.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTopicCoverageDashboardLiveUpdateStorageEvent(event)) return
+      refresh(topic.trim())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
+
+  const handleRecordSnapshot = () => {
+    const activeTopic = topic.trim()
+    if (!activeTopic || !report) return
+    recordCoverageSnapshot(activeTopic, report)
+    setSnapshots(listCoverageSnapshots(activeTopic))
+  }
+
+  const handleClearSnapshots = () => {
+    const activeTopic = topic.trim()
+    if (!activeTopic) return
+    clearCoverageSnapshots(activeTopic)
+    setSnapshots([])
   }
 
   const handleAdd = () => {
@@ -120,14 +174,11 @@ export function TopicCoverageDashboardPanel() {
   const underCovered = report ? getUnderCoveredArguments(report) : []
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Topic Coverage Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Track which arguments a topic's checklist calls for, and see which are missing, thin, or
-          covered based on the shared evidence library's submitted cards.
-        </p>
-      </div>
+    <PanelShell
+      title="Topic Coverage Dashboard"
+      description="Track which arguments a topic's checklist calls for, and see which are missing, thin, or covered based on the shared evidence library's submitted cards."
+    >
+      {crossTopicRows.length > 1 && <CrossTopicComparisonHeatmap rows={crossTopicRows} />}
 
       <div className="space-y-2">
         <Label htmlFor="coverage-topic">Topic</Label>
@@ -155,9 +206,7 @@ export function TopicCoverageDashboardPanel() {
       </div>
 
       {topic.trim() === "" ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          Enter a topic above to view or build its coverage checklist.
-        </div>
+        <EmptyState title="Enter a topic above to view or build its coverage checklist." />
       ) : (
         <>
           <div className="rounded-lg border border-border p-4 space-y-3">
@@ -187,7 +236,12 @@ export function TopicCoverageDashboardPanel() {
 
           {report && report.tracked.length > 0 ? (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">{buildTopicCoverageSummaryText(report)}</p>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-muted-foreground">{buildTopicCoverageSummaryText(report)}</p>
+                <Button size="sm" variant="outline" onClick={handleRecordSnapshot}>
+                  Record snapshot
+                </Button>
+              </div>
 
               <div className="space-y-2">
                 {report.tracked.map((argument) => {
@@ -222,13 +276,30 @@ export function TopicCoverageDashboardPanel() {
               )}
             </div>
           ) : (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              No tracked arguments yet for {topic.trim()}. Add one above to start the checklist.
+            <EmptyState
+              title={`No tracked arguments yet for ${topic.trim()}.`}
+              message="Add one above to start the checklist."
+            />
+          )}
+
+          {snapshots.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-xs font-medium uppercase text-muted-foreground">Coverage trend</p>
+                <Button size="sm" variant="ghost" onClick={handleClearSnapshots}>
+                  Clear trend history
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {snapshots.map((snapshot) => (
+                  <CoverageSnapshotRow key={snapshot.id} snapshot={snapshot} />
+                ))}
+              </div>
             </div>
           )}
         </>
       )}
-    </div>
+    </PanelShell>
   )
 }
 
@@ -248,6 +319,86 @@ function CoverageRow({ argument, onRemove }: { argument: ArgumentCoverage; onRem
           Remove
         </Button>
       )}
+    </div>
+  )
+}
+
+/** RGB channels (no alpha) each coverage level's heatmap cell shades toward as its share of a topic's tracked arguments grows. */
+const LEVEL_HEAT_RGB: Record<CoverageLevel, string> = {
+  missing: "220, 38, 38",
+  thin: "217, 119, 6",
+  covered: "22, 163, 74",
+}
+
+/**
+ * Cross-topic comparison heatmap — the "a cross-topic comparison view (a
+ * heatmap-style rollup across every tracked topic at once)" follow-up named
+ * under the "📊 Topic Coverage Dashboard" idea in TODO.md. One row per
+ * tracked topic (worst-covered first), with a shaded cell per coverage
+ * level — shade intensity scales with that level's share of the topic's
+ * tracked arguments, so a glance at the grid shows which topics lean red
+ * (missing), amber (thin), or green (covered) relative to each other.
+ */
+function CrossTopicComparisonHeatmap({ rows }: { rows: CrossTopicCoverageRow[] }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-medium uppercase text-muted-foreground">Cross-topic comparison</p>
+      <div className="overflow-x-auto rounded-lg border border-border">
+        <table className="w-full min-w-[420px] border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-border text-left text-xs text-muted-foreground">
+              <th className="p-2 font-medium">Topic</th>
+              <th className="p-2 text-center font-medium">Missing</th>
+              <th className="p-2 text-center font-medium">Thin</th>
+              <th className="p-2 text-center font-medium">Covered</th>
+              <th className="p-2 text-center font-medium">Coverage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.topic} className="border-b border-border last:border-b-0">
+                <td className="p-2 font-medium text-foreground">{row.topic}</td>
+                <HeatmapCell count={row.missing} total={row.total} level="missing" />
+                <HeatmapCell count={row.thin} total={row.total} level="thin" />
+                <HeatmapCell count={row.covered} total={row.total} level="covered" />
+                <td className="p-2 text-center text-xs text-muted-foreground">
+                  {row.total === 0 ? "—" : `${Math.round(row.coverageRatio * 100)}%`}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
+function HeatmapCell({ count, total, level }: { count: number; total: number; level: CoverageLevel }) {
+  const share = total === 0 ? 0 : count / total
+  return (
+    <td
+      className="p-2 text-center text-xs font-medium text-foreground"
+      style={{ backgroundColor: share === 0 ? undefined : `rgba(${LEVEL_HEAT_RGB[level]}, ${0.15 + share * 0.55})` }}
+    >
+      {count}
+    </td>
+  )
+}
+
+function CoverageSnapshotRow({ snapshot }: { snapshot: TopicCoverageSnapshotRecord }) {
+  return (
+    <div className="rounded-md border border-border px-3 py-2 space-y-1.5">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span>{new Date(snapshot.createdAt).toLocaleString()}</span>
+        <span>
+          {snapshot.covered}/{snapshot.total} covered · {snapshot.thin} thin · {snapshot.missing} missing
+        </span>
+      </div>
+      <MeterBar
+        value={snapshot.covered}
+        max={snapshot.total}
+        tone={snapshot.covered === snapshot.total && snapshot.total > 0 ? "positive" : "info"}
+      />
     </div>
   )
 }

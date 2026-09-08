@@ -3,9 +3,11 @@ import {
   getPersistedStreakLapseReminderInfo,
   isStreakLapseReminderEnabled,
   listStreakLapseReminderContributorIds,
+  mergeRemoteStreakLapseReminderEnabled,
   setStreakLapseReminderEnabled,
 } from "../src/state/streakLapseReminders";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
+import { applyPersistedStreakFreeze } from "../src/state/streakFreezes";
 
 /** Minimal in-memory `localStorage` mock — this package's Vitest environment is `node`, with no DOM. */
 class MemoryStorage {
@@ -80,6 +82,39 @@ describe("setStreakLapseReminderEnabled", () => {
   });
 });
 
+describe("mergeRemoteStreakLapseReminderEnabled", () => {
+  it("enables locally and reports a change when the account says it's on and this device hasn't caught up", () => {
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", true);
+    expect(changed).toBe(true);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(true);
+  });
+
+  it("is a no-op reporting no change when already enabled locally", () => {
+    setStreakLapseReminderEnabled("alice", true);
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", true);
+    expect(changed).toBe(false);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(true);
+  });
+
+  it("never disables a locally-enabled reminder when the remote value is false", () => {
+    setStreakLapseReminderEnabled("alice", true);
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", false);
+    expect(changed).toBe(false);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(true);
+  });
+
+  it("stays disabled locally when the remote value is false and nothing is enabled yet", () => {
+    const changed = mergeRemoteStreakLapseReminderEnabled("alice", false);
+    expect(changed).toBe(false);
+    expect(isStreakLapseReminderEnabled("alice")).toBe(false);
+  });
+
+  it("keeps different contributors' opt-ins independent", () => {
+    mergeRemoteStreakLapseReminderEnabled("alice", true);
+    expect(isStreakLapseReminderEnabled("bob")).toBe(false);
+  });
+});
+
 describe("getPersistedStreakLapseReminderInfo", () => {
   it("reports disabled with no risk when a contributor has no history and hasn't opted in", () => {
     expect(getPersistedStreakLapseReminderInfo("alice", "2026-08-10")).toEqual({
@@ -105,6 +140,21 @@ describe("getPersistedStreakLapseReminderInfo", () => {
     setStreakLapseReminderEnabled("alice", true);
 
     expect(getPersistedStreakLapseReminderInfo("alice", "2026-08-10").riskLength).toBeNull();
+  });
+
+  it("bridges streak freezes into the at-risk length, matching the roster's own freeze-bridged streak", () => {
+    // alice completed 08-07 and 08-09, missed 08-08, then spent a grace day
+    // on the gap — her freeze-bridged streak is 3, and the banner must say
+    // 3, not the raw unfrozen 1.
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-07", isComplete: true });
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    applyPersistedStreakFreeze("alice", "2026-08-08", "2026-08-09");
+    setStreakLapseReminderEnabled("alice", true);
+
+    expect(getPersistedStreakLapseReminderInfo("alice", "2026-08-10")).toEqual({
+      enabled: true,
+      riskLength: 3,
+    });
   });
 
   it("keeps different contributors' risk independent", () => {

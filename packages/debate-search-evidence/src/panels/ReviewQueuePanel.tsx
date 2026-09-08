@@ -50,6 +50,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import { Textarea } from "../ui/primitives/textarea"
 import {
   addReviewComment,
@@ -57,6 +58,7 @@ import {
   buildReviewSummary,
   createCardReview,
   getReviewAgeDays,
+  getUnresolvedBlockingComments,
   isReviewStale,
   requestChanges,
   resolveReviewComment,
@@ -76,6 +78,7 @@ import {
   rejectPersistedReviewAsReviewer,
   savePeerReview,
 } from "../state/peerReviews"
+import { isReviewQueueLiveUpdateStorageEvent } from "../state/live-update"
 
 const STATUS_LABEL: Record<ReviewStatus, string> = {
   draft: "Draft",
@@ -131,10 +134,26 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
   const [actingReviewerId, setActingReviewerId] = useState("")
   const [hasEditedActingReviewerId, setHasEditedActingReviewerId] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [reviewErrors, setReviewErrors] = useState<Record<string, string>>({})
   const [commentDrafts, setCommentDrafts] = useState<Record<string, CommentDraft>>({})
 
   useEffect(() => {
     setReviews(buildReviewQueuePanelView())
+  }, [])
+
+  /**
+   * Live-update the queue when another browser tab starts, advances, or
+   * comments on a review (or edits an underlying evidence entry). A
+   * `storage` event never fires in the tab that made the write, only in
+   * other tabs — same-tab changes already refresh via `refresh()`.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isReviewQueueLiveUpdateStorageEvent(event)) return
+      setReviews(buildReviewQueuePanelView())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   useEffect(() => {
@@ -165,12 +184,16 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
     refresh()
   }
 
+  const setReviewError = (cardId: string, message: string | null) => {
+    setReviewErrors((prev) => ({ ...prev, [cardId]: message ?? "" }))
+  }
+
   const applyTransition = (review: CardReview, transition: (review: CardReview) => CardReview) => {
     try {
       savePeerReview(transition(review))
-      setError(null)
+      setReviewError(review.cardId, null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update the review.")
+      setReviewError(review.cardId, err instanceof Error ? err.message : "Could not update the review.")
     }
     refresh()
   }
@@ -181,14 +204,14 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
   ) => {
     const reviewerId = actingReviewerId.trim()
     if (!reviewerId) {
-      setError(`Enter your reviewer ID above — approving, rejecting, and publishing need a ${MIN_REVIEWER_TIER} contribution record.`)
+      setReviewError(cardId, `Enter your reviewer ID above — approving, rejecting, and publishing need a ${MIN_REVIEWER_TIER} contribution record.`)
       return
     }
     try {
       gatedTransition(cardId, reviewerId)
-      setError(null)
+      setReviewError(cardId, null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not update the review.")
+      setReviewError(cardId, err instanceof Error ? err.message : "Could not update the review.")
     }
     refresh()
   }
@@ -198,7 +221,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
     const reviewerId = draft.reviewerId.trim()
     const body = draft.body.trim()
     if (!reviewerId || !body) {
-      setError("Reviewer ID and comment text are required.")
+      setReviewError(review.cardId, "Reviewer ID and comment text are required.")
       return
     }
     savePeerReview(
@@ -209,8 +232,13 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
         severity: draft.severity,
       }),
     )
-    setError(null)
-    setCommentDrafts((prev) => ({ ...prev, [review.cardId]: EMPTY_COMMENT_DRAFT }))
+    setReviewError(review.cardId, null)
+    // Reset the draft but re-seed the signed-in reviewer id — writing a
+    // blank draft back would permanently clobber the prefill for this card.
+    setCommentDrafts((prev) => ({
+      ...prev,
+      [review.cardId]: { ...EMPTY_COMMENT_DRAFT, reviewerId: signedInContributorId ?? "" },
+    }))
     refresh()
   }
 
@@ -231,24 +259,16 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
   const workload = buildReviewerWorkload(reviews)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Review Queue</h1>
-        <p className="text-sm text-muted-foreground">
-          Move a submitted card through peer review — comment, request changes, approve, and
-          publish — before it goes live in the shared library.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Review Queue"
+      description="Move a submitted card through peer review — comment, request changes, approve, and publish — before it goes live in the shared library."
+    >
       {workload.length > 0 && (
-        <div className="rounded-lg border border-border p-4 space-y-2">
-          <div>
-            <h2 className="text-sm font-medium text-foreground">Reviewer workload</h2>
-            <p className="text-xs text-muted-foreground">
-              Who's carrying the queue right now — busiest first — so new review requests can be
-              steered toward reviewers with room to take them.
-            </p>
-          </div>
+        <PanelSection
+          title="Reviewer workload"
+          description="Who's carrying the queue right now — busiest first — so new review requests can be steered toward reviewers with room to take them."
+          className="rounded-lg border border-border p-4"
+        >
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -279,7 +299,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
               </tbody>
             </table>
           </div>
-        </div>
+        </PanelSection>
       )}
 
       <div className="rounded-lg border border-border p-4 space-y-4">
@@ -331,16 +351,12 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
       </div>
 
       {reviews.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No cards in review yet. Start one above to see it here.
-        </div>
+        <EmptyState title="No cards in review yet." message="Start one above to see it here." />
       ) : (
         <div className="space-y-3">
           {reviews.map((review) => {
             const draft = commentDraftFor(review.cardId)
-            const unresolvedBlocking = review.comments.filter(
-              (comment) => comment.severity === "blocking" && !comment.resolved,
-            )
+            const unresolvedBlocking = getUnresolvedBlockingComments(review)
             const ageDays = getReviewAgeDays(review)
             const stale = isReviewStale(review)
 
@@ -447,6 +463,10 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
                   </p>
                 )}
 
+                {reviewErrors[review.cardId] && (
+                  <p className="text-xs text-destructive">{reviewErrors[review.cardId]}</p>
+                )}
+
                 <div className="flex flex-wrap items-end gap-3 rounded-md border border-border p-3">
                   <div className="space-y-1.5">
                     <Label htmlFor={`review-comment-reviewer-${review.cardId}`}>Reviewer ID</Label>
@@ -500,6 +520,6 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

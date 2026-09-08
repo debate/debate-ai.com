@@ -41,7 +41,7 @@
 
 import { Fragment, useEffect, useState } from "react"
 import { cn } from "../ui/lib/utils"
-import { toneSurfaceClass } from "../ui/panels/panel-shell"
+import { PanelSection, PanelShell, toneSurfaceClass } from "../ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import {
@@ -61,8 +61,17 @@ import {
 import { buildPersistedStaleEvidenceDigest } from "../state/evidenceLibraryEntries"
 import { isRevisionIncentivesLiveUpdateStorageEvent } from "../state/live-update"
 import type { ContributorRevisionStats } from "../lib/revision-incentives"
+import { buildRevisionRewardUnlockStatus } from "../lib/revision-progress-unlocks"
 import type { StaleEvidenceDigestEntry } from "../lib/shared-evidence-library"
 import type { CardRevisionFieldDiff, DiffSegment } from "../lib/revision-text-diff"
+
+/** Same tier→badge-variant mapping `ContributionLeaderboardPanel` (`debate-contributor-progress`) uses. */
+const TIER_VARIANT: Record<string, "default" | "secondary" | "outline"> = {
+  novice: "outline",
+  apprentice: "secondary",
+  veteran: "secondary",
+  expert: "default",
+}
 
 /** How many of the most recent revisions to list before/after diffs for. */
 const RECENT_REVISIONS_LIMIT = 20
@@ -182,15 +191,11 @@ export function RevisionIncentivesPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Revision Incentives</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Ranked by total reward points earned improving weak cards, strengthening citations, and
-        refreshing stale evidence.
-      </p>
-
-      <section className="mb-6">
-        <h2 className="mb-1 text-base font-semibold text-foreground">Stale evidence digest</h2>
+    <PanelShell
+      title="Revision Incentives"
+      description="Ranked by total reward points earned improving weak cards, strengthening citations, and refreshing stale evidence."
+    >
+      <PanelSection title="Stale evidence digest">
         {staleDigest.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No stale cards right now — every card's cited evidence is dated and recent.
@@ -212,6 +217,9 @@ export function RevisionIncentivesPanel() {
                   <TableHead>Topic / case area</TableHead>
                   <TableHead>Cite</TableHead>
                   <TableHead className="text-right">Age</TableHead>
+                  <TableHead className="text-right">
+                    <span className="sr-only">Revise</span>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -227,16 +235,24 @@ export function RevisionIncentivesPanel() {
                         {staleness.ageYears === null ? "Undated" : `${staleness.ageYears}y old`}
                       </Badge>
                     </TableCell>
+                    <TableCell className="text-right">
+                      <a
+                        href={`/cards/library?q=${encodeURIComponent(entry.argBlock)}`}
+                        className="whitespace-nowrap text-xs underline underline-offset-2"
+                        aria-label={`Revise "${entry.argBlock}" in the Evidence Library`}
+                      >
+                        Revise
+                      </a>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </>
         )}
-      </section>
+      </PanelSection>
 
-      <section className="mb-6">
-        <h2 className="mb-1 text-base font-semibold text-foreground">Leaderboard</h2>
+      <PanelSection title="Leaderboard">
         {rows.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
             No card revisions recorded yet. The leaderboard fills in as contributors improve weak
@@ -248,17 +264,26 @@ export function RevisionIncentivesPanel() {
               <TableRow>
                 <TableHead>Rank</TableHead>
                 <TableHead>Contributor</TableHead>
+                <TableHead>Tier</TableHead>
                 <TableHead className="text-right">Revisions</TableHead>
                 <TableHead className="text-right">Rewarded</TableHead>
                 <TableHead className="text-right">Reward points</TableHead>
                 <TableHead className="text-right">Weak cards improved</TableHead>
+                <TableHead>Badges</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.map((row, index) => (
+              {rows.map((row, index) => {
+                const unlockStatus = buildRevisionRewardUnlockStatus(row)
+                return (
                 <TableRow key={row.contributorId}>
                   <TableCell className="font-medium text-muted-foreground">{index + 1}</TableCell>
                   <TableCell className="font-medium">{row.contributorId}</TableCell>
+                  <TableCell>
+                    <Badge variant={TIER_VARIANT[unlockStatus.tier] ?? "outline"} className="capitalize">
+                      {unlockStatus.tier}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="text-right">{row.revisionCount}</TableCell>
                   <TableCell className="text-right">{row.rewardedRevisionCount}</TableCell>
                   <TableCell className="text-right">{row.totalRewardPoints}</TableCell>
@@ -271,15 +296,28 @@ export function RevisionIncentivesPanel() {
                       <span className="text-muted-foreground">—</span>
                     )}
                   </TableCell>
+                  <TableCell>
+                    {unlockStatus.badges.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {unlockStatus.badges.map((badge) => (
+                          <Badge key={badge} variant="outline" className="whitespace-nowrap">
+                            {badge}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </TableCell>
                 </TableRow>
-              ))}
+                )
+              })}
             </TableBody>
           </Table>
         )}
-      </section>
+      </PanelSection>
 
-      <section>
-        <h2 className="mb-1 text-base font-semibold text-foreground">Recent revisions</h2>
+      <PanelSection title="Recent revisions">
         {recentRevisions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No card revisions recorded yet.
@@ -334,7 +372,7 @@ export function RevisionIncentivesPanel() {
             </Table>
           </>
         )}
-      </section>
-    </div>
+      </PanelSection>
+    </PanelShell>
   )
 }

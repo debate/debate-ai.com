@@ -12,7 +12,7 @@ import type { Flow, Box, Round } from "../../types/flow";
 import { generateRoundTitle, generateRoundSlug } from "../../types/flow";
 import { useFlowStore } from "../../state/store";
 import { settings } from "../../state/settings";
-import { sendRoundInvites } from "../../round/round-invite-client";
+import { sendRoundInvites, computeAddedInviteEmails } from "../../round/round-invite-client";
 import {
   debateStyles,
   debateStyleMap,
@@ -66,11 +66,13 @@ export interface RoundEditorFormState {
 /**
  * Fires the "Create Round & Invite" half of round creation (see TODO.md's
  * "Create New Round — registered-user autocomplete + invite notifications"
- * Completed entry). Fire-and-forget: `sendRoundInvites` never
- * throws, and a failed dispatch shouldn't block navigation to the
- * already-created round, so this only toasts a one-line summary of what
- * happened (silently doing nothing when there's nobody left to invite,
- * e.g. every field was blank or referenced the creator's own email).
+ * Completed entry), and also the invite dispatch for newly-added judges/
+ * spectators/debaters when editing an already-created round (see
+ * `computeAddedInviteEmails`). Fire-and-forget: `sendRoundInvites` never
+ * throws, and a failed dispatch shouldn't block navigation/closing the
+ * dialog, so this only toasts a one-line summary of what happened
+ * (silently doing nothing when there's nobody left to invite, e.g. every
+ * field was blank or referenced the creator's own email).
  */
 function dispatchRoundInvites(request: {
   emails: string[];
@@ -276,6 +278,9 @@ export function useRoundEditorForm(
 
     // -- Update existing round --
     if (roundId) {
+      const previousRound = rounds.find((r) => r.id === roundId);
+      const spectators = spectatorEmails.filter((s) => s.trim());
+
       updateRound(roundId, {
         tournamentName,
         roundLevel,
@@ -285,10 +290,31 @@ export function useRoundEditorForm(
         },
         schools: { aff: [affSchool, affSchool], neg: [negSchool, negSchool] },
         judges,
-        spectators: spectatorEmails.filter((s) => s.trim()),
+        spectators,
         isPrivate,
         winner: winner === "none" ? undefined : winner,
       });
+
+      if (previousRound) {
+        const addedEmails = computeAddedInviteEmails(
+          [
+            ...previousRound.debaters.aff,
+            ...previousRound.debaters.neg,
+            ...previousRound.judges,
+            ...(previousRound.spectators ?? []),
+          ],
+          [affDebater1, affDebater2, negDebater1, negDebater2, ...judges, ...spectators],
+        );
+        if (addedEmails.length > 0) {
+          dispatchRoundInvites({
+            emails: addedEmails,
+            tournamentName,
+            roundLevel,
+            slug: previousRound.slug ?? "",
+          });
+        }
+      }
+
       onOpenChange(false);
       return;
     }

@@ -7,11 +7,14 @@ current streak, and how far they are from the next tier.
 - **Route:** `/cards/progress`
 - **Nav:** the Tools page's Community & Progress group; the Reason Editor's
   Workspace menu (`t progress` in Ctrl/Cmd-Shift-Space's command palette)
-- **Package:** [`debate-card-search`](../../packages/debate-card-search/README.md)
+- **Package:** [`debate-community`](../../packages/debate-contributor-progress/README.md)
 
 ## What it shows
 
-One row per contributor with at least one persisted contribution, sorted
+One row per contributor with at least one persisted contribution or
+completed research task (the roster unions both signals via
+`buildPersistedLeaderboardWithCompletedTasks` — see the data flow below),
+sorted
 alphabetically by contributor id (this view isn't ranked by score — see the
 [Contribution Leaderboard](./contribution-leaderboard.md) for that):
 
@@ -20,7 +23,7 @@ alphabetically by contributor id (this view isn't ranked by score — see the
 | Contributor | `contributorId` |
 | Tier | `novice` / `apprentice` / `veteran` / `expert`, from `lib/progress-unlocks.ts` |
 | Unlocked tasks | The `research-task-routing.ts` `SkillLevel` that tier grants |
-| Streak | Current consecutive-day quest streak, from `lib/gamified-quests.ts` |
+| Streak | Current consecutive-day quest streak (freeze-bridged via `applyStreakFreezes`, so it matches `/cards/streaks`), from `lib/gamified-quests.ts` |
 | Tasks completed | Completed `research-task-routing.ts` tasks, from `state/researchProgress.ts`'s persisted completion history |
 | Badges | Tier badges + streak-milestone badges, merged by `lib/unlock-streak-status.ts` |
 | Next tier | Contributions and helpfulness points, **or** completed tasks, still needed to reach the next tier |
@@ -49,7 +52,7 @@ components/research/ProgressUnlocksWithIdentity.tsx  — "use client" wrapper
   → useSession()                          — lib/hooks/useSession.ts, the
                                               better-auth React session hook
   → deriveContributorIdFromSessionIdentity(user)
-      — debate-card-search's lib/session-identity.ts: name, else the
+      — debate-research-evidence's lib/session-identity.ts: name, else the
         email's local part, else the raw account id, else ""
   → <ProgressUnlocksPanel signedInContributorId={...} />
       → isOwnContributorRow(status.contributorId, signedInContributorId)
@@ -67,11 +70,11 @@ highlights a matching row instead.
 
 Every tier/badge/streak rule already existed and was Vitest-covered; this
 feature adds one new composition function, `buildUnlockStatusRoster`
-(`packages/debate-card-search/src/lib/unlock-streak-status.ts`), which lists
+(`packages/debate-contributor-progress/src/lib/unlock-streak-status.ts`), which lists
 every contributor with a persisted contribution and resolves each one's
 status through the already-existing `buildContributorUnlockStatusWithStreakFromStore`
 — no new tier, badge, or streak logic was introduced. Vitest-covered in
-`packages/debate-card-search/test/unlock-streak-status.test.ts` (empty roster
+`packages/debate-contributor-progress/test/unlock-streak-status.test.ts` (empty roster
 when nothing is persisted, multiple contributors sorted alphabetically with
 their own tier/streak, and per-contributor data isolation). The signed-in
 highlight adds one new pure helper, `isOwnContributorRow`
@@ -93,7 +96,7 @@ tab now refreshes this tab's roster without a manual reload — closing the
 "Every other localStorage-backed panel in this repo still has no cross-tab
 live-update mechanism" Known gap noted in
 [`shared-flow-sync.md`](./shared-flow-sync.md), for this panel.
-Vitest-covered in `packages/debate-card-search/test/live-update.test.ts`.
+Vitest-covered in `packages/debate-search-evidence/test/live-update.test.ts`.
 
 ## Next-tier progress bar
 
@@ -105,7 +108,7 @@ fill toward the next tier, with the same needed-counts text kept underneath
 as detail.
 
 The percentage comes from a new `NextTierProgress.progressRatio` field
-(`packages/debate-card-search/src/lib/progress-unlocks.ts`'s
+(`packages/debate-search-evidence/src/lib/progress-unlocks.ts`'s
 `getNextTierProgress`): since `computeContributorTier` already lets a
 contributor reach a tier via *either* the contribution-count-and-score path
 *or* the completed-task-count path alone, the ratio takes whichever path is
@@ -115,7 +118,7 @@ dimension counting as `1`), versus the completed-task ratio for the OR path
 — so a contributor grinding routed research tasks sees their bar move even
 with zero scored contributions, and vice versa. No new tier/badge/streak
 logic was introduced; this only exposes the existing requirement table as a
-fraction. Vitest-covered in `packages/debate-card-search/test/progress-unlocks.test.ts`'s
+fraction. Vitest-covered in `packages/debate-search-evidence/test/progress-unlocks.test.ts`'s
 `nextTier.progressRatio` suite (zero progress, the weaker-dimension cap on
 the AND path, picking the stronger of the two paths, clamping at 1, and
 `null` at the top tier).
@@ -146,7 +149,7 @@ this feature ships.
 
 No new tier/badge/streak rule was introduced; this only surfaces a
 transition in the existing, already-merged `badges` list. Vitest-covered in
-`packages/debate-card-search/test/unlock-celebration.test.ts` (the pure
+`packages/debate-contributor-progress/test/unlock-celebration.test.ts` (the pure
 diff/message logic) and `test/unlockCelebrations.test.ts` (the persisted
 baseline: first-sight suppression, no repeat reporting, independent
 per-contributor baselines).

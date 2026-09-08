@@ -51,6 +51,17 @@
  * `state/coachingSessions.ts#buildCoachingSessionComparison`, plus a
  * "Download comparison" action mirroring the per-session Download button.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isCoachingSessionsPanelLiveUpdateStorageEvent`)
+ * refreshes the rendered session list when another tab saves, restores, or
+ * clears a coaching session, closing `shared-flow-sync.md`'s "every other
+ * localStorage-backed panel in this repo still has no cross-tab live-update
+ * mechanism" Known gap for `CoachingSessionsPanel`. The "Compare two
+ * sessions" dropdowns re-derive from the same refreshed `sessions` list; the
+ * "Generate coaching session" side field, any in-progress comparison result,
+ * and an open History panel's contents are left untouched, matching every
+ * other closed panel's "refresh the derived view, not the draft" convention.
+ *
  * @module panels/CoachingSessionsPanel
  */
 
@@ -61,7 +72,7 @@ import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -88,6 +99,7 @@ import {
   listVersionsForCoachingSession,
   type CoachingSessionHistoryEntry,
 } from "../state/coachingSessionHistory"
+import { isCoachingSessionsPanelLiveUpdateStorageEvent } from "../state/live-update"
 import type { CoachingPromptKind } from "debate-round/src/flow/coach-mode"
 import { requestCoachFeedback } from "../round/coach-feedback-client"
 import { useFlowStore } from "debate-round/src/state/store"
@@ -130,6 +142,20 @@ export function CoachingSessionsPanel() {
   }, [])
 
   const refresh = () => setSessions(buildCoachingSessionsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves, restores, or
+   * clears a coaching session — a `storage` event never fires in the tab
+   * that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachingSessionsPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleClear = (roundId: string, sideKey: string) => {
     deleteCoachingSession(roundId, sideKey)
@@ -248,15 +274,10 @@ export function CoachingSessionsPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">AI Coach Mode</h1>
-        <p className="text-sm text-muted-foreground">
-          Coaching prompts generated from each round's flow — what to extend, what to answer,
-          where to collapse, and how to weigh the round.
-        </p>
-      </div>
-
+    <PanelShell
+      title="AI Coach Mode"
+      description="Coaching prompts generated from each round's flow — what to extend, what to answer, where to collapse, and how to weigh the round."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div>
           <Label htmlFor="coaching-session-generate-side">Generate coaching session for current round</Label>
@@ -481,6 +502,6 @@ export function CoachingSessionsPanel() {
           )}
         </div>
       ))}
-    </div>
+    </PanelShell>
   )
 }

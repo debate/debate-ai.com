@@ -234,6 +234,27 @@ export function buildEvidenceEntryFromBrainstormIdea(
   };
 }
 
+/**
+ * Renders a short rank badge label for an idea's 1-indexed position within
+ * its board's already-ranked `ideas` list (`rankBrainstormIdeas`'s output
+ * order) — the "polish the idea-ranking UI" follow-up named under the "🧠
+ * Team Brainstorm Assist" bullet in TODO.md. The top three ranks get a
+ * distinct medal glyph (mirroring `GroupChallengesPanel`'s existing 🏆
+ * MVP-callout convention) so the highest-voted ideas stand out from the
+ * list at a glance instead of only being distinguishable by reading each
+ * popularity score; every other rank renders as a plain `#N` badge. Throws
+ * on a non-positive rank rather than silently mislabeling a board position.
+ */
+export function buildBrainstormIdeaRankBadge(rank: number): string {
+  if (!Number.isInteger(rank) || rank <= 0) {
+    throw new Error("Brainstorm idea rank must be a positive integer.");
+  }
+  if (rank === 1) return "🏆 #1";
+  if (rank === 2) return "🥈 #2";
+  if (rank === 3) return "🥉 #3";
+  return `#${rank}`;
+}
+
 /** Renders a short summary line for a brainstorm board, for a prep-session panel. */
 export function buildBrainstormSummaryText(board: BrainstormBoard): string {
   const label = CATEGORY_LABELS[board.category];

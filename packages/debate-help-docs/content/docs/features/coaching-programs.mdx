@@ -1,0 +1,39 @@
+---
+title: "Coaching Programs and Group Challenges"
+---
+
+# Coaching Programs and Group Challenges
+
+Lets a coach create a named coaching space scoped to a squad roster, and
+opens each program's live board: its shared topic sprint, its group-challenge
+standings, and each member's generated drill set.
+
+- **Route:** `/coaching-programs`
+- **Package:** `debate-round`
+
+## What it shows
+
+A form to create a coaching space, then every persisted
+`CoachingProgramConfig` with a roster badge list. Each program has a "View
+board" action showing topic-sprint status, group-challenge standings, and a
+"Member flows" roster for recording each member's practice round.
+
+## Roster analytics dashboard
+
+A **Roster Analytics** section shows every roster member's group-challenge
+standing and daily-quest streak in one table, plus a **Recent challenge
+results** digest scoped to that program's roster.
+
+## Data flow
+
+```
+state/coachingPrograms.ts (localStorage: coachingPrograms)
+  → buildCoachingProgramsPanelView()
+  → panels/CoachingProgramsPanel.tsx
+  → apps/debate-ai.com/app/coaching-programs/page.tsx
+```
+
+## Known gaps
+
+- The roster analytics table doesn't yet fold in drill-completion rate or
+  practice-round counts.

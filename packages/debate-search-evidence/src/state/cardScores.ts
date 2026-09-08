@@ -41,6 +41,15 @@
  * can score a result in place and show its badge on every later visit
  * without re-scoring.
  *
+ * `recordScoreHistoryIfAttributed` closes the "a per-contributor
+ * score-trend chart over time" next-step named at the end of that same
+ * bullet: whenever `saveScoredCard`/`saveScoredCardsBulk` save a card that
+ * carries a `contributorId`, it appends that card's freshly computed
+ * `overallScore` to `state/cardScoreHistory.ts`'s append-only log, which
+ * `CardScoringPanel`'s trend chart reads back per contributor. A card saved
+ * with no `contributorId` (e.g. `scoreEvidenceLibraryEntry`'s auto-scored
+ * entries) isn't anyone's own submission, so it's left out of every trend.
+ *
  * @module state/cardScores
  */
 
@@ -53,6 +62,7 @@ import {
   rankCardScores,
 } from "../lib/llm-card-scoring";
 import type { EvidenceLibraryEntry } from "../lib/shared-evidence-library";
+import { appendCardScoreHistoryEntry } from "./cardScoreHistory";
 import { listEvidenceLibraryEntries } from "./evidenceLibraryEntries";
 import { listTrackedArguments } from "./trackedArguments";
 
@@ -98,6 +108,21 @@ export function saveScoredCard(card: ScoredCard): void {
     cards[index] = card;
   }
   writeAll(cards);
+  recordScoreHistoryIfAttributed(card);
+}
+
+/**
+ * Appends a `cardScoreHistory.ts` snapshot for `card` when it carries a
+ * `contributorId` — a card scored with no contributor attribution (e.g.
+ * `scoreEvidenceLibraryEntry`'s auto-scored entries) isn't anyone's own
+ * submission, so it's left out of every contributor's trend. Reuses
+ * `getScoredCardBreakdown` for the freshly computed `overallScore` rather
+ * than re-deriving the comparison corpus here.
+ */
+function recordScoreHistoryIfAttributed(card: ScoredCard): void {
+  if (!card.contributorId) return;
+  const breakdown = getScoredCardBreakdown(card.id);
+  if (breakdown) appendCardScoreHistoryEntry(card.id, card.contributorId, breakdown.overallScore);
 }
 
 /** Deletes a persisted scored card by id; a no-op if it isn't stored. */
@@ -123,6 +148,9 @@ export function saveScoredCardsBulk(cards: ScoredCard[]): void {
     }
   }
   writeAll(existing);
+  for (const card of cards) {
+    recordScoreHistoryIfAttributed(card);
+  }
 }
 
 /**
@@ -135,6 +163,7 @@ export function saveScoredCardsBulk(cards: ScoredCard[]): void {
 export function bulkImportScoredCards(
   rawText: string,
   defaultQuality = 0.5,
+  contributorId?: string,
 ): { importedCount: number; skippedCount: number } {
   const { entries, skippedCount } = parseBulkCardSubmissions(rawText, defaultQuality);
   saveScoredCardsBulk(
@@ -143,6 +172,7 @@ export function bulkImportScoredCards(
       text: entry.text,
       argBlockKeywords: entry.argBlockKeywords,
       qualitySignals: [entry.quality],
+      ...(contributorId ? { contributorId } : {}),
     })),
   );
   return { importedCount: entries.length, skippedCount };

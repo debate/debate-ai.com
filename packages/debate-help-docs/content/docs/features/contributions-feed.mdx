@@ -1,0 +1,38 @@
+---
+title: "Contributions Feed"
+---
+
+# Contributions Feed
+
+Lets a contributor submit an `AttributedContribution` (a card, summary,
+highlight, annotation, original argument, or refutation), then renders
+every persisted contribution ranked by blended helpfulness score, with
+Like/Save/Endorse actions per entry.
+
+- **Route:** `/cards/contributions`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A submission form followed by the ranked feed. Each entry shows its kind
+badge, contributor, helpfulness score, likes/saves/endorsement counts, and
+Like/Save/Endorse buttons. A "Flagged for review" moderator toggle narrows
+the feed to popularity-driven outliers.
+
+## Data flow
+
+```
+state/contributions.ts (localStorage: "contributions")
+  → saveContribution() / recordPersistedLike() / recordPersistedSave() /
+    recordPersistedEndorsementFromReviewer()
+  → buildPersistedContributionFeed()
+  → panels/ContributionsFeedPanel.tsx
+```
+
+Endorsing is locked to the signed-in identity, and self-endorsement throws
+`SelfEndorsementNotAllowedError`.
+
+## Known gaps
+
+- A submitted contribution starts with a neutral quality-signal placeholder.
+- The reviewer-identity lock only stops a signed-in visitor from spoofing.

@@ -9,7 +9,7 @@
  * @module lib/videos/video-repository
  */
 
-import { and, asc, count, desc, eq, inArray, isNull, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNotNull, isNull, sql, type SQL } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
@@ -21,13 +21,18 @@ import {
   clampPageSize,
   computeLectureCategories,
   computeVideoFacets,
+  computeVideoSuggestions,
   filterVideoRows,
   parseSeasonFilter,
   queryVideoRows,
+  rankKeywordSuggestions,
+  rankTournamentSuggestions,
   searchTokens,
+  SUGGESTED_KEYWORDS,
   type LectureCategoryFacet,
   type VideoFacets,
   type VideoQueryParams,
+  type VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
 import { getVideoRowsFromJson } from "./video-json-source";
 
@@ -62,10 +67,12 @@ export interface VideoCounts {
   byStyle: Record<number, number>;
 }
 
-/** Metadata payload backing the page chrome (counts, category cards). */
+/** Metadata payload backing the page chrome (counts, category cards, chips). */
 export interface VideoMeta {
   counts: VideoCounts;
   lectureCategories: LectureCategoryFacet[];
+  /** Popular keyword and tournament searches shown under the video grid. */
+  suggestions: VideoSuggestions;
   backend: VideoBackend;
 }
 
@@ -263,6 +270,51 @@ export async function getVideoPage(
 }
 
 /**
+ * Computes the popular-search chips from SQL: one grouped query for the
+ * tournament names in the library, and a single scan that counts every
+ * candidate keyword at once.
+ *
+ * @param db - Drizzle handle.
+ * @returns See {@link VideoSuggestions}.
+ */
+async function suggestionsFromSql(db: any): Promise<VideoSuggestions> {
+  const keywordSelect: Record<string, SQL<number>> = {};
+  SUGGESTED_KEYWORDS.forEach((keyword, index) => {
+    // Same all-tokens-must-match rule the search box applies, so a chip's
+    // count is exactly what clicking it returns.
+    const conditions = searchTokens(keyword).map(
+      (token) => sql`${videos.searchText} LIKE ${likePattern(token)} ESCAPE '\\'`,
+    );
+    const matches = conditions.length > 1 ? and(...conditions)! : conditions[0];
+    keywordSelect[`k${index}`] = sql<number>`sum(case when ${matches} then 1 else 0 end)`;
+  });
+
+  const [tournamentRows, keywordRows] = await Promise.all([
+    db
+      .select({ tournament: videos.tournament, value: count() })
+      .from(videos)
+      .where(isNotNull(videos.tournament))
+      .groupBy(videos.tournament),
+    db.select(keywordSelect).from(videos),
+  ]);
+
+  const keywordCounts: Record<string, number> = {};
+  SUGGESTED_KEYWORDS.forEach((keyword, index) => {
+    keywordCounts[keyword] = Number(keywordRows?.[0]?.[`k${index}`] ?? 0);
+  });
+
+  return {
+    keywords: rankKeywordSuggestions(keywordCounts),
+    tournaments: rankTournamentSuggestions(
+      (tournamentRows as Array<{ tournament: string | null; value: number }>).map((row) => ({
+        tournament: row.tournament,
+        count: row.value,
+      })),
+    ),
+  };
+}
+
+/**
  * Fetches the library-wide counts and lecture-category cards.
  *
  * @returns See {@link VideoMeta}.
@@ -271,8 +323,15 @@ export async function getVideoMeta(): Promise<VideoMeta> {
   const db = await tryGetDb();
   if (db && (await isTableSeeded(db))) {
     try {
-      const [[totalRow], sourceRows, styleRows, [lecturesOnlyRow], [topPicksRow], categoryRows] =
-        await Promise.all([
+      const [
+        [totalRow],
+        sourceRows,
+        styleRows,
+        [lecturesOnlyRow],
+        [topPicksRow],
+        categoryRows,
+        suggestions,
+      ] = await Promise.all([
           db.select({ value: count() }).from(videos),
           db.select({ source: videos.source, value: count() }).from(videos).groupBy(videos.source),
           db.select({ style: videos.style, value: count() }).from(videos).groupBy(videos.style),
@@ -288,6 +347,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
             .from(videos)
             .where(isNull(videos.style))
             .groupBy(videos.categoryKey, videos.category),
+          suggestionsFromSql(db),
         ]);
 
       const byStyle: Record<number, number> = {};
@@ -319,6 +379,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
           byStyle,
         },
         lectureCategories,
+        suggestions,
         backend: "sql",
       };
     } catch (error) {
@@ -344,6 +405,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
       byStyle,
     },
     lectureCategories: computeLectureCategories(allRows),
+    suggestions: computeVideoSuggestions(allRows),
     backend: "json",
   };
 }

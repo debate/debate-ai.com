@@ -3,8 +3,8 @@ import {
   ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
-  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass,
-  Rss, Gauge, Crosshair, Crown, Send,
+  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass, Contact,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone,
   type LucideIcon,
 } from "lucide-react"
 
@@ -186,6 +186,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Needs-follow-up notes surfaced first, then open, then covered", "Assign a note to a teammate — they get a real Notifications entry"],
       },
       {
+        href: "/contacts", label: "Contacts", icon: Contact,
+        description: "Your contacts list — requests, blocking, who's online, and the live cards contacts shared with you.",
+        highlights: ["Share the open Reason Editor document as a live co-editing card with a contact", "Shared cards show as available on every device you sign in on"],
+      },
+      {
         href: "/notifications", label: "Notifications", icon: Bell,
         description: "See assignee notifications for prep notes handed off to you as a task.",
         highlights: ["Fires automatically the moment a Prep Note is assigned to you", "Mark individual notifications read, newest first"],
@@ -273,6 +278,20 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
     ],
   },
   {
+    heading: "Mobile Setup",
+    tools: [
+      {
+        href: "/tools/mobile-setup", label: "Laptop-less Debating", icon: Smartphone,
+        description: "Gear picks and a step-by-step guide to prepping, flowing, and speaking off just a mobile phone — no laptop.",
+        highlights: [
+          "Recommended phone mount and keyboard gear, with Amazon links",
+          "How to prep speeches, flow, and time rounds from a phone browser",
+          "Speaking-off-your-phone checklist for round day",
+        ],
+      },
+    ],
+  },
+  {
     heading: "Coaching & Analytics",
     tools: [
       {
@@ -283,7 +302,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
       {
         href: "/rank", label: "Team Rankings", icon: Crown,
         description: "Debate team rankings, leaderboard, and Elo ratings.",
-        highlights: ["Elo-based team leaderboard", "Track team ratings and rankings over time"],
+        highlights: [
+          "Elo-based team leaderboard",
+          "Track team ratings and rankings over time",
+          "Standings tab: log or bulk-CSV-import tournament results into NDCA-style qualification standings with an editable points table",
+        ],
       },
       {
         href: "/coaching-programs", label: "Coaching Programs", icon: School,

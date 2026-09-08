@@ -1,0 +1,35 @@
+---
+title: "Prep Notes"
+---
+
+# Prep Notes
+
+Shows every persisted "Strategy Sync Notes" note across every flow,
+grouped by status (needs follow-up first), with a "cycle status" action and
+an "assign to" control for handing a note off as a task.
+
+- **Route:** `/prep-notes`
+- **Package:** `debate-round`
+
+## What it shows
+
+Notes grouped into Needs follow-up / Open / Covered, each with a priority
+flag, an assignee, a status-cycle button, and a **Replies** thread. A
+related **Notifications** page (`/notifications`) shows assignment digests
+per day. Each note has a "Jump to argument" link back into the live flow
+grid, and a note can be created directly from a `FlowSpreadsheet` cell
+badge.
+
+## Data flow
+
+```
+state/prepNotes.ts (localStorage: prepNotes)
+  → buildPrepNotesPanelView()
+  → panels/PrepNotesPanel.tsx
+  → apps/debate-ai.com/app/prep-notes/page.tsx
+```
+
+## Known gaps
+
+The "Author ID"/reviewer fields are free-form, not an authenticated
+identity. Notifications are in-app only, covering prep-note assignment.

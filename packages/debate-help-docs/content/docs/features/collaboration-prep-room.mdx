@@ -1,0 +1,44 @@
+---
+title: "Collaboration Prep Room"
+---
+
+# Collaboration Prep Room
+
+A topic's shared prep space: a switcher for every topic with either a
+tracked-argument checklist or submitted evidence, a keyword search over
+that topic's evidence and draft blocks, and the topic's coverage-gap
+research tasks routed to available contributors.
+
+- **Route:** `/cards/prep-room`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+| Element | Source |
+| --- | --- |
+| Topic switcher | `listPrepRoomTopics()` |
+| Summary line | `buildPrepRoomSummaryText` |
+| Evidence/draft-block search | `searchPrepRoomEvidence` |
+| Routed research tasks | The room's routing assignments |
+| Active-now roster | `listPersistedActiveContributors(topic, now)` |
+| Room activity timeline | `buildPrepRoomActivityTimeline(room)` |
+
+A **Shared task checklist** lets any teammate add a freeform todo item,
+toggle it done, and remove it.
+
+## Data flow
+
+```
+state/evidenceLibraryEntries.ts (localStorage)
+state/trackedArguments.ts (localStorage)
+state/contributorAvailability.ts (localStorage)
+  → buildPersistedPrepRoom(topic) — state/prepRooms.ts
+  → panels/PrepRoomPanel.tsx
+  → apps/debate-ai.com/app/cards/prep-room/page.tsx
+```
+
+## Known gaps
+
+- The room is per-browser localStorage, not a shared team resource.
+- No reviewer-identity/permission checks.
+- No "shared file/attachment area".

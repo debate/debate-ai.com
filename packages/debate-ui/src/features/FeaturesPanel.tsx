@@ -22,6 +22,7 @@ import { useMemo, useState } from "react";
 
 import { Input } from "../primitives/input";
 import { cn } from "../lib/utils";
+import { EmptyState } from "../panels/panel-shell";
 import {
   APP_FEATURES,
   buildFeatureCatalogSummaryText,
@@ -92,9 +93,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
       ) : null}
 
       {sections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No features match &quot;{query}&quot;.
-        </div>
+        <EmptyState title={`No features match "${query}".`} />
       ) : (
         <div className="flex flex-col gap-8">
           {sections.map((section) => (

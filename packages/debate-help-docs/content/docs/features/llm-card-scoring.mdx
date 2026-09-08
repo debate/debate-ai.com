@@ -1,0 +1,38 @@
+---
+title: "LLM Card Scoring"
+---
+
+# LLM Card Scoring
+
+Scores a submitted debate-evidence card across five dimensions —
+relevance, clarity, uniqueness, evidence quality, usability — with a
+deterministic heuristic, ranks every card, flags likely duplicates, and
+optionally requests a real Anthropic-backed qualitative assessment.
+
+- **Route:** `/cards/scoring`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A topic switcher, a "Score card" form, a "Bulk import" textarea
+(`---`-delimited batches), a ranked list with per-dimension scores and a
+"Likely duplicate" badge, and a "Get AI assessment" button per card.
+Evidence Library results also carry a "Score card" action with an inline
+score badge.
+
+## Data flow
+
+```
+state/cardScores.ts (localStorage)
+  → buildPersistedCardScoreRanking()
+  → panels/CardScoringPanel.tsx
+
+"Get AI assessment":
+  → requestCardScoringAiAssessment() — lib/llm-card-scoring-client.ts
+      → POST /api/reason-ai
+```
+
+## Known gaps
+
+Bulk import is pasted plain text, not a real file upload. Assessments are
+per-browser localStorage, not a shared team resource.

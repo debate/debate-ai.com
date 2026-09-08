@@ -420,8 +420,10 @@ function installSeams(
   shareCode: string,
   ownerUid: string,
 ): ActiveSession {
-  const ownerView = (): EditorView | null =>
-    (ownerUid ? deps.getViewForUid?.(ownerUid) ?? null : null) ?? deps.getView();
+  const ownerView = (): EditorView | null => {
+    const owned = ownerUid ? deps.getViewForUid?.(ownerUid) : undefined;
+    return owned ?? deps.getView();
+  };
   // One shared tagger stamps ANY binding transaction (keyed off the Loro plugin
   // meta), so it serves every session; installed while ≥1 is live.
   setCollabTransactionTagger(collabTagger);

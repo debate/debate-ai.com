@@ -1,0 +1,36 @@
+---
+title: "Pre-Round Briefings"
+---
+
+# Pre-Round Briefings
+
+Shows every persisted Pre-Round Intelligence Panel briefing — opponent
+scouting, judge tendencies, head-to-head record, and team prep notes
+combined into one briefing per round.
+
+- **Route:** `/briefings`
+- **Package:** `debate-round`
+
+## What it shows
+
+A "create briefing" form (round ID, tournament, division, side, optional
+opponent/judge pick, prep notes), every persisted briefing as its own card,
+a "Log a round" form for this team's own round history, a "Download"
+plain-text export, a freshness ("pending N hours") badge, and a manual
+"Pairing schedule" section (account-synced across devices).
+
+## Data flow
+
+```
+state/preRoundBriefings.ts (localStorage: preRoundBriefings)
+  → buildPreRoundBriefingRecordFromDraft(draft)
+      → buildPreRoundBriefingFromStores(...) — round/pre-round-briefing.ts
+  → panels/PreRoundBriefingsPanel.tsx
+  → apps/debate-ai.com/app/briefings/page.tsx
+```
+
+## Known gaps
+
+No real data source for tournament results/ballots — scouting/judge data is
+entered by hand; pairings have a dedicated manual-entry form as the
+practical stand-in for still-blocked live Tabroom data.

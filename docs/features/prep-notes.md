@@ -10,6 +10,16 @@ to a teammate.
   Workspace menu (`t prep notes` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-round`](../../packages/debate-round/README.md)
 
+> **⚠️ Known regression, discovered 2026-09-05:** PR #498 ("Remove flow
+> spreadsheet grid, show round flows in round editor", merged 2026-09-03)
+> deleted the AG Grid-based `FlowSpreadsheet` view along with
+> `flow/PrepNoteBadge.tsx` and `flow/PrepNotePopover.tsx`. This standalone
+> `/prep-notes` panel is unaffected — it never depended on the grid — but
+> the two references below to a `FlowSpreadsheet`-grid `PrepNoteBadge` (a
+> per-box note badge in the live flow grid, distinct from this cross-flow
+> list view) describe deleted code with no current replacement. See
+> `flow-annotations.md`'s matching notice for the same regression.
+
 ## What it shows
 
 Notes are grouped into three sections, in this order:
@@ -212,7 +222,7 @@ itself without changing its status, and without every discussion having to
 be crammed into the note's own text.
 
 - **Store:** `state/prepNoteReplies.ts` (localStorage: `prepNoteReplies`),
-  local-first, mirroring `debate-card-search`'s
+  local-first, mirroring `debate-research-evidence`'s
   `state/dailyBestCardComments.ts` convention — a `PrepNoteReply` is keyed
   by its own generated id and carries the `noteId` it's attached to, an
   `authorId` (trimmed, falling back to `"Anonymous"` when blank), `text`
@@ -311,6 +321,32 @@ itself, rather than needing a not-yet-built flow-view affordance.
 - A note created this way immediately shows up in the cross-flow
   `PrepNotesPanel` above (same persisted `PrepNote` store) and can be
   cycled/assigned from either place.
+
+## Round-anchored notes
+
+Closes idea #6's ("Speech Transcript Summaries and Answers") "a one-click
+'send to Prep Notes' action for a summary" follow-up in TODO.md: a note can
+now attach to a round as a whole instead of one specific flow argument, for
+a source with no `flowId`/`boxPath` of its own (the Speech Transcript
+Summaries panel's `FlowSummaryRecord`, keyed only by `roundId`).
+
+`PrepNote` is now a discriminated union of the original `BoxAnchoredPrepNote`
+(`flowId`/`boxPath`) and a new `RoundAnchoredPrepNote` (`roundId` instead) —
+`isBoxAnchoredPrepNote(note)`/`isRoundAnchoredPrepNote(note)` type-guard
+between them, `createRoundPrepNote(...)`/`getNotesForRound(notes, roundId)`
+are the round-anchored counterparts to `createPrepNote`/`getNotesForBox`, and
+`state/prepNotes.ts`'s `addRoundPrepNote({ roundId, authorId, text })`/
+`listPrepNotesForRound(roundId)` are the persisted-store wrappers.
+`getNotesForBox`/`getNotesForFlow` now only ever match box-anchored notes,
+`resolvePrepNoteBox` returns `null` for a round-anchored note (no box to
+resolve), and `buildPrepNoteJumpHref`'s signature is narrowed to
+`BoxAnchoredPrepNote` — a caller must check `isBoxAnchoredPrepNote(note)`
+first. `PrepNotesPanel` renders a "Round `<roundId>`" badge in place of the
+"Jump to argument" link for a round-anchored note.
+
+See `docs/features/flow-summaries.md`'s "Sending a summary to Prep Notes"
+section for the sending side (`FlowSummariesPanel`'s "Send to Prep Notes"
+action and its `apps/debate-ai.com` app-layer wiring).
 
 ## Known gaps
 

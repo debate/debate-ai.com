@@ -1,0 +1,80 @@
+---
+title: Training tools
+description: Coach a flowed round — argument trees, AI coaching prompts, drills, coach materials, scouting, and briefings
+icon: Dumbbell
+---
+
+# Training tools
+
+The training tools turn a round you've already flowed into something to practice from. They all live in the
+**[Coach Workspace](https://debate-ai.com/coach)** (`/coach`), and each also has its own page. Every one of
+them starts from the same input: the **current round**, meaning the flow selected in the
+[round workspace](https://debate-ai.com/debate) (`/debate`). The Coach Workspace shows which round that is at
+the top of every section, with a link to change it.
+
+## The workflow
+
+1. **Flow the round** in the round workspace, or open a saved one.
+2. **Read it** in the *Flow* section: the argument tree, per-argument summaries, and the exposure charts show
+   what was answered, what was dropped, and where each side is vulnerable.
+3. **Generate training** in the *Coaching* section: coaching prompts and drills are derived from the flowed
+   arguments, so they're specific to this round rather than generic.
+4. **Practice**, mark drills done, and come back for review reminders.
+5. **Prep the next round** in the *Prep* and *Scouting* sections: briefings pull scouting on the opponent and
+   judge together with your team's prep notes.
+
+## Flow section
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Argument Tree Outline | [`/outline`](/docs/features/argument-tree-outline) | A filterable outline of the round grouped by heading — filter by kind, side, speech, argument type, contributor, and evidence status, with an "unanswered only" toggle. |
+| Speech Transcript Summaries | [`/summaries`](/docs/features/flow-summaries) | One summary per flowed argument, with suggested cross-examination questions and extension ideas. |
+| AI Response-Outcome Charts | [`/outcomes`](/docs/features/response-outcome-charts) | Per-side exposure and the most vulnerable arguments, with a "what if" picker that recomputes exposure under a hypothetical extend, answer, or concede. |
+| Shared Flow Sync | — | Previews a merge of a partner's concurrent edits to the same flow and applies it back into the round workspace. See [Shared flow sync](/docs/features/shared-flow-sync). |
+| Flow Edit Log | — | The log of partner edits Shared Flow Sync merges from. |
+
+The four pages that act on the current round — Outline, Outcomes, Drills, and Coaching — link to each other
+from a **related tools** row under their headers, so you can move between them without returning to the round
+workspace.
+
+## Coaching section
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| AI Coach Mode | [`/coaching`](/docs/features/coaching-sessions) | Extension, refutation, collapse, and weighing prompts generated from the round for one side. "Get AI feedback" expands any prompt into open-ended coaching; sessions keep a history and can be compared side by side or downloaded. |
+| Practice Drills | [`/drills`](/docs/features/drill-sets) | Overview, frontline, cross-ex, and collapse drills derived from the round, each with a difficulty rating, an optional AI-written script, a "mark practiced" toggle, and a review reminder. Practiced drills feed a practice tier. |
+| Coaching Programs | [`/coaching-programs`](/docs/features/coaching-programs) | A group coaching space scoped to a squad roster: a shared topic sprint, group-challenge standings, and drills on one board, plus roster analytics. |
+| Coach Materials | [`/coach-materials`](/docs/features/coach-materials) | Upload `.docx`/`.txt`/`.md` files or dictate by voice to ground the team coach AI, and preview which materials a question would draw on. |
+
+Drill sets and coaching sessions are saved to your account when signed in, so they follow you across devices.
+
+## Prep section
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Pre-Round Briefings | [`/briefings`](/docs/features/pre-round-briefings) | One briefing per upcoming round: opponent scouting, judge tendencies, the head-to-head record, and free-text team prep notes. |
+| Prep Notes | [`/prep-notes`](/docs/features/prep-notes) | Live prep notes across every flow, grouped needs-follow-up → open → covered. Assigning a note to a teammate sends them a [notification](/docs/features/round-invites-and-notifications). |
+| Flow Annotations | [`/annotations`](/docs/features/flow-annotations) | Timestamped annotations tied to a specific flowed argument while watching a recorded round, with a jump back to the moment. |
+
+## Scouting section
+
+| Tool | Route | What it does |
+| --- | --- | --- |
+| Opponent Team Profiles | [`/opponents`](/docs/features/opponent-team-profiles) | Records, Aff/Neg side tendencies, and the arguments and cases a team runs most. |
+| Judge Profiles | [`/judges`](/docs/features/judge-profiles) | Side-vote bias, average speaker points, speed tolerance, and theory receptiveness for every saved judge. |
+| Scout-to-Strategy | [`/strategy`](/docs/features/scout-to-strategy) | Turns those two profiles into a ranked list of case options with a judge-adaptation note each, and a matchup risk level. |
+
+## Practice section
+
+The Coach Workspace's fifth section holds the practice tools — simulated rounds, rounds against the AI, and
+the paradigm and persona pickers they use. Those are covered in the [Practice tools](/docs/guides/practice-tools)
+guide.
+
+## Tips
+
+- **Nothing to generate?** Every "Generate … for current round" action is disabled until a round is selected.
+  The current-round bar at the top of the Coach Workspace says which round is selected and links to
+  `/debate` to flow or pick one.
+- **Working on one tool?** Open it as its own page from the chip in the section heading; the standalone page
+  has the same data and a lighter layout.
+- **Sharing a section:** the URL carries the open section, e.g. `/coach?section=coaching`.
