@@ -25,6 +25,8 @@
  * `isPracticeRoundSimulatorPanelLiveUpdateStorageEvent` closes it for
  * `PracticeRoundSimulatorPanel`. `isJudgeDecisionPanelLiveUpdateStorageEvent`
  * closes it for `JudgeDecisionPanel` (via `useJudgeDecisions`).
+ * `isFlowSummariesPanelLiveUpdateStorageEvent` closes it for
+ * `FlowSummariesPanel`.
  *
  * @module state/live-update
  */
@@ -274,5 +276,55 @@ export function isPracticeRoundSimulatorPanelLiveUpdateStorageEvent(event: { key
   return (
     event.key === null ||
     (PRACTICE_ROUND_SIMULATOR_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `OpponentPersonaPickerPanel` reads from:
+ * `state/opponentPersonaSelections.ts`'s own `"opponentPersonaSelections"`
+ * store (the per-session saved-persona list the panel renders). The panel
+ * also reads `useCustomOpponentPersonaLibrary`'s account-synced persona
+ * library, which manages its own refresh via that hook rather than a raw
+ * `storage`-event listener, so it is intentionally not covered here.
+ */
+export const OPPONENT_PERSONA_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "opponentPersonaSelections",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `OpponentPersonaPickerPanel` to
+ * refresh its rendered selection list. A `null` key (e.g. from
+ * `localStorage.clear()`, per the `StorageEvent` spec) counts too — the
+ * safest response to "everything changed" is refreshing. Any other key (an
+ * unrelated store elsewhere in the app) is ignored so an unrelated cross-tab
+ * write doesn't force a needless refresh.
+ */
+export function isOpponentPersonaPickerPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (OPPONENT_PERSONA_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `FlowSummariesPanel` reads directly:
+ * `state/flowSummaries.ts`'s own `"flowSummaries"` store (the per-round
+ * flow-summary list the panel's cards, cross-exam questions, and extension
+ * ideas all derive from).
+ */
+export const FLOW_SUMMARIES_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["flowSummaries"] as const;
+
+/**
+ * Whether a `storage` event should trigger `FlowSummariesPanel` to refresh
+ * its rendered summary list. A `null` key (e.g. from `localStorage.clear()`,
+ * per the `StorageEvent` spec) counts too — the safest response to
+ * "everything changed" is refreshing. Any other key (an unrelated store
+ * elsewhere in the app) is ignored so an unrelated cross-tab write doesn't
+ * force a needless refresh.
+ */
+export function isFlowSummariesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (FLOW_SUMMARIES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

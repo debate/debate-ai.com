@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "../../lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
+import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
 
@@ -135,16 +136,14 @@ export function AdminDashboard() {
       const res = await fetch("/api/admin/youtube/resync", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.details || data?.error || "Resync failed");
+      // Only the fields `SyncRun` declares — the rest of the run row the API
+      // returns is not read here.
       setLastRun({
         id: data.runId,
         status: "success",
-        triggeredBy: null,
         channelsSynced: data.channelsSynced,
-        videosFetched: data.videosFetched,
         videosUpserted: data.videosUpserted,
         error: null,
-        startedAt: new Date().toISOString(),
-        finishedAt: new Date().toISOString(),
       });
       await loadFirstPage(style);
     } catch (error) {
@@ -354,6 +353,8 @@ export function AdminDashboard() {
       </Card>
 
       <TopicStarterUpload />
+
+      <DebateCardParquetUpload />
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Round videos</h2>

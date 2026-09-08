@@ -7,6 +7,118 @@ _No task currently in progress._
 
 ### Completed
 
+- **📋 Speech Transcript Summaries — cross-tab live update.** Another repeat
+  of the standing autonomous-routine prompt ("integrate all the tools into
+  the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap. The prior
+  run's list of still-open panels (`AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel`) turned out to be stale — a fresh grep of every
+  `panels/*.tsx` file (and the hooks they read through) for an existing
+  `storage`-event listener, cross-checked against the open PR list (none
+  open against this Known gap at the start of this run), showed all but
+  `FlowSummariesPanel` had already been closed by intervening runs, so this
+  slice picked `FlowSummariesPanel` as the one genuinely still-unclaimed
+  panel.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `FLOW_SUMMARIES_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isFlowSummariesPanelLiveUpdateStorageEvent`, covering the panel's one
+  direct backing store: `flowSummaries` (the per-round flow-summary list).
+  `FlowSummariesPanel.tsx` now subscribes to `window`'s `storage` event and
+  calls its existing `refresh()` closure when the predicate matches — a
+  summary generated (manually or via AI transcript extraction), or cleared,
+  in one tab now shows up in every other open tab without a manual reload.
+
+  See `docs/features/flow-summaries.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `FlowSummariesPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored).
+
+  Ran the full verification gate: `npx vitest run --config
+  apps/debate-ai.com/vitest.config.ts` (331 test files, 6980 tests passing),
+  `bunx turbo typecheck --filter=debate-practice-rounds` (12/12 tasks
+  green), and `bun run build:web` (production build completes
+  successfully, including the service-worker asset-list generation step).
+  No `lint`/`format:check` script exists anywhere in this repo, so that
+  step was skipped as not applicable.
+- **🎭 Opponent Persona Picker — cross-tab live update.** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap. Two other
+  sessions had open PRs against the same Known gap for `JudgeDecisionPanel`
+  (#658) and `ResponseOutcomeChartsPanel` (#657) at the start of this run,
+  so this slice cross-checked the open-PR list first and picked
+  `debate-practice-drills`'s `OpponentPersonaPickerPanel` instead — a
+  genuinely still-unclaimed panel confirmed via a direct grep of every
+  `panels/*.tsx` file in the repo for an existing `storage`-event listener.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` (which
+  already held `JudgeParadigmPickerPanel`'s own predicate) with
+  `OPPONENT_PERSONA_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isOpponentPersonaPickerPanelLiveUpdateStorageEvent`, covering the panel's
+  one direct backing store: `opponentPersonaSelections` (the per-session
+  saved-persona list). `OpponentPersonaPickerPanel.tsx` now subscribes to
+  `window`'s `storage` event and calls its existing `refresh()` closure when
+  the predicate matches — a teammate saving or clearing a session's opponent
+  persona in one tab now shows up in every other open tab without a manual
+  reload. The account-synced custom-persona library ("My persona library"/
+  "Shared by your team", via `useCustomOpponentPersonaLibrary`) is
+  deliberately excluded — it manages its own refresh through that hook
+  rather than a raw `localStorage` read — and the in-progress session-
+  selection form draft is left untouched, matching every other closed
+  panel's "refresh the derived view, not the draft" convention.
+
+  See `docs/features/practice-opponent.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `OpponentPersonaPickerPanel` to the closed list).
+  Vitest-covered: `packages/debate-practice-drills/test/live-update.test.ts`
+  (the one backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored). `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit),
+  `CoachingProgramsPanel` (`debate-team-collaboration`), and the remaining
+  panels in `debate-practice-drills` not already covered by this run or the
+  two open PRs above (`AiVersusRoundPanel`, `ArgumentTreePanel`,
+  `CoachingSessionsPanel`, `DrillSetsPanel`, `FlowSummariesPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`,
+  `WordCountRoundsPanel`) remain open for a future run to pick up next —
+  each of those can now extend this same `live-update.ts` file rather than
+  creating another one.
+
+  Ran the full verification gate: `bun run test` (5169 passing, up from
+  5165 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
 - **🧩 Standing tool-panel/nav UI-polish audit (idea #17, follow-up (4)) — StatTile/StatGrid adoption pass.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
