@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { Badge } from "debate-round/src/ui/primitives/badge";
 import { Button } from "debate-round/src/ui/primitives/button";
 import { Input } from "debate-round/src/ui/primitives/input";
-import { EmptyState, Pill } from "debate-round/src/ui/panels/panel-shell";
+import { EmptyState, PanelSection, PanelShell, Pill } from "debate-round/src/ui/panels/panel-shell";
 import { sortContacts, type ContactUser } from "../lib/contacts";
 import { searchUsers, type ContactEntry } from "../state/contacts";
 import { useContacts, type UseContactsResult } from "../hooks/useContacts";
@@ -201,27 +201,23 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Contacts</h1>
-          <p className="text-sm text-muted-foreground">
-            People you can share a live card with. Contacts see each other as online while the app is open.
-          </p>
-        </div>
+    <PanelShell
+      title="Contacts"
+      description="People you can share a live card with. Contacts see each other as online while the app is open."
+      actions={
         <div className="flex items-center gap-2">
           <Badge variant={onlineCount > 0 ? "default" : "outline"}>{onlineCount} online</Badge>
           <Badge variant="outline">{sorted.length} contacts</Badge>
         </div>
-      </div>
-
+      }
+    >
       <AddContactSearch contacts={contacts} />
 
       {contacts.incoming.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-foreground">
-            Requests for you <Badge className="ml-1">{contacts.incoming.length}</Badge>
-          </h2>
+        <PanelSection
+          title="Requests for you"
+          actions={<Badge>{contacts.incoming.length}</Badge>}
+        >
           {contacts.incoming.map((req) => (
             <div key={req.id} className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2">
               <UserLine user={req.user} />
@@ -242,11 +238,10 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
               </div>
             </div>
           ))}
-        </section>
+        </PanelSection>
       )}
 
-      <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-foreground">Your contacts</h2>
+      <PanelSection title="Your contacts">
         {contacts.loading && !contacts.loaded ? (
           <p className="text-sm text-muted-foreground">Loading contacts…</p>
         ) : sorted.length === 0 ? (
@@ -281,11 +276,10 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
             </div>
           ))
         )}
-      </section>
+      </PanelSection>
 
       {contacts.outgoing.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-foreground">Sent requests</h2>
+        <PanelSection title="Sent requests">
           {contacts.outgoing.map((req) => (
             <div key={req.id} className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -297,15 +291,14 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
               </Button>
             </div>
           ))}
-        </section>
+        </PanelSection>
       )}
 
       {contacts.blocked.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-foreground">Blocked</h2>
-          <p className="text-xs text-muted-foreground">
-            Blocked users can't send you requests or share cards with you, and any existing shares between you were revoked.
-          </p>
+        <PanelSection
+          title="Blocked"
+          description="Blocked users can't send you requests or share cards with you, and any existing shares between you were revoked."
+        >
           {contacts.blocked.map((entry) => (
             <div key={entry.user.id} className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2">
               <UserLine user={entry.user} />
@@ -314,8 +307,8 @@ export function ContactsPanel({ enabled = true, onShareWith, contacts: shared }:
               </Button>
             </div>
           ))}
-        </section>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   );
 }

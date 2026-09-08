@@ -22,7 +22,7 @@ import { useEffect, useState } from "react"
 import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
-import { EmptyState, PanelRow } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelRow, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildNotificationDigestView,
   markManyPersistedNotificationsRead,
@@ -109,13 +109,10 @@ export function PrepNoteNotificationsPanel() {
   const unreadCount = (digestGroups ?? []).reduce((total, group) => total + group.unreadCount, 0)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Notifications</h1>
-        <p className="text-sm text-muted-foreground">
-          Assignee notifications for prep notes handed off to you as a task, grouped into one digest per day.
-        </p>
-      </div>
+    <PanelShell
+      title="Notifications"
+      description="Assignee notifications for prep notes handed off to you as a task, grouped into one digest per day."
+    >
       <div className="flex items-center gap-2">
         <Input
           value={recipientId}
@@ -187,6 +184,6 @@ export function PrepNoteNotificationsPanel() {
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

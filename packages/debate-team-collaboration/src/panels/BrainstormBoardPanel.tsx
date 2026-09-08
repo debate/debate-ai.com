@@ -133,7 +133,7 @@ import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-research-evidence/src/ui/primitives/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-research-evidence/src/ui/primitives/select"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildBrainstormBoardsPanelView,
   buildBrainstormBoardsPanelViewForTopic,
@@ -429,21 +429,15 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Team Brainstorm Assist</h1>
-        <p className="text-sm text-muted-foreground">
-          Submit and upvote squad ideas for an argument block, grouped into boards by category.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Team Brainstorm Assist"
+      description="Submit and upvote squad ideas for an argument block, grouped into boards by category."
+    >
       {timer && (
-        <div className="rounded-lg border border-border p-4 space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-sm font-semibold text-foreground">Session timer</h2>
-              <p className="text-xs text-muted-foreground">Optional — time-box the sprint before reviewing boards.</p>
-            </div>
+        <PanelSection
+          title="Session timer"
+          description="Optional — time-box the sprint before reviewing boards."
+          actions={
             <span
               className={`text-2xl font-semibold tabular-nums ${
                 isBrainstormSessionTimerExpired(timer, timerNow) ? "text-destructive" : "text-foreground"
@@ -451,7 +445,8 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
             >
               {formatBrainstormSessionTimerRemaining(getBrainstormSessionTimerRemainingSeconds(timer, timerNow))}
             </span>
-          </div>
+          }
+        >
           {isBrainstormSessionTimerExpired(timer, timerNow) && (
             <p className="text-xs font-medium text-destructive">Time's up!</p>
           )}
@@ -482,7 +477,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
               </Button>
             )}
           </div>
-        </div>
+        </PanelSection>
       )}
 
       <div className="space-y-2">
@@ -711,6 +706,6 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
