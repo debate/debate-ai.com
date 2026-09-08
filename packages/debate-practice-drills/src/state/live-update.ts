@@ -19,6 +19,8 @@
  * for `WordCountRoundsPanel`'s `useWordCountRounds` hook.
  * `isDrillSetsPanelLiveUpdateStorageEvent` closes it for
  * `DrillSetsPanel`'s `useDrillSets` hook.
+ * `isAiVersusRoundPanelLiveUpdateStorageEvent` closes it for
+ * `AiVersusRoundPanel`.
  *
  * @module state/live-update
  */
@@ -166,5 +168,28 @@ export function isDrillSetsPanelLiveUpdateStorageEvent(event: { key: string | nu
   return (
     event.key === null ||
     (DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `AiVersusRoundPanel` reads directly:
+ * `debate-round`'s `state/aiVersusRounds.ts` own `"aiVersusRounds"` store
+ * (the persisted-round list the panel's active round, round history, and
+ * "Compare transcripts" section all derive from).
+ */
+export const AI_VERSUS_ROUND_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["aiVersusRounds"] as const;
+
+/**
+ * Whether a `storage` event should trigger `AiVersusRoundPanel` to refresh
+ * its rendered round list. A `null` key (e.g. from `localStorage.clear()`,
+ * per the `StorageEvent` spec) counts too — the safest response to
+ * "everything changed" is refreshing. Any other key (an unrelated store
+ * elsewhere in the app) is ignored so an unrelated cross-tab write doesn't
+ * force a needless refresh.
+ */
+export function isAiVersusRoundPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (AI_VERSUS_ROUND_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
