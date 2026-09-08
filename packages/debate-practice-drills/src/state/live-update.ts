@@ -23,7 +23,8 @@
  * `AiVersusRoundPanel`. `isCoachingSessionsPanelLiveUpdateStorageEvent`
  * closes it for `CoachingSessionsPanel`.
  * `isPracticeRoundSimulatorPanelLiveUpdateStorageEvent` closes it for
- * `PracticeRoundSimulatorPanel`.
+ * `PracticeRoundSimulatorPanel`. `isJudgeDecisionPanelLiveUpdateStorageEvent`
+ * closes it for `JudgeDecisionPanel` (via `useJudgeDecisions`).
  *
  * @module state/live-update
  */
@@ -49,6 +50,28 @@ export function isJudgeParadigmPickerPanelLiveUpdateStorageEvent(event: { key: s
   return (
     event.key === null ||
     (JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `JudgeDecisionPanel` reads from (via
+ * `hooks/useJudgeDecisions.ts`): `state/judgeDecisions.ts`'s own
+ * `"judgeDecisions"` store (the per-round AI judge-decision history the
+ * panel renders, newest first).
+ */
+export const JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["judgeDecisions"] as const;
+
+/**
+ * Whether a `storage` event should trigger `JudgeDecisionPanel` (via
+ * `useJudgeDecisions`) to refresh its rendered decision history. A `null`
+ * key (e.g. from `localStorage.clear()`, per the `StorageEvent` spec) counts
+ * too — the safest response to "everything changed" is refreshing. Any
+ * other key (an unrelated store elsewhere in the app) is ignored so an
+ * unrelated cross-tab write doesn't force a needless refresh.
+ */
+export function isJudgeDecisionPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null || (JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
 
