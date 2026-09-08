@@ -7,6 +7,70 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎓 Coaching Programs — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this panel) and every
+  unmerged branch's diff (none touch `CoachingProgramsPanel.tsx` or its
+  backing stores — `state/coachingPrograms.ts`,
+  `state/persistedCoachingProgramBoard.ts`, `state/roundContributorFlows.ts`
+  — so the "multiple parallel branches mid-refactor" note that left this
+  panel unclaimed in a prior run no longer applies) before confirming via a
+  direct grep of every panel in `debate-team-collaboration` for an existing
+  `storage`-event listener that `CoachingProgramsPanel` was still genuinely
+  open and unclaimed, alongside `UserSettingsPanel` (`debate-round` — left
+  for a future run, since its `form` is a live, directly-editable settings
+  form rather than a derived list/roster view, so closing it needs
+  refreshing only the persisted values, not stomping an unsaved in-progress
+  edit).
+
+  Added `packages/debate-team-collaboration/src/state/live-update.ts` (the
+  first `live-update.ts` in this package) with
+  `COACHING_PROGRAMS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isCoachingProgramsPanelLiveUpdateStorageEvent`, covering the two stores
+  `CoachingProgramsPanel` reads directly regardless of which board is open:
+  `coachingPrograms` (the persisted program-config list) and
+  `roundContributorFlows` (each roster member's "Flow recorded" badge).
+  `CoachingProgramsPanel.tsx` now subscribes to `window`'s `storage` event
+  and, when the predicate matches, refreshes the program list, re-derives
+  the roster's recorded-contributor set, and — if a board is currently open
+  — recomposes it. A program's expanded board also transitively depends on
+  several other packages' stores (topic-sprint inputs, the group-challenge
+  roster, the contribution feed, win events, and practice-round records,
+  all read through `state/persistedCoachingProgramBoard.ts`); those are
+  deliberately left out of this predicate, matching every other panel's
+  "cover the store(s) this panel reads directly, not everything a composed
+  view transitively depends on" convention (e.g. `JudgeDecisionPanel`'s
+  hook-scoped predicate) — a change to one of those deeper stores in
+  another tab still shows up the next time the board is reopened. This is
+  recorded as a follow-up in `docs/features/coaching-programs.md`'s Known
+  gaps rather than silently left unmentioned.
+
+  See `docs/features/coaching-programs.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `CoachingProgramsPanel` to the closed list).
+  Vitest-covered: `packages/debate-team-collaboration/test/live-update.test.ts`
+  (every backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, mirroring every other
+  panel's cases in that file).
+
+  Ran the full verification gate: `bun run test` (5232 passing, up from
+  5228 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
 - **🧪 Practice Round Simulator — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

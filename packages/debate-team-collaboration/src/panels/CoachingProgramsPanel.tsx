@@ -35,6 +35,14 @@
  * `state/roundContributorFlows.ts`'s `buildCoachingProgramMemberPracticeRounds`),
  * closing idea #13's remaining "(c)" follow-up in TODO.md.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts`) refreshes the rendered program list, roster "Flow
+ * recorded" badges, and (if open) the current program's board whenever
+ * another tab creates/removes a program or records/clears a member's flow —
+ * closing the "Every other localStorage-backed panel in this repo still has
+ * no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/CoachingProgramsPanel
  */
 
@@ -59,6 +67,7 @@ import {
 } from "../state/roundContributorFlows"
 import { buildCoachingProgramSummaryText, type CoachingProgramBoard, type CoachingProgramConfig } from "../round/coaching-program"
 import { useFlowStore } from "debate-round/src/state/store"
+import { isCoachingProgramsPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 type ProgramDraft = { name: string; memberIds: string }
 
@@ -106,6 +115,23 @@ export function CoachingProgramsPanel() {
       return
     }
     refreshBoard(openProgramId, topic)
+  }, [openProgramId, topic])
+
+  /**
+   * `storage` never fires in the tab that made the change — only in other
+   * same-origin tabs — so a teammate creating/removing a coaching program or
+   * recording/clearing a roster member's flow in another tab wouldn't show
+   * up here without a manual reload without this listener.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCoachingProgramsPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+      setRecordedContributorIds(new Set(listRoundContributorFlows().map((record) => record.contributorId)))
+      if (openProgramId) refreshBoard(openProgramId, topic)
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [openProgramId, topic])
 
   const handleToggleBoard = (id: string) => {
