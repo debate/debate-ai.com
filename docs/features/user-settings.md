@@ -388,3 +388,17 @@ new render test.
   dependency edge, out of scope for a markup-only migration. `debate-round`,
   `debate-contributor-progress`, and `debate-practice-drills` are still
   unaudited — left for a further package-scoped slice each.
+  A further slice closed `debate-round`: its own `ui/panels/panel-shell.tsx`
+  (already used by `FlowEditLogPanel`/`SharedFlowSyncPanel`) needed no new
+  dependency, and three panels hand-rolled the same top-level header shape
+  while already importing `EmptyState` from it —
+  `OpponentTeamProfilesPanel`, `PreRoundBriefingsPanel`, `StrategyPanel` —
+  all migrated onto `PanelShell`, plus each panel's singular `<h2>`-titled
+  sub-section (`OpponentTeamProfilesPanel`'s "Bulk import (CSV)"/"Logged
+  rounds"; `PreRoundBriefingsPanel`'s "Pairing schedule"/"Log a round") onto
+  `PanelSection`. `WordLimitPresetsPanel` (a `/settings`-page section, not a
+  standalone panel card) and `UserSettingsPanel` (a live, directly-editable
+  form, not a derived list/roster view) were left out of scope; each panel's
+  per-item loop `<h2>` (one per matchup/briefing/round) was left alone as a
+  repeated row heading, not a panel/section header. `debate-contributor-
+  progress` and `debate-practice-drills` remain unaudited.
