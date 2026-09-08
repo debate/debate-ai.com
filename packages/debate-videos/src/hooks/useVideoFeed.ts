@@ -14,6 +14,7 @@ import grab from "grab-url";
 import type {
   LectureCategoryFacet,
   VideoFacets,
+  VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
 import type {
   DebateStyle,
@@ -236,6 +237,9 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
   };
 }
 
+/** Empty suggestion lists used until `/api/videos/meta` resolves. */
+const EMPTY_SUGGESTIONS: VideoSuggestions = { keywords: [], tournaments: [] };
+
 /** Empty counts used until `/api/videos/meta` resolves. */
 const EMPTY_COUNTS: VideoCounts = {
   total: 0,
@@ -251,6 +255,8 @@ export interface VideoMetaState {
   meta: VideoMetaResponse | null;
   counts: VideoCounts;
   lectureCategories: LectureCategoryFacet[];
+  /** Popular keyword and tournament searches shown under the video grid. */
+  suggestions: VideoSuggestions;
   isLoading: boolean;
 }
 
@@ -291,11 +297,13 @@ export function useVideoMeta(): VideoMetaState {
   }, []);
 
   const lectureCategories = useMemo(() => meta?.lectureCategories ?? [], [meta]);
+  const suggestions = useMemo(() => meta?.suggestions ?? EMPTY_SUGGESTIONS, [meta]);
 
   return {
     meta,
     counts: meta?.counts ?? EMPTY_COUNTS,
     lectureCategories,
+    suggestions,
     isLoading,
   };
 }
