@@ -351,3 +351,40 @@ new render test.
   unaffected by a markup-only change, matching how the prior EmptyState
   migration slices in `debate-round`/`debate-practice-drills` were also
   verified via typecheck/build rather than new render tests.
+  A further slice started on the "`PanelShell`/`PanelSection` adoption is
+  still unaudited" half named above, package by package: `debate-search-evidence`
+  (npm package name `debate-research-evidence`) was picked next — its 7 panels
+  (`ArgumentLibraryPanel`, `CardScoringPanel`, `ContributionsFeedPanel`,
+  `EvidenceLibraryPanel`, `ReviewQueuePanel`, `RevisionIncentivesPanel`,
+  `TopicCoverageDashboardPanel`) all hand-rolled a top-level `<h1>`-title-
+  plus-description header and none used `PanelShell`/`PanelSection` yet, and
+  the primitive was already one import away (the same `./ui/panels/panel-shell`
+  module each panel already imported `EmptyState`/`MeterBar` from — no new
+  cross-package dependency needed). All 7 were migrated onto `PanelShell`.
+  Each panel's genuinely singular, non-repeated `<h2>`-titled sub-section was
+  also migrated onto `PanelSection` where one existed: `CardScoringPanel`'s
+  "Bulk import"/"My score trend", `ContributionsFeedPanel`'s dynamic
+  "Flagged for review (N)"/"All contributions (N)" list header,
+  `EvidenceLibraryPanel`'s "Check this page"/"Team reuse dashboard"/"Pending
+  review (N)", `ReviewQueuePanel`'s "Reviewer workload", and
+  `RevisionIncentivesPanel`'s "Stale evidence digest"/"Leaderboard"/"Recent
+  revisions". A description containing embedded markup (a `<code>` tag, or
+  `ContributionsFeedPanel`'s tooltip-carrying paragraph) was kept as a plain
+  child element instead of forced through `PanelShell`/`PanelSection`'s
+  `description` prop, which only accepts a plain string. `ArgumentLibraryPanel`
+  and `TopicCoverageDashboardPanel` had no `<h2>`-titled sub-section to
+  migrate (their bordered blocks use a plain `<div>` label, not a heading),
+  so only their top-level header moved onto `PanelShell`; `TopicCoverageDashboardPanel`'s
+  "Cross-topic comparison"/"Coverage trend" labels use the same non-`<h2>`
+  shape and were deliberately left alone for the same reason. Of the
+  remaining packages named in the "roughly 45 panel files" survey above,
+  `debate-team-collaboration` had an open PR against this same follow-up at
+  the start of this slice (checked first to avoid duplicating work), and
+  `debate-speech-writer`'s two panels (`JudgeProfilesPanel`,
+  `CoachMaterialsPanel`) are blocked the same way they are for the
+  `EmptyState` gap above — neither `debate-round` nor
+  `debate-research-evidence` is a dependency of that package, so `PanelShell`/
+  `PanelSection` aren't reachable without first adding a new cross-package
+  dependency edge, out of scope for a markup-only migration. `debate-round`,
+  `debate-contributor-progress`, and `debate-practice-drills` are still
+  unaudited — left for a further package-scoped slice each.
