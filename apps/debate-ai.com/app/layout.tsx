@@ -38,6 +38,19 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Applies the persisted colour theme's `theme-<name>` class to <html>
+            before paint. `useThemeState` re-applies the same class on mount,
+            but only after hydration — and since `globals.css` now takes the
+            body typeface from the theme's `--font-sans`, waiting for that
+            effect would show a flash of the fallback font (and of the fallback
+            palette) on every load. The name is read back from localStorage, so
+            it is sanitised to the kebab-case shape `THEME_NAMES` uses before
+            being turned into a class. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('color-theme');if(!t||!/^[a-z0-9-]+$/.test(t))t='modern-minimal';document.documentElement.classList.add('theme-'+t);}catch(e){document.documentElement.classList.add('theme-modern-minimal');}})();`,
+          }}
+        />
         {/* Applies the persisted font-family choice before paint (avoiding a
             flash of the default font) and keeps it in sync with the picker in
             `UserSettingsPanel` — ported from qwksearch-research-agent's
