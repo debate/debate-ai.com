@@ -384,7 +384,7 @@ function DockInstance({
         iconSize={embedded ? EMBEDDED_ICON_SIZE : undefined}
         magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
       >
-        {allItems.map(({ key, label, icon, active, onClick }) => (
+        {allItems.map(({ key, label, icon, active, onClick, renderIcon }) => (
           <DockItem
             key={key}
             onClick={onClick}
