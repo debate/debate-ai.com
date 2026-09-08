@@ -57,6 +57,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -502,9 +503,7 @@ export function JudgeProfilesPanel() {
       </div>
 
       {roster.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No judge profiles yet. Log a judged round above to build one.
-        </div>
+        <EmptyState title="No judge profiles yet." message="Log a judged round above to build one." />
       ) : (
         <Table>
           <TableHeader>
