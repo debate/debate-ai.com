@@ -323,12 +323,12 @@ function VideoRow({
                       ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
                       : "text-muted-foreground hover:text-foreground",
                   )}
-                  aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}
+                  aria-label={isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
                 >
                   <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
                 </button>
               </TooltipTrigger>
-              <TooltipContent>{isFavorite ? "Remove from favorites" : "Save to favorites"}</TooltipContent>
+              <TooltipContent>{isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}</TooltipContent>
             </Tooltip>
 
             <Tooltip>

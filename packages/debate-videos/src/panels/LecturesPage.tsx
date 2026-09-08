@@ -88,7 +88,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
-  const { meta, counts, lectureCategories } = useVideoMeta()
+  const { meta, counts, lectureCategories, suggestions } = useVideoMeta()
 
   // ---------------------------------------------------------------------------
   // UI state
@@ -407,6 +407,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       currentCategory={state.currentCategory}
       totalVideos={feed.total}
       facets={feed.facets}
+      searchSuggestions={suggestions}
       isLoading={feed.isLoading}
       errorMessage={feed.errorMessage}
       isLoadingMore={feed.isLoadingMore}

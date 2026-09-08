@@ -74,7 +74,7 @@ const QUICK_LINKS: QuickLink[] = [
   },
   {
     id: "favorites",
-    title: "Favorites",
+    title: "My Favorites",
     href: "/videos/favorites",
     logo: IconTrophy,
     gradient: "from-rose-500/20 via-pink-500/10 to-transparent",

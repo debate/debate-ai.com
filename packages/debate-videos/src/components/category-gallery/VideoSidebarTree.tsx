@@ -2,7 +2,7 @@
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
  *   College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
- *   Favorites (h2, plain link)
+ *   My Favorites (h2, plain link)
  *   Lectures (h2, expandable) -> lecture categories (h3)
  *   Coaching / Research / Practice (h2, expandable) -> tool links (h3)
  */
@@ -105,7 +105,7 @@ export function VideoSidebarTree({
       <TreeItem
         level={2}
         href="/videos/favorites"
-        title="Favorites"
+        title="My Favorites"
         count={counts?.favorites}
         isActive={activeId === "favorites"}
         icon={IconTrophy}
@@ -164,7 +164,7 @@ export function VideoSidebarTree({
 }
 
 interface TreeItemProps {
-  /** Heading level: 2 = top-level section (College Debates/Favorites/Lectures), 3 = subgroup, lecture category, or leaf child. */
+  /** Heading level: 2 = top-level section (College Debates/My Favorites/Lectures), 3 = subgroup, lecture category, or leaf child. */
   level: 2 | 3;
   href: string;
   title: string;

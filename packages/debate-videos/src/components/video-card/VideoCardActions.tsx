@@ -146,7 +146,7 @@ export function VideoCardActions({
                     : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-label={
-                  isFavorite ? "Remove from favorites" : "Save to favorites"
+                  isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"
                 }
               >
                 <Star
@@ -156,7 +156,7 @@ export function VideoCardActions({
             </TooltipTrigger>
             <TooltipContent>
               <p>
-                {isFavorite ? "Remove from favorites" : "Save to favorites"}
+                {isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
               </p>
             </TooltipContent>
           </Tooltip>

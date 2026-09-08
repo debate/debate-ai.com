@@ -4,6 +4,10 @@ import {
   clampPageSize,
   computeLectureCategories,
   computeVideoFacets,
+  computeVideoSuggestions,
+  normalizeTournamentName,
+  rankKeywordSuggestions,
+  rankTournamentSuggestions,
   filterVideoRows,
   parseSeasonFilter,
   queryVideoRows,
@@ -230,5 +234,89 @@ describe("computeLectureCategories", () => {
     const labels = computeLectureCategories(ROWS).map((c) => c.label);
     expect(labels).not.toContain("Awards");
     expect(labels).toHaveLength(2);
+  });
+});
+
+/** Builds a round row carrying a tournament name and a searchable title. */
+function tournamentRow(id: string, tournament: string | null, title = id): VideoRow {
+  return tupleToVideoRow(
+    [id, title, "2025-01-01", "Channel", 0, "", 1, tournament, null, null, null, null, null, null, null, false],
+    "round",
+  )!;
+}
+
+describe("normalizeTournamentName", () => {
+  it("folds every edition of a tournament onto one name", () => {
+    expect(normalizeTournamentName("NDT 2018")).toBe("NDT");
+    expect(normalizeTournamentName("2019 NDT")).toBe("NDT");
+    expect(normalizeTournamentName("NDT 24")).toBe("NDT");
+    expect(normalizeTournamentName("Dartmouth RR")).toBe("Dartmouth RR");
+  });
+
+  it("drops empty, too-short and placeholder values", () => {
+    expect(normalizeTournamentName(null)).toBeNull();
+    expect(normalizeTournamentName("2019")).toBeNull();
+    expect(normalizeTournamentName("N/A")).toBeNull();
+  });
+});
+
+describe("rankTournamentSuggestions", () => {
+  it("sums the editions of a tournament and orders by size", () => {
+    const ranked = rankTournamentSuggestions([
+      { tournament: "NDT 2018", count: 3 },
+      { tournament: "NDT", count: 4 },
+      { tournament: "Shirley 2019", count: 5 },
+      { tournament: null, count: 99 },
+    ]);
+    expect(ranked).toEqual([
+      { label: "NDT", count: 7, kind: "tournament" },
+      { label: "Shirley", count: 5, kind: "tournament" },
+    ]);
+  });
+
+  it("keeps at most the requested number of chips", () => {
+    const entries = ["Texas", "Harvard", "Emory"].map((t) => ({ tournament: t, count: 1 }));
+    expect(rankTournamentSuggestions(entries, 2)).toHaveLength(2);
+  });
+});
+
+describe("rankKeywordSuggestions", () => {
+  it("drops keywords the library has no videos for, keeping the curated order", () => {
+    const ranked = rankKeywordSuggestions({ Finals: 4, Kritik: 9, Novice: 0 });
+    expect(ranked).toEqual([
+      { label: "Finals", count: 4, kind: "keyword" },
+      { label: "Kritik", count: 9, kind: "keyword" },
+    ]);
+  });
+
+  it("keeps at most the requested number of chips", () => {
+    expect(rankKeywordSuggestions({ Finals: 1, Kritik: 1, Topicality: 1 }, 2)).toHaveLength(2);
+  });
+});
+
+describe("computeVideoSuggestions", () => {
+  const SUGGESTION_ROWS: VideoRow[] = [
+    tournamentRow("a", "2019 NDT", "NDT Finals — Kritik on the flow"),
+    tournamentRow("b", "NDT 2020", "NDT Semis"),
+    tournamentRow("c", "TOC", "TOC Finals"),
+    tournamentRow("d", null, "Lecture on flowing"),
+  ];
+
+  it("suggests only keywords that match, counted like the search box", () => {
+    const { keywords } = computeVideoSuggestions(SUGGESTION_ROWS);
+    const byLabel = Object.fromEntries(keywords.map((k) => [k.label, k.count]));
+    expect(byLabel.Finals).toBe(2);
+    expect(byLabel.Kritik).toBe(1);
+    expect(byLabel.Semis).toBe(1);
+    expect(keywords.every((k) => k.count > 0)).toBe(true);
+    expect(byLabel.Topicality).toBeUndefined();
+  });
+
+  it("suggests the tournaments in the library, biggest first", () => {
+    const { tournaments } = computeVideoSuggestions(SUGGESTION_ROWS);
+    expect(tournaments).toEqual([
+      { label: "NDT", count: 2, kind: "tournament" },
+      { label: "TOC", count: 1, kind: "tournament" },
+    ]);
   });
 });
