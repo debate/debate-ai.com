@@ -17,7 +17,7 @@ gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
 shortcuts in dock order.
 
 **Tools are not dock icons.** The tools catalog is reached three other ways:
-the sidebar nav tree's "Apps" heading and its "All Tools" entry, the tree's
+the sidebar nav tree's "All Tools" entry under its "Apps" section, the tree's
 Coaching / Research / Practice sections, and the dock's own Settings menu
 ("All Tools", plus a Tools submenu grouped the same way `/tools` is). Holding
 the dock to five destinations is what lets it fit inside the sidebar column
@@ -68,8 +68,42 @@ normal case.
 Hover labels stay `overflow-visible`: the sidebar column is the clipping
 boundary, and clipping at the dock would hide every tooltip.
 
+## The nav tree's headings
+
+Below the dock, the same column carries the nav tree
+(`VideoSidebarTree` on `/videos`, its `ToolNavTree` tail everywhere else).
+It is three levels deep:
+
+| Level | Element | What it is |
+| --- | --- | --- |
+| 1 | `h1` | A top-level section: Videos, Apps, Coaching, Research, Practice |
+| 2 | `h2` | A subgroup inside one — College Debates, Favorites, Lectures |
+| 3 | `span` | A leaf link: a tool, a lecture category, a debate format |
+
+Two rules hold for every h1:
+
+- **It is not a link.** The row renders without an `href`, so clicking it
+  does nothing but toggle the section. Each section's flagship tool is the
+  first link *inside* it (`/coach` under Coaching, `/tools` as "All Tools"
+  under Apps), so nothing became unreachable — a click on the heading no
+  longer navigates away from the page you are on just because you wanted to
+  see what else is in the group.
+- **It starts expanded.** The tree is the only nav on the tool pages, so all
+  of it is visible up front rather than only the section holding the current
+  page. Collapsing is still per-section, and the state is per-mount.
+
+`SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
+still folds it into the set of paths that get the tool sidebar.
+
+Indentation follows *nesting*, not `level` — each expanded node pads its own
+child list — so a leaf under College Debates sits a step deeper than one
+hanging straight off Coaching, wherever in the tree it is.
+
 ## Tests
 
+- `packages/debate-videos/test/video-sidebar-render.test.tsx` — the heading
+  structure above: College Debates under a Videos `h1`, no `h1` inside an
+  anchor, every section a toggle button that starts expanded.
 - `packages/debate-ui/test/dock.test.tsx` — the `fluid` variant's classes,
   host-set icon sizing, and that magnification never shrinks an icon below
   its resting size.
