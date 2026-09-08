@@ -118,7 +118,7 @@ describe("setStateInURL writing", () => {
   it("encodes a value that needs it", () => {
     setStateInURL({ q: "a & b" });
     expect(window.location.search).toContain("a+%26+b");
-    expect(setStateInURL().q).toBe("a & b");
+    expect(setStateInURL()?.q).toBe("a & b");
   });
 
   it("replaces the history entry by default, so the back button leaves the page", () => {

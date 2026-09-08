@@ -15,7 +15,7 @@ import type { Card, FormatProfile, MutableCard } from "../src/types/types";
 const card = (over: Partial<MutableCard> = {}): MutableCard => ({
   summary: "Warming is real",
   author: "Lovelace",
-  author_type: "person",
+  author_type: null,
   cite: "Lovelace 24",
   year: 2024,
   url: "https://example.com/a",
@@ -188,7 +188,7 @@ describe("repairCards", () => {
   const parsed = (over: Partial<Card> = {}): Card => ({
     summary: "Warming is real",
     author: "Lovelace",
-    author_type: "person",
+    author_type: null,
     cite: "Lovelace 24",
     year: 2024,
     url: null,

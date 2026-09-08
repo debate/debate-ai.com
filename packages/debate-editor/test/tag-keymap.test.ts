@@ -55,11 +55,14 @@ const stateAt = (d: PMNode, pos: number) =>
 
 /** Runs a command, reporting whether it handled the key and what it wrote. */
 function run(command: Command, state: EditorState) {
-  let next: PMNode | null = null;
+  // Held on an object rather than in a local: TypeScript does not track an
+  // assignment made inside the dispatch callback, and would narrow a plain
+  // `let` back to null at the return.
+  const written: { doc: PMNode | null } = { doc: null };
   const handled = command(state, (tr) => {
-    next = state.apply(tr).doc;
+    written.doc = state.apply(tr).doc;
   });
-  return { handled, doc: next, changed: next !== null };
+  return { handled, doc: written.doc, changed: written.doc !== null };
 }
 
 describe("backspaceAtTagStart", () => {
