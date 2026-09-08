@@ -15,7 +15,8 @@
  * `isCounselPanelAssessmentsLiveUpdateStorageEvent` close the same gap for
  * `VulnerabilityChartsPanel` and its `useCounselPanelAssessments` hook.
  * `isArgumentTreePanelLiveUpdateStorageEvent` closes it for
- * `ArgumentTreePanel`.
+ * `ArgumentTreePanel`. `isWordCountRoundsLiveUpdateStorageEvent` closes it
+ * for `WordCountRoundsPanel`'s `useWordCountRounds` hook.
  *
  * @module state/live-update
  */
@@ -117,5 +118,28 @@ export function isArgumentTreePanelLiveUpdateStorageEvent(event: { key: string |
   return (
     event.key === null ||
     (ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `useWordCountRounds` reads/writes through:
+ * `debate-round`'s `state/wordCountRounds.ts` own `"wordCountRounds"` store
+ * (the persisted-round list `WordCountRoundsPanel`'s round history and
+ * word-count trend view both derive from).
+ */
+export const WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS = ["wordCountRounds"] as const;
+
+/**
+ * Whether a `storage` event should trigger `useWordCountRounds` to refresh
+ * its rendered round list. A `null` key (e.g. from `localStorage.clear()`,
+ * per the `StorageEvent` spec) counts too — the safest response to
+ * "everything changed" is refreshing. Any other key (an unrelated store
+ * elsewhere in the app) is ignored so an unrelated cross-tab write doesn't
+ * force a needless refresh.
+ */
+export function isWordCountRoundsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

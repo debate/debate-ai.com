@@ -4,10 +4,12 @@ import {
   COUNSEL_PANEL_ASSESSMENTS_LIVE_UPDATE_STORAGE_KEYS,
   JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   VULNERABILITY_CHARTS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
+  WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS,
   isArgumentTreePanelLiveUpdateStorageEvent,
   isCounselPanelAssessmentsLiveUpdateStorageEvent,
   isJudgeParadigmPickerPanelLiveUpdateStorageEvent,
   isVulnerabilityChartsPanelLiveUpdateStorageEvent,
+  isWordCountRoundsLiveUpdateStorageEvent,
 } from "../src/state/live-update";
 
 describe("isJudgeParadigmPickerPanelLiveUpdateStorageEvent", () => {
@@ -95,5 +97,27 @@ describe("isArgumentTreePanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isArgumentTreePanelLiveUpdateStorageEvent({ key: "old_argumentTrees" })).toBe(false);
     expect(isArgumentTreePanelLiveUpdateStorageEvent({ key: "argumentTreeFiltersBackup" })).toBe(false);
+  });
+});
+
+describe("isWordCountRoundsLiveUpdateStorageEvent", () => {
+  it("is true for every store key the hook reads", () => {
+    for (const key of WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isWordCountRoundsLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isWordCountRoundsLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isWordCountRoundsLiveUpdateStorageEvent({ key: "word-limit-presets" })).toBe(false);
+    expect(isWordCountRoundsLiveUpdateStorageEvent({ key: "judgeDecisions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isWordCountRoundsLiveUpdateStorageEvent({ key: "old_wordCountRounds" })).toBe(false);
+    expect(isWordCountRoundsLiveUpdateStorageEvent({ key: "wordCountRoundsBackup" })).toBe(false);
   });
 });
