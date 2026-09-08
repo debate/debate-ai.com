@@ -57,9 +57,10 @@ endpoint is a same-origin POST, not something a plain navigation can hit), are i
 - No auto-update yet — `tauri-plugin-updater` is wired into the Rust side but left inactive
   (`plugins.updater.active: false` in `tauri.conf.json`) until a signing keypair and update
   endpoint are set up. See `apps/debate-native-wrapper/docs/BUILDING.md`'s "Auto-update" section.
-- Android/iOS mobile projects (`gen/android`, `gen/apple`) aren't generated or checked in — this
-  environment had neither an Android SDK/NDK nor a macOS+Xcode host available, so mobile support
-  is scaffolded (the Rust core is mobile-ready) but not exercised end-to-end. See
+- Android/iOS mobile projects (`gen/android`, `gen/apple`) aren't checked in — they're generated
+  on demand by the release workflow's `build-android` / `build-ios` jobs (and by
+  `npm run android:init` / `ios:init` locally), because a freshly generated tree matches
+  `tauri.conf.json` exactly. Neither mobile build has been exercised on a real device yet. See
   `apps/debate-native-wrapper/docs/MOBILE.md`.
 - No store submissions have been made for any platform — `apps/debate-native-wrapper/docs/APP_STORES.md`
   documents what each store needs (including the real Guideline 4.2 "minimum functionality"
