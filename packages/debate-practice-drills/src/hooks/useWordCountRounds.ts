@@ -37,6 +37,12 @@
  * notice is handed to exactly one hook instance's state rather than
  * re-appearing on every later mount of the same already-resolved merge.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isWordCountRoundsLiveUpdateStorageEvent`,
+ * mirroring `useCounselPanelAssessments`'s own `storage`-event subscription
+ * — a round saved, cleared, or synced from the account in another
+ * same-origin tab refreshes this one too.
+ *
  * @module hooks/useWordCountRounds
  */
 
@@ -58,6 +64,7 @@ import {
   listSavedWordCountRounds,
   saveWordCountRoundToAccount,
 } from "../round/word-count-rounds-client";
+import { isWordCountRoundsLiveUpdateStorageEvent } from "../state/live-update";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
 // one page load share one account fetch and one "is this browser signed
@@ -144,6 +151,20 @@ export function useWordCountRounds(): UseWordCountRoundsResult {
       const notice = consumeSyncNotice();
       if (notice.length > 0) setJustSyncedRoundIds(notice);
     });
+  }, []);
+
+  /**
+   * Live-update the round list when another browser tab saves, clears, or
+   * account-syncs a round. A `storage` event never fires in the tab that
+   * made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isWordCountRoundsLiveUpdateStorageEvent(event)) return;
+      setRounds(buildWordCountRoundsPanelView());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const dismissSyncNotice = useCallback(() => setJustSyncedRoundIds([]), []);

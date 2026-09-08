@@ -7,6 +7,67 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔢 Word-Count-Only Speech Format — cross-tab live update.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this repo
+  currently has many parallel sessions racing on that same gap (four open
+  PRs at the start of this run, plus half a dozen unmerged branches), so
+  this run cross-checked both the open-PR list (`#658` JudgeDecisionPanel,
+  `#659` OpponentPersonaPickerPanel, plus two unrelated PRs) and every
+  unmerged branch's diff (one mid-flight on `FlowSummariesPanel`, others on
+  unrelated features in `debate-team-collaboration`) before picking a
+  genuinely unclaimed panel: a direct grep of every panel in
+  `debate-practice-drills` for a `storage`-event listener confirmed
+  `WordCountRoundsPanel` (backed by its `useWordCountRounds` hook, not read
+  directly by the panel) was still open and unclaimed by any in-flight
+  branch.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS`/
+  `isWordCountRoundsLiveUpdateStorageEvent`, covering the hook's one backing
+  store: `wordCountRounds` (the persisted-round list both the round-history
+  cards and the word-count trend view derive from). `useWordCountRounds`
+  (`hooks/useWordCountRounds.ts`) now subscribes to `window`'s `storage`
+  event and re-reads `buildWordCountRoundsPanelView()` when the predicate
+  matches — mirroring this same package's `useCounselPanelAssessments`
+  hook's own `storage`-event subscription (the "panel reads through a hook,
+  not directly" pattern) — so a round saved, cleared, or synced from the
+  account in one tab now shows up in every other open `/word-count` tab
+  without a manual reload. The in-progress speech drafts, round-ID field,
+  and dictation state are left untouched, matching every other closed
+  panel's "refresh the derived view, not the draft" convention.
+
+  See `docs/features/word-count-rounds.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `WordCountRoundsPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `AiVersusRoundPanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, and `PracticeRoundSimulatorPanel` (`debate-practice-drills`,
+  confirmed still missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5199 passing, up from
+  5195 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
 - **📝 Outline Filters and Argument Tree View — cross-tab live update.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with

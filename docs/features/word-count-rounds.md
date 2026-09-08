@@ -266,6 +266,38 @@ convention for account-synced, `localStorage`-backed hooks and their UI
 covered indirectly via `planWordCountRoundMerge`/`resolveWordCountRoundConflict`'s
 direct unit tests.
 
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `WordCountRoundsPanel`.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, saving, clearing, or
+account-syncing a round in one tab left every other open `/word-count` tab
+showing a stale round list and trend view until a manual reload.
+
+`useWordCountRounds` (`hooks/useWordCountRounds.ts`) now subscribes to
+`window`'s `storage` event and re-reads `buildWordCountRoundsPanelView()`
+whenever `state/live-update.ts`'s `isWordCountRoundsLiveUpdateStorageEvent`
+matches — covering the hook's one backing store, `wordCountRounds`
+(mirroring `useCounselPanelAssessments`'s own `storage`-event subscription
+in the same package). A teammate saving or clearing a round, or an account
+merge adopting a synced round, in one tab now shows up in every other open
+tab without a manual reload. The in-progress speech drafts and round-ID
+field are untouched, matching every other closed panel's "refresh the
+derived view, not the draft" convention.
+
+```
+state/live-update.ts (debate-practice-drills)  — WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS, isWordCountRoundsLiveUpdateStorageEvent
+hooks/useWordCountRounds.ts                     — storage-event subscription, refreshes rounds
+```
+
+Vitest-covered:
+`packages/debate-practice-drills/test/live-update.test.ts` (the one
+backing-store key, the `null`-key clear-all case, and unrelated/
+substring-matching keys staying ignored).
+
 ## Known gaps
 
 - ~~The compact ticking timer in `FlowPageHeader` (mobile header) still shows
