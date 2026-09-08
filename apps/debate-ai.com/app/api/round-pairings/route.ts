@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedRoundPairings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked round-pairing sync — TODO.md idea #12 ("Pre-Round
@@ -20,18 +21,21 @@ import { getUserId } from "@/lib/auth/session"
  *   fetch.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced round pairings." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/round-pairings",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced round pairings." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedRoundPairings.data })
-    .from(savedRoundPairings)
-    .where(eq(savedRoundPairings.userId, userId))
-    .orderBy(asc(savedRoundPairings.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedRoundPairings.data })
+      .from(savedRoundPairings)
+      .where(eq(savedRoundPairings.userId, userId))
+      .orderBy(asc(savedRoundPairings.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)

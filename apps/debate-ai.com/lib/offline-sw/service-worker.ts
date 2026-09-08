@@ -128,6 +128,29 @@ async function putInCache(request: Request, response: Response): Promise<void> {
   }
 }
 
+/**
+ * What a failed network request has to look like when there is nothing cached
+ * to fall back on.
+ *
+ * `Response.error()` is a network error: the page's `fetch` rejects and a
+ * navigation shows the browser's own offline page, exactly as it would with no
+ * service worker installed. A synthesized `new Response("…", { status: 502 })`
+ * is something else entirely — a *successful* exchange reporting an HTTP
+ * error — and the browser treats it as one: it is a valid response, so it can
+ * be stored for a speculative request and replayed into the real navigation
+ * that follows. That is how a single dropped prefetch turned into the hard
+ * "502 (Network Error)" on `/versus-ai` in the console, and why
+ * `isSpeculativeRequest` alone was not enough to stop it: any request this
+ * worker answers but the browser classifies as speculative (a `<link
+ * rel="prefetch">` that sends no `Sec-Purpose` header and reports an empty
+ * `destination`) walks the same path. Never manufacture an HTTP status the
+ * origin did not send.
+ */
+function networkError(request: Request, err: unknown): Response {
+  console.warn("SW : Network fetch failed:", request.url, err);
+  return Response.error();
+}
+
 async function onFetch(event: FetchEvent): Promise<Response> {
   const url = new URL(event.request.url);
 
@@ -149,7 +172,7 @@ async function onFetch(event: FetchEvent): Promise<Response> {
         const offlineShell = await cache.match('/');
         if (offlineShell) return offlineShell;
       }
-      throw error;
+      return networkError(event.request, error);
     }
   }
 
@@ -165,10 +188,9 @@ async function onFetch(event: FetchEvent): Promise<Response> {
       }
       return networkResponse;
     } catch (err) {
-      console.warn('SW : Network fetch failed for immutable asset:', event.request.url, err);
       const fallback = await caches.match(event.request);
       if (fallback) return fallback;
-      return new Response('Network error', { status: 502, statusText: 'Network Error' });
+      return networkError(event.request, err);
     }
   }
 
@@ -178,10 +200,9 @@ async function onFetch(event: FetchEvent): Promise<Response> {
   try {
     return await fetch(event.request);
   } catch (err) {
-    console.warn('SW : Pass-through fetch failed:', event.request.url, err);
     const cached = await caches.match(event.request);
     if (cached) return cached;
-    return new Response('Network error', { status: 502, statusText: 'Network Error' });
+    return networkError(event.request, err);
   }
 }
 
