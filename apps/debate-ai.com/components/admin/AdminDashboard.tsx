@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "../../lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
+import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
 
@@ -280,6 +281,8 @@ export function AdminDashboard() {
       </Card>
 
       <TopicStarterUpload />
+
+      <DebateCardParquetUpload />
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-medium">Round videos</h2>
