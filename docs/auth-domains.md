@@ -1,8 +1,9 @@
 # Auth across several domains
 
-The app is served from more than one host. `debate-ai.com` is canonical,
-`ebate.app` is a short domain pointed at the same Worker, preview builds land
-on `*.workers.dev` / `*.vercel.app`, and dev runs on `localhost:3000`.
+The app is served from more than one host. `ebate.app` is the short-domain
+rebrand the production deployment now answers on, `debate-ai.com` may still
+resolve, preview builds land on `*.workers.dev` / `*.vercel.app`, and dev runs
+on `localhost:3000`.
 
 better-auth pins its base URL to a single origin unless told otherwise, and its
 CSRF middleware rejects any state-changing request whose `Origin` is not

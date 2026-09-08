@@ -201,3 +201,41 @@ export function isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event: { key: 
     (OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }
+
+/**
+ * The `localStorage` keys `panels/UserSettingsPanel.tsx` reads directly:
+ * `state/settings.ts`'s own `"settings"` store (the `debateStyle`/
+ * `fontSize` fields, re-read via `state/userSettings.ts`'s
+ * `refreshLocalUserSettingsFromStorage`), `"color-theme"` (the `colorTheme`
+ * field, shared with `components/theme-dropdown.tsx`'s dock picker),
+ * `"theme"` (next-themes' own default storage key, backing the
+ * `themeMode` field), and `state/fontSettings.ts`'s `"fontFamily"` (the
+ * separate, always-immediate font-family picker, not part of the
+ * Save-gated form).
+ *
+ * Unlike this panel's other backing stores, `UserSettingsPanel`'s form is a
+ * live, directly-editable draft rather than a derived list/roster view — so
+ * its `storage`-event handler only refreshes a field that still matches
+ * what was last loaded/saved (i.e. the user hasn't started editing it),
+ * leaving an in-progress, not-yet-saved edit on any other field alone
+ * rather than stomping it.
+ */
+export const USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "settings",
+  "color-theme",
+  "theme",
+  "fontFamily",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `UserSettingsPanel` to refresh
+ * its not-yet-edited fields from `localStorage`. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isUserSettingsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}

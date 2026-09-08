@@ -497,7 +497,7 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`topic-coverage-dashboard.md`](topic-coverage-dashboard.md)'s "Cross-tab
   live update"), `OpponentTeamProfilesPanel` (see
   [`opponent-team-profiles.md`](opponent-team-profiles.md)'s "Cross-tab live
-  update"), `JudgeParadigmPickerPanel` (see
+  update"), `JudgeParadigmPickerPanel` and `JudgeDecisionPanel` (see
   [`judge-paradigm-selections.md`](judge-paradigm-selections.md)'s
   "Cross-tab live update" — the first `live-update.ts` in
   `debate-practice-drills`), `VulnerabilityChartsPanel` (see
@@ -515,7 +515,14 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`coaching-sessions.md`](coaching-sessions.md)'s "Cross-tab live update"),
   `PracticeRoundSimulatorPanel` (see
   [`practice-round-simulator.md`](practice-round-simulator.md)'s "Cross-tab
-  live update"), and `FlowEditLogPanel` itself (see
+  live update"), `CoachingProgramsPanel` (see
+  [`coaching-programs.md`](coaching-programs.md)'s "Cross-tab live update" —
+  the first `live-update.ts` in `debate-team-collaboration`), `UserSettingsPanel`
+  (see [`user-settings.md`](user-settings.md)'s "Cross-tab live update" — the
+  one panel in this closed list whose `form` is a live, directly-editable
+  draft rather than a derived list/roster view, so only fields untouched
+  since they were last loaded/saved are refreshed, never an in-progress
+  edit), and `FlowEditLogPanel` itself (see
   "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
   equivalent mechanism for their own stores, but every other
   localStorage-backed panel in this repo still has none (Live Sync

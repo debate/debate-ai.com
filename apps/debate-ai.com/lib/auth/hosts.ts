@@ -12,22 +12,26 @@ import { APP_ORIGIN } from "../config/site";
 /**
  * Every host that serves this app.
  *
- * `debate-ai.com` is canonical, `ebate.app` is the short domain pointed at the
- * same Worker, the wildcards cover preview deployments, and localhost is dev.
+ * `ebate.app` is the short-domain rebrand the production deployment now
+ * answers on; `debate-ai.com` may still resolve, so both stay listed rather
+ * than swapping one hardcoded host for another. The wildcards cover preview
+ * deployments, and localhost is dev.
+ *
  * better-auth derives one base URL per request from this list, so a visitor on
  * ebate.app keeps ebate.app for their cookies, OAuth callback and magic link
- * instead of being handed the canonical domain halfway through signing in.
+ * instead of being handed the other domain halfway through signing in.
  *
  * This is an allowlist rather than "whatever the Host header says" on purpose:
  * an unchecked host would let a spoofed request mint magic links pointing at
  * someone else's domain.
  */
 export const DEFAULT_ALLOWED_HOSTS = [
+  "ebate.app",
+  "www.ebate.app",
+  "*.ebate.app",
   "debate-ai.com",
   "www.debate-ai.com",
   "*.debate-ai.com",
-  "ebate.app",
-  "www.ebate.app",
   "*.workers.dev",
   "*.vercel.app",
   "localhost:3000",

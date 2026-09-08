@@ -10,7 +10,9 @@
  * the app's persistent sidebar (`AppSidebarShell` →
  * `ReasonDocsSidebarPanels`), which already wrapped this route and so used to
  * put a second sidebar beside it. This page now only renders the editor for
- * whatever that sidebar has active, reading it from `ReasonDocsProvider`.
+ * whatever that sidebar has active, reading it from `ReasonDocsProvider` —
+ * or, on a cold load, from the `?doc=`/`?topic=` link that sidebar routes to
+ * (`ReasonDocsRouteSync`).
  * That sidebar is desktop-only, so the same panels are also mounted here as a
  * collapsible strip below `md`.
  *
@@ -27,6 +29,7 @@ import { cn } from "../../lib/ui/lib/utils"
 import { Input } from "../../lib/ui/primitives/input"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
+import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
 import { ShareWithContacts, SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
 
 export default function ReasonEditorPage() {
@@ -36,10 +39,8 @@ export default function ReasonEditorPage() {
     activeId,
     topicDocument,
     loading,
-    loaded,
     saving,
     ensureLoaded,
-    openDocument,
     selectTab,
     closeTab,
     updateTitle,
@@ -50,14 +51,6 @@ export default function ReasonEditorPage() {
     ensureLoaded()
   }, [ensureLoaded])
 
-  // Land on something readable instead of an empty pane: once the documents
-  // are in, open the first file if the sidebar hasn't already picked one.
-  useEffect(() => {
-    if (!loaded || activeId != null || topicDocument) return
-    const firstFile = documents.find((d) => !d.isFolder)
-    if (firstFile) openDocument(firstFile.id)
-  }, [loaded, activeId, topicDocument, documents, openDocument])
-
   const selected = documents.find((d) => d.id === activeId) ?? null
 
   return (
@@ -66,6 +59,13 @@ export default function ReasonEditorPage() {
           seeds the co-editing display name; mounted once, renders nothing. */}
       <Suspense>
         <SharedCardOpener />
+      </Suspense>
+      {/* Opens whichever file the sidebar's `?doc=`/`?topic=` link names —
+          and, failing that, the first one — so a click from any sidebar
+          (including `/videos`, which is its own layout branch) brings this
+          column up with that file loaded. Renders nothing. */}
+      <Suspense>
+        <ReasonDocsRouteSync />
       </Suspense>
       {/* The app sidebar carrying these panels is `hidden md:flex`, so below
           that breakpoint they ride along at the top of the editor instead.

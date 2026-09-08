@@ -57,6 +57,7 @@ describe("sign-in origin check", () => {
     "debate-ai.com",
     "ebate.app",
     "www.debate-ai.com",
+    "www.ebate.app",
     // Preview deployments, which the previous `trustedOrigins` list covered
     // with the same wildcards and which must keep working.
     "debate-ai-dev.example.workers.dev",
