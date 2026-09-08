@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "debate-data-sync": "workspace:*",
+    "debate-research-evidence": "workspace:*",
     "framer-motion": "^12.36.0",
     "fuse.js": "^7.1.0",
     "grab-url": "^1.6.7",

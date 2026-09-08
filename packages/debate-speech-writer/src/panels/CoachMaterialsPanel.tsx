@@ -84,6 +84,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -638,11 +639,11 @@ export function CoachMaterialsPanel() {
       )}
 
       {library.totalMaterials === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {totalUnfiltered === 0
-            ? "No coach materials uploaded yet. Add one above to see it here."
-            : "No materials match this search/tag filter."}
-        </div>
+        totalUnfiltered === 0 ? (
+          <EmptyState title="No coach materials uploaded yet." message="Add one above to see it here." />
+        ) : (
+          <EmptyState title="No materials match this search/tag filter." />
+        )
       ) : (
         <div className="space-y-4">
           {library.groups.map((group) => (

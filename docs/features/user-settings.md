@@ -471,3 +471,23 @@ new render test.
   exporting `PanelShell`/`PanelSection` is now migrated; only
   `debate-speech-writer`'s two panels remain, still blocked on the
   cross-package-dependency gap named earlier in this section.
+
+  A further slice closed that cross-package-dependency gap itself, for both
+  the `EmptyState` and `PanelShell`/`PanelSection` follow-ups: `debate-research-evidence`'s
+  own dependency tree (`debate-card-parser` plus a few UI/parsing libraries) has no edge
+  back to `debate-speech-writer` or `debate-videos`, so it was added as a plain
+  `"debate-research-evidence": "workspace:*"` dependency to both packages'
+  `package.json` (`debate-round` was not an option — it already depends on both packages, so
+  pointing either back at it would be circular). `JudgeProfilesPanel`/`CoachMaterialsPanel`
+  (`debate-speech-writer`) and `StandingsPanel` (`debate-videos`) now import `EmptyState` from
+  `debate-research-evidence/src/ui/panels/panel-shell` the same way `debate-contributor-progress`
+  and every other already-migrated package does, closing the last two packages named in the
+  "duplicated empty states" survey above. `PanelShell`/`PanelSection` adoption for these same
+  three panels is now reachable the same way, but wasn't done in this slice — the dependency
+  edge only unblocks it — so it remains a small, well-scoped, not-yet-picked-up follow-up.
+  A `Pill` adoption spot-check the same slice ran across every panel package
+  turned up only two hand-rolled "pill" chip candidates repo-wide, and left both alone:
+  `debate-team-collaboration`'s `SharedCardsPanel` "share with contact" chips are interactive
+  toggle `<button>`s with selected/hover states `Pill`'s display-only `<span>` has no vocabulary
+  for, and `debate-videos`'s `LeaderboardDataRow` tournament chips live in the package this
+  slice just unblocked but hasn't yet migrated onto `PanelShell` conventions.

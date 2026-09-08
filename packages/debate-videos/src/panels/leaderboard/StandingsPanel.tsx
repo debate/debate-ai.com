@@ -33,6 +33,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../../ui/primitives/badge"
 import { Button } from "../../ui/primitives/button"
 import { Input } from "../../ui/primitives/input"
@@ -466,9 +467,7 @@ export function StandingsPanel() {
           </span>
         </div>
         {standings.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            No tournament results logged yet. Log one above, or bulk-import a CSV.
-          </p>
+          <EmptyState title="No tournament results logged yet." message="Log one above, or bulk-import a CSV." />
         ) : (
           <Table>
             <TableHeader>

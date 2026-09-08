@@ -7,6 +7,59 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 Close the `debate-speech-writer`/`debate-videos` `EmptyState` cross-package-dependency
+  gap.** Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the feature
+  catalog. So this slice picked the one concretely-scoped item left open under idea #17's
+  follow-up (4): the repo-wide duplicated-`EmptyState` sweep (see this file's Follow-ups
+  section) had left `debate-speech-writer`'s `JudgeProfilesPanel`/`CoachMaterialsPanel` and
+  `debate-videos`'s `StandingsPanel` unmigrated because neither package depended on
+  `debate-round` or `debate-research-evidence` — the two packages whose `panel-shell.tsx`
+  exports the shared `EmptyState` primitive — and adding a new cross-package dependency edge
+  was out of scope for a markup-only pass.
+
+  Checked for a cycle before adding the edge: `debate-round` already depends on both
+  `debate-speech-writer` and `debate-videos`, so pointing either of *those* back at
+  `debate-round` would be circular — but `debate-research-evidence`'s own dependency tree
+  (`debate-card-parser` plus a handful of UI/parsing libraries) has no edge back to either
+  package, so `debate-research-evidence: "workspace:*"` was added to both
+  `debate-speech-writer/package.json` and `debate-videos/package.json` instead (`bun install`
+  to refresh `bun.lock`), matching how `debate-contributor-progress` and other already-migrated
+  packages resolve the same import
+  (`import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"`).
+
+  All three panels' hand-rolled `<div className="p-6 text-center text-sm
+  text-muted-foreground">…</div>` (or, for `StandingsPanel`, an already-near-identical
+  hand-copied `rounded-lg border border-dashed border-border p-6 text-center text-sm
+  text-muted-foreground` `<p>`) now render `<EmptyState>`, each message split on its first
+  "…yet." sentence into `title`/`message` the same way every prior `EmptyState` migration
+  slice in this repo did: `JudgeProfilesPanel`'s "No judge profiles yet." / "Log a judged round
+  above to build one.", `StandingsPanel`'s "No tournament results logged yet." / "Log one
+  above, or bulk-import a CSV.", and `CoachMaterialsPanel`'s "No coach materials uploaded yet."
+  / "Add one above to see it here." — its second, dynamic no-search-match message ("No
+  materials match this search/tag filter.") has no "…yet." to split on, so it's passed as
+  `title` alone, matching `FeaturesPanel`'s empty-search-state precedent.
+
+  This closes the last two packages named in the "duplicated empty states" half of idea #17's
+  follow-up (4) — see this file's Follow-ups section and `docs/features/user-settings.md`'s
+  Known gaps for the full history of what's been swept.
+
+  No new tests added — markup-only change; the one existing test that touches this string
+  (`debate-speech-writer/test/team-coach-materials.test.ts`'s
+  `buildCoachMaterialLibrarySummaryText` case) exercises a separate pure-logic summary builder,
+  not this panel's markup, and still passes unchanged. Ran the full verification gate: `bun
+  install` (refreshed `bun.lock` for the two new workspace edges), `bun run test` (341 files,
+  7084 tests passing), `bun run typecheck` (17/17 packages green), `debate-speech-writer`'s own
+  `bunx vitest run` (20 test files, 401 tests) and `bunx tsc --noEmit`, `debate-videos`'s own
+  `bunx vitest run` (12 test files, 139 tests) and `bunx tsc --noEmit`, and `bun run build:web`
+  (production build, succeeded).
+
 - **🧩 `PanelShell`/`PanelSection` adoption across `debate-practice-drills`
   panels.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
@@ -1563,6 +1616,16 @@ _No task currently in progress._
   the shared `EmptyState` primitive (`debate-round`'s or
   `debate-research-evidence`'s `src/ui/panels/panel-shell`) — currently out
   of scope since neither package depends on either.
+  **Update:** closed — see the Tracker Status entry above. Both packages now
+  depend on `debate-research-evidence: "workspace:*"` (confirmed non-circular:
+  `debate-research-evidence`'s own dependency tree has no edge back to either
+  package, unlike `debate-round`, which already depends on both and so would
+  have been circular) and all three panels now render the shared
+  `EmptyState`. The new dependency edge also unblocks — but does not itself
+  close — `PanelShell`/`PanelSection`/`Pill` adoption for these same three
+  panels; that's a separate, still-open follow-up (see below), since (per
+  the note there) adopting `PanelShell` is a visible design change that
+  needs its own deliberate slice, not a side effect of an `EmptyState` swap.
 - The broader "`PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is
   still unaudited" half of idea #17's follow-up (4) remains open — see
   `docs/features/user-settings.md`'s Known gaps for the full history of
@@ -1604,3 +1667,22 @@ _No task currently in progress._
   primitive convention" half of follow-up (4) remains open more generally
   (each pass so far has searched for one specific pattern, not exhaustively
   compared every panel against every shared primitive).
+  **Update:** the cross-package-dependency gap itself is now closed (see the
+  Tracker Status entry above and the `EmptyState` follow-up bullet above) —
+  `debate-speech-writer` and `debate-videos` both now depend on
+  `debate-research-evidence`, so `JudgeProfilesPanel`/`CoachMaterialsPanel`/
+  `StandingsPanel` could adopt `PanelShell`/`PanelSection` in a future slice
+  the same way every other package's panels already have. That slice hasn't
+  been done yet — closing the dependency gap only unblocks it — so these
+  three panels remain a small, well-scoped, not-yet-picked-up follow-up. A
+  `Pill` adoption pass was also spot-checked this run: aside from
+  `panel-shell.tsx` itself, only two hand-rolled "pill" chip candidates
+  turned up repo-wide (`grep` for `rounded-full`+`border`+`px-2`+`text-xs`
+  across every panel), and neither is a clean fit —
+  `debate-team-collaboration`'s `SharedCardsPanel` "share with contact"
+  chips are interactive toggle `<button>`s with selected/hover states
+  `Pill`'s display-only `<span>` has no vocabulary for, and
+  `debate-videos`'s `LeaderboardDataRow` tournament chips sit in the same
+  `debate-videos` package this slice just unblocked but hasn't yet migrated.
+  So `Pill` adoption stays open, folded into the same not-yet-picked-up
+  follow-up above rather than tracked separately.
