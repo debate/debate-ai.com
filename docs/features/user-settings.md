@@ -402,3 +402,38 @@ new render test.
   per-item loop `<h2>` (one per matchup/briefing/round) was left alone as a
   repeated row heading, not a panel/section header. `debate-contributor-
   progress` and `debate-practice-drills` remain unaudited.
+  A further slice closed `debate-contributor-progress` (npm package name
+  `debate-community`): it already depends on `debate-research-evidence` (the
+  same `./ui/panels/panel-shell` module every one of its 9 panels already
+  imported `EmptyState`/`StatGrid`/`StatTile`/`MeterBar` from), so no new
+  cross-package dependency was needed. All 9 panels' top-level `<h1>`-title-
+  plus-description header moved onto `PanelShell`: `ContributionLeaderboardPanel`,
+  `CoachingProgramRosterAnalyticsPanel`, `ContributorAwardsPanel`,
+  `DailyBestCardPanel`, `ProgressUnlocksPanel`, `QuestStreaksPanel`,
+  `ContributorProfilePanel`, `CommunityResearchHubPanel`, and
+  `DailyQuestsPanel` (`NewsStreamPanel`, the package's 10th panel, has no
+  matching header shape). Each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section was also migrated onto `PanelSection`:
+  `CoachingProgramRosterAnalyticsPanel`'s "Recent challenge results"/"Program
+  calendar", `ContributorProfilePanel`'s "Badges"/"Top Contributor
+  Awards"/"Endorsements received"/"Endorsements given", `CommunityResearchHubPanel`'s
+  conditional "For You" strip, and `DailyQuestsPanel`'s "Team competition"
+  (kept its own `border-dashed` styling via `PanelSection`'s `className` prop,
+  mirroring `OpponentTeamProfilesPanel`'s bordered-section convention). A
+  description containing embedded markup (`ContributionLeaderboardPanel`'s
+  tooltip-carrying paragraph, `CommunityResearchHubPanel`'s second
+  machine-generated summary line) was kept as a plain child element instead of
+  forced through `PanelShell`'s `description` prop. `ContributorAwardsPanel`
+  and `DailyBestCardPanel` had no `<h2>`-titled sub-section to migrate (their
+  labeled blocks — "Hall of Fame", "Peer Nominations", "Today's leader",
+  "Best of the week", "Announced history" — use a plain `<div>` label, not a
+  heading), so only their top-level header moved onto `PanelShell`, matching
+  `TopicCoverageDashboardPanel`'s precedent for the same shape.
+  `ContributorProfilePanel`'s title is a per-contributor id rather than a
+  fixed panel name, and its header also carried a "You"/tier `Badge` pair
+  inline next to the `<h1>` rather than in a separate description — moved
+  into `PanelShell`'s `actions` slot (right-aligned) instead of leaving the
+  header unmigrated, the one deliberate layout adjustment in this slice.
+  `CommunityResearchHubPanel`'s and `CoachingProgramRosterAnalyticsPanel`'s
+  per-category/per-day loop `<h2>`s were left alone as repeated row headings,
+  not panel/section headers. Only `debate-practice-drills` remains unaudited.
