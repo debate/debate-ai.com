@@ -7,6 +7,70 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗑️ Remove dead `debate-videos` `panels/rankings/` duplicate tree
+  (Follow-up item).** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/
+  `documents`/`saved_flows`/`saved_rounds` and 25+ other `saved_*` D1
+  tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice picked up the open
+  Follow-up: "`debate-videos`' leaderboard panels appear to exist as a
+  duplicated tree... not yet investigated for which tree (if either) is
+  dead code versus which is actually wired up to a route. Needs its own
+  slice to confirm before deleting anything."
+
+  Confirmed via a repo-wide grep of every `RankingsLeaderboardPanel`/
+  `DebateRankingsPanel`/`StandingsPanel`/`panels/rankings` reference that
+  `packages/debate-videos/src/panels/leaderboard/RankingsLeaderboardPanel`
+  is the tree `debate-videos`' `index.ts` exports as `LeaderboardPanel` and
+  that `apps/debate-ai.com/app/rank/page.tsx` (the live `/rank` route)
+  renders. `packages/debate-videos/src/panels/rankings/DebateRankingsPanel`
+  and its five sibling files (`LeaderboardChampionBanner.tsx`,
+  `LeaderboardDataRow.tsx`, `LeaderboardFilterBar.tsx`,
+  `LeaderboardTable.tsx`, `LeaderboardTableHeader.tsx`,
+  `leaderboardTypes.ts`, `leaderboardUtils.ts`) had zero references anywhere
+  outside their own directory — not `index.ts`, not any route, not any doc,
+  not any test. A file-by-file diff against the `leaderboard/` tree showed
+  5 of 7 shared filenames were byte-identical duplicates, and the main
+  panel (`DebateRankingsPanel` vs. `RankingsLeaderboardPanel`) was a strict
+  subset missing the later-added "Standings" tab (`StandingsPanel`) — i.e.
+  `rankings/` was `leaderboard/`'s predecessor, left behind as dead code
+  after the rename/rebuild rather than deleted. Deleted the entire
+  `packages/debate-videos/src/panels/rankings/` directory (8 files, ~1,090
+  lines). No doc referenced the dead directory, so no doc updates were
+  needed; no new tests were needed since this removes unreferenced code
+  rather than changing behavior — the existing `leaderboard-utils.test.ts`
+  (which already imports only from `leaderboard/`) continues to cover the
+  live tree.
+
+  Ran the full verification gate against a clean `bun install` (removed and
+  reinstalled all `node_modules`): `bun run test` (331 test files, 6,989
+  tests passing), `bunx turbo run typecheck` (16/17 tasks green —
+  `debate-ai-web#typecheck` fails identically with this change reverted, in
+  a git worktree of `origin/master`, and in a fresh `bun install` of this
+  same branch, all with an unrelated `@ai-sdk/provider` v2-vs-v3 type
+  conflict pulled in transitively through `write-language`; the resolution
+  bun's flat-node_modules hoisting picks for that conflicting transitive
+  dependency appears to vary between separate `bun install` runs — same
+  `bun.lock`, same `package.json` in every case checked — independent of
+  this change), and `bun run build:web` (production build completes
+  successfully, including the service-worker asset-list generation step and
+  the `/rank` route). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable.
+
+  **Follow-up:** the `debate-ai-web#typecheck` / `write-language` /
+  `@ai-sdk/provider` version-conflict flakiness above is pre-existing and
+  unrelated to this change, but is newly documented here (not previously
+  called out in this tracker) — worth a dedicated slice to either pin
+  `write-language`'s `@ai-sdk/provider` peer to the same major version the
+  rest of the app uses, or otherwise make the hoisted resolution
+  deterministic, so `typecheck` stops being install-order-dependent.
+
 - **📋 Speech Transcript Summaries — cross-tab live update.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to
