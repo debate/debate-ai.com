@@ -7,6 +7,73 @@ _No task currently in progress._
 
 ### Completed
 
+- **⚖️ AI Judge Decision — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap. Checked the
+  currently open PR list first (only #657, `VulnerabilityChartsPanel`/
+  response-outcome-charts, was in flight) and then grepped every
+  `panels/*.tsx` file in `debate-practice-drills` directly (not the
+  possibly-stale prose in this file) for a `storage`-event listener to find
+  a genuinely still-open, unclaimed panel: `JudgeDecisionPanel` (the AI
+  Judge Decision panel).
+
+  `JudgeDecisionPanel` reads its history through
+  `hooks/useJudgeDecisions.ts` rather than `localStorage` directly, so
+  unlike every prior panel in this series (which each wire the listener
+  straight into the panel component), this slice added the listener inside
+  the hook itself — the hook is the sole owner of the `groups` state the
+  panel renders, and the panel's own state (Round ID, side names, selected
+  multi-judge paradigms) lives entirely outside the hook, so a refresh
+  there can never stomp an in-progress form. Extended
+  `packages/debate-practice-drills/src/state/live-update.ts` (previously
+  holding only `JudgeParadigmPickerPanel`'s predicate) with
+  `JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isJudgeDecisionPanelLiveUpdateStorageEvent`, covering the hook's one
+  backing store: `judgeDecisions` (`state/judgeDecisions.ts`).
+  `useJudgeDecisions` now subscribes to `window`'s `storage` event and
+  calls `setGroups(buildJudgeDecisionsPanelView())` when the predicate
+  matches — a decision requested, cleared, or bulk-cleared for a round in
+  one tab now shows up in every other open tab's already-rendered history
+  without a manual reload.
+
+  See `docs/features/judge-paradigm-selections.md`'s "Cross-tab live
+  update" section (extended with `JudgeDecisionPanel`'s own case) and
+  `docs/features/shared-flow-sync.md`'s updated Known gaps bullet (added
+  `JudgeDecisionPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and
+  unrelated/substring-matching keys staying ignored, mirroring the existing
+  `JudgeParadigmPickerPanel` cases in the same file). `UserSettingsPanel`
+  (`debate-round`), `VulnerabilityChartsPanel` (`debate-practice-drills` —
+  claimed by open PR #657), `CoachingProgramsPanel`
+  (`debate-team-collaboration`), and every other panel in
+  `debate-practice-drills` still missing a `storage`-event listener
+  (`AiVersusRoundPanel`, `ArgumentTreePanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowSummariesPanel`, `OpponentPersonaPickerPanel`,
+  `PracticeRoundSimulatorPanel`, `WordCountRoundsPanel`) remain open for a
+  future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5169 passing, up from
+  5165 at HEAD before this change — the 8 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green, `debate-ai-web` has
+  no `typecheck` script), and confirmed `bun run build:web` fails
+  identically on this branch and on the branch's own HEAD before this
+  change (`UNLOADABLE_DEPENDENCY` on the native `canvas` binding during the
+  RSC server-bundle scan — a pre-existing sandbox/toolchain limitation
+  unrelated to this change, not something this run introduced or could fix
+  without rebuilding that native dependency for this container). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
 - **⚖️ Judge Paradigm Picker — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

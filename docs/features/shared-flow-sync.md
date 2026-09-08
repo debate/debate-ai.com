@@ -497,7 +497,7 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`topic-coverage-dashboard.md`](topic-coverage-dashboard.md)'s "Cross-tab
   live update"), `OpponentTeamProfilesPanel` (see
   [`opponent-team-profiles.md`](opponent-team-profiles.md)'s "Cross-tab live
-  update"), `JudgeParadigmPickerPanel` (see
+  update"), `JudgeParadigmPickerPanel` and `JudgeDecisionPanel` (see
   [`judge-paradigm-selections.md`](judge-paradigm-selections.md)'s
   "Cross-tab live update" — the first `live-update.ts` in
   `debate-practice-drills`), and `FlowEditLogPanel` itself (see "Cross-tab
