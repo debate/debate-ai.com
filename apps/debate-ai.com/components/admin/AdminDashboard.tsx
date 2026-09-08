@@ -117,16 +117,14 @@ export function AdminDashboard() {
       const res = await fetch("/api/admin/youtube/resync", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.details || data?.error || "Resync failed");
+      // Only the fields `SyncRun` declares — the rest of the run row the API
+      // returns is not read here.
       setLastRun({
         id: data.runId,
         status: "success",
-        triggeredBy: null,
         channelsSynced: data.channelsSynced,
-        videosFetched: data.videosFetched,
         videosUpserted: data.videosUpserted,
         error: null,
-        startedAt: new Date().toISOString(),
-        finishedAt: new Date().toISOString(),
       });
       await loadFirstPage(style);
     } catch (error) {
