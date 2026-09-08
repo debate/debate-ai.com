@@ -41,6 +41,8 @@ export default function ReasonEditorPage() {
     topicDocument,
     loading,
     saving,
+    unsaved,
+    saveFailed,
     ensureLoaded,
     selectTab,
     closeTab,
@@ -128,7 +130,28 @@ export default function ReasonEditorPage() {
                 className="max-w-sm h-8 text-sm font-medium"
                 placeholder="Untitled"
               />
-              {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
+              {topicDocument ? (
+                <span className="text-xs text-muted-foreground">Public topic starter</span>
+              ) : (
+                /* Three states, not one: a write in flight, an edit still
+                   waiting on its debounce, and a write that failed and is
+                   being retried — the last of which used to show as a
+                   "Saving…" that simply never went away. */
+                <span
+                  className={cn(
+                    "text-xs",
+                    saveFailed ? "text-destructive" : "text-muted-foreground",
+                  )}
+                >
+                  {saveFailed
+                    ? "Couldn't save — retrying…"
+                    : saving
+                      ? "Saving…"
+                      : unsaved
+                        ? "Unsaved changes"
+                        : ""}
+                </span>
+              )}
               {selected && (
                 <div className="ml-auto">
                   {/* Account-linked live sharing (contacts list, /contacts).
