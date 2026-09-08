@@ -7,6 +7,126 @@ _No task currently in progress._
 
 ### Completed
 
+- **fix(judge-decision): restore a lost cross-tab live-update export that broke `bun run build:web`.**
+  Before picking a new item, this run's routine "inspect the repository's
+  current development state" step ran the full verification gate
+  (`bun run test`, `bunx turbo run typecheck`, `bun run build:web`) as a
+  sanity check on `master`'s current tip, and found `build:web` completely
+  failing: `[MISSING_EXPORT] "isJudgeDecisionPanelLiveUpdateStorageEvent" is
+  not exported by "packages/debate-practice-drills/src/state/live-update.ts"`,
+  imported by `hooks/useJudgeDecisions.ts`. `bunx turbo run typecheck` failed
+  the same way (`debate-practice-rounds#typecheck`).
+
+  Root-caused via `git log -- .../state/live-update.ts` plus
+  `git rev-list --parents`: two earlier autonomous runs
+  (`887ad86` "feat(response-outcome-charts)" and `4edd8c1`
+  "feat(judge-decision)") both branched from the same parent commit
+  (`0bfaf05`) and each independently appended their own predicate function
+  to this same file — a real concurrent-edit collision, not a bad manual
+  merge. `887ad86`'s version is the one every later PR in this file's
+  history (`#664`, `#667`, `#669`, `#670`, `#674`, `#675`) built on top of;
+  `4edd8c1`'s `JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isJudgeDecisionPanelLiveUpdateStorageEvent` addition was silently dropped
+  along the way even though `4edd8c1` itself is still an ancestor of
+  `master`'s tip and its *other* file, `hooks/useJudgeDecisions.ts` (plus
+  its already-accurate `docs/features/judge-paradigm-selections.md`
+  write-up), survived untouched. This also explains this tracker's own
+  previous entry above ("⚖️ AI Judge Decision — cross-tab live update" title
+  with a CoachingProgramsPanel-shaped body) — a symptom of the same lost
+  update, not a separate bug.
+
+  Restored `JUDGE_DECISION_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isJudgeDecisionPanelLiveUpdateStorageEvent` into
+  `packages/debate-practice-drills/src/state/live-update.ts` (appended after
+  the existing entries, none of which were touched) verbatim from `4edd8c1`,
+  plus its file-header doc-comment mention and its four
+  `test/live-update.test.ts` cases (every backing-store key, the null-key
+  clear-all case, an unrelated key, and a substring-only match). No other
+  code changed — `useJudgeDecisions.ts`'s `storage`-event subscription was
+  already complete and correct; it just had nothing to import.
+
+  Ran the full verification gate again after the fix: `bun run test` (5261
+  passing, +4 for the restored predicate's cases), `bunx turbo run
+  typecheck` (16/16 packages green, `debate-practice-rounds` included), and
+  `bun run build:web` (now builds cleanly). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+  Bundled into the same PR as the next entry below, since this run's normal
+  verification gate couldn't otherwise report a clean `build:web`.
+- **⚙️ User Settings — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — the one
+  remaining panel two prior runs had each left open for a future run,
+  `UserSettingsPanel` (`debate-round`), since unlike every other panel
+  closed so far its `form` is a live, directly-editable draft rather than a
+  derived list/roster view, so closing it needed refreshing only the
+  persisted values, not stomping an unsaved in-progress edit. This run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`) and every
+  unmerged branch's diff (none touch `UserSettingsPanel.tsx`,
+  `state/userSettings.ts`, or `flow/live-update.ts`) before confirming via a
+  direct grep that no other branch had already claimed this panel.
+
+  Added `flow/live-update.ts`'s `USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isUserSettingsPanelLiveUpdateStorageEvent`, covering the four
+  `localStorage` keys the panel reads directly: `settings` (via
+  `state/userSettings.ts`'s new `refreshLocalUserSettingsFromStorage`,
+  needed because the local `settings` singleton only reads `localStorage`
+  on its own `init()`/`loadFromLocalStorage()` call, not automatically on
+  every read — so a different tab's `applyUserSettingsToLocalStore` write
+  would otherwise go unnoticed here), `color-theme`, `theme` (next-themes'
+  own default storage key), and `fontFamily`.
+
+  Unlike every prior panel this Known gap bullet lists, `UserSettingsPanel`'s
+  `form` is a Save-gated draft the user directly edits, not a derived
+  view — so a naive "re-read and overwrite on every matching `storage`
+  event" would stomp an in-progress, not-yet-saved edit the moment another
+  tab (or `theme-dropdown.tsx`'s dock picker) changed anything. Instead,
+  `UserSettingsPanel.tsx` now tracks a `baselineRef` (the values `form` was
+  last loaded or saved from) and its `storage`-event handler refreshes each
+  of the four form fields *individually*, only when that field's current
+  value still matches its baseline entry — an edited-but-unsaved field is
+  left alone. `fontFamily` (a separate, non-form, always-immediate-apply
+  field) is refreshed unconditionally, since there's no draft to protect. A
+  refreshed `colorTheme` also reapplies the `theme-*` DOM class in this tab
+  (extracted into a new `applyColorThemeClass` helper, reused by the
+  existing `applyThemeLocally`), since that's per-tab in-memory `document`
+  state a `storage` event alone doesn't update; `themeMode`'s equivalent DOM
+  effect is already handled by next-themes' own internal storage listener.
+  Saving also updates `baselineRef` to the just-saved values, so a field
+  isn't treated as permanently "dirty" after a successful Save.
+
+  See `docs/features/user-settings.md`'s new "Cross-tab live update" section
+  and `docs/features/shared-flow-sync.md`'s updated Known gaps bullet (added
+  `UserSettingsPanel` to the closed list).
+  Vitest-covered: `packages/debate-round/test/live-update.test.ts` (every
+  backing-store key, the null-key clear-all case, an unrelated key, and
+  substring-only matches, mirroring every other panel's cases in that file)
+  and `packages/debate-round/test/userSettings.test.ts` (new
+  `refreshLocalUserSettingsFromStorage` describe block: picks up a value
+  written straight to `localStorage`, unlike plain `readLocalUserSettings`,
+  and returns the current defaults when nothing is stored). The per-field
+  dirty-tracking behavior itself has no dedicated render test — this repo
+  has no component-render test for any `debate-round` panel — matching how
+  every prior cross-tab live-update slice here was verified via its pure
+  predicate function plus typecheck/build, not a new render test.
+
+  Ran the full verification gate: `bun run test` (5261 passing — the 4 new
+  `isUserSettingsPanelLiveUpdateStorageEvent` cases plus 2 new
+  `refreshLocalUserSettingsFromStorage` cases, on top of the 4 restored
+  judge-decision cases from the previous entry), `bunx turbo run typecheck`
+  (16/16 typecheck-bearing packages green), and `bun run build:web` (passed
+  cleanly). No `lint`/`format:check` script exists anywhere in this repo, so
+  that step was skipped as not applicable.
 - **⚖️ AI Judge Decision — cross-tab live update.** Another repeat of the
   standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
