@@ -63,7 +63,6 @@
         "autoprefixer": "^10.4.27",
         "better-auth": "^1.6.13",
         "better-auth-cloudflare": "^0.3.0",
-        "canvas": "^3.2.3",
         "chat-agent-toolkit": "^1.2.273",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",

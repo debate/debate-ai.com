@@ -1,6 +1,6 @@
 name: Native Wrapper Release
 
-# Builds packages/native-wrapper for every desktop platform (Windows, macOS
+# Builds apps/debate-native-wrapper for every desktop platform (Windows, macOS
 # universal, Linux) plus a best-effort Android .aab, and attaches the
 # installers to a GitHub Release. Triggered by a `native-wrapper-v*.*.*` tag
 # (a distinct prefix from any web-app release tags this repo uses elsewhere)
@@ -89,7 +89,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: packages/native-wrapper/src-tauri
+          workspaces: apps/debate-native-wrapper/src-tauri
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -122,7 +122,7 @@ jobs:
           WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
           WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
         with:
-          projectPath: packages/native-wrapper
+          projectPath: apps/debate-native-wrapper
           tagName: ${{ github.event_name == 'push' && github.ref_name || '' }}
           releaseName: ${{ github.event_name == 'push' && format('Native Wrapper {0}', github.ref_name) || '' }}
           releaseId: ${{ needs.prepare-release.outputs.release_id }}
@@ -158,7 +158,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: packages/native-wrapper/src-tauri
+          workspaces: apps/debate-native-wrapper/src-tauri
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -168,14 +168,14 @@ jobs:
         run: bun install --ignore-scripts
 
       - name: Generate the gen/android project
-        working-directory: packages/native-wrapper
+        working-directory: apps/debate-native-wrapper
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/28.0.13004108
         run: npx @tauri-apps/cli@2 android init
 
       - name: Decode release keystore (skips signing if not configured)
         id: keystore
-        working-directory: packages/native-wrapper
+        working-directory: apps/debate-native-wrapper
         run: |
           if [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
             echo "configured=false" >> "$GITHUB_OUTPUT"
@@ -191,7 +191,7 @@ jobs:
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Build .aab
-        working-directory: packages/native-wrapper
+        working-directory: apps/debate-native-wrapper
         env:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/28.0.13004108
         run: npx @tauri-apps/cli@2 android build --aab
@@ -200,7 +200,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: native-wrapper-android
-          path: packages/native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
+          path: apps/debate-native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
           if-no-files-found: warn
 
       - name: Attach to release
@@ -209,7 +209,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           shopt -s globstar nullglob
-          files=(packages/native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab)
+          files=(apps/debate-native-wrapper/src-tauri/gen/android/app/build/outputs/bundle/**/*.aab)
           if [ ${#files[@]} -gt 0 ]; then
             gh release upload "${GITHUB_REF_NAME}" "${files[@]}" --clobber
           fi

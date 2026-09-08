@@ -24,7 +24,9 @@ import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
  * "Open Tabs" list. They live here rather than in `/reason-editor`'s own
  * `<aside>` — which this shell already wrapped, so that page rendered two
  * sidebars side by side — and so stay reachable from every tool page the nav
- * links to.
+ * links to. `/videos` keeps its own sidebar and so is not wrapped by this
+ * shell; it mounts the same panels through `LecturesPage`'s `docsSlot`, in
+ * the same slot position (see `docs/features/reason-docs-sidebar.md`).
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

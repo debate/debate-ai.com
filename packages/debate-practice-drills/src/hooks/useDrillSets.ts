@@ -23,6 +23,13 @@
  * local apply is never blocked by a sync failure, matching every other
  * synced-history hook's convention.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isDrillSetsPanelLiveUpdateStorageEvent`,
+ * mirroring `useWordCountRounds`'s own `storage`-event subscription — a
+ * drill set generated, completed, scripted, review-scheduled, cleared, or
+ * synced from the account in another same-origin tab refreshes this one
+ * too.
+ *
  * @module hooks/useDrillSets
  */
 
@@ -46,6 +53,7 @@ import {
   listSavedDrillSets,
   saveDrillSetToAccount,
 } from "../round/drill-sets-client";
+import { isDrillSetsPanelLiveUpdateStorageEvent } from "../state/live-update";
 import type { Flow } from "debate-round/src/types/flow";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
@@ -124,6 +132,21 @@ export function useDrillSets(): UseDrillSetsResult {
       setSynced(remoteAvailable);
       if (changed) setDrillSets(buildDrillSetsPanelView());
     });
+  }, []);
+
+  /**
+   * Live-update the drill-set list when another browser tab generates,
+   * completes, scripts, review-schedules, clears, or account-syncs a drill
+   * set. A `storage` event never fires in the tab that made the write, only
+   * in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isDrillSetsPanelLiveUpdateStorageEvent(event)) return;
+      setDrillSets(buildDrillSetsPanelView());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const saveDrillSet = useCallback((record: DrillSetRecord) => {

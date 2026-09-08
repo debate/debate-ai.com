@@ -8,6 +8,7 @@ import {
   PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   STRATEGY_LIVE_UPDATE_STORAGE_KEYS,
+  USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   isFlowAnnotationsPanelLiveUpdateStorageEvent,
   isFlowEditLogPanelLiveUpdateStorageEvent,
   isFlowLiveUpdateStorageEvent,
@@ -16,6 +17,7 @@ import {
   isPrepNoteNotificationsLiveUpdateStorageEvent,
   isPrepNotesPanelLiveUpdateStorageEvent,
   isStrategyLiveUpdateStorageEvent,
+  isUserSettingsPanelLiveUpdateStorageEvent,
 } from "../src/flow/live-update";
 
 describe("isFlowLiveUpdateStorageEvent", () => {
@@ -197,5 +199,28 @@ describe("isOpponentTeamProfilesPanelLiveUpdateStorageEvent", () => {
     expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentRoundRecordEditHistoryArchive" })).toBe(
       false,
     );
+  });
+});
+
+describe("isUserSettingsPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isUserSettingsPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "wordLimitPresets" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a covered store name as a substring", () => {
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "settingsBackup" })).toBe(false);
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "old_color-theme" })).toBe(false);
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "themeMode" })).toBe(false);
   });
 });

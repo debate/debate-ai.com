@@ -1,17 +1,22 @@
 /**
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
- *   College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
- *   Favorites (h2, plain link)
- *   Lectures (h2, expandable) -> lecture categories (h3)
- *   Apps / Coaching / Research / Practice (h2, expandable) -> tool links (h3)
+ *   Videos (h1, expandable, heading-only)
+ *     -> College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
+ *     -> Favorites (h2, plain link)
+ *     -> Lectures (h2, expandable) -> lecture categories
+ *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
+ *
+ * The h1 sections are groupings, not destinations: they carry no `href`, so
+ * clicking one only toggles it, and they start expanded.
  */
 
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Clapperboard } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
@@ -42,6 +47,7 @@ export function VideoSidebarTree({
   lecturesExpanded,
   onToggleLectures,
 }: VideoSidebarTreeProps) {
+  const [videosExpanded, setVideosExpanded] = useState(true);
   const [collegeExpanded, setCollegeExpanded] = useState(true);
 
   // Re-open the College Debates node if the user navigates straight to one
@@ -49,6 +55,7 @@ export function VideoSidebarTree({
   useEffect(() => {
     if (activeId && COLLEGE_CHILD_IDS.includes(activeId)) {
       setCollegeExpanded(true);
+      setVideosExpanded(true);
     }
   }, [activeId]);
 
@@ -69,7 +76,13 @@ export function VideoSidebarTree({
 
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
-      <div>
+      <TreeItem
+        level={1}
+        title="Videos"
+        icon={Clapperboard}
+        expanded={videosExpanded}
+        onToggleExpand={() => setVideosExpanded((v) => !v)}
+      >
         <TreeItem
           level={2}
           href="/videos/college"
@@ -84,37 +97,37 @@ export function VideoSidebarTree({
           <TreeItem level={3} href="/videos/ld" title="LD Debates" count={counts?.ld} isActive={activeId === "ld"} />
           <TreeItem level={3} href="/videos/topPicks" title="Greatest of All-Time" isActive={activeId === "topPicks"} />
         </TreeItem>
-      </div>
 
-      <TreeItem
-        level={2}
-        href="/videos/favorites"
-        title="Favorites"
-        count={counts?.favorites}
-        isActive={activeId === "favorites"}
-        icon={IconTrophy}
-      />
+        <TreeItem
+          level={2}
+          href="/videos/favorites"
+          title="Favorites"
+          count={counts?.favorites}
+          isActive={activeId === "favorites"}
+          icon={IconTrophy}
+        />
 
-      <TreeItem
-        level={2}
-        href="/videos/lectures"
-        title="Lectures"
-        count={counts?.lectures}
-        isActive={activeId === "lectures"}
-        expanded={lecturesExpanded}
-        onToggleExpand={onToggleLectures}
-        icon={IconLectures}
-      >
-        {lectureCategoryItems.map((item) => (
-          <TreeItem
-            key={item.id}
-            level={3}
-            href={buildLectureCategoryHref(item.id)}
-            title={item.title}
-            count={item.count}
-            isActive={selectedCategory === item.id || (item.id === "all" && !selectedCategory)}
-          />
-        ))}
+        <TreeItem
+          level={2}
+          href="/videos/lectures"
+          title="Lectures"
+          count={counts?.lectures}
+          isActive={activeId === "lectures"}
+          expanded={lecturesExpanded}
+          onToggleExpand={onToggleLectures}
+          icon={IconLectures}
+        >
+          {lectureCategoryItems.map((item) => (
+            <TreeItem
+              key={item.id}
+              level={3}
+              href={buildLectureCategoryHref(item.id)}
+              title={item.title}
+              count={item.count}
+              isActive={selectedCategory === item.id || (item.id === "all" && !selectedCategory)}
+            />
+          ))}
+        </TreeItem>
       </TreeItem>
 
       <ToolNavTree />

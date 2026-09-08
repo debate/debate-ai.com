@@ -281,6 +281,30 @@ and server error propagation). The hook (`hooks/useDrillSets.ts`) and API
 routes stay untested at the unit level, matching every other synced field's
 client/hook layer in this repo.
 
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `DrillSetsPanel`.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, generating, completing,
+scripting, review-scheduling, clearing, or account-syncing a drill set in
+one tab left every other open `/drills` tab showing a stale drill-set list
+until a manual reload.
+
+`useDrillSets` (`hooks/useDrillSets.ts`, in the `debate-practice-drills`
+package) now subscribes to `window`'s `storage` event and re-reads
+`buildDrillSetsPanelView()` whenever `state/live-update.ts`'s
+`isDrillSetsPanelLiveUpdateStorageEvent` matches — covering the hook's one
+backing store, `drillSets` (mirroring `useWordCountRounds`'s own
+`storage`-event subscription). A teammate generating, completing, scripting,
+review-scheduling, or clearing a drill set — or an account merge adopting a
+synced one — in one tab now shows up in every other open tab without a
+manual reload. The in-progress "Generate drills for current round" form's
+side-key field is untouched, matching every other closed panel's "refresh
+the derived view, not the draft" convention.
+
 ## Known gaps
 
 No further follow-up is currently tracked for the "📚 AI Drill Generator"

@@ -302,6 +302,44 @@ happens implicitly — the table only ever renders rows for the selected
 program's own `memberIds`), so this isn't scoped to the viewing coach's own
 account the way `drillReviewEvents` is.
 
+## Cross-tab live update
+
+`CoachingProgramsPanel` (the program list/board panel this doc otherwise
+covers, as opposed to the roster analytics panel above, which already had its
+own `storage`-event subscription) only refreshed its program list, roster
+"Flow recorded" badges, and open board on mount or right after its own
+create/remove/record/clear actions — a coach creating or removing a coaching
+program, or recording/clearing a roster member's flow, in another open tab
+never showed up here without a manual reload. This is the recurring "every
+other localStorage-backed panel in this repo still has no cross-tab
+live-update mechanism" gap tracked in `shared-flow-sync.md`.
+
+New `state/live-update.ts` (the first in this package) adds
+`COACHING_PROGRAMS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+`isCoachingProgramsPanelLiveUpdateStorageEvent`, covering the two stores the
+panel reads directly regardless of which board is open: `coachingPrograms`
+(the persisted program-config list) and `roundContributorFlows` (each roster
+member's recorded-flow badge). `CoachingProgramsPanel.tsx` now subscribes to
+`window`'s `storage` event and, when the predicate matches, refreshes the
+program list, re-derives the roster's recorded-contributor set, and — if a
+board is currently open — recomposes it.
+
+An open board also transitively depends on several other packages' stores
+(topic-sprint inputs, the group-challenge roster, the contribution feed, win
+events, and practice-round records, all read through
+`state/persistedCoachingProgramBoard.ts`) that this predicate deliberately
+leaves out, matching every other panel's "cover the store(s) this panel reads
+directly, not everything a composed view transitively depends on" convention
+(e.g. `JudgeDecisionPanel`'s hook-scoped predicate). A change to one of those
+deeper stores in another tab still shows up the next time the board is
+reopened (toggle "Hide board" then "View board" again) or the topic field is
+re-entered — it just doesn't force a live recompose while already open.
+
+Vitest-covered by `packages/debate-team-collaboration/test/live-update.test.ts`
+(every backing-store key, the `null`-key clear-all case, and
+unrelated/substring-matching keys staying ignored, mirroring every other
+package's `live-update.test.ts` cases).
+
 ## Known gaps
 
 - The program calendar's drill-review events are scoped to the viewing
@@ -309,3 +347,10 @@ account the way `drillReviewEvents` is.
   a coach can see for teammates today. Widening this to a real roster-wide
   view would need drill sets to carry an owning contributor id and a way to
   look them up across the roster, neither of which exists yet.
+- An open program board does not live-update against the topic-sprint,
+  group-challenge, contribution, win-event, or practice-round stores it
+  transitively composes (see "Cross-tab live update" above) — only the
+  program list and roster "Flow recorded" badges do. Widening the predicate
+  to cover the full composed board would need `state/live-update.ts` to
+  import every one of those stores' own keys (several from other packages),
+  left as a follow-up.
