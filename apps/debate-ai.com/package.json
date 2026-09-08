@@ -12,6 +12,7 @@
     "build:sw": "node lib/offline-sw/generate.cjs && webpack --config webpack.config.cjs && cp public/service-worker.js dist/client/service-worker.js",
     "start": "vinext start",
     "deploy": "npm run db:migrate:d1 && npm run build && vinext deploy --skip-build",
+    "deploy:upload": "node scripts/deploy-upload.mjs",
     "preview": "NODE_OPTIONS='--max-old-space-size=4096' vinext build && npm run build:sw && wrangler dev",
     "deploy:staging": "npm run build && vinext deploy --skip-build --env staging",
     "db:generate": "drizzle-kit generate",

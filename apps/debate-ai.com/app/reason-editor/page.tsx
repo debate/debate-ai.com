@@ -27,7 +27,6 @@ import { Loader2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
 import { topicStarterHtml } from "@/lib/topic-starters/content"
 import { cn } from "../../lib/ui/lib/utils"
-import { Input } from "../../lib/ui/primitives/input"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
@@ -46,7 +45,6 @@ export default function ReasonEditorPage() {
     ensureLoaded,
     selectTab,
     closeTab,
-    updateTitle,
     updateContent,
   } = useReasonDocs()
 
@@ -122,36 +120,12 @@ export default function ReasonEditorPage() {
 
         {selected || topicDocument ? (
           <>
+            {/* No rename field here: the tab strip above already names the
+                open document, and renaming lives in the sidebar file tree
+                (`ReasonDocsSidebarPanels` → `onRename`). This row is just
+                the status/sharing strip. */}
             <div className="flex items-center gap-2 px-4 py-2 border-b">
-              <Input
-                value={topicDocument?.title ?? selected?.title ?? ""}
-                onChange={(e) => selected && updateTitle(selected.id, e.target.value)}
-                readOnly={Boolean(topicDocument)}
-                className="max-w-sm h-8 text-sm font-medium"
-                placeholder="Untitled"
-              />
-              {topicDocument ? (
-                <span className="text-xs text-muted-foreground">Public topic starter</span>
-              ) : (
-                /* Three states, not one: a write in flight, an edit still
-                   waiting on its debounce, and a write that failed and is
-                   being retried — the last of which used to show as a
-                   "Saving…" that simply never went away. */
-                <span
-                  className={cn(
-                    "text-xs",
-                    saveFailed ? "text-destructive" : "text-muted-foreground",
-                  )}
-                >
-                  {saveFailed
-                    ? "Couldn't save — retrying…"
-                    : saving
-                      ? "Saving…"
-                      : unsaved
-                        ? "Unsaved changes"
-                        : ""}
-                </span>
-              )}
+              {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
               {selected && (
                 <div className="ml-auto">
                   {/* Account-linked live sharing (contacts list, /contacts).
