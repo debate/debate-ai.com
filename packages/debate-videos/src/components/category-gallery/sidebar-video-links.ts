@@ -42,7 +42,7 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
 
 /** Siblings of College Debates under the "Videos" heading. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
-  { id: "favorites", href: "/videos/favorites", title: "Favorites" },
+  { id: "favorites", href: "/videos/favorites", title: "My Favorites" },
   { id: "lectures", href: "/videos/lectures", title: "Lectures" },
 ];
 

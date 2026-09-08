@@ -10,11 +10,12 @@
 
 import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
-import type { CategoryType, TopicType, VideoFacets } from "../types/videos"
+import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
@@ -48,6 +49,8 @@ interface LecturesVideoGridViewProps {
   totalVideos: number
   /** Season/style counts for the filter dropdowns, or `null` before they load. */
   facets: VideoFacets | null
+  /** Popular keyword and tournament searches offered under the grid. */
+  searchSuggestions: VideoSuggestions
 
   // ---- Load state ----
   /** `true` while the initial video data is loading. */
@@ -165,6 +168,7 @@ export function LecturesVideoGridView({
   currentCategory,
   totalVideos,
   facets,
+  searchSuggestions,
   isLoading,
   errorMessage,
   isLoadingMore,
@@ -331,6 +335,15 @@ export function LecturesVideoGridView({
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
 
+        {/* One-click searches drawn from the library: popular debate terms and
+            the tournaments with the most rounds. */}
+        <VideoSearchSuggestions
+          suggestions={searchSuggestions}
+          searchTerm={searchTerm}
+          onSelect={onSearchChange}
+          className="mb-6"
+        />
+
         {isLoading ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Loading videos...</p>
@@ -341,7 +354,24 @@ export function LecturesVideoGridView({
           </div>
         ) : currentVideos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No videos found matching your filters.</p>
+            {showFavoritesOnly && favorites.size === 0 ? (
+              <>
+                <p className="text-muted-foreground">
+                  Star videos to add them to My Favorites.
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Click the star on any video and it will show up here.
+                </p>
+              </>
+            ) : showFavoritesOnly ? (
+              <p className="text-muted-foreground">
+                None of My Favorites match your filters.
+              </p>
+            ) : (
+              <p className="text-muted-foreground">
+                No videos found matching your filters — try one of the searches above.
+              </p>
+            )}
           </div>
         ) : (
           <>

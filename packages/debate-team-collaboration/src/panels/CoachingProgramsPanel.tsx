@@ -53,7 +53,7 @@ import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   buildCoachingProgramsPanelView,
   deleteCoachingProgram,
@@ -189,15 +189,10 @@ export function CoachingProgramsPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Coaching Programs</h1>
-        <p className="text-sm text-muted-foreground">
-          Create a group coaching space scoped to a squad roster, shared across research sprints,
-          friendly challenges, and practice drills.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Coaching Programs"
+      description="Create a group coaching space scoped to a squad roster, shared across research sprints, friendly challenges, and practice drills."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
@@ -329,6 +324,6 @@ export function CoachingProgramsPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

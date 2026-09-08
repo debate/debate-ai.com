@@ -3,7 +3,7 @@
  * sidebar on the videos pages. Structure:
  *   Videos (h1, expandable, heading-only)
  *     -> College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
- *     -> Favorites (h2, plain link)
+ *     -> My Favorites (h2, plain link)
  *     -> Lectures (h2, expandable) -> lecture categories
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video

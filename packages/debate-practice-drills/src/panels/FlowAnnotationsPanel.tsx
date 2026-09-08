@@ -45,7 +45,7 @@ import {
   SelectValue,
 } from "debate-round/src/ui/primitives/select"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import { sendYouTubeCommand, useVideoPlayerStore } from "debate-videos"
 import {
   createFlowAnnotation,
@@ -243,15 +243,10 @@ export function FlowAnnotationsPanel() {
   const filteredAnnotations = filterFlowAnnotations(annotations, filter)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Flow-in-Speech Annotations</h1>
-        <p className="text-sm text-muted-foreground">
-          While watching a streamed or recorded round, drop a timestamped note tied to a specific
-          flow argument, then jump straight back to it later.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Flow-in-Speech Annotations"
+      description="While watching a streamed or recorded round, drop a timestamped note tied to a specific flow argument, then jump straight back to it later."
+    >
       <div className="rounded-lg border border-border p-4 space-y-4">
         <p className="text-sm text-foreground">
           {activeVideoId ? (
@@ -530,6 +525,6 @@ export function FlowAnnotationsPanel() {
           )}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

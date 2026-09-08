@@ -436,4 +436,38 @@ new render test.
   header unmigrated, the one deliberate layout adjustment in this slice.
   `CommunityResearchHubPanel`'s and `CoachingProgramRosterAnalyticsPanel`'s
   per-category/per-day loop `<h2>`s were left alone as repeated row headings,
-  not panel/section headers. Only `debate-practice-drills` remains unaudited.
+  not panel/section headers.
+  A further slice closed the last remaining package, `debate-practice-drills`
+  (npm package name `debate-practice-rounds`): it already depends on
+  `debate-round` and every one of its 12 panels already imported `EmptyState`
+  (several also `MeterBar`/`PanelRow`) from that same `panel-shell` module, so
+  no new cross-package dependency was needed. All 12 panels' top-level
+  `<h1>`-title-plus-description header moved onto `PanelShell`
+  (`AiVersusRoundPanel`, `ArgumentTreePanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowAnnotationsPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel`), and each panel's
+  genuinely singular, non-repeated `<h2>`-titled sub-section onto
+  `PanelSection`: `AiVersusRoundPanel`'s "Compare transcripts",
+  `DrillSetsPanel`'s "Practice tier" (tier `Badge` moved into `actions`),
+  `FlowSummariesPanel`'s "Generate from raw speech text",
+  `JudgeDecisionPanel`'s "Multi-judge panel", `OpponentPersonaPickerPanel`'s
+  "My persona library"/"Shared by your team", `PracticeRoundSimulatorPanel`'s
+  "Compare your past attempts" (its "Download comparison" button moved into
+  `actions`), and `WordCountRoundsPanel`'s "Round history" (its "Delete all
+  synced history" button moved into `actions`) and "Word-count trend" (its
+  conditional speech-filter `Select` moved into `actions`). A header/section
+  carrying a second paragraph with embedded markup or dynamic sign-in-status
+  copy was kept as a plain child element instead of forced through the
+  string-only `description` prop, matching every prior slice's judgment call.
+  `CoachingSessionsPanel`, `FlowAnnotationsPanel`, and
+  `JudgeParadigmPickerPanel` had no singular `<h2>` sub-section to migrate;
+  `ArgumentTreePanel`'s and `VulnerabilityChartsPanel`'s sole `<h2>` (a
+  per-item "Round {id}" loop heading) was left alone as a repeated row
+  heading, not a panel/section header, matching the historical `PanelRow`
+  audit's judgment call for the same shape. This closes the last package
+  left open by this survey — every package that depends on a package
+  exporting `PanelShell`/`PanelSection` is now migrated; only
+  `debate-speech-writer`'s two panels remain, still blocked on the
+  cross-package-dependency gap named earlier in this section.

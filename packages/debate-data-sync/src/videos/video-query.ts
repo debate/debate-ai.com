@@ -237,3 +237,180 @@ export function computeLectureCategories(rows: VideoRow[]): LectureCategoryFacet
 
   return [...byLabel.values()].sort((a, b) => b.maxViews - a.maxViews);
 }
+
+/** Which family a search suggestion chip came from. */
+export type VideoSuggestionKind = "keyword" | "tournament";
+
+/** One search-suggestion chip: the term to search for and how many videos it hits. */
+export interface VideoSuggestion {
+  /** Text placed into the search box when the chip is clicked. */
+  label: string;
+  /** Number of videos in the library the term matches. */
+  count: number;
+  kind: VideoSuggestionKind;
+}
+
+/** Popular search terms offered under the video grid. */
+export interface VideoSuggestions {
+  /** Curated debate terms, only those the library actually has videos for. */
+  keywords: VideoSuggestion[];
+  /** Tournament names taken from the library itself, biggest first. */
+  tournaments: VideoSuggestion[];
+}
+
+/**
+ * Search terms offered as keyword chips, in the order they are shown. The list
+ * is ordered by hand so the chips stay a spread of round levels and argument
+ * types rather than a run of near-synonyms; every candidate is counted against
+ * the library and dropped when nothing matches, so the page only ever suggests
+ * searches that return results.
+ */
+export const SUGGESTED_KEYWORDS: readonly string[] = [
+  "Finals",
+  "Kritik",
+  "Topicality",
+  "Semis",
+  "Framework",
+  "Quarters",
+  "Counterplan",
+  "Octas",
+  "Disadvantage",
+  "Theory",
+  "1AC",
+  "2NR",
+  "Flowing",
+  "Novice",
+  "Camp",
+  "Rebuttal",
+  "Doubles",
+  "Public Forum",
+  "Lincoln Douglas",
+  "Philosophy",
+  "Round Analysis",
+];
+
+/** How many keyword chips the page shows. */
+export const MAX_KEYWORD_SUGGESTIONS = 12;
+
+/** How many tournament chips the page shows. */
+export const MAX_TOURNAMENT_SUGGESTIONS = 12;
+
+/** Tournament labels that are too generic to be useful as a search chip. */
+const HIDDEN_TOURNAMENT_SUGGESTIONS = new Set(["n/a", "na", "unknown", "other", "misc"]);
+
+/**
+ * Reduces a stored tournament value to the name shared by every edition, so
+ * `"NDT 2018"`, `"2019 NDT"` and `"NDT"` all count towards one chip.
+ *
+ * @param value - Tournament value from a row (already year-stripped at the front).
+ * @returns The bare tournament name, or `null` when there is nothing usable.
+ */
+export function normalizeTournamentName(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const name = value
+    .replace(/^\s*(19|20)\d{2}\s+/, "")
+    .replace(/[\s,\-–]+(?:(?:19|20)\d{2}|\d{2})\s*$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (name.length < 3) return null;
+  // A row whose tournament is just a year (or any bare number) leaves nothing
+  // to search for once the edition is folded away.
+  if (/^\d+$/.test(name)) return null;
+  if (HIDDEN_TOURNAMENT_SUGGESTIONS.has(name.toLowerCase())) return null;
+  return name;
+}
+
+/** Orders suggestions by match count, breaking ties alphabetically. */
+function compareSuggestions(a: VideoSuggestion, b: VideoSuggestion): number {
+  return b.count - a.count || a.label.localeCompare(b.label);
+}
+
+/**
+ * Ranks tournament chips from `(tournament, count)` pairs, which is what both
+ * backends can produce cheaply — a `GROUP BY` in SQL, a tally in memory.
+ *
+ * @param entries - Raw tournament values with their video counts.
+ * @param limit - Maximum number of chips to keep.
+ * @returns Tournament suggestions, biggest first.
+ */
+export function rankTournamentSuggestions(
+  entries: Array<{ tournament: string | null; count: number }>,
+  limit: number = MAX_TOURNAMENT_SUGGESTIONS,
+): VideoSuggestion[] {
+  const totals = new Map<string, number>();
+  for (const entry of entries) {
+    const name = normalizeTournamentName(entry.tournament);
+    if (!name) continue;
+    totals.set(name, (totals.get(name) ?? 0) + entry.count);
+  }
+
+  return [...totals.entries()]
+    .map(([label, count]): VideoSuggestion => ({ label, count, kind: "tournament" }))
+    .sort(compareSuggestions)
+    .slice(0, Math.max(0, limit));
+}
+
+/**
+ * Builds the keyword chips from per-keyword match counts, dropping the terms
+ * the library has no videos for and keeping the curated order.
+ *
+ * @param counts - Match count per entry of {@link SUGGESTED_KEYWORDS}.
+ * @param limit - Maximum number of chips to keep.
+ * @returns Keyword suggestions, in {@link SUGGESTED_KEYWORDS} order.
+ */
+export function rankKeywordSuggestions(
+  counts: Record<string, number>,
+  limit: number = MAX_KEYWORD_SUGGESTIONS,
+): VideoSuggestion[] {
+  return SUGGESTED_KEYWORDS.map((label): VideoSuggestion => ({
+    label,
+    count: counts[label] ?? 0,
+    kind: "keyword",
+  }))
+    .filter((suggestion) => suggestion.count > 0)
+    .slice(0, Math.max(0, limit));
+}
+
+/**
+ * Counts the videos each {@link SUGGESTED_KEYWORDS} entry matches, using the
+ * same all-tokens-must-match rule as the search box.
+ *
+ * @param rows - All video rows.
+ * @returns Match count keyed by keyword.
+ */
+export function countKeywordMatches(rows: VideoRow[]): Record<string, number> {
+  const tokensByKeyword = SUGGESTED_KEYWORDS.map(
+    (keyword) => [keyword, searchTokens(keyword)] as const,
+  );
+  const counts: Record<string, number> = {};
+
+  for (const [keyword] of tokensByKeyword) counts[keyword] = 0;
+  for (const row of rows) {
+    for (const [keyword, tokens] of tokensByKeyword) {
+      if (tokens.every((token) => row.searchText.includes(token))) counts[keyword] += 1;
+    }
+  }
+
+  return counts;
+}
+
+/**
+ * Builds the popular-search chips shown under the video grid.
+ *
+ * @param rows - All video rows.
+ * @returns See {@link VideoSuggestions}.
+ */
+export function computeVideoSuggestions(rows: VideoRow[]): VideoSuggestions {
+  const tournamentCounts = new Map<string, number>();
+  for (const row of rows) {
+    if (!row.tournament) continue;
+    tournamentCounts.set(row.tournament, (tournamentCounts.get(row.tournament) ?? 0) + 1);
+  }
+
+  return {
+    keywords: rankKeywordSuggestions(countKeywordMatches(rows)),
+    tournaments: rankTournamentSuggestions(
+      [...tournamentCounts.entries()].map(([tournament, count]) => ({ tournament, count })),
+    ),
+  };
+}

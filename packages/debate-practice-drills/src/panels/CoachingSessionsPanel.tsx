@@ -72,7 +72,7 @@ import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -274,15 +274,10 @@ export function CoachingSessionsPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">AI Coach Mode</h1>
-        <p className="text-sm text-muted-foreground">
-          Coaching prompts generated from each round's flow — what to extend, what to answer,
-          where to collapse, and how to weigh the round.
-        </p>
-      </div>
-
+    <PanelShell
+      title="AI Coach Mode"
+      description="Coaching prompts generated from each round's flow — what to extend, what to answer, where to collapse, and how to weigh the round."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div>
           <Label htmlFor="coaching-session-generate-side">Generate coaching session for current round</Label>
@@ -507,6 +502,6 @@ export function CoachingSessionsPanel() {
           )}
         </div>
       ))}
-    </div>
+    </PanelShell>
   )
 }

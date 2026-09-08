@@ -112,7 +112,7 @@ import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -451,14 +451,10 @@ export function PracticeRoundSimulatorPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Practice Round Simulator</h1>
-        <p className="text-sm text-muted-foreground">
-          Recreate a tournament round — pick a format, side, AI judge paradigm, and AI opponent
-          style, then track speeches and feedback for it.
-        </p>
-      </div>
+    <PanelShell
+      title="Practice Round Simulator"
+      description="Recreate a tournament round — pick a format, side, AI judge paradigm, and AI opponent style, then track speeches and feedback for it."
+    >
 
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">
@@ -720,13 +716,15 @@ export function PracticeRoundSimulatorPanel() {
       </div>
 
       {comparison.attempts.length > 0 && (
-        <div className="rounded-lg border border-border p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">Compare your past attempts</h2>
+        <PanelSection
+          title="Compare your past attempts"
+          className="rounded-lg border border-border p-4 space-y-3"
+          actions={
             <Button size="sm" variant="outline" onClick={handleDownloadAttemptsComparison}>
               Download comparison
             </Button>
-          </div>
+          }
+        >
           <p className="text-sm text-muted-foreground">
             {comparison.attempts.length} attempt{comparison.attempts.length === 1 ? "" : "s"} logged —{" "}
             {comparison.wins} won, {comparison.losses} lost, {comparison.pending} pending
@@ -757,7 +755,7 @@ export function PracticeRoundSimulatorPanel() {
               </div>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
 
       {rounds.length === 0 ? (
@@ -1017,6 +1015,6 @@ export function PracticeRoundSimulatorPanel() {
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }
