@@ -7,6 +7,54 @@ _No task currently in progress._
 
 ### Completed
 
+- **📁 Docs sidebar — files in every sidebar, opened in CardMirror.**
+  Two gaps in the REASON docs panels (Files / Topic Starters / Open Tabs),
+  reported from `/debate`: the files were missing from `/videos`, and a
+  click on one was only guaranteed to load that file into CardMirror when
+  the hop happened to stay client-side.
+
+  `/videos` renders its own sidebar (`LecturesVideoGridView`'s `<aside>`)
+  rather than the app's `AppSidebarShell`, so it was the one route with a
+  sidebar but no files in it — the panels simply had nowhere to mount.
+  `LecturesPage`/`LecturesVideoGridView` now take a `docsSlot` alongside
+  the existing `dockSlot`, for the same reason: the panels read app-level
+  document state and route into `/reason-editor`, neither of which
+  `debate-videos` can reach. `app/videos/page.tsx` and
+  `app/videos/[category]/page.tsx` pass `<ReasonDocsSidebarPanels />` into
+  it, under the dock and above the nav tree — the same order
+  `AppSidebarShell` uses, since the tree is long enough that anything
+  below it starts under the fold.
+
+  Selections now travel in the URL as well as in provider state:
+  `/reason-editor?doc=<id>` for an owned document, `?topic=<id>` for a
+  public topic starter. Provider state covers a client-side hop but not a
+  reload, a pasted link, or a hard navigation — `/videos` is its own
+  layout branch and can boot the editor with an empty provider, which is
+  exactly the case the report came from. New
+  `apps/debate-ai.com/lib/reason-docs/route-selection.ts` owns both ends of
+  that round trip as pure functions (`editorHrefForSelection`,
+  `parseSelectionParams`, `resolveSelection`) so the sidebar and the editor
+  route cannot drift; `ReasonDocsRouteSync` is the thin React wrapper that
+  applies it on `/reason-editor`. A stale or foreign id falls through to
+  the first-file fallback rather than erroring, and the deep link applies
+  once per URL so a reader who then picks something else isn't dragged
+  back.
+
+  The first-file fallback moved out of `app/reason-editor/page.tsx` into
+  that same function, which is the actual bug fix behind "opens with that
+  file loaded": as two sibling effects they raced — the fallback's closure
+  still saw no selection in the commit where the deep link opened its file,
+  and opened the first file over the top of it.
+
+  See the new `docs/features/reason-docs-sidebar.md`. Vitest-covered:
+  `apps/debate-ai.com/lib/reason-docs/__tests__/route-selection.test.ts`
+  (href round trip, malformed ids, deep link beating the fallback, stale
+  ids falling through to it, the applied-once rule, and topic/document id
+  namespaces staying separate) and
+  `packages/debate-videos/test/lectures-sidebar-docs-slot.test.tsx` (the
+  slot renders, sits above the nav tree and below the dock, and the
+  sidebar still renders when no panels are supplied).
+
 - **🧪 Practice Round Simulator — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

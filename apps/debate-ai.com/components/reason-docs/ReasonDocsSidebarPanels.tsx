@@ -11,20 +11,31 @@
  * switching exclusively, so Files and Open Tabs are both visible at once
  * (its default view). Unlike that sidebar this lives in the app's persistent
  * left sidebar (`AppSidebarShell`) instead of a second sidebar owned by the
- * editor route, so the tree stays on screen across tool pages; picking a file
- * anywhere routes to `/reason-editor` with it open.
+ * editor route, so the tree stays on screen across tool pages.
+ *
+ * `/videos` renders its own sidebar rather than that shell, and so was the
+ * one route with a sidebar but no files in it; it now mounts these panels in
+ * the same slot position via `LecturesPage`'s `docsSlot`.
+ *
+ * Picking a file anywhere routes to `/reason-editor?doc=<id>` (or
+ * `?topic=<id>` for a public topic starter), which brings CardMirror up in
+ * the main column with that file loaded — see `ReasonDocsRouteSync` for why
+ * the selection travels in the URL and not only in provider state.
  */
 
 import { useCallback, useEffect, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
 import { cn } from "@/lib/ui/lib/utils"
+import {
+  REASON_EDITOR_ROUTE,
+  editorHrefForSelection,
+  type ReasonDocsSelection,
+} from "@/lib/reason-docs/route-selection"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
-
-export const REASON_EDITOR_ROUTE = "/reason-editor"
 
 type SidebarPanel = "files" | "topicStarters" | "openTabs"
 
@@ -136,10 +147,34 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     })
   }, [])
 
-  /** Selections made from another tool page carry the reader to the editor. */
-  const goToEditor = useCallback(() => {
+  /** A new document has no id until the POST resolves, so its hop carries no
+   *  selection — `createDocument` opens the created file itself. */
+  const goToBlankEditor = useCallback(() => {
     if (!onEditorRoute) router.push(REASON_EDITOR_ROUTE)
   }, [onEditorRoute, router])
+
+  /**
+   * Carries a selection into the editor's main column, as a URL the editor
+   * route can reopen on its own: `?doc=<id>` for an owned document,
+   * `?topic=<id>` for a public topic starter.
+   *
+   * The provider state set alongside this makes the switch immediate on a
+   * client-side hop; the query is what makes the same click survive a reload,
+   * a shared link, or a hard navigation (`/videos` is a different layout
+   * branch), so CardMirror always comes up with *that* file rather than
+   * whatever the editor would otherwise fall back to.
+   *
+   * Already on the route, the URL is replaced rather than pushed: opening ten
+   * files in a row shouldn't cost ten Back presses to leave the editor.
+   */
+  const goToEditor = useCallback(
+    (selection: ReasonDocsSelection) => {
+      const href = editorHrefForSelection(selection)
+      if (onEditorRoute) router.replace(href)
+      else router.push(href)
+    },
+    [onEditorRoute, router],
+  )
 
   return (
     <div className={cn("flex min-h-0 flex-col", className)}>
@@ -159,7 +194,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
               type="button"
               onClick={() => {
                 void createDocument(null, false)
-                goToEditor()
+                goToBlankEditor()
               }}
               title="New document"
               className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -226,7 +261,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     activeId={activeId}
                     onSelect={(id) => {
                       openDocument(id)
-                      goToEditor()
+                      goToEditor({ kind: "document", id })
                     }}
                     onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
                     onRename={updateTitle}
@@ -245,7 +280,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     items={topicItems}
                     onSelect={(item) => {
                       selectTopicDocument(item)
-                      goToEditor()
+                      goToEditor({ kind: "topic", id: item.id })
                     }}
                   />
                 </div>
@@ -269,7 +304,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                       type="button"
                       onClick={() => {
                         void createDocument(null, false)
-                        goToEditor()
+                        goToBlankEditor()
                       }}
                       title="New File"
                       className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -283,7 +318,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     activeId={activeId}
                     onSelect={(id) => {
                       selectTab(id)
-                      goToEditor()
+                      goToEditor({ kind: "document", id })
                     }}
                     onClose={closeTab}
                   />
