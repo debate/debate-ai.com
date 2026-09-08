@@ -20,7 +20,8 @@
  * `isDrillSetsPanelLiveUpdateStorageEvent` closes it for
  * `DrillSetsPanel`'s `useDrillSets` hook.
  * `isAiVersusRoundPanelLiveUpdateStorageEvent` closes it for
- * `AiVersusRoundPanel`.
+ * `AiVersusRoundPanel`. `isCoachingSessionsPanelLiveUpdateStorageEvent`
+ * closes it for `CoachingSessionsPanel`.
  *
  * @module state/live-update
  */
@@ -191,5 +192,28 @@ export function isAiVersusRoundPanelLiveUpdateStorageEvent(event: { key: string 
   return (
     event.key === null ||
     (AI_VERSUS_ROUND_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` key `CoachingSessionsPanel` reads directly:
+ * `state/coachingSessions.ts`'s own `"coachingSessions"` store (the
+ * round+side coaching-session list the panel's rendered sessions, "Compare
+ * two sessions" dropdowns, and comparison view all derive from).
+ */
+export const COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["coachingSessions"] as const;
+
+/**
+ * Whether a `storage` event should trigger `CoachingSessionsPanel` to
+ * refresh its rendered session list. A `null` key (e.g. from
+ * `localStorage.clear()`, per the `StorageEvent` spec) counts too — the
+ * safest response to "everything changed" is refreshing. Any other key (an
+ * unrelated store elsewhere in the app) is ignored so an unrelated
+ * cross-tab write doesn't force a needless refresh.
+ */
+export function isCoachingSessionsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

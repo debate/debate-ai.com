@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   AI_VERSUS_ROUND_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS,
+  COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   COUNSEL_PANEL_ASSESSMENTS_LIVE_UPDATE_STORAGE_KEYS,
   DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS,
@@ -9,6 +10,7 @@ import {
   WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS,
   isAiVersusRoundPanelLiveUpdateStorageEvent,
   isArgumentTreePanelLiveUpdateStorageEvent,
+  isCoachingSessionsPanelLiveUpdateStorageEvent,
   isCounselPanelAssessmentsLiveUpdateStorageEvent,
   isDrillSetsPanelLiveUpdateStorageEvent,
   isJudgeParadigmPickerPanelLiveUpdateStorageEvent,
@@ -167,5 +169,27 @@ describe("isAiVersusRoundPanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isAiVersusRoundPanelLiveUpdateStorageEvent({ key: "old_aiVersusRounds" })).toBe(false);
     expect(isAiVersusRoundPanelLiveUpdateStorageEvent({ key: "aiVersusRoundsBackup" })).toBe(false);
+  });
+});
+
+describe("isCoachingSessionsPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads directly", () => {
+    for (const key of COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: "coachingSessionHistory" })).toBe(false);
+    expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: "drillSets" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: "old_coachingSessions" })).toBe(false);
+    expect(isCoachingSessionsPanelLiveUpdateStorageEvent({ key: "coachingSessionsBackup" })).toBe(false);
   });
 });

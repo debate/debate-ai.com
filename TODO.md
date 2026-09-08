@@ -7,6 +7,66 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎙️ AI Coach Mode — cross-tab live update.** Another repeat of the
+  standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built and reconfirmed
+  again this run: `user_settings`/`documents`/`saved_flows`/`saved_rounds`
+  and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up
+  `shared-flow-sync.md`'s "every other localStorage-backed panel in this
+  repo still has no cross-tab live-update mechanism" Known gap — this run
+  cross-checked the open-PR list (`#663` DB error diagnostics, `#660`
+  Parquet card import, `#659` `OpponentPersonaPickerPanel`, `#658`
+  `JudgeDecisionPanel`, none of them touching this panel) and every
+  unmerged branch's diff before a direct grep of every panel in
+  `debate-practice-drills` for a `storage`-event listener confirmed
+  `CoachingSessionsPanel` was still genuinely open and unclaimed.
+
+  Extended `packages/debate-practice-drills/src/state/live-update.ts` with
+  `COACHING_SESSIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+  `isCoachingSessionsPanelLiveUpdateStorageEvent`, covering the panel's one
+  backing store: `coachingSessions` (`state/coachingSessions.ts` — the
+  round+side coaching-session list the panel's rendered sessions, "Compare
+  two sessions" dropdowns, and comparison view all derive from).
+  `CoachingSessionsPanel.tsx` now subscribes to `window`'s `storage` event
+  and calls its existing `refresh()` closure when the predicate matches — a
+  session saved, restored, or cleared in one tab now shows up in every
+  other open tab without a manual reload. The "Generate coaching session"
+  side-key field, any in-progress "Compare two sessions" result, and an
+  open History panel's contents are left untouched, matching every other
+  closed panel's "refresh the derived view, not the draft" convention. The
+  sibling `coachingSessionHistory` store (read only when a session's
+  History toggle is opened, not part of the main derived view) is
+  deliberately left out of the tracked key set, mirroring how every other
+  closed panel in this file tracks only its main list's own store.
+
+  See `docs/features/coaching-sessions.md`'s new "Cross-tab live update"
+  section and `docs/features/shared-flow-sync.md`'s updated Known gaps
+  bullet (added `CoachingSessionsPanel` to the closed list). Vitest-covered:
+  `packages/debate-practice-drills/test/live-update.test.ts` (the one
+  backing-store key, the `null`-key clear-all case, and unrelated/
+  substring-matching keys staying ignored, mirroring every other panel's
+  cases in that file). `PracticeRoundSimulatorPanel` (`debate-practice-drills`,
+  confirmed still missing a listener by the same grep), `UserSettingsPanel`
+  (`debate-round` — its `form` is a live, directly-editable settings form
+  rather than a derived list/roster view, so closing it needs refreshing
+  only the persisted values, not stomping an unsaved in-progress edit), and
+  `CoachingProgramsPanel` (`debate-team-collaboration` — that package
+  currently has multiple parallel branches mid-refactor on conflicting
+  files) remain open for a future run to pick up next.
+
+  Ran the full verification gate: `bun run test` (5219 passing, up from
+  5215 at HEAD before this change — the 4 new cases above), `bunx turbo run
+  typecheck` (16/16 typecheck-bearing packages green), and `bun run
+  build:web` (passed cleanly this run). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
+  PR: opened from branch `claude/gifted-babbage-madgjl`.
 - **⚔️ Online Debate Versus AI — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save

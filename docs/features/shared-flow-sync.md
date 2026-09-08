@@ -511,7 +511,9 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   `DrillSetsPanel` (see [`drill-sets.md`](drill-sets.md)'s "Cross-tab live
   update" — covers its `useDrillSets` hook's `drillSets` store),
   `AiVersusRoundPanel` (see [`ai-versus-rounds.md`](ai-versus-rounds.md)'s
-  "Cross-tab live update"), and `FlowEditLogPanel` itself (see
+  "Cross-tab live update"), `CoachingSessionsPanel` (see
+  [`coaching-sessions.md`](coaching-sessions.md)'s "Cross-tab live update"),
+  and `FlowEditLogPanel` itself (see
   "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
   equivalent mechanism for their own stores, but every other
   localStorage-backed panel in this repo still has none (Live Sync
