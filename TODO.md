@@ -66,7 +66,7 @@ _No task currently in progress._
   build:web` (passed cleanly this run). No `lint`/`format:check` script
   exists anywhere in this repo, so that step was skipped as not applicable.
 
-  PR: opened from branch `claude/gifted-babbage-madgjl`.
+  PR: [#674](https://github.com/debate/debate-ai.com/pull/674).
 - **⚔️ Online Debate Versus AI — cross-tab live update.** Another repeat of
   the standing autonomous-routine prompt ("integrate all the tools into the
   UI... create user settings and link user db SQL with the ability to save
