@@ -18,6 +18,7 @@ echo "  - BETTER_AUTH_ALLOWED_HOSTS (optional - extra hosts this app is served f
 echo "      comma-separated; see docs/auth-domains.md)"
 echo "  - YOUTUBE_API_KEY (required for /admin YouTube resync)"
 echo "  - ADMIN_EMAILS (optional - comma-separated allowlist for /admin; open to everyone if unset)"
+echo "  - CARD_IMPORT_TOKEN (optional - bearer token for the debate-cards-upload CLI; without it, card imports need an admin session)"
 echo ""
 echo "To set a secret, run:"
 echo "  npx wrangler secret put SECRET_NAME"
