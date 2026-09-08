@@ -170,6 +170,29 @@ describe("session constraints", () => {
     expect(d1.opened).toEqual(["first-unconstrained"]);
   });
 
+  /**
+   * `decodeURIComponent` throws on a malformed escape, and the cookie is read
+   * in the Worker entry ahead of every route handler — so before this was
+   * guarded, one unparseable `d1_bookmark` cookie was an exception on every
+   * request that browser made, including routes that never touch D1.
+   */
+  it("ignores a bookmark cookie that cannot be percent-decoded", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    for (const value of ["%", "%zz", "0000001-000000%E0%A4%A"]) {
+      await runWithD1Session(get({ cookie: `${D1_BOOKMARK_COOKIE}=${value}` }), undefined, () =>
+        db.prepare("select 1").run(),
+      );
+    }
+
+    expect(d1.opened).toEqual([
+      "first-unconstrained",
+      "first-unconstrained",
+      "first-unconstrained",
+    ]);
+  });
+
   it("honours the D1_SESSION_MODE override", async () => {
     const d1 = fakeD1();
     const db = sessionedD1(d1.binding);
