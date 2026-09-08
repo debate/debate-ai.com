@@ -1,6 +1,6 @@
 {
-  "name": "debate-timer",
-  "description": "Critical times call for critical thinking! A debate round timer with prep clocks and a round timeline.",
+  "name": "debate-web-ext",
+  "description": "Debate AI browser extension: a debate round timer with prep clocks and a round timeline, plus an on-page card reuse check.",
   "version": "5.2.0",
   "type": "module",
   "private": true,

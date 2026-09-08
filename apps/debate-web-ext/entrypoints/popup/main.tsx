@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
+import '@/src/styles/base.css';
+import '@/src/styles/popup.css';
+
 import App from './App';
-import './style.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
