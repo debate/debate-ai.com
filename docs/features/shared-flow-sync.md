@@ -507,7 +507,9 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
   update"), `WordCountRoundsPanel` (see
   [`word-count-rounds.md`](word-count-rounds.md)'s "Cross-tab live update" —
-  covers its `useWordCountRounds` hook's `wordCountRounds` store), and
+  covers its `useWordCountRounds` hook's `wordCountRounds` store),
+  `DrillSetsPanel` (see [`drill-sets.md`](drill-sets.md)'s "Cross-tab live
+  update" — covers its `useDrillSets` hook's `drillSets` store), and
   `FlowEditLogPanel` itself (see
   "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
   equivalent mechanism for their own stores, but every other

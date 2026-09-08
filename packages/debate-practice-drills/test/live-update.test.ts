@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   COUNSEL_PANEL_ASSESSMENTS_LIVE_UPDATE_STORAGE_KEYS,
+  DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   JUDGE_PARADIGM_PICKER_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   VULNERABILITY_CHARTS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   WORD_COUNT_ROUNDS_LIVE_UPDATE_STORAGE_KEYS,
   isArgumentTreePanelLiveUpdateStorageEvent,
   isCounselPanelAssessmentsLiveUpdateStorageEvent,
+  isDrillSetsPanelLiveUpdateStorageEvent,
   isJudgeParadigmPickerPanelLiveUpdateStorageEvent,
   isVulnerabilityChartsPanelLiveUpdateStorageEvent,
   isWordCountRoundsLiveUpdateStorageEvent,
@@ -119,5 +121,27 @@ describe("isWordCountRoundsLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains a tracked store name as a substring", () => {
     expect(isWordCountRoundsLiveUpdateStorageEvent({ key: "old_wordCountRounds" })).toBe(false);
     expect(isWordCountRoundsLiveUpdateStorageEvent({ key: "wordCountRoundsBackup" })).toBe(false);
+  });
+});
+
+describe("isDrillSetsPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the hook reads", () => {
+    for (const key of DRILL_SETS_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isDrillSetsPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isDrillSetsPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isDrillSetsPanelLiveUpdateStorageEvent({ key: "wordCountRounds" })).toBe(false);
+    expect(isDrillSetsPanelLiveUpdateStorageEvent({ key: "judgeDecisions" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a tracked store name as a substring", () => {
+    expect(isDrillSetsPanelLiveUpdateStorageEvent({ key: "old_drillSets" })).toBe(false);
+    expect(isDrillSetsPanelLiveUpdateStorageEvent({ key: "drillSetsBackup" })).toBe(false);
   });
 });
