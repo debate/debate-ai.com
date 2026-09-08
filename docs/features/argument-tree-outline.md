@@ -464,8 +464,43 @@ no-alphanumeric-fallback behavior mirroring
 `ai-versus-transcript.test.ts`/`pre-round-briefing.test.ts`'s own filename
 suites).
 
+## Cross-tab live update
+
+Closes `shared-flow-sync.md`'s "every other localStorage-backed panel in
+this repo still has no cross-tab live-update mechanism" Known gap for
+`ArgumentTreePanel`. The browser's `storage` event never fires in the *same*
+tab that wrote the change — only in other same-origin tabs — so a panel that
+reads `localStorage` on mount only never reflects another tab's write
+without a manual reload.
+
+`packages/debate-practice-drills/src/state/live-update.ts` gained
+`ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS`/
+`isArgumentTreePanelLiveUpdateStorageEvent`, covering both stores the panel
+reads directly: `argumentTrees` (the derived outline records) and
+`argumentTreeFilters` (each round's saved filter selection).
+`ArgumentTreePanel.tsx` now subscribes to `window`'s `storage` event and
+re-reads both when the predicate matches — a teammate generating, clearing,
+or tagging an outline, or saving/clearing a round's filter, in one tab now
+shows up in every other open tab without a manual reload.
+
+Deliberately excluded: `hooks/useOutlineFilterPresets.ts`'s own
+`outline-filter-presets` store. That hook already has a same-tab
+`CHANGE_EVENT` sync but no cross-tab `storage` listener, matching every
+other `use*Presets` hook in this repo (e.g. `debate-round`'s
+`useWordLimitPresets`) — closing that separate, wider gap across every
+preset hook is left for a future run rather than special-casing just this
+one panel's presets.
+
+Vitest-covered in
+`packages/debate-practice-drills/test/live-update.test.ts` (both tracked
+keys, the `null`-key clear-all case, and unrelated/substring-matching keys
+staying ignored).
+
 ## Known gaps
 
+- `hooks/useOutlineFilterPresets.ts` (and every other `use*Presets` hook
+  sharing its `CHANGE_EVENT` pattern) has no cross-tab `storage` listener
+  yet — see "Cross-tab live update" above.
 - Tagging only works for the round currently open in the round workspace
   (`useFlowStore`'s selected flow) — a round's other, not-currently-selected
   persisted outline records show a disabled "Tag…" button with an

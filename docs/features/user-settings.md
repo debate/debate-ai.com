@@ -168,6 +168,57 @@ D1-route pair in this repo (e.g. `round/judge-decision-client.ts`,
 `app/api/evidence-reuse-check/route.ts`) — `apps/debate-ai.com` has no
 vitest project wired up at all (see `apps/debate-ai.com/vitest.config.ts`'s `projects` list).
 
+## Cross-tab live update
+
+Closes the "every other localStorage-backed panel in this repo still has no
+cross-tab live-update mechanism" Known gap noted in
+[`shared-flow-sync.md`](shared-flow-sync.md), for `UserSettingsPanel` — the
+last panel that bullet's closed list didn't yet cover, since (unlike every
+other panel closed so far) its `form` is a live, directly-editable draft
+rather than a derived list/roster view.
+
+The browser's `storage` event never fires in the tab that made the write,
+only in other same-origin tabs — before this, saving `debateStyle`/
+`fontSize`/`colorTheme`/`themeMode` here, picking a color theme from
+`theme-dropdown.tsx`'s dock picker, or picking a font family (also read by
+this panel, though it's local-only and never synced to `/api/settings`)
+left every other open `UserSettingsPanel` tab showing stale values until a
+manual reload.
+
+`UserSettingsPanel.tsx` now subscribes to `window`'s `storage` event (see
+`flow/live-update.ts`'s `isUserSettingsPanelLiveUpdateStorageEvent`,
+covering `settings`, `color-theme`, `theme` — next-themes' own storage key
+— and `fontFamily`) and, on a match, refreshes `fontFamily` unconditionally
+(it isn't Save-gated; it always applies immediately, so there's nothing to
+protect) plus each `form` field *individually* — but only a field whose
+current value still matches `baselineRef` (what was last loaded or saved
+here), so an in-progress, not-yet-saved edit on any field is never
+overwritten by another tab's change. A refreshed `colorTheme` also reapplies
+the `theme-*` class on `<html>` in this tab, since that's per-tab DOM state
+a `storage` event alone doesn't update (`themeMode`'s equivalent DOM effect
+is already handled by next-themes' own storage listener). Saving here also
+updates `baselineRef` to the just-saved values, so a field isn't treated as
+"dirty" forever after a successful Save.
+
+`state/userSettings.ts` gained `refreshLocalUserSettingsFromStorage`, which
+re-reads `localStorage`'s `"settings"` key into the local `settings`
+singleton (via its existing `loadFromLocalStorage`) before returning its
+`debateStyle`/`fontSize` values — unlike `readLocalUserSettings`, which only
+reflects whatever the singleton last loaded, and would otherwise miss
+another tab's `applyUserSettingsToLocalStore` write.
+
+Vitest-covered: `packages/debate-round/test/live-update.test.ts` (every
+backing-store key, the `null`-key clear-all case, and unrelated/substring-
+matching keys staying ignored, mirroring every other panel's cases in that
+file) and `packages/debate-round/test/userSettings.test.ts`
+(`refreshLocalUserSettingsFromStorage` picking up a value written straight
+to `localStorage`, unlike `readLocalUserSettings`). The per-field
+"don't stomp an unsaved edit" behavior itself has no dedicated render
+test — this repo has no component-render test for any `debate-round`
+panel — matching how every prior cross-tab live-update slice in this repo
+was verified via its pure predicate function plus typecheck/build, not a
+new render test.
+
 ## Known gaps
 
 - No optimistic-concurrency handling: if the same account edits settings

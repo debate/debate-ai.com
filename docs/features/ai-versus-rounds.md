@@ -246,6 +246,27 @@ highlighting itself is visual-only, since a plain-text file has no faithful
 way to carry it). Vitest-covered in
 `packages/debate-practice-drills/test/ai-versus-transcript.test.ts`.
 
+## Cross-tab live update
+
+`AiVersusRoundPanel` now subscribes to the browser's `storage` event — which
+the spec fires only in *other* same-origin tabs/windows, never the one that
+made the write — and refreshes its rendered round list when another tab
+saves, clears, or regenerates a speech in an AI-versus round. A new pure
+helper, `state/live-update.ts`'s `isAiVersusRoundPanelLiveUpdateStorageEvent`,
+checks whether the event's `key` is the panel's one backing store
+(`aiVersusRounds`, from `debate-round`'s `state/aiVersusRounds.ts`) or `null`
+(a `localStorage.clear()`), closing the "every other localStorage-backed
+panel in this repo still has no cross-tab live-update mechanism" Known gap
+noted in [`shared-flow-sync.md`](shared-flow-sync.md), for
+`AiVersusRoundPanel`. The active round's turn-order display and round-history
+list both re-derive from the same refreshed `rounds` list; the in-progress
+speech-text draft, round-ID/format/side form fields, and "Compare
+transcripts" dropdown selections are left untouched, matching every other
+closed panel's "refresh the derived view, not the draft" convention.
+
+Vitest-covered by four new cases for `isAiVersusRoundPanelLiveUpdateStorageEvent`
+in `packages/debate-practice-drills/test/live-update.test.ts`.
+
 ## Known gaps
 
 None open. Every delivered AI speech can now be regenerated independently
@@ -253,7 +274,9 @@ in place (see "Regenerating a delivered AI speech at any position" above)
 without discarding any other speech; a completed round's transcript can now
 be downloaded as plain text (see "Download transcript" above); any two
 persisted rounds' transcripts can now be compared side by side with
-word-level diff highlighting (see "Compare transcripts" above); speech
-submission stays text-only beyond microphone dictation, and there is no
-transcription path for an already-recorded audio/video file, matching every
-other panel in this repo that shares that same gap.
+word-level diff highlighting (see "Compare transcripts" above); a round
+saved, cleared, or regenerated in another tab now shows up here without a
+manual reload (see "Cross-tab live update" above); speech submission stays
+text-only beyond microphone dictation, and there is no transcription path
+for an already-recorded audio/video file, matching every other panel in
+this repo that shares that same gap.

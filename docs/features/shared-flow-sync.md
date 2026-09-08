@@ -497,13 +497,35 @@ for `useFlowSyncPolling`/`/api/flow-sync`.
   [`topic-coverage-dashboard.md`](topic-coverage-dashboard.md)'s "Cross-tab
   live update"), `OpponentTeamProfilesPanel` (see
   [`opponent-team-profiles.md`](opponent-team-profiles.md)'s "Cross-tab live
-  update"), `JudgeParadigmPickerPanel` (see
+  update"), `JudgeParadigmPickerPanel` and `JudgeDecisionPanel` (see
   [`judge-paradigm-selections.md`](judge-paradigm-selections.md)'s
   "Cross-tab live update" — the first `live-update.ts` in
-  `debate-practice-drills`), and `FlowEditLogPanel` itself (see "Cross-tab
-  live update in `FlowEditLogPanel`" above) have since gained the equivalent
-  mechanism for their own stores, but every other localStorage-backed panel
-  in this repo still has none (Live Sync
+  `debate-practice-drills`), `VulnerabilityChartsPanel` (see
+  [`response-outcome-charts.md`](response-outcome-charts.md)'s "Cross-tab
+  live update" — also covers its `useCounselPanelAssessments` hook's
+  `counselPanelAssessments` store), `ArgumentTreePanel` (see
+  [`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
+  update"), `WordCountRoundsPanel` (see
+  [`word-count-rounds.md`](word-count-rounds.md)'s "Cross-tab live update" —
+  covers its `useWordCountRounds` hook's `wordCountRounds` store),
+  `DrillSetsPanel` (see [`drill-sets.md`](drill-sets.md)'s "Cross-tab live
+  update" — covers its `useDrillSets` hook's `drillSets` store),
+  `AiVersusRoundPanel` (see [`ai-versus-rounds.md`](ai-versus-rounds.md)'s
+  "Cross-tab live update"), `CoachingSessionsPanel` (see
+  [`coaching-sessions.md`](coaching-sessions.md)'s "Cross-tab live update"),
+  `PracticeRoundSimulatorPanel` (see
+  [`practice-round-simulator.md`](practice-round-simulator.md)'s "Cross-tab
+  live update"), `CoachingProgramsPanel` (see
+  [`coaching-programs.md`](coaching-programs.md)'s "Cross-tab live update" —
+  the first `live-update.ts` in `debate-team-collaboration`), `UserSettingsPanel`
+  (see [`user-settings.md`](user-settings.md)'s "Cross-tab live update" — the
+  one panel in this closed list whose `form` is a live, directly-editable
+  draft rather than a derived list/roster view, so only fields untouched
+  since they were last loaded/saved are refreshed, never an in-progress
+  edit), and `FlowEditLogPanel` itself (see
+  "Cross-tab live update in `FlowEditLogPanel`" above) have since gained the
+  equivalent mechanism for their own stores, but every other
+  localStorage-backed panel in this repo still has none (Live Sync
   above is cross-*contributor*, via the server, not cross-tab within one
   browser, and remains the only path for a *different device/browser* to
   see the edit at all).

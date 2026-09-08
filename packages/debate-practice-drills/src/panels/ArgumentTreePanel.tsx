@@ -78,6 +78,14 @@
  * dialog as a manually-checked selection would. Hidden for a heading with no
  * surviving filtered rows under it (nothing to select).
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isArgumentTreePanelLiveUpdateStorageEvent`)
+ * refreshes the rendered outlines and per-round filter selections when
+ * another tab generates, clears, or tags an outline, or saves/clears a
+ * round's filter — closing the "Every other localStorage-backed panel in
+ * this repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -128,6 +136,7 @@ import {
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
 import { useOutlineFilterPresets } from "../hooks/useOutlineFilterPresets"
+import { isArgumentTreePanelLiveUpdateStorageEvent } from "../state/live-update"
 import { useFlowStore } from "debate-round/src/state/store"
 import type { Flow } from "debate-round/src/types/flow"
 
@@ -202,8 +211,8 @@ export function ArgumentTreePanel() {
   const selected = useFlowStore((state) => state.selected)
   const currentFlow = mounted ? flows[selected] : undefined
 
-  useEffect(() => {
-    setMounted(true)
+  /** Re-reads every persisted outline and each one's saved filter selection, mirroring the initial-mount read below. */
+  const refreshAll = () => {
     const view = buildArgumentTreesPanelView()
     setRecords(view)
     setFilters(
@@ -211,6 +220,26 @@ export function ArgumentTreePanel() {
         view.map((record) => [record.roundId, getArgumentTreeFilterSelection(record.roundId)?.filter ?? {}]),
       ),
     )
+  }
+
+  useEffect(() => {
+    setMounted(true)
+    refreshAll()
+  }, [])
+
+  /**
+   * Live-update this panel when another browser tab generates, clears, or
+   * tags an outline, or saves/clears a round's filter — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isArgumentTreePanelLiveUpdateStorageEvent(event)) return
+      refreshAll()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const refresh = () => setRecords(buildArgumentTreesPanelView())

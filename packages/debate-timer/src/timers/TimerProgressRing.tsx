@@ -1,7 +1,7 @@
 /**
  * @fileoverview Circular countdown-progress ring, extracted from the
  * debate-timer-progress browser extension's timer face
- * (apps/debate-timer-progress-ext/src/components/TimerFace.tsx) so it can be
+ * (apps/debate-web-ext/src/components/TimerFace.tsx) so it can be
  * reused as a standalone visual anywhere in the monorepo — e.g. as the art
  * for a nav/dock button, not just inside the extension's own timer face.
  *

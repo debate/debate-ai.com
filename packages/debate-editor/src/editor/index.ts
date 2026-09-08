@@ -121,6 +121,7 @@ import { openBulkCompress, runCompressSingleFileWeb } from './bulk-compress-ui.j
 import { bulkCompressEnabled } from './bulk-compress-gate.js';
 import { openClean, runCleanSingleFileWeb } from './clean-ui.js';
 import { homeScreen, type HomeScreenCallbacks } from './home-screen.js';
+import { chromeHost } from './chrome-host.js';
 import { recordRecent, removeRecent, listRecents, type RecentFile } from './recents-store.js';
 import { isAutosaveOnForPath, setAutosaveForPath } from './autosave-prefs-store.js';
 import {
@@ -9146,7 +9147,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
     // and the shell re-shows it when the last doc closes) — an empty
     // workspace would otherwise land on a bare window with no
     // affordances. Any doc entering a slot hides it.
-    homeScreen.mount(document.body, homeCallbacks);
+    //
+    // Mounted into the engine container rather than `<body>`: the hub is
+    // `position: fixed; inset: 0`, which is the whole WINDOW in an embed —
+    // over the host page's sidebar — until `embed-containment.css` can reach
+    // it, and a descendant rule can only reach it inside the embed. See
+    // chrome-host.ts.
+    homeScreen.mount(chromeHost(), homeCallbacks);
     // Tell main this window can take OS-opened files into its slot
     // picker (so "Open with…" reuses it instead of spawning a blank
     // window), and wire the forward channel.
@@ -9170,7 +9177,13 @@ if (BOOT_MULTI_DOC_WORKSPACE) {
   // Home screen is a single-doc-mode feature (multi-pane has its
   // own workspace layout). Mount it before boot so the overlay is
   // ready when initSingleDocBoot decides whether to show it.
-  homeScreen.mount(document.body, homeCallbacks);
+  //
+  // Into the engine container, not `<body>` — see the multi-pane mount
+  // above and chrome-host.ts: a `<body>` child is outside
+  // `.dec-cardmirror-embed`, so the containment rule that would pin this
+  // full-window hub to the embed's column never matches it and the hub
+  // covers the host page (its sidebar included) instead.
+  homeScreen.mount(chromeHost(), homeCallbacks);
   // Single-pane windows don't take OS-opened files in place — main
   // keeps spawning a fresh window per file. Report the mode so a
   // stale multi-pane registration (from before a mode-toggle reload)
