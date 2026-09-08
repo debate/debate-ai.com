@@ -64,6 +64,16 @@ dialogs/CreateRoundDialog/useRoundEditorForm.ts#handleSubmit
           — everyone else          → Resend email invite
   → toast.success("Notified N registered users, emailed M invites")
 
+Submitting an edit to an already-created round (same handler, roundId set):
+dialogs/CreateRoundDialog/useRoundEditorForm.ts#handleSubmit
+  → updateRound(...)                          — local round update, unchanged
+  → computeAddedInviteEmails(previousEmails, nextEmails)  (round/round-invite-client.ts)
+      — diffs the round's debater/judge/spectator emails before vs. after
+        the edit (case-insensitive, blanks ignored) so only genuinely new
+        invitees are dispatched
+  → dispatchRoundInvites(...)  — same as above, only when the diff is non-empty,
+      using the round's existing slug (unchanged by an edit)
+
 Receiving a notification:
 hooks/useAccountNotifications.ts  (polls every 30s while the tab is visible)
   → fetchAccountNotifications()  (state/accountNotifications.ts)
@@ -84,8 +94,11 @@ panels/AccountNotificationsPanel.tsx  (mounted at /notifications)
   state) unless separately cloud-saved via the pre-existing, opt-in
   `/api/rounds` flow. An invitee's link only shows real round data if the
   creator has done that.
-- Only round *creation* sends invites. Adding a judge or spectator to an
-  already-created round (the "Edit Round" path) doesn't re-invite them.
+- Editing an already-created round only invites the newly-added debater/
+  judge/spectator emails (diffed against the round's own previous values,
+  case-insensitively) — it does not re-invite anyone already on the round,
+  and it does not notify anyone *removed* from the round that they were
+  taken off it.
 - The unread count on the dock badge is derived from the most recent 50
   notifications, not a separate `count(*)` query — accurate unless a user
   somehow has more than 50 unread at once.

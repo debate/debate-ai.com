@@ -7,6 +7,61 @@ _No task currently in progress._
 
 ### Completed
 
+- **🐛 Editing an already-created round now invites newly-added judges/
+  spectators/debaters.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds` and 25+ other
+  `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. The one remaining item in the standing
+  `PanelShell`/`PanelSection` audit (idea #17 follow-up (4)),
+  `debate-practice-drills`, already had an open PR (#704) from a concurrent
+  session at the start of this run, so this slice picked a different,
+  previously-untouched gap instead: `docs/features/
+  round-invites-and-notifications.md`'s Known gaps bullet "Only round
+  *creation* sends invites. Adding a judge or spectator to an
+  already-created round (the 'Edit Round' path) doesn't re-invite them."
+
+  Added `computeAddedInviteEmails(previousEmails, nextEmails)`
+  (`packages/debate-round/src/round/round-invite-client.ts`) — a pure,
+  case-insensitive diff (blanks ignored, deduped, first-seen casing kept)
+  between a round's debater/judge/spectator emails before and after an
+  edit. `dialogs/CreateRoundDialog/useRoundEditorForm.ts#handleSubmit`'s
+  existing "Update existing round" branch now captures the round's
+  pre-edit state (already available via `rounds.find`), computes the diff
+  against the submitted form's emails, and — only when the diff is
+  non-empty — calls the same `dispatchRoundInvites` helper the "Create
+  Round & Invite" path already used, reusing the round's existing `slug`
+  (unchanged by an edit) rather than regenerating one. A user who was
+  already on the round (as a debater, judge, or spectator) is never
+  re-invited by an unrelated edit to the same round; a user removed from
+  the round is not notified of the removal (documented as a new,
+  narrower Known gap in place of the old one).
+
+  `packages/debate-round/test/round-invite-client.test.ts` gained 7 new
+  `describe("computeAddedInviteEmails")` cases: only-genuinely-new emails
+  returned, nothing-added returns empty, case-insensitive comparison
+  against `previousEmails`, blank/whitespace-only entries ignored in both
+  lists, `nextEmails` deduped keeping first-seen casing, a returned email
+  is trimmed, and both-empty-lists returns empty. `useRoundEditorForm.ts`'s
+  hook itself stays untested, matching this repo's existing convention that
+  no `debate-round` panel/dialog hook has a render test — only its pure
+  logic (here, the new diff function) is unit-tested, the same pattern
+  every other fetch-client/pure-logic pair in this package follows.
+
+  Ran the full verification gate: `bun run test` (340 files, 7071 tests
+  passing — 7064 before this change, +7 new), `bun run typecheck` (17/17
+  packages green — the previously-noted pre-existing `debate-ai-web`
+  `write-language`/`@ai-sdk` type-mismatch failure did not reproduce this
+  run), and `bun run build:web` (production build, succeeded). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
 - **🧩 `PanelShell`/`PanelSection` adoption across `debate-contributor-progress`
   panels.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
