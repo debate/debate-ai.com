@@ -10,21 +10,27 @@
  * nav stays visible everywhere it points to, not just on `/videos`.
  *
  * Each section heading is a grouping rather than a destination: it renders
- * without an `href`, so clicking it does nothing but toggle the section, and
- * every section starts expanded. Its flagship tool is still reachable — it is
- * also listed as the first link inside the section.
+ * without an `href`, so clicking it does nothing but toggle the section. Its
+ * flagship tool is still reachable — it is also listed as the first link
+ * inside the section.
+ *
+ * The sections behave as an accordion: exactly one is open, and a closed
+ * section renders none of its links. The open one follows the route, so
+ * clicking an app dock button loads that destination's section into the
+ * sidebar and nothing else — see `sidebar-active-section`.
  *
  * @module components/category-gallery/ToolNavTree
  */
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 import { TreeItem } from "./TreeItem";
 import type { TreeItemIcon } from "./tree-item-icon";
 import { APP_DOCK_LINKS, SIDEBAR_TOOL_SECTIONS, TOOLS_ROOT_HREF } from "./sidebar-tool-sections";
+import { APPS_SECTION_ID, sidebarSectionForPath } from "./sidebar-active-section";
 import { VIDEO_REFERENCE_LINKS } from "./sidebar-video-links";
 import { IconBook, IconLeaderboard } from "../../ui/icons";
 
@@ -37,28 +43,50 @@ const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
 
 export interface ToolNavTreeProps {
   /**
-   * Whether the sections start open. `true` (the sidebar's own default) shows
-   * the whole tree up front; the mobile mount below `md` passes `false`, where
-   * the tree sits inline under the quick-link tiles and forty expanded rows
-   * would bury the video grid it is printed above.
+   * Whether the section holding the current route starts open. `true` (the
+   * sidebar's own default) opens it; the mobile mount below `md` passes
+   * `false`, where the tree sits inline under the quick-link tiles and even
+   * one expanded section would push the video grid off the screen.
    */
   defaultExpanded?: boolean;
+  /**
+   * Id of the open section, when a parent owns the accordion. `VideoSidebarTree`
+   * passes this so its own "Videos" node takes part: opening a tool section
+   * there closes Videos, and vice versa.
+   */
+  openSectionId?: string | null;
+  /** Present together with {@link ToolNavTreeProps.openSectionId}. */
+  onOpenSectionChange?: (sectionId: string | null) => void;
 }
 
-export function ToolNavTree({ defaultExpanded = true }: ToolNavTreeProps = {}) {
+export function ToolNavTree({
+  defaultExpanded = true,
+  openSectionId,
+  onOpenSectionChange,
+}: ToolNavTreeProps = {}) {
   const pathname = usePathname();
-  // Every section starts open: the tree is the only nav on the tool pages,
-  // so showing all of it up front beats making people hunt for the section
-  // that holds the page they want. Collapsing is still available per section.
-  const [appsExpanded, setAppsExpanded] = useState(defaultExpanded);
-  const [collapsedToolSections, setCollapsedToolSections] = useState<Record<string, boolean>>(
-    defaultExpanded
-      ? {}
-      : Object.fromEntries(SIDEBAR_TOOL_SECTIONS.map((section) => [section.id, true])),
+  const routeSectionId = sidebarSectionForPath(pathname);
+  const isControlled = onOpenSectionChange != null;
+
+  // One section open at a time, and the open one follows the route: the tree
+  // is the only nav on the tool pages, and rendering all forty-odd links up
+  // front cost a prefetch apiece on the page that was already the slowest.
+  const [ownSectionId, setOwnSectionId] = useState<string | null>(
+    defaultExpanded ? routeSectionId : null,
   );
 
-  const toggleToolSection = (id: string) =>
-    setCollapsedToolSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  useEffect(() => {
+    if (isControlled || !defaultExpanded) return;
+    setOwnSectionId(routeSectionId);
+  }, [routeSectionId, isControlled, defaultExpanded]);
+
+  const openId = isControlled ? openSectionId ?? null : ownSectionId;
+
+  const toggleSection = (id: string) => {
+    const next = openId === id ? null : id;
+    if (isControlled) onOpenSectionChange?.(next);
+    else setOwnSectionId(next);
+  };
 
   return (
     <>
@@ -66,8 +94,8 @@ export function ToolNavTree({ defaultExpanded = true }: ToolNavTreeProps = {}) {
         level={1}
         title="Apps"
         icon={LayoutGrid}
-        expanded={appsExpanded}
-        onToggleExpand={() => setAppsExpanded((v) => !v)}
+        expanded={openId === APPS_SECTION_ID}
+        onToggleExpand={() => toggleSection(APPS_SECTION_ID)}
       >
         {APP_DOCK_LINKS.map((link) => (
           <TreeItem
@@ -95,8 +123,8 @@ export function ToolNavTree({ defaultExpanded = true }: ToolNavTreeProps = {}) {
           level={1}
           title={section.title}
           icon={section.icon}
-          expanded={!collapsedToolSections[section.id]}
-          onToggleExpand={() => toggleToolSection(section.id)}
+          expanded={openId === section.id}
+          onToggleExpand={() => toggleSection(section.id)}
         >
           {section.tools.map((tool) => (
             <TreeItem

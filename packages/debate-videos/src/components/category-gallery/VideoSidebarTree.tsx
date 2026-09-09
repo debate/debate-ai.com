@@ -10,12 +10,17 @@
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
  *
  * The h1 sections are groupings, not destinations: they carry no `href`, so
- * clicking one only toggles it, and they start expanded.
+ * clicking one only toggles it. They form one accordion — "Videos" and the
+ * `ToolNavTree` sections together — so exactly one is open and a closed
+ * section renders none of its links. The open one follows the route, which
+ * is what makes clicking an app dock button load that destination's section
+ * and nothing else (see `sidebar-active-section`).
  */
 
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Clapperboard } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
@@ -26,6 +31,7 @@ import {
   VIDEO_FORMAT_LINKS,
   SIDEBAR_VIDEO_LINKS_BY_ID,
 } from "./sidebar-video-links";
+import { VIDEOS_SECTION_ID, sidebarSectionForPath } from "./sidebar-active-section";
 
 const COLLEGE_CHILD_IDS = VIDEO_FORMAT_LINKS.map((link) => link.id);
 
@@ -52,15 +58,28 @@ export function VideoSidebarTree({
   lecturesExpanded,
   onToggleLectures,
 }: VideoSidebarTreeProps) {
-  const [videosExpanded, setVideosExpanded] = useState(true);
+  const pathname = usePathname();
+  // The whole tree is one accordion, "Videos" included: this component owns
+  // which section is open and hands the same state down to `ToolNavTree`, so
+  // opening a tool section closes Videos rather than stacking on top of it.
+  const routeSectionId = sidebarSectionForPath(pathname);
+  const [openSectionId, setOpenSectionId] = useState<string | null>(
+    routeSectionId ?? VIDEOS_SECTION_ID,
+  );
   const [collegeExpanded, setCollegeExpanded] = useState(true);
+
+  useEffect(() => {
+    setOpenSectionId(routeSectionId ?? VIDEOS_SECTION_ID);
+  }, [routeSectionId]);
+
+  const videosExpanded = openSectionId === VIDEOS_SECTION_ID;
 
   // Re-open the College Debates node if the user navigates straight to one
   // of its children (e.g. via URL) while it happens to be collapsed.
   useEffect(() => {
     if (activeId && COLLEGE_CHILD_IDS.includes(activeId)) {
       setCollegeExpanded(true);
-      setVideosExpanded(true);
+      setOpenSectionId(VIDEOS_SECTION_ID);
     }
   }, [activeId]);
 
@@ -86,7 +105,9 @@ export function VideoSidebarTree({
         title="Videos"
         icon={Clapperboard}
         expanded={videosExpanded}
-        onToggleExpand={() => setVideosExpanded((v) => !v)}
+        onToggleExpand={() =>
+          setOpenSectionId((current) => (current === VIDEOS_SECTION_ID ? null : VIDEOS_SECTION_ID))
+        }
       >
         <TreeItem
           level={2}
@@ -141,7 +162,7 @@ export function VideoSidebarTree({
         </TreeItem>
       </TreeItem>
 
-      <ToolNavTree />
+      <ToolNavTree openSectionId={openSectionId} onOpenSectionChange={setOpenSectionId} />
     </nav>
   );
 }

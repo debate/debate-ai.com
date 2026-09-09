@@ -4,6 +4,105 @@ import { memo, useCallback, useEffect, useRef } from "react";
 import { cn } from "../lib/utils";
 import { animate } from "motion/react";
 
+/**
+ * One glow instance's participation in the shared pointer tracker below.
+ */
+interface GlowSubscriber {
+  /** The element whose `--active`/`--start` variables this glow drives. */
+  element: HTMLElement;
+  /** Whether the element is near enough to the viewport to be worth measuring. */
+  visible: boolean;
+  /** Applies the current pointer position to the element. */
+  apply: (x: number, y: number) => void;
+}
+
+/**
+ * Every glow on the page shares one `pointermove` listener, one `scroll`
+ * listener and one animation frame.
+ *
+ * A video grid mounts a glow per card and pages in sixty more every time the
+ * user reaches the bottom, so per-instance listeners meant hundreds of
+ * handlers each running `getBoundingClientRect()` — a forced layout — on
+ * every pointer move and every scroll frame. That is what froze the page as
+ * the library loaded. The shared tracker measures once per frame, and only
+ * for the handful of cards actually on screen.
+ */
+const subscribers = new Map<Element, GlowSubscriber>();
+
+/** Last known pointer position, in client coordinates. */
+let pointerX = 0;
+let pointerY = 0;
+/** Handle of the pending frame, or 0 when none is scheduled. */
+let frameHandle = 0;
+/** Shared observer that gates work to the glows near the viewport. */
+let visibilityObserver: IntersectionObserver | null = null;
+
+function getVisibilityObserver(): IntersectionObserver | null {
+  if (visibilityObserver) return visibilityObserver;
+  if (typeof IntersectionObserver === "undefined") return null;
+  visibilityObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        const subscriber = subscribers.get(entry.target);
+        if (subscriber) subscriber.visible = entry.isIntersecting;
+      }
+    },
+    // A margin wide enough that a card is already live by the time it
+    // scrolls into view, without measuring the whole loaded library.
+    { rootMargin: "200px" },
+  );
+  return visibilityObserver;
+}
+
+function flush() {
+  frameHandle = 0;
+  for (const subscriber of subscribers.values()) {
+    if (subscriber.visible) subscriber.apply(pointerX, pointerY);
+  }
+}
+
+function schedule() {
+  if (frameHandle) return;
+  frameHandle = requestAnimationFrame(flush);
+}
+
+function handlePointerMove(event: PointerEvent) {
+  pointerX = event.clientX;
+  pointerY = event.clientY;
+  schedule();
+}
+
+/** Scrolling moves the elements under a stationary pointer, so re-measure. */
+function handleScroll() {
+  schedule();
+}
+
+function subscribe(subscriber: GlowSubscriber) {
+  if (subscribers.size === 0) {
+    document.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+  }
+  subscribers.set(subscriber.element, subscriber);
+  // Without an observer (jsdom, older browsers) every glow stays live, which
+  // is the old behaviour rather than a broken one.
+  const observer = getVisibilityObserver();
+  if (observer) observer.observe(subscriber.element);
+  else subscriber.visible = true;
+}
+
+function unsubscribe(subscriber: GlowSubscriber) {
+  subscribers.delete(subscriber.element);
+  getVisibilityObserver()?.unobserve(subscriber.element);
+  if (subscribers.size === 0) {
+    document.removeEventListener("pointermove", handlePointerMove);
+    window.removeEventListener("scroll", handleScroll);
+    if (frameHandle) {
+      cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
+    }
+  }
+}
+
 interface GlowingEffectProps {
   blur?: number;
   inactiveZone?: number;
@@ -30,92 +129,75 @@ const GlowingEffect = memo(
     disabled = true,
   }: GlowingEffectProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const lastPosition = useRef({ x: 0, y: 0 });
-    const animationFrameRef = useRef<number>(0);
+    /** Whether the border is currently lit, so the style is written on change only. */
+    const isActiveRef = useRef<boolean | null>(null);
+    /** The in-flight angle animation, stopped before a new one starts. */
+    const angleAnimationRef = useRef<{ stop: () => void } | null>(null);
 
-    const handleMove = useCallback(
-      (e?: MouseEvent | { x: number; y: number }) => {
-        if (!containerRef.current) return;
+    const applyPointer = useCallback(
+      (mouseX: number, mouseY: number) => {
+        const element = containerRef.current;
+        if (!element) return;
 
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
+        const { left, top, width, height } = element.getBoundingClientRect();
+        const center = [left + width * 0.5, top + height * 0.5];
+        const distanceFromCenter = Math.hypot(mouseX - center[0], mouseY - center[1]);
+        const inactiveRadius = 0.5 * Math.min(width, height) * inactiveZone;
+
+        const isActive =
+          distanceFromCenter >= inactiveRadius &&
+          mouseX > left - proximity &&
+          mouseX < left + width + proximity &&
+          mouseY > top - proximity &&
+          mouseY < top + height + proximity;
+
+        if (isActiveRef.current !== isActive) {
+          isActiveRef.current = isActive;
+          element.style.setProperty("--active", isActive ? "1" : "0");
         }
 
-        animationFrameRef.current = requestAnimationFrame(() => {
-          const element = containerRef.current;
-          if (!element) return;
+        if (!isActive) {
+          // Nothing is lit, so let any angle animation for this card stop
+          // instead of ticking on behind an invisible border.
+          angleAnimationRef.current?.stop();
+          angleAnimationRef.current = null;
+          return;
+        }
 
-          const { left, top, width, height } = element.getBoundingClientRect();
-          const mouseX = e?.x ?? lastPosition.current.x;
-          const mouseY = e?.y ?? lastPosition.current.y;
+        const currentAngle = parseFloat(element.style.getPropertyValue("--start")) || 0;
+        const targetAngle =
+          (180 * Math.atan2(mouseY - center[1], mouseX - center[0])) / Math.PI + 90;
+        const angleDiff = ((targetAngle - currentAngle + 180) % 360) - 180;
+        // Sub-degree movement is invisible; animating it only piles up
+        // animation objects, one per pointer event per card.
+        if (Math.abs(angleDiff) < 1) return;
 
-          if (e) {
-            lastPosition.current = { x: mouseX, y: mouseY };
-          }
-
-          const center = [left + width * 0.5, top + height * 0.5];
-          const distanceFromCenter = Math.hypot(
-            mouseX - center[0],
-            mouseY - center[1]
-          );
-          const inactiveRadius = 0.5 * Math.min(width, height) * inactiveZone;
-
-          if (distanceFromCenter < inactiveRadius) {
-            element.style.setProperty("--active", "0");
-            return;
-          }
-
-          const isActive =
-            mouseX > left - proximity &&
-            mouseX < left + width + proximity &&
-            mouseY > top - proximity &&
-            mouseY < top + height + proximity;
-
-          element.style.setProperty("--active", isActive ? "1" : "0");
-
-          if (!isActive) return;
-
-          const currentAngle =
-            parseFloat(element.style.getPropertyValue("--start")) || 0;
-          let targetAngle =
-            (180 * Math.atan2(mouseY - center[1], mouseX - center[0])) /
-            Math.PI +
-            90;
-
-          const angleDiff = ((targetAngle - currentAngle + 180) % 360) - 180;
-          const newAngle = currentAngle + angleDiff;
-
-          animate(currentAngle, newAngle, {
-            duration: movementDuration,
-            ease: [0.16, 1, 0.3, 1],
-            onUpdate: (value) => {
-              element.style.setProperty("--start", String(value));
-            },
-          });
+        angleAnimationRef.current?.stop();
+        angleAnimationRef.current = animate(currentAngle, currentAngle + angleDiff, {
+          duration: movementDuration,
+          ease: [0.16, 1, 0.3, 1],
+          onUpdate: (value) => {
+            element.style.setProperty("--start", String(value));
+          },
         });
       },
-      [inactiveZone, proximity, movementDuration]
+      [inactiveZone, proximity, movementDuration],
     );
 
     useEffect(() => {
       if (disabled) return;
+      const element = containerRef.current;
+      if (!element) return;
 
-      const handleScroll = () => handleMove();
-      const handlePointerMove = (e: PointerEvent) => handleMove(e);
-
-      window.addEventListener("scroll", handleScroll, { passive: true });
-      document.body.addEventListener("pointermove", handlePointerMove, {
-        passive: true,
-      });
+      const subscriber: GlowSubscriber = { element, visible: false, apply: applyPointer };
+      subscribe(subscriber);
 
       return () => {
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
-        window.removeEventListener("scroll", handleScroll);
-        document.body.removeEventListener("pointermove", handlePointerMove);
+        unsubscribe(subscriber);
+        angleAnimationRef.current?.stop();
+        angleAnimationRef.current = null;
       };
-    }, [handleMove, disabled]);
+    }, [applyPointer, disabled]);
 
     return (
       <>

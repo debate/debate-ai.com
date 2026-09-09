@@ -194,7 +194,7 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures,
           const isActive = activeId === link.id;
           return (
             <li key={link.id} className="list-none">
-              <Link href={link.href} className="block hover:opacity-90 transition-opacity">
+              <Link href={link.href} prefetch={false} className="block hover:opacity-90 transition-opacity">
                 <ListRow link={link} count={counts?.[link.id]} isActive={isActive} />
               </Link>
             </li>
@@ -212,6 +212,7 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures,
           <li key={link.id} className="list-none">
             <Link
               href={link.href}
+              prefetch={false}
               className={cn(
                 "relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group",
                 isActive && "border-primary/60",
