@@ -10,23 +10,30 @@
  * task-oriented walkthroughs of the training, practice, and research
  * collaboration tools.
  *
- * The deployed docs site's origin is an environment concern, not a code
- * one: set `NEXT_PUBLIC_DOCS_URL` (e.g. `https://docs.debate-ai.com`) and
- * every link resolves to the live site. Without it, links fall back to the
- * same `.mdx` source rendered on GitHub, so a fresh checkout never links to
- * a 404.
+ * Those docs ship with the app. `scripts/build-docs.mjs` static-exports the
+ * docs site into `public/docs` on every build, so the Worker serves it at
+ * `/docs` on whatever origin the app is running on — which is why every link
+ * below is a same-origin path by default and needs no configuration.
+ *
+ * `NEXT_PUBLIC_DOCS_URL` overrides that origin for the case where the docs
+ * are deployed separately (e.g. `https://docs.debate-ai.com`). It only
+ * replaces the origin: the docs site is served under `/docs` there too, so
+ * the rest of the path is the same either way.
  *
  * @module lib/docs-links
  */
 
 import { APP_FEATURES } from "./ui/features/feature-catalog"
 
-/** Origin of the deployed Fumadocs site, without a trailing slash; empty when unset. */
+/**
+ * Origin of a separately-deployed Fumadocs site, without a trailing slash.
+ * Empty by default, which leaves every link same-origin — the docs are built
+ * into this app's own `public/docs` (see `scripts/build-docs.mjs`).
+ */
 export const DOCS_SITE_URL = (process.env.NEXT_PUBLIC_DOCS_URL ?? "").replace(/\/+$/, "")
 
-/** Where the docs site's content lives on GitHub, for the no-deployment fallback. */
-const DOCS_SOURCE_URL =
-  "https://github.com/debate/debate-ai.com/blob/master/packages/debate-help-docs/content/docs"
+/** Path the docs site is served under, on this origin or an override origin. */
+const DOCS_BASE_PATH = "/docs"
 
 /** The task-oriented guides under `content/docs/guides/`. */
 export type DocsGuide = "training-tools" | "practice-tools" | "research-collaboration"
@@ -53,12 +60,12 @@ export const DOCS_GUIDE_TITLES: Record<DocsGuide, string> = {
  */
 export function docsPageUrl(path: string): string {
   const clean = path.replace(/^\/+/, "").replace(/\.mdx?$/, "")
-  return DOCS_SITE_URL ? `${DOCS_SITE_URL}/docs/${clean}` : `${DOCS_SOURCE_URL}/${clean}.mdx`
+  return `${DOCS_SITE_URL}${DOCS_BASE_PATH}/${clean}`
 }
 
-/** URL of the docs site's landing page (or the docs folder on GitHub). */
+/** URL of the docs site's home page. */
 export function docsHomeUrl(): string {
-  return DOCS_SITE_URL ? `${DOCS_SITE_URL}/docs` : DOCS_SOURCE_URL
+  return `${DOCS_SITE_URL}${DOCS_BASE_PATH}`
 }
 
 /**

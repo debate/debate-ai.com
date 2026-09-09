@@ -19,7 +19,7 @@ export function Footer() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/docs">
+            <Link href="/">
               <Button size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
                 <BookOpen className="h-4 w-4" />
                 Read the Docs

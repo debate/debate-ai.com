@@ -25,8 +25,16 @@
  * @module features/feature-catalog
  */
 
-/** Repository the feature docs are published from. */
-const DOCS_BASE_URL = "https://github.com/debate/debate-ai.com/blob/master/docs/features";
+/**
+ * Where the feature docs are served from. Same origin as the app: the docs
+ * site is static-exported into `public/docs` at build time
+ * (`scripts/build-docs.mjs`), so `docs/features/<name>.md` in the monorepo is
+ * published at `/docs/features/<name>`.
+ *
+ * Spelled out here rather than imported from `lib/docs-links.ts`, which
+ * imports this module: the dependency only runs one way.
+ */
+const DOCS_BASE_URL = "/docs/features";
 
 /**
  * Groups the catalog by the job a debater is doing, rather than by the
@@ -637,13 +645,16 @@ export function searchFeatures(entries: FeatureEntry[], query: string): FeatureE
 }
 
 /**
- * Absolute URL of an entry's long-form feature doc.
+ * URL of an entry's long-form feature doc on the docs site.
+ *
+ * `doc` names the source file (`drill-sets.md`); the published page drops the
+ * extension.
  *
  * @param entry - The catalog entry.
  * @returns The doc's URL, or `undefined` when the entry has no doc.
  */
 export function featureDocUrl(entry: FeatureEntry): string | undefined {
-  return entry.doc ? `${DOCS_BASE_URL}/${entry.doc}` : undefined;
+  return entry.doc ? `${DOCS_BASE_URL}/${entry.doc.replace(/\.mdx?$/, "")}` : undefined;
 }
 
 /**

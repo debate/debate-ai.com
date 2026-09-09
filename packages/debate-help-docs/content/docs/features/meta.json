@@ -1,5 +1,6 @@
 {
-  "title": "Packages",
+  "title": "Features",
+  "icon": "Layers",
   "pages": [
     "index",
     "..."

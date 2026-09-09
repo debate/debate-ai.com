@@ -8,7 +8,8 @@
   "license": "rights.institute/prosper",
   "scripts": {
     "dev": "vinext dev",
-    "build": " vinext build && npm run build:sw",
+    "build": "npm run build:docs && vinext build && npm run build:sw",
+    "build:docs": "node scripts/build-docs.mjs",
     "build:sw": "node lib/offline-sw/generate.cjs && webpack --config webpack.config.cjs && cp public/service-worker.js dist/client/service-worker.js",
     "start": "vinext start",
     "deploy": "npm run db:migrate:d1 && npm run build && vinext deploy --skip-build",

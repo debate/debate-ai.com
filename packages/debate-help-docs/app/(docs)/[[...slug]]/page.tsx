@@ -2,7 +2,7 @@
  * @file page.tsx
  * @description Dynamic documentation page component that renders MDX content.
  */
-import { source } from '@/lib/fumadocs/source';
+import { pageMarkdownUrl, source } from '@/lib/fumadocs/source';
 import {
   DocsBody,
   DocsDescription,
@@ -55,6 +55,7 @@ export default async function Page(props: {
   const data = page.data as any;
   const MDX = data.body;
   const lastUpdate = await lastEditFor(page.path);
+  const markdownUrl = pageMarkdownUrl(page);
 
   return (
     <DocsPage toc={data.toc} full={data.full} lastUpdate={lastUpdate}>
@@ -63,9 +64,9 @@ export default async function Page(props: {
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
         <div className="flex flex-row gap-2 items-center border-b pt-2 pb-6">
-          <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+          <LLMCopyButton markdownUrl={markdownUrl} />
           <AskAIDropdown
-            markdownUrl={`${page.url}.mdx`}
+            markdownUrl={markdownUrl}
             githubUrl={docsConfig.githubDocs ? `${docsConfig.githubDocs}/${page.path}` : undefined}
           />
         </div>

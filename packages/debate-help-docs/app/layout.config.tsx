@@ -24,13 +24,13 @@ export const baseOptions: BaseLayoutProps = {
       label: 'Guides',
       icon: <Compass />,
       text: 'Guides',
-      url: '/docs/guides',
+      url: '/guides',
     },
     {
       label: 'Docs',
       icon: <BookOpen />,
       text: 'Docs',
-      url: '/docs',
+      url: '/',
     },
     {
       label: 'Open the app',
