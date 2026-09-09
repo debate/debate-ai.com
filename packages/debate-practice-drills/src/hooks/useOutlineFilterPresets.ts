@@ -15,6 +15,14 @@
  * preset" reads that round's current filter back out and stores it here
  * under a new name.
  *
+ * Also subscribes to the browser's `storage` event (via
+ * `isOutlineFilterPresetsLiveUpdateStorageEvent`) so a *different* browser
+ * tab saving or removing a preset refreshes this one too — the same-tab
+ * `CHANGE_EVENT` listener below never fires for another tab's write. This
+ * closes `docs/features/argument-tree-outline.md`'s "no cross-tab `storage`
+ * listener yet" Known gap, and the matching one `state/live-update.ts`'s doc
+ * comment named for this hook.
+ *
  * @module hooks/useOutlineFilterPresets
  */
 
@@ -46,6 +54,18 @@ function readLocal(): OutlineFilterPreset[] {
 function writeLocal(list: OutlineFilterPreset[]) {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+/**
+ * Whether a `storage` event should trigger `useOutlineFilterPresets` to
+ * refresh its preset list. A `null` key (e.g. from `localStorage.clear()`,
+ * per the `StorageEvent` spec) counts too — the safest response to
+ * "everything changed" is refreshing. Any other key (an unrelated store
+ * elsewhere in the app) is ignored so an unrelated cross-tab write doesn't
+ * force a needless refresh.
+ */
+export function isOutlineFilterPresetsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return event.key === null || event.key === STORAGE_KEY;
 }
 
 // Module-level (not per-hook-instance) so every mounted instance shares one
@@ -102,6 +122,18 @@ export function useOutlineFilterPresets(): UseOutlineFilterPresetsResult {
     return () => {
       window.removeEventListener(CHANGE_EVENT, onExternalChange);
     };
+  }, []);
+
+  // A `storage` event never fires in the tab that made the write, only in
+  // other same-origin tabs — the `CHANGE_EVENT` listener above only covers
+  // this tab's own instances.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOutlineFilterPresetsLiveUpdateStorageEvent(event)) return;
+      setPresets(readLocal());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const persist = useCallback((next: OutlineFilterPreset[]) => {
