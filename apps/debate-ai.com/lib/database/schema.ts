@@ -262,6 +262,20 @@ export const userSettings = sqliteTable("user_settings", {
   // Null/absent means "nothing synced yet", same semantics as every other
   // nullable column here.
   questStreakSync: text("quest_streak_sync"),
+  // JSON-serialized `QualificationPointsTable` override (see
+  // packages/debate-data-sync/src/state/qualificationPointsTable.ts and
+  // docs/features/team-rankings.md's "Standings data... is stored in
+  // localStorage only" Known gap) and `QualificationCutoffSettings` (see
+  // packages/debate-data-sync/src/state/qualificationCutoff.ts, same gap) —
+  // the Standings tab's custom point weights and qualification cutoff, kept
+  // as two nullable columns rather than folded into one blob since a team
+  // can configure either independently. Null/absent means "no custom value
+  // saved yet, use the local default", same semantics as every other
+  // nullable column here. The logged/imported tournament results
+  // themselves are not settings — those sync through the separate
+  // `saved_tournament_results` table below, one row per result.
+  qualificationPointsTable: text("qualification_points_table"),
+  qualificationCutoff: text("qualification_cutoff"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -389,6 +403,44 @@ export const savedWordCountRounds = sqliteTable(
 );
 
 export type SavedWordCountRoundRow = typeof savedWordCountRounds.$inferSelect;
+
+// Account-linked tournament-result sync — docs/features/team-rankings.md's
+// "Standings data (logged/imported tournament results, the custom points
+// table, and the qualification cutoff) is stored in localStorage only... it
+// doesn't yet follow a signed-in user across devices" Known gap. A team logs
+// or bulk-imports many results, so — like `savedWordCountRounds` above —
+// this is one row per (user, result) pair rather than one row per user;
+// unlike that table, results are create/delete only (a logged result is
+// never edited in place, only removed), so there is no update-conflict
+// concern to resolve on merge. `clientId` holds the result's own
+// caller-generated `TournamentResultRecord.id` (unique per user, for
+// idempotent upsert-by-id). `data` holds the whole record JSON-stringified,
+// mirroring `savedWordCountRounds.data` — a result's payload is a handful of
+// short fields, so `GET /api/tournament-results` returns every record in one
+// call, no separate summary/label split.
+export const savedTournamentResults = sqliteTable(
+  "saved_tournament_results",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_tournament_results_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_tournament_results_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedTournamentResultRow = typeof savedTournamentResults.$inferSelect;
 
 // Account-linked judge-decision-history sync — TODO.md idea #5 ("AI Judge
 // Decision Modes"), "(b) a decision history log per round instead of only

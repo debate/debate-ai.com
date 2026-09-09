@@ -58,6 +58,20 @@ import {
   serializeEditorPreferences,
   type EditorPreferencesPayload,
 } from "@/lib/editor-preferences"
+import {
+  DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
+  normalizeQualificationPointsTablePatch,
+  parseQualificationPointsTable,
+  serializeQualificationPointsTable,
+} from "debate-data-sync/src/state/qualificationPointsTable"
+import {
+  DEFAULT_QUALIFICATION_CUTOFF_SYNC,
+  normalizeQualificationCutoffPatch,
+  parseQualificationCutoff,
+  serializeQualificationCutoff,
+  type QualificationCutoffSettings,
+} from "debate-data-sync/src/state/qualificationCutoff"
+import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndca-standings"
 
 /**
  * Account-linked app preferences — TODO.md idea #17 ("User Settings —
@@ -79,15 +93,20 @@ import {
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, wordLimitPresets?,
  *   outlineFilterPresets?, newsRead?, newsLiked?, savedArgumentCollections?,
- *   researchProgressGoal?, questStreakSync? } — validates and upserts the
+ *   researchProgressGoal?, questStreakSync?, qualificationPointsTable?,
+ *   qualificationCutoff? } — validates and upserts the
  *   given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
- *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`
- *   and `debate-card-search`'s
+ *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`,
+ *   `debate-card-search`'s
  *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
  *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`,
- *   the same option lists/shape the picker, favorite-star,
+ *   and `debate-data-sync`'s
+ *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
+ *   (the Standings tab's custom point weights/cutoff — see
+ *   `docs/features/team-rankings.md`'s Known gaps), the same option
+ *   lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
  *   collections", Research Progress "My research goal", and Quest Streaks
  *   reminder/freeze UIs themselves use), returning the resulting full
@@ -114,6 +133,8 @@ type SettingsRow = {
   savedArgumentCollections: string | null
   researchProgressGoal: string | null
   questStreakSync: string | null
+  qualificationPointsTable: string | null
+  qualificationCutoff: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -128,6 +149,8 @@ type SettingsPayload = UserSettingsPayload & {
   savedArgumentCollections: SavedArgumentCollection[]
   researchProgressGoal: ResearchProgressGoalSyncPayload | null
   questStreakSync: QuestStreakSyncPayload | null
+  qualificationPointsTable: QualificationPointsTable | null
+  qualificationCutoff: QualificationCutoffSettings | null
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -155,6 +178,12 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     questStreakSync: row?.questStreakSync
       ? parseQuestStreakSync(row.questStreakSync)
       : DEFAULT_QUEST_STREAK_SYNC.questStreakSync,
+    qualificationPointsTable: row?.qualificationPointsTable
+      ? parseQualificationPointsTable(row.qualificationPointsTable)
+      : DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC.qualificationPointsTable,
+    qualificationCutoff: row?.qualificationCutoff
+      ? parseQualificationCutoff(row.qualificationCutoff)
+      : DEFAULT_QUALIFICATION_CUTOFF_SYNC.qualificationCutoff,
   }
 }
 
@@ -193,6 +222,8 @@ export async function PUT(req: NextRequest) {
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
+  const qualificationPointsTableResult = normalizeQualificationPointsTablePatch(body)
+  const qualificationCutoffResult = normalizeQualificationCutoffPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
@@ -208,6 +239,8 @@ export async function PUT(req: NextRequest) {
     ...researchProgressGoalResult.errors,
     ...questStreakSyncResult.errors,
     ...newsSyncResult.errors,
+    ...qualificationPointsTableResult.errors,
+    ...qualificationCutoffResult.errors,
     ...editorPreferencesResult.errors,
   ]
 
@@ -224,13 +257,15 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
+    qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
+    qualificationCutoffResult.valid.qualificationCutoff === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -252,6 +287,8 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollections?: string | null
     researchProgressGoal?: string | null
     questStreakSync?: string | null
+    qualificationPointsTable?: string | null
+    qualificationCutoff?: string | null
   } = { ...valid }
   if (
     favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
@@ -291,6 +328,14 @@ export async function PUT(req: NextRequest) {
   }
   if (questStreakSyncResult.valid.questStreakSync !== undefined) {
     dbPatch.questStreakSync = serializeQuestStreakSync(questStreakSyncResult.valid.questStreakSync)
+  }
+  if (qualificationPointsTableResult.valid.qualificationPointsTable !== undefined) {
+    dbPatch.qualificationPointsTable = serializeQualificationPointsTable(
+      qualificationPointsTableResult.valid.qualificationPointsTable,
+    )
+  }
+  if (qualificationCutoffResult.valid.qualificationCutoff !== undefined) {
+    dbPatch.qualificationCutoff = serializeQualificationCutoff(qualificationCutoffResult.valid.qualificationCutoff)
   }
   if (newsSyncResult.valid.newsRead !== undefined) {
     dbPatch.newsRead = serializeNewsIdList(newsSyncResult.valid.newsRead)

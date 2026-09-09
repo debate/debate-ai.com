@@ -27,6 +27,12 @@
  * Below that, the ranked standings table itself, each row expandable to see
  * (and delete) its individual tournament results.
  *
+ * All three sections' writes go through `useStandingsAccountSync`
+ * (`../../hooks/useStandingsAccountSync.ts`), closing
+ * `docs/features/team-rankings.md`'s "Standings data... stored in
+ * localStorage only" Known gap — local-first (fully usable signed out),
+ * best-effort synced to the account when signed in.
+ *
  * @module panels/leaderboard/StandingsPanel
  */
 
@@ -55,21 +61,12 @@ import {
 } from "../../ui/primitives/table"
 import {
   buildStandingsFromStore,
-  bulkImportTournamentResults,
-  deleteTournamentResult,
-  saveTournamentResult,
   type TournamentResultRecord,
 } from "debate-data-sync/src/state/tournamentResults"
-import {
-  getEffectiveQualificationPointsTable,
-  resetPersistedQualificationPointsTable,
-  savePersistedQualificationPointsTable,
-} from "debate-data-sync/src/state/qualificationPointsTable"
+import { getEffectiveQualificationPointsTable } from "debate-data-sync/src/state/qualificationPointsTable"
 import {
   getEffectiveQualificationCutoff,
   isQualificationCutoffConfigured,
-  resetPersistedQualificationCutoff,
-  savePersistedQualificationCutoff,
   toQualificationOptions,
   type QualificationCutoffSettings,
 } from "debate-data-sync/src/state/qualificationCutoff"
@@ -80,6 +77,7 @@ import {
   type QualificationPointsTable,
   type RankedTeamStanding,
 } from "debate-data-sync/src/rankings/ndca-standings"
+import { useStandingsAccountSync } from "../../hooks/useStandingsAccountSync"
 
 const FINISH_OPTIONS: { value: OutroundFinish; label: string }[] = [
   { value: "champion", label: "Champion" },
@@ -153,6 +151,21 @@ export function StandingsPanel() {
 
   const refresh = () => setStandings(loadStandings())
 
+  const {
+    synced,
+    saveTournamentResult,
+    deleteTournamentResult,
+    bulkImportTournamentResults,
+    saveQualificationPointsTable,
+    resetQualificationPointsTable,
+    saveQualificationCutoff,
+    resetQualificationCutoff,
+  } = useStandingsAccountSync(() => {
+    refresh()
+    setPointsTable(getEffectiveQualificationPointsTable())
+    setCutoff(getEffectiveQualificationCutoff())
+  })
+
   const handleLogResult = () => {
     const teamId = entryForm.teamId.trim()
     const tournamentName = entryForm.tournamentName.trim()
@@ -197,27 +210,33 @@ export function StandingsPanel() {
   }
 
   const handleSavePointsTable = () => {
-    savePersistedQualificationPointsTable(pointsTable)
-    setPointsTableStatus("Saved — new points weights apply immediately.")
+    saveQualificationPointsTable(pointsTable)
+    setPointsTableStatus(
+      synced
+        ? "Saved to your account — new points weights apply immediately."
+        : "Saved — new points weights apply immediately.",
+    )
     refresh()
   }
 
   const handleResetPointsTable = () => {
-    resetPersistedQualificationPointsTable()
-    const defaults = getEffectiveQualificationPointsTable()
+    const defaults = resetQualificationPointsTable()
     setPointsTable(defaults)
     setPointsTableStatus("Reset to the default point table.")
     refresh()
   }
 
   const handleSaveCutoff = () => {
-    savePersistedQualificationCutoff(cutoff)
-    setCutoffStatus("Saved — the qualified list below applies it immediately.")
+    saveQualificationCutoff(cutoff)
+    setCutoffStatus(
+      synced
+        ? "Saved to your account — the qualified list below applies it immediately."
+        : "Saved — the qualified list below applies it immediately.",
+    )
   }
 
   const handleResetCutoff = () => {
-    resetPersistedQualificationCutoff()
-    setCutoff(getEffectiveQualificationCutoff())
+    setCutoff(resetQualificationCutoff())
     setCutoffStatus("Cleared — no cutoff is configured.")
   }
 
@@ -460,6 +479,7 @@ export function StandingsPanel() {
             {cutoffConfigured
               ? ` · ${qualifiedTeamIds.size} of ${standings.length} currently qualify`
               : ""}
+            {synced ? " · synced to your account" : ""}
           </span>
         }
       >
