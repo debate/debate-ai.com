@@ -10,6 +10,9 @@
  * set fits without wrapping in the first place.
  */
 
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -133,5 +136,59 @@ describe("magnification", () => {
     // arrives, so the resting transform is the identity — anything else here
     // would be a hydration mismatch.
     expect(renderDock()).toContain("transform:none");
+  });
+});
+
+describe("DockLabel", () => {
+  /** The tooltip div, pulled out of a rendered item by its label text. */
+  function labelClasses(html: string): string {
+    const match = /<div class="([^"]*)">Videos<\/div>/.exec(html);
+    if (!match) throw new Error(`no dock label in: ${html}`);
+    return match[1];
+  }
+
+  it("hangs the tooltip a fixed distance under its own icon", () => {
+    // Anchored from the item's bottom edge, so the gap is the same at every
+    // icon size and whatever the label's height. Pinning the label's *bottom*
+    // instead (`-bottom-8`) made the gap 32px minus the label's height: the
+    // tooltip floated free of the icon it belonged to — in the sidebar dock,
+    // far enough to land on the panel header below it — and a taller label
+    // climbed back up over the icon.
+    const classes = labelClasses(renderItem());
+    expect(classes).toContain("top-full");
+    expect(classes).toContain("mt-1.5");
+    expect(classes).not.toContain("-bottom-8");
+  });
+
+  it("paints over the content it hangs across", () => {
+    // The label leaves the dock's box, and the dock is the first thing in the
+    // sidebar column — with no stacking order of its own it goes *under* any
+    // positioned element that comes after it in the document.
+    expect(labelClasses(renderItem())).toContain("z-50");
+  });
+
+  it("stays centred on its icon and out of the pointer's way", () => {
+    const classes = labelClasses(renderItem());
+    expect(classes).toContain("left-1/2");
+    expect(classes).toContain("-translate-x-1/2");
+    // Hidden until hover/focus, and never a click target: a visible label
+    // overlapping a neighbouring icon must not swallow that icon's click.
+    expect(classes).toContain("opacity-0");
+    expect(classes).toContain("group-hover:opacity-100");
+    expect(classes).toContain("pointer-events-none");
+  });
+
+  it("keeps the web app's copy of the dock in step", () => {
+    // `apps/debate-ai.com/lib/ui/layout/dock.tsx` is a second copy of this
+    // file — the one the app actually renders, and the one the tooltip bug
+    // was seen in. Only the package copy is unit-tested, so compare the label
+    // markup directly rather than let the two drift apart again.
+    const appDock = readFileSync(
+      path.resolve(import.meta.dirname, "../../../apps/debate-ai.com/lib/ui/layout/dock.tsx"),
+      "utf8",
+    );
+    const appClasses = /"absolute top-full[^"]*"/.exec(appDock)?.[0];
+    expect(appClasses).toBeDefined();
+    expect(appClasses!.slice(1, -1)).toBe(labelClasses(renderItem()));
   });
 });

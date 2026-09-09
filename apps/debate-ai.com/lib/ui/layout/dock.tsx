@@ -369,11 +369,29 @@ const DockItem = React.forwardRef<HTMLElement, DockItemProps>(
 
 DockItem.displayName = "DockItem"
 
+/**
+ * The hover/focus tooltip for a dock item, hung under its icon.
+ *
+ * Anchored from the item's *bottom edge* (`top-full` plus a fixed `mt-1.5`),
+ * not by pinning the label's own bottom edge a fixed distance below it. With
+ * `bottom: -2rem` the gap was whatever was left of those 32px after the
+ * label's height, so the label floated a variable distance clear of the icon
+ * and a taller label (a wrapped one, or a larger text scale) climbed back up
+ * over it. In the sidebar-hosted dock that gap put the tooltip down among the
+ * panels below the dock — reading as a chip dropped on the panel header
+ * rather than as the hovered icon's label. A constant 6px keeps it attached
+ * to its icon at every icon size.
+ *
+ * `z-50` because the label leaves the dock's box and overlays whatever is
+ * under it. The dock is the first thing in the sidebar column, so without a
+ * stacking order of its own the label paints *below* any positioned element
+ * that comes after it in the document.
+ */
 const DockLabel = ({ children, className }: { children: React.ReactNode; className?: string }) => {
   return (
     <div
       className={cn(
-        "absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 dark:bg-gray-200 px-2 py-0.5 text-xs text-white dark:text-black opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100 group-focus-visible:opacity-100",
+        "absolute top-full left-1/2 z-50 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-800 dark:bg-gray-200 px-2 py-0.5 text-xs text-white dark:text-black shadow-md opacity-0 transition-opacity duration-200 pointer-events-none group-hover:opacity-100 group-focus-visible:opacity-100",
         className,
       )}
     >
