@@ -15,6 +15,19 @@ import { renderToStaticMarkup } from "react-dom/server";
 
 import { Dock, DockIcon, DockItem, DockLabel, dockVariants } from "../src/layout/dock";
 
+function renderItem(props: Record<string, unknown> = {}) {
+  return renderToStaticMarkup(
+    <Dock direction="middle">
+      <DockItem {...props}>
+        <DockLabel>Videos</DockLabel>
+        <DockIcon>
+          <span>V</span>
+        </DockIcon>
+      </DockItem>
+    </Dock>,
+  );
+}
+
 function renderDock(props: Record<string, unknown> = {}) {
   return renderToStaticMarkup(
     <Dock direction="middle" {...props}>
@@ -77,5 +90,48 @@ describe("Dock", () => {
     // otherwise get an icon that shrinks on hover.
     const html = renderDock({ iconSize: 34, magnification: 20 });
     expect(html).toContain("width:34px");
+  });
+});
+
+describe("DockItem", () => {
+  it("renders a navigating item as a real link", () => {
+    // Not decoration: the anchor is what gives a dock button middle-click,
+    // open-in-new-tab, a hover target in the status bar and Enter to
+    // activate. The host still intercepts the plain click to route itself.
+    const html = renderItem({ href: "/videos", "aria-label": "Videos" });
+    expect(html).toContain('href="/videos"');
+    expect(html).toContain('aria-label="Videos"');
+  });
+
+  it("gives a non-navigating item button semantics instead", () => {
+    // The settings item opens a menu rather than going anywhere, and is also
+    // what Radix's DropdownMenuTrigger renders through `asChild`.
+    const html = renderItem({ "aria-label": "Settings" });
+    expect(html).not.toContain("href=");
+    expect(html).toContain('role="button"');
+    expect(html).toContain('tabindex="0"');
+  });
+
+  it("marks the current destination for assistive tech", () => {
+    expect(renderItem({ href: "/videos", "aria-current": "page" })).toContain('aria-current="page"');
+  });
+});
+
+describe("magnification", () => {
+  it("leaves the hit area a fixed box whatever the magnification", () => {
+    // The whole point: magnification is a transform on a layer inside the
+    // slot, so the button never resizes and never shoves its neighbours out
+    // from under the cursor mid-click. Both the resting and the magnified
+    // size come out of the same 40px box.
+    const html = renderDock({ iconSize: 40, magnification: 80 });
+    expect(html).toContain("width:40px");
+    expect(html).not.toContain("width:80px");
+  });
+
+  it("rests unmagnified, so a server render matches the first paint", () => {
+    // Scale is driven by pointer distance, which is infinite until the cursor
+    // arrives, so the resting transform is the identity — anything else here
+    // would be a hydration mismatch.
+    expect(renderDock()).toContain("transform:none");
   });
 });
