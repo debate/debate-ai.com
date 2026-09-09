@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedCounselPanelAssessments } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
@@ -24,18 +25,21 @@ import { getUserId } from "@/lib/auth/session"
  *   per-assessment follow-up fetch.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced counsel-panel assessments." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/counsel-panel-assessments",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced counsel-panel assessments." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedCounselPanelAssessments.data })
-    .from(savedCounselPanelAssessments)
-    .where(eq(savedCounselPanelAssessments.userId, userId))
-    .orderBy(asc(savedCounselPanelAssessments.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedCounselPanelAssessments.data })
+      .from(savedCounselPanelAssessments)
+      .where(eq(savedCounselPanelAssessments.userId, userId))
+      .orderBy(asc(savedCounselPanelAssessments.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)
