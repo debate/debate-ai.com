@@ -13,7 +13,7 @@
 
 import type React from "react"
 
-import { CategoryDockProvider, PersistentVideoPlayer, VideoPlayerFrameBridge } from "debate-videos"
+import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { AppSidebarShell } from "@/components/layout/AppSidebarShell"
 import { AppFrameProvider, AppFrameSurface } from "@/components/layout/AppFrameProvider"
@@ -63,7 +63,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </AppFrameProvider>
       </ReasonDocsProvider>
       <div data-app-chrome>
-        <PersistentVideoPlayer />
+        {/* The slow-the-spread toggle is debate chrome, not part of the player. */}
+        <PersistentVideoPlayer extraControls={<SlowSpreadButton />} />
         <OneTap />
       </div>
       <VideoPlayerFrameBridge />

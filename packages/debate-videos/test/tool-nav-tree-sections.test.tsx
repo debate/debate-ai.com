@@ -2,13 +2,13 @@
  * @fileoverview Pins what `ToolNavTree` renders when a caller narrows it to a
  * subset of sections.
  *
- * The regression this covers: `/cards` used to get the whole nav — the Apps
- * node, all three tool sections, and the glossary/rankings pair — stacked
- * under its document panels. The app's `AppSidebarShell` now asks for the
- * Research section alone, and the two things that have to hold for that
- * column to be usable are that nothing else renders, and that the one section
- * shown is *open*: `/cards` matches the (omitted) Apps node, so following the
- * route blindly would leave a heading with no links under it.
+ * The regression this covers: `/cards` used to get the whole nav — every tool
+ * section and the glossary/rankings pair — stacked under its document panels.
+ * The app's `AppSidebarShell` now asks for the Research section alone, and
+ * the two things that have to hold for that column to be usable are that
+ * nothing else renders, and that the one section shown is *open*: `/cards` is
+ * a dock destination that no tool section lists, so following the route
+ * blindly would leave a heading with no links under it.
  *
  * Static markup is enough — the question is which rows the tree renders.
  */
@@ -37,7 +37,7 @@ vi.mock("next/image", () => ({
 import type { ToolNavTreeProps } from "../src/components/category-gallery/ToolNavTree";
 
 const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
-const { RESEARCH_SECTION_ID } = await import(
+const { PRACTICE_SECTION_ID, RESEARCH_SECTION_ID } = await import(
   "../src/components/category-gallery/sidebar-tool-sections"
 );
 
@@ -54,33 +54,54 @@ describe("ToolNavTree sectionIds", () => {
     expect(html).not.toContain("Practice");
   });
 
-  it("drops the Apps node and the reference links around the sections", () => {
+  it("leaves out the glossary/rankings pair, which rides with Practice", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
-    // The Apps node and its "All Tools" entry are the app dock restated as
-    // text; on /cards the dock itself sits right above this tree.
-    expect(html).not.toContain("All Tools");
-    expect(html).not.toContain(">Apps<");
-    // The glossary/rankings pair below the tree belongs to the video library.
     expect(html).not.toContain("/dictionary");
+    expect(html).not.toContain("/videos/rankings");
+  });
+
+  it("renders no Apps node in any shape", () => {
+    // It was the app dock's own five icons spelled out as text directly
+    // below the dock — the column saying everything twice.
+    for (const html of [render({}), render({ sectionIds: [RESEARCH_SECTION_ID] })]) {
+      expect(html).not.toContain(">Apps<");
+      expect(html).not.toContain("All Tools");
+      expect(html).not.toContain('href="/tools"');
+    }
   });
 
   it("opens the one section shown even though the route matches another", () => {
-    // `/cards` is an app-dock destination, so `sidebarSectionForPath` puts it
-    // in the Apps node — which this tree doesn't render. Without the fallback
-    // the column would be a single collapsed heading.
+    // `/cards` is an app-dock destination that no tool section lists, so
+    // `sidebarSectionForPath` returns null for it. Without the fallback the
+    // column would be a single collapsed heading.
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).toContain("/cards/library");
     expect(html).toContain("/reason-editor");
   });
 
-  it("still renders the whole tree when no sections are named", () => {
+  it("still renders every section when no sections are named", () => {
     const html = render({});
 
-    expect(html).toContain("All Tools");
     expect(html).toContain("Coaching");
+    expect(html).toContain("Research");
     expect(html).toContain("Practice");
+  });
+
+  it("closes Practice with the glossary and rankings links", () => {
+    // They used to hang below the whole tree, in no section at all.
+    pathname.current = "/paradigms";
+    try {
+      const html = render({ sectionIds: [PRACTICE_SECTION_ID] });
+
+      expect(html).toContain("/videos/dictionary");
+      expect(html).toContain("/videos/rankings");
+      // Last in the section: reference material after the tools themselves.
+      expect(html.indexOf("/annotations")).toBeLessThan(html.indexOf("/videos/dictionary"));
+    } finally {
+      pathname.current = "/cards";
+    }
   });
 
   it("ignores an id no section carries rather than throwing", () => {

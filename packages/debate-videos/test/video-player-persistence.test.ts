@@ -28,7 +28,7 @@ const snapshot = (
   title: "Round 3 - Westside vs Eastside",
   meta: { year: 2024, tournament: "Berkeley" },
   isMinimized: false,
-  isSlowMode: false,
+  playbackRate: 1,
   queue: [],
   savedTime: 125,
   ...over,
@@ -64,14 +64,23 @@ describe("savePlayerState and loadPlayerState", () => {
     savePlayerState(
       snapshot({
         isMinimized: true,
-        isSlowMode: true,
+        playbackRate: 0.65,
         queue: [{ videoId: "next1", title: "Next up" }],
       }),
     );
     const loaded = loadPlayerState()!;
     expect(loaded.isMinimized).toBe(true);
-    expect(loaded.isSlowMode).toBe(true);
+    expect(loaded.playbackRate).toBe(0.65);
     expect(loaded.queue).toEqual([{ videoId: "next1", title: "Next up" }]);
+  });
+
+  it("falls back to normal speed for a snapshot written before playbackRate existed", () => {
+    const { playbackRate: _dropped, ...legacy } = snapshot();
+    localStorage.setItem(
+      "persistent-video-player",
+      JSON.stringify({ ...legacy, isSlowMode: true, savedAt: Date.now() }),
+    );
+    expect(loadPlayerState()!.playbackRate).toBe(1);
   });
 
   it("drops a snapshot older than a day rather than resuming it", () => {

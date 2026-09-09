@@ -10,7 +10,7 @@ export interface PersistedPlayerState {
   title: string
   meta: VideoMeta | null
   isMinimized: boolean
-  isSlowMode: boolean
+  playbackRate: number
   queue: QueueItem[]
   savedTime: number // seconds into the video
   savedAt: number // unix ms timestamp
@@ -43,7 +43,9 @@ export function loadPlayerState(): PersistedPlayerState | null {
       localStorage.removeItem(STORAGE_KEY)
       return null
     }
-    return state
+    // Snapshots written before playback speed became a number carry a boolean
+    // `isSlowMode` instead; fall back to normal speed rather than NaN.
+    return { ...state, playbackRate: typeof state.playbackRate === "number" ? state.playbackRate : 1 }
   } catch {
     return null
   }

@@ -1,21 +1,27 @@
 /**
- * @fileoverview Player control buttons component for video player UI
+ * @fileoverview Player control buttons component for video player UI.
+ *
+ * Only controls that mean the same thing for any video live here. Anything
+ * debate-specific — the slow-the-spread speed toggle, say — is passed in as
+ * `extraControls` by whoever mounts the player, so this strip stays generic
+ * and matches the seam in the extracted `extract-youtube/react` package.
  */
 
-import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge, PictureInPicture2, Captions } from "lucide-react"
+import type { ReactNode } from "react"
+import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions } from "lucide-react"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/primitives/tooltip"
 import type { QueueItem } from "../../state/videoPlayerStore"
 
 interface PlayerControlsProps {
   isPlaying: boolean
   isMinimized: boolean
-  isSlowMode: boolean
   queue: QueueItem[]
   isPipSupported: boolean
   isPipActive: boolean
   isSubtitlesOpen: boolean
+  /** Host-supplied buttons, rendered right after play/pause. */
+  extraControls?: ReactNode
   onPlayPause: () => void
-  onToggleSlowMode: () => void
   onPlayNext: () => void
   onToggleMinimize: () => void
   onTogglePip: () => void
@@ -26,13 +32,12 @@ interface PlayerControlsProps {
 export function PlayerControls({
   isPlaying,
   isMinimized,
-  isSlowMode,
   queue,
   isPipSupported,
   isPipActive,
   isSubtitlesOpen,
+  extraControls,
   onPlayPause,
-  onToggleSlowMode,
   onPlayNext,
   onToggleMinimize,
   onTogglePip,
@@ -57,20 +62,7 @@ export function PlayerControls({
           </TooltipContent>
         </Tooltip>
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onToggleSlowMode}
-              className={`p-1 rounded hover:bg-accent transition-colors ${isSlowMode ? "text-red-300 bg-accent" : "text-red-600 text-muted-foreground hover:text-foreground"}`}
-              aria-label={isSlowMode ? "Normal speed" : "Slow down debate spread"}
-            >
-              <Gauge className="h-3 w-3" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs">
-            {isSlowMode ? "Back to debate spread speed (1x)" : "Slow down debate spread 65%"}
-          </TooltipContent>
-        </Tooltip>
+        {extraControls}
 
         {queue.length > 0 && (
           <Tooltip>

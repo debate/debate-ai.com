@@ -59,10 +59,13 @@ function renderSidebar(): string {
   return renderToStaticMarkup(
     createElement(VideoSidebarTree, {
       counts: { college: 12, favorites: 3, lectures: 40 },
+      // The real `/api/videos/meta` shape — `key`/`label`, not `id`/`title`.
+      // Cast as `never`, the wrong shape rendered blank rows pointing at
+      // `/videos/undefined` and the assertions below never noticed.
       lectureCategories: [
-        { id: "all", title: "All Lectures", count: 40 },
-        { id: "strategy", title: "Strategy", count: 9 },
-      ] as never,
+        { key: "strategy", label: "Strategy", count: 9, maxViews: 100 },
+        { key: "theory", label: "Theory", count: 31, maxViews: 80 },
+      ],
       selectedCategory: "all",
       activeId: "lectures",
       lecturesExpanded: true,
@@ -120,17 +123,31 @@ describe("VideoSidebarTree", () => {
 });
 
 describe("the sidebar's heading structure", () => {
-  it("puts College Debates under a Videos h1", () => {
+  it("puts College Debates and My Favorites under a Round Videos h1", () => {
     const html = renderSidebar();
-    expect(html).toMatch(/<h1[^>]*>Videos<\/h1>/);
+    expect(html).toMatch(/<h1[^>]*>Round Videos<\/h1>/);
     expect(html).toMatch(/<h2[^>]*>College Debates<\/h2>/);
-    // The h1 comes first: College Debates is nested inside it, not a sibling.
-    expect(html.indexOf(">Videos<")).toBeLessThan(html.indexOf(">College Debates<"));
+    expect(html).toMatch(/<h2[^>]*>My Favorites<\/h2>/);
+    // The h1 comes first: both are nested inside it, not siblings of it.
+    expect(html.indexOf(">Round Videos<")).toBeLessThan(html.indexOf(">College Debates<"));
+    expect(html.indexOf(">College Debates<")).toBeLessThan(html.indexOf(">My Favorites<"));
+  });
+
+  it("gives Lectures an h1 of its own, after the Round Videos section", () => {
+    // Lectures used to hang off the Videos node as an h2 two levels in, which
+    // read as a filter on the round archive rather than the other library.
+    const html = renderSidebar();
+    expect(html).toMatch(/<h1[^>]*>Lectures<\/h1>/);
+    expect(html).not.toMatch(/<h2[^>]*>Lectures<\/h2>/);
+    expect(html.indexOf(">My Favorites<")).toBeLessThan(html.indexOf(">Lectures<"));
+    // Its categories are the section's own content, one level in.
+    expect(html).toMatch(/<h2[^>]*>All Lectures<\/h2>/);
+    expect(html).toMatch(/<h2[^>]*>Strategy<\/h2>/);
   });
 
   it("renders Coaching / Research / Practice as h1 sections", () => {
     const html = renderSidebar();
-    for (const title of ["Apps", "Coaching", "Research", "Practice"]) {
+    for (const title of ["Coaching", "Research", "Practice"]) {
       expect(html).toMatch(new RegExp(`<h1[^>]*>${title}<\\/h1>`));
     }
   });
@@ -144,7 +161,7 @@ describe("the sidebar's heading structure", () => {
     // "open in a new tab" silently did nothing on the five rows that happened
     // to be sections.
     const html = renderSidebar();
-    for (const title of ["Videos", "Apps", "Coaching", "Research", "Practice"]) {
+    for (const title of ["Round Videos", "Lectures", "Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
         new RegExp(
           `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
@@ -153,13 +170,17 @@ describe("the sidebar's heading structure", () => {
     }
   });
 
-  it("opens every section, not only the one holding the route", () => {
-    // The tree used to be an accordion — one section open, the one the dock
-    // just took you to — so reaching a tool in another section was always two
-    // clicks with the list you were reading vanishing in between. Every
-    // section now starts expanded and collapses on its own.
+  it("opens only the section that holds the current route", () => {
+    // `usePathname` is mocked to `/videos`, so Round Videos is the open
+    // section and every tool section is closed: those are one accordion,
+    // which is what keeps the sidebar to the content of wherever the dock
+    // just took you. Lectures is outside it — the page owns whether it is
+    // open, and here it is.
     const html = renderSidebar();
-    for (const title of ["Videos", "Apps", "Coaching", "Research", "Practice"]) {
+    expect(html).toMatch(
+      /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Round Videos<\/h1>/,
+    );
+    for (const title of ["Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
         new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
@@ -167,10 +188,18 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain('aria-expanded="false"');
   });
 
-  it("renders every section's links up front", () => {
-    // The accordion's one benefit was that a closed section cost no DOM and
-    // no link for the router to prefetch. Expanding all of them trades that
-    // back for a nav that stays put: every destination is one click away.
+  it("renders no Apps node restating the app dock", () => {
+    // The dock itself is mounted directly above this tree (`dockSlot`), so
+    // the node under it was the same five destinations a second time.
+    const html = renderSidebar();
+    expect(html).not.toContain(">Apps<");
+    expect(html).not.toContain("All Tools");
+    expect(html).not.toContain('href="/tools"');
+  });
+
+  it("renders no links for the sections it leaves closed", () => {
+    // The point of the accordion: a closed section costs no DOM and no link
+    // for the router to prefetch. Fifty of those fired on every /videos load.
     const html = renderSidebar();
     expect(html).toContain("Coaching Programs");
     expect(html).toContain("Evidence Library");
@@ -181,12 +210,14 @@ describe("the sidebar's heading structure", () => {
     expect(html).toContain("My Favorites");
   });
 
-  it("keeps the glossary and rankings pair below the tree, always", () => {
-    // Those two hang under the tree rather than inside a section, so they
-    // stay reachable whichever section happens to be open.
+  it("keeps the glossary and rankings pair inside the Practice section", () => {
+    // They used to hang below the tree, outside every section. Now they are
+    // the tail of Practice, so on `/videos` — where Practice is closed —
+    // they cost no DOM, exactly like the tools they sit with.
+    // `tool-nav-tree-sections.test.tsx` pins that they are in fact there.
     const html = renderSidebar();
-    expect(html).toContain("Glossary of Terms");
-    expect(html).toContain("Rankings");
+    expect(html).not.toContain("Glossary of Terms");
+    expect(html).not.toContain("/videos/dictionary");
   });
 });
 

@@ -11,7 +11,6 @@
 
 import { describe, it, expect } from "vitest";
 import {
-  APPS_SECTION_ID,
   VIDEOS_SECTION_ID,
   sidebarSectionForPath,
 } from "../src/components/category-gallery/sidebar-active-section";
@@ -24,18 +23,20 @@ describe("sidebarSectionForPath", () => {
     expect(sidebarSectionForPath("/videos/philosophy___ir_theory")).toBe(VIDEOS_SECTION_ID);
   });
 
-  it("puts the app dock's destinations in the Apps section", () => {
-    // Clicking a dock button lands on one of these, and the sidebar should
-    // then hold that destination's section and nothing else.
-    for (const href of ["/cards", "/debate", "/versus-ai", "/tools"]) {
-      expect(sidebarSectionForPath(href)).toBe(APPS_SECTION_ID);
+  it("opens nothing for a dock destination no tool section lists", () => {
+    // These used to open an "Apps" node that restated the dock as text. The
+    // tree no longer renders one, so nothing claims them.
+    for (const href of ["/cards", "/debate", "/tools"]) {
+      expect(sidebarSectionForPath(href)).toBeNull();
     }
   });
 
-  it("resolves a route listed in both the dock and a tool section to the dock", () => {
-    // `/doc` is the dock's Docs button and also Research's "Debate Docs". The
-    // dock is the primary navigation, so it wins.
-    expect(sidebarSectionForPath("/doc")).toBe(APPS_SECTION_ID);
+  it("resolves a dock destination to the tool section that lists it", () => {
+    // `/doc` is the dock's Docs button and also Research's "Debate Docs";
+    // `/versus-ai` is a dock button and Practice's "Debate Versus AI". With
+    // the Apps node gone, the section holding the link wins outright.
+    expect(sidebarSectionForPath("/doc")).toBe("research");
+    expect(sidebarSectionForPath("/versus-ai")).toBe("practice");
   });
 
   it("finds the tool section holding a tool route", () => {

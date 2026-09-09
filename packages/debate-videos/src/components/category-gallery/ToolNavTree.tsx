@@ -1,13 +1,22 @@
 /**
- * @fileoverview The "Apps" + "Coaching / Research / Practice" + glossary/
- * rankings portion of the videos sidebar — the h1 sections that follow
- * "Videos" in the tree — factored out of `VideoSidebarTree` so it can also
- * render on the non-video tool pages those sections link to (`/coach`,
- * `/research`, `/practice-round`, etc.) — those
- * pages otherwise render no sidebar at all once you navigate off `/videos`,
- * which reads as the sidebar disappearing. `AppSidebarShell` (app-local)
- * mounts this on every page whose path matches one of the links below so the
- * nav stays visible everywhere it points to, not just on `/videos`.
+ * @fileoverview The "Coaching / Research / Practice" portion of the videos
+ * sidebar — the h1 sections that follow "Round Videos" and "Lectures" in the
+ * tree — factored out of `VideoSidebarTree` so it can also render on the
+ * non-video tool pages those sections link to (`/coach`, `/research`,
+ * `/practice-round`, etc.) — those pages otherwise render no sidebar at all
+ * once you navigate off `/videos`, which reads as the sidebar disappearing.
+ * `AppSidebarShell` (app-local) mounts this on every page whose path matches
+ * one of the links below so the nav stays visible everywhere it points to,
+ * not just on `/videos`.
+ *
+ * There is no "Apps" node above the sections any more: it was the app dock's
+ * own five icons spelled out as text immediately below the dock, so the
+ * column said everything twice. The dock is still right there, and its
+ * Settings menu still carries the same list for phones.
+ *
+ * The glossary/rankings pair used to hang below the tree, outside every
+ * section. It now sits at the end of Practice, which is where the rest of the
+ * round-day reference material lives.
  *
  * Each section heading is a grouping rather than a destination: it renders
  * without an `href`, so clicking it does nothing but toggle the section. Its
@@ -21,10 +30,9 @@
  * disappearing in between. Collapsing is still per-section and sticky for the
  * session, so anyone who wants a short column can still have one.
  *
- * `sectionIds` narrows the tree to named sections and drops the Apps node and
- * the reference pair with it: the `/cards` sidebar is the document panels plus
- * the Research tools, so it asks for that one section rather than the whole
- * nav (see the app's `AppSidebarShell`).
+ * `sectionIds` narrows the tree to named sections: the `/cards` sidebar is
+ * the document panels plus the Research tools, so it asks for that one
+ * section rather than the whole nav (see the app's `AppSidebarShell`).
  *
  * @module components/category-gallery/ToolNavTree
  */
@@ -33,22 +41,19 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LayoutGrid } from "lucide-react";
 import { TreeItem } from "./TreeItem";
 import type { TreeItemIcon } from "./tree-item-icon";
 import {
-  APP_DOCK_LINKS,
+  PRACTICE_SECTION_ID,
   SIDEBAR_TOOL_SECTIONS,
-  TOOLS_ROOT_HREF,
   type SidebarToolSection,
 } from "./sidebar-tool-sections";
-import { APPS_SECTION_ID, sidebarSectionForPath } from "./sidebar-active-section";
-import { toggleExpandedSection, withSectionExpanded } from "./sidebar-section-expansion";
+import { sidebarSectionForPath } from "./sidebar-active-section";
 import { VIDEO_REFERENCE_LINKS } from "./sidebar-video-links";
 import { IconBook, IconLeaderboard } from "../../ui/icons";
 
-/** Per-id artwork for the reference pair below the tree; the hrefs and
- *  titles come from `VIDEO_REFERENCE_LINKS`. */
+/** Per-id artwork for the reference pair at the end of Practice; the hrefs
+ *  and titles come from `VIDEO_REFERENCE_LINKS`. */
 const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
   dictionary: IconBook,
   rankings: IconLeaderboard,
@@ -63,18 +68,16 @@ export interface ToolNavTreeProps {
    */
   defaultExpanded?: boolean;
   /**
-   * Ids of the expanded sections, when a parent owns the expanded state.
-   * `VideoSidebarTree` passes this so its own "Videos" node is toggled by the
-   * same state these sections are.
+   * Id of the open section, when a parent owns the accordion. `VideoSidebarTree`
+   * passes this so its own "Round Videos" node takes part: opening a tool
+   * section there closes Round Videos, and vice versa.
    */
   expandedSectionIds?: readonly string[];
   /** Present together with {@link ToolNavTreeProps.expandedSectionIds}. */
   onToggleSection?: (sectionId: string) => void;
   /**
    * Render only these tool sections, in this order, instead of all of
-   * {@link SIDEBAR_TOOL_SECTIONS}. It also drops the "Apps" node above the
-   * sections and the glossary/rankings pair below them, so the tree is the
-   * named sections and nothing else — the `/cards` sidebar passes
+   * {@link SIDEBAR_TOOL_SECTIONS} — the `/cards` sidebar passes
    * `[RESEARCH_SECTION_ID]` to be exactly the research tools next to its
    * document panels. Omit for the whole tree.
    */
@@ -101,12 +104,15 @@ export function ToolNavTree({
   );
   const showsWholeTree = sectionIds == null;
 
-  // Every section the tree renders, Apps included — the expanded-by-default
-  // set, and what "collapse all/expand all" would mean here.
-  const allSectionIds = React.useMemo(
-    () => (showsWholeTree ? [APPS_SECTION_ID, ...sections.map((s) => s.id)] : sections.map((s) => s.id)),
-    [sections, showsWholeTree],
-  );
+  // On a filtered tree the route often sits in a section that isn't rendered
+  // — `/cards` is a dock destination, in no tool section at all — which would
+  // leave the column with a heading and no links. Fall back to the first
+  // section shown, so the research list is open on arrival.
+  const matchedSectionId = sidebarSectionForPath(pathname);
+  const routeSectionId =
+    showsWholeTree || sections.some((section) => section.id === matchedSectionId)
+      ? matchedSectionId
+      : sections[0]?.id ?? null;
 
   const [ownExpanded, setOwnExpanded] = useState<readonly string[]>(() =>
     defaultExpanded ? allSectionIds : [],
@@ -134,37 +140,6 @@ export function ToolNavTree({
 
   return (
     <>
-      {showsWholeTree && (
-        <TreeItem
-          level={1}
-          title="Apps"
-          icon={LayoutGrid}
-          // Plain click toggles; ctrl/shift/middle-click opens the catalog.
-          sectionHref={TOOLS_ROOT_HREF}
-          expanded={isExpanded(APPS_SECTION_ID)}
-          onToggleExpand={() => toggleSection(APPS_SECTION_ID)}
-        >
-          {APP_DOCK_LINKS.map((link) => (
-            <TreeItem
-              key={link.href}
-              level={3}
-              href={link.href}
-              title={link.title}
-              isActive={pathname === link.href}
-            />
-          ))}
-          {/* The tools catalog has no dock icon of its own (see
-              `TOOLS_ROOT_HREF`), and the "Apps" heading above is a toggle
-              rather than a link, so this is how the catalog is reached. */}
-          <TreeItem
-            level={3}
-            href={TOOLS_ROOT_HREF}
-            title="All Tools"
-            isActive={pathname === TOOLS_ROOT_HREF}
-          />
-        </TreeItem>
-      )}
-
       {sections.map((section) => (
         <TreeItem
           key={section.id}
@@ -186,24 +161,26 @@ export function ToolNavTree({
               isActive={pathname === tool.href}
             />
           ))}
+          {/* The glossary and the rankings are round-day reference material,
+              so they close out Practice rather than floating below the tree
+              in a section of their own. They stay `VIDEO_REFERENCE_LINKS`
+              rather than becoming Practice tools: `sidebar-tool-sections`
+              feeds `sidebar-routes` and `sidebar-active-section`, and folding
+              two `/videos/*` paths into a tool section would hand the video
+              library's own pages the generic tool sidebar. */}
+          {section.id === PRACTICE_SECTION_ID &&
+            VIDEO_REFERENCE_LINKS.map((link) => (
+              <TreeItem
+                key={link.id}
+                level={3}
+                href={link.href}
+                title={link.title}
+                icon={REFERENCE_ICONS[link.id]}
+                isActive={pathname === link.href}
+              />
+            ))}
         </TreeItem>
       ))}
-
-      {showsWholeTree && (
-        <div className="mt-1 flex flex-col gap-0.5 border-t border-border/60 pt-2">
-          {VIDEO_REFERENCE_LINKS.map((link) => (
-            <TreeItem
-              key={link.id}
-              level={3}
-              href={link.href}
-              title={link.title}
-              icon={REFERENCE_ICONS[link.id]}
-              isActive={pathname === link.href}
-              muted
-            />
-          ))}
-        </div>
-      )}
     </>
   );
 }
