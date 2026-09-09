@@ -2,11 +2,15 @@
 
 import type React from "react"
 import { usePathname } from "next/navigation"
-import { ToolNavTree, ToolSidebarFooter } from "debate-videos"
+import { RESEARCH_SECTION_ID, ToolNavTree, ToolSidebarFooter } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
-import { showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
+import { showsCardsOnlySidebar, showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
+
+/** The one tool section the `/cards` sidebar keeps. Module-level so the array
+ *  identity is stable across renders of the tree below. */
+const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -29,9 +33,17 @@ import { showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
  * nav, and on `/videos` — which keeps its own sidebar and so is not wrapped by
  * this shell at all — it is the video library
  * (see `docs/features/reason-docs-sidebar.md`).
+ *
+ * `/cards` goes one step further and is the docs panels plus the Research tool
+ * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,
+ * the glossary and rankings links and the site footer are all about somewhere
+ * else, and stacking them under a file tree made the column a scroll rather
+ * than a place. The dock stays — it is the control you clicked "Shared" in,
+ * and the way back to videos.
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const cardsOnly = showsCardsOnlySidebar(pathname)
 
   if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
@@ -49,8 +61,14 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
             the page's primary navigation. Absent entirely on the routes that
             are about something else, so their sidebar is only their own nav. */}
         {showsReasonDocsPanels(pathname) && <ReasonDocsSidebarPanels className="shrink-0" />}
-        <ToolNavTree />
-        <ToolSidebarFooter />
+        {cardsOnly ? (
+          <ToolNavTree sectionIds={CARDS_SIDEBAR_SECTIONS} />
+        ) : (
+          <>
+            <ToolNavTree />
+            <ToolSidebarFooter />
+          </>
+        )}
       </aside>
       <div className="min-w-0 flex-1">{children}</div>
     </div>
