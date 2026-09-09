@@ -2,6 +2,7 @@ export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
+export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
 export {
   SIDEBAR_TOOL_SECTIONS,

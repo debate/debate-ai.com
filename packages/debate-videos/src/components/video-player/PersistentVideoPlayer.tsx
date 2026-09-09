@@ -4,7 +4,7 @@
 
 "use client"
 
-import React, { useEffect, useRef, useState, useCallback } from "react" // useState kept for PersistentVideoPlayer mounted state
+import React, { useEffect, useRef, useState, useCallback, type ReactNode } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
 import { AlertCircle } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
@@ -18,20 +18,28 @@ import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
 import { buildEmbedUrl, describePlayerError, startListening, watchUrl } from "./youtubeEmbed"
 
-function VideoPlayerUI() {
+interface VideoPlayerProps {
+  /**
+   * App-specific buttons for the control strip — e.g. the slow-the-spread
+   * speed toggle. Kept out of the player itself so the widget stays generic;
+   * see `SlowSpreadButton`.
+   */
+  extraControls?: ReactNode
+}
+
+function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   const {
     activeVideoId,
     activeVideoTitle,
     activeVideoMeta,
     isMinimized,
     isPlaying,
-    isSlowMode,
+    playbackRate,
     queue,
     startTime,
     clearActiveVideo,
     setMinimized,
     setIsPlaying,
-    setSlowMode,
     playNextInQueue,
     restoreVideo,
     setGetCurrentTimeRef,
@@ -40,8 +48,8 @@ function VideoPlayerUI() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const videoWrapperRef = useRef<HTMLDivElement | null>(null)
-  // Track whether we still need to apply slow mode for the current video load
-  const pendingSlowMode = useRef(false)
+  // Track whether the current video load still needs the playback rate applied
+  const pendingPlaybackRate = useRef(false)
 
   const { isSupported: isPipSupported, isActive: isPipActive, toggle: togglePip, exit: exitPip } = useDocumentPictureInPicture(videoWrapperRef)
 
@@ -83,7 +91,7 @@ function VideoPlayerUI() {
       title: store.activeVideoTitle ?? "",
       meta: store.activeVideoMeta,
       isMinimized: store.isMinimized,
-      isSlowMode: store.isSlowMode,
+      playbackRate: store.playbackRate,
       queue: store.queue,
       savedTime: getCurrentTime(),
     })
@@ -106,7 +114,7 @@ function VideoPlayerUI() {
         playStartedAtRef.current = null
         restoreVideo(saved.videoId, saved.title, saved.meta, {
           isMinimized: saved.isMinimized,
-          isSlowMode: saved.isSlowMode,
+          playbackRate: saved.playbackRate,
           queue: saved.queue,
           savedTime: saved.savedTime,
         })
@@ -137,16 +145,12 @@ function VideoPlayerUI() {
     setResumeSeconds(null)
   }, [activeVideoId])
 
-  // When a new video opens, mark that slow mode needs to be applied on first play
+  // A fresh embed always starts at 1x, so re-apply the chosen rate on first play
   useEffect(() => {
     if (activeVideoId) {
-      if (isSlowMode) {
-        pendingSlowMode.current = true
-      } else {
-        pendingSlowMode.current = false
-      }
+      pendingPlaybackRate.current = playbackRate !== 1
     }
-  }, [activeVideoId, isSlowMode])
+  }, [activeVideoId, playbackRate])
 
   // Listen for YouTube IFrame API state change events
   useEffect(() => {
@@ -167,10 +171,10 @@ function VideoPlayerUI() {
               playStartedAtRef.current = Date.now()
             }
             setIsPlaying(true)
-            // Apply slow mode on the first playing event after a new video loads
-            if (pendingSlowMode.current) {
-              pendingSlowMode.current = false
-              sendYouTubeCommand("setPlaybackRate", [0.65])
+            // Apply the chosen rate on the first playing event after a load
+            if (pendingPlaybackRate.current) {
+              pendingPlaybackRate.current = false
+              sendYouTubeCommand("setPlaybackRate", [playbackRate])
             }
           } else if (data.info === 2 || data.info === 0) {
             // Paused or ended — accumulate elapsed time
@@ -203,7 +207,7 @@ function VideoPlayerUI() {
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [setIsPlaying, persistState, showSubtitles])
+  }, [setIsPlaying, persistState, showSubtitles, playbackRate])
 
   // Re-send the "listening" handshake for a few seconds after every embed load.
   // `onLoad` alone is not enough: React's delegated events stop reaching the
@@ -245,12 +249,6 @@ function VideoPlayerUI() {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
     setIsPlaying(!isPlaying)
   }, [isPlaying, setIsPlaying])
-
-  const handleToggleSlowMode = useCallback(() => {
-    const next = !isSlowMode
-    setSlowMode(next)
-    sendYouTubeCommand("setPlaybackRate", [next ? 0.65 : 1])
-  }, [isSlowMode, setSlowMode])
 
   /**
    * Moving the iframe into (or out of) the PiP window re-creates it, so capture
@@ -329,13 +327,12 @@ function VideoPlayerUI() {
         <PlayerControls
           isPlaying={isPlaying}
           isMinimized={isMinimized}
-          isSlowMode={isSlowMode}
           queue={queue}
           isPipSupported={isPipSupported}
           isPipActive={isPipActive}
           isSubtitlesOpen={showSubtitles}
+          extraControls={extraControls}
           onPlayPause={handlePlayPause}
-          onToggleSlowMode={handleToggleSlowMode}
           onPlayNext={playNextInQueue}
           onToggleMinimize={() => setMinimized(!isMinimized)}
           onTogglePip={handleTogglePip}
@@ -407,7 +404,7 @@ function VideoPlayerUI() {
  * is completely independent of the Next.js component tree and immune to
  * any stacking context, overflow, or re-mounting issues on any page.
  */
-export function PersistentVideoPlayer() {
+export function PersistentVideoPlayer({ extraControls }: VideoPlayerProps = {}) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -416,5 +413,5 @@ export function PersistentVideoPlayer() {
 
   if (!mounted) return null
 
-  return createPortal(<VideoPlayerUI />, document.body)
+  return createPortal(<VideoPlayerUI extraControls={extraControls} />, document.body)
 }
