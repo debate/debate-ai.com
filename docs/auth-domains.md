@@ -83,3 +83,9 @@ config is kept around as a live reproduction of the 403.
 Note that better-auth disables the origin check by default under
 `NODE_ENV=test`, so those tests pass `advanced: { disableOriginCheck: false }`
 — without it they assert nothing.
+
+## See also
+
+[When a sign-in fails on the way back](./sign-in-failures.md) — the
+`state_mismatch` error, which happens *after* the origin check has passed and
+the provider has sent the visitor back.

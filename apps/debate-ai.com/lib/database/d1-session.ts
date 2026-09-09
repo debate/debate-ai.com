@@ -189,6 +189,42 @@ function readClientBookmark(request: Request): string | null {
   return null;
 }
 
+/** Prefix every better-auth route is served under. */
+const AUTH_PATH_PREFIX = "/api/auth";
+
+/**
+ * Requests whose reads must never be answered by a replica.
+ *
+ * Every sign-in is a read-after-write that spans two requests, and the second
+ * one arrives from somewhere else entirely. `POST /api/auth/sign-in/social`
+ * writes the OAuth `state` row (magic links write their token the same way)
+ * and hands the browser to accounts.google.com; the provider then sends it
+ * back to `GET /api/auth/callback/google`, which has to find that exact row.
+ * The production database runs with read replication on `auto` and its primary
+ * in WNAM, so a callback answered by a replica that has not caught up finds
+ * nothing — and better-auth reports a missing state row as a CSRF failure,
+ * which is the dead-end "Something went wrong / CODE: state_mismatch" page a
+ * user hits instead of being signed in.
+ *
+ * The bookmark from the sign-in response normally carries that consistency
+ * across the redirect, but it travels as a cookie, and the callback is a
+ * cross-site navigation: anything that keeps the cookie from coming back — a
+ * cleared jar, an embedded webview, a bookmark D1 later refuses (see
+ * {@link dropClientBookmark}, which for a replayable GET restarts on
+ * `first-unconstrained`) — silently downgrades the lookup to whichever replica
+ * is nearest. Auth is a handful of requests per session, so one round trip to
+ * the primary is a cheap price for a sign-in that cannot fail this way.
+ */
+function requiresPrimary(request: Request): boolean {
+  let pathname: string;
+  try {
+    pathname = new URL(request.url).pathname;
+  } catch {
+    return false;
+  }
+  return pathname === AUTH_PATH_PREFIX || pathname.startsWith(`${AUTH_PATH_PREFIX}/`);
+}
+
 /**
  * Where this request's session should start, and where to start over if that
  * turns out not to work. A bookmark always wins: it is both the fastest option
@@ -196,6 +232,12 @@ function readClientBookmark(request: Request): string | null {
  * older than what this client already saw). Without one, mutations start on
  * the primary so a handler that writes and then reads back cannot miss its own
  * write, and plain reads start anywhere.
+ *
+ * Auth (see {@link requiresPrimary}) is the exception to all of that: it
+ * starts on the primary whatever the client sent and whatever `mode` asks for,
+ * because `unconstrained` is a latency knob and not a licence to break
+ * sign-in. `off` still bypasses the Sessions API entirely, which routes those
+ * queries to the primary anyway.
  */
 function resolveStartpoint(
   request: Request,
@@ -203,10 +245,13 @@ function resolveStartpoint(
 ): { start: string; fallback: string; resumed: boolean; replayable: boolean } {
   const method = request.method.toUpperCase();
   const replayable = method === "GET" || method === "HEAD";
+  const pinnedToPrimary = requiresPrimary(request);
   const fallback =
-    mode === "primary" || !replayable ? FIRST_PRIMARY : FIRST_UNCONSTRAINED;
+    mode === "primary" || pinnedToPrimary || !replayable ? FIRST_PRIMARY : FIRST_UNCONSTRAINED;
 
-  if (mode === "primary") return { start: FIRST_PRIMARY, fallback, resumed: false, replayable };
+  if (pinnedToPrimary || mode === "primary") {
+    return { start: FIRST_PRIMARY, fallback, resumed: false, replayable };
+  }
   if (mode === "unconstrained") {
     return { start: FIRST_UNCONSTRAINED, fallback, resumed: false, replayable };
   }
