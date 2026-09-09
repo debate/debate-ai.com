@@ -8,6 +8,7 @@
 // why a plain "load the site" wrapper can't skip this step.
 
 mod generated_scheme;
+mod system_info;
 
 use tauri::{Manager, Url};
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -41,6 +42,7 @@ pub fn run() {
     }
 
     builder
+        .invoke_handler(tauri::generate_handler![system_info::system_info])
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_deep_link::init())
         .setup(|app| {

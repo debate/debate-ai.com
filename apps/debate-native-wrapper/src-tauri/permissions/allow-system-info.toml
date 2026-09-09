@@ -1,0 +1,15 @@
+# Grants the `system_info` command, the only command this wrapper defines.
+#
+# This file exists because of how Tauri v2 treats remote content: a window
+# whose content is a remote https origin (this wrapper's whole design — see
+# ../../README.md) is subject to ACL resolution for *every* IPC call, including
+# calls into the app's own commands. Without a permission naming it, and a
+# capability granting that permission to the remote origin, `invoke("system_info")`
+# from the wrapped site is rejected before it reaches Rust.
+#
+# Defining any app permission also switches ACL enforcement on for local
+# content, which is why capabilities/default.json grants this too.
+[[permission]]
+identifier = "allow-system-info"
+description = "Read a description of the host OS, architecture, kernel and packaging for the site's About system panel. Read-only, and reports nothing that isn't already in the browser's user agent string plus the distro name."
+commands.allow = ["system_info"]

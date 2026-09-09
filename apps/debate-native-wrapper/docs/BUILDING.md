@@ -21,9 +21,14 @@ npm run build:desktop
 ```
 
 Requires the platform's own Tauri prerequisites (a C toolchain; on Linux,
-`libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev` — see
-[Tauri's prerequisites guide](https://v2.tauri.app/start/prerequisites/) for Windows/macOS).
-Output lands under `src-tauri/target/release/bundle/`.
+`libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev`). Output
+lands under `src-tauri/target/release/bundle/`.
+
+`docs/PLATFORMS.md` has the per-platform detail this one line compresses: install
+commands for every Linux distro family, which bundle formats each host produces, the
+glibc floor that decides which Linux releases your `.deb`/`.AppImage` will start on,
+Windows' MSVC + WebView2 + VBScript prerequisites, the macOS universal build, and how
+to confirm a build worked from the app's own Settings -> System panel.
 
 ## Android / iOS
 
