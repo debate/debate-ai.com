@@ -137,7 +137,9 @@ describe("the mobile block below md", () => {
     const mobile = mobileMarkup();
     for (const heading of ["Apps", "Coaching", "Research", "Practice"]) {
       expect(mobile).toMatch(
-        new RegExp(`<button[^>]*aria-expanded="false"[^>]*>(?:(?!</button>)[\\s\\S])*<h1[^>]*>${heading}</h1>`),
+        // Section headings are anchors so a modifier-click can open them in a
+        // new tab; a plain click still only toggles. See `TreeItem`.
+        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${heading}</h1>`),
       );
     }
   });

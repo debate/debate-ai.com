@@ -20,6 +20,10 @@ import { GlowingEffect } from "../src/ui/effects/glowing-effect";
 
 /** Records how many listeners are live per event name. */
 let liveListeners: Record<string, number>;
+/** Elements the shared visibility observer is currently watching. */
+let observed: Element[];
+/** Reports an intersection change to the shared observer, from a test. */
+let notifyIntersection: (targets: Element[], isIntersecting: boolean) => void;
 let container: HTMLDivElement;
 let root: Root;
 
@@ -40,12 +44,23 @@ beforeEach(() => {
   liveListeners = {};
   // jsdom has no IntersectionObserver; the effect gates its per-frame work on
   // one, so give it a stand-in that reports everything as on screen.
+  observed = [];
   vi.stubGlobal(
     "IntersectionObserver",
     class {
-      observe() {}
-      unobserve() {}
-      disconnect() {}
+      constructor(callback: (entries: { target: Element; isIntersecting: boolean }[]) => void) {
+        notifyIntersection = (targets, isIntersecting) =>
+          callback(targets.map((target) => ({ target, isIntersecting })));
+      }
+      observe(target: Element) {
+        observed.push(target);
+      }
+      unobserve(target: Element) {
+        observed = observed.filter((element) => element !== target);
+      }
+      disconnect() {
+        observed = [];
+      }
       takeRecords() {
         return [];
       }
@@ -100,6 +115,46 @@ describe("GlowingEffect", () => {
     act(() => root.render(createElement("div")));
     expect(liveListeners.pointermove).toBe(0);
     expect(liveListeners.scroll).toBe(0);
+  });
+
+  it("books no animation frame for a pointer no card can see", () => {
+    // A scroll through a long grid used to queue a frame per event purely to
+    // walk every card ever loaded and find that none of them were on screen.
+    // The observer stub reports nothing as intersecting, so nothing is.
+    const requestFrame = vi.spyOn(window, "requestAnimationFrame");
+    renderGlows(200);
+    document.dispatchEvent(new MouseEvent("pointermove", { clientX: 10, clientY: 10 }));
+    window.dispatchEvent(new Event("scroll"));
+    expect(requestFrame).not.toHaveBeenCalled();
+  });
+
+  it("measures only the cards on screen, not every card loaded", () => {
+    // The per-frame cost has to stay proportional to what is visible: the
+    // grid pages in sixty cards at a time and unmounts none of them, so a
+    // pass over all of them is a pass that keeps growing for the life of the
+    // page. `getBoundingClientRect` is the measurement, and it is a forced
+    // layout — the expensive part.
+    const measure = vi.spyOn(Element.prototype, "getBoundingClientRect");
+    // Run the scheduled frame by hand: jsdom's own rAF is timer-driven, and
+    // what this test is about is what happens inside that one callback.
+    let frame: FrameRequestCallback | null = null;
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      frame = callback;
+      return 1;
+    });
+
+    renderGlows(200);
+    act(() => notifyIntersection(observed.slice(0, 3), true));
+
+    measure.mockClear();
+    document.dispatchEvent(new MouseEvent("pointermove", { clientX: 10, clientY: 10 }));
+    expect(frame).toBeTypeOf("function");
+    act(() => frame!(0));
+
+    // Three cards on screen out of two hundred loaded, so at most three
+    // forced layouts — not two hundred.
+    expect(measure.mock.calls.length).toBeLessThanOrEqual(3);
+    expect(measure.mock.calls.length).toBeGreaterThan(0);
   });
 
   it("installs nothing while disabled, which is the default", () => {

@@ -94,6 +94,8 @@ export function ToolNavTree({
         level={1}
         title="Apps"
         icon={LayoutGrid}
+        // Plain click toggles; ctrl/shift/middle-click opens the catalog.
+        sectionHref={TOOLS_ROOT_HREF}
         expanded={openId === APPS_SECTION_ID}
         onToggleExpand={() => toggleSection(APPS_SECTION_ID)}
       >
@@ -123,6 +125,9 @@ export function ToolNavTree({
           level={1}
           title={section.title}
           icon={section.icon}
+          // `section.href` is the section's flagship tool — where a
+          // ctrl/shift/middle-click on the heading goes.
+          sectionHref={section.href}
           expanded={openId === section.id}
           onToggleExpand={() => toggleSection(section.id)}
         >

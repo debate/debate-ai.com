@@ -28,6 +28,15 @@ interface GlowSubscriber {
  * for the handful of cards actually on screen.
  */
 const subscribers = new Map<Element, GlowSubscriber>();
+/**
+ * The subset of {@link subscribers} currently near the viewport.
+ *
+ * Kept separately so a frame costs one pass over the handful of cards on
+ * screen rather than one over every card ever loaded: with the grid paging in
+ * sixty at a time and unmounting none of them, walking the whole map to skip
+ * the invisible ones was itself thousands of iterations per pointer move.
+ */
+const visibleSubscribers = new Set<GlowSubscriber>();
 
 /** Last known pointer position, in client coordinates. */
 let pointerX = 0;
@@ -44,7 +53,10 @@ function getVisibilityObserver(): IntersectionObserver | null {
     (entries) => {
       for (const entry of entries) {
         const subscriber = subscribers.get(entry.target);
-        if (subscriber) subscriber.visible = entry.isIntersecting;
+        if (!subscriber) continue;
+        subscriber.visible = entry.isIntersecting;
+        if (entry.isIntersecting) visibleSubscribers.add(subscriber);
+        else visibleSubscribers.delete(subscriber);
       }
     },
     // A margin wide enough that a card is already live by the time it
@@ -56,13 +68,17 @@ function getVisibilityObserver(): IntersectionObserver | null {
 
 function flush() {
   frameHandle = 0;
-  for (const subscriber of subscribers.values()) {
-    if (subscriber.visible) subscriber.apply(pointerX, pointerY);
+  for (const subscriber of visibleSubscribers) {
+    subscriber.apply(pointerX, pointerY);
   }
 }
 
 function schedule() {
   if (frameHandle) return;
+  // Nothing on screen wants the pointer, so do not book a frame for it. A
+  // scroll through a long grid otherwise queued one every frame purely to
+  // find an empty list.
+  if (visibleSubscribers.size === 0) return;
   frameHandle = requestAnimationFrame(flush);
 }
 
@@ -87,11 +103,15 @@ function subscribe(subscriber: GlowSubscriber) {
   // is the old behaviour rather than a broken one.
   const observer = getVisibilityObserver();
   if (observer) observer.observe(subscriber.element);
-  else subscriber.visible = true;
+  else {
+    subscriber.visible = true;
+    visibleSubscribers.add(subscriber);
+  }
 }
 
 function unsubscribe(subscriber: GlowSubscriber) {
   subscribers.delete(subscriber.element);
+  visibleSubscribers.delete(subscriber);
   getVisibilityObserver()?.unobserve(subscriber.element);
   if (subscribers.size === 0) {
     document.removeEventListener("pointermove", handlePointerMove);
