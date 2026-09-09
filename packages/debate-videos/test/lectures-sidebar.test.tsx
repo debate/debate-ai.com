@@ -121,18 +121,18 @@ describe("the mobile block below md", () => {
   }
 
   it("carries the tool sections the sidebar shows", () => {
-    // The quick-link tiles cover the tree's Videos section only; without the
-    // tool nav below them, Apps / Coaching / Research / Practice had no
-    // counterpart on a phone anywhere on this page.
+    // The quick-link tiles cover the tree's video sections only; without the
+    // tool nav below them, Coaching / Research / Practice had no counterpart
+    // on a phone anywhere on this page.
     const mobile = mobileMarkup();
-    for (const heading of ["Apps", "Coaching", "Research", "Practice"]) {
+    for (const heading of ["Coaching", "Research", "Practice"]) {
       expect(mobile).toMatch(new RegExp(`<h1[^>]*>${heading}</h1>`));
     }
   });
 
   it("starts those sections collapsed so the grid stays in view", () => {
     const mobile = mobileMarkup();
-    for (const heading of ["Apps", "Coaching", "Research", "Practice"]) {
+    for (const heading of ["Coaching", "Research", "Practice"]) {
       expect(mobile).toMatch(
         // Section headings are anchors so a modifier-click can open them in a
         // new tab; a plain click still only toggles. See `TreeItem`.
@@ -142,6 +142,8 @@ describe("the mobile block below md", () => {
   });
 
   it("still reaches the glossary and rankings pair", () => {
+    // They ride at the end of the (collapsed) Practice section in the tree
+    // now, so on a phone the quick-link tiles are what carries them.
     const mobile = mobileMarkup();
     expect(mobile).toContain('href="/videos/dictionary"');
     expect(mobile).toContain('href="/videos/rankings"');

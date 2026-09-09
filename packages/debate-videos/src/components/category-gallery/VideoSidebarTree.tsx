@@ -1,21 +1,30 @@
 /**
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
- *   Videos (h1, expandable, heading-only)
+ *   Round Videos (h1, expandable, heading-only)
  *     -> College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
  *     -> My Favorites (h2, plain link)
- *     -> Lectures (h2, expandable) -> lecture categories
+ *   Lectures (h1, expandable, heading-only) -> lecture categories (h2)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
  *
+ * Lectures is a top-level section rather than a node inside the video tree:
+ * the two libraries are peers — rounds recorded at tournaments on one side,
+ * teaching videos on the other — and burying one two levels inside the other
+ * made the lecture categories read as a sub-filter of the round archive.
+ *
  * The h1 sections are groupings, not destinations: a plain click on one only
  * toggles it (a ctrl/shift/middle-click still opens its flagship page in a
- * new tab, via `TreeItem`'s `sectionHref`). They form one accordion — "Videos" and the
- * `ToolNavTree` sections together — so exactly one is open and a closed
- * section renders none of its links. The open one follows the route, which
- * is what makes clicking an app dock button load that destination's section
- * and nothing else (see `sidebar-active-section`).
+ * new tab, via `TreeItem`'s `sectionHref`). "Round Videos" and the
+ * `ToolNavTree` sections form one accordion — exactly one is open and a
+ * closed section renders none of its links. The open one follows the route,
+ * which is what makes clicking an app dock button load that destination's
+ * section and nothing else (see `sidebar-active-section`). Lectures sits
+ * outside that accordion: its expanded state is the page's own
+ * `showLectureCategories`, the same flag that shows the category gallery
+ * above the grid, so the sidebar and the page agree on whether you are
+ * browsing lectures.
  */
 
 "use client";
@@ -45,9 +54,9 @@ interface VideoSidebarTreeProps {
   selectedCategory?: string;
   /** Id of the currently active nav item, used for highlighting. */
   activeId?: string;
-  /** Whether the "Lectures" node is expanded. */
+  /** Whether the "Lectures" section is expanded. */
   lecturesExpanded: boolean;
-  /** Toggles the "Lectures" node's expanded state. */
+  /** Toggles the "Lectures" section's expanded state. */
   onToggleLectures: () => void;
 }
 
@@ -60,9 +69,10 @@ export function VideoSidebarTree({
   onToggleLectures,
 }: VideoSidebarTreeProps) {
   const pathname = usePathname();
-  // The whole tree is one accordion, "Videos" included: this component owns
-  // which section is open and hands the same state down to `ToolNavTree`, so
-  // opening a tool section closes Videos rather than stacking on top of it.
+  // "Round Videos" and the tool sections are one accordion: this component
+  // owns which of them is open and hands the same state down to `ToolNavTree`,
+  // so opening a tool section closes Round Videos rather than stacking on top
+  // of it. Lectures is not part of it — see the file comment.
   const routeSectionId = sidebarSectionForPath(pathname);
   const [openSectionId, setOpenSectionId] = useState<string | null>(
     routeSectionId ?? VIDEOS_SECTION_ID,
@@ -99,16 +109,20 @@ export function VideoSidebarTree({
     return isSame ? "/videos" : `/videos/${encodeURIComponent(categoryId)}`;
   };
 
+  const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
+  const lecturesActive = activeId === "lectures";
+
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
       <TreeItem
         level={1}
-        title="Videos"
+        title="Round Videos"
         icon={Clapperboard}
         // The heading toggles on a plain click; ctrl/shift/middle-click opens
         // the library itself, so every row in the tree can be opened in a new
-        // tab rather than only the leaves.
-        sectionHref="/videos"
+        // tab rather than only the leaves. `/videos` is the lectures view, so
+        // the round archive's own flagship is College Debates.
+        sectionHref={VIDEO_COLLEGE_LINK.href}
         expanded={videosExpanded}
         onToggleExpand={() =>
           setOpenSectionId((current) => (current === VIDEOS_SECTION_ID ? null : VIDEOS_SECTION_ID))
@@ -143,21 +157,25 @@ export function VideoSidebarTree({
           isActive={activeId === "favorites"}
           icon={IconTrophy}
         />
+      </TreeItem>
 
+      {lectureCategoryItems.length > 0 ? (
         <TreeItem
-          level={2}
-          href={SIDEBAR_VIDEO_LINKS_BY_ID.lectures.href}
-          title={SIDEBAR_VIDEO_LINKS_BY_ID.lectures.title}
+          level={1}
+          title={lecturesLink.title}
+          icon={IconLectures}
+          // Same deal as the Round Videos heading: a plain click toggles the
+          // section, a modifier click opens the lecture library itself.
+          sectionHref={lecturesLink.href}
           count={counts?.lectures}
-          isActive={activeId === "lectures"}
+          isActive={lecturesActive}
           expanded={lecturesExpanded}
           onToggleExpand={onToggleLectures}
-          icon={IconLectures}
         >
           {lectureCategoryItems.map((item) => (
             <TreeItem
               key={item.id}
-              level={3}
+              level={2}
               href={buildLectureCategoryHref(item.id)}
               title={item.title}
               count={item.count}
@@ -165,7 +183,19 @@ export function VideoSidebarTree({
             />
           ))}
         </TreeItem>
-      </TreeItem>
+      ) : (
+        // No categories to expand into (they arrive with `/api/videos/meta`).
+        // A heading-only row would toggle nothing and read as a dead click, so
+        // the section is a plain link until its children exist.
+        <TreeItem
+          level={1}
+          href={lecturesLink.href}
+          title={lecturesLink.title}
+          icon={IconLectures}
+          count={counts?.lectures}
+          isActive={lecturesActive}
+        />
+      )}
 
       <ToolNavTree openSectionId={openSectionId} onOpenSectionChange={setOpenSectionId} />
     </nav>
