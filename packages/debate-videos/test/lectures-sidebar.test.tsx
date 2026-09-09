@@ -1,15 +1,16 @@
 /**
- * @fileoverview Pins that the videos sidebar has a place for the app's REASON
- * document panels, and that it sits where the other tool routes put them.
+ * @fileoverview Pins what the videos sidebar holds: the app dock the page
+ * hands it, and the video library's own nav — and nothing else.
  *
- * `/videos` renders its own sidebar rather than the app's `AppSidebarShell`,
- * and so was the one route with a sidebar but no files in it — the panels
- * simply had nowhere to mount. They arrive as a slot for the same reason the
- * dock does: they read app-level document state and route into
- * `/reason-editor`, neither of which this package can reach.
+ * `/videos` renders this sidebar rather than the app's `AppSidebarShell`. It
+ * used to take a second app-owned slot for the REASON document panels
+ * (`docsSlot`), which put a file tree above the video nav on a page that is
+ * not about documents; those panels now mount only on the routes they are the
+ * subject of (`apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`), so the
+ * slot is gone.
  *
- * Static markup is enough — the question is whether the slot is rendered, and
- * where in the column.
+ * Static markup is enough — the question is what the column renders, and in
+ * what order.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -36,7 +37,7 @@ const { LecturesVideoGridView } = await import("../src/panels/LecturesVideoGridV
 const noop = () => {};
 const ref = { current: null };
 
-function render(slots: { dockSlot?: ReactNode; docsSlot?: ReactNode }): string {
+function render(slots: { dockSlot?: ReactNode }): string {
   return renderToStaticMarkup(
     createElement(LecturesVideoGridView, {
       searchTerm: "",
@@ -84,31 +85,27 @@ function render(slots: { dockSlot?: ReactNode; docsSlot?: ReactNode }): string {
   );
 }
 
-describe("the videos sidebar's docs slot", () => {
-  it("renders the panels the page hands it", () => {
-    const markup = render({ docsSlot: createElement("div", { id: "reason-docs" }, "Files") });
-    expect(markup).toContain('id="reason-docs"');
+describe("the videos sidebar", () => {
+  it("renders the dock the page hands it, above the video nav", () => {
+    const markup = render({ dockSlot: createElement("div", { id: "app-dock" }) });
+    expect(markup).toContain('id="app-dock"');
+    expect(markup.indexOf('id="app-dock"')).toBeLessThan(markup.indexOf('href="/videos/college"'));
   });
 
-  it("puts them above the nav tree, as the other tool routes do", () => {
-    // Below it they would start under the fold: the tree is long enough that
-    // a section auto-expanding to show where you are pushes past the column.
-    const markup = render({ docsSlot: createElement("div", { id: "reason-docs" }) });
-    expect(markup.indexOf('id="reason-docs"')).toBeLessThan(markup.indexOf('href="/videos/college"'));
+  it("renders the video nav with no app document panels above it", () => {
+    // The dock is the only app-owned slot left: the REASON file tree / topic
+    // starters / open tabs belong to `/cards` and `/reason-editor` now, and a
+    // page with no `docsSlot` to pass is what keeps them off this sidebar.
+    const markup = render({});
+    expect(markup).toContain('href="/videos/college"');
+    for (const label of ["Topic Starters", "Open Tabs"]) {
+      expect(markup).not.toContain(label);
+    }
   });
 
-  it("keeps them under the app dock", () => {
-    const markup = render({
-      dockSlot: createElement("div", { id: "app-dock" }),
-      docsSlot: createElement("div", { id: "reason-docs" }),
-    });
-    expect(markup.indexOf('id="app-dock"')).toBeLessThan(markup.indexOf('id="reason-docs"'));
-  });
-
-  it("renders the sidebar unchanged when no panels are supplied", () => {
-    // The leaderboard and dictionary branches pass neither slot.
+  it("renders without a dock too", () => {
+    // The leaderboard and dictionary branches pass no slots at all.
     expect(() => render({})).not.toThrow();
-    expect(render({})).toContain('href="/videos/college"');
   });
 });
 

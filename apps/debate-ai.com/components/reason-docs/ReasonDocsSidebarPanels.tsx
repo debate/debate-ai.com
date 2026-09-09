@@ -11,11 +11,12 @@
  * switching exclusively, so Files and Open Tabs are both visible at once
  * (its default view). Unlike that sidebar this lives in the app's persistent
  * left sidebar (`AppSidebarShell`) instead of a second sidebar owned by the
- * editor route, so the tree stays on screen across tool pages.
+ * editor route.
  *
- * `/videos` renders its own sidebar rather than that shell, and so was the
- * one route with a sidebar but no files in it; it now mounts these panels in
- * the same slot position via `LecturesPage`'s `docsSlot`.
+ * It is mounted only where the documents are the subject — `/cards` and
+ * `/reason-editor` (`lib/reason-docs/sidebar-routes.ts`). Elsewhere the
+ * sidebar is that page's own nav: `/videos`, which renders its own sidebar
+ * rather than the shell, shows the video library and nothing else.
  *
  * Picking a file anywhere routes to `/reason-editor?doc=<id>` (or
  * `?topic=<id>` for a public topic starter), which brings CardMirror up in

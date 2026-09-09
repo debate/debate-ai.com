@@ -1,44 +1,49 @@
-# REASON docs sidebar — files in every sidebar, opened in CardMirror
+# REASON docs sidebar — files on the document routes, opened in CardMirror
 
 The Files / Topic Starters / Open Tabs panels that sit above the tool nav
 tree, and the URL round trip that turns a click on one of them into "that
 file, loaded in CardMirror, in the main column."
 
-- **Routes:** every route with a sidebar — the tool routes wrapped by
-  `AppSidebarShell`, plus `/videos` and `/videos/:category`, which render
-  their own sidebar
+- **Routes:** `/cards` (and below it) and `/reason-editor` — the routes the
+  documents are the subject of, per
+  `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
 - **Panels:** `apps/debate-ai.com/components/reason-docs/`
   (`ReasonDocsSidebarPanels`, `FileTree`, `TopicStarterTree`,
   `OpenTabsPanel`), over `ReasonDocsProvider` in the root layout
 - **URL rules:** `apps/debate-ai.com/lib/reason-docs/route-selection.ts`
+- **Where they show:** `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
 - **Editor:** `/reason-editor` (`debate-editor`'s CardMirror embed)
 
 ## Where the panels mount
 
-`ReasonDocsSidebarPanels` is one component mounted in three places:
+`ReasonDocsSidebarPanels` is one component mounted in two places:
 
-1. `AppSidebarShell`'s `<aside>` — every tool route the nav tree links to.
-2. `LecturesPage`'s `docsSlot` — `/videos` and `/videos/:category`, which
-   render their own sidebar rather than that shell. The panels arrive as a
-   slot for the same reason the app dock does (`dockSlot`): they read
-   app-level document state and route into `/reason-editor`, neither of
-   which `debate-videos` can reach. Before this slot `/videos` was the one
-   route with a sidebar but no files in it — following a file from anywhere
-   else in the app and then hopping to the video library lost the tree.
-3. `/reason-editor` itself, as a collapsible strip below `md`, since both
-   sidebars above are `hidden md:flex`.
+1. `AppSidebarShell`'s `<aside>`, on the routes `showsReasonDocsPanels`
+   admits — `/cards` (the dock's "Shared" destination, and any page below
+   it) and `/reason-editor`, whose desktop file navigation *is* this
+   sidebar, the editor route having no `<aside>` of its own.
+2. `/reason-editor` itself, as a collapsible strip below `md`, since that
+   sidebar is `hidden md:flex`.
 
-In the sidebar the panels sit under the dock and above the nav tree, the
-same order in both sidebars: the tree is long enough (a section auto-expands
-to show where you are) that anything below it starts under the fold.
-`packages/debate-videos/test/lectures-sidebar-docs-slot.test.tsx` pins that
-placement for the videos sidebar.
+They are deliberately absent everywhere else. The panels used to ride in
+every sidebar, `/videos` included — which took a third mount, an app-owned
+`docsSlot` on `LecturesPage`, since `/videos` renders its own sidebar rather
+than the shell. That put a document tree above the video library's own nav
+on a page that is not about documents; the slot is gone and the videos
+sidebar is the dock plus the video nav
+(`packages/debate-videos/test/lectures-sidebar.test.tsx`). The trade is that
+a file opened from `/cards` is no longer one click away after hopping to the
+video library — the dock hop back is.
+
+In the sidebar the panels sit under the dock and above the nav tree: the
+tree is long enough (a section auto-expands to show where you are) that
+anything below it starts under the fold.
 
 The section is expanded by default on `/reason-editor`, where the docs are
-the page's subject, and collapsed elsewhere until the reader says otherwise
-— which sticks, per-device, in `localStorage`. Nothing is fetched until it
-is actually open, so a tool page that leaves it collapsed makes no document
-request at all.
+the page's subject, and collapsed on `/cards` until the reader says
+otherwise — which sticks, per-device, in `localStorage`. Nothing is fetched
+until it is actually open, so a page that leaves it collapsed makes no
+document request at all.
 
 ## Opening a file
 
@@ -126,10 +131,11 @@ document.
 
 ## Known gaps
 
-- The docs section starts collapsed everywhere except `/reason-editor`, so
-  on `/videos` the files are one click away rather than on screen. That
-  follows the other tool routes deliberately; a reader who opens it there
-  has their choice remembered.
+- The docs section starts collapsed on `/cards`, so the files are one click
+  away there rather than on screen. A reader who opens it has that choice
+  remembered per-device.
+- `showsReasonDocsPanels` is a hard-coded route list, not something derived
+  from the nav data. A new documents route has to be added to it by hand.
 - `SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare
   `/reason-editor`, dropping any `?doc=`/`?topic=` alongside it. The two
   never travel together in practice (a share link comes from `/contacts`),
