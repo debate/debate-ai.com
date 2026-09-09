@@ -14,11 +14,11 @@ export const docsConfig: DocsConfig = {
   topLinks: [
     {
       text: "Guides",
-      url: "/docs/guides",
+      url: "/guides",
     },
     {
       text: "Docs",
-      url: "/docs",
+      url: "/",
     },
     {
       text: "GitHub",

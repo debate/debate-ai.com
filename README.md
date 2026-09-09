@@ -1,7 +1,7 @@
 <p align="center">
         <a href="https://youtu.be/XB0tzpBUEKQ" target="_blank" rel="noopener noreferrer"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
 <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
-    <a href="https://github.com/debate/debate-ai.com/tree/master/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
+    <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <a href="https://debate-ai.com/api/api-docs"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API badge"></a>
     <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com" target="_blank" rel="noopener noreferrer"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
     <a href="https://github.com/debate/debate-ai.com/discussions"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/debate/debate-ai.com" /></a>

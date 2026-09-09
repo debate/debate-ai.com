@@ -9,7 +9,6 @@
   "scripts": {
     "dev": "rm -rf .next/; open-ready next dev --turbo",
     "build": "next build",
-    "build:preview": "next build; open-ready next start",
     "build:api": "node ./lib/fumadocs/generate-api-docs.ts",
     "typecheck": "fumadocs-mdx && tsc --noEmit",
     "favicon": "npm create favicon public/favicon-512.png public/ -- --overwrite"

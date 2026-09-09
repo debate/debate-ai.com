@@ -7,6 +7,59 @@ _No task currently in progress._
 
 ### Completed
 
+- **📚 The help docs are published at `debate-ai.com/docs`.** `packages/debate-help-docs`
+  had a complete Fumadocs site — guides, one page per feature, one per workspace
+  package, search, `llms-full.txt` — and no way for anyone to read it: nothing built
+  it, nothing deployed it, and `lib/docs-links.ts` said as much, falling back to the
+  raw `.mdx` on GitHub whenever `NEXT_PUBLIC_DOCS_URL` was unset, which it always was.
+
+  The site now ships with the web app. It static-exports (`output: 'export'`, every
+  page was already prerendered) under `basePath: '/docs'`, and
+  `apps/debate-ai.com/scripts/build-docs.mjs` — wired into that app's `build` — runs
+  that build and copies the export into `public/docs`, which lands in `dist/client`
+  and is served by the Worker's static-asset binding. `basePath` was the one option
+  that could work: two Next apps on one origin otherwise collide on `/_next/` and on
+  the router's own `__next.*` payload files at the site root. It also meant the docs
+  app's routes had to move out of `app/docs/` to the app root (`app/(docs)/[[...slug]]`
+  is `/docs`, not `/docs/docs`), the landing page had to move off `/` to `/welcome` to
+  leave the root for the docs index, and every in-content `/docs/…` link had to lose
+  the prefix the router now adds. URLs that bypass the router (the search-index
+  `fetch`, the two `window.location` jumps) keep it, built from `DOCS_BASE_PATH` in
+  `lib/fumadocs/base-path.ts` — the one place the prefix is written down, imported by
+  `next.config.ts` itself.
+
+  Two things the export forced into the open: the per-page Markdown endpoint used a
+  rewrite (unsupported by `output: 'export'`) and an optional catch-all, so the export
+  tried to write a file and a directory of the same name and failed the build outright.
+  It is now a required catch-all at `/docs/llms.mdx/<path>.mdx` that the Copy/Ask AI
+  buttons address directly.
+
+  With the docs actually reachable, the app's links point at them: `docs-links.ts` and
+  `feature-catalog.ts`'s `featureDocUrl` both resolve to same-origin `/docs/…` paths
+  (`NEXT_PUBLIC_DOCS_URL` now overrides only the origin, for a separate docs
+  deployment), so the tool page headers, both workspace hubs, and every card on
+  `/features` open the published page. Three gaps that would have shipped as 404s are
+  closed: `docs/features/{app-nav-dock,card-library-import,cardmirror-embed-persistence,
+  contacts,reason-docs-sidebar}.md` had never been ported (one of them, `contacts`, is
+  linked from `/features`), and `/docs/features` and `/docs/packages` had no section
+  index pages despite the docs home linking to both.
+
+  One regression caught before it shipped: `lib/offline-sw/generate.cjs` lists every
+  file in `dist/client` and the service worker precaches all of them on install, so
+  staging the docs would have had every first-time visitor download ~28 MB / 620 files
+  of documentation before the app was usable. `docs/` is excluded from that list and
+  from the build digest, so docs-only changes no longer invalidate the app's cache
+  either; the worker's network-first document handling still serves the docs normally.
+
+  `public/docs/` and `packages/debate-help-docs/out/` are gitignored — build output,
+  rebuilt on every build. New tests cover the link builders
+  (`apps/debate-ai.com/lib/__tests__/docs-links.test.ts`). Verification gate:
+  `bun install`, `bun run test` (352 files, 7173 tests passing), `bunx turbo run
+  typecheck` (17/17 green — the `debate-ai-web` failure logged against earlier slices
+  no longer reproduces), and a full `npm run build` in `apps/debate-ai.com`, after
+  which every `/docs` route, its 20 asset URLs, and every internal link on the docs
+  home and `/docs/features` were served from `dist/client` and checked for a 200.
+
 - **🧹 Delete the dead `ThemeDropdown` component from `theme-dropdown.tsx`.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
