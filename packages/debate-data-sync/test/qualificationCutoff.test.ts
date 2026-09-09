@@ -4,8 +4,11 @@ import {
   getEffectiveQualificationCutoff,
   getPersistedQualificationCutoff,
   isQualificationCutoffConfigured,
+  normalizeQualificationCutoffPatch,
+  parseQualificationCutoff,
   resetPersistedQualificationCutoff,
   savePersistedQualificationCutoff,
+  serializeQualificationCutoff,
   toQualificationOptions,
   type QualificationCutoffSettings,
 } from "../src/state/qualificationCutoff";
@@ -118,5 +121,54 @@ describe("toQualificationOptions", () => {
 
   it("carries over both halves when both are configured", () => {
     expect(toQualificationOptions(CUSTOM_CUTOFF)).toEqual({ minPoints: 25, maxQualifiers: 8 });
+  });
+});
+
+describe("normalizeQualificationCutoffPatch", () => {
+  it("accepts null, clearing the synced cutoff", () => {
+    const { valid, errors } = normalizeQualificationCutoffPatch({ qualificationCutoff: null });
+    expect(errors).toEqual([]);
+    expect(valid.qualificationCutoff).toBeNull();
+  });
+
+  it("accepts a valid cutoff", () => {
+    const { valid, errors } = normalizeQualificationCutoffPatch({ qualificationCutoff: CUSTOM_CUTOFF });
+    expect(errors).toEqual([]);
+    expect(valid.qualificationCutoff).toEqual(CUSTOM_CUTOFF);
+  });
+
+  it("rejects a malformed cutoff", () => {
+    const { valid, errors } = normalizeQualificationCutoffPatch({
+      qualificationCutoff: { minPoints: "twenty-five", maxQualifiers: 8 },
+    });
+    expect(errors.length).toBe(1);
+    expect(valid.qualificationCutoff).toBeUndefined();
+  });
+
+  it("leaves the field unset when absent from the input", () => {
+    const { valid, errors } = normalizeQualificationCutoffPatch({});
+    expect(errors).toEqual([]);
+    expect(valid.qualificationCutoff).toBeUndefined();
+  });
+
+  it("rejects a non-object body", () => {
+    const { errors } = normalizeQualificationCutoffPatch(42);
+    expect(errors.length).toBe(1);
+  });
+});
+
+describe("serializeQualificationCutoff / parseQualificationCutoff", () => {
+  it("round-trips a cutoff", () => {
+    expect(parseQualificationCutoff(serializeQualificationCutoff(CUSTOM_CUTOFF))).toEqual(CUSTOM_CUTOFF);
+  });
+
+  it("serializes null as null", () => {
+    expect(serializeQualificationCutoff(null)).toBeNull();
+  });
+
+  it("parses a missing/corrupt/invalid value as null", () => {
+    expect(parseQualificationCutoff(null)).toBeNull();
+    expect(parseQualificationCutoff("{not json")).toBeNull();
+    expect(parseQualificationCutoff(JSON.stringify({ minPoints: "nope" }))).toBeNull();
   });
 });

@@ -73,3 +73,76 @@ export function resetPersistedQualificationPointsTable(): void {
 export function getEffectiveQualificationPointsTable(): QualificationPointsTable {
   return getPersistedQualificationPointsTable() ?? DEFAULT_QUALIFICATION_POINTS_TABLE;
 }
+
+// --- Account sync (docs/features/team-rankings.md's "Standings data...
+// is stored in localStorage only" Known gap) ------------------------------
+//
+// Pure validation/serialization helpers shared by the `/api/settings`
+// D1-backed route (`apps/debate-ai.com`) and
+// `hooks/useStandingsAccountSync.ts`, mirroring `wordLimitPresets.ts`'s
+// split. `null` means "no custom table saved to the account", the same
+// "use the local/default value" semantics `getPersistedQualificationPointsTable`
+// already uses for a signed-out browser.
+
+export type QualificationPointsTablePayload = {
+  qualificationPointsTable: QualificationPointsTable | null;
+};
+
+/** Mirrors every other `DEFAULT_*` in this repo's settings surfaces: the value used when no saved row/value exists yet. */
+export const DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC: QualificationPointsTablePayload = {
+  qualificationPointsTable: null,
+};
+
+export type QualificationPointsTablePatchResult = {
+  /** Only the field, if present in `input` *and* valid. */
+  valid: Partial<QualificationPointsTablePayload>;
+  /** One message per rejected or malformed field. */
+  errors: string[];
+};
+
+/**
+ * Validates an untrusted (e.g. parsed request-body JSON) patch: `null`
+ * clears the synced table, a valid `QualificationPointsTable` object
+ * replaces it — mirrors `normalizeWordLimitPresetsPatch`'s "one field,
+ * accepted or rejected as a whole" shape.
+ */
+export function normalizeQualificationPointsTablePatch(input: unknown): QualificationPointsTablePatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+
+  const record = input as Record<string, unknown>;
+  const valid: Partial<QualificationPointsTablePayload> = {};
+  const errors: string[] = [];
+
+  if ("qualificationPointsTable" in record) {
+    const value = record.qualificationPointsTable;
+    if (value === null) {
+      valid.qualificationPointsTable = null;
+    } else if (isValidTable(value)) {
+      valid.qualificationPointsTable = value;
+    } else {
+      errors.push(
+        '"qualificationPointsTable" must be null or a { outroundPoints, pointsPerPrelimWin, bidLevelBonusRate } qualification points table.',
+      );
+    }
+  }
+
+  return { valid, errors };
+}
+
+/** Serializes a table for the `qualification_points_table` D1 column: `null` clears it, matching `serializeWordLimitPresets`'s "no saved value yet" semantics. */
+export function serializeQualificationPointsTable(table: QualificationPointsTable | null): string | null {
+  return table === null ? null : JSON.stringify(table);
+}
+
+/** Parses the `qualification_points_table` D1 column back into a table, or `null`. Never throws — a null, malformed, or invalid-shape value reads back as `null` rather than erroring the request. */
+export function parseQualificationPointsTable(raw: string | null | undefined): QualificationPointsTable | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return isValidTable(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
