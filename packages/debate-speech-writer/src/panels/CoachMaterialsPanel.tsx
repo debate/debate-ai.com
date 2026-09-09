@@ -84,7 +84,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { EmptyState, SummaryText } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell, SummaryText } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -761,7 +761,7 @@ export function CoachMaterialsPanel() {
         {askError && <p className="text-sm text-destructive">{askError}</p>}
 
         {answer && <SummaryText label="Coach's answer" text={answer} />}
-      </div>
-    </div>
+      </PanelSection>
+    </PanelShell>
   )
 }
