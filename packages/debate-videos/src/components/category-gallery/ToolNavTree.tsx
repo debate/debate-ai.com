@@ -23,10 +23,12 @@
  * flagship tool is still reachable — it is also listed as the first link
  * inside the section.
  *
- * The sections behave as an accordion: exactly one is open, and a closed
- * section renders none of its links. The open one follows the route, so
- * clicking an app dock button loads that destination's section into the
- * sidebar and nothing else — see `sidebar-active-section`.
+ * Every section starts expanded and they collapse independently: opening one
+ * no longer closes the others. The tree is the only nav on the tool pages, and
+ * an accordion meant that reaching a tool in another section was always two
+ * clicks (open the section, then the link) with the list you were reading
+ * disappearing in between. Collapsing is still per-section and sticky for the
+ * session, so anyone who wants a short column can still have one.
  *
  * `sectionIds` narrows the tree to named sections: the `/cards` sidebar is
  * the document panels plus the Research tools, so it asks for that one
@@ -59,10 +61,10 @@ const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
 
 export interface ToolNavTreeProps {
   /**
-   * Whether the section holding the current route starts open. `true` (the
-   * sidebar's own default) opens it; the mobile mount below `md` passes
-   * `false`, where the tree sits inline under the quick-link tiles and even
-   * one expanded section would push the video grid off the screen.
+   * Whether the sections start expanded. `true` (the sidebar's own default)
+   * opens every one of them; the mobile mount below `md` passes `false`,
+   * where the tree sits inline under the quick-link tiles and even one
+   * expanded section would push the video grid off the screen.
    */
   defaultExpanded?: boolean;
   /**
@@ -70,9 +72,9 @@ export interface ToolNavTreeProps {
    * passes this so its own "Round Videos" node takes part: opening a tool
    * section there closes Round Videos, and vice versa.
    */
-  openSectionId?: string | null;
-  /** Present together with {@link ToolNavTreeProps.openSectionId}. */
-  onOpenSectionChange?: (sectionId: string | null) => void;
+  expandedSectionIds?: readonly string[];
+  /** Present together with {@link ToolNavTreeProps.expandedSectionIds}. */
+  onToggleSection?: (sectionId: string) => void;
   /**
    * Render only these tool sections, in this order, instead of all of
    * {@link SIDEBAR_TOOL_SECTIONS} — the `/cards` sidebar passes
@@ -84,12 +86,12 @@ export interface ToolNavTreeProps {
 
 export function ToolNavTree({
   defaultExpanded = true,
-  openSectionId,
-  onOpenSectionChange,
+  expandedSectionIds,
+  onToggleSection,
   sectionIds,
 }: ToolNavTreeProps = {}) {
   const pathname = usePathname();
-  const isControlled = onOpenSectionChange != null;
+  const isControlled = onToggleSection != null;
 
   const sections = React.useMemo(
     () =>
@@ -112,24 +114,28 @@ export function ToolNavTree({
       ? matchedSectionId
       : sections[0]?.id ?? null;
 
-  // One section open at a time, and the open one follows the route: the tree
-  // is the only nav on the tool pages, and rendering all forty-odd links up
-  // front cost a prefetch apiece on the page that was already the slowest.
-  const [ownSectionId, setOwnSectionId] = useState<string | null>(
-    defaultExpanded ? routeSectionId : null,
+  const [ownExpanded, setOwnExpanded] = useState<readonly string[]>(() =>
+    defaultExpanded ? allSectionIds : [],
   );
 
+  // The route's own section is opened on navigation even if it was collapsed
+  // by hand, so following a link never lands you on a page whose section is
+  // shut. Nothing else is closed — sections are independent now.
+  const routeSectionId = sidebarSectionForPath(pathname);
   useEffect(() => {
-    if (isControlled || !defaultExpanded) return;
-    setOwnSectionId(routeSectionId);
+    if (isControlled || !defaultExpanded || routeSectionId == null) return;
+    setOwnExpanded((current) => withSectionExpanded(current, routeSectionId));
   }, [routeSectionId, isControlled, defaultExpanded]);
 
-  const openId = isControlled ? openSectionId ?? null : ownSectionId;
+  const expanded = isControlled ? expandedSectionIds ?? [] : ownExpanded;
+  const isExpanded = (id: string) => expanded.includes(id);
 
   const toggleSection = (id: string) => {
-    const next = openId === id ? null : id;
-    if (isControlled) onOpenSectionChange?.(next);
-    else setOwnSectionId(next);
+    if (isControlled) {
+      onToggleSection?.(id);
+      return;
+    }
+    setOwnExpanded((current) => toggleExpandedSection(current, id));
   };
 
   return (
@@ -143,7 +149,7 @@ export function ToolNavTree({
           // `section.href` is the section's flagship tool — where a
           // ctrl/shift/middle-click on the heading goes.
           sectionHref={section.href}
-          expanded={openId === section.id}
+          expanded={isExpanded(section.id)}
           onToggleExpand={() => toggleSection(section.id)}
         >
           {section.tools.map((tool) => (

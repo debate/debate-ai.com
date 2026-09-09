@@ -35,6 +35,11 @@ import type { JudgeDecisionAiResult } from "../round/judge-decision-ai";
 import { buildPracticeRoundFeedback } from "../round/practice-round-simulator";
 import type { PracticeRoundFeedback, PracticeRoundSetup } from "../round/practice-round-simulator";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type PracticeRoundRecord = {
   roundId: string;
   setup: PracticeRoundSetup;
@@ -97,17 +102,25 @@ export function getPracticeRound(roundId: string): PracticeRoundRecord | undefin
 export function savePracticeRound(record: PracticeRoundRecord): void {
   const records = readAll();
   const index = records.findIndex((existing) => existing.roundId === record.roundId);
+  // The stored record is not the argument — `createdAt` is stamped here — so
+  // the account gets what local storage got, not what the caller passed.
+  const stored: PracticeRoundRecord =
+    index === -1
+      ? { ...record, createdAt: record.createdAt ?? Date.now() }
+      : { ...record, createdAt: records[index].createdAt };
   if (index === -1) {
-    records.push({ ...record, createdAt: record.createdAt ?? Date.now() });
+    records.push(stored);
   } else {
-    records[index] = { ...record, createdAt: records[index].createdAt };
+    records[index] = stored;
   }
   writeAll(records);
+  mirrorToolRecordSave("practiceRounds", stored);
 }
 
 /** Deletes a round's persisted practice-round state; a no-op if it isn't stored. */
 export function deletePracticeRound(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+  mirrorToolRecordDelete("practiceRounds", roundId);
 }
 
 /**

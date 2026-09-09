@@ -120,19 +120,23 @@ Two rules hold for every h1:
   under Apps), so nothing became unreachable — a click on the heading no
   longer navigates away from the page you are on just because you wanted to
   see what else is in the group.
-- **One section is open at a time, and it follows the route.** The tree is an
-  accordion: opening a section closes the one that was open, and a closed
-  section renders none of its links. Which one is open comes from the current
-  path (`sidebar-active-section.ts`), so clicking an app dock button loads
-  that destination's section into the sidebar and nothing else. The state is
-  per-mount, and opening another section by hand still works.
+- **Every section starts open, and they collapse independently.** Opening one
+  section no longer closes another. The tree is the only nav on the tool
+  pages, and as an accordion — one section open at a time, closed sections
+  rendering none of their links — reaching a tool in another section was
+  always two clicks, with the list you were reading disappearing in between.
+  The state is per-mount and sticky for the session, so collapsing a section
+  you don't use keeps the column short; navigating into a section you had
+  collapsed re-opens it (`sidebar-active-section.ts`), so a dock button never
+  lands you on a page whose nav is shut.
 
-  It used to render every section's links up front. That put around fifty
-  `next/link`s in the sidebar on `/videos`, and the router prefetched an RSC
-  payload for each one the moment the page mounted — a burst of requests
-  racing the video feed and its thumbnails on the page that already felt
-  slowest. The tree links now also pass `prefetch={false}`, so the ones that
-  *are* rendered are fetched on click rather than on sight.
+  The accordion existed for a reason worth naming: rendering every section up
+  front puts around fifty `next/link`s in the sidebar on `/videos`, and the
+  router used to prefetch an RSC payload for each one the moment the page
+  mounted — a burst of requests racing the video feed on the page that already
+  felt slowest. That cost is paid off separately: the tree links pass
+  `prefetch={false}`, so the rendered links are fetched on click rather than
+  on sight, which is what makes a fully expanded tree affordable.
 
   Resolution is longest-match, with ties going to the app dock: `/cards/library`
   opens Research (which lists it) rather than Apps (which lists `/cards`),

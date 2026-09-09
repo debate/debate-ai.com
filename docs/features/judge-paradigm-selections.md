@@ -298,6 +298,10 @@ above in the same `live-update.test.ts` file.
 
 ## Known gaps
 
+- Saved selections sync to a signed-in user's account as the
+  `judgeParadigmSelections` collection (see
+  [Tool Data Sync](tool-data-sync.md)); a signed-out browser still keeps them
+  in `localStorage` only.
 - The multi-judge panel mode above closes idea #5's remaining named
   next-step. No further follow-up is currently tracked for this idea; a
   future run should pick a fresh next-step (e.g. letting a panel run

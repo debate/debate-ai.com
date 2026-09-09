@@ -40,6 +40,12 @@ import { buildJudgeProfile } from "../judge/judge-profile";
 import { parseJudgeRoundRecordsCsv } from "../judge/judge-round-record-csv-import";
 import { deleteJudgeProfile, saveJudgeProfile } from "./judgeProfiles";
 
+
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+  mirrorToolRecordsSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
 /** A `JudgeRoundRecord` as persisted: a unique id, since a judge decides many rounds. */
 export interface JudgeRoundRecordEntry extends JudgeRoundRecord {
   id: string;
@@ -217,6 +223,7 @@ export function recordJudgeRound(record: JudgeRoundRecordEntry): JudgeProfile {
   const records = readAll();
   records.push(record);
   writeAll(records);
+  mirrorToolRecordSave("judgeRoundRecords", record);
   const profile = buildJudgeProfile(
     record.judgeId,
     records.filter((existing) => existing.judgeId === record.judgeId),
@@ -259,6 +266,7 @@ export function bulkImportJudgeRoundRecords(rawCsv: string): JudgeRoundCsvImport
   }));
   records.push(...newEntries);
   writeAll(records);
+  mirrorToolRecordsSave("judgeRoundRecords", newEntries);
 
   const affectedJudgeIds = Array.from(new Set(newEntries.map((entry) => entry.judgeId)));
   for (const judgeId of affectedJudgeIds) {
@@ -289,6 +297,7 @@ export function updateJudgeRoundRecord(record: JudgeRoundRecordEntry): JudgeProf
   clearRedoHistory(record.id);
   records[index] = record;
   writeAll(records);
+  mirrorToolRecordSave("judgeRoundRecords", record);
   if (previous.judgeId !== record.judgeId) {
     rebuildJudgeProfileFromRecords(previous.judgeId);
   }
@@ -306,6 +315,7 @@ export function deleteJudgeRoundRecord(id: string): void {
   const removed = records.find((record) => record.id === id);
   if (!removed) return;
   writeAll(records.filter((record) => record.id !== id));
+  mirrorToolRecordDelete("judgeRoundRecords", id);
   clearEditHistory(id);
   clearRedoHistory(id);
   rebuildJudgeProfileFromRecords(removed.judgeId);
@@ -353,6 +363,7 @@ export function undoLastJudgeRoundRecordEdit(id: string): JudgeProfile | null {
   const currentJudgeId = replaced.judgeId;
   records[index] = restored;
   writeAll(records);
+  mirrorToolRecordSave("judgeRoundRecords", restored);
 
   const remaining = stack.slice(0, -1);
   if (remaining.length > 0) {
@@ -410,6 +421,7 @@ export function redoLastJudgeRoundRecordEdit(id: string): JudgeProfile | null {
   const currentJudgeId = replaced.judgeId;
   records[index] = redone;
   writeAll(records);
+  mirrorToolRecordSave("judgeRoundRecords", redone);
 
   const remainingRedo = redoStack.slice(0, -1);
   if (remainingRedo.length > 0) {

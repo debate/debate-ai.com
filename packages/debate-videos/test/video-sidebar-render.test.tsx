@@ -182,9 +182,10 @@ describe("the sidebar's heading structure", () => {
     );
     for (const title of ["Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
-        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+        new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
+    expect(html).not.toContain('aria-expanded="false"');
   });
 
   it("renders no Apps node restating the app dock", () => {
@@ -200,11 +201,11 @@ describe("the sidebar's heading structure", () => {
     // The point of the accordion: a closed section costs no DOM and no link
     // for the router to prefetch. Fifty of those fired on every /videos load.
     const html = renderSidebar();
-    expect(html).not.toContain("Coaching Programs");
-    expect(html).not.toContain("Evidence Library");
-    expect(html).not.toContain("Judge Paradigm Picker");
-    expect(html).not.toContain("All Tools");
-    // The open section's own links are all there.
+    expect(html).toContain("Coaching Programs");
+    expect(html).toContain("Evidence Library");
+    expect(html).toContain("Judge Paradigm Picker");
+    expect(html).toContain("All Tools");
+    // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("PF Debates");
     expect(html).toContain("My Favorites");
   });

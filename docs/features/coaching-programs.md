@@ -342,6 +342,10 @@ package's `live-update.test.ts` cases).
 
 ## Known gaps
 
+- Programs sync to a signed-in user's account as the `coachingPrograms`
+  collection (see [Tool Data Sync](tool-data-sync.md)), so they follow that
+  coach across devices — but they are still per-*user*, so a roster is not
+  yet shared with the members on it.
 - The program calendar's drill-review events are scoped to the viewing
   coach's own drill sets, not the roster's — there's no per-member drill data
   a coach can see for teammates today. Widening this to a real roster-wide

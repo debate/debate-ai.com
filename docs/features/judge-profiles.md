@@ -269,6 +269,9 @@ ignored).
   round" above). Undo (and now redo) history is still capped at the 10 most
   recent edits per round, so a round corrected more than 10 times can't be
   undone all the way back to its first-ever logged version.
-- Profiles are per-browser localStorage, not a shared team resource, and
-  there are no identity/permission checks on who may log a round for a
-  judge (no auth in this repo yet).
+- ~~Profiles are per-browser localStorage~~ Closed for a signed-in user:
+  `judgeProfiles` and the `judgeRoundRecords` they aggregate now sync to the
+  account through `saved_tool_records` — see
+  [Tool Data Sync](tool-data-sync.md). They are still per-*user* rather than a
+  shared team resource, and there are still no identity/permission checks on
+  who may log a round for a judge beyond "it's your own account's data".

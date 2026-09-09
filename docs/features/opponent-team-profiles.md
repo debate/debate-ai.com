@@ -309,6 +309,9 @@ ignored).
   (and forward from) any of its last 10 prior versions (see "Correcting a
   logged round" above), mirroring the same fix already shipped for
   [Judge Profiles](judge-profiles.md).
-- Profiles are per-browser localStorage, not a shared team resource, and
-  there are no identity/permission checks on who may log a round against a
-  team (no auth in this repo yet).
+- ~~Profiles are per-browser localStorage~~ Closed for a signed-in user:
+  `opponentTeamProfiles` and the `opponentRoundRecords` they aggregate now
+  sync to the account through `saved_tool_records` — see
+  [Tool Data Sync](tool-data-sync.md). They are still per-*user* rather than a
+  shared team resource, and there are still no identity/permission checks on
+  who may log a round against a team beyond "it's your own account's data".

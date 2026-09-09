@@ -304,8 +304,11 @@ line, timestamp ordering) and `flowAnnotationsExportFilename`.
   render the `flowEdits`/`prepNotes` badges the grid's predicate also
   covers), and re-reads the annotation list when it fires. Vitest-covered
   in `packages/debate-round/test/live-update.test.ts`.
-- No collaborative/live sync — annotations are local `localStorage` only,
-  same as every other persisted record in this repo today.
+- ~~annotations are local `localStorage` only~~ Closed for a signed-in
+  user: annotations sync to the account through `saved_tool_records` — see
+  [Tool Data Sync](tool-data-sync.md). There is still no *collaborative* live
+  sync: they follow one user across devices, they are not a shared stream two
+  people annotate at once.
 - The current flow editor (the "ebb flow" split speech-editor view that
   replaced `FlowSpreadsheet` in PR #498) has no in-grid indicator that a
   box already has an annotation — see the "FlowSpreadsheet affordance

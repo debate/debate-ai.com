@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "debate-community": "workspace:*",
+    "debate-data-sync": "workspace:*",
     "debate-research-evidence": "workspace:*",
     "debate-round": "workspace:*",
     "debate-speech-writer": "workspace:*",

@@ -48,6 +48,12 @@ import { buildOpponentTeamProfile } from "../rankings/opponent-team-profile";
 import { parseOpponentRoundRecordsCsv } from "../rankings/opponent-round-csv-import";
 import { deleteOpponentTeamProfile, saveOpponentTeamProfile } from "./opponentTeamProfiles";
 
+
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+  mirrorToolRecordsSave,
+} from "./tool-record-mirror";
 /** An `OpponentRoundRecord` as persisted: a unique id, since a team plays many rounds. */
 export interface OpponentRoundRecordEntry extends OpponentRoundRecord {
   id: string;
@@ -227,6 +233,7 @@ export function recordOpponentRound(record: OpponentRoundRecordEntry): OpponentT
   const records = readAll();
   records.push(record);
   writeAll(records);
+  mirrorToolRecordSave("opponentRoundRecords", record);
   const profile = buildOpponentTeamProfile(
     record.teamId,
     records.filter((existing) => existing.teamId === record.teamId),
@@ -268,6 +275,7 @@ export function bulkImportOpponentRoundRecords(rawCsv: string): OpponentRoundCsv
   }));
   records.push(...newEntries);
   writeAll(records);
+  mirrorToolRecordsSave("opponentRoundRecords", newEntries);
 
   const affectedTeamIds = Array.from(new Set(newEntries.map((entry) => entry.teamId)));
   for (const teamId of affectedTeamIds) {
@@ -300,6 +308,7 @@ export function updateOpponentRoundRecord(
   clearRedoHistory(record.id);
   records[index] = record;
   writeAll(records);
+  mirrorToolRecordSave("opponentRoundRecords", record);
   if (previous.teamId !== record.teamId) {
     rebuildOpponentTeamProfileFromRecords(previous.teamId);
   }
@@ -317,6 +326,7 @@ export function deleteOpponentRoundRecord(id: string): void {
   const removed = records.find((record) => record.id === id);
   if (!removed) return;
   writeAll(records.filter((record) => record.id !== id));
+  mirrorToolRecordDelete("opponentRoundRecords", id);
   clearEditHistory(id);
   clearRedoHistory(id);
   rebuildOpponentTeamProfileFromRecords(removed.teamId);
@@ -364,6 +374,7 @@ export function undoLastOpponentRoundRecordEdit(id: string): OpponentTeamProfile
   const currentTeamId = replaced.teamId;
   records[index] = restored;
   writeAll(records);
+  mirrorToolRecordSave("opponentRoundRecords", restored);
 
   const remaining = stack.slice(0, -1);
   if (remaining.length > 0) {
@@ -421,6 +432,7 @@ export function redoLastOpponentRoundRecordEdit(id: string): OpponentTeamProfile
   const currentTeamId = replaced.teamId;
   records[index] = redone;
   writeAll(records);
+  mirrorToolRecordSave("opponentRoundRecords", redone);
 
   const remainingRedo = redoStack.slice(0, -1);
   if (remainingRedo.length > 0) {

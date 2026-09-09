@@ -288,6 +288,9 @@ own tests.
 
 ## Known gaps
 
+- Saved briefings sync to a signed-in user's account as the
+  `preRoundBriefings` collection (see [Tool Data Sync](tool-data-sync.md)); a
+  signed-out browser still keeps them in `localStorage` only.
 - No real data source for tournament results, event details, or ballots —
   a briefing's opponent-scouting/judge-tendency data still has to be
   entered by hand (via the Opponent Team Profiles / Judge Profiles stores)

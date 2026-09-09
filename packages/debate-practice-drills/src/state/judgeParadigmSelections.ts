@@ -14,6 +14,11 @@
 
 import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type JudgeParadigmSelection = {
   roundId: string;
   paradigm: JudgeParadigm;
@@ -58,11 +63,13 @@ export function saveJudgeParadigmSelection(selection: JudgeParadigmSelection): v
     selections[index] = selection;
   }
   writeAll(selections);
+  mirrorToolRecordSave("judgeParadigmSelections", selection);
 }
 
 /** Deletes a round's persisted judge-paradigm selection; a no-op if it isn't stored. */
 export function deleteJudgeParadigmSelection(roundId: string): void {
   writeAll(readAll().filter((selection) => selection.roundId !== roundId));
+  mirrorToolRecordDelete("judgeParadigmSelections", roundId);
 }
 
 /**
