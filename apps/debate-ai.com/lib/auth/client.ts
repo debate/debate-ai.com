@@ -12,6 +12,7 @@ import {
   NEXT_PUBLIC_BASE_URL,
   NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 } from "../config/site";
+import { ONE_TAP_CLIENT_OPTIONS } from "./one-tap";
 
 // Always talk to the origin the page was served from. The app ships its own
 // /api/auth routes on every deployment (debate-ai.com, preview builds,
@@ -24,18 +25,6 @@ const baseURL =
     ? window.location.origin
     : NEXT_PUBLIC_BASE_URL || APP_ORIGIN;
 
-// Default One Tap options. The Google client id may arrive after page load from
-// /api/auth/providers, so callers that need One Tap should create an auth
-// client after that lookup resolves instead of relying on this build-time
-// fallback. GOOGLE_CLIENT_ID is a Worker secret and is never inlined into the
-// browser bundle.
-const oneTapOptions = {
-  clientId: NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-  additionalOptions: {
-    use_fedcm_for_prompt: false,
-  },
-};
-
 /** Create an auth client with the Google client id available at that moment. */
 export function createAppAuthClient(
   googleClientId = NEXT_PUBLIC_GOOGLE_CLIENT_ID,
@@ -43,8 +32,14 @@ export function createAppAuthClient(
   return createAuthClient({
     baseURL,
     plugins: [
+      // The Google client id may arrive after page load from
+      // /api/auth/providers, so callers that need One Tap should create an
+      // auth client after that lookup resolves instead of relying on the
+      // build-time fallback. GOOGLE_CLIENT_ID is a Worker secret and is never
+      // inlined into the browser bundle. The rest of the One Tap settings live
+      // in ./one-tap, which explains why FedCM leaves so little to configure.
       oneTapClient({
-        ...oneTapOptions,
+        ...ONE_TAP_CLIENT_OPTIONS,
         clientId: googleClientId,
       }),
       magicLinkClient(),
