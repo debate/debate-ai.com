@@ -29,6 +29,7 @@ export function Footer() {
                 <React.Fragment key={link.text}>
                   <Link
                     href={href}
+                    prefetch={false}
                     target={href.startsWith("http") ? "_blank" : "_self"}
                     rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="hover:text-foreground transition-colors flex items-center gap-1"

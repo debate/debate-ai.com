@@ -60,4 +60,40 @@ export function getYearTopic(
   return undefined;
 }
 
+/**
+ * Cached date formatters.
+ *
+ * `toLocaleDateString(locale, options)` builds a fresh `Intl.DateTimeFormat`
+ * on every call, which is the expensive part. A grid renders three dates per
+ * card and holds hundreds of cards once the user has paged through the
+ * library, so building those formatters once is worth the indirection.
+ */
+const FULL_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+
+const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "short" });
+
+/**
+ * Formats a video's publication date for a card or row.
+ *
+ * @param date - The raw date string from the video row.
+ * @param style - `"full"` for "Mar 3, 2026", `"month"` for just "Mar".
+ * @param fallback - Returned for a date that does not parse.
+ * @returns The formatted date.
+ */
+export function formatVideoDate(
+  date: string,
+  style: "full" | "month" = "full",
+  fallback = "",
+): string {
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return fallback;
+  return style === "month"
+    ? MONTH_FORMATTER.format(parsed)
+    : FULL_DATE_FORMATTER.format(parsed);
+}
+
 export { DEBATE_STYLE_LABELS };

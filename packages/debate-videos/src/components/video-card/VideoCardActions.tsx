@@ -21,6 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "../../ui/primitives/tooltip"
+import { formatVideoDate } from "./videoCardUtils"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 
@@ -269,28 +270,14 @@ export function VideoCardActions({
                 className="flex items-center gap-1 shrink-0 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Calendar className="h-3 w-3" />
-                <span>
-                  {showFullDate
-                    ? new Date(date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })
-                    : new Date(date).toLocaleDateString("en-US", {
-                        month: "short",
-                      })}
-                </span>
+                <span>{formatVideoDate(date, showFullDate ? "full" : "month")}</span>
               </button>
             </TooltipTrigger>
             <TooltipContent>
               <div className="text-sm space-y-1">
                 <p className="font-medium">{channel}</p>
                 <p className="text-orange-400">
-                  {new Date(date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {formatVideoDate(date)}
                 </p>
               </div>
             </TooltipContent>

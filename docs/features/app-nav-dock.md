@@ -120,9 +120,24 @@ Two rules hold for every h1:
   under Apps), so nothing became unreachable — a click on the heading no
   longer navigates away from the page you are on just because you wanted to
   see what else is in the group.
-- **It starts expanded.** The tree is the only nav on the tool pages, so all
-  of it is visible up front rather than only the section holding the current
-  page. Collapsing is still per-section, and the state is per-mount.
+- **One section is open at a time, and it follows the route.** The tree is an
+  accordion: opening a section closes the one that was open, and a closed
+  section renders none of its links. Which one is open comes from the current
+  path (`sidebar-active-section.ts`), so clicking an app dock button loads
+  that destination's section into the sidebar and nothing else. The state is
+  per-mount, and opening another section by hand still works.
+
+  It used to render every section's links up front. That put around fifty
+  `next/link`s in the sidebar on `/videos`, and the router prefetched an RSC
+  payload for each one the moment the page mounted — a burst of requests
+  racing the video feed and its thumbnails on the page that already felt
+  slowest. The tree links now also pass `prefetch={false}`, so the ones that
+  *are* rendered are fetched on click rather than on sight.
+
+  Resolution is longest-match, with ties going to the app dock: `/cards/library`
+  opens Research (which lists it) rather than Apps (which lists `/cards`),
+  while `/doc` — listed in both — opens Apps, since the dock is what the user
+  just clicked.
 
 `SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
 still folds it into the set of paths that get the tool sidebar.
@@ -135,7 +150,11 @@ hanging straight off Coaching, wherever in the tree it is.
 
 - `packages/debate-videos/test/video-sidebar-render.test.tsx` — the heading
   structure above: College Debates under a Videos `h1`, no `h1` inside an
-  anchor, every section a toggle button that starts expanded.
+  anchor, every section a toggle button, and only the section holding the
+  current route open (with the closed ones rendering none of their links).
+- `packages/debate-videos/test/sidebar-active-section.test.ts` — the
+  route-to-section mapping itself, including the longest-match and
+  dock-wins-a-tie rules above.
 - `packages/debate-ui/test/dock.test.tsx` — the `fluid` variant's classes,
   host-set icon sizing, and that magnification never shrinks an icon below
   its resting size.
