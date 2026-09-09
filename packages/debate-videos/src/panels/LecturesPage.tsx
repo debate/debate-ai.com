@@ -330,12 +330,18 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
   // Infinite scroll
   // ---------------------------------------------------------------------------
 
+  // `atCapacity` stops the automatic paging at `MAX_LOADED_VIDEOS`: past that
+  // the next page comes from the button in `LecturesVideoGridView`, which the
+  // user has to press. Scrolling on its own can no longer grow the grid past
+  // the point where the page stops responding.
   useInfiniteScroll(
     state.loadMoreTriggerRef,
-    feed.hasMore,
+    feed.hasMore && !feed.atCapacity,
     feed.isLoading || feed.isLoadingMore,
     feed.loadMore,
   )
+
+  const handleLoadMore = useCallback(() => feed.loadMore({ force: true }), [feed.loadMore])
 
   // ---------------------------------------------------------------------------
   // Shared back button
@@ -412,6 +418,8 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
       isLoading={feed.isLoading}
       errorMessage={feed.errorMessage}
       isLoadingMore={feed.isLoadingMore}
+      atCapacity={feed.atCapacity}
+      onLoadMore={handleLoadMore}
       currentVideos={currentVideos}
       favorites={state.favorites}
       hiddenVideos={state.hiddenVideos}

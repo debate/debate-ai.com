@@ -50,6 +50,53 @@ const DEFAULT_ICON_SIZE = 40
 const DockMeasureContext = React.createContext(0)
 
 /**
+ * One shared, frame-throttled `resize`/`scroll` subscription for every icon in
+ * every dock on the page.
+ *
+ * Each icon used to register its own capture-phase `scroll` listener on
+ * `window` and re-measure from it. Capture-phase means the listener fires for
+ * *every* scrollable element on the page, and re-measuring is a
+ * `getBoundingClientRect` — a forced synchronous layout. With a couple of
+ * dozen icons that was a couple of dozen forced layouts per scroll event, on
+ * top of whatever the page under the dock was already doing; on `/videos`,
+ * where the grid pages in hundreds of cards and layout is expensive, it was
+ * enough on its own to make scrolling stutter and clicks miss.
+ *
+ * Now: one listener, and the measurements it triggers are batched into a
+ * single animation frame no matter how many scroll events arrived in it.
+ */
+const layoutListeners = new Set<() => void>()
+let layoutFrame = 0
+
+function runLayoutListeners() {
+  layoutFrame = 0
+  for (const listener of layoutListeners) listener()
+}
+
+function onWindowLayoutChange() {
+  if (layoutFrame) return
+  layoutFrame = requestAnimationFrame(runLayoutListeners)
+}
+
+function subscribeToLayoutChanges(listener: () => void): () => void {
+  if (layoutListeners.size === 0) {
+    window.addEventListener("resize", onWindowLayoutChange, { passive: true })
+    window.addEventListener("scroll", onWindowLayoutChange, { passive: true, capture: true })
+  }
+  layoutListeners.add(listener)
+  return () => {
+    layoutListeners.delete(listener)
+    if (layoutListeners.size > 0) return
+    window.removeEventListener("resize", onWindowLayoutChange)
+    window.removeEventListener("scroll", onWindowLayoutChange, { capture: true })
+    if (layoutFrame) {
+      cancelAnimationFrame(layoutFrame)
+      layoutFrame = 0
+    }
+  }
+}
+
+/**
  * True only on pointers that can hover precisely — a mouse or trackpad.
  *
  * On touch there is no cursor to magnify toward, and running the springs
@@ -207,13 +254,7 @@ const DockIcon = ({
 
   useEffect(() => {
     if (typeof window === "undefined") return
-    const onLayoutChange = () => measure()
-    window.addEventListener("resize", onLayoutChange)
-    window.addEventListener("scroll", onLayoutChange, true)
-    return () => {
-      window.removeEventListener("resize", onLayoutChange)
-      window.removeEventListener("scroll", onLayoutChange, true)
-    }
+    return subscribeToLayoutChanges(measure)
   }, [measure])
 
   const distanceCalc = useTransform(pointerx, (val: number) => val - centerRef.current)

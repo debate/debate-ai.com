@@ -27,6 +27,19 @@ import type {
 /** Videos requested per page; one screenful of grid plus headroom. */
 export const VIDEO_PAGE_SIZE = 60;
 
+/**
+ * Hard ceiling on how many videos one feed will hold in memory at once.
+ *
+ * The grid is not virtualised: every loaded video is a mounted card with a
+ * thumbnail, a tooltip provider and a glow subscriber, and infinite scroll
+ * appended pages for as long as the library had more to give. A category with
+ * a few thousand videos therefore ended with a few thousand live cards, which
+ * is what made the page stop responding to clicks a while after it looked
+ * loaded. Automatic paging stops here and the view offers an explicit
+ * "Load more" instead, so the page can never grow without bound on its own.
+ */
+export const MAX_LOADED_VIDEOS = 600;
+
 /** Filters describing one video feed. */
 export interface VideoFeedFilters {
   /** Restrict to rounds or lectures; `"all"` spans both. */
@@ -71,8 +84,17 @@ export interface VideoFeed {
   isLoadingMore: boolean;
   /** Human-readable error message, or an empty string. */
   errorMessage: string;
-  /** Requests the next page; a no-op when one is already in flight. */
-  loadMore: () => void;
+  /**
+   * `true` once {@link MAX_LOADED_VIDEOS} videos are loaded and more remain.
+   * Automatic paging stops here; a forced `loadMore` still works, so the view
+   * can put the next page behind a button the user presses deliberately.
+   */
+  atCapacity: boolean;
+  /**
+   * Requests the next page; a no-op when one is already in flight, when the
+   * feed is exhausted, or when it is at capacity and `force` is not set.
+   */
+  loadMore: (options?: { force?: boolean }) => void;
   /** Refetches the feed from the first page. */
   reload: () => void;
 }
@@ -147,6 +169,10 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
 
   const requestRef = useRef(0);
   const loadedRef = useRef(0);
+  /** Offset the next page is requested from — the server's row count so far. */
+  const nextOffsetRef = useRef(0);
+  /** Ids already appended, so a shifting server order cannot duplicate rows. */
+  const seenIdsRef = useRef<Set<string>>(new Set());
   // Latest filters, so paging can rebuild the request without making the fetch
   // callback depend on the caller's (freshly allocated) filters object.
   const filtersRef = useRef(filters);
@@ -175,13 +201,37 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
           throw new Error((data as { error?: string })?.error || "Malformed videos response");
         }
 
+        // Rows already on screen are dropped rather than appended again: the
+        // library is ordered by view count or recency, both of which shift
+        // under a feed that is read a page at a time, so the same video can
+        // legitimately come back in a later page. Appending it grew the grid
+        // without advancing through the library.
+        if (offset === 0) seenIdsRef.current = new Set();
+        const seen = seenIdsRef.current;
+        const fresh: VideoType[] = [];
+        for (const video of data.videos) {
+          if (seen.has(video[0])) continue;
+          seen.add(video[0]);
+          fresh.push(video);
+        }
+
+        // The next request continues from where the *server* left off, not
+        // from the number of rows kept, so dropping a duplicate never makes
+        // the feed ask for the same window again.
+        nextOffsetRef.current = offset + data.videos.length;
+
         setVideos((previous) => {
-          const next = offset === 0 ? data.videos : [...previous, ...data.videos];
+          const next = offset === 0 ? fresh : [...previous, ...fresh];
           loadedRef.current = next.length;
           return next;
         });
         setTotal(data.total);
-        setHasMore(data.hasMore);
+        // A page that returned nothing at all ends the feed whatever the
+        // server says about `hasMore`. Without this the sentinel sat in view
+        // asking for the same offset over and over — a request loop that only
+        // stopped when the tab did. A page of rows the client already had
+        // still counts as progress, because the offset advanced past them.
+        setHasMore(data.hasMore && data.videos.length > 0);
         if (data.facets) setFacets(data.facets);
         setErrorMessage("");
       } catch (error) {
@@ -195,6 +245,8 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
           setTotal(0);
           setHasMore(false);
           loadedRef.current = 0;
+          nextOffsetRef.current = 0;
+          seenIdsRef.current = new Set();
         }
       } finally {
         if (requestId === requestRef.current) {
@@ -214,13 +266,26 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
       return;
     }
     loadedRef.current = 0;
+    nextOffsetRef.current = 0;
+    seenIdsRef.current = new Set();
     void fetchPage(0);
   }, [fetchPage, enabled, reloadToken]);
 
-  const loadMore = useCallback(() => {
-    if (!enabled || isLoading || isLoadingMore || !hasMore) return;
-    void fetchPage(loadedRef.current);
-  }, [enabled, isLoading, isLoadingMore, hasMore, fetchPage]);
+  // Reached the ceiling with more still available: automatic paging stops and
+  // the view puts the next page behind a button. `videos.length` rather than
+  // `loadedRef` so this is state the render actually depends on.
+  const atCapacity = hasMore && videos.length >= MAX_LOADED_VIDEOS;
+
+  const loadMore = useCallback(
+    (options?: { force?: boolean }) => {
+      if (!enabled || isLoading || isLoadingMore || !hasMore) return;
+      // Only a deliberate press gets past the ceiling, and only by one page:
+      // `atCapacity` goes true again as soon as that page lands.
+      if (atCapacity && !options?.force) return;
+      void fetchPage(nextOffsetRef.current);
+    },
+    [enabled, isLoading, isLoadingMore, hasMore, atCapacity, fetchPage],
+  );
 
   const reload = useCallback(() => setReloadToken((token) => token + 1), []);
 
@@ -232,6 +297,7 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
     isLoading,
     isLoadingMore,
     errorMessage,
+    atCapacity,
     loadMore,
     reload,
   };

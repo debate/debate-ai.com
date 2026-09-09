@@ -9,8 +9,9 @@
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
  *
- * The h1 sections are groupings, not destinations: they carry no `href`, so
- * clicking one only toggles it. They form one accordion — "Videos" and the
+ * The h1 sections are groupings, not destinations: a plain click on one only
+ * toggles it (a ctrl/shift/middle-click still opens its flagship page in a
+ * new tab, via `TreeItem`'s `sectionHref`). They form one accordion — "Videos" and the
  * `ToolNavTree` sections together — so exactly one is open and a closed
  * section renders none of its links. The open one follows the route, which
  * is what makes clicking an app dock button load that destination's section
@@ -104,6 +105,10 @@ export function VideoSidebarTree({
         level={1}
         title="Videos"
         icon={Clapperboard}
+        // The heading toggles on a plain click; ctrl/shift/middle-click opens
+        // the library itself, so every row in the tree can be opened in a new
+        // tab rather than only the leaves.
+        sectionHref="/videos"
         expanded={videosExpanded}
         onToggleExpand={() =>
           setOpenSectionId((current) => (current === VIDEOS_SECTION_ID ? null : VIDEOS_SECTION_ID))

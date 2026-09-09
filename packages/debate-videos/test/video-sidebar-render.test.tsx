@@ -135,20 +135,20 @@ describe("the sidebar's heading structure", () => {
     }
   });
 
-  it("never wraps an h1 section heading in a link", () => {
-    // Clicking a section heading toggles it and nothing else — the heading is
-    // a grouping, not a destination, so it must not be an anchor.
-    const html = renderSidebar();
-    for (const [anchor] of html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)) {
-      expect(anchor).not.toContain("<h1");
-    }
-  });
-
-  it("makes every h1 section a toggle button", () => {
+  it("gives every h1 section a destination a modifier-click can open", () => {
+    // A plain click on a section heading still only toggles it — the heading
+    // is a grouping, not a destination (`TreeItem` calls `preventDefault` for
+    // exactly that, see `opensElsewhere` below). But it has to be a real
+    // anchor with a real href, because ctrl/cmd/shift/middle-click is handled
+    // by the browser and there is nothing for it to open on a `<button>`:
+    // "open in a new tab" silently did nothing on the five rows that happened
+    // to be sections.
     const html = renderSidebar();
     for (const title of ["Videos", "Apps", "Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
-        new RegExp(`<button[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</button>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+        new RegExp(
+          `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
+        ),
       );
     }
   });
@@ -159,11 +159,11 @@ describe("the sidebar's heading structure", () => {
     // keeps the sidebar to the content of wherever the dock just took you.
     const html = renderSidebar();
     expect(html).toMatch(
-      /<button[^>]*aria-expanded="true"[^>]*>(?:(?!<\/button>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
+      /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
     );
     for (const title of ["Apps", "Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
-        new RegExp(`<button[^>]*aria-expanded="false"[^>]*>(?:(?!</button>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
   });
