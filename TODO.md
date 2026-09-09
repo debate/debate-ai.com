@@ -1798,6 +1798,39 @@ _No task currently in progress._
   `bun run typecheck` (16/16 packages), `bun run build:web` confirmed
   failing identically before this change (pre-existing sandbox-only
   `canvas` native-binding load failure, unrelated to this diff).
+- **🧭 Add `Contacts` to the Reason Editor's Workspace menu / command-palette `t` prefix.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own Google-Docs-style
+  `MenuBar`/`Ctrl`/`Cmd`-Shift-Space command palette
+  (`packages/debate-editor/src/react/MenuBar.tsx`, populated from
+  `WORKSPACE_LINKS`), and the feature catalog. Diffing `WORKSPACE_LINKS`
+  against the `/tools` catalog's `ALL_TOOLS` for the first time (prior
+  slices audited the catalog itself for undiscoverable routes and swept
+  `debate-ui` primitive adoption, but never checked this specific list
+  against its own source of truth) found one real gap: `/contacts` was
+  reachable from the dock's Settings menu, the Tools page's Prep & Practice
+  group, and a "Share with contacts" action button in the Reason Editor's
+  header, but missing from `WORKSPACE_LINKS` — the one Prep & Practice tool
+  out of nineteen not in that list. Added it in the same position it holds
+  in the `/tools` catalog, and updated `docs/features/contacts.md`'s Nav
+  line to match the documented convention every other tool's feature doc
+  already follows. Non-duplicative: the existing header button shares the
+  *currently open document*; this adds plain navigation to the Contacts
+  page itself, the same distinction every other `WORKSPACE_LINKS` entry
+  already has alongside its own in-editor actions.
+  Verification: `bunx tsc --noEmit` and `bunx vitest run` in
+  `packages/debate-editor` (635 tests, all passing), `bun run test`
+  repo-wide (347 files, 7132 tests passing), `bunx turbo run typecheck`
+  repo-wide — 16/17 packages green, `debate-ai-web` failing on the same
+  pre-existing `@ai-sdk/provider` v2-vs-v3 version-conflict type error
+  tracked elsewhere in this file, unrelated to this diff.
 
 ### Follow-ups
 
