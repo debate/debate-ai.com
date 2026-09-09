@@ -17,6 +17,7 @@ import {
     ArrowsClockwise,
     type Icon,
     GridFour,
+    Info,
     Keyboard,
     Palette,
     PencilSimpleLine,
@@ -57,6 +58,7 @@ import type { ThemeMode } from "../../lib/theme/mode";
 import { isDesktop } from "../../lib/update/adapter";
 import { cn } from "../../lib/utils";
 
+import AboutSystemSettings from "./AboutSystemSettings";
 import FlowsFolderControl from "./FlowsFolderControl";
 import SettingRow from "./SettingRow";
 import SettingsSection from "./SettingsSection";
@@ -97,7 +99,14 @@ function isReservedChord(chord: string): boolean {
     return [`${mod}+a`, `${mod}+c`, `${mod}+v`, `${mod}+x`, `${mod}+q`].includes(chord);
 }
 
-type Category = "appearance" | "grid" | "editing" | "keyboard" | "collaboration" | "updates";
+type Category =
+    | "appearance"
+    | "grid"
+    | "editing"
+    | "keyboard"
+    | "collaboration"
+    | "updates"
+    | "system";
 
 const BASE_CATEGORIES: { id: Category; label: string; icon: Icon }[] = [
     { id: "appearance", label: "Appearance", icon: Palette },
@@ -106,15 +115,20 @@ const BASE_CATEGORIES: { id: Category; label: string; icon: Icon }[] = [
     { id: "keyboard", label: "Keyboard", icon: Keyboard },
 ];
 
-// Both trailing categories are desktop-only: the web build has no updater, and
-// shared editing runs on an endpoint only the desktop app can bind.
-const CATEGORIES: { id: Category; label: string; icon: Icon }[] = isDesktop()
-    ? [
-          ...BASE_CATEGORIES,
-          { id: "collaboration", label: "Collaboration", icon: UsersThree },
-          { id: "updates", label: "Updates", icon: ArrowsClockwise },
-      ]
-    : BASE_CATEGORIES;
+// "System" is last on both hosts — it is the panel people are sent to, not one
+// they browse. The two before it are desktop-only: the web build has no
+// updater, and shared editing runs on an endpoint only the desktop app can
+// bind.
+const CATEGORIES: { id: Category; label: string; icon: Icon }[] = [
+    ...BASE_CATEGORIES,
+    ...(isDesktop()
+        ? [
+              { id: "collaboration" as const, label: "Collaboration", icon: UsersThree },
+              { id: "updates" as const, label: "Updates", icon: ArrowsClockwise },
+          ]
+        : []),
+    { id: "system", label: "System", icon: Info },
+];
 
 export default function SettingsPanelBody() {
     const keymapOverrides = useFlowStore((s) => s.keymapOverrides);
@@ -270,6 +284,7 @@ export default function SettingsPanelBody() {
                         </h1>
                     )}
                     {category === "updates" && <UpdateSettings />}
+                    {category === "system" && <AboutSystemSettings />}
                     {category === "appearance" && (
                         <div>
                             <SettingsSection title="Theme">
