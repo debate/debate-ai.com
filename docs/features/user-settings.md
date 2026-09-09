@@ -17,8 +17,9 @@ signed-in user's preferences and starred tools both follow them across
 devices, and are all reachable from one page.
 
 - **Route:** `/settings` (app preferences, theme, and favorite tools). The
-  dock's `ThemeDropdown`/`useThemeState` (`components/theme-dropdown.tsx`)
-  is still the primary day-to-day color-theme/light-dark picker — `/settings`
+  dock's own theme-picker UI, built on `useThemeState`
+  (`components/theme-dropdown.tsx`), is still the primary day-to-day
+  color-theme/light-dark picker — `/settings`
   now has its own Color theme/Light-dark-mode pickers too (not just a
   passive sync target), so either surface can change them.
 - **Nav:** the dock's gear-icon menu → "Preferences" (previously that menu
@@ -247,11 +248,15 @@ new render test.
   check gap this bullet describes; a whole-list `favoriteTools` PUT is still
   accepted for legitimate bulk replaces (`pruneUnknown`'s stale-favorite
   cleanup), which stays subject to the general gap above.
-- `ThemeDropdown` (the standalone exported component in
+- ~~`ThemeDropdown` (the standalone exported component in
   `theme-dropdown.tsx`, distinct from `useThemeState` the hook) is dead
   code — unused anywhere in the app, which actually renders `CategoryDock`'s
   own theme picker built on `useThemeState` — and was not updated with the
-  account-sync wiring above; it still only reads/writes localStorage.
+  account-sync wiring above; it still only reads/writes localStorage.~~
+  **Fixed:** the unused `ThemeDropdown` component (and its now-unreachable
+  imports) was deleted from `theme-dropdown.tsx`; the file now only exports
+  the theme registry/formatting helpers and the account-synced
+  `useThemeState` hook that `CategoryDock` actually renders.
 - `favoriteTools` validation is shape-only (`isValidToolHref`): the shared
   `debate-round` package has no way to check a starred `href` against the
   real `/tools` catalog, since that catalog (`app/tools/tool-groups.ts`) is

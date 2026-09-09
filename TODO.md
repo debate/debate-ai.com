@@ -7,6 +7,56 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧹 Delete the dead `ThemeDropdown` component from `theme-dropdown.tsx`.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette
+  (`Mod-Shift-Space`), and the feature catalog. Open PR #709 already covers
+  the last concretely-scoped item under idea #17's follow-up (4)
+  (`JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
+  `PanelSection` adoption), so this slice instead picked up a different,
+  already-named gap: `docs/features/user-settings.md`'s Known gaps flagged
+  `theme-dropdown.tsx`'s standalone `ThemeDropdown` component (distinct from
+  the `useThemeState` hook the same file also exports) as dead code — a
+  repo-wide `import.*ThemeDropdown.*theme-dropdown` search confirmed it had
+  no importers; `CategoryDock` (the dock's actual theme-picker UI) only ever
+  imported `themeNames`/`themeColors`/`formatThemeName`/`useThemeState` from
+  that file, never the component itself.
+
+  `ThemeDropdown` duplicated most of `useThemeState`'s state machine (color
+  theme, mount-guard, hover-preview, light/dark toggle) in an unreachable
+  second copy that also lacked the account-sync (`fetchUserSettings`/
+  `saveUserSettings`) wiring `useThemeState` already has — so it wasn't just
+  unused, it was a second, out-of-date implementation of the same feature
+  that any future editor touching "the theme dropdown" could easily edit by
+  mistake instead of the one CategoryDock renders. Deleted the function and
+  its now-solely-used imports (`Moon`/`Sun` from `lucide-react`, `Image`,
+  `Button`, the `DropdownMenu*` family, `IconThemePantone`) — `themeNames`,
+  `themeColors`, `formatThemeName`, and `useThemeState` are untouched and
+  still used by `CategoryDock` and (for `themeColors`) `qwksearch`'s
+  Settings panel. Updated the file's header doc comment,
+  `lib/database/schema.ts`'s stale `ThemeDropdown`-picker-UI comment (now
+  points at `CategoryDock`), and `docs/features/user-settings.md`'s Known
+  gaps entry (marked fixed) and Route description (no longer names
+  `ThemeDropdown` as if it were the dock's rendered component) to match.
+
+  No new tests added — pure dead-code deletion with no behavior change to
+  any reachable code path; `useThemeState` and its callers are unmodified.
+  Ran the full verification gate: `bun install`, `bun run test` (341 files,
+  7085 tests passing), `bunx turbo run typecheck` (16/17 packages green; the
+  sole failure, `debate-ai-web`, is the pre-existing `write-language`/
+  `@ai-sdk/provider` version-conflict issue tracked elsewhere in this file,
+  reconfirmed unrelated by reproducing it unchanged on this branch's HEAD
+  before this slice's edits), and `bun run build:web` (production build,
+  succeeded). No `lint`/`format:check` script exists anywhere in this repo,
+  so that step was skipped as not applicable.
+
 - **🩹 `moveDocument` now writes through the CardMirror save queue.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability to
