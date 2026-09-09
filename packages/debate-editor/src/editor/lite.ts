@@ -27,7 +27,7 @@ export function isLiteBuild(): boolean {
   if (overrideForTests !== null) return overrideForTests;
   try {
     return (
-      (import.meta as { env?: Record<string, string | undefined> }).env?.['VITE_LITE'] === '1'
+      (import.meta as unknown as { env?: Record<string, string | undefined> }).env?.['VITE_LITE'] === '1'
     );
   } catch {
     return false;
