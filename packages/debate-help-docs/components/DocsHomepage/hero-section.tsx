@@ -6,7 +6,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Github, BookOpen, Compass } from "lucide-react"
+import { Code2, BookOpen, Compass } from "lucide-react"
 import { withBasePath } from "@/lib/fumadocs/base-path"
 
 export function HeroSection() {
@@ -43,7 +43,7 @@ export function HeroSection() {
             </Button>
 
             <Button onClick={() => window.location.href = "https://github.com/debate/debate-ai.com"} variant="outline" size="lg" className="gap-2 bg-transparent">
-              <Github className="h-4 w-4" />
+              <Code2 className="h-4 w-4" />
               GitHub
             </Button>
           </div>
