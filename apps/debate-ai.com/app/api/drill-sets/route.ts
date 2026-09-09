@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedDrillSets } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked drill-set sync — the "sharing the 'Practice tier' status
@@ -21,18 +22,21 @@ import { getUserId } from "@/lib/auth/session"
  *   without a per-round follow-up fetch.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced drill sets." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/drill-sets",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced drill sets." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedDrillSets.data })
-    .from(savedDrillSets)
-    .where(eq(savedDrillSets.userId, userId))
-    .orderBy(asc(savedDrillSets.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedDrillSets.data })
+      .from(savedDrillSets)
+      .where(eq(savedDrillSets.userId, userId))
+      .orderBy(asc(savedDrillSets.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)

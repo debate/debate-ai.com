@@ -1215,6 +1215,39 @@ _No task currently in progress._
   `bun run typecheck` (16/16 packages), `bun run build:web` confirmed
   failing identically before this change (pre-existing sandbox-only
   `canvas` native-binding load failure, unrelated to this diff).
+- **🧭 Add `Contacts` to the Reason Editor's Workspace menu / command-palette `t` prefix.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own Google-Docs-style
+  `MenuBar`/`Ctrl`/`Cmd`-Shift-Space command palette
+  (`packages/debate-editor/src/react/MenuBar.tsx`, populated from
+  `WORKSPACE_LINKS`), and the feature catalog. Diffing `WORKSPACE_LINKS`
+  against the `/tools` catalog's `ALL_TOOLS` for the first time (prior
+  slices audited the catalog itself for undiscoverable routes and swept
+  `debate-ui` primitive adoption, but never checked this specific list
+  against its own source of truth) found one real gap: `/contacts` was
+  reachable from the dock's Settings menu, the Tools page's Prep & Practice
+  group, and a "Share with contacts" action button in the Reason Editor's
+  header, but missing from `WORKSPACE_LINKS` — the one Prep & Practice tool
+  out of nineteen not in that list. Added it in the same position it holds
+  in the `/tools` catalog, and updated `docs/features/contacts.md`'s Nav
+  line to match the documented convention every other tool's feature doc
+  already follows. Non-duplicative: the existing header button shares the
+  *currently open document*; this adds plain navigation to the Contacts
+  page itself, the same distinction every other `WORKSPACE_LINKS` entry
+  already has alongside its own in-editor actions.
+  Verification: `bunx tsc --noEmit` and `bunx vitest run` in
+  `packages/debate-editor` (635 tests, all passing), `bun run test`
+  repo-wide (347 files, 7132 tests passing), `bunx turbo run typecheck`
+  repo-wide — 16/17 packages green, `debate-ai-web` failing on the same
+  pre-existing `@ai-sdk/provider` v2-vs-v3 version-conflict type error
+  tracked elsewhere in this file, unrelated to this diff.
 
 ### Follow-ups
 
@@ -1224,26 +1257,42 @@ _No task currently in progress._
   the shared `EmptyState` primitive (`debate-round`'s or
   `debate-research-evidence`'s `src/ui/panels/panel-shell`) — currently out
   of scope since neither package depends on either.
+  **Update:** closed — see the Tracker Status entry above. Both packages now
+  depend on `debate-research-evidence: "workspace:*"` (confirmed non-circular:
+  `debate-research-evidence`'s own dependency tree has no edge back to either
+  package, unlike `debate-round`, which already depends on both and so would
+  have been circular) and all three panels now render the shared
+  `EmptyState`. The new dependency edge also unblocks — but does not itself
+  close — `PanelShell`/`PanelSection`/`Pill` adoption for these same three
+  panels; that's a separate, still-open follow-up (see below), since (per
+  the note there) adopting `PanelShell` is a visible design change that
+  needs its own deliberate slice, not a side effect of an `EmptyState` swap.
 - The broader "`PanelShell`/`PanelSection`/`StatTile`/`Pill` adoption is
   still unaudited" half of idea #17's follow-up (4) remains open — see
   `docs/features/user-settings.md`'s Known gaps for the full history of
   what's been swept so far (undiscoverable routes, duplicated empty states,
   duplicated progress bars, duplicated list rows, and now duplicated stat
   tiles) and what hasn't. The `StatTile`/`StatGrid` half is now closed (see
-  the Tracker Status entry above); `PanelShell`/`PanelSection` is not — a
-  repo-wide survey found roughly 45 panel files across `debate-round`,
-  `debate-search-evidence`, `debate-contributor-progress`,
+  the Tracker Status entry above); `PanelShell`/`PanelSection` is partially
+  closed — a repo-wide survey found roughly 45 panel files across
+  `debate-round`, `debate-search-evidence`, `debate-contributor-progress`,
   `debate-practice-drills`, `debate-speech-writer`, and
   `debate-team-collaboration` hand-roll a top-level `<h1>`-title-plus-
   description header (the shape `PanelShell`'s `title`/`description` props
   already cover) and/or a bordered `<h2>`-titled sub-section (closer to
-  `PanelSection`, though it has no border of its own to match). Left open
-  because adopting `PanelShell` is a visible design change, not a pure
-  refactor — it adds a card background/border/shadow no un-migrated panel
-  currently renders — so it needs a deliberate scoped slice (or several,
-  package by package) with that trade-off called out up front, not a
-  blanket find-replace. Not every panel `<h1>`/`<h2>` is a clean fit either
-  (some are per-item/per-group loop headings, not panel/section headers) —
+  `PanelSection`, though it has no border of its own to match); this run
+  closed `debate-search-evidence`'s 7 panels, `debate-round`'s 3, and
+  `debate-contributor-progress`'s 9 (see the Tracker Status entries above),
+  and an open PR (#693) covers `debate-team-collaboration`'s 13. Only
+  `debate-practice-drills` remains unaudited; `debate-speech-writer` stays
+  blocked on the same cross-package-dependency gap named in the bullet
+  above. Left open because
+  adopting `PanelShell` is a visible design change, not a pure refactor — it
+  adds a card background/border/shadow no un-migrated panel currently
+  renders — so it needs a deliberate scoped slice (or several, package by
+  package) with that trade-off called out up front, not a blanket
+  find-replace. Not every panel `<h1>`/`<h2>` is a clean fit either (some
+  are per-item/per-group loop headings, not panel/section headers) —
   see the historical `PanelRow` audit's four deliberately-skipped panels
   for the same kind of judgment call.
 - ~~`debate-videos`' leaderboard panels appear to exist as a duplicated

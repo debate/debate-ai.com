@@ -135,32 +135,58 @@ describe("the sidebar's heading structure", () => {
     }
   });
 
-  it("never wraps an h1 section heading in a link", () => {
-    // Clicking a section heading toggles it and nothing else — the heading is
-    // a grouping, not a destination, so it must not be an anchor.
-    const html = renderSidebar();
-    for (const [anchor] of html.matchAll(/<a\b[^>]*>[\s\S]*?<\/a>/g)) {
-      expect(anchor).not.toContain("<h1");
-    }
-  });
-
-  it("makes every h1 section a toggle button that starts expanded", () => {
+  it("gives every h1 section a destination a modifier-click can open", () => {
+    // A plain click on a section heading still only toggles it — the heading
+    // is a grouping, not a destination (`TreeItem` calls `preventDefault` for
+    // exactly that, see `opensElsewhere` below). But it has to be a real
+    // anchor with a real href, because ctrl/cmd/shift/middle-click is handled
+    // by the browser and there is nothing for it to open on a `<button>`:
+    // "open in a new tab" silently did nothing on the five rows that happened
+    // to be sections.
     const html = renderSidebar();
     for (const title of ["Videos", "Apps", "Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
-        new RegExp(`<button[^>]*aria-expanded="true"[^>]*>(?:(?!</button>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+        new RegExp(
+          `<a[^>]*href="/[^"]*"[^>]*aria-expanded="(?:true|false)"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`,
+        ),
       );
     }
   });
 
-  it("shows every section's tools up front, on a page in none of them", () => {
-    // `usePathname` is mocked to `/videos`, which is in no tool section — the
-    // sections used to open only for the section holding the current page.
+  it("opens only the section that holds the current route", () => {
+    // `usePathname` is mocked to `/videos`, so Videos is the open section and
+    // every other one is closed: the tree is an accordion, which is what
+    // keeps the sidebar to the content of wherever the dock just took you.
     const html = renderSidebar();
-    expect(html).toContain("Coaching Programs");
-    expect(html).toContain("Evidence Library");
-    expect(html).toContain("Judge Paradigm Picker");
-    expect(html).toContain("All Tools");
+    expect(html).toMatch(
+      /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
+    );
+    for (const title of ["Apps", "Coaching", "Research", "Practice"]) {
+      expect(html).toMatch(
+        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+      );
+    }
+  });
+
+  it("renders no links for the sections it leaves closed", () => {
+    // The point of the accordion: a closed section costs no DOM and no link
+    // for the router to prefetch. Fifty of those fired on every /videos load.
+    const html = renderSidebar();
+    expect(html).not.toContain("Coaching Programs");
+    expect(html).not.toContain("Evidence Library");
+    expect(html).not.toContain("Judge Paradigm Picker");
+    expect(html).not.toContain("All Tools");
+    // The open section's own links are all there.
+    expect(html).toContain("PF Debates");
+    expect(html).toContain("My Favorites");
+  });
+
+  it("keeps the glossary and rankings pair below the tree, always", () => {
+    // Those two hang under the tree rather than inside a section, so they
+    // stay reachable whichever section happens to be open.
+    const html = renderSidebar();
+    expect(html).toContain("Glossary of Terms");
+    expect(html).toContain("Rankings");
   });
 });
 

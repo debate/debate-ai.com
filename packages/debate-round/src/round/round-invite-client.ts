@@ -33,6 +33,41 @@ export interface RoundInviteRequest {
 }
 
 /**
+ * Diffs an edited round's debater/judge/spectator emails against the same
+ * round's emails before the edit, returning only the ones newly added —
+ * so saving an edit to an already-created round invites just-added judges/
+ * spectators/debaters without re-notifying everyone already on the round
+ * (see `docs/features/round-invites-and-notifications.md`'s Known gaps:
+ * "Only round creation sends invites").
+ *
+ * Comparison is case-insensitive and blank entries are ignored; the
+ * returned list is deduped and preserves each email's first-seen casing
+ * from `nextEmails`.
+ */
+export function computeAddedInviteEmails(
+  previousEmails: string[],
+  nextEmails: string[],
+): string[] {
+  const previousSet = new Set(
+    previousEmails
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0),
+  );
+
+  const seen = new Set<string>();
+  const added: string[] = [];
+  for (const email of nextEmails) {
+    const trimmed = email.trim();
+    if (!trimmed) continue;
+    const key = trimmed.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (!previousSet.has(key)) added.push(trimmed);
+  }
+  return added;
+}
+
+/**
  * Posts a Create New Round invite request. Resolves to `null` (rather than
  * throwing) when signed out (`401`) or on any other failure — the caller
  * already created the round locally, so an invite failure is reported, not

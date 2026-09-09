@@ -3,7 +3,7 @@
  * @module components/debate/videos/hooks/useVideoState
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import type { CategoryType, DebateStyle } from "../types/videos";
 
 /** Layout of the video results: card grid with thumbnails, or a dense row/table list. */
@@ -49,8 +49,11 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
     }
   }, []);
 
-  // Action to hide/unhide a video
-  const hideVideo = (videoId: string) => {
+  // Stable identities: these are handed to every card in the grid, and the
+  // cards are memoised, so a fresh function per render would defeat that and
+  // re-render the whole (paged, potentially several-hundred-card) grid on
+  // every keystroke in the search box.
+  const hideVideo = useCallback((videoId: string) => {
     setHiddenVideos((prev) => {
       const next = new Set(prev);
       next.add(videoId);
@@ -59,9 +62,9 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       } catch {}
       return next;
     });
-  };
+  }, []);
 
-  const unhideVideo = (videoId: string) => {
+  const unhideVideo = useCallback((videoId: string) => {
     setHiddenVideos((prev) => {
       const next = new Set(prev);
       next.delete(videoId);
@@ -70,10 +73,10 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       } catch {}
       return next;
     });
-  };
+  }, []);
 
   // Action to toggle a favorite
-  const toggleFavorite = (videoId: string) => {
+  const toggleFavorite = useCallback((videoId: string) => {
     setFavorites((prev) => {
       const newFavorites = new Set(prev);
       if (newFavorites.has(videoId)) {
@@ -93,7 +96,7 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
 
       return newFavorites;
     });
-  };
+  }, []);
 
   /** Ref attached to the scrollable video grid container. */
   const videoContainerRef = useRef<HTMLDivElement | null>(null);

@@ -12,91 +12,104 @@ import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
 import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
+import { SIDEBAR_VIDEO_LINKS, type SidebarVideoLink } from "./sidebar-video-links";
 
-interface QuickLink {
-  id: string;
-  title: string;
-  href: string;
+interface QuickLinkStyle {
   icon?: React.ReactNode;
   logo?: string | StaticImageData;
   gradient: string;
   iconBg: string;
 }
 
-const QUICK_LINKS: QuickLink[] = [
-  {
-    id: "college",
-    title: "College Debates",
-    href: "/videos/college",
+type QuickLink = SidebarVideoLink & QuickLinkStyle;
+
+/**
+ * Per-tile artwork, keyed by {@link SidebarVideoLink.id}. Only the visuals
+ * live here — the href and title come from `SIDEBAR_VIDEO_LINKS`, the same
+ * list the sidebar tree and the dock's Settings menu read, so a destination
+ * cannot exist on one surface and be missing from another.
+ */
+const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
+  college: {
     logo: "https://i.imgur.com/cFmTAdJ.png",
     gradient: "from-purple-500/20 via-violet-500/10 to-transparent",
     iconBg: "bg-purple-500/15 ring-1 ring-purple-500/30",
   },
-  {
-    id: "policy",
-    title: "Policy Debates",
-    href: "/videos/policy",
+  policy: {
     logo: "https://i.imgur.com/CMuiSKj.png",
     gradient: "from-red-500/20 via-rose-500/10 to-transparent",
     iconBg: "bg-red-500/15 ring-1 ring-red-500/30",
   },
-  {
-    id: "pf",
-    title: "PF Debates",
-    href: "/videos/pf",
+  pf: {
     logo: "https://i.imgur.com/92V0FBF.png",
     gradient: "from-emerald-500/20 via-green-500/10 to-transparent",
     iconBg: "bg-emerald-500/15 ring-1 ring-emerald-500/30",
   },
-  {
-    id: "ld",
-    title: "LD Debates",
-    href: "/videos/ld",
+  ld: {
     logo: "https://i.imgur.com/3xFjCvO.png",
     gradient: "from-sky-500/20 via-blue-500/10 to-transparent",
     iconBg: "bg-sky-500/15 ring-1 ring-sky-500/30",
   },
-  {
-    id: "lectures",
-    title: "Lectures",
-    href: "/videos/lectures",
+  lectures: {
     logo: IconLectures,
     gradient: "from-cyan-500/20 via-teal-500/10 to-transparent",
     iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
   },
-  {
-    id: "topPicks",
-    title: "Greatest of All-Time",
-    href: "/videos/topPicks",
+  topPicks: {
     logo: IconTrophyGoat,
     gradient: "from-amber-500/20 via-yellow-500/10 to-transparent",
     iconBg: "bg-amber-500/15 ring-1 ring-amber-500/30",
   },
-  {
-    id: "favorites",
-    title: "Favorites",
-    href: "/videos/favorites",
+  favorites: {
     logo: IconTrophy,
     gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
     iconBg: "bg-rose-500/15 ring-1 ring-rose-500/30",
   },
-  {
-    id: "dictionary",
-    title: "Glossary of Terms",
-    href: "/videos/dictionary",
+  dictionary: {
     logo: IconBook,
     gradient: "from-indigo-500/20 via-blue-500/10 to-transparent",
     iconBg: "bg-indigo-500/15 ring-1 ring-indigo-500/30",
   },
-  {
-    id: "rankings",
-    title: "Rankings",
-    href: "/videos/rankings",
+  rankings: {
     logo: IconLeaderboard,
     gradient: "from-yellow-500/20 via-amber-500/10 to-transparent",
     iconBg: "bg-yellow-500/15 ring-1 ring-yellow-500/30",
   },
+};
+
+/**
+ * Tile order, which is the grid's own (formats first, then the lecture and
+ * favorites libraries, then reference) rather than the tree's nesting order.
+ * Any id without an entry here still renders, appended in list order, so a
+ * link added to `SIDEBAR_VIDEO_LINKS` shows up on this grid too.
+ */
+const QUICK_LINK_ORDER = [
+  "college",
+  "policy",
+  "pf",
+  "ld",
+  "lectures",
+  "topPicks",
+  "favorites",
+  "dictionary",
+  "rankings",
 ];
+
+const QUICK_LINKS: QuickLink[] = [...SIDEBAR_VIDEO_LINKS]
+  .sort((a, b) => {
+    const rank = (id: string) => {
+      const index = QUICK_LINK_ORDER.indexOf(id);
+      return index === -1 ? QUICK_LINK_ORDER.length : index;
+    };
+    return rank(a.id) - rank(b.id);
+  })
+  .map((link) => ({
+    ...link,
+    ...(QUICK_LINK_STYLES[link.id] ?? {
+      gradient: "from-slate-500/20 via-slate-500/10 to-transparent",
+      iconBg: "bg-slate-500/15 ring-1 ring-slate-500/30",
+    }),
+  }));
 
 interface QuickLinksGridProps {
   counts?: Record<string, number>;
@@ -181,7 +194,7 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures,
           const isActive = activeId === link.id;
           return (
             <li key={link.id} className="list-none">
-              <Link href={link.href} className="block hover:opacity-90 transition-opacity">
+              <Link href={link.href} prefetch={false} className="block hover:opacity-90 transition-opacity">
                 <ListRow link={link} count={counts?.[link.id]} isActive={isActive} />
               </Link>
             </li>
@@ -199,6 +212,7 @@ export function QuickLinksGrid({ counts, showLectures = false, onToggleLectures,
           <li key={link.id} className="list-none">
             <Link
               href={link.href}
+              prefetch={false}
               className={cn(
                 "relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/60 transition-colors group",
                 isActive && "border-primary/60",

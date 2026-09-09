@@ -81,6 +81,31 @@ explicit `ids` allow-list when the favourites filter is on, and **hidden
 videos** are filtered out of the loaded pages in the browser (an explicit
 search still surfaces them, as it always has).
 
+## What a big grid costs
+
+The grid is unbounded: every page of infinite scroll appends sixty more cards
+and none are recycled, so a browsed-through library holds several hundred
+live cards. Four things scaled with that count and made the page feel frozen
+while videos loaded. All four are now per-page rather than per-card:
+
+| Was | Now |
+| --- | --- |
+| `GlowingEffect` added a `pointermove` and a `scroll` listener **per card**, each running `getBoundingClientRect()` (a forced layout) per event, and started a new `motion` animation per frame | One shared subscription for every glow on the page, measuring once per animation frame and only for the cards an `IntersectionObserver` reports as near the viewport. Sub-degree movement no longer starts an animation, and the previous one is stopped before a new one begins |
+| `VideoCard` and the list rows subscribed to the **whole** player store, so any change — a queue add, a play/pause, the search handler being registered — re-rendered every card on screen | Per-field selectors, and the card is `memo`-wrapped with stable callbacks from `useVideoState`, so a card re-renders only when its own state changes |
+| Each card was wrapped in a framer-motion `motion.div` purely for the hover lift | A CSS transition (`hover:-translate-y-2`), which the compositor runs on its own |
+| Three dates per card were formatted with `toLocaleDateString(locale, options)`, which builds a fresh `Intl.DateTimeFormat` on every call | Two module-level formatters, shared by the cards and the list rows (`formatVideoDate`) |
+
+The sidebar beside the grid mattered too: it used to render every section's
+links up front, and the router prefetched an RSC payload for each of the ~50
+of them while the feed was still loading. It is now an accordion that renders
+only the open section, and its links pass `prefetch={false}` — see
+`docs/features/app-nav-dock.md`.
+
+`packages/debate-videos/test/glowing-effect-listeners.test.tsx` pins the first
+row of that table: mounting 120 glows must still install exactly one
+`pointermove` listener and one `scroll` listener, and unmounting the last one
+must release both.
+
 ## Seeding the table
 
 From a machine with wrangler credentials:

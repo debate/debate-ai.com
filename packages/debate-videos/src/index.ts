@@ -11,6 +11,21 @@ export {
   type SidebarToolSection,
 } from "./components/category-gallery/sidebar-tool-sections";
 export {
+  SIDEBAR_VIDEO_LINKS,
+  SIDEBAR_VIDEO_LINKS_BY_ID,
+  VIDEO_COLLEGE_LINK,
+  VIDEO_FORMAT_LINKS,
+  VIDEO_LIBRARY_LINKS,
+  VIDEO_REFERENCE_LINKS,
+  type SidebarVideoLink,
+} from "./components/category-gallery/sidebar-video-links";
+export {
+  FOOTER_LINKS,
+  SITE_FOOTER_LINKS,
+  DEBATE_FOOTER_LINKS,
+  type FooterLink,
+} from "./ui/layout/footer-links";
+export {
   TOOL_SIDEBAR_HREFS,
   matchesToolSidebarHref,
   hasEmbeddedDock,
@@ -23,4 +38,5 @@ export {
   useCategoryDockState,
 } from "./context/category-dock-context";
 export { useVideoPlayerStore, sendYouTubeCommand, videoPlayerIframeRef } from "./state/videoPlayerStore";
+export { VideoPlayerFrameBridge } from "./state/videoPlayerFrameBridge";
 export * from "./types/videos";

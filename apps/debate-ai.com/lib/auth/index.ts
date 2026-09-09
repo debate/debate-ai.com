@@ -7,6 +7,7 @@ import * as schema from "../database/schema";
 import { Resend } from "resend";
 import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "../config/site";
 import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
+import { OAUTH_STATE_COOKIE_MAX_AGE_SECONDS, SIGN_IN_ERROR_URL } from "./oauth-state";
 import { getEnv } from "../env";
 
 /**
@@ -82,6 +83,11 @@ async function buildAuth() {
       fallback: configuredBaseURL || APP_ORIGIN,
     },
     trustedOrigins,
+    // A failed OAuth callback lands on the app's own /login rather than
+    // better-auth's built-in error page — see ./oauth-state.
+    onAPIError: {
+      errorURL: SIGN_IN_ERROR_URL,
+    },
     advanced: {
       // Per-request base URLs are derived from the Host header, and better-auth
       // prefers `x-forwarded-host` over it whenever proxy headers are trusted —
@@ -91,6 +97,12 @@ async function buildAuth() {
       // taking the host from the request itself is both correct and forgeable
       // only by someone who already controls a routed hostname.
       trustedProxyHeaders: false,
+      cookies: {
+        // The OAuth `state` cookie outlives better-auth's five-minute default
+        // so it cannot expire while the state row it is checked against is
+        // still valid — see ./oauth-state.
+        state: { attributes: { maxAge: OAUTH_STATE_COOKIE_MAX_AGE_SECONDS } },
+      },
     },
     secret: getEnv("BETTER_AUTH_SECRET") || "dev-secret-change-in-production",
     database: drizzleAdapter(db, {

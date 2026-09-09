@@ -815,3 +815,11 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* A document running inside the app shell's frame renders its page only. The
+   shell keeps the dock, the tool sidebar and the persistent player in the top
+   document; this hides any copy the framed document paints before `AppShell`'s
+   embed check runs and unmounts them. See `components/layout/AppShell.tsx`. */
+html[data-embedded="1"] [data-app-chrome] {
+  display: none !important;
+}

@@ -90,16 +90,19 @@ export const documents = sqliteTable(
 export type ReasonDocument = typeof documents.$inferSelect;
 
 // Public, admin-curated evidence packs. A row is either a folder or an
-// imported DOCX file; `parentId` preserves the directory structure in an
-// uploaded zip. Content is stored as CardMirror-compatible HTML so selecting
-// a public file can open it directly in the editor without exposing a storage
-// bucket or requiring a signed-in account.
+// imported file; `parentId` preserves the directory structure in an uploaded
+// zip. Content is stored inline rather than in a storage bucket so selecting
+// a public file can open it directly in the editor without a signed-in
+// account: an uploaded DOCX is converted to CardMirror's native `.cmir`
+// (gzipped JSON, base64-encoded to fit this text column), which `format`
+// records. Rows imported before that carry card HTML and say so.
 export const topicStarterItems = sqliteTable(
   "topic_starter_items",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull(),
     content: text("content").notNull().default(""),
+    format: text("format").notNull().default("html"),
     parentId: integer("parent_id"),
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
     tags: text("tags").notNull().default("[]"),
@@ -178,11 +181,12 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // semantics as an absent key in the local `Settings` store.
 //
 // `colorTheme`/`themeMode` (idea #17, follow-up (2)) extend the same row
-// with the color-theme/light-dark preference `components/theme-dropdown.tsx`
-// previously kept in `localStorage`/a cookie only — also nullable, with the
-// same "no saved row/value yet" semantics, validated by `debate-round`'s
-// `normalizeThemeSettingsPatch` against its `THEME_NAMES`/`THEME_MODES`
-// lists (the same lists `ThemeDropdown`'s picker UI uses).
+// with the color-theme/light-dark preference `components/theme-dropdown.tsx`'s
+// `useThemeState` hook previously kept in `localStorage`/a cookie only — also
+// nullable, with the same "no saved row/value yet" semantics, validated by
+// `debate-round`'s `normalizeThemeSettingsPatch` against its
+// `THEME_NAMES`/`THEME_MODES` lists (the same lists `CategoryDock`'s theme
+// picker UI uses).
 //
 // `favoriteTools` (idea #17, follow-up "integrate tools into user
 // settings") stores a signed-in user's starred `/tools` entries as a JSON

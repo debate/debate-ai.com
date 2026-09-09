@@ -1,11 +1,17 @@
 /**
  * @fileoverview Admin-only Topic Starter importer.
  *
- * Accepts one `.docx` or a `.zip` of them, converts each to card HTML and
- * files it under a folder tree mirroring the archive. Imports are
- * fault-tolerant per file: one unreadable DOCX no longer aborts the batch, and
- * every failure comes back with a coded reason the admin UI can show and a
- * structured `console.error` line the server logs can be searched by.
+ * Accepts one `.docx` or a `.zip` of them, converts each with CardMirror to
+ * its native `.cmir` and files it under a folder tree mirroring the archive.
+ * Every file in the library is a `.cmir`: it is the only format that holds
+ * what CardMirror's importer reads out of a Verbatim document — the card
+ * outline, comments, images and marks the card HTML this replaces flattened
+ * away — and it is what the editor opens the file from.
+ *
+ * Imports are fault-tolerant per file: one unreadable DOCX no longer aborts
+ * the batch, and every failure comes back with a coded reason the admin UI
+ * can show and a structured `console.error` line the server logs can be
+ * searched by.
  *
  * @module app/api/admin/topic-starters/route
  */
@@ -15,11 +21,12 @@ import {
   DOCX_IMPORT_LIMITS,
   collectDocxEntries,
   describeDocxImportError,
-  docxBytesToHtml,
   formatBytes,
   summarizeImportOutcome,
   type DocxImportFailure,
 } from "debate-card-parser";
+import { TOPIC_STARTER_FORMATS } from "@/lib/topic-starters/format";
+import { docxToStoredCmir } from "@/lib/topic-starters/import";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { topicStarterItems } from "@/lib/database/schema";
@@ -101,7 +108,7 @@ export async function POST(request: NextRequest) {
       try {
         // Convert before touching the database so a bad file leaves no
         // half-created folder rows behind.
-        const content = await docxBytesToHtml(entry.bytes);
+        const content = await docxToStoredCmir(entry.bytes);
         const parts = entry.path.split("/").filter(Boolean);
         let parentId = root.id;
         for (let index = 0; index < parts.length - 1; index++) {
@@ -130,7 +137,10 @@ export async function POST(request: NextRequest) {
           title: parts.at(-1)!.replace(/\.docx$/i, ""),
           parentId,
           content,
-          tags: JSON.stringify(["docx", published ? "public" : "private"]),
+          // The row holds a `.cmir` whatever it was uploaded as, so the tag
+          // names the format the file is kept in, not the one it arrived in.
+          format: TOPIC_STARTER_FORMATS.cmir,
+          tags: JSON.stringify(["cmir", published ? "public" : "private"]),
           published,
         });
         imported++;

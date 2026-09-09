@@ -84,6 +84,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
+import { EmptyState, PanelSection, PanelShell, SummaryText } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -414,19 +415,15 @@ export function CoachMaterialsPanel() {
   const groundedPrompt = matches === null ? null : buildGroundedCoachPrompt(question, matches)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Coach Materials</h1>
-        <p className="text-sm text-muted-foreground">
-          Upload lecture transcripts, camp materials, instructional documents, and practice-round
-          recordings to ground the team coach AI in your own teaching materials.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {synced
-            ? "Materials and their edit history are synced to your account."
-            : "Sign in to sync materials and their edit history across devices."}
-        </p>
-      </div>
+    <PanelShell
+      title="Coach Materials"
+      description="Upload lecture transcripts, camp materials, instructional documents, and practice-round recordings to ground the team coach AI in your own teaching materials."
+    >
+      <p className="-mt-3 text-xs text-muted-foreground">
+        {synced
+          ? "Materials and their edit history are synced to your account."
+          : "Sign in to sync materials and their edit history across devices."}
+      </p>
 
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">
@@ -543,16 +540,11 @@ export function CoachMaterialsPanel() {
       </div>
 
       {pendingMaterials.length > 0 && (
-        <div className="rounded-lg border border-border p-4 space-y-3">
-          <div>
-            <h2 className="text-sm font-medium text-foreground">
-              Pending review ({pendingMaterials.length})
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              These materials won't ground "Ask the coach" answers until approved.
-            </p>
-          </div>
-
+        <PanelSection
+          title={`Pending review (${pendingMaterials.length})`}
+          description={`These materials won't ground "Ask the coach" answers until approved.`}
+          className="rounded-lg border border-border p-4"
+        >
           <div className="space-y-1.5 max-w-xs">
             <Label htmlFor="coach-material-reviewer">Reviewer name</Label>
             <Input
@@ -591,7 +583,7 @@ export function CoachMaterialsPanel() {
               </div>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
 
       {totalUnfiltered > 0 && (
@@ -638,11 +630,11 @@ export function CoachMaterialsPanel() {
       )}
 
       {library.totalMaterials === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {totalUnfiltered === 0
-            ? "No coach materials uploaded yet. Add one above to see it here."
-            : "No materials match this search/tag filter."}
-        </div>
+        totalUnfiltered === 0 ? (
+          <EmptyState title="No coach materials uploaded yet." message="Add one above to see it here." />
+        ) : (
+          <EmptyState title="No materials match this search/tag filter." />
+        )
       ) : (
         <div className="space-y-4">
           {library.groups.map((group) => (
@@ -720,22 +712,18 @@ export function CoachMaterialsPanel() {
         </div>
       )}
 
-      <div className="rounded-lg border border-border p-4 space-y-4">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <h2 className="text-sm font-medium text-foreground">Ask the coach</h2>
-            <p className="text-xs text-muted-foreground">
-              Ask a question and the team coach AI answers strictly from your grounding materials —
-              or say so if they don't cover it. Follow-up questions build on the conversation below.
-            </p>
-          </div>
-          {history.length > 0 && (
+      <PanelSection
+        title="Ask the coach"
+        description="Ask a question and the team coach AI answers strictly from your grounding materials — or say so if they don't cover it. Follow-up questions build on the conversation below."
+        className="rounded-lg border border-border p-4"
+        actions={
+          history.length > 0 ? (
             <Button type="button" size="sm" variant="ghost" onClick={handleClearHistory}>
               Clear conversation
             </Button>
-          )}
-        </div>
-
+          ) : undefined
+        }
+      >
         {history.length > 0 && (
           <div className="space-y-2">
             <Label>Conversation</Label>
@@ -768,23 +756,12 @@ export function CoachMaterialsPanel() {
           </Button>
         </div>
 
-        {groundedPrompt && (
-          <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-            {groundedPrompt}
-          </pre>
-        )}
+        {groundedPrompt && <SummaryText text={groundedPrompt} />}
 
         {askError && <p className="text-sm text-destructive">{askError}</p>}
 
-        {answer && (
-          <div className="space-y-1.5">
-            <Label>Coach's answer</Label>
-            <p className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-              {answer}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
+        {answer && <SummaryText label="Coach's answer" text={answer} />}
+      </PanelSection>
+    </PanelShell>
   )
 }

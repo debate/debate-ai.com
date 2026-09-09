@@ -160,6 +160,9 @@ const GridItem = ({
       <Link
         href={href}
         scroll={false}
+        // See `TreeItem`: the gallery renders a tile per lecture category, and
+        // prefetching every one of them on mount competed with the video feed.
+        prefetch={false}
         onClick={onClick}
         className="relative h-full w-full block rounded-lg border-[0.75px] border-border p-1 hover:border-primary/50 transition-colors"
       >

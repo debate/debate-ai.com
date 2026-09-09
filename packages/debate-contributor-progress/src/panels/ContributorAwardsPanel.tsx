@@ -60,7 +60,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -429,12 +429,10 @@ export function ContributorAwardsPanel() {
   const hallOfFame = buildContributorAwardsHallOfFame(history.flatMap((announcement) => announcement.awards))
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Top Contributor Awards</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Current category winners, ranked by total helpfulness score within each contribution kind.
-      </p>
-
+    <PanelShell
+      title="Top Contributor Awards"
+      description="Current category winners, ranked by total helpfulness score within each contribution kind."
+    >
       {awardsToShow.length === 0 ? (
         <div className="mb-6">
           <EmptyState
@@ -528,6 +526,6 @@ export function ContributorAwardsPanel() {
           <AnnouncementGroup key={announcement.dayKey} announcement={announcement} />
         ))
       )}
-    </div>
+    </PanelShell>
   )
 }

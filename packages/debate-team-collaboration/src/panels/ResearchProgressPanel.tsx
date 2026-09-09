@@ -63,7 +63,7 @@ import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
 import { Label } from "debate-research-evidence/src/ui/primitives/label"
-import { EmptyState, MeterBar } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, MeterBar, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -236,24 +236,19 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
   // The goal section renders even on an empty roster — a brand-new signed-in
   // contributor with no tracked work yet is exactly who goal-setting is for.
   return (
-    <div className="p-4 sm:p-6">
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Research Progress</h1>
-          <p className="text-sm text-muted-foreground">
-            Each contributor's contribution history and per-topic task completion.
-          </p>
-        </div>
-        {roster.length > 0 && (
+    <PanelShell
+      title="Research Progress"
+      description="Each contributor's contribution history and per-topic task completion."
+      actions={
+        roster.length > 0 ? (
           <Button size="sm" variant="outline" onClick={handleDownloadReport}>
             Download report
           </Button>
-        )}
-      </div>
-
+        ) : undefined
+      }
+    >
       {signedInContributorId && (
-        <div className="mb-6 rounded-lg border border-border bg-muted/30 p-4">
-          <h2 className="mb-1 text-sm font-semibold text-foreground">My research goal</h2>
+        <PanelSection title="My research goal">
           {isEditingGoal ? (
             <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:flex-wrap">
               <div className="space-y-1.5">
@@ -347,7 +342,7 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
             </div>
           )}
           {goalError && <p className="mt-2 text-sm text-destructive">{goalError}</p>}
-        </div>
+        </PanelSection>
       )}
 
       {roster.length === 0 && (
@@ -425,11 +420,10 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
       )}
 
       {topicComparison.length > 0 && (
-        <div className="mt-6">
-          <h2 className="mb-1 text-lg font-semibold text-foreground">Topic comparison</h2>
-          <p className="mb-3 text-sm text-muted-foreground">
-            Task completion rolled up across the whole team, least-covered topic first.
-          </p>
+        <PanelSection
+          title="Topic comparison"
+          description="Task completion rolled up across the whole team, least-covered topic first."
+        >
           <Table>
             <TableHeader>
               <TableRow>
@@ -458,8 +452,8 @@ export function ResearchProgressPanel({ signedInContributorId }: ResearchProgres
               ))}
             </TableBody>
           </Table>
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }

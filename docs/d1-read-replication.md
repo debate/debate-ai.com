@@ -28,12 +28,36 @@ Where a session starts, when the client has no bookmark to resume from:
 
 | Request | Starts on | Why |
 | --- | --- | --- |
+| `/api/auth/*` | the primary (`first-primary`) | a sign-in writes on one request and reads back on the next — see below |
 | `GET` / `HEAD` | any replica (`first-unconstrained`) | lowest latency; nothing has been written to miss |
 | everything else | the primary (`first-primary`) | a handler that writes and reads back must not miss its own write |
 | cron / background | the primary (`first-primary`) | no client bookmark exists, and these jobs write |
 
 Requests that never touch D1 never open a session, which is what keeps the
 bookmark cookie off static and otherwise cacheable responses.
+
+### Why auth ignores the bookmark
+
+Everything else in this table describes what happens when the client has no
+bookmark. `/api/auth/*` is different: it starts on the primary *whatever* the
+client sent, and whatever `D1_SESSION_MODE` says short of `off`.
+
+A sign-in is a read-after-write that spans two requests, and the second one is
+handed to us by somebody else. `POST /api/auth/sign-in/social` writes the OAuth
+`state` row (magic links write their token the same way) and sends the browser
+to the provider; the provider then returns it to
+`GET /api/auth/callback/google`, which has to find that exact row. A callback
+answered by a replica that has not caught up finds nothing, and better-auth
+reports a missing state row as a CSRF failure — the dead-end
+"Something went wrong / CODE: `state_mismatch`" page, instead of a signed-in
+user.
+
+The bookmark would normally carry that consistency across the redirect, but it
+travels as a cookie and the callback is a cross-site navigation: a cleared
+cookie jar, an embedded webview, or a bookmark D1 later refuses (which restarts
+a replayable GET on `first-unconstrained`) all quietly downgrade the lookup to
+the nearest replica. Auth is a handful of requests per session, so one round
+trip to the primary is a cheap price for a sign-in that cannot fail this way.
 
 ## Turning replication on
 
@@ -58,8 +82,16 @@ without a redeploy.
 
 - `D1_SESSION_MODE` — `auto` (default), `primary` (always start on the primary),
   `unconstrained` (always start anywhere), or `off` (bypass the Sessions API
-  entirely; the rollback switch).
+  entirely; the rollback switch). `unconstrained` does not apply to
+  `/api/auth/*`, which stays on the primary; `off` bypasses sessions, which
+  routes those queries to the primary anyway.
 - `D1_SESSION_DEBUG` — when set, responses carry `x-d1-served-by-region` and
   `x-d1-served-by-primary` from the last query's `meta`, so you can see which
   instance actually answered. These fields are `undefined` under
   `wrangler dev`; they only appear for remote D1 requests.
+
+## See also
+
+[When a sign-in fails on the way back](./sign-in-failures.md) — what a stale
+replica read used to do to the OAuth callback, and the rest of the
+`state_mismatch` story.

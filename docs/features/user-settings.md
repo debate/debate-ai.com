@@ -17,8 +17,9 @@ signed-in user's preferences and starred tools both follow them across
 devices, and are all reachable from one page.
 
 - **Route:** `/settings` (app preferences, theme, and favorite tools). The
-  dock's `ThemeDropdown`/`useThemeState` (`components/theme-dropdown.tsx`)
-  is still the primary day-to-day color-theme/light-dark picker — `/settings`
+  dock's own theme-picker UI, built on `useThemeState`
+  (`components/theme-dropdown.tsx`), is still the primary day-to-day
+  color-theme/light-dark picker — `/settings`
   now has its own Color theme/Light-dark-mode pickers too (not just a
   passive sync target), so either surface can change them.
 - **Nav:** the dock's gear-icon menu → "Preferences" (previously that menu
@@ -247,11 +248,15 @@ new render test.
   check gap this bullet describes; a whole-list `favoriteTools` PUT is still
   accepted for legitimate bulk replaces (`pruneUnknown`'s stale-favorite
   cleanup), which stays subject to the general gap above.
-- `ThemeDropdown` (the standalone exported component in
+- ~~`ThemeDropdown` (the standalone exported component in
   `theme-dropdown.tsx`, distinct from `useThemeState` the hook) is dead
   code — unused anywhere in the app, which actually renders `CategoryDock`'s
   own theme picker built on `useThemeState` — and was not updated with the
-  account-sync wiring above; it still only reads/writes localStorage.
+  account-sync wiring above; it still only reads/writes localStorage.~~
+  **Fixed:** the unused `ThemeDropdown` component (and its now-unreachable
+  imports) was deleted from `theme-dropdown.tsx`; the file now only exports
+  the theme registry/formatting helpers and the account-synced
+  `useThemeState` hook that `CategoryDock` actually renders.
 - `favoriteTools` validation is shape-only (`isValidToolHref`): the shared
   `debate-round` package has no way to check a starred `href` against the
   real `/tools` catalog, since that catalog (`app/tools/tool-groups.ts`) is
@@ -351,3 +356,143 @@ new render test.
   unaffected by a markup-only change, matching how the prior EmptyState
   migration slices in `debate-round`/`debate-practice-drills` were also
   verified via typecheck/build rather than new render tests.
+  A further slice started on the "`PanelShell`/`PanelSection` adoption is
+  still unaudited" half named above, package by package: `debate-search-evidence`
+  (npm package name `debate-research-evidence`) was picked next — its 7 panels
+  (`ArgumentLibraryPanel`, `CardScoringPanel`, `ContributionsFeedPanel`,
+  `EvidenceLibraryPanel`, `ReviewQueuePanel`, `RevisionIncentivesPanel`,
+  `TopicCoverageDashboardPanel`) all hand-rolled a top-level `<h1>`-title-
+  plus-description header and none used `PanelShell`/`PanelSection` yet, and
+  the primitive was already one import away (the same `./ui/panels/panel-shell`
+  module each panel already imported `EmptyState`/`MeterBar` from — no new
+  cross-package dependency needed). All 7 were migrated onto `PanelShell`.
+  Each panel's genuinely singular, non-repeated `<h2>`-titled sub-section was
+  also migrated onto `PanelSection` where one existed: `CardScoringPanel`'s
+  "Bulk import"/"My score trend", `ContributionsFeedPanel`'s dynamic
+  "Flagged for review (N)"/"All contributions (N)" list header,
+  `EvidenceLibraryPanel`'s "Check this page"/"Team reuse dashboard"/"Pending
+  review (N)", `ReviewQueuePanel`'s "Reviewer workload", and
+  `RevisionIncentivesPanel`'s "Stale evidence digest"/"Leaderboard"/"Recent
+  revisions". A description containing embedded markup (a `<code>` tag, or
+  `ContributionsFeedPanel`'s tooltip-carrying paragraph) was kept as a plain
+  child element instead of forced through `PanelShell`/`PanelSection`'s
+  `description` prop, which only accepts a plain string. `ArgumentLibraryPanel`
+  and `TopicCoverageDashboardPanel` had no `<h2>`-titled sub-section to
+  migrate (their bordered blocks use a plain `<div>` label, not a heading),
+  so only their top-level header moved onto `PanelShell`; `TopicCoverageDashboardPanel`'s
+  "Cross-topic comparison"/"Coverage trend" labels use the same non-`<h2>`
+  shape and were deliberately left alone for the same reason. Of the
+  remaining packages named in the "roughly 45 panel files" survey above,
+  `debate-team-collaboration` had an open PR against this same follow-up at
+  the start of this slice (checked first to avoid duplicating work), and
+  `debate-speech-writer`'s two panels (`JudgeProfilesPanel`,
+  `CoachMaterialsPanel`) are blocked the same way they are for the
+  `EmptyState` gap above — neither `debate-round` nor
+  `debate-research-evidence` is a dependency of that package, so `PanelShell`/
+  `PanelSection` aren't reachable without first adding a new cross-package
+  dependency edge, out of scope for a markup-only migration. `debate-round`,
+  `debate-contributor-progress`, and `debate-practice-drills` are still
+  unaudited — left for a further package-scoped slice each.
+  A further slice closed `debate-round`: its own `ui/panels/panel-shell.tsx`
+  (already used by `FlowEditLogPanel`/`SharedFlowSyncPanel`) needed no new
+  dependency, and three panels hand-rolled the same top-level header shape
+  while already importing `EmptyState` from it —
+  `OpponentTeamProfilesPanel`, `PreRoundBriefingsPanel`, `StrategyPanel` —
+  all migrated onto `PanelShell`, plus each panel's singular `<h2>`-titled
+  sub-section (`OpponentTeamProfilesPanel`'s "Bulk import (CSV)"/"Logged
+  rounds"; `PreRoundBriefingsPanel`'s "Pairing schedule"/"Log a round") onto
+  `PanelSection`. `WordLimitPresetsPanel` (a `/settings`-page section, not a
+  standalone panel card) and `UserSettingsPanel` (a live, directly-editable
+  form, not a derived list/roster view) were left out of scope; each panel's
+  per-item loop `<h2>` (one per matchup/briefing/round) was left alone as a
+  repeated row heading, not a panel/section header. `debate-contributor-
+  progress` and `debate-practice-drills` remain unaudited.
+  A further slice closed `debate-contributor-progress` (npm package name
+  `debate-community`): it already depends on `debate-research-evidence` (the
+  same `./ui/panels/panel-shell` module every one of its 9 panels already
+  imported `EmptyState`/`StatGrid`/`StatTile`/`MeterBar` from), so no new
+  cross-package dependency was needed. All 9 panels' top-level `<h1>`-title-
+  plus-description header moved onto `PanelShell`: `ContributionLeaderboardPanel`,
+  `CoachingProgramRosterAnalyticsPanel`, `ContributorAwardsPanel`,
+  `DailyBestCardPanel`, `ProgressUnlocksPanel`, `QuestStreaksPanel`,
+  `ContributorProfilePanel`, `CommunityResearchHubPanel`, and
+  `DailyQuestsPanel` (`NewsStreamPanel`, the package's 10th panel, has no
+  matching header shape). Each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section was also migrated onto `PanelSection`:
+  `CoachingProgramRosterAnalyticsPanel`'s "Recent challenge results"/"Program
+  calendar", `ContributorProfilePanel`'s "Badges"/"Top Contributor
+  Awards"/"Endorsements received"/"Endorsements given", `CommunityResearchHubPanel`'s
+  conditional "For You" strip, and `DailyQuestsPanel`'s "Team competition"
+  (kept its own `border-dashed` styling via `PanelSection`'s `className` prop,
+  mirroring `OpponentTeamProfilesPanel`'s bordered-section convention). A
+  description containing embedded markup (`ContributionLeaderboardPanel`'s
+  tooltip-carrying paragraph, `CommunityResearchHubPanel`'s second
+  machine-generated summary line) was kept as a plain child element instead of
+  forced through `PanelShell`'s `description` prop. `ContributorAwardsPanel`
+  and `DailyBestCardPanel` had no `<h2>`-titled sub-section to migrate (their
+  labeled blocks — "Hall of Fame", "Peer Nominations", "Today's leader",
+  "Best of the week", "Announced history" — use a plain `<div>` label, not a
+  heading), so only their top-level header moved onto `PanelShell`, matching
+  `TopicCoverageDashboardPanel`'s precedent for the same shape.
+  `ContributorProfilePanel`'s title is a per-contributor id rather than a
+  fixed panel name, and its header also carried a "You"/tier `Badge` pair
+  inline next to the `<h1>` rather than in a separate description — moved
+  into `PanelShell`'s `actions` slot (right-aligned) instead of leaving the
+  header unmigrated, the one deliberate layout adjustment in this slice.
+  `CommunityResearchHubPanel`'s and `CoachingProgramRosterAnalyticsPanel`'s
+  per-category/per-day loop `<h2>`s were left alone as repeated row headings,
+  not panel/section headers.
+  A further slice closed the last remaining package, `debate-practice-drills`
+  (npm package name `debate-practice-rounds`): it already depends on
+  `debate-round` and every one of its 12 panels already imported `EmptyState`
+  (several also `MeterBar`/`PanelRow`) from that same `panel-shell` module, so
+  no new cross-package dependency was needed. All 12 panels' top-level
+  `<h1>`-title-plus-description header moved onto `PanelShell`
+  (`AiVersusRoundPanel`, `ArgumentTreePanel`, `CoachingSessionsPanel`,
+  `DrillSetsPanel`, `FlowAnnotationsPanel`, `FlowSummariesPanel`,
+  `JudgeDecisionPanel`, `JudgeParadigmPickerPanel`,
+  `OpponentPersonaPickerPanel`, `PracticeRoundSimulatorPanel`,
+  `VulnerabilityChartsPanel`, `WordCountRoundsPanel`), and each panel's
+  genuinely singular, non-repeated `<h2>`-titled sub-section onto
+  `PanelSection`: `AiVersusRoundPanel`'s "Compare transcripts",
+  `DrillSetsPanel`'s "Practice tier" (tier `Badge` moved into `actions`),
+  `FlowSummariesPanel`'s "Generate from raw speech text",
+  `JudgeDecisionPanel`'s "Multi-judge panel", `OpponentPersonaPickerPanel`'s
+  "My persona library"/"Shared by your team", `PracticeRoundSimulatorPanel`'s
+  "Compare your past attempts" (its "Download comparison" button moved into
+  `actions`), and `WordCountRoundsPanel`'s "Round history" (its "Delete all
+  synced history" button moved into `actions`) and "Word-count trend" (its
+  conditional speech-filter `Select` moved into `actions`). A header/section
+  carrying a second paragraph with embedded markup or dynamic sign-in-status
+  copy was kept as a plain child element instead of forced through the
+  string-only `description` prop, matching every prior slice's judgment call.
+  `CoachingSessionsPanel`, `FlowAnnotationsPanel`, and
+  `JudgeParadigmPickerPanel` had no singular `<h2>` sub-section to migrate;
+  `ArgumentTreePanel`'s and `VulnerabilityChartsPanel`'s sole `<h2>` (a
+  per-item "Round {id}" loop heading) was left alone as a repeated row
+  heading, not a panel/section header, matching the historical `PanelRow`
+  audit's judgment call for the same shape. This closes the last package
+  left open by this survey — every package that depends on a package
+  exporting `PanelShell`/`PanelSection` is now migrated; only
+  `debate-speech-writer`'s two panels remain, still blocked on the
+  cross-package-dependency gap named earlier in this section.
+
+  A further slice closed that cross-package-dependency gap itself, for both
+  the `EmptyState` and `PanelShell`/`PanelSection` follow-ups: `debate-research-evidence`'s
+  own dependency tree (`debate-card-parser` plus a few UI/parsing libraries) has no edge
+  back to `debate-speech-writer` or `debate-videos`, so it was added as a plain
+  `"debate-research-evidence": "workspace:*"` dependency to both packages'
+  `package.json` (`debate-round` was not an option — it already depends on both packages, so
+  pointing either back at it would be circular). `JudgeProfilesPanel`/`CoachMaterialsPanel`
+  (`debate-speech-writer`) and `StandingsPanel` (`debate-videos`) now import `EmptyState` from
+  `debate-research-evidence/src/ui/panels/panel-shell` the same way `debate-contributor-progress`
+  and every other already-migrated package does, closing the last two packages named in the
+  "duplicated empty states" survey above. `PanelShell`/`PanelSection` adoption for these same
+  three panels is now reachable the same way, but wasn't done in this slice — the dependency
+  edge only unblocks it — so it remains a small, well-scoped, not-yet-picked-up follow-up.
+  A `Pill` adoption spot-check the same slice ran across every panel package
+  turned up only two hand-rolled "pill" chip candidates repo-wide, and left both alone:
+  `debate-team-collaboration`'s `SharedCardsPanel` "share with contact" chips are interactive
+  toggle `<button>`s with selected/hover states `Pill`'s display-only `<span>` has no vocabulary
+  for, and `debate-videos`'s `LeaderboardDataRow` tournament chips live in the package this
+  slice just unblocked but hasn't yet migrated onto `PanelShell` conventions.

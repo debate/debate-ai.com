@@ -15,6 +15,7 @@ import {
 } from "debate-data-sync/src/youtube/parsers/round-parsers";
 import { isRound } from "debate-data-sync/src/youtube/parsers/video-classifier";
 import { getDBFromContext } from "../database/context";
+import { describeError } from "../database/errors";
 import { youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
 import { getEnv } from "../env";
 
@@ -41,6 +42,17 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
     .returning();
 
   try {
+    // Read before the channel loop, not after it. Every video fetched below is
+    // filtered against this set, so a database that cannot answer the query is
+    // fatal either way — and asking first means the run fails in milliseconds
+    // instead of after ~35 channels' worth of YouTube API calls. (It read
+    // *after* the loop until a missing `youtube_video_exclusions` table turned
+    // every resync into a 30-second request that ended in a 500.)
+    const excludedIds = new Set(
+      (await db.select({ videoId: youtubeVideoExclusions.videoId }).from(youtubeVideoExclusions))
+        .map((row: { videoId: string }) => row.videoId),
+    );
+
     const allVideos: any[] = [];
     let channelsSynced = 0;
 
@@ -63,10 +75,6 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
     }
 
     let videosUpserted = 0;
-    const excludedIds = new Set(
-      (await db.select({ videoId: youtubeVideoExclusions.videoId }).from(youtubeVideoExclusions))
-        .map((row: { videoId: string }) => row.videoId),
-    );
 
     // A channel can surface a video more than once. Deduplicate before the
     // upsert, and honour admin removals across every future resync.
@@ -132,14 +140,23 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
       videosUpserted,
     };
   } catch (error) {
-    await db
-      .update(youtubeSyncRuns)
-      .set({
-        status: "error",
-        finishedAt: new Date(),
-        error: (error as Error).message,
-      })
-      .where(eq(youtubeSyncRuns.id, run.id));
+    try {
+      await db
+        .update(youtubeSyncRuns)
+        .set({
+          status: "error",
+          finishedAt: new Date(),
+          // `describeError` keeps the driver's own complaint (e.g. "no such
+          // table: …"), which Drizzle hides behind its "Failed query: …"
+          // wrapper.
+          error: describeError(error).slice(0, 1000),
+        })
+        .where(eq(youtubeSyncRuns.id, run.id));
+    } catch (bookkeepingError) {
+      // Recording the failure must never replace it: whatever broke the run is
+      // the error the caller needs to see, not our inability to write it down.
+      console.error("Failed to record YouTube resync failure:", describeError(bookkeepingError));
+    }
 
     throw error;
   }

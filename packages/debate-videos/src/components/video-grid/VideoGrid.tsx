@@ -4,7 +4,7 @@
 
 "use client"
 
-import React from "react"
+import React, { memo } from "react"
 import type { VideoType, TopicType } from "../../types/videos"
 import { VideoCard } from "../video-card/VideoCard"
 import { HoverCardWrapper } from "../../ui/primitives/hover-card-wrapper"
@@ -25,7 +25,7 @@ interface VideoGridProps {
   showDescription?: boolean
 }
 
-export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos, topPicks, showFullDate, showDescription }: VideoGridProps) {
+function VideoGridComponent({ videos, showThumbnails, topics, videoContainerRef, favorites, onToggleFavorite, onBadgeClick, onHideVideo, onUnhideVideo, hiddenVideos, topPicks, showFullDate, showDescription }: VideoGridProps) {
   return (
     <div
       ref={videoContainerRef}
@@ -52,3 +52,11 @@ export function VideoGrid({ videos, showThumbnails, topics, videoContainerRef, f
     </div>
   )
 }
+
+/**
+ * Memoised: the page above re-renders on every keystroke in the search box
+ * and on every filter toggle, and the grid's own props (the loaded page of
+ * videos, the favourite/hidden sets, the stable card callbacks) change far
+ * less often than that.
+ */
+export const VideoGrid = memo(VideoGridComponent)

@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Activity, Bell, Book, BookMarked, Calendar, Code2, Contact, FileText, Globe, LayoutGrid, LogIn, LogOut, MessageCircle, MessageSquare, Monitor, Moon, Palette, Pause, Play, Scale, Settings as SettingsIcon, Shield, Sun, Swords, Trophy, UserCircle2 } from "lucide-react"
+import { Bell, Contact, Globe, LayoutGrid, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -32,51 +32,11 @@ import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
 import { TOOL_GROUPS } from "@/app/tools/tool-groups"
 import { hasEmbeddedDock } from "@/lib/sidebar-routes"
-import {
-  IconCollectiveMind,
-  IconFlowFlower,
-  IconRead,
-  IconSettings,
-  IconRoundsYoutube,
-  IconTools,
-  IconVsAi
-} from "../../lib/ui/icons"
-
-// Same destinations as packages/debate-videos/src/ui/layout/footer.tsx, split into
-// the two Settings-menu submenus below so they're reachable without
-// scrolling to the page footer.
-const SITE_LINKS = [
-  { url: "https://github.com/debate", text: "Github", icon: Code2 },
-  { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle },
-  { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity },
-  { url: "/legal/privacy", text: "Privacy", icon: Shield },
-  { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText },
-]
-
-const DEBATE_LINKS = [
-  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare },
-  { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar },
-  { url: "https://www.debate.land", text: "Rankings", icon: Trophy },
-  { url: "https://opencaselist.com", text: "Research", icon: BookMarked },
-  { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale },
-  { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book },
-]
-
-const NAV_ITEMS = [
-  { href: "/videos", label: "Videos", icon: IconRoundsYoutube },
-  { href: "/cards", label: "Shared", icon: IconCollectiveMind },
-  { href: "/debate", label: "Debate", icon: IconFlowFlower },
-  // Practice vs AI — a full timed round against an AI opponent, from the
-  // `debate-practice-vs-ai` package.
-  { href: "/versus-ai", label: "Practice vs AI", icon: IconVsAi },
-  { href: "/doc", label: "Docs", icon: IconRead },
-  // No "Tools" icon here on purpose: the tools catalog is reached from the
-  // sidebar nav tree (its "Apps" heading and the Coaching/Research/Practice
-  // sections) and from the Settings menu's "All Tools" entry and Tools
-  // submenu below. Keeping it out holds the dock to five destinations, which
-  // is what lets the sidebar-hosted instance fit inside the sidebar column
-  // instead of reaching across it — see `DockInstance`'s `embedded` prop.
-]
+import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "@/lib/nav/dock-menu-sections"
+import { NAV_ITEMS } from "@/lib/nav/dock-nav-items"
+import { useAppFrame } from "@/components/layout/AppFrameProvider"
+import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
+import { IconSettings, IconTools } from "../../lib/ui/icons"
 
 // No Timer button here on purpose: the round timers live in the rounds
 // sidebar, on the selected round (`LiveRoundGroup`, in debate-round's
@@ -85,6 +45,21 @@ const NAV_ITEMS = [
 // round context, so it was removed.
 
 const VIDEO_CATEGORY_ITEMS: { category: CategoryType; label: string; icon: any }[] = []
+
+/** One rendered dock button, in either the desktop or the mobile instance. */
+interface DockNavRenderItem {
+  key: string
+  label: string
+  icon: any
+  active: boolean
+  /** Set for real destinations, so the button is an anchor you can middle-click. */
+  href?: string
+  onClick: (event: ReactMouseEvent<HTMLElement>) => void
+  /** Warms the destination on hover/focus, before the click lands. */
+  onPreload?: () => void
+  renderIcon?: () => ReactNode
+  isPlayingIndicator?: boolean
+}
 
 /**
  * Account block at the foot of the settings menu: who is signed in and how to
@@ -169,7 +144,16 @@ function SettingsMenu({
   const router = useRouter()
 
   return (
-    <DropdownMenuContent side={side} align="end" className="w-48">
+    <DropdownMenuContent
+      side={side}
+      align="end"
+      // Tall enough now (six nav submenus above the account block) to run past
+      // a phone viewport, which would otherwise cut the account rows off with
+      // no way to reach them.
+      className="w-48 max-h-[min(560px,80vh)] overflow-y-auto"
+      collisionPadding={8}
+      avoidCollisions
+    >
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/features") }}>
         <LayoutGrid className="mr-2 h-4 w-4" />
         All Features
@@ -199,6 +183,27 @@ function SettingsMenu({
           ))}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
+      <DropdownMenuSeparator />
+      {/* The desktop sidebar's own sections, one submenu each. The sidebar is
+          md+ only, so on a phone this is the only place its Videos links and
+          the glossary/rankings pair below its tree can be reached — see
+          `lib/nav/dock-menu-sections.ts`, which derives these from the same
+          data the sidebar renders. */}
+      {SIDEBAR_MENU_SECTIONS.map((section) => (
+        <DropdownMenuSub key={section.id}>
+          <DropdownMenuSubTrigger>
+            <section.icon className="mr-2 h-4 w-4 shrink-0" />
+            {section.title}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent className="w-56 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+            {section.links.map((link) => (
+              <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
+                {link.title}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+      ))}
       <DropdownMenuSeparator />
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/notifications") }}>
         <Bell className="mr-2 h-4 w-4" />
@@ -355,7 +360,7 @@ function DockInstance({
 }: {
   dockClassName: string
   side: "bottom" | "top"
-  allItems: { key: string; label: string; icon: any; active: boolean; onClick: () => void; renderIcon?: () => ReactNode }[]
+  allItems: DockNavRenderItem[]
   onSignIn: () => void
   unreadNotifications: number
   pendingContacts: number
@@ -370,10 +375,15 @@ function DockInstance({
         iconSize={embedded ? EMBEDDED_ICON_SIZE : undefined}
         magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
       >
-        {allItems.map(({ key, label, icon, active, onClick, renderIcon }) => (
+        {allItems.map(({ key, label, icon, active, href, onClick, onPreload, renderIcon }) => (
           <DockItem
             key={key}
+            href={href}
             onClick={onClick}
+            onMouseEnter={onPreload}
+            onFocus={onPreload}
+            aria-label={label}
+            aria-current={active ? "page" : undefined}
             className={cn(
               "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
               active
@@ -390,7 +400,7 @@ function DockInstance({
           </DockItem>
         ))}
         <DropdownMenuTrigger asChild>
-          <DockItem className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
+          <DockItem aria-label="Settings" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
             <DockLabel>Settings</DockLabel>
             <DockIcon>
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
@@ -419,6 +429,12 @@ function DockInstance({
 export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) {
   const pathname = usePathname()
   const router = useRouter()
+  const frame = useAppFrame()
+  // A page rendered inside the app frame never draws a dock of its own: the
+  // shell's dock sits above the frame, in the top document, and stays put
+  // while this page loads and reloads underneath it. That includes the
+  // sidebar-hosted instance /videos mounts from its own `<aside>`.
+  const framedDocument = useIsFramedDocument()
   const categoryState = useCategoryDockState()
   const { activeVideoId, activeVideoTitle, isMinimized, isPlaying, setMinimized, setIsPlaying } = useVideoPlayerStore()
   // Owned here rather than inside the menu: the dropdown unmounts its content
@@ -431,13 +447,49 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   // wherever they are in the app.
   const { incoming: incomingContacts } = useContacts(isAuthenticated)
 
-  const allItems = [
+  /**
+   * Hands the destination to the app frame when there is one, so the click
+   * swaps a frame instead of tearing down and rebuilding the whole app —
+   * which is what used to leave the dock unresponsive while the next page
+   * hydrated. `AppFrameProvider` pushes the URL either way, so the address
+   * bar, deep links and the back button behave as before. Falls back to a
+   * plain route change wherever the frame isn't mounted (a framed document,
+   * or a path the dock doesn't own).
+   */
+  const navigate = useCallback(
+    (href: string) => {
+      if (frame?.openInFrame(href)) return
+      router.push(href)
+    },
+    [frame, router],
+  )
+
+  const handleNavClick = useCallback(
+    (href: string) => (event: ReactMouseEvent<HTMLElement>) => {
+      // Leave the modified clicks to the browser: the item is a real anchor
+      // now, so ⌘/ctrl-click and middle-click open the page in a new tab.
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      if ("button" in event && event.button !== 0) return
+      event.preventDefault()
+      navigate(href)
+    },
+    [navigate],
+  )
+
+  // The active item comes from the frame when one is open: `usePathname()`
+  // agrees, but the frame knows first, so the icon lights up on the click
+  // rather than a paint later.
+  const activePath = frame?.activePath ?? pathname
+
+  const allItems: DockNavRenderItem[] = [
     ...NAV_ITEMS.map(({ href, label, icon }) => ({
       key: href,
       label,
       icon,
-      active: pathname === href,
-      onClick: () => router.push(href),
+      active: activePath === href,
+      href,
+      onClick: handleNavClick(href),
+      onPreload: frame ? () => frame.preloadFrame(href) : undefined,
     })),
     ...(categoryState
       ? VIDEO_CATEGORY_ITEMS.map(({ category, label, icon }) => ({
@@ -462,14 +514,14 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
         if (numKey >= 1 && numKey <= NAV_ITEMS.length) {
           event.preventDefault()
           const navItem = NAV_ITEMS[numKey - 1]
-          router.push(navItem.href)
+          navigate(navItem.href)
         }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [router])
+  }, [navigate])
 
   const handleDockPlayPause = () => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
@@ -477,7 +529,7 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   }
 
   // Playing indicator item for mobile dock — shows when a video is active
-  const playingItem = activeVideoId
+  const playingItem: DockNavRenderItem | null = activeVideoId
     ? {
       key: "playing",
       label: isPlaying ? "Pause" : "Play",
@@ -488,14 +540,18 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     }
     : null
 
-  const mobileItems = (playingItem
+  const mobileItems: DockNavRenderItem[] = (playingItem
     ? [...allItems, playingItem]
     : allItems
   )
 
+  if (framedDocument) return null
+
   if (embedded) {
     return (
-      <>
+      // `contents` so this wrapper adds nothing to the sidebar's flex column;
+      // it exists only to carry the marker the pre-paint CSS hides on.
+      <div data-app-chrome className="contents">
         <DockInstance
           dockClassName="shrink-0 min-h-[52px]"
           side="bottom"
@@ -506,19 +562,22 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           embedded
         />
         <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
-      </>
+      </div>
     )
   }
 
   // The videos page (and, via `AppSidebarShell`, every other page the videos
   // sidebar's tool tree links to) renders its own embedded dock at the top of
-  // its sidebar (md+), so the fixed top-left dock would otherwise show twice.
-  const suppressDesktopDock = hasEmbeddedDock(pathname)
+  // its sidebar (md+), so the fixed top-left dock would otherwise show twice —
+  // but only while this document is the one rendering that page. Once it is in
+  // the app frame its sidebar dock is in the frame's document, where it takes
+  // itself down, and suppressing here as well would leave no dock at all.
+  const suppressDesktopDock = !frame?.framedPath && hasEmbeddedDock(activePath)
 
   return (
     <>
       {/* Desktop: top-left corner */}
-      <div className={cn("fixed top-0 left-2 z-50", suppressDesktopDock ? "hidden" : "hidden md:block")}>
+      <div data-app-chrome className={cn("fixed top-0 left-2 z-50", suppressDesktopDock ? "hidden" : "hidden md:block")}>
         <DockInstance
           dockClassName="h-[52px] shrink-0 !mt-0 !mx-0"
           side="bottom"
@@ -530,16 +589,19 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       </div>
 
       {/* Mobile: fixed bottom bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
+      <div data-app-chrome className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <DropdownMenu>
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
-            {mobileItems.map(({ key, label, icon, active, onClick, ...rest }) => {
-              const isPlayingIndicator = (rest as any).isPlayingIndicator
-              const renderIcon = (rest as any).renderIcon as (() => ReactNode) | undefined
+            {mobileItems.map(({ key, label, icon, active, href, onClick, onPreload, isPlayingIndicator, renderIcon }) => {
               return (
                 <DockItem
                   key={key}
+                  href={href}
                   onClick={onClick}
+                  onMouseEnter={onPreload}
+                  onFocus={onPreload}
+                  aria-label={label}
+                  aria-current={active ? "page" : undefined}
                   className={cn(
                     "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
                     active

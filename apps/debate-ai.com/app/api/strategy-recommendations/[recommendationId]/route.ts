@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { savedStrategyRecommendations } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { isValidStrategyRecommendationRecord, MAX_SAVED_STRATEGY_RECOMMENDATION_BYTES } from "debate-round"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked strategy-recommendation-history sync — the "🧭
@@ -26,68 +27,74 @@ import { isValidStrategyRecommendationRecord, MAX_SAVED_STRATEGY_RECOMMENDATION_
  * a single-recommendation fetch.
  */
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ recommendationId: string }> }) {
-  const { recommendationId } = await params
+export const PUT = withRouteErrors(
+  "PUT /api/strategy-recommendations/[recommendationId]",
+  async (req: NextRequest, { params }: { params: Promise<{ recommendationId: string }> }) => {
+    const { recommendationId } = await params
 
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to sync strategy recommendations to your account." }, { status: 401 })
-  }
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to sync strategy recommendations to your account." }, { status: 401 })
+    }
 
-  let body: unknown
-  try {
-    body = await req.json()
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
-  }
+    let body: unknown
+    try {
+      body = await req.json()
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
+    }
 
-  const record = (body as { record?: unknown } | null)?.record
-  if (!isValidStrategyRecommendationRecord(record)) {
-    return NextResponse.json(
-      { error: "Request body's \"record\" is not a valid strategy recommendation." },
-      { status: 400 },
-    )
-  }
-  if (record.id !== recommendationId) {
-    return NextResponse.json({ error: "The record's id must match the URL's recommendation id." }, { status: 400 })
-  }
+    const record = (body as { record?: unknown } | null)?.record
+    if (!isValidStrategyRecommendationRecord(record)) {
+      return NextResponse.json(
+        { error: "Request body's \"record\" is not a valid strategy recommendation." },
+        { status: 400 },
+      )
+    }
+    if (record.id !== recommendationId) {
+      return NextResponse.json({ error: "The record's id must match the URL's recommendation id." }, { status: 400 })
+    }
 
-  const data = JSON.stringify(record)
-  if (data.length > MAX_SAVED_STRATEGY_RECOMMENDATION_BYTES) {
-    return NextResponse.json(
-      { error: "This strategy recommendation is too large to sync to your account." },
-      { status: 413 },
-    )
-  }
+    const data = JSON.stringify(record)
+    if (data.length > MAX_SAVED_STRATEGY_RECOMMENDATION_BYTES) {
+      return NextResponse.json(
+        { error: "This strategy recommendation is too large to sync to your account." },
+        { status: 413 },
+      )
+    }
 
-  const db = await getDBFromContext()
-  const now = new Date()
+    const db = await getDBFromContext()
+    const now = new Date()
 
-  await db
-    .insert(savedStrategyRecommendations)
-    .values({ userId, clientId: recommendationId, matchupId: record.matchupId, data, createdAt: now, updatedAt: now })
-    .onConflictDoUpdate({
-      target: [savedStrategyRecommendations.userId, savedStrategyRecommendations.clientId],
-      set: { data, updatedAt: now },
-    })
+    await db
+      .insert(savedStrategyRecommendations)
+      .values({ userId, clientId: recommendationId, matchupId: record.matchupId, data, createdAt: now, updatedAt: now })
+      .onConflictDoUpdate({
+        target: [savedStrategyRecommendations.userId, savedStrategyRecommendations.clientId],
+        set: { data, updatedAt: now },
+      })
 
-  return NextResponse.json({ recommendationId, updatedAt: now.toISOString() })
-}
+    return NextResponse.json({ recommendationId, updatedAt: now.toISOString() })
+  },
+)
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ recommendationId: string }> }) {
-  const { recommendationId } = await params
+export const DELETE = withRouteErrors(
+  "DELETE /api/strategy-recommendations/[recommendationId]",
+  async (req: NextRequest, { params }: { params: Promise<{ recommendationId: string }> }) => {
+    const { recommendationId } = await params
 
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to manage your synced strategy recommendations." }, { status: 401 })
-  }
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to manage your synced strategy recommendations." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  await db
-    .delete(savedStrategyRecommendations)
-    .where(
-      and(eq(savedStrategyRecommendations.userId, userId), eq(savedStrategyRecommendations.clientId, recommendationId)),
-    )
+    const db = await getDBFromContext()
+    await db
+      .delete(savedStrategyRecommendations)
+      .where(
+        and(eq(savedStrategyRecommendations.userId, userId), eq(savedStrategyRecommendations.clientId, recommendationId)),
+      )
 
-  return NextResponse.json({ success: true })
-}
+    return NextResponse.json({ success: true })
+  },
+)

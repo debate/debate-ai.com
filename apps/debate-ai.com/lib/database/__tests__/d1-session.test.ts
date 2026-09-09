@@ -132,6 +132,12 @@ const get = (headers?: Record<string, string>) =>
 const post = (headers?: Record<string, string>) =>
   new Request("https://example.test/api/items", { method: "POST", headers });
 
+/** The two halves of an OAuth sign-in, which span two requests. */
+const authSignIn = (headers?: Record<string, string>) =>
+  new Request("https://example.test/api/auth/sign-in/social", { method: "POST", headers });
+const authCallback = (headers?: Record<string, string>) =>
+  new Request("https://example.test/api/auth/callback/google?state=abc&code=xyz", { headers });
+
 describe("session constraints", () => {
   it("starts reads on any replica and writes on the primary", async () => {
     const d1 = fakeD1();
@@ -141,6 +147,60 @@ describe("session constraints", () => {
     await runWithD1Session(post(), undefined, () => db.prepare("insert 1").run());
 
     expect(d1.opened).toEqual(["first-unconstrained", "first-primary"]);
+  });
+
+  /**
+   * A sign-in writes its OAuth state row on one request and the provider's
+   * callback reads it back on the next, so a callback answered by a replica
+   * that has not caught up finds nothing — which better-auth reports as
+   * `state_mismatch` and the visitor sees as a dead-end error page instead of
+   * being signed in. Auth therefore always starts on the primary, whatever
+   * bookmark the browser sent and whatever mode is configured.
+   */
+  it("starts every auth request on the primary", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(authSignIn(), undefined, () => db.prepare("insert 1").run());
+    await runWithD1Session(authCallback(), undefined, () => db.prepare("select 1").run());
+
+    expect(d1.opened).toEqual(["first-primary", "first-primary"]);
+  });
+
+  it("ignores the client's bookmark on an auth request", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(
+      authCallback({ cookie: `${D1_BOOKMARK_COOKIE}=0000001-0000002` }),
+      undefined,
+      () => db.prepare("select 1").run(),
+    );
+
+    expect(d1.opened).toEqual(["first-primary"]);
+  });
+
+  it("keeps auth on the primary even under the unconstrained override", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(authCallback(), "unconstrained", () => db.prepare("select 1").run());
+    await runWithD1Session(get(), "unconstrained", () => db.prepare("select 1").run());
+
+    expect(d1.opened).toEqual(["first-primary", "first-unconstrained"]);
+  });
+
+  it("does not mistake a lookalike path for an auth route", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    await runWithD1Session(
+      new Request("https://example.test/api/authors"),
+      undefined,
+      () => db.prepare("select 1").run(),
+    );
+
+    expect(d1.opened).toEqual(["first-unconstrained"]);
   });
 
   it("resumes from the client's bookmark, header or cookie", async () => {
@@ -168,6 +228,29 @@ describe("session constraints", () => {
     );
 
     expect(d1.opened).toEqual(["first-unconstrained"]);
+  });
+
+  /**
+   * `decodeURIComponent` throws on a malformed escape, and the cookie is read
+   * in the Worker entry ahead of every route handler — so before this was
+   * guarded, one unparseable `d1_bookmark` cookie was an exception on every
+   * request that browser made, including routes that never touch D1.
+   */
+  it("ignores a bookmark cookie that cannot be percent-decoded", async () => {
+    const d1 = fakeD1();
+    const db = sessionedD1(d1.binding);
+
+    for (const value of ["%", "%zz", "0000001-000000%E0%A4%A"]) {
+      await runWithD1Session(get({ cookie: `${D1_BOOKMARK_COOKIE}=${value}` }), undefined, () =>
+        db.prepare("select 1").run(),
+      );
+    }
+
+    expect(d1.opened).toEqual([
+      "first-unconstrained",
+      "first-unconstrained",
+      "first-unconstrained",
+    ]);
   });
 
   it("honours the D1_SESSION_MODE override", async () => {

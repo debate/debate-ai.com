@@ -19,11 +19,10 @@
  * Tool pages that never expand it pay for no fetch.
  */
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
+import { DocumentSaveQueue, type SaveQueueState } from "@/lib/reason-docs/save-queue"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterItem } from "./TopicStarterTree"
-
-const AUTOSAVE_DELAY_MS = 800
 
 export interface ReasonDocsContextValue {
   documents: ReasonDocument[]
@@ -38,6 +37,10 @@ export interface ReasonDocsContextValue {
   loaded: boolean
   /** True while a debounced autosave is being flushed. */
   saving: boolean
+  /** True while an edit is queued but not yet acknowledged by the server. */
+  unsaved: boolean
+  /** True when the last write for some document failed and is being retried. */
+  saveFailed: boolean
   /** Fetches documents and topic starters once, on first request. */
   ensureLoaded: () => void
   /** Opens a document in a tab and makes it active. */
@@ -63,8 +66,19 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
   const [topicDocument, setTopicDocument] = useState<TopicStarterItem | null>(null)
   const [loading, setLoading] = useState(false)
   const [loaded, setLoaded] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const saveTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [saveState, setSaveState] = useState<SaveQueueState>({
+    pendingIds: [],
+    saving: false,
+    failedIds: [],
+  })
+  // One queue for the whole app: per-document debounces, merged patches,
+  // retry on failure, and a flush when the page goes away. See
+  // `lib/reason-docs/save-queue.ts` for why each of those is load-bearing.
+  const saveQueueRef = useRef<DocumentSaveQueue | null>(null)
+  if (!saveQueueRef.current) {
+    saveQueueRef.current = new DocumentSaveQueue({ onStateChange: setSaveState })
+  }
+  const saveQueue = saveQueueRef.current
   // Guards the lazy fetch: `loaded` only flips once the request resolves, so
   // it can't dedupe the calls the editor page and the sidebar make together
   // on the same render.
@@ -145,39 +159,55 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       }
       collect(id)
 
+      // Drop queued writes first: a debounced PUT landing after the DELETE
+      // would 404, and one landing before it would just be wasted work.
+      for (const docId of idsToDelete) saveQueue.cancel(docId)
+
       await Promise.all(idsToDelete.map((docId) => fetch(`/api/doc/documents/${docId}`, { method: "DELETE" })))
 
       setDocuments((prev) => prev.filter((d) => !idsToDelete.includes(d.id)))
       setOpenTabs((prev) => prev.filter((tabId) => !idsToDelete.includes(tabId)))
       if (activeId != null && idsToDelete.includes(activeId)) setActiveId(null)
     },
-    [documents, activeId],
+    [documents, activeId, saveQueue],
   )
 
-  const moveDocument = useCallback(async (id: number, parentId: number | null) => {
-    setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
-    await fetch(`/api/doc/documents/${id}`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ parentId }),
-    })
-  }, [])
+  const moveDocument = useCallback(
+    async (id: number, parentId: number | null) => {
+      setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
+      // Through the same queue as title/content edits: a re-parent now gets
+      // retry-with-backoff and a `pagehide`/tab-hide flush instead of a
+      // fire-and-forget PUT that silently drops on a network blip.
+      saveQueue.queue(id, { parentId })
+    },
+    [saveQueue],
+  )
 
-  const saveDocument = useCallback((id: number, patch: { title?: string; content?: string }) => {
-    if (saveTimeout.current) clearTimeout(saveTimeout.current)
-    saveTimeout.current = setTimeout(async () => {
-      setSaving(true)
-      try {
-        await fetch(`/api/doc/documents/${id}`, {
-          method: "PUT",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(patch),
-        })
-      } finally {
-        setSaving(false)
-      }
-    }, AUTOSAVE_DELAY_MS)
-  }, [])
+  // Nothing queued may be lost to a navigation: `pagehide` fires on tab
+  // close, reload and bfcache entry, and `visibilitychange` is often the
+  // last event a backgrounded mobile tab gets. Both send with `keepalive`
+  // so the browser completes the write after the page is gone.
+  useEffect(() => {
+    const flush = () => void saveQueue.flushAll({ keepalive: true })
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush()
+    }
+    window.addEventListener("pagehide", flush)
+    document.addEventListener("visibilitychange", onVisibility)
+    return () => {
+      window.removeEventListener("pagehide", flush)
+      document.removeEventListener("visibilitychange", onVisibility)
+      flush()
+      saveQueue.dispose()
+    }
+  }, [saveQueue])
+
+  const saveDocument = useCallback(
+    (id: number, patch: { title?: string; content?: string }) => {
+      saveQueue.queue(id, patch)
+    },
+    [saveQueue],
+  )
 
   const updateTitle = useCallback(
     (id: number, title: string) => {
@@ -209,7 +239,9 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       topicDocument,
       loading,
       loaded,
-      saving,
+      saving: saveState.saving,
+      unsaved: saveState.pendingIds.length > 0,
+      saveFailed: saveState.failedIds.length > 0,
       ensureLoaded,
       openDocument,
       selectTab,
@@ -229,7 +261,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       topicDocument,
       loading,
       loaded,
-      saving,
+      saveState,
       ensureLoaded,
       openDocument,
       selectTab,

@@ -23,6 +23,38 @@ Coaching / Research / Practice sections, and the dock's own Settings menu
 the dock to five destinations is what lets it fit inside the sidebar column
 it is hosted in — see below.
 
+## The Settings menu is the whole nav on a phone
+
+The sidebar column below is `md+` only: on a phone the dock is a bottom bar
+and its Settings menu is the only navigation there is. So the menu carries a
+submenu per sidebar section — **Videos, Apps, Coaching, Research, Practice** —
+above its notifications/theme/links block, and those submenus are *derived*
+from the data the sidebar itself renders rather than restated:
+
+| Menu submenu | Comes from |
+| --- | --- |
+| Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`) |
+| Apps | `APP_DOCK_LINKS` + `TOOLS_ROOT_HREF` |
+| Coaching / Research / Practice | `SIDEBAR_TOOL_SECTIONS` |
+| Site Links / Debate Links | `FOOTER_LINKS`, split by its `group` field |
+
+`apps/debate-ai.com/lib/nav/dock-menu-sections.ts` does that composition, and
+`lib/nav/__tests__/dock-menu-sections.test.ts` fails if a sidebar destination
+is not in the menu. That coupling is the point: the Videos links and the
+glossary/rankings pair below the tree were in the sidebar and in no mobile
+menu at all, because the menu was a hand-kept list.
+
+The dock's five icons label themselves on hover, which a touch device never
+fires, so the Apps submenu spells the same five destinations out as text
+rows. The menu itself scrolls (`max-h-[min(560px,80vh)]`) — with six nav
+submenus above the account block it is taller than a phone viewport.
+
+`/videos` additionally prints the tree inline in its own `md:hidden` block,
+under the quick-link tiles: the tiles are the Videos section only, so
+`ToolNavTree` follows them with `defaultExpanded={false}` (its sections start
+collapsed there — expanded, forty rows would push the video grid off the
+screen).
+
 ## Where it renders
 
 The dock has two forms, and which one a route gets is decided by
@@ -88,9 +120,24 @@ Two rules hold for every h1:
   under Apps), so nothing became unreachable — a click on the heading no
   longer navigates away from the page you are on just because you wanted to
   see what else is in the group.
-- **It starts expanded.** The tree is the only nav on the tool pages, so all
-  of it is visible up front rather than only the section holding the current
-  page. Collapsing is still per-section, and the state is per-mount.
+- **One section is open at a time, and it follows the route.** The tree is an
+  accordion: opening a section closes the one that was open, and a closed
+  section renders none of its links. Which one is open comes from the current
+  path (`sidebar-active-section.ts`), so clicking an app dock button loads
+  that destination's section into the sidebar and nothing else. The state is
+  per-mount, and opening another section by hand still works.
+
+  It used to render every section's links up front. That put around fifty
+  `next/link`s in the sidebar on `/videos`, and the router prefetched an RSC
+  payload for each one the moment the page mounted — a burst of requests
+  racing the video feed and its thumbnails on the page that already felt
+  slowest. The tree links now also pass `prefetch={false}`, so the ones that
+  *are* rendered are fetched on click rather than on sight.
+
+  Resolution is longest-match, with ties going to the app dock: `/cards/library`
+  opens Research (which lists it) rather than Apps (which lists `/cards`),
+  while `/doc` — listed in both — opens Apps, since the dock is what the user
+  just clicked.
 
 `SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
 still folds it into the set of paths that get the tool sidebar.
@@ -103,10 +150,22 @@ hanging straight off Coaching, wherever in the tree it is.
 
 - `packages/debate-videos/test/video-sidebar-render.test.tsx` — the heading
   structure above: College Debates under a Videos `h1`, no `h1` inside an
-  anchor, every section a toggle button that starts expanded.
+  anchor, every section a toggle button, and only the section holding the
+  current route open (with the closed ones rendering none of their links).
+- `packages/debate-videos/test/sidebar-active-section.test.ts` — the
+  route-to-section mapping itself, including the longest-match and
+  dock-wins-a-tie rules above.
 - `packages/debate-ui/test/dock.test.tsx` — the `fluid` variant's classes,
   host-set icon sizing, and that magnification never shrinks an icon below
   its resting size.
 - `packages/debate-videos/test/sidebar-routes.test.ts` — that `/tools` is no
   longer a dock destination but is still a sidebar one, and the prefix
   matching (including `/docs` not matching `/doc`).
+- `packages/debate-videos/test/sidebar-video-links.test.tsx` — that the tree
+  and the mobile quick-link tiles both render every `SIDEBAR_VIDEO_LINKS`
+  entry, glossary and rankings included.
+- `packages/debate-videos/test/lectures-sidebar-docs-slot.test.tsx` — that
+  `/videos`' `md:hidden` block carries the tool sections, collapsed.
+- `apps/debate-ai.com/lib/nav/__tests__/dock-menu-sections.test.ts` — that
+  every sidebar destination (videos, dock, tool sections, footer links) is
+  reachable from the Settings menu, which is the whole nav below `md`.

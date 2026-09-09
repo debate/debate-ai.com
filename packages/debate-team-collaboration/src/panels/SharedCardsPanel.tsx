@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { Badge } from "debate-round/src/ui/primitives/badge";
 import { Button } from "debate-round/src/ui/primitives/button";
 import { Input } from "debate-round/src/ui/primitives/input";
-import { EmptyState, Pill } from "debate-round/src/ui/panels/panel-shell";
+import { EmptyState, PanelSection, PanelShell, Pill } from "debate-round/src/ui/panels/panel-shell";
 import { parseInviteInput } from "../lib/contacts";
 import type { CardShareEntry } from "../state/cardShares";
 import type { ContactEntry } from "../state/contacts";
@@ -94,11 +94,11 @@ function ShareByCodeForm({
   };
 
   return (
-    <section className="space-y-2 rounded-md border border-border p-3">
-      <h2 className="text-sm font-semibold text-foreground">Share a card by code</h2>
-      <p className="text-xs text-muted-foreground">
-        Paste the share code or invite link the editor copied when you started a session, then pick who gets it.
-      </p>
+    <PanelSection
+      title="Share a card by code"
+      description="Paste the share code or invite link the editor copied when you started a session, then pick who gets it."
+      className="rounded-md border border-border p-3"
+    >
       <Input
         value={code}
         onChange={(e) => setCode(e.target.value)}
@@ -133,7 +133,7 @@ function ShareByCodeForm({
       <Button size="sm" disabled={!parsed || picked.size === 0 || busy} onClick={() => void submit()}>
         {busy ? "Sharing…" : `Share with ${picked.size || ""} ${picked.size === 1 ? "contact" : "contacts"}`.replace("  ", " ")}
       </Button>
-    </section>
+    </PanelSection>
   );
 }
 
@@ -165,19 +165,12 @@ export function SharedCardsPanel({ enabled = true, onOpen, contacts, shares: sha
   };
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Shared cards</h1>
-          <p className="text-sm text-muted-foreground">
-            Live co-editing cards your contacts made available to you, and the ones you've shared out.
-          </p>
-        </div>
-        <Badge variant={shares.unopenedCount > 0 ? "default" : "outline"}>{shares.unopenedCount} new</Badge>
-      </div>
-
-      <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-foreground">Available to you</h2>
+    <PanelShell
+      title="Shared cards"
+      description="Live co-editing cards your contacts made available to you, and the ones you've shared out."
+      actions={<Badge variant={shares.unopenedCount > 0 ? "default" : "outline"}>{shares.unopenedCount} new</Badge>}
+    >
+      <PanelSection title="Available to you">
         {shares.loading && !shares.loaded ? (
           <p className="text-sm text-muted-foreground">Loading shared cards…</p>
         ) : shares.received.length === 0 ? (
@@ -212,11 +205,10 @@ export function SharedCardsPanel({ enabled = true, onOpen, contacts, shares: sha
             </div>
           ))
         )}
-      </section>
+      </PanelSection>
 
       {shares.sent.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-foreground">Shared by you</h2>
+        <PanelSection title="Shared by you">
           {shares.sent.map((share) => (
             <div key={share.id} className="rounded-md border border-border px-3 py-2 flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
@@ -234,10 +226,10 @@ export function SharedCardsPanel({ enabled = true, onOpen, contacts, shares: sha
               </Button>
             </div>
           ))}
-        </section>
+        </PanelSection>
       )}
 
       {contacts && <ShareByCodeForm contacts={contacts} shares={shares} />}
-    </div>
+    </PanelShell>
   );
 }

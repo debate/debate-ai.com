@@ -41,7 +41,7 @@
 
 import { Fragment, useEffect, useState } from "react"
 import { cn } from "../ui/lib/utils"
-import { toneSurfaceClass } from "../ui/panels/panel-shell"
+import { PanelSection, PanelShell, toneSurfaceClass } from "../ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import {
@@ -191,15 +191,11 @@ export function RevisionIncentivesPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Revision Incentives</h1>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Ranked by total reward points earned improving weak cards, strengthening citations, and
-        refreshing stale evidence.
-      </p>
-
-      <section className="mb-6">
-        <h2 className="mb-1 text-base font-semibold text-foreground">Stale evidence digest</h2>
+    <PanelShell
+      title="Revision Incentives"
+      description="Ranked by total reward points earned improving weak cards, strengthening citations, and refreshing stale evidence."
+    >
+      <PanelSection title="Stale evidence digest">
         {staleDigest.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No stale cards right now — every card's cited evidence is dated and recent.
@@ -254,10 +250,9 @@ export function RevisionIncentivesPanel() {
             </Table>
           </>
         )}
-      </section>
+      </PanelSection>
 
-      <section className="mb-6">
-        <h2 className="mb-1 text-base font-semibold text-foreground">Leaderboard</h2>
+      <PanelSection title="Leaderboard">
         {rows.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground">
             No card revisions recorded yet. The leaderboard fills in as contributors improve weak
@@ -320,10 +315,9 @@ export function RevisionIncentivesPanel() {
             </TableBody>
           </Table>
         )}
-      </section>
+      </PanelSection>
 
-      <section>
-        <h2 className="mb-1 text-base font-semibold text-foreground">Recent revisions</h2>
+      <PanelSection title="Recent revisions">
         {recentRevisions.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No card revisions recorded yet.
@@ -378,7 +372,7 @@ export function RevisionIncentivesPanel() {
             </Table>
           </>
         )}
-      </section>
-    </div>
+      </PanelSection>
+    </PanelShell>
   )
 }

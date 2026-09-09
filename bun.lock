@@ -182,6 +182,7 @@
       },
       "devDependencies": {
         "@vitest/coverage-v8": "^4.1.0",
+        "typescript": "^5.9.3",
         "vitest": "^4.1.0",
       },
     },
@@ -535,6 +536,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "debate-card-parser": "workspace:*",
+        "debate-research-evidence": "workspace:*",
         "grab-url": "^1.6.22",
         "lucide-react": "^0.577.0",
         "qwksearch-api-client": "0.0.12",
@@ -674,6 +676,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "debate-data-sync": "workspace:*",
+        "debate-research-evidence": "workspace:*",
         "framer-motion": "^12.36.0",
         "fuse.js": "^7.1.0",
         "grab-url": "^1.6.7",

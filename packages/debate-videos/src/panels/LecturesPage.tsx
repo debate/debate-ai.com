@@ -33,6 +33,7 @@ import { LecturesVideoGridView } from "./LecturesVideoGridView"
 import { useVideoState } from "../hooks/useVideoState"
 import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
+import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
 
 /** Number of entries in the debate dictionary, shown on its quick-link card. */
@@ -95,7 +96,7 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
-  const { meta, counts, lectureCategories } = useVideoMeta()
+  const { meta, counts, lectureCategories, suggestions } = useVideoMeta()
 
   // ---------------------------------------------------------------------------
   // UI state
@@ -105,7 +106,7 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
-  const [youtubeStats, setYoutubeStats] = useState<any>(null)
+  const youtubeStats = useYouTubeStats()
 
   // ---------------------------------------------------------------------------
   // Quick-link counts (per-category video tallies for navigation cards)
@@ -150,13 +151,6 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
     params.set("format", val)
     router.replace(`?${params.toString()}`, { scroll: false })
   }, [searchParams, router])
-
-  useEffect(() => {
-    fetch("/api/youtube-stats")
-      .then((res) => res.json())
-      .then((data) => setYoutubeStats(data))
-      .catch((err) => console.error("Failed to load YouTube stats:", err))
-  }, [])
 
   // Initialize state from URL parameters on mount
   useEffect(() => {
@@ -336,12 +330,18 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
   // Infinite scroll
   // ---------------------------------------------------------------------------
 
+  // `atCapacity` stops the automatic paging at `MAX_LOADED_VIDEOS`: past that
+  // the next page comes from the button in `LecturesVideoGridView`, which the
+  // user has to press. Scrolling on its own can no longer grow the grid past
+  // the point where the page stops responding.
   useInfiniteScroll(
     state.loadMoreTriggerRef,
-    feed.hasMore,
+    feed.hasMore && !feed.atCapacity,
     feed.isLoading || feed.isLoadingMore,
     feed.loadMore,
   )
+
+  const handleLoadMore = useCallback(() => feed.loadMore({ force: true }), [feed.loadMore])
 
   // ---------------------------------------------------------------------------
   // Shared back button
@@ -414,9 +414,12 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
       currentCategory={state.currentCategory}
       totalVideos={feed.total}
       facets={feed.facets}
+      searchSuggestions={suggestions}
       isLoading={feed.isLoading}
       errorMessage={feed.errorMessage}
       isLoadingMore={feed.isLoadingMore}
+      atCapacity={feed.atCapacity}
+      onLoadMore={handleLoadMore}
       currentVideos={currentVideos}
       favorites={state.favorites}
       hiddenVideos={state.hiddenVideos}

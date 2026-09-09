@@ -22,11 +22,11 @@
  * toggle away.
  */
 
-import { Suspense, useEffect } from "react"
+import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
 import { EditorWithToolbar } from "debate-editor"
+import { topicStarterHtml } from "@/lib/topic-starters/content"
 import { cn } from "../../lib/ui/lib/utils"
-import { Input } from "../../lib/ui/primitives/input"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
@@ -40,10 +40,11 @@ export default function ReasonEditorPage() {
     topicDocument,
     loading,
     saving,
+    unsaved,
+    saveFailed,
     ensureLoaded,
     selectTab,
     closeTab,
-    updateTitle,
     updateContent,
   } = useReasonDocs()
 
@@ -52,6 +53,14 @@ export default function ReasonEditorPage() {
   }, [ensureLoaded])
 
   const selected = documents.find((d) => d.id === activeId) ?? null
+
+  // Topic Starters are stored as `.cmir`, so opening one means gunzipping and
+  // reparsing it — once per file, not once per keystroke elsewhere on the
+  // page.
+  const topicHtml = useMemo(
+    () => (topicDocument ? topicStarterHtml(topicDocument) : null),
+    [topicDocument],
+  )
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
@@ -111,14 +120,11 @@ export default function ReasonEditorPage() {
 
         {selected || topicDocument ? (
           <>
+            {/* No rename field here: the tab strip above already names the
+                open document, and renaming lives in the sidebar file tree
+                (`ReasonDocsSidebarPanels` → `onRename`). This row is just
+                the status/sharing strip. */}
             <div className="flex items-center gap-2 px-4 py-2 border-b">
-              <Input
-                value={topicDocument?.title ?? selected?.title ?? ""}
-                onChange={(e) => selected && updateTitle(selected.id, e.target.value)}
-                readOnly={Boolean(topicDocument)}
-                className="max-w-sm h-8 text-sm font-medium"
-                placeholder="Untitled"
-              />
               {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
               {selected && (
                 <div className="ml-auto">
@@ -137,7 +143,7 @@ export default function ReasonEditorPage() {
                   the editor's mount effects — re-hiding a nav pane the user
                   pulled back open — on every document switch. */}
               <EditorWithToolbar
-                content={topicDocument?.content ?? selected!.content}
+                content={topicHtml ?? selected!.content}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}

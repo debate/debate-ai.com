@@ -97,7 +97,7 @@ import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import { Switch } from "debate-round/src/ui/primitives/switch"
 import {
   Select,
@@ -383,15 +383,10 @@ export function ArgumentTreePanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
-        <p className="text-sm text-muted-foreground">
-          A filterable outline of each round's flow, grouped under its headings — filter by speech,
-          side, unanswered status, or heading-vs-argument kind.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Outline Filters and Argument Tree"
+      description="A filterable outline of each round's flow, grouped under its headings — filter by speech, side, unanswered status, or heading-vs-argument kind."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div>
           <Label className="text-sm font-medium text-foreground">Generate outline for current round</Label>
@@ -886,6 +881,6 @@ export function ArgumentTreePanel() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </PanelShell>
   )
 }
