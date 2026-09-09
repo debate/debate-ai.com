@@ -32,7 +32,7 @@ const SHARED_KEYS = [
   "activeVideoMeta",
   "isMinimized",
   "isPlaying",
-  "isSlowMode",
+  "playbackRate",
   "queue",
   "startTime",
 ] as const
