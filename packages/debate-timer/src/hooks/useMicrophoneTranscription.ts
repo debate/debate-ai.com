@@ -3,11 +3,10 @@
  * that module's file doc for the word-count-rounds Known gap this closes.
  *
  * Instantiates the browser's real `SpeechRecognition`/`webkitSpeechRecognition`
- * API. Like every other browser-API hook in this repo (e.g.
- * `debate-timer/src/hooks/useSpeechRecorder.ts`), this file is untested
- * wiring — the feature-detection, text-joining, and error-message logic it
- * calls into lives in `timers/microphone-transcription.ts` and is Vitest
- * covered there instead.
+ * API. The feature-detection, text-joining, and error-message logic it calls
+ * into lives in `timers/microphone-transcription.ts`; this hook's own wiring is
+ * covered by `test/useMicrophoneTranscription.test.tsx`, which drives a fake
+ * recognition constructor since jsdom ships no SpeechRecognition.
  *
  * @module hooks/useMicrophoneTranscription
  */

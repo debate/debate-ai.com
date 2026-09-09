@@ -1,6 +1,17 @@
 import { TERMS_ORG, TERMS_QUALIFICATIONS, ORG_PATTERNS } from "./constants";
 import dataHumanNames from "./human-names-92k.json";
 
+const HUMAN_NAMES = dataHumanNames as Record<string, number>;
+
+/**
+ * Whether a single lower-cased word appears in the 92k given-name/surname
+ * dataset. The dataset is keyed in lower case, so callers must pass a
+ * lower-cased word.
+ */
+function isKnownHumanNameWord(word: string): boolean {
+  return HUMAN_NAMES[word] === 1 || HUMAN_NAMES[word] === 2;
+}
+
 /**
  * Validates whether a provided name string conceptually applies to a registered organization,
  * corporation, publication, or government entity vs a discrete human.
@@ -19,10 +30,15 @@ export function isOrganization(nameString: string): boolean {
     return true;
   }
 
-  // Organization dict scan
-  for (const word of words) {
-    if (TERMS_ORG.has(word)) return true;
-  }
+  // Organization dict scan. Roughly a quarter of the dictionary doubles as a
+  // human given name or surname — "doe" (Dept. of Energy) and "jones" (Dow
+  // Jones) are in there next to "institution" and "reuters" — so a lone
+  // ambiguous hit is not enough to call "John Doe" an organization. A single
+  // *unambiguous* term is decisive; ambiguous ones only count in pairs, which
+  // is what carries firm names like "Morgan Stanley" and "Wells Fargo".
+  const orgHits = words.filter((word) => TERMS_ORG.has(word));
+  const decisiveOrgHits = orgHits.filter((word) => !isKnownHumanNameWord(word));
+  if (decisiveOrgHits.length > 0 || orgHits.length > 1) return true;
 
   // Qualification dict scan (counter-balance for "Professor Institute ABC")
   for (const word of words) {
@@ -42,13 +58,8 @@ export function isOrganization(nameString: string): boolean {
   // Arbitrary length fail-over. Most humans lack > 4 distinct name elements.
   if (words.length > 4 && !nameString.includes(",")) return true;
 
-  // Cross-reference against our standard known human-names dataset
-  const record = dataHumanNames as Record<string, number>;
-  const hasHumanNamePart = words.some((word) => {
-    const titleCase =
-      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    return record[titleCase] === 1 || record[titleCase] === 2;
-  });
-
-  return !hasHumanNamePart && words.length > 2;
+  // Cross-reference against our standard known human-names dataset. The dataset
+  // is keyed in lower case, and `words` is already lower-cased above, so the two
+  // line up without any re-casing.
+  return !words.some(isKnownHumanNameWord) && words.length > 2;
 }
