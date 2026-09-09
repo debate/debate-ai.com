@@ -40,7 +40,7 @@ native-wrapper/
 ## Quick start
 
 ```bash
-cd packages/native-wrapper
+cd apps/debate-native-wrapper
 npm run dev              # opens a window on the debate-ai profile's URL
 ```
 

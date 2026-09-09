@@ -84,7 +84,7 @@
 
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
+import { EmptyState, SummaryText } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
@@ -756,23 +756,12 @@ export function CoachMaterialsPanel() {
           </Button>
         </div>
 
-        {groundedPrompt && (
-          <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-            {groundedPrompt}
-          </pre>
-        )}
+        {groundedPrompt && <SummaryText text={groundedPrompt} />}
 
         {askError && <p className="text-sm text-destructive">{askError}</p>}
 
-        {answer && (
-          <div className="space-y-1.5">
-            <Label>Coach's answer</Label>
-            <p className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-              {answer}
-            </p>
-          </div>
-        )}
-      </PanelSection>
-    </PanelShell>
+        {answer && <SummaryText label="Coach's answer" text={answer} />}
+      </div>
+    </div>
   )
 }

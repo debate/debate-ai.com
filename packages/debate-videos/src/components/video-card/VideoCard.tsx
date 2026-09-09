@@ -5,6 +5,7 @@
 
 "use client"
 
+import { memo } from "react"
 import { Card } from "../../ui/primitives/card"
 import { GlowingEffect } from "../../ui/effects/glowing-effect"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
@@ -51,7 +52,7 @@ export interface VideoCardProps {
  *
  * @param props - See {@link VideoCardProps}.
  */
-export function VideoCard({
+function VideoCardComponent({
   video,
   showThumbnails,
   topics,
@@ -83,10 +84,17 @@ export function VideoCard({
     arg2NR,
   ] = video
 
-  const { activeVideoId, setActiveVideo, addToQueue, queue } =
-    useVideoPlayerStore()
-  const isPlaying = activeVideoId === videoId
-  const isInQueue = queue.some((q) => q.videoId === videoId)
+  // Narrow selectors, not the whole store: a grid holds hundreds of these
+  // cards, and subscribing each to the store object re-rendered every one of
+  // them on any player change — a queue add, a play/pause, the search handler
+  // being registered. Each selector below yields a primitive or a stable
+  // action, so a card only re-renders when its own state actually changes.
+  const isPlaying = useVideoPlayerStore((state) => state.activeVideoId === videoId)
+  const isInQueue = useVideoPlayerStore((state) =>
+    state.queue.some((item) => item.videoId === videoId),
+  )
+  const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
+  const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
 
   const year = new Date(date).getFullYear()
   const styleNumber = typeof style === "number" ? style : undefined
@@ -179,3 +187,10 @@ export function VideoCard({
     </TooltipProvider>
   )
 }
+
+/**
+ * Memoised: the grid re-renders on every keystroke in the search box and on
+ * every page appended by infinite scroll, and without this each of those
+ * re-rendered every card already on screen.
+ */
+export const VideoCard = memo(VideoCardComponent)

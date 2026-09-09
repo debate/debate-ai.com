@@ -12,7 +12,7 @@ import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown } fr
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
-import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor } from "../video-card/videoCardUtils"
+import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { TranscriptModal } from "../transcript-modal/TranscriptModal"
 import { useResizableColumns } from "./useResizableColumns"
@@ -31,9 +31,7 @@ interface VideoListRowsProps {
 }
 
 function formatDate(date: string): string {
-  const d = new Date(date)
-  if (Number.isNaN(d.getTime())) return "—"
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+  return formatVideoDate(date, "full", "—")
 }
 
 function getStyleLabel(video: VideoType): string {
@@ -174,9 +172,15 @@ function VideoRow({
   ] = video
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
-  const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
-  const isPlaying = activeVideoId === videoId
-  const isInQueue = queue.some((q) => q.videoId === videoId)
+  // Per-field selectors rather than the whole store — see `VideoCard` for
+  // why: a list holds one of these rows per loaded video, and subscribing
+  // each to the store object re-rendered all of them on any player change.
+  const isPlaying = useVideoPlayerStore((state) => state.activeVideoId === videoId)
+  const isInQueue = useVideoPlayerStore((state) =>
+    state.queue.some((item) => item.videoId === videoId),
+  )
+  const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
+  const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
 
   const styleNumber = typeof style === "number" ? style : undefined
   const styleLabel = styleNumber

@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedCoachMaterialVersions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked coach-material version-history sync — the same TODO.md
@@ -17,21 +18,24 @@ import { getUserId } from "@/lib/auth/session"
  *   `/api/judge-decisions`'s "return full records, not just labels" shape.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json(
-      { error: "Sign in to view your synced coach-material version history." },
-      { status: 401 },
-    )
-  }
+export const GET = withRouteErrors(
+  "GET /api/coach-material-versions",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Sign in to view your synced coach-material version history." },
+        { status: 401 },
+      )
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedCoachMaterialVersions.data })
-    .from(savedCoachMaterialVersions)
-    .where(eq(savedCoachMaterialVersions.userId, userId))
-    .orderBy(asc(savedCoachMaterialVersions.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedCoachMaterialVersions.data })
+      .from(savedCoachMaterialVersions)
+      .where(eq(savedCoachMaterialVersions.userId, userId))
+      .orderBy(asc(savedCoachMaterialVersions.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)

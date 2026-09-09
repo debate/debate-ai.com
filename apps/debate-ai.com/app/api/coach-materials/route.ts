@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedCoachMaterials } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked coach-material sync — TODO.md idea #8
@@ -21,18 +22,21 @@ import { getUserId } from "@/lib/auth/session"
  *   fetch.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced coach materials." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/coach-materials",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced coach materials." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedCoachMaterials.data })
-    .from(savedCoachMaterials)
-    .where(eq(savedCoachMaterials.userId, userId))
-    .orderBy(asc(savedCoachMaterials.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedCoachMaterials.data })
+      .from(savedCoachMaterials)
+      .where(eq(savedCoachMaterials.userId, userId))
+      .orderBy(asc(savedCoachMaterials.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)

@@ -181,11 +181,12 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // semantics as an absent key in the local `Settings` store.
 //
 // `colorTheme`/`themeMode` (idea #17, follow-up (2)) extend the same row
-// with the color-theme/light-dark preference `components/theme-dropdown.tsx`
-// previously kept in `localStorage`/a cookie only — also nullable, with the
-// same "no saved row/value yet" semantics, validated by `debate-round`'s
-// `normalizeThemeSettingsPatch` against its `THEME_NAMES`/`THEME_MODES`
-// lists (the same lists `ThemeDropdown`'s picker UI uses).
+// with the color-theme/light-dark preference `components/theme-dropdown.tsx`'s
+// `useThemeState` hook previously kept in `localStorage`/a cookie only — also
+// nullable, with the same "no saved row/value yet" semantics, validated by
+// `debate-round`'s `normalizeThemeSettingsPatch` against its
+// `THEME_NAMES`/`THEME_MODES` lists (the same lists `CategoryDock`'s theme
+// picker UI uses).
 //
 // `favoriteTools` (idea #17, follow-up "integrate tools into user
 // settings") stores a signed-in user's starred `/tools` entries as a JSON

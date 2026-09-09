@@ -129,7 +129,13 @@ export function TreeItem({
           </button>
         ) : (
           <>
-            <Link href={href} className={rowClassName}>
+            {/* `prefetch={false}`: the tree renders dozens of links at once,
+                and the router fetched an RSC payload for every one of them
+                the moment the sidebar mounted — a burst of requests
+                competing with the video feed and its thumbnails on exactly
+                the page that felt slowest. Navigation still fetches on
+                click. */}
+            <Link href={href} prefetch={false} className={rowClassName}>
               {rowContents}
             </Link>
             {expandable && (

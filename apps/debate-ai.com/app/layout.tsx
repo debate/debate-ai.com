@@ -2,13 +2,7 @@ import type React from "react"
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { CategoryDockProvider, PersistentVideoPlayer } from "debate-videos"
-import { CategoryDock } from "@/components/layout/CategoryDock"
-import { AppSidebarShell } from "@/components/layout/AppSidebarShell"
-import { ReasonDocsProvider } from "@/components/reason-docs/ReasonDocsProvider"
-import { OneTap } from "@/components/layout/OneTap"
-import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
-import { Toaster } from "sonner"
+import { AppShell } from "@/components/layout/AppShell"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -60,6 +54,16 @@ export default function RootLayout({
             __html: `(function(){function apply(){try{var f=localStorage.getItem('fontFamily');var v=f&&f!=='system-default'?f:'';document.documentElement.style.fontFamily=v;if(document.body)document.body.style.fontFamily=v;}catch(e){}}apply();window.addEventListener('client-config-changed',apply);window.addEventListener('storage',apply);})();`,
           }}
         />
+        {/* Marks a document that the app shell is running inside a frame,
+            before first paint. The shell's dock, sidebar and player stay in
+            the top document; without this the framed page would render its
+            own copies for the frame or two it takes React to mount and find
+            out it is embedded. `AppShell` unmounts them right after. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(window.self!==window.top)document.documentElement.setAttribute('data-embedded','1');}catch(e){document.documentElement.setAttribute('data-embedded','1');}})();`,
+          }}
+        />
         {/* The qwksearch embed's API base URL is set by
             components/qwksearch/base-url.ts, imported first from the /doc
             chunk itself — a head script here couldn't cover client-side
@@ -68,23 +72,7 @@ export default function RootLayout({
       </head>
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          <CategoryDockProvider>
-            {/* The REASON docs tree/tabs live in the sidebar (rendered by
-                AppSidebarShell) while the editor that opens them is a page
-                below it, so their shared state has to be owned above both. */}
-            <ReasonDocsProvider>
-              <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
-                <CategoryDock />
-                <AppSidebarShell>{children}</AppSidebarShell>
-              </div>
-            </ReasonDocsProvider>
-            <PersistentVideoPlayer />
-            <OneTap />
-            <ServiceWorkerRegistrar />
-            {/* Sign-in and sign-out report through toasts; without a mounted
-                toaster every one of those messages was dropped silently. */}
-            <Toaster position="top-center" richColors closeButton />
-          </CategoryDockProvider>
+          <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>

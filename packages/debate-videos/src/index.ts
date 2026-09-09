@@ -38,4 +38,5 @@ export {
   useCategoryDockState,
 } from "./context/category-dock-context";
 export { useVideoPlayerStore, sendYouTubeCommand, videoPlayerIframeRef } from "./state/videoPlayerStore";
+export { VideoPlayerFrameBridge } from "./state/videoPlayerFrameBridge";
 export * from "./types/videos";

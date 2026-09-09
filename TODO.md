@@ -7,71 +7,196 @@ _No task currently in progress._
 
 ### Completed
 
-- **🧩 `PanelShell`/`PanelSection` adoption for `debate-speech-writer`'s
-  `JudgeProfilesPanel`/`CoachMaterialsPanel` and `debate-videos`'s
-  `StandingsPanel`.** Another repeat of the standing autonomous-routine
-  prompt ("integrate all the tools into the UI... create user settings and
-  link user db SQL with the ability to save flows/docs/debates in SQL and
-  link to users... add tools into where needed in the UI... develop better
-  tool UI") — as with every recent repeat, that prompt's own asks are
-  already fully built and reconfirmed again this run: `user_settings`/
-  `documents`/`saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables
-  all linked to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`),
-  and every tool already reachable from the Tools page, CardMirror's own
-  `MenuBar`/command palette (`Mod-Shift-Space`), and the feature catalog.
-  So this slice picked the one concretely-scoped item left open under idea
-  #17's follow-up (4) — now that both `debate-speech-writer` and
-  `debate-videos` depend on `debate-research-evidence` (closed by #708's
-  `EmptyState` cross-package-dependency fix), the last three panels the
-  repo-wide `PanelShell`/`PanelSection` survey had left blocked could
-  finally adopt the shared primitives, the same way every other package's
-  panels already had.
+- **🧹 Delete the dead `ThemeDropdown` component from `theme-dropdown.tsx`.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette
+  (`Mod-Shift-Space`), and the feature catalog. Open PR #709 already covers
+  the last concretely-scoped item under idea #17's follow-up (4)
+  (`JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
+  `PanelSection` adoption), so this slice instead picked up a different,
+  already-named gap: `docs/features/user-settings.md`'s Known gaps flagged
+  `theme-dropdown.tsx`'s standalone `ThemeDropdown` component (distinct from
+  the `useThemeState` hook the same file also exports) as dead code — a
+  repo-wide `import.*ThemeDropdown.*theme-dropdown` search confirmed it had
+  no importers; `CategoryDock` (the dock's actual theme-picker UI) only ever
+  imported `themeNames`/`themeColors`/`formatThemeName`/`useThemeState` from
+  that file, never the component itself.
 
-  `JudgeProfilesPanel.tsx`'s top-level `<h1>`/description header became
-  `PanelShell`; its "Log a judged round"/"Edit logged round" (dynamic
-  title), "Bulk import (CSV)", "Compare judges" (dynamic title with a
-  selected-count suffix, its conditional "Clear selection" button moved
-  into `PanelSection`'s `actions` slot), and "Logged rounds" `<h2>`
-  sub-sections became `PanelSection`. `CoachMaterialsPanel.tsx`'s top
-  header became `PanelShell` (its dynamic sync-status sentence kept as a
-  plain child paragraph rather than forced through the string-only
-  `description` prop, matching every prior slice's judgment call for the
-  same shape); its "Pending review" and "Ask the coach" (conditional
-  "Clear conversation" button moved into `actions`) sub-sections became
-  `PanelSection`. Its upload-form section and per-kind material-group
-  headings have no singular panel/section title to migrate (the latter are
-  per-item loop headings), so were left alone, matching the historical
-  `PanelRow`/`PanelShell` audits' judgment call for the same shape.
-  `StandingsPanel.tsx` mounts as a tab inside `RankingsLeaderboardPanel`
-  rather than a standalone page (see its own doc comment) and so has no
-  top-level header to wrap in `PanelShell`; its "Log a result", "Bulk
-  import (CSV)", and "Standings" (its team/result-count `<span>` moved
-  into `actions`, mirroring how `DrillSetsPanel`'s tier `Badge` moved into
-  `actions`) `<h2>` sub-sections became `PanelSection`. Its two
-  `<details>`/`<summary>` collapsible sections (qualification points table,
-  qualification cutoff) were left as-is — a different collapsible pattern
-  `PanelSection` has no equivalent for. Every section carrying a
-  description paragraph with embedded `<code>` markup (both packages' "Bulk
-  import (CSV)" sections) kept that paragraph as a plain child element
-  rather than the string-only `description` prop, matching precedent.
+  `ThemeDropdown` duplicated most of `useThemeState`'s state machine (color
+  theme, mount-guard, hover-preview, light/dark toggle) in an unreachable
+  second copy that also lacked the account-sync (`fetchUserSettings`/
+  `saveUserSettings`) wiring `useThemeState` already has — so it wasn't just
+  unused, it was a second, out-of-date implementation of the same feature
+  that any future editor touching "the theme dropdown" could easily edit by
+  mistake instead of the one CategoryDock renders. Deleted the function and
+  its now-solely-used imports (`Moon`/`Sun` from `lucide-react`, `Image`,
+  `Button`, the `DropdownMenu*` family, `IconThemePantone`) — `themeNames`,
+  `themeColors`, `formatThemeName`, and `useThemeState` are untouched and
+  still used by `CategoryDock` and (for `themeColors`) `qwksearch`'s
+  Settings panel. Updated the file's header doc comment,
+  `lib/database/schema.ts`'s stale `ThemeDropdown`-picker-UI comment (now
+  points at `CategoryDock`), and `docs/features/user-settings.md`'s Known
+  gaps entry (marked fixed) and Route description (no longer names
+  `ThemeDropdown` as if it were the dock's rendered component) to match.
 
-  This closes the last still-open piece of the "`PanelShell`/`PanelSection`
-  adoption is still unaudited" half of idea #17's follow-up (4) — see this
-  file's Follow-ups section and `docs/features/user-settings.md`'s Known
-  gaps for the full history of what's been swept.
+  No new tests added — pure dead-code deletion with no behavior change to
+  any reachable code path; `useThemeState` and its callers are unmodified.
+  Ran the full verification gate: `bun install`, `bun run test` (341 files,
+  7085 tests passing), `bunx turbo run typecheck` (16/17 packages green; the
+  sole failure, `debate-ai-web`, is the pre-existing `write-language`/
+  `@ai-sdk/provider` version-conflict issue tracked elsewhere in this file,
+  reconfirmed unrelated by reproducing it unchanged on this branch's HEAD
+  before this slice's edits), and `bun run build:web` (production build,
+  succeeded). No `lint`/`format:check` script exists anywhere in this repo,
+  so that step was skipped as not applicable.
 
-  No new tests added — markup-only change; neither package has any
-  component-rendering test that touches these three panels' markup (only
-  `debate-speech-writer/test/live-update.test.ts`'s pure
-  `isCoachMaterialsPanelLiveUpdateStorageEvent`/-adjacent helpers, which
-  don't render the panel), matching every prior `PanelShell`/`PanelSection`
-  migration slice in this repo. Ran the full verification gate: `bun
-  install`, `bun run test` (341 files, 7084 tests passing),
-  `bun run typecheck` (17/17 packages green), `debate-speech-writer`'s own
-  `bunx vitest run` (20 test files, 401 tests) and `bunx tsc --noEmit`,
-  `debate-videos`'s own `bunx vitest run` (12 test files, 139 tests) and
-  `bunx tsc --noEmit`, and `bun run build:web` (production build,
-  succeeded).
+- **🩹 `moveDocument` now writes through the CardMirror save queue.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent repeat,
+  that prompt's own asks are already fully built and reconfirmed again this
+  run: `user_settings`/`documents`/`saved_flows`/`saved_rounds` and 25+ other
+  `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette
+  (`Mod-Shift-Space`), and the feature catalog; `bun install` + `bunx turbo run
+  typecheck` (17/17 green) also reconfirmed the `write-language`/
+  `@ai-sdk/provider` version-conflict flakiness a much earlier entry in this
+  tracker flagged as a follow-up isn't currently reproducing, so that wasn't a
+  safe target this run either. So this slice picked up the one small,
+  concretely-scoped, still-open item `docs/features/cardmirror-embed-persistence.md`'s
+  Known gaps named: `moveDocument` (re-parenting a document by dragging it to
+  a new folder in the REASON docs sidebar tree) wrote through its own bare
+  `fetch(PUT /api/doc/documents/:id)` instead of
+  `lib/reason-docs/save-queue.ts`'s `DocumentSaveQueue` — the same queue every
+  title/content edit already goes through for per-document debounce,
+  retry-with-backoff, and a `pagehide`/tab-hide flush. A re-parent that hit a
+  network blip or a 5xx just silently failed instead of retrying.
+
+  `DocumentPatch` now carries an optional `parentId?: number | null` field
+  (the API route already accepted it in the PUT body, so no server change was
+  needed) and `ReasonDocsProvider.tsx`'s `moveDocument` calls
+  `saveQueue.queue(id, { parentId })` instead of its own fetch. No change to
+  the queue's merge/retry/flush semantics — `parentId` is just a third patch
+  field alongside `title`/`content`, and the existing per-field-acknowledgment
+  logic in `write()` already handles a `null` value like any other value. The
+  one caller (`ReasonDocsSidebarPanels.tsx`'s drag-to-move handler) already
+  calls `moveDocument` fire-and-forget (`void moveDocument(...)`), so sending
+  through the queue's background debounce instead of awaiting the PUT inline
+  isn't a behavior change from the caller's side.
+
+  See `docs/features/cardmirror-embed-persistence.md`'s updated Known gaps
+  (the `moveDocument` bullet is now a description of the fix, not a gap).
+  Vitest-covered: `apps/debate-ai.com/lib/reason-docs/__tests__/save-queue.test.ts`'s
+  new "retries a re-parent (parentId patch) the same way as a title or body
+  edit" case (a failed `parentId: 5` write retries with the newer `parentId:
+  null`, mirroring the file's existing title/content retry test).
+
+  Ran the full verification gate: the new test file (10 passing, up from 9),
+  `bun run test` (341 files, 7085 tests passing), `bunx turbo run typecheck`
+  (17/17 packages green), and `bun run build:web` (production build
+  succeeded). No `lint`/`format:check` script exists anywhere in this repo, so
+  that step was skipped as not applicable. PR: #713.
+
+- **🧩 `SummaryText` adoption for `FlowSummariesPanel`/`CoachMaterialsPanel`.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the
+  feature catalog. Open PR #709 already covers the last concretely-scoped item left open
+  under idea #17's follow-up (4) (`JudgeProfilesPanel`/`CoachMaterialsPanel`/
+  `StandingsPanel` `PanelShell`/`PanelSection` adoption), and `debate-team-collaboration`'s
+  `SharedCardsPanel` toggle-button chips were already found not to be a clean fit for
+  `Pill`. So this slice picked a fresh angle on the same standing audit: `debate-ui`'s
+  `panel-shell.tsx` (and its `debate-round`/`debate-research-evidence` copies) exports a
+  `SummaryText` primitive — a labeled `<pre>` block styled for a slice's
+  `build*SummaryText`-shaped plain-text output — that had never been imported anywhere in
+  the app (`import.*SummaryText` repo-wide search: zero hits outside the three
+  `panel-shell.tsx` files and their own `panel-shell.test.tsx` cases).
+
+  Two panels hand-rolled the exact shape `SummaryText` was built for:
+  `debate-practice-drills`' `FlowSummariesPanel` (`buildFlowSummaryTextFromRows(rows)`,
+  literally the "build\*SummaryText output" case named in `SummaryTextProps`'s own doc
+  comment) and `debate-speech-writer`'s `CoachMaterialsPanel` (the grounded-prompt preview
+  and the coach's answer, the latter already paired with a `<Label>Coach's answer</Label>`
+  heading that maps directly onto `SummaryText`'s own `label` prop). All three call sites
+  used the identical hand-rolled `whitespace-pre-wrap rounded-md border border-border
+  bg-muted/30 px-3 py-2 text-sm text-foreground` `<pre>`/`<p>` styling; both files already
+  imported `EmptyState` from a `panel-shell` module that also exports `SummaryText`, so no
+  new cross-package dependency was needed. Swapped all three for `<SummaryText text={...}
+  />` (`CoachMaterialsPanel`'s answer block also passing `label="Coach's answer"`, replacing
+  its standalone `<Label>`).
+
+  This is a small, deliberate visual change, called out up front like every other
+  primitive-adoption slice in this audit: `SummaryText` has no `className`/tone override
+  (unlike `Pill`), so its `text-xs text-muted-foreground`/`bg-muted/50`/`rounded-lg`/
+  `overflow-x-auto` styling replaces the panels' previous `text-sm text-foreground`/
+  `bg-muted/30`/`rounded-md` look — smaller, more muted text, matching every other panel
+  in this repo that already renders a slice's summary output through the shared primitive
+  instead of duplicating its markup.
+
+  No new tests added — markup-only change; neither panel has a component-render test in
+  this repo (matching every prior markup-only primitive-adoption slice), and `SummaryText`
+  itself already has render-test coverage in `packages/debate-ui/test/panel-shell.test.tsx`.
+  Ran the full verification gate: `bun install`, `debate-practice-drills`'s own `bunx
+  vitest run` (46 files, 698 tests) and `bunx tsc --noEmit`, `debate-speech-writer`'s own
+  `bunx vitest run` (20 files, 401 tests) and `bunx tsc --noEmit`, `bun run test` (341
+  files, 7084 tests passing), `bun run typecheck` (16/17 packages green; the sole failure,
+  `debate-ai-web`, is the pre-existing `write-language`/`@ai-sdk/provider` version-conflict
+  issue tracked elsewhere in this file and confirmed unrelated by reproducing it unchanged
+  on this branch's HEAD before this slice's edits), and `bun run build:web` (production
+  build, succeeded).
+
+- **🧩 `Pill` adoption for `debate-videos`'s `LeaderboardDataRow` tournament chips.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the
+  feature catalog. Two open PRs (#709 `PanelShell`/`PanelSection` for the last three
+  `debate-speech-writer`/`debate-videos` panels, #695 D1-migration/account-sync error
+  handling) already cover the other concretely-scoped items left open under idea #17's
+  follow-up (4), so this slice closed the one remaining named-but-unclaimed item: the
+  `Pill` adoption spot-check's `debate-videos` half (see this file's Follow-ups section).
+
+  `LeaderboardDataRow`'s mobile tournament chips (`entry.details.map(...)`) hand-rolled
+  `<span className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground
+  rounded-full px-2 py-0.5">` — the same shape the shared `Pill` primitive
+  (`debate-research-evidence/src/ui/panels/panel-shell`) already covers, and now
+  reachable from `debate-videos` since #708 added the `debate-research-evidence`
+  dependency edge for the `EmptyState` migration (the earlier `Pill` spot-check had found
+  this exact chip but left it open only because that edge didn't exist yet at the time).
+  Swapped the `<span>` for `<Pill className="gap-1 font-normal">`, keeping the icon +
+  `"{tournament} · {placement}"` children unchanged; `font-normal` overrides `Pill`'s
+  default `font-medium` (via `cn`'s `tailwind-merge`) to match the original chip's
+  unweighted text, since nothing else about the original styling called for emphasis.
+  `Pill`'s own `neutral`-tone background/border reads close enough to the original
+  `bg-muted`/no-border look to not need a `tone` override either.
+
+  No new tests added — markup-only change; no component-rendering test in
+  `debate-videos` touches this panel's markup, matching every prior `Pill`/`EmptyState`/
+  `PanelShell` migration slice in this repo. Ran the full verification gate: `bun install`,
+  `debate-videos`'s own `bunx vitest run` (12 files, 139 tests) and `bunx tsc --noEmit`,
+  `bun run test` (341 files, 7084 tests passing), `bun run typecheck` (17/17 packages
+  green), and `bun run build:web` (production build, succeeded).
+
+  This closes the last item named in the "`Pill` adoption" follow-up under idea #17's
+  follow-up (4) — see this file's Follow-ups section for the full history.
 
 - **🧩 Close the `debate-speech-writer`/`debate-videos` `EmptyState` cross-package-dependency
   gap.** Another repeat of the standing autonomous-routine prompt ("integrate all the tools
@@ -1752,14 +1877,24 @@ _No task currently in progress._
   `debate-videos` package this slice just unblocked but hasn't yet migrated.
   So `Pill` adoption stays open, folded into the same not-yet-picked-up
   follow-up above rather than tracked separately.
-  **Update:** the `PanelShell`/`PanelSection` half of this follow-up is now
-  closed — see the Tracker Status entry above. `JudgeProfilesPanel`/
-  `CoachMaterialsPanel` (`debate-speech-writer`) and `StandingsPanel`
-  (`debate-videos`) all now render `PanelShell`/`PanelSection` the same way
-  every other package's panels do; `StandingsPanel`'s two `<details>`
-  sections were deliberately left alone (a different collapsible pattern
-  with no `PanelSection` equivalent). `Pill` adoption for
-  `debate-videos`'s `LeaderboardDataRow` tournament chips — spot-checked
-  above but not migrated — remains open as a small, separately-scoped
-  follow-up; so does the broader "bring every weaker panel UI up to every
-  shared `debate-ui` primitive convention" half noted above.
+  **Update:** the `debate-videos` half is now closed — see the Tracker Status
+  entry above. `LeaderboardDataRow`'s tournament chips now render `Pill`.
+  `debate-team-collaboration`'s `SharedCardsPanel` toggle-button chips remain
+  open — still not a clean fit, since `Pill`'s display-only `<span>` has no
+  selected/hover-state vocabulary for an interactive toggle. The
+  `JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
+  `PanelSection` migration named just above is covered by open PR #709.
+  **Update:** this run swept the two remaining `debate-ui` primitives from the
+  same `panel-shell.tsx` family that hadn't yet been audited by name —
+  `SummaryText`/`LabeledField` — and found `SummaryText` (a labeled `<pre>`
+  block for `build*SummaryText`-shaped output) was exported by all three
+  `panel-shell.tsx` copies but imported nowhere in the app; `LabeledField`'s
+  shape (`text-muted-foreground font-medium` label span above a form control)
+  had no hand-rolled duplicates repo-wide, so it stays effectively adopted
+  everywhere already and needs no follow-up. `FlowSummariesPanel`'s and
+  `CoachMaterialsPanel`'s three matching hand-rolled `<pre>`/`<p>` blocks now
+  render `SummaryText` — see the Tracker Status entry above. The broader
+  "bring every weaker panel UI up to every shared `debate-ui` primitive
+  convention" half of follow-up (4) remains open more generally — this pass
+  covered one more specific pattern, not an exhaustive primitive-by-primitive
+  sweep.
