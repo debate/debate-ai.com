@@ -7,47 +7,630 @@ _No task currently in progress._
 
 ### Completed
 
-- **🗑️ Removed the dead `debate-videos` "rankings" leaderboard tree.** Another
+- **🧹 Delete the dead `ThemeDropdown` component from `theme-dropdown.tsx`.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette
+  (`Mod-Shift-Space`), and the feature catalog. Open PR #709 already covers
+  the last concretely-scoped item under idea #17's follow-up (4)
+  (`JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
+  `PanelSection` adoption), so this slice instead picked up a different,
+  already-named gap: `docs/features/user-settings.md`'s Known gaps flagged
+  `theme-dropdown.tsx`'s standalone `ThemeDropdown` component (distinct from
+  the `useThemeState` hook the same file also exports) as dead code — a
+  repo-wide `import.*ThemeDropdown.*theme-dropdown` search confirmed it had
+  no importers; `CategoryDock` (the dock's actual theme-picker UI) only ever
+  imported `themeNames`/`themeColors`/`formatThemeName`/`useThemeState` from
+  that file, never the component itself.
+
+  `ThemeDropdown` duplicated most of `useThemeState`'s state machine (color
+  theme, mount-guard, hover-preview, light/dark toggle) in an unreachable
+  second copy that also lacked the account-sync (`fetchUserSettings`/
+  `saveUserSettings`) wiring `useThemeState` already has — so it wasn't just
+  unused, it was a second, out-of-date implementation of the same feature
+  that any future editor touching "the theme dropdown" could easily edit by
+  mistake instead of the one CategoryDock renders. Deleted the function and
+  its now-solely-used imports (`Moon`/`Sun` from `lucide-react`, `Image`,
+  `Button`, the `DropdownMenu*` family, `IconThemePantone`) — `themeNames`,
+  `themeColors`, `formatThemeName`, and `useThemeState` are untouched and
+  still used by `CategoryDock` and (for `themeColors`) `qwksearch`'s
+  Settings panel. Updated the file's header doc comment,
+  `lib/database/schema.ts`'s stale `ThemeDropdown`-picker-UI comment (now
+  points at `CategoryDock`), and `docs/features/user-settings.md`'s Known
+  gaps entry (marked fixed) and Route description (no longer names
+  `ThemeDropdown` as if it were the dock's rendered component) to match.
+
+  No new tests added — pure dead-code deletion with no behavior change to
+  any reachable code path; `useThemeState` and its callers are unmodified.
+  Ran the full verification gate: `bun install`, `bun run test` (341 files,
+  7085 tests passing), `bunx turbo run typecheck` (16/17 packages green; the
+  sole failure, `debate-ai-web`, is the pre-existing `write-language`/
+  `@ai-sdk/provider` version-conflict issue tracked elsewhere in this file,
+  reconfirmed unrelated by reproducing it unchanged on this branch's HEAD
+  before this slice's edits), and `bun run build:web` (production build,
+  succeeded). No `lint`/`format:check` script exists anywhere in this repo,
+  so that step was skipped as not applicable.
+
+- **🩹 `moveDocument` now writes through the CardMirror save queue.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the tools
-  into the UI... create user settings and link user db SQL with the ability
-  to save flows/docs/debates in SQL and link to users... add tools into
-  where needed in the UI... develop better tool UI") — as with every recent
-  repeat, that prompt's own asks are already fully built and reconfirmed
-  again this run (`user_settings`/`documents`/`saved_flows`/`saved_rounds`
-  and 25+ other `saved_*` D1 tables all linked to `user.id`, every tool
-  already reachable from the Tools page, CardMirror's `MenuBar`/command
-  palette, and the feature catalog), and the repo-wide per-panel cross-tab
-  live-update sweep (this run's fresh grep of every `*Panel.tsx` for a
-  `storage`-event listener, cross-checked against the panels' backing hooks)
-  turned up nothing new — every remaining hit resolved to a panel whose
-  cross-tab sync already lives in its data hook (`useDrillSets`,
-  `useWordCountRounds`, `useJudgeDecisions`, etc.), not the panel file
-  itself. So this slice picked up the Follow-ups list's other open item:
-  confirming which of `packages/debate-videos/src/panels/leaderboard/` and
-  `packages/debate-videos/src/panels/rankings/` (both added in the same
-  commit, #607) was dead code.
+  into the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent repeat,
+  that prompt's own asks are already fully built and reconfirmed again this
+  run: `user_settings`/`documents`/`saved_flows`/`saved_rounds` and 25+ other
+  `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette
+  (`Mod-Shift-Space`), and the feature catalog; `bun install` + `bunx turbo run
+  typecheck` (17/17 green) also reconfirmed the `write-language`/
+  `@ai-sdk/provider` version-conflict flakiness a much earlier entry in this
+  tracker flagged as a follow-up isn't currently reproducing, so that wasn't a
+  safe target this run either. So this slice picked up the one small,
+  concretely-scoped, still-open item `docs/features/cardmirror-embed-persistence.md`'s
+  Known gaps named: `moveDocument` (re-parenting a document by dragging it to
+  a new folder in the REASON docs sidebar tree) wrote through its own bare
+  `fetch(PUT /api/doc/documents/:id)` instead of
+  `lib/reason-docs/save-queue.ts`'s `DocumentSaveQueue` — the same queue every
+  title/content edit already goes through for per-document debounce,
+  retry-with-backoff, and a `pagehide`/tab-hide flush. A re-parent that hit a
+  network blip or a 5xx just silently failed instead of retrying.
 
-  Confirmed `rankings/`'s `DebateRankingsPanel` and its
-  `LeaderboardChampionBanner`/`LeaderboardDataRow`/`LeaderboardFilterBar`/
-  `LeaderboardTable`/`LeaderboardTableHeader`/`leaderboardTypes`/
-  `leaderboardUtils` siblings had zero importers anywhere in the repo (only
-  the file's own module-doc comment and export referenced its name) and no
-  test coverage — `debate-videos/index.ts` exports `LeaderboardPanel` from
-  `leaderboard/RankingsLeaderboardPanel` only, and the one shared-name test
-  file (`test/leaderboard-utils.test.ts`) imports from
-  `../src/panels/leaderboard/leaderboardUtils`, never `rankings/`. Every
-  file the two trees have in common is byte-identical except
-  `LeaderboardFilterBar.tsx` (`rankings/`'s copy has older, pre-polish
-  Tailwind classes), confirming `rankings/` was simply never wired up after
-  `leaderboard/` superseded it. Deleted the entire
-  `packages/debate-videos/src/panels/rankings/` directory.
+  `DocumentPatch` now carries an optional `parentId?: number | null` field
+  (the API route already accepted it in the PUT body, so no server change was
+  needed) and `ReasonDocsProvider.tsx`'s `moveDocument` calls
+  `saveQueue.queue(id, { parentId })` instead of its own fetch. No change to
+  the queue's merge/retry/flush semantics — `parentId` is just a third patch
+  field alongside `title`/`content`, and the existing per-field-acknowledgment
+  logic in `write()` already handles a `null` value like any other value. The
+  one caller (`ReasonDocsSidebarPanels.tsx`'s drag-to-move handler) already
+  calls `moveDocument` fire-and-forget (`void moveDocument(...)`), so sending
+  through the queue's background debounce instead of awaiting the PUT inline
+  isn't a behavior change from the caller's side.
 
-  Ran the full verification gate: `bunx turbo typecheck --filter=debate-videos`
-  (2/2 tasks green), `npx vitest run --config apps/debate-ai.com/vitest.config.ts`
-  (331 test files, 6989 tests passing), and `bun run build:web` (production
-  build, including the service-worker asset-list generation step, completes
-  successfully). No `lint`/`format:check` script exists anywhere in this
-  repo, so that step was skipped as not applicable.
+  See `docs/features/cardmirror-embed-persistence.md`'s updated Known gaps
+  (the `moveDocument` bullet is now a description of the fix, not a gap).
+  Vitest-covered: `apps/debate-ai.com/lib/reason-docs/__tests__/save-queue.test.ts`'s
+  new "retries a re-parent (parentId patch) the same way as a title or body
+  edit" case (a failed `parentId: 5` write retries with the newer `parentId:
+  null`, mirroring the file's existing title/content retry test).
+
+  Ran the full verification gate: the new test file (10 passing, up from 9),
+  `bun run test` (341 files, 7085 tests passing), `bunx turbo run typecheck`
+  (17/17 packages green), and `bun run build:web` (production build
+  succeeded). No `lint`/`format:check` script exists anywhere in this repo, so
+  that step was skipped as not applicable. PR: #713.
+
+- **🧩 `SummaryText` adoption for `FlowSummariesPanel`/`CoachMaterialsPanel`.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the
+  feature catalog. Open PR #709 already covers the last concretely-scoped item left open
+  under idea #17's follow-up (4) (`JudgeProfilesPanel`/`CoachMaterialsPanel`/
+  `StandingsPanel` `PanelShell`/`PanelSection` adoption), and `debate-team-collaboration`'s
+  `SharedCardsPanel` toggle-button chips were already found not to be a clean fit for
+  `Pill`. So this slice picked a fresh angle on the same standing audit: `debate-ui`'s
+  `panel-shell.tsx` (and its `debate-round`/`debate-research-evidence` copies) exports a
+  `SummaryText` primitive — a labeled `<pre>` block styled for a slice's
+  `build*SummaryText`-shaped plain-text output — that had never been imported anywhere in
+  the app (`import.*SummaryText` repo-wide search: zero hits outside the three
+  `panel-shell.tsx` files and their own `panel-shell.test.tsx` cases).
+
+  Two panels hand-rolled the exact shape `SummaryText` was built for:
+  `debate-practice-drills`' `FlowSummariesPanel` (`buildFlowSummaryTextFromRows(rows)`,
+  literally the "build\*SummaryText output" case named in `SummaryTextProps`'s own doc
+  comment) and `debate-speech-writer`'s `CoachMaterialsPanel` (the grounded-prompt preview
+  and the coach's answer, the latter already paired with a `<Label>Coach's answer</Label>`
+  heading that maps directly onto `SummaryText`'s own `label` prop). All three call sites
+  used the identical hand-rolled `whitespace-pre-wrap rounded-md border border-border
+  bg-muted/30 px-3 py-2 text-sm text-foreground` `<pre>`/`<p>` styling; both files already
+  imported `EmptyState` from a `panel-shell` module that also exports `SummaryText`, so no
+  new cross-package dependency was needed. Swapped all three for `<SummaryText text={...}
+  />` (`CoachMaterialsPanel`'s answer block also passing `label="Coach's answer"`, replacing
+  its standalone `<Label>`).
+
+  This is a small, deliberate visual change, called out up front like every other
+  primitive-adoption slice in this audit: `SummaryText` has no `className`/tone override
+  (unlike `Pill`), so its `text-xs text-muted-foreground`/`bg-muted/50`/`rounded-lg`/
+  `overflow-x-auto` styling replaces the panels' previous `text-sm text-foreground`/
+  `bg-muted/30`/`rounded-md` look — smaller, more muted text, matching every other panel
+  in this repo that already renders a slice's summary output through the shared primitive
+  instead of duplicating its markup.
+
+  No new tests added — markup-only change; neither panel has a component-render test in
+  this repo (matching every prior markup-only primitive-adoption slice), and `SummaryText`
+  itself already has render-test coverage in `packages/debate-ui/test/panel-shell.test.tsx`.
+  Ran the full verification gate: `bun install`, `debate-practice-drills`'s own `bunx
+  vitest run` (46 files, 698 tests) and `bunx tsc --noEmit`, `debate-speech-writer`'s own
+  `bunx vitest run` (20 files, 401 tests) and `bunx tsc --noEmit`, `bun run test` (341
+  files, 7084 tests passing), `bun run typecheck` (16/17 packages green; the sole failure,
+  `debate-ai-web`, is the pre-existing `write-language`/`@ai-sdk/provider` version-conflict
+  issue tracked elsewhere in this file and confirmed unrelated by reproducing it unchanged
+  on this branch's HEAD before this slice's edits), and `bun run build:web` (production
+  build, succeeded).
+
+- **🧩 `Pill` adoption for `debate-videos`'s `LeaderboardDataRow` tournament chips.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the
+  feature catalog. Two open PRs (#709 `PanelShell`/`PanelSection` for the last three
+  `debate-speech-writer`/`debate-videos` panels, #695 D1-migration/account-sync error
+  handling) already cover the other concretely-scoped items left open under idea #17's
+  follow-up (4), so this slice closed the one remaining named-but-unclaimed item: the
+  `Pill` adoption spot-check's `debate-videos` half (see this file's Follow-ups section).
+
+  `LeaderboardDataRow`'s mobile tournament chips (`entry.details.map(...)`) hand-rolled
+  `<span className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground
+  rounded-full px-2 py-0.5">` — the same shape the shared `Pill` primitive
+  (`debate-research-evidence/src/ui/panels/panel-shell`) already covers, and now
+  reachable from `debate-videos` since #708 added the `debate-research-evidence`
+  dependency edge for the `EmptyState` migration (the earlier `Pill` spot-check had found
+  this exact chip but left it open only because that edge didn't exist yet at the time).
+  Swapped the `<span>` for `<Pill className="gap-1 font-normal">`, keeping the icon +
+  `"{tournament} · {placement}"` children unchanged; `font-normal` overrides `Pill`'s
+  default `font-medium` (via `cn`'s `tailwind-merge`) to match the original chip's
+  unweighted text, since nothing else about the original styling called for emphasis.
+  `Pill`'s own `neutral`-tone background/border reads close enough to the original
+  `bg-muted`/no-border look to not need a `tone` override either.
+
+  No new tests added — markup-only change; no component-rendering test in
+  `debate-videos` touches this panel's markup, matching every prior `Pill`/`EmptyState`/
+  `PanelShell` migration slice in this repo. Ran the full verification gate: `bun install`,
+  `debate-videos`'s own `bunx vitest run` (12 files, 139 tests) and `bunx tsc --noEmit`,
+  `bun run test` (341 files, 7084 tests passing), `bun run typecheck` (17/17 packages
+  green), and `bun run build:web` (production build, succeeded).
+
+  This closes the last item named in the "`Pill` adoption" follow-up under idea #17's
+  follow-up (4) — see this file's Follow-ups section for the full history.
+
+- **🧩 Close the `debate-speech-writer`/`debate-videos` `EmptyState` cross-package-dependency
+  gap.** Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the feature
+  catalog. So this slice picked the one concretely-scoped item left open under idea #17's
+  follow-up (4): the repo-wide duplicated-`EmptyState` sweep (see this file's Follow-ups
+  section) had left `debate-speech-writer`'s `JudgeProfilesPanel`/`CoachMaterialsPanel` and
+  `debate-videos`'s `StandingsPanel` unmigrated because neither package depended on
+  `debate-round` or `debate-research-evidence` — the two packages whose `panel-shell.tsx`
+  exports the shared `EmptyState` primitive — and adding a new cross-package dependency edge
+  was out of scope for a markup-only pass.
+
+  Checked for a cycle before adding the edge: `debate-round` already depends on both
+  `debate-speech-writer` and `debate-videos`, so pointing either of *those* back at
+  `debate-round` would be circular — but `debate-research-evidence`'s own dependency tree
+  (`debate-card-parser` plus a handful of UI/parsing libraries) has no edge back to either
+  package, so `debate-research-evidence: "workspace:*"` was added to both
+  `debate-speech-writer/package.json` and `debate-videos/package.json` instead (`bun install`
+  to refresh `bun.lock`), matching how `debate-contributor-progress` and other already-migrated
+  packages resolve the same import
+  (`import { EmptyState } from "debate-research-evidence/src/ui/panels/panel-shell"`).
+
+  All three panels' hand-rolled `<div className="p-6 text-center text-sm
+  text-muted-foreground">…</div>` (or, for `StandingsPanel`, an already-near-identical
+  hand-copied `rounded-lg border border-dashed border-border p-6 text-center text-sm
+  text-muted-foreground` `<p>`) now render `<EmptyState>`, each message split on its first
+  "…yet." sentence into `title`/`message` the same way every prior `EmptyState` migration
+  slice in this repo did: `JudgeProfilesPanel`'s "No judge profiles yet." / "Log a judged round
+  above to build one.", `StandingsPanel`'s "No tournament results logged yet." / "Log one
+  above, or bulk-import a CSV.", and `CoachMaterialsPanel`'s "No coach materials uploaded yet."
+  / "Add one above to see it here." — its second, dynamic no-search-match message ("No
+  materials match this search/tag filter.") has no "…yet." to split on, so it's passed as
+  `title` alone, matching `FeaturesPanel`'s empty-search-state precedent.
+
+  This closes the last two packages named in the "duplicated empty states" half of idea #17's
+  follow-up (4) — see this file's Follow-ups section and `docs/features/user-settings.md`'s
+  Known gaps for the full history of what's been swept.
+
+  No new tests added — markup-only change; the one existing test that touches this string
+  (`debate-speech-writer/test/team-coach-materials.test.ts`'s
+  `buildCoachMaterialLibrarySummaryText` case) exercises a separate pure-logic summary builder,
+  not this panel's markup, and still passes unchanged. Ran the full verification gate: `bun
+  install` (refreshed `bun.lock` for the two new workspace edges), `bun run test` (341 files,
+  7084 tests passing), `bun run typecheck` (17/17 packages green), `debate-speech-writer`'s own
+  `bunx vitest run` (20 test files, 401 tests) and `bunx tsc --noEmit`, `debate-videos`'s own
+  `bunx vitest run` (12 test files, 139 tests) and `bunx tsc --noEmit`, and `bun run build:web`
+  (production build, succeeded).
+
+- **🧩 `PanelShell`/`PanelSection` adoption across `debate-practice-drills`
+  panels.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked
+  to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), and every tool
+  already reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette (`Mod-Shift-Space`), and the feature catalog. So this slice closed
+  idea #17's still-open follow-up (4) — the "`PanelShell`/`PanelSection`
+  adoption is still unaudited" half named in
+  `docs/features/user-settings.md`'s Known gaps — picking
+  `debate-practice-drills` (npm package name `debate-practice-rounds`), the
+  last of the packages that half's original repo-wide survey left open (the
+  open PRs at the start of this run — #695 D1-migration/account-sync error
+  handling, #694 video search-suggestion chips, #693
+  `debate-team-collaboration`'s `PanelShell` pass — don't touch this
+  package).
+
+  `debate-practice-drills` already depends on `debate-round` and every one
+  of its 12 panels already imported `EmptyState` (several also `MeterBar`/
+  `PanelRow`) from its `./ui/panels/panel-shell` module, so no new
+  cross-package dependency was needed. All 12 panels hand-rolled the same
+  top-level `<h1 className="mb-1 text-xl font-semibold text-foreground">`
+  header and were migrated onto `PanelShell`: `AiVersusRoundPanel`,
+  `ArgumentTreePanel`, `CoachingSessionsPanel`, `DrillSetsPanel`,
+  `FlowAnnotationsPanel`, `FlowSummariesPanel`, `JudgeDecisionPanel`,
+  `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
+  `PracticeRoundSimulatorPanel`, `VulnerabilityChartsPanel`, and
+  `WordCountRoundsPanel`. Each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section was also migrated onto `PanelSection`:
+  `AiVersusRoundPanel`'s "Compare transcripts", `DrillSetsPanel`'s "Practice
+  tier" (its tier `Badge` moved into `PanelSection`'s `actions` slot),
+  `FlowSummariesPanel`'s "Generate from raw speech text",
+  `JudgeDecisionPanel`'s "Multi-judge panel", `OpponentPersonaPickerPanel`'s
+  "My persona library" and "Shared by your team", `PracticeRoundSimulatorPanel`'s
+  "Compare your past attempts" (its "Download comparison" button moved into
+  `actions`), and `WordCountRoundsPanel`'s "Round history" (its "Delete all
+  synced history" button moved into `actions`) and "Word-count trend" (its
+  conditional speech-filter `Select` moved into `actions`). A header or
+  section carrying a second paragraph with embedded markup or dynamic
+  sign-in-status copy (`DrillSetsPanel`'s and `JudgeDecisionPanel`'s
+  sync-status line, `WordCountRoundsPanel`'s custom-word-limit/sync-status
+  lines, `OpponentPersonaPickerPanel`'s sync-status sentence) was kept as a
+  plain child element rather than forced through the string-only
+  `description` prop, matching every prior slice's judgment call.
+  `CoachingSessionsPanel`, `FlowAnnotationsPanel`, and
+  `JudgeParadigmPickerPanel` had no singular `<h2>` sub-section to migrate
+  (their only `<h2>`s are per-item loop headings, or they have none), so
+  only their top-level header moved; `ArgumentTreePanel`'s and
+  `VulnerabilityChartsPanel`'s sole `<h2>` (a per-item "Round {id}" loop
+  heading) was likewise left alone, matching the historical `PanelRow`
+  audit's judgment call for the same shape.
+
+  This closes the last package left open by the repo-wide `PanelShell`/
+  `PanelSection` survey — see `docs/features/user-settings.md`'s Known gaps
+  and this file's Follow-ups section for the full history of what's been
+  swept.
+
+  No new tests added — markup-only change, each panel's own pure-logic
+  functions stay covered by `debate-practice-drills`'s existing state/lib
+  test suite, matching every prior `PanelShell`/`PanelSection` migration
+  slice in this repo. Ran the full verification gate: `bun run test` (340
+  files, 7064 tests passing), `bun run typecheck` (16/17 packages green;
+  the sole failure, `debate-ai-web`, is a pre-existing `write-language`/
+  `@ai-sdk` provider version-mismatch type error reproduced identically on
+  master before this change, unrelated to this diff), `debate-practice-drills`'s
+  own `bunx vitest run` (46 test files, 698 tests passing), and `bun run
+  build:web` (production build, succeeded). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not applicable.
+
+- **🧩 `PanelShell`/`PanelSection` adoption across `debate-contributor-progress`
+  panels.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked
+  to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), and every tool
+  already reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette (`Mod-Shift-Space`), and the feature catalog. So this slice
+  continued idea #17's still-open follow-up (4) — the "`PanelShell`/
+  `PanelSection` adoption is still unaudited" half named in
+  `docs/features/user-settings.md`'s Known gaps — picking
+  `debate-contributor-progress` (npm package name `debate-community`) next,
+  the first of the two packages the prior `debate-round` slice left open (the
+  other, `debate-practice-drills`, remains unaudited). The open PRs at the
+  start of this run (#693 `debate-team-collaboration` `PanelShell` pass, #694
+  video search-suggestion chips, #695 D1-migration/account-sync error
+  handling) don't touch this package.
+
+  `debate-contributor-progress` already depends on `debate-research-evidence`
+  (the same `./ui/panels/panel-shell` module every one of its panels already
+  imported `EmptyState`/`StatGrid`/`StatTile`/`MeterBar` from), so no new
+  cross-package dependency was needed. Migrated all 9 panels that hand-rolled
+  a top-level `<h1>`-title-plus-description header onto `PanelShell`:
+  `ContributionLeaderboardPanel`, `CoachingProgramRosterAnalyticsPanel`,
+  `ContributorAwardsPanel`, `DailyBestCardPanel`, `ProgressUnlocksPanel`,
+  `QuestStreaksPanel`, `ContributorProfilePanel`, `CommunityResearchHubPanel`,
+  and `DailyQuestsPanel` (`NewsStreamPanel`, the package's 10th panel, has no
+  matching header shape, so it was left alone). Each panel's genuinely
+  singular, non-repeated `<h2>`-titled sub-section also moved onto
+  `PanelSection`: `CoachingProgramRosterAnalyticsPanel`'s "Recent challenge
+  results"/"Program calendar", `ContributorProfilePanel`'s "Badges"/"Top
+  Contributor Awards"/"Endorsements received"/"Endorsements given",
+  `CommunityResearchHubPanel`'s conditional "For You" strip, and
+  `DailyQuestsPanel`'s "Team competition" (kept its own `border-dashed`
+  styling via `PanelSection`'s `className` prop). A description containing
+  embedded markup (`ContributionLeaderboardPanel`'s tooltip-carrying
+  paragraph, `CommunityResearchHubPanel`'s second machine-generated summary
+  line) was kept as a plain child element rather than forced through
+  `PanelShell`'s string-only `description` prop. `ContributorAwardsPanel` and
+  `DailyBestCardPanel` had no `<h2>`-titled sub-section to migrate (their
+  labeled blocks use a plain `<div>` label, not a heading), so only their
+  top-level header moved. `ContributorProfilePanel`'s header carried a
+  "You"/tier `Badge` pair inline next to its per-contributor-id `<h1>` rather
+  than a plain description — moved into `PanelShell`'s `actions` slot
+  (right-aligned) instead of leaving that header unmigrated, the one
+  deliberate layout adjustment in this slice. Per-category/per-day loop
+  `<h2>`s in `CommunityResearchHubPanel`/`CoachingProgramRosterAnalyticsPanel`
+  were left alone as repeated row headings, not panel/section headers.
+
+  Only `debate-practice-drills` remains open for a future run to pick up
+  next — see `docs/features/user-settings.md`'s updated Known gaps section
+  for the full breakdown.
+
+  No new tests added — markup-only change, each panel's pure-logic functions
+  stay covered by the package's existing state/lib test suite, matching
+  every prior `PanelShell`/`PanelSection` migration slice in this repo. Ran
+  the full verification gate: `bun run test` (340 files, 7064 tests
+  passing), `bun run typecheck` (16/17 packages green; the sole failure,
+  `debate-ai-web`, is a pre-existing `write-language`/`@ai-sdk` provider
+  version-mismatch type error reproduced identically on master before this
+  change, unrelated to this diff), `debate-community`'s own `bunx vitest
+  run` (21 test files, 420 tests passing), and `bun run build:web`
+  (production build, succeeded). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
+- **🧩 `PanelShell`/`PanelSection` adoption across `debate-round` panels.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built and
+  reconfirmed again this run: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette,
+  and the feature catalog. So this slice continued idea #17's still-open
+  follow-up (4) — the "`PanelShell`/`PanelSection` adoption is still
+  unaudited" half named in `docs/features/user-settings.md`'s Known gaps —
+  picking `debate-round` next (of the three packages that bullet left
+  unaudited: `debate-round`, `debate-contributor-progress`,
+  `debate-practice-drills`; the open PRs at the start of this run were #695
+  (D1-migration/account-sync error handling), #694 (video search-suggestion
+  chips), and #693 (`debate-team-collaboration`'s `PanelShell` pass), none
+  of which touch this package).
+
+  `debate-round` already ships its own `ui/panels/panel-shell.tsx` (used by
+  `FlowEditLogPanel`/`SharedFlowSyncPanel`), so no new cross-package
+  dependency was needed. Migrated the three panels that hand-rolled a
+  top-level `<h1>`-title-plus-description header and already imported
+  `EmptyState` from that same module: `OpponentTeamProfilesPanel`,
+  `PreRoundBriefingsPanel`, and `StrategyPanel` — all onto `PanelShell`,
+  moving `OpponentTeamProfilesPanel`'s "Download report" button into its
+  `actions` prop. Each panel's genuinely singular, non-repeated `<h2>`-titled
+  sub-section was also migrated onto `PanelSection` where one existed:
+  `OpponentTeamProfilesPanel`'s "Bulk import (CSV)" (kept as a plain child
+  paragraph rather than the `description` prop, since it embeds `<code>`
+  tags) and "Logged rounds"; `PreRoundBriefingsPanel`'s "Pairing schedule"
+  and "Log a round" (both `className="rounded-lg border border-border p-4"`
+  on `PanelSection` to keep their existing bordered-card look, matching the
+  prior `debate-search-evidence` slice's convention for a section that used
+  to carry its own border). Left alone, matching that same slice's judgment
+  calls: `OpponentTeamProfilesPanel`'s "Log a scouted round"/"Edit logged
+  round" form and "Compare vs. opponent" block (a `<Label>`, not an `<h2>`,
+  heading the latter) stayed plain `<div>`s; `StrategyPanel`'s and
+  `PreRoundBriefingsPanel`'s per-item loop `<h2>`s (one per matchup/briefing
+  record) stayed as-is — a repeated per-row heading, not a panel/section
+  header; `WordLimitPresetsPanel` (a `/settings`-page section, not a
+  standalone panel card) and `UserSettingsPanel` (a live, directly-editable
+  settings form, not a derived list/roster view — and already flagged
+  elsewhere as needing careful handling) were left out of scope entirely.
+  `DebateRoundPanel`, `FlowEditLogPanel`, and `SharedFlowSyncPanel` needed no
+  change: the first has no matching header shape, the latter two already
+  use `PanelShell`/`PanelSection`.
+
+  Of the three packages the prior slice left unaudited, `debate-round` is
+  now closed; `debate-contributor-progress` and `debate-practice-drills`
+  remain open for a future run.
+
+  No new tests added — this is a markup-only change, and each panel's own
+  pure-logic functions stay covered by `debate-round`'s existing state/lib
+  test suite, matching how every prior `PanelShell`/`EmptyState`/`PanelRow`
+  migration slice in this repo was also verified via typecheck/tests rather
+  than new render tests. Ran the full verification gate: `bun run test`
+  (340 files, 7064 tests passing), `bun run typecheck` (17/17 packages
+  green), `debate-round`'s own `bunx vitest run` inside
+  `packages/debate-round` (54 test files, 1136 tests passing) and `bunx
+  turbo run typecheck --filter=debate-round` individually, and `bun run
+  build:web` (production build). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
+- **🩹 CardMirror embed: a loaded file can no longer go blank — or save itself
+  blank.** Reported from the field: "after a file is loaded sometimes it
+  disappears and goes blank." It was never only a display bug. The web hosts
+  (`/reason-editor`, Flow's speech-doc panels) persist whatever the embed's
+  `onChange` reports, and the reporter fired on ANY doc change — including
+  the ones the engine makes on its own initiative, which in an embed means
+  its blank starter doc. The blank was written to `documents` and the file
+  was gone.
+
+  Four failures, each proven and each now covered by a test:
+
+  1. **Every doc change counted as a user edit.** `change-reporter.ts` now
+     tells a transaction (a real edit) apart from a whole-state replacement
+     (the engine's `mountView` — boot, New/Open, crash recovery, a joined
+     session) using plugin state, which `apply`s for transactions only. Only
+     the first is reported. A blank replacement the user didn't ask for is
+     restored from the loaded document instead of left on screen, and the
+     engine is told which doc is mounted (`adoptEmbeddedDoc`) so its own
+     `currentDoc` — the fallback content for any remount it does itself —
+     stops pointing at the blank starter from boot.
+  2. **Unreadable stored content mounted as blank.** `htmlToDoc` answered
+     "this didn't parse" and "this document is empty" with the same blank
+     doc. `parseHtml` now reports which; a failed load keeps what's on
+     screen, files a durable notice, and blocks all reporting for that
+     document so the intact copy on the server survives.
+  3. **Footnotes were dropped by every HTML round trip.** A footnote ref
+     serializes to an empty `<sup>`; ProseMirror collects mark rules before
+     node rules, so the generic `superscript` mark rule matched first and the
+     footnote came back as a mark on no text. The node rule now carries
+     `priority: 60`.
+  4. **Edits went to the wrong document, or nowhere.** The change debounce is
+     flushed before the live binding changes and on page hide; the provider's
+     single shared save timer — which cancelled a *different* document's
+     pending write, so renaming a file and then typing in another silently
+     dropped the rename — is replaced by `lib/reason-docs/save-queue.ts`: one
+     debounce per document, merged patches, `keepalive` flush on `pagehide`
+     and tab-hide, retry with backoff, queued writes cancelled on delete, and
+     a real `Saving…`/`Unsaved changes`/`Couldn't save — retrying…` indicator
+     instead of a `Saving…` that never resolved.
+
+  See `docs/features/cardmirror-embed-persistence.md`. Tests:
+  `packages/debate-editor/test/change-reporter.test.ts`,
+  `packages/debate-editor/test/html-bridge.test.ts`,
+  `apps/debate-ai.com/lib/reason-docs/__tests__/save-queue.test.ts`.
+
+- **🧩 `PanelShell`/`PanelSection` adoption — `debate-search-evidence` package
+  pass.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link to
+  users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked
+  to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), and every tool
+  already reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice again picked up idea #17's
+  still-open follow-up (4): the "`PanelShell`/`PanelSection`/`StatTile`/
+  `Pill` adoption is still unaudited" half named in
+  `docs/features/user-settings.md`'s Known gaps. An open PR (#693) already
+  covered `debate-team-collaboration` — the only other open PR at the start
+  of this run was an unrelated Parquet card-import feature (#687) and an
+  unrelated DB-error-diagnostics fix (#663) — so this slice scoped to a
+  different package per that Known gap's own "package by package" guidance:
+  `debate-search-evidence` (npm package name `debate-research-evidence`),
+  whose 7 panels were all one import away from the primitive (the same
+  `./ui/panels/panel-shell` module each already imported `EmptyState`/
+  `MeterBar` from) with no new cross-package dependency needed.
+
+  Migrated all 7 panels (`ArgumentLibraryPanel`, `CardScoringPanel`,
+  `ContributionsFeedPanel`, `EvidenceLibraryPanel`, `ReviewQueuePanel`,
+  `RevisionIncentivesPanel`, `TopicCoverageDashboardPanel`) off their
+  hand-rolled top-level `<h1>`-title-plus-description header onto
+  `PanelShell`. Also migrated each panel's genuinely singular, non-repeated
+  `<h2>`-titled sub-section onto `PanelSection` where one existed:
+  `CardScoringPanel`'s "Bulk import"/"My score trend" (the latter's
+  contributor `Select` moved into `actions`), `ContributionsFeedPanel`'s
+  dynamic "Flagged for review (N)"/"All contributions (N)" list header (its
+  toggle `Button` moved into `actions`), `EvidenceLibraryPanel`'s "Check this
+  page"/"Team reuse dashboard"/"Pending review (N)", `ReviewQueuePanel`'s
+  "Reviewer workload", and `RevisionIncentivesPanel`'s "Stale evidence
+  digest"/"Leaderboard"/"Recent revisions" (dropping each `<section>`'s own
+  `mb-6` in favor of `PanelShell`'s `gap-4`). A description containing
+  embedded markup (a `<code>` tag, or `ContributionsFeedPanel`'s
+  tooltip-carrying paragraph) was kept as a plain child element instead of
+  forced through the `description` prop, which only accepts a plain string.
+  `ArgumentLibraryPanel` and `TopicCoverageDashboardPanel` had no `<h2>`-
+  titled sub-section to migrate (their bordered blocks use a plain `<div>`
+  label, not a heading) — only their top-level header moved onto
+  `PanelShell`. `debate-speech-writer`'s two panels remain blocked the same
+  way they are for the `EmptyState` gap (neither `debate-round` nor
+  `debate-research-evidence` is one of its dependencies); `debate-round`,
+  `debate-contributor-progress`, and `debate-practice-drills` are still
+  unaudited.
+
+  See `docs/features/user-settings.md`'s updated Known gaps bullet for the
+  full per-panel breakdown. No new tests added — this is a markup-only
+  change, and each panel's own pure-logic functions stay covered by the
+  package's existing state/lib test suite, matching how prior `PanelShell`/
+  `EmptyState`/`PanelRow` migration slices in this repo were also verified
+  via typecheck/tests rather than new render tests. Ran the full
+  verification gate: `npx vitest run --config
+  apps/debate-ai.com/vitest.config.ts` (334 test files, 7017 tests
+  passing), `bun run typecheck` (17/17 packages green), the package's own
+  `npx vitest run` inside `packages/debate-search-evidence` (38 test files,
+  1154 tests passing) and `bunx turbo typecheck --filter=debate-research-evidence`
+  individually, and `bun run build:web` (production build completes
+  successfully, including the service-worker asset-list generation step).
+  No `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+- **🗑️ Remove dead `debate-videos` `panels/rankings/` duplicate tree
+  (Follow-up item).** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/
+  `documents`/`saved_flows`/`saved_rounds` and 25+ other `saved_*` D1
+  tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command
+  palette, and the feature catalog. So this slice picked up the open
+  Follow-up: "`debate-videos`' leaderboard panels appear to exist as a
+  duplicated tree... not yet investigated for which tree (if either) is
+  dead code versus which is actually wired up to a route. Needs its own
+  slice to confirm before deleting anything."
+
+  Confirmed via a repo-wide grep of every `RankingsLeaderboardPanel`/
+  `DebateRankingsPanel`/`StandingsPanel`/`panels/rankings` reference that
+  `packages/debate-videos/src/panels/leaderboard/RankingsLeaderboardPanel`
+  is the tree `debate-videos`' `index.ts` exports as `LeaderboardPanel` and
+  that `apps/debate-ai.com/app/rank/page.tsx` (the live `/rank` route)
+  renders. `packages/debate-videos/src/panels/rankings/DebateRankingsPanel`
+  and its five sibling files (`LeaderboardChampionBanner.tsx`,
+  `LeaderboardDataRow.tsx`, `LeaderboardFilterBar.tsx`,
+  `LeaderboardTable.tsx`, `LeaderboardTableHeader.tsx`,
+  `leaderboardTypes.ts`, `leaderboardUtils.ts`) had zero references anywhere
+  outside their own directory — not `index.ts`, not any route, not any doc,
+  not any test. A file-by-file diff against the `leaderboard/` tree showed
+  5 of 7 shared filenames were byte-identical duplicates, and the main
+  panel (`DebateRankingsPanel` vs. `RankingsLeaderboardPanel`) was a strict
+  subset missing the later-added "Standings" tab (`StandingsPanel`) — i.e.
+  `rankings/` was `leaderboard/`'s predecessor, left behind as dead code
+  after the rename/rebuild rather than deleted. Deleted the entire
+  `packages/debate-videos/src/panels/rankings/` directory (8 files, ~1,090
+  lines). No doc referenced the dead directory, so no doc updates were
+  needed; no new tests were needed since this removes unreferenced code
+  rather than changing behavior — the existing `leaderboard-utils.test.ts`
+  (which already imports only from `leaderboard/`) continues to cover the
+  live tree.
+
+  Ran the full verification gate against a clean `bun install` (removed and
+  reinstalled all `node_modules`): `bun run test` (331 test files, 6,989
+  tests passing), `bunx turbo run typecheck` (16/17 tasks green —
+  `debate-ai-web#typecheck` fails identically with this change reverted, in
+  a git worktree of `origin/master`, and in a fresh `bun install` of this
+  same branch, all with an unrelated `@ai-sdk/provider` v2-vs-v3 type
+  conflict pulled in transitively through `write-language`; the resolution
+  bun's flat-node_modules hoisting picks for that conflicting transitive
+  dependency appears to vary between separate `bun install` runs — same
+  `bun.lock`, same `package.json` in every case checked — independent of
+  this change), and `bun run build:web` (production build completes
+  successfully, including the service-worker asset-list generation step and
+  the `/rank` route). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable.
+
+  **Follow-up:** the `debate-ai-web#typecheck` / `write-language` /
+  `@ai-sdk/provider` version-conflict flakiness above is pre-existing and
+  unrelated to this change, but is newly documented here (not previously
+  called out in this tracker) — worth a dedicated slice to either pin
+  `write-language`'s `@ai-sdk/provider` peer to the same major version the
+  rest of the app uses, or otherwise make the hoisted resolution
+  deterministic, so `typecheck` stops being install-order-dependent.
+
 - **📋 Speech Transcript Summaries — cross-tab live update.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to
@@ -1295,8 +1878,56 @@ _No task currently in progress._
   are per-item/per-group loop headings, not panel/section headers) —
   see the historical `PanelRow` audit's four deliberately-skipped panels
   for the same kind of judgment call.
-- ~~`debate-videos`' leaderboard panels appear to exist as a duplicated
-  tree...~~ Closed — see the Tracker Status entry above:
-  `packages/debate-videos/src/panels/rankings/` was confirmed to be dead
-  code (no importers, no test coverage) and deleted; the live tree is
-  `packages/debate-videos/src/panels/leaderboard/`.
+  **Update:** two further slices closed `debate-team-collaboration`'s 13
+  panels (PR #693) and `debate-round`'s 3 and `debate-contributor-progress`'s
+  9 (see the Tracker Status entries above), and this slice closed the last
+  remaining package, `debate-practice-drills`'s 12 panels — see the Tracker
+  Status entry above. Every package from the original ~45-panel survey that
+  depends on a package exporting `PanelShell`/`PanelSection` is now closed;
+  only `debate-speech-writer`'s two panels remain, still blocked on the same
+  cross-package-dependency gap named above. The "`PanelShell`/`PanelSection`
+  adoption is still unaudited" half of follow-up (4) is effectively closed;
+  the broader "bring every weaker panel UI up to every shared `debate-ui`
+  primitive convention" half of follow-up (4) remains open more generally
+  (each pass so far has searched for one specific pattern, not exhaustively
+  compared every panel against every shared primitive).
+  **Update:** the cross-package-dependency gap itself is now closed (see the
+  Tracker Status entry above and the `EmptyState` follow-up bullet above) —
+  `debate-speech-writer` and `debate-videos` both now depend on
+  `debate-research-evidence`, so `JudgeProfilesPanel`/`CoachMaterialsPanel`/
+  `StandingsPanel` could adopt `PanelShell`/`PanelSection` in a future slice
+  the same way every other package's panels already have. That slice hasn't
+  been done yet — closing the dependency gap only unblocks it — so these
+  three panels remain a small, well-scoped, not-yet-picked-up follow-up. A
+  `Pill` adoption pass was also spot-checked this run: aside from
+  `panel-shell.tsx` itself, only two hand-rolled "pill" chip candidates
+  turned up repo-wide (`grep` for `rounded-full`+`border`+`px-2`+`text-xs`
+  across every panel), and neither is a clean fit —
+  `debate-team-collaboration`'s `SharedCardsPanel` "share with contact"
+  chips are interactive toggle `<button>`s with selected/hover states
+  `Pill`'s display-only `<span>` has no vocabulary for, and
+  `debate-videos`'s `LeaderboardDataRow` tournament chips sit in the same
+  `debate-videos` package this slice just unblocked but hasn't yet migrated.
+  So `Pill` adoption stays open, folded into the same not-yet-picked-up
+  follow-up above rather than tracked separately.
+  **Update:** the `debate-videos` half is now closed — see the Tracker Status
+  entry above. `LeaderboardDataRow`'s tournament chips now render `Pill`.
+  `debate-team-collaboration`'s `SharedCardsPanel` toggle-button chips remain
+  open — still not a clean fit, since `Pill`'s display-only `<span>` has no
+  selected/hover-state vocabulary for an interactive toggle. The
+  `JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
+  `PanelSection` migration named just above is covered by open PR #709.
+  **Update:** this run swept the two remaining `debate-ui` primitives from the
+  same `panel-shell.tsx` family that hadn't yet been audited by name —
+  `SummaryText`/`LabeledField` — and found `SummaryText` (a labeled `<pre>`
+  block for `build*SummaryText`-shaped output) was exported by all three
+  `panel-shell.tsx` copies but imported nowhere in the app; `LabeledField`'s
+  shape (`text-muted-foreground font-medium` label span above a form control)
+  had no hand-rolled duplicates repo-wide, so it stays effectively adopted
+  everywhere already and needs no follow-up. `FlowSummariesPanel`'s and
+  `CoachMaterialsPanel`'s three matching hand-rolled `<pre>`/`<p>` blocks now
+  render `SummaryText` — see the Tracker Status entry above. The broader
+  "bring every weaker panel UI up to every shared `debate-ui` primitive
+  convention" half of follow-up (4) remains open more generally — this pass
+  covered one more specific pattern, not an exhaustive primitive-by-primitive
+  sweep.
