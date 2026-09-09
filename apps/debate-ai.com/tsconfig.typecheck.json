@@ -1,0 +1,17 @@
+{
+  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module.",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "write-language": [
+        "./node_modules/write-language/dist/index.d.ts"
+      ],
+      "write-language/*": [
+        "./node_modules/write-language/dist/*.d.ts"
+      ]
+    }
+  }
+}
