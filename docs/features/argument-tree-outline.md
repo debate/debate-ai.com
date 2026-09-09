@@ -483,24 +483,34 @@ re-reads both when the predicate matches — a teammate generating, clearing,
 or tagging an outline, or saving/clearing a round's filter, in one tab now
 shows up in every other open tab without a manual reload.
 
-Deliberately excluded: `hooks/useOutlineFilterPresets.ts`'s own
-`outline-filter-presets` store. That hook already has a same-tab
-`CHANGE_EVENT` sync but no cross-tab `storage` listener, matching every
-other `use*Presets` hook in this repo (e.g. `debate-round`'s
-`useWordLimitPresets`) — closing that separate, wider gap across every
-preset hook is left for a future run rather than special-casing just this
-one panel's presets.
+Excluded from `ArgumentTreePanel`'s own predicate:
+`hooks/useOutlineFilterPresets.ts`'s `outline-filter-presets` store, which
+manages its own refresh instead — see the next paragraph.
 
 Vitest-covered in
 `packages/debate-practice-drills/test/live-update.test.ts` (both tracked
 keys, the `null`-key clear-all case, and unrelated/substring-matching keys
 staying ignored).
 
+~~`hooks/useOutlineFilterPresets.ts` (and every other `use*Presets` hook
+sharing its `CHANGE_EVENT` pattern) has no cross-tab `storage` listener.~~
+Closed: `useOutlineFilterPresets.ts` now exports
+`isOutlineFilterPresetsLiveUpdateStorageEvent` and subscribes to `window`'s
+`storage` event alongside its existing same-tab `CHANGE_EVENT` listener, so
+a preset saved or removed in one tab now shows up in
+`ArgumentTreePanel`'s "Filter presets" bar in every other open tab without a
+manual reload. The same fix was applied to every other hook sharing this
+exact shape: `debate-round`'s `hooks/useWordLimitPresets.ts`
+(`isWordLimitPresetsLiveUpdateStorageEvent`) and `debate-search-evidence`'s
+`hooks/useSavedArgumentCollections.ts`
+(`isSavedArgumentCollectionsLiveUpdateStorageEvent`). Each predicate is
+Vitest-covered in its own package (`test/useOutlineFilterPresets.test.ts`,
+`test/useWordLimitPresets.test.ts`, `test/useSavedArgumentCollections.test.ts`
+respectively) with the same null-key/unrelated-key/substring-match cases as
+every other `isXLiveUpdateStorageEvent` predicate in this repo.
+
 ## Known gaps
 
-- `hooks/useOutlineFilterPresets.ts` (and every other `use*Presets` hook
-  sharing its `CHANGE_EVENT` pattern) has no cross-tab `storage` listener
-  yet — see "Cross-tab live update" above.
 - Tagging only works for the round currently open in the round workspace
   (`useFlowStore`'s selected flow) — a round's other, not-currently-selected
   persisted outline records show a disabled "Tag…" button with an

@@ -71,6 +71,20 @@ client scoped to just this one field, mirroring the shape (not the import)
 of `round/user-settings-client.ts` — the same reason `news-stream-sync.ts`'s
 account sync is wired in from the app layer instead.
 
+## Cross-tab live update
+
+`useSavedArgumentCollections.ts` already refreshed every other mounted
+instance on the same tab via a same-tab `saved-argument-collections-changed`
+window event, but a *different* browser tab saving, renaming, updating, or
+removing a collection needed a manual reload to show up — the browser's
+`storage` event never fires in the tab that made the write, only in other
+same-origin tabs. The hook now also exports
+`isSavedArgumentCollectionsLiveUpdateStorageEvent` and subscribes to
+`window`'s `storage` event, mirroring the identical fix applied to this
+hook's `useOutlineFilterPresets`/`useWordLimitPresets` siblings (see
+[`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
+update"). Vitest-covered in `test/useSavedArgumentCollections.test.ts`.
+
 ## Known gaps
 
 None currently open on this bullet — the previous "no rename" and "no

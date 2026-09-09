@@ -130,11 +130,10 @@ export function isCounselPanelAssessmentsLiveUpdateStorageEvent(event: { key: st
  * own `state/argumentTreeFilters.ts` `"argumentTreeFilters"` store (each
  * round's saved speech/side/kind/unanswered-only filter selection). The
  * panel's saved filter *presets* (`hooks/useOutlineFilterPresets.ts`,
- * `"outline-filter-presets"`) are deliberately excluded — that hook already
- * has its own same-tab `CHANGE_EVENT` sync but no cross-tab `storage`
- * listener yet, matching every other `use*Presets` hook in this repo (e.g.
- * `debate-round`'s `useWordLimitPresets`); closing that separate, wider gap
- * is left for a future run.
+ * `"outline-filter-presets"`) are deliberately excluded — that hook manages
+ * its own refresh, both the same-tab `CHANGE_EVENT` and (via its own
+ * `isOutlineFilterPresetsLiveUpdateStorageEvent`) the cross-tab `storage`
+ * event, rather than being covered by this file's predicate.
  */
 export const ARGUMENT_TREE_PANEL_LIVE_UPDATE_STORAGE_KEYS = ["argumentTrees", "argumentTreeFilters"] as const;
 

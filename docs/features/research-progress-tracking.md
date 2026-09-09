@@ -269,8 +269,14 @@ that fails validation both reading back as `null`). The hook and API route
 themselves stay untested at the unit level, matching every other synced
 field's client/hook layer in this package and app (`useWordLimitPresets`,
 `useSavedArgumentCollections`, `/api/settings` itself) — none have
-hook-level or route-level Vitest coverage; only the pure validation/shape
-helpers do.
+hook-level or route-level Vitest coverage of their main sync/merge logic;
+only the pure validation/shape helpers do. (The one narrow exception:
+`useWordLimitPresets` and `useSavedArgumentCollections` each now export a
+small `isXLiveUpdateStorageEvent` cross-tab predicate that *is*
+Vitest-covered — see
+[`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
+update" — but that's the storage-event filter, not the hooks' sync/merge
+behavior itself.)
 
 ## Known gaps
 

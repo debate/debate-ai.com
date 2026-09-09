@@ -19,6 +19,17 @@
  * a module-level `remoteLoadPromise`, mirroring `useFavoriteTools`'s dedup
  * for the same reason: several consumers can mount on one page.
  *
+ * Also subscribes to the browser's `storage` event (via
+ * `isWordLimitPresetsLiveUpdateStorageEvent`) so a *different* browser tab
+ * adding, editing, or removing a preset refreshes this one too — the
+ * `word-limit-presets-changed` event above never fires in the tab that made
+ * the change, only same-tab listeners, so a second open tab previously
+ * needed a manual reload to see it. This closed the "every other
+ * `use*Presets` hook sharing `useOutlineFilterPresets.ts`'s `CHANGE_EVENT`
+ * pattern has no cross-tab `storage` listener yet" gap
+ * `docs/features/argument-tree-outline.md` and this hook's own
+ * `state/live-update.ts` doc comment both named.
+ *
  * @module hooks/useWordLimitPresets
  */
 
@@ -49,6 +60,18 @@ function readLocal(): WordLimitPreset[] {
 function writeLocal(list: WordLimitPreset[]) {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+/**
+ * Whether a `storage` event should trigger `useWordLimitPresets` to refresh
+ * its preset list. A `null` key (e.g. from `localStorage.clear()`, per the
+ * `StorageEvent` spec) counts too — the safest response to "everything
+ * changed" is refreshing. Any other key (an unrelated store elsewhere in the
+ * app) is ignored so an unrelated cross-tab write doesn't force a needless
+ * refresh.
+ */
+export function isWordLimitPresetsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return event.key === null || event.key === STORAGE_KEY;
 }
 
 // Module-level (not per-hook-instance) so every mounted instance shares one
@@ -107,6 +130,18 @@ export function useWordLimitPresets(): UseWordLimitPresetsResult {
     return () => {
       window.removeEventListener(CHANGE_EVENT, onExternalChange);
     };
+  }, []);
+
+  // A `storage` event never fires in the tab that made the write, only in
+  // other same-origin tabs — the `CHANGE_EVENT` listener above only covers
+  // this tab's own instances.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isWordLimitPresetsLiveUpdateStorageEvent(event)) return;
+      setPresets(readLocal());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const persist = useCallback((next: WordLimitPreset[]) => {

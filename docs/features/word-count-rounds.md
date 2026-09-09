@@ -112,10 +112,13 @@ panels/WordCountRoundsPanel.tsx  — passes presets through
 Vitest-covered in `packages/debate-round/test/wordLimitPresets.test.ts`
 (validation, serialization, and lookup) plus preset-priority cases added to
 `word-count-speech-mode.test.ts` and `wordCountRounds.test.ts`.
-`WordLimitPresetsPanel`/`useWordLimitPresets` themselves are untested,
-matching this package's existing convention for account-synced,
+`WordLimitPresetsPanel`/`useWordLimitPresets` themselves are otherwise
+untested, matching this package's existing convention for account-synced,
 `localStorage`-backed hooks and their settings-page UI (e.g.
-`useFavoriteTools`/`FavoriteToolsSettings`).
+`useFavoriteTools`/`FavoriteToolsSettings`) — the one exception is
+`useWordLimitPresets`'s own `isWordLimitPresetsLiveUpdateStorageEvent`
+predicate, covered by `test/useWordLimitPresets.test.ts` (see "Cross-tab
+live update" below).
 
 ## Word-count trend view
 
@@ -297,6 +300,16 @@ Vitest-covered:
 `packages/debate-practice-drills/test/live-update.test.ts` (the one
 backing-store key, the `null`-key clear-all case, and unrelated/
 substring-matching keys staying ignored).
+
+A separate, longstanding gap in the *preset manager* above (not this
+round-history view) is now also closed: `useWordLimitPresets` now has its
+own `storage`-event subscription too, via a new
+`isWordLimitPresetsLiveUpdateStorageEvent` predicate exported from the hook
+itself rather than this package's shared `state/live-update.ts` (the
+preset store lives in `debate-round`, not `debate-practice-drills`) — see
+[`argument-tree-outline.md`](argument-tree-outline.md)'s "Cross-tab live
+update" for the full writeup, which fixed this same gap across every
+`use*Presets`-shaped hook in the repo at once.
 
 ## Known gaps
 
