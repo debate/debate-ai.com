@@ -14,7 +14,8 @@ sign in on.
   on the second)
 - **Nav:** the dock's Settings menu ("Contacts", with a count of pending
   requests); the Tools page's Prep & Practice group; the Reason Editor's
-  header ("Share with contacts")
+  header ("Share with contacts") and Workspace menu (`t contacts` in
+  Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-team-collaboration`](../../packages/debate-team-collaboration/README.md)
   (`lib/contacts.ts` rules, `state/contacts.ts` + `state/cardShares.ts`
   clients, `useContacts` / `useCardShares` hooks, `ContactsPanel` /
