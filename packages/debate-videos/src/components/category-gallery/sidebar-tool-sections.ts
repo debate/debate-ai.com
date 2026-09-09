@@ -56,6 +56,14 @@ export const APP_DOCK_LINKS: SidebarToolLink[] = [
   { href: "/doc", title: "Docs" },
 ];
 
+/**
+ * Id of the Research section — the one section the `/cards` sidebar keeps
+ * (`AppSidebarShell`), where the column is the document tree plus the research
+ * tools and nothing else. Named rather than spelled inline at the call site so
+ * renaming the section below can't silently empty that sidebar.
+ */
+export const RESEARCH_SECTION_ID = "research";
+
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   {
     id: "coaching",
