@@ -7,6 +7,55 @@ _No task currently in progress._
 
 ### Completed
 
+- **🩹 `moveDocument` now writes through the CardMirror save queue.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent repeat,
+  that prompt's own asks are already fully built and reconfirmed again this
+  run: `user_settings`/`documents`/`saved_flows`/`saved_rounds` and 25+ other
+  `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already
+  reachable from the Tools page, CardMirror's own `MenuBar`/command palette
+  (`Mod-Shift-Space`), and the feature catalog; `bun install` + `bunx turbo run
+  typecheck` (17/17 green) also reconfirmed the `write-language`/
+  `@ai-sdk/provider` version-conflict flakiness a much earlier entry in this
+  tracker flagged as a follow-up isn't currently reproducing, so that wasn't a
+  safe target this run either. So this slice picked up the one small,
+  concretely-scoped, still-open item `docs/features/cardmirror-embed-persistence.md`'s
+  Known gaps named: `moveDocument` (re-parenting a document by dragging it to
+  a new folder in the REASON docs sidebar tree) wrote through its own bare
+  `fetch(PUT /api/doc/documents/:id)` instead of
+  `lib/reason-docs/save-queue.ts`'s `DocumentSaveQueue` — the same queue every
+  title/content edit already goes through for per-document debounce,
+  retry-with-backoff, and a `pagehide`/tab-hide flush. A re-parent that hit a
+  network blip or a 5xx just silently failed instead of retrying.
+
+  `DocumentPatch` now carries an optional `parentId?: number | null` field
+  (the API route already accepted it in the PUT body, so no server change was
+  needed) and `ReasonDocsProvider.tsx`'s `moveDocument` calls
+  `saveQueue.queue(id, { parentId })` instead of its own fetch. No change to
+  the queue's merge/retry/flush semantics — `parentId` is just a third patch
+  field alongside `title`/`content`, and the existing per-field-acknowledgment
+  logic in `write()` already handles a `null` value like any other value. The
+  one caller (`ReasonDocsSidebarPanels.tsx`'s drag-to-move handler) already
+  calls `moveDocument` fire-and-forget (`void moveDocument(...)`), so sending
+  through the queue's background debounce instead of awaiting the PUT inline
+  isn't a behavior change from the caller's side.
+
+  See `docs/features/cardmirror-embed-persistence.md`'s updated Known gaps
+  (the `moveDocument` bullet is now a description of the fix, not a gap).
+  Vitest-covered: `apps/debate-ai.com/lib/reason-docs/__tests__/save-queue.test.ts`'s
+  new "retries a re-parent (parentId patch) the same way as a title or body
+  edit" case (a failed `parentId: 5` write retries with the newer `parentId:
+  null`, mirroring the file's existing title/content retry test).
+
+  Ran the full verification gate: the new test file (10 passing, up from 9),
+  `bun run test` (341 files, 7085 tests passing), `bunx turbo run typecheck`
+  (17/17 packages green), and `bun run build:web` (production build
+  succeeded). No `lint`/`format:check` script exists anywhere in this repo, so
+  that step was skipped as not applicable. PR: #713.
+
 - **🧩 `SummaryText` adoption for `FlowSummariesPanel`/`CoachMaterialsPanel`.**
   Another repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability to save

@@ -29,6 +29,7 @@
 export interface DocumentPatch {
   title?: string
   content?: string
+  parentId?: number | null
 }
 
 export interface SaveQueueState {
