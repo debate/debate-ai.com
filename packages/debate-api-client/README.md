@@ -53,6 +53,15 @@ npm run generate   # re-run @hey-api/openapi-ts against debate-openapi.yml
 npm run build       # generate + compile to dist/
 ```
 
+This package pins TypeScript 5 while the rest of the monorepo is on 7.
+TypeScript 7 ships the native compiler and no longer exposes the JavaScript
+compiler API (`ts.SyntaxKind` and friends), which `@hey-api/openapi-ts` builds
+its output with — under TS 7 codegen dies with
+`Cannot read properties of undefined (reading 'AnyKeyword')`. Bun resolves
+Hey API's `typescript` peer from this package, so the pin keeps codegen (and
+therefore `typecheck`, which runs `generate` first) working. Drop it once
+Hey API supports TypeScript 7.
+
 ## Release
 
 Publishing to npm is automated by

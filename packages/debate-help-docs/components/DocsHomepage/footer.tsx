@@ -4,7 +4,8 @@
  */
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Github, BookOpen } from "lucide-react"
+import { BookOpen } from "lucide-react"
+import { Github } from "./github-icon"
 
 export function Footer() {
   return (

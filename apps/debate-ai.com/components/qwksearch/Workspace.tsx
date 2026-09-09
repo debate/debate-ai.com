@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { ChatInputBox, ChatWindow, configureResearchAgentUI, useChat } from "research-agent-ui"
 import { ReasonDocs } from "react-reason-editor/reason-docs"
+import { Sidebar, SidebarContent } from "react-reason-editor-sidebar"
 import { themeActions } from "react-reason-editor/theme"
 import { localeActions } from "react-reason-editor/locale-bundle"
 import { useMainView } from "./MainViewProvider"
@@ -158,20 +159,27 @@ export function QwksearchWorkspace() {
     onSearchTopic: handleSearchTopic,
   }
 
-  // The published react-reason-editor bundles its files/outline sidebar
-  // internally (the SidebarComponent injection props only exist in the
-  // unpublished monorepo HEAD), so only the main-content slot differs
-  // between the two views.
+  // ReasonDocs takes its files/outline sidebar and right-panel body as
+  // injected components; `react-reason-editor-sidebar` ships the pair the
+  // editor is built against. Only the main-content slot differs between the
+  // two views.
+  const sidebarProps = {
+    SidebarComponent: Sidebar,
+    SidebarContentComponent: SidebarContent,
+  }
+
   return activeView === "docs" ? (
     <ReasonDocs
       belowMainContent={<ChatInputBox />}
       openFilesSidebarSignal={filesSidebarRequestId}
+      {...sidebarProps}
       {...extraTabProps}
     />
   ) : (
     <ReasonDocs
       mainContent={<ChatWindow />}
       openFilesSidebarSignal={filesSidebarRequestId}
+      {...sidebarProps}
       {...extraTabProps}
     />
   )

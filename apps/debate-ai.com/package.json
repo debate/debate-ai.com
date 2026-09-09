@@ -24,7 +24,7 @@
     "db:seed:videos:d1": "bun run scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",
     "db:studio": "drizzle-kit studio",
     "favicon": "bun create favicon public/favicon-512.png public/ --overwrite",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
@@ -112,6 +112,7 @@
     "react-icons": "^5.7.0",
     "react-native-app-buttons": "^0.1.4",
     "react-reason-editor": "^1.0.85",
+    "react-reason-editor-sidebar": "^0.1.5",
     "react-resizable-panels": "^4.12.4",
     "react-server-dom-webpack": "^19.2.8",
     "recharts": "3.10.1",

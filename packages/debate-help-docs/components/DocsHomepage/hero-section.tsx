@@ -6,7 +6,8 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Github, BookOpen, Compass } from "lucide-react"
+import { BookOpen, Compass } from "lucide-react"
+import { Github } from "./github-icon"
 import { withBasePath } from "@/lib/fumadocs/base-path"
 
 export function HeroSection() {

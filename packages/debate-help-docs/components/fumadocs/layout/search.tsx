@@ -15,23 +15,16 @@ import {
   type SharedProps,
 } from 'fumadocs-ui/components/dialog/search';
 import { useDocsSearch } from 'fumadocs-core/search/client';
-import { create } from '@orama/orama';
 import { useI18n } from 'fumadocs-ui/contexts/i18n';
 import { withBasePath } from '@/lib/fumadocs/base-path';
 
-function initOrama() {
-  return create({
-    schema: { _: 'string' },
-    language: 'english',
-  });
-}
-
 export default function DefaultSearchDialog(props: SharedProps) {
   const { locale } = useI18n(); // (optional) for i18n
+  // fumadocs-core 16 initializes the static search database (ZBSearch) itself;
+  // the old `initOrama` hook is deprecated and no longer takes an Orama index.
   const { search, setSearch, query } = useDocsSearch({
     type: 'static',
     from: withBasePath('/api/docs-search'),
-    initOrama,
     locale,
   });
 
