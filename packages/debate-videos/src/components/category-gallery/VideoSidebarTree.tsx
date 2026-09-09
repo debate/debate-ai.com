@@ -11,11 +11,12 @@
  *
  * The h1 sections are groupings, not destinations: a plain click on one only
  * toggles it (a ctrl/shift/middle-click still opens its flagship page in a
- * new tab, via `TreeItem`'s `sectionHref`). They form one accordion — "Videos" and the
- * `ToolNavTree` sections together — so exactly one is open and a closed
- * section renders none of its links. The open one follows the route, which
- * is what makes clicking an app dock button load that destination's section
- * and nothing else (see `sidebar-active-section`).
+ * new tab, via `TreeItem`'s `sectionHref`). Every one of them — "Videos" and
+ * the `ToolNavTree` sections together — starts expanded and collapses
+ * independently, so opening one no longer shuts the rest (see `ToolNavTree`).
+ * Navigation still expands the section holding the route, so a dock button
+ * never lands you on a page whose section you had collapsed
+ * (see `sidebar-active-section`).
  */
 
 "use client";
@@ -33,6 +34,11 @@ import {
   SIDEBAR_VIDEO_LINKS_BY_ID,
 } from "./sidebar-video-links";
 import { VIDEOS_SECTION_ID, sidebarSectionForPath } from "./sidebar-active-section";
+import {
+  ALL_SIDEBAR_SECTION_IDS,
+  toggleExpandedSection,
+  withSectionExpanded,
+} from "./sidebar-section-expansion";
 
 const COLLEGE_CHILD_IDS = VIDEO_FORMAT_LINKS.map((link) => link.id);
 
@@ -60,29 +66,38 @@ export function VideoSidebarTree({
   onToggleLectures,
 }: VideoSidebarTreeProps) {
   const pathname = usePathname();
-  // The whole tree is one accordion, "Videos" included: this component owns
-  // which section is open and hands the same state down to `ToolNavTree`, so
-  // opening a tool section closes Videos rather than stacking on top of it.
+  // "Videos" and the `ToolNavTree` sections share one expanded set, owned
+  // here and handed down, so the two halves of the tree behave the same way:
+  // every section open on arrival, each collapsing on its own.
   const routeSectionId = sidebarSectionForPath(pathname);
-  const [openSectionId, setOpenSectionId] = useState<string | null>(
-    routeSectionId ?? VIDEOS_SECTION_ID,
-  );
+  const [expandedSectionIds, setExpandedSectionIds] =
+    useState<readonly string[]>(ALL_SIDEBAR_SECTION_IDS);
   const [collegeExpanded, setCollegeExpanded] = useState(true);
 
-  useEffect(() => {
-    setOpenSectionId(routeSectionId ?? VIDEOS_SECTION_ID);
-  }, [routeSectionId]);
+  const expandSection = React.useCallback((sectionId: string) => {
+    setExpandedSectionIds((current) => withSectionExpanded(current, sectionId));
+  }, []);
 
-  const videosExpanded = openSectionId === VIDEOS_SECTION_ID;
+  const toggleSection = React.useCallback((sectionId: string) => {
+    setExpandedSectionIds((current) => toggleExpandedSection(current, sectionId));
+  }, []);
+
+  // Re-open the section holding the route on navigation — nothing else closes.
+  useEffect(() => {
+    if (routeSectionId == null) return;
+    expandSection(routeSectionId);
+  }, [routeSectionId, expandSection]);
+
+  const videosExpanded = expandedSectionIds.includes(VIDEOS_SECTION_ID);
 
   // Re-open the College Debates node if the user navigates straight to one
   // of its children (e.g. via URL) while it happens to be collapsed.
   useEffect(() => {
     if (activeId && COLLEGE_CHILD_IDS.includes(activeId)) {
       setCollegeExpanded(true);
-      setOpenSectionId(VIDEOS_SECTION_ID);
+      expandSection(VIDEOS_SECTION_ID);
     }
-  }, [activeId]);
+  }, [activeId, expandSection]);
 
   const lectureCategoryItems = React.useMemo(() => {
     if (lectureCategories.length === 0) return [];
@@ -110,9 +125,7 @@ export function VideoSidebarTree({
         // tab rather than only the leaves.
         sectionHref="/videos"
         expanded={videosExpanded}
-        onToggleExpand={() =>
-          setOpenSectionId((current) => (current === VIDEOS_SECTION_ID ? null : VIDEOS_SECTION_ID))
-        }
+        onToggleExpand={() => toggleSection(VIDEOS_SECTION_ID)}
       >
         <TreeItem
           level={2}
@@ -167,7 +180,7 @@ export function VideoSidebarTree({
         </TreeItem>
       </TreeItem>
 
-      <ToolNavTree openSectionId={openSectionId} onOpenSectionChange={setOpenSectionId} />
+      <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />
     </nav>
   );
 }

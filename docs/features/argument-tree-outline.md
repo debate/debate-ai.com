@@ -511,6 +511,10 @@ every other `isXLiveUpdateStorageEvent` predicate in this repo.
 
 ## Known gaps
 
+- Saved outlines sync to a signed-in user's account as the `argumentTrees`
+  collection (see [Tool Data Sync](tool-data-sync.md)); a signed-out browser
+  still keeps them in `localStorage` only. The named filter presets sync
+  separately, through `user_settings.outline_filter_presets`.
 - Tagging only works for the round currently open in the round workspace
   (`useFlowStore`'s selected flow) — a round's other, not-currently-selected
   persisted outline records show a disabled "Tag…" button with an

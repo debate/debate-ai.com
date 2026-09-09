@@ -320,6 +320,9 @@ keys staying ignored).
 
 ## Known gaps
 
+- Saved rounds sync to a signed-in user's account as the `practiceRounds`
+  collection (see [Tool Data Sync](tool-data-sync.md)); a signed-out browser
+  still keeps them in `localStorage` only.
 No further known gaps remain for this idea beyond the cross-tab live update
 above, and no further follow-up is currently tracked for the "🧪 Practice
 Round Simulator" bullet in TODO.md's Research Crowdsourcing Organizer

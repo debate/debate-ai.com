@@ -1,11 +1,12 @@
 /**
  * @fileoverview Pins which sidebar section a route opens.
  *
- * The tree is an accordion — one section open, closed sections render none of
- * their links — so this mapping is what decides which links exist in the DOM
- * on any given page. Getting it wrong either hides the nav for where you are
- * or brings back the fifty-link sidebar that prefetched an RSC payload per
- * entry on every `/videos` load.
+ * Every section starts expanded now, so this mapping no longer decides which
+ * links exist in the DOM. What it still decides is which section a navigation
+ * *re-opens*: follow a link into a section you had collapsed by hand and that
+ * section expands again, rather than leaving you on a page whose nav is shut.
+ * Getting it wrong means exactly that — a collapsed section stays collapsed
+ * under the page it holds.
  */
 
 import { describe, it, expect } from "vitest";

@@ -12,6 +12,11 @@
 
 import type { CoachingProgramConfig } from "../round/coaching-program";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 const STORAGE_KEY = "coachingPrograms";
 
 function readAll(): CoachingProgramConfig[] {
@@ -51,11 +56,13 @@ export function saveCoachingProgram(program: CoachingProgramConfig): void {
     programs[index] = program;
   }
   writeAll(programs);
+  mirrorToolRecordSave("coachingPrograms", program);
 }
 
 /** Deletes a persisted coaching-program config by id; a no-op if it isn't stored. */
 export function deleteCoachingProgram(id: string): void {
   writeAll(readAll().filter((program) => program.id !== id));
+  mirrorToolRecordDelete("coachingPrograms", id);
 }
 
 /**

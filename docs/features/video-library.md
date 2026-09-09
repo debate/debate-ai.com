@@ -95,11 +95,11 @@ while videos loaded. All four are now per-page rather than per-card:
 | Each card was wrapped in a framer-motion `motion.div` purely for the hover lift | A CSS transition (`hover:-translate-y-2`), which the compositor runs on its own |
 | Three dates per card were formatted with `toLocaleDateString(locale, options)`, which builds a fresh `Intl.DateTimeFormat` on every call | Two module-level formatters, shared by the cards and the list rows (`formatVideoDate`) |
 
-The sidebar beside the grid mattered too: it used to render every section's
-links up front, and the router prefetched an RSC payload for each of the ~50
-of them while the feed was still loading. It is now an accordion that renders
-only the open section, and its links pass `prefetch={false}` — see
-`docs/features/app-nav-dock.md`.
+The sidebar beside the grid mattered too: the router used to prefetch an RSC
+payload for each of the ~50 links in it while the feed was still loading. Its
+links now pass `prefetch={false}`, so they are fetched on click rather than on
+sight — which is what lets every section render expanded without the burst
+coming back. See `docs/features/app-nav-dock.md`.
 
 `packages/debate-videos/test/glowing-effect-listeners.test.tsx` pins the first
 row of that table: mounting 120 glows must still install exactly one

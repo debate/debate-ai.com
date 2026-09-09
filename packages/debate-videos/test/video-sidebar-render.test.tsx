@@ -153,30 +153,30 @@ describe("the sidebar's heading structure", () => {
     }
   });
 
-  it("opens only the section that holds the current route", () => {
-    // `usePathname` is mocked to `/videos`, so Videos is the open section and
-    // every other one is closed: the tree is an accordion, which is what
-    // keeps the sidebar to the content of wherever the dock just took you.
+  it("opens every section, not only the one holding the route", () => {
+    // The tree used to be an accordion — one section open, the one the dock
+    // just took you to — so reaching a tool in another section was always two
+    // clicks with the list you were reading vanishing in between. Every
+    // section now starts expanded and collapses on its own.
     const html = renderSidebar();
-    expect(html).toMatch(
-      /<a[^>]*aria-expanded="true"[^>]*>(?:(?!<\/a>)[\s\S])*<h1[^>]*>Videos<\/h1>/,
-    );
-    for (const title of ["Apps", "Coaching", "Research", "Practice"]) {
+    for (const title of ["Videos", "Apps", "Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
-        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+        new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
+    expect(html).not.toContain('aria-expanded="false"');
   });
 
-  it("renders no links for the sections it leaves closed", () => {
-    // The point of the accordion: a closed section costs no DOM and no link
-    // for the router to prefetch. Fifty of those fired on every /videos load.
+  it("renders every section's links up front", () => {
+    // The accordion's one benefit was that a closed section cost no DOM and
+    // no link for the router to prefetch. Expanding all of them trades that
+    // back for a nav that stays put: every destination is one click away.
     const html = renderSidebar();
-    expect(html).not.toContain("Coaching Programs");
-    expect(html).not.toContain("Evidence Library");
-    expect(html).not.toContain("Judge Paradigm Picker");
-    expect(html).not.toContain("All Tools");
-    // The open section's own links are all there.
+    expect(html).toContain("Coaching Programs");
+    expect(html).toContain("Evidence Library");
+    expect(html).toContain("Judge Paradigm Picker");
+    expect(html).toContain("All Tools");
+    // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("PF Debates");
     expect(html).toContain("My Favorites");
   });

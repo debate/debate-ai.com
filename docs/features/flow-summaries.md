@@ -310,6 +310,9 @@ staying ignored).
 
 ## Known gaps
 
+- Saved summaries sync to a signed-in user's account as the `flowSummaries`
+  collection (see [Tool Data Sync](tool-data-sync.md)); a signed-out browser
+  still keeps them in `localStorage` only.
 - Microphone dictation transcribes live speech only — it does not accept an
   already-recorded audio/video file upload. Idea #8's ("Video-Lecture-Training
   Coach AI") identical "recording" follow-up is a separate, still-open gap in

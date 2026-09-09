@@ -423,8 +423,9 @@ ignored).
   `requestTeamCoachAnswer` sends the most recent turns (capped at
   `maxHistoryTurns`, default 6) as real conversation context ahead of the
   current question's grounded prompt (see "Conversation history" above).
-  History is per-browser localStorage, not a shared team resource, the same
-  gap every other localStorage-backed panel in this repo has.
+  History now syncs to a signed-in user's account as the `coachConversation`
+  collection (see [Tool Data Sync](tool-data-sync.md)), so it follows them
+  across devices; it is still per-*user* rather than a shared team resource.
 - ~~No cross-tab live update — a teammate's second open tab (or a second
   browser window on the same machine) saving, editing, deleting, reviewing,
   or restoring a material showed a stale view until it re-rendered for some

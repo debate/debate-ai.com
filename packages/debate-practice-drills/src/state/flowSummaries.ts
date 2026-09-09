@@ -11,6 +11,11 @@
 
 import type { FlowRowSummary } from "debate-round/src/flow/flow-transcript-summary";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type FlowSummaryRecord = {
   roundId: string;
   summaries: FlowRowSummary[];
@@ -55,11 +60,13 @@ export function saveFlowSummary(record: FlowSummaryRecord): void {
     records[index] = record;
   }
   writeAll(records);
+  mirrorToolRecordSave("flowSummaries", record);
 }
 
 /** Deletes a round's persisted flow summary; a no-op if it isn't stored. */
 export function deleteFlowSummary(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+  mirrorToolRecordDelete("flowSummaries", roundId);
 }
 
 /**

@@ -13,6 +13,11 @@ import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-pro
 import { appendNoteToPreRoundBriefing, buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
 import type { PreRoundBriefing } from "../round/pre-round-briefing";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type PreRoundBriefingRecord = {
   roundId: string;
   briefing: PreRoundBriefing;
@@ -74,11 +79,13 @@ export function savePreRoundBriefing(record: PreRoundBriefingRecord, now: number
     records[index] = stamped;
   }
   writeAll(records);
+  mirrorToolRecordSave("preRoundBriefings", stamped);
 }
 
 /** Deletes a round's persisted briefing; a no-op if it isn't stored. */
 export function deletePreRoundBriefing(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+  mirrorToolRecordDelete("preRoundBriefings", roundId);
 }
 
 /**
