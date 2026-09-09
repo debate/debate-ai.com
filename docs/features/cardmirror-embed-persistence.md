@@ -117,6 +117,9 @@ inside the debounce dropped the edits to the one you left.
   `Saving…` that never resolved.
 - A document being deleted has its queued writes cancelled, so no PUT lands
   after the DELETE.
+- `moveDocument` (dragging a file to a new folder) queues its `parentId`
+  patch through the same queue as title/content edits, so a re-parent gets
+  the same retry-with-backoff and `pagehide`/tab-hide flush.
 
 ## Tests
 
@@ -133,8 +136,6 @@ inside the debounce dropped the edits to the one you left.
   work typed into that pane is discarded. The notice says so; a better answer
   would be to offer the raw stored HTML for download so the user can salvage
   it themselves.
-- `moveDocument` still writes through its own `fetch` rather than the queue,
-  so a re-parent isn't retried on failure the way a title or body edit is.
 - Flow's speech docs ride the same embed and so inherit every guard here, but
   their own persistence (inside the `Flow` object, via `/api/flows`) has no
   equivalent per-document queue.

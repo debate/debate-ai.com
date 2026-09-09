@@ -77,6 +77,22 @@ describe("DocumentSaveQueue", () => {
     expect(sent[0]!.patch).toEqual({ content: "body", title: "Renamed" })
   })
 
+  it("retries a re-parent (parentId patch) the same way as a title or body edit", async () => {
+    const { queue, sent } = makeQueue({ fail: (n) => n === 1 })
+
+    // A move to a folder, then a move to the root — the second should win.
+    queue.queue(1, { parentId: 5 })
+    await vi.advanceTimersByTimeAsync(100)
+    expect(sent[0]!.patch).toEqual({ parentId: 5 })
+    expect(queue.state().failedIds).toEqual([1])
+
+    queue.queue(1, { parentId: null })
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(sent[1]!.patch).toEqual({ parentId: null })
+    expect(queue.state().pendingIds).toEqual([])
+  })
+
   it("flushes everything still queued when the page goes away", async () => {
     const { queue, sent } = makeQueue()
 

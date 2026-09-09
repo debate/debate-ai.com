@@ -172,14 +172,16 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     [documents, activeId, saveQueue],
   )
 
-  const moveDocument = useCallback(async (id: number, parentId: number | null) => {
-    setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
-    await fetch(`/api/doc/documents/${id}`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ parentId }),
-    })
-  }, [])
+  const moveDocument = useCallback(
+    async (id: number, parentId: number | null) => {
+      setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, parentId } : d)))
+      // Through the same queue as title/content edits: a re-parent now gets
+      // retry-with-backoff and a `pagehide`/tab-hide flush instead of a
+      // fire-and-forget PUT that silently drops on a network blip.
+      saveQueue.queue(id, { parentId })
+    },
+    [saveQueue],
+  )
 
   // Nothing queued may be lost to a navigation: `pagehide` fires on tab
   // close, reload and bfcache entry, and `visibilitychange` is often the
