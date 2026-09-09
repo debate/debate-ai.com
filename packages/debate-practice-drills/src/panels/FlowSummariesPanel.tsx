@@ -73,7 +73,12 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
+import {
+  EmptyState,
+  PanelSection,
+  PanelShell,
+  SummaryText,
+} from "debate-round/src/ui/panels/panel-shell"
 import {
   buildFlowSummariesPanelView,
   deleteFlowSummary,
@@ -380,9 +385,7 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
                   </Button>
                 </div>
               </div>
-              <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-                {buildFlowSummaryTextFromRows(rows)}
-              </pre>
+              <SummaryText text={buildFlowSummaryTextFromRows(rows)} />
               {sendFormOpenRoundId === record.roundId && (
                 <div className="mt-3 space-y-2 rounded-md border border-border p-3">
                   <p className="text-xs text-muted-foreground">

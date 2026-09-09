@@ -7,6 +7,59 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧩 `SummaryText` adoption for `FlowSummariesPanel`/`CoachMaterialsPanel`.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*` D1 tables all linked to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), and every tool already reachable from the
+  Tools page, CardMirror's own `MenuBar`/command palette (`Mod-Shift-Space`), and the
+  feature catalog. Open PR #709 already covers the last concretely-scoped item left open
+  under idea #17's follow-up (4) (`JudgeProfilesPanel`/`CoachMaterialsPanel`/
+  `StandingsPanel` `PanelShell`/`PanelSection` adoption), and `debate-team-collaboration`'s
+  `SharedCardsPanel` toggle-button chips were already found not to be a clean fit for
+  `Pill`. So this slice picked a fresh angle on the same standing audit: `debate-ui`'s
+  `panel-shell.tsx` (and its `debate-round`/`debate-research-evidence` copies) exports a
+  `SummaryText` primitive — a labeled `<pre>` block styled for a slice's
+  `build*SummaryText`-shaped plain-text output — that had never been imported anywhere in
+  the app (`import.*SummaryText` repo-wide search: zero hits outside the three
+  `panel-shell.tsx` files and their own `panel-shell.test.tsx` cases).
+
+  Two panels hand-rolled the exact shape `SummaryText` was built for:
+  `debate-practice-drills`' `FlowSummariesPanel` (`buildFlowSummaryTextFromRows(rows)`,
+  literally the "build\*SummaryText output" case named in `SummaryTextProps`'s own doc
+  comment) and `debate-speech-writer`'s `CoachMaterialsPanel` (the grounded-prompt preview
+  and the coach's answer, the latter already paired with a `<Label>Coach's answer</Label>`
+  heading that maps directly onto `SummaryText`'s own `label` prop). All three call sites
+  used the identical hand-rolled `whitespace-pre-wrap rounded-md border border-border
+  bg-muted/30 px-3 py-2 text-sm text-foreground` `<pre>`/`<p>` styling; both files already
+  imported `EmptyState` from a `panel-shell` module that also exports `SummaryText`, so no
+  new cross-package dependency was needed. Swapped all three for `<SummaryText text={...}
+  />` (`CoachMaterialsPanel`'s answer block also passing `label="Coach's answer"`, replacing
+  its standalone `<Label>`).
+
+  This is a small, deliberate visual change, called out up front like every other
+  primitive-adoption slice in this audit: `SummaryText` has no `className`/tone override
+  (unlike `Pill`), so its `text-xs text-muted-foreground`/`bg-muted/50`/`rounded-lg`/
+  `overflow-x-auto` styling replaces the panels' previous `text-sm text-foreground`/
+  `bg-muted/30`/`rounded-md` look — smaller, more muted text, matching every other panel
+  in this repo that already renders a slice's summary output through the shared primitive
+  instead of duplicating its markup.
+
+  No new tests added — markup-only change; neither panel has a component-render test in
+  this repo (matching every prior markup-only primitive-adoption slice), and `SummaryText`
+  itself already has render-test coverage in `packages/debate-ui/test/panel-shell.test.tsx`.
+  Ran the full verification gate: `bun install`, `debate-practice-drills`'s own `bunx
+  vitest run` (46 files, 698 tests) and `bunx tsc --noEmit`, `debate-speech-writer`'s own
+  `bunx vitest run` (20 files, 401 tests) and `bunx tsc --noEmit`, `bun run test` (341
+  files, 7084 tests passing), `bun run typecheck` (16/17 packages green; the sole failure,
+  `debate-ai-web`, is the pre-existing `write-language`/`@ai-sdk/provider` version-conflict
+  issue tracked elsewhere in this file and confirmed unrelated by reproducing it unchanged
+  on this branch's HEAD before this slice's edits), and `bun run build:web` (production
+  build, succeeded).
+
 - **🧩 `Pill` adoption for `debate-videos`'s `LeaderboardDataRow` tournament chips.**
   Another repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability to save
@@ -1732,3 +1785,17 @@ _No task currently in progress._
   selected/hover-state vocabulary for an interactive toggle. The
   `JudgeProfilesPanel`/`CoachMaterialsPanel`/`StandingsPanel` `PanelShell`/
   `PanelSection` migration named just above is covered by open PR #709.
+  **Update:** this run swept the two remaining `debate-ui` primitives from the
+  same `panel-shell.tsx` family that hadn't yet been audited by name —
+  `SummaryText`/`LabeledField` — and found `SummaryText` (a labeled `<pre>`
+  block for `build*SummaryText`-shaped output) was exported by all three
+  `panel-shell.tsx` copies but imported nowhere in the app; `LabeledField`'s
+  shape (`text-muted-foreground font-medium` label span above a form control)
+  had no hand-rolled duplicates repo-wide, so it stays effectively adopted
+  everywhere already and needs no follow-up. `FlowSummariesPanel`'s and
+  `CoachMaterialsPanel`'s three matching hand-rolled `<pre>`/`<p>` blocks now
+  render `SummaryText` — see the Tracker Status entry above. The broader
+  "bring every weaker panel UI up to every shared `debate-ui` primitive
+  convention" half of follow-up (4) remains open more generally — this pass
+  covered one more specific pattern, not an exhaustive primitive-by-primitive
+  sweep.
