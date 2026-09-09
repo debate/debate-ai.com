@@ -47,13 +47,6 @@ interface LecturesPageProps {
    * leaderboard and dictionary branches, which keep their own top layout.
    */
   dockSlot?: React.ReactNode
-  /**
-   * App-owned REASON document panels, forwarded to
-   * {@link LecturesVideoGridView} for its persistent left sidebar (md+ only),
-   * so the files are reachable from `/videos` too. Omitted for the
-   * leaderboard and dictionary branches, which keep their own top layout.
-   */
-  docsSlot?: React.ReactNode
 }
 
 /**
@@ -63,7 +56,7 @@ interface LecturesPageProps {
  * API, and rendering is delegated to the three branch view components
  * depending on `state.currentCategory`.
  */
-export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
+export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const searchParams = useSearchParams()
   const routeParams = useParams()
 
@@ -454,7 +447,6 @@ export function LecturesPage({ dockSlot, docsSlot }: LecturesPageProps = {}) {
         setStateInURL({ style: style ? String(style) : null })
       }}
       dockSlot={dockSlot}
-      docsSlot={docsSlot}
     />
   )
 }

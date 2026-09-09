@@ -144,16 +144,6 @@ interface LecturesVideoGridViewProps {
    * (auth session, routing, settings menu).
    */
   dockSlot?: React.ReactNode
-  /**
-   * App-owned REASON document panels (file tree, topic starters, open tabs),
-   * rendered under the dock in the same sidebar column the other tool routes
-   * put them in (`AppSidebarShell`). Supplied by the page for the same reason
-   * as {@link LecturesVideoGridViewProps.dockSlot}: the panels read app-level
-   * document state and route into `/reason-editor`, neither of which this
-   * package can reach. Without it `/videos` was the one route with a sidebar
-   * but no files in it.
-   */
-  docsSlot?: React.ReactNode
 }
 
 /**
@@ -213,7 +203,6 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
   dockSlot,
-  docsSlot,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
   const slug = useMemo(() => {
@@ -291,11 +280,10 @@ export function LecturesVideoGridView({
 
         {searchBarNode(true)}
 
-        {/* Above the nav tree, matching `AppSidebarShell`'s order on every
-            other tool route: the tree is long enough that anything under it
-            starts below the fold. */}
-        {docsSlot}
-
+        {/* Videos only: the app's REASON document panels used to mount here
+            (`docsSlot`), above the tree. They belong on the routes the
+            documents are the subject of — the sidebar of the video library is
+            the video library. */}
         <VideoSidebarTree
           counts={quickLinkCounts}
           lectureCategories={lectureCategories}

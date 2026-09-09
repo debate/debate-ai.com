@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { LecturesPage } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
-import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 
 export const metadata: Metadata = {
   title: "LEARN: Lectures from Educators, Archive of Rounds & Notes",
@@ -12,10 +11,11 @@ export const metadata: Metadata = {
 export default function VideosCategory() {
   return (
     <Suspense>
-      <LecturesPage
-        dockSlot={<CategoryDock embedded />}
-        docsSlot={<ReasonDocsSidebarPanels className="shrink-0" />}
-      />
+      {/* Sidebar: the app dock and the video library's own nav, nothing else.
+          The REASON document panels used to mount here too (`docsSlot`); they
+          now show only where the documents are the subject — see
+          `lib/reason-docs/sidebar-routes.ts`. */}
+      <LecturesPage dockSlot={<CategoryDock embedded />} />
     </Suspense>
   )
 }
