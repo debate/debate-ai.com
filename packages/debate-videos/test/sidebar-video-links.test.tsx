@@ -42,6 +42,10 @@ vi.mock("next/navigation", () => ({
 
 const { VideoSidebarTree } = await import("../src/components/category-gallery/VideoSidebarTree");
 const { QuickLinksGrid } = await import("../src/components/category-gallery/QuickLinksGrid");
+const { ToolNavTree } = await import("../src/components/category-gallery/ToolNavTree");
+const { PRACTICE_SECTION_ID } = await import(
+  "../src/components/category-gallery/sidebar-tool-sections"
+);
 
 function sidebarHtml(): string {
   return renderToStaticMarkup(
@@ -89,10 +93,14 @@ describe("SIDEBAR_VIDEO_LINKS", () => {
 });
 
 describe("the surfaces that render them", () => {
-  it("gives the sidebar tree a link for every entry", () => {
+  it("gives the sidebar tree a link for every video destination", () => {
+    // Every entry but the reference pair, which moved into the tool tree's
+    // Practice section — see the test below.
     const html = sidebarHtml();
     const hrefs = hrefsIn(html);
+    const referenceHrefs = new Set(VIDEO_REFERENCE_LINKS.map((link) => link.href));
     for (const link of SIDEBAR_VIDEO_LINKS) {
+      if (referenceHrefs.has(link.href)) continue;
       expect(hrefs).toContain(link.href);
       expect(html).toContain(link.title);
     }
@@ -111,12 +119,14 @@ describe("the surfaces that render them", () => {
   });
 
   it("keeps the glossary and rankings pair in both", () => {
-    // The pair that went missing: pinned below the tool tree in the sidebar,
-    // and a tile on mobile.
-    const sidebar = hrefsIn(sidebarHtml());
+    // The pair that went missing: at the end of the tool tree's Practice
+    // section in the sidebar, and a tile on mobile.
+    const practice = hrefsIn(
+      renderToStaticMarkup(<ToolNavTree sectionIds={[PRACTICE_SECTION_ID]} />),
+    );
     const tiles = hrefsIn(renderToStaticMarkup(createElement(QuickLinksGrid, {})));
     for (const link of VIDEO_REFERENCE_LINKS) {
-      expect(sidebar).toContain(link.href);
+      expect(practice).toContain(link.href);
       expect(tiles).toContain(link.href);
     }
   });
