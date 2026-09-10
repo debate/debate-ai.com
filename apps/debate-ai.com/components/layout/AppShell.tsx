@@ -12,6 +12,8 @@
  */
 
 import type React from "react"
+import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
@@ -22,10 +24,30 @@ import { OneTap } from "@/components/layout/OneTap"
 import { ToolRecordSyncProvider } from "@/components/layout/ToolRecordSyncProvider"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
+import { isDockOwnedPath } from "@/lib/nav/dock-nav-paths"
 import { Toaster } from "sonner"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const embedded = useIsFramedDocument()
+  const pathname = usePathname()
+
+  // A framed dock destination (e.g. /videos) can navigate itself somewhere
+  // the dock never framed — a tool-tree link to /coach, /drills, etc. That
+  // page is still "embedded" by every check here (same iframe, same origin),
+  // so without this it would render bare below with no dock, no sidebar, and
+  // no way back, while the top document's address bar and history stay on
+  // whatever the dock last pushed. Send the whole tab there instead: a normal
+  // top-level load of just that tool, with its own chrome, is what clicking
+  // it is supposed to do.
+  useEffect(() => {
+    if (!embedded || isDockOwnedPath(pathname)) return
+    try {
+      window.top?.location.assign(`${window.location.pathname}${window.location.search}${window.location.hash}`)
+    } catch {
+      // Same-origin only by construction (AppFrameProvider only ever frames
+      // this app's own paths) — nothing to do if that ever isn't true.
+    }
+  }, [embedded, pathname])
 
   if (embedded) {
     return (
