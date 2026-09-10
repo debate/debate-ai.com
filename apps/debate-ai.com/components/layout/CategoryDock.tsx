@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Bell, Contact, Globe, LayoutGrid, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
+import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -30,13 +30,12 @@ import { themeNames, themeColors, formatThemeName, useThemeState } from "@/compo
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
 import { useSession } from "@/lib/hooks/useSession"
-import { TOOL_GROUPS } from "@/app/tools/tool-groups"
 import { hasEmbeddedDock } from "@/lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "@/lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "@/lib/nav/dock-nav-items"
 import { useAppFrame } from "@/components/layout/AppFrameProvider"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
-import { IconSettings, IconTools } from "../../lib/ui/icons"
+import { IconSettings } from "../../lib/ui/icons"
 
 // No Timer button here on purpose: the round timers live in the rounds
 // sidebar, on the selected round (`LiveRoundGroup`, in debate-round's
@@ -131,14 +130,9 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
 function SettingsMenu({
   side,
   onSignIn,
-  unreadNotifications,
-  pendingContacts,
 }: {
   side: "bottom" | "top"
   onSignIn: () => void
-  unreadNotifications: number
-  /** Incoming contact requests — the "New" badge on the Contacts entry. */
-  pendingContacts: number
 }) {
   const themeState = useThemeState()
   const router = useRouter()
@@ -147,48 +141,20 @@ function SettingsMenu({
     <DropdownMenuContent
       side={side}
       align="end"
-      // Tall enough now (six nav submenus above the account block) to run past
-      // a phone viewport, which would otherwise cut the account rows off with
+      // Tall enough (the nav submenus above the account block) to run past a
+      // phone viewport, which would otherwise cut the account rows off with
       // no way to reach them.
       className="w-48 max-h-[min(560px,80vh)] overflow-y-auto"
       collisionPadding={8}
       avoidCollisions
     >
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/features") }}>
-        <LayoutGrid className="mr-2 h-4 w-4" />
-        All Features
-      </DropdownMenuItem>
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/tools") }}>
-        <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
-        All Tools
-      </DropdownMenuItem>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <Image src={IconTools} alt="" width={16} height={16} className="mr-2 h-4 w-4" unoptimized />
-          Tools
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-56 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
-          {TOOL_GROUPS.map((group) => (
-            <DropdownMenuSub key={group.heading}>
-              <DropdownMenuSubTrigger>{group.heading}</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-64 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
-                {group.tools.map((tool) => (
-                  <DropdownMenuItem key={tool.href} onSelect={(e) => { e.preventDefault(); router.push(tool.href) }}>
-                    <tool.icon className="mr-2 h-4 w-4 shrink-0" />
-                    {tool.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          ))}
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
-      <DropdownMenuSeparator />
       {/* The desktop sidebar's own sections, one submenu each. The sidebar is
           md+ only, so on a phone this is the only place its Videos links and
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
-          data the sidebar renders. */}
+          data the sidebar renders. "Apps" carries the whole feature catalog
+          as nested per-category submenus, which is why the menu itself no
+          longer has All Features / All Tools / Tools rows of its own. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>
@@ -201,28 +167,23 @@ function SettingsMenu({
                 {link.title}
               </DropdownMenuItem>
             ))}
+            {section.groups && section.groups.length > 0 && <DropdownMenuSeparator />}
+            {section.groups?.map((group) => (
+              <DropdownMenuSub key={group.id}>
+                <DropdownMenuSubTrigger>{group.title}</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="w-64 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+                  {group.links.map((link) => (
+                    <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
+                      {link.title}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>
       ))}
       <DropdownMenuSeparator />
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/notifications") }}>
-        <Bell className="mr-2 h-4 w-4" />
-        <span className="flex-1">Notifications</span>
-        {unreadNotifications > 0 && (
-          <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">
-            New
-          </span>
-        )}
-      </DropdownMenuItem>
-      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/contacts") }}>
-        <Contact className="mr-2 h-4 w-4" />
-        <span className="flex-1">Contacts</span>
-        {pendingContacts > 0 && (
-          <span className="ml-2 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold leading-none text-primary-foreground">
-            {pendingContacts}
-          </span>
-        )}
-      </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
@@ -354,16 +315,12 @@ function DockInstance({
   side,
   allItems,
   onSignIn,
-  unreadNotifications,
-  pendingContacts,
   embedded = false,
 }: {
   dockClassName: string
   side: "bottom" | "top"
   allItems: DockNavRenderItem[]
   onSignIn: () => void
-  unreadNotifications: number
-  pendingContacts: number
   embedded?: boolean
 }) {
   return (
@@ -405,13 +362,10 @@ function DockInstance({
             <DockIcon>
               <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
             </DockIcon>
-            {unreadNotifications > 0 && (
-              <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background" />
-            )}
           </DockItem>
         </DropdownMenuTrigger>
       </Dock>
-      <SettingsMenu side={side} onSignIn={onSignIn} unreadNotifications={unreadNotifications} pendingContacts={pendingContacts} />
+      <SettingsMenu side={side} onSignIn={onSignIn} />
     </DropdownMenu>
   )
 }
@@ -441,11 +395,15 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
   // when it closes, which would tear the dialog down with it.
   const [loginOpen, setLoginOpen] = useState(false)
   const { isAuthenticated } = useSession()
-  const { unreadCount } = useAccountNotifications(isAuthenticated)
-  // Polled here (not only on /contacts) on purpose: the same GET is the
-  // presence heartbeat that shows this user as online to their contacts
-  // wherever they are in the app.
-  const { incoming: incomingContacts } = useContacts(isAuthenticated)
+  // Called for their app-wide side effects, not for anything this component
+  // renders: `useAccountNotifications` is what toasts a notification that
+  // arrives while the user is anywhere in the app, and `useContacts`' poll
+  // doubles as the presence heartbeat that shows this user as online to their
+  // contacts (not only on /contacts). Neither count is shown in the dock any
+  // more — the Settings menu is navigation now, and its Notifications and
+  // Contacts rows, plus the unread dot that advertised them, are gone.
+  useAccountNotifications(isAuthenticated)
+  useContacts(isAuthenticated)
 
   /**
    * Hands the destination to the app frame when there is one, so the click
@@ -557,8 +515,6 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           side="bottom"
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
-          unreadNotifications={unreadCount}
-          pendingContacts={incomingContacts.length}
           embedded
         />
         <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
@@ -583,8 +539,6 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
           side="bottom"
           allItems={allItems}
           onSignIn={() => setLoginOpen(true)}
-          unreadNotifications={unreadCount}
-          pendingContacts={incomingContacts.length}
         />
       </div>
 
@@ -634,13 +588,10 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
                 <DockIcon>
                   <Image src={IconSettings} alt="settings" width={24} height={24} className="w-full h-full" unoptimized />
                 </DockIcon>
-                {unreadCount > 0 && (
-                  <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-background" />
-                )}
               </DockItem>
             </DropdownMenuTrigger>
           </Dock>
-          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} unreadNotifications={unreadCount} pendingContacts={incomingContacts.length} />
+          <SettingsMenu side="top" onSignIn={() => setLoginOpen(true)} />
         </DropdownMenu>
       </div>
 

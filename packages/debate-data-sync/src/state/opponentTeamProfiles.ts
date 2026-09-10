@@ -18,6 +18,8 @@
 
 import type { OpponentTeamProfile } from "../rankings/opponent-team-profile";
 
+import { mirrorToolRecordDelete, mirrorToolRecordSave } from "./tool-record-mirror";
+
 const STORAGE_KEY = "opponentTeamProfiles";
 
 function readAll(): OpponentTeamProfile[] {
@@ -57,11 +59,13 @@ export function saveOpponentTeamProfile(profile: OpponentTeamProfile): void {
     profiles[index] = profile;
   }
   writeAll(profiles);
+  mirrorToolRecordSave("opponentTeamProfiles", profile);
 }
 
 /** Deletes a persisted opponent team profile by `teamId`; a no-op if it isn't stored. */
 export function deleteOpponentTeamProfile(teamId: string): void {
   writeAll(readAll().filter((profile) => profile.teamId !== teamId));
+  mirrorToolRecordDelete("opponentTeamProfiles", teamId);
 }
 
 /**

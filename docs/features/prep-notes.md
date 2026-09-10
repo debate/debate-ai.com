@@ -350,6 +350,10 @@ action and its `apps/debate-ai.com` app-layer wiring).
 
 ## Known gaps
 
+- Notes sync to a signed-in user's account as the `prepNotes` collection
+  (see [Tool Data Sync](tool-data-sync.md)), so they follow that user across
+  devices — but they are still per-*user*, not a shared team resource two
+  people write to at once.
 - ~~If a note's `boxPath` no longer resolves to a real grid row (e.g. the
   flow was edited since the note was made), `jumpToBoxInGrid` silently
   returns `false` — the flow tab still gets selected, but nothing scrolls

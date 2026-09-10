@@ -13,12 +13,13 @@
 
 import type React from "react"
 
-import { CategoryDockProvider, PersistentVideoPlayer, VideoPlayerFrameBridge } from "debate-videos"
+import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { AppSidebarShell } from "@/components/layout/AppSidebarShell"
 import { AppFrameProvider, AppFrameSurface } from "@/components/layout/AppFrameProvider"
 import { ReasonDocsProvider } from "@/components/reason-docs/ReasonDocsProvider"
 import { OneTap } from "@/components/layout/OneTap"
+import { ToolRecordSyncProvider } from "@/components/layout/ToolRecordSyncProvider"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
 import { Toaster } from "sonner"
@@ -35,6 +36,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {/* Mirrors picks made in this frame (a video card, the queue) back
               to the player mounted in the shell. */}
           <VideoPlayerFrameBridge />
+          {/* The tool panels run in this document, so the account mirror for
+              their localStorage stores has to be switched on here too. */}
+          <ToolRecordSyncProvider />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
       </CategoryDockProvider>
@@ -59,10 +63,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </AppFrameProvider>
       </ReasonDocsProvider>
       <div data-app-chrome>
-        <PersistentVideoPlayer />
+        {/* The slow-the-spread toggle is debate chrome, not part of the player. */}
+        <PersistentVideoPlayer extraControls={<SlowSpreadButton />} />
         <OneTap />
       </div>
       <VideoPlayerFrameBridge />
+      <ToolRecordSyncProvider />
       <ServiceWorkerRegistrar />
       {/* Sign-in and sign-out report through toasts; without a mounted
           toaster every one of those messages was dropped silently. */}

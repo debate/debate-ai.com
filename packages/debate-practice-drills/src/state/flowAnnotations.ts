@@ -16,6 +16,11 @@ import {
   sortAnnotationsByTimestamp,
 } from "debate-round/src/flow/flow-annotations";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 const STORAGE_KEY = "flowAnnotations";
 
 function readAll(): FlowAnnotation[] {
@@ -83,9 +88,11 @@ export function saveFlowAnnotation(annotation: FlowAnnotation): void {
     annotations[index] = annotation;
   }
   writeAll(annotations);
+  mirrorToolRecordSave("flowAnnotations", annotation);
 }
 
 /** Deletes a persisted annotation by id; a no-op if it isn't stored. */
 export function deleteFlowAnnotation(id: string): void {
   writeAll(readAll().filter((annotation) => annotation.id !== id));
+  mirrorToolRecordDelete("flowAnnotations", id);
 }

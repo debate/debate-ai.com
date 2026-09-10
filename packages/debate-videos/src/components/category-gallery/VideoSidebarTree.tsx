@@ -42,6 +42,11 @@ import {
   SIDEBAR_VIDEO_LINKS_BY_ID,
 } from "./sidebar-video-links";
 import { VIDEOS_SECTION_ID, sidebarSectionForPath } from "./sidebar-active-section";
+import {
+  ALL_SIDEBAR_SECTION_IDS,
+  toggleExpandedSection,
+  withSectionExpanded,
+} from "./sidebar-section-expansion";
 
 const COLLEGE_CHILD_IDS = VIDEO_FORMAT_LINKS.map((link) => link.id);
 
@@ -74,25 +79,34 @@ export function VideoSidebarTree({
   // so opening a tool section closes Round Videos rather than stacking on top
   // of it. Lectures is not part of it — see the file comment.
   const routeSectionId = sidebarSectionForPath(pathname);
-  const [openSectionId, setOpenSectionId] = useState<string | null>(
-    routeSectionId ?? VIDEOS_SECTION_ID,
-  );
+  const [expandedSectionIds, setExpandedSectionIds] =
+    useState<readonly string[]>(ALL_SIDEBAR_SECTION_IDS);
   const [collegeExpanded, setCollegeExpanded] = useState(true);
 
-  useEffect(() => {
-    setOpenSectionId(routeSectionId ?? VIDEOS_SECTION_ID);
-  }, [routeSectionId]);
+  const expandSection = React.useCallback((sectionId: string) => {
+    setExpandedSectionIds((current) => withSectionExpanded(current, sectionId));
+  }, []);
 
-  const videosExpanded = openSectionId === VIDEOS_SECTION_ID;
+  const toggleSection = React.useCallback((sectionId: string) => {
+    setExpandedSectionIds((current) => toggleExpandedSection(current, sectionId));
+  }, []);
+
+  // Re-open the section holding the route on navigation — nothing else closes.
+  useEffect(() => {
+    if (routeSectionId == null) return;
+    expandSection(routeSectionId);
+  }, [routeSectionId, expandSection]);
+
+  const videosExpanded = expandedSectionIds.includes(VIDEOS_SECTION_ID);
 
   // Re-open the College Debates node if the user navigates straight to one
   // of its children (e.g. via URL) while it happens to be collapsed.
   useEffect(() => {
     if (activeId && COLLEGE_CHILD_IDS.includes(activeId)) {
       setCollegeExpanded(true);
-      setOpenSectionId(VIDEOS_SECTION_ID);
+      expandSection(VIDEOS_SECTION_ID);
     }
-  }, [activeId]);
+  }, [activeId, expandSection]);
 
   const lectureCategoryItems = React.useMemo(() => {
     if (lectureCategories.length === 0) return [];
@@ -124,9 +138,7 @@ export function VideoSidebarTree({
         // the round archive's own flagship is College Debates.
         sectionHref={VIDEO_COLLEGE_LINK.href}
         expanded={videosExpanded}
-        onToggleExpand={() =>
-          setOpenSectionId((current) => (current === VIDEOS_SECTION_ID ? null : VIDEOS_SECTION_ID))
-        }
+        onToggleExpand={() => toggleSection(VIDEOS_SECTION_ID)}
       >
         <TreeItem
           level={2}
@@ -197,7 +209,7 @@ export function VideoSidebarTree({
         />
       )}
 
-      <ToolNavTree openSectionId={openSectionId} onOpenSectionChange={setOpenSectionId} />
+      <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />
     </nav>
   );
 }

@@ -15,6 +15,7 @@ import {
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
 } from "debate-videos/src/components/category-gallery/sidebar-tool-sections"
+import { APP_FEATURES } from "../../ui/features/feature-catalog"
 import { SIDEBAR_VIDEO_LINKS } from "debate-videos/src/components/category-gallery/sidebar-video-links"
 import { FOOTER_LINKS } from "debate-videos/src/ui/layout/footer-links"
 import {
@@ -23,6 +24,9 @@ import {
   SITE_LINKS,
   DEBATE_LINKS,
 } from "../dock-menu-sections"
+
+/** The two surfaces `dock-menu-sections.ts` keeps out of the menu. */
+const MENU_EXCLUDED_HREFS = new Set(["/contacts", "/notifications"])
 
 describe("SIDEBAR_MENU_SECTIONS", () => {
   it("mirrors the sidebar's sections, in tree order", () => {
@@ -52,10 +56,36 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
   it("lists the dock's own destinations as text rows too", () => {
     // The dock icons label themselves on hover, which a touch device never
     // fires — so the same five destinations are spelled out in the menu.
+    const apps = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "apps")!
+    const appsRows = apps.links.map((link) => link.href)
     for (const link of APP_DOCK_LINKS) {
-      expect(DOCK_MENU_HREFS.has(link.href)).toBe(true)
+      expect(appsRows).toContain(link.href)
     }
-    expect(DOCK_MENU_HREFS.has(TOOLS_ROOT_HREF)).toBe(true)
+  })
+
+  it("carries the whole feature catalog under Apps, grouped by category", () => {
+    const apps = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "apps")!
+    expect(apps.links[0]).toEqual({ href: "/features", title: "All Features" })
+    expect(apps.groups?.length).toBeGreaterThan(0)
+
+    const grouped = new Set(apps.groups!.flatMap((group) => group.links.map((link) => link.href)))
+    for (const feature of APP_FEATURES) {
+      if (MENU_EXCLUDED_HREFS.has(feature.href)) continue
+      expect(grouped.has(feature.href)).toBe(true)
+    }
+    // One entry per category, and no category listed twice.
+    const ids = apps.groups!.map((group) => group.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it("drops the rows the menu deliberately no longer carries", () => {
+    // `/tools` and its groups, plus the contacts list and the notification
+    // inbox: the menu is navigation, and every tool it used to list is
+    // already under one of the Coaching / Research / Practice submenus.
+    expect(DOCK_MENU_HREFS.has(TOOLS_ROOT_HREF)).toBe(false)
+    for (const href of MENU_EXCLUDED_HREFS) {
+      expect(DOCK_MENU_HREFS.has(href)).toBe(false)
+    }
   })
 
   it("carries every footer link across its two external submenus", () => {
@@ -80,10 +110,14 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     }
   })
 
-  it("does not repeat a destination inside one section", () => {
+  it("does not repeat a destination inside one section's rows", () => {
     for (const section of SIDEBAR_MENU_SECTIONS) {
       const hrefs = section.links.map((link) => link.href)
       expect(new Set(hrefs).size).toBe(hrefs.length)
+      for (const group of section.groups ?? []) {
+        const groupHrefs = group.links.map((link) => link.href)
+        expect(new Set(groupHrefs).size).toBe(groupHrefs.length)
+      }
     }
   })
 })
