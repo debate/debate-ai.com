@@ -6,6 +6,7 @@ export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
 export {
   SIDEBAR_TOOL_SECTIONS,
   APP_DOCK_LINKS,
+  RESEARCH_SECTION_ID,
   TOOLS_ROOT_HREF,
   type SidebarToolLink,
   type SidebarToolSection,

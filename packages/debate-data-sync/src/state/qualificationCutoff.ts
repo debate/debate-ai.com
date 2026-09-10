@@ -76,3 +76,73 @@ export function toQualificationOptions(cutoff: QualificationCutoffSettings): Qua
   if (cutoff.maxQualifiers !== null) options.maxQualifiers = cutoff.maxQualifiers;
   return options;
 }
+
+// --- Account sync (docs/features/team-rankings.md's "Standings data...
+// is stored in localStorage only" Known gap) ------------------------------
+//
+// Pure validation/serialization helpers shared by the `/api/settings`
+// D1-backed route (`apps/debate-ai.com`) and
+// `hooks/useStandingsAccountSync.ts`, mirroring
+// `qualificationPointsTable.ts`'s sync helpers exactly. `null` means "no
+// cutoff saved to the account", the same "not configured" semantics
+// `DEFAULT_QUALIFICATION_CUTOFF` already uses for a signed-out browser.
+
+export type QualificationCutoffPayload = {
+  qualificationCutoff: QualificationCutoffSettings | null;
+};
+
+/** Mirrors every other `DEFAULT_*` in this repo's settings surfaces: the value used when no saved row/value exists yet. */
+export const DEFAULT_QUALIFICATION_CUTOFF_SYNC: QualificationCutoffPayload = {
+  qualificationCutoff: null,
+};
+
+export type QualificationCutoffPatchResult = {
+  /** Only the field, if present in `input` *and* valid. */
+  valid: Partial<QualificationCutoffPayload>;
+  /** One message per rejected or malformed field. */
+  errors: string[];
+};
+
+/**
+ * Validates an untrusted (e.g. parsed request-body JSON) patch: `null`
+ * clears the synced cutoff, a valid `{ minPoints, maxQualifiers }` object
+ * replaces it.
+ */
+export function normalizeQualificationCutoffPatch(input: unknown): QualificationCutoffPatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+
+  const record = input as Record<string, unknown>;
+  const valid: Partial<QualificationCutoffPayload> = {};
+  const errors: string[] = [];
+
+  if ("qualificationCutoff" in record) {
+    const value = record.qualificationCutoff;
+    if (value === null) {
+      valid.qualificationCutoff = null;
+    } else if (isValidCutoff(value)) {
+      valid.qualificationCutoff = value;
+    } else {
+      errors.push('"qualificationCutoff" must be null or a { minPoints, maxQualifiers } object, either field a number or null.');
+    }
+  }
+
+  return { valid, errors };
+}
+
+/** Serializes a cutoff for the `qualification_cutoff` D1 column: `null` clears it. */
+export function serializeQualificationCutoff(cutoff: QualificationCutoffSettings | null): string | null {
+  return cutoff === null ? null : JSON.stringify(cutoff);
+}
+
+/** Parses the `qualification_cutoff` D1 column back into a cutoff, or `null`. Never throws — a null, malformed, or invalid-shape value reads back as `null` rather than erroring the request. */
+export function parseQualificationCutoff(raw: string | null | undefined): QualificationCutoffSettings | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    return isValidCutoff(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}

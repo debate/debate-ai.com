@@ -75,8 +75,18 @@ re-deriving them:
   Workspace menu/command palette — no in-app entry point linked to it.
 - Elo and TOC-score computation aren't documented here in detail; see
   `packages/debate-videos/src/panels/leaderboard/leaderboardUtils.ts`.
-- Standings data (logged/imported tournament results, the custom points
+- ~~Standings data (logged/imported tournament results, the custom points
   table, and the qualification cutoff) is stored in `localStorage` only —
   it doesn't yet follow a signed-in user across devices the way
   flows/rounds/word-count rounds and the other `saved_*` D1-backed records
-  do.
+  do.~~ Closed: `StandingsPanel` now syncs all three to a signed-in user's
+  account via `useStandingsAccountSync` (`packages/debate-videos/src/hooks/`).
+  Logged/imported tournament results sync through the new `saved_tournament_results`
+  D1 table (one row per result, `/api/tournament-results`), one-to-one with
+  `saved_word_count_rounds`'s shape; the custom points table and qualification
+  cutoff sync as two new nullable `user_settings` columns
+  (`qualificationPointsTable`/`qualificationCutoff`) via the existing
+  `/api/settings` route, mirroring `wordLimitPresets`'s "remote wins if
+  present, else push local up" merge. Every write still applies to
+  `localStorage` first (fully usable signed out) and best-effort syncs
+  after — a failed sync never blocks the local save.

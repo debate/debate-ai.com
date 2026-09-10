@@ -7,8 +7,8 @@ import {
   Compass,
   Search,
   Package,
-  Code2,
 } from "lucide-react"
+import { Github } from "./github-icon"
 
 const features = [
   {
@@ -32,7 +32,7 @@ const features = [
     description: "Client-side search across all documentation, powered by Orama.",
   },
   {
-    icon: Code2,
+    icon: Github,
     title: "GitHub-Linked",
     description: "Every page links back to its source file in debate/debate-ai.com.",
   },

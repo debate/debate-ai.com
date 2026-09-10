@@ -39,11 +39,33 @@ In the sidebar the panels sit under the dock and above the nav tree: the
 tree is long enough (a section auto-expands to show where you are) that
 anything below it starts under the fold.
 
-The section is expanded by default on `/reason-editor`, where the docs are
-the page's subject, and collapsed on `/cards` until the reader says
-otherwise — which sticks, per-device, in `localStorage`. Nothing is fetched
-until it is actually open, so a page that leaves it collapsed makes no
-document request at all.
+## What else the `/cards` sidebar carries
+
+Nothing but the Research tool list. Clicking "Shared" in the dock used to
+land on a column holding four navigations at once — the document panels, the
+whole Apps / Coaching / Research / Practice tree, the glossary and rankings
+links, and the site footer — on a page that is about the first of them.
+`showsCardsOnlySidebar` (same module) marks the `/cards` subtree, and there
+`AppSidebarShell` renders the tree as `ToolNavTree sectionIds={[…]}`: only
+the named sections, no "Apps" node above them and no reference pair below,
+and no footer.
+
+Research is the section that lists the cards pages themselves (Evidence
+Library, Argument Library, Topic Coverage, the prep room, the review queue),
+so it is the one kept — and because `/cards` matches the *Apps* node by
+route, `ToolNavTree` falls back to opening the first section it was given
+rather than leaving a heading with nothing under it. The dock stays: it is
+the control the reader clicked "Shared" in, and the way back to `/videos`.
+
+`/reason-editor` keeps the full tree — it is reached *from* those other
+sections rather than being one of them.
+
+The section is expanded by default on both routes — they are the only two it
+mounts on, and on `/cards` the sidebar is now these panels plus the Research
+tool list, so a collapsed "Documents" row would leave that column with no
+file tree in it. A reader's own collapse still wins and sticks, per-device,
+in `localStorage`. Nothing is fetched until the section is actually open, so
+collapsing it costs no document request.
 
 ## Opening a file
 

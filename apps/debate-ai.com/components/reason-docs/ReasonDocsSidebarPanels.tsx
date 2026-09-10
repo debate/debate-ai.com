@@ -71,7 +71,7 @@ function loadPanels(): SidebarPanel[] {
 }
 
 /** The user's explicit collapse choice, or `null` when they've never made
- *  one (in which case the section follows the current route). */
+ *  one (in which case the section starts open — see `isOpen` below). */
 function loadSectionOpen(): boolean | null {
   try {
     const raw = localStorage.getItem(SECTION_STORAGE_KEY)
@@ -113,13 +113,15 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
   }, [])
 
   const onEditorRoute = pathname === REASON_EDITOR_ROUTE
-  // Expanded by default where the docs are the page's subject, collapsed on
-  // the other tool pages the sidebar also covers — until the user says
-  // otherwise, which sticks.
-  const isOpen = openOverride ?? onEditorRoute
+  // Expanded by default: this only mounts where the documents *are* the
+  // page's subject (`/cards` and the editor), and on `/cards` the sidebar is
+  // now these panels plus the Research tool list — a collapsed "Documents"
+  // row would leave that column with no file tree in it at all. The user's
+  // own collapse still wins, and sticks.
+  const isOpen = openOverride ?? true
 
-  // Nothing is fetched until the section is actually on screen, so tool pages
-  // that leave it collapsed make no document requests at all.
+  // Nothing is fetched until the section is actually on screen, so a reader
+  // who collapses it makes no document requests at all.
   useEffect(() => {
     if (isOpen) ensureLoaded()
   }, [isOpen, ensureLoaded])

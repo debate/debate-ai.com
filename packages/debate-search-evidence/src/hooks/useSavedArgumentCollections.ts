@@ -14,6 +14,15 @@
  * "Save current selection" reads `activeTags` back out and stores it here
  * under a new name.
  *
+ * Also subscribes to the browser's `storage` event (via
+ * `isSavedArgumentCollectionsLiveUpdateStorageEvent`) so a *different*
+ * browser tab saving, renaming, updating, or removing a collection refreshes
+ * this one too — the same-tab `CHANGE_EVENT` listener below never fires for
+ * another tab's write. This closes the same "every `use*Presets`-shaped hook
+ * has no cross-tab `storage` listener yet" gap
+ * `docs/features/argument-tree-outline.md` named for this hook's
+ * `useOutlineFilterPresets.ts` sibling.
+ *
  * @module hooks/useSavedArgumentCollections
  */
 
@@ -47,6 +56,18 @@ function readLocal(): SavedArgumentCollection[] {
 function writeLocal(list: SavedArgumentCollection[]) {
   if (typeof localStorage === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+/**
+ * Whether a `storage` event should trigger `useSavedArgumentCollections` to
+ * refresh its collection list. A `null` key (e.g. from
+ * `localStorage.clear()`, per the `StorageEvent` spec) counts too — the
+ * safest response to "everything changed" is refreshing. Any other key (an
+ * unrelated store elsewhere in the app) is ignored so an unrelated cross-tab
+ * write doesn't force a needless refresh.
+ */
+export function isSavedArgumentCollectionsLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return event.key === null || event.key === STORAGE_KEY;
 }
 
 // Module-level (not per-hook-instance) so every mounted instance shares one
@@ -105,6 +126,18 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
     return () => {
       window.removeEventListener(CHANGE_EVENT, onExternalChange);
     };
+  }, []);
+
+  // A `storage` event never fires in the tab that made the write, only in
+  // other same-origin tabs — the `CHANGE_EVENT` listener above only covers
+  // this tab's own instances.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isSavedArgumentCollectionsLiveUpdateStorageEvent(event)) return;
+      setCollections(readLocal());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const persist = useCallback((next: SavedArgumentCollection[]) => {

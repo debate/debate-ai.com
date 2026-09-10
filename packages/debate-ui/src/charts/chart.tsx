@@ -119,7 +119,13 @@ function ChartTooltipContent({
   nameKey,
   labelKey,
 }: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-  React.ComponentProps<"div"> & {
+  React.ComponentProps<"div"> &
+  // Recharts reads `active`, `payload`, and `label` off its own context and
+  // strips them from the Tooltip props, so a content renderer has to declare
+  // the props it is handed back.
+  Partial<
+    Pick<RechartsPrimitive.TooltipContentProps, "active" | "payload" | "label">
+  > & {
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: "line" | "dot" | "dashed"
@@ -188,7 +194,7 @@ function ChartTooltipContent({
 
             return (
               <div
-                key={item.dataKey}
+                key={key}
                 className={cn(
                   "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground",
                   indicator === "dot" && "items-center"
@@ -259,7 +265,10 @@ function ChartLegendContent({
   verticalAlign = "bottom",
   nameKey,
 }: React.ComponentProps<"div"> &
-  Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  Pick<RechartsPrimitive.LegendProps, "verticalAlign"> & {
+    // Legend omits `payload` from its own props and passes it to the content
+    // renderer instead.
+    payload?: ReadonlyArray<RechartsPrimitive.LegendPayload>
     hideIcon?: boolean
     nameKey?: string
   }) {

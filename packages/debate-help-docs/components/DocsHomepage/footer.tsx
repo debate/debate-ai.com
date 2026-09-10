@@ -4,7 +4,8 @@
  */
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Code2, BookOpen } from "lucide-react"
+import { BookOpen } from "lucide-react"
+import { Github } from "./github-icon"
 
 export function Footer() {
   return (
@@ -27,7 +28,7 @@ export function Footer() {
             </Link>
             <Link href="https://github.com/debate/debate-ai.com" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg" className="gap-2 bg-transparent">
-                <Code2 className="h-4 w-4" />
+                <Github className="h-4 w-4" />
                 Star on GitHub
               </Button>
             </Link>

@@ -14,6 +14,8 @@
 @import "tw-animate-css";
 /* The REASON editor's own component styles (toolbar, tables, code blocks…). */
 @import "react-reason-editor/style.css" layer(vendor);
+/* The files/outline sidebar ships its styles separately. */
+@import "react-reason-editor-sidebar/style.css" layer(vendor);
 @import "./themes.css";
 @import "../../../packages/debate-flow/src/styles/ebb-scope.css";
 
@@ -33,6 +35,7 @@
    without these the chat UI and editor ship unstyled. */
 @source "../node_modules/research-agent-ui/src";
 @source "../node_modules/react-reason-editor/dist";
+@source "../node_modules/react-reason-editor-sidebar/dist";
 @source "../node_modules/shadcn-settings/dist";
 
 @custom-variant dark (:is(.dark) &);

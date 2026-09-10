@@ -1,7 +1,7 @@
 /**
  * @fileoverview The Videos portion of the sidebar tree — the destinations
- * under its "Videos" heading plus the glossary/rankings pair pinned below
- * the tree — as plain data.
+ * under its "Round Videos" and "Lectures" headings plus the glossary/rankings
+ * pair pinned below the tree — as plain data.
  *
  * Three surfaces render these links and used to each restate them: the
  * sidebar tree (`VideoSidebarTree`), the mobile quick-link tiles
@@ -40,7 +40,8 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
   { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time" },
 ];
 
-/** Siblings of College Debates under the "Videos" heading. */
+/** The rest of the video library: My Favorites, a sibling of College Debates
+ *  under "Round Videos", and Lectures, which is a heading of its own. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites" },
   { id: "lectures", href: "/videos/lectures", title: "Lectures" },

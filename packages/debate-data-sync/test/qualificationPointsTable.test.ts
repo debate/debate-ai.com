@@ -2,8 +2,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   getEffectiveQualificationPointsTable,
   getPersistedQualificationPointsTable,
+  normalizeQualificationPointsTablePatch,
+  parseQualificationPointsTable,
   resetPersistedQualificationPointsTable,
   savePersistedQualificationPointsTable,
+  serializeQualificationPointsTable,
 } from "../src/state/qualificationPointsTable";
 import { DEFAULT_QUALIFICATION_POINTS_TABLE, type QualificationPointsTable } from "../src/rankings/ndca-standings";
 
@@ -97,5 +100,54 @@ describe("getEffectiveQualificationPointsTable", () => {
     savePersistedQualificationPointsTable(CUSTOM_TABLE);
     resetPersistedQualificationPointsTable();
     expect(getEffectiveQualificationPointsTable()).toEqual(DEFAULT_QUALIFICATION_POINTS_TABLE);
+  });
+});
+
+describe("normalizeQualificationPointsTablePatch", () => {
+  it("accepts null, clearing the synced table", () => {
+    const { valid, errors } = normalizeQualificationPointsTablePatch({ qualificationPointsTable: null });
+    expect(errors).toEqual([]);
+    expect(valid.qualificationPointsTable).toBeNull();
+  });
+
+  it("accepts a valid table", () => {
+    const { valid, errors } = normalizeQualificationPointsTablePatch({ qualificationPointsTable: CUSTOM_TABLE });
+    expect(errors).toEqual([]);
+    expect(valid.qualificationPointsTable).toEqual(CUSTOM_TABLE);
+  });
+
+  it("rejects a malformed table", () => {
+    const { valid, errors } = normalizeQualificationPointsTablePatch({
+      qualificationPointsTable: { outroundPoints: { champion: 1 } },
+    });
+    expect(errors.length).toBe(1);
+    expect(valid.qualificationPointsTable).toBeUndefined();
+  });
+
+  it("leaves the field unset when absent from the input", () => {
+    const { valid, errors } = normalizeQualificationPointsTablePatch({});
+    expect(errors).toEqual([]);
+    expect(valid.qualificationPointsTable).toBeUndefined();
+  });
+
+  it("rejects a non-object body", () => {
+    const { errors } = normalizeQualificationPointsTablePatch("nope");
+    expect(errors.length).toBe(1);
+  });
+});
+
+describe("serializeQualificationPointsTable / parseQualificationPointsTable", () => {
+  it("round-trips a table", () => {
+    expect(parseQualificationPointsTable(serializeQualificationPointsTable(CUSTOM_TABLE))).toEqual(CUSTOM_TABLE);
+  });
+
+  it("serializes null as null", () => {
+    expect(serializeQualificationPointsTable(null)).toBeNull();
+  });
+
+  it("parses a missing/corrupt/invalid value as null", () => {
+    expect(parseQualificationPointsTable(null)).toBeNull();
+    expect(parseQualificationPointsTable("{not json")).toBeNull();
+    expect(parseQualificationPointsTable(JSON.stringify({ outroundPoints: {} }))).toBeNull();
   });
 });
