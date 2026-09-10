@@ -42,6 +42,28 @@ export function isDockNavPath(path: string): boolean {
   return DOCK_NAV_HREFS.includes(normalized)
 }
 
+/**
+ * Whether `path` belongs to a dock destination that is already framed — the
+ * destination itself, or a page it navigates to on its own (`/videos/some-
+ * lecture` under a framed `/videos`). Unlike {@link isDockNavPath}, this is a
+ * prefix match, and it answers a different question: not "should the dock
+ * open this as a new frame" but "does the frame currently showing this path
+ * still own it, or has the page inside it wandered off to a tool the dock
+ * never framed in the first place."
+ *
+ * `AppShell` uses this to decide whether a framed document that navigated
+ * itself (a tool-tree link, not a dock click) should break out of the frame:
+ * a page under a dock destination stays embedded, same as before; anything
+ * else renders chrome-less inside the frame with no way back to the top
+ * document's dock, address bar, or history, so it breaks out to a normal
+ * top-level load instead.
+ */
+export function isDockOwnedPath(path: string): boolean {
+  const withoutQuery = path.split("?")[0]?.split("#")[0] ?? ""
+  const normalized = withoutQuery.replace(/\/+$/, "") || "/"
+  return DOCK_NAV_HREFS.some((href) => normalized === href || normalized.startsWith(`${href}/`))
+}
+
 /** Query marker on a frame's URL, so the framed document is identifiable. */
 export const EMBED_PARAM = "embed"
 export const EMBED_VALUE = "1"
