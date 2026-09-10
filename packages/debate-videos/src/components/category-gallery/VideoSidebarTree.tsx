@@ -2,12 +2,17 @@
  * @fileoverview Collapsible navigation tree shown in the persistent left
  * sidebar on the videos pages. Structure:
  *   Round Videos (h1, expandable, heading-only)
- *     -> College Debates (h2, expandable) -> Policy / PF / LD / Greatest of All-Time
- *     -> My Favorites (h2, plain link)
+ *     -> College Debates / Policy / PF / LD / Greatest of All-Time /
+ *        My Favorites (h2, plain links, all peers)
  *   Lectures (h1, expandable, heading-only) -> lecture categories (h2)
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
+ *
+ * The round-archive links are one flat list. Policy / PF / LD / Greatest of
+ * All-Time used to hang inside College Debates, which read as if they were
+ * subsets of it — they are sibling collections of the same library, and the
+ * extra level only bought an indent and a second chevron to fight with.
  *
  * Lectures is a top-level section rather than a node inside the video tree:
  * the two libraries are peers — rounds recorded at tournaments on one side,
@@ -48,8 +53,6 @@ import {
   withSectionExpanded,
 } from "./sidebar-section-expansion";
 
-const COLLEGE_CHILD_IDS = VIDEO_FORMAT_LINKS.map((link) => link.id);
-
 interface VideoSidebarTreeProps {
   /** Per-category video counts, keyed by quick-link id. */
   counts?: Record<string, number>;
@@ -81,7 +84,6 @@ export function VideoSidebarTree({
   const routeSectionId = sidebarSectionForPath(pathname);
   const [expandedSectionIds, setExpandedSectionIds] =
     useState<readonly string[]>(ALL_SIDEBAR_SECTION_IDS);
-  const [collegeExpanded, setCollegeExpanded] = useState(true);
 
   const expandSection = React.useCallback((sectionId: string) => {
     setExpandedSectionIds((current) => withSectionExpanded(current, sectionId));
@@ -98,15 +100,6 @@ export function VideoSidebarTree({
   }, [routeSectionId, expandSection]);
 
   const videosExpanded = expandedSectionIds.includes(VIDEOS_SECTION_ID);
-
-  // Re-open the College Debates node if the user navigates straight to one
-  // of its children (e.g. via URL) while it happens to be collapsed.
-  useEffect(() => {
-    if (activeId && COLLEGE_CHILD_IDS.includes(activeId)) {
-      setCollegeExpanded(true);
-      expandSection(VIDEOS_SECTION_ID);
-    }
-  }, [activeId, expandSection]);
 
   const lectureCategoryItems = React.useMemo(() => {
     if (lectureCategories.length === 0) return [];
@@ -140,26 +133,16 @@ export function VideoSidebarTree({
         expanded={videosExpanded}
         onToggleExpand={() => toggleSection(VIDEOS_SECTION_ID)}
       >
-        <TreeItem
-          level={2}
-          href={VIDEO_COLLEGE_LINK.href}
-          title={VIDEO_COLLEGE_LINK.title}
-          count={counts?.[VIDEO_COLLEGE_LINK.id]}
-          isActive={activeId === VIDEO_COLLEGE_LINK.id}
-          expanded={collegeExpanded}
-          onToggleExpand={() => setCollegeExpanded((v) => !v)}
-        >
-          {VIDEO_FORMAT_LINKS.map((link) => (
-            <TreeItem
-              key={link.id}
-              level={3}
-              href={link.href}
-              title={link.title}
-              count={counts?.[link.id]}
-              isActive={activeId === link.id}
-            />
-          ))}
-        </TreeItem>
+        {[VIDEO_COLLEGE_LINK, ...VIDEO_FORMAT_LINKS].map((link) => (
+          <TreeItem
+            key={link.id}
+            level={2}
+            href={link.href}
+            title={link.title}
+            count={counts?.[link.id]}
+            isActive={activeId === link.id}
+          />
+        ))}
 
         <TreeItem
           level={2}

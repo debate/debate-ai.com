@@ -24,15 +24,17 @@ export interface SidebarVideoLink {
   title: string;
 }
 
-/** The College Debates node — a link in its own right and, in the tree, the
- *  parent of {@link VIDEO_FORMAT_LINKS}. */
+/** The College Debates node — the round archive's flagship link, and the
+ *  first of the peer collections it heads in the tree. */
 export const VIDEO_COLLEGE_LINK: SidebarVideoLink = {
   id: "college",
   href: "/videos/college",
   title: "College Debates",
 };
 
-/** The debate formats nested under College Debates in the tree. */
+/** The debate formats, peers of {@link VIDEO_COLLEGE_LINK} in the tree
+ *  rather than children of it: they are sibling collections of the same
+ *  round archive, not subsets of the college one. */
 export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
   { id: "policy", href: "/videos/policy", title: "Policy Debates" },
   { id: "pf", href: "/videos/pf", title: "PF Debates" },
@@ -40,8 +42,8 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
   { id: "topPicks", href: "/videos/topPicks", title: "Greatest of All-Time" },
 ];
 
-/** The rest of the video library: My Favorites, a sibling of College Debates
- *  under "Round Videos", and Lectures, which is a heading of its own. */
+/** The rest of the video library: My Favorites, the last row under "Round
+ *  Videos", and Lectures, which is a heading of its own. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites" },
   { id: "lectures", href: "/videos/lectures", title: "Lectures" },

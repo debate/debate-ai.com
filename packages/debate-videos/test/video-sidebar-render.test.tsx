@@ -133,6 +133,28 @@ describe("the sidebar's heading structure", () => {
     expect(html.indexOf(">College Debates<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
+  it("keeps every round-archive link on one level under Round Videos", () => {
+    // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
+    // College Debates node, one indent deeper than it. They are peers of it:
+    // same heading level, same indent, and no chevron on College Debates to
+    // collapse them out of view.
+    const html = renderSidebar();
+    for (const title of [
+      "College Debates",
+      "Policy Debates",
+      "PF Debates",
+      "LD Debates",
+      "Greatest of All-Time",
+      "My Favorites",
+    ]) {
+      expect(html).toMatch(new RegExp(`<h2[^>]*>${title}</h2>`));
+      expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
+    }
+    // One expand control in the section — the Round Videos heading itself.
+    expect(html).not.toContain("Collapse College Debates");
+    expect(html).not.toContain("Expand College Debates");
+  });
+
   it("gives Lectures an h1 of its own, after the Round Videos section", () => {
     // Lectures used to hang off the Videos node as an h2 two levels in, which
     // read as a filter on the round archive rather than the other library.
