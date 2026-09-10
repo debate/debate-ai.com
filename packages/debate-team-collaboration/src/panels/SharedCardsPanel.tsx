@@ -114,18 +114,10 @@ function ShareByCodeForm({
           {contacts.map((c) => {
             const on = picked.has(c.user.id);
             return (
-              <button
-                key={c.user.id}
-                type="button"
-                aria-pressed={on}
-                onClick={() => toggle(c.user.id)}
-                className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs ${
-                  on ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground hover:bg-accent"
-                }`}
-              >
+              <Pill key={c.user.id} selected={on} onClick={() => toggle(c.user.id)}>
                 <span className={`h-1.5 w-1.5 rounded-full ${c.online ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
                 {c.user.name || c.user.email}
-              </button>
+              </Pill>
             );
           })}
         </div>

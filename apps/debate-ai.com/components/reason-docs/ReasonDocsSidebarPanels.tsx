@@ -39,7 +39,6 @@ import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,
   isEditorPathname,
-  type ReasonDocsCatalog,
   type ReasonDocsSelection,
 } from "@/lib/reason-docs/route-selection"
 import { FileTree } from "./FileTree"
@@ -171,17 +170,6 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
   const goToBlankEditor = useCallback(() => {
     if (!onEditorRoute) router.push(REASON_EDITOR_ROUTE)
   }, [onEditorRoute, router])
-
-  /** The files a URL can name, in the order a name resolves against them —
-   *  see `lib/reason-docs/route-selection`. Folders open nothing, so they are
-   *  not addressable. */
-  const catalog: ReasonDocsCatalog = useMemo(
-    () => ({
-      documents: documents.filter((d) => !d.isFolder).map((d) => ({ id: d.id, title: d.title })),
-      topics: topicItems.filter((t) => !t.isFolder).map((t) => ({ id: t.id, title: t.title })),
-    }),
-    [documents, topicItems],
-  )
 
   /**
    * Carries a selection into the editor's main column, as a URL the editor

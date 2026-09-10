@@ -174,8 +174,8 @@ export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome
  * applications. Two URLs naming the same file share a key even if their other
  * query parameters differ.
  */
-export function selectionParamsKey({ slug, doc, topic }: SelectionParams): string {
-  return `slug:${slug ?? ""}|doc:${doc ?? ""}|topic:${topic ?? ""}`
+export function selectionParamsKey({ doc, topic }: SelectionParams): string {
+  return `doc:${doc ?? ""}|topic:${topic ?? ""}`
 }
 
 /** The address bar, as much of it as {@link canonicalEditorUrl} reads. */
@@ -187,15 +187,24 @@ export interface EditorLocation {
   hash: string
 }
 
+/** The trees {@link canonicalEditorUrl} names a selection against — the
+ *  reader's own documents and the public topic starters, folders included
+ *  (folders are what makes a nested path resolvable, same as
+ *  {@link editorHrefForSelection}'s `items`). */
+export interface ReasonDocsCatalog {
+  documents: readonly PathItem[]
+  topics: readonly PathItem[]
+}
+
 /**
  * The URL the open document *should* have, or `null` when the current one
  * already says it.
  *
  * This is what turns a `?doc=12` link — or a link written before the file was
- * renamed — into `/reason-editor/<its name>` once the catalogue has loaded,
- * and what keeps the address bar naming the file the reader switched to. The
- * ids it replaces are dropped from the query; every other parameter is kept,
- * since `?share=` and `?shareWith=` are read by the same page.
+ * renamed — into `?doc=<its name>` once the catalogue has loaded, and what
+ * keeps the address bar naming the file the reader switched to. The ids it
+ * replaces are dropped from the query; every other parameter is kept, since
+ * `?share=` and `?shareWith=` are read by the same page.
  */
 export function canonicalEditorUrl(
   selection: ReasonDocsSelection | null,
@@ -207,13 +216,18 @@ export function canonicalEditorUrl(
   // this mounts on `/reason-editor`, but a caller mounted elsewhere renaming
   // *that* page's URL would be a navigation, not a rename.
   if (!isEditorPathname(location.pathname)) return null
-  const slug = editorSlugForSelection(selection, catalog)
-  if (!slug) return null
+  const items = selection.kind === "topic" ? catalog.topics : catalog.documents
+  const path = itemPath(items, selection.id)
+  if (!path) return null
   const params = new URLSearchParams(location.search)
   params.delete("doc")
   params.delete("topic")
-  const query = params.toString()
-  const next = `${REASON_EDITOR_ROUTE}/${slug}${query ? `?${query}` : ""}${location.hash}`
+  const rest = params.toString()
+  // Segment-wise, like `editorHrefForSelection` — `URLSearchParams` would
+  // percent-encode the path's own slashes into an unreadable `%2F`.
+  const encoded = path.split("/").map(encodeURIComponent).join("/")
+  const query = `${paramForKind(selection.kind)}=${encoded}${rest ? `&${rest}` : ""}`
+  const next = `${REASON_EDITOR_ROUTE}?${query}${location.hash}`
   const current = `${location.pathname}${location.search}${location.hash}`
   return next === current ? null : next
 }

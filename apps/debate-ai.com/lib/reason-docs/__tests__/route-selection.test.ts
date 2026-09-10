@@ -15,6 +15,8 @@ import {
   REASON_EDITOR_ROUTE,
   canonicalEditorUrl,
   editorHrefForSelection,
+  editorSlugFromPathname,
+  isEditorPathname,
   parseSelectionParams,
   resolveSelection,
   selectionParamsKey,
@@ -48,7 +50,7 @@ function input(overrides: Partial<Parameters<typeof resolveSelection>[0]> = {}) 
 /** Reads a href back the way the editor route does. */
 function parseHref(href: string) {
   const url = new URL(href, "https://debate-ai.com")
-  return parseSelectionParams(url.searchParams, url.pathname)
+  return parseSelectionParams(url.searchParams)
 }
 
 describe("editorHrefForSelection", () => {
@@ -201,5 +203,40 @@ describe("selectionParamsKey", () => {
     // Separate namespaces: doc "a" is not topic "a".
     expect(selectionParamsKey({ doc: "a", topic: null })).not.toBe(selectionParamsKey({ doc: null, topic: "a" }))
     expect(selectionParamsKey({ doc: null, topic: null })).not.toBe(selectionParamsKey({ doc: "a", topic: null }))
+  })
+})
+
+describe("canonicalEditorUrl", () => {
+  const catalog = { documents: DOCUMENTS, topics: TOPICS }
+  const loc = (search: string, pathname = REASON_EDITOR_ROUTE) => ({ pathname, search, hash: "" })
+
+  it("rewrites an id-addressed URL to the file's name", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34"))).toBe(
+      `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac`,
+    )
+  })
+
+  it("names a topic selection against the public tree", () => {
+    expect(canonicalEditorUrl({ kind: "topic", id: 7 }, catalog, loc("?topic=7"))).toBe(
+      `${REASON_EDITOR_ROUTE}?topic=topic-starter`,
+    )
+  })
+
+  it("keeps every other query parameter", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34&share=abc"))).toBe(
+      `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac&share=abc`,
+    )
+  })
+
+  it("returns null once the URL already names the file", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=impacts/warming-1ac"))).toBeNull()
+  })
+
+  it("does nothing off the editor route", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34", "/cards"))).toBeNull()
+  })
+
+  it("returns null without a selection", () => {
+    expect(canonicalEditorUrl(null, catalog, loc(""))).toBeNull()
   })
 })
