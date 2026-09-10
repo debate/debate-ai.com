@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -63,13 +63,20 @@ export const verification = sqliteTable("verification", {
 // (ported from quick search's document model; see /reason-editor). `parentId`
 // and `isFolder` back the file-tree sidebar (also ported from quick search's
 // REASON editor — see reason-editor-sidebar's FileTree) so documents can be
-// organized into folders instead of one flat list.
+// organized into folders instead of one flat list. An uploaded `.docx`
+// lands here too, converted to CardMirror's native `.cmir` on the way in
+// (`lib/cardmirror/stored-cmir.ts`); `format` says which shape a row holds.
 export const documents = sqliteTable(
   "documents",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull().default("Untitled"),
     content: text("content").notNull().default(""),
+    // How `content` is encoded: `"cmir"` for an uploaded file, which is kept
+    // in CardMirror's native format for its whole life, or `"html"` for a
+    // document written in the editor. Same two values as
+    // `topic_starter_items.format` — see `lib/cardmirror/format.ts`.
+    format: text("format").notNull().default("html"),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     parentId: integer("parent_id"),
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
@@ -927,6 +934,32 @@ export const videos = sqliteTable(
 
 export type VideoTableRow = typeof videos.$inferSelect;
 export type VideoTableInsert = typeof videos.$inferInsert;
+
+// Transcript cache, one row per video+language. YouTube bot-checks server IPs
+// at random and rate-limits them in bursts, so a transcript that was fetched
+// once is worth keeping: later viewers of the same video are served from here
+// instead of racing the limiter, and a video whose captions are momentarily
+// unreachable still has a transcript to show. `snippets` holds the caption
+// cues as fetched — `[{ text, start, duration }, …]` JSON — because the UI
+// regroups them into sentences itself and the raw cues are what a re-render
+// needs. Only successful fetches are stored; a miss falls through to YouTube,
+// so a video that gains captions later picks them up on the next request.
+export const videoTranscripts = sqliteTable(
+  "video_transcripts",
+  {
+    videoId: text("video_id").notNull(),
+    lang: text("lang").notNull().default("en"),
+    snippets: text("snippets").notNull(),
+    fetchedAt: integer("fetched_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.videoId, table.lang] }),
+  }),
+);
+
+export type VideoTranscriptRow = typeof videoTranscripts.$inferSelect;
 
 // Account-linked in-app notifications — backs the Create New Round dialog's
 // "invite a registered user" flow (an invitee with a matching `user` row

@@ -60,11 +60,40 @@ it stays a stable "how big is this app" answer while someone types.
   `searchFeatures`, `featureDocUrl`, and `buildFeatureCatalogSummaryText`.
   Like `debate-community`'s narrower community-hub directory it has no
   store — every entry links to a surface that already persists (or doesn't
-  need to persist) its own state.
+  need to persist) its own state. This is the original, seed copy — see
+  "Three copies, hand-synced" below for where the app actually renders from.
 - [`packages/debate-ui/src/features/FeaturesPanel.tsx`](../../packages/debate-ui/src/features/FeaturesPanel.tsx)
-  renders it, holding only the search string in local state.
+  renders it, holding only the search string in local state. This is also no
+  longer what the live `/features` route mounts (see below); it stays as the
+  package's own tested reference implementation.
 - [`apps/debate-ai.com/app/features/page.tsx`](../../apps/debate-ai.com/app/features/page.tsx)
-  mounts the panel at `/features`.
+  mounts `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx` — the app's
+  own, independently-evolved fork of the component above (an aurora hero,
+  counted-up totals, a marquee, and scroll-reveal spotlight cards, rather
+  than the package's plainer list), reading from its own fork of the catalog,
+  `apps/debate-ai.com/lib/ui/features/feature-catalog.ts`.
+
+### Three copies, hand-synced
+
+`APP_FEATURES` exists in three places, each maintained by hand rather than
+imported from a shared package:
+
+| Copy | Used by |
+| --- | --- |
+| `packages/debate-ui/src/features/feature-catalog.ts` | Its own `FeaturesPanel.tsx` and tests only — no longer rendered by the app |
+| `packages/debate-contributor-progress/src/ui/features/feature-catalog.ts` | [News Stream](news-stream.md)'s `buildAutoFeatureNews()` (the "Tool spotlight" auto-posts) |
+| `apps/debate-ai.com/lib/ui/features/feature-catalog.ts` | The live `/features` page |
+
+None of the three packages involved (`debate-ui`, `debate-community`, and the
+app) share a dependency edge that would let one `import` the others'
+copy — `debate-ui` is deliberately not a runtime dependency of the app or of
+`debate-community` (the September 2026 changelog's "vendored `debate-ui`
+into each consumer" pass), so a shared module isn't a small change here; it
+would mean choosing one of the three as canonical and wiring the other two
+through a new dependency edge. Until that happens, adding, renaming, or
+re-routing a feature has to be repeated in whichever of these three files a
+change actually needs to reach — see Known gaps for the drift this has
+already caused once.
 
 Titles and descriptions are copied from each route's own `metadata` export
 (or, where a route has none, from its feature doc's opening lines) so a card
@@ -102,6 +131,21 @@ the jump nav.
   internal consistency, not that it covers every file under
   `apps/debate-ai.com/app/`, because the app is outside the packages Vitest
   runs over.
+- **Fixed:** the three hand-synced copies named above had already drifted —
+  `/contacts` was added to the app's copy (alongside the Reason Editor's
+  Workspace menu and the `/tools` Prep & Practice group) but never carried
+  over to `packages/debate-ui`'s or `packages/debate-contributor-progress`'s,
+  so [News Stream](news-stream.md)'s auto-generated "Tool spotlight" post
+  (the only mention Contacts would otherwise ever get in that feed — no
+  hand-written `PRODUCT_NEWS` entry names it either) silently never fired for
+  it. Added the same entry to both lagging copies. No test caught this
+  because each copy's own test suite only checks its own internal
+  consistency (unique ids/routes, every category used, etc.), never that the
+  other two copies agree with it — and, per "Three copies, hand-synced"
+  above, none of the three packages has a dependency edge that would let one
+  test import and compare all three without adding one. This class of drift
+  (one copy gaining an entry the other two miss) remains possible for the
+  next feature that's added to only one copy.
 - `/login` is intentionally absent: it's a step on the way to a feature
   rather than a feature, and it's already reachable from the Settings menu.
 - The **Docs** links point at the feature docs on GitHub's `master` branch;

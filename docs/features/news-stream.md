@@ -233,6 +233,17 @@ is a best-effort layer on top rather than a replacement for it.
   so it doesn't distinguish "just shipped" from "always been here." Writing
   a real `PRODUCT_NEWS` entry for a tool remains the way to say something
   more specific than that.
+- **Fixed:** `buildAutoFeatureNews()` reads *this package's own*
+  `feature-catalog.ts` (`lib/news-stream.ts`'s import), one of three
+  hand-synced copies of `APP_FEATURES` across the repo (see
+  [`features-page.md`](features-page.md)'s "Three copies, hand-synced").
+  Contacts had been added to the app's copy — reachable from the dock, the
+  Tools page, and the Reason Editor — but never to this package's, so it had
+  no hand-written `PRODUCT_NEWS` entry *and* no auto-spotlight either,
+  making it the one tool this feed never mentioned at all. Added the missing
+  entry; the general "a future feature added to only one of the three
+  copies won't reach this feed" gap remains, since nothing checks the three
+  copies against each other.
 - Because the read/like account sync above is a union merge rather than a
   full two-way sync, **unliking** an item on one device doesn't clear that
   like on another device until that other device's own next toggle

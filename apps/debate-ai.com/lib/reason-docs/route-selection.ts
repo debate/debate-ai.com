@@ -3,101 +3,46 @@
  * in CardMirror".
  *
  * A selection made in the docs sidebar (`components/reason-docs`) is carried
- * to `/reason-editor` in the URL rather than only in `ReasonDocsProvider`
- * state. Provider state covers a client-side hop; the URL is what also covers
- * a reload, a pasted link, and a hard navigation out of `/videos`, which
- * renders its own layout branch and so can boot the editor with an empty
- * provider.
+ * to `/reason-editor` in the query string rather than only in
+ * `ReasonDocsProvider` state. Provider state covers a client-side hop; the URL
+ * is what also covers a reload, a pasted link, and a hard navigation out of
+ * `/videos`, which renders its own layout branch and so can boot the editor
+ * with an empty provider.
  *
- * That URL names the document: `/reason-editor/cp-answer-to-states`, built by
- * {@link editorHrefForSelection} from the file's own title (see
- * `./doc-slug`). The older `?doc=<id>` / `?topic=<id>` query form is still
- * read — links to it are out in the world — and the editor route rewrites
- * itself to the named path once it knows which file that id is
- * ({@link canonicalEditorUrl}).
+ * The query names the file by **filename**, not row id — `?doc=impacts/warming-1ac`
+ * for one of the reader's own files, `?topic=core/topic-starter` for a public
+ * one. `./doc-path` owns how a name becomes a path and how a path is read back;
+ * old numeric links keep working because it resolves those too.
+ *
+ * A URL that names nothing the reader has loaded is not an error: a public file
+ * lives in a catalogue this reader may never have fetched (and may not be
+ * signed in for at all), so resolution can come back asking for a server
+ * lookup — {@link resolveSelection}'s `lookup` outcome, which
+ * `ReasonDocsRouteSync` answers with `/api/topic-starters/by-path`. That is
+ * what makes a filename URL work for anyone whenever the file is public.
  *
  * Both ends of the round trip live here so they cannot drift: the sidebar
- * builds the href, and the editor route's `ReasonDocsRouteSync` reads it back
- * with {@link parseSelectionParams} and {@link resolveSelection}. Pure on
- * purpose — the components stay thin wrappers over functions with unit tests.
+ * builds the href with {@link editorHrefForSelection}, and the editor route's
+ * `ReasonDocsRouteSync` reads it back with {@link parseSelectionParams} and
+ * {@link resolveSelection}. Pure on purpose — the components stay thin
+ * wrappers over functions with unit tests.
  *
  * @module lib/reason-docs/route-selection
  */
 
-import { type DocSlugEntry, docSlugForId, findDocIdBySlug } from "./doc-slug"
+import { findItemByRef, itemPath, type PathItem } from "./doc-path"
 
 export const REASON_EDITOR_ROUTE = "/reason-editor"
 
 /** A document the editor can show: an owned document, or a read-only public
- *  topic starter. Both are addressed by id, in separate namespaces. */
+ *  topic starter. Both are addressed by name, in separate query parameters. */
 export type ReasonDocsSelection =
   | { kind: "document"; id: number }
   | { kind: "topic"; id: number }
 
-/** One file the editor route can address, as the sidebar knows it. */
-export interface ReasonDocsEntry {
-  id: number
-  title: string
-}
-
-/**
- * Everything `/reason-editor` can open, in the order a bare slug resolves
- * against it: topic starters first, then the reader's own documents — the
- * same precedence the query form has always had for a URL carrying both.
- */
-export interface ReasonDocsCatalog {
-  /** The reader's own non-folder documents, in sidebar order. */
-  documents: readonly ReasonDocsEntry[]
-  /** Public topic starters that are files, not folders. */
-  topics: readonly ReasonDocsEntry[]
-}
-
-const EMPTY_CATALOG: ReasonDocsCatalog = { documents: [], topics: [] }
-
-/** The two id namespaces share one URL space, so a slug's discriminator says
- *  which one it belongs to: `d12` is document 12, `t7` is topic starter 7. */
-function entryKey(selection: ReasonDocsSelection): string {
-  return `${selection.kind === "document" ? "d" : "t"}${selection.id}`
-}
-
-/** Reads {@link entryKey} back. */
-function parseEntryKey(key: string): ReasonDocsSelection | null {
-  const match = /^([dt])(\d+)$/.exec(key)
-  if (!match) return null
-  const id = Number(match[2])
-  if (!Number.isInteger(id)) return null
-  return { kind: match[1] === "d" ? "document" : "topic", id }
-}
-
-/** The catalogue as one flat, slug-addressable list — topic starters ahead of
- *  owned documents, per {@link ReasonDocsCatalog}. */
-function slugEntries(catalog: ReasonDocsCatalog): DocSlugEntry[] {
-  return [
-    ...catalog.topics.map((item) => ({ id: `t${item.id}`, title: item.title })),
-    ...catalog.documents.map((item) => ({ id: `d${item.id}`, title: item.title })),
-  ]
-}
-
-/** The path segment naming `selection`, or `null` when the catalogue doesn't
- *  hold it (a file still loading, or one that has been deleted). */
-export function editorSlugForSelection(
-  selection: ReasonDocsSelection,
-  catalog: ReasonDocsCatalog,
-): string | null {
-  return docSlugForId(entryKey(selection), slugEntries(catalog))
-}
-
-/** The editor URL that reopens `selection` from cold — `/reason-editor/<the
- *  file's name>`, falling back to the id form while the catalogue is still
- *  loading and the name isn't known yet. */
-export function editorHrefForSelection(
-  selection: ReasonDocsSelection,
-  catalog: ReasonDocsCatalog = EMPTY_CATALOG,
-): string {
-  const slug = editorSlugForSelection(selection, catalog)
-  if (slug) return `${REASON_EDITOR_ROUTE}/${slug}`
-  const key = selection.kind === "document" ? "doc" : "topic"
-  return `${REASON_EDITOR_ROUTE}?${key}=${selection.id}`
+/** Which query parameter a selection travels in. */
+export function paramForKind(kind: ReasonDocsSelection["kind"]): "doc" | "topic" {
+  return kind === "document" ? "doc" : "topic"
 }
 
 /** True on `/reason-editor` and on the named-document paths below it. */
@@ -118,42 +63,46 @@ export function editorSlugFromPathname(pathname: string | null | undefined): str
 }
 
 /**
- * `?doc=12` → `12`. Anything that is not a whole number — empty, `abc`,
- * `3.5`, a repeated param's junk — reads as absent rather than throwing: a
- * malformed link should land on the editor's normal fallback, not an error.
+ * The editor URL that reopens `selection` from cold.
+ *
+ * `items` is the tree the selection came from, which is what turns a row into
+ * a path. Without it (or when the row has no sluggable name) the link falls
+ * back to the id — still a working URL, just not a readable one.
  */
-export function parseSelectionId(raw: string | null | undefined): number | null {
-  if (!raw) return null
-  const id = Number(raw)
-  return Number.isInteger(id) ? id : null
+export function editorHrefForSelection(
+  selection: ReasonDocsSelection,
+  items: readonly PathItem[] = [],
+): string {
+  const path = itemPath(items, selection.id)
+  const ref = path && path.length > 0 ? path : String(selection.id)
+  // Segment-wise: the slashes are the path's own structure, and encoding them
+  // would turn `a/b` into a single unreadable segment.
+  const encoded = ref.split("/").map(encodeURIComponent).join("/")
+  return `${REASON_EDITOR_ROUTE}?${paramForKind(selection.kind)}=${encoded}`
 }
 
-/** Everything a `/reason-editor` URL can say about which file to open: the
- *  named path segment, plus the legacy ids. */
+/** The refs a `/reason-editor` URL can carry — a filename path or, on links
+ *  minted before paths, a row id. */
 export interface SelectionParams {
-  slug: string | null
-  doc: number | null
-  topic: number | null
+  doc: string | null
+  topic: string | null
 }
 
-/** Reads {@link SelectionParams} off a pathname and anything with
- *  `URLSearchParams`'s getter (Next's `useSearchParams` returns a readonly
- *  wrapper, not the class). */
-export function parseSelectionParams(
-  params: { get: (key: string) => string | null },
-  pathname?: string | null,
-): SelectionParams {
-  return {
-    slug: editorSlugFromPathname(pathname),
-    doc: parseSelectionId(params.get("doc")),
-    topic: parseSelectionId(params.get("topic")),
-  }
+/** Reads {@link SelectionParams} off anything with `URLSearchParams`'s getter
+ *  (Next's `useSearchParams` returns a readonly wrapper, not the class). */
+export function parseSelectionParams(params: { get: (key: string) => string | null }): SelectionParams {
+  const read = (key: string) => params.get(key)?.trim() || null
+  return { doc: read("doc"), topic: read("topic") }
 }
 
 /** What {@link resolveSelection} is deciding over. */
 export interface ResolveSelectionInput extends SelectionParams {
-  /** Every file the editor can open, and in what order a slug matches. */
-  catalog: ReasonDocsCatalog
+  /** The reader's own rows, folders included — folders are what makes a
+   *  nested path resolvable, even though one is never opened directly. */
+  documents: readonly PathItem[]
+  /** The public topic starters this client has loaded. Capped by the
+   *  catalogue route, hence the `lookup` outcome for everything past it. */
+  topics: readonly PathItem[]
   /**
    * False once this URL's selection has already been applied, so a reader who
    * then picks a different file from the sidebar isn't dragged back to the
@@ -162,40 +111,62 @@ export interface ResolveSelectionInput extends SelectionParams {
   applyParams: boolean
   /** Whether something is already open in the editor. */
   hasSelection: boolean
+  /**
+   * False once the server lookup for this URL has been tried and come back
+   * empty, so an unresolvable link falls through to the normal fallback
+   * instead of asking again forever.
+   */
+  allowLookup?: boolean
 }
 
 /**
- * The document the editor route should open, or `null` to leave it as it is.
+ * What the editor route should open, or `null` to leave it as it is.
  *
- * Order: the URL's named file, then its topic id, then its document id, then
- * — only when nothing is open — the first file, so the reader lands on
- * something readable instead of an empty pane. A name or id that matches
- * nothing (a deleted file, someone else's link) falls through to that same
- * fallback rather than erroring.
+ * Order: the URL's topic ref, then its document ref (against the reader's own
+ * tree and then the public one, since a shared link names a file, not a
+ * table), then a server lookup for a ref that matched neither — the file may
+ * be public and simply not loaded here — and then, only when nothing is open,
+ * the first file, so the reader lands on something readable instead of an
+ * empty pane.
  *
  * This is one function rather than a deep-link rule and a separate fallback
  * because as two React effects they raced: the fallback's closure still saw
  * no selection in the commit where the deep link opened its file, and opened
  * the first file over the top of it.
  */
-export function resolveSelection(input: ResolveSelectionInput): ReasonDocsSelection | null {
-  const { slug, doc, topic, catalog, applyParams, hasSelection } = input
-  const documentIds = catalog.documents.map((item) => item.id)
-  const topicIds = catalog.topics.map((item) => item.id)
+export type SelectionOutcome =
+  | ReasonDocsSelection
+  /** Not in anything loaded here — ask the public catalogue for this name. */
+  | { kind: "lookup"; ref: string }
+
+export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome | null {
+  const { doc, topic, documents, topics, applyParams, hasSelection, allowLookup = true } = input
 
   if (applyParams) {
-    const named = slug ? findDocIdBySlug(slug, slugEntries(catalog)) : null
-    if (named) {
-      const selection = parseEntryKey(named)
-      if (selection) return selection
+    if (topic) {
+      const match = findItemByRef(topics, topic)
+      if (match) return { kind: "topic", id: match.id }
     }
-    if (topic != null && topicIds.includes(topic)) return { kind: "topic", id: topic }
-    if (doc != null && documentIds.includes(doc)) return { kind: "document", id: doc }
+    if (doc) {
+      const match = findItemByRef(documents, doc)
+      if (match) return { kind: "document", id: match.id }
+      // A name is a name: `?doc=` is where a shared link most often ends up,
+      // and the file it points at may be a public one rather than one of this
+      // reader's. Falling through to the public tree is what lets the same URL
+      // work for the person who has the file and the person who doesn't.
+      const publicMatch = findItemByRef(topics, doc)
+      if (publicMatch) return { kind: "topic", id: publicMatch.id }
+    }
+    // A name this client can't place is most often a public file it never
+    // fetched — the catalogue is capped, and a signed-out reader following a
+    // shared link has no documents at all. Ask the server before giving up.
+    const unresolved = topic ?? doc
+    if (allowLookup && unresolved) return { kind: "lookup", ref: unresolved }
   }
 
   if (hasSelection) return null
-  const first = documentIds[0]
-  return first == null ? null : { kind: "document", id: first }
+  const first = documents.find((item) => !item.isFolder)
+  return first ? { kind: "document", id: first.id } : null
 }
 
 /**

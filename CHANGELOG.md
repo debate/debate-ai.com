@@ -6,45 +6,264 @@ Commit counts are commits authored that month on the default branch, merge commi
 
 ## September 2026 — 395 commits
 
-Practice, collaboration, and a wave of "second draft" polish across research tools, followed by a tool-page UI pass and a working docs site. Ported the **practice-vs-AI** backend from Go to Node/TS and docked it in the main app, then layered a **difficulty slider** on top of AI persona choice and added past-attempts comparison to the Practice Round Simulator. Chased down a run of `/videos` bugs — a route crash from Lucide icons reaching `next/image`, the service worker's fabricated 502, a YouTube "error 153," and a transcript API that always 404'd — while reworking the videos experience with a **collapsible sidebar nav tree**, persistent left-sidebar controls, a **transcript modal with synced YouTube playback**, resizable/sortable list columns, and admin YouTube video management with per-video publish/delete and a weekly resync cron. Pushed real-time collaboration further: **live "who's editing now" presence** and a side-by-side conflict-diff view in Shared Flow Sync, a team capacity view and coach-facing reassign/override controls in the Task Inbox, a shared checklist and activity timeline in the Collaboration Prep Room, and an end-of-sprint retrospective summary for Team Collaboration Mode. Rounded out Coaching Programs with a reviewer/approval workflow for coach materials, a coach-facing roster analytics dashboard, and a program-roster-scoped challenge digest. Research and scouting tools picked up matching depth: side-by-side case comparison and export-to-briefing in Scout-to-Strategy, bulk CSV import and printable scouting reports for Opponent Team Profiles, cross-device goal-setting for Research Progress, a winner-history calendar for Daily Best Card, multi-judge comparison for Judge Profiles, threaded replies and a high-priority flag for Strategy Sync Notes, and a public topic starter library. Reorganized the **CardMirror** editor shell again — a file tree + open tabs sidebar for the REASON editor, tighter menu-bar categories, Benchmark/About-this-install moved into Settings, and the ebb Flow start page retired into the flow toolbar with speech timers mirrored to the sidebar. Under the hood: split debate-card-search and debate-round into four category packages, vendored debate-ui into each consumer, published a typed **OpenAPI SDK** (`debate-api-client`) to npm, added `native-wrapper` (a Tauri desktop/mobile shell shipped as Debate AI), stood up a `debate-ai-docs` package, and fixed an EventEmitter memory leak. Later in the month, gave every training, practice, and research-collaboration page (27 routes, from `/coach` and `/drills` through `/versus-ai` and `/cards/prep-room`) one shared **tool page header** — a named back link, the tool's icon, title, and description from the tools catalog, an eyebrow naming its guide, **Docs** and **Guide** links, the favorite star, and the related-tools row where one exists — in place of the bare "Back" button each page opened with. Redesigned the **Coach Workspace** and **Research Workspace** hubs around a sticky, keyboard-navigable section tab strip with icons and panel counts, a per-section intro card explaining the stage and listing every panel (each chip scrolls to its panel, and an arrow opens the panel's own page), a "current round" bar in the Coach hub naming the flow every generate action reads, a workspace-identity card in the Research hub, and **`?section=` URL sync** so a hub section can be shared or bookmarked (with the last section remembered per device). Finished the **debate-ai-docs** Fumadocs site, which had content but none of its Next.js routes: added the root and docs layouts, the MDX page route, the landing page, the Orama search index, and the `llms-full.txt` / per-page `.mdx` endpoints; wrote a new **Guides** section (training tools, practice tools, research collaboration) that the app's page headers and hub sections link to via `NEXT_PUBLIC_DOCS_URL`, falling back to the source on GitHub; pinned `fumadocs-mdx` to the version compatible with the pinned `fumadocs-core`, moved the site onto Next 16.2+ (which its Turbopack MDX rules require), and pointed its Turbopack root at the monorepo so bun's nested installs resolve. Fixed **bun.lock**, which bun refused to parse because of a duplicated `exceljs/uuid` entry. Gave AI Judge Decision Modes a **multi-judge panel mode**: run two or more judge paradigms against the same round in one click and see a combined majority decision alongside a side-by-side comparison table of each paradigm's own vote and rationale, synced to the account like any other decision. Linked the CardMirror editor's **real-time collaboration to better-auth accounts**: a `/contacts` page with a typical friends list (search-and-request, accept/decline, remove, block/unblock, online presence from a poll heartbeat), a **Share with contacts** control in the Reason Editor that starts a co-editing session and hands its share code + guest pass to a contact's account through `/api/card-shares` (no clipboard), and a Shared cards tab where every received card shows as available to open on any device — its four tables had been dropped from `lib/database/schema.ts` by a merge, which broke the production build along with node-canvas, a native `.node` addon pulled in as linkedom's optional peer that the Worker bundle cannot parse and now resolves to a no-op shim. Added a **card library importer** for the published Parquet card dump: a `debate-cards-upload` CLI that streams each shard row-group by row-group and posts normalized batches to a new admin ingest endpoint (resumable with `--start-row`, `--dry-run` to check a shard without writing), the matching "Card library import" panel on `/admin` that runs the same import in the browser one file at a time, and a `debate_cards` table cards are upserted into by id so re-importing a shard corrects it instead of duplicating the corpus. Moved the **Topic Starter library** onto CardMirror's native format: an uploaded DOCX is converted with the editor's own OOXML importer and stored as a `.cmir` (so the Verbatim outline, comment threads, images and named character styles survive an import that used to flatten them to card HTML), the `/reason-editor` embed parses the stored file in the browser, and rows imported before the switch keep opening as HTML. Fixed the report that a file loaded into **CardMirror sometimes disappears and goes blank**, which was never only a display bug: the embed reported *any* document change as a user edit, so a blank mounted by the engine's own machinery (boot, New/Open, crash recovery) — or by stored content that failed to parse — was written straight over the file in D1. The embed now reports only real edits, restores a blank it didn't ask for, refuses to save over a document it couldn't read, and stopped dropping footnotes on every HTML round trip; on the storage side, one debounce per document (with a `keepalive` flush on tab close, retry-with-backoff, and a truthful save-state indicator) replaced a single shared timer that cancelled other documents' pending writes. Fixed **Google sign-in dead-ending on `state_mismatch`**: better-auth checks the OAuth `state` against both a database row and a signed cookie when the provider redirects back, and both halves could go missing on their own — the row because `/api/auth/*` reads could be answered by a D1 read replica that had not yet caught up with the sign-in request's write (auth now always opens its session on the primary), and the cookie because its five-minute default expired while the ten-minute state row was still valid (the two now match). Failed callbacks land back on `/login` with the reason in plain words and the sign-in buttons right there, instead of better-auth's built-in "Something went wrong / CODE: state_mismatch" page with nothing but a Go Home button. Closed the month by **publishing the help docs at `debate-ai.com/docs`**, which until now existed only as a Fumadocs package nobody had a way to read: the site is statically exported under `basePath: '/docs'` and copied into the web app's `public/docs` on every build, so the Worker serves all ~75 pages — the guides, one page per feature, one per workspace package, the Orama search index, and `llms-full.txt` — as static assets on the app's own origin. Every **Docs** and **Guide** link in the app (the tool page headers, both workspace hubs, and every card on `/features`) now opens the real page instead of falling back to raw Markdown on GitHub, the five feature docs that had never been ported were published, and `/docs/features` and `/docs/packages` got the section index pages their links had been 404ing against. The service worker skips the docs entirely, so first-time visitors don't precache a documentation site to open the app.
+Practice, collaboration, and a wave of "second draft" polish across research tools, followed by a tool-page UI pass and a working docs site.
+
+### Practice and AI opponents
+
+- Ported the **practice-vs-AI** backend from Go to Node/TS and docked it in the main app.
+- Layered a **difficulty slider** on top of AI persona choice and added past-attempts comparison to the Practice Round Simulator.
+- Gave AI Judge Decision Modes a **multi-judge panel mode**: run two or more judge paradigms against the same round in one click and see a combined majority decision alongside a side-by-side comparison table of each paradigm's own vote and rationale, synced to the account like any other decision.
+
+### Videos
+
+- Chased down a run of `/videos` bugs — a route crash from Lucide icons reaching `next/image`, the service worker's fabricated 502, a YouTube "error 153," and a transcript API that always 404'd.
+- Reworked the videos experience with a **collapsible sidebar nav tree**, persistent left-sidebar controls, a **transcript modal with synced YouTube playback**, and resizable/sortable list columns.
+- Added admin YouTube video management with per-video publish/delete and a weekly resync cron.
+
+### Collaboration and coaching
+
+- Pushed real-time collaboration further: **live "who's editing now" presence** and a side-by-side conflict-diff view in Shared Flow Sync.
+- Added a team capacity view and coach-facing reassign/override controls in the Task Inbox.
+- Added a shared checklist and activity timeline in the Collaboration Prep Room, and an end-of-sprint retrospective summary for Team Collaboration Mode.
+- Rounded out Coaching Programs with a reviewer/approval workflow for coach materials, a coach-facing roster analytics dashboard, and a program-roster-scoped challenge digest.
+
+### Research and scouting tools
+
+- Side-by-side case comparison and export-to-briefing in Scout-to-Strategy.
+- Bulk CSV import and printable scouting reports for Opponent Team Profiles.
+- Cross-device goal-setting for Research Progress.
+- A winner-history calendar for Daily Best Card.
+- Multi-judge comparison for Judge Profiles.
+- Threaded replies and a high-priority flag for Strategy Sync Notes.
+- A public topic starter library.
+
+### CardMirror and the editor shell
+
+- Reorganized the **CardMirror** editor shell again — a file tree + open tabs sidebar for the REASON editor, tighter menu-bar categories, Benchmark/About-this-install moved into Settings, and the ebb Flow start page retired into the flow toolbar with speech timers mirrored to the sidebar.
+- Moved the **Topic Starter library** onto CardMirror's native format: an uploaded DOCX is converted with the editor's own OOXML importer and stored as a `.cmir` (so the Verbatim outline, comment threads, images and named character styles survive an import that used to flatten them to card HTML), the `/reason-editor` embed parses the stored file in the browser, and rows imported before the switch keep opening as HTML.
+- Fixed the report that a file loaded into **CardMirror sometimes disappears and goes blank**, which was never only a display bug:
+  - The embed reported *any* document change as a user edit, so a blank mounted by the engine's own machinery (boot, New/Open, crash recovery) — or by stored content that failed to parse — was written straight over the file in D1.
+  - The embed now reports only real edits, restores a blank it didn't ask for, refuses to save over a document it couldn't read, and stopped dropping footnotes on every HTML round trip.
+  - On the storage side, one debounce per document (with a `keepalive` flush on tab close, retry-with-backoff, and a truthful save-state indicator) replaced a single shared timer that cancelled other documents' pending writes.
+
+### Accounts and sharing
+
+- Linked the CardMirror editor's **real-time collaboration to better-auth accounts**: a `/contacts` page with a typical friends list (search-and-request, accept/decline, remove, block/unblock, online presence from a poll heartbeat), a **Share with contacts** control in the Reason Editor that starts a co-editing session and hands its share code + guest pass to a contact's account through `/api/card-shares` (no clipboard), and a Shared cards tab where every received card shows as available to open on any device.
+- Restored that feature's four tables, which had been dropped from `lib/database/schema.ts` by a merge, breaking the production build along with node-canvas — a native `.node` addon pulled in as linkedom's optional peer that the Worker bundle cannot parse and now resolves to a no-op shim.
+- Fixed **Google sign-in dead-ending on `state_mismatch`**: better-auth checks the OAuth `state` against both a database row and a signed cookie when the provider redirects back, and both halves could go missing on their own — the row because `/api/auth/*` reads could be answered by a D1 read replica that had not yet caught up with the sign-in request's write (auth now always opens its session on the primary), and the cookie because its five-minute default expired while the ten-minute state row was still valid (the two now match). Failed callbacks land back on `/login` with the reason in plain words and the sign-in buttons right there, instead of better-auth's built-in "Something went wrong / CODE: state_mismatch" page with nothing but a Go Home button.
+
+### Card library import
+
+- Added a **card library importer** for the published Parquet card dump: a `debate-cards-upload` CLI that streams each shard row-group by row-group and posts normalized batches to a new admin ingest endpoint (resumable with `--start-row`, `--dry-run` to check a shard without writing).
+- Added the matching "Card library import" panel on `/admin` that runs the same import in the browser one file at a time.
+- Added a `debate_cards` table cards are upserted into by id, so re-importing a shard corrects it instead of duplicating the corpus.
+
+### Tool pages and workspace hubs
+
+- Gave every training, practice, and research-collaboration page (27 routes, from `/coach` and `/drills` through `/versus-ai` and `/cards/prep-room`) one shared **tool page header** — a named back link, the tool's icon, title, and description from the tools catalog, an eyebrow naming its guide, **Docs** and **Guide** links, the favorite star, and the related-tools row where one exists — in place of the bare "Back" button each page opened with.
+- Redesigned the **Coach Workspace** and **Research Workspace** hubs around a sticky, keyboard-navigable section tab strip with icons and panel counts, a per-section intro card explaining the stage and listing every panel (each chip scrolls to its panel, and an arrow opens the panel's own page), a "current round" bar in the Coach hub naming the flow every generate action reads, a workspace-identity card in the Research hub, and **`?section=` URL sync** so a hub section can be shared or bookmarked (with the last section remembered per device).
+
+### Documentation site
+
+- Finished the **debate-ai-docs** Fumadocs site, which had content but none of its Next.js routes: added the root and docs layouts, the MDX page route, the landing page, the Orama search index, and the `llms-full.txt` / per-page `.mdx` endpoints.
+- Wrote a new **Guides** section (training tools, practice tools, research collaboration) that the app's page headers and hub sections link to via `NEXT_PUBLIC_DOCS_URL`, falling back to the source on GitHub.
+- Pinned `fumadocs-mdx` to the version compatible with the pinned `fumadocs-core`, moved the site onto Next 16.2+ (which its Turbopack MDX rules require), and pointed its Turbopack root at the monorepo so bun's nested installs resolve.
+- Closed the month by **publishing the help docs at `debate-ai.com/docs`**, which until now existed only as a Fumadocs package nobody had a way to read: the site is statically exported under `basePath: '/docs'` and copied into the web app's `public/docs` on every build, so the Worker serves all ~75 pages — the guides, one page per feature, one per workspace package, the Orama search index, and `llms-full.txt` — as static assets on the app's own origin.
+- Every **Docs** and **Guide** link in the app (the tool page headers, both workspace hubs, and every card on `/features`) now opens the real page instead of falling back to raw Markdown on GitHub, the five feature docs that had never been ported were published, and `/docs/features` and `/docs/packages` got the section index pages their links had been 404ing against.
+- The service worker skips the docs entirely, so first-time visitors don't precache a documentation site to open the app.
+
+### Platform and packages
+
+- Split debate-card-search and debate-round into four category packages, and vendored debate-ui into each consumer.
+- Published a typed **OpenAPI SDK** (`debate-api-client`) to npm.
+- Added `native-wrapper`, a Tauri desktop/mobile shell shipped as Debate AI.
+- Stood up a `debate-ai-docs` package and fixed an EventEmitter memory leak.
+- Fixed **bun.lock**, which bun refused to parse because of a duplicated `exceljs/uuid` entry.
+
 ## August 2026 — 418 commits
 
-Identity, live sync, and a real content feed. Wired real signed-in **Google/better-auth** identity into more than a dozen research and round panels (Leaderboard, Progress Unlocks, Research Progress, Daily Quests, Review Queue, Team Collaboration Mode, Team Brainstorm Assist, Group Challenges, Task Inbox, Collaboration Prep Room), replacing free-typed contributor IDs with session-derived prefills and, for Task Inbox verification, a real identity gate. Added **cross-tab live updates** (via `storage` events / BroadcastChannel-style polling) to the Daily Best Card Challenge, Contribution Leaderboard, Task Inbox, Progress Unlocks, Research Progress, Quest Streaks, and the new News Stream feed. Built a brand-new **News Stream** feed that auto-aggregates activity across the app — quest-streak milestones, group challenges, revisions, prep notes, Argument Library submissions, AI Coach Mode sessions — plus an auto-generated "Tool spotlight" post for every unannounced entry in the tools catalog, capped for readability. Persisted account-linked **D1-backed cloud save** for user settings, saved flows, and saved rounds (idea #17 follow-ups), synced the color-theme preference server-side, and wired D1 migrations into the deploy pipeline to fix a production `unable_to_create_user` failure. Chased down a run of **Google One Tap** auth bugs: prompting on every signed-out page, a wrong runtime client id, and a 401 caused by a missing `isAnonymous` column plus overly strict account linking. Overhauled the CardMirror editor shell — added a Plugins dropdown and a Workspace menu with full Tools-page search/highlights, confined CardMirror's own chrome to its own column with **ebb** brought in as an embeddable panel, redesigned the settings panels around that layout, retired the old CardMirror start screen, and fixed a menu-bar crash on load. Migrated the video library from a static JSON feed to a **SQL-backed paginated feed**, seeded from inside the Worker with byte-batched inserts. Wired up several previously orphaned tool routes (LLM Card Scoring, Scout-to-Strategy, Team Rankings, Speech Documents) into their nav entries, added a "Tools for this round" quick-access menu to the round workspace, added Site Links/Debate Links submenus and a direct settings link to the dock's Settings menu, and shipped a `/legal/privacy` page. Feature polish across the Product Feature Ideas backlog included Argument Tree Outline auto-sync while flowing, a nearest-match datalist on the Judge/Opponent Team Profiles round-ID filters, Common Argument Library tag autocomplete plus cross-store tag rename/merge, a custom opponent-persona authoring flow for the AI Practice Opponent, an undo/redo affordance for logged opponent rounds, a surfaced live-sync toggle in Shared Flow Sync, and conversation history for the Coach Materials "Ask the coach" action. Later in the month, removed the CX NDCA Standings tool and its now-unused custom qualification-points-table follow-up, replaced the browser-extension card-reuse checker with a new **debate-web-ext** implementation, restored a `debate-editor` re-export shim split out from the CardMirror engine, and stopped the service worker from intercepting requests it can't safely handle. Closed out the month with a docs pass fixing a stale "global dock's Settings menu" claim across 34 feature docs, a revised README features section, new unit test coverage for CardMirror schema-id helpers, footnote helpers, and timer sound effects, a fix for two independently-merged **user settings/rounds** persistence systems that collided and broke the production build, an **Insert Short Cite** CardMirror command, saved flows surfaced in the `/tools` "My Saved Items" widget, and a **"Save all rounds"** bulk action for Round Cloud Save so every local round (and its flows) syncs to the account in one click instead of one at a time.
+Identity, live sync, and a real content feed.
+
+### Accounts and identity
+
+- Wired real signed-in **Google/better-auth** identity into more than a dozen research and round panels (Leaderboard, Progress Unlocks, Research Progress, Daily Quests, Review Queue, Team Collaboration Mode, Team Brainstorm Assist, Group Challenges, Task Inbox, Collaboration Prep Room), replacing free-typed contributor IDs with session-derived prefills and, for Task Inbox verification, a real identity gate.
+- Chased down a run of **Google One Tap** auth bugs: prompting on every signed-out page, a wrong runtime client id, and a 401 caused by a missing `isAnonymous` column plus overly strict account linking.
+
+### Live sync and cloud save
+
+- Added **cross-tab live updates** (via `storage` events / BroadcastChannel-style polling) to the Daily Best Card Challenge, Contribution Leaderboard, Task Inbox, Progress Unlocks, Research Progress, Quest Streaks, and the new News Stream feed.
+- Persisted account-linked **D1-backed cloud save** for user settings, saved flows, and saved rounds (idea #17 follow-ups), synced the color-theme preference server-side, and wired D1 migrations into the deploy pipeline to fix a production `unable_to_create_user` failure.
+- Fixed two independently-merged **user settings/rounds** persistence systems that collided and broke the production build.
+- Added a **"Save all rounds"** bulk action for Round Cloud Save so every local round (and its flows) syncs to the account in one click instead of one at a time.
+
+### News Stream
+
+- Built a brand-new **News Stream** feed that auto-aggregates activity across the app — quest-streak milestones, group challenges, revisions, prep notes, Argument Library submissions, AI Coach Mode sessions — plus an auto-generated "Tool spotlight" post for every unannounced entry in the tools catalog, capped for readability.
+
+### CardMirror and the editor shell
+
+- Overhauled the CardMirror editor shell — added a Plugins dropdown and a Workspace menu with full Tools-page search/highlights, confined CardMirror's own chrome to its own column with **ebb** brought in as an embeddable panel, redesigned the settings panels around that layout, retired the old CardMirror start screen, and fixed a menu-bar crash on load.
+- Restored a `debate-editor` re-export shim split out from the CardMirror engine.
+- Added an **Insert Short Cite** CardMirror command.
+
+### Videos
+
+- Migrated the video library from a static JSON feed to a **SQL-backed paginated feed**, seeded from inside the Worker with byte-batched inserts.
+
+### Navigation and routes
+
+- Wired up several previously orphaned tool routes (LLM Card Scoring, Scout-to-Strategy, Team Rankings, Speech Documents) into their nav entries.
+- Added a "Tools for this round" quick-access menu to the round workspace.
+- Added Site Links/Debate Links submenus and a direct settings link to the dock's Settings menu, and shipped a `/legal/privacy` page.
+- Surfaced saved flows in the `/tools` "My Saved Items" widget.
+
+### Feature polish (Product Feature Ideas backlog)
+
+- Argument Tree Outline auto-sync while flowing.
+- A nearest-match datalist on the Judge/Opponent Team Profiles round-ID filters.
+- Common Argument Library tag autocomplete plus cross-store tag rename/merge.
+- A custom opponent-persona authoring flow for the AI Practice Opponent.
+- An undo/redo affordance for logged opponent rounds.
+- A surfaced live-sync toggle in Shared Flow Sync.
+- Conversation history for the Coach Materials "Ask the coach" action.
+
+### Removals and replacements
+
+- Removed the CX NDCA Standings tool and its now-unused custom qualification-points-table follow-up.
+- Replaced the browser-extension card-reuse checker with a new **debate-web-ext** implementation.
+- Stopped the service worker from intercepting requests it can't safely handle.
+
+### Docs and tests
+
+- A docs pass fixing a stale "global dock's Settings menu" claim across 34 feature docs, plus a revised README features section.
+- New unit test coverage for CardMirror schema-id helpers, footnote helpers, and timer sound effects.
 
 ## June 2026 — 23 commits
 
-CardMirror release milestone month. Integrated the **CardMirror engine** into a new **reason-editor** workspace package built on **TipTap/React**, then ported CardMirror's **AI editing tools** (cite, repair, explain, alt text). Implemented an **HTML-to-card parser** with citation extraction and metadata assembly. Added new server configuration and **session management hooks**. Hardened the build and deployment pipeline: fixed **Vercel** builds to run as a **Vite** app instead of failing Next.js detection, rebuilt the **PWA service worker** precache for the Vite build (fixing React #130 errors), declared missing workspace dependencies, and pinned loose dependency specifiers with an emotion alias fix. Simplified HTML extraction functions across several refactoring passes.
+CardMirror release milestone month.
+
+### Editor
+
+- Integrated the **CardMirror engine** into a new **reason-editor** workspace package built on **TipTap/React**.
+- Ported CardMirror's **AI editing tools** (cite, repair, explain, alt text).
+- Implemented an **HTML-to-card parser** with citation extraction and metadata assembly.
+- Simplified HTML extraction functions across several refactoring passes.
+
+### Server and build
+
+- Added new server configuration and **session management hooks**.
+- Fixed **Vercel** builds to run as a **Vite** app instead of failing Next.js detection.
+- Rebuilt the **PWA service worker** precache for the Vite build (fixing React #130 errors).
+- Declared missing workspace dependencies and pinned loose dependency specifiers with an emotion alias fix.
 
 ## May 2026 — 60 commits
 
-Research platform and rebranding push. Rebranded the project to **Debate-AI.com** and defined the core platform pillars — **CARDS**, **FIAT**, **LEARN** (renamed from DEARLY), **STREAM**, and **REASON**. Authored the **Debate Singularity** research paper on AI-driven argument reasoning and collective knowledge mapping, plus a companion theory paper, with a PDF route and expanded citations. Built the **LecturesPage** with category navigation, quick links, and **YouTube statistics** integration, and overhauled the video library with new **leaderboard** and **dictionary** panels. Ingested **NDCA 2026 LD rounds** with duplicate-video detection. Initialized **Lexical editor** integration with advanced plugins, custom nodes, and collaborative **Image, Poll, and Sticky** components backed by **yjs**. Extracted sync and data modules into a new **debate-data-sync** workspace package, moved the offline service worker to `lib/offline-sw`, and added dynamic `/videos/[category]` routing.
+Research platform and rebranding push.
+
+### Brand and research
+
+- Rebranded the project to **Debate-AI.com** and defined the core platform pillars — **CARDS**, **FIAT**, **LEARN** (renamed from DEARLY), **STREAM**, and **REASON**.
+- Authored the **Debate Singularity** research paper on AI-driven argument reasoning and collective knowledge mapping, plus a companion theory paper, with a PDF route and expanded citations.
+
+### Videos and lectures
+
+- Built the **LecturesPage** with category navigation, quick links, and **YouTube statistics** integration.
+- Overhauled the video library with new **leaderboard** and **dictionary** panels, and added dynamic `/videos/[category]` routing.
+- Ingested **NDCA 2026 LD rounds** with duplicate-video detection.
+
+### Editor and packages
+
+- Initialized **Lexical editor** integration with advanced plugins, custom nodes, and collaborative **Image, Poll, and Sticky** components backed by **yjs**.
+- Extracted sync and data modules into a new **debate-data-sync** workspace package, and moved the offline service worker to `lib/offline-sw`.
 
 ## April 2026 — 11 commits
 
-Flow tooling and archive maintenance. Implemented an **interactive flow spreadsheet** with custom cell rendering, row operations, and context menus. Added **persistent video playback timestamps** and improved type safety in video card metadata. Refreshed the tournament video archive with **NDT/TOC** rounds, updated README branding and demo images, removed legacy build scripts, and cleaned up obsolete test suites.
+Flow tooling and archive maintenance.
+
+### Flow tooling
+
+- Implemented an **interactive flow spreadsheet** with custom cell rendering, row operations, and context menus.
+
+### Videos and maintenance
+
+- Added **persistent video playback timestamps** and improved type safety in video card metadata.
+- Refreshed the tournament video archive with **NDT/TOC** rounds.
+- Updated README branding and demo images, removed legacy build scripts, and cleaned up obsolete test suites.
 
 ## March 2026 — 159 commits
 
-The biggest month of development. Built the complete **Debate Round** feature: round creation and editing, a **flow interface** with spreadsheet, per-speech **timers with persistence**, speech management, and embedded timer **sound effects**. Overhauled **CARD search** with new state management, **AI analysis** sidebars, advanced filtering, responsive layouts, and client-side caching. Rebuilt the **card parser** with human-name and citation extraction plus **DOCX parsing**. Added **AI speech-to-flow** and **speech-to-response** prompts and **speech-sync card highlighting** for live reading progress. Shipped a **persistent floating video player** that survives page navigation (portal-based, draggable popout), video categorization by format, infinite scroll, structured tournament/round/team metadata with **JSON schemas**, and **YouTube synchronization**. Enhanced rankings with **school name normalization** and ELO leaderboard fixes. Extensive mobile UX polish (dock navigation, speech toolbar, timers) and new visual components (**GlowingEffect**, **CardSpotlight**, **CanvasRevealEffect**). Added service worker **offline caching** and an auto-merge CI workflow.
+The biggest month of development.
+
+### Debate Round
+
+- Built the complete **Debate Round** feature: round creation and editing, a **flow interface** with spreadsheet, per-speech **timers with persistence**, speech management, and embedded timer **sound effects**.
+
+### Cards and search
+
+- Overhauled **CARD search** with new state management, **AI analysis** sidebars, advanced filtering, responsive layouts, and client-side caching.
+- Rebuilt the **card parser** with human-name and citation extraction plus **DOCX parsing**.
+
+### AI features
+
+- Added **AI speech-to-flow** and **speech-to-response** prompts.
+- Added **speech-sync card highlighting** for live reading progress.
+
+### Videos
+
+- Shipped a **persistent floating video player** that survives page navigation (portal-based, draggable popout).
+- Added video categorization by format, infinite scroll, structured tournament/round/team metadata with **JSON schemas**, and **YouTube synchronization**.
+
+### Rankings
+
+- Enhanced rankings with **school name normalization** and ELO leaderboard fixes.
+
+### UI and infrastructure
+
+- Extensive mobile UX polish (dock navigation, speech toolbar, timers) and new visual components (**GlowingEffect**, **CardSpotlight**, **CanvasRevealEffect**).
+- Added service worker **offline caching** and an auto-merge CI workflow.
 
 ## February 2026 — 17 commits
 
-**Beta V2 major release**: core debate application with flow editor, video integration, card parsing, and comprehensive UI components. Completed the **TipTap to Lexical** editor migration with a quotes plugin. Added the **debate flow spreadsheet**, speech document panel, and a new markdown editor. Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, redesigned the **ChampionsPanel**, and restructured documentation into a new `docs/` directory with project vision and feature docs.
+**Beta V2 major release**: core debate application with flow editor, video integration, card parsing, and comprehensive UI components.
+
+### Editor
+
+- Completed the **TipTap to Lexical** editor migration with a quotes plugin.
+- Added the **debate flow spreadsheet**, speech document panel, and a new markdown editor.
+
+### Pages and docs
+
+- Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, and redesigned the **ChampionsPanel**.
+- Restructured documentation into a new `docs/` directory with project vision and feature docs.
 
 # Prototype Phase (2023–2025)
 
 ## December 2025 — 6 commits
 
-Created the **FLOW Research Manager** as a **Next.js** application. Established the debate flow and timer system foundation with **React Context** providers and conversion tracking. Completed Phase 1 MVP (core Flow editor with React/Next.js) and Phase 2 (advanced Flow features and UI enhancements).
+- Created the **FLOW Research Manager** as a **Next.js** application.
+- Established the debate flow and timer system foundation with **React Context** providers and conversion tracking.
+- Completed Phase 1 MVP (core Flow editor with React/Next.js) and Phase 2 (advanced Flow features and UI enhancements).
 
 ## July 2024 — 2 commits
 
-Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation.
+Editor prototype milestone.
+
+- Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**.
+- Indexed **2,000 videos** and built the frontpage UI.
+- Laid the **auth and docs** foundation.
 
 ## October 2023 — 12 commits
 
-AI research and browser tooling. Built a **Chrome extension** for cite and flow (working **crxjs** build), a card **parser**, and the **debate2vec** API. Conducted **LLaMA 2 vs ChatGPT** research and invented the **"Permutation Tree of Thought"** prompt inspired by Hegelian dialectic.
+AI research and browser tooling.
+
+- Built a **Chrome extension** for cite and flow (working **crxjs** build), a card **parser**, and the **debate2vec** API.
+- Conducted **LLaMA 2 vs ChatGPT** research.
+- Invented the **"Permutation Tree of Thought"** prompt inspired by Hegelian dialectic.
 
 ## September 2023 — 4 commits
 
-Project inception. Initial docs, schema, and UI experiments; **Google One Tap sign-in** testing; first dev example (v0.1).
+Project inception.
+
+- Initial docs, schema, and UI experiments.
+- **Google One Tap sign-in** testing.
+- First dev example (v0.1).

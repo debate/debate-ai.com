@@ -19,6 +19,8 @@ interface PlayerControlsProps {
   isPipSupported: boolean
   isPipActive: boolean
   isSubtitlesOpen: boolean
+  /** Whether the current video has a transcript to show. Hides the button when it doesn't. */
+  showSubtitles: boolean
   /** Host-supplied buttons, rendered right after play/pause. */
   extraControls?: ReactNode
   onPlayPause: () => void
@@ -36,6 +38,7 @@ export function PlayerControls({
   isPipSupported,
   isPipActive,
   isSubtitlesOpen,
+  showSubtitles,
   extraControls,
   onPlayPause,
   onPlayNext,
@@ -82,20 +85,22 @@ export function PlayerControls({
           </Tooltip>
         )}
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onToggleSubtitles}
-              className={`p-1 rounded hover:bg-accent transition-colors ${isSubtitlesOpen ? "text-primary bg-accent" : "text-muted-foreground hover:text-foreground"}`}
-              aria-label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
-            >
-              <Captions className="h-3 w-3" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs">
-            {isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
-          </TooltipContent>
-        </Tooltip>
+        {showSubtitles && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onToggleSubtitles}
+                className={`p-1 rounded hover:bg-accent transition-colors ${isSubtitlesOpen ? "text-primary bg-accent" : "text-muted-foreground hover:text-foreground"}`}
+                aria-label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
+              >
+                <Captions className="h-3 w-3" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">
+              {isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
+            </TooltipContent>
+          </Tooltip>
+        )}
 
         {isPipSupported && (
           <Tooltip>

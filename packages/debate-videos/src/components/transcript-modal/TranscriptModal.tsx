@@ -1,15 +1,19 @@
 /**
  * @fileoverview Modal overlaying a YouTube player alongside its transcript
- * (fetched server-side from YouTube's caption tracks), with the transcript synced to
- * playback — the currently spoken line is highlighted and auto-scrolled, an
- * approximate per-word highlight sweeps across the active line, and clicking
- * any line seeks the player there.
+ * (fetched server-side from YouTube's caption tracks), with the transcript
+ * synced to playback — caption cues are regrouped into whole sentences and
+ * read as prose, the currently spoken sentence is highlighted and
+ * auto-scrolled, an approximate per-word highlight sweeps across it, and
+ * clicking a sentence seeks the player to where it starts.
+ *
+ * A video whose captions can't be read shows no transcript rather than an
+ * error: the modal is then just the player.
  */
 
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Captions, Loader2, AlertCircle } from "lucide-react"
+import { Captions, Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -20,6 +24,7 @@ import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { buildEmbedUrl } from "../video-player/youtubeEmbed"
 import { useTranscript } from "./useTranscript"
+import { groupIntoSentences } from "./transcriptUtils"
 import { TranscriptLine } from "./TranscriptLine"
 
 interface TranscriptModalProps {
@@ -30,7 +35,7 @@ interface TranscriptModalProps {
 export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
   const [open, setOpen] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
-  const { snippets, loading, error } = useTranscript(videoId, open)
+  const { snippets: cues, loading } = useTranscript(videoId, open)
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const lineRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -79,6 +84,14 @@ export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
     )
   }, [])
 
+  // Cues are cut for on-screen display and break mid-clause; read as prose
+  // instead by regrouping them into sentences.
+  const snippets = useMemo(() => (cues ? groupIntoSentences(cues) : null), [cues])
+
+  // No captions (or a failed fetch) collapses the sidebar instead of showing
+  // an error.
+  const hasTranscript = loading || (snippets?.length ?? 0) > 0
+
   const activeIndex = useMemo(() => {
     if (!snippets || snippets.length === 0) return -1
     let idx = -1
@@ -121,7 +134,9 @@ export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
           <DialogTitle className="truncate pr-6">{title}</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] flex-1 min-h-0">
+        <div
+          className={`grid grid-cols-1 flex-1 min-h-0 ${hasTranscript ? "lg:grid-cols-[1fr_360px]" : ""}`}
+        >
           <div className="relative w-full bg-black" style={{ paddingTop: "56.25%" }}>
             <iframe
               ref={iframeRef}
@@ -135,39 +150,35 @@ export function TranscriptModal({ videoId, title }: TranscriptModalProps) {
             />
           </div>
 
-          <div className="flex flex-col min-h-0 border-t lg:border-t-0 lg:border-l border-border">
-            <div className="px-3 py-2 text-xs font-medium text-muted-foreground border-b border-border shrink-0">
-              Transcript
-            </div>
-            <ScrollArea className="flex-1 min-h-0 h-[280px] lg:h-auto">
-              <div className="p-2 space-y-0.5">
-                {loading && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground p-3">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Loading transcript...
-                  </div>
-                )}
-                {error && !loading && (
-                  <div className="flex items-start gap-2 text-sm text-destructive p-3">
-                    <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-                    <span>{error}</span>
-                  </div>
-                )}
-                {snippets?.map((snippet, index) => (
-                  <TranscriptLine
-                    key={index}
-                    ref={(el) => {
-                      lineRefs.current[index] = el
-                    }}
-                    snippet={snippet}
-                    isActive={index === activeIndex}
-                    currentTime={currentTime}
-                    onSeek={() => seekTo(snippet.start)}
-                  />
-                ))}
+          {hasTranscript && (
+            <div className="flex flex-col min-h-0 border-t lg:border-t-0 lg:border-l border-border">
+              <div className="px-3 py-2 text-xs font-medium text-muted-foreground border-b border-border shrink-0">
+                Transcript
               </div>
-            </ScrollArea>
-          </div>
+              <ScrollArea className="flex-1 min-h-0 h-[280px] lg:h-auto">
+                <div className="p-2 space-y-0.5">
+                  {loading && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground p-3">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Loading transcript...
+                    </div>
+                  )}
+                  {snippets?.map((snippet, index) => (
+                    <TranscriptLine
+                      key={index}
+                      ref={(el) => {
+                        lineRefs.current[index] = el
+                      }}
+                      snippet={snippet}
+                      isActive={index === activeIndex}
+                      currentTime={currentTime}
+                      onSeek={() => seekTo(snippet.start)}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

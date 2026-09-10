@@ -3,6 +3,12 @@
  * {@link VideoGrid}'s cards, but as a header + one row per video with no
  * thumbnails, for scanning many videos' details at once. Columns are
  * drag-resizable and click-sortable.
+ *
+ * The 1AC/2NR argument labels are not one of those columns: two wrapped
+ * lines of prose per row in a table built for scanning, and the widest
+ * thing in it, for the one field nothing here sorts or filters on. They
+ * still ride on the cards (`VideoCardThumbnail`) and in the round's own
+ * page, which is where a matchup is read rather than scanned.
  */
 
 "use client"
@@ -45,7 +51,6 @@ type ColumnKey =
   | "level"
   | "aff"
   | "neg"
-  | "arguments"
   | "channel"
   | "season"
   | "title"
@@ -57,7 +62,8 @@ interface ColumnDef {
   key: ColumnKey
   label: string
   headerClassName?: string
-  /** Omit for columns (like "Arguments") that have no single sortable value. */
+  /** Omit for a column with no single sortable value; its header is then
+   *  plain text rather than a sort button. */
   sortValue?: (video: VideoType) => string | number
 }
 
@@ -66,7 +72,6 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   level: 100,
   aff: 150,
   neg: 150,
-  arguments: 200,
   channel: 160,
   season: 90,
   title: 260,
@@ -94,7 +99,6 @@ const ROUND_COLUMNS: ColumnDef[] = [
   { key: "level", label: "Level", headerClassName: "hidden sm:table-cell", sortValue: (v) => v[8]?.toLowerCase() ?? "" },
   { key: "aff", label: "Aff", sortValue: (v) => v[9]?.toLowerCase() ?? "" },
   { key: "neg", label: "Neg", sortValue: (v) => v[10]?.toLowerCase() ?? "" },
-  { key: "arguments", label: "Arguments", headerClassName: "hidden lg:table-cell" },
   SEASON_COLUMN,
   DATE_COLUMN,
   VIEWS_COLUMN,
@@ -164,8 +168,8 @@ function VideoRow({
     negTeam,
     _affWin,
     _judgeDecision,
-    arg1AC,
-    arg2NR,
+    _arg1AC,
+    _arg2NR,
     _isTopPickFlag,
     _speechDocsUrl,
     seasonYear,
@@ -192,7 +196,7 @@ function VideoRow({
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
   // Without a Title column, Tournament and the Aff/Neg matchup are what
-  // actually identify a round — Level and Arguments alone don't. When
+  // actually identify a round — Level alone doesn't. When
   // neither is available (no tournament, or no team on either side), the
   // row has nothing to scan, so show the video title across the full width
   // instead of a row of dashes.
@@ -238,19 +242,9 @@ function VideoRow({
               <td className="px-3 py-2 align-top text-sm truncate">
                 {negTeam || <span className="text-muted-foreground">—</span>}
               </td>
-              <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground">
-                {arg1AC || arg2NR ? (
-                  <div className="flex flex-col gap-0.5">
-                    {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
-                    {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
-                  </div>
-                ) : (
-                  "—"
-                )}
-              </td>
             </>
           ) : (
-            <td colSpan={5} className="px-3 py-2 align-top text-sm text-foreground truncate">
+            <td colSpan={4} className="px-3 py-2 align-top text-sm text-foreground truncate">
               {title}
             </td>
           )

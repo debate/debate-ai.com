@@ -18,17 +18,23 @@
  * sidebar is that page's own nav: `/videos`, which renders its own sidebar
  * rather than the shell, shows the video library and nothing else.
  *
- * Picking a file anywhere routes to `/reason-editor/<the file's name>`,
- * which brings CardMirror up in the main column with that file loaded — see
- * `ReasonDocsRouteSync` for why the selection travels in the URL and not only
- * in provider state, and `lib/reason-docs/doc-slug.ts` for how a title
- * becomes a path segment.
+ * Picking a file anywhere routes to `/reason-editor?doc=<file name>` (or
+ * `?topic=<file name>` for a public topic starter), which brings CardMirror up
+ * in the main column with that file loaded — see `ReasonDocsRouteSync` for why
+ * the selection travels in the URL and not only in provider state, and
+ * `lib/reason-docs/doc-path.ts` for how the file's own name becomes that URL.
+ *
+ * Files also arrive here: the Upload button and a drop onto the tree import
+ * `.docx` (and `.cmir`, and plain text) as CardMirror native files, so a card
+ * document dropped in the sidebar is one click from opening in CardMirror with
+ * its cards, highlighting and comments intact.
  */
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
+import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
 import { cn } from "@/lib/ui/lib/utils"
+import { IMPORT_ACCEPT } from "@/lib/cardmirror/stored-cmir"
 import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,
@@ -40,6 +46,7 @@ import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
+import type { ReasonDocument } from "./types"
 
 type SidebarPanel = "files" | "topicStarters" | "openTabs"
 
@@ -102,10 +109,16 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     moveDocument,
     updateTitle,
     selectTopicDocument,
+    importFiles,
+    importing,
   } = useReasonDocs()
 
   const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
   const [openOverride, setOpenOverride] = useState<boolean | null>(null)
+  /** What the last upload couldn't take, shown under the tree until the next
+   *  one. Silence would leave a reader watching a file that never appears. */
+  const [importErrors, setImportErrors] = useState<string[]>([])
+  const uploadInputRef = useRef<HTMLInputElement>(null)
 
   // Panel choice and collapse state are per-device view preferences (same as
   // the source sidebar's persisted panel list); read after mount so the SSR
@@ -172,7 +185,10 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
 
   /**
    * Carries a selection into the editor's main column, as a URL the editor
-   * route can reopen on its own: `/reason-editor/<the file's name>`.
+   * route can reopen on its own: `?doc=<file name>` for an owned document,
+   * `?topic=<file name>` for a public topic starter. The name comes from the
+   * tree the file is in, folders included, so the link reads as the file's own
+   * path rather than a row id.
    *
    * The provider state set alongside this makes the switch immediate on a
    * client-side hop; the URL is what makes the same click survive a reload, a
@@ -187,11 +203,38 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
    * row would be ten editor remounts, and ten Back presses to leave.
    */
   const goToEditor = useCallback(
-    (selection: ReasonDocsSelection) => {
-      if (onEditorRoute) return
-      router.push(editorHrefForSelection(selection, catalog))
+    (selection: ReasonDocsSelection, extraItems: readonly ReasonDocument[] = []) => {
+      // `extraItems` covers a file whose row hasn't reached state yet — a
+      // just-uploaded one — so its link is its name rather than its id.
+      const href = editorHrefForSelection(
+        selection,
+        selection.kind === "document" ? [...extraItems, ...documents] : topicItems,
+      )
+      if (onEditorRoute) router.replace(href)
+      else router.push(href)
     },
-    [catalog, onEditorRoute, router],
+    [onEditorRoute, router, documents, topicItems],
+  )
+
+  /**
+   * Takes files from the Upload button or a drop onto the tree.
+   *
+   * Everything becomes a CardMirror native file on the way in — the sidebar
+   * never stores a `.docx` as-is and never runs it through the card parser, so
+   * an imported Verbatim document keeps its cards, highlighting and comments
+   * (`lib/cardmirror/stored-cmir.ts`). The first file imported is opened, which
+   * is what makes uploading and clicking one file the same gesture.
+   */
+  const uploadFiles = useCallback(
+    async (files: readonly File[], parentId: number | null) => {
+      if (files.length === 0) return
+      setImportErrors([])
+      const { created, failures } = await importFiles(files, parentId)
+      setImportErrors(failures)
+      const first = created[0]
+      if (first) goToEditor({ kind: "document", id: first.id }, created)
+    },
+    [importFiles, goToEditor],
   )
 
   return (
@@ -227,6 +270,29 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
             >
               <FolderPlus className="h-3.5 w-3.5" />
             </button>
+            <button
+              type="button"
+              onClick={() => uploadInputRef.current?.click()}
+              disabled={importing}
+              title={`Upload a file (${IMPORT_ACCEPT})`}
+              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+            >
+              {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+            </button>
+            <input
+              ref={uploadInputRef}
+              type="file"
+              multiple
+              accept={IMPORT_ACCEPT}
+              className="hidden"
+              onChange={(event) => {
+                const files = Array.from(event.target.files ?? [])
+                // Cleared before the await so picking the same file twice in a
+                // row still fires `change` the second time.
+                event.target.value = ""
+                void uploadFiles(files, null)
+              }}
+            />
           </>
         )}
       </div>
@@ -285,7 +351,15 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     onRename={updateTitle}
                     onDelete={(id) => void deleteDocument(id)}
                     onMove={(id, parentId) => void moveDocument(id, parentId)}
+                    onUpload={(files, parentId) => void uploadFiles(files, parentId)}
                   />
+                  {importErrors.length > 0 && (
+                    <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
+                      {importErrors.map((message) => (
+                        <li key={message}>{message}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
 
