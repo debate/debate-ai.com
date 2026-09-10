@@ -197,27 +197,28 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain('href="/tools"');
   });
 
-  it("renders no links for the sections it leaves closed", () => {
-    // The point of the accordion: a closed section costs no DOM and no link
-    // for the router to prefetch. Fifty of those fired on every /videos load.
+  it("renders every section's links, not just the route's", () => {
+    // There is no accordion left to leave anything closed: sections all
+    // start expanded and collapse independently, so one link from each is
+    // mounted on arrival.
     const html = renderSidebar();
     expect(html).toContain("Coaching Programs");
     expect(html).toContain("Evidence Library");
     expect(html).toContain("Judge Paradigm Picker");
-    expect(html).toContain("All Tools");
     // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("PF Debates");
     expect(html).toContain("My Favorites");
   });
 
   it("keeps the glossary and rankings pair inside the Practice section", () => {
-    // They used to hang below the tree, outside every section. Now they are
-    // the tail of Practice, so on `/videos` — where Practice is closed —
-    // they cost no DOM, exactly like the tools they sit with.
-    // `tool-nav-tree-sections.test.tsx` pins that they are in fact there.
+    // They used to hang below the tree, outside every section. They are now
+    // the tail of Practice, and Practice — like every section — starts
+    // expanded, so they render with the tools they sit with rather than
+    // below the whole tree.
+    // `tool-nav-tree-sections.test.tsx` pins which section they belong to.
     const html = renderSidebar();
-    expect(html).not.toContain("Glossary of Terms");
-    expect(html).not.toContain("/videos/dictionary");
+    expect(html).toContain("Glossary of Terms");
+    expect(html).toContain("/videos/dictionary");
   });
 });
 

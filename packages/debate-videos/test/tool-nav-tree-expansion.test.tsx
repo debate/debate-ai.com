@@ -39,7 +39,7 @@ const { ToolNavTree } = await import("../src/components/category-gallery/ToolNav
 const { SIDEBAR_TOOL_SECTIONS } = await import(
   "../src/components/category-gallery/sidebar-tool-sections"
 );
-const { APPS_SECTION_ID, VIDEOS_SECTION_ID } = await import(
+const { VIDEOS_SECTION_ID } = await import(
   "../src/components/category-gallery/sidebar-active-section"
 );
 const { ALL_SIDEBAR_SECTION_IDS, toggleExpandedSection, withSectionExpanded } = await import(
@@ -62,8 +62,9 @@ describe("ToolNavTree expansion", () => {
       expect(href, `no sample href for section "${section.id}"`).toBeTruthy();
       expect(html).toContain(`href="${href}"`);
     }
-    // The Apps node is expanded too — "All Tools" only renders inside it.
-    expect(html).toContain("All Tools");
+    // No "Apps" node any more: it spelled out the dock's own five icons as
+    // text right below the dock, so the column said everything twice.
+    expect(html).not.toContain("All Tools");
   });
 
   it("starts fully collapsed when defaultExpanded is false", () => {
@@ -88,9 +89,8 @@ describe("ToolNavTree expansion", () => {
 });
 
 describe("sidebar section expansion set", () => {
-  it("starts with every h1 node open, Videos and Apps included", () => {
+  it("starts with every h1 node open, Videos included", () => {
     expect(ALL_SIDEBAR_SECTION_IDS).toContain(VIDEOS_SECTION_ID);
-    expect(ALL_SIDEBAR_SECTION_IDS).toContain(APPS_SECTION_ID);
     for (const section of SIDEBAR_TOOL_SECTIONS) {
       expect(ALL_SIDEBAR_SECTION_IDS).toContain(section.id);
     }
