@@ -16,6 +16,12 @@
  * That sidebar is desktop-only, so the same panels are also mounted here as a
  * collapsible strip below `md`.
  *
+ * A document's stored shape is not always the HTML the editor's `content`
+ * prop takes: an uploaded file is kept as CardMirror's native `.cmir`, and
+ * `documentHtml` is what renders either shape for the editor (and what keeps
+ * an edit made this session in front of the stored copy when you switch tabs
+ * and come back).
+ *
  * CardMirror is mounted with `defaultNavPaneHidden` so the engine's own
  * outline nav pane doesn't claim a second sidebar's worth of the column — the
  * app sidebar owns the side, and the outline stays one pull-tab / View-menu
@@ -46,6 +52,7 @@ export function ReasonEditorScreen() {
     selectTab,
     closeTab,
     updateContent,
+    documentHtml,
   } = useReasonDocs()
 
   useEffect(() => {
@@ -60,6 +67,16 @@ export function ReasonEditorScreen() {
   const topicHtml = useMemo(
     () => (topicDocument ? topicStarterHtml(topicDocument) : null),
     [topicDocument],
+  )
+
+  // Same for an uploaded document, which is stored as `.cmir` too. Keyed on
+  // the row's identity rather than its content: the content changes on every
+  // debounced save, and re-parsing the file each time would gunzip a card
+  // document on a timer for a result the editor doesn't re-read.
+  const selectedHtml = useMemo(
+    () => (selected ? documentHtml(selected) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selected?.id, selected?.format, documentHtml],
   )
 
   return (
@@ -143,7 +160,7 @@ export function ReasonEditorScreen() {
                   the editor's mount effects — re-hiding a nav pane the user
                   pulled back open — on every document switch. */}
               <EditorWithToolbar
-                content={topicHtml ?? selected!.content}
+                content={topicHtml ?? selectedHtml!}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}

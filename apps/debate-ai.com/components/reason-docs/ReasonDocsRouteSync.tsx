@@ -25,8 +25,8 @@
  * `useSearchParams`).
  */
 
-import { useEffect, useRef, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { usePathname, useSearchParams } from "next/navigation"
 import {
   canonicalEditorUrl,
   parseSelectionParams,
@@ -38,6 +38,9 @@ import { useReasonDocs } from "./ReasonDocsProvider"
 
 export function ReasonDocsRouteSync() {
   const searchParams = useSearchParams()
+  // The file can be named by the path (`/reason-editor/<name>`) as well as by
+  // the query, so both halves of the address are read.
+  const pathname = usePathname()
   const {
     documents,
     topicItems,

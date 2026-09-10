@@ -14,6 +14,12 @@
  * one. `./doc-path` owns how a name becomes a path and how a path is read back;
  * old numeric links keep working because it resolves those too.
  *
+ * The address bar itself ends up on the path form of that same name —
+ * `/reason-editor/impacts-warming-1ac`, written by {@link canonicalEditorUrl}
+ * once the file is known — and {@link parseSelectionParams} reads that segment
+ * back as the `doc` ref it is. One naming scheme, two spellings; nothing
+ * resolves a path differently from a query.
+ *
  * A URL that names nothing the reader has loaded is not an error: a public file
  * lives in a catalogue this reader may never have fetched (and may not be
  * signed in for at all), so resolution can come back asking for a server
@@ -31,6 +37,7 @@
  */
 
 import { findItemByRef, itemPath, type PathItem } from "./doc-path"
+import { type DocSlugEntry, docSlugForId } from "./doc-slug"
 
 export const REASON_EDITOR_ROUTE = "/reason-editor"
 
@@ -39,6 +46,48 @@ export const REASON_EDITOR_ROUTE = "/reason-editor"
 export type ReasonDocsSelection =
   | { kind: "document"; id: number }
   | { kind: "topic"; id: number }
+
+/** One file the editor route can address, as the sidebar knows it. */
+export interface ReasonDocsEntry {
+  id: number
+  title: string
+}
+
+/**
+ * Everything `/reason-editor` can open, in the order a bare slug resolves
+ * against it: topic starters first, then the reader's own documents — the
+ * same precedence the query form has always had for a URL carrying both.
+ */
+export interface ReasonDocsCatalog {
+  /** The reader's own non-folder documents, in sidebar order. */
+  documents: readonly ReasonDocsEntry[]
+  /** Public topic starters that are files, not folders. */
+  topics: readonly ReasonDocsEntry[]
+}
+
+/** The two id namespaces share one URL space, so a slug's discriminator says
+ *  which one it belongs to: `d12` is document 12, `t7` is topic starter 7. */
+function entryKey(selection: ReasonDocsSelection): string {
+  return `${selection.kind === "document" ? "d" : "t"}${selection.id}`
+}
+
+/** The catalogue as one flat, slug-addressable list — topic starters ahead of
+ *  owned documents, per {@link ReasonDocsCatalog}. */
+function slugEntries(catalog: ReasonDocsCatalog): DocSlugEntry[] {
+  return [
+    ...catalog.topics.map((item) => ({ id: `t${item.id}`, title: item.title })),
+    ...catalog.documents.map((item) => ({ id: `d${item.id}`, title: item.title })),
+  ]
+}
+
+/** The path segment naming `selection`, or `null` when the catalogue doesn't
+ *  hold it (a file still loading, or one that has been deleted). */
+export function editorSlugForSelection(
+  selection: ReasonDocsSelection,
+  catalog: ReasonDocsCatalog,
+): string | null {
+  return docSlugForId(entryKey(selection), slugEntries(catalog))
+}
 
 /** Which query parameter a selection travels in. */
 export function paramForKind(kind: ReasonDocsSelection["kind"]): "doc" | "topic" {
@@ -88,11 +137,24 @@ export interface SelectionParams {
   topic: string | null
 }
 
-/** Reads {@link SelectionParams} off anything with `URLSearchParams`'s getter
- *  (Next's `useSearchParams` returns a readonly wrapper, not the class). */
-export function parseSelectionParams(params: { get: (key: string) => string | null }): SelectionParams {
+/**
+ * Reads {@link SelectionParams} off a pathname and anything with
+ * `URLSearchParams`'s getter (Next's `useSearchParams` returns a readonly
+ * wrapper, not the class).
+ *
+ * `/reason-editor/<name>` and `?doc=<name>` are the same statement about which
+ * file to open — the path form is what {@link canonicalEditorUrl} rewrites the
+ * address to, the query form is what older links still carry — so the path
+ * segment reads back as a `doc` ref and resolves through the very same
+ * `findItemByRef` lookup. An explicit `?doc=` wins, since that is the link the
+ * reader actually followed.
+ */
+export function parseSelectionParams(
+  params: { get: (key: string) => string | null },
+  pathname?: string | null,
+): SelectionParams {
   const read = (key: string) => params.get(key)?.trim() || null
-  return { doc: read("doc"), topic: read("topic") }
+  return { doc: read("doc") ?? editorSlugFromPathname(pathname), topic: read("topic") }
 }
 
 /** What {@link resolveSelection} is deciding over. */
@@ -174,8 +236,8 @@ export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome
  * applications. Two URLs naming the same file share a key even if their other
  * query parameters differ.
  */
-export function selectionParamsKey({ slug, doc, topic }: SelectionParams): string {
-  return `slug:${slug ?? ""}|doc:${doc ?? ""}|topic:${topic ?? ""}`
+export function selectionParamsKey({ doc, topic }: SelectionParams): string {
+  return `doc:${doc ?? ""}|topic:${topic ?? ""}`
 }
 
 /** The address bar, as much of it as {@link canonicalEditorUrl} reads. */
