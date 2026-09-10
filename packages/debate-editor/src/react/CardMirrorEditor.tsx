@@ -9,9 +9,15 @@
  * this drops into) so those call sites don't need their own props
  * reshaped — only the shim they import through needs to point here.
  *
- * The engine's own ribbon is the only command chrome the shell renders: it
- * is tabbed (see `editor/ribbon-tabs.ts`), and the dropdown menu bar that
- * used to sit above it is gone — its categories are the ribbon's tabs now.
+ * Command chrome: a Google-Docs-style dropdown `MenuBar` (File / Edit /
+ * Insert / Workspace / …, lazily projected from the same `RIBBON_TABS`
+ * taxonomy the ribbon itself uses — see `menu-bar-categories.ts`) stacked
+ * above the engine's own tabbed ribbon (`editor/ribbon-tabs.ts`). The two
+ * aren't duplicate surfaces for the same job: the ribbon is the always-
+ * visible, icon-driven ribbon strip; the menu bar is the click-to-browse,
+ * text-labeled index over the same commands (plus `WORKSPACE_LINKS`
+ * navigation), the way Docs/Sheets keep a menu bar above their own
+ * toolbar. Both gate on `showToolbar` together.
  *
  * CardMirror's engine is a page-level singleton (see singleton.ts) — it
  * cannot run two live instances at once. `live` (default true) controls
@@ -23,6 +29,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
+import { MenuBar } from "./MenuBar.js";
 import * as singleton from "./singleton.js";
 import "../editor/style.css";
 import "../editor/icons.css";
@@ -47,13 +54,12 @@ export interface ReasonEditorProps {
   onTitleChange?: (title: string) => void;
   onShareClick?: () => void;
   editable?: boolean;
-  /** Whether the ribbon is paged into Word-style tabs (default true).
-   *  `false` un-pages it: the tab strip is hidden and every panel shows at
-   *  once, on one horizontally scrolling strip — what hosts that supply
-   *  their own command chrome around the embed want. This used to gate a
-   *  separate dropdown menu bar stacked above the ribbon; those categories
-   *  are the ribbon's tabs now (see `editor/ribbon-tabs.ts`), so the same
-   *  prop gates the same commands in their new home. */
+  /** Whether the shell renders its own command chrome — the `MenuBar`
+   *  dropdown strip plus the engine's ribbon, paged into Word-style tabs
+   *  (default true). `false` hides the `MenuBar` and un-pages the ribbon:
+   *  the tab strip disappears and every panel shows at once, on one
+   *  horizontally scrolling strip — what hosts that supply their own
+   *  command chrome around the embed want (see `editor/ribbon-tabs.ts`). */
   showToolbar?: boolean;
   showCardTools?: boolean;
   showAiTools?: boolean;
@@ -245,12 +251,15 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
 
     return (
       <div className={"dec-cardmirror-embed flex h-full w-full flex-col overflow-hidden" + (className ? ` ${className}` : "")}>
-        <div ref={hostRef} className="dec-cardmirror-viewport relative min-h-0 flex-1 overflow-hidden" />
-        {!claimed && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
-            Loading editor…
-          </div>
-        )}
+        {showToolbar && <MenuBar />}
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          <div ref={hostRef} className="dec-cardmirror-viewport h-full w-full" />
+          {!claimed && (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
+              Loading editor…
+            </div>
+          )}
+        </div>
       </div>
     );
   },

@@ -40,6 +40,7 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 ### CardMirror and the editor shell
 
 - Reorganized the **CardMirror** editor shell again — a file tree + open tabs sidebar for the REASON editor, tighter menu-bar categories, Benchmark/About-this-install moved into Settings, and the ebb Flow start page retired into the flow toolbar with speech timers mirrored to the sidebar.
+- Restored the **Google-Docs-style menu bar** (File / Edit / Insert / Workspace / …) above the ribbon toolbar in every editor host, so the same commands the `Ctrl`/`Cmd`-Shift-Space palette exposes are also one click away as a text-labeled menu strip, not just ribbon icons.
 - Moved the **Topic Starter library** onto CardMirror's native format: an uploaded DOCX is converted with the editor's own OOXML importer and stored as a `.cmir` (so the Verbatim outline, comment threads, images and named character styles survive an import that used to flatten them to card HTML), the `/reason-editor` embed parses the stored file in the browser, and rows imported before the switch keep opening as HTML.
 - Fixed the report that a file loaded into **CardMirror sometimes disappears and goes blank**, which was never only a display bug:
   - The embed reported *any* document change as a user edit, so a blank mounted by the engine's own machinery (boot, New/Open, crash recovery) — or by stored content that failed to parse — was written straight over the file in D1.
