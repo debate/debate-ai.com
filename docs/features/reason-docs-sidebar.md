@@ -74,16 +74,34 @@ does two things:
 
 - sets it active in `ReasonDocsProvider`, so a client-side hop switches the
   editor instantly; and
-- routes to `/reason-editor?doc=<id>` (or `?topic=<id>`), so the selection
-  is addressable.
+- routes to `/reason-editor/<the file's name>` — `/reason-editor/cp-answer-to-states`,
+  not `/reason-editor?topic=2` — so the selection is addressable, and legible
+  in a shared link.
 
 Provider state alone covers the hop but not a reload, a pasted link, or a
 hard navigation — `/videos` is its own layout branch and can boot the editor
-with an empty provider. Carrying the id in the query is what makes "click a
+with an empty provider. Carrying the file in the URL is what makes "click a
 file, get *that* file in CardMirror" hold from every sidebar rather than
-only from the ones that hop client-side. Already on the editor route the URL
-is replaced rather than pushed, so opening ten files in a row doesn't cost
-ten Back presses to leave.
+only from the ones that hop client-side.
+
+The name is the title slugified (`lib/reason-docs/doc-slug.ts`): lowercased,
+accents folded, apostrophes dropped, everything else non-alphanumeric
+collapsed to single hyphens, capped at 80 characters on a word boundary, and
+`untitled` when a title leaves nothing behind. Titles are not unique and ids
+are, so two files that slugify the same are told apart by a `~<id>` suffix —
+`impact-turns~d12` for document 12, `impact-turns~t7` for topic starter 7.
+No title can forge one: `~` is stripped out of titles by the same slugifier.
+
+Already on the editor route, a pick routes nothing at all. `/reason-editor`
+and `/reason-editor/<slug>` are separate Next routes, so routing between
+them would remount CardMirror — and its undo history — on every tab switch;
+the provider already has the file open, and `ReasonDocsRouteSync` renames
+the address bar in place with `history.replaceState`. That same rewrite is
+what upgrades an older `?doc=<id>` / `?topic=<id>` link (still read, and
+still resolved) to the named path once the catalogue says what that file is
+called, and what keeps the address on a file that is renamed while open. Any
+other query parameter is kept — `?share=` and `?shareWith=` are read by the
+same page.
 
 `ReasonDocsRouteSync` (mounted once on `/reason-editor`, inside a
 `<Suspense>` since it reads `useSearchParams`, renders nothing) reads it
@@ -94,18 +112,21 @@ ends of the round trip cannot drift, and unit-tested in
 
 Resolution order, per URL:
 
-1. the URL's `topic` id, if it names a live topic starter;
-2. the URL's `doc` id, if it names one of the reader's own non-folder
+1. the path's name — an exact `~<id>` discriminator first, then the bare
+   slug matched against topic starters and then the reader's own documents,
+   then the segment read as an id;
+2. the URL's `topic` id, if it names a live topic starter;
+3. the URL's `doc` id, if it names one of the reader's own non-folder
    documents;
-3. otherwise, and only when nothing is open, the first file — so the reader
+4. otherwise, and only when nothing is open, the first file — so the reader
    lands on something readable instead of an empty pane.
 
-An id that matches nothing (a deleted file, someone else's link) falls
-through to that same fallback rather than erroring, and a malformed one
-(`?doc=abc`, `?doc=3.5`) reads as absent. The deep link applies once per
-URL: after it opens its file the reader can pick another from the sidebar
-without the stale query dragging them back, and the sidebar rewrites the
-query on every pick, which re-arms it.
+A name or id that matches nothing (a renamed file, a deleted one, someone
+else's link) falls through to that same fallback rather than erroring — a
+stale link is not a 404 — and a malformed id (`?doc=abc`, `?doc=3.5`) reads
+as absent. The deep link applies once per URL: after it opens its file the
+reader can pick another from the sidebar without the stale URL dragging them
+back, and every pick rewrites the address, which re-arms it.
 
 The deep-link rule and the first-file fallback are one function on purpose.
 As two React effects they raced: the fallback's closure still saw no

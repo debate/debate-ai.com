@@ -18,19 +18,22 @@
  * sidebar is that page's own nav: `/videos`, which renders its own sidebar
  * rather than the shell, shows the video library and nothing else.
  *
- * Picking a file anywhere routes to `/reason-editor?doc=<id>` (or
- * `?topic=<id>` for a public topic starter), which brings CardMirror up in
- * the main column with that file loaded — see `ReasonDocsRouteSync` for why
- * the selection travels in the URL and not only in provider state.
+ * Picking a file anywhere routes to `/reason-editor/<the file's name>`,
+ * which brings CardMirror up in the main column with that file loaded — see
+ * `ReasonDocsRouteSync` for why the selection travels in the URL and not only
+ * in provider state, and `lib/reason-docs/doc-slug.ts` for how a title
+ * becomes a path segment.
  */
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
 import { cn } from "@/lib/ui/lib/utils"
 import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,
+  isEditorPathname,
+  type ReasonDocsCatalog,
   type ReasonDocsSelection,
 } from "@/lib/reason-docs/route-selection"
 import { FileTree } from "./FileTree"
@@ -112,7 +115,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     setOpenOverride(loadSectionOpen())
   }, [])
 
-  const onEditorRoute = pathname === REASON_EDITOR_ROUTE
+  const onEditorRoute = isEditorPathname(pathname)
   // Expanded by default: this only mounts where the documents *are* the
   // page's subject (`/cards` and the editor), and on `/cards` the sidebar is
   // now these panels plus the Research tool list — a collapsed "Documents"
@@ -156,27 +159,39 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     if (!onEditorRoute) router.push(REASON_EDITOR_ROUTE)
   }, [onEditorRoute, router])
 
+  /** The files a URL can name, in the order a name resolves against them —
+   *  see `lib/reason-docs/route-selection`. Folders open nothing, so they are
+   *  not addressable. */
+  const catalog: ReasonDocsCatalog = useMemo(
+    () => ({
+      documents: documents.filter((d) => !d.isFolder).map((d) => ({ id: d.id, title: d.title })),
+      topics: topicItems.filter((t) => !t.isFolder).map((t) => ({ id: t.id, title: t.title })),
+    }),
+    [documents, topicItems],
+  )
+
   /**
    * Carries a selection into the editor's main column, as a URL the editor
-   * route can reopen on its own: `?doc=<id>` for an owned document,
-   * `?topic=<id>` for a public topic starter.
+   * route can reopen on its own: `/reason-editor/<the file's name>`.
    *
    * The provider state set alongside this makes the switch immediate on a
-   * client-side hop; the query is what makes the same click survive a reload,
-   * a shared link, or a hard navigation (`/videos` is a different layout
+   * client-side hop; the URL is what makes the same click survive a reload, a
+   * shared link, or a hard navigation (`/videos` is a different layout
    * branch), so CardMirror always comes up with *that* file rather than
    * whatever the editor would otherwise fall back to.
    *
-   * Already on the route, the URL is replaced rather than pushed: opening ten
-   * files in a row shouldn't cost ten Back presses to leave the editor.
+   * Already on the route, nothing is routed at all: the provider has the file
+   * open, and `ReasonDocsRouteSync` renames the address bar in place. Routing
+   * would mean a Next route change between `/reason-editor/<a>` and
+   * `/reason-editor/<b>`, which remounts CardMirror — ten files opened in a
+   * row would be ten editor remounts, and ten Back presses to leave.
    */
   const goToEditor = useCallback(
     (selection: ReasonDocsSelection) => {
-      const href = editorHrefForSelection(selection)
-      if (onEditorRoute) router.replace(href)
-      else router.push(href)
+      if (onEditorRoute) return
+      router.push(editorHrefForSelection(selection, catalog))
     },
-    [onEditorRoute, router],
+    [catalog, onEditorRoute, router],
   )
 
   return (

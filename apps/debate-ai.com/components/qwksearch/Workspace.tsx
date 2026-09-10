@@ -5,7 +5,7 @@
 import "./base-url"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import { ChatInputBox, ChatWindow, configureResearchAgentUI, useChat } from "research-agent-ui"
 import { ReasonDocs } from "react-reason-editor/reason-docs"
 import { Sidebar, SidebarContent } from "react-reason-editor-sidebar"
@@ -15,6 +15,13 @@ import { useMainView } from "./MainViewProvider"
 import { useChatTabs } from "./useChatTabs"
 import { getPageTips, htmlToPlainText } from "./reason-docs/page-tips"
 import { getTopicSearches } from "./reason-docs/topic-searches"
+import {
+  QWKSEARCH_DOCS_ROUTE,
+  docIdFromSlug,
+  docPathForId,
+  docSlugFromPathname,
+  readStoredDocs,
+} from "@/lib/qwksearch/doc-paths"
 
 import "katex/dist/katex.min.css"
 import "easydrawer/styles.css"
@@ -31,6 +38,7 @@ export function QwksearchWorkspace() {
   const { chatTabs, activeChatId, openChat, newChat, closeChat } = useChatTabs()
   const { sendMessage } = useChat()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
   const [activeDocId, setActiveDocId] = useState<string | null>(null)
   const [initialDocId, setInitialDocId] = useState<string | null>(null)
   const [hasRestoredFromUrl, setHasRestoredFromUrl] = useState(false)
@@ -42,15 +50,24 @@ export function QwksearchWorkspace() {
   }, [])
 
   // Restore whichever tab (a chat or a REASON document) was active from the
-  // URL's `chat`/`docs` params on first load — the workspace itself never
-  // navigates away from `/doc`, so this is the only way a shared/bookmarked
-  // link reopens the right tab. Runs once; afterwards the effect below owns
-  // keeping the URL in sync with the live tab state.
+  // URL on first load — the workspace itself never navigates away from
+  // `/doc`, so this is the only way a shared/bookmarked link reopens the
+  // right tab. A document is named in the path (`/doc/cp-answer-to-states`,
+  // resolved against the editor's own document store); a chat is still
+  // `?chat=<id>`, since a chat has no filed name to carry. `?docs=<id>` is
+  // read too: links to that older form are already out there, and the effect
+  // below rewrites the address to the named path once it lands.
+  // Runs once; afterwards that effect owns keeping the URL in sync with the
+  // live tab state.
   const restoredFromUrlRef = useRef(false)
+  // Whether a document has ever been active in this session — see the mirror
+  // effect below, which reads it to tell "not open yet" from "not open".
+  const hasOpenedDocRef = useRef(false)
   useEffect(() => {
     if (restoredFromUrlRef.current) return
     restoredFromUrlRef.current = true
-    const docsParam = searchParams.get("docs")
+    const namedDocId = docIdFromSlug(docSlugFromPathname(pathname), readStoredDocs())
+    const docsParam = namedDocId ?? searchParams.get("docs")
     const chatParam = searchParams.get("chat")
     if (docsParam) {
       setInitialDocId(docsParam)
@@ -60,22 +77,49 @@ export function QwksearchWorkspace() {
       toggleToResearch()
     }
     setHasRestoredFromUrl(true)
-    // Runs once on mount only — later param changes come from our own sync below.
+    // Runs once on mount only — later URL changes come from our own sync below.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Mirror the active chat/doc tab into `?chat=&docs=` without a route
-  // transition: chats and REASON docs are tabs within this one workspace
-  // route, not separate pages, so the URL only needs to record which tab is
-  // active for sharing/reload — not drive navigation. Waits for the restore
-  // effect above so it doesn't clobber the incoming URL with blanks before
-  // the restored tab's state has landed.
+  // Mirror the active tab into the URL without a route transition: chats and
+  // REASON docs are tabs within this one workspace route, not separate pages,
+  // so the URL only needs to record which tab is active for sharing/reload —
+  // not drive navigation. An open document is named in the path (`/doc/<its
+  // title>`, from the editor's own document store); an open chat stays a
+  // `?chat=` id. `history.replaceState` and not the router: `/doc` and
+  // `/doc/<slug>` are different Next routes, and routing between them on
+  // every tab switch would remount the whole workspace.
+  //
+  // Waits for the restore effect above so it doesn't clobber the incoming URL
+  // before the restored tab's state has landed. A rename is picked up the
+  // next time the active tab changes — the editor's store has no same-tab
+  // change notification to subscribe to.
   useEffect(() => {
     if (typeof window === "undefined" || !hasRestoredFromUrl) return
     const url = new URL(window.location.href)
-    url.searchParams.set("chat", activeView === "research" ? activeChatId ?? "" : "")
-    url.searchParams.set("docs", activeView === "docs" ? activeDocId ?? "" : "")
-    const nextRelative = `${url.pathname}?${url.searchParams.toString()}${url.hash}`
+    const chatId = activeView === "research" ? activeChatId : null
+    if (chatId) url.searchParams.set("chat", chatId)
+    else url.searchParams.delete("chat")
+    // Superseded by the path; dropped so a restored `?docs=` link doesn't
+    // keep naming the document twice, in two different ways.
+    url.searchParams.delete("docs")
+    if (activeDocId) hasOpenedDocRef.current = true
+    // Between a cold load at `/doc/<name>` and the editor reporting that
+    // document as active there is a commit with no active document in it.
+    // Writing `/doc` in that gap would blank the name out of the address bar
+    // (and out of a reload) before it has been acted on — so until the first
+    // document opens, an incoming named path is left as it is. After that,
+    // no active document really does mean the bare route.
+    const docPath =
+      activeView !== "docs"
+        ? QWKSEARCH_DOCS_ROUTE
+        : activeDocId
+          ? docPathForId(activeDocId, readStoredDocs())
+          : hasOpenedDocRef.current
+            ? QWKSEARCH_DOCS_ROUTE
+            : window.location.pathname
+    const query = url.searchParams.toString()
+    const nextRelative = `${docPath}${query ? `?${query}` : ""}${url.hash}`
     const currentRelative = `${window.location.pathname}${window.location.search}${window.location.hash}`
     if (nextRelative !== currentRelative) {
       window.history.replaceState(null, "", nextRelative)
