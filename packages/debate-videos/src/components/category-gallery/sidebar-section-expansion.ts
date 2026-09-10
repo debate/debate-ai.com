@@ -12,16 +12,16 @@
  * @module components/category-gallery/sidebar-section-expansion
  */
 
-import { APPS_SECTION_ID, VIDEOS_SECTION_ID } from "./sidebar-active-section";
+import { VIDEOS_SECTION_ID } from "./sidebar-active-section";
 import { SIDEBAR_TOOL_SECTIONS } from "./sidebar-tool-sections";
 
 /**
- * Every h1 node `VideoSidebarTree` owns the expanded state of — "Videos", the
- * "Apps" node, and the tool sections — all of which start open.
+ * Every h1 node `VideoSidebarTree` owns the expanded state of — "Videos" and
+ * the tool sections — all of which start open. The "Apps" node is gone; the
+ * dock renders those five destinations itself.
  */
 export const ALL_SIDEBAR_SECTION_IDS: readonly string[] = [
   VIDEOS_SECTION_ID,
-  APPS_SECTION_ID,
   ...SIDEBAR_TOOL_SECTIONS.map((section) => section.id),
 ];
 
