@@ -1,5 +1,6 @@
 /**
- * @fileoverview The URL half of "click a file, get that file in CardMirror".
+ * @fileoverview The URL half of "click a file in any sidebar, get that file
+ * in CardMirror".
  *
  * A selection made in the docs sidebar (`components/reason-docs`) is carried
  * to `/reason-editor` in the query string rather than only in
@@ -42,6 +43,23 @@ export type ReasonDocsSelection =
 /** Which query parameter a selection travels in. */
 export function paramForKind(kind: ReasonDocsSelection["kind"]): "doc" | "topic" {
   return kind === "document" ? "doc" : "topic"
+}
+
+/** True on `/reason-editor` and on the named-document paths below it. */
+export function isEditorPathname(pathname: string | null | undefined): boolean {
+  if (!pathname) return false
+  const path = (pathname.split("?")[0]?.split("#")[0] ?? "").replace(/\/+$/, "")
+  return path === REASON_EDITOR_ROUTE || path.startsWith(`${REASON_EDITOR_ROUTE}/`)
+}
+
+/** The `<slug>` in `/reason-editor/<slug>`, or `null` on the bare route (and
+ *  on any other page). */
+export function editorSlugFromPathname(pathname: string | null | undefined): string | null {
+  if (!pathname) return null
+  const path = pathname.split("?")[0]?.split("#")[0] ?? ""
+  if (!path.startsWith(`${REASON_EDITOR_ROUTE}/`)) return null
+  const segment = path.slice(REASON_EDITOR_ROUTE.length + 1).replace(/\/+$/, "")
+  return segment || null
 }
 
 /**
@@ -88,7 +106,7 @@ export interface ResolveSelectionInput extends SelectionParams {
   /**
    * False once this URL's selection has already been applied, so a reader who
    * then picks a different file from the sidebar isn't dragged back to the
-   * one named in the query.
+   * one named in the URL.
    */
   applyParams: boolean
   /** Whether something is already open in the editor. */
@@ -152,10 +170,68 @@ export function resolveSelection(input: ResolveSelectionInput): SelectionOutcome
 }
 
 /**
- * Identity of the selection a URL asks for, for deduping repeat applications.
- * Two URLs naming the same file share a key even if their other query
- * parameters differ.
+ * Identity of the selection a URL asks for, for deduping repeat
+ * applications. Two URLs naming the same file share a key even if their other
+ * query parameters differ.
  */
-export function selectionParamsKey({ doc, topic }: SelectionParams): string {
-  return `doc:${doc ?? ""}|topic:${topic ?? ""}`
+export function selectionParamsKey({ slug, doc, topic }: SelectionParams): string {
+  return `slug:${slug ?? ""}|doc:${doc ?? ""}|topic:${topic ?? ""}`
+}
+
+/** The address bar, as much of it as {@link canonicalEditorUrl} reads. */
+export interface EditorLocation {
+  pathname: string
+  /** Including the leading `?`, as `window.location.search` gives it. */
+  search: string
+  /** Including the leading `#`. */
+  hash: string
+}
+
+/**
+ * The URL the open document *should* have, or `null` when the current one
+ * already says it.
+ *
+ * This is what turns a `?doc=12` link — or a link written before the file was
+ * renamed — into `/reason-editor/<its name>` once the catalogue has loaded,
+ * and what keeps the address bar naming the file the reader switched to. The
+ * ids it replaces are dropped from the query; every other parameter is kept,
+ * since `?share=` and `?shareWith=` are read by the same page.
+ */
+export function canonicalEditorUrl(
+  selection: ReasonDocsSelection | null,
+  catalog: ReasonDocsCatalog,
+  location: EditorLocation,
+): string | null {
+  if (!selection) return null
+  // Only ever rewrites the editor's own address. The route sync that calls
+  // this mounts on `/reason-editor`, but a caller mounted elsewhere renaming
+  // *that* page's URL would be a navigation, not a rename.
+  if (!isEditorPathname(location.pathname)) return null
+  const slug = editorSlugForSelection(selection, catalog)
+  if (!slug) return null
+  const params = new URLSearchParams(location.search)
+  params.delete("doc")
+  params.delete("topic")
+  const query = params.toString()
+  const next = `${REASON_EDITOR_ROUTE}/${slug}${query ? `?${query}` : ""}${location.hash}`
+  const current = `${location.pathname}${location.search}${location.hash}`
+  return next === current ? null : next
+}
+
+/**
+ * `location` with `param` dropped — the URL to leave behind once a
+ * one-shot query parameter has been acted on (`?share=<id>` is joined once;
+ * a reload must not re-run it).
+ *
+ * Kept here because the naive version of that is `router.replace(
+ * "/reason-editor")`, which now also throws away the document the path names
+ * and routes the reader off the file they were reading. Returns `null` when
+ * the parameter isn't there to drop.
+ */
+export function urlWithoutParam(param: string, location: EditorLocation): string | null {
+  const params = new URLSearchParams(location.search)
+  if (!params.has(param)) return null
+  params.delete(param)
+  const query = params.toString()
+  return `${location.pathname}${query ? `?${query}` : ""}${location.hash}`
 }

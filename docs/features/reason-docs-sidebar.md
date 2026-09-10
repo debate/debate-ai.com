@@ -85,9 +85,26 @@ Provider state alone covers the hop but not a reload, a pasted link, or a
 hard navigation — `/videos` is its own layout branch and can boot the editor
 with an empty provider. Carrying the file in the query is what makes "click a
 file, get *that* file in CardMirror" hold from every sidebar rather than
-only from the ones that hop client-side. Already on the editor route the URL
-is replaced rather than pushed, so opening ten files in a row doesn't cost
-ten Back presses to leave.
+only from the ones that hop client-side.
+
+The name is the title slugified (`lib/reason-docs/doc-slug.ts`): lowercased,
+accents folded, apostrophes dropped, everything else non-alphanumeric
+collapsed to single hyphens, capped at 80 characters on a word boundary, and
+`untitled` when a title leaves nothing behind. Titles are not unique and ids
+are, so two files that slugify the same are told apart by a `~<id>` suffix —
+`impact-turns~d12` for document 12, `impact-turns~t7` for topic starter 7.
+No title can forge one: `~` is stripped out of titles by the same slugifier.
+
+Already on the editor route, a pick routes nothing at all. `/reason-editor`
+and `/reason-editor/<slug>` are separate Next routes, so routing between
+them would remount CardMirror — and its undo history — on every tab switch;
+the provider already has the file open, and `ReasonDocsRouteSync` renames
+the address bar in place with `history.replaceState`. That same rewrite is
+what upgrades an older `?doc=<id>` / `?topic=<id>` link (still read, and
+still resolved) to the named path once the catalogue says what that file is
+called, and what keeps the address on a file that is renamed while open. Any
+other query parameter is kept — `?share=` and `?shareWith=` are read by the
+same page.
 
 `ReasonDocsRouteSync` (mounted once on `/reason-editor`, inside a
 `<Suspense>` since it reads `useSearchParams`, renders nothing) reads it

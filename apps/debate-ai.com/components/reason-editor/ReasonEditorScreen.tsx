@@ -1,7 +1,7 @@
-import { ReasonEditorScreen } from "@/components/reason-editor/ReasonEditorScreen"
+"use client"
 
 /**
- * Native REASON editor route — the debate-editor (TipTap/CardMirror) shell
+ * The native REASON editor screen — the debate-editor (TipTap/CardMirror) shell
  * wired to per-user document persistence (/api/doc/documents). Reachable
  * from the Settings menu alongside the existing /doc iframe.
  *
@@ -11,23 +11,28 @@ import { ReasonEditorScreen } from "@/components/reason-editor/ReasonEditorScree
  * `ReasonDocsSidebarPanels`), which already wrapped this route and so used to
  * put a second sidebar beside it. This page now only renders the editor for
  * whatever that sidebar has active, reading it from `ReasonDocsProvider` —
- * or, on a cold load, from the `?doc=`/`?topic=` link that sidebar routes to
+ * or, on a cold load, from the named link that sidebar routes to
  * (`ReasonDocsRouteSync`).
  * That sidebar is desktop-only, so the same panels are also mounted here as a
  * collapsible strip below `md`.
- *
- * A document's stored shape is not always the HTML the editor's `content`
- * prop takes: an uploaded file is kept as CardMirror's native `.cmir`, and
- * `documentHtml` is what renders either shape for the editor (and what keeps
- * an edit made this session in front of the stored copy when you switch tabs
- * and come back).
  *
  * CardMirror is mounted with `defaultNavPaneHidden` so the engine's own
  * outline nav pane doesn't claim a second sidebar's worth of the column — the
  * app sidebar owns the side, and the outline stays one pull-tab / View-menu
  * toggle away.
  */
-export default function ReasonEditorPage() {
+
+import { Suspense, useEffect, useMemo } from "react"
+import { Loader2 } from "lucide-react"
+import { EditorWithToolbar } from "debate-editor"
+import { topicStarterHtml } from "@/lib/topic-starters/content"
+import { cn } from "@/lib/ui/lib/utils"
+import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
+import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
+import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
+import { ShareWithContacts, SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
+
+export function ReasonEditorScreen() {
   const {
     documents,
     openTabs,
@@ -41,7 +46,6 @@ export default function ReasonEditorPage() {
     selectTab,
     closeTab,
     updateContent,
-    documentHtml,
   } = useReasonDocs()
 
   useEffect(() => {
@@ -58,16 +62,6 @@ export default function ReasonEditorPage() {
     [topicDocument],
   )
 
-  // Same for an uploaded document, which is stored as `.cmir` too. Keyed on
-  // the row's identity rather than its content: the content changes on every
-  // debounced save, and re-parsing the file each time would gunzip a card
-  // document on a timer for a result the editor doesn't re-read.
-  const selectedHtml = useMemo(
-    () => (selected ? documentHtml(selected) : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selected?.id, selected?.format, documentHtml],
-  )
-
   return (
     <div className="h-dvh flex flex-col overflow-hidden pt-14 lg:pt-0 pb-20 lg:pb-0">
       {/* Opens a card a contact shared (`?share=<id>` from /contacts) and
@@ -75,10 +69,10 @@ export default function ReasonEditorPage() {
       <Suspense>
         <SharedCardOpener />
       </Suspense>
-      {/* Opens whichever file the sidebar's `?doc=`/`?topic=` link names —
-          and, failing that, the first one — so a click from any sidebar
-          (including `/videos`, which is its own layout branch) brings this
-          column up with that file loaded. Renders nothing. */}
+      {/* Opens whichever file the URL names — and, failing that, the first
+          one — so a click from any sidebar (including `/videos`, which is its
+          own layout branch) brings this column up with that file loaded, and
+          keeps the address bar on that file's name. Renders nothing. */}
       <Suspense>
         <ReasonDocsRouteSync />
       </Suspense>
@@ -149,7 +143,7 @@ export default function ReasonEditorPage() {
                   the editor's mount effects — re-hiding a nav pane the user
                   pulled back open — on every document switch. */}
               <EditorWithToolbar
-                content={topicHtml ?? selectedHtml!}
+                content={topicHtml ?? selected!.content}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}

@@ -1,9 +1,9 @@
 "use client"
 
 /**
- * Resolves which document the editor route shows, from the URL — the React
- * half of `lib/reason-docs/route-selection`, which owns the rules and their
- * tests.
+ * Resolves which document the editor route shows, from the URL, and keeps the
+ * URL naming whichever document is open — the React half of
+ * `lib/reason-docs/route-selection`, which owns the rules and their tests.
  *
  * The sidebar panels (`ReasonDocsSidebarPanels`) route a click to
  * `/reason-editor?doc=<file name>` for an owned document or `?topic=<file name>`
@@ -28,9 +28,11 @@
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import {
+  canonicalEditorUrl,
   parseSelectionParams,
   resolveSelection,
   selectionParamsKey,
+  type ReasonDocsCatalog,
 } from "@/lib/reason-docs/route-selection"
 import { useReasonDocs } from "./ReasonDocsProvider"
 
@@ -47,17 +49,26 @@ export function ReasonDocsRouteSync() {
     openPublicByRef,
   } = useReasonDocs()
 
-  const params = parseSelectionParams(searchParams)
+  const params = parseSelectionParams(searchParams, pathname)
   const paramsKey = selectionParamsKey(params)
   // One application per URL: once it has opened that file the reader is free
   // to pick another from the sidebar without this dragging them back. The
-  // sidebar rewrites the query on every pick, which is what re-arms it.
+  // sidebar rewrites the URL on every pick, which is what re-arms it.
   const appliedKeyRef = useRef<string | null>(null)
   // Refs whose server lookup already came back empty. Re-resolving without the
   // lookup is what lets the URL fall through to the normal fallback instead of
   // asking for the same missing name on every render.
   const [deadRefs, setDeadRefs] = useState<readonly string[]>([])
   const lookupsRef = useRef(new Set<string>())
+
+  // Folders are not openable, so they are not addressable either.
+  const catalog: ReasonDocsCatalog = useMemo(
+    () => ({
+      documents: documents.filter((d) => !d.isFolder).map((d) => ({ id: d.id, title: d.title })),
+      topics: topicItems.filter((t) => !t.isFolder).map((t) => ({ id: t.id, title: t.title })),
+    }),
+    [documents, topicItems],
+  )
 
   useEffect(() => {
     // Documents and topic starters arrive together with `loaded`; resolving
@@ -104,6 +115,7 @@ export function ReasonDocsRouteSync() {
   }, [
     loaded,
     paramsKey,
+    catalog,
     documents,
     topicItems,
     activeId,
@@ -113,6 +125,26 @@ export function ReasonDocsRouteSync() {
     selectTopicDocument,
     openPublicByRef,
   ])
+
+  // Name the open file in the address bar. Compares against
+  // `window.location`, which is what the previous run of this effect wrote,
+  // rather than the router's pathname — the two are the same only if the
+  // router mirrors a `replaceState`, and a stale comparison would rewrite
+  // the same URL on every render.
+  useEffect(() => {
+    if (!loaded || typeof window === "undefined") return
+    const selection = topicDocument
+      ? ({ kind: "topic", id: topicDocument.id } as const)
+      : activeId != null
+        ? ({ kind: "document", id: activeId } as const)
+        : null
+    const next = canonicalEditorUrl(selection, catalog, {
+      pathname: window.location.pathname,
+      search: window.location.search,
+      hash: window.location.hash,
+    })
+    if (next) window.history.replaceState(null, "", next)
+  }, [loaded, activeId, topicDocument, catalog])
 
   return null
 }

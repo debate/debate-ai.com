@@ -1,7 +1,8 @@
 /**
  * @fileoverview Pins the URL round trip behind "click a file in any sidebar,
- * get that file in CardMirror": the href the docs sidebar routes to, and the
- * selection the editor route resolves back out of it.
+ * get that file in CardMirror": the href the docs sidebar routes to, the
+ * selection the editor route resolves back out of it, and the rewrite that
+ * keeps the address bar naming whatever is open.
  *
  * The fallback rule is tested from the same function as the deep-link rule on
  * purpose — as two separate React effects they raced, and the first file was
@@ -12,10 +13,12 @@ import { describe, it, expect } from "vitest"
 import type { PathItem } from "../doc-path"
 import {
   REASON_EDITOR_ROUTE,
+  canonicalEditorUrl,
   editorHrefForSelection,
   parseSelectionParams,
   resolveSelection,
   selectionParamsKey,
+  urlWithoutParam,
 } from "../route-selection"
 
 /** The reader's own files (12, 34) under a folder, plus a public library. */
@@ -31,6 +34,7 @@ const TOPICS: PathItem[] = [
 /** Defaults for a cold load with nothing open yet. */
 function input(overrides: Partial<Parameters<typeof resolveSelection>[0]> = {}) {
   return {
+    slug: null,
     doc: null,
     topic: null,
     documents: DOCUMENTS,
@@ -39,6 +43,12 @@ function input(overrides: Partial<Parameters<typeof resolveSelection>[0]> = {}) 
     hasSelection: false,
     ...overrides,
   }
+}
+
+/** Reads a href back the way the editor route does. */
+function parseHref(href: string) {
+  const url = new URL(href, "https://debate-ai.com")
+  return parseSelectionParams(url.searchParams, url.pathname)
 }
 
 describe("editorHrefForSelection", () => {
@@ -62,6 +72,33 @@ describe("editorHrefForSelection", () => {
     const params = parseSelectionParams(new URL(href, "https://debate-ai.com").searchParams)
     expect(params).toEqual({ doc: "impacts/warming-1ac", topic: null })
     expect(resolveSelection(input(params))).toEqual({ kind: "document", id: 34 })
+  })
+
+  it("round-trips the id form the same way", () => {
+    const params = parseHref(editorHrefForSelection({ kind: "document", id: 34 }))
+    expect(resolveSelection(input(params))).toEqual({ kind: "document", id: 34 })
+  })
+})
+
+describe("editorSlugFromPathname", () => {
+  it("reads the name out of an editor path", () => {
+    expect(editorSlugFromPathname("/reason-editor/cp-answer-to-states")).toBe("cp-answer-to-states")
+    expect(editorSlugFromPathname("/reason-editor/cp-answer-to-states/")).toBe("cp-answer-to-states")
+  })
+
+  it("reads no name off the bare route or another page", () => {
+    for (const path of ["/reason-editor", "/reason-editor/", "/cards", "/doc/x", "", null]) {
+      expect(editorSlugFromPathname(path)).toBeNull()
+    }
+  })
+})
+
+describe("isEditorPathname", () => {
+  it("covers the route and the named files under it, and nothing else", () => {
+    expect(isEditorPathname("/reason-editor")).toBe(true)
+    expect(isEditorPathname("/reason-editor/impact-turns")).toBe(true)
+    expect(isEditorPathname("/reason-editor-other")).toBe(false)
+    expect(isEditorPathname("/cards")).toBe(false)
   })
 })
 
@@ -134,7 +171,7 @@ describe("resolveSelection", () => {
   })
 
   it("leaves an open document alone once the URL has been applied", () => {
-    // The reader picked something else from the sidebar; the stale query in
+    // The reader picked something else from the sidebar; the stale name in
     // the URL must not drag them back to it.
     expect(
       resolveSelection(input({ doc: "scratch-pad", applyParams: false, hasSelection: true })),
