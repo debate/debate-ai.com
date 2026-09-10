@@ -64,12 +64,11 @@ export function ReasonDocsRouteSync() {
   const [deadRefs, setDeadRefs] = useState<readonly string[]>([])
   const lookupsRef = useRef(new Set<string>())
 
-  // Folders are not openable, so they are not addressable either.
+  // Folders stay in (unlike the file's own openable-file lists elsewhere):
+  // `canonicalEditorUrl`'s nested path building needs them for ancestry, the
+  // same way `editorHrefForSelection`'s `items` argument does.
   const catalog: ReasonDocsCatalog = useMemo(
-    () => ({
-      documents: documents.filter((d) => !d.isFolder).map((d) => ({ id: d.id, title: d.title })),
-      topics: topicItems.filter((t) => !t.isFolder).map((t) => ({ id: t.id, title: t.title })),
-    }),
+    () => ({ documents, topics: topicItems }),
     [documents, topicItems],
   )
 

@@ -14,11 +14,11 @@
  * one. `./doc-path` owns how a name becomes a path and how a path is read back;
  * old numeric links keep working because it resolves those too.
  *
- * The address bar itself ends up on the path form of that same name —
- * `/reason-editor/impacts-warming-1ac`, written by {@link canonicalEditorUrl}
- * once the file is known — and {@link parseSelectionParams} reads that segment
- * back as the `doc` ref it is. One naming scheme, two spellings; nothing
- * resolves a path differently from a query.
+ * The path form of that same name — `/reason-editor/impacts-warming-1ac`,
+ * which `app/reason-editor/[slug]` serves — is read back by
+ * {@link parseSelectionParams} as the `doc` ref it is. One naming scheme, two
+ * spellings; nothing resolves a path differently from a query, and
+ * {@link canonicalEditorUrl} writes the query form.
  *
  * A URL that names nothing the reader has loaded is not an error: a public file
  * lives in a catalogue this reader may never have fetched (and may not be
@@ -37,7 +37,6 @@
  */
 
 import { findItemByRef, itemPath, type PathItem } from "./doc-path"
-import { type DocSlugEntry, docSlugForId } from "./doc-slug"
 
 export const REASON_EDITOR_ROUTE = "/reason-editor"
 
@@ -46,48 +45,6 @@ export const REASON_EDITOR_ROUTE = "/reason-editor"
 export type ReasonDocsSelection =
   | { kind: "document"; id: number }
   | { kind: "topic"; id: number }
-
-/** One file the editor route can address, as the sidebar knows it. */
-export interface ReasonDocsEntry {
-  id: number
-  title: string
-}
-
-/**
- * Everything `/reason-editor` can open, in the order a bare slug resolves
- * against it: topic starters first, then the reader's own documents — the
- * same precedence the query form has always had for a URL carrying both.
- */
-export interface ReasonDocsCatalog {
-  /** The reader's own non-folder documents, in sidebar order. */
-  documents: readonly ReasonDocsEntry[]
-  /** Public topic starters that are files, not folders. */
-  topics: readonly ReasonDocsEntry[]
-}
-
-/** The two id namespaces share one URL space, so a slug's discriminator says
- *  which one it belongs to: `d12` is document 12, `t7` is topic starter 7. */
-function entryKey(selection: ReasonDocsSelection): string {
-  return `${selection.kind === "document" ? "d" : "t"}${selection.id}`
-}
-
-/** The catalogue as one flat, slug-addressable list — topic starters ahead of
- *  owned documents, per {@link ReasonDocsCatalog}. */
-function slugEntries(catalog: ReasonDocsCatalog): DocSlugEntry[] {
-  return [
-    ...catalog.topics.map((item) => ({ id: `t${item.id}`, title: item.title })),
-    ...catalog.documents.map((item) => ({ id: `d${item.id}`, title: item.title })),
-  ]
-}
-
-/** The path segment naming `selection`, or `null` when the catalogue doesn't
- *  hold it (a file still loading, or one that has been deleted). */
-export function editorSlugForSelection(
-  selection: ReasonDocsSelection,
-  catalog: ReasonDocsCatalog,
-): string | null {
-  return docSlugForId(entryKey(selection), slugEntries(catalog))
-}
 
 /** Which query parameter a selection travels in. */
 export function paramForKind(kind: ReasonDocsSelection["kind"]): "doc" | "topic" {
@@ -143,11 +100,11 @@ export interface SelectionParams {
  * wrapper, not the class).
  *
  * `/reason-editor/<name>` and `?doc=<name>` are the same statement about which
- * file to open — the path form is what {@link canonicalEditorUrl} rewrites the
- * address to, the query form is what older links still carry — so the path
- * segment reads back as a `doc` ref and resolves through the very same
- * `findItemByRef` lookup. An explicit `?doc=` wins, since that is the link the
- * reader actually followed.
+ * file to open — the path form is what `app/reason-editor/[slug]` serves, the
+ * query form is what the sidebar links to and what {@link canonicalEditorUrl}
+ * rewrites the address to — so the path segment reads back as a `doc` ref and
+ * resolves through the very same `findItemByRef` lookup. An explicit `?doc=`
+ * wins, since that is the link the reader actually followed.
  */
 export function parseSelectionParams(
   params: { get: (key: string) => string | null },
@@ -249,15 +206,24 @@ export interface EditorLocation {
   hash: string
 }
 
+/** The trees {@link canonicalEditorUrl} names a selection against — the
+ *  reader's own documents and the public topic starters, folders included
+ *  (folders are what makes a nested path resolvable, same as
+ *  {@link editorHrefForSelection}'s `items`). */
+export interface ReasonDocsCatalog {
+  documents: readonly PathItem[]
+  topics: readonly PathItem[]
+}
+
 /**
  * The URL the open document *should* have, or `null` when the current one
  * already says it.
  *
  * This is what turns a `?doc=12` link — or a link written before the file was
- * renamed — into `/reason-editor/<its name>` once the catalogue has loaded,
- * and what keeps the address bar naming the file the reader switched to. The
- * ids it replaces are dropped from the query; every other parameter is kept,
- * since `?share=` and `?shareWith=` are read by the same page.
+ * renamed — into `?doc=<its name>` once the catalogue has loaded, and what
+ * keeps the address bar naming the file the reader switched to. The ids it
+ * replaces are dropped from the query; every other parameter is kept, since
+ * `?share=` and `?shareWith=` are read by the same page.
  */
 export function canonicalEditorUrl(
   selection: ReasonDocsSelection | null,
@@ -269,13 +235,18 @@ export function canonicalEditorUrl(
   // this mounts on `/reason-editor`, but a caller mounted elsewhere renaming
   // *that* page's URL would be a navigation, not a rename.
   if (!isEditorPathname(location.pathname)) return null
-  const slug = editorSlugForSelection(selection, catalog)
-  if (!slug) return null
+  const items = selection.kind === "topic" ? catalog.topics : catalog.documents
+  const path = itemPath(items, selection.id)
+  if (!path) return null
   const params = new URLSearchParams(location.search)
   params.delete("doc")
   params.delete("topic")
-  const query = params.toString()
-  const next = `${REASON_EDITOR_ROUTE}/${slug}${query ? `?${query}` : ""}${location.hash}`
+  const rest = params.toString()
+  // Segment-wise, like `editorHrefForSelection` — `URLSearchParams` would
+  // percent-encode the path's own slashes into an unreadable `%2F`.
+  const encoded = path.split("/").map(encodeURIComponent).join("/")
+  const query = `${paramForKind(selection.kind)}=${encoded}${rest ? `&${rest}` : ""}`
+  const next = `${REASON_EDITOR_ROUTE}?${query}${location.hash}`
   const current = `${location.pathname}${location.search}${location.hash}`
   return next === current ? null : next
 }

@@ -69,8 +69,11 @@ export function ReasonEditorScreen() {
     [topicDocument],
   )
 
-  // Same for an uploaded document, which is stored as `.cmir` too. Keyed on
-  // the row's identity rather than its content: the content changes on every
+  // Same for an uploaded document, which is stored as `.cmir` too — and for
+  // an HTML row, `documentHtml` hands back whatever this session's own edit
+  // wrote (`ReasonDocsProvider`'s `openHtmlRef`), so switching tabs and back
+  // doesn't lose an edit made before the debounced save landed. Keyed on the
+  // row's identity rather than its content: the content changes on every
   // debounced save, and re-parsing the file each time would gunzip a card
   // document on a timer for a result the editor doesn't re-read.
   const selectedHtml = useMemo(
