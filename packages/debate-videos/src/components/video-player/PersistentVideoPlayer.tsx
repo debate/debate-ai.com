@@ -4,7 +4,7 @@
 
 "use client"
 
-import React, { useEffect, useRef, useState, useCallback, type ReactNode } from "react" // useState kept for PersistentVideoPlayer mounted state
+import React, { useEffect, useMemo, useRef, useState, useCallback, type ReactNode } from "react" // useState kept for PersistentVideoPlayer mounted state
 import { createPortal } from "react-dom"
 import { AlertCircle } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
@@ -16,6 +16,8 @@ import { PlayerControls } from "./PlayerControls"
 import { PlayerQueue } from "./PlayerQueue"
 import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
+import { useTranscript } from "../transcript-modal/useTranscript"
+import { groupIntoSentences } from "../transcript-modal/transcriptUtils"
 import { buildEmbedUrl, describePlayerError, startListening, watchUrl } from "./youtubeEmbed"
 
 interface VideoPlayerProps {
@@ -68,6 +70,16 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   const timeOffsetRef = useRef<number>(0) // accumulated seconds before last play event
 
   const { position, isDragging, isResizing, playerWidth, startDrag, startResize } = useDragResize(containerRef)
+
+  // Every video that plays is checked for a transcript, whether or not the
+  // subtitles panel is open: that check is what decides whether the captions
+  // control is offered at all. A video without usable captions simply doesn't
+  // get the control — no error is surfaced for it.
+  const { snippets: cues } = useTranscript(activeVideoId ?? "", Boolean(activeVideoId))
+
+  // Cues are cut for on-screen display and break mid-clause; read as prose
+  // instead by regrouping them into sentences.
+  const sentences = useMemo(() => (cues ? groupIntoSentences(cues) : []), [cues])
 
   const setIframeRef = useCallback((el: HTMLIFrameElement | null) => {
     iframeRef.current = el
@@ -331,6 +343,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
           isPipSupported={isPipSupported}
           isPipActive={isPipActive}
           isSubtitlesOpen={showSubtitles}
+          showSubtitles={sentences.length > 0}
           extraControls={extraControls}
           onPlayPause={handlePlayPause}
           onPlayNext={playNextInQueue}
@@ -343,7 +356,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
 
       {/* Subtitles panel — shown above the video, enlarging the widget, synced to playback. */}
       {showSubtitles && !isMinimized && (
-        <PlayerSubtitles videoId={activeVideoId} currentTime={subtitleTime} onSeek={handleSubtitleSeek} />
+        <PlayerSubtitles sentences={sentences} currentTime={subtitleTime} onSeek={handleSubtitleSeek} />
       )}
 
       {/* iframe — hidden via CSS when minimized so playback is never interrupted. */}

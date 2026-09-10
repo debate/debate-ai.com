@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -934,6 +934,32 @@ export const videos = sqliteTable(
 
 export type VideoTableRow = typeof videos.$inferSelect;
 export type VideoTableInsert = typeof videos.$inferInsert;
+
+// Transcript cache, one row per video+language. YouTube bot-checks server IPs
+// at random and rate-limits them in bursts, so a transcript that was fetched
+// once is worth keeping: later viewers of the same video are served from here
+// instead of racing the limiter, and a video whose captions are momentarily
+// unreachable still has a transcript to show. `snippets` holds the caption
+// cues as fetched — `[{ text, start, duration }, …]` JSON — because the UI
+// regroups them into sentences itself and the raw cues are what a re-render
+// needs. Only successful fetches are stored; a miss falls through to YouTube,
+// so a video that gains captions later picks them up on the next request.
+export const videoTranscripts = sqliteTable(
+  "video_transcripts",
+  {
+    videoId: text("video_id").notNull(),
+    lang: text("lang").notNull().default("en"),
+    snippets: text("snippets").notNull(),
+    fetchedAt: integer("fetched_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.videoId, table.lang] }),
+  }),
+);
+
+export type VideoTranscriptRow = typeof videoTranscripts.$inferSelect;
 
 // Account-linked in-app notifications — backs the Create New Round dialog's
 // "invite a registered user" flow (an invitee with a matching `user` row
