@@ -9,6 +9,10 @@
  * this drops into) so those call sites don't need their own props
  * reshaped — only the shim they import through needs to point here.
  *
+ * The engine's own ribbon is the only command chrome the shell renders: it
+ * is tabbed (see `editor/ribbon-tabs.ts`), and the dropdown menu bar that
+ * used to sit above it is gone — its categories are the ribbon's tabs now.
+ *
  * CardMirror's engine is a page-level singleton (see singleton.ts) — it
  * cannot run two live instances at once. `live` (default true) controls
  * whether THIS instance claims the singleton and renders the real editor,
@@ -18,7 +22,6 @@
  */
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { MenuBar } from "./MenuBar.js";
 import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
 import * as singleton from "./singleton.js";
 import "../editor/style.css";
@@ -44,6 +47,13 @@ export interface ReasonEditorProps {
   onTitleChange?: (title: string) => void;
   onShareClick?: () => void;
   editable?: boolean;
+  /** Whether the ribbon is paged into Word-style tabs (default true).
+   *  `false` un-pages it: the tab strip is hidden and every panel shows at
+   *  once, on one horizontally scrolling strip — what hosts that supply
+   *  their own command chrome around the embed want. This used to gate a
+   *  separate dropdown menu bar stacked above the ribbon; those categories
+   *  are the ribbon's tabs now (see `editor/ribbon-tabs.ts`), so the same
+   *  prop gates the same commands in their new home. */
   showToolbar?: boolean;
   showCardTools?: boolean;
   showAiTools?: boolean;
@@ -145,6 +155,23 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       };
     }, [defaultNavPaneHidden, live]);
 
+    // The ribbon is engine-owned, page-singleton DOM, so paging it is a
+    // singleton-level call rather than a rendered element — but only one
+    // CardMirrorEditor is ever live at a time, so it still tracks THIS
+    // instance's prop. Restored on unmount so the next host starts from the
+    // default (paged) ribbon rather than inheriting this one's choice.
+    useEffect(() => {
+      if (!live || !claimed || showToolbar) return;
+      let alive = true;
+      void import("../editor/ribbon-tabs-ui.js").then((m) => {
+        if (alive) m.setRibbonTabsEnabled(false);
+      });
+      return () => {
+        alive = false;
+        void import("../editor/ribbon-tabs-ui.js").then((m) => m.setRibbonTabsEnabled(true));
+      };
+    }, [live, claimed, showToolbar]);
+
     // Same-identity external content updates (e.g. a realtime sync
     // overwriting `content` while this key is still the live doc).
     useEffect(() => {
@@ -218,7 +245,6 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
 
     return (
       <div className={"dec-cardmirror-embed flex h-full w-full flex-col overflow-hidden" + (className ? ` ${className}` : "")}>
-        {showToolbar && <MenuBar />}
         <div ref={hostRef} className="dec-cardmirror-viewport relative min-h-0 flex-1 overflow-hidden" />
         {!claimed && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
