@@ -25,9 +25,9 @@
  * taxonomy lives in `editor/ribbon-tabs.ts`). Both elements are empty /
  * inert here: the strip's buttons are generated, and every panel below
  * renders exactly as before until the controller pages it. The React shell
- * no longer stacks a separate dropdown menu bar above this markup —
- * `MenuBar.tsx` still exists and still works, but its categories are the
- * ribbon's tabs now, so the shell renders one control surface, not two.
+ * (`CardMirrorEditor.tsx`) stacks `MenuBar.tsx` above this markup when
+ * `showToolbar` is set — a text-labeled dropdown index over the same
+ * commands this tabbed ribbon exposes as icons, Google-Docs-style.
  *
  * `#ribbon-command-panel` is where a tab with no panels of its own (Tools,
  * AI, Workspace, …) renders its generated command clusters; it stays empty

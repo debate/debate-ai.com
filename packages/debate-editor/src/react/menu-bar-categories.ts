@@ -1,19 +1,22 @@
 /**
- * Menu-bar categories for `MenuBar.tsx` — now a thin projection of the
- * ribbon's own tab taxonomy (`../editor/ribbon-tabs.js`).
+ * Menu-bar categories for `MenuBar.tsx` — a thin projection of the ribbon's
+ * own tab taxonomy (`../editor/ribbon-tabs.js`).
  *
  * This file used to own the mapping: it re-bucketed CardMirror's ~30
  * `RIBBON_GROUPS` into dropdown categories for a menu bar stacked above the
  * ribbon. The ribbon is tabbed now — those same categories ARE its tabs
- * (see `RIBBON_TABS`), so the shell renders one control surface instead of
- * two and `CardMirrorEditor` no longer mounts `MenuBar` by default.
+ * (see `RIBBON_TABS`) — but `CardMirrorEditor` still stacks `MenuBar` above
+ * it (Google-Docs-style: a text-labeled menu strip above an icon toolbar),
+ * so this file keeps projecting `RIBBON_TABS` into that menu's categories
+ * instead of maintaining a second, hand-written bucketing that could drift
+ * from the ribbon it mirrors.
  *
- * The component is still exported from this package (`react/index.tsx`) for
+ * The component is also exported from this package (`react/index.tsx`) for
  * hosts that want a compact command menu of their own somewhere else on the
- * page, so the projection below keeps it working — and keeps it honest:
- * fed from `RIBBON_TABS`, a menu can't drift from the ribbon it mirrors,
- * and the exhaustiveness guard over `RIBBON_GROUPS` lives in one place
- * rather than two.
+ * page, so the projection below keeps that working too — fed from
+ * `RIBBON_TABS`, a menu can't drift from the ribbon it mirrors, and the
+ * exhaustiveness guard over `RIBBON_GROUPS` lives in one place rather than
+ * two.
  *
  * `panels` — the ribbon's own markup, which only the tabbed ribbon can show
  * — has no menu-bar equivalent and is dropped here. Every command in those

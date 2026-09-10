@@ -6,15 +6,16 @@
  * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
  * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy.
  *
- * This used to be stacked above the ribbon by `CardMirrorEditor`, back when
- * the ribbon was one flat strip. It isn't any more: those same categories
- * are the ribbon's own Word-style TABS now (`editor/ribbon-tabs.ts`), and
- * stacking a menu bar on top of a tabbed ribbon is two control surfaces for
- * one job. The component stays exported from this package for hosts that
- * want a command menu somewhere else on their page (a compact header, a
- * kebab menu beside a document title), and its categories are projected
- * straight from `RIBBON_TABS` — see menu-bar-categories.ts — so a menu
- * rendered here can't drift from the ribbon it mirrors.
+ * `CardMirrorEditor` stacks this above its own ribbon (Google-Docs-style: a
+ * text-labeled menu strip above an icon toolbar), gated by the same
+ * `showToolbar` prop that pages the ribbon into Word-style tabs
+ * (`editor/ribbon-tabs.ts`). The two aren't duplicate surfaces for one job —
+ * the ribbon is the always-visible icon strip, this is the click-to-browse
+ * index over the same commands — and its categories are projected straight
+ * from `RIBBON_TABS` (see menu-bar-categories.ts), so this menu can't drift
+ * from the ribbon it mirrors. The component also stays exported from this
+ * package for hosts that want a command menu somewhere else on their page
+ * (a compact header, a kebab menu beside a document title).
  *
  * Two categories aren't sourced from `RIBBON_GROUPS`: Plugins lists whatever
  * the palette's `command` search source pulls from the runtime plugin
