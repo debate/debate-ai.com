@@ -49,6 +49,11 @@ import {
   type SidebarToolSection,
 } from "./sidebar-tool-sections";
 import { sidebarSectionForPath } from "./sidebar-active-section";
+import {
+  ALL_SIDEBAR_SECTION_IDS,
+  toggleExpandedSection,
+  withSectionExpanded,
+} from "./sidebar-section-expansion";
 import { VIDEO_REFERENCE_LINKS } from "./sidebar-video-links";
 import { IconBook, IconLeaderboard } from "../../ui/icons";
 
@@ -115,13 +120,12 @@ export function ToolNavTree({
       : sections[0]?.id ?? null;
 
   const [ownExpanded, setOwnExpanded] = useState<readonly string[]>(() =>
-    defaultExpanded ? allSectionIds : [],
+    defaultExpanded ? ALL_SIDEBAR_SECTION_IDS : [],
   );
 
   // The route's own section is opened on navigation even if it was collapsed
   // by hand, so following a link never lands you on a page whose section is
   // shut. Nothing else is closed — sections are independent now.
-  const routeSectionId = sidebarSectionForPath(pathname);
   useEffect(() => {
     if (isControlled || !defaultExpanded || routeSectionId == null) return;
     setOwnExpanded((current) => withSectionExpanded(current, routeSectionId));
