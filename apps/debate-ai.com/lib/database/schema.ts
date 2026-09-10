@@ -63,13 +63,20 @@ export const verification = sqliteTable("verification", {
 // (ported from quick search's document model; see /reason-editor). `parentId`
 // and `isFolder` back the file-tree sidebar (also ported from quick search's
 // REASON editor — see reason-editor-sidebar's FileTree) so documents can be
-// organized into folders instead of one flat list.
+// organized into folders instead of one flat list. An uploaded `.docx`
+// lands here too, converted to CardMirror's native `.cmir` on the way in
+// (`lib/cardmirror/stored-cmir.ts`); `format` says which shape a row holds.
 export const documents = sqliteTable(
   "documents",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull().default("Untitled"),
     content: text("content").notNull().default(""),
+    // How `content` is encoded: `"cmir"` for an uploaded file, which is kept
+    // in CardMirror's native format for its whole life, or `"html"` for a
+    // document written in the editor. Same two values as
+    // `topic_starter_items.format` — see `lib/cardmirror/format.ts`.
+    format: text("format").notNull().default("html"),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     parentId: integer("parent_id"),
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
