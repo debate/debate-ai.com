@@ -274,20 +274,48 @@ export function MeterBar({ value, max, label, caption, tone = "info" }: MeterBar
 export interface PillProps {
   /** Pill text. */
   children: React.ReactNode;
-  /** Semantic colour. */
+  /** Semantic colour. Ignored for the interactive (`onClick`) variant, which uses a selected/unselected look instead. */
   tone?: PanelTone;
   /** Extra classes. */
   className?: string;
+  /** Renders the pill as a toggle button instead of a static span. */
+  onClick?: () => void;
+  /** Pressed/selected state for the toggle variant. Ignored without `onClick`. */
+  selected?: boolean;
 }
 
 /**
  * Small status chip. Kept separate from the shadcn `Badge` so panels can use
  * the same tone vocabulary as stat tiles and meters.
  *
+ * Pass `onClick` to render an interactive toggle chip (e.g. a multi-select
+ * filter) instead of a display-only pill — `selected` then controls its
+ * pressed look.
+ *
  * @param props - See {@link PillProps}.
  * @returns The pill element.
  */
-export function Pill({ children, tone = "neutral", className }: PillProps) {
+export function Pill({ children, tone = "neutral", className, onClick, selected }: PillProps) {
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        data-slot="pill"
+        aria-pressed={selected}
+        onClick={onClick}
+        className={cn(
+          "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors",
+          selected
+            ? "bg-primary text-primary-foreground border-primary"
+            : "border-border text-foreground hover:bg-accent",
+          className,
+        )}
+      >
+        {children}
+      </button>
+    );
+  }
+
   return (
     <span
       data-slot="pill"

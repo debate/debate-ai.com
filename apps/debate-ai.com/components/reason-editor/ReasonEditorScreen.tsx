@@ -46,6 +46,7 @@ export function ReasonEditorScreen() {
     selectTab,
     closeTab,
     updateContent,
+    documentHtml,
   } = useReasonDocs()
 
   useEffect(() => {
@@ -60,6 +61,19 @@ export function ReasonEditorScreen() {
   const topicHtml = useMemo(
     () => (topicDocument ? topicStarterHtml(topicDocument) : null),
     [topicDocument],
+  )
+
+  // Same for an uploaded document, which is stored as `.cmir` too — and for
+  // an HTML row, `documentHtml` hands back whatever this session's own edit
+  // wrote (`ReasonDocsProvider`'s `openHtmlRef`), so switching tabs and back
+  // doesn't lose an edit made before the debounced save landed. Keyed on the
+  // row's identity rather than its content: the content changes on every
+  // debounced save, and re-parsing the file each time would gunzip a card
+  // document on a timer for a result the editor doesn't re-read.
+  const selectedHtml = useMemo(
+    () => (selected ? documentHtml(selected) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selected?.id, selected?.format, documentHtml],
   )
 
   return (
@@ -143,7 +157,7 @@ export function ReasonEditorScreen() {
                   the editor's mount effects — re-hiding a nav pane the user
                   pulled back open — on every document switch. */}
               <EditorWithToolbar
-                content={topicHtml ?? selected!.content}
+                content={topicHtml ?? selectedHtml!}
                 contentKey={topicDocument ? `topic-${topicDocument.id}` : String(selected!.id)}
                 title={topicDocument?.title ?? selected!.title}
                 showAiTools={!topicDocument}
