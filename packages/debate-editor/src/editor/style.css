@@ -545,7 +545,15 @@ button {
    the rest of the layout reads from them. */
 :root {
   --nav-width: 300px;
-  --ribbon-height: 4rem;
+  /* The ribbon is two stacked rows: the Word-style tab strip, then the
+     button strip for whichever tab is active. `--ribbon-height` stays the
+     TOTAL — everything else in the layout (the #app band, the nav panel,
+     scroll padding, the find bar, …) measures against it and needs no
+     change. `body.pmd-ribbon-tabs-off` zeroes the tab row for hosts that
+     embed the editor without it. */
+  --ribbon-tabs-height: 1.75rem;
+  --ribbon-strip-height: 4rem;
+  --ribbon-height: calc(var(--ribbon-tabs-height) + var(--ribbon-strip-height));
   --status-bar-height: 1.8rem;
   /* Per-pane footer (word count + Σ + open button) in multi-doc mode.
      A shared var so the footer's min-height and anything that has to
@@ -1213,25 +1221,37 @@ html:has(body.pmd-speech-banner-visible) {
   height: var(--ribbon-height);
   background: var(--pmd-c-surface);
   border-bottom: 1px solid var(--pmd-c-border-soft);
+  /* Two rows: `.ribbon-tabstrip` then `.ribbon-strip`. The header itself
+     never scrolls — each row owns its own horizontal overflow — and it
+     stays `overflow: visible` so a dropdown or picker anchored to a ribbon
+     button isn't clipped by it. */
   display: flex;
-  align-items: center;
-  /* One unbroken strip: every button group sits shoulder-to-shoulder
-     (the shortcuts/settings/timer grid included — it used to be pinned
-     to the far right with a gulf of blank space in between), and the
-     whole strip scrolls left↔right when it outgrows the window rather
-     than dropping panels out of reach. `flex-wrap: nowrap` is explicit
-     because the whole point is that a narrow ribbon overflows
-     horizontally instead of stacking into a second row. */
-  flex-wrap: nowrap;
-  gap: 0.35rem;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 0 0.5rem;
+  flex-direction: column;
+  align-items: stretch;
   /* Above editor-surface decorations (.pmd-editor-pickup-highlight z=90
      and .pmd-editor-drop-indicator z=100) so they don't bleed over the
      ribbon when scrolled into the chrome's bounds. */
   z-index: 200;
   font-size: 0.85rem;
+}
+
+/* The button row for the active tab. One unbroken strip: every panel the
+   tab shows sits shoulder-to-shoulder (the shortcuts/settings/timer grid
+   included — it used to be pinned to the far right with a gulf of blank
+   space in between), and the whole strip scrolls left↔right when it
+   outgrows the window rather than dropping panels out of reach.
+   `flex-wrap: nowrap` is explicit because the whole point is that a narrow
+   ribbon overflows horizontally instead of stacking into a second row. */
+.ribbon-strip {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 0.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--pmd-c-border) transparent;
   /* Scrolling past either end stays here: no chaining to the page and,
@@ -1240,26 +1260,26 @@ html:has(body.pmd-speech-banner-visible) {
      wheel onto this axis. */
   overscroll-behavior-x: contain;
 }
-#ribbon::-webkit-scrollbar {
+.ribbon-strip::-webkit-scrollbar {
   height: 6px;
 }
-#ribbon::-webkit-scrollbar-track {
+.ribbon-strip::-webkit-scrollbar-track {
   background: transparent;
 }
-#ribbon::-webkit-scrollbar-thumb {
+.ribbon-strip::-webkit-scrollbar-thumb {
   background: var(--pmd-c-border);
   border-radius: 3px;
 }
-#ribbon::-webkit-scrollbar-thumb:hover {
+.ribbon-strip::-webkit-scrollbar-thumb:hover {
   background: var(--pmd-c-text-secondary);
 }
 /* No overflow, no track: the scrollbar gutter only appears when the
    strip actually has somewhere to scroll (class set by
    initRibbonScroller). */
-#ribbon:not(.pmd-ribbon-scrollable)::-webkit-scrollbar {
+.ribbon-strip:not(.pmd-ribbon-scrollable)::-webkit-scrollbar {
   height: 0;
 }
-#ribbon:not(.pmd-ribbon-scrollable) {
+.ribbon-strip:not(.pmd-ribbon-scrollable) {
   scrollbar-width: none;
 }
 /* "There's more this way" — a shadow at each end that the strip can
@@ -1272,7 +1292,7 @@ html:has(body.pmd-speech-banner-visible) {
    (and is an invisible overlay bar on macOS / touch devices), and a
    toolbar that silently hides half its buttons is exactly what this
    replaced. */
-#ribbon.pmd-ribbon-scrollable {
+.ribbon-strip.pmd-ribbon-scrollable {
   background-image:
     linear-gradient(to right, var(--pmd-c-surface), transparent),
     linear-gradient(to left, var(--pmd-c-surface), transparent),
@@ -1300,6 +1320,141 @@ html:has(body.pmd-speech-banner-visible) {
    overflow. */
 .ribbon-center { flex: 1 1 auto; justify-content: center; min-width: 0; }
 .ribbon-right { flex: 0 0 auto; }
+
+/* ─── Tab strip ────────────────────────────────────────────────────
+   The Word-style page selector above the button strip. Buttons are
+   generated by `ribbon-tabs-ui.ts` from the tabs that actually have
+   something to show, so this row is empty markup in the template. It
+   scrolls horizontally on its own rather than wrapping — a second row of
+   tabs would push the editor down by a whole ribbon's worth. */
+.ribbon-tabstrip {
+  flex: 0 0 auto;
+  height: var(--ribbon-tabs-height);
+  display: flex;
+  align-items: stretch;
+  gap: 1px;
+  padding: 0 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  background: var(--pmd-c-surface-alt);
+  border-bottom: 1px solid var(--pmd-c-border-soft);
+}
+.ribbon-tabstrip::-webkit-scrollbar {
+  height: 0;
+}
+.ribbon-tabstrip[hidden] {
+  display: none;
+}
+/* Paging off (`setRibbonTabsEnabled(false)`): the tab row collapses and
+   every panel shows at once, i.e. the pre-tabs ribbon. The variable is set
+   on <body> rather than on #ribbon because #app, the nav panel and the
+   status bar are SIBLINGS of the ribbon and read `--ribbon-height` too. */
+body.pmd-ribbon-tabs-off {
+  --ribbon-tabs-height: 0px;
+}
+
+/* Prefixed with `#ribbon` to beat the generic `#ribbon button` rule
+   (ID + element), which sizes every ribbon button to a 1.7rem square —
+   without this a tab collapses to a 27px box and its label spills over
+   its neighbours. */
+#ribbon .ribbon-tab {
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1;
+  color: var(--pmd-c-text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 3px 3px 0 0;
+  padding: 0 0.6rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+#ribbon .ribbon-tab:hover {
+  background: var(--pmd-c-hover);
+  color: var(--pmd-c-text);
+}
+#ribbon .ribbon-tab:focus-visible {
+  outline: 2px solid var(--pmd-c-accent);
+  outline-offset: -2px;
+}
+#ribbon .ribbon-tab[aria-selected='true'] {
+  color: var(--pmd-c-accent);
+  border-bottom-color: var(--pmd-c-accent);
+  background: var(--pmd-c-surface);
+  font-weight: 600;
+}
+
+/* A panel some OTHER tab owns. Additive only — a panel the engine has
+   independently marked `hidden` stays hidden on its own tab too — and
+   `!important` because several panel classes declare their own
+   `display: grid` / `display: flex`, which a plain `display: none` here
+   would lose to on specificity. */
+#ribbon .pmd-ribbon-panel-off {
+  display: none !important;
+}
+
+/* ─── Generated command clusters ───────────────────────────────────
+   What a tab with no panels of its own (Tools, AI, Panes, Workspace, …)
+   shows instead: one captioned cluster per source group, its commands in
+   a two-row grid that grows sideways — the same shape as Word's small-
+   button galleries, and the shape that packs the most commands into a
+   4rem strip without a second ribbon row. */
+.ribbon-command-panel {
+  gap: 0.5rem;
+  align-items: stretch;
+  padding: 0.15rem 0;
+}
+.ribbon-command-panel[hidden] {
+  display: none;
+}
+.ribbon-cmd-cluster {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.15rem;
+  padding: 0 0.4rem;
+  border-right: 1px solid var(--pmd-c-border-soft);
+}
+.ribbon-cmd-cluster:last-child {
+  border-right: none;
+}
+.ribbon-cmd-cluster-buttons {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+}
+.ribbon-cmd-cluster-title {
+  font-size: 0.62rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--pmd-c-text-faint);
+  white-space: nowrap;
+}
+/* Prefixed with `#ribbon` to beat the generic `#ribbon button` rule
+   (ID + element), which forces every ribbon button to a 1.7rem square. */
+#ribbon .ribbon-cmd-btn {
+  width: auto;
+  height: auto;
+  min-height: 1.15rem;
+  justify-content: flex-start;
+  font-size: 0.72rem;
+  line-height: 1.1;
+  padding: 0.1rem 0.35rem;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  text-align: left;
+}
 
 /* All ribbon buttons share the same icon-button look: square, centered
    glyph, no padding-driven asymmetry. Flexbox centering avoids

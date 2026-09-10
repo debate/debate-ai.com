@@ -33,6 +33,7 @@ import {
 import { cycleTimerProfile, TIMER_PROFILE_LABELS } from './timer-profile.js';
 import { isBenchmarkActive, setBenchmarkActive } from './benchmark-state.js';
 import { openReference } from './reference-ui.js';
+import { initRibbonTabs, refreshRibbonTabs } from './ribbon-tabs-ui.js';
 import {
   getSpeechDocResolver,
   installSpeechDocResolver,
@@ -3910,7 +3911,8 @@ settings.subscribe((s) => {
  *  This wires up the two parts CSS can't do alone:
  *   - `.pmd-ribbon-scrollable` while the strip actually overflows, so
  *     the scrollbar gutter (and the 6px it costs the button row) only
- *     appears when there is somewhere to scroll;
+ *     appears when there is somewhere to scroll — which, now that the
+ *     ribbon is paged into tabs, is far less often;
  *   - vertical mouse wheel → horizontal scroll, the convention for a
  *     single-row scrolling toolbar. Trackpads and shift-wheel already
  *     send horizontal deltas and are left to the browser.
@@ -3919,7 +3921,9 @@ settings.subscribe((s) => {
  *  tabbing to a button that is scrolled out of view brings it back
  *  into view. */
 function initRibbonScroller(): void {
-  const ribbon = document.getElementById('ribbon');
+  // `#ribbon-strip` — the button row INSIDE the `#ribbon` header, below the
+  // tab strip. The header itself no longer scrolls (see ribbon-tabs.ts).
+  const ribbon = document.getElementById('ribbon-strip');
   if (!ribbon) return;
   // 1px slack: sub-pixel layout rounding otherwise reports a permanent
   // fractional "overflow" at some zoom levels / OS font sizes, which
@@ -3935,7 +3939,7 @@ function initRibbonScroller(): void {
   // toggles the timer panel or the doc-name chip, the ribbon's
   // `scrollWidth` jumps but `clientWidth` doesn't, so a ribbon-only
   // observer never fires.
-  for (const id of ['timer-panel', 'doc-name-chip', 'custom-ribbon-panel', 'numbering-panel']) {
+  for (const id of ['timer-panel', 'doc-name-chip', 'custom-ribbon-panel', 'numbering-panel', 'ribbon-command-panel']) {
     const el = document.getElementById(id);
     if (el) observer.observe(el);
   }
@@ -3966,6 +3970,10 @@ function initRibbonScroller(): void {
   syncOverflow();
 }
 initRibbonScroller();
+initRibbonTabs({
+  run: (id) => runRibbon(id),
+  navigate: (href) => window.location.assign(href),
+});
 
 applyTheme(settings.get('theme'), settings.get('themeAppliesToDocument'));
 applyShowDocNameChip(settings.get('showDocNameChip'));
@@ -8872,6 +8880,12 @@ async function initPlugins(): Promise<void> {
     // of the just-registered plugin materializes now (boot rendered before
     // the async plugin load), and an uninstalled plugin's button vanishes.
     renderCustomRibbonButtons();
+    // A plugin's first command can turn the (previously empty, therefore
+    // absent) Plugins tab into a real one — and uninstalling the last one
+    // takes it away again. Forced, because registering a SECOND command on
+    // an already-present plugin leaves the tab list identical while the
+    // Plugins page's contents change.
+    refreshRibbonTabs(true);
   };
   installPluginRegistry((pluginId) =>
     createPluginApi(pluginId, {
