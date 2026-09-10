@@ -26,7 +26,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import {
   canonicalEditorUrl,
   parseSelectionParams,
@@ -38,6 +38,9 @@ import { useReasonDocs } from "./ReasonDocsProvider"
 
 export function ReasonDocsRouteSync() {
   const searchParams = useSearchParams()
+  // The file can be named by the path (`/reason-editor/<name>`) as well as by
+  // the query, so both halves of the address are read.
+  const pathname = usePathname()
   const {
     documents,
     topicItems,
@@ -49,7 +52,7 @@ export function ReasonDocsRouteSync() {
     openPublicByRef,
   } = useReasonDocs()
 
-  const params = parseSelectionParams(searchParams)
+  const params = parseSelectionParams(searchParams, pathname)
   const paramsKey = selectionParamsKey(params)
   // One application per URL: once it has opened that file the reader is free
   // to pick another from the sidebar without this dragging them back. The

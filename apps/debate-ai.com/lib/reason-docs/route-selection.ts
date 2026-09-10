@@ -14,6 +14,12 @@
  * one. `./doc-path` owns how a name becomes a path and how a path is read back;
  * old numeric links keep working because it resolves those too.
  *
+ * The path form of that same name — `/reason-editor/impacts-warming-1ac`,
+ * which `app/reason-editor/[slug]` serves — is read back by
+ * {@link parseSelectionParams} as the `doc` ref it is. One naming scheme, two
+ * spellings; nothing resolves a path differently from a query, and
+ * {@link canonicalEditorUrl} writes the query form.
+ *
  * A URL that names nothing the reader has loaded is not an error: a public file
  * lives in a catalogue this reader may never have fetched (and may not be
  * signed in for at all), so resolution can come back asking for a server
@@ -88,11 +94,24 @@ export interface SelectionParams {
   topic: string | null
 }
 
-/** Reads {@link SelectionParams} off anything with `URLSearchParams`'s getter
- *  (Next's `useSearchParams` returns a readonly wrapper, not the class). */
-export function parseSelectionParams(params: { get: (key: string) => string | null }): SelectionParams {
+/**
+ * Reads {@link SelectionParams} off a pathname and anything with
+ * `URLSearchParams`'s getter (Next's `useSearchParams` returns a readonly
+ * wrapper, not the class).
+ *
+ * `/reason-editor/<name>` and `?doc=<name>` are the same statement about which
+ * file to open — the path form is what `app/reason-editor/[slug]` serves, the
+ * query form is what the sidebar links to and what {@link canonicalEditorUrl}
+ * rewrites the address to — so the path segment reads back as a `doc` ref and
+ * resolves through the very same `findItemByRef` lookup. An explicit `?doc=`
+ * wins, since that is the link the reader actually followed.
+ */
+export function parseSelectionParams(
+  params: { get: (key: string) => string | null },
+  pathname?: string | null,
+): SelectionParams {
   const read = (key: string) => params.get(key)?.trim() || null
-  return { doc: read("doc"), topic: read("topic") }
+  return { doc: read("doc") ?? editorSlugFromPathname(pathname), topic: read("topic") }
 }
 
 /** What {@link resolveSelection} is deciding over. */

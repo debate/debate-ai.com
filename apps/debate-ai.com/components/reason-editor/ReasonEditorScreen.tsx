@@ -16,6 +16,12 @@
  * That sidebar is desktop-only, so the same panels are also mounted here as a
  * collapsible strip below `md`.
  *
+ * A document's stored shape is not always the HTML the editor's `content`
+ * prop takes: an uploaded file is kept as CardMirror's native `.cmir`, and
+ * `documentHtml` is what renders either shape for the editor (and what keeps
+ * an edit made this session in front of the stored copy when you switch tabs
+ * and come back).
+ *
  * CardMirror is mounted with `defaultNavPaneHidden` so the engine's own
  * outline nav pane doesn't claim a second sidebar's worth of the column — the
  * app sidebar owns the side, and the outline stays one pull-tab / View-menu

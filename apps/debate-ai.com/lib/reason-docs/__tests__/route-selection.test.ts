@@ -36,7 +36,6 @@ const TOPICS: PathItem[] = [
 /** Defaults for a cold load with nothing open yet. */
 function input(overrides: Partial<Parameters<typeof resolveSelection>[0]> = {}) {
   return {
-    slug: null,
     doc: null,
     topic: null,
     documents: DOCUMENTS,

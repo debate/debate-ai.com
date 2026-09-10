@@ -30,7 +30,7 @@
  * its cards, highlighting and comments intact.
  */
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
 import { cn } from "@/lib/ui/lib/utils"
