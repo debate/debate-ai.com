@@ -13,6 +13,7 @@
     <a href="https://codespaces.new/vtempest/debate-docx-to-args">
     <img src="https://github.com/codespaces/badge.svg" width="150" height="20" />
     </a>
+    <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
 </p>
 
 

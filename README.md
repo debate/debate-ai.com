@@ -4,6 +4,7 @@
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <a href="https://debate-ai.com/api/api-docs"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API badge"></a>
     <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com" target="_blank" rel="noopener noreferrer"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
+    <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
     <a href="https://github.com/debate/debate-ai.com/discussions"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/debate/debate-ai.com" /></a>
 <br />
             <a href="https://app.codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/branch/master/graph/badge.svg" alt="Coverage" /></a>
