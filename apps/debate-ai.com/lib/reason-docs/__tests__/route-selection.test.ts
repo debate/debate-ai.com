@@ -1,7 +1,8 @@
 /**
  * @fileoverview Pins the URL round trip behind "click a file in any sidebar,
- * get that file in CardMirror": the href the docs sidebar routes to, and the
- * selection the editor route resolves back out of it.
+ * get that file in CardMirror": the href the docs sidebar routes to, the
+ * selection the editor route resolves back out of it, and the rewrite that
+ * keeps the address bar naming whatever is open.
  *
  * The fallback rule is tested from the same function as the deep-link rule on
  * purpose — as two separate React effects they raced, and the first file was
@@ -9,91 +10,173 @@
  */
 
 import { describe, it, expect } from "vitest"
+import type { PathItem } from "../doc-path"
 import {
   REASON_EDITOR_ROUTE,
+  canonicalEditorUrl,
   editorHrefForSelection,
-  parseSelectionId,
+  editorSlugFromPathname,
+  isEditorPathname,
   parseSelectionParams,
   resolveSelection,
   selectionParamsKey,
+  urlWithoutParam,
 } from "../route-selection"
 
-/** The reader's own files (12, 34) plus a folder, which is never openable. */
-const DOCUMENT_IDS = [12, 34]
-const TOPIC_IDS = [7]
+/** The reader's own files (12, 34) under a folder, plus a public library. */
+const DOCUMENTS: PathItem[] = [
+  { id: 12, title: "Scratch pad", parentId: null, isFolder: false },
+  { id: 5, title: "Impacts", parentId: null, isFolder: true },
+  { id: 34, title: "Warming 1AC.docx", parentId: 5, isFolder: false },
+]
+const TOPICS: PathItem[] = [
+  { id: 7, title: "Topic Starter", parentId: null, isFolder: false },
+]
 
 /** Defaults for a cold load with nothing open yet. */
 function input(overrides: Partial<Parameters<typeof resolveSelection>[0]> = {}) {
   return {
     doc: null,
     topic: null,
-    documentIds: DOCUMENT_IDS,
-    topicIds: TOPIC_IDS,
+    documents: DOCUMENTS,
+    topics: TOPICS,
     applyParams: true,
     hasSelection: false,
     ...overrides,
   }
 }
 
+/** Reads a href back the way the editor route does. */
+function parseHref(href: string) {
+  const url = new URL(href, "https://debate-ai.com")
+  return parseSelectionParams(url.searchParams)
+}
+
 describe("editorHrefForSelection", () => {
-  it("addresses an owned document as ?doc and a topic starter as ?topic", () => {
-    expect(editorHrefForSelection({ kind: "document", id: 12 })).toBe(`${REASON_EDITOR_ROUTE}?doc=12`)
-    expect(editorHrefForSelection({ kind: "topic", id: 7 })).toBe(`${REASON_EDITOR_ROUTE}?topic=7`)
+  it("names the file rather than its row id", () => {
+    expect(editorHrefForSelection({ kind: "document", id: 34 }, DOCUMENTS)).toBe(
+      `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac`,
+    )
+    expect(editorHrefForSelection({ kind: "topic", id: 7 }, TOPICS)).toBe(
+      `${REASON_EDITOR_ROUTE}?topic=topic-starter`,
+    )
+  })
+
+  it("falls back to the id when the file's tree isn't in hand", () => {
+    // A just-uploaded row whose state update hasn't landed yet still gets a
+    // working link, just not a readable one.
+    expect(editorHrefForSelection({ kind: "document", id: 34 })).toBe(`${REASON_EDITOR_ROUTE}?doc=34`)
   })
 
   it("round-trips through the parser the editor route reads with", () => {
-    const href = editorHrefForSelection({ kind: "topic", id: 7 })
+    const href = editorHrefForSelection({ kind: "document", id: 34 }, DOCUMENTS)
     const params = parseSelectionParams(new URL(href, "https://debate-ai.com").searchParams)
-    expect(params).toEqual({ doc: null, topic: 7 })
-    expect(resolveSelection(input(params))).toEqual({ kind: "topic", id: 7 })
+    expect(params).toEqual({ doc: "impacts/warming-1ac", topic: null })
+    expect(resolveSelection(input(params))).toEqual({ kind: "document", id: 34 })
+  })
+
+  it("round-trips the id form the same way", () => {
+    const params = parseHref(editorHrefForSelection({ kind: "document", id: 34 }))
+    expect(resolveSelection(input(params))).toEqual({ kind: "document", id: 34 })
   })
 })
 
-describe("parseSelectionId", () => {
-  it("reads a whole number", () => {
-    expect(parseSelectionId("12")).toBe(12)
+describe("editorSlugFromPathname", () => {
+  it("reads the name out of an editor path", () => {
+    expect(editorSlugFromPathname("/reason-editor/cp-answer-to-states")).toBe("cp-answer-to-states")
+    expect(editorSlugFromPathname("/reason-editor/cp-answer-to-states/")).toBe("cp-answer-to-states")
   })
 
-  it("reads anything else as absent rather than throwing", () => {
-    // A malformed link should land on the editor's normal fallback.
-    for (const raw of [null, undefined, "", "abc", "3.5", "12px", "NaN"]) {
-      expect(parseSelectionId(raw)).toBeNull()
+  it("reads no name off the bare route or another page", () => {
+    for (const path of ["/reason-editor", "/reason-editor/", "/cards", "/doc/x", "", null]) {
+      expect(editorSlugFromPathname(path)).toBeNull()
     }
+  })
+})
+
+describe("isEditorPathname", () => {
+  it("covers the route and the named files under it, and nothing else", () => {
+    expect(isEditorPathname("/reason-editor")).toBe(true)
+    expect(isEditorPathname("/reason-editor/impact-turns")).toBe(true)
+    expect(isEditorPathname("/reason-editor-other")).toBe(false)
+    expect(isEditorPathname("/cards")).toBe(false)
+  })
+})
+
+describe("parseSelectionParams", () => {
+  it("reads a name off either parameter and treats blank as absent", () => {
+    const read = (query: string) =>
+      parseSelectionParams(new URL(`https://x/?${query}`).searchParams)
+    expect(read("doc=impacts/warming-1ac")).toEqual({ doc: "impacts/warming-1ac", topic: null })
+    expect(read("topic=core")).toEqual({ doc: null, topic: "core" })
+    expect(read("doc=%20%20")).toEqual({ doc: null, topic: null })
+    expect(read("")).toEqual({ doc: null, topic: null })
   })
 })
 
 describe("resolveSelection", () => {
   it("opens the document the URL names", () => {
-    expect(resolveSelection(input({ doc: 34 }))).toEqual({ kind: "document", id: 34 })
+    expect(resolveSelection(input({ doc: "impacts/warming-1ac" }))).toEqual({ kind: "document", id: 34 })
   })
 
   it("opens the topic starter the URL names", () => {
-    expect(resolveSelection(input({ topic: 7 }))).toEqual({ kind: "topic", id: 7 })
+    expect(resolveSelection(input({ topic: "topic-starter" }))).toEqual({ kind: "topic", id: 7 })
+  })
+
+  it("still opens a document a pre-path link addresses by id", () => {
+    expect(resolveSelection(input({ doc: "34" }))).toEqual({ kind: "document", id: 34 })
   })
 
   it("prefers the URL's file over the first-file fallback", () => {
     // The bug this whole module exists for: 12 is first, 34 was clicked.
-    expect(resolveSelection(input({ doc: 34 }))).not.toEqual({ kind: "document", id: 12 })
+    expect(resolveSelection(input({ doc: "warming-1ac" }))).not.toEqual({ kind: "document", id: 12 })
   })
 
   it("prefers the URL's file even when something is already open", () => {
-    expect(resolveSelection(input({ doc: 34, hasSelection: true }))).toEqual({ kind: "document", id: 34 })
+    expect(resolveSelection(input({ doc: "warming-1ac", hasSelection: true }))).toEqual({
+      kind: "document",
+      id: 34,
+    })
+  })
+
+  it("reads a ?doc= name against the public library when the reader has no such file", () => {
+    // A shared link names a file, not a table — the same URL has to work for
+    // the person who owns it and the person who only has the public copy.
+    expect(resolveSelection(input({ doc: "topic-starter" }))).toEqual({ kind: "topic", id: 7 })
   })
 
   it("falls back to the first file when the URL names nothing", () => {
     expect(resolveSelection(input())).toEqual({ kind: "document", id: 12 })
   })
 
-  it("falls back to the first file when the URL names a file that is gone", () => {
-    // A deleted document or someone else's link is not an error state.
-    expect(resolveSelection(input({ doc: 999 }))).toEqual({ kind: "document", id: 12 })
-    expect(resolveSelection(input({ topic: 999 }))).toEqual({ kind: "document", id: 12 })
+  it("asks the server for a name nothing loaded here matches", () => {
+    // The public catalogue is capped and a signed-out reader has no documents
+    // at all, so an unknown name is a lookup, not a miss.
+    expect(resolveSelection(input({ doc: "shared/deterrence-block" }))).toEqual({
+      kind: "lookup",
+      ref: "shared/deterrence-block",
+    })
+  })
+
+  it("falls back to the first file once that lookup has come back empty", () => {
+    expect(resolveSelection(input({ doc: "gone", allowLookup: false }))).toEqual({
+      kind: "document",
+      id: 12,
+    })
+  })
+
+  it("never opens a folder as a document", () => {
+    // Folders are in the list so nested paths resolve; the fallback skips them.
+    const foldersFirst = [DOCUMENTS[1]!, DOCUMENTS[2]!]
+    expect(resolveSelection(input({ documents: foldersFirst }))).toEqual({ kind: "document", id: 34 })
   })
 
   it("leaves an open document alone once the URL has been applied", () => {
-    // The reader picked something else from the sidebar; the stale query in
+    // The reader picked something else from the sidebar; the stale name in
     // the URL must not drag them back to it.
-    expect(resolveSelection(input({ doc: 12, applyParams: false, hasSelection: true }))).toBeNull()
+    expect(
+      resolveSelection(input({ doc: "scratch-pad", applyParams: false, hasSelection: true })),
+    ).toBeNull()
   })
 
   it("still opens something when the URL has been applied and nothing is open", () => {
@@ -101,20 +184,58 @@ describe("resolveSelection", () => {
   })
 
   it("opens nothing at all when the reader has no documents", () => {
-    expect(resolveSelection(input({ documentIds: [] }))).toBeNull()
+    expect(resolveSelection(input({ documents: [], allowLookup: false }))).toBeNull()
   })
 
-  it("reads a topic id ahead of a document id when a URL carries both", () => {
-    expect(resolveSelection(input({ doc: 12, topic: 7 }))).toEqual({ kind: "topic", id: 7 })
+  it("reads a topic name ahead of a document name when a URL carries both", () => {
+    expect(resolveSelection(input({ doc: "scratch-pad", topic: "topic-starter" }))).toEqual({
+      kind: "topic",
+      id: 7,
+    })
   })
 })
 
 describe("selectionParamsKey", () => {
   it("matches URLs that name the same file and separates ones that don't", () => {
-    expect(selectionParamsKey({ doc: 12, topic: null })).toBe(selectionParamsKey({ doc: 12, topic: null }))
-    expect(selectionParamsKey({ doc: 12, topic: null })).not.toBe(selectionParamsKey({ doc: 34, topic: null }))
-    // Separate namespaces: doc 7 is not topic 7.
-    expect(selectionParamsKey({ doc: 7, topic: null })).not.toBe(selectionParamsKey({ doc: null, topic: 7 }))
-    expect(selectionParamsKey({ doc: null, topic: null })).not.toBe(selectionParamsKey({ doc: 12, topic: null }))
+    expect(selectionParamsKey({ doc: "a", topic: null })).toBe(selectionParamsKey({ doc: "a", topic: null }))
+    expect(selectionParamsKey({ doc: "a", topic: null })).not.toBe(selectionParamsKey({ doc: "b", topic: null }))
+    // Separate namespaces: doc "a" is not topic "a".
+    expect(selectionParamsKey({ doc: "a", topic: null })).not.toBe(selectionParamsKey({ doc: null, topic: "a" }))
+    expect(selectionParamsKey({ doc: null, topic: null })).not.toBe(selectionParamsKey({ doc: "a", topic: null }))
+  })
+})
+
+describe("canonicalEditorUrl", () => {
+  const catalog = { documents: DOCUMENTS, topics: TOPICS }
+  const loc = (search: string, pathname = REASON_EDITOR_ROUTE) => ({ pathname, search, hash: "" })
+
+  it("rewrites an id-addressed URL to the file's name", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34"))).toBe(
+      `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac`,
+    )
+  })
+
+  it("names a topic selection against the public tree", () => {
+    expect(canonicalEditorUrl({ kind: "topic", id: 7 }, catalog, loc("?topic=7"))).toBe(
+      `${REASON_EDITOR_ROUTE}?topic=topic-starter`,
+    )
+  })
+
+  it("keeps every other query parameter", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34&share=abc"))).toBe(
+      `${REASON_EDITOR_ROUTE}?doc=impacts/warming-1ac&share=abc`,
+    )
+  })
+
+  it("returns null once the URL already names the file", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=impacts/warming-1ac"))).toBeNull()
+  })
+
+  it("does nothing off the editor route", () => {
+    expect(canonicalEditorUrl({ kind: "document", id: 34 }, catalog, loc("?doc=34", "/cards"))).toBeNull()
+  })
+
+  it("returns null without a selection", () => {
+    expect(canonicalEditorUrl(null, catalog, loc(""))).toBeNull()
   })
 })

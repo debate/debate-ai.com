@@ -68,12 +68,15 @@ body.pmd-multi-doc .dec-cardmirror-embed #app {
    window) never get CardMirror's own page-owning mobile shell — see
    `detectEmbedded()`/`resolveMobileLayout` in mobile-layout.ts — so the
    full desktop ribbon stays mounted here instead of being replaced by it.
-   `initRibbonResizer()` (editor/index.ts) already drops least-essential
-   panels first as the ribbon narrows, but whatever it leaves mounted must
-   stay reachable rather than being squeezed illegibly or clipped by this
-   file's `overflow: hidden` on `.dec-cardmirror-embed` — so scroll the
-   remainder horizontally instead. */
-.dec-cardmirror-embed #ribbon {
+   Paging the ribbon into tabs (editor/ribbon-tabs.ts) means a narrow embed
+   now shows one tab's panels rather than all of them at once, but whatever
+   the active tab mounts must stay reachable rather than being squeezed
+   illegibly or clipped by this file's `overflow: hidden` on
+   `.dec-cardmirror-embed` — so scroll the remainder horizontally instead.
+   Both ribbon rows get this: the tab strip can outgrow a narrow column
+   just as the button strip can. */
+.dec-cardmirror-embed .ribbon-strip,
+.dec-cardmirror-embed .ribbon-tabstrip {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;

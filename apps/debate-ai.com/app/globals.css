@@ -826,3 +826,192 @@
 html[data-embedded="1"] [data-app-chrome] {
   display: none !important;
 }
+
+/* ---------------------------------------------------------------------------
+   Features page effects (/features)
+
+   Keyframes and accent helpers for `lib/ui/features/effects.tsx`. Ported from
+   qwksearch-research-agent's `apps/qwksearch-web/app/globals.css`, with its
+   hard-coded sky/violet palette swapped for the `--accent-hue` /
+   `--accent-secondary-hue` pair above, so the aurora, the border beam and the
+   shimmering headline are painted in the app's own accent colours. Light and
+   dark get their own lightness so the accent stays legible on either ground.
+
+   They live here rather than beside the component because Tailwind v4 only
+   resolves animation names it can see in a stylesheet.
+--------------------------------------------------------------------------- */
+
+.da-features {
+  --da-accent: hsl(var(--accent-hue) 78% 42%);
+  --da-accent-2: hsl(var(--accent-secondary-hue) 78% 48%);
+  /* Gradients run between the accent and this analogous hue rather than
+     between the two brand accents: teal → orange crosses the whole wheel and
+     lands on mud at the midpoint, where teal → indigo stays saturated. The
+     orange accent still shows, undiluted, in the aurora and nowhere else. */
+  --da-accent-3: hsl(calc(var(--accent-hue) + 60) 72% 52%);
+}
+
+.dark .da-features {
+  --da-accent: hsl(var(--accent-hue) 62% 68%);
+  --da-accent-2: hsl(var(--accent-secondary-hue) 68% 66%);
+  --da-accent-3: hsl(calc(var(--accent-hue) + 60) 70% 72%);
+}
+
+.da-accent-text {
+  color: var(--da-accent);
+}
+
+.da-accent-soft {
+  background: color-mix(in oklab, var(--da-accent) 12%, transparent);
+  color: var(--da-accent);
+  border-color: color-mix(in oklab, var(--da-accent) 28%, transparent);
+}
+
+.da-accent-fill {
+  background: linear-gradient(135deg, var(--da-accent), var(--da-accent-3));
+  color: white;
+}
+
+/* Outlined chip that warms to the accent on hover — the jump-to-category row
+   and the marquee tickers. */
+.da-chip {
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.da-chip:hover {
+  color: var(--da-accent);
+  border-color: color-mix(in oklab, var(--da-accent) 40%, transparent);
+  background: color-mix(in oklab, var(--da-accent) 8%, transparent);
+}
+
+@keyframes da-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - var(--da-marquee-gap, 1rem) / 2));
+  }
+}
+
+@keyframes da-aurora {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  33% {
+    transform: translate3d(6%, -4%, 0) scale(1.15);
+    opacity: 0.8;
+  }
+  66% {
+    transform: translate3d(-5%, 5%, 0) scale(0.95);
+    opacity: 0.45;
+  }
+}
+
+@keyframes da-border-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes da-shimmer {
+  0% {
+    background-position: -180% 0;
+  }
+  100% {
+    background-position: 180% 0;
+  }
+}
+
+.da-marquee-track {
+  animation: da-marquee var(--da-marquee-duration, 40s) linear infinite;
+}
+
+.da-marquee:hover .da-marquee-track {
+  animation-play-state: paused;
+}
+
+.da-aurora-blob {
+  animation: da-aurora 18s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.da-aurora-primary {
+  background: color-mix(in oklab, var(--da-accent) 30%, transparent);
+}
+
+.da-aurora-secondary {
+  background: color-mix(in oklab, var(--da-accent-2) 24%, transparent);
+}
+
+/* Rotating conic border. The card body sits on a 1px padding ring above this
+   pseudo-element, so only the ring shows through and the beam reads as the
+   border rather than a glow. */
+.da-border-beam::before {
+  content: "";
+  position: absolute;
+  inset: -120%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--da-accent, var(--primary)) 55deg,
+    var(--da-accent-3, var(--primary)) 100deg,
+    transparent 175deg
+  );
+  animation: da-border-spin 5s linear infinite;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.da-border-beam:hover::before,
+.da-border-beam:focus-within::before {
+  opacity: 1;
+}
+
+.da-shimmer-text {
+  background-image: linear-gradient(
+    to right,
+    var(--da-accent),
+    var(--da-accent-3),
+    var(--da-accent)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: da-shimmer 6s linear infinite;
+}
+
+/* Scroll reveal. The hidden state only applies once JS has marked the element,
+   so no-JS readers still get fully rendered content. */
+[data-da-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+[data-da-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--da-reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .da-marquee-track,
+  .da-aurora-blob,
+  .da-border-beam::before,
+  .da-shimmer-text {
+    animation: none !important;
+  }
+
+  [data-da-reveal="hidden"] {
+    opacity: 1;
+    transform: none;
+  }
+}

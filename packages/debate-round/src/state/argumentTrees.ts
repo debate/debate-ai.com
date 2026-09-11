@@ -16,6 +16,11 @@
 import type { Flow } from "../types/flow";
 import { buildArgumentTree, type ArgumentTreeNode } from "../flow/argument-tree";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type ArgumentTreeRecord = {
   roundId: string;
   tree: ArgumentTreeNode[];
@@ -60,11 +65,13 @@ export function saveArgumentTree(record: ArgumentTreeRecord): void {
     records[index] = record;
   }
   writeAll(records);
+  mirrorToolRecordSave("argumentTrees", record);
 }
 
 /** Deletes a round's persisted argument tree; a no-op if it isn't stored. */
 export function deleteArgumentTree(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+  mirrorToolRecordDelete("argumentTrees", roundId);
 }
 
 /**

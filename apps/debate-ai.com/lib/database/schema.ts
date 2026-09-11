@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, index, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -63,13 +63,20 @@ export const verification = sqliteTable("verification", {
 // (ported from quick search's document model; see /reason-editor). `parentId`
 // and `isFolder` back the file-tree sidebar (also ported from quick search's
 // REASON editor — see reason-editor-sidebar's FileTree) so documents can be
-// organized into folders instead of one flat list.
+// organized into folders instead of one flat list. An uploaded `.docx`
+// lands here too, converted to CardMirror's native `.cmir` on the way in
+// (`lib/cardmirror/stored-cmir.ts`); `format` says which shape a row holds.
 export const documents = sqliteTable(
   "documents",
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull().default("Untitled"),
     content: text("content").notNull().default(""),
+    // How `content` is encoded: `"cmir"` for an uploaded file, which is kept
+    // in CardMirror's native format for its whole life, or `"html"` for a
+    // document written in the editor. Same two values as
+    // `topic_starter_items.format` — see `lib/cardmirror/format.ts`.
+    format: text("format").notNull().default("html"),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     parentId: integer("parent_id"),
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
@@ -928,6 +935,32 @@ export const videos = sqliteTable(
 export type VideoTableRow = typeof videos.$inferSelect;
 export type VideoTableInsert = typeof videos.$inferInsert;
 
+// Transcript cache, one row per video+language. YouTube bot-checks server IPs
+// at random and rate-limits them in bursts, so a transcript that was fetched
+// once is worth keeping: later viewers of the same video are served from here
+// instead of racing the limiter, and a video whose captions are momentarily
+// unreachable still has a transcript to show. `snippets` holds the caption
+// cues as fetched — `[{ text, start, duration }, …]` JSON — because the UI
+// regroups them into sentences itself and the raw cues are what a re-render
+// needs. Only successful fetches are stored; a miss falls through to YouTube,
+// so a video that gains captions later picks them up on the next request.
+export const videoTranscripts = sqliteTable(
+  "video_transcripts",
+  {
+    videoId: text("video_id").notNull(),
+    lang: text("lang").notNull().default("en"),
+    snippets: text("snippets").notNull(),
+    fetchedAt: integer("fetched_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.videoId, table.lang] }),
+  }),
+);
+
+export type VideoTranscriptRow = typeof videoTranscripts.$inferSelect;
+
 // Account-linked in-app notifications — backs the Create New Round dialog's
 // "invite a registered user" flow (an invitee with a matching `user` row
 // gets one of these instead of an email, since they can already see it
@@ -1320,3 +1353,55 @@ export const debateCardImports = sqliteTable(
 );
 
 export type DebateCardImportRow = typeof debateCardImports.$inferSelect;
+
+// Account-linked sync for the sidebar's localStorage-backed tools — the
+// "per-browser localStorage, not account-synced" Known gap recorded in
+// docs/features/judge-profiles.md, opponent-team-profiles.md,
+// flow-annotations.md, prep-notes.md, coaching-programs.md and friends, and
+// the "every other localStorage-backed panel in this repo" phrasing of the
+// same gap in scout-to-strategy.md.
+//
+// One table rather than a `saved_*` table per tool: the thirteen stores that
+// still had the gap all have the same shape — a JSON array under one
+// localStorage key, each record identified by one string field — so they
+// share this table, keyed by (user_id, collection, client_id), and one
+// `/api/tool-records/[collection]` route pair. `collection` is an allowlist
+// value from `debate-data-sync`'s TOOL_RECORD_COLLECTIONS, checked by the
+// route before any write, so this can't be used as a free-form per-user blob
+// store. `data` holds the whole record JSON-stringified, mirroring
+// `saved_drill_sets`/`saved_tournament_results`' blob-column approach — a
+// record is read and written as one unit by the tool that owns it, and its
+// fields are that tool's business rather than this table's.
+export const savedToolRecords = sqliteTable(
+  "saved_tool_records",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    collection: text("collection").notNull(),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    // Every read is "this user's records for this collection", so the index
+    // carries both columns rather than user_id alone.
+    userCollectionIdx: index("idx_saved_tool_records_user_collection").on(
+      table.userId,
+      table.collection,
+    ),
+    userCollectionClientIdx: uniqueIndex("idx_saved_tool_records_user_collection_client").on(
+      table.userId,
+      table.collection,
+      table.clientId,
+    ),
+  }),
+);
+
+export type SavedToolRecordRow = typeof savedToolRecords.$inferSelect;

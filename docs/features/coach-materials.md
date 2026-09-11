@@ -1,0 +1,434 @@
+# Coach Materials
+
+Lets a coach upload grounding materials — lecture transcripts, camp
+materials, instructional documents, and practice-round recordings — for a
+private team coach AI, preview which materials a question would draw on,
+and ask the coach AI a real question grounded strictly in those materials.
+
+- **Route:** `/coach-materials`
+- **Nav:** the Tools page's Coaching & Analytics group; the Reason Editor's
+  Workspace menu (`t materials` in Ctrl/Cmd-Shift-Space's command palette)
+- **Package:** [`debate-speech-writer`](../../packages/debate-speech-writer/README.md)
+
+## What it shows
+
+- An upload form (kind, title, optional topic, comma-separated tags,
+  material text) that saves a `CoachMaterial` through the already-persisted
+  `state/coachMaterials.ts`.
+- An "Upload a document" button next to the Material text field that reads
+  an uploaded `.docx`, `.txt`, or `.md` file and fills the text field from
+  it, instead of requiring the text to be pasted in by hand.
+- A "🎤 Record"/"Stop recording" button next to the same field that dictates
+  directly into it via the browser's own Web Speech API, with a disabled
+  "Microphone dictation isn't supported in this browser" fallback and an
+  inline error message on recognition failure (e.g. mic permission denied).
+- A search/filter bar above the material list, once at least one material is
+  saved: a keyword search box (matching a material's title, topic, tags, or
+  body text) plus a "Tag" dropdown scoped to every distinct tag across the
+  whole library, and a "Clear filters" action once either is set. The list
+  below reflects both narrowed together.
+- Every persisted material matching the current search/filter, grouped by
+  kind (Lecture Transcript, Camp Material, Instructional Document,
+  Practice-Round Recording), each with a "Delete" action. Distinguishes "no
+  materials uploaded yet" from "no materials match this search/tag filter".
+- An "Ask the coach" section: typing a question and clicking "Preview
+  grounded prompt" shows the top relevant materials and the composed
+  grounded prompt text, while "Ask the coach" sends that same prompt to a
+  real AI call and renders the model's grounded answer (or a plain error
+  message if the request fails).
+- A persisted **Conversation** history above the question field: every
+  question/answer pair asked so far, most recent last, each rendered as a
+  small card. A follow-up question ("what about a counter-interp?") is sent
+  with the prior turns as real conversation context, so the model can build
+  on an earlier answer instead of treating every question as the first one.
+  A "Clear conversation" action (shown once any history exists) wipes it.
+
+## Data flow
+
+```
+state/coachMaterials.ts (localStorage)
+  → buildCoachMaterialLibraryFromStore()   — composes coach/team-coach-materials.ts
+      → buildCoachMaterialLibrary()        — groups materials by kind
+  → findRelevantMaterialsFromStore()       — composes coach/team-coach-materials.ts
+      → findRelevantMaterials()            — keyword-overlap relevance ranking
+      → buildGroundedCoachPrompt()         — composes the ranked matches into a prompt
+  → panels/CoachMaterialsPanel.tsx (upload form, kind-grouped list, ask-the-coach UI)
+  → apps/debate-ai.com/app/coach-materials/page.tsx (mounts the panel as a route)
+
+Asking the coach a question (follow-up (b)):
+panels/CoachMaterialsPanel.tsx
+  → findRelevantMaterialsFromStore(question, { limit: 5 })   — the same
+                                                                 matches the
+                                                                 preview uses
+  → coach/team-coach-client.ts's requestTeamCoachAnswer(question, matches, { history })
+      → coach/team-coach-materials.ts's buildCoachConversationMessages(question, matches, history)
+          → prior turns (most recent `maxHistoryTurns`, default 6) as
+            alternating { role: "user" } / { role: "assistant" } messages
+          → buildGroundedCoachPrompt(question, matches)  — the final
+                                                            user-turn message,
+                                                            unchanged from
+                                                            before
+      → coach/team-coach-ai.ts's TEAM_COACH_AI_SYSTEM_PROMPT
+                                                    — frames the model as the
+                                                      team's private coach
+      → POST /api/reason-ai                          — the shared
+                                                        Anthropic proxy,
+                                                        whose `messages` array
+                                                        already accepted
+                                                        multiple turns
+      → parseTeamCoachAiResponse(text)                — strips a wrapping
+                                                          code fence
+  → state/coachConversation.ts's appendCoachConversationTurn({ question, answer })
+                                                    — persists the new turn
+                                                      and folds it into the
+                                                      panel's own `history`
+                                                      state for the next
+                                                      question
+  → renders the answer, or the thrown error message on failure
+
+Conversation history (closes the "No conversation history" Known gap):
+state/coachConversation.ts (localStorage, key "coachConversation")
+  → listCoachConversationTurns()      — read on mount, rendered above the
+                                         question field
+  → appendCoachConversationTurn()     — called once a real answer comes back
+                                         (capped at the 50 most recently
+                                         stored turns)
+  → clearCoachConversationHistory()   — wired to the panel's
+                                         "Clear conversation" action
+  → fed into requestTeamCoachAnswer's `history` option on every question, so
+    a follow-up builds on the conversation instead of starting fresh
+
+Uploading a document to fill the text field (the "document" half of
+follow-up (a)):
+panels/CoachMaterialsPanel.tsx
+  → coach/document-material-extraction.ts's
+      extractMaterialTextFromDocument({ fileName, content: file })
+      → detectDocumentKind(fileName)                  — .txt/.md/.markdown vs .docx
+      → (.txt/.md) file.text()                        — read directly
+      → (.docx) debate-card-parser's convertDocxToHTML(file, { plainTextOnly: true })
+                                                        — the existing Verbatim
+                                                          .docx → text pipeline
+  → fills form.text (and form.title, if it was still empty) from the result
+
+Dictating into the Material text field (the "recording" half of
+follow-up (a)):
+panels/CoachMaterialsPanel.tsx
+  → hooks/useMicrophoneTranscription.ts                — wraps the browser's
+                                                           SpeechRecognition/
+                                                           webkitSpeechRecognition
+      → coach/microphone-transcription.ts's
+          getSpeechRecognitionConstructor/isMicrophoneTranscriptionSupported
+                                                        — feature detection
+          appendDictatedSegment                        — joins each finalized
+                                                          segment onto form.text
+          describeMicrophoneTranscriptionError         — readable recognition-
+                                                          error messages
+  → fills form.text as the user speaks
+```
+
+This feature is a read/write UI layer over the existing pure logic: it
+introduces two store-composition functions, `buildCoachMaterialLibraryFromStore`
+and `findRelevantMaterialsFromStore` in `state/coachMaterials.ts`, which
+compose the existing pure `buildCoachMaterialLibrary`/`findRelevantMaterials`
+directly against the persisted materials store — no new scoring or grouping
+logic (see `packages/debate-speech-writer/test/coachMaterials.test.ts`).
+
+Follow-up (b) — the real AI Q&A call — adds `coach/team-coach-ai.ts` (the
+system prompt plus a tolerant response parser, `fetch`-free and directly
+Vitest-testable) and `coach/team-coach-client.ts` (the thin `fetch` client
+posting to `/api/reason-ai`), mirroring `debate-round`'s
+`round/ai-versus-speech-ai.ts` / `round/ai-versus-speech-client.ts` split.
+The user-turn message sent to the model is exactly
+`buildGroundedCoachPrompt`'s existing output — no new prompt-composition
+logic was introduced, only the system prompt and response parsing. Vitest-
+covered in `packages/debate-speech-writer/test/team-coach-ai.test.ts`
+(system prompt content + response parsing) and
+`packages/debate-speech-writer/test/team-coach-client.test.ts` (the `fetch`
+client, with `fetch` mocked via `vi.stubGlobal`, covering the success path,
+an endpoint override, a server error message, a non-JSON error body, and
+an empty/unusable AI reply).
+
+## Search/filter bar
+
+Closes the "material tagging and a search/filter bar once a library grows
+past a handful of uploads" follow-up named under idea #8 in `TODO.md`.
+Materials already carried a `tags: string[]` field (comma-separated on the
+upload form, rendered as badges); this only adds the search/filter layer on
+top:
+
+- `coach/team-coach-materials.ts#listCoachMaterialTags(materials)` — every
+  distinct tag across a material list, alphabetically sorted and
+  de-duplicated, for the tag dropdown's options.
+- `coach/team-coach-materials.ts#filterCoachMaterials(materials, { query?, tag? })`
+  — a pure filter: `tag` restricts to an exact tag match, `query` is a
+  case-insensitive substring match against a material's title, topic, tags,
+  and body text (blank/whitespace-only treated as no filter), and the two
+  compose (both must match). Returns the input unchanged when neither option
+  is given.
+- `state/coachMaterials.ts#buildCoachMaterialLibraryFromStore(filter?)` now
+  accepts the same `{ query?, tag? }` options, composing
+  `filterCoachMaterials` ahead of the existing `buildCoachMaterialLibrary`
+  grouping — existing no-argument callers are unaffected (an empty filter
+  matches everything). A new `listCoachMaterialTagsFromStore()` composes
+  `listCoachMaterialTags` against every persisted material, independent of
+  whatever filter the panel currently has applied, so a tag doesn't
+  disappear from the dropdown just because it's the active filter.
+- `CoachMaterialsPanel.tsx` renders the search box and tag `Select` above
+  the material list once any material exists, re-running
+  `buildCoachMaterialLibraryFromStore` with the current filter whenever
+  either changes (and after every save/delete), and separately tracks the
+  library's true unfiltered material count so the empty state can
+  distinguish "no materials uploaded yet" from "no materials match this
+  search/tag filter".
+
+Vitest-covered in `packages/debate-speech-writer/test/team-coach-materials.test.ts`
+(`listCoachMaterialTags`, `filterCoachMaterials` — title/topic/tag/body
+matches, case-insensitivity, blank-query passthrough, tag+query
+combination) and `packages/debate-speech-writer/test/coachMaterials.test.ts`
+(`buildCoachMaterialLibraryFromStore` with a filter, `listCoachMaterialTagsFromStore`).
+
+## Edit-in-place and version history
+
+Closes the "No version history for a material that gets re-uploaded/edited"
+Known gap below. Previously the upload form only ever created a brand-new
+record (`saveCoachMaterial({ id: \`${kind}-${Date.now()}\`, ... })`), and
+there was no way to revise a material without deleting and re-adding it,
+which lost the old text outright.
+
+- `state/coachMaterialVersions.ts` — a new local-only store (mirroring
+  `state/coachMaterials.ts`'s own persistence convention; coach materials
+  aren't account-synced yet, so this stays local-only too). Each entry is a
+  full snapshot of a material's fields (`materialId`, `kind`, `title`,
+  `topic`, `tags`, `text`, `replacedAt`). `appendMaterialVersion(previous)`
+  snapshots a material right before it gets overwritten, capping at
+  `MAX_VERSIONS_PER_MATERIAL` (10) per material by dropping the oldest.
+  `listVersionsForMaterial(materialId)` returns a material's versions
+  newest first; `deleteVersionsForMaterial(materialId)` clears them (called
+  when the material itself is deleted); `materialFromVersion(version)`
+  rebuilds a `CoachMaterial` from a snapshot so it can be handed straight
+  back to `saveCoachMaterial` to restore it.
+- `state/coachMaterials.ts#saveCoachMaterial` now calls
+  `appendMaterialVersion` on the record it's about to replace whenever the
+  save overwrites an existing id (a brand-new id records no version, since
+  there's nothing prior to snapshot).
+- `CoachMaterialsPanel.tsx` — each material now has an "Edit" action that
+  loads it back into the upload form (Save becomes "Save changes", with a
+  "Cancel edit" action next to it) instead of the form only ever creating a
+  new record, and a "History" toggle listing that material's past versions
+  with a "Restore this version" action on each, which just calls
+  `saveCoachMaterial` with the version's fields under the same material id
+  — restoring is itself a normal overwrite, so the version it replaces gets
+  snapshotted too, preserving full lineage.
+
+Vitest-covered in `packages/debate-speech-writer/test/coachMaterialVersions.test.ts`
+(snapshot shape, id uniqueness within the same millisecond, per-material
+cap/eviction, newest-first ordering, per-material isolation, deletion) and
+new cases in `packages/debate-speech-writer/test/coachMaterials.test.ts`
+(`saveCoachMaterial` records no version on create, snapshots on overwrite,
+accumulates versions across repeated overwrites; `deleteCoachMaterial` also
+clears that material's version history).
+
+## Account-synced materials and version history
+
+Closes the "No account sync for coach materials at all" Known gap below —
+the material library and its version history were both purely per-browser
+localStorage, unlike most other panels in this repo. Mirrors
+`debate-round`'s `saved_round_pairings`
+D1-table-plus-`/api/round-pairings`-routes pattern exactly, applied to both
+`CoachMaterial`s and their `CoachMaterialVersion` snapshots:
+
+- Two new D1 tables (`apps/debate-ai.com/lib/database/schema.ts`):
+  `saved_coach_materials` (one row per `(user, material)` pair, keyed by the
+  material's own id — mirrors `saved_round_pairings`) and
+  `saved_coach_material_versions` (one row per version snapshot, many rows
+  can share a `materialId` — mirrors `saved_judge_decisions`/
+  `saved_counsel_panel_assessments`'s append-only-log shape, with
+  `materialId` as a plain indexed column).
+- `/api/coach-materials` (`GET` — every synced material in full) and
+  `/api/coach-materials/[materialId]` (`PUT` upsert, `DELETE` — which also
+  cascades to that material's synced version rows, mirroring
+  `state/coachMaterials.ts#deleteCoachMaterial`'s local cascade) plus the
+  same GET/PUT/DELETE shape at `/api/coach-material-versions` and
+  `/api/coach-material-versions/[versionId]` for the version history. Both
+  pairs require a signed-in session (401 otherwise) — a synced record only
+  exists once explicitly saved, same as `/api/round-pairings`.
+- `state/savedCoachMaterials.ts`/`state/savedCoachMaterialVersions.ts` — pure
+  request-body validators (`isValidCoachMaterialRecord`,
+  `isValidCoachMaterialVersionRecord`) and per-record byte caps
+  (`MAX_SAVED_COACH_MATERIAL_BYTES`, `MAX_SAVED_COACH_MATERIAL_VERSION_BYTES`,
+  1 MB each — generous for a full lecture transcript, well short of D1's
+  row-size limits), shared by the API routes and the sync hook.
+- `coach/coach-materials-client.ts`/`coach/coach-material-versions-client.ts`
+  — the `fetch` calls against those routes (`listSaved…`, `save…ToAccount`,
+  `deleteSaved…FromAccount`), kept separate from the validators so those stay
+  unit-testable without mocking `fetch`.
+- `state/coachMaterials.ts` gains `adoptCoachMaterial` (upsert-by-id without
+  snapshotting a version, for adopting a remote record the local store
+  doesn't have yet) and `saveCoachMaterial`/`deleteCoachMaterial` now return
+  the version it created/the version ids it removed, so a caller can sync
+  those too. `state/coachMaterialVersions.ts` gains the matching
+  `adoptMaterialVersion` and `listAllCoachMaterialVersions`, and
+  `deleteVersionsForMaterial` now returns the removed ids.
+- `hooks/useCoachMaterialsSync.ts` — a new local-first sync hook, mirroring
+  `debate-round`'s `useRoundPairings`: on mount, a one-time cross-device
+  merge (deduped across instances via module-level state) reconciles local
+  and remote materials *and* their version history by id, only ever filling
+  gaps (never overwriting an id both sides already have — no edit-conflict
+  resolution). `saveMaterial`/`deleteMaterial` wrap the local
+  `saveCoachMaterial`/`deleteCoachMaterial` calls with a best-effort account
+  push; a failed sync never blocks the local save/delete.
+- `CoachMaterialsPanel.tsx` now calls the hook's `saveMaterial`/
+  `deleteMaterial` instead of the state module's functions directly (save,
+  restore, and delete all route through it), and shows a "Materials and
+  their edit history are synced to your account." / "Sign in to sync
+  materials and their edit history across devices." status line, mirroring
+  `PreRoundBriefingsPanel`'s pairings-synced indicator.
+
+Vitest-covered in `packages/debate-speech-writer/test/savedCoachMaterials.test.ts`
+and `test/savedCoachMaterialVersions.test.ts` (validator acceptance/rejection
+cases) and new cases in `test/coachMaterials.test.ts`/
+`test/coachMaterialVersions.test.ts` (`adoptCoachMaterial`/
+`adoptMaterialVersion` upsert-by-id semantics, `listAllCoachMaterialVersions`,
+and the new return values of `saveCoachMaterial`/`deleteCoachMaterial`/
+`deleteVersionsForMaterial`). No route-level tests — mirrors this repo's
+existing convention of testing only the pure validators, not the D1-backed
+routes themselves (see e.g. `/api/round-pairings`).
+
+## Reviewer/approval workflow
+
+Closes the "No reviewer/approval workflow before a material is available to
+the team coach" Known gap below — previously any saved material, including a
+brand-new upload or an in-place edit, was immediately eligible to ground an
+"Ask the coach" answer.
+
+- `CoachMaterial` gains an optional `status?: "pending" | "approved" |
+  "rejected"` field (`coach/team-coach-materials.ts`), plus `reviewedBy?`,
+  `reviewedAt?`, and `reviewNote?`. A material with no `status` at all —
+  every record saved before this field existed — is treated the same as
+  `"approved"` (`isCoachMaterialApproved`), so this doesn't retroactively hide
+  anything already trusted.
+- Every save through the panel's upload/edit form now stamps the material
+  `status: "pending"`, and restoring an older version
+  (`state/coachMaterialVersions.ts#materialFromVersion`) does too — a content
+  change, whether a brand-new upload, an edit, or a restore, always goes back
+  through review rather than silently keeping a prior approval.
+- `state/coachMaterials.ts#findRelevantMaterialsFromStore` — what "Ask the
+  coach" draws its grounding materials from — now filters through
+  `filterApprovedCoachMaterials` first, so a `"pending"`/`"rejected"` material
+  never grounds an answer. The main library view
+  (`buildCoachMaterialLibraryFromStore`) is unchanged and still shows every
+  material regardless of status, so a coach can see and act on what's
+  awaiting review.
+- New `state/coachMaterials.ts#setCoachMaterialReviewStatus(id, status,
+  reviewerId, note?)` records a review decision in place — unlike
+  `saveCoachMaterial`, it never snapshots a version, since a review decision
+  isn't a content edit. `listPendingCoachMaterialsFromStore()` lists everything
+  still awaiting a decision.
+- `hooks/useCoachMaterialsSync.ts` gains `reviewMaterial(id, status,
+  reviewerId, note?)`, wrapping the local write with the same best-effort
+  account push `saveMaterial` already does — a review decision follows a
+  signed-in user across devices the same way the material itself does.
+- `CoachMaterialsPanel.tsx` gets a "Pending review (N)" section above the
+  library (shown only once something is pending) with a typed-in "Reviewer
+  name" field and per-material Approve/Reject actions (Reject accepts an
+  optional reason). This repo has no roles/auth system to verify a real "team
+  coach" identity (see `debate-search-evidence`'s `reviewer-permissions.ts`
+  for the same honest limitation elsewhere), so the reviewer field is
+  free-form input, not a permission check. Every material in the main grouped
+  list now also shows a status badge, with a rejected material's reviewer
+  note shown alongside it.
+
+Vitest-covered: `isCoachMaterialApproved`/`filterApprovedCoachMaterials`/
+`filterPendingCoachMaterials`/`reviewCoachMaterial`/`approveCoachMaterial`/
+`rejectCoachMaterial` in `test/team-coach-materials.test.ts`;
+`findRelevantMaterialsFromStore` excluding pending/rejected materials,
+`listPendingCoachMaterialsFromStore`, and `setCoachMaterialReviewStatus`
+(approve, reject with a note, unknown id, no version snapshot recorded) in
+`test/coachMaterials.test.ts`; `materialFromVersion` always coming back
+`"pending"` in `test/coachMaterialVersions.test.ts`; and the new optional
+`status`/`reviewedBy`/`reviewedAt`/`reviewNote` fields in
+`test/savedCoachMaterials.test.ts`'s `isValidCoachMaterialRecord` cases.
+
+## Cross-tab live update
+
+Until now, `CoachMaterialsPanel` only read its persisted material library,
+tag list, pending-review queue, an open material's version history, and
+conversation history on mount, or right after its own save/edit/delete/
+review/restore/clear actions — a teammate's second open tab (or a second
+browser window on the same machine) saving or reviewing a material showed a
+stale view until it re-rendered for some unrelated reason. The browser's
+`storage` event fires only in *other* same-origin tabs/windows, never the
+one that made the write, so it's exactly the missing cross-tab signal every
+other closed panel in this repo already uses (see
+[`shared-flow-sync.md`](shared-flow-sync.md)'s "Cross-tab live update"
+section).
+
+A new pure helper, `state/live-update.ts`'s
+`isCoachMaterialsPanelLiveUpdateStorageEvent`, checks whether the event's
+`key` is one of this panel's three backing stores (`coachMaterials`, the
+material library the main list/tag dropdown/Pending review section all
+derive from; `coachMaterialVersions`, a material's "History" toggle; and
+`coachConversation`, the "Ask the coach" conversation history) or `null` (a
+`localStorage.clear()`). `CoachMaterialsPanel` subscribes to `window`'s
+`storage` event and calls its existing `refresh()` closure — plus
+re-reading the conversation history and, if a material's "History" toggle is
+open, that material's version list — when the predicate matches. The
+in-progress upload/edit form draft, "Reviewer name" field, per-material
+reject-reason inputs, and the "Ask the coach" question/answer fields are all
+left untouched, only the persisted views re-read.
+
+Vitest-covered in `test/live-update.test.ts` (every backing-store key, the
+`null`-key clear-all case, and unrelated/substring-matching keys staying
+ignored).
+
+## Known gaps
+
+- No transcription of an *uploaded* audio/video recording file — follow-up
+  (a) under idea #8 in `TODO.md` is now fully closed for text sources
+  (`.docx`/`.txt`/`.md` upload, plus live microphone dictation), but turning
+  an already-recorded practice-round audio/video *file* into text still has
+  no path in this repo; no server-side/paid transcription service exists
+  here, only the browser's live `SpeechRecognition` API used for dictation
+  above.
+- ~~No version history for a material that gets re-uploaded/edited — saving
+  over an existing id (there's no edit form today; a re-upload is a brand
+  new record) or editing one directly overwrites it in place, with no way to
+  see or restore a prior version.~~ Closed: `state/coachMaterialVersions.ts`
+  now snapshots a material every time `saveCoachMaterial` overwrites it, and
+  `CoachMaterialsPanel` has an "Edit" action (revise in place) plus a
+  "History" toggle with a "Restore this version" action per snapshot (see
+  "Edit-in-place and version history" above). Version history now follows a
+  signed-in user across devices too (see the next gap's closure).
+- ~~No account sync for coach materials at all — unlike most other panels in
+  this repo (word-count rounds, judge decisions, prep notes, etc.), the
+  material library and its version history are both purely per-browser
+  localStorage, with no D1 table or `/api/coach-materials` route.~~ Closed:
+  new `saved_coach_materials`/`saved_coach_material_versions` D1 tables plus
+  `/api/coach-materials`/`/api/coach-material-versions` routes, merged in by
+  `hooks/useCoachMaterialsSync.ts`, so both the material library and its
+  version history now follow a signed-in user across devices — see
+  "Account-synced materials and version history" above.
+- `convertDocxToHTML`'s default renderer needs a browser `DOMParser` (via
+  `docx-preview`), so `.docx` upload only works from this `"use client"`
+  panel in the browser — not from a server-rendered or Node context.
+- ~~No reviewer/approval workflow before a material is available to the
+  team coach — any saved material is immediately included.~~ Closed: a
+  `status` field gates whether a material is live for "Ask the coach", with a
+  "Pending review" panel section for Approve/Reject actions — see "Reviewer/
+  approval workflow" above.
+- ~~No conversation history — each question is answered independently; a
+  prior question/answer isn't persisted or fed back into a later one.~~
+  Closed: `state/coachConversation.ts` now persists every question/answer
+  turn, `CoachMaterialsPanel` renders it above the question field, and
+  `requestTeamCoachAnswer` sends the most recent turns (capped at
+  `maxHistoryTurns`, default 6) as real conversation context ahead of the
+  current question's grounded prompt (see "Conversation history" above).
+  History now syncs to a signed-in user's account as the `coachConversation`
+  collection (see [Tool Data Sync](tool-data-sync.md)), so it follows them
+  across devices; it is still per-*user* rather than a shared team resource.
+- ~~No cross-tab live update — a teammate's second open tab (or a second
+  browser window on the same machine) saving, editing, deleting, reviewing,
+  or restoring a material showed a stale view until it re-rendered for some
+  unrelated reason.~~ Closed: a `storage`-event listener now refreshes the
+  panel's persisted views when another tab writes to one of its three
+  backing stores — see "Cross-tab live update" above.

@@ -290,6 +290,16 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["strategy sync", "follow-up", "assign"],
   },
   {
+    id: "contacts",
+    title: "Contacts",
+    description:
+      "Account-linked contacts list with requests and blocking, online presence, and live co-editing cards shared straight to a contact's account",
+    href: "/contacts",
+    category: "collaboration",
+    doc: "contacts.md",
+    tags: ["friends", "share", "block", "presence"],
+  },
+  {
     id: "notifications",
     title: "Notifications",
     description: "Assignee notifications for prep notes handed off to you as a task",

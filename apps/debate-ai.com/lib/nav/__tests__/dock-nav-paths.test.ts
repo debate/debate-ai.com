@@ -11,7 +11,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, toFrameSrc } from "../dock-nav-paths"
+import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, isDockOwnedPath, toFrameSrc } from "../dock-nav-paths"
 
 describe("isDockNavPath", () => {
   it("accepts every dock destination", () => {
@@ -44,6 +44,43 @@ describe("isDockNavPath", () => {
   it("does not match a path that merely starts with a destination's name", () => {
     expect(isDockNavPath("/cards-archive")).toBe(false)
     expect(isDockNavPath("/documentation")).toBe(false)
+  })
+})
+
+describe("isDockOwnedPath", () => {
+  it("accepts every dock destination", () => {
+    for (const href of DOCK_NAV_HREFS) {
+      expect(isDockOwnedPath(href)).toBe(true)
+    }
+  })
+
+  it("accepts a page below a destination — unlike isDockNavPath", () => {
+    // This is the whole point of the separate predicate: the framed /videos
+    // document navigating to /videos/some-lecture on its own should still
+    // read as framed, not trigger a breakout.
+    expect(isDockOwnedPath("/videos/some-lecture")).toBe(true)
+    expect(isDockOwnedPath("/doc/42")).toBe(true)
+  })
+
+  it("ignores a trailing slash, query string and hash", () => {
+    expect(isDockOwnedPath("/cards/")).toBe(true)
+    expect(isDockOwnedPath("/cards?q=nuclear")).toBe(true)
+    expect(isDockOwnedPath("/cards#top")).toBe(true)
+  })
+
+  it("rejects a tool the dock does not own", () => {
+    // A framed /videos document's tool-tree link to /coach — the case
+    // AppShell breaks out of the frame for.
+    expect(isDockOwnedPath("/coach")).toBe(false)
+    expect(isDockOwnedPath("/reason-editor")).toBe(false)
+    expect(isDockOwnedPath("/settings")).toBe(false)
+    expect(isDockOwnedPath("/")).toBe(false)
+    expect(isDockOwnedPath("")).toBe(false)
+  })
+
+  it("does not match a path that merely starts with a destination's name", () => {
+    expect(isDockOwnedPath("/cards-archive")).toBe(false)
+    expect(isDockOwnedPath("/documentation")).toBe(false)
   })
 })
 

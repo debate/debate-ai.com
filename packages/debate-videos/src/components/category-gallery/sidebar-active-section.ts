@@ -1,13 +1,11 @@
 /**
  * @fileoverview Which sidebar section holds a given route.
  *
- * The sidebar tree is an accordion: one section is open at a time, and a
- * closed section renders none of its links. That is what keeps the sidebar
- * to the content of wherever you actually are — clicking a dock button
- * navigates, and the section holding that destination is the one that opens.
- * Before this, every section rendered its links up front, so landing on
- * `/videos` mounted around fifty links and the router went and prefetched an
- * RSC payload for each of them while the video feed was still loading.
+ * The tree's sections expand independently and all start open, so this is no
+ * longer what decides which single section is visible — it is what a
+ * navigation *re-opens*: following a link into a section you had collapsed
+ * expands that section again rather than leaving you on a page whose nav is
+ * shut. Nothing else collapses.
  *
  * @module components/category-gallery/sidebar-active-section
  */

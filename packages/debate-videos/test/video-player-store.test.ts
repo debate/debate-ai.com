@@ -27,7 +27,7 @@ beforeEach(() => {
     activeVideoMeta: null,
     isMinimized: false,
     isPlaying: false,
-    isSlowMode: false,
+    playbackRate: 1,
     queue: [],
     startTime: 0,
     searchHandler: null,
@@ -218,10 +218,10 @@ describe("the player's own toggles", () => {
     expect(store().isPlaying).toBe(false);
   });
 
-  it("tracks slow mode, which outlives one video", () => {
-    store().setSlowMode(true);
+  it("tracks playback rate, which outlives one video", () => {
+    store().setPlaybackRate(0.65);
     store().setActiveVideo("vid1", "One");
-    expect(store().isSlowMode).toBe(true);
+    expect(store().playbackRate).toBe(0.65);
   });
 
   it("holds the search handler a host page registers, and lets it go", () => {
@@ -245,7 +245,7 @@ describe("restoreVideo", () => {
   it("puts back every part of a persisted snapshot", () => {
     store().restoreVideo("vid1", "Round 3", { year: 2024 }, {
       isMinimized: true,
-      isSlowMode: true,
+      playbackRate: 0.65,
       queue: [{ videoId: "vid2", title: "Next" }],
       savedTime: 125,
     });
@@ -254,7 +254,7 @@ describe("restoreVideo", () => {
       activeVideoTitle: "Round 3",
       activeVideoMeta: { year: 2024 },
       isMinimized: true,
-      isSlowMode: true,
+      playbackRate: 0.65,
       startTime: 125,
       isPlaying: true,
     });
@@ -264,7 +264,7 @@ describe("restoreVideo", () => {
   it("restores a video that carried no metadata", () => {
     store().restoreVideo("vid1", "Round 3", null, {
       isMinimized: false,
-      isSlowMode: false,
+      playbackRate: 1,
       queue: [],
       savedTime: 0,
     });

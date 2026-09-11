@@ -47,6 +47,7 @@ import {
 } from "../../lib/ui/primitives/dialog"
 import { useSession } from "@/lib/hooks/useSession"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
+import { urlWithoutParam } from "@/lib/reason-docs/route-selection"
 
 type Bridge = typeof import("debate-editor/collab-bridge")
 
@@ -110,9 +111,26 @@ async function joinSharedCard(
   }
 }
 
+/**
+ * Drops a one-shot query parameter from the address bar, keeping the rest of
+ * the URL — including the path, which names the open document.
+ *
+ * `history.replaceState` rather than the router: `/reason-editor` and
+ * `/reason-editor/<slug>` are separate Next routes, so a `router.replace`
+ * here would remount CardMirror over the reader mid-join.
+ */
+function dropQueryParam(param: string): void {
+  if (typeof window === "undefined") return
+  const next = urlWithoutParam(param, {
+    pathname: window.location.pathname,
+    search: window.location.search,
+    hash: window.location.hash,
+  })
+  if (next) window.history.replaceState(null, "", next)
+}
+
 /** Mount once per page. Handles `?share=<id>` and seeds the presence name. Renders nothing. */
 export function SharedCardOpener() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const { user, isAuthenticated } = useSession()
   const { createDocument, updateTitle, activeId } = useReasonDocs()
@@ -130,7 +148,11 @@ export function SharedCardOpener() {
     if (!shareParam || !isAuthenticated || handledRef.current === shareParam) return
     handledRef.current = shareParam
     // Strip the query first: a reload mid-join must not re-run the join.
-    router.replace("/reason-editor")
+    // In place, not `router.replace("/reason-editor")` — the path names the
+    // document the reader is on (see `lib/reason-docs/route-selection`), and
+    // routing back to the bare route would both lose that name and remount
+    // the editor under them.
+    dropQueryParam("share")
     void (async () => {
       const page = await fetchCardShares()
       const entry = page?.received.find((s) => String(s.id) === shareParam)
@@ -140,7 +162,7 @@ export function SharedCardOpener() {
       }
       await joinSharedCard(entry, { createDocument, updateTitle }, activeIdRef)
     })()
-  }, [shareParam, isAuthenticated, router, createDocument, updateTitle])
+  }, [shareParam, isAuthenticated, createDocument, updateTitle])
 
   return null
 }
@@ -176,8 +198,8 @@ export function ShareWithContacts({ title }: ShareWithContactsProps) {
     handledShareWithRef.current = shareWithParam
     setPicked(new Set([shareWithParam]))
     setOpen(true)
-    router.replace("/reason-editor")
-  }, [shareWithParam, router])
+    dropQueryParam("shareWith")
+  }, [shareWithParam])
 
   const sorted = useMemo(() => sortContacts(contacts.contacts), [contacts.contacts])
 

@@ -11,11 +11,14 @@ export const metadata: Metadata = {
 
 export default function FeaturesPage() {
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6">
-      <div className="mb-4">
+    // No page padding: the panel's hero is full-bleed, so its aurora backdrop
+    // and grid have to reach the edges. The Back link floats over the hero
+    // instead of pushing it down.
+    <div className="relative min-h-screen bg-background">
+      <div className="absolute top-3 left-3 z-20 sm:top-5 sm:left-5">
         <Link
           href="/videos"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border bg-card/80 backdrop-blur-sm hover:bg-accent text-sm font-medium text-foreground transition-colors"
           aria-label="Back to lectures"
         >
           <ArrowLeft className="h-4 w-4" />

@@ -42,6 +42,11 @@ import {
 import { recordPrepNoteAssignedNotification } from "./prepNoteNotifications";
 import { deleteRepliesForNote } from "./prepNoteReplies";
 
+
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
 const STORAGE_KEY = "prepNotes";
 
 function readAll(): PrepNote[] {
@@ -128,6 +133,7 @@ export function savePrepNote(note: PrepNote): void {
     notes[index] = note;
   }
   writeAll(notes);
+  mirrorToolRecordSave("prepNotes", note);
 }
 
 /**
@@ -137,6 +143,7 @@ export function savePrepNote(note: PrepNote): void {
 export function deletePrepNote(id: string): void {
   writeAll(readAll().filter((note) => note.id !== id));
   deleteRepliesForNote(id);
+  mirrorToolRecordDelete("prepNotes", id);
 }
 
 /**

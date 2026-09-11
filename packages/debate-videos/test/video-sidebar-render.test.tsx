@@ -133,6 +133,28 @@ describe("the sidebar's heading structure", () => {
     expect(html.indexOf(">College Debates<")).toBeLessThan(html.indexOf(">My Favorites<"));
   });
 
+  it("keeps every round-archive link on one level under Round Videos", () => {
+    // Policy / PF / LD / Greatest of All-Time used to be h3 leaves inside a
+    // College Debates node, one indent deeper than it. They are peers of it:
+    // same heading level, same indent, and no chevron on College Debates to
+    // collapse them out of view.
+    const html = renderSidebar();
+    for (const title of [
+      "College Debates",
+      "Policy Debates",
+      "PF Debates",
+      "LD Debates",
+      "Greatest of All-Time",
+      "My Favorites",
+    ]) {
+      expect(html).toMatch(new RegExp(`<h2[^>]*>${title}</h2>`));
+      expect(html).not.toMatch(new RegExp(`<span[^>]*>${title}</span>`));
+    }
+    // One expand control in the section — the Round Videos heading itself.
+    expect(html).not.toContain("Collapse College Debates");
+    expect(html).not.toContain("Expand College Debates");
+  });
+
   it("gives Lectures an h1 of its own, after the Round Videos section", () => {
     // Lectures used to hang off the Videos node as an h2 two levels in, which
     // read as a filter on the round archive rather than the other library.
@@ -182,9 +204,10 @@ describe("the sidebar's heading structure", () => {
     );
     for (const title of ["Coaching", "Research", "Practice"]) {
       expect(html).toMatch(
-        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
+        new RegExp(`<a[^>]*aria-expanded="true"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${title}</h1>`),
       );
     }
+    expect(html).not.toContain('aria-expanded="false"');
   });
 
   it("renders no Apps node restating the app dock", () => {
@@ -196,27 +219,28 @@ describe("the sidebar's heading structure", () => {
     expect(html).not.toContain('href="/tools"');
   });
 
-  it("renders no links for the sections it leaves closed", () => {
-    // The point of the accordion: a closed section costs no DOM and no link
-    // for the router to prefetch. Fifty of those fired on every /videos load.
+  it("renders every section's links, not just the route's", () => {
+    // There is no accordion left to leave anything closed: sections all
+    // start expanded and collapse independently, so one link from each is
+    // mounted on arrival.
     const html = renderSidebar();
-    expect(html).not.toContain("Coaching Programs");
-    expect(html).not.toContain("Evidence Library");
-    expect(html).not.toContain("Judge Paradigm Picker");
-    expect(html).not.toContain("All Tools");
-    // The open section's own links are all there.
+    expect(html).toContain("Coaching Programs");
+    expect(html).toContain("Evidence Library");
+    expect(html).toContain("Judge Paradigm Picker");
+    // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("PF Debates");
     expect(html).toContain("My Favorites");
   });
 
   it("keeps the glossary and rankings pair inside the Practice section", () => {
-    // They used to hang below the tree, outside every section. Now they are
-    // the tail of Practice, so on `/videos` — where Practice is closed —
-    // they cost no DOM, exactly like the tools they sit with.
-    // `tool-nav-tree-sections.test.tsx` pins that they are in fact there.
+    // They used to hang below the tree, outside every section. They are now
+    // the tail of Practice, and Practice — like every section — starts
+    // expanded, so they render with the tools they sit with rather than
+    // below the whole tree.
+    // `tool-nav-tree-sections.test.tsx` pins which section they belong to.
     const html = renderSidebar();
-    expect(html).not.toContain("Glossary of Terms");
-    expect(html).not.toContain("/videos/dictionary");
+    expect(html).toContain("Glossary of Terms");
+    expect(html).toContain("/videos/dictionary");
   });
 });
 
