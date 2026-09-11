@@ -22,6 +22,7 @@ import { AppFrameProvider, AppFrameSurface } from "@/components/layout/AppFrameP
 import { ReasonDocsProvider } from "@/components/reason-docs/ReasonDocsProvider"
 import { OneTap } from "@/components/layout/OneTap"
 import { ToolRecordSyncProvider } from "@/components/layout/ToolRecordSyncProvider"
+import { GlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
 import { isDockOwnedPath } from "@/lib/nav/dock-nav-paths"
@@ -61,6 +62,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {/* The tool panels run in this document, so the account mirror for
               their localStorage stores has to be switched on here too. */}
           <ToolRecordSyncProvider />
+          {/* Same reason: a framed document owns its own keyboard focus, so
+              the Ctrl/Cmd-Shift-Space listener has to live here too, not
+              just in the top-level shell below. */}
+          <GlobalCommandPalette />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
       </CategoryDockProvider>
@@ -91,6 +96,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       <VideoPlayerFrameBridge />
       <ToolRecordSyncProvider />
+      <GlobalCommandPalette />
       <ServiceWorkerRegistrar />
       {/* Sign-in and sign-out report through toasts; without a mounted
           toaster every one of those messages was dropped silently. */}
