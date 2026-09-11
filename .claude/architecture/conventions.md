@@ -2,83 +2,79 @@
 
 ## Language and style
 
-- TypeScript throughout, ESM. Rust only in `apps/debate-native-wrapper/src-tauri`.
+- TypeScript throughout, ESM. React for every UI package.
 - Match the surrounding file's style — naming, import order, comment density.
   There is no repo-wide formatter enforcing it in CI.
-- **This codebase documents heavily in file headers.** Most modules open with a
-  `@fileoverview` block that says what the module is for, which Known gap it
-  closes, and what it deliberately does *not* do. Write in that register: why,
-  not what, and name the doc page the change answers to.
-- Keep package boundaries clean: import a sibling from its public entry point.
+- **Comments explain why, not what.** The valuable comments here record a
+  constraint and its cause: why `keep_vars` must stay in `wrangler.jsonc`, why
+  `packages/README.md` is excluded from the Vitest projects, why the web app's
+  test project is registered inline with the `@/` alias. `vitest.config.ts` and
+  `wrangler.jsonc` are the house style — copy that register.
+- Keep package boundaries clean: import a sibling from its public entry point,
+  never from its internals or its `src/`. The edges between the `debate-*`
+  packages are documented in [overview.md](overview.md) — adding a new one is a
+  decision, not a detail.
 
 ## Commits
 
-Gitmoji + conventional commits, lowercase subject, imperative mood:
+Gitmoji + conventional commits, lowercase subject, imperative mood. Recent
+history is the reference:
 
 ```
-✨ feat(videos): read transcripts as sentences, cache them in D1
-🐛 fix(reason-editor): stop the DOM-only dependency builds that 500 the homepage
-⏰ feat(videos): make the weekly cron refresh view counts, not just scan
-🔗 feat(reason-docs): address documents by name, not by id
-📝 docs(ci): record the lockfile outage blocking every job
+✨ feat(nav): make Ctrl/Cmd-Shift-Space a real app-wide command palette
+⏰ feat(videos): make the weekly cron refresh view counts, not just scan for new videos
+🐛 fix(cards): repair the merge that crashed /cards and /reason-editor
+🐛 fix(shell): bound each chrome region so one crash can't 500 a route
 ```
 
-Scope is the package or feature area. Version-bump commits are generated — do not
-write them by hand.
+Scope is the package or surface name without its `debate-` prefix.
 
 ## Pull requests
 
 - Target `master`. One concern per PR; no drive-by refactors.
-- Say what changed, why, and which packages are affected.
-- Link issues with `Fixes #123`; screenshots for UI changes.
+- Say what changed, why, and which packages are affected — especially if you
+  touched `debate-ui`, `debate-search-evidence` or `debate-round`, which several
+  packages build on.
+- **Say explicitly if you changed `apps/debate-web-ext` or
+  `apps/debate-native-wrapper`** — they are outside the workspace, so nothing in
+  the root CI will catch a break.
+- Include test results; screenshots for UI changes.
 - If you could not run a check, say so and why.
 
-## Tests and type-checking
+## Tests
 
-```bash
-bun run typecheck    # turbo typecheck across every package — a CI gate
-bun run test         # vitest
-bun run coverage     # vitest + coverage, as CI runs it
-bun run build        # turbo build
-```
-
-`typecheck` blocks CI just as hard as the test suite, and it is the faster of the
-two — run it first. The root `test` script points at
-`apps/debate-ai.com/vitest.config.ts`, which is where the suite is configured.
-
-Add or update tests for every behaviour change and bug fix. Tests run under Node;
-passing tests do **not** prove the code runs on a Cloudflare Worker.
+- Add or update tests for every behaviour change and bug fix.
+- **Package tests go in `packages/<dir>/test/`.** App tests go in
+  `apps/debate-ai.com/lib/**/__tests__/`. Anywhere else and nothing runs them.
+- One Vitest config for the whole repo, at `apps/debate-ai.com/vitest.config.ts`
+  — see [monorepo.md](monorepo.md). Don't add another.
+- `bun run typecheck && bun run coverage` is exactly what CI runs.
+- Tests run under Node. Passing tests do **not** prove the code runs on a
+  Cloudflare Worker; see [web-app.md](web-app.md).
 
 ## CI
 
 | Workflow | Trigger | What it guards |
 | --- | --- | --- |
-| `test.yml` | push to master, PR | `bun run typecheck` then `bun run coverage`, uploaded to Codecov |
-| `native-wrapper-ci.yml` | changes to the wrapper | Builds the Tauri app |
-| `native-wrapper-release.yml` | release | Signs and publishes desktop/mobile builds |
-| `npm-release.yml` | push to master | Publishes changed public packages |
-| `auto-merge-*.yml` | schedule / PR | Merges PRs that are clean, approved and green |
+| `test.yml` | push to `master`, PR | `bun install --ignore-scripts`, `bun run typecheck`, `bun run coverage`, upload to Codecov |
+| `npm-release.yml` | manual (`workflow_dispatch`, with a dist-tag input) | Publishes **`debate-api-client`** — the only published package |
+| `native-wrapper-ci.yml` / `native-wrapper-release.yml` | — | `apps/debate-native-wrapper` (Tauri), which the root CI never touches |
+| `auto-merge-claude.yml` | PR | Auto-merge/approve on Claude PRs |
+| `auto-merge-and-create-prs.yml` | schedule | Merges eligible PRs, opens PRs for branches without one |
 
-CI installs with `bun install --ignore-scripts` and `bun-version: 1.3.11`. A
-lockfile that only converges under a different bun will fail the Cloudflare build.
+## Publishing
 
-## Security
+Only `debate-api-client` publishes, and only when someone runs the workflow by
+hand with a dist-tag. Everything else is `"private": true`.
 
-- Never commit secrets, credentials, API keys, private keys or build output.
-  `public/docs` and other generated output are gitignored — keep it that way.
-- Worker secrets go through `wrangler secret put` (see
-  `apps/debate-ai.com/setup-secrets.sh`), not `vars` and not the repo. Plaintext
-  dashboard Variables survive deploys only because of `keep_vars` — see
-  [web-app.md](web-app.md).
-- The license is PROSPER (`LICENSE.md`); contributions are under it.
+## Security and user data
 
-## Agent-specific rules
-
-- Do not create a root `docs/` folder — see [documentation.md](documentation.md).
-- Update **both** the `features/` page and the `internals/` note for any
-  behaviour change, and close the Known gap you actually closed.
-- Do not run `npm`/`yarn`/`pnpm` at the repo root.
-- `app/` routes and `/api` handlers should stay thin; put logic in a package.
-- When adding a localStorage-backed tool, check whether it needs an entry in
-  `TOOL_RECORD_COLLECTIONS` so it syncs across devices — see
-  [overview.md](overview.md).
+- Never commit secrets, credentials or API keys. Worker secrets go in via
+  `wrangler secret put` (`apps/debate-ai.com/setup-secrets.sh` helps).
+- **This product's users include minors** — high-school debaters. Team rosters,
+  prep notes, speech recordings and round history are personal data. Do not add
+  logging that captures speech content, recordings, or identifiable round data,
+  and do not widen a sharing default.
+- Uploaded evidence files (`.docx`, including encrypted Verbatim files) are
+  untrusted input. `debate-card-parser` and `debate-editor` parse them — treat
+  malformed and hostile documents as expected, not exceptional.

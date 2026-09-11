@@ -1,104 +1,73 @@
-# Documentation — Where It Goes
+# Documentation
 
-All prose documentation lives in the user guide package,
-**`packages/debate-help-docs/content/docs`**. There is deliberately **no root
-`docs/` folder**; one existed, its contents were folded into the user guide, and
-recreating it splits the documentation in two again — only the help-docs site is
-actually published.
+## Where it lives
 
-## The two tiers
+| If it is… | It goes in… |
+| --- | --- |
+| A guide a debater or contributor would read | `packages/debate-help-docs` |
+| A feature, for someone using it | `packages/debate-help-docs/content/docs/features/` |
+| A feature, for someone changing its code | `packages/debate-help-docs/content/docs/internals/` |
+| What a package is and what it depends on | `packages/README.md` — the index everyone reads first |
+| How to use one package | That package's own `README.md` |
+| How an agent should work in a package | That package's `CLAUDE.md` |
+| Repo-wide agent orientation | root `CLAUDE.md` + `.claude/architecture/` |
 
-Each feature gets two pages, in two sections, written for two readers:
+## `/docs` is built into the app, not deployed separately
+
+`packages/debate-help-docs` is a Fumadocs site, but it is **not** deployed on its
+own. It is statically exported under `basePath: '/docs'` and copied into the web
+app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`, which runs
+as the **first stage of the app's build** (`bun run build` → `build:docs` →
+`vinext build` → `build:sw`).
+
+Two consequences:
+
+- A docs change only appears after a full app build. Running `vinext build`
+  alone leaves the old export in `public/docs`.
+- It publishes both docs tiers **and the package READMEs**. So a package README
+  is user-facing documentation here — write it that way, and keep
+  `packages/README.md` current when a package's purpose or dependencies change.
+
+`debate-help-docs` is excluded from the Vitest projects (it is a site, not a
+tested library), so nothing in the test run will tell you the docs build broke.
+
+## Every feature has two docs
+
+There is no root `docs/` folder — it was folded into the help-docs package, so
+the repo has one docs home. Each feature gets two pages there, for two readers:
 
 | Section | Reader | Shape |
 | --- | --- | --- |
-| `content/docs/features/<name>.mdx` | Someone using the app | ~35 lines: what it does, where it is, what it is for |
+| `content/docs/features/<name>.mdx` | Someone using the app | ~35 lines: what it does and what it is for |
 | `content/docs/internals/<name>.mdx` | Someone changing the code | ~300 lines: route/package/component, exact behaviour, the data-flow chain, Known gaps |
 
-Plus `content/docs/guides/` (task-oriented walkthroughs) and
-`content/docs/packages/` (one page per workspace package).
-
 **Change behaviour, update both.** The internals page is what source comments
-point at — `packages/debate-help-docs/content/docs/internals/<name>.mdx`'s "Known
-gaps" is cited from ~150 places in the code, and closing a gap means editing that
-list, not just the code.
+point at — its "Known gaps" list is cited from ~150 places in the code, and
+closing a gap means editing that list, not just the code.
 
-### The internals page shape
+### Two MDX traps, both of which have broken the build
 
-```markdown
----
-title: "..."
----
+These pages were folded in from plain `.md`, where neither is an error:
 
-# ...
+- **A backslash does not escape a backtick inside a code span.** Writing
+  ``` `a \`b\` c` ``` ends the span at the first inner backtick; whatever
+  follows lands in prose, and MDX compiles `{...}` there as JSX. That threw
+  `ReferenceError: kind is not defined` during `next build` and took down every
+  Cloudflare Workers build of the app. Use a double-backtick span instead:
+  ``` ``a `b` c`` ```.
+- **A bare `{` or `<` outside a code fence is JSX.** Wrap identifiers and
+  placeholders in backticks — `` `<aside>` ``, `` `{url}` ``.
 
-- **Route:** /summaries
-- **Package:** debate-round
+Since `debate-help-docs` is excluded from the Vitest projects, neither shows up
+in the test run. `cd packages/debate-help-docs && npx next build` prerenders
+every page and is the only check that catches them.
 
-## What it shows
-## Data flow          ← the call chain, state file → selector → panel → route
-## Known gaps         ← what is deliberately not done yet
-```
+## The API spec
 
-Keep it. Both the "Known gaps" convention and the data-flow block are load-bearing
-— they are how a later change finds what it is meant to close.
+`apps/debate-ai.com/public/debate-openapi.yml` is the source of truth for the
+API, and `packages/debate-api-client` is **generated from it** with Hey API. To
+change the client, change the route and the spec, then regenerate — never
+hand-edit the generated SDK.
 
-## Adding a page
-
-1. Write the `.mdx` with frontmatter — `title` is required by `frontmatterSchema`
-   in `source.config.ts`. This repo keeps an `# H1` as well as the frontmatter
-   title; match that.
-2. Add the slug to `meta.json` in that directory (the root `meta.json` uses
-   `...<section>` spreads, so a new *page* in an existing section only needs the
-   section's own meta; a new *section* needs a `---Label---` separator and a
-   `...<section>` entry at the root).
-3. MDX rules apply: a bare `{` or `<` outside a code fence is parsed as JSX. Wrap
-   identifiers and placeholders in backticks — `` `<aside>` ``, `` `{url}` ``.
-   Backticks are the only escape that works: a backslash does **not** escape a
-   backtick inside a code span, so `` `a \` b` `` ends the span at the
-   backslashed backtick and spills the rest into JSX. Quote a snippet that
-   itself contains backticks with a longer fence — ``` `` `${x}` `` ``` — and
-   prefer a fenced block for anything multi-line.
-4. Links must work **on the published site**, so filesystem-relative links into
-   the repo (`../../packages/...`) do not resolve. Link to GitHub
-   (`https://github.com/debate/debate-ai.com/blob/master/...`) or to another docs
-   page.
-
-## How docs reach `/docs`
-
-`packages/debate-help-docs` is its own Next app, statically exported
-(`output: 'export'`, `basePath: '/docs'`) — every page is prerendered, so the site
-is a folder of files with no server behind it.
-
-```
-packages/debate-help-docs   →  next build (export)  →  out/
-  → apps/debate-ai.com/scripts/build-docs.mjs
-  → apps/debate-ai.com/public/docs/        (gitignored build output)
-  → wrangler assets.directory → served at /docs
-```
-
-The Worker's static-asset binding answers `/docs/...` before the request reaches
-the app's router. `SKIP_DOCS_BUILD=1` reuses an existing `out/`.
-
-## Linking from the app into the docs
-
-`apps/debate-ai.com/lib/docs-links.ts` builds every in-app docs link. Tool page
-headers and both workspace hubs use it, and the link targets come from
-`APP_FEATURES` in the feature catalog (`lib/ui/features/feature-catalog.ts`, and
-its copies in `debate-ui` and `debate-contributor-progress`). A feature's `doc`
-field is the file name under `content/docs/features/`.
-
-Links are same-origin by default because the docs ship inside the app;
-`NEXT_PUBLIC_DOCS_URL` overrides only the origin for a separately-deployed site.
-
-## Docs that stay next to their code
-
-Two exceptions, deliberately not in the user guide:
-
-- `apps/debate-native-wrapper/docs/` — build, platform, app-store and OAuth notes
-  for the Tauri wrapper. Heavily cross-linked and referenced from the release
-  workflow; they travel with that app.
-- `packages/debate-round-practice-ai/` — a vendored sub-app with its own
-  `REPOSITORY_GUIDE.md` and `cf-app/docs/`.
-
-Everything else belongs in `packages/debate-help-docs/content/docs`.
+The spec is also what's served at
+[debate-ai.com/api/api-docs](https://debate-ai.com/api/api-docs).

@@ -48,9 +48,6 @@ next-env.d.ts
 src/sw/app-file-list.ts
 src/sw/version.ts
 public/service-worker.js
-.claude/*
-# Architecture notes for Claude agents — checked in on purpose (see CLAUDE.md)
-!.claude/architecture
 pnpm-lock.yaml
 open-when-ready.log
 # Generated video seed SQL (regenerate with `bun run db:seed:videos`)
@@ -74,3 +71,10 @@ apps/debate-ai.com/public/docs/
 # WXT browser extensions: build output and generated types
 apps/*/.output/
 apps/*/.wxt/
+
+.claude/*
+# Agent docs for Claude Code — checked in on purpose (see CLAUDE.md)
+!.claude/architecture
+!.claude/settings.json
+.claude/settings.local.json
+CLAUDE.local.md

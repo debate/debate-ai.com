@@ -1,80 +1,88 @@
 # Architecture Overview
 
-One Next.js app on Cloudflare Workers, two secondary shells, and sixteen
-`debate-*` packages that hold nearly all the behaviour. The app is mostly routing,
-API handlers and the database; when a feature "isn't working", the code is
-usually in a package.
+One product, three shells, sixteen libraries. Almost every behaviour a debater
+can see is implemented in a `packages/debate-*` library and merely *mounted* by
+a route in `apps/debate-ai.com`. Finding the owning package is the first step of
+nearly every task here.
 
 ## The product
 
-Five product areas, all sharing one account and one D1 database:
+Tooling for competitive debate (Public Forum, Lincoln-Douglas, Policy), in four
+named surfaces:
 
-- **CARDS** — crowdsourced annotated evidence: full-text search over tagged cards,
-  AI annotation and highlighting, citation formatting, `.docx` import.
-- **FIAT** — the round workspace: a multi-column flow spreadsheet, shareable round
-  URLs, speech docs, format-aware timers, judge decisions, collaboration.
-- **LEARN** — the archive: ~1,400 college NDT rounds back to 1995, ~900
-  instructional videos, a 200-term dictionary, team rankings.
-- **STREAM** — web search with extraction and an answer model (the QwkSearch
-  integration, `lib/qwksearch`).
-- **REASON** — `/reason-editor` and every speech-doc panel, running on
-  `packages/debate-editor` — the ported CardMirror ProseMirror engine, ~500
-  editing commands, lossless Verbatim `.docx` round-trip, CRDT collaboration.
+- **CARDS** — crowdsourced annotated research: evidence search, card scoring,
+  review queue, topic coverage, and the CardMirror editor with lossless Verbatim
+  `.docx` round-trip.
+- **FIAT** — the live round workspace: an ag-Grid flow spreadsheet, column
+  navigation and split view, round setup, speech docs, export and history.
+- **LEARN** — the video library: search, grids, a persistent YouTube player with
+  picture-in-picture, lecture pages, rankings.
+- **Practice** — drills, AI coach mode, AI judging, and a full timed round
+  against an AI opponent at `/versus-ai`.
 
-## Apps
+## Shells
 
-| App | Stack | Owns |
+| Shell | Workspace? | Stack |
 | --- | --- | --- |
-| `apps/debate-ai.com` | Next.js + vinext → Cloudflare Worker, D1 via Drizzle | The deployed product: ~44 `/api` routes, auth, schema, migrations, the offline service worker. See [web-app.md](web-app.md). |
-| `apps/debate-native-wrapper` | Tauri (`src-tauri/`), profile-driven | Desktop and mobile wrappers around the site. Build, platform, store and OAuth notes live in its own `docs/` next to the code it describes. |
-| `apps/debate-web-ext` | WXT browser extension | `entrypoints/` — the in-page card capture surface. |
+| `apps/debate-ai.com` | **yes** | Next.js + vinext → Cloudflare Workers, D1 via Drizzle. The deployed product. See [web-app.md](web-app.md). |
+| `apps/debate-web-ext` | no | Browser extension: round timer with prep clocks |
+| `apps/debate-native-wrapper` | no | Generic Tauri wrapper packaging the site as a native app |
 
-Only `packages/*` and `apps/debate-ai.com` are in the root workspace globs; the
-other two apps are built from their own directories.
+The two non-workspace apps have their own CI (`native-wrapper-ci.yml`,
+`native-wrapper-release.yml`) and are not installed by a root `bun install`.
 
 ## Packages
 
-| Package | Owns |
-| --- | --- |
-| `debate-editor` | CardMirror: the ProseMirror engine, `.docx`/`.cmir` interop, the `cardmirror-read` CLI/MCP tool, the React editor shell |
-| `debate-flow` | The flow sheet — columns, cells, annotations, cloud save |
-| `debate-round` | Rounds, flow summaries, judge decisions, round records |
-| `debate-practice-drills` | Drill sets, practice rounds, coaching sessions, the argument tree |
-| `debate-search-evidence` | Evidence search, card library, on-page reuse search |
-| `debate-speech-writer` | Speech docs, coach materials, judge profiles, opponent personas |
-| `debate-team-collaboration` | Prep rooms, invites, shared flow sync, presence |
-| `debate-contributor-progress` | (npm `debate-community`) leaderboard, news stream, awards, quests |
-| `debate-videos` | The video library, transcripts, category galleries, sidebar routes |
-| `debate-round-practice-ai` | The AI practice opponent, plus its own `cf-app/` Worker |
-| `debate-card-parser` | Verbatim `.docx` / HTML → structured cards with cites |
-| `debate-data-sync` | Bundled data assets and the scripts that refresh them |
-| `debate-api-client` | Typed SDK generated from the OpenAPI spec, over `grab-url` |
-| `debate-timer` | Format-aware prep and speech timers |
-| `debate-ui` | Shared primitives, the app dock, the feature catalog |
-| `debate-help-docs` | The Fumadocs documentation site. See [documentation.md](documentation.md). |
+Everything is private except `debate-api-client`.
 
-`debate-contributor-progress`, `debate-search-evidence` and
-`debate-team-collaboration` were split out of a former `debate-card-search`, and
-still depend on each other — a change in one often needs the others rebuilt.
+| Directory | Package name | Owns |
+| --- | --- | --- |
+| `debate-api-client` | *(same)* | **Published.** Typed SDK generated from `apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through **`grab-url`**, not fetch/axios, so every operation gets caching, retries, rate limiting and dedupe. Resolves to `{ data?, error? }` — **never throws on an HTTP error.** |
+| `debate-card-parser` | *(same)* | Verbatim `.docx` and HTML → structured cards with citations and highlighting |
+| `debate-contributor-progress` | `debate-community` | Leaderboard, news stream, awards, daily best card, progress unlocks, quest streaks, daily quests |
+| `debate-data-sync` | *(same)* | Bundled data assets (metadata, videos, schemas) + the sync scripts; shared record types like `OpponentTeamProfile` |
+| `debate-editor` | *(same)* | CardMirror: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
+| `debate-flow` | `debate-flow-ebb` | `ebb`, the local-first keyboard-first flow editor. `EbbFlowEmbed` mounts it as one column of a host page. |
+| `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
+| `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, judge paradigm picker, AI judge decision, opponent personas, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
+| `debate-round` | *(same)* | FIAT: ag-Grid flow spreadsheet, column nav and split view, round setup dialogs, speech doc panels, export/history, flow and settings stores, plus the roster panels that render persisted practice records |
+| `debate-round-practice-ai` | `debate-practice-vs-ai` | `/versus-ai`: a Node/TS port of the Go `arguehub` vs-bot backend (13 bot personalities, prompt construction, AI judging, gamification) + the React round UI. Plain `fetch`; no Go/Mongo/Gin. |
+| `debate-search-evidence` | `debate-research-evidence` | Search bar, result list, card viewer, research and AI-analysis sidebars, the shared evidence/argument library, LLM card scoring, revision incentives, review queue, topic coverage dashboard |
+| `debate-speech-writer` | *(same)* | The AI prompt library: flow extraction, judge decisions, flaw finding, research outlines, batch quote analysis |
+| `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |
+| `debate-timer` | *(same)* | Speech and prep timers with per-format speech times; in-round recorder with mic selection, live waveform, playback |
+| `debate-ui` | *(same)* | shadcn/Radix primitives, the custom icon set, the site footer, `cn` and URL-state helpers |
+| `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, rankings |
 
-## How a feature is wired
+## The dependency edges
 
-Most tool features follow the same shape, and both docs for a feature describe it
-in these terms:
+These are real and they are the reason a "small" change can ripple. Know them
+before adding another.
 
 ```
-packages/<pkg>/src/state/<thing>.ts          localStorage, the source of truth
-  → build<Thing>PanelView()                  a pure selector
-  → packages/<pkg>/src/panels/<Thing>Panel.tsx
-  → apps/debate-ai.com/app/<route>/page.tsx  a thin route that renders the panel
+debate-ui ──────────────► everything (primitives, icons, cn)
+
+debate-search-evidence ──┬─► debate-contributor-progress
+                         └─► debate-team-collaboration
+        (both were split out of the old debate-card-search and still build on it)
+
+debate-round ────────────► debate-team-collaboration
+                           (prep notes and notifications moved out of debate-round)
+
+debate-practice-drills ──► debate-round, debate-speech-writer, debate-timer,
+                           debate-search-evidence, debate-contributor-progress
+
+debate-flow ─────────────► embedded by debate-round (EbbFlowEmbed)
 ```
 
-Account sync is layered on top rather than replacing it: `POST/GET
-/api/tool-records/[collection]` stores one `saved_tool_records` row per (user,
-collection, record) so a localStorage-backed tool becomes cross-device without
-its panel changing shape. `collection` is an allowlist key from
-`TOOL_RECORD_COLLECTIONS` — adding a synced tool means adding an entry there, not
-a new route.
+`debate-search-evidence` and `debate-round` are the two load-bearing packages:
+changing their public exports moves several others. `debate-ui` is load-bearing
+in a different way — it is cheap to change and expensive to get wrong, because
+every surface renders it.
 
-When you change a panel, check whether its state is in that sync allowlist; a new
-field that never reaches D1 is the most common half-finished change here.
+## `debate-api-client` never throws
+
+Worth stating on its own, because it inverts the usual habit: every operation
+resolves to `{ data?, error? }`. A `try/catch` around a call is dead code, and
+code that assumes a rejected promise on a 4xx will silently treat an error as
+success. Check `error` first.

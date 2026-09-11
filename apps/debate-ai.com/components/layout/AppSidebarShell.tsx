@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { RESEARCH_SECTION_ID, ToolNavTree, ToolSidebarFooter } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
+import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
 import { showsCardsOnlySidebar, showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
 
@@ -54,21 +55,35 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
           own contents, so it can't reach across the border onto the page —
           a CardMirror editor, on `/reason-editor` and `/doc`. */}
       <aside data-app-chrome className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
-        <CategoryDock embedded />
+        {/* Each region is bounded separately. This whole `<aside>` renders
+            from the root layout, so before the boundaries a throw in any one
+            of these unmounted the entire document — and on the server failed
+            the render, answering 500 with no shell and no page (see
+            `chrome-error-boundary.tsx`). Now the sidebar loses the panel that
+            broke and keeps the rest, and the page below renders either way. */}
+        <ChromeErrorBoundary label="CategoryDock">
+          <CategoryDock embedded />
+        </ChromeErrorBoundary>
         {/* Above the nav tree rather than below it: the tree is long enough
             (a section auto-expands to show where you are) that anything under
             it starts below the fold, and on /reason-editor these panels are
             the page's primary navigation. Absent entirely on the routes that
             are about something else, so their sidebar is only their own nav. */}
-        {showsReasonDocsPanels(pathname) && <ReasonDocsSidebarPanels className="shrink-0" />}
-        {cardsOnly ? (
-          <ToolNavTree sectionIds={CARDS_SIDEBAR_SECTIONS} />
-        ) : (
-          <>
-            <ToolNavTree />
-            <ToolSidebarFooter />
-          </>
+        {showsReasonDocsPanels(pathname) && (
+          <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
+            <ReasonDocsSidebarPanels className="shrink-0" />
+          </ChromeErrorBoundary>
         )}
+        <ChromeErrorBoundary label="ToolNavTree">
+          {cardsOnly ? (
+            <ToolNavTree sectionIds={CARDS_SIDEBAR_SECTIONS} />
+          ) : (
+            <>
+              <ToolNavTree />
+              <ToolSidebarFooter />
+            </>
+          )}
+        </ChromeErrorBoundary>
       </aside>
       <div className="min-w-0 flex-1">{children}</div>
     </div>

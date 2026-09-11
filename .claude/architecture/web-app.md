@@ -1,96 +1,100 @@
-# `apps/debate-ai.com` — The Deployed Product
+# The Web App — `apps/debate-ai.com`
 
-Next.js (App Router) compiled by **vinext** and deployed to a **Cloudflare
-Worker** (`debate-ai-com`). Everything a user touches ships through here.
+The deployed product. Next.js (App Router) built by **vinext** and run on
+**Cloudflare Workers**.
 
-## Layout
+## Shape
 
 ```
-app/                 ~45 routes, one per tool, each thin
-  api/               ~44 route handlers
-components/          app-level composition (layout, hubs, tool headers)
-lib/                 the app's own logic
-  auth/              Better Auth, trusted origins, OAuth state
-  database/          Drizzle schema (~1,400 lines), D1 session, request context
-  cardmirror/ videos/ youtube/ qwksearch/ reason-docs/ topic-starters/
-  nav/ layout/ ui/ hooks/ offline-sw/ native/
-drizzle/             D1 migrations + seed SQL
-scripts/             build-docs, migrate-d1, seed-videos, deploy-upload
-worker/index.ts      Worker entry: fetch handler + scheduled handler
-wrangler.jsonc       bindings, cron triggers, production env
+apps/debate-ai.com/
+  app/             routes + route handlers
+  components/      app-local UI (shadcn; components.json)
+  lib/             app libraries — including the D1 read-replication session
+                   wrapper and the offline service-worker generator
+  data/            app data
+  drizzle/         migrations (+ drizzle/seed)
+  worker/index.ts  the Workers entrypoint
+  wrangler.jsonc   bindings, crons, vars
+  public/debate-openapi.yml   the spec debate-api-client is generated from
+  scripts/         build-docs, migrate-d1, seed-videos, deploy-upload
+  vitest.config.ts the whole repo's Vitest config (see monorepo.md)
 ```
 
-Route handlers stay thin — parsing, auth, a Drizzle call. Feature logic belongs
-in a `packages/debate-*` library.
+Three TypeScript configs, and they are not interchangeable: `tsconfig.json`,
+`tsconfig.typecheck.json` (what `bun run typecheck` uses) and `tsconfig.sw.json`
+(the service worker).
 
-## Worker entry
+## The build has three stages
 
-`worker/index.ts` does four things beyond serving the app:
+```bash
+bun run build    # build:docs → vinext build → build:sw
+```
 
-- image optimization (`vinext/server/image-optimization`);
-- opens the per-request database context and D1 session;
-- runs the **weekly cron** (`0 8 * * 1`) — `runWeeklyYouTubeSync`, which refreshes
-  view counts as well as scanning for new videos;
-- purges old evidence-reuse-check log rows.
+1. **`build:docs`** (`scripts/build-docs.mjs`) statically exports
+   `packages/debate-help-docs` and copies it into `public/docs`. See
+   [documentation.md](documentation.md).
+2. **`vinext build`** — the app itself.
+3. **`build:sw`** — generates the offline service worker
+   (`lib/offline-sw/generate.cjs`), bundles it with **webpack**
+   (`webpack.config.cjs`), and copies it to `dist/client/service-worker.js`.
 
-A cron trigger is declared **twice** in `wrangler.jsonc` — top level and again
-under `env.production`. Named envs do not inherit triggers or bindings, so
-anything production needs has to be repeated there. The same is true of
-`keep_vars`, `images` and `d1_databases`.
+A `vinext build` on its own produces an app with **stale docs and no service
+worker**. Use `bun run build`.
+
+`preview` raises the heap (`--max-old-space-size=4096`) and then runs
+`wrangler dev` — the build is memory-hungry enough to need it.
+
+## Bindings and crons
+
+| Binding | What it is |
+| --- | --- |
+| `debate_db` | D1 database `debate-ai-db` |
+| `ASSETS` | The client bundle |
+| `IMAGES` | Cloudflare Images |
+
+`keep_vars` is set on purpose: **without it, every `wrangler deploy` deletes the
+plaintext Variables**. Do not remove it.
+
+A weekly cron (Mondays 08:00 UTC) does YouTube maintenance — scanning the
+subscribed channels for new videos *and* refreshing view counts on existing
+ones.
 
 ## Database
 
-D1 (`debate-ai-db`, binding `debate_db`) through Drizzle. Schema in
-`lib/database/schema.ts`.
+Drizzle + D1, with **two configs**:
+
+- `drizzle.config.ts` — the local/dev config
+- `drizzle.d1.config.ts` — D1, used by `db:push:d1`
 
 ```bash
-bun run db:generate       # drizzle-kit generate — migration from schema
-bun run db:migrate:d1     # scripts/migrate-d1.ts, also run by `deploy`
+bun run db:generate        # after editing the schema
+bun run db:push
 bun run db:push:d1
-bun run db:seed:videos:d1
+bun run db:migrate:d1      # scripts/migrate-d1.ts — runs first in `deploy`
 bun run db:studio
+bun run db:seed:videos
+bun run db:seed:videos:d1  # emits SQL, then wrangler d1 execute --remote
 ```
 
-Edit `schema.ts` → `db:generate` → commit the SQL in `drizzle/` → migrate. Never
-hand-edit an applied migration.
+**Never edit an applied migration.** Change the schema, regenerate, commit the
+new file in `drizzle/`.
 
-**Read replication** works exactly as in the sibling qwksearch repo: the Worker
-opens a D1 session per request, `sessionedD1()` wraps the binding so every Drizzle
-statement joins it, and `applyD1Bookmark` writes the closing bookmark onto the
-response. Outside a session scope the wrapper is a pass-through.
-`runWithPrimaryD1Session` forces the primary where a replica read would be wrong.
+Note `deploy` runs `db:migrate:d1` **before** building — a deploy migrates
+production. Know what is in the migration directory before you run it.
 
-## Auth
-
-**Better Auth** over the Drizzle/D1 adapter — `oneTap`, `openAPI`, `magicLink`,
-`anonymous` and `oneTimeToken` plugins, Resend for mail. Trusted origins and
-allowed hosts are built in `lib/auth/hosts.ts`; the native wrapper's custom URL
-scheme (`debateai://`) hands a session back to the app window through the OAuth
-flow, so host handling is not purely web.
-
-## Build and deploy
+## Deploy
 
 ```bash
-bun run build      # build:docs → vinext build → build:sw
-bun run deploy     # db:migrate:d1 → build → vinext deploy --skip-build
-bun run preview    # vinext build + wrangler dev
+bun run deploy            # db:migrate:d1 → build → vinext deploy --skip-build
+bun run deploy:staging    # same, --env staging
+bun run preview           # local wrangler dev against the real build
 ```
 
-Three things make that build longer than a plain Next build:
+`setup-secrets.sh` is the helper for Worker secrets. Secrets are never committed.
 
-1. **`build:docs`** static-exports `packages/debate-help-docs` and copies it into
-   `public/docs`. `public/docs` is build output and gitignored. Set
-   `SKIP_DOCS_BUILD=1` to reuse an existing export while iterating on the app.
-2. **`build:sw`** generates and webpacks the offline service worker, then copies
-   it into `dist/client`.
-3. `deploy` migrates D1 **before** building, so a failed migration stops the
-   release rather than half-applying it.
+## Testing against Workers
 
-## Workers-runtime rules
-
-- No filesystem, no `import.meta.url` path resolution at module scope.
-- No runtime code generation (`new Function` throws `EvalError`).
-- `keep_vars: true` is load-bearing: this config declares no `vars`, so without it
-  a deploy would wipe the plaintext Variables set in the Cloudflare dashboard.
-  It has to be repeated inside `env.production`.
-- Tests run under Node and will happily pass code that cannot run on a Worker.
+Tests run under Node. **Passing tests do not prove the code runs on a Worker.**
+The app's own test project only covers `lib/**/__tests__` — routes, the worker
+entrypoint and the service worker are not covered by anything. Exercise those
+with `bun run preview` before shipping.
