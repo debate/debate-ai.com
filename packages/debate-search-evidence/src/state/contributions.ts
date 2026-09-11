@@ -337,7 +337,7 @@ export function listContributionTags(): string[] {
  * `argument-library.ts`'s pure `renameTagInList` per contribution — the
  * Contributions Feed half of the tag rename/merge tool, which used to rewrite
  * only `evidenceLibraryEntries.ts`'s own entries (a gap recorded in
- * `docs/features/evidence-library.md`). Returns the number of contributions
+ * `packages/debate-help-docs/content/docs/features/evidence-library.mdx`). Returns the number of contributions
  * changed, writing back only when at least one actually changed. Throws on a
  * blank or unchanged tag pair, matching `renameTagAcrossCards`.
  */

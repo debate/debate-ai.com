@@ -23,7 +23,11 @@ import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
-interface SyncRun { id: number; status: "running" | "success" | "error"; channelsSynced: number; videosUpserted: number; error: string | null; }
+interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
+// `youtube_sync_runs.triggered_by` for a run the weekly cron started rather
+// than an admin — the sentinel written by lib/youtube/weekly-sync.ts. Repeated
+// here as a literal so this client component does not import that server module.
+const CRON_TRIGGERED_BY = "cron";
 interface ViewCountStatus { publishedVideos: number; queuedVideos: number; }
 interface Overview { stats: { users: number; sessions: number; files: number; publishedVideos: number; stagedVideos: number }; recentUsers: Array<{ id: string; name: string; email: string; image: string | null; createdAt: string; isAnonymous: boolean }>; }
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
@@ -274,7 +278,8 @@ export function AdminDashboard() {
           <CardTitle>Resync YouTube rounds</CardTitle>
           <CardDescription>
             Refetches every subscribed channel from YouTube, re-classifies rounds, and
-            upserts them into the database.
+            upserts them into the database. Runs automatically every Monday at 08:00 UTC;
+            this button is for when you do not want to wait.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
@@ -284,7 +289,8 @@ export function AdminDashboard() {
             </Button>
             {lastRun && (
               <span className="text-muted-foreground text-sm">
-                Last run: {lastRun.status === "error" ? "failed" : "success"}
+                Last run{lastRun.triggeredBy === CRON_TRIGGERED_BY ? " (scheduled)" : ""}:{" "}
+                {lastRun.status === "error" ? "failed" : "success"}
                 {lastRun.status !== "error" &&
                   ` — ${lastRun.videosUpserted} rounds from ${lastRun.channelsSynced} channels`}
               </span>
@@ -304,7 +310,7 @@ export function AdminDashboard() {
             Refetches the watch count of every stored video from YouTube — both published
             videos and the queue below — and writes back the ones that moved. Counts are
             captured once, at ingest, so they only fall behind; the video library sorts on
-            them.
+            them. Runs automatically on the same weekly schedule as the round scan above.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">

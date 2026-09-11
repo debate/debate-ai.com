@@ -4,7 +4,7 @@
  * @fileoverview Account-synced drill sets — the "sharing the 'Practice
  * tier' status across devices for a signed-in user" follow-up named under
  * the "📚 AI Drill Generator" bullet in TODO.md's Research Crowdsourcing
- * Organizer Features, and `docs/features/drill-sets.md`'s Known gaps.
+ * Organizer Features, and `packages/debate-help-docs/content/docs/features/drill-sets.mdx`'s Known gaps.
  *
  * Local-first, like `useWordCountRounds`: `DrillSetsPanel` (the sole
  * consumer of `state/drillSets.ts`) keeps reading/writing `localStorage`

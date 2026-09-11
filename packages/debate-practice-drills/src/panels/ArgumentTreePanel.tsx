@@ -43,7 +43,7 @@
  * Each non-heading row in a round whose flow is the round workspace's
  * *currently selected* one also has a "Tag…" action — restoring the only
  * write path for `Box.argumentType`/`authorId`/`evidenceStatus` after PR
- * #498 deleted it (see `docs/features/argument-tree-outline.md`'s "Known
+ * #498 deleted it (see `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`'s "Known
  * regression" note and `debate-round`'s `flow/argument-tagging.ts` for why
  * this lives here rather than in `debate-flow`'s Handsontable editor).
  * Saving writes the tags onto the flow's underlying `Box` via
@@ -56,7 +56,7 @@
  *
  * Each non-heading row in a taggable round also has a checkbox (idea #10's
  * "checkbox-selection mode … if bulk tagging is worth restoring" follow-up,
- * see `docs/features/argument-tree-outline.md`'s "Known gaps"). Once at
+ * see `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`'s "Known gaps"). Once at
  * least one row is checked, a "Tag selected…" bulk toolbar appears above the
  * row list; it opens the same dialog (with a blank draft rather than one
  * row's current tags, since a mixed selection has no single "current" value)

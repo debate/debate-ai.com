@@ -41,7 +41,10 @@ export default defineConfig({
         test: {
           name: "debate-ai-web",
           environment: "node",
-          include: ["apps/debate-ai.com/lib/**/__tests__/**/*.test.ts"],
+          // `.tsx` too: the shell's error boundary is only meaningful as a
+          // rendered tree, and its regression (a throw failing the *server*
+          // render into a 500) is asserted through `react-dom/server`.
+          include: ["apps/debate-ai.com/lib/**/__tests__/**/*.test.ts?(x)"],
         },
       },
     ],

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Network calls for the tournament-result-history D1 sync
- * (docs/features/team-rankings.md's "Standings data... stored in
+ * (packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... stored in
  * localStorage only" Known gap). Kept separate from
  * `state/savedTournamentResults.ts`'s pure validation helpers so those stay
  * unit-testable without mocking `fetch`, mirroring

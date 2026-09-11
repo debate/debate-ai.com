@@ -3,7 +3,7 @@
  * `JudgeRoundRecord`s — the raw per-ballot history behind a
  * `JudgeProfile`, which `state/judgeProfiles.ts` does not keep (that store
  * holds only the aggregate). Closes the "no profile editing/creation UI"
- * gap named in `docs/features/judge-profiles.md`: with the ballots
+ * gap named in `packages/debate-help-docs/content/docs/internals/judge-profiles.mdx`: with the ballots
  * themselves persisted, a panel can log one round at a time and have the
  * judge's profile re-aggregate from the full history.
  *
@@ -18,7 +18,7 @@
  * `updateJudgeRoundRecord` also keeps a small per-round undo history (a
  * separate `judgeRoundRecordEditHistory` store, keyed by round id), closing
  * the "editing a ballot is all-or-nothing... a correction can't be undone"
- * gap named in `docs/features/judge-profiles.md`: `undoLastJudgeRoundRecordEdit`
+ * gap named in `packages/debate-help-docs/content/docs/internals/judge-profiles.mdx`: `undoLastJudgeRoundRecordEdit`
  * steps a round back to the version it held immediately before its most
  * recent edit, one edit at a time.
  *

@@ -20,7 +20,7 @@
  * this one too — the same-tab `CHANGE_EVENT` listener below never fires for
  * another tab's write. This closes the same "every `use*Presets`-shaped hook
  * has no cross-tab `storage` listener yet" gap
- * `docs/features/argument-tree-outline.md` named for this hook's
+ * `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx` named for this hook's
  * `useOutlineFilterPresets.ts` sibling.
  *
  * @module hooks/useSavedArgumentCollections

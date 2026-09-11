@@ -15,7 +15,7 @@
  *
  * Also wires `useNewsStreamSync` into the panel's `syncRemote` prop, so a
  * signed-in user's read/liked state follows them across devices instead of
- * staying stuck in one browser (`docs/features/news-stream.md`'s "Read/like
+ * staying stuck in one browser (`packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like
  * state is per-browser" Known gap).
  *
  * @module app/news/NewsPageContent

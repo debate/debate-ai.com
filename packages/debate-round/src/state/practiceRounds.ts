@@ -138,7 +138,7 @@ export function getPracticeRoundSubmittedSpeeches(roundId: string): PriorSpeechR
  * workspace's currently selected flow) against a round's own already-saved
  * `setup.judgeParadigm`, and saves it onto that round's persisted record —
  * the "post-round feedback generation isn't wired to a live round flow"
- * Known gap named in `docs/features/practice-round-simulator.md`. Reuses
+ * Known gap named in `packages/debate-help-docs/content/docs/internals/practice-round-simulator.mdx`. Reuses
  * the existing `buildPracticeRoundFeedback` directly rather than
  * reimplementing any of its coaching-session composition. Also passes the
  * round's own already-saved `setup.opponentPersona` through, so feedback

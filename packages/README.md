@@ -47,8 +47,8 @@ bridge, palette, and scoped styles here.
 ## debate-help-docs
 
 Package name `debate-help-docs`. The Debate AI documentation site, built on the Fumadocs
-starter template. Publishes the product's feature specs (`docs/features/`) and package
-READMEs as a searchable docs site. Statically exported under `basePath: '/docs'` and
+starter template. Publishes the product's feature pages (`content/docs/features/`), the engineering
+notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. Statically exported under `basePath: '/docs'` and
 copied into the web app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`,
 so it is served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed
 on its own.

@@ -22,7 +22,7 @@
  * Also renders a "log a round" form: this team's own round history (used
  * for the "Prior meetings" head-to-head record) is persisted via
  * `state/ownRoundHistory.ts`'s `saveOwnRoundHistoryRecord`, closing the
- * real gap `docs/features/pre-round-briefings.md`'s "Known gaps" documented
+ * real gap `packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`'s "Known gaps" documented
  * — no persisted store of a team's own round history existed for
  * `buildPreRoundBriefingFromStores` to read from, so "Prior meetings"
  * always rendered "No recorded prior meetings" even when an opponent
@@ -47,7 +47,7 @@
  * Also renders a "Pairing schedule" section — idea #12's "A manual
  * pairing/room-assignment entry form as the practical stand-in" follow-up,
  * since real Tabroom pairings stay blocked behind a login wall (see
- * `docs/features/pre-round-briefings.md`'s "Known gaps"). Pairings are
+ * `packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`'s "Known gaps"). Pairings are
  * persisted (and account-synced) independently of a briefing via
  * `hooks/useRoundPairings.ts`, so a team can log a tournament's whole round
  * schedule as soon as pairings are posted, before writing up any briefing.

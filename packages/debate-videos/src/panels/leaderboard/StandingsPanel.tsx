@@ -29,7 +29,7 @@
  *
  * All three sections' writes go through `useStandingsAccountSync`
  * (`../../hooks/useStandingsAccountSync.ts`), closing
- * `docs/features/team-rankings.md`'s "Standings data... stored in
+ * `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s "Standings data... stored in
  * localStorage only" Known gap — local-first (fully usable signed out),
  * best-effort synced to the account when signed in.
  *

@@ -316,7 +316,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   /**
    * Saves every local round (and, transitively, every flow any of them
    * references) to the account in one action — closing the "no bulk 'save
-   * all my rounds' action" gap `docs/features/round-cloud-save.md`
+   * all my rounds' action" gap `packages/debate-help-docs/content/docs/features/round-cloud-save.mdx`
    * recorded, since before this a user had to click each round's own
    * cloud icon individually. Collects the deduplicated set of flows across
    * all rounds first (a flow shared by more than one round is only ever
@@ -356,7 +356,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   /**
    * Saves every locally-available flow that no round references to the
    * account in one action — closing the "a flow with no round referencing
-   * it still has no bulk path" gap `docs/features/flow-cloud-save.md`
+   * it still has no bulk path" gap `packages/debate-help-docs/content/docs/features/flow-cloud-save.mdx`
    * recorded once "Save all rounds" (above) closed the common case. Mirrors
    * that action's shape exactly, just over `collectUnreferencedFlows`'s
    * result instead of `collectFlowsForRounds`'s.
@@ -440,7 +440,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   /**
    * Deletes a round from this browser only, after a confirm prompt — the
    * store's `deleteRound` action already existed but had no caller anywhere
-   * in the app (`docs/features/round-cloud-save.md`'s "no UI for deleting a
+   * in the app (`packages/debate-help-docs/content/docs/features/round-cloud-save.mdx`'s "no UI for deleting a
    * local round" Known gap). Mirrors `handleRemoveCloudRound`'s scope in
    * reverse: this never touches any cloud-saved copy of the round, and
    * never deletes the round's flows (a flow still exists locally, and

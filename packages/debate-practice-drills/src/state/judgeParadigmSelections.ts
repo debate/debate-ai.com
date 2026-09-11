@@ -86,7 +86,7 @@ export function buildJudgeParadigmSelectionsPanelView(): JudgeParadigmSelection[
 /**
  * Builds the `debate-round` AI Judge Decision page's deep link for a round
  * that already has a saved paradigm here — closes the
- * `docs/features/judge-paradigm-selections.md` Known gap that this panel
+ * `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx` Known gap that this panel
  * "doesn't itself invoke a judge decision": `JudgeParadigmPickerPanel.tsx`
  * renders this as a link next to each saved selection, and
  * `JudgeDecisionPanel.tsx` (`debate-round`) reads the same `roundId` query

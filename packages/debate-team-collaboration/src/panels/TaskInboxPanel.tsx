@@ -15,7 +15,7 @@
  *
  * A "Awaiting verification" section closes the "No reviewer/verification
  * step before a task is marked complete" Known gap recorded in
- * `docs/features/task-inbox.md`: a task marked done sits here until a
+ * `packages/debate-help-docs/content/docs/features/task-inbox.mdx`: a task marked done sits here until a
  * *different* contributor types their own id and verifies it, via
  * `state/researchProgress.ts`'s `verifyAndRecordResearchTask` (gated by
  * `lib/task-verification.ts`'s `assertVerifierAllowed` — the assignee
@@ -77,7 +77,7 @@
  * priority-flag control for Strategy Sync Notes. An unassigned task has the
  * same toggle too (`setPersistedUnassignedTaskPriority`), closing the "An
  * unassigned task can't be pre-flagged before it has an assignee" Known gap
- * recorded in `docs/features/task-inbox.md` — flagging it before it has an
+ * recorded in `packages/debate-help-docs/content/docs/features/task-inbox.mdx` — flagging it before it has an
  * assignee carries the flag onto whichever contributor it's later
  * assigned/reassigned to.
  *
