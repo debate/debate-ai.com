@@ -98,6 +98,7 @@
     "immer": "^11.1.18",
     "jszip": "3.10.2",
     "katex": "0.18.7",
+    "legal-terms-privacy-policy": "^0.1.0",
     "linkedom": "0.18.13",
     "lucide-react": "^1.43.0",
     "marked": "^18.0.12",
