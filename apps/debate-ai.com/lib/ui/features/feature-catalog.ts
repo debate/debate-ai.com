@@ -13,7 +13,7 @@
  *
  * `APP_FEATURES` is that outline: every user-facing surface's title,
  * one-line description, route, category, and — where one exists — its
- * long-form doc under `docs/features/`. Titles and descriptions are taken
+ * long-form doc under `packages/debate-help-docs/content/docs/features/`. Titles and descriptions are taken
  * from each route's own page metadata (or its feature doc's opening lines),
  * so this catalog reads the same as the page a reader lands on after
  * clicking through.
@@ -28,7 +28,7 @@
 /**
  * Where the feature docs are served from. Same origin as the app: the docs
  * site is static-exported into `public/docs` at build time
- * (`scripts/build-docs.mjs`), so `docs/features/<name>.md` in the monorepo is
+ * (`scripts/build-docs.mjs`), so `packages/debate-help-docs/content/docs/features/<name>.mdx` in the monorepo is
  * published at `/docs/features/<name>`.
  *
  * Spelled out here rather than imported from `lib/docs-links.ts`, which
@@ -86,7 +86,7 @@ export interface FeatureEntry {
   href: string;
   /** Which group the surface belongs to. */
   category: FeatureCategory;
-  /** File name under `docs/features/`, when a long-form doc exists. */
+  /** File name under `packages/debate-help-docs/content/docs/features/`, when a long-form doc exists. */
   doc?: string;
   /**
    * Extra search terms that don't appear in the title or description —

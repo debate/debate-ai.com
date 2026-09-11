@@ -99,7 +99,7 @@ export type FavoriteToolOpPatchResult = {
  * Validates an untrusted `{ addFavoriteTool }` / `{ removeFavoriteTool }`
  * patch — the fix for the "two tabs star different tools in quick
  * succession" lost-update race `normalizeFavoriteToolsPatch`'s whole-list
- * replace is exposed to (see `docs/features/user-settings.md`'s Known
+ * replace is exposed to (see `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s Known
  * gaps): the caller sends just the one href being added or removed, and
  * `/api/settings`'s route resolves it against the row's current value
  * (read-then-write, mirroring how `editorPreferences` already merges onto

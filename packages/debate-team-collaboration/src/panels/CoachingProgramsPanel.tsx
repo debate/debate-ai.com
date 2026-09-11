@@ -21,7 +21,7 @@
  *
  * A member's drill set comes from their currently recorded practice-round
  * flow — the `roundId`-to-contributor mapping named as a further follow-up
- * in TODO.md and `docs/features/coaching-programs.md`'s "Known gaps". An
+ * in TODO.md and `packages/debate-help-docs/content/docs/internals/coaching-programs.mdx`'s "Known gaps". An
  * open board's roster now gets a "Save current flow" action per member that
  * records the live round workspace's selected flow (`state/store.ts`'s
  * `useFlowStore`) against that member via

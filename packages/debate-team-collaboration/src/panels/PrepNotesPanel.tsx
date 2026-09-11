@@ -12,7 +12,7 @@
  *
  * Each note also links "Jump to argument" — `strategy-sync-notes.ts`'s
  * `buildPrepNoteJumpHref` — to `/debate`, closing the "No 'jump to
- * argument' link" bullet in `docs/features/prep-notes.md`'s Known gaps.
+ * argument' link" bullet in `packages/debate-help-docs/content/docs/internals/prep-notes.mdx`'s Known gaps.
  * See `hooks/useJumpToPrepNoteBox.ts` for the flow-select + grid-scroll
  * side of that link.
  *

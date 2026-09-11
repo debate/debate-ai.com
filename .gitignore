@@ -48,7 +48,9 @@ next-env.d.ts
 src/sw/app-file-list.ts
 src/sw/version.ts
 public/service-worker.js
-.claude
+.claude/*
+# Architecture notes for Claude agents — checked in on purpose (see CLAUDE.md)
+!.claude/architecture
 pnpm-lock.yaml
 open-when-ready.log
 # Generated video seed SQL (regenerate with `bun run db:seed:videos`)

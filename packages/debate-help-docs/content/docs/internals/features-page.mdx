@@ -1,3 +1,7 @@
+---
+title: "Features Page"
+---
+
 # Features Page
 
 One page that outlines every user-facing surface in the app: each feature's
@@ -6,7 +10,7 @@ grouped into eight categories and filtered by a single search box.
 
 - **Route:** `/features`
 - **Nav:** the global dock's Settings menu → **All Features** (the first item)
-- **Package:** [`debate-ui`](../../packages/debate-ui/README.md)
+- **Package:** [`debate-ui`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-ui/README.md)
 
 ## Why this exists
 
@@ -14,8 +18,8 @@ Nothing in the app listed everything it does:
 
 - The global dock exposes four destinations (Videos, Shared, Debate, Docs)
   plus a Settings menu that is a flat, unexplained list of forty-odd items.
-- [`/research`](../../apps/debate-ai.com/components/research/ResearchHub.tsx)
-  and [`/coach`](../../apps/debate-ai.com/components/coach/CoachHub.tsx) each
+- [`/research`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/components/research/ResearchHub.tsx)
+  and [`/coach`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/components/coach/CoachHub.tsx) each
   tab across the panels of one package.
 - [`/community-hub`](./community-research-hub.md) covers only the spaces named
   under TODO.md's "Research Crowdsourcing Organizer Features" heading — 17 of
@@ -55,18 +59,18 @@ it stays a stable "how big is this app" answer while someone types.
 
 ## How it works
 
-- [`packages/debate-ui/src/features/feature-catalog.ts`](../../packages/debate-ui/src/features/feature-catalog.ts)
+- [`packages/debate-ui/src/features/feature-catalog.ts`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-ui/src/features/feature-catalog.ts)
   holds the pure data and helpers: `APP_FEATURES`, `buildFeatureSections`,
   `searchFeatures`, `featureDocUrl`, and `buildFeatureCatalogSummaryText`.
   Like `debate-community`'s narrower community-hub directory it has no
   store — every entry links to a surface that already persists (or doesn't
   need to persist) its own state. This is the original, seed copy — see
   "Three copies, hand-synced" below for where the app actually renders from.
-- [`packages/debate-ui/src/features/FeaturesPanel.tsx`](../../packages/debate-ui/src/features/FeaturesPanel.tsx)
+- [`packages/debate-ui/src/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-ui/src/features/FeaturesPanel.tsx)
   renders it, holding only the search string in local state. This is also no
   longer what the live `/features` route mounts (see below); it stays as the
   package's own tested reference implementation.
-- [`apps/debate-ai.com/app/features/page.tsx`](../../apps/debate-ai.com/app/features/page.tsx)
+- [`apps/debate-ai.com/app/features/page.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/app/features/page.tsx)
   mounts `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx` — the app's
   own, independently-evolved fork of the component above (an aurora hero,
   counted-up totals, a marquee, and scroll-reveal spotlight cards, rather

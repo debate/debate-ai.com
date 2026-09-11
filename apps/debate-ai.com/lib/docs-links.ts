@@ -6,7 +6,8 @@
  * workspace hubs (`components/research/ResearchHub.tsx`,
  * `components/coach/CoachHub.tsx`) link to the long-form doc for what's on
  * screen. Those docs are published from `packages/debate-help-docs/content/docs`
- * — `features/*.mdx` mirrors `docs/features/*.md`, and `guides/*.mdx` are the
+ * — `features/*.mdx` is the user-facing page per feature, `internals/*.mdx`
+ * the engineering note behind it, and `guides/*.mdx` are the
  * task-oriented walkthroughs of the training, practice, and research
  * collaboration tools.
  *

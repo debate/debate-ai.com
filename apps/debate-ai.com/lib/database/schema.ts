@@ -224,7 +224,7 @@ export const userSettings = sqliteTable("user_settings", {
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
   // and TODO.md's Product Feature Idea "Community-Rated Summaries" /
-  // docs/features/news-stream.md's "Read/like state is per-browser" Known
+  // packages/debate-help-docs/content/docs/internals/news-stream.mdx's "Read/like state is per-browser" Known
   // gap). Null/absent means "nothing synced yet" — same semantics as every
   // other nullable column here; the client's own localStorage state is
   // still the source of truth for a signed-out browser and is merged
@@ -271,7 +271,7 @@ export const userSettings = sqliteTable("user_settings", {
   questStreakSync: text("quest_streak_sync"),
   // JSON-serialized `QualificationPointsTable` override (see
   // packages/debate-data-sync/src/state/qualificationPointsTable.ts and
-  // docs/features/team-rankings.md's "Standings data... is stored in
+  // packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... is stored in
   // localStorage only" Known gap) and `QualificationCutoffSettings` (see
   // packages/debate-data-sync/src/state/qualificationCutoff.ts, same gap) —
   // the Standings tab's custom point weights and qualification cutoff, kept
@@ -411,7 +411,7 @@ export const savedWordCountRounds = sqliteTable(
 
 export type SavedWordCountRoundRow = typeof savedWordCountRounds.$inferSelect;
 
-// Account-linked tournament-result sync — docs/features/team-rankings.md's
+// Account-linked tournament-result sync — packages/debate-help-docs/content/docs/features/team-rankings.mdx's
 // "Standings data (logged/imported tournament results, the custom points
 // table, and the qualification cutoff) is stored in localStorage only... it
 // doesn't yet follow a signed-in user across devices" Known gap. A team logs
@@ -487,8 +487,8 @@ export const savedJudgeDecisions = sqliteTable(
 
 export type SavedJudgeDecisionRow = typeof savedJudgeDecisions.$inferSelect;
 
-// Account-linked Speech Documents send-log sync — closes docs/features/
-// flow-tools-menu.md's/user-settings.md's standing "docs" gap: CardMirror's
+// Account-linked Speech Documents send-log sync — closes the standing "docs"
+// gap in the flow-tools-menu and user-settings feature docs: CardMirror's
 // speech-send history (`packages/debate-editor/src/editor/
 // speech-send-log.ts`, rendered by `/speech-documents`) was IndexedDB-only,
 // unlike flows/rounds/word-count-rounds/judge-decisions above, which all
@@ -1148,7 +1148,7 @@ export type SavedSprintSessionRow = typeof savedSprintSessions.$inferSelect;
 // than to a person). These tables key everything to better-auth `user.id`s
 // instead, so a signed-in user has a contacts list they can share a live
 // card with directly, and a shared card shows up as available on the
-// recipient's account wherever they sign in. See docs/features/contacts.md.
+// recipient's account wherever they sign in. See packages/debate-help-docs/content/docs/features/contacts.mdx.
 
 // One row per unordered pair of users. A request is a `pending` row from
 // `requester` to `addressee`; accepting flips it to `accepted` (the row is
@@ -1356,7 +1356,7 @@ export type DebateCardImportRow = typeof debateCardImports.$inferSelect;
 
 // Account-linked sync for the sidebar's localStorage-backed tools — the
 // "per-browser localStorage, not account-synced" Known gap recorded in
-// docs/features/judge-profiles.md, opponent-team-profiles.md,
+// packages/debate-help-docs/content/docs/internals/judge-profiles.mdx, opponent-team-profiles.md,
 // flow-annotations.md, prep-notes.md, coaching-programs.md and friends, and
 // the "every other localStorage-backed panel in this repo" phrasing of the
 // same gap in scout-to-strategy.md.

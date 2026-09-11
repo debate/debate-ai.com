@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview Account sync adapter for `NewsStreamPanel`'s optional
- * `syncRemote` prop — closes `docs/features/news-stream.md`'s "Read/like
+ * `syncRemote` prop — closes `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like
  * state is per-browser (localStorage), not per-account" Known gap.
  * Local-first, matching `useFavoriteTools`'s convention: the panel already
  * works fully signed out against its own localStorage viewer state; this

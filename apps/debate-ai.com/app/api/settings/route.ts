@@ -105,7 +105,7 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   and `debate-data-sync`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
- *   `docs/features/team-rankings.md`'s Known gaps), the same option
+ *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps), the same option
  *   lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
  *   collections", Research Progress "My research goal", and Quest Streaks

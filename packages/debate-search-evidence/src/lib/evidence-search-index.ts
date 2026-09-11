@@ -18,7 +18,7 @@
  * `filterCardsByTags` directly).
  *
  * `addEntryToIndex`/`removeEntryFromIndex`/`updateEntryInIndex` close this
- * bullet's remaining "Known gap" named in `docs/features/evidence-library.md`
+ * bullet's remaining "Known gap" named in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`
  * — true incremental indexing that updates only the entries a write
  * actually touched, rather than `state/evidenceLibraryEntries.ts`'s cached
  * index falling back to a full `buildEvidenceSearchIndex` re-tokenize-

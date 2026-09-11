@@ -33,7 +33,7 @@
  *
  * `routePersistedTopicTasks` closes the "(d) a task-routing trigger UI to
  * actually populate a topic's queue" follow-up named under the same bullet
- * (also tracked as `docs/features/task-inbox.md`'s "No task-routing trigger
+ * (also tracked as `packages/debate-help-docs/content/docs/features/task-inbox.mdx`'s "No task-routing trigger
  * UI yet" known gap) — it composes `trackedArguments.ts`'s
  * `buildPersistedTopicCoverageReport` (a topic's checklist against the
  * shared evidence library) directly with `buildAndPersistRoutingResult`, so
@@ -59,7 +59,7 @@
  * `sortNotesByPriorityThenCreatedAt` convention for Strategy Sync Notes.
  * `setPersistedUnassignedTaskPriority` closes the "An unassigned task can't
  * be pre-flagged before it has an assignee" Known gap recorded in
- * `docs/features/task-inbox.md` — the same flag, applied directly to a
+ * `packages/debate-help-docs/content/docs/features/task-inbox.mdx` — the same flag, applied directly to a
  * still-unassigned `ResearchTask` (`lib/research-task-routing.ts`'s
  * `setTaskPriority`) instead of requiring it to be assigned first;
  * `buildTaskInboxView` sorts `unassignedTasks` high-priority first too
@@ -319,7 +319,7 @@ export function setPersistedRoutedTaskPriority(
 /**
  * Flags (or unflags) one still-unassigned task high priority, closing the
  * "An unassigned task can't be pre-flagged before it has an assignee" Known
- * gap recorded in `docs/features/task-inbox.md` — the unassigned
+ * gap recorded in `packages/debate-help-docs/content/docs/features/task-inbox.mdx` — the unassigned
  * counterpart of `setPersistedRoutedTaskPriority`, matching by `argBlock`
  * against `unassignedTasks` instead of `assignments` via
  * `research-task-routing.ts`'s `setTaskPriority`. The flag carries over onto

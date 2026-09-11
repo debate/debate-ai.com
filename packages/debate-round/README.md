@@ -10,70 +10,70 @@ import { DebateFlowPage, useFlowStore } from "debate-round"
 
 `PrepNotesPanel` (also exported from the package root) renders every
 persisted "Strategy Sync Notes" `PrepNote` grouped by status — see
-[`docs/features/prep-notes.md`](../../docs/features/prep-notes.md).
+[`packages/debate-help-docs/content/docs/internals/prep-notes.mdx`](../../docs/features/prep-notes.md).
 
 `OpponentTeamProfilesPanel` (also exported from the package root) renders
 every persisted `debate-data-sync` `OpponentTeamProfile` as a scouting
 roster — see
-[`docs/features/opponent-team-profiles.md`](../../docs/features/opponent-team-profiles.md).
+[`packages/debate-help-docs/content/docs/internals/opponent-team-profiles.mdx`](../../docs/features/opponent-team-profiles.md).
 
 `DrillSetsPanel` (also exported from the package root) renders every
 persisted "AI Drill Generator" `Drill` set, grouped by round — see
-[`docs/features/drill-sets.md`](../../docs/features/drill-sets.md).
+[`packages/debate-help-docs/content/docs/features/drill-sets.mdx`](../../docs/features/drill-sets.md).
 
 `PreRoundBriefingsPanel` (also exported from the package root) renders
 every persisted "Pre-Round Intelligence Panel" `PreRoundBriefingRecord`,
 sorted by round — see
-[`docs/features/pre-round-briefings.md`](../../docs/features/pre-round-briefings.md).
+[`packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`](../../docs/features/pre-round-briefings.md).
 
 `CoachingSessionsPanel` (also exported from the package root) renders
 every persisted "AI Coach Mode" `CoachingSessionRecord`, grouped by round +
 side — see
-[`docs/features/coaching-sessions.md`](../../docs/features/coaching-sessions.md).
+[`packages/debate-help-docs/content/docs/features/coaching-sessions.mdx`](../../docs/features/coaching-sessions.md).
 
 `FlowSummariesPanel` (also exported from the package root) renders every
 persisted "Speech Transcript Summaries and Answers" `FlowSummaryRecord`,
 one card per round, with suggested cross-exam questions and extension
 ideas for anything still unanswered — see
-[`docs/features/flow-summaries.md`](../../docs/features/flow-summaries.md).
+[`packages/debate-help-docs/content/docs/internals/flow-summaries.mdx`](../../docs/features/flow-summaries.md).
 
 `WordCountRoundsPanel` (also exported from the package root) lets a user
 type a "Word-Count-Only Speech Format" round's speeches against a live
 word-count readout and renders every persisted `WordCountRoundRecord` — see
-[`docs/features/word-count-rounds.md`](../../docs/features/word-count-rounds.md).
+[`packages/debate-help-docs/content/docs/features/word-count-rounds.mdx`](../../docs/features/word-count-rounds.md).
 
 `ArgumentTreePanel` (also exported from the package root) renders every
 persisted "Outline Filters and Argument Tree View" `ArgumentTreeRecord` as a
 filterable, heading-grouped outline, with speech/side/kind/unanswered-only
 controls that persist per round — see
-[`docs/features/argument-tree-outline.md`](../../docs/features/argument-tree-outline.md).
+[`packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`](../../docs/features/argument-tree-outline.md).
 
 `AiVersusRoundPanel` (also exported from the package root) lets a user
 start an "Online Debate Versus AI" round (format + side), submit their own
 speeches in turn order via `validateSpeechSubmission`, and renders every
 persisted `AiVersusRoundRecord` — see
-[`docs/features/ai-versus-rounds.md`](../../docs/features/ai-versus-rounds.md).
+[`packages/debate-help-docs/content/docs/features/ai-versus-rounds.mdx`](../../docs/features/ai-versus-rounds.md).
 
 `PracticeRoundSimulatorPanel` (also exported from the package root) lets a
 user configure a "Practice Round Simulator" round (format, side, AI judge
 paradigm, AI opponent persona) via `buildPracticeRoundSetup`, and renders
 every persisted `PracticeRoundRecord` with its setup, submitted-speech
 progress, and post-round feedback — see
-[`docs/features/practice-round-simulator.md`](../../docs/features/practice-round-simulator.md).
+[`packages/debate-help-docs/content/docs/internals/practice-round-simulator.mdx`](../../docs/features/practice-round-simulator.md).
 
 
 `VulnerabilityChartsPanel` (also exported from the package root) renders
 every persisted "AI Response-Outcome Charts" `VulnerabilityReportRecord`,
 one card per round, with a per-side exposure summary and a "most exposed
 arguments" bar chart — see
-[`docs/features/response-outcome-charts.md`](../../docs/features/response-outcome-charts.md).
+[`packages/debate-help-docs/content/docs/features/response-outcome-charts.mdx`](../../docs/features/response-outcome-charts.md).
 
 `FlowAnnotationsPanel` (also exported from the package root) lets a viewer
 drop a timestamped "Flow-in-Speech Flow Annotations" `FlowAnnotation` at the
 `debate-videos` player's live playback position (or a manual timestamp),
 and renders every persisted annotation with a "Jump to" action back into
 the player — see
-[`docs/features/flow-annotations.md`](../../docs/features/flow-annotations.md).
+[`packages/debate-help-docs/content/docs/internals/flow-annotations.mdx`](../../docs/features/flow-annotations.md).
 
 Composes `debate-timer` for speech timing and recording and `debate-editor` for speech
 docs; the flow types themselves live in `src/types/flow.ts` (this package owns them —

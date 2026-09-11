@@ -27,7 +27,7 @@
  * needed a manual reload to see it. This closed the "every other
  * `use*Presets` hook sharing `useOutlineFilterPresets.ts`'s `CHANGE_EVENT`
  * pattern has no cross-tab `storage` listener yet" gap
- * `docs/features/argument-tree-outline.md` and this hook's own
+ * `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx` and this hook's own
  * `state/live-update.ts` doc comment both named.
  *
  * @module hooks/useWordLimitPresets

@@ -4,7 +4,7 @@
  *
  * Mirrors packages/debate-card-search/src/lib/evidence-reuse-check-client.ts's
  * request/response shape against the same `GET /api/evidence-reuse-check`
- * route (see docs/features/on-page-card-reuse-search.md). Ported from the
+ * route (see packages/debate-help-docs/content/docs/features/on-page-card-reuse-search.mdx). Ported from the
  * pre-merge extension's plain-JS `api.js` when the card-reuse extension and
  * the round timer became one extension; the storage keys are unchanged.
  */

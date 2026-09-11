@@ -25,7 +25,7 @@
  * `ownRecords` from `state/ownRoundHistory.ts`'s persisted store by
  * `opponentTeamId` when the caller doesn't already supply `ownRecords`
  * directly — closing the real (not form-oversight) gap documented in
- * `docs/features/pre-round-briefings.md`'s "Known gaps": the form's "Prior
+ * `packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`'s "Known gaps": the form's "Prior
  * meetings" section always rendered "No recorded prior meetings" because no
  * persisted store of a team's own round history existed for it to read
  * from.
