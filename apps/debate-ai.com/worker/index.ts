@@ -11,7 +11,7 @@ import handler from "vinext/server/app-router-entry";
 import { runWithContext } from "../lib/database/context";
 import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
-import { resyncYouTubeRounds } from "../lib/youtube/resync-rounds";
+import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 
 interface Env {
@@ -86,18 +86,22 @@ export default {
     );
   },
 
-  // Weekly YouTube round resync (see the `triggers.crons` entry in
-  // wrangler.jsonc) — keeps the admin queue current without an admin having
-  // to remember to click "Resync videos". The same weekly tick also purges
-  // expired `reuse_check_log` rows (idea #7's retention/purge policy
-  // follow-up) — an unrelated, independent job piggybacking on the one cron
-  // trigger this app has, rather than a dedicated schedule of its own.
+  // Weekly YouTube maintenance (see the `triggers.crons` entry in
+  // wrangler.jsonc) — scans the subscribed channels for new videos and
+  // refreshes every stored video's view count, so neither depends on an admin
+  // remembering to press the buttons on /admin. Both passes live in
+  // lib/youtube/weekly-sync.ts. The same weekly tick also purges expired
+  // `reuse_check_log` rows (idea #7's retention/purge policy follow-up) — an
+  // unrelated, independent job piggybacking on the one cron trigger this app
+  // has, rather than a dedicated schedule of its own.
   async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
     // Both jobs write, and neither has a client bookmark to resume from, so
     // each runs in its own session started on the primary.
     ctx.waitUntil(
-      runWithPrimaryD1Session(() => runWithContext(env, () => resyncYouTubeRounds(null))).catch((error) => {
-        console.error("Scheduled YouTube resync failed:", describeError(error), error);
+      // `runWeeklyYouTubeSync` reports a failed pass rather than throwing, so
+      // this catch is only for something breaking outside the two passes.
+      runWithPrimaryD1Session(() => runWithContext(env, () => runWeeklyYouTubeSync())).catch((error) => {
+        console.error("Scheduled YouTube sync failed:", describeError(error), error);
       }),
     );
     ctx.waitUntil(
