@@ -54,6 +54,11 @@ Keep it. Both the "Known gaps" convention and the data-flow block are load-beari
    `...<section>` entry at the root).
 3. MDX rules apply: a bare `{` or `<` outside a code fence is parsed as JSX. Wrap
    identifiers and placeholders in backticks — `` `<aside>` ``, `` `{url}` ``.
+   Backticks are the only escape that works: a backslash does **not** escape a
+   backtick inside a code span, so `` `a \` b` `` ends the span at the
+   backslashed backtick and spills the rest into JSX. Quote a snippet that
+   itself contains backticks with a longer fence — ``` `` `${x}` `` ``` — and
+   prefer a fenced block for anything multi-line.
 4. Links must work **on the published site**, so filesystem-relative links into
    the repo (`../../packages/...`) do not resolve. Link to GitHub
    (`https://github.com/debate/debate-ai.com/blob/master/...`) or to another docs

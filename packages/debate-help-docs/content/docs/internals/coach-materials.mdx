@@ -195,7 +195,7 @@ combination) and `packages/debate-speech-writer/test/coachMaterials.test.ts`
 
 Closes the "No version history for a material that gets re-uploaded/edited"
 Known gap below. Previously the upload form only ever created a brand-new
-record (`saveCoachMaterial({ id: \`${kind}-${Date.now()}\`, ... })`), and
+record (``saveCoachMaterial({ id: `${kind}-${Date.now()}`, ... })``), and
 there was no way to revise a material without deleting and re-adding it,
 which lost the old text outright.
 
