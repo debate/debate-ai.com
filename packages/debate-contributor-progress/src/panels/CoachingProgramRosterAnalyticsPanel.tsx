@@ -44,7 +44,7 @@
  *
  * The roster table also renders each member's drill-completion progress and
  * Practice Round Simulator status — the other half of
- * `docs/features/coaching-programs.md`'s Known gaps ("the roster analytics
+ * `packages/debate-help-docs/content/docs/internals/coaching-programs.mdx`'s Known gaps ("the roster analytics
  * table ... doesn't yet fold in drill-completion rate or practice-round
  * counts"). Same as `drillReviewEvents` above, this comes in via an optional,
  * caller-resolved `memberDrillPracticeStatus` prop rather than being read

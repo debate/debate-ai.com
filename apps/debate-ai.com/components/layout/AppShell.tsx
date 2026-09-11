@@ -22,9 +22,11 @@ import { AppFrameProvider, AppFrameSurface } from "@/components/layout/AppFrameP
 import { ReasonDocsProvider } from "@/components/reason-docs/ReasonDocsProvider"
 import { OneTap } from "@/components/layout/OneTap"
 import { ToolRecordSyncProvider } from "@/components/layout/ToolRecordSyncProvider"
+import { GlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
 import { isDockOwnedPath } from "@/lib/nav/dock-nav-paths"
+import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -57,10 +59,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="min-h-screen w-full overflow-x-hidden">{children}</div>
           {/* Mirrors picks made in this frame (a video card, the queue) back
               to the player mounted in the shell. */}
-          <VideoPlayerFrameBridge />
+          <ChromeErrorBoundary label="VideoPlayerFrameBridge">
+            <VideoPlayerFrameBridge />
+          </ChromeErrorBoundary>
           {/* The tool panels run in this document, so the account mirror for
               their localStorage stores has to be switched on here too. */}
-          <ToolRecordSyncProvider />
+          <ChromeErrorBoundary label="ToolRecordSyncProvider">
+            <ToolRecordSyncProvider />
+          </ChromeErrorBoundary>
+          {/* Same reason: a framed document owns its own keyboard focus, so
+              the Ctrl/Cmd-Shift-Space listener has to live here too, not
+              just in the top-level shell below. */}
+          <ChromeErrorBoundary label="GlobalCommandPalette">
+            <GlobalCommandPalette />
+          </ChromeErrorBoundary>
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
       </CategoryDockProvider>
@@ -77,21 +89,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ReasonDocsProvider>
         <AppFrameProvider>
           <div className="w-screen h-screen overflow-auto pb-[70px] md:pb-0">
-            <CategoryDock />
+            <ChromeErrorBoundary label="CategoryDock">
+              <CategoryDock />
+            </ChromeErrorBoundary>
             <AppSidebarShell>
               <AppFrameSurface>{children}</AppFrameSurface>
             </AppSidebarShell>
           </div>
         </AppFrameProvider>
       </ReasonDocsProvider>
+      {/* None of the chrome below is what the reader came for, so each piece
+          is bounded on its own: a crash in the player, the sign-in prompt or
+          the shortcut listener leaves that one piece out rather than taking
+          the page and sidebar down with it (see `chrome-error-boundary.tsx`). */}
       <div data-app-chrome>
         {/* The slow-the-spread toggle is debate chrome, not part of the player. */}
-        <PersistentVideoPlayer extraControls={<SlowSpreadButton />} />
-        <OneTap />
+        <ChromeErrorBoundary label="PersistentVideoPlayer">
+          <PersistentVideoPlayer extraControls={<SlowSpreadButton />} />
+        </ChromeErrorBoundary>
+        <ChromeErrorBoundary label="OneTap">
+          <OneTap />
+        </ChromeErrorBoundary>
       </div>
-      <VideoPlayerFrameBridge />
-      <ToolRecordSyncProvider />
-      <ServiceWorkerRegistrar />
+      <ChromeErrorBoundary label="VideoPlayerFrameBridge">
+        <VideoPlayerFrameBridge />
+      </ChromeErrorBoundary>
+      <ChromeErrorBoundary label="ToolRecordSyncProvider">
+        <ToolRecordSyncProvider />
+      </ChromeErrorBoundary>
+      <ChromeErrorBoundary label="GlobalCommandPalette">
+        <GlobalCommandPalette />
+      </ChromeErrorBoundary>
+      <ChromeErrorBoundary label="ServiceWorkerRegistrar">
+        <ServiceWorkerRegistrar />
+      </ChromeErrorBoundary>
       {/* Sign-in and sign-out report through toasts; without a mounted
           toaster every one of those messages was dropped silently. */}
       <Toaster position="top-center" richColors closeButton />

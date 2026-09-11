@@ -4,7 +4,7 @@
  * `OpponentTeamProfile`, which `state/opponentTeamProfiles.ts` does not keep
  * (that store holds only the aggregate). Closes the "no profile
  * editing/creation UI" gap named in
- * `docs/features/opponent-team-profiles.md`: with the rounds themselves
+ * `packages/debate-help-docs/content/docs/internals/opponent-team-profiles.mdx`: with the rounds themselves
  * persisted, a panel can log one scouted round at a time and have the team's
  * profile re-aggregate from the full history.
  *
@@ -25,7 +25,7 @@
  * `updateOpponentRoundRecord` also keeps a small per-round undo history (a
  * separate `opponentRoundRecordEditHistory` store, keyed by round id),
  * closing the "editing a round is all-or-nothing... a correction can't be
- * undone" gap named in `docs/features/opponent-team-profiles.md`:
+ * undone" gap named in `packages/debate-help-docs/content/docs/internals/opponent-team-profiles.mdx`:
  * `undoLastOpponentRoundRecordEdit` steps a round back to the version it
  * held immediately before its most recent edit, one edit at a time. A
  * matching per-round redo stack (`opponentRoundRecordRedoHistory`) lets

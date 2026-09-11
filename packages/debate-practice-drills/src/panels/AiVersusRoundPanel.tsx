@@ -34,7 +34,7 @@
  * leaving every other speech (earlier or later, including the user's)
  * untouched, rather than requiring the whole round to be cleared and
  * restarted. This closes the "regenerate affordance" follow-up noted in
- * `docs/features/ai-versus-rounds.md`'s Known gaps.
+ * `packages/debate-help-docs/content/docs/features/ai-versus-rounds.mdx`'s Known gaps.
  *
  * The speech text field also has a "🎤 Record" button (via the same
  * `hooks/useMicrophoneTranscription.ts` the "Speech Transcript Summaries"
@@ -42,7 +42,7 @@
  * #298) panels already use) that dictates directly into `speechText`,
  * closing the "text-only" half of the "Speech submission is text-only...
  * no transcription pipeline exists" Known gap recorded in
- * `docs/features/ai-versus-rounds.md`.
+ * `packages/debate-help-docs/content/docs/features/ai-versus-rounds.mdx`.
  *
  * A "Download transcript" action (shown once a round's `nextSlot` is
  * `null` — every speech delivered — both on the active round and on any

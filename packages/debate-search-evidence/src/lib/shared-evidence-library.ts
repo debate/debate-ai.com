@@ -33,7 +33,7 @@
  * `SprintNotesPanel.tsx`'s identical convention) plus
  * `buildEvidenceEntryAnnouncementText` close the "a new Argument Library
  * entry ... isn't wired in" half of the Known gap recorded in
- * `docs/features/news-stream.md` — `state/newsStream.ts`'s new
+ * `packages/debate-help-docs/content/docs/internals/news-stream.mdx` — `state/newsStream.ts`'s new
  * `argumentLibraryNews()` reads both to post every newly submitted, live
  * card or block as a Community item, mirroring `team-collaboration-mode.ts`'s
  * `buildSprintNoteAnnouncementText` convention.

@@ -110,7 +110,7 @@ export function buildArgumentTreesPanelView(): ArgumentTreeRecord[] {
  * action, extracted so it doesn't need a live `Flow` object mounted in a
  * browser to Vitest-cover — closing the "Nothing in the live round-flowing
  * page ... calls `buildAndSaveArgumentTree` yet" gap noted in
- * `docs/features/argument-tree-outline.md`.
+ * `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`.
  */
 export function buildAndSaveArgumentTreeFromCurrentFlow(
   flow: Pick<Flow, "id" | "children" | "columns">,

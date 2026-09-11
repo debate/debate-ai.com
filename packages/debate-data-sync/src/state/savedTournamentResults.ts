@@ -1,6 +1,6 @@
 /**
  * @fileoverview Account-linked tournament-result sync —
- * docs/features/team-rankings.md's "Standings data (logged/imported
+ * packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data (logged/imported
  * tournament results, the custom points table, and the qualification
  * cutoff) is stored in localStorage only... it doesn't yet follow a
  * signed-in user across devices" Known gap. Pure validation helpers shared

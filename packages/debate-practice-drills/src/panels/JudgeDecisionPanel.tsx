@@ -22,7 +22,7 @@
  * `debate-speech-writer`'s `buildJudgeDecisionDeepLink` builds for the
  * "Get AI judge decision →" link on each saved selection in
  * `JudgeParadigmPickerPanel.tsx`, closing the
- * `docs/features/judge-paradigm-selections.md` Known gap that picking a
+ * `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx` Known gap that picking a
  * paradigm had no path into actually requesting a decision for it, mirroring
  * `debate-card-search`'s `EvidenceLibraryPanel`/`?checkUrl=` convention.
  *

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Network calls for the Standings tab's qualification-settings
  * account sync (`qualificationPointsTable.ts`/`qualificationCutoff.ts`'s
- * sync helpers) — docs/features/team-rankings.md's "Standings data...
+ * sync helpers) — packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data...
  * stored in localStorage only" Known gap. Talks directly to
  * `apps/debate-ai.com`'s `/api/settings` route via `fetch`, mirroring
  * `debate-team-collaboration`'s `lib/research-progress-goal-sync-client.ts`

@@ -24,8 +24,9 @@
 	"images": {
 		"binding": "IMAGES"
 	},
-	// Weekly YouTube round resync — Mondays at 08:00 UTC. Handled by the
-	// `scheduled` export in worker/index.ts.
+	// Weekly YouTube maintenance — Mondays at 08:00 UTC: scan the subscribed
+	// channels for new videos, then refresh every stored video's view count.
+	// Handled by the `scheduled` export in worker/index.ts.
 	"triggers": {
 		"crons": [
 			"0 8 * * 1"

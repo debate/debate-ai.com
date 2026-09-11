@@ -1,0 +1,21 @@
+---
+title: "Internals"
+description: "How each feature is actually built."
+---
+
+# Internals
+
+Engineering notes on how the app's features are built: the routes and components
+involved, how data flows between them, and the gaps that are known and not yet
+closed. Written for someone about to change the code.
+
+The [Features](../features) section covers the same ground for someone about to
+*use* the app. When behaviour changes, both sections need updating — the feature
+page for what a user sees, the internals page for how it happens.
+
+Each page follows the same shape:
+
+- **Route / Package / Component** — where the feature lives.
+- **What it shows** — the user-visible behaviour, precisely.
+- **Data flow** — the call chain, from persisted state to rendered panel.
+- **Known gaps** — what is deliberately not done yet.

@@ -7,7 +7,7 @@
  * four built-in personas from `opponent/opponent-personas.ts`, or a custom
  * persona built from the user's own style description via
  * `buildCustomOpponentPersona` (the "custom opponent-persona authoring flow"
- * follow-up named in `docs/features/practice-opponent.md`'s Known gaps,
+ * follow-up named in `packages/debate-help-docs/content/docs/features/practice-opponent.mdx`'s Known gaps,
  * mirroring `JudgeParadigmPickerPanel.tsx`'s custom-paradigm form) — and
  * saves it through the already-persisted `state/opponentPersonaSelections.ts`
  * (`saveOpponentPersonaSelection`, `deleteOpponentPersonaSelection`). Also
@@ -37,7 +37,7 @@
  * another tab saves or clears a session's persona selection, closing the
  * "Every other localStorage-backed panel in this repo still has no
  * cross-tab live-update mechanism" Known gap noted in
- * `docs/features/shared-flow-sync.md` for this panel.
+ * `packages/debate-help-docs/content/docs/features/shared-flow-sync.mdx` for this panel.
  *
  * @module panels/OpponentPersonaPickerPanel
  */

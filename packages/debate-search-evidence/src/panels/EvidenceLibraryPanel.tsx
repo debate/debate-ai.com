@@ -2,12 +2,12 @@
  * @fileoverview Shared Evidence Library panel — the UI follow-up named "(a)
  * a search panel UI" under the "Shared Evidence Library" bullet in TODO.md,
  * plus a submission form that closes that same bullet's "No submission UI
- * yet" gap (see `docs/features/evidence-library.md`) and, by giving the
+ * yet" gap (see `packages/debate-help-docs/content/docs/features/evidence-library.mdx`) and, by giving the
  * repository a real source of `argBlock`/`wordCount`-carrying entries,
  * follow-up (a) under the "📊 Topic Coverage Dashboard" bullet ("an
  * `argBlock`/word-count field wired into a real card-submission flow beyond
  * the existing `/cards/library` evidence-library form"). Edit/Delete actions
- * close `docs/features/evidence-library.md`'s "No edit/delete affordance"
+ * close `packages/debate-help-docs/content/docs/features/evidence-library.mdx`'s "No edit/delete affordance"
  * gap, and editing an entry closes follow-up (a) under the "🔁 Revision
  * Incentives" bullet ("wiring an actual card-edit/save flow to call
  * `saveRevisionRecord` with a before/after snapshot"). A "Stale evidence"

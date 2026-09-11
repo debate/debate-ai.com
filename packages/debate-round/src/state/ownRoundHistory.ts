@@ -1,7 +1,7 @@
 /**
  * @fileoverview Persistent storage for this team's own round history —
  * closes the real follow-up (not a form oversight) documented in
- * `docs/features/pre-round-briefings.md`'s "Known gaps" and in TODO.md's
+ * `packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`'s "Known gaps" and in TODO.md's
  * Tracker Status "Pre-Round Briefings — add a 'create briefing' form" entry:
  * `round/pre-round-briefing.ts`'s `buildPreRoundBriefingFromStores` already
  * supports a head-to-head `ownRecords`/`opponentTeamId` history, but no

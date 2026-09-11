@@ -20,7 +20,7 @@
  * mechanism `CoachingProgramsPanel`'s "Save current flow" action uses) and,
  * given a side, derives and persists that round's drill set via
  * `state/drillSets.ts`'s `buildAndSaveDrillSet` — closing
- * `docs/features/drill-sets.md`'s "no affordance in this panel to generate a
+ * `packages/debate-help-docs/content/docs/features/drill-sets.mdx`'s "no affordance in this panel to generate a
  * new drill set for a round" Known gap. No new drill-generation logic is
  * introduced here.
  *
@@ -60,7 +60,7 @@
  * Every drill set (including its completion/AI-script/review-reminder
  * state) is now account-synced across devices for a signed-in user, via
  * `hooks/useDrillSets.ts` — the "sharing the 'Practice tier' status across
- * devices" follow-up named in `docs/features/drill-sets.md`'s Known gaps.
+ * devices" follow-up named in `packages/debate-help-docs/content/docs/features/drill-sets.mdx`'s Known gaps.
  * This panel reads/writes exclusively through that hook now, in place of
  * `state/drillSets.ts`'s mutating functions directly.
  *

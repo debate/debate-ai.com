@@ -5,7 +5,7 @@
  *
  * Most of the sidebar's Coaching/Practice tools kept everything they produce
  * in one browser's `localStorage` — the "per-browser localStorage, not
- * account-synced" Known gap recorded in `docs/features/judge-profiles.md`,
+ * account-synced" Known gap recorded in `packages/debate-help-docs/content/docs/internals/judge-profiles.mdx`,
  * `opponent-team-profiles.md`, `flow-annotations.md`, `prep-notes.md`,
  * `coaching-programs.md`, `coach-materials.md` and friends. Signing in on a
  * second device showed an empty tool.

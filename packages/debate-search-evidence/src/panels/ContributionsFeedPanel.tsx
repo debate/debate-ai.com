@@ -64,7 +64,7 @@
  * by the same `parseTagsInput`/`suggestTags`/`applyTagSuggestion` helpers
  * `EvidenceLibraryPanel` already uses — closing the "a Contributions Feed
  * submission tagged for the Argument Library gets no tag-autocomplete
- * affordance of its own" gap in `docs/features/evidence-library.md`.
+ * affordance of its own" gap in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`.
  *
  * Also subscribes to the browser's `storage` event via
  * `state/live-update.ts`'s `isContributionsFeedLiveUpdateStorageEvent`, so a
@@ -73,8 +73,8 @@
  * suggestions without a manual reload — closing, for this panel, the "Every
  * other localStorage-backed panel in this repo still has no cross-tab
  * live-update mechanism" Known gap noted in
- * `docs/features/shared-flow-sync.md`. See
- * `docs/features/contributions-feed.md`.
+ * `packages/debate-help-docs/content/docs/features/shared-flow-sync.mdx`. See
+ * `packages/debate-help-docs/content/docs/features/contributions-feed.mdx`.
  *
  * The heading now carries an Info-icon tooltip (via `community-rating.ts`'s
  * `buildHelpfulnessScoreExplanation`) spelling out the popularity/quality/

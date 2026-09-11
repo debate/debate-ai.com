@@ -30,7 +30,7 @@
  * history (`state/coachConversation.ts`), feeding prior turns back into
  * `requestTeamCoachAnswer` so a follow-up question can build on an earlier
  * answer, closing the "No conversation history" Known gap recorded in
- * `docs/features/coach-materials.md`.
+ * `packages/debate-help-docs/content/docs/internals/coach-materials.mdx`.
  *
  * A search/filter bar (keyword search plus a tag dropdown, both backed by
  * the new `filterCoachMaterials`/`listCoachMaterialTags` in
@@ -44,7 +44,7 @@
  * toggle listing every version `state/coachMaterialVersions.ts` snapshotted
  * before an overwrite, each restorable — closing the "No version history
  * for a material that gets re-uploaded/edited" Known gap recorded in
- * `docs/features/coach-materials.md`.
+ * `packages/debate-help-docs/content/docs/internals/coach-materials.mdx`.
  *
  * Also live-updates across browser tabs: a `storage`-event listener (see
  * `state/live-update.ts#isCoachMaterialsPanelLiveUpdateStorageEvent`)
