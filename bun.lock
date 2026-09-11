@@ -93,6 +93,7 @@
         "immer": "^11.1.18",
         "jszip": "3.10.2",
         "katex": "0.18.7",
+        "legal-terms-privacy-policy": "^0.1.0",
         "linkedom": "0.18.13",
         "lucide-react": "^1.43.0",
         "marked": "^18.0.12",
@@ -3343,6 +3344,8 @@
     "layout-base": ["layout-base@1.0.2", "", {}, "sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg=="],
 
     "lazystream": ["lazystream@1.0.1", "", { "dependencies": { "readable-stream": "^2.0.5" } }, "sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw=="],
+
+    "legal-terms-privacy-policy": ["legal-terms-privacy-policy@0.1.8", "", { "peerDependencies": { "lucide-react": ">=0.4.0", "react": ">=18" }, "optionalPeers": ["lucide-react", "react"], "bin": { "legal-terms-privacy-policy": "cli.mjs" } }, "sha512-SyYd4je9Yb50DRW+LRiDuzkHz2DOPrG7x068PnqgRb4fc7Or+q43hSj44nQ16gpGvvM1tbzDmWQXNP5op5Zq4w=="],
 
     "lib0": ["lib0@0.2.117", "", { "dependencies": { "isomorphic.js": "^0.2.4" }, "bin": { "0serve": "bin/0serve.js", "0gentesthtml": "bin/gentesthtml.js", "0ecdsa-generate-keypair": "bin/0ecdsa-generate-keypair.js" } }, "sha512-DeXj9X5xDCjgKLU/7RR+/HQEVzuuEUiwldwOGsHK/sfAfELGWEyTcf0x+uOvCvK3O2zPmZePXWL85vtia6GyZw=="],
 

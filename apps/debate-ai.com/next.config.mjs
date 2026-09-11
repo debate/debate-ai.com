@@ -14,6 +14,8 @@ const nextConfig = {
   },
   transpilePackages: [
     "react-resizable-panels",
+    // Published as TypeScript source rather than a build output.
+    "legal-terms-privacy-policy",
     // Workspace packages are published as TypeScript source.
     "reason-editor",
     "debate-card-parser",
