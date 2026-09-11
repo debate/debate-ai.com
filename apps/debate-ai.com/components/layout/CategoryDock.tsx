@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
+import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -35,6 +35,7 @@ import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "@/lib/nav/dock-
 import { NAV_ITEMS } from "@/lib/nav/dock-nav-items"
 import { useAppFrame } from "@/components/layout/AppFrameProvider"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
+import { openGlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
 import { IconSettings } from "../../lib/ui/icons"
 
 // No Timer button here on purpose: the round timers live in the rounds
@@ -148,6 +149,12 @@ function SettingsMenu({
       collisionPadding={8}
       avoidCollisions
     >
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); openGlobalCommandPalette() }}>
+        <Search className="mr-2 h-4 w-4" />
+        Command Palette
+        <span className="ml-auto text-xs text-muted-foreground">⌘/Ctrl⇧Space</span>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
       {/* The desktop sidebar's own sections, one submenu each. The sidebar is
           md+ only, so on a phone this is the only place its Videos links and
           the glossary/rankings pair below its tree can be reached — see
