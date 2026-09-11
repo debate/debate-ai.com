@@ -42,7 +42,9 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 function runWrangler(args) {
   return new Promise((resolve, reject) => {
-    const child = spawn("npx", ["wrangler", "versions", "upload", ...args], {
+    // --keep-vars mirrors `keep_vars` in wrangler.jsonc: never wipe the
+    // plaintext Variables entered in the Cloudflare dashboard on upload.
+    const child = spawn("npx", ["wrangler", "versions", "upload", "--keep-vars", ...args], {
       stdio: ["inherit", "pipe", "pipe"],
       env: process.env,
     });

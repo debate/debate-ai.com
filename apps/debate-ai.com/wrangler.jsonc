@@ -34,7 +34,6 @@
 	},
 	"env": {
 		"production": {
-			"keep_vars": true,
 			"images": {
 				"binding": "IMAGES"
 			},

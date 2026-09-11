@@ -1,5 +1,8 @@
 # Cloudflare Workers config for the DebateAI Next.js app (deployed via @opennextjs/cloudflare).
 name = "debateai"
+# Wrangler deletes plaintext Variables set in the Cloudflare dashboard on every
+# deploy unless keep_vars is set. Secrets are never deleted either way.
+keep_vars = true
 # Custom entry that wraps the OpenNext handler (WebSocket routing + cron).
 # `opennextjs-cloudflare build` still generates .open-next/worker.js, which this imports.
 main = "src/worker/index.ts"
