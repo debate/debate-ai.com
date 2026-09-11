@@ -7,7 +7,7 @@ import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked tournament-result history sync —
- * docs/features/team-rankings.md's "Standings data... stored in localStorage
+ * packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data... stored in localStorage
  * only" Known gap. One `saved_tournament_results` row per (user, result)
  * pair, keyed by the caller-generated `TournamentResultRecord.id`. Same
  * account-only shape as `/api/flows`/`/api/rounds`/`/api/word-count-rounds`

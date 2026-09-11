@@ -34,7 +34,13 @@ extension and a native wrapper.
 6. **Respect package boundaries.** Import from a package's public entry point,
    never reach into its internals. The dependency edges between the
    `debate-*` packages are real and documented — read them before adding one.
-7. **Never commit secrets**, credentials, API keys, or build output.
+7. **Every feature has two docs**, both in `packages/debate-help-docs`: a
+   user-facing page under `content/docs/features/` and an engineering note
+   under `content/docs/internals/`. Behaviour changes update both, and the
+   internals "Known gaps" lists are cited from ~150 places in the code. There
+   is no root `docs/` folder — do not recreate one. See
+   [`architecture/documentation.md`](.claude/architecture/documentation.md).
+8. **Never commit secrets**, credentials, API keys, or build output.
 
 ## Where things live
 
@@ -88,5 +94,5 @@ bun run coverage               # merged coverage/lcov.info
 | [overview.md](.claude/architecture/overview.md) | The product, every package, and the dependency edges between them |
 | [monorepo.md](.claude/architecture/monorepo.md) | Workspaces, the apps that aren't workspaces, turbo, the single Vitest config |
 | [web-app.md](.claude/architecture/web-app.md) | The deployed Cloudflare app: Worker, D1, crons, the service worker, deploy |
-| [documentation.md](.claude/architecture/documentation.md) | Where docs live and how `/docs` is built into the app |
+| [documentation.md](.claude/architecture/documentation.md) | Where docs live, the two-tier features/internals model, how `/docs` is built into the app, and the two MDX traps |
 | [conventions.md](.claude/architecture/conventions.md) | Code style, commits, PRs, CI, publishing, security |

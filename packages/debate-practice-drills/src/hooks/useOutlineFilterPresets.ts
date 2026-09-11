@@ -19,7 +19,7 @@
  * `isOutlineFilterPresetsLiveUpdateStorageEvent`) so a *different* browser
  * tab saving or removing a preset refreshes this one too — the same-tab
  * `CHANGE_EVENT` listener below never fires for another tab's write. This
- * closes `docs/features/argument-tree-outline.md`'s "no cross-tab `storage`
+ * closes `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`'s "no cross-tab `storage`
  * listener yet" Known gap, and the matching one `state/live-update.ts`'s doc
  * comment named for this hook.
  *

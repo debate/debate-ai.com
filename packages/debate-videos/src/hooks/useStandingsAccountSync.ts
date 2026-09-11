@@ -2,7 +2,7 @@
 
 /**
  * @fileoverview Account sync for the Standings tab (`StandingsPanel`) —
- * closes docs/features/team-rankings.md's "Standings data (logged/imported
+ * closes packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data (logged/imported
  * tournament results, the custom points table, and the qualification
  * cutoff) is stored in localStorage only... it doesn't yet follow a
  * signed-in user across devices the way flows/rounds/word-count rounds and

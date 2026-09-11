@@ -21,7 +21,7 @@ import {
  * relay guest pass) handed from one account to a contact, so the card shows
  * up as available on the recipient's account instead of only on the
  * clipboard the invite link was pasted into (`card_shares` in
- * `lib/database/schema.ts`; see docs/features/contacts.md). Shares only
+ * `lib/database/schema.ts`; see packages/debate-help-docs/content/docs/features/contacts.mdx). Shares only
  * ever go to accepted contacts with no block in either direction —
  * `filterShareableContacts` — and blocking revokes them. Requires a session.
  *

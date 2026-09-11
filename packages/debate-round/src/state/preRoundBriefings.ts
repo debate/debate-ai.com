@@ -121,7 +121,7 @@ export type PreRoundBriefingDraftResult =
 /**
  * Validates and composes a `PreRoundBriefingRecord` from a "create briefing"
  * form draft — the panel's previously-missing "generate a new briefing for a
- * round" affordance named in `docs/features/pre-round-briefings.md`'s
+ * round" affordance named in `packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`'s
  * "Known gaps." Resolves an opponent/judge profile from their persisted
  * stores by id via `buildPreRoundBriefingFromStores` rather than introducing
  * new briefing-composition logic. Does not persist the result — call

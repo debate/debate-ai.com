@@ -14,7 +14,7 @@
  *
  * A per-topic "Clear completed history" action closes the "a completed
  * task's history record is never deleted" Known gap recorded in
- * `docs/features/research-progress-tracking.md`, calling
+ * `packages/debate-help-docs/content/docs/features/research-progress-tracking.mdx`, calling
  * `state/researchProgress.ts`'s `deleteCompletedTaskHistoryForTopic` and
  * re-reading the board.
  *

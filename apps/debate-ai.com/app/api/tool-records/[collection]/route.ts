@@ -15,7 +15,8 @@ import {
 /**
  * Account-linked sync for the sidebar's localStorage-backed tools — the
  * "per-browser localStorage, not account-synced" Known gap recorded across
- * `docs/features/*.md`. One `saved_tool_records` row per (user, collection,
+ * `packages/debate-help-docs/content/docs/features/*.mdx`. One
+ * `saved_tool_records` row per (user, collection,
  * record), keyed by the caller-generated id the collection names
  * (`TOOL_RECORD_COLLECTIONS[].idField`).
  *

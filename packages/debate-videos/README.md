@@ -16,7 +16,7 @@ import {
 Video and ranking data comes from `debate-data-sync`, projected into the app's `videos` SQL
 table and served a page at a time by `/api/videos` — `hooks/useVideoFeed.ts` pages through
 it as the grid is scrolled, so no screen loads the whole library (see
-[docs/features/video-library.md](../../docs/features/video-library.md)). Player state is a
+[packages/debate-help-docs/content/docs/internals/video-library.mdx](../../docs/features/video-library.md)). Player state is a
 zustand store that survives navigation, which is why the player is mounted once in the
 app's root layout.
 

@@ -48,7 +48,7 @@
  * coaching session for current round" action uses) and, given a side, calls
  * the new `state/practiceRounds.ts`'s `buildAndSavePracticeRoundFeedback` to
  * derive and save that round's `PracticeRoundFeedback` — closing
- * `docs/features/practice-round-simulator.md`'s "feedback generation isn't
+ * `packages/debate-help-docs/content/docs/internals/practice-round-simulator.mdx`'s "feedback generation isn't
  * wired to a live round flow" Known gap. The button is only enabled while
  * the workspace's selected flow's id matches this card's `roundId`, since
  * feedback is judged under that round's own already-saved judge paradigm.
@@ -72,7 +72,7 @@
  * Practice Opponent" idea's "unifying the Practice Round Simulator's own
  * separate persona setup with [the custom-persona] library" Next item
  * (TODO.md's Research Crowdsourcing Organizer Features list;
- * `docs/features/practice-opponent.md`'s Known gaps): this panel's own
+ * `packages/debate-help-docs/content/docs/features/practice-opponent.mdx`'s Known gaps): this panel's own
  * opponent-persona picker could previously only choose a built-in persona,
  * with no custom-persona authoring and no way to reuse an entry already
  * saved to (or shared through) `OpponentPersonaPickerPanel`'s "My persona
@@ -97,7 +97,7 @@
  * tab saves, clears, or advances a round's `practiceRounds` or
  * `aiVersusRounds` record, closing the "Every other localStorage-backed
  * panel in this repo still has no cross-tab live-update mechanism" Known gap
- * noted in `docs/features/shared-flow-sync.md` for this panel.
+ * noted in `packages/debate-help-docs/content/docs/features/shared-flow-sync.mdx` for this panel.
  *
  * @module panels/PracticeRoundSimulatorPanel
  */

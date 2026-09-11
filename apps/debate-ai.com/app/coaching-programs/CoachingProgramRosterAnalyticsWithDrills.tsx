@@ -26,7 +26,7 @@
  * status), the same two joins `CoachingProgramsPanel`'s own board already
  * performs — just resolved here since this layer, unlike `debate-community`,
  * can depend on both `debate-practice-rounds` and `debate-team-collaboration`
- * directly. See `docs/features/coaching-programs.md`'s "Per-member
+ * directly. See `packages/debate-help-docs/content/docs/internals/coaching-programs.mdx`'s "Per-member
  * drill/practice-round status" section.
  *
  * @module app/coaching-programs/CoachingProgramRosterAnalyticsWithDrills

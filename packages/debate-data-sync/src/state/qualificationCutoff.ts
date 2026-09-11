@@ -77,7 +77,7 @@ export function toQualificationOptions(cutoff: QualificationCutoffSettings): Qua
   return options;
 }
 
-// --- Account sync (docs/features/team-rankings.md's "Standings data...
+// --- Account sync (packages/debate-help-docs/content/docs/features/team-rankings.mdx's "Standings data...
 // is stored in localStorage only" Known gap) ------------------------------
 //
 // Pure validation/serialization helpers shared by the `/api/settings`

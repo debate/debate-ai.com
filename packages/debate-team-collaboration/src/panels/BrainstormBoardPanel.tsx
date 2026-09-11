@@ -25,7 +25,7 @@
  *
  * A topic switcher (mirroring `TopicCoverageDashboardPanel`'s) closes the
  * "boards aren't seeded from the coverage-gap prompts" gap noted in
- * `docs/features/brainstorm-board.md` — picking a tracked topic swaps the
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx` — picking a tracked topic swaps the
  * board list to `state/brainstormIdeas.ts`'s
  * `buildBrainstormBoardsPanelViewForTopic`, which shows one board per
  * under-covered tracked argument/category pair (with its seeding prompt
@@ -101,7 +101,7 @@
  * itself gained a chevron-up icon. Both are presentation-only — no new
  * ranking, scoring, or persistence logic — so, matching this panel's
  * existing convention (see "Cross-tab live update" in
- * `docs/features/brainstorm-board.md`), the animation's own timer/state
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`), the animation's own timer/state
  * wiring is intentionally untested; only the new pure `buildBrainstormIdeaRankBadge`
  * helper is Vitest-covered.
  *

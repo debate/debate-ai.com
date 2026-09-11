@@ -51,7 +51,7 @@ same rows:
 | `lib/parquet-upload-cli-options.ts` | Flag parsing and usage text |
 | `cli/upload-parquet.ts` | The CLI's file and console I/O |
 
-See [docs/features/card-library-import.md](../../docs/features/card-library-import.md)
+See [packages/debate-help-docs/content/docs/features/card-library-import.mdx](../../docs/features/card-library-import.md)
 for the column mapping, the skip codes, and how authorization works.
 
 ## Package layout

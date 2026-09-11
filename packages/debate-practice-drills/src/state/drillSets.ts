@@ -40,7 +40,7 @@
  * `scheduleDrillReview`) with the current time. It exists to drive
  * `resolveDrillSetConflict`/`planDrillSetMerge` below, the "sharing the
  * 'Practice tier' status across devices for a signed-in user" follow-up
- * named in `docs/features/drill-sets.md`'s Known gaps — see
+ * named in `packages/debate-help-docs/content/docs/features/drill-sets.mdx`'s Known gaps — see
  * `hooks/useDrillSets.ts`, which uses it the same way
  * `hooks/useWordCountRounds.ts` uses `WordCountRoundRecord.updatedAt`.
  *
@@ -65,7 +65,7 @@
  * drill sets, dependency-free the same way, resolved by the same app/page
  * layer alongside a `roundContributorFlows.ts`-driven practice-round lookup
  * into a `memberDrillPracticeStatus` map — see that same file and
- * `docs/features/coaching-programs.md`'s "Per-member drill/practice-round
+ * `packages/debate-help-docs/content/docs/internals/coaching-programs.mdx`'s "Per-member drill/practice-round
  * status" section.
  *
  * @module state/drillSets
@@ -407,7 +407,7 @@ export function getDrillSetCompletionStats(record: Pick<DrillSetRecord, "drills"
  * package isn't otherwise a dependent of `debate-team-collaboration`, and a
  * structural type avoids adding an edge just for two fields) — against this
  * store's own persisted drill sets by `roundId`, for the "drill-completion
- * rate" half of `docs/features/coaching-programs.md`'s Known gaps: the
+ * rate" half of `packages/debate-help-docs/content/docs/internals/coaching-programs.mdx`'s Known gaps: the
  * Roster Analytics table only showed challenge standings and quest streaks,
  * even though the `roundId`-to-contributor mapping needed to look up each
  * member's drill-completion progress already exists. A member with no
@@ -434,7 +434,7 @@ export function buildContributorDrillCompletionStats(
 /**
  * Derives a round's drill set from an already-flowed `Flow` and persists it
  * in one step — the "generate a new drill set for a round" affordance named
- * in `docs/features/drill-sets.md`'s Known gaps. Lets a caller with a live
+ * in `packages/debate-help-docs/content/docs/features/drill-sets.mdx`'s Known gaps. Lets a caller with a live
  * flow (e.g. the round workspace's currently selected flow) create a
  * `DrillSetRecord` without hand-building it, mirroring
  * `roundContributorFlows.ts`'s `buildAndSaveRoundContributorFlow`. Overwrites

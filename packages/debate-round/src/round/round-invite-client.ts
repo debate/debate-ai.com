@@ -37,7 +37,7 @@ export interface RoundInviteRequest {
  * round's emails before the edit, returning only the ones newly added —
  * so saving an edit to an already-created round invites just-added judges/
  * spectators/debaters without re-notifying everyone already on the round
- * (see `docs/features/round-invites-and-notifications.md`'s Known gaps:
+ * (see `packages/debate-help-docs/content/docs/features/round-invites-and-notifications.mdx`'s Known gaps:
  * "Only round creation sends invites").
  *
  * Comparison is case-insensitive and blank entries are ignored; the

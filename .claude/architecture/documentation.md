@@ -5,7 +5,8 @@
 | If it is… | It goes in… |
 | --- | --- |
 | A guide a debater or contributor would read | `packages/debate-help-docs` |
-| A feature spec | `docs/features/` (published by the docs site) |
+| A feature, for someone using it | `packages/debate-help-docs/content/docs/features/` |
+| A feature, for someone changing its code | `packages/debate-help-docs/content/docs/internals/` |
 | What a package is and what it depends on | `packages/README.md` — the index everyone reads first |
 | How to use one package | That package's own `README.md` |
 | How an agent should work in a package | That package's `CLAUDE.md` |
@@ -23,13 +24,43 @@ Two consequences:
 
 - A docs change only appears after a full app build. Running `vinext build`
   alone leaves the old export in `public/docs`.
-- It publishes the product's feature specs (`docs/features/`) **and the package
-  READMEs**. So a package README is user-facing documentation here — write it
-  that way, and keep `packages/README.md` current when a package's purpose or
-  dependencies change.
+- It publishes both docs tiers **and the package READMEs**. So a package README
+  is user-facing documentation here — write it that way, and keep
+  `packages/README.md` current when a package's purpose or dependencies change.
 
 `debate-help-docs` is excluded from the Vitest projects (it is a site, not a
 tested library), so nothing in the test run will tell you the docs build broke.
+
+## Every feature has two docs
+
+There is no root `docs/` folder — it was folded into the help-docs package, so
+the repo has one docs home. Each feature gets two pages there, for two readers:
+
+| Section | Reader | Shape |
+| --- | --- | --- |
+| `content/docs/features/<name>.mdx` | Someone using the app | ~35 lines: what it does and what it is for |
+| `content/docs/internals/<name>.mdx` | Someone changing the code | ~300 lines: route/package/component, exact behaviour, the data-flow chain, Known gaps |
+
+**Change behaviour, update both.** The internals page is what source comments
+point at — its "Known gaps" list is cited from ~150 places in the code, and
+closing a gap means editing that list, not just the code.
+
+### Two MDX traps, both of which have broken the build
+
+These pages were folded in from plain `.md`, where neither is an error:
+
+- **A backslash does not escape a backtick inside a code span.** Writing
+  ``` `a \`b\` c` ``` ends the span at the first inner backtick; whatever
+  follows lands in prose, and MDX compiles `{...}` there as JSX. That threw
+  `ReferenceError: kind is not defined` during `next build` and took down every
+  Cloudflare Workers build of the app. Use a double-backtick span instead:
+  ``` ``a `b` c`` ```.
+- **A bare `{` or `<` outside a code fence is JSX.** Wrap identifiers and
+  placeholders in backticks — `` `<aside>` ``, `` `{url}` ``.
+
+Since `debate-help-docs` is excluded from the Vitest projects, neither shows up
+in the test run. `cd packages/debate-help-docs && npx next build` prerenders
+every page and is the only check that catches them.
 
 ## The API spec
 

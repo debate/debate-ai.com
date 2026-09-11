@@ -3,7 +3,7 @@
 /**
  * Account-linked live sharing for /reason-editor — the contacts-list front
  * door to the CardMirror engine's real-time collaboration (see
- * docs/features/contacts.md). Two components, both talking to the engine
+ * packages/debate-help-docs/content/docs/features/contacts.mdx). Two components, both talking to the engine
  * through `debate-editor/collab-bridge`:
  *
  * `ShareWithContacts` (header button + dialog): pick contacts and an

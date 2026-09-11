@@ -6,7 +6,7 @@
  * 2026-09-03) deleted the AG Grid `FlowSpreadsheet` view along with this
  * package's original `argument-tagging.ts`/`ArgumentTagPopover.tsx`/
  * `GridContextMenu.tsx` — the only place in the app that ever set these
- * fields (see `docs/features/argument-tree-outline.md`'s "Known regression"
+ * fields (see `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`'s "Known regression"
  * note).
  *
  * That note assumed the AG Grid was replaced by `debate-flow`'s

@@ -15,7 +15,7 @@
  * submission tagged with topic/case-area now appears here too, not just a
  * dedicated `/cards/library` evidence-library entry.
  *
- * A "Rename/merge tag" form closes `docs/features/evidence-library.md`'s
+ * A "Rename/merge tag" form closes `packages/debate-help-docs/content/docs/features/evidence-library.mdx`'s
  * "No tag rename/merge tool" Known gap: picking an existing tag and typing a
  * new name calls `state/evidenceLibraryEntries.ts`'s
  * `renameTagAcrossCombinedPersistedStores`, rewriting the tag on every

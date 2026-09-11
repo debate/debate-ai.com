@@ -34,7 +34,7 @@
  * calls instead of rebuilding it on every search").
  *
  * `getCachedEvidenceSearchIndex` also closes the "Known gap" recorded in
- * `docs/features/evidence-library.md` after that slice — a cache
+ * `packages/debate-help-docs/content/docs/features/evidence-library.mdx` after that slice — a cache
  * invalidation used to fall back to a full `buildEvidenceSearchIndex`
  * re-tokenize-everything pass over every live entry, even when a write only
  * actually touched one of them. It now diffs the previously-indexed live
@@ -53,7 +53,7 @@
  * that constructs an `EvidenceLibraryEntry` directly (as every existing test
  * here does) is unaffected. Together this closes the "a new Argument
  * Library entry ... isn't wired in" half of the Known gap recorded in
- * `docs/features/news-stream.md` (the other half, a coaching session, stays
+ * `packages/debate-help-docs/content/docs/internals/news-stream.mdx` (the other half, a coaching session, stays
  * unwired: `debate-round` already depends on this package, so the reverse
  * dependency this module's news source would need is unavailable without a
  * cycle).
@@ -259,7 +259,7 @@ let cachedLiveEntriesById: Map<string, EvidenceLibraryEntry> | null = null;
  * entries that were actually added, removed, or edited (an unrelated write —
  * e.g. a different entry's peer-review transition — leaves every other
  * entry's postings untouched), closing the "Known gap" recorded in
- * `docs/features/evidence-library.md`.
+ * `packages/debate-help-docs/content/docs/features/evidence-library.mdx`.
  */
 function getCachedEvidenceSearchIndex(): EvidenceSearchIndex {
   const rawEntries = readRawEntries();
@@ -361,7 +361,7 @@ export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
 /**
  * Renames (or merges) a tag across every persisted evidence-library entry
  * that carries it — closes the "No tag rename/merge tool" gap recorded in
- * `docs/features/evidence-library.md`'s Known gaps. Reuses
+ * `packages/debate-help-docs/content/docs/features/evidence-library.mdx`'s Known gaps. Reuses
  * `argument-library.ts`'s pure `renameTagAcrossCards` directly against this
  * store's entries, writing back only when at least one entry actually
  * changed (so an all-no-op rename doesn't touch `localStorage`, and the
@@ -370,7 +370,7 @@ export function buildCombinedPersistedArgumentLibrary(): ArgumentLibrary {
  * the number of entries changed. Only rewrites this store's own entries —
  * a tag applied to a Contributions Feed submission (see
  * `buildCombinedPersistedArgumentLibrary`) is a separate store/form and is
- * left untouched, as noted in `docs/features/evidence-library.md`.
+ * left untouched, as noted in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`.
  */
 export function renameTagAcrossPersistedEntries(oldTag: string, newTag: string): number {
   const { cards: updated, changedCount } = renameTagAcrossCards(readAll(), oldTag, newTag);
@@ -416,7 +416,7 @@ export function listPersistedTags(): string[] {
  * evidence-library tag rather than coining a near-duplicate (the
  * "a Contributions Feed submission tagged for the Argument Library gets no
  * tag-autocomplete affordance of its own" gap in
- * `docs/features/evidence-library.md`). Deduped by exact string, matching how
+ * `packages/debate-help-docs/content/docs/features/evidence-library.mdx`). Deduped by exact string, matching how
  * `buildTagCollections` already treats tag identity.
  */
 export function listCombinedPersistedTags(): string[] {
@@ -436,7 +436,7 @@ export interface CombinedTagRenameResult {
  * evidence repository via `renameTagAcrossPersistedEntries` and the
  * Contributions Feed via `renameTagAcrossPersistedContributions`. Closes the
  * "only rewrites this evidence-library repository's own entries" gap recorded
- * in `docs/features/evidence-library.md`: a tag shown in the combined Common
+ * in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`: a tag shown in the combined Common
  * Argument Library (see `buildCombinedPersistedArgumentLibrary`) may come from
  * either store, so renaming it in one alone left the other's copy stranded
  * under the old name. Throws on a blank or unchanged tag pair, before either

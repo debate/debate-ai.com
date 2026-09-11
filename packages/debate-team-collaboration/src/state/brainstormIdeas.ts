@@ -21,7 +21,7 @@
  *
  * `buildBrainstormBoardsPanelViewForTopic` closes the "boards aren't seeded
  * from the coverage-gap prompts" gap noted in
- * `docs/features/brainstorm-board.md` — it composes a topic's persisted
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx` — it composes a topic's persisted
  * coverage report (`state/trackedArguments.ts`'s
  * `buildPersistedTopicCoverageReport`) with the pure
  * `team-brainstorm-assist.ts` `buildBrainstormBoardsForCoverageGaps` to
@@ -33,7 +33,7 @@
  *
  * `mergePersistedBrainstormIdeas` closes the "no reviewer/moderator merge
  * action for ideas flagged as likely duplicates" Known gap noted in
- * `docs/features/brainstorm-board.md` — it applies the pure
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx` — it applies the pure
  * `team-brainstorm-assist.ts` `mergeBrainstormIdeas` against the two stored
  * ideas and deletes the merged-away duplicate, rather than introducing new
  * merge logic here.

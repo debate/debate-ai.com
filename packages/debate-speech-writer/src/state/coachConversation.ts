@@ -3,7 +3,7 @@
  * history (`CoachConversationTurn`s) — closes the "No conversation
  * history — each question is answered independently; a prior
  * question/answer isn't persisted or fed back into a later one" Known gap
- * recorded in `docs/features/coach-materials.md` for idea #8
+ * recorded in `packages/debate-help-docs/content/docs/internals/coach-materials.mdx` for idea #8
  * ("Video-Lecture-Training Coach AI") in TODO.md. Stores turns in
  * localStorage, mirroring `coachMaterials.ts`'s persistence convention.
  *

@@ -7,7 +7,7 @@ import { reuseCheckLog } from "../database/schema";
  * Deletes `reuse_check_log` rows older than the retention window (idea #7's
  * "On Page Card Reuse Search" — "a retention/purge policy for the
  * ever-growing reuse_check_log" follow-up; see the "Known gaps" bullet this
- * closes in `docs/features/on-page-card-reuse-search.md`). The log is an
+ * closes in `packages/debate-help-docs/content/docs/features/on-page-card-reuse-search.mdx`). The log is an
  * append-only audit trail written on every `GET /api/evidence-reuse-check`
  * lookup with no cap of its own, so without this it grows forever.
  *

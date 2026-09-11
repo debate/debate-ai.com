@@ -6,7 +6,7 @@ Debate-AI is a Bun + Turborepo monorepo: the web app lives in `apps/debate-ai.co
 
 ## Before You Start
 
-- Read the [README](README.md) and the docs under [`docs/`](docs).
+- Read the [README](README.md), the [CLAUDE.md](CLAUDE.md) repo guide, and the docs under [`packages/debate-help-docs/content/docs`](packages/debate-help-docs/content/docs).
 - Search [existing issues](https://github.com/debate/debate-ai.com/issues) and [pull requests](https://github.com/debate/debate-ai.com/pulls) to avoid duplicating work.
 - For substantial changes — new tools, schema changes, or changes to how arguments and evidence are modeled — open an issue first to discuss the problem, proposed approach, and scope.
 - Be respectful and constructive in issues, reviews, and discussions.

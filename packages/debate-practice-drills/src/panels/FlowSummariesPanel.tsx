@@ -25,7 +25,7 @@
  * `state/live-update.ts`'s `isFlowSummariesPanelLiveUpdateStorageEvent` —
  * closing the "every other localStorage-backed panel in this repo still has
  * no cross-tab live-update mechanism" Known gap noted in
- * `docs/features/shared-flow-sync.md`, for `FlowSummariesPanel` — so a
+ * `packages/debate-help-docs/content/docs/features/shared-flow-sync.mdx`, for `FlowSummariesPanel` — so a
  * summary generated, extracted, or cleared in another same-origin tab shows
  * up here without a manual reload.
  *

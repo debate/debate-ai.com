@@ -33,7 +33,7 @@ const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * (`showsReasonDocsPanels`): everywhere else the sidebar is that page's own
  * nav, and on `/videos` — which keeps its own sidebar and so is not wrapped by
  * this shell at all — it is the video library
- * (see `docs/features/reason-docs-sidebar.md`).
+ * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
  * `/cards` goes one step further and is the docs panels plus the Research tool
  * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,
