@@ -27,7 +27,7 @@
     "debate-research-evidence": "workspace:*",
     "grab-url": "^1.6.22",
     "lucide-react": "^1.43.0",
-    "qwksearch-api-client": "0.9.225",
+    "qwksearch-api-client": "^1.0.24",
     "tailwind-merge": "^3.6.0"
   },
   "peerDependencies": {
