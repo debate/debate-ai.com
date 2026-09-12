@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../lib/ui/primitives/ava
 import { themeNames, themeColors, formatThemeName, useThemeState } from "@/components/theme-dropdown"
 import { LoginDialog } from "@/components/layout/LoginDialog"
 import { authClient } from "@/lib/auth/client"
+import { resetUser } from "@/lib/analytics/mixpanel"
 import { useSession } from "@/lib/hooks/useSession"
 import { hasEmbeddedDock } from "@/lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "@/lib/nav/dock-menu-sections"
@@ -72,6 +73,7 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
 
   const handleSignOut = async () => {
     try {
+      resetUser()
       const { error } = await authClient.signOut()
       if (error) throw new Error(error.message || error.statusText)
       router.refresh()

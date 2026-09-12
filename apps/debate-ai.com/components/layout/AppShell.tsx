@@ -29,6 +29,7 @@ import {
   FrameNavigationHost,
   useFrameNavigationHandoff,
 } from "@/components/layout/FrameNavigationBridge"
+import { MixpanelProvider } from "@/components/analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
 
@@ -79,6 +80,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <ChromeErrorBoundary label="GlobalCommandPalette">
             <GlobalCommandPalette />
           </ChromeErrorBoundary>
+          <MixpanelProvider />
           <Toaster position="top-center" richColors closeButton />
         </ReasonDocsProvider>
       </CategoryDockProvider>
@@ -137,6 +139,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <ChromeErrorBoundary label="ServiceWorkerRegistrar">
         <ServiceWorkerRegistrar />
       </ChromeErrorBoundary>
+      <MixpanelProvider />
       {/* Sign-in and sign-out report through toasts; without a mounted
           toaster every one of those messages was dropped silently. */}
       <Toaster position="top-center" richColors closeButton />

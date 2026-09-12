@@ -29,6 +29,8 @@ export interface DebatePracticeVsAiProps {
   apiBaseUrl?: string
   /** Recommendation cards shown on the scorecard. */
   coachSkills?: CoachSkill[]
+  /** Called when a debate round is initiated. */
+  onStartDebate?: (debate: StartedDebate) => void
 }
 
 export function DebatePracticeVsAi({
@@ -39,11 +41,17 @@ export function DebatePracticeVsAi({
   userAvatar,
   apiBaseUrl,
   coachSkills,
+  onStartDebate,
 }: DebatePracticeVsAiProps = {}) {
   const [debate, setDebate] = useState<StartedDebate | null>(null)
 
+  const handleStart = (started: StartedDebate) => {
+    setDebate(started)
+    onStartDebate?.(started)
+  }
+
   if (!debate) {
-    return <BotSelection onStart={setDebate} apiBaseUrl={apiBaseUrl} />
+    return <BotSelection onStart={handleStart} apiBaseUrl={apiBaseUrl} />
   }
 
   return (

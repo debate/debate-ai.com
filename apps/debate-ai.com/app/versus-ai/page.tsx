@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { DebatePracticeVsAi } from "debate-practice-vs-ai"
+import { VersusAiClient } from "./VersusAiClient"
 import { getSession } from "@/lib/auth/session"
 import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
@@ -26,7 +26,7 @@ export default async function VersusAiPage() {
     <ToolPage>
       <ToolPageHeader href="/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
       <Suspense>
-        <DebatePracticeVsAi
+        <VersusAiClient
           userId={session?.user?.id}
           userDisplayName={session?.user?.name}
           userAvatar={session?.user?.image}
