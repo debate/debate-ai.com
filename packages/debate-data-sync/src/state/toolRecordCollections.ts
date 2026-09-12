@@ -26,9 +26,25 @@
  * tool packages depend on it, not the other way round), and without depending
  * on whether the tool's panel happens to be mounted yet.
  *
- * Adding a tool to the sync is one entry here plus the two `mirrorToolRecord*`
- * calls in that tool's own save/delete functions — see
- * `state/tool-record-mirror.ts`.
+ * Adding a tool to the sync is **one entry in this list**, and nothing else.
+ * `state/tool-record-auto-sync.ts` watches every collection named here and
+ * flushes whatever its store gains, changes or loses, so a tool syncs without
+ * its own package being edited at all. A store that additionally calls
+ * `mirrorToolRecord*` from its `save*`/`delete*` functions (see
+ * `state/tool-record-mirror.ts`) gets the same change out immediately rather
+ * than at the watcher's next tick; that is an optimization on top of the
+ * watcher, not a requirement of joining it.
+ *
+ * What *is* required is the shape: a JSON array under one `localStorage` key,
+ * each element an object carrying a stable string `idField`. Single-object
+ * settings stores (`myTeamProfile`, `fontFamily`), presence heartbeats and
+ * per-device playback state are deliberately absent — the first cannot be
+ * keyed, and the last two describe this browser rather than this user. So is
+ * `flowEdits`, whose `SharedFlowSyncPanel`/`FlowEditLogPanel` is not mounted at
+ * any route yet: `test/tool-record-sync-catalog.test.ts` requires every `href`
+ * here to be a tool the sidebar actually links to, so listing it would put a
+ * dead link in `/settings` for data no panel can show. It joins the catalog
+ * when its panel gets a route.
  *
  * @module state/toolRecordCollections
  */
@@ -167,6 +183,288 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     idField: "id",
     label: "Coaching Programs",
     href: "/coaching-programs",
+  },
+  {
+    key: "coachMaterials",
+    storageKey: "coachMaterials",
+    idField: "id",
+    label: "Coach Materials",
+    href: "/coach-materials",
+  },
+  {
+    key: "coachMaterialVersions",
+    storageKey: "coachMaterialVersions",
+    idField: "id",
+    label: "Coach Material Versions",
+    href: "/coach-materials",
+  },
+  {
+    key: "coachingSessionHistory",
+    storageKey: "coachingSessionHistory",
+    idField: "id",
+    // The Coach Workspace's own `coachingSessions` store is deliberately not
+    // here: `CoachingSessionRecord` is keyed by `(roundId, sideKey)` and
+    // carries no single id field, so it cannot be keyed by this table. Its
+    // version history can, and each entry names the round and side it belongs
+    // to, so what the user wrote is kept either way.
+    label: "Coach Workspace History",
+    href: "/coach",
+  },
+  // — Practice —
+  {
+    key: "drillSets",
+    storageKey: "drillSets",
+    idField: "roundId",
+    label: "Practice Drills",
+    href: "/drills",
+  },
+  {
+    key: "aiVersusRounds",
+    storageKey: "aiVersusRounds",
+    idField: "roundId",
+    label: "Debate Versus AI",
+    href: "/versus-ai",
+  },
+  {
+    key: "judgeDecisions",
+    storageKey: "judgeDecisions",
+    idField: "id",
+    label: "AI Judge Decision",
+    href: "/judge-decision",
+  },
+  {
+    key: "counselPanelAssessments",
+    storageKey: "counselPanelAssessments",
+    idField: "id",
+    label: "Response-Outcome Charts",
+    href: "/outcomes",
+  },
+  {
+    key: "vulnerabilityReports",
+    storageKey: "vulnerabilityReports",
+    idField: "roundId",
+    label: "Vulnerability Reports",
+    href: "/outcomes",
+  },
+  {
+    key: "opponentPersonaSelections",
+    storageKey: "opponentPersonaSelections",
+    idField: "sessionId",
+    label: "Opponent Persona Picker",
+    href: "/practice-opponent",
+  },
+  {
+    key: "customOpponentPersonaLibrary",
+    storageKey: "customOpponentPersonaLibrary",
+    idField: "id",
+    label: "Custom Opponent Personas",
+    href: "/practice-opponent",
+  },
+  {
+    key: "wordCountRounds",
+    storageKey: "wordCountRounds",
+    idField: "roundId",
+    label: "Word-Count Speeches",
+    href: "/word-count",
+  },
+  {
+    key: "roundPairings",
+    storageKey: "roundPairings",
+    idField: "roundId",
+    label: "Round Pairings",
+    href: "/practice-round",
+  },
+  {
+    key: "ownRoundHistory",
+    storageKey: "ownRoundHistory",
+    idField: "id",
+    label: "Your Round History",
+    href: "/practice-round",
+  },
+  {
+    key: "strategyRecommendations",
+    storageKey: "strategyRecommendations",
+    idField: "id",
+    label: "Scout-to-Strategy",
+    href: "/strategy",
+  },
+  // — Research —
+  {
+    key: "evidenceLibraryEntries",
+    storageKey: "evidenceLibraryEntries",
+    idField: "id",
+    label: "Evidence Library",
+    href: "/cards/library",
+  },
+  {
+    key: "cardScores",
+    storageKey: "cardScores",
+    idField: "id",
+    label: "Card Scores",
+    href: "/cards/reviews",
+  },
+  {
+    key: "cardScoreHistory",
+    storageKey: "cardScoreHistory",
+    idField: "id",
+    label: "Card Score History",
+    href: "/cards/reviews",
+  },
+  {
+    key: "peerReviews",
+    storageKey: "peerReviews",
+    idField: "cardId",
+    label: "Review Queue",
+    href: "/cards/reviews",
+  },
+  {
+    key: "contributions",
+    storageKey: "contributions",
+    idField: "id",
+    label: "Contributions Feed",
+    href: "/cards/contributions",
+  },
+  {
+    key: "trackedArguments",
+    storageKey: "trackedArguments",
+    idField: "id",
+    label: "Argument Library",
+    href: "/cards/argument-library",
+  },
+  {
+    key: "revisionHistory",
+    storageKey: "revisionHistory",
+    idField: "id",
+    label: "Card Revision History",
+    href: "/cards/library",
+  },
+  {
+    key: "reuseCheckHistory",
+    storageKey: "reuseCheckHistory",
+    idField: "id",
+    label: "Card Reuse Checks",
+    href: "/cards/library",
+  },
+  {
+    key: "topicCoverageSnapshots",
+    storageKey: "topicCoverageSnapshots",
+    idField: "id",
+    label: "Topic Coverage",
+    href: "/cards/coverage",
+  },
+  // — Team —
+  {
+    key: "brainstormIdeas",
+    storageKey: "brainstormIdeas",
+    idField: "id",
+    label: "Team Brainstorm Assist",
+    href: "/cards/brainstorm",
+  },
+  {
+    key: "prepNoteReplies",
+    storageKey: "prepNoteReplies",
+    idField: "id",
+    label: "Prep Note Replies",
+    href: "/prep-notes",
+  },
+  {
+    key: "prepRoomChecklist",
+    storageKey: "prepRoomChecklist",
+    idField: "id",
+    label: "Collaboration Prep Room",
+    href: "/cards/prep-room",
+  },
+  {
+    key: "sprintSessions",
+    storageKey: "sprintSessions",
+    idField: "id",
+    label: "Prep Room Sprints",
+    href: "/cards/prep-room",
+  },
+  {
+    key: "sprintNotes",
+    storageKey: "sprintNotes",
+    idField: "id",
+    label: "Sprint Notes",
+    href: "/cards/prep-room",
+  },
+  {
+    key: "sprintWhiteboardNotes",
+    storageKey: "sprintWhiteboardNotes",
+    idField: "id",
+    label: "Sprint Whiteboard",
+    href: "/cards/prep-room",
+  },
+  {
+    key: "routedTaskQueues",
+    storageKey: "routedTaskQueues",
+    idField: "topicId",
+    label: "Task Inbox",
+    href: "/cards/inbox",
+  },
+  {
+    key: "roundContributorFlows",
+    storageKey: "roundContributorFlows",
+    idField: "contributorId",
+    label: "Contributor Flows",
+    href: "/cards/progress-tracking",
+  },
+  {
+    key: "contributorAvailability",
+    storageKey: "contributorAvailability",
+    idField: "contributorId",
+    label: "Contributor Availability",
+    href: "/cards/progress-tracking",
+  },
+  {
+    key: "groupChallenges",
+    storageKey: "groupChallenges",
+    idField: "id",
+    label: "Group Challenges",
+    href: "/cards/leaderboard",
+  },
+  {
+    key: "dailyQuestTemplates",
+    storageKey: "dailyQuestTemplates",
+    idField: "id",
+    label: "Daily Quests",
+    href: "/cards/leaderboard",
+  },
+  {
+    key: "contributorAwardNominations",
+    storageKey: "contributorAwardNominations",
+    idField: "id",
+    label: "Contributor Award Nominations",
+    href: "/cards/leaderboard",
+  },
+  {
+    key: "dailyBestCardComments",
+    storageKey: "dailyBestCardComments",
+    idField: "id",
+    label: "Daily Best Card Comments",
+    href: "/cards/leaderboard",
+  },
+  // — Videos —
+  {
+    key: "debateVideosFavorites",
+    storageKey: "debateVideosFavorites",
+    idField: "videoId",
+    label: "Video Favorites",
+    href: "/videos",
+  },
+  {
+    key: "debateVideosHidden",
+    storageKey: "debateVideosHidden",
+    idField: "videoId",
+    label: "Hidden Videos",
+    href: "/videos",
+  },
+  {
+    key: "debateVideoReports",
+    storageKey: "debateVideoReports",
+    idField: "id",
+    label: "Video Reports",
+    href: "/videos",
   },
 ];
 
