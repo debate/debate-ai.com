@@ -101,6 +101,16 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
   tool added to `/tools` and nowhere else now reaches this palette and
   favorites (both already read `tool-groups.ts`) but not `/features` or the
   Reason Editor's Workspace menu/`t` prefix, unless it's added there too.
+  **Guarded now:** `apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
+  cross-checks `tool-groups.ts`'s `ALL_TOOLS` against both `feature-catalog.ts`'s
+  `APP_FEATURES` and `debate-editor`'s `WORKSPACE_LINKS` (a test-only relative
+  import into `debate-editor`, which the app already depends on as a
+  package), against an explicit, documented exception list for the few
+  routes that should stay one-sided. A tool added to only one of the three
+  now fails `bun run test` naming exactly which list is missing it, instead
+  of silently under-reaching. The lists themselves still have to be edited by
+  hand in three places — this catches the omission, it doesn't remove the
+  edit.
 - No recent-items or usage-based ranking — every open starts from the same
   static favorites-then-catalog order regardless of what was picked last
   time.

@@ -166,6 +166,13 @@ renders a `--da-card-hue`, that the angle follows the card's catalog position
 rather than its place in a filtered grid, and that `cardHueShift` stays inside
 one turn of the wheel while keeping consecutive cards more than 80° apart.
 
+`apps/debate-ai.com/lib/__tests__/feature-catalog-copies.test.ts` cross-checks
+the three hand-synced copies against each other (see "Three copies,
+hand-synced" and Known gaps below), and
+`apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
+cross-checks this catalog's routes against `/tools`' `ALL_TOOLS` and the
+Reason Editor's `WORKSPACE_LINKS`.
+
 ## Known gaps
 
 - The catalog is a hand-maintained registry, so a new route has to be added
@@ -185,9 +192,16 @@ one turn of the wheel while keeping consecutive cards more than 80° apart.
   consistency (unique ids/routes, every category used, etc.), never that the
   other two copies agree with it — and, per "Three copies, hand-synced"
   above, none of the three packages has a dependency edge that would let one
-  test import and compare all three without adding one. This class of drift
-  (one copy gaining an entry the other two miss) remains possible for the
-  next feature that's added to only one copy.
+  test import and compare all three without adding one.
+  **Guarded now:** `apps/debate-ai.com/lib/__tests__/feature-catalog-copies.test.ts`
+  reads all three copies via a *test-only* relative import (it adds no
+  runtime dependency edge — nothing under `lib/__tests__` ships in a bundle)
+  and asserts the other two match the live app's ids, routes, titles,
+  descriptions, categories, and tags. A repeat of the Contacts drift now
+  fails `bun run test` immediately instead of silently. Choosing one of the
+  three as canonical and wiring the other two through a real dependency edge
+  — so the content itself is only typed once — is still open; see the
+  follow-up issue linked from this page's PR history.
 - `/login` is intentionally absent: it's a step on the way to a feature
   rather than a feature, and it's already reachable from the Settings menu.
 - The **Docs** links point at the feature docs on GitHub's `master` branch;
