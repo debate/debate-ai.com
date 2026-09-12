@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "caselist-downloads.schema.json",
+  "title": "openCaselist Bulk Downloads Manifest",
+  "description": "What `bun run sync-caselist` writes: the bulk archives openCaselist currently publishes for each caselist, and which of them have already been ingested.",
+  "type": "object",
+  "required": ["updatedAt", "caselists"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the manifest was last written."
+    },
+    "caselists": {
+      "type": "object",
+      "description": "One entry per caselist, keyed by slug (hspolicy26, hsld26, hspf26, ndtceda26, nfald26).",
+      "additionalProperties": { "$ref": "#/$defs/CaselistEntry" }
+    }
+  },
+  "$defs": {
+    "Archive": {
+      "type": "object",
+      "required": ["url", "fileName", "slug", "kind", "date"],
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "fileName": { "type": "string" },
+        "slug": { "type": "string" },
+        "kind": {
+          "enum": ["all", "weekly"],
+          "description": "`all` is the whole-season dump; `weekly` is one Tuesday's delta."
+        },
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "description": "The Tuesday the archive was cut."
+        }
+      }
+    },
+    "CaselistEntry": {
+      "type": "object",
+      "required": ["slug", "label", "pageUrl", "source", "fetchedAt", "weekly", "synced"],
+      "properties": {
+        "slug": { "type": "string" },
+        "label": { "type": "string" },
+        "pageUrl": { "type": "string", "format": "uri" },
+        "source": {
+          "enum": ["api", "html", "probe", "none"],
+          "description": "Which discovery source produced this entry."
+        },
+        "fetchedAt": { "type": "string", "format": "date-time" },
+        "all": {
+          "oneOf": [{ "$ref": "#/$defs/Archive" }, { "type": "null" }],
+          "description": "The newest whole-season dump, or null when none is published."
+        },
+        "weekly": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Archive" },
+          "description": "Weekly deltas, newest first."
+        },
+        "synced": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" },
+          "description": "Archive URLs already ingested. Drives the incremental sync."
+        },
+        "lastIngest": {
+          "type": "object",
+          "required": ["at", "archives", "documents", "failures"],
+          "properties": {
+            "at": { "type": "string", "format": "date-time" },
+            "archives": { "type": "integer" },
+            "documents": { "type": "integer" },
+            "failures": { "type": "integer" }
+          }
+        }
+      }
+    }
+  }
+}

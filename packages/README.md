@@ -27,8 +27,10 @@ streaks, and daily quests. Split out of `debate-card-search` alongside
 ## debate-data-sync
 
 Bundled debate data assets (metadata, videos, schemas) plus the scripts that sync them.
-Keeps YouTube video data and debate rankings up to date, and defines shared record types
-such as `OpponentTeamProfile`.
+Keeps YouTube video data and debate rankings up to date, pulls the openCaselist bulk
+evidence archives for every caselist (HS Policy, HS LD, HS PF, NDT/CEDA, NFA LD), and
+defines shared record types such as `OpponentTeamProfile`. Depends on
+`debate-card-parser` for the DOCX half of the caselist ingest.
 
 ## debate-editor
 
