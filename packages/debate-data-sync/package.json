@@ -16,7 +16,6 @@
     "youtube-update-views": "bun run src/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
-    "axios": "^1.20.0",
     "extract-youtube": "^1.0.266",
     "grab-url": "^1.6.22",
     "linkedom": "^0.18.13"
