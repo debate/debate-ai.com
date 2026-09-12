@@ -49,13 +49,70 @@ native-wrapper/
 
 ## Quick start
 
+This package is **outside the workspace globs** — a root `bun install` does not install it, so
+install here explicitly. It also needs a [Rust toolchain](https://rustup.rs) and the platform's
+Tauri prerequisites (on Debian/Ubuntu: `libgtk-3-dev libwebkit2gtk-4.1-dev
+libayatana-appindicator3-dev librsvg2-dev`); `docs/PLATFORMS.md` has the per-OS list.
+
 ```bash
 cd apps/debate-native-wrapper
-npm run dev              # opens a window on the debate-ai profile's URL
+npm install
+npm run dev              # regenerates tauri.conf.json from the profile, then `tauri dev`
+npm run build:desktop    # → src-tauri/target/release/bundle/
 ```
 
-To build installers, retarget at a different site, or ship to a store, see the docs above —
-`docs/BUILDING.md` is the right starting point.
+Every `dev`/`build` script is preceded by `configure.mjs`, so the generated
+`src-tauri/tauri.conf.json` is always rebuilt from the active profile before Tauri runs.
+
+To retarget at a different site or ship to a store, see the docs above — `docs/BUILDING.md` is
+the right starting point.
+
+## Configuration
+
+**The app itself reads no environment variables** — it holds no API key and no secret. Its
+identity comes from a **profile**, one JSON file in `profiles/`, which `scripts/configure.mjs`
+compiles into `src-tauri/tauri.conf.json` and `generated_scheme.rs`:
+
+| Field | What it sets |
+| --- | --- |
+| `url` | The site the window loads. Point it at `http://localhost:3000` to test against a local `apps/debate-ai.com` — and don't commit that. |
+| `appName`, `productName`, `identifier`, `version` | The app's identity with each OS and store. |
+| `deepLinkScheme` | The custom scheme the OAuth handoff comes back on — see `docs/OAUTH.md`. |
+| `iconSource` | The single image `npm run icons` expands into the full `src-tauri/icons/` set. |
+| `trustedOrigins` | Which origins the webview may navigate to. |
+| `window`, `android`, `ios` | Window geometry, package name, bundle id, OS floors. |
+
+One environment variable exists, and it only selects which profile to compile:
+
+| Variable | Enables | Where to get it |
+| --- | --- | --- |
+| `WRAPPER_PROFILE` | Which `profiles/<name>.json` to build from. Defaults to `debate-ai`. | The basename of your own profile file. |
+
+```bash
+cp profiles/example.json profiles/my-app.json    # then edit every field
+WRAPPER_PROFILE=my-app npm run configure
+WRAPPER_PROFILE=my-app npm run icons
+```
+
+`profiles/README.md` documents each field, since JSON cannot carry comments.
+
+## Signing secrets for releases
+
+Local builds need nothing. `.github/workflows/native-wrapper-release.yml` produces signed,
+store-ready artifacts, and reads these from **Settings → Secrets and variables → Actions**.
+All are optional — the workflow skips the platform whose secrets are absent rather than failing.
+
+| Secret | Enables | Where to get it |
+| --- | --- | --- |
+| `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD`, `APPLE_SIGNING_IDENTITY` | Signing the macOS bundle. The certificate is a base64-encoded `.p12`. | [Apple Developer](https://developer.apple.com/account/resources/certificates/list) → Certificates → *Developer ID Application*, exported from Keychain Access. |
+| `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` | Notarizing it, so macOS opens the app without a Gatekeeper warning. `APPLE_PASSWORD` is an app-specific password, not your Apple ID password. | [appleid.apple.com](https://appleid.apple.com/account/manage) → Sign-In and Security → App-Specific Passwords. The team ID is in the Apple Developer account's Membership page. |
+| `IOS_PROVISIONING_PROFILE_BASE64` | The iOS build. | Apple Developer → Profiles → download the `.mobileprovision`, then `base64 -i`. |
+| `WINDOWS_CERTIFICATE`, `WINDOWS_CERTIFICATE_PASSWORD` | Authenticode-signing the `.msi`/`.exe`, so SmartScreen stops warning. Base64-encoded `.pfx`. | A code-signing certificate from a CA (DigiCert, Sectigo, SSL.com). |
+| `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` | Signing the release `.aab`/`.apk`. Play requires a signed upload. | Generate once with `keytool -genkey -v -keystore release.keystore -alias <alias> -keyalg RSA -keysize 2048 -validity 10000`, then `base64 -i release.keystore`. **Keep the keystore file** — losing it means you can never update the Play listing. |
+| `GITHUB_TOKEN` | Attaching artifacts to the release. | Provided automatically by Actions; nothing to set. |
+
+Store submission itself — Microsoft Store, Mac App Store, iOS App Store, Google Play — is
+`docs/APP_STORES.md`.
 
 ## Why a window, not a bundled frontend
 

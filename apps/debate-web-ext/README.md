@@ -27,16 +27,61 @@ check was ported to TypeScript and both halves share `storage` and settings.
 
 ## Develop
 
+This app is **outside the workspace globs** — a root `bun install` does not
+install it, so install here explicitly.
+
 ```bash
-npm install         # runs `wxt prepare`
-npm run dev         # launches Chrome with the extension + HMR
-npm run compile     # tsc --noEmit
-npm run build       # production build -> .output/chrome-mv3
-npm run zip         # -> .output/debate-web-ext-<version>-chrome.zip
+cd apps/debate-web-ext
+bun install         # runs `wxt prepare`
+bun run dev         # launches Chrome with the extension + HMR
+bun run dev:firefox # the same, in Firefox
+bun run compile     # tsc --noEmit
+bun run build       # production build -> .output/chrome-mv3
+bun run zip         # -> .output/debate-web-ext-<version>-chrome.zip
 ```
 
-Load unpacked: `chrome://extensions` → Developer mode → **Load unpacked** →
+`wxt dev` launches a browser with the extension already loaded, so there is no
+"load unpacked" step while developing. To load a built extension by hand:
+`chrome://extensions` → Developer mode → **Load unpacked** →
 `.output/chrome-mv3`.
+
+## Configuration
+
+**This extension reads no environment variables.** There is no `.env` and no API
+key in the bundle — everything configurable is a user-facing setting on the
+Options page, stored in `chrome.storage`, documented under
+[Options](#options) below.
+
+The one thing worth knowing before you point it somewhere new: the **API base
+URL** setting decides which `debate-ai.com` deployment the reuse check queries,
+but only the production domain and `http://localhost:3000` are pre-authorized in
+the manifest's `host_permissions`. Another host needs
+[`wxt.config.ts`](./wxt.config.ts) updated and the extension reloaded first —
+the setting alone will not grant access.
+
+Everything the API itself needs — auth, model keys, the card database — is
+configured on that deployment; see
+[its README](../debate-ai.com/README.md#environment-variables).
+
+## Publishing
+
+```bash
+bun run build && bun run zip           # → .output/debate-web-ext-<version>-chrome.zip
+bun run build:firefox && bun run zip   # Firefox equivalents
+```
+
+Bump `version` in `package.json` first — a store rejects an upload whose version
+is not higher than the last.
+
+| Store | Upload | What you need |
+| --- | --- | --- |
+| Chrome Web Store | [Developer Dashboard](https://chrome.google.com/webstore/devconsole) | A developer account (one-time $5 registration fee) and the `chrome-mv3` zip. |
+| Firefox Add-ons | [addons.mozilla.org/developers](https://addons.mozilla.org/developers/) | A Mozilla account and the Firefox zip. Source must be submitted alongside the build, since the bundle is generated. |
+
+Both stores want a privacy policy URL, and both will ask why the extension sends
+page URLs to a server — the reuse check does, which is why the skip-check
+whitelist and the "check automatically" toggle exist. Neither upload needs a
+secret in this repository; nothing here automates them.
 
 ## The three pages
 
