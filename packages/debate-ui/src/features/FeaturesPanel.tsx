@@ -55,13 +55,14 @@ import {
 } from "./effects";
 import {
   APP_FEATURES,
+  GITHUB_DOCS_BASE_URL,
   buildFeatureCatalogSummaryText,
   buildFeatureSections,
   featureDocUrl,
   searchFeatures,
   type FeatureCategory,
   type FeatureEntry,
-} from "./feature-catalog";
+} from "debate-feature-catalog/src/feature-catalog";
 
 /**
  * A glyph per category, so a section is identifiable before its heading is
@@ -289,7 +290,14 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {section.entries.map((entry, index) => {
-                      const docUrl = featureDocUrl(entry);
+                      // This package has no docs site of its own to link into
+                      // (only the live app's `/features` does), so this
+                      // reference implementation links to the doc's source
+                      // on GitHub instead.
+                      const docUrl = featureDocUrl(entry, {
+                        baseUrl: GITHUB_DOCS_BASE_URL,
+                        stripExtension: false,
+                      });
                       return (
                         <Reveal
                           key={entry.id}

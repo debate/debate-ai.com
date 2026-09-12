@@ -7,7 +7,7 @@
  * palette (`GlobalCommandPalette.tsx` imports it directly). Two catalogs
  * still can't import it and so are kept in sync by hand instead:
  *
- * - `lib/ui/features/feature-catalog.ts`'s `APP_FEATURES` — a different page
+ * - `debate-feature-catalog`'s `APP_FEATURES` — a different page
  *   (`/features`) with its own curated, differently-voiced copy per entry,
  *   grouped into a different category scheme. Recombining the two into one
  *   data source would mean either forcing `/features`'s marketing copy to
@@ -30,7 +30,7 @@
 import { describe, expect, it } from "vitest"
 
 import { ALL_TOOLS } from "@/app/tools/tool-groups"
-import { APP_FEATURES } from "../ui/features/feature-catalog"
+import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog"
 import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/workspace-links"
 
 /**

@@ -9,7 +9,7 @@ feature's name, a one-line description, its route, and a link to its
 long-form doc, grouped into eight categories and filtered by a search box.
 
 - **Route:** `/features`
-- **Package:** `debate-ui`
+- **Package:** `debate-ui` (catalog data lives in `debate-feature-catalog`)
 
 ## Why this exists
 
@@ -33,7 +33,7 @@ cards never come up the same colour.
 
 ## How it works
 
-`packages/debate-ui/src/features/feature-catalog.ts` holds the pure data
+`debate-feature-catalog`'s `src/feature-catalog.ts` holds the pure data
 (`APP_FEATURES`, `buildFeatureSections`, `searchFeatures`); `FeaturesPanel.tsx`
 renders it. Titles/descriptions are copied from each route's own metadata.
 
