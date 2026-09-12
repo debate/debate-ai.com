@@ -9,7 +9,10 @@
  * the sidebar therefore removed the sidebar — and the dock with it.
  *
  * {@link LecturesSidebarShell} is what puts the column back, so this pins that
- * it renders the dock slot it is given, the nav tree, and the footer.
+ * it renders the dock slot it is given, the nav tree, and the footer — and,
+ * below `md` where that column is hidden and the dock's mobile bar is
+ * suppressed by the same `hasEmbeddedDock` rule, the block that stands in for
+ * it.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -75,5 +78,37 @@ describe("LecturesSidebarShell", () => {
 
   it("marks the column as app chrome, so the pre-paint rule can hide it in a frame", () => {
     expect(render("dictionary")).toContain("data-app-chrome");
+  });
+});
+
+describe("the md:hidden block, which is what a phone sees", () => {
+  /** The mobile column, sliced out of the markup. */
+  function mobileMarkup(): string {
+    const html = render("dictionary");
+    const start = html.indexOf('class="md:hidden p-3"');
+    expect(start).toBeGreaterThan(-1);
+    const end = html.indexOf("<main>", start);
+    return html.slice(start, end === -1 ? undefined : end);
+  }
+
+  it("carries the video quick links, the pair included", () => {
+    const mobile = mobileMarkup();
+    expect(mobile).toContain('href="/videos/college"');
+    expect(mobile).toContain('href="/videos/dictionary"');
+    expect(mobile).toContain('href="/videos/rankings"');
+  });
+
+  it("carries the tool sections, collapsed so the page stays in view", () => {
+    const mobile = mobileMarkup();
+    for (const heading of ["Coaching", "Research", "Practice"]) {
+      expect(mobile).toMatch(new RegExp(`<h1[^>]*>${heading}</h1>`));
+      expect(mobile).toMatch(
+        new RegExp(`<a[^>]*aria-expanded="false"[^>]*>(?:(?!</a>)[\\s\\S])*<h1[^>]*>${heading}</h1>`),
+      );
+    }
+  });
+
+  it("still renders the page after it", () => {
+    expect(render("dictionary")).toContain("<main>page</main>");
   });
 });
