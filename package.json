@@ -33,7 +33,8 @@
     "grab-url": "^1.6.22",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.1",
-    "linkedom": "^0.18.12"
+    "linkedom": "^0.18.12",
+    "yarn": "^1.22.22"
   },
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30"

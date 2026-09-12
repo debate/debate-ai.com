@@ -40,10 +40,6 @@ Created the **FLOW Research Manager** as a **Next.js** application. Established 
 
 Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation.
 
-## October 2023
-
-AI research and browser tooling. Built a **Chrome extension** for cite and flow (working **crxjs** build), a card **parser**, and the **debate2vec** API. Conducted **LLaMA 2 vs ChatGPT** research and invented the **"Permutation Tree of Thought"** prompt inspired by Hegelian dialectic.
-
 ## September 2023
 
 Project inception. Initial docs, schema, and UI experiments; **Google One Tap sign-in** testing; first dev example (v0.1).
