@@ -79,11 +79,37 @@ hooks/useVideoFeed.ts
 ```
 
 Filter state (search, season, style, sort, category, top picks) lives in
-`useVideoState` and is sent to the server. Two preferences stay on the client
-because the server has no knowledge of them: **favourites** are sent as an
-explicit `ids` allow-list when the favourites filter is on, and **hidden
+`useVideoState` and is sent to the server. Two preferences are applied on the
+client because the feed query has no knowledge of them: **favourites** are sent
+as an explicit `ids` allow-list when the favourites filter is on, and **hidden
 videos** are filtered out of the loaded pages in the browser (an explicit
 search still surfaces them, as it always has).
+
+Applied on the client, but no longer *stored* there alone. Both live in
+`state/videoLibrary.ts`, which persists them, mirrors each change to the
+signed-in user's account through
+[Tool Data Sync](tool-data-sync.mdx), and prompts a signed-out user once that
+their collection is browser-only. `useVideoState` keeps the `Set<string>` shape
+its filters need and re-reads that store on every `storage` event — which is
+what makes favourites merged from another device appear in an open grid without
+a reload.
+
+Two details of that store are load-bearing:
+
+- **The record shape changed, and the old one still reads.** Favourites and
+  hidden videos shipped as a JSON array of bare video ids, which the account
+  sync cannot key (`saved_tool_records` is keyed by a record's own id field).
+  They are now `{ videoId, savedAt }` / `{ videoId, hiddenAt }` objects, and
+  the reader normalizes the legacy strings per entry — a debater can build a
+  favourites list over a whole season, and a format change that dropped it
+  would be a silent loss visible only to them. Upgraded entries are dated to
+  the epoch, not to the upgrade, so a season's collection is not reordered the
+  first time the new code runs.
+- **Reports are keyed too.** `debateVideoReports` pushed an unkeyed object, so
+  a report sat in one browser where nobody could follow it up. New reports carry
+  an `id`; older ones get a stable id derived from their video and submission
+  time, so re-reading does not sync the same report as a new row each page
+  load.
 
 ## What a big grid costs
 
@@ -140,8 +166,16 @@ committed; regenerate it from the assets.
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now
   returns nothing.
-- Facet counts do not deduct locally hidden videos: hiding a video removes it
+- Facet counts do not deduct hidden videos: hiding a video removes it
   from the grid, but the season and style dropdowns still count it.
+- Favourites are sent to the feed as an explicit `ids` allow-list, so the
+  favourites filter is bounded by how many ids fit in a request. A user with a
+  very large collection would need the filter pushed into the query instead.
+- The favourites/hidden merge is a union keyed by `videoId`, so un-favouriting
+  on one device and re-favouriting on another cannot conflict — but neither can
+  a deliberate "clear my favourites" propagate to a device that is offline at
+  the time and still holds them; that browser's copy is pushed back up on its
+  next sign-in.
 - The seed runs as a separate step from `sync-youtube`, so newly synced videos
   reach the site only after the seed is re-run (until then the JSON fallback,
   not the table, is what carries them).

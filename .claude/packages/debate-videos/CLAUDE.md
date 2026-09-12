@@ -37,6 +37,23 @@ parsed positionally from the end of the slug (`lib/video-slug.ts`) — never
 decoration, so changing how titles are slugified must not stop old links
 resolving.
 
+## Favourites, hidden videos and reports belong to the user
+
+These three are the package's only per-user stores, and they all live in
+`src/state/videoLibrary.ts` — not in `useVideoState`, which only mirrors them
+into the `Set<string>` its filters need. Go through the store, because it does
+three things a bare `localStorage.setItem` does not:
+
+- **Keeps the record shape the account sync can store.** Favourites and hidden
+  videos are `{ videoId, … }` objects, not the bare id strings they used to be,
+  because `saved_tool_records` keys a row by a field on the record. The reader
+  still normalizes the legacy strings — **don't drop that**, a user's
+  favourites list can be a whole season's work.
+- **Mirrors each change to the account** (see
+  `.claude/architecture/` and the Tool Data Sync internals note).
+- **Offers a signed-out user somewhere to keep it**, once per feature. The save
+  happens either way — the prompt is an offer, never a gate.
+
 ## Data
 
 Video metadata comes from `debate-data-sync`'s bundled assets, kept fresh by a

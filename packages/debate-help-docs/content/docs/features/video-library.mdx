@@ -27,8 +27,16 @@ hooks/useVideoFeed.ts — useVideoFeed(filters) / useVideoMeta()
 hooks/useInfiniteScroll.ts — loads the next page as the grid is scrolled
 ```
 
-Favourites and hidden videos stay client-side (an explicit `ids` allow-list
-and a client-side filter, respectively).
+Favourites and hidden videos are still *filtered* client-side — favourites as
+an explicit `ids` allow-list, hidden videos by dropping them from the loaded
+pages — but they are no longer *stored* only client-side: both are kept on your
+account and follow you to another device. See
+[Tool Data Sync](../internals/tool-data-sync.mdx).
+
+Signed out, they save in that browser alone, and favouriting a video says so
+once — with an offer to sign in and keep the collection. Declining is fine: the
+favourite is still saved, and signing in later pushes everything that browser
+already holds up to the account rather than replacing it.
 
 ## Known gaps
 

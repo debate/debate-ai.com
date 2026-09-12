@@ -1,3 +1,19 @@
+export {
+  VIDEO_FAVORITES_KEY,
+  VIDEO_HIDDEN_KEY,
+  VIDEO_REPORTS_KEY,
+  clearVideoFavorites,
+  hideVideo,
+  listHiddenVideos,
+  listVideoFavorites,
+  listVideoReports,
+  saveVideoReport,
+  toggleVideoFavorite,
+  unhideVideo,
+  type HiddenVideo,
+  type VideoFavorite,
+  type VideoReport,
+} from "./state/videoLibrary";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
