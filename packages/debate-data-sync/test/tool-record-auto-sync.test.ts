@@ -20,8 +20,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   flushToolRecordCollection,
   flushToolRecords,
+  isToolRecordAutoSyncRunning,
   markToolRecordsSynced,
   resetToolRecordAutoSync,
+  startToolRecordAutoSync,
+  stopToolRecordAutoSync,
 } from "../src/state/tool-record-auto-sync";
 import {
   setToolRecordSyncEnabled,
@@ -302,5 +305,125 @@ describe("the unchanged-store pre-check", () => {
     calls = [];
     expect(await flushToolRecordCollection(favorites.key)).toMatchObject({ pushed: 1 });
     expect(calls).toHaveLength(1);
+  });
+});
+
+
+describe("what wakes the watcher", () => {
+  /** A `window`/`document` pair that records what was subscribed. */
+  function installDom() {
+    const listeners = new Map<string, Set<(event: unknown) => void>>();
+    const add = (type: string, handler: (event: unknown) => void) => {
+      if (!listeners.has(type)) listeners.set(type, new Set());
+      listeners.get(type)!.add(handler);
+    };
+    const remove = (type: string, handler: (event: unknown) => void) => {
+      listeners.get(type)?.delete(handler);
+    };
+    vi.stubGlobal("window", { addEventListener: add, removeEventListener: remove });
+    vi.stubGlobal("document", {
+      addEventListener: add,
+      removeEventListener: remove,
+      visibilityState: "visible",
+    });
+    return {
+      count: (type: string) => listeners.get(type)?.size ?? 0,
+      async fire(type: string, event: unknown = {}) {
+        for (const handler of [...(listeners.get(type) ?? [])]) handler(event);
+        // The handlers kick a fire-and-forget flush.
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      },
+    };
+  }
+
+  afterEach(() => {
+    stopToolRecordAutoSync();
+  });
+
+  it("flushes on a storage event for a store the catalog names", async () => {
+    const dom = installDom();
+    markToolRecordsSynced(favorites.key);
+    startToolRecordAutoSync();
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+
+    await dom.fire("storage", { key: favorites.storageKey });
+
+    expect(calls).toHaveLength(1);
+  });
+
+  it("ignores a storage event for an unrelated store", async () => {
+    const dom = installDom();
+    markToolRecordsSynced(favorites.key);
+    startToolRecordAutoSync();
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+
+    // An unrelated key must not make every collection re-diff.
+    await dom.fire("storage", { key: "color-theme" });
+
+    expect(calls).toEqual([]);
+  });
+
+  it("flushes on a null storage key, which means localStorage was cleared", async () => {
+    const dom = installDom();
+    markToolRecordsSynced(favorites.key);
+    startToolRecordAutoSync();
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+
+    await dom.fire("storage", { key: null });
+
+    expect(calls).toHaveLength(1);
+  });
+
+  it("flushes when the tab goes away, which is what saves a last-second change", async () => {
+    const dom = installDom();
+    markToolRecordsSynced(favorites.key);
+    startToolRecordAutoSync();
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+
+    await dom.fire("pagehide");
+
+    expect(calls).toHaveLength(1);
+  });
+
+  it("does not flush on a visibility change back to visible", async () => {
+    const dom = installDom();
+    markToolRecordsSynced(favorites.key);
+    startToolRecordAutoSync();
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+
+    await dom.fire("visibilitychange");
+
+    expect(calls).toEqual([]);
+  });
+
+  it("does not stack a second watcher when started twice", () => {
+    const dom = installDom();
+
+    startToolRecordAutoSync();
+    startToolRecordAutoSync();
+
+    // `ToolRecordSyncProvider` mounts in the shell and in each dock frame.
+    expect(dom.count("storage")).toBe(1);
+    expect(dom.count("pagehide")).toBe(1);
+    expect(isToolRecordAutoSyncRunning()).toBe(true);
+  });
+
+  it("detaches everything it attached on stop", () => {
+    const dom = installDom();
+
+    startToolRecordAutoSync();
+    stopToolRecordAutoSync();
+
+    expect(dom.count("storage")).toBe(0);
+    expect(dom.count("pagehide")).toBe(0);
+    expect(dom.count("visibilitychange")).toBe(0);
+    expect(isToolRecordAutoSyncRunning()).toBe(false);
+  });
+
+  it("is a no-op without a window, so a server render attaches nothing", () => {
+    vi.stubGlobal("window", undefined);
+
+    expect(() => startToolRecordAutoSync()()).not.toThrow();
+    expect(isToolRecordAutoSyncRunning()).toBe(false);
   });
 });
