@@ -15,16 +15,25 @@
  * two destinations in the tree that, on a desktop, answered with no
  * navigation at all beyond a "Back" link.
  *
- * The search controls are deliberately not here: neither page searches the
- * video feed, and a search box that filters something off-screen is worse
- * than none. Everything else is the same column, at the same widths, so the
- * sidebar does not move when you cross into one of these pages.
+ * The search controls are not here, and are not in the grid's `<aside>`
+ * either: they float over the results panel (`FloatingVideoSearch`). So this
+ * column and that one now hold the same things, at the same widths, and the
+ * sidebar does not change shape when you cross into one of these pages.
+ *
+ * The `md:hidden` block below it is the other half of the same problem. The
+ * `<aside>` is `md+` only, and `hasEmbeddedDock` reports every `/videos` path
+ * as already carrying a sidebar-hosted dock — which keeps `CategoryDock`'s
+ * mobile bottom bar hidden too. On a phone that left these two pages with no
+ * navigation whatsoever. It carries what the grid's own mobile block carries:
+ * the quick-link tiles, the tool tree (collapsed), and the footer.
  *
  * @module panels/LecturesSidebarShell
  */
 
 import type React from "react"
 
+import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
+import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { Footer } from "../ui/layout/footer"
 import type { LectureCategoryFacet } from "../types/videos"
@@ -76,7 +85,22 @@ export function LecturesSidebarShell({
         <Footer />
       </aside>
 
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="min-w-0 flex-1">
+        {/* Below md the `<aside>` above is gone and the app dock's fixed
+            instance stays hidden, so without this the page answers with no
+            way out of it but the browser's Back button. */}
+        <div className="md:hidden p-3">
+          <QuickLinksGrid counts={counts} activeId={activeId} />
+
+          <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
+            <ToolNavTree defaultExpanded={false} />
+          </nav>
+
+          <Footer />
+        </div>
+
+        {children}
+      </div>
     </div>
   )
 }

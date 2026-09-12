@@ -2,7 +2,7 @@
 
 The deployed product: Next.js (App Router) built with **vinext** and run on
 **Cloudflare Workers**. Full notes in
-[`../../.claude/architecture/web-app.md`](../../.claude/architecture/web-app.md).
+[`../../architecture/web-app.md`](../../architecture/web-app.md).
 
 ## Mount, don't reimplement
 
