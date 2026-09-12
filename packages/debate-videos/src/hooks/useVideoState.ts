@@ -44,7 +44,10 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [sortOrder, setSortOrder] = useState("Recency");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
-  const [viewMode, setViewMode] = useState<VideoViewMode>("grid");
+  // Rows by default: the dense list fits roughly four times as many results
+  // on a screen, and the thumbnail grid is one toggle away in the search
+  // panel for anyone who wants it.
+  const [viewMode, setViewMode] = useState<VideoViewMode>("list");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");

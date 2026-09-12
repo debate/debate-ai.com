@@ -1,6 +1,6 @@
 /**
  * @fileoverview Main video grid view for the lectures page.
- * Renders the sticky search/filter bar, quick-link navigation cards,
+ * Renders the floating search/filter control, quick-link navigation cards,
  * the lecture-category gallery, and the paginated video grid with
  * infinite-scroll trigger.
  * @module components/debate/DebateVideos/panels/LecturesVideoGridView
@@ -13,7 +13,7 @@ import { useParams } from "next/navigation"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
-import { StickyHeader } from "../components/layout/StickyHeader"
+import { FloatingVideoSearch } from "../components/video-search/FloatingVideoSearch"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
@@ -231,7 +231,9 @@ export function LecturesVideoGridView({
     return undefined
   }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
-  const searchBarNode = (stacked: boolean) => (
+  // Always stacked: the floating panel it opens in is a narrow column, not
+  // the full-width row the old sticky header gave it.
+  const searchBarNode = (
     <VideoSearchBar
       searchTerm={searchTerm}
       sortOrder={sortOrder}
@@ -251,7 +253,7 @@ export function LecturesVideoGridView({
       onToggleThumbnails={onToggleThumbnails}
       onToggleFavoritesOnly={onToggleFavoritesOnly}
       totalVideos={totalVideos}
-      stacked={stacked}
+      stacked
       extraButtons={
         youtubeStats ? (
           <YouTubeStatsModal
@@ -269,16 +271,16 @@ export function LecturesVideoGridView({
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Persistent left sidebar (md+): app dock, search controls, video
-          categories, lecture categories, footer. Below md the same controls
-          render inline above the grid instead — see the mobile block below.
-          `min-w-0` keeps every child bound to this column; the dock arrives
-          in `dockSlot` already sized to the column rather than to its own
+      {/* Persistent left sidebar (md+): app dock, video categories, lecture
+          categories, footer. The search and filter controls are deliberately
+          not here — they float over the results panel instead
+          (`FloatingVideoSearch`), which is what lets this column be the same
+          column on the glossary and rankings pages, where there is nothing to
+          search. `min-w-0` keeps every child bound to it; the dock arrives in
+          `dockSlot` already sized to the column rather than to its own
           contents, so it can't reach across the border onto the grid. */}
       <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
         {dockSlot}
-
-        {searchBarNode(true)}
 
         {/* Videos only: the app's REASON document panels used to mount here
             (`docsSlot`), above the tree. They belong on the routes the
@@ -297,10 +299,16 @@ export function LecturesVideoGridView({
       </aside>
 
       <div className="min-w-0 flex-1 p-3 sm:p-6">
-        {/* Mobile-only controls (sidebar above is md+ only) */}
-        <div className="md:hidden">
-          <StickyHeader controls={searchBarNode(false)} />
+        {/* The one instance of the search and filter controls, on every
+            breakpoint: an icon in the top-right corner of this panel that
+            opens on hover, on tap and on focus. It is `sticky` with no height,
+            so it follows the scroll without moving the grid down. */}
+        <FloatingVideoSearch keepOpen={!!searchTerm || isSearchFocused}>
+          {searchBarNode}
+        </FloatingVideoSearch>
 
+        {/* Mobile-only nav (sidebar above is md+ only) */}
+        <div className="md:hidden">
           <QuickLinksGrid
             counts={quickLinkCounts}
             showLectures={showLectureCategories}
