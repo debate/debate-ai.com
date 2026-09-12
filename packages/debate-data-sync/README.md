@@ -1,3 +1,19 @@
+<!-- template-git-repo:badges:start -->
+<p align="center">
+    <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
+    <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-data-sync"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
+    <br />
+    <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
+    <a href="https://github.com/debate/debate-ai.com/issues"><img src="https://img.shields.io/github/issues/debate/debate-ai.com?logo=github" alt="GitHub Issues" /></a>
+    <a href="https://github.com/debate/debate-ai.com/pulls"><img src="https://img.shields.io/github/issues-pr/debate/debate-ai.com?logo=github&label=PRs" alt="Open Pull Requests" /></a>
+    <a href="https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5" alt="Merged Pull Requests" /></a>
+    <a href="https://github.com/debate/debate-ai.com/discussions"><img src="https://img.shields.io/github/discussions/debate/debate-ai.com" alt="GitHub Discussions" /></a>
+    <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
+    <br />
+    <img src="https://img.shields.io/badge/Bun-14151A?logo=bun&logoColor=white" alt="Bun" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white" alt="Vitest" />
+</p>
+<!-- template-git-repo:badges:end -->
+
 # debate-data-sync
 
 Bundled debate data assets and the sync scripts that maintain them.
@@ -260,10 +276,33 @@ debate-data-sync/
 ├── schemas/          # JSON Schemas validating data/
 ├── src/
 │   ├── rankings/     # leaderboard scrapers
+│   ├── state/        # localStorage-backed records, and the account sync over them
 │   ├── types/        # ambient declarations for untyped dependencies
 │   └── youtube/      # channel ingestion, stats, view updates, parsers
 └── test/             # Vitest suites for the title/description parsers
 ```
+
+## The tool-data sync
+
+`src/state/` also holds the account sync that every tool's `localStorage`
+store rides on, documented in full under
+[Tool Data Sync](https://debate-ai.com/docs/internals/tool-data-sync). It lives
+in this package because this is a leaf the tool packages depend on, and it is
+kept framework- and fetch-free where it can be so the server, the client and
+the tests can all import the same rules.
+
+| Module | Role |
+| --- | --- |
+| `toolRecordCollections.ts` | The allowlist of synced stores, and the merge rules. **Adding a tool to the sync is one entry here and nothing else.** |
+| `tool-records-client.ts` | The `/api/tool-records` calls, and nothing but them. |
+| `tool-record-mirror.ts` | What a store's own `save*`/`delete*` calls to push a change immediately; plus the per-collection account merge. |
+| `tool-record-auto-sync.ts` | The floor: watches every collection in the catalog and flushes what changed, so a store syncs without its package being wired for it. |
+| `sign-in-prompt.ts` | Lets a store ask the app to offer a signed-out user an account to keep their work on. No React, no `fetch`. |
+
+The rule these share: **a local save is never blocked by a sync failure.** A
+mirror call returns immediately and swallows its own error, nothing syncs until
+the app reports a signed-in session, and a guest's save still happens whether or
+not they take the sign-in offer.
 
 ## Tests
 

@@ -9,7 +9,7 @@ scripts that sync them. Also defines shared record types such as
 | Content | Rule |
 | --- | --- |
 | `data/`, `schemas/` | **Generated / bundled assets.** Excluded from coverage on purpose — they carry no logic. Do not hand-edit a synced file; change the sync script and re-run it. |
-| `src/` | Real code: the sync scripts and the shared types |
+| `src/` | Real code: the sync scripts, the shared types, and `state/` |
 
 ## Rules
 
@@ -45,3 +45,25 @@ scripts that sync them. Also defines shared record types such as
   read out of an entry path are what an ingested card is credited to.
 - An archive is recorded as synced only after its ingest succeeds, so a failed
   run retries exactly that archive.
+
+## `src/state/` is the account sync, and it is load-bearing
+
+Beyond the shared record types, `src/state/` holds the sync every tool's
+`localStorage` store rides on. Working in here:
+
+- **`TOOL_RECORD_COLLECTIONS` is the whole contract.** A collection in that list
+  syncs — `tool-record-auto-sync.ts` watches it and needs no per-package
+  wiring. That also makes a bad entry silent: a duplicated `key` merges two
+  tools' account rows, and a mistyped `idField` makes every record in that
+  store fail validation, so the tool keeps working locally and simply never
+  syncs. `test/tool-record-catalog.test.ts` is what catches both — don't add an
+  entry without checking the owning store's actual id field.
+- **Keep this layer framework-free.** The route, the client and the tests all
+  import `toolRecordCollections.ts`, and `sign-in-prompt.ts` is imported by tool
+  packages that have no DOM in their tests. No React, no `next/*`, and no
+  `fetch` outside `tool-records-client.ts`.
+- **Never let a sync failure block a local write.** A mirror call returns
+  immediately and swallows its error; a store applies locally first, always.
+- **Never advance a snapshot past a write that did not land.** That is the one
+  bug the watcher cannot have — the record would be dropped with no error
+  anywhere.

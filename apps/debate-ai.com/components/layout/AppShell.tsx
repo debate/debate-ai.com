@@ -21,6 +21,7 @@ import { AppFrameProvider, AppFrameSurface } from "@/components/layout/AppFrameP
 import { ReasonDocsProvider } from "@/components/reason-docs/ReasonDocsProvider"
 import { OneTap } from "@/components/layout/OneTap"
 import { ToolRecordSyncProvider } from "@/components/layout/ToolRecordSyncProvider"
+import { SignInPromptProvider } from "@/components/layout/SignInPromptProvider"
 import { GlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
@@ -64,6 +65,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               their localStorage stores has to be switched on here too. */}
           <ChromeErrorBoundary label="ToolRecordSyncProvider">
             <ToolRecordSyncProvider />
+          </ChromeErrorBoundary>
+          {/* And the tool that tells a guest their save is browser-only has to
+              be able to open a dialog in the document the click happened in —
+              a dialog mounted only in the shell would render behind this
+              frame, or not at all. */}
+          <ChromeErrorBoundary label="SignInPromptProvider">
+            <SignInPromptProvider />
           </ChromeErrorBoundary>
           {/* Same reason: a framed document owns its own keyboard focus, so
               the Ctrl/Cmd-Shift-Space listener has to live here too, not
@@ -119,6 +127,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ToolRecordSyncProvider">
         <ToolRecordSyncProvider />
+      </ChromeErrorBoundary>
+      <ChromeErrorBoundary label="SignInPromptProvider">
+        <SignInPromptProvider />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="GlobalCommandPalette">
         <GlobalCommandPalette />
