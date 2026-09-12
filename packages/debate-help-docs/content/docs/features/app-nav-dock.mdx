@@ -20,27 +20,33 @@ Five destinations — Videos, Shared, Debate, Practice vs AI, Docs — plus a
 gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
 shortcuts in dock order.
 
-**Tools are not dock icons.** The tools catalog is reached three other ways:
-the sidebar nav tree's "All Tools" entry under its "Apps" section, the tree's
-Coaching / Research / Practice sections, and the dock's own Settings menu
-("All Tools", plus a Tools submenu grouped the same way `/tools` is). Holding
-the dock to five destinations is what lets it fit inside the sidebar column
-it is hosted in — see below.
+**Tools are not dock icons.** The tools catalog is reached from the sidebar
+nav tree's Coaching / Research / Practice sections, and the whole feature
+catalog from the **Features** row in the Settings menu's Site Links submenu —
+next to a **Docs** row for the help site. Holding the dock to five
+destinations is what lets it fit inside the sidebar column it is hosted in —
+see below.
 
 ## The Settings menu is the whole nav on a phone
 
 The sidebar column below is `md+` only: on a phone the dock is a bottom bar
 and its Settings menu is the only navigation there is. So the menu carries a
-submenu per sidebar section — **Videos, Apps, Coaching, Research, Practice** —
-above its notifications/theme/links block, and those submenus are *derived*
-from the data the sidebar itself renders rather than restated:
+submenu per sidebar section — **Videos, Coaching, Research, Practice** —
+above its theme/links block, and those submenus are *derived* from the data
+the sidebar itself renders rather than restated:
 
 | Menu submenu | Comes from |
 | --- | --- |
 | Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`) |
-| Apps | `APP_DOCK_LINKS` + `TOOLS_ROOT_HREF` |
 | Coaching / Research / Practice | `SIDEBAR_TOOL_SECTIONS` |
 | Site Links / Debate Links | `FOOTER_LINKS`, split by its `group` field |
+
+**There is no "Apps" submenu.** It used to restate the dock's own five icons
+as text and then hang the whole feature catalog underneath, one nested
+submenu per category — a second, deeper copy of `/features` hanging off the
+dock that was already showing those five icons. One **Features** row reaches
+the catalog instead, and a **Docs** row the help site; both are footer links,
+so the sidebar footer carries them too.
 
 `apps/debate-ai.com/lib/nav/dock-menu-sections.ts` does that composition, and
 `lib/nav/__tests__/dock-menu-sections.test.ts` fails if a sidebar destination
@@ -48,10 +54,8 @@ is not in the menu. That coupling is the point: the Videos links and the
 glossary/rankings pair below the tree were in the sidebar and in no mobile
 menu at all, because the menu was a hand-kept list.
 
-The dock's five icons label themselves on hover, which a touch device never
-fires, so the Apps submenu spells the same five destinations out as text
-rows. The menu itself scrolls (`max-h-[min(560px,80vh)]`) — with six nav
-submenus above the account block it is taller than a phone viewport.
+The menu scrolls (`max-h-[min(560px,80vh)]`) — with the nav submenus above
+the account block it can still run past a phone viewport.
 
 `/videos` additionally prints the tree inline in its own `md:hidden` block,
 under the quick-link tiles: the tiles are the Videos section only, so
@@ -68,6 +72,13 @@ The dock has two forms, and which one a route gets is decided by
 `<aside>` takes it through `LecturesVideoGridView`'s `dockSlot`) and on every
 route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
 the generic sidebar), the dock sits at the top of that 300px column.
+
+That now includes `/videos/rankings` and `/videos/dictionary`. Both are rows
+in the sidebar's own tree, and both used to answer with a bare page — no
+sidebar, and no fixed dock either, since every `/videos` path counts as
+already carrying a sidebar-hosted one. `LecturesSidebarShell` wraps them in
+the same column (dock, nav tree, footer), so clicking either link leaves the
+nav exactly where it was.
 
 **Fixed fallback.** Everywhere else — the home page, `/login`, `/legal/*` —
 it renders fixed in the top-left corner on desktop and as a bottom bar on
@@ -112,7 +123,7 @@ It is three levels deep:
 
 | Level | Element | What it is |
 | --- | --- | --- |
-| 1 | `h1` | A top-level section: Videos, Apps, Coaching, Research, Practice |
+| 1 | `h1` | A top-level section: Videos, Coaching, Research, Practice |
 | 2 | `h2` | A subgroup inside one — College Debates, Favorites, Lectures |
 | 3 | `span` | A leaf link: a tool, a lecture category, a debate format |
 
@@ -120,10 +131,9 @@ Two rules hold for every h1:
 
 - **It is not a link.** The row renders without an `href`, so clicking it
   does nothing but toggle the section. Each section's flagship tool is the
-  first link *inside* it (`/coach` under Coaching, `/tools` as "All Tools"
-  under Apps), so nothing became unreachable — a click on the heading no
-  longer navigates away from the page you are on just because you wanted to
-  see what else is in the group.
+  first link *inside* it (`/coach` under Coaching), so nothing became
+  unreachable — a click on the heading no longer navigates away from the page
+  you are on just because you wanted to see what else is in the group.
 - **One section is open at a time, and it follows the route.** The tree is an
   accordion: opening a section closes the one that was open, and a closed
   section renders none of its links. Which one is open comes from the current
@@ -138,10 +148,10 @@ Two rules hold for every h1:
   slowest. The tree links now also pass `prefetch={false}`, so the ones that
   *are* rendered are fetched on click rather than on sight.
 
-  Resolution is longest-match, with ties going to the app dock: `/cards/library`
-  opens Research (which lists it) rather than Apps (which lists `/cards`),
-  while `/doc` — listed in both — opens Apps, since the dock is what the user
-  just clicked.
+  Resolution is longest-match over the links the tree actually renders:
+  `/cards/library` opens Research, which lists it, and `/doc` opens Research
+  too ("Debate Docs"). A dock destination in no tool section — `/cards`,
+  `/debate` — matches nothing and opens nothing.
 
 `SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
 still folds it into the set of paths that get the tool sidebar.
@@ -170,6 +180,26 @@ hanging straight off Coaching, wherever in the tree it is.
   entry, glossary and rankings included.
 - `packages/debate-videos/test/lectures-sidebar-docs-slot.test.tsx` — that
   `/videos`' `md:hidden` block carries the tool sections, collapsed.
+- `packages/debate-videos/test/lectures-sidebar-shell.test.tsx` — that the
+  rankings and glossary branches render the dock, the nav tree and the
+  footer rather than a bare page.
 - `apps/debate-ai.com/lib/nav/__tests__/dock-menu-sections.test.ts` — that
-  every sidebar destination (videos, dock, tool sections, footer links) is
-  reachable from the Settings menu, which is the whole nav below `md`.
+  every sidebar destination (videos, tool sections, footer links) is
+  reachable from the Settings menu, which is the whole nav below `md`, that
+  there is no Apps section, and that `/features` and `/docs` are reachable.
+- `apps/debate-ai.com/lib/layout/__tests__/frame-navigation.test.ts` — which
+  links a framed page hands up to the shell and which it leaves alone.
+
+## Following a sidebar link never costs you the sidebar
+
+The shell runs each dock destination in a same-origin frame, which puts
+`/videos`' sidebar inside that frame. Its tool rows point at pages the dock
+never frames, and following one used to load that tool inside the frame with
+no sidebar and no dock, then reload the whole tab to recover — the nav
+vanished, then everything flashed.
+
+The click is handed to the shell instead (`FrameNavigationBridge`), which
+routes there itself. The shell document, its dock and its sidebar stay
+mounted, so the column you clicked in is the column you land with. Links that
+are genuinely somewhere else — another origin, a ⌘/ctrl-click opening a new
+tab, `/docs` — are left to the browser as before.

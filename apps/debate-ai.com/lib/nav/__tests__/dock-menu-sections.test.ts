@@ -7,15 +7,17 @@
  * Videos section and its glossary/rankings pair ended up on desktop only.
  * These tests fail if a link is ever added to the sidebar tree without
  * reaching the menu.
+ *
+ * They also pin what the menu deliberately does *not* carry: no "Apps"
+ * section restating the dock's icons and the whole feature catalog, with
+ * `/features` and `/docs` reached as single rows instead.
  */
 
 import { describe, it, expect } from "vitest"
 import {
-  APP_DOCK_LINKS,
   SIDEBAR_TOOL_SECTIONS,
   TOOLS_ROOT_HREF,
 } from "debate-videos/src/components/category-gallery/sidebar-tool-sections"
-import { APP_FEATURES } from "../../ui/features/feature-catalog"
 import { SIDEBAR_VIDEO_LINKS } from "debate-videos/src/components/category-gallery/sidebar-video-links"
 import { FOOTER_LINKS } from "debate-videos/src/ui/layout/footer-links"
 import {
@@ -25,14 +27,10 @@ import {
   DEBATE_LINKS,
 } from "../dock-menu-sections"
 
-/** The two surfaces `dock-menu-sections.ts` keeps out of the menu. */
-const MENU_EXCLUDED_HREFS = new Set(["/contacts", "/notifications"])
-
 describe("SIDEBAR_MENU_SECTIONS", () => {
   it("mirrors the sidebar's sections, in tree order", () => {
     expect(SIDEBAR_MENU_SECTIONS.map((section) => section.id)).toEqual([
       "videos",
-      "apps",
       ...SIDEBAR_TOOL_SECTIONS.map((section) => section.id),
     ])
   })
@@ -53,39 +51,31 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     }
   })
 
-  it("lists the dock's own destinations as text rows too", () => {
-    // The dock icons label themselves on hover, which a touch device never
-    // fires — so the same five destinations are spelled out in the menu.
-    const apps = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "apps")!
-    const appsRows = apps.links.map((link) => link.href)
-    for (const link of APP_DOCK_LINKS) {
-      expect(appsRows).toContain(link.href)
-    }
+  it("carries no Apps section restating the dock and the feature catalog", () => {
+    // The dock's own five icons sit right beside this menu, and the catalog
+    // they belonged to is one `/features` row in Site Links now — not a
+    // submenu of per-category submenus inside the Settings menu.
+    expect(SIDEBAR_MENU_SECTIONS.some((section) => section.id === "apps")).toBe(false)
+    expect(SIDEBAR_MENU_SECTIONS.some((section) => section.title === "Apps")).toBe(false)
   })
 
-  it("carries the whole feature catalog under Apps, grouped by category", () => {
-    const apps = SIDEBAR_MENU_SECTIONS.find((section) => section.id === "apps")!
-    expect(apps.links[0]).toEqual({ href: "/features", title: "All Features" })
-    expect(apps.groups?.length).toBeGreaterThan(0)
+  it("still reaches the feature catalog, through the Site Links row", () => {
+    expect(SITE_LINKS.map((link) => link.url)).toContain("/features")
+    expect(DOCK_MENU_HREFS.has("/features")).toBe(true)
+  })
 
-    const grouped = new Set(apps.groups!.flatMap((group) => group.links.map((link) => link.href)))
-    for (const feature of APP_FEATURES) {
-      if (MENU_EXCLUDED_HREFS.has(feature.href)) continue
-      expect(grouped.has(feature.href)).toBe(true)
-    }
-    // One entry per category, and no category listed twice.
-    const ids = apps.groups!.map((group) => group.id)
-    expect(new Set(ids).size).toBe(ids.length)
+  it("reaches the help docs", () => {
+    // `/docs` is the statically exported help site staged at `public/docs`,
+    // not a Next route — the menu reaches it as an external-style link.
+    expect(SITE_LINKS.map((link) => link.url)).toContain("/docs")
+    expect(DOCK_MENU_HREFS.has("/docs")).toBe(true)
   })
 
   it("drops the rows the menu deliberately no longer carries", () => {
-    // `/tools` and its groups, plus the contacts list and the notification
-    // inbox: the menu is navigation, and every tool it used to list is
-    // already under one of the Coaching / Research / Practice submenus.
+    // `/tools` and its groups: the menu is navigation, and every tool it used
+    // to list is already under one of the Coaching / Research / Practice
+    // submenus.
     expect(DOCK_MENU_HREFS.has(TOOLS_ROOT_HREF)).toBe(false)
-    for (const href of MENU_EXCLUDED_HREFS) {
-      expect(DOCK_MENU_HREFS.has(href)).toBe(false)
-    }
   })
 
   it("carries every footer link across its two external submenus", () => {
@@ -114,10 +104,6 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
     for (const section of SIDEBAR_MENU_SECTIONS) {
       const hrefs = section.links.map((link) => link.href)
       expect(new Set(hrefs).size).toBe(hrefs.length)
-      for (const group of section.groups ?? []) {
-        const groupHrefs = group.links.map((link) => link.href)
-        expect(new Set(groupHrefs).size).toBe(groupHrefs.length)
-      }
     }
   })
 })
