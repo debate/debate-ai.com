@@ -1,13 +1,14 @@
 {
   "name": "debate-data-sync",
   "version": "0.1.0",
-  "description": "Debate data assets (metadata, videos, schemas) plus sync scripts for YouTube videos and debate rankings",
+  "description": "Debate data assets (metadata, videos, schemas) plus sync scripts for YouTube videos, debate rankings and openCaselist bulk downloads",
   "private": true,
   "author": "vtempest",
   "license": "rights.institute/prosper",
   "scripts": {
     "coverage": "vitest run --coverage",
     "extract-transcripts": "bun run src/youtube/extract-transcripts.ts",
+    "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts",
     "sync-youtube": "bun run src/youtube/youtube-sync-cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -16,8 +17,10 @@
     "youtube-update-views": "bun run src/youtube/youtube-sync-cli.ts --update-views"
   },
   "dependencies": {
+    "debate-card-parser": "workspace:*",
     "extract-youtube": "^1.0.266",
     "grab-url": "^1.6.22",
+    "jszip": "^3.10.2",
     "linkedom": "^0.18.13"
   },
   "devDependencies": {

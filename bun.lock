@@ -226,8 +226,10 @@
       "name": "debate-data-sync",
       "version": "0.1.0",
       "dependencies": {
+        "debate-card-parser": "workspace:*",
         "extract-youtube": "^1.0.266",
         "grab-url": "^1.6.22",
+        "jszip": "^3.10.2",
         "linkedom": "^0.18.13",
       },
       "devDependencies": {

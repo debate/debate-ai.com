@@ -39,8 +39,101 @@ Run from the repo root:
 | `npm run sync-youtube` | Pull new videos from configured YouTube channels and classify them as rounds vs. lectures. |
 | `npm run youtube-stats` | Recalculate aggregate view stats and write `data/metadata/youtube-stats.json`. |
 | `npm run youtube-update-views` | Refresh view counts for previously synced videos in batches. |
+| `bun run sync-caselist` | Refresh the openCaselist bulk-archive manifest for every caselist. Add `--ingest` to download and unpack what is new. |
 
-Set `YOUTUBE_API_KEY` in the environment before running any of these.
+Set `YOUTUBE_API_KEY` in the environment before running any of the YouTube scripts.
+The caselist sync needs no credentials — the archives are public.
+
+## src/caselist/
+
+Syncs the bulk evidence archives openCaselist publishes at
+`https://opencaselist.com/{slug}/downloads` — one caselist per event per season,
+all serving the same page and the same bucket layout:
+
+| Caselist | Slug |
+| --- | --- |
+| HS Policy 2026-27 | `hspolicy26` |
+| HS LD 2026-27 | `hsld26` |
+| HS PF 2026-27 | `hspf26` |
+| NDT/CEDA College 2026-27 | `ndtceda26` |
+| NFA College LD 2026-27 | `nfald26` |
+
+Each caselist offers one whole-season dump (`{slug}-all-{date}.zip`) and a weekly
+delta per Tuesday (`{slug}-weekly-{date}.zip`), each a ZIP of Verbatim `.docx`
+files laid out as `{school}/{team}/{file}.docx`.
+
+```ts
+import {
+  fetchCaselistDownloads,
+  selectPendingArchives,
+  downloadArchive,
+  loadCaselistArchive,
+} from "@/packages/debate-data-sync/src/caselist";
+
+const downloads = await fetchCaselistDownloads("hspolicy26");
+
+for (const archive of selectPendingArchives(downloads, state)) {
+  const { bytes } = await downloadArchive(archive);
+  await loadCaselistArchive(bytes, {
+    slug: downloads.slug,
+    parseCards: true,
+    onDocument: async (document) => {
+      // document.school / .team / .side / .html / .cards
+    },
+  });
+}
+```
+
+### Discovery falls back three ways
+
+`/{slug}/downloads` is a client-rendered React app: a plain GET returns the
+`<div id="root">` shell, so a scraper reading the raw HTML sees no links and
+cannot tell that apart from "no archives cut yet".
+`fetchCaselistDownloads` therefore tries, in order, and reports which answered
+in `result.source`:
+
+1. **`api`** — the JSON endpoint the page's own client calls.
+2. **`html`** — the rendered page, either served pre-rendered or handed in as
+   `options.html` by a caller that rendered it (headless browser, saved capture).
+3. **`probe`** — the bucket layout is fully determined by the slug and the date,
+   and archives are cut at midnight every Tuesday, so the candidate URLs for the
+   last N weeks are generated and HEAD-checked.
+
+A run that finds nothing returns `source: "none"` and the reasons in
+`result.notes` rather than throwing — one caselist being unreachable must not
+cost a five-caselist run the other four.
+
+### Unpacking
+
+`loadCaselistArchive` walks the ZIP one entry at a time and hands each converted
+document to `onDocument`, so a season dump is never held in memory whole. The
+DOCX → HTML → cards conversion itself is `debate-card-parser`'s, the same code
+path the editor's import and the admin uploader use. `describeCaselistEntry`
+reads the school, team and side back out of an entry's path, degrading to `null`
+rather than guessing — a wrong attribution is worse than a missing one.
+
+One unreadable document (password-protected, truncated, a `.doc` renamed) is
+recorded in `failures` with a coded reason and the walk continues.
+
+### The manifest
+
+`bun run sync-caselist` writes `data/metadata/caselist-downloads.json`
+(schema: [`schemas/caselist-downloads.schema.json`](schemas/caselist-downloads.schema.json)),
+which doubles as the sync state: each caselist records the archive URLs already
+ingested, so the next `--ingest` run fetches only the weeks added since. Once a
+caselist has been seeded, `selectPendingArchives` stops offering the season dump
+— the weekly deltas carry the same files for a fraction of the bytes.
+
+| Flag | Effect |
+| --- | --- |
+| `--caselist=hsld26,hspf26` | Only these caselists (default: all five). |
+| `--ingest` | Also download and unpack the archives not yet ingested. |
+| `--limit=25` | Stop after N documents per archive. |
+| `--cards` | Also run the card parser on each document. |
+| `--no-probe` | Skip the bucket probe. |
+| `--html-file=page.html` | Read a rendered downloads page saved from a browser instead of discovering. Needs a single `--caselist`. |
+| `--dry-run` | Report what would happen; write nothing. |
+| `--out=path` | Write the manifest somewhere other than the default. |
 
 ## src/rankings/
 
