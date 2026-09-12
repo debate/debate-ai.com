@@ -14,6 +14,7 @@ import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../l
 import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
+import { handleCanonicalHostRedirect } from "../lib/redirects";
 
 interface Env extends TurnstileEnv {
   ASSETS: Fetcher;
@@ -60,6 +61,14 @@ interface ScheduledEvent {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Canonical host, ahead of everything else: a request that arrived on the
+    // `ebate.app` apex (or its `www.` form) is sent to `d.ebate.app` with its
+    // path and query intact, before any work is done for it. Returns null for
+    // every other host — `d.ebate.app`, `debate-ai.com`, previews and dev.
+    // See lib/redirects/canonical-host.ts.
+    const redirect = handleCanonicalHostRedirect(request);
+    if (redirect) return redirect;
+
     // Cloudflare Turnstile, in front of everything else: a desktop browser's
     // first HTML page view is answered with a "just a moment" check until it
     // carries a pass this Worker signed. Returns null — and costs one HMAC
