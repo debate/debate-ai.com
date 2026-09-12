@@ -1,0 +1,130 @@
+---
+title: "Team Rankings"
+---
+
+# Team Rankings
+
+How `/rank` gets its rows: two independent third-party sources, merged by team
+name, behind one `/api/leaderboard` endpoint.
+
+- **Route:** `/rank`; data from `/api/leaderboard?division=<VPF|VLD|VCX>&year=<YYYY>`.
+- **Package:** [`debate-videos`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-videos/README.md)
+  (the panel and the fetch hook),
+  [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
+  (the scrapers and the merge), `apps/debate-ai.com`
+  (`app/api/leaderboard/route.ts`, `lib/leaderboard/resolve.ts`).
+
+The user-facing **Team Rankings** feature page covers what the table shows.
+
+## The two sources
+
+| Source | Gives | Divisions | Fetched from |
+| --- | --- | --- | --- |
+| TOC bid list | rank, TOC score, bid count, students, state, per-tournament breakdown | CX, PF, LD | `tocbidlist.com/api/enriched-leaderboard` |
+| DebateDrills | Debate Elo rating and Elo rank | PF, LD | ranking CSVs on `raw.githubusercontent.com` |
+
+Neither is ours and neither is under contract. They go down separately, and
+the current season's table is a join of the two: the bid list is the spine,
+Elo is merged onto it.
+
+Prior seasons (2021–2025) are DebateDrills-only — the bid list API serves the
+current season — so `/rank` for an older year returns Elo rows for PF and LD
+and an empty list for anything else.
+
+## Joining them by name
+
+The two sources name the same team differently, so `mergeElo`
+(`debate-data-sync/src/rankings/merge-elo.ts`) tries progressively more
+forgiving keys:
+
+1. Both names normalized — lowercased, punctuation stripped, whitespace
+   collapsed — and matched exactly.
+2. **LD only:** DebateDrills folds the debater's initials into the team name
+   where TOC keeps them in a separate `students` field, so the initials are
+   appended before matching (`Harker` + `Ada Lovelace` → `harker al`).
+3. **PF only:** the two partners' initials are not always in the same order,
+   so `Strake Jesuit MS` is also tried as `Strake Jesuit SM`.
+
+A row that matches nothing is returned **unchanged** rather than dropped: a
+partial or empty Elo dataset costs you the Elo column, not the leaderboard.
+
+## Degrading when a source is down
+
+`resolveLeaderboard` (`apps/debate-ai.com/lib/leaderboard/resolve.ts`) owns
+this; the route is the HTTP shell around it. Both upstreams are requested
+concurrently and what to serve is decided afterwards:
+
+| TOC bid list | DebateDrills | Served |
+| --- | --- | --- |
+| ✅ | ✅ | merged rows |
+| ✅ | ❌ | bid-list rows, no Elo column |
+| ❌ | ✅ (non-empty) | Elo-only rows |
+| ❌ | ❌ / empty | `502` with `{ error, details }` |
+
+CX has no Elo source, so a bid-list outage is a `502` for that division.
+
+Two rules this encodes, both of which the endpoint previously got wrong:
+
+- **One dead upstream must not take out the other.** A single wrapping
+  `try`/`catch` used to answer `500` the moment either scrape threw, so a
+  tocbidlist outage blanked PF, LD *and* CX at once even though DebateDrills
+  was answering.
+- **An upstream failure is a `502`, not a `500`.** The app is fine; something
+  it depends on is not. Saying so keeps third-party downtime out of our own
+  error rate.
+
+Every failure is `console.error`-logged before it is absorbed, so it lands in
+Workers Logs. The DebateDrills branch used to swallow its error in a bare
+`catch {}`, which made an outage indistinguishable from a season with no Elo
+published yet.
+
+## `grab`, not `axios`
+
+Both scrapers go through `grab-url`, the repo's standard request client.
+This matters more than house style: these scrapes run **inside the Cloudflare
+Worker**, where `axios` picks its transport at import time and reaches for
+`XMLHttpRequest` or `node:http` rather than the runtime's real `fetch`.
+
+`grab`'s `cancelOngoingIfNew` is explicitly **off** for the bid-list fetch. It
+defaults on and is keyed by path, which is right in a browser (one user, one
+in-flight request per endpoint) and wrong on a server, where two visitors
+asking for the same division at the same moment would cancel each other.
+
+`grab` also resolves with an `.error` field instead of rejecting, so both
+scrapers check it — an unchecked result looks exactly like a successful empty
+response.
+
+## Surfacing a failure in the panel
+
+`useLeaderboardData` (`debate-videos/src/hooks/useLeaderboardData.ts`) sets
+`error` when the payload carries `.error` or is not an array, and
+`RankingsLeaderboardPanel` renders it. Because `grab` resolves rather than
+rejects, an outage never reached the hook's `catch` and the panel rendered an
+empty table with no explanation — the error state existed but was unreachable.
+
+## Tests
+
+- `packages/debate-data-sync/test/merge-elo.test.ts` — the three key
+  strategies, that unmatched rows survive, and that the input entries are not
+  mutated.
+- `packages/debate-data-sync/test/sync-rankings-tocbidlist.test.ts` — row
+  mapping and sorting, the `cancelOngoingIfNew` opt-out, and that a `.error`
+  result or a missing `rows` array throws instead of reading as empty.
+- `apps/debate-ai.com/lib/leaderboard/__tests__/resolve.test.ts` — the
+  degradation matrix above, that the two upstreams are queried concurrently,
+  and that failures are logged.
+
+## Known gaps
+
+- Both sources are scraped live on every request with no server-side cache, so
+  each page load costs two third-party round trips and the endpoint is only as
+  fast and as available as they are.
+- The name join is exact-match-after-normalization plus two hand-written
+  special cases. A school that renames itself mid-season, or a partnership
+  listed with three initials, silently loses its Elo column. (An earlier
+  revision mentioned a Fuse.js fuzzy fallback; there is none — the
+  `LeaderboardEntry` simply comes back without `debateElo`.)
+- `CURRENT_YEAR` is hardcoded. Each new season needs it bumped, or `/rank`
+  serves the new year from the historical Elo-only path.
+- NDT appears as a division tab but has no ranking source; the hook
+  short-circuits it to an empty table.

@@ -1,0 +1,39 @@
+---
+title: "AI Coach Mode"
+---
+
+# AI Coach Mode
+
+Shows every persisted "AI Coach Mode" coaching session, grouped by round +
+side — extension, refutation, collapse, and weighing prompts derived from
+that round's flow — with a "Get AI feedback" action for open-ended AI
+coaching feedback.
+
+- **Route:** `/coaching`
+- **Package:** `debate-round`
+
+## What it shows
+
+Each persisted `CoachingSessionRecord` renders as its own card with kind
+badges (Extension/Refutation/Collapse/Weighing). An **AI feedback** section
+shows generated feedback or a "Get AI feedback" button. Each card has a
+Download action, a History timeline (with Restore), and a Compare-two-
+sessions view.
+
+## Data flow
+
+```
+state/coachingSessions.ts (localStorage: coachingSessions)
+  → buildCoachingSessionsPanelView()
+  → panels/CoachingSessionsPanel.tsx
+  → apps/debate-ai.com/app/coaching/page.tsx
+
+Getting AI coaching feedback:
+  → requestCoachFeedback(...) — round/coach-feedback-client.ts
+      → buildCoachFeedbackAiUserPrompt(...) — round/coach-feedback-ai.ts
+      → POST /api/reason-ai
+```
+
+## Known gaps
+
+None open.

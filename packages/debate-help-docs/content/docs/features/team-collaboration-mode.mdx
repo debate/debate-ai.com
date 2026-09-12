@@ -1,0 +1,35 @@
+---
+title: "Team Collaboration Mode"
+---
+
+# Team Collaboration Mode
+
+Lets a teammate leave a live prep note against a shared topic sprint, and
+shows every persisted `SprintNote` grouped by topic.
+
+- **Route:** `/cards/collaboration`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A form to add a note, notes grouped by topic with status-cycle and
+assign/unassign actions, a live "active now" roster (per-topic presence
+heartbeat), and (via `TopicSprintPanel`) a full topic sprint composition
+(quests, task routing, progress board, notes) plus an **End-of-sprint
+retrospective** download.
+
+## Data flow
+
+```
+state/sprintNotes.ts (localStorage: sprintNotes)
+  → buildSprintNotesPanelView()
+  → panels/SprintNotesPanel.tsx
+  → apps/debate-ai.com/app/cards/collaboration/page.tsx
+
+state/topicSprints.ts → buildPersistedTopicSprint(topic)
+```
+
+## Known gaps
+
+All id fields are still free-form text — a signed-in session only
+prefills them.

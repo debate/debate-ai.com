@@ -1,0 +1,43 @@
+---
+title: "Contribution Leaderboard"
+---
+
+# Contribution Leaderboard
+
+Ranks community contributors — cards, summaries, analytics, and other
+research contributions — by a blended helpfulness score, and shows each
+contributor's unlock tier, earned badges, and current daily-quest streak.
+
+- **Route:** `/cards/leaderboard`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+| Column | Source |
+| --- | --- |
+| Rank | `buildLeaderboard`'s sort order |
+| Contributor | `contributorId` |
+| Tier | novice/apprentice/veteran/expert |
+| Contributions | Count of persisted contributions |
+| Total/Avg score | Blended helpfulness score |
+| Streak | Current consecutive-day quest streak |
+| Badges | Tier + streak-milestone badges |
+
+A **Range** filter (All time/This week/This month) and a **Category**
+filter re-derive the whole roster. Each row has a "History" toggle showing
+endorsement history.
+
+## Data flow
+
+```
+state/contributions.ts (localStorage)
+  → buildPersistedLeaderboard()
+  → buildContributorUnlockStatusWithStreakFromStore()
+  → panels/ContributionLeaderboardPanel.tsx
+  → apps/debate-ai.com/app/cards/leaderboard/page.tsx
+```
+
+## Known gaps
+
+- No reviewer-identity/permission checks (no auth/roles in this repo yet).
+- "My endorsement activity" only appears for a signed-in visitor.

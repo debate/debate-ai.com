@@ -1,0 +1,40 @@
+---
+title: "Speech Documents"
+---
+
+# Speech Documents — a history of what CardMirror actually sent
+
+`/speech-documents` shows a durable, listable send log of everything the
+live Reason Editor (CardMirror) has sent into a designated "speech doc"
+pane.
+
+- **Route:** `/speech-documents` (view/manage history) — send from any
+  CardMirror document (e.g. `/reason-editor`)
+- **Package:** `debate-editor`
+
+## How sending works
+
+CardMirror's speech-doc feature is a pane-designation model: mark a pane as
+the speech doc (File menu → Speech), then send the current selection (or
+card/section) with the backtick key. A live ProseMirror slice is inserted
+directly into the designated pane — same-window, or cross-tab via
+`BroadcastChannel`. The speech doc is just an ordinary open document —
+CardMirror keeps no separate copy.
+
+## What this page shows
+
+A **send log**, not a document list: the plain text of what actually landed
+for every send, in IndexedDB, newest first, with per-entry Remove and a
+Clear history action.
+
+## Data flow
+
+```
+debate-editor/src/editor/speech-doc-send.ts → sendToSpeech / insertSpeechSlice
+debate-editor/src/editor/speech-send-log.ts (IndexedDB, "speech-send-log")
+apps/debate-ai.com/app/speech-documents/SpeechSendLogPanel.tsx
+```
+
+## Known gaps
+
+Today's log is one global history, not grouped per speech-doc identity.

@@ -1,0 +1,34 @@
+---
+title: "Revision Incentives"
+---
+
+# Revision Incentives
+
+Rewards contributors for improving weak cards, strengthening citations,
+and refreshing stale evidence, and ranks them by total reward points
+earned.
+
+- **Route:** `/cards/revisions`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+A leaderboard (revisions, rewarded count, reward points, weak cards
+improved), a **Stale evidence digest** (most-urgent first), and a **Recent
+revisions** section with a word-level before/after diff viewer.
+
+## Data flow
+
+```
+state/revisionHistory.ts (localStorage)
+  → buildPersistedRevisionIncentiveLeaderboard()
+  → panels/RevisionIncentivesPanel.tsx
+  → apps/debate-ai.com/app/cards/revisions/page.tsx
+```
+
+A revision earns points from a quality-score gain, a citation-completeness
+gain, and citing newer evidence than the prior snapshot.
+
+## Known gaps
+
+None open on this bullet.

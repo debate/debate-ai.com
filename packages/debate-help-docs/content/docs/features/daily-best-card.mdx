@@ -1,0 +1,33 @@
+---
+title: "Daily Best Card Challenge"
+---
+
+# Daily Best Card Challenge
+
+Highlights the single highest-helpfulness card submitted each UTC calendar
+day, and lets a day's winner be frozen as an official "announced" result.
+
+- **Route:** `/cards/best-card`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+**Today's leader**, an **Announce today's winner** action, a **Winner
+history calendar**, **Announced history**, a **Best of the week** rollup,
+and a per-day **comment thread**.
+
+## Data flow
+
+```
+state/contributions.ts (localStorage, "contributions")
+  → getTodaysBestCardFromStore() / buildDailyBestCardsFromStore()
+state/dailyBestCardAnnouncements.ts
+  → announceDailyBestCard()
+  → panels/DailyBestCardPanel.tsx
+  → apps/debate-ai.com/app/cards/best-card/page.tsx
+```
+
+## Known gaps
+
+- No scheduled job announces automatically.
+- A comment's "Your name" field is a free-form prefill, not an identity gate.

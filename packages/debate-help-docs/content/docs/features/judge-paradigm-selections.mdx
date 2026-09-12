@@ -1,0 +1,35 @@
+---
+title: "Judge Paradigm Picker"
+---
+
+# Judge Paradigm Picker
+
+Lets a user pick a round's AI judge paradigm — one of six built-in
+paradigms or a custom paradigm built from a real judge's own stated
+preferences — and lists every round with a saved selection.
+
+- **Route:** `/paradigms`
+- **Package:** `debate-speech-writer`
+
+## What it shows
+
+A form to save a round's paradigm, plus every saved selection with a
+"Preview prompt" toggle, a "Get AI judge decision →" deep link, and a
+"Clear" action. A related **Decision history** log
+(`/judge-decision`) appends every requested AI decision per round instead
+of overwriting, with account-synced history, bulk clear, and a per-round
+cap.
+
+## Data flow
+
+```
+state/judgeParadigmSelections.ts (localStorage: judgeParadigmSelections)
+  → panels/JudgeParadigmPickerPanel.tsx
+  → apps/debate-ai.com/app/paradigms/page.tsx
+
+round/judge-decision-ai.ts + round/judge-decision-client.ts → POST /api/reason-ai
+```
+
+## Known gaps
+
+None open.

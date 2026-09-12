@@ -1,0 +1,58 @@
+---
+title: "Outline Filters and Argument Tree View"
+---
+
+# Outline Filters and Argument Tree View
+
+Renders a filterable, heading-grouped outline of a round's flow.
+
+- **Route:** `/outline`
+- **Nav:** the Tools page's Prep & Practice group; the Reason Editor's
+  Workspace menu
+- **Package:** `debate-round`
+
+## What it shows
+
+Every persisted `ArgumentTreeRecord` (one card per round). Each card has
+seven filter controls — **Kind**, **Side**, **Speech**, **Argument type**,
+**Contributor**, **Evidence status**, and an **Unanswered only** toggle.
+Changing a control re-filters the tree in place and saves the chosen
+filter through `saveArgumentTreeFilterSelection`.
+
+## Filter presets
+
+Each round card has a "Filter presets" row: apply a saved preset, or save
+the round's current filter combination under a new name. Local-first and
+best-effort account-synced through the same `/api/settings` row.
+
+## Tagging an argument from the flow grid
+
+Right-clicking any row in the live flow grid offers **Tag Argument…**,
+opening a popover with an Argument type select, Evidence status select, and
+a Contributor field. Saving writes the tags onto the row's root `Box`.
+
+## Outline export
+
+Each round card has a "Download outline" button that downloads the
+flattened, filtered rows as a plain-text `.txt` outline.
+
+## Data flow
+
+```
+flow/argument-tree.ts
+  → buildArgumentTree(flow)
+  → filterArgumentTree(tree, filter)
+  → flattenArgumentTree(nodes)
+
+state/argumentTrees.ts (localStorage: argumentTrees)
+  → buildAndSaveArgumentTree(flow, roundId)
+  → panels/ArgumentTreePanel.tsx
+  → apps/debate-ai.com/app/outline/page.tsx
+```
+
+## Known gaps
+
+- Tagging is row-level, not per-speech.
+- The contributor field is a free-form typed id, not an authenticated user.
+- Applying a preset only sets the round's filter; it doesn't select or
+  scroll to a particular round.

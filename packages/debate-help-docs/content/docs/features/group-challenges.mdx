@@ -1,0 +1,32 @@
+---
+title: "Group Challenges"
+---
+
+# Group Challenges
+
+Lets a coach create a squad-scoped friendly challenge — either "reach N
+matching contributions" or "reach N recorded wins" — with a roster and a
+challenge window, showing every challenge's live standings.
+
+- **Route:** `/cards/group-challenges`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+Each persisted `GroupChallenge` renders as its own card: title, goal,
+window, roster, and live standings (best first, 🏆 marking the MVP). A
+`win_target` challenge gets a "Record a win" action.
+
+## Data flow
+
+```
+state/groupChallenges.ts (localStorage: groupChallenges)
+state/challengeWinEvents.ts (localStorage: challengeWinEvents)
+  → buildPersistedGroupChallengeBoard(now)
+  → panels/GroupChallengesPanel.tsx
+```
+
+## Known gaps
+
+"Record a win" is still free-form text, not a login — a real signed-in
+session only prefills it.

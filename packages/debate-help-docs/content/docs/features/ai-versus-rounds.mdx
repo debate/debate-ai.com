@@ -1,0 +1,73 @@
+---
+title: "Online Debate Versus AI"
+---
+
+# Online Debate Versus AI
+
+Lets a debater start a full practice round against an AI opponent — pick a
+`debate-timer` format and side, then submit their own speeches one at a
+time, in turn order.
+
+- **Route:** none of its own — the panel renders inside `/coach`. `/versus-ai`
+  now serves Practice vs AI, the ported full-round feature.
+- **Nav:** the Coach hub
+- **Package:** `debate-round`
+
+## What it shows
+
+A form to start a round: a round ID, a `debate-timer` format, and which
+side the user is speaking (formats with no `secondary` side, like
+Congress, only offer the primary side). Starting a round derives its full
+speech order via `buildAiVersusSpeechOrder` and persists an empty round
+through `saveAiVersusRound`.
+
+Once a round is active, the panel renders its full turn order — each slot
+tagged "You" or "AI" and marked Delivered/Next/Pending — and, when it's the
+user's turn, a text area to type and submit the next expected speech.
+Submission calls `validateSpeechSubmission` before saving. On the AI's
+turn, a "Generate AI speech" button calls the real AI speech-generation
+request and saves the returned text as that slot's speech.
+
+Every delivered AI speech in the turn-order list gets its own "Regenerate"
+button. Clicking it re-requests that slot, from the same prior-speeches
+context originally used to generate it, and replaces it in place — every
+other speech is untouched.
+
+A "Download transcript" button appears once a round's `nextSlot` is `null`
+(every speech delivered), rendering a plain-text transcript labeled
+"You"/"AI" per slot.
+
+The speech-submission text field also has a "🎤 Record"/"Stop recording"
+button dictating directly into the same `speechText` state via the
+browser's Web Speech API, with a disabled fallback when unsupported.
+
+## Data flow
+
+```
+round/ai-versus-speech-order.ts
+  → buildAiVersusSpeechOrder(styleKey, userSide)   — derives the turn order
+  → validateSpeechSubmission(order, submittedCount, speechName)
+
+state/aiVersusRounds.ts (localStorage: aiVersusRounds)
+  → buildAiVersusRoundsPanelView()
+  → getAiVersusRoundStatus(roundId)
+  → panels/AiVersusRoundPanel.tsx
+  → apps/debate-ai.com/app/versus-ai/page.tsx
+
+Generating the AI's next speech:
+panels/AiVersusRoundPanel.tsx
+  → buildAiResponseRequest(order, submittedCount, submittedSpeeches)
+  → round/ai-versus-speech-client.ts's requestAiVersusSpeech(request)
+      → round/ai-versus-speech-ai.ts's AI_VERSUS_SPEECH_SYSTEM_PROMPT + buildAiVersusSpeechUserPrompt(request)
+      → POST /api/reason-ai
+      → parseAiVersusSpeechResponse(text)
+  → saveAiVersusRound({ ...record, submittedSpeeches: [...] })
+```
+
+## Known gaps
+
+None open. Every delivered AI speech can be regenerated independently in
+place; a completed round's transcript can be downloaded as plain text;
+speech submission stays text-only beyond microphone dictation, and there is
+no transcription path for an already-recorded audio/video file, matching
+every other panel in this repo that shares that same gap.

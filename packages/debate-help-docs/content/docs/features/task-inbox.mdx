@@ -1,0 +1,34 @@
+---
+title: "Task Inbox"
+---
+
+# Task Inbox
+
+Shows every research task routed to a contributor, grouped by topic, so a
+contributor or coach can see what's assigned, mark tasks done, and have a
+different contributor verify them before they count as complete.
+
+- **Route:** `/cards/inbox`
+- **Package:** `debate-card-search`
+
+## What it shows
+
+Per topic: task, coverage level, assignee, a "Mark done" action (moves to
+**Awaiting verification**, requiring a different contributor's id to
+**Verify**), a "Reassign"/"Assign to…" control, a priority flag, a "My
+tasks" filter, and a **Team capacity** view.
+
+## Data flow
+
+```
+state/routedTaskQueues.ts (localStorage: routedTaskQueues)
+  → buildTaskInboxView()
+state/pendingTaskVerifications.ts (localStorage: pendingTaskVerifications)
+  → verifyAndRecordResearchTask(...) — state/researchProgress.ts
+  → panels/TaskInboxPanel.tsx
+```
+
+## Known gaps
+
+"My tasks" is still free-form text — a signed-in session only prefills it.
+No real "coach" role/permission system gates Reassign or priority.
