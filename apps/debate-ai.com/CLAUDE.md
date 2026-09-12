@@ -27,6 +27,12 @@ scoring or editor behaviour inside `app/`, it is in the wrong package.
   commit the new file.
 - `preview` needs the raised heap (`--max-old-space-size=4096`) — the build is
   genuinely that memory-hungry.
+- **The Turnstile gate runs first in `worker/index.ts`** (`lib/turnstile`). It
+  only ever interrupts a desktop browser's first HTML page view, and it is a
+  no-op until `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` are set. Adding a
+  path that must answer machines — a webhook, a feed, a health check — outside
+  `/api/*` means adding it to the exempt list in
+  `lib/turnstile/request-filter.ts`.
 
 ## This app holds the repo's only Vitest config
 

@@ -13,8 +13,9 @@ import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
 import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
+import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 
-interface Env {
+interface Env extends TurnstileEnv {
   ASSETS: Fetcher;
   IMAGES: {
     input(stream: ReadableStream): {
@@ -59,6 +60,16 @@ interface ScheduledEvent {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    // Cloudflare Turnstile, in front of everything else: a desktop browser's
+    // first HTML page view is answered with a "just a moment" check until it
+    // carries a pass this Worker signed. Returns null — and costs one HMAC
+    // verify — for every other request, and for all of them when the
+    // TURNSTILE_* variables are unset. Runs outside the D1 scopes below
+    // because a challenged request never reaches the database.
+    // See lib/turnstile/gate.ts.
+    const gated = await handleTurnstileGate(request, env);
+    if (gated) return gated;
+
     // Two nested scopes for the request: `runWithContext` publishes the
     // bindings, and `runWithD1Session` pins every D1 query the request makes
     // to one read-replication session (lib/database/d1-session.ts). The
