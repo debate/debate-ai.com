@@ -1,21 +1,21 @@
 <!-- template-git-repo:badges:start -->
 <p align="center">
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
-    <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-api-client"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
     <br />
+    <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
     <a href="https://www.npmjs.com/package/debate-api-client"><img src="https://img.shields.io/npm/dm/debate-api-client.svg" alt="NPM Monthly Downloads" /></a>
     <a href="https://www.npmjs.com/package/debate-api-client"><img src="https://img.shields.io/npm/v/debate-api-client.svg" alt="npm version" /></a>
     <a href="https://www.npmjs.com/package/debate-api-client"><img src="https://img.shields.io/npm/dt/debate-api-client.svg" alt="NPM Total Downloads" /></a>
     <a href="https://www.npmjs.com/package/debate-api-client"><img src="https://img.shields.io/npm/types/debate-api-client" alt="TypeScript types" /></a>
     <a href="https://packagephobia.com/result?p=debate-api-client"><img src="https://packagephobia.com/badge?p=debate-api-client" alt="Install size" /></a>
     <br />
-    <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
     <a href="https://github.com/debate/debate-ai.com/issues"><img src="https://img.shields.io/github/issues/debate/debate-ai.com?logo=github" alt="GitHub Issues" /></a>
     <a href="https://github.com/debate/debate-ai.com/pulls"><img src="https://img.shields.io/github/issues-pr/debate/debate-ai.com?logo=github&label=PRs" alt="Open Pull Requests" /></a>
     <a href="https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5" alt="Merged Pull Requests" /></a>
     <a href="https://github.com/debate/debate-ai.com/discussions"><img src="https://img.shields.io/github/discussions/debate/debate-ai.com" alt="GitHub Discussions" /></a>
     <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
     <br />
+    <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-api-client"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
     <img src="https://img.shields.io/badge/Bun-14151A?logo=bun&logoColor=white" alt="Bun" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white" alt="Vitest" />
 </p>
 <!-- template-git-repo:badges:end -->
