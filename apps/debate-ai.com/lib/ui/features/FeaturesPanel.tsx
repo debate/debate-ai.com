@@ -61,7 +61,7 @@ import {
   searchFeatures,
   type FeatureCategory,
   type FeatureEntry,
-} from "./feature-catalog";
+} from "debate-feature-catalog/src/feature-catalog";
 
 /**
  * A glyph per category, so a section is identifiable before its heading is

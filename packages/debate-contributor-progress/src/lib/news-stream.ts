@@ -27,7 +27,7 @@
  * @module lib/news-stream
  */
 
-import { APP_FEATURES, type FeatureEntry } from "../ui/features/feature-catalog";
+import { APP_FEATURES, type FeatureEntry } from "debate-feature-catalog/src/feature-catalog";
 
 /** Which of the feed's sources a `NewsItem` came from. */
 export type NewsCategory = "product" | "daily-best-card" | "awards" | "community";
