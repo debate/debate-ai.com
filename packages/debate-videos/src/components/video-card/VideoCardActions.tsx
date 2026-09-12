@@ -23,7 +23,7 @@ import {
 } from "../../ui/primitives/tooltip"
 import { formatVideoDate } from "./videoCardUtils"
 import { HideConfirmDialog } from "./VideoCardDialogs"
-import { TranscriptModal } from "../transcript-modal/TranscriptModal"
+import { WatchPageLink } from "../watch/WatchPageLink"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -186,8 +186,8 @@ export function VideoCardActions({
             </TooltipContent>
           </Tooltip>
 
-          {/* Transcript modal */}
-          <TranscriptModal videoId={videoId} title={title} />
+          {/* Watch page — the video, its transcript and related videos */}
+          <WatchPageLink videoId={videoId} title={title} />
 
           {/* Topic tooltip button */}
           {yearTopic && (

@@ -1,17 +1,25 @@
 # debate-videos
 
 LEARN — the video library: search and filtering, video grids and cards, the persistent
-YouTube player (with picture-in-picture and a queue), lecture and dictionary pages, and
-the rankings leaderboards.
+YouTube player (with picture-in-picture and a queue), a per-video watch page, lecture and
+dictionary pages, and the rankings leaderboards.
 
 ```tsx
 import {
   LecturesPage,
+  VideoWatchPage,
   PersistentVideoPlayer,
   CategoryDockProvider,
   useVideoPlayerStore,
+  videoWatchHref,
 } from "debate-videos"
 ```
+
+`VideoWatchPage` backs `/videos/watch/<title-slug>-<videoId>`: one video, its synced
+transcript beside it, related videos underneath. It does not add a second embed — it
+takes playback over from the persistent player for as long as it is mounted and hands
+it back, at the same second, on the way out. See
+[internals/video-watch-page.mdx](../debate-help-docs/content/docs/internals/video-watch-page.mdx).
 
 Video and ranking data comes from `debate-data-sync`, projected into the app's `videos` SQL
 table and served a page at a time by `/api/videos` — `hooks/useVideoFeed.ts` pages through
@@ -27,11 +35,12 @@ Logic lives under `src/`, grouped by role; tests live under `test/`.
 ```
 debate-videos/
 ├── src/
-│   ├── components/   # cards, grids, search bar, player, stats modal
+│   ├── components/   # cards, grids, search bar, player, watch page, stats modal
 │   ├── context/      # category dock context
 │   ├── data/         # category descriptions
 │   ├── hooks/        # paginated video feed, infinite scroll, leaderboard data
-│   ├── panels/       # lectures, dictionary, leaderboard, rankings pages
+│   ├── lib/          # watch-page slugs
+│   ├── panels/       # lectures, watch, dictionary, leaderboard, rankings pages
 │   ├── state/        # persistent video player store
 │   ├── types/        # video and topic types
 │   └── index.ts      # public entry point

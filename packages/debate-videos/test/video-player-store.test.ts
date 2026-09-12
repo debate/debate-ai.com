@@ -30,6 +30,7 @@ beforeEach(() => {
     playbackRate: 1,
     queue: [],
     startTime: 0,
+    theaterVideoId: null,
     searchHandler: null,
     getCurrentTimeRef: null,
   });
@@ -305,5 +306,39 @@ describe("sendYouTubeCommand", () => {
   it("does nothing when the iframe has no window yet", () => {
     videoPlayerIframeRef.current = { contentWindow: null } as never;
     expect(() => sendYouTubeCommand("playVideo")).not.toThrow();
+  });
+});
+
+describe("theaterVideoId", () => {
+  it("is unset until a watch page claims playback", () => {
+    expect(store().theaterVideoId).toBeNull();
+  });
+
+  it("names the video the watch page took over, and releases it again", () => {
+    store().setActiveVideo("vid1", "Round 3");
+    store().setTheaterVideoId("vid1");
+
+    // The floating player reads this to stand down: two embeds would fight
+    // over playback and over picture-in-picture.
+    expect(store().theaterVideoId).toBe("vid1");
+
+    store().setTheaterVideoId(null);
+    expect(store().theaterVideoId).toBeNull();
+    // Standing the watch page down is not the same as closing the video.
+    expect(store().activeVideoId).toBe("vid1");
+  });
+
+  it("leaves the queue and the position handoff alone", () => {
+    store().setActiveVideo("vid1", "Round 3");
+    store().addToQueue("vid2", "Round 4");
+    store().setTheaterVideoId("vid1");
+
+    // Leaving the watch page hands the tracked position back so the popout
+    // player resumes mid-sentence rather than restarting.
+    store().setActiveVideo("vid1", "Round 3", undefined, 128);
+    store().setTheaterVideoId(null);
+
+    expect(store().startTime).toBe(128);
+    expect(store().queue).toHaveLength(1);
   });
 });

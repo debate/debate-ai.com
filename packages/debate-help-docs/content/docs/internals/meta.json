@@ -23,6 +23,7 @@
     "tool-data-sync",
     "turnstile-bot-gate",
     "video-library",
+    "video-watch-page",
     "youtube-transcript-proxy"
   ],
   "icon": "Wrench"

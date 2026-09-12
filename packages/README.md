@@ -112,5 +112,6 @@ the site footer, and the `cn`/URL-state helpers other packages build on.
 ## debate-videos
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
-persistent YouTube player with picture-in-picture, lecture pages, and rankings
-leaderboards.
+persistent YouTube player with picture-in-picture, a per-video watch page at
+`/videos/watch/<title-slug>-<videoId>` (player, synced transcript, related videos),
+lecture pages, and rankings leaderboards.

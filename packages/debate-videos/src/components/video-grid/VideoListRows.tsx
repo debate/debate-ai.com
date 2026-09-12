@@ -20,7 +20,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
-import { TranscriptModal } from "../transcript-modal/TranscriptModal"
+import { WatchPageLink } from "../watch/WatchPageLink"
 import { useResizableColumns } from "./useResizableColumns"
 import type { VideoType } from "../../types/videos"
 import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
@@ -348,7 +348,7 @@ function VideoRow({
               <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
             </Tooltip>
 
-            <TranscriptModal videoId={videoId} title={title} />
+            <WatchPageLink videoId={videoId} title={title} className="p-1" iconClassName="h-3.5 w-3.5" />
 
             <Tooltip>
               <TooltipTrigger asChild>

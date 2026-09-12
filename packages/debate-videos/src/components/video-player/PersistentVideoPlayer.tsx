@@ -16,8 +16,8 @@ import { PlayerControls } from "./PlayerControls"
 import { PlayerQueue } from "./PlayerQueue"
 import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
-import { useTranscript } from "../transcript-modal/useTranscript"
-import { groupIntoSentences } from "../transcript-modal/transcriptUtils"
+import { useTranscript } from "../transcript/useTranscript"
+import { groupIntoSentences } from "../transcript/transcriptUtils"
 import { buildEmbedUrl, describePlayerError, startListening, watchUrl } from "./youtubeEmbed"
 
 interface VideoPlayerProps {
@@ -39,6 +39,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     playbackRate,
     queue,
     startTime,
+    theaterVideoId,
     clearActiveVideo,
     setMinimized,
     setIsPlaying,
@@ -303,7 +304,14 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     sendYouTubeCommand("playVideo")
   }, [])
 
-  if (!activeVideoId) return null
+  // The full-page watch player owns the embed while it is mounted, so the
+  // floating widget renders nothing rather than mounting a second one that
+  // would compete for playback and for picture-in-picture. Its hooks stay
+  // mounted above this line: the YouTube `infoDelivery` messages the watch
+  // page's embed posts are window-wide, so play state and the tracked
+  // position keep flowing into the store and into `localStorage` while the
+  // user is on that page.
+  if (!activeVideoId || theaterVideoId) return null
 
   const startSeconds = resumeSeconds ?? startTime
   const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })

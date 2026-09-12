@@ -1,8 +1,9 @@
 # CLAUDE.md — `debate-videos` (LEARN)
 
 Private. The debate video library: search and filtering, grids and cards, a
-**persistent YouTube player with picture-in-picture**, lecture pages, and
-rankings leaderboards. Entry `src/index.ts`, tests in `test/`.
+**persistent YouTube player with picture-in-picture**, a per-video watch page,
+lecture pages, and rankings leaderboards. Entry `src/index.ts`, tests in
+`test/`.
 
 ## The player is persistent — that's the hard part
 
@@ -15,6 +16,26 @@ above the route tree, not inside a page. So:
   (a new key, a moved provider) stops a lecture mid-sentence.
 - PiP is browser state you don't fully own — handle the user exiting PiP,
   or the browser refusing it, without losing playback position.
+
+The one page that does have its own embed, `panels/watch/VideoWatchPage.tsx`,
+is not an exception to that: it *takes over* from the persistent player rather
+than joining it. It sets `theaterVideoId` on the store (which makes
+`PersistentVideoPlayer` render nothing), claims `videoPlayerIframeRef` so
+`sendYouTubeCommand` drives the embed the user is actually watching, and hands
+both back — with the playback position — on unmount. If you add another
+full-page player, do the same; don't mount one alongside.
+
+Its toolbar is the popout player's toolbar: both compose
+`components/video-player/PlayerIconButton.tsx`, so add a control there rather
+than hand-rolling a button in one of them.
+
+## Watch-page URLs are permanent
+
+`/videos/watch/<title-slug>-<videoId>` links are shared and indexed. The id is
+parsed positionally from the end of the slug (`lib/video-slug.ts`) — never
+`split("-")`, because YouTube ids contain `-` and `_`. The title half is
+decoration, so changing how titles are slugified must not stop old links
+resolving.
 
 ## Data
 
