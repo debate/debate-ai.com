@@ -1,6 +1,5 @@
 <!-- template-git-repo:badges:start -->
 <p align="center">
-    <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI" /></a>
     <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
     <a href="https://debate-ai.com"><img height="20px" src="https://img.shields.io/badge/App-blueviolet?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" /></a>
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
@@ -23,13 +22,14 @@
     <br />
     <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
     <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs--welcome-brightgreen" alt="PRs Welcome" /></a>
-    <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" /> <img src="https://img.shields.io/badge/Bun-14151A?logo=bun&logoColor=white" alt="Bun" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" /> <img src="https://img.shields.io/badge/Tauri-24C8D8?logo=tauri&logoColor=white" alt="Tauri" /> <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" /> <img src="https://img.shields.io/badge/better--auth-000000" alt="better-auth" /> <img src="https://img.shields.io/badge/ProseMirror-000000" alt="ProseMirror" /> <img src="https://img.shields.io/badge/Fumadocs-000000" alt="Fumadocs" /> 
+    <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" /> <img src="https://img.shields.io/badge/Tauri-24C8D8?logo=tauri&logoColor=white" alt="Tauri" /> <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" />  <img src="https://img.shields.io/badge/ProseMirror-000000" alt="ProseMirror" /> <img src="https://img.shields.io/badge/Fumadocs-000000" alt="Fumadocs" /> 
 </p>
 <!-- template-git-repo:badges:end -->
 
 <p align="center">
     <a href="https://doi.org/10.5281/zenodo.22170412"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.22170412.svg" alt="DOI"></a>
-    <a href="https://doi.org/10.5281/zenodo.21881743"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21881743.svg" alt="DOI"></a>
+      <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI" /></a>
+  <a href="https://doi.org/10.5281/zenodo.21881743"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21881743.svg" alt="DOI"></a>
     <br />
     <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
     <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
