@@ -15,7 +15,10 @@
  * every surface, and spotlight cards that reveal as they scroll in. Their
  * colour comes from `globals.css`'s `--accent-hue` / `--accent-secondary-hue`
  * pair rather than a palette of the page's own, so the page reads as part of
- * the app in both light and dark.
+ * the app in both light and dark. Each card rotates that accent by its own
+ * angle (`cardHueShift`) for its hover state alone, so pointing at a card
+ * lights it in a colour no neighbour shares while the grid at rest stays on
+ * the single app accent.
  *
  * It has no store: every card just links to a surface that already manages
  * its own state.
@@ -41,7 +44,15 @@ import {
 import { Input } from "../primitives/input";
 import { cn } from "../lib/utils";
 import { EmptyState } from "../panels/panel-shell";
-import { AuroraBackdrop, CountUp, Marquee, Pill, Reveal, SpotlightCard } from "./effects";
+import {
+  AuroraBackdrop,
+  cardHueShift,
+  CountUp,
+  Marquee,
+  Pill,
+  Reveal,
+  SpotlightCard,
+} from "./effects";
 import {
   APP_FEATURES,
   buildFeatureCatalogSummaryText,
@@ -103,6 +114,15 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
     () => entries.filter((entry) => entry.doc).length,
     [entries],
   );
+
+  // A card's hover colour comes from its place in the whole catalog, not in
+  // the filtered grid, so a feature keeps the same colour while someone types
+  // rather than every card changing hue on each keystroke.
+  const hueShifts = useMemo(() => {
+    const byId = new Map<string, number>();
+    entries.forEach((entry, index) => byId.set(entry.id, cardHueShift(index)));
+    return byId;
+  }, [entries]);
 
   // Two ticker rows out of one list, so the second can run the other way and
   // the pair doesn't read as one long line wrapped twice.
@@ -270,11 +290,11 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                           // on its last card.
                           delay={(index % 3) * 70}
                         >
-                          <SpotlightCard className="h-full">
+                          <SpotlightCard className="h-full" hueShift={hueShifts.get(entry.id)}>
                             <div className="group/feature flex h-full flex-col p-5">
                               <a
                                 href={entry.href}
-                                className="text-sm font-semibold text-foreground transition-colors group-hover/feature:text-[var(--da-accent)]"
+                                className="text-sm font-semibold text-foreground transition-colors group-hover/feature:text-[var(--da-card-accent,var(--da-accent))]"
                               >
                                 <span className="absolute inset-0" aria-hidden />
                                 {entry.title}

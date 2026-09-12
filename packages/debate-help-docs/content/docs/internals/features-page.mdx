@@ -77,6 +77,41 @@ it stays a stable "how big is this app" answer while someone types.
   than the package's plainer list), reading from its own fork of the catalog,
   `apps/debate-ai.com/lib/ui/features/feature-catalog.ts`.
 
+### Per-card hover colour
+
+The grid at rest is painted in the one app accent, but each card hovers in a
+colour of its own: the cursor spotlight, the rotating border beam and the card
+title all come up in a hue no neighbouring card shares.
+
+`cardHueShift(index)` in `effects.tsx` turns a card's position in the catalog
+into a rotation off `--accent-hue`, stepping by the golden angle (137.508°) so
+consecutive cards land far apart on the wheel rather than in the
+near-duplicates a plain `index * 40` would give. `SpotlightCard` writes that
+angle to the card as `--da-card-hue` and tags it `da-card-tint`;
+`globals.css` turns the angle into the `--da-card-accent` /
+`--da-card-accent-3` pair, which the hover visuals read with a fallback to the
+page-wide `--da-accent`.
+
+Three details are load-bearing:
+
+- **The angle is unitless.** It is added to the bare `--accent-hue` inside one
+  `calc()`, and `calc(192 + 138deg)` is invalid — a `deg` suffix would silently
+  drop the colour to its fallback.
+- **The rotation is resolved in CSS, not inline.** A custom property inherits
+  the value it was *substituted with*, not the expression, so a card that only
+  overrode `--da-card-hue` would never recompute an `--da-accent` declared on
+  an ancestor. The card has to declare its own colour tokens — and doing it in
+  the stylesheet keeps the light/dark lightness split the rest of the accent
+  tokens use.
+- **The hue comes from the full catalog, not the filtered grid.** A feature
+  keeps its colour while someone types, instead of every card changing hue on
+  each keystroke.
+
+Only the hover visuals read the per-card tokens. The resting page — the Docs
+links, the section icons, the aurora, the shimmering headline — stays on
+`--da-accent`, so the grid still reads as one surface until a card is pointed
+at.
+
 ### Three copies, hand-synced
 
 `APP_FEATURES` exists in three places, each maintained by hand rather than
@@ -126,7 +161,10 @@ across all four matched fields, doc-URL building, and summary-line
 pluralization. `packages/debate-ui/test/features-panel.test.tsx` renders the
 panel and asserts every catalogued route, the category headings, the summary
 line, a docs link, the jump nav, and that a one-entry catalog renders without
-the jump nav.
+the jump nav. It also covers the per-card hover colour: that every card
+renders a `--da-card-hue`, that the angle follows the card's catalog position
+rather than its place in a filtered grid, and that `cardHueShift` stays inside
+one turn of the wheel while keeping consecutive cards more than 80° apart.
 
 ## Known gaps
 
