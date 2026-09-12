@@ -8,6 +8,10 @@
  * `--da-accent` pair `globals.css` derives from the app's accent hues —
  * instead of the source's hard-coded sky/violet.
  *
+ * {@link SpotlightCard} additionally takes a `hueShift`, which rotates its
+ * hover colours off that accent so a grid of cards lights up in a different
+ * shade per card; `globals.css` turns the angle into the `--da-card-*` pair.
+ *
  * Deliberately dependency-free (CSS + `IntersectionObserver` only) so a page
  * can use them without pulling an animation runtime into the bundle. The
  * keyframes live in `app/globals.css` under "Features page effects", because
@@ -96,6 +100,22 @@ export function Reveal({ children, delay = 0, className, as = "div" }: RevealPro
   );
 }
 
+/**
+ * Angle, in degrees, to rotate a card's hover colour off the app accent.
+ *
+ * Successive indices are spread by the golden angle, so any run of cards —
+ * a grid row, or whatever survives a search filter — lands on hues far apart
+ * on the wheel instead of the near-duplicates a plain `index * 40` would give.
+ * It is a pure function of the card's position in the catalog, so a feature
+ * keeps its colour across renders, filters and SSR/hydration.
+ *
+ * @param index - The card's index in the full, unfiltered list.
+ * @returns A rotation in `[0, 360)`.
+ */
+export function cardHueShift(index: number): number {
+  return Math.round((index * 137.508) % 360);
+}
+
 /** Props for {@link SpotlightCard}. */
 export interface SpotlightCardProps {
   children: ReactNode;
@@ -104,6 +124,12 @@ export interface SpotlightCardProps {
   beam?: boolean;
   /** Radius of the cursor highlight, in px. */
   spotlightSize?: number;
+  /**
+   * Degrees to rotate this card's hover colour off the app accent — see
+   * {@link cardHueShift}. Omitted, the card hovers in the app accent like
+   * every other surface.
+   */
+  hueShift?: number;
 }
 
 /**
@@ -121,6 +147,7 @@ export function SpotlightCard({
   className,
   beam = true,
   spotlightSize = 420,
+  hueShift,
 }: SpotlightCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [spot, setSpot] = useState({ x: 0, y: 0, on: false });
@@ -140,8 +167,19 @@ export function SpotlightCard({
       className={cn(
         "group/spotlight relative isolate overflow-hidden rounded-2xl p-px",
         beam && "da-border-beam",
+        hueShift !== undefined && "da-card-tint",
         className,
       )}
+      // Only the rotation is set here; `globals.css` turns it into the two
+      // `--da-card-*` colours, so light and dark keep the lightness split the
+      // rest of the accent tokens use rather than hard-coding one here.
+      style={
+        hueShift === undefined
+          ? undefined
+          : // Unitless, to match `--accent-hue`: the two are added inside one
+            // `calc()`, and a `deg` there would not add to a bare number.
+            ({ "--da-card-hue": `${hueShift}` } as CSSProperties)
+      }
     >
       <div className="relative z-10 h-full rounded-[calc(1rem-1px)] border border-border bg-card/80 backdrop-blur-sm transition-colors duration-300 group-hover/spotlight:border-transparent">
         <div
@@ -149,7 +187,11 @@ export function SpotlightCard({
           className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-300"
           style={{
             opacity: spot.on ? 1 : 0,
-            background: `radial-gradient(${spotlightSize}px circle at ${spot.x}px ${spot.y}px, color-mix(in oklab, var(--da-accent, var(--primary)) 16%, transparent), transparent 60%)`,
+            // Two stops, not one: the highlight sweeps from the card's own
+            // accent into its analogous partner, so each card reads as its
+            // own gradient rather than a single tinted blob. Both fall back
+            // to the page accent for a card with no `hueShift`.
+            background: `radial-gradient(${spotlightSize}px circle at ${spot.x}px ${spot.y}px, color-mix(in oklab, var(--da-card-accent, var(--da-accent, var(--primary))) 22%, transparent), color-mix(in oklab, var(--da-card-accent-3, var(--da-accent-3, var(--primary))) 13%, transparent) 42%, transparent 72%)`,
           }}
         />
         <div className="relative h-full">{children}</div>

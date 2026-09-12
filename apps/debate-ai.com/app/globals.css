@@ -857,6 +857,27 @@ html[data-embedded="1"] [data-app-chrome] {
   --da-accent-3: hsl(calc(var(--accent-hue) + 60) 70% 72%);
 }
 
+/* Per-card accent. A feature card carries `--da-card-hue`, a rotation in
+   degrees off `--accent-hue` (see `cardHueShift` in `effects.tsx`), and this
+   turns it into the same accent/analogous pair the page uses — so every card
+   hovers in a colour of its own instead of all fifty coming up the one teal.
+
+   Only the hover visuals read these: the cursor spotlight, the border beam and
+   the card title. At rest the page stays on `--da-accent`, so the grid reads as
+   one surface until a card is pointed at. The rotation is resolved here rather
+   than inline because the tokens need the light/dark lightness split above;
+   a card is tinted by its own declaration, since a custom property inherits
+   the value it was substituted with, not the expression. */
+.da-features .da-card-tint {
+  --da-card-accent: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0)) 78% 42%);
+  --da-card-accent-3: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0) + 60) 72% 52%);
+}
+
+.dark .da-features .da-card-tint {
+  --da-card-accent: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0)) 62% 68%);
+  --da-card-accent-3: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0) + 60) 70% 72%);
+}
+
 .da-accent-text {
   color: var(--da-accent);
 }
@@ -958,8 +979,8 @@ html[data-embedded="1"] [data-app-chrome] {
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    var(--da-accent, var(--primary)) 55deg,
-    var(--da-accent-3, var(--primary)) 100deg,
+    var(--da-card-accent, var(--da-accent, var(--primary))) 55deg,
+    var(--da-card-accent-3, var(--da-accent-3, var(--primary))) 100deg,
     transparent 175deg
   );
   animation: da-border-spin 5s linear infinite;
