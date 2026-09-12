@@ -29,6 +29,7 @@
  */
 
 import { Suspense, useEffect, useMemo } from "react"
+import { Loader2 } from "lucide-react"
 import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 import { EditorWithToolbar } from "debate-editor"
 import { topicStarterHtml } from "@/lib/topic-starters/content"
