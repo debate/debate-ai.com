@@ -28,6 +28,17 @@ type AnalyzeQuotesOptions = {
   outputPath?: string | null
 }
 
+/**
+ * Provider + model the flaw finder asks for, in qwksearch's
+ * `ModelWithProvider` shape (`providerId` names the LIP, `key` the model).
+ * Groq's Llama 4 Maverick is fast and cheap enough to run over a whole
+ * outline; the endpoint falls back to the user's configured chat model if
+ * this provider has no key.
+ */
+const FLAW_FINDER_MODEL = {
+  providerId: "groq",
+  key: "meta-llama/llama-4-maverick-17b-128e-instruct",
+} as const
 
 /**
  * Runs LLM-based analysis over parsed card entries that include HTML content.
@@ -60,14 +71,14 @@ export async function analyzeQuotes(
       console.log(`Processing card ${processed + 1}/${Math.min(limit, totalCards)}...`)
       delete t.summary
       const htmlSnippet = String(JSON.stringify(t)).slice(0, maxChars)
-      const response = await (ResearchAgent as any).writeLanguage({
+      // The card is the `article` and the rubric is the `question`: articleQA
+      // prompts the model with the article first, so the instructions land
+      // last and are what the model is actually answering.
+      const response = await ResearchAgent.articleQa({
         body: {
-          agent: "question",
-          article: findFlawsPrompt + htmlSnippet,
-          provider: "groq",
-          model: "meta-llama/llama-4-maverick-17b-128e-instruct",
-          html: true,
-          temperature: 0.7,
+          article: htmlSnippet,
+          question: findFlawsPrompt,
+          chatModel: FLAW_FINDER_MODEL,
         },
       })
       // Model responses may contain fenced or malformed JSON; parse defensively.

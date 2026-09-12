@@ -1,11 +1,26 @@
 import vinext from "vinext";
 import { cloudflare } from "@cloudflare/vite-plugin";
-import { defineConfig } from "vite";
+import { defineConfig, type Rolldown } from "vite";
 import path from "path";
 import { createRequire } from "module";
 
 const appDir = path.resolve(import.meta.dirname);
 const require = createRequire(import.meta.url);
+
+/**
+ * react-reason-editor bundles react-player, which ships dash.js as a
+ * prebuilt, already-minified chunk (`dist/dash.all.min-*.js`). That file
+ * carries a top-level `export` *and* bare `exports` references, so rolldown
+ * reads it as ESM and warns that `exports` resolves to a free global
+ * (COMMONJS_VARIABLE_IN_ESM). dash.js guards those references at runtime and
+ * the file is published output of a dependency, so there is nothing to fix
+ * from here — recognise it and drop it rather than print it on every build.
+ */
+const isVendoredDashPlayerNoise = (log: Rolldown.RolldownLog) =>
+  log.code === "COMMONJS_VARIABLE_IN_ESM" &&
+  [log.id, ...(log.ids ?? []), log.message].some(
+    (text) => text?.includes("react-reason-editor") && text.includes("dash.all.min"),
+  );
 
 export default defineConfig({
   define: {
@@ -19,6 +34,29 @@ export default defineConfig({
     // it rejects with 400 — the icon silently rendered as a broken image.
     // Emitting every asset as a real file keeps that extension check working.
     assetsInlineLimit: 0,
+    // The /doc route's chunk (Workspace-*.js, 7,520 kB minified as of this
+    // commit) is the whole embedded research workspace: research-agent-ui's
+    // chat/search/reader plus react-reason-editor's ProseMirror/Tiptap editor,
+    // its sidebar and KaTeX. Both halves render on the same screen, so
+    // splitting them further changes how many requests fetch that payload but
+    // not how much of it /doc needs — and the route is already behind `lazy()`
+    // (see app/doc/ResearchAgentEmbed.tsx), which is the one thing the default
+    // warning has to suggest. The speech models that *can* load later already
+    // do, as their own chunks (moonshine, kokoro, ~2.1 MB each).
+    //
+    // So the default 500 kB reported the same known chunk on every build and
+    // told us nothing. This limit sits just above the measured size instead:
+    // it stays quiet for what we knowingly ship and trips the moment that
+    // chunk grows. Actually shrinking it means trimming what the workspace
+    // pulls in, which is work in research-agent-ui and react-reason-editor,
+    // not a bundler setting here.
+    chunkSizeWarningLimit: 8000,
+    rolldownOptions: {
+      onLog(level, log, defaultHandler) {
+        if (isVendoredDashPlayerNoise(log)) return;
+        defaultHandler(level, log);
+      },
+    },
   },
   plugins: [
     vinext(),
