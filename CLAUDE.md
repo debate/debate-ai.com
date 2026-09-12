@@ -81,7 +81,7 @@ bun run coverage               # merged coverage/lcov.info
 - Run `bun run typecheck` and `bun run test` — that is exactly what CI runs.
 - Update `packages/README.md` when a package's purpose or dependencies change;
   it is the index everyone reads first, and the docs site publishes it.
-- Update the package's own `CLAUDE.md` when its boundaries change.
+- Update the package's own note under `.claude/` when its boundaries change.
 - Commit style is **gitmoji + conventional commits**:
   `✨ feat(scope): what changed`. See
   [`architecture/conventions.md`](.claude/architecture/conventions.md).
@@ -96,3 +96,32 @@ bun run coverage               # merged coverage/lcov.info
 | [web-app.md](.claude/architecture/web-app.md) | The deployed Cloudflare app: Worker, D1, crons, the service worker, deploy |
 | [documentation.md](.claude/architecture/documentation.md) | Where docs live, the two-tier features/internals model, how `/docs` is built into the app, and the two MDX traps |
 | [conventions.md](.claude/architecture/conventions.md) | Code style, commits, PRs, CI, publishing, security |
+
+## Per-workspace notes
+
+Every app and package keeps its own note. They live under `.claude/`
+mirroring the workspace path — `packages/debate-round` is documented in
+`.claude/packages/debate-round/CLAUDE.md` — so every agent instruction in the repo sits in
+one tree rather than beside the source.
+
+| Workspace | Note |
+| --- | --- |
+| `apps/debate-ai.com` | [.claude/apps/debate-ai.com/CLAUDE.md](.claude/apps/debate-ai.com/CLAUDE.md) |
+| `apps/debate-native-wrapper` | [.claude/apps/debate-native-wrapper/CLAUDE.md](.claude/apps/debate-native-wrapper/CLAUDE.md) |
+| `apps/debate-web-ext` | [.claude/apps/debate-web-ext/CLAUDE.md](.claude/apps/debate-web-ext/CLAUDE.md) |
+| `packages/debate-api-client` | [.claude/packages/debate-api-client/CLAUDE.md](.claude/packages/debate-api-client/CLAUDE.md) |
+| `packages/debate-card-parser` | [.claude/packages/debate-card-parser/CLAUDE.md](.claude/packages/debate-card-parser/CLAUDE.md) |
+| `packages/debate-contributor-progress` | [.claude/packages/debate-contributor-progress/CLAUDE.md](.claude/packages/debate-contributor-progress/CLAUDE.md) |
+| `packages/debate-data-sync` | [.claude/packages/debate-data-sync/CLAUDE.md](.claude/packages/debate-data-sync/CLAUDE.md) |
+| `packages/debate-editor` | [.claude/packages/debate-editor/CLAUDE.md](.claude/packages/debate-editor/CLAUDE.md) |
+| `packages/debate-flow` | [.claude/packages/debate-flow/CLAUDE.md](.claude/packages/debate-flow/CLAUDE.md) |
+| `packages/debate-help-docs` | [.claude/packages/debate-help-docs/CLAUDE.md](.claude/packages/debate-help-docs/CLAUDE.md) |
+| `packages/debate-practice-drills` | [.claude/packages/debate-practice-drills/CLAUDE.md](.claude/packages/debate-practice-drills/CLAUDE.md) |
+| `packages/debate-round-practice-ai` | [.claude/packages/debate-round-practice-ai/CLAUDE.md](.claude/packages/debate-round-practice-ai/CLAUDE.md) |
+| `packages/debate-round` | [.claude/packages/debate-round/CLAUDE.md](.claude/packages/debate-round/CLAUDE.md) |
+| `packages/debate-search-evidence` | [.claude/packages/debate-search-evidence/CLAUDE.md](.claude/packages/debate-search-evidence/CLAUDE.md) |
+| `packages/debate-speech-writer` | [.claude/packages/debate-speech-writer/CLAUDE.md](.claude/packages/debate-speech-writer/CLAUDE.md) |
+| `packages/debate-team-collaboration` | [.claude/packages/debate-team-collaboration/CLAUDE.md](.claude/packages/debate-team-collaboration/CLAUDE.md) |
+| `packages/debate-timer` | [.claude/packages/debate-timer/CLAUDE.md](.claude/packages/debate-timer/CLAUDE.md) |
+| `packages/debate-ui` | [.claude/packages/debate-ui/CLAUDE.md](.claude/packages/debate-ui/CLAUDE.md) |
+| `packages/debate-videos` | [.claude/packages/debate-videos/CLAUDE.md](.claude/packages/debate-videos/CLAUDE.md) |
