@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Upload, Copy, RefreshCw, Eye, EyeOff, ChevronDown, Moon, Sun } from 'lucide-react';
+import { AnimatedLoader } from '@/components/ui/AnimatedLoader';
 import { authClient } from '@/components/qwksearch/guest-auth';
 import { cn } from '@/components/qwksearch/lib/utils';
 import { useTheme } from 'next-themes';

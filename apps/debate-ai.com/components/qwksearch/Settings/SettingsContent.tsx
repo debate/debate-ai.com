@@ -18,7 +18,7 @@ import Fuse from 'fuse.js';
 import { AnchorTitle, highlightAnchor } from './anchors';
 import grab from 'grab-url';
 import { toast } from 'sonner';
-import Loader from '@/components/qwksearch/ui/Loader';
+import { AnimatedLoader } from '@/components/ui/AnimatedLoader';
 import { cn } from '@/components/qwksearch/lib/utils';
 import Models from './Sections/Models/Section';
 import MCPServers from './Sections/MCPServers/Section';

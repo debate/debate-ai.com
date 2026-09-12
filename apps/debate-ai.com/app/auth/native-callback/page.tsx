@@ -18,6 +18,7 @@ import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 
 import { authClient } from "@/lib/auth/client"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 
 export default function NativeCallbackPage() {
   const router = useRouter()

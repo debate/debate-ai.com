@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Loader2, BookOpen, Globe2, FileText, Lightbulb } from 'lucide-react';
+import { AnimatedLoader } from '@/components/ui/AnimatedLoader';
 import { cn } from '@/components/qwksearch/lib/utils';
 
 interface UserAgentSkill {

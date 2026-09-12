@@ -36,6 +36,7 @@ import { useSearchParams } from "next/navigation"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // this route's own chunk — never loaded by the host app's main bundle.
 import "debate-editor/styles.css"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 
 type SettingsCategory = "general" | "appearance" | "accessibility"
 

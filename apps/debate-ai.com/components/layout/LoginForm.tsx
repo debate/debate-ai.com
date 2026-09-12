@@ -13,6 +13,7 @@ import { Mail } from "lucide-react"
 import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
 import { toast } from "sonner"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 
 import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
