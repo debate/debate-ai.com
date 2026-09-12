@@ -127,44 +127,53 @@ export function parseRoundLevel(
   }
 
   /*
-   * Named elimination rounds must be parsed before generic round patterns.
+   * Named elimination rounds must be parsed in order of specificity.
    *
-   * Otherwise:
-   * "Final Round - Wake Forest(A)"
-   * could be mistakenly treated as a generic "Round" field.
+   * Compound prefixes (triple, double, octo, quarter, semi) must be matched
+   * BEFORE bare "finals" so that "Semi-Finals", "Quarter Finals", and
+   * "Octo Finals" are not prematurely matched as FINALS.
    */
 
-  // Finals
+  // Triple octofinals. Must come before generic "octos".
   if (
-    /\b(?:grand\s+)?finals?\b/.test(normalized) ||
-    /\b(?:championship|championship\s+round)\b/.test(normalized) ||
-    /\b(?:title\s+round)\b/.test(normalized) ||
-    /\b1st\s+place\b/.test(normalized)
-  ) {
-    const exact = /^(?:grand\s+)?finals?$/.test(normalized);
-
-    return result(raw, normalized, "FINALS", exact ? "exact" : "normalized");
-  }
-
-  // Runoffs / qualifying rounds commonly used at TOC.
-  if (
-    /\brun[\s-]?offs?\b/.test(normalized) ||
-    /\bqualifying\s+round\b/.test(normalized)
-  ) {
-    const exact = /^run[\s-]?offs?$/.test(normalized);
-
-    return result(raw, normalized, "RUNOFFS", exact ? "exact" : "normalized");
-  }
-
-  // Semifinals
-  if (
-    /\b(?:semis?|semi[\s-]?finals?|semifinals?|sf)\b/.test(normalized)
-  ) {
-    const exact = /^(?:semis?|semi[\s-]?finals?|semifinals?)$/.test(
+    /\b(?:triples?|triple[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))\b/.test(
       normalized,
-    );
+    )
+  ) {
+    const exact =
+      /^(?:triples?|triple[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))$/.test(
+        normalized,
+      );
 
-    return result(raw, normalized, "SEMIS", exact ? "exact" : "normalized");
+    return result(raw, normalized, "TRIPLES", exact ? "exact" : "normalized");
+  }
+
+  // Double octofinals. Must come before generic "octos".
+  if (
+    /\b(?:doubles?|double[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))\b/.test(
+      normalized,
+    )
+  ) {
+    const exact =
+      /^(?:doubles?|double[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))$/.test(
+        normalized,
+      );
+
+    return result(raw, normalized, "DOUBLES", exact ? "exact" : "normalized");
+  }
+
+  // Octofinals
+  if (
+    /\b(?:octos?|octas?|octo[\s-]?finals?|octa[\s-]?finals?|octofinals?)\b/.test(
+      normalized,
+    )
+  ) {
+    const exact =
+      /^(?:octos?|octas?|octo[\s-]?finals?|octa[\s-]?finals?|octofinals?)$/.test(
+        normalized,
+      );
+
+    return result(raw, normalized, "OCTOS", exact ? "exact" : "normalized");
   }
 
   // Quarterfinals
@@ -185,46 +194,37 @@ export function parseRoundLevel(
     );
   }
 
-  // Octofinals
+  // Semifinals (require 'semis', 'semi-finals', 'semifinals', or 'sf', not bare 'semi')
   if (
-    /\b(?:octos?|octas?|octo[\s-]?finals?|octa[\s-]?finals?|octofinals?)\b/.test(
-      normalized,
-    )
+    /\b(?:semis|semi[\s-]?finals?|semifinals?|sf)\b/.test(normalized)
   ) {
-    const exact =
-      /^(?:octos?|octas?|octo[\s-]?finals?|octa[\s-]?finals?|octofinals?)$/.test(
-        normalized,
-      );
+    const exact = /^(?:semis|semi[\s-]?finals?|semifinals?)$/.test(
+      normalized,
+    );
 
-    return result(raw, normalized, "OCTOS", exact ? "exact" : "normalized");
+    return result(raw, normalized, "SEMIS", exact ? "exact" : "normalized");
   }
 
-  // Double octofinals. Must come before generic "octos".
+  // Runoffs / qualifying rounds commonly used at TOC.
   if (
-    /\b(?:doubles?|double[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))\b/.test(
-      normalized,
-    )
+    /\brun[\s-]?offs?\b/.test(normalized) ||
+    /\bqualifying\s+round\b/.test(normalized)
   ) {
-    const exact =
-      /^(?:doubles?|double[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))$/.test(
-        normalized,
-      );
+    const exact = /^run[\s-]?offs?$/.test(normalized);
 
-    return result(raw, normalized, "DOUBLES", exact ? "exact" : "normalized");
+    return result(raw, normalized, "RUNOFFS", exact ? "exact" : "normalized");
   }
 
-  // Triple octofinals. Must come before generic "octos".
+  // Finals
   if (
-    /\b(?:triples?|triple[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))\b/.test(
-      normalized,
-    )
+    /\b(?:grand\s+)?finals?\b/.test(normalized) ||
+    /\b(?:championship|championship\s+round)\b/.test(normalized) ||
+    /\b(?:title\s+round)\b/.test(normalized) ||
+    /\b1st\s+place\b/.test(normalized)
   ) {
-    const exact =
-      /^(?:triples?|triple[\s-]?(?:octos?|octas?|octofinals?|octa[\s-]?finals?))$/.test(
-        normalized,
-      );
+    const exact = /^(?:grand\s+)?finals?$/.test(normalized);
 
-    return result(raw, normalized, "TRIPLES", exact ? "exact" : "normalized");
+    return result(raw, normalized, "FINALS", exact ? "exact" : "normalized");
   }
 
   /*
@@ -351,7 +351,7 @@ export function formatRoundLevel(level: StandardRoundLevel): string {
     UNKNOWN: "Unknown round",
   };
 
-  return labels[level];
+  return labels[level as Exclude<StandardRoundLevel, `R${number}`>];
 }
 
 export function getRoundSortKey(level: StandardRoundLevel): number {
@@ -375,5 +375,5 @@ export function getRoundSortKey(level: StandardRoundLevel): number {
     RUNOFFS: 160,
   };
 
-  return sortKeys[level];
+  return sortKeys[level as Exclude<StandardRoundLevel, `R${number}`>];
 }
