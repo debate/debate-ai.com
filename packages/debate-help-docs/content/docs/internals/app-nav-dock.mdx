@@ -150,6 +150,28 @@ Two rules hold for every h1:
 `SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
 still folds it into the set of paths that get the tool sidebar.
 
+### Every row carries one Lucide glyph
+
+`SidebarToolLink.icon` is **required**, and typed `LucideIcon` rather than
+`TreeItemIcon`, so every tool row in the tree draws a glyph and every one of
+them is a Lucide component. `TreeItem` renders them all through one exported
+class, `TREE_ITEM_ICON_CLASS` (`h-4 w-4 shrink-0 text-muted-foreground`), which
+a Lucide icon picks up through `currentColor` — so a section heading and its
+tool rows are the same size and the same color.
+
+That is why the type is narrowed. `TreeItem` also accepts an *image* icon (an
+imported SVG/PNG from `debate-videos`' `ui/icons`, rendered through
+`next/image`), and an image cannot take a text color — it draws at whatever
+colors are baked into the file. The glossary/rankings pair at the end of
+Practice used to be exactly that (`icon-book.svg`, `icon-leaderboard.png`) and
+were the only two rows in the tool tree whose icons did not match the rest;
+they are now `BookOpen` and `ChartColumn`. The image branch remains for the
+video tree's own nodes, which are bespoke artwork rather than tool rows.
+
+`dock-menu-sections.ts` takes `{ href, title }` off these links for the mobile
+Settings menu and does not use the icons — the menu draws one icon per
+*section*, not per link.
+
 Indentation follows *nesting*, not `level` — each expanded node pads its own
 child list — so a leaf under College Debates sits a step deeper than one
 hanging straight off Coaching, wherever in the tree it is.
@@ -160,6 +182,10 @@ hanging straight off Coaching, wherever in the tree it is.
   structure above: College Debates under a Videos `h1`, no `h1` inside an
   anchor, every section a toggle button, and only the section holding the
   current route open (with the closed ones rendering none of their links).
+- `packages/debate-videos/test/tool-nav-tree-icons.test.tsx` — that every
+  tool link and app-dock link carries an icon, that all of them are Lucide
+  components rather than image sources, and that the rendered tree draws one
+  glyph per row in the single shared icon color with no `<img>` among them.
 - `packages/debate-videos/test/sidebar-active-section.test.ts` — the
   route-to-section mapping itself, including the longest-match and
   dock-wins-a-tie rules above.

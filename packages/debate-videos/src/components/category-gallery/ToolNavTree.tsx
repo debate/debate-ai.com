@@ -41,6 +41,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { BookOpen, ChartColumn } from "lucide-react";
 import { TreeItem } from "./TreeItem";
 import type { TreeItemIcon } from "./tree-item-icon";
 import {
@@ -55,13 +56,21 @@ import {
   withSectionExpanded,
 } from "./sidebar-section-expansion";
 import { VIDEO_REFERENCE_LINKS } from "./sidebar-video-links";
-import { IconBook, IconLeaderboard } from "../../ui/icons";
 
-/** Per-id artwork for the reference pair at the end of Practice; the hrefs
- *  and titles come from `VIDEO_REFERENCE_LINKS`. */
+/**
+ * Per-id glyph for the reference pair at the end of Practice; the hrefs and
+ * titles come from `VIDEO_REFERENCE_LINKS`.
+ *
+ * Lucide components, not the `ui/icons` images these two used to draw
+ * (`IconBook`, `IconLeaderboard`). They hang inside the Practice section
+ * alongside 15 tool rows, and an image renders at its own baked-in colors
+ * while a Lucide glyph inherits the one color `TreeItem` sets — so the two of
+ * them were the only rows in the tool tree whose icons did not match. See
+ * `TREE_ITEM_ICON_CLASS`.
+ */
 const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
-  dictionary: IconBook,
-  rankings: IconLeaderboard,
+  dictionary: BookOpen,
+  rankings: ChartColumn,
 };
 
 export interface ToolNavTreeProps {
@@ -162,6 +171,7 @@ export function ToolNavTree({
               level={3}
               href={tool.href}
               title={tool.title}
+              icon={tool.icon}
               isActive={pathname === tool.href}
             />
           ))}

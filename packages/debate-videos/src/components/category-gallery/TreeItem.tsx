@@ -34,6 +34,21 @@ import { cn } from "../../ui/lib/utils";
 import { isComponentIcon, isImageIcon, type TreeItemIcon } from "./tree-item-icon";
 
 /**
+ * The one icon treatment every row in the tree draws with: a fixed 16px box
+ * that never shrinks, and `text-muted-foreground` — which a Lucide glyph
+ * picks up through `currentColor`, so the section headings and all of their
+ * tool rows render the same color.
+ *
+ * An imported image (the `imageSrc` branch below) cannot take a text color:
+ * it draws at whatever colors are baked into the file. That is why every row
+ * in the tool tree carries a Lucide component — `SidebarToolLink.icon` is
+ * typed `LucideIcon` rather than `TreeItemIcon` for exactly this reason — and
+ * why this class is exported: `tool-nav-tree-icons.test.tsx` asserts the tool
+ * tree renders no image icons alongside them.
+ */
+export const TREE_ITEM_ICON_CLASS = "h-4 w-4 shrink-0 text-muted-foreground";
+
+/**
  * Whether a click asks for the link to be opened somewhere other than this
  * tab — ctrl/cmd (new tab), shift (new window), alt (download), or any button
  * but the primary one (middle-click is a new tab too).
@@ -136,7 +151,7 @@ export function TreeItem({
   const rowContents = (
     <>
       {Glyph ? (
-        <Glyph className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+        <Glyph className={TREE_ITEM_ICON_CLASS} aria-hidden />
       ) : imageSrc ? (
         <Image src={imageSrc} alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain" unoptimized />
       ) : null}

@@ -2,19 +2,69 @@
  * @fileoverview The Coaching / Research / Practice tool sections rendered in
  * the videos sidebar underneath the "Round Videos" and "Lectures" nodes. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
- * three headings the sidebar shows and trimmed to the label + href the tree
- * needs — the sidebar lives in this package, which cannot import app-local
- * modules, so the links are restated here rather than derived.
+ * three headings the sidebar shows and trimmed to the label, href and icon
+ * the tree needs — the sidebar lives in this package, which cannot import
+ * app-local modules, so the links are restated here rather than derived.
  *
  * @module components/category-gallery/sidebar-tool-sections
  */
 
-import { Dumbbell, GraduationCap, Library, type LucideIcon } from "lucide-react";
+import {
+  BadgeCheck,
+  BookMarked,
+  Bot,
+  CalendarCheck,
+  ChartLine,
+  ChartPie,
+  Clapperboard,
+  ClipboardCheck,
+  ClipboardList,
+  DoorOpen,
+  Dumbbell,
+  FileText,
+  FolderOpen,
+  Gavel,
+  GraduationCap,
+  Hash,
+  Highlighter,
+  Inbox,
+  Library,
+  Lightbulb,
+  ListTree,
+  Map as MapIcon,
+  Medal,
+  MessageSquare,
+  MessagesSquare,
+  PenLine,
+  Presentation,
+  Repeat,
+  Rss,
+  Scale,
+  ScrollText,
+  Search,
+  Share2,
+  StickyNote,
+  Swords,
+  Timer,
+  TrendingUp,
+  Trophy,
+  User,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 export interface SidebarToolLink {
   /** In-app path this entry links to. */
   href: string;
   title: string;
+  /**
+   * The row's glyph. A Lucide component rather than one of the imported
+   * images in `ui/icons`, and required rather than optional, so every row in
+   * the tool tree draws with `currentColor` and therefore picks up the one
+   * icon color `TreeItem` sets. An image icon would render at its own
+   * baked-in colors next to them; see `TreeItem`'s `TREE_ITEM_ICON_CLASS`.
+   */
+  icon: LucideIcon;
 }
 
 export interface SidebarToolSection {
@@ -52,11 +102,11 @@ export const TOOLS_ROOT_HREF = "/tools";
  * one menu a phone has on every route, and for `sidebar-routes`.
  */
 export const APP_DOCK_LINKS: SidebarToolLink[] = [
-  { href: "/videos", title: "Videos" },
-  { href: "/cards", title: "Shared" },
-  { href: "/debate", title: "Debate" },
-  { href: "/versus-ai", title: "Practice vs AI" },
-  { href: "/doc", title: "Docs" },
+  { href: "/videos", title: "Videos", icon: Clapperboard },
+  { href: "/cards", title: "Shared", icon: Share2 },
+  { href: "/debate", title: "Debate", icon: MessageSquare },
+  { href: "/versus-ai", title: "Practice vs AI", icon: Swords },
+  { href: "/doc", title: "Docs", icon: FileText },
 ];
 
 /**
@@ -81,14 +131,14 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/coach",
     icon: GraduationCap,
     tools: [
-      { href: "/coach", title: "Coach Workspace" },
-      { href: "/coaching", title: "AI Coach Mode" },
-      { href: "/coaching-programs", title: "Coaching Programs" },
-      { href: "/coach-materials", title: "Coach Materials" },
-      { href: "/outcomes", title: "Response-Outcome Charts" },
-      { href: "/rank", title: "Team Rankings" },
-      { href: "/cards/leaderboard", title: "Leaderboard" },
-      { href: "/cards/progress-tracking", title: "Research Progress" },
+      { href: "/coach", title: "Coach Workspace", icon: Presentation },
+      { href: "/coaching", title: "AI Coach Mode", icon: Bot },
+      { href: "/coaching-programs", title: "Coaching Programs", icon: CalendarCheck },
+      { href: "/coach-materials", title: "Coach Materials", icon: FolderOpen },
+      { href: "/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
+      { href: "/rank", title: "Team Rankings", icon: Medal },
+      { href: "/cards/leaderboard", title: "Leaderboard", icon: Trophy },
+      { href: "/cards/progress-tracking", title: "Research Progress", icon: TrendingUp },
     ],
   },
   {
@@ -97,18 +147,18 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/research",
     icon: Library,
     tools: [
-      { href: "/research", title: "Research Workspace" },
-      { href: "/community-hub", title: "Community Research Hub" },
-      { href: "/cards/library", title: "Evidence Library" },
-      { href: "/cards/argument-library", title: "Argument Library" },
-      { href: "/cards/coverage", title: "Topic Coverage" },
-      { href: "/cards/prep-room", title: "Collaboration Prep Room" },
-      { href: "/cards/reviews", title: "Review Queue" },
-      { href: "/cards/inbox", title: "Task Inbox" },
-      { href: "/cards/contributions", title: "Contributions Feed" },
-      { href: "/cards/brainstorm", title: "Team Brainstorm Assist" },
-      { href: "/reason-editor", title: "Reason Editor" },
-      { href: "/doc", title: "Debate Docs" },
+      { href: "/research", title: "Research Workspace", icon: Search },
+      { href: "/community-hub", title: "Community Research Hub", icon: Users },
+      { href: "/cards/library", title: "Evidence Library", icon: BookMarked },
+      { href: "/cards/argument-library", title: "Argument Library", icon: MessagesSquare },
+      { href: "/cards/coverage", title: "Topic Coverage", icon: ChartPie },
+      { href: "/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
+      { href: "/cards/reviews", title: "Review Queue", icon: ClipboardCheck },
+      { href: "/cards/inbox", title: "Task Inbox", icon: Inbox },
+      { href: "/cards/contributions", title: "Contributions Feed", icon: Rss },
+      { href: "/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
+      { href: "/reason-editor", title: "Reason Editor", icon: PenLine },
+      { href: "/doc", title: "Debate Docs", icon: FileText },
     ],
   },
   {
@@ -117,21 +167,21 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     href: "/practice-round",
     icon: Dumbbell,
     tools: [
-      { href: "/practice-round", title: "Practice Round Simulator" },
-      { href: "/versus-ai", title: "Debate Versus AI" },
-      { href: "/drills", title: "Practice Drills" },
-      { href: "/briefings", title: "Pre-Round Briefings" },
-      { href: "/strategy", title: "Scout-to-Strategy" },
-      { href: "/opponents", title: "Opponent Team Profiles" },
-      { href: "/judges", title: "Judge Profiles" },
-      { href: "/paradigms", title: "Judge Paradigm Picker" },
-      { href: "/judge-decision", title: "AI Judge Decision" },
-      { href: "/practice-opponent", title: "Opponent Persona Picker" },
-      { href: "/summaries", title: "Speech Summaries" },
-      { href: "/word-count", title: "Word-Count Speeches" },
-      { href: "/outline", title: "Argument Tree Outline" },
-      { href: "/prep-notes", title: "Prep Notes" },
-      { href: "/annotations", title: "Flow Annotations" },
+      { href: "/practice-round", title: "Practice Round Simulator", icon: Timer },
+      { href: "/versus-ai", title: "Debate Versus AI", icon: Swords },
+      { href: "/drills", title: "Practice Drills", icon: Repeat },
+      { href: "/briefings", title: "Pre-Round Briefings", icon: ClipboardList },
+      { href: "/strategy", title: "Scout-to-Strategy", icon: MapIcon },
+      { href: "/opponents", title: "Opponent Team Profiles", icon: Users },
+      { href: "/judges", title: "Judge Profiles", icon: Gavel },
+      { href: "/paradigms", title: "Judge Paradigm Picker", icon: Scale },
+      { href: "/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
+      { href: "/practice-opponent", title: "Opponent Persona Picker", icon: User },
+      { href: "/summaries", title: "Speech Summaries", icon: ScrollText },
+      { href: "/word-count", title: "Word-Count Speeches", icon: Hash },
+      { href: "/outline", title: "Argument Tree Outline", icon: ListTree },
+      { href: "/prep-notes", title: "Prep Notes", icon: StickyNote },
+      { href: "/annotations", title: "Flow Annotations", icon: Highlighter },
     ],
   },
 ];
