@@ -37,7 +37,6 @@ pub fn run() {
                 let _ = window.unminimize();
             }
         }));
-        builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
         builder = builder.plugin(fullscreen_toggle_plugin());
     }
 
