@@ -97,4 +97,23 @@ describe("cardHueShift", () => {
     expect(cardHueShift(7)).toBe(cardHueShift(7));
     expect(cardHueShift(0)).toBe(0);
   });
+
+  it("shifts hues predictably when an offset is provided", () => {
+    expect(cardHueShift(0, 90)).toBe(90);
+    expect(cardHueShift(0, 360)).toBe(0);
+    expect(cardHueShift(0, 450)).toBe(90);
+    for (let i = 0; i < 50; i++) {
+      const hue = cardHueShift(i, 120);
+      expect(hue).toBeGreaterThanOrEqual(0);
+      expect(hue).toBeLessThan(360);
+    }
+  });
+
+  it("maintains separation between neighbouring cards even with an offset", () => {
+    const offset = 77;
+    for (let i = 0; i < 50; i++) {
+      const gap = Math.abs(cardHueShift(i + 1, offset) - cardHueShift(i, offset));
+      expect(Math.min(gap, 360 - gap)).toBeGreaterThan(80);
+    }
+  });
 });

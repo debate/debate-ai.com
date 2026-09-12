@@ -849,12 +849,14 @@ html[data-embedded="1"] [data-app-chrome] {
      lands on mud at the midpoint, where teal → indigo stays saturated. The
      orange accent still shows, undiluted, in the aurora and nowhere else. */
   --da-accent-3: hsl(calc(var(--accent-hue) + 60) 72% 52%);
+  --da-card-hover-bg: color-mix(in oklab, var(--da-accent) 8%, var(--card));
 }
 
 .dark .da-features {
   --da-accent: hsl(var(--accent-hue) 62% 68%);
   --da-accent-2: hsl(var(--accent-secondary-hue) 68% 66%);
   --da-accent-3: hsl(calc(var(--accent-hue) + 60) 70% 72%);
+  --da-card-hover-bg: color-mix(in oklab, var(--da-accent) 12%, var(--card));
 }
 
 /* Per-card accent. A feature card carries `--da-card-hue`, a rotation in
@@ -871,11 +873,13 @@ html[data-embedded="1"] [data-app-chrome] {
 .da-features .da-card-tint {
   --da-card-accent: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0)) 78% 42%);
   --da-card-accent-3: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0) + 60) 72% 52%);
+  --da-card-hover-bg: color-mix(in oklab, var(--da-card-accent) 8%, var(--card));
 }
 
 .dark .da-features .da-card-tint {
   --da-card-accent: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0)) 62% 68%);
   --da-card-accent-3: hsl(calc(var(--accent-hue) + var(--da-card-hue, 0) + 60) 70% 72%);
+  --da-card-hover-bg: color-mix(in oklab, var(--da-card-accent) 12%, var(--card));
 }
 
 .da-accent-text {

@@ -106,14 +106,14 @@ export function Reveal({ children, delay = 0, className, as = "div" }: RevealPro
  * Successive indices are spread by the golden angle, so any run of cards —
  * a grid row, or whatever survives a search filter — lands on hues far apart
  * on the wheel instead of the near-duplicates a plain `index * 40` would give.
- * It is a pure function of the card's position in the catalog, so a feature
- * keeps its colour across renders, filters and SSR/hydration.
+ * An optional offset allows randomizing the palette per page load.
  *
  * @param index - The card's index in the full, unfiltered list.
+ * @param offset - Optional rotation offset (0-360) to randomize the wheel.
  * @returns A rotation in `[0, 360)`.
  */
-export function cardHueShift(index: number): number {
-  return Math.round((index * 137.508) % 360);
+export function cardHueShift(index: number, offset = 0): number {
+  return Math.round(((index * 137.508) + offset) % 360 + 360) % 360;
 }
 
 /** Props for {@link SpotlightCard}. */
@@ -181,7 +181,17 @@ export function SpotlightCard({
             ({ "--da-card-hue": `${hueShift}` } as CSSProperties)
       }
     >
-      <div className="relative z-10 h-full rounded-[calc(1rem-1px)] border border-border bg-card/80 backdrop-blur-sm transition-colors duration-300 group-hover/spotlight:border-transparent">
+      <div className="relative z-10 h-full rounded-[calc(1rem-1px)] border border-border bg-card/80 backdrop-blur-sm transition-all duration-300 group-hover/spotlight:border-transparent group-hover/spotlight:bg-[var(--da-card-hover-bg,var(--card))]">
+        {/* Ambient hover background tint */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover/spotlight:opacity-100"
+          style={{
+            background:
+              "radial-gradient(ellipse at 50% 0%, color-mix(in oklab, var(--da-card-accent, var(--da-accent, var(--primary))) 16%, transparent), color-mix(in oklab, var(--da-card-accent-3, var(--da-accent-3, var(--primary))) 8%, transparent) 65%, transparent 100%)",
+          }}
+        />
+        {/* Dynamic cursor tracking spotlight */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-300"
@@ -191,7 +201,7 @@ export function SpotlightCard({
             // accent into its analogous partner, so each card reads as its
             // own gradient rather than a single tinted blob. Both fall back
             // to the page accent for a card with no `hueShift`.
-            background: `radial-gradient(${spotlightSize}px circle at ${spot.x}px ${spot.y}px, color-mix(in oklab, var(--da-card-accent, var(--da-accent, var(--primary))) 22%, transparent), color-mix(in oklab, var(--da-card-accent-3, var(--da-accent-3, var(--primary))) 13%, transparent) 42%, transparent 72%)`,
+            background: `radial-gradient(${spotlightSize}px circle at ${spot.x}px ${spot.y}px, color-mix(in oklab, var(--da-card-accent, var(--da-accent, var(--primary))) 24%, transparent), color-mix(in oklab, var(--da-card-accent-3, var(--da-accent-3, var(--primary))) 14%, transparent) 42%, transparent 72%)`,
           }}
         />
         <div className="relative h-full">{children}</div>

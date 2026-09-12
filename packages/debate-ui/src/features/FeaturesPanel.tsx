@@ -28,7 +28,7 @@
 
 "use client";
 
-import { useMemo, useState, type ComponentType } from "react";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   BarChart3,
   Dumbbell,
@@ -95,6 +95,12 @@ export interface FeaturesPanelProps {
  */
 export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPanelProps) {
   const [query, setQuery] = useState("");
+  const [hueOffset, setHueOffset] = useState(0);
+
+  useEffect(() => {
+    // Randomize card hover colours on each page load so every visit gets a unique, vibrant palette
+    setHueOffset(Math.floor(Math.random() * 360));
+  }, []);
 
   const sections = useMemo(
     () => buildFeatureSections(searchFeatures(entries, query)),
@@ -115,14 +121,15 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
     [entries],
   );
 
-  // A card's hover colour comes from its place in the whole catalog, not in
-  // the filtered grid, so a feature keeps the same colour while someone types
-  // rather than every card changing hue on each keystroke.
+  // A card's hover colour comes from its place in the whole catalog plus the
+  // randomized page-load offset, not in the filtered grid, so a feature keeps
+  // the same colour while someone types rather than every card changing hue on
+  // each keystroke.
   const hueShifts = useMemo(() => {
     const byId = new Map<string, number>();
-    entries.forEach((entry, index) => byId.set(entry.id, cardHueShift(index)));
+    entries.forEach((entry, index) => byId.set(entry.id, cardHueShift(index, hueOffset)));
     return byId;
-  }, [entries]);
+  }, [entries, hueOffset]);
 
   // Two ticker rows out of one list, so the second can run the other way and
   // the pair doesn't read as one long line wrapped twice.
