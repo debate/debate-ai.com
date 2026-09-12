@@ -1,34 +1,52 @@
+<!-- template-git-repo:badges:start -->
 <p align="center">
-        <a href="https://youtu.be/XB0tzpBUEKQ" target="_blank" rel="noopener noreferrer"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
-<a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+    <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI" /></a>
+    <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
+    <a href="https://debate-ai.com"><img height="20px" src="https://img.shields.io/badge/App-blueviolet?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" /></a>
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
-    <a href="https://debate-ai.com/api/api-docs"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API badge"></a>
-    <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com" target="_blank" rel="noopener noreferrer"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
+    <a href="https://debate-ai.com/api/api-docs"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API" /></a>
+    <a href="https://youtu.be/XB0tzpBUEKQ"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
+    <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
     <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
-    <a href="https://github.com/debate/debate-ai.com/discussions"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/debate/debate-ai.com" /></a>
-<br />
-            <a href="https://app.codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/branch/master/graph/badge.svg" alt="Coverage" /></a>
-    <a href="https://github.com/debate/debate-ai.com/pulse" alt="Activity"><img src="https://img.shields.io/github/commit-activity/m/debate/debate-ai.com" /></a>
-    <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
-    <a href="https://github.com/debate/debate-ai.com/actions/workflows/test.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg" alt="Test debate-ai.com status for master" /></a>
+    <a href="https://codespaces.new/debate/debate-ai.com"><img height="20px" src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces" /></a>
     <br />
-            <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>
-            <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime-Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
-    <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
-<img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff" alt="Claude AI"> <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=Cloudflare&logoColor=white" alt="Cloudflare"> <img src="https://img.shields.io/badge/Next.js-black" alt="Next.js" /> <a href="https://grab.js.org"><img src="https://i.imgur.com/EWze7Ew.png" height="20" alt="grab.js.org" /></a>
-   <br />
-    <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI"></a>
+    <a href="https://www.npmjs.com/package/debate-card-parser"><img src="https://img.shields.io/npm/dm/debate-card-parser.svg" alt="NPM Monthly Downloads" /></a>
+    <a href="https://www.npmjs.com/package/debate-card-parser"><img src="https://img.shields.io/npm/v/debate-card-parser.svg" alt="npm version" /></a>
+    <a href="https://www.npmjs.com/package/debate-card-parser"><img src="https://img.shields.io/npm/dt/debate-card-parser.svg" alt="NPM Total Downloads" /></a>
+    <a href="https://www.npmjs.com/package/debate-card-parser"><img src="https://img.shields.io/npm/types/debate-card-parser" alt="TypeScript types" /></a>
+    <a href="https://packagephobia.com/result?p=debate-card-parser"><img src="https://packagephobia.com/badge?p=debate-card-parser" alt="Install size" /></a>
+    <a href="https://codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg" alt="Coverage" /></a>
+    <a href="https://github.com/debate/debate-ai.com/actions/workflows/test.yml"><img src="https://github.com/debate/debate-ai.com/actions/workflows/test.yml/badge.svg?branch=master" alt="CI status" /></a>
+    <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime--Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
+    <br />
+    <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
+    <a href="https://github.com/debate/debate-ai.com/forks"><img src="https://img.shields.io/github/forks/debate/debate-ai.com" alt="GitHub Forks" /></a>
+    <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/contributors/debate/debate-ai.com" alt="Contributors" /></a>
+    <a href="https://github.com/debate/debate-ai.com/issues"><img src="https://img.shields.io/github/issues/debate/debate-ai.com?logo=github" alt="GitHub Issues" /></a>
+    <a href="https://github.com/debate/debate-ai.com/pulls"><img src="https://img.shields.io/github/issues-pr/debate/debate-ai.com?logo=github&label=PRs" alt="Open Pull Requests" /></a>
+    <a href="https://github.com/debate/debate-ai.com/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed/debate/debate-ai.com?logo=github&label=PRs%20merged&color=8957e5" alt="Merged Pull Requests" /></a>
+    <a href="https://github.com/debate/debate-ai.com/discussions"><img src="https://img.shields.io/github/discussions/debate/debate-ai.com" alt="GitHub Discussions" /></a>
+    <a href="https://github.com/debate/debate-ai.com/graphs/contributors"><img src="https://img.shields.io/github/commit-activity/m/debate/debate-ai.com" alt="Commit activity" /></a>
+    <a href="https://github.com/debate/debate-ai.com/commits/master/"><img src="https://img.shields.io/github/last-commit/debate/debate-ai.com.svg" alt="GitHub last commit" /></a>
+    <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>
+    <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs--welcome-brightgreen" alt="PRs Welcome" /></a>
+    <a href="https://github.com/debate/debate-ai.com/blob/master/LICENSE.md"><img src="https://img.shields.io/github/license/debate/debate-ai.com" alt="License" /></a>
+    <br />
+    <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" /> <img src="https://img.shields.io/badge/Bun-14151A?logo=bun&logoColor=white" alt="Bun" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" /> <img src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=white" alt="React" /> <img src="https://img.shields.io/badge/Tauri-24C8D8?logo=tauri&logoColor=white" alt="Tauri" /> <img src="https://img.shields.io/badge/Cloudflare%20Workers-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" /> <img src="https://img.shields.io/badge/Drizzle%20ORM-C5F74F?logo=drizzle&logoColor=white" alt="Drizzle ORM" /> <img src="https://img.shields.io/badge/better--auth-000000" alt="better-auth" /> <img src="https://img.shields.io/badge/ProseMirror-000000" alt="ProseMirror" /> <img src="https://img.shields.io/badge/Fumadocs-000000" alt="Fumadocs" /> <img src="https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white" alt="Vite" /> <img src="https://img.shields.io/badge/Turborepo-EF4444?logo=turborepo&logoColor=white" alt="Turborepo" /> <img src="https://img.shields.io/badge/Vitest-6E9F18?logo=vitest&logoColor=white" alt="Vitest" />
+</p>
+<!-- template-git-repo:badges:end -->
+
+<p align="center">
     <a href="https://doi.org/10.5281/zenodo.22170412"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.22170412.svg" alt="DOI"></a>
     <a href="https://doi.org/10.5281/zenodo.21881743"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21881743.svg" alt="DOI"></a>
-   <br />
-  <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" "></a>
-  <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
-  <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
-          <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
-  <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Ranks-informational?style=for-the-badge" alt="Results"></a>
-    <br/>
-  <img src="https://i.imgur.com/c3mT4oo.png"  width="800px" > 
-    <br/>
+    <br />
+    <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
+    <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
+    <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
+    <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
+    <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Ranks-informational?style=for-the-badge" alt="Results"></a>
+    <br />
+    <img src="https://i.imgur.com/c3mT4oo.png" width="800px" />
 </p>
  
 
