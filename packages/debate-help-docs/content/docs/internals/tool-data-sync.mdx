@@ -39,7 +39,7 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
 - **Package:** [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
   (the catalog, the fetch client, the mirror), `apps/debate-ai.com`
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
-  `lib/hooks/useToolRecordSync.ts`,
+  `lib/hooks/useToolRecordSync.ts`, `lib/sign-in-prompt-preference.ts`,
   `components/layout/ToolRecordSyncProvider.tsx`,
   `components/layout/SignInPromptProvider.tsx`,
   `components/settings/ToolDataSyncSettings.tsx`). Some tool packages
@@ -297,7 +297,7 @@ subscribes and opens `LoginDialog` with that text, returning the user to the
 page they were on. It reads the same signed-in flag the mirror does, so the two
 can never disagree about whether there is an account to save to.
 
-Two rules keep it an offer rather than a gate:
+Three rules keep it an offer rather than a gate:
 
 - **The local save still happens.** `requireSignIn` returning false does not
   mean the caller skipped the write — a guest who dismisses the dialog keeps
@@ -309,6 +309,14 @@ Two rules keep it an offer rather than a gate:
   30-minute per-feature cooldown in `sessionStorage`. Removing something never
   prompts at all: un-favouriting and un-hiding are not moments to ask anyone
   to sign in.
+- **A guest can say "don't ask me again", and it sticks.** The dialog's
+  secondary action calls `setSignInPromptOptedOut(true)`
+  (`lib/sign-in-prompt-preference.ts`), a plain `localStorage` flag the
+  provider checks before raising any prompt — unlike the cooldown above, this
+  survives new tabs and new days, on purpose. `/settings` → Account →
+  **Tool data** shows the current state to a signed-out visitor and offers a
+  button to reverse it, since the dialog that could otherwise change their
+  mind never shows again once they've opted out.
 
 ## The merge
 
@@ -357,7 +365,8 @@ records it had just adopted.
 it and says plainly which state you are in:
 
 - Signed out — "These tools save to this browser only", every row "This
-  browser".
+  browser", plus a row saying whether this browser will be asked to sign in
+  when it saves in a tool, with a button to flip that.
 - Signed in — rows read "Syncing…" then "Synced", or "Not synced" for a
   collection whose merge failed, plus a **Sync now** button for the case where
   a merge failed or another device has since saved something.
@@ -392,6 +401,9 @@ it and says plainly which state you are in:
 - `packages/debate-data-sync/test/sign-in-prompt.test.ts` — the prompt bus,
   including the property that is easiest to "tidy up" into a bug: a guest's
   local save still happens.
+- `apps/debate-ai.com/lib/__tests__/sign-in-prompt-preference.test.ts` — the
+  persistent opt-out: defaults to "ask", persists across reads, clears, and
+  never throws when `localStorage` is unavailable or refuses the read/write.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
   videos and reports, with the legacy bare-id format cases: a store written in
   the old format still reads, keeps its order, de-duplicates against the new
@@ -431,6 +443,11 @@ it and says plainly which state you are in:
   it cannot take its collection's other records down with it. It still saves
   locally, and it syncs if later edited under the cap — but until then it is
   browser-only, and nothing says so outside `/settings`' row for that tool.
-- **The guest prompt is per-browser-session, not per-account.** The 30-minute
-  per-feature cooldown lives in `sessionStorage`, so a user who keeps declining
-  is asked again in a new tab. There is no "don't ask me again" that persists.
+- **The persistent opt-out is per-browser, not per-account.** "Don't ask me
+  again" and the `/settings` toggle both write to `localStorage`, so the
+  choice doesn't follow a guest to another browser or device the way an
+  account-linked preference would — signing in is what would make the
+  preference itself portable, which is the one thing the opted-out guest has
+  declined. The 30-minute per-feature cooldown (`sessionStorage`, unaffected
+  by the opt-out) is what a browser that has never opted out falls back to
+  between prompts.
