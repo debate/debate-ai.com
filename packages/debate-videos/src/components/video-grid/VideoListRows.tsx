@@ -19,6 +19,7 @@ import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
+import { TopPickBadge } from "../video-card/TopPickBadge"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { useResizableColumns } from "./useResizableColumns"
@@ -287,14 +288,16 @@ function VideoRow({
         <td className="px-3 py-2 align-top">
           <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
             {isTopPick && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="p-1" aria-label="Top pick">
-                    🎖️
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Top pick</TooltipContent>
-              </Tooltip>
+              <TopPickBadge
+                videoId={videoId}
+                affTeam={affTeam}
+                negTeam={negTeam}
+                title={title}
+                tournament={tournament}
+                year={date ? new Date(date).getFullYear() : undefined}
+                roundLevel={roundLevel}
+                size="sm"
+              />
             )}
 
             <Tooltip>

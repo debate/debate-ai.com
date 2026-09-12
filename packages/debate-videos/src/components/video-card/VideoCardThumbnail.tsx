@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor } from "./videoCardUtils"
+import { TopPickBadge } from "./TopPickBadge"
 
 /** Shape of the video metadata forwarded to the player store on play. */
 interface VideoMeta {
@@ -153,9 +154,16 @@ export function VideoCardThumbnail({
               {/* Row 1: tournament · year · round */}
               <div className="flex flex-wrap items-center justify-center gap-1.5">
                 {isTopPick && (
-                  <span className="inline-flex items-center px-2 py-1 rounded text-base backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg">
-                    🎖️
-                  </span>
+                  <TopPickBadge
+                    videoId={videoId}
+                    affTeam={affTeam}
+                    negTeam={negTeam}
+                    title={title}
+                    tournament={cleanTournament}
+                    year={year}
+                    roundLevel={roundLevel}
+                    size="md"
+                  />
                 )}
                 {cleanTournament && (
                   <span
@@ -240,9 +248,16 @@ export function VideoCardThumbnail({
             /* Fallback: title pill link when metadata is sparse */
             <div className="flex flex-col items-center gap-2">
               {isTopPick && (
-                <span className="inline-flex items-center px-2 py-1 rounded text-xl backdrop-blur-md bg-amber-500/80 border border-amber-300/90 shadow-lg">
-                  🎖️
-                </span>
+                <TopPickBadge
+                  videoId={videoId}
+                  affTeam={affTeam}
+                  negTeam={negTeam}
+                  title={title}
+                  tournament={cleanTournament}
+                  year={year}
+                  roundLevel={roundLevel}
+                  size="lg"
+                />
               )}
               <a
                 href={youtubeUrl}
