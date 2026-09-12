@@ -167,10 +167,33 @@ debate-data-sync/
 ├── schemas/          # JSON Schemas validating data/
 ├── src/
 │   ├── rankings/     # leaderboard scrapers
+│   ├── state/        # localStorage-backed records, and the account sync over them
 │   ├── types/        # ambient declarations for untyped dependencies
 │   └── youtube/      # channel ingestion, stats, view updates, parsers
 └── test/             # Vitest suites for the title/description parsers
 ```
+
+## The tool-data sync
+
+`src/state/` also holds the account sync that every tool's `localStorage`
+store rides on, documented in full under
+[Tool Data Sync](https://debate-ai.com/docs/internals/tool-data-sync). It lives
+in this package because this is a leaf the tool packages depend on, and it is
+kept framework- and fetch-free where it can be so the server, the client and
+the tests can all import the same rules.
+
+| Module | Role |
+| --- | --- |
+| `toolRecordCollections.ts` | The allowlist of synced stores, and the merge rules. **Adding a tool to the sync is one entry here and nothing else.** |
+| `tool-records-client.ts` | The `/api/tool-records` calls, and nothing but them. |
+| `tool-record-mirror.ts` | What a store's own `save*`/`delete*` calls to push a change immediately; plus the per-collection account merge. |
+| `tool-record-auto-sync.ts` | The floor: watches every collection in the catalog and flushes what changed, so a store syncs without its package being wired for it. |
+| `sign-in-prompt.ts` | Lets a store ask the app to offer a signed-out user an account to keep their work on. No React, no `fetch`. |
+
+The rule these share: **a local save is never blocked by a sync failure.** A
+mirror call returns immediately and swallows its own error, nothing syncs until
+the app reports a signed-in session, and a guest's save still happens whether or
+not they take the sign-in offer.
 
 ## Tests
 

@@ -5,6 +5,15 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { CategoryType, DebateStyle } from "../types/videos";
+import {
+  VIDEO_FAVORITES_KEY,
+  VIDEO_HIDDEN_KEY,
+  hideVideo as hideVideoRecord,
+  listHiddenVideos,
+  listVideoFavorites,
+  toggleVideoFavorite as toggleVideoFavoriteRecord,
+  unhideVideo as unhideVideoRecord,
+} from "../state/videoLibrary";
 
 /** Layout of the video results: card grid with thumbnails, or a dense row/table list. */
 export type VideoViewMode = "grid" | "list";
@@ -14,8 +23,16 @@ export type VideoViewMode = "grid" | "list";
  *
  * Video rows, paging and load state are *not* here — they belong to
  * {@link useVideoFeed}, which pages them in from `/api/videos`. This hook keeps
- * only the user-controlled filter state and the browser-local favourite/hidden
- * sets, which drive the requests that hook makes.
+ * only the user-controlled filter state and the favourite/hidden sets, which
+ * drive the requests that hook makes.
+ *
+ * Those two sets are no longer this hook's own `localStorage` writes: they live
+ * in `state/videoLibrary.ts`, which keys them as records the account sync can
+ * store, mirrors each change up, and prompts a signed-out user to keep the
+ * collection. This hook keeps the `Set<string>` shape its callers filter on and
+ * re-reads that store whenever it changes — including when an account merge
+ * writes it on sign-in, which is what makes favourites from another device show
+ * up in an open grid without a reload.
  *
  * @returns An object containing `state` (current values and refs) and `actions` (setter functions).
  */
@@ -33,69 +50,45 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");
   const [hiddenVideos, setHiddenVideos] = useState<Set<string>>(new Set());
 
-  // Load favorites and hidden videos from local storage on mount
+  // Read both stores on mount, and again whenever anything writes them: this
+  // tab's own mutators dispatch a `storage` event by hand, other tabs get the
+  // real one, and the account merge on sign-in writes through the same key.
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("debateVideosFavorites");
-      if (stored) {
-        setFavorites(new Set(JSON.parse(stored)));
+    const read = () => {
+      setFavorites(new Set(listVideoFavorites().map((favorite) => favorite.videoId)));
+      setHiddenVideos(new Set(listHiddenVideos().map((entry) => entry.videoId)));
+    };
+    read();
+
+    const onStorage = (event: StorageEvent) => {
+      // `null` is `localStorage.clear()` per the StorageEvent spec — both
+      // stores may be gone, so re-read rather than guess.
+      if (event.key === null || event.key === VIDEO_FAVORITES_KEY || event.key === VIDEO_HIDDEN_KEY) {
+        read();
       }
-      const storedHidden = localStorage.getItem("debateVideosHidden");
-      if (storedHidden) {
-        setHiddenVideos(new Set(JSON.parse(storedHidden)));
-      }
-    } catch (error) {
-      console.error("Failed to load data from localStorage", error);
-    }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   // Stable identities: these are handed to every card in the grid, and the
   // cards are memoised, so a fresh function per render would defeat that and
   // re-render the whole (paged, potentially several-hundred-card) grid on
   // every keystroke in the search box.
+  //
+  // The store owns persistence, mirroring and the guest prompt, and hands back
+  // the full list — so state is set from what was actually written rather than
+  // from an optimistic copy a failed quota write would leave diverged.
   const hideVideo = useCallback((videoId: string) => {
-    setHiddenVideos((prev) => {
-      const next = new Set(prev);
-      next.add(videoId);
-      try {
-        localStorage.setItem("debateVideosHidden", JSON.stringify(Array.from(next)));
-      } catch {}
-      return next;
-    });
+    setHiddenVideos(new Set(hideVideoRecord(videoId).map((entry) => entry.videoId)));
   }, []);
 
   const unhideVideo = useCallback((videoId: string) => {
-    setHiddenVideos((prev) => {
-      const next = new Set(prev);
-      next.delete(videoId);
-      try {
-        localStorage.setItem("debateVideosHidden", JSON.stringify(Array.from(next)));
-      } catch {}
-      return next;
-    });
+    setHiddenVideos(new Set(unhideVideoRecord(videoId).map((entry) => entry.videoId)));
   }, []);
 
-  // Action to toggle a favorite
   const toggleFavorite = useCallback((videoId: string) => {
-    setFavorites((prev) => {
-      const newFavorites = new Set(prev);
-      if (newFavorites.has(videoId)) {
-        newFavorites.delete(videoId);
-      } else {
-        newFavorites.add(videoId);
-      }
-
-      try {
-        localStorage.setItem(
-          "debateVideosFavorites",
-          JSON.stringify(Array.from(newFavorites)),
-        );
-      } catch (error) {
-        console.error("Failed to save favorites to localStorage", error);
-      }
-
-      return newFavorites;
-    });
+    setFavorites(new Set(toggleVideoFavoriteRecord(videoId).map((favorite) => favorite.videoId)));
   }, []);
 
   /** Ref attached to the scrollable video grid container. */

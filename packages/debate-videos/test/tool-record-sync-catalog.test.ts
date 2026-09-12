@@ -12,14 +12,27 @@
 
 import { describe, it, expect } from "vitest";
 import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections";
-import { SIDEBAR_TOOL_SECTIONS } from "../src/components/category-gallery/sidebar-tool-sections";
+import {
+  APP_DOCK_LINKS,
+  SIDEBAR_TOOL_SECTIONS,
+} from "../src/components/category-gallery/sidebar-tool-sections";
 
-const SIDEBAR_HREFS = new Set(
-  SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href)),
-);
+/**
+ * Every destination this sidebar links to: the Tools tree's sections, plus the
+ * five app-dock icons above them.
+ *
+ * The dock belongs in here because the video library lives there rather than
+ * in the Tools tree — `/videos` is how a user reaches their favourites and
+ * their hidden list, so a `/settings` row pointing at it is a working link,
+ * which is the whole property this file exists to protect.
+ */
+const SIDEBAR_HREFS = new Set([
+  ...SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href)),
+  ...APP_DOCK_LINKS.map((link) => link.href),
+]);
 
 describe("synced tool collections", () => {
-  it("points every collection at a tool the sidebar lists", () => {
+  it("points every collection at a destination the sidebar links to", () => {
     for (const collection of TOOL_RECORD_COLLECTIONS) {
       expect(SIDEBAR_HREFS, `${collection.key} → ${collection.href}`).toContain(collection.href);
     }

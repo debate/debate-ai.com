@@ -71,6 +71,45 @@ export async function listToolRecords(
 }
 
 /**
+ * Lists every collection the current user has records under, in one request —
+ * what a sign-in uses instead of a GET per collection.
+ *
+ * Resolves to `null` on a `401`, and on any other failure, so the caller falls
+ * back to reconciling collection by collection rather than treating a failed
+ * prefetch as an empty account. That distinction matters: an empty account
+ * means "adopt nothing", while a failed fetch must not be allowed to look like
+ * one.
+ *
+ * @param base - Endpoint override, for tests.
+ * @returns Records by collection key, or `null` when the request didn't land.
+ */
+export async function listAllToolRecords(
+  base = BASE_ENDPOINT,
+): Promise<Record<string, unknown[]> | null> {
+  let res: Response;
+  try {
+    res = await fetch(base);
+  } catch {
+    return null;
+  }
+  if (!res.ok) return null;
+
+  let payload: unknown;
+  try {
+    payload = await res.json();
+  } catch {
+    return null;
+  }
+  if (typeof payload !== "object" || payload === null || Array.isArray(payload)) return null;
+
+  const byCollection: Record<string, unknown[]> = {};
+  for (const [key, records] of Object.entries(payload as Record<string, unknown>)) {
+    if (Array.isArray(records)) byCollection[key] = records;
+  }
+  return byCollection;
+}
+
+/**
  * Upserts one record into the current user's account, keyed by its id within
  * the collection. Throws on failure, `401` included.
  *
