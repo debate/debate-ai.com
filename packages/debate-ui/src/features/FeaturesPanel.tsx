@@ -147,22 +147,23 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
           <Reveal>
             <Pill className="mb-5">
               <LayoutGrid className="size-3.5" />
-              Every surface, one page
+              PF, LD and Policy — every tool
             </Pill>
           </Reveal>
 
           <Reveal delay={80}>
             <h1 className="text-4xl leading-[1.08] font-bold tracking-tight text-balance text-foreground sm:text-5xl">
-              Everything the app does.
+              Cut, flow, drill, debate.
               <br />
-              <span className="da-shimmer-text">In one place.</span>
+              <span className="da-shimmer-text">All of it, here.</span>
             </h1>
           </Reveal>
 
           <Reveal delay={160}>
             <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-pretty text-muted-foreground sm:text-lg">
-              Search it by name, description, route, or the jargon you would actually type —
-              or skim a category and open the surface straight from its card.
+              Cut and tag evidence, flow a live round, time every speech, scout judges and
+              opponents, and take a full round against an AI. Search by tool, by route, or by
+              the word you would actually say in a block — then open it straight from its card.
             </p>
           </Reveal>
 

@@ -27,6 +27,7 @@ import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
+import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
 
 // Hooks
@@ -42,9 +43,11 @@ const DICTIONARY_ENTRY_COUNT = 203
 /** Props for the {@link LecturesPage} component. */
 interface LecturesPageProps {
   /**
-   * App-owned navigation dock, forwarded to {@link LecturesVideoGridView} for
-   * the top of its persistent left sidebar (md+ only). Omitted for the
-   * leaderboard and dictionary branches, which keep their own top layout.
+   * App-owned navigation dock, rendered at the top of the persistent left
+   * sidebar (md+ only) — by {@link LecturesVideoGridView} on the grid, and by
+   * {@link LecturesSidebarShell} on the rankings and glossary branches, which
+   * keep their own *content* layout but share that column. They used to drop
+   * it, which left both with no dock and no nav tree at all.
    */
   dockSlot?: React.ReactNode
 }
@@ -355,43 +358,59 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Branch rendering
   // ---------------------------------------------------------------------------
 
+  // Both branches below are wrapped in the same sidebar the grid renders, so
+  // a tree link into either one lands on a page you can navigate out of.
+  // `sidebarShellProps` is shared between them rather than spelled twice.
+  const sidebarShellProps = {
+    dockSlot,
+    counts: quickLinkCounts,
+    lectureCategories,
+    selectedCategory,
+    lecturesExpanded: showLectureCategories,
+    onToggleLectures: () => setShowLectureCategories((shown) => !shown),
+  }
+
   if (state.currentCategory === "leaderboard") {
     return (
-      <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
-        <div>
-          <StickyHeader
-            controls={
-              <div className="flex flex-row items-center gap-3 w-full justify-between sm:justify-start">
-                {backButton}
-                <LeaderboardFilterBar
-                  division={leaderboardDivision}
-                  year={leaderboardYear}
-                  years={leaderboardYears}
-                  onChangeDivision={handleDivisionChange}
-                  onChangeYear={setLeaderboardYear}
-                />
-              </div>
-            }
-          />
-          <LeaderboardPanel
-            controlledDivision={leaderboardDivision}
-            controlledYear={leaderboardYear}
-            onControlledDivisionChange={handleDivisionChange}
-            onControlledYearChange={setLeaderboardYear}
-            history={meta?.history}
-          />
+      <LecturesSidebarShell {...sidebarShellProps} activeId="rankings">
+        <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+          <div>
+            <StickyHeader
+              controls={
+                <div className="flex flex-row items-center gap-3 w-full justify-between sm:justify-start">
+                  {backButton}
+                  <LeaderboardFilterBar
+                    division={leaderboardDivision}
+                    year={leaderboardYear}
+                    years={leaderboardYears}
+                    onChangeDivision={handleDivisionChange}
+                    onChangeYear={setLeaderboardYear}
+                  />
+                </div>
+              }
+            />
+            <LeaderboardPanel
+              controlledDivision={leaderboardDivision}
+              controlledYear={leaderboardYear}
+              onControlledDivisionChange={handleDivisionChange}
+              onControlledYearChange={setLeaderboardYear}
+              history={meta?.history}
+            />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </LecturesSidebarShell>
     )
   }
 
   if (state.currentCategory === "dictionary") {
     return (
-      <LecturesDictionaryView
-        dictSearchTerm={dictSearchTerm}
-        onDictSearchTermChange={setDictSearchTerm}
-      />
+      <LecturesSidebarShell {...sidebarShellProps} activeId="dictionary">
+        <LecturesDictionaryView
+          dictSearchTerm={dictSearchTerm}
+          onDictSearchTermChange={setDictSearchTerm}
+        />
+      </LecturesSidebarShell>
     )
   }
 

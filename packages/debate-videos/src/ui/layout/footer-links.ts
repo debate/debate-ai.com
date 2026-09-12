@@ -16,9 +16,11 @@ import {
   Activity,
   Book,
   BookMarked,
+  BookOpen,
   Calendar,
   Code2,
   FileText,
+  LayoutGrid,
   MessageCircle,
   MessageSquare,
   Scale,
@@ -37,6 +39,14 @@ export interface FooterLink {
 }
 
 export const FOOTER_LINKS: FooterLink[] = [
+  // `/docs` is the help site (`packages/debate-help-docs`), statically
+  // exported into the app's `public/docs` — not a Next route, so it is
+  // reached by a plain navigation like any other entry here.
+  { url: "/docs", text: "Docs", icon: BookOpen, group: "site" },
+  // `/features` is the whole catalog. It is listed here because the app
+  // dock's Settings menu no longer carries an "Apps" submenu spelling that
+  // catalog out, so this row is how the menu reaches it.
+  { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
   { url: "https://github.com/debate", text: "Github", icon: Code2, group: "site" },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare, group: "debate" },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },

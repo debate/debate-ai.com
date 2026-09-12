@@ -159,9 +159,8 @@ function SettingsMenu({
           md+ only, so on a phone this is the only place its Videos links and
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
-          data the sidebar renders. "Apps" carries the whole feature catalog
-          as nested per-category submenus, which is why the menu itself no
-          longer has All Features / All Tools / Tools rows of its own. */}
+          data the sidebar renders. The feature catalog is *not* restated
+          here: it is the `/features` row in Site Links below. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>
@@ -173,19 +172,6 @@ function SettingsMenu({
               <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
                 {link.title}
               </DropdownMenuItem>
-            ))}
-            {section.groups && section.groups.length > 0 && <DropdownMenuSeparator />}
-            {section.groups?.map((group) => (
-              <DropdownMenuSub key={group.id}>
-                <DropdownMenuSubTrigger>{group.title}</DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="w-64 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
-                  {group.links.map((link) => (
-                    <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
-                      {link.title}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
             ))}
           </DropdownMenuSubContent>
         </DropdownMenuSub>

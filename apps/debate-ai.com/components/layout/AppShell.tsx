@@ -12,7 +12,6 @@
  */
 
 import type React from "react"
-import { useEffect } from "react"
 import { usePathname } from "next/navigation"
 
 import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoPlayerFrameBridge } from "debate-videos"
@@ -25,7 +24,10 @@ import { ToolRecordSyncProvider } from "@/components/layout/ToolRecordSyncProvid
 import { GlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "@/components/layout/ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
-import { isDockOwnedPath } from "@/lib/nav/dock-nav-paths"
+import {
+  FrameNavigationHost,
+  useFrameNavigationHandoff,
+} from "@/components/layout/FrameNavigationBridge"
 import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
 
@@ -36,20 +38,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // A framed dock destination (e.g. /videos) can navigate itself somewhere
   // the dock never framed — a tool-tree link to /coach, /drills, etc. That
   // page is still "embedded" by every check here (same iframe, same origin),
-  // so without this it would render bare below with no dock, no sidebar, and
-  // no way back, while the top document's address bar and history stay on
-  // whatever the dock last pushed. Send the whole tab there instead: a normal
-  // top-level load of just that tool, with its own chrome, is what clicking
-  // it is supposed to do.
-  useEffect(() => {
-    if (!embedded || isDockOwnedPath(pathname)) return
-    try {
-      window.top?.location.assign(`${window.location.pathname}${window.location.search}${window.location.hash}`)
-    } catch {
-      // Same-origin only by construction (AppFrameProvider only ever frames
-      // this app's own paths) — nothing to do if that ever isn't true.
-    }
-  }, [embedded, pathname])
+  // so left alone it renders bare below with no dock, no sidebar, and no way
+  // back, while the top document's address bar and history stay on whatever
+  // the dock last pushed.
+  //
+  // The shell is asked to route there instead of the tab being thrown at a
+  // fresh top-level load, which is what this used to do: the shell document —
+  // and so the sidebar you clicked the link in — survives the hop. See
+  // `FrameNavigationBridge`; a hard load is still the fallback when no shell
+  // answers.
+  useFrameNavigationHandoff(embedded, pathname)
 
   if (embedded) {
     return (
@@ -95,6 +93,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <AppSidebarShell>
               <AppFrameSurface>{children}</AppFrameSurface>
             </AppSidebarShell>
+            {/* Routes what a framed page's own links hand up, so the sidebar
+                around them is never torn down to follow one. */}
+            <ChromeErrorBoundary label="FrameNavigationHost">
+              <FrameNavigationHost />
+            </ChromeErrorBoundary>
           </div>
         </AppFrameProvider>
       </ReasonDocsProvider>

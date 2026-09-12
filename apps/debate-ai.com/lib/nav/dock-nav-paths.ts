@@ -59,9 +59,26 @@ export function isDockNavPath(path: string): boolean {
  * top-level load instead.
  */
 export function isDockOwnedPath(path: string): boolean {
+  return dockNavRootFor(path) != null
+}
+
+/**
+ * The dock destination `path` belongs to — itself, or the one it hangs under
+ * (`/videos/lectures` → `/videos`) — or `null` for a path no dock icon owns.
+ *
+ * The finer-grained half of {@link isDockOwnedPath}, and what a framed
+ * document compares against to tell its *own* pages apart from another
+ * destination's: a framed `/videos` linking to `/videos/lectures` is
+ * navigating within itself, but linking to `/cards/library` is not — that is
+ * a different frame's subtree, and letting it load inside this one leaves the
+ * page with no sidebar while the top document's URL still says `/videos`.
+ */
+export function dockNavRootFor(path: string): string | null {
   const withoutQuery = path.split("?")[0]?.split("#")[0] ?? ""
   const normalized = withoutQuery.replace(/\/+$/, "") || "/"
-  return DOCK_NAV_HREFS.some((href) => normalized === href || normalized.startsWith(`${href}/`))
+  return (
+    DOCK_NAV_HREFS.find((href) => normalized === href || normalized.startsWith(`${href}/`)) ?? null
+  )
 }
 
 /** Query marker on a frame's URL, so the framed document is identifiable. */
