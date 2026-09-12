@@ -80,6 +80,12 @@ already carrying a sidebar-hosted one. `LecturesSidebarShell` wraps them in
 the same column (dock, nav tree, footer), so clicking either link leaves the
 nav exactly where it was.
 
+The sidebar is `md+` only, though, and the same rule that hides the fixed dock
+hides its mobile bottom bar. So on a phone those two pages still answered with
+nothing to navigate by. `LecturesSidebarShell` now also renders the `md:hidden`
+block the grid renders — the quick-link tiles, the tool tree (collapsed) and
+the footer — so the pair has a way out of it at every width.
+
 **Fixed fallback.** Everywhere else — the home page, `/login`, `/legal/*` —
 it renders fixed in the top-left corner on desktop and as a bottom bar on
 mobile. The two never show at once.
@@ -88,6 +94,30 @@ Route matching is by path *prefix*, so a nested route under a tree entry
 (`/cards/awards` under `/cards`, a document route under `/doc`) keeps the
 sidebar rather than dropping to the fixed dock. The trailing `/` in the
 comparison keeps `/docs` from matching `/doc`.
+
+## Search floats over the results
+
+The search box, the season and style filters, the sort and the grid/rows
+toggle used to sit in the sidebar on a desktop and in a bar above the results
+on a phone — two copies, which is why a half-typed query seemed to disappear
+when a window was resized across the breakpoint.
+
+There is one now, and it is not in the sidebar: a small magnifier in the
+top-right corner of the results, which follows them as you scroll. Hover it on
+a desktop, tap it on a phone, or Tab to it, and the whole control opens over
+the results. It stays open while you are typing in it or while a search is
+active, and closes on Escape or a click outside. Whatever you typed is still
+there the next time you open it.
+
+That is also what lets the sidebar stay the same on `/videos/dictionary` and
+`/videos/rankings`, which have nothing to search: the column is now the same
+column everywhere in the library.
+
+## Results open as rows
+
+`/videos` opens as the dense row list rather than the thumbnail grid — about
+four times as many results per screen. The grid is one toggle away inside the
+search panel. The choice is not remembered between page loads.
 
 ## Staying inside the sidebar
 
@@ -195,7 +225,10 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
   `/videos`' `md:hidden` block carries the tool sections, collapsed.
 - `packages/debate-videos/test/lectures-sidebar-shell.test.tsx` — that the
   rankings and glossary branches render the dock, the nav tree and the
-  footer rather than a bare page.
+  footer rather than a bare page, on a phone as well as a desktop.
+- `packages/debate-videos/test/videos-search-and-layout.test.tsx` — that the
+  search controls render once, over the results rather than in the sidebar,
+  and that results open as rows.
 - `apps/debate-ai.com/lib/nav/__tests__/dock-menu-sections.test.ts` — that
   every sidebar destination (videos, tool sections, footer links) is
   reachable from the Settings menu, which is the whole nav below `md`, that

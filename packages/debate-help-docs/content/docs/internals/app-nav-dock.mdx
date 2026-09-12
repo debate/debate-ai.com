@@ -81,8 +81,19 @@ carrying a sidebar-hosted dock, the fixed fallback stayed hidden as well — so
 two rows of the sidebar's own tree answered, on desktop, with no navigation
 at all beyond a "Back" link. `LecturesSidebarShell`
 (`packages/debate-videos/src/panels/LecturesSidebarShell.tsx`) wraps both in
-the same column: dock slot, `VideoSidebarTree`, footer. The search controls
-are left out, since neither page searches the video feed.
+the same column: dock slot, `VideoSidebarTree`, footer.
+
+That `<aside>` is `hidden md:flex`, and the same `hasEmbeddedDock` rule keeps
+`CategoryDock`'s mobile bottom bar hidden, so below `md` the two pages were
+still bare. The shell now carries a `md:hidden` block as well — `QuickLinksGrid`,
+`ToolNavTree defaultExpanded={false}`, `Footer` — matching what
+`LecturesVideoGridView` renders below `md`.
+`packages/debate-videos/test/lectures-sidebar-shell.test.tsx` pins it.
+
+Neither column carries the search controls any more, on either page or on the
+grid: see **Search floats over the results** below. That is what makes the
+three columns identical, so the sidebar no longer changes shape when you cross
+between them.
 
 **Fixed fallback.** Everywhere else — the home page, `/login`, `/legal/*` —
 it renders fixed in the top-left corner on desktop and as a bottom bar on
@@ -92,6 +103,41 @@ Route matching is by path *prefix*, so a nested route under a tree entry
 (`/cards/awards` under `/cards`, a document route under `/doc`) keeps the
 sidebar rather than dropping to the fixed dock. The trailing `/` in the
 comparison keeps `/docs` from matching `/doc`.
+
+## Search floats over the results
+
+`VideoSearchBar` — the search input, the season and style dropdowns, the sort,
+favourites, thumbnail and grid/rows toggles and the result count — used to
+render **twice** on every `/videos` page: stacked in the desktop `<aside>`
+above the nav tree, and again in a `StickyHeader` at the top of the
+`md:hidden` column. It cost the sidebar roughly a third of its height, which
+pushed the nav tree below the fold on a laptop, and the two copies held
+separate local input state, so a half-typed query appeared to vanish when the
+viewport crossed `md`.
+
+`FloatingVideoSearch`
+(`packages/debate-videos/src/components/video-search/FloatingVideoSearch.tsx`)
+replaces both with one instance, mounted at the top of the results panel:
+
+- `sticky top-3` with `h-0`, so it rides the scroll and costs the grid no
+  vertical space;
+- collapsed to a 36px round button in the panel's top-right corner;
+- opens on hover (desktop), on click or tap (both), and on focus — so Tab
+  reaches it without a pointer;
+- stays open while focus is inside it, or while a search term is set
+  (`keepOpen`), and closes on Escape or a `pointerdown` outside;
+- the panel is `hidden`, not unmounted, so the input keeps its value (and its
+  2s debounce) across an accidental hover-out;
+- the wrapper is `pointer-events-none` — only the button and the open panel
+  take clicks, so nothing is stolen from the video cards underneath.
+
+## Results open as rows
+
+`useVideoState` starts `viewMode` at `"list"`, so `/videos` opens as
+`VideoListRows` rather than `VideoGrid`. The dense list fits roughly four
+times as many results on a screen; the thumbnail grid is one toggle away in
+the floating search panel. Nothing persists the choice — it resets per page
+load.
 
 ## Staying inside the sidebar
 
@@ -216,7 +262,12 @@ hanging straight off Coaching, wherever in the tree it is.
   `/videos`' `md:hidden` block carries the tool sections, collapsed.
 - `packages/debate-videos/test/lectures-sidebar-shell.test.tsx` — that the
   rankings and glossary branches render the dock slot, the whole nav tree and
-  the footer, rather than a bare page.
+  the footer, rather than a bare page, and that the `md:hidden` block below
+  that column carries the quick links and the collapsed tool sections.
+- `packages/debate-videos/test/videos-search-and-layout.test.tsx` — that the
+  search controls render once, after `</aside>` rather than inside it, start
+  collapsed with the panel hidden rather than unmounted, and that
+  `useVideoState` opens on `"list"`.
 - `apps/debate-ai.com/lib/nav/__tests__/dock-menu-sections.test.ts` — that
   every sidebar destination (videos, tool sections, footer links) is
   reachable from the Settings menu, which is the whole nav below `md`, that
