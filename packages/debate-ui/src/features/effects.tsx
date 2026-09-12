@@ -130,6 +130,10 @@ export interface SpotlightCardProps {
    * every other surface.
    */
   hueShift?: number;
+  /**
+   * When true (default), re-randomizes the card's hover color and effects on each hover.
+   */
+  randomizeOnHover?: boolean;
 }
 
 /**
@@ -148,9 +152,15 @@ export function SpotlightCard({
   beam = true,
   spotlightSize = 420,
   hueShift,
+  randomizeOnHover = true,
 }: SpotlightCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [spot, setSpot] = useState({ x: 0, y: 0, on: false });
+  const [activeHue, setActiveHue] = useState<number | undefined>(hueShift);
+
+  useEffect(() => {
+    setActiveHue(hueShift);
+  }, [hueShift]);
 
   const handleMove = (event: MouseEvent<HTMLDivElement>) => {
     const rect = ref.current?.getBoundingClientRect();
@@ -158,27 +168,43 @@ export function SpotlightCard({
     setSpot({ x: event.clientX - rect.left, y: event.clientY - rect.top, on: true });
   };
 
+  const handleMouseEnter = () => {
+    if (randomizeOnHover) {
+      setActiveHue((prev) => {
+        const offset = Math.floor(Math.random() * 240) + 60;
+        return Math.round(((prev ?? 0) + offset) % 360);
+      });
+    }
+    setSpot((s) => ({ ...s, on: true }));
+  };
+
+  const handleMouseLeave = () => {
+    setSpot((s) => ({ ...s, on: false }));
+  };
+
+  const currentHue = activeHue ?? hueShift;
+
   return (
     <div
       ref={ref}
       onMouseMove={handleMove}
-      onMouseEnter={() => setSpot((s) => ({ ...s, on: true }))}
-      onMouseLeave={() => setSpot((s) => ({ ...s, on: false }))}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={cn(
         "group/spotlight relative isolate overflow-hidden rounded-2xl p-px",
         beam && "da-border-beam",
-        hueShift !== undefined && "da-card-tint",
+        currentHue !== undefined && "da-card-tint",
         className,
       )}
       // Only the rotation is set here; `globals.css` turns it into the two
       // `--da-card-*` colours, so light and dark keep the lightness split the
       // rest of the accent tokens use rather than hard-coding one here.
       style={
-        hueShift === undefined
+        currentHue === undefined
           ? undefined
           : // Unitless, to match `--accent-hue`: the two are added inside one
             // `calc()`, and a `deg` there would not add to a bare number.
-            ({ "--da-card-hue": `${hueShift}` } as CSSProperties)
+            ({ "--da-card-hue": `${currentHue}` } as CSSProperties)
       }
     >
       <div className="relative z-10 h-full rounded-[calc(1rem-1px)] border border-border bg-card/80 backdrop-blur-sm transition-all duration-300 group-hover/spotlight:border-transparent group-hover/spotlight:bg-[var(--da-card-hover-bg,var(--card))]">

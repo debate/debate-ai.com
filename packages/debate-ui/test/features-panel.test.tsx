@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { FeaturesPanel } from "../src/features/FeaturesPanel";
-import { cardHueShift } from "../src/features/effects";
+import { SpotlightCard, cardHueShift } from "../src/features/effects";
 import { APP_FEATURES } from "../src/features/feature-catalog";
 
 describe("FeaturesPanel", () => {
@@ -72,6 +72,30 @@ describe("FeaturesPanel", () => {
     );
     expect(single).toContain(`--da-card-hue:${cardHueShift(0)}`);
     expect(html).toContain(`--da-card-hue:${cardHueShift(index)}`);
+  });
+});
+
+describe("SpotlightCard", () => {
+  it("renders static markup with initial hueShift style", () => {
+    const cardHtml = renderToStaticMarkup(
+      <SpotlightCard hueShift={120}>
+        <div>Card Content</div>
+      </SpotlightCard>,
+    );
+    expect(cardHtml).toContain("--da-card-hue:120");
+    expect(cardHtml).toContain("da-card-tint");
+    expect(cardHtml).toContain("da-border-beam");
+    expect(cardHtml).toContain("Card Content");
+  });
+
+  it("renders without tint when hueShift is omitted", () => {
+    const cardHtml = renderToStaticMarkup(
+      <SpotlightCard>
+        <div>Plain Card</div>
+      </SpotlightCard>,
+    );
+    expect(cardHtml).not.toContain("da-card-tint");
+    expect(cardHtml).toContain("Plain Card");
   });
 });
 
