@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { groupIntoSentences } from "../src/components/transcript-modal/transcriptUtils"
+import { groupIntoSentences } from "../src/components/transcript/transcriptUtils"
 
 function cue(text: string, start: number, duration = 2) {
   return { text, start, duration }

@@ -13,6 +13,8 @@ import { and, asc, count, desc, eq, inArray, isNotNull, isNull, sql, type SQL } 
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
+  normalizeCategoryKey,
+  stripTournamentYear,
   videoRowToTuple,
   type VideoRow,
   type VideoTuple,
@@ -408,4 +410,70 @@ export async function getVideoMeta(): Promise<VideoMeta> {
     suggestions: computeVideoSuggestions(allRows),
     backend: "json",
   };
+}
+
+/** Index of the fields the watch page reads out of a {@link VideoTuple}. */
+const TUPLE = { videoId: 0, title: 1, style: 6, tournament: 7 } as const;
+
+/**
+ * Fetches a single video by its YouTube id.
+ *
+ * @param videoId - YouTube video id.
+ * @returns The video in UI tuple form, or `null` when the library has no such
+ *   video.
+ */
+export async function getVideoById(videoId: string): Promise<VideoTuple | null> {
+  const page = await getVideoPage({ source: "all", ids: [videoId], limit: 1, offset: 0 });
+  return page.videos[0] ?? null;
+}
+
+/**
+ * Fetches the videos shown under a video on its watch page.
+ *
+ * Relatedness is ordered by how specific it is: the rest of the same
+ * tournament first (the other rounds of a bracket are what a viewer usually
+ * wants next), then the same lecture category or debate format, then the
+ * most recent videos in the library — each pass topping up the list until it
+ * is full, so a video with no tournament and no format still gets a full row.
+ *
+ * @param video - The video being watched, as a tuple.
+ * @param limit - How many related videos to return at most.
+ * @returns Related videos in UI tuple form, never including `video` itself.
+ */
+export async function getRelatedVideos(
+  video: VideoTuple,
+  limit = 12,
+): Promise<VideoTuple[]> {
+  const videoId = video[TUPLE.videoId] as string;
+  const style = video[TUPLE.style];
+  const tournament = video[TUPLE.tournament] as string | null | undefined;
+
+  const passes: VideoQueryParams[] = [];
+  // Tournament names are prefixed with the year of the event; searching the
+  // bare name keeps the rest of that bracket without excluding other years.
+  const tournamentName = tournament ? stripTournamentYear(tournament) : null;
+  if (tournamentName) passes.push({ source: "all", q: tournamentName, sort: "Recency" });
+  if (typeof style === "number") passes.push({ source: "all", style, sort: "Recency" });
+  if (typeof style === "string") {
+    passes.push({ source: "all", categoryKey: normalizeCategoryKey(style), sort: "Recency" });
+  }
+  passes.push({ source: "all", sort: "Recency" });
+
+  const seen = new Set<string>([videoId]);
+  const related: VideoTuple[] = [];
+
+  for (const params of passes) {
+    if (related.length >= limit) break;
+    // Over-fetch by one pass' worth: every row may already be in the list.
+    const page = await getVideoPage({ ...params, limit: limit + related.length + 1, offset: 0 });
+    for (const candidate of page.videos) {
+      const id = candidate[TUPLE.videoId] as string;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      related.push(candidate);
+      if (related.length >= limit) break;
+    }
+  }
+
+  return related;
 }

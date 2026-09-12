@@ -1,0 +1,104 @@
+---
+title: "Video Watch Page — a page that owns the one player"
+---
+
+# Video Watch Page — a page that owns the one player
+
+`/videos/watch/<title-slug>-<videoId>` renders one video with its
+transcript beside it and related videos underneath. It replaces
+`TranscriptModal`, a dialog over the grid that mounted its own YouTube
+embed and had no URL.
+
+- **Where:** `apps/debate-ai.com/app/videos/watch/[slug]/page.tsx`
+- **Package:** [`debate-videos`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-videos/README.md)
+  — `panels/watch/VideoWatchPage.tsx`, `components/watch/*`, `lib/video-slug.ts`
+
+## The slug
+
+`lib/video-slug.ts` owns both directions:
+
+```
+videoWatchSlug("2022 NDT Finals", "OXdffJy8HIs")  → "2022-ndt-finals-OXdffJy8HIs"
+parseVideoWatchSlug("anything-at-all-OXdffJy8HIs") → "OXdffJy8HIs"
+```
+
+The id is read **positionally**, as the last 11 characters after a dash,
+not by splitting on `-`: YouTube ids contain `-` and `_`, so
+`slug.split("-").pop()` truncates a real share of the library. Because the
+title is never consulted, a retitled video still resolves from an old
+link; `generateMetadata` emits the freshly-built slug as `canonical` so
+the two spellings don't both get indexed.
+
+`/videos/[category]` is one segment and `/videos/watch/[slug]` is two, so
+they never collide.
+
+## Only one embed exists at a time
+
+Two YouTube embeds on one page fight over playback and over
+picture-in-picture, which is why the library has exactly one player,
+mounted above the route tree. This page does not add a second one — it
+*takes over* from the first:
+
+```
+mount   → setActiveVideo(id, …)        share title, meta, queue, playback rate
+        → setTheaterVideoId(id)        PersistentVideoPlayer renders null
+        → videoPlayerIframeRef = this  sendYouTubeCommand drives this embed
+unmount → setActiveVideo(id, …, seconds)  hand the position back
+        → setTheaterVideoId(null)      the floating player resumes it
+```
+
+`PersistentVideoPlayer` returns `null` while `theaterVideoId` is set, but
+its hooks stay mounted above that early return. That is deliberate: the
+`infoDelivery` messages this page's embed posts are window-wide, so the
+store's play state and the `localStorage` position keep updating while the
+user is on the watch page.
+
+Two guards matter on the way out, both for the case where the next page is
+another watch page that has already mounted:
+
+- the position is only written back if the store still names *this* video;
+- `theaterVideoId` is only cleared if it still names *this* video.
+
+Without the second, the floating player would reappear behind the incoming
+watch page.
+
+## Switching videos is a navigation
+
+Anything that changes the store's active video — a related card, the
+queue advancing — pushes that video's watch URL instead of swapping the
+embed, so the address always names what is playing. The effect reads
+`useVideoPlayerStore.getState()` rather than the render's snapshot,
+because on the first commit the snapshot still names whatever was playing
+before the page opened and would bounce straight back to it.
+
+## Shared controls
+
+`components/video-player/PlayerIconButton.tsx` is the single button both
+toolbars are built from — `PlayerControls` (popout, `size="sm"`) and
+`WatchToolbar` (page, `size="md"`). `SlowSpreadButton` draws itself the
+same way and takes the size from whichever toolbar hosts it.
+`test/watch-toolbar.test.tsx` renders both strips and asserts the shared
+accessible names, so a rename in one shows up as a failure rather than as
+drift.
+
+## Data
+
+The page is server-rendered so the title, description and social card come
+from the video rather than from a client fetch a crawler never waits for.
+`lib/videos/video-repository.ts` gained two helpers over `getVideoPage`:
+
+- `getVideoById(videoId)` — one video, via the existing `ids` filter.
+- `getRelatedVideos(video, limit)` — passes in order of specificity: the
+  same tournament (searched by its year-stripped name), then the same
+  style or lecture category, then recency; each pass tops the list up.
+
+## Known gaps
+
+Related videos are query passes, not a relevance model — the tournament
+pass is a `LIKE` search on the tournament name, so a tournament whose name
+appears in unrelated descriptions pulls those in too. The transcript
+column's search is a substring filter with no highlighting of the match.
+Fullscreen covers the player *and* its metadata column (the whole left
+stage), not the video alone. The position handed back to the floating
+player comes from YouTube's `infoDelivery` broadcasts, so a video closed
+in the first second before any broadcast arrives resumes from 0.

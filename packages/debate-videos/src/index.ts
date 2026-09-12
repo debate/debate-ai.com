@@ -17,6 +17,13 @@ export {
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
+export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
+export {
+  parseVideoWatchSlug,
+  slugifyVideoTitle,
+  videoWatchHref,
+  videoWatchSlug,
+} from "./lib/video-slug";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";

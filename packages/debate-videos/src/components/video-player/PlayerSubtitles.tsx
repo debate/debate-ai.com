@@ -12,8 +12,8 @@
 "use client"
 
 import { useEffect, useMemo, useRef } from "react"
-import { TranscriptLine } from "../transcript-modal/TranscriptLine"
-import type { TranscriptSnippet } from "../transcript-modal/transcriptUtils"
+import { TranscriptLine } from "../transcript/TranscriptLine"
+import type { TranscriptSnippet } from "../transcript/transcriptUtils"
 
 interface PlayerSubtitlesProps {
   /** The video's transcript, already regrouped into sentences. */
