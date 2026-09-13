@@ -26,14 +26,12 @@
  * regardless of how many components mount this hook.
  *
  * `toggleFavorite`/`removeFavorite` sync a single `addFavoriteTool`/
- * `removeFavoriteTool` op (`saveFavoriteToolOp`) rather than a whole-list
- * `favoriteTools` replace, so two tabs starring different tools in quick
- * succession both land instead of the second PUT silently dropping the
- * first tab's addition — see `state/favoriteTools.ts#applyFavoriteToolOp`'s
- * docstring. `pruneUnknown` still replaces the whole list: it's a bulk
- * cleanup pass, not a single star/unstar, and is convergent under a race
- * either way (it only ever drops entries the current catalog no longer
- * recognizes).
+ * `removeFavoriteTool` op, and `pruneUnknown` syncs a batch
+ * `removeFavoriteTools` op, rather than any of them ever PUTting a whole-list
+ * `favoriteTools` replace (`saveFavoriteToolOp`) — so two tabs editing
+ * favorites at once both land instead of the second PUT silently dropping
+ * the first tab's change. See `state/favoriteTools.ts#applyFavoriteToolOp`'s
+ * docstring.
  *
  * @module lib/hooks/useFavoriteTools
  */
@@ -42,7 +40,6 @@ import { useCallback, useEffect, useState } from "react"
 import {
   fetchUserSettings,
   saveFavoriteToolOp,
-  saveUserSettings,
   filterKnownFavoriteTools,
   isValidToolHref,
   MAX_FAVORITE_TOOLS,
@@ -120,21 +117,17 @@ export function useFavoriteTools() {
     window.dispatchEvent(new Event(CHANGE_EVENT))
   }, [])
 
-  const syncOp = useCallback((op: { addFavoriteTool?: string; removeFavoriteTool?: string }) => {
-    if (!remoteAvailable) return
-    saveFavoriteToolOp(op).catch(() => {
-      // Best-effort — the change already applied locally above, matching
-      // useThemeState's/UserSettingsPanel's "local apply is never
-      // blocked by a sync failure" convention.
-    })
-  }, [])
-
-  const syncWholeList = useCallback((next: string[]) => {
-    if (!remoteAvailable) return
-    saveUserSettings({ favoriteTools: next }).catch(() => {
-      // Best-effort, same as syncOp above.
-    })
-  }, [])
+  const syncOp = useCallback(
+    (op: { addFavoriteTool?: string; removeFavoriteTool?: string; removeFavoriteTools?: string[] }) => {
+      if (!remoteAvailable) return
+      saveFavoriteToolOp(op).catch(() => {
+        // Best-effort — the change already applied locally above, matching
+        // useThemeState's/UserSettingsPanel's "local apply is never
+        // blocked by a sync failure" convention.
+      })
+    },
+    [],
+  )
 
   const isFavorite = useCallback((href: string) => favorites.includes(href), [favorites])
 
@@ -166,16 +159,21 @@ export function useFavoriteTools() {
   // rendering it — see `state/favoriteTools.ts`'s header comment). The one
   // consumer that knows the real catalog (`FavoriteToolsSettings`) calls
   // this once loaded to prune and best-effort sync the cleanup, the same
-  // way any other favorites change persists.
+  // way any other favorites change persists. Synced as a batch
+  // `removeFavoriteTools` op — resolved server-side against the account's
+  // *current* list — rather than a whole-list `favoriteTools` replace of
+  // this browser's own (possibly already-stale) copy, which used to be able
+  // to silently drop a star another tab had just added before this prune's
+  // PUT landed.
   const pruneUnknown = useCallback(
     (validHrefs: readonly string[]) => {
       const next = filterKnownFavoriteTools(favorites, validHrefs)
-      if (next !== favorites) {
-        persistLocal(next)
-        syncWholeList(next)
-      }
+      if (next === favorites) return
+      const stale = favorites.filter((href) => !next.includes(href))
+      persistLocal(next)
+      syncOp({ removeFavoriteTools: stale })
     },
-    [favorites, persistLocal, syncWholeList],
+    [favorites, persistLocal, syncOp],
   )
 
   return { favorites, loaded, isFavorite, toggleFavorite, removeFavorite, pruneUnknown }
