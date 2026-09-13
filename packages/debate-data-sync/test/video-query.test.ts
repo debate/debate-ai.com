@@ -145,6 +145,21 @@ describe("filterVideoRows", () => {
     expect(ids({ ids: ["legacy", "pf-old"] })).toEqual(["pf-old", "legacy"]);
   });
 
+  it("drops an explicit id deny-list", () => {
+    expect(ids({ excludeIds: ["legacy", "pf-old"] })).toEqual([
+      "policy-new",
+      "pf-new",
+      "lecture-k",
+      "lecture-demo",
+      "lecture-award",
+      "lecture-round",
+    ]);
+  });
+
+  it("ignores an empty deny-list", () => {
+    expect(ids({ excludeIds: [] })).toEqual(ROWS.map((r) => r.videoId));
+  });
+
   it("combines filters", () => {
     expect(ids({ style: 2, year: "2026", q: "octas" })).toEqual(["pf-new"]);
   });
@@ -220,6 +235,17 @@ describe("computeVideoFacets", () => {
 
   it("ignores the search term, so dropdowns keep showing library totals", () => {
     expect(computeVideoFacets(ROWS, { q: "octas" })).toEqual(computeVideoFacets(ROWS, {}));
+  });
+
+  it("deducts hidden videos from both dimensions' counts", () => {
+    // "pf-new" (style 2, season 2026) hidden: the style-2 and 2026 counts
+    // must each drop by exactly one, everything else stays put.
+    const withoutHidden = computeVideoFacets(ROWS, {});
+    const withHidden = computeVideoFacets(ROWS, { excludeIds: ["pf-new"] });
+    expect(withHidden.yearCounts["2026"]).toBe((withoutHidden.yearCounts["2026"] ?? 0) - 1);
+    expect(withHidden.styleCounts[2]).toBe((withoutHidden.styleCounts[2] ?? 0) - 1);
+    expect(withHidden.yearCounts["2013"]).toBe(withoutHidden.yearCounts["2013"]);
+    expect(withHidden.styleCounts[1]).toBe(withoutHidden.styleCounts[1]);
   });
 });
 

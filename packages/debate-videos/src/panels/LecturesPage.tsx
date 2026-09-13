@@ -18,7 +18,7 @@ import Link from "next/link"
 import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
-import type { CategoryType, DebateStyle, VideoType } from "../types/videos"
+import type { CategoryType, DebateStyle } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
@@ -229,6 +229,14 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const isVideoCategory =
     state.currentCategory !== "leaderboard" && state.currentCategory !== "dictionary"
 
+  // Hidden videos are a browser-local preference; an explicit search still
+  // surfaces them, as it always has, so the deny-list is only sent while not
+  // searching — otherwise a hidden video could never be found again to unhide.
+  const excludeIds = useMemo(
+    () => (state.searchTerm.trim() || state.hiddenVideos.size === 0 ? null : Array.from(state.hiddenVideos)),
+    [state.searchTerm, state.hiddenVideos],
+  )
+
   const filters: VideoFeedFilters = {
     source: "all",
     // "All Lectures" means everything without a numeric debate style — rounds
@@ -244,16 +252,14 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     sort: state.sortOrder,
     q: state.searchTerm,
     ids: favoriteIds,
+    excludeIds,
     withFacets: true,
     enabled: isVideoCategory,
   }
 
   const feed = useVideoFeed(filters)
 
-  const currentVideos = useMemo<VideoType[]>(() => {
-    if (state.searchTerm.trim() || state.hiddenVideos.size === 0) return feed.videos
-    return feed.videos.filter((video) => !state.hiddenVideos.has(video[0]))
-  }, [feed.videos, state.hiddenVideos, state.searchTerm])
+  const currentVideos = feed.videos
 
   const topPicksSet = useMemo(
     () => new Set(feed.videos.filter((video) => video[15] === true).map((video) => video[0])),
