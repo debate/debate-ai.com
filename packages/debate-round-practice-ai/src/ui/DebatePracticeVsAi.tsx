@@ -6,7 +6,9 @@
  * picker, `/debate/:id` for the round, and the scorecard inside it), passing
  * round setup through `location.state`. Under Next.js that state would be
  * lost on reload, so the two screens live behind one route here and hand
- * the round off in local state instead.
+ * the round off in local state instead — mirrored into `active-round.ts`'s
+ * localStorage record so a reload resumes the round instead of dropping
+ * back to the picker.
  *
  * @module ui/DebatePracticeVsAi
  */
@@ -14,6 +16,7 @@
 "use client"
 
 import { useState } from "react"
+import { clearActiveRound, readActiveRound, writeActiveRound } from "./active-round"
 import { BotSelection, type StartedDebate } from "./BotSelection"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
@@ -43,11 +46,17 @@ export function DebatePracticeVsAi({
   coachSkills,
   onStartDebate,
 }: DebatePracticeVsAiProps = {}) {
-  const [debate, setDebate] = useState<StartedDebate | null>(null)
+  const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
 
   const handleStart = (started: StartedDebate) => {
+    writeActiveRound(userId, started)
     setDebate(started)
     onStartDebate?.(started)
+  }
+
+  const handleExit = () => {
+    clearActiveRound(userId)
+    setDebate(null)
   }
 
   if (!debate) {
@@ -70,7 +79,7 @@ export function DebatePracticeVsAi({
       userAvatar={userAvatar}
       apiBaseUrl={apiBaseUrl}
       coachSkills={coachSkills}
-      onExit={() => setDebate(null)}
+      onExit={handleExit}
     />
   )
 }
