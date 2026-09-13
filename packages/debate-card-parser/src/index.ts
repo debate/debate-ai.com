@@ -3,7 +3,6 @@ export { htmlToCards } from "./parsers/html-to-cards";
 export { convertDocxToHTML, styleMap } from "./parsers/docx-to-html";
 export { docxToCards, docxToHtml } from "./parsers/docx-to-cards";
 export {
-  DOCX_IMPORT_LIMITS,
   DocxImportError,
   assertReadableDocxBytes,
   collectDocxEntries,

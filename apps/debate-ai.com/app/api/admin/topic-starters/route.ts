@@ -18,10 +18,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { asc, eq } from "drizzle-orm";
 import {
-  DOCX_IMPORT_LIMITS,
   collectDocxEntries,
   describeDocxImportError,
-  formatBytes,
   summarizeImportOutcome,
   type DocxImportFailure,
 } from "debate-card-parser";
@@ -184,10 +182,6 @@ export async function POST(request: NextRequest) {
         imported,
         failures,
         summary,
-        limits: {
-          maxFiles: DOCX_IMPORT_LIMITS.maxFiles,
-          maxFileSize: formatBytes(DOCX_IMPORT_LIMITS.maxFileBytes),
-        },
         ...(imported === 0 ? { error: summary, code: failures[0]?.code ?? "unknown" } : {}),
       },
       { status: imported === 0 ? 422 : 201 },

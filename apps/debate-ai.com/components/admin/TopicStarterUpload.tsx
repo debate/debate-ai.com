@@ -36,9 +36,6 @@ interface ImportOutcome {
   importId?: string
 }
 
-/** Client-side ceiling, mirroring the server's upload limit. */
-const MAX_UPLOAD_BYTES = 100 * 1024 * 1024
-
 const TONE_STYLES = {
   success: "border-green-500/40 bg-green-500/5 text-green-700 dark:text-green-400",
   partial: "border-amber-500/40 bg-amber-500/5 text-amber-700 dark:text-amber-400",
@@ -84,14 +81,6 @@ export function TopicStarterUpload() {
 
     if (file.size === 0) {
       setOutcome({ tone: "error", summary: `"${file.name}" is empty (0 bytes).`, failures: [] })
-      return
-    }
-    if (file.size > MAX_UPLOAD_BYTES) {
-      setOutcome({
-        tone: "error",
-        summary: `"${file.name}" is ${(file.size / 1024 / 1024).toFixed(1)}MB, over the 100MB upload limit. Split the archive and upload it in parts.`,
-        failures: [],
-      })
       return
     }
 
@@ -155,7 +144,7 @@ export function TopicStarterUpload() {
   return <Card>
     <CardHeader>
       <CardTitle>Topic Starter library</CardTitle>
-      <CardDescription>Upload one DOCX or a ZIP containing up to 100 DOCX files (100MB max, 25MB per file). Each file is converted to CardMirror&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to CardMirror for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
+      <CardDescription>Upload one DOCX or a ZIP of them — there is no cap on how many files an archive holds or how large they are. Each file is converted to CardMirror&rsquo;s native <span className="font-mono">.cmir</span> format and stored that way, so the card outline, highlighting and comments survive the import. Every imported folder and file is published to CardMirror for everyone. Files that fail to convert are listed below with the reason, and the rest of the batch still imports.</CardDescription>
     </CardHeader>
     <CardContent className="flex flex-col gap-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">

@@ -8,13 +8,12 @@
  * drift from it. What this module owns is the part that is specific to a bulk
  * caselist archive rather than to one upload:
  *
- * - **Scale.** `collectDocxEntries` caps an upload at
- *   {@link DOCX_IMPORT_LIMITS.maxFiles} files and buffers every entry's bytes
- *   at once, which is right for a human dragging files into the browser and
- *   wrong for a season dump — `hspolicy26-all-*.zip` is thousands of documents
- *   and hundreds of megabytes. Entries here are decompressed and converted one
- *   at a time and handed straight to {@link LoadArchiveOptions.onDocument}, so
- *   an ingest holds one document in memory, not an archive.
+ * - **Scale.** `collectDocxEntries` buffers every entry's bytes at once, which
+ *   is right for a human dragging files into the browser and wrong for a
+ *   season dump — `hspolicy26-all-*.zip` is thousands of documents and
+ *   hundreds of megabytes. Entries here are decompressed and converted one at
+ *   a time and handed straight to {@link LoadArchiveOptions.onDocument}, so an
+ *   ingest holds one document in memory, not an archive.
  * - **Provenance.** A file's path inside the archive is the only record of
  *   whose evidence it is. {@link describeCaselistEntry} reads it back out.
  * - **Partial failure.** One password-protected or truncated `.docx` in a

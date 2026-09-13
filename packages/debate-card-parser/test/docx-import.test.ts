@@ -1,7 +1,6 @@
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 import {
-  DOCX_IMPORT_LIMITS,
   DocxImportError,
   assertReadableDocxBytes,
   collectDocxEntries,
@@ -197,9 +196,9 @@ describe("assertReadableDocxBytes", () => {
     expect(() => assertReadableDocxBytes(new ArrayBuffer(0))).toThrowError(/empty/i);
   });
 
-  it("rejects a file over the per-file limit", () => {
-    const oversized = { byteLength: DOCX_IMPORT_LIMITS.maxFileBytes + 1, slice: () => bytesOf(0x50, 0x4b) } as unknown as ArrayBuffer;
-    expect(() => assertReadableDocxBytes(oversized)).toThrowError(/per-file limit/);
+  it("accepts a file far larger than the old per-file ceiling", () => {
+    const huge = { byteLength: 512 * 1024 * 1024, slice: () => bytesOf(0x50, 0x4b) } as unknown as ArrayBuffer;
+    expect(() => assertReadableDocxBytes(huge)).not.toThrow();
   });
 
   it("accepts a ZIP-headed file", () => {
@@ -256,6 +255,15 @@ describe("collectDocxEntries", () => {
 
     const entries = await collectDocxEntries("camp.zip", bytes);
     expect(entries.map((entry) => entry.path)).toEqual(["Aff/warming.docx"]);
+  });
+
+  it("walks a ZIP holding far more files than the old 100-file ceiling", async () => {
+    const zip = new JSZip();
+    for (let index = 0; index < 250; index++) zip.file(`Aff/card-${index}.docx`, "PK");
+    const bytes = await zip.generateAsync({ type: "arraybuffer" });
+
+    const entries = await collectDocxEntries("camp.zip", bytes);
+    expect(entries).toHaveLength(250);
   });
 
   it("explains a ZIP that holds no DOCX at all", async () => {
