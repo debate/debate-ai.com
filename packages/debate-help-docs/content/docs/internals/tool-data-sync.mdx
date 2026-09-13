@@ -78,9 +78,11 @@ aggregate (`judgeRoundRecords`, by `id`); the Judge Paradigm Picker
 (`opponentPersonaSelections`, by `sessionId`) and its custom library
 (`customOpponentPersonaLibrary`, by `id`).
 
-**Flowing and writing** — Speech Summaries (`flowSummaries`) and the Argument
-Tree Outline (`argumentTrees`), by `roundId`; Prep Notes (`prepNotes`), their
-replies (`prepNoteReplies`) and Flow Annotations (`flowAnnotations`), by `id`.
+**Flowing and writing** — Speech Summaries (`flowSummaries`), the Argument
+Tree Outline (`argumentTrees`) and its per-round filter selection
+(`argumentTreeFilters`), by `roundId`; Prep Notes (`prepNotes`), their
+replies (`prepNoteReplies`) and assignment notifications
+(`prepNoteNotifications`), and Flow Annotations (`flowAnnotations`), by `id`.
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
 (`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
@@ -97,7 +99,8 @@ Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
 (`prepRoomChecklist`), its sprints (`sprintSessions`), notes (`sprintNotes`) and
 whiteboard (`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`),
-Daily Quests (`dailyQuestTemplates`), award nominations
+Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
+(`questTeams`), award nominations
 (`contributorAwardNominations`) and daily best-card comments
 (`dailyBestCardComments`), all by `id`; frozen Daily Best Card winners
 (`dailyBestCardAnnouncements`) and Top Contributor Award standings
