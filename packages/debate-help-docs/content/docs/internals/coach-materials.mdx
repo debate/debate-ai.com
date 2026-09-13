@@ -199,9 +199,10 @@ record (``saveCoachMaterial({ id: `${kind}-${Date.now()}`, ... })``), and
 there was no way to revise a material without deleting and re-adding it,
 which lost the old text outright.
 
-- `state/coachMaterialVersions.ts` — a new local-only store (mirroring
-  `state/coachMaterials.ts`'s own persistence convention; coach materials
-  aren't account-synced yet, so this stays local-only too). Each entry is a
+- `state/coachMaterialVersions.ts` — a store mirroring
+  `state/coachMaterials.ts`'s own persistence convention; both now sync to
+  the signed-in user's account as the `coachMaterials`/`coachMaterialVersions`
+  collections (see [Tool Data Sync](tool-data-sync.md)). Each entry is a
   full snapshot of a material's fields (`materialId`, `kind`, `title`,
   `topic`, `tags`, `text`, `replacedAt`). `appendMaterialVersion(previous)`
   snapshots a material right before it gets overwritten, capping at

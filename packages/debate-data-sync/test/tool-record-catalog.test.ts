@@ -85,6 +85,8 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   dailyQuestTemplates: "id",
   contributorAwardNominations: "id",
   dailyBestCardComments: "id",
+  dailyBestCardAnnouncements: "dayKey",
+  contributorAwardAnnouncements: "dayKey",
   debateVideosFavorites: "videoId",
   debateVideosHidden: "videoId",
   debateVideoReports: "id",
@@ -150,6 +152,24 @@ describe("the synced collection catalog", () => {
       storageKey: "flowEdits",
       idField: "id",
       href: "/coach",
+    });
+  });
+
+  it("syncs the frozen daily/award announcements now that both are keyed by dayKey", () => {
+    // `announceDailyBestCard`/`announceContributorAwards` each freeze at most
+    // one record per UTC day under `dayKey`, mirroring `dailyBestCardComments`'
+    // own precedent of reusing that panel's existing sidebar destination —
+    // `DailyBestCardPanel`/`ContributorAwardsPanel` render both a collection's
+    // records and its frozen announcements on the same page.
+    expect(findToolRecordCollection("dailyBestCardAnnouncements")).toMatchObject({
+      storageKey: "dailyBestCardAnnouncements",
+      idField: "dayKey",
+      href: "/cards/leaderboard",
+    });
+    expect(findToolRecordCollection("contributorAwardAnnouncements")).toMatchObject({
+      storageKey: "contributorAwardAnnouncements",
+      idField: "dayKey",
+      href: "/cards/leaderboard",
     });
   });
 

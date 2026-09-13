@@ -96,9 +96,11 @@ Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
 whiteboard (`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`),
 Daily Quests (`dailyQuestTemplates`), award nominations
 (`contributorAwardNominations`) and daily best-card comments
-(`dailyBestCardComments`), all by `id`; the Task Inbox (`routedTaskQueues`) by
-`topicId`; contributor flows (`roundContributorFlows`) and availability
-(`contributorAvailability`) by `contributorId`.
+(`dailyBestCardComments`), all by `id`; frozen Daily Best Card winners
+(`dailyBestCardAnnouncements`) and Top Contributor Award standings
+(`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
+(`routedTaskQueues`) by `topicId`; contributor flows (`roundContributorFlows`)
+and availability (`contributorAvailability`) by `contributorId`.
 
 `TOOL_RECORD_COLLECTIONS` is an **allowlist**, not a convenience: the route
 rejects any collection key not in it, so the table can't be used as a
@@ -444,9 +446,11 @@ it and says plainly which state you are in:
   `useToolRecordSync` folds its results into the same `results` state the
   reconcile populates, so a record that grows past the cap mid-session no
   longer leaves that tool showing "Synced" after it has stopped being true.
-- **The guest prompt is per-browser-session, not per-account.** The 30-minute
-  per-feature cooldown lives in `sessionStorage`, so a user who keeps declining
-  is asked again in a new tab. There is no "don't ask me again" that persists.
+- **The 30-minute per-feature cooldown is per-browser-session, not
+  per-account.** It lives in `sessionStorage`, so a user who dismisses a
+  prompt without opting out entirely is asked again about that feature in a
+  new tab. (A guest who instead picks "don't ask me again" gets the
+  persistent, cross-tab opt-out described above.)
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it

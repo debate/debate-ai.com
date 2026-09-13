@@ -233,9 +233,10 @@ be crammed into the note's own text.
   (trimmed and capped at `MAX_PREP_NOTE_REPLY_TEXT_LENGTH`), and a
   `postedAt` timestamp. `listRepliesForNote(noteId)` returns a note's
   thread oldest first.
-- **Unlike `dailyBestCardComments.ts`,** this store has no account-sync
-  counterpart yet — `state/prepNotes.ts` itself isn't account-synced (see
-  Known gaps below), so there's nothing for a reply to sync alongside.
+- **Like `dailyBestCardComments.ts`,** this store syncs to the signed-in
+  user's account as the `prepNoteReplies` collection, the same generic sync
+  `prepNotes` itself rides on (see Known gaps below and
+  [Tool Data Sync](tool-data-sync.md)).
 - **UI:** `panels/PrepNotesPanel.tsx`'s `PrepNoteReplyThread` renders the
   thread (author + text, each with a "Delete" action) and an inline
   "Your name" / "Reply" form, mirroring `DailyBestCardPanel`'s
