@@ -26,6 +26,7 @@ import { Mic, MicOff } from "lucide-react"
 import { Button } from "debate-speech-writer/src/ui/primitives/button"
 import { Textarea } from "debate-speech-writer/src/ui/primitives/textarea"
 import { concedeDebate, judgeDebate, sendDebateMessage } from "../client"
+import type { GamificationAward } from "../backend/gamification"
 import type { DebateMessage } from "../backend/types"
 import { findBot } from "./bots"
 import type { JudgmentDataUserBot } from "./JudgmentPopup"
@@ -179,6 +180,7 @@ export function DebateRoom(props: DebateRoomProps) {
     message: "",
   })
   const [judgmentData, setJudgmentData] = useState<JudgmentDataUserBot | null>(null)
+  const [gamification, setGamification] = useState<GamificationAward | null>(null)
   const [isRecognizing, setIsRecognizing] = useState(false)
   const [nextTurnPending, setNextTurnPending] = useState(false)
 
@@ -264,12 +266,16 @@ export function DebateRoom(props: DebateRoomProps) {
   const judgeRound = useCallback(
     async (messages: RoomMessage[]) => {
       try {
-        const { result } = await judgeDebate({ history: messages, debateId }, { baseUrl: apiBaseUrl })
+        const { result, gamification: award } = await judgeDebate(
+          { history: messages, debateId },
+          { baseUrl: apiBaseUrl },
+        )
         const judgment = JSON.parse(extractJson(result)) as JudgmentDataUserBot
         if (!judgment?.opening_statement || !judgment?.verdict) {
           throw new Error("Judge returned an unrecognised scorecard")
         }
         setJudgmentData(judgment)
+        setGamification(award ?? null)
         setPopup({ show: false, message: "" })
       } catch (error) {
         console.error("Judging error:", error)
@@ -467,9 +473,16 @@ export function DebateRoom(props: DebateRoomProps) {
       if (!confirmed) return
     }
     try {
-      if (debateId) await concedeDebate(debateId, state.messages, { baseUrl: apiBaseUrl })
+      const response = debateId
+        ? await concedeDebate(debateId, state.messages, { baseUrl: apiBaseUrl })
+        : null
       setState((prev) => ({ ...prev, isDebateEnded: true }))
-      setPopup({ show: true, message: "You have conceded the debate.", isJudging: false })
+      const pointsNote = response?.gamification ? ` (+${response.gamification.points} points)` : ""
+      setPopup({
+        show: true,
+        message: `You have conceded the debate.${pointsNote}`,
+        isJudging: false,
+      })
       setTimeout(() => onExit?.(), 2000)
     } catch (error) {
       console.error("Error conceding:", error)
@@ -519,6 +532,7 @@ export function DebateRoom(props: DebateRoomProps) {
           userStance={state.userStance}
           botStance={state.botStance}
           botDesc={bot.desc}
+          gamification={gamification}
           coachSkills={coachSkills}
           onClose={() => {
             setJudgmentData(null)

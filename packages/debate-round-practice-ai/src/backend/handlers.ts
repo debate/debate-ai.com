@@ -13,12 +13,13 @@
  * @module backend/handlers
  */
 
-import { computeGamificationAward } from "./gamification"
+import { computeGamificationAward, type GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
 import { generateBotResponse, judgeDebate, resolveResultStatus } from "./service"
 import type { DebateStore } from "./store"
 import type {
   ConcedeRequestBody,
+  ConcedeResponse,
   CreateDebateResponse,
   DebateActor,
   DebateMessage,
@@ -185,7 +186,9 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
   /**
    * Record a finished round: transcript, then the gamification award.
    * Ported from the Go controller's post-judge tail, which wrapped both in a
-   * recover so a scoring failure never failed the request.
+   * recover so a scoring failure never failed the request. Returns the award
+   * so callers can hand it back to the client for the scorecard; `null` when
+   * the store doesn't implement the gamification hooks or the write failed.
    */
   async function recordCompletedRound(
     actor: DebateActor,
@@ -195,7 +198,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
       result: ReturnType<typeof resolveResultStatus>
       history: DebateMessage[]
     },
-  ): Promise<void> {
+  ): Promise<GamificationAward | null> {
     try {
       await store.saveTranscript?.({
         userId: actor.userId,
@@ -211,17 +214,19 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
 
     try {
-      if (!store.getGamificationProfile || !store.applyGamificationAward) return
+      if (!store.getGamificationProfile || !store.applyGamificationAward) return null
       const profile = await store.getGamificationProfile(actor.userId)
-      if (!profile) return
+      if (!profile) return null
       const award = computeGamificationAward(profile, input.result)
       await store.applyGamificationAward(actor.userId, award, {
         debateType: "user_vs_bot",
         topic: input.topic,
         result: input.result,
       })
+      return award
     } catch (error) {
       console.error("[practice-vs-ai] failed to apply gamification award:", error)
+      return null
     }
   }
 
@@ -257,14 +262,14 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
 
     const resultStatus = resolveResultStatus(result)
-    await recordCompletedRound(actor, {
+    const gamification = await recordCompletedRound(actor, {
       topic: latest?.topic ?? "Debate vs Bot",
       opponentName: latest?.botName ?? "AI Bot",
       result: resultStatus,
       history: body.history,
     })
 
-    return { status: 200, body: { result } }
+    return { status: 200, body: gamification ? { result, gamification } : { result } }
   }
 
   /**
@@ -275,7 +280,7 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
   async function concedeDebate(
     actor: DebateActor,
     body: ConcedeRequestBody,
-  ): Promise<HandlerResult<{ message: string }>> {
+  ): Promise<HandlerResult<ConcedeResponse>> {
     if (!body?.debateId) {
       return { status: 400, body: { error: "Invalid request payload: debateId is required" } }
     }
@@ -297,14 +302,19 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
 
     const history = body.history && body.history.length > 0 ? body.history : debate.history
-    await recordCompletedRound(actor, {
+    const gamification = await recordCompletedRound(actor, {
       topic: debate.topic,
       opponentName: debate.botName,
       result: "loss",
       history,
     })
 
-    return { status: 200, body: { message: "Debate conceded successfully" } }
+    return {
+      status: 200,
+      body: gamification
+        ? { message: "Debate conceded successfully", gamification }
+        : { message: "Debate conceded successfully" },
+    }
   }
 
   return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate }
