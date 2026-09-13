@@ -30,6 +30,10 @@ import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
 import {
   collectFlowsForRounds,
   collectUnreferencedFlows,
+  filterDirtyFlows,
+  filterDirtyRounds,
+  hashFlowContent,
+  hashRoundContent,
   mapFlowsToReferencingRound,
   summarizeBulkSaveOutcomes,
   type BulkSaveOutcome,
@@ -168,6 +172,16 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [bulkFlowSaveSummary, setBulkFlowSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(
     null,
   )
+  /**
+   * Content-hash of each flow/round as of its last successful save this
+   * session (see `filterDirtyFlows`/`filterDirtyRounds`), keyed by local
+   * id. Deliberately *not* reset by the "dialog opened" effect below, unlike
+   * `cloudActions`/`cloudRoundActions` — it needs to survive the dialog
+   * closing and reopening so a second "Save all rounds" click (in this same
+   * page session) can skip whatever hasn't changed since the first (#810).
+   */
+  const [lastSavedFlowHashes, setLastSavedFlowHashes] = useState<Record<number, string>>({})
+  const [lastSavedRoundHashes, setLastSavedRoundHashes] = useState<Record<number, string>>({})
 
   /**
    * Load history and rounds when dialog opens.
@@ -270,6 +284,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         const others = prev.flows.filter((f) => f.clientId !== result.summary.clientId)
         return { kind: "loaded", flows: [...others, result.summary] }
       })
+      setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
     } catch {
       setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
     }
@@ -342,6 +357,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
         const others = prev.rounds.filter((r) => r.clientId !== result.summary.clientId)
         return { kind: "loaded", rounds: [...others, result.summary] }
       })
+      setLastSavedRoundHashes((prev) => ({ ...prev, [round.id]: hashRoundContent(round) }))
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
     }
@@ -359,18 +375,32 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * individual save buttons already render, so a round's icon updates in
    * place exactly as if it had been saved on its own. Best-effort per item:
    * one flow or round failing to save doesn't stop the others.
+   *
+   * Skips re-PUTting a flow or round whose content hasn't changed since its
+   * last successful save this session (`filterDirtyFlows`/
+   * `filterDirtyRounds`, against `lastSavedFlowHashes`/
+   * `lastSavedRoundHashes`) — a clean item is marked "saved" directly
+   * without a network call, since it already is. #810.
    */
   const handleSaveAllRoundsToAccount = async () => {
     if (rounds.length === 0 || bulkSaveStatus === "saving") return
     setBulkSaveStatus("saving")
     setBulkSaveSummary(null)
 
-    const flowsToSave = collectFlowsForRounds(rounds, flows)
+    const flowsToSave = filterDirtyFlows(collectFlowsForRounds(rounds, flows), lastSavedFlowHashes)
     await Promise.all(flowsToSave.map((flow) => handleSaveFlowToAccount(flow)))
 
     const outcomes: Record<number, BulkSaveOutcome> = {}
+    const dirtyRounds = filterDirtyRounds(rounds, lastSavedRoundHashes)
+    const dirtyRoundIds = new Set(dirtyRounds.map((round) => round.id))
+    for (const round of rounds) {
+      if (!dirtyRoundIds.has(round.id)) {
+        outcomes[round.id] = "saved"
+        setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saved" }))
+      }
+    }
     await Promise.all(
-      rounds.map(async (round) => {
+      dirtyRounds.map(async (round) => {
         setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saving" }))
         const known = cloudRoundList.kind === "loaded" ? cloudRoundList.rounds.find((r) => r.clientId === round.id) : undefined
         try {
@@ -388,6 +418,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             const others = prev.rounds.filter((r) => r.clientId !== result.summary.clientId)
             return { kind: "loaded", rounds: [...others, result.summary] }
           })
+          setLastSavedRoundHashes((prev) => ({ ...prev, [round.id]: hashRoundContent(round) }))
           outcomes[round.id] = "saved"
         } catch {
           setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
@@ -406,7 +437,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * it still has no bulk path" gap `packages/debate-help-docs/content/docs/features/flow-cloud-save.mdx`
    * recorded once "Save all rounds" (above) closed the common case. Mirrors
    * that action's shape exactly, just over `collectUnreferencedFlows`'s
-   * result instead of `collectFlowsForRounds`'s.
+   * result instead of `collectFlowsForRounds`'s — dirty-tracking (#810)
+   * included.
    */
   const handleSaveUnreferencedFlowsToAccount = async () => {
     const unreferencedFlows = collectUnreferencedFlows(rounds, flows)
@@ -415,8 +447,16 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     setBulkFlowSaveSummary(null)
 
     const outcomes: Record<number, BulkSaveOutcome> = {}
+    const dirtyFlows = filterDirtyFlows(unreferencedFlows, lastSavedFlowHashes)
+    const dirtyFlowIds = new Set(dirtyFlows.map((flow) => flow.id))
+    for (const flow of unreferencedFlows) {
+      if (!dirtyFlowIds.has(flow.id)) {
+        outcomes[flow.id] = "saved"
+        setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+      }
+    }
     await Promise.all(
-      unreferencedFlows.map(async (flow) => {
+      dirtyFlows.map(async (flow) => {
         setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
         const known = cloudList.kind === "loaded" ? cloudList.flows.find((f) => f.clientId === flow.id) : undefined
         try {
@@ -434,6 +474,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             const others = prev.flows.filter((f) => f.clientId !== result.summary.clientId)
             return { kind: "loaded", flows: [...others, result.summary] }
           })
+          setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
           outcomes[flow.id] = "saved"
         } catch {
           setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))

@@ -40,7 +40,18 @@ round/saved-rounds-client.ts (fetch) — list/fetch/save/delete
 apps/debate-ai.com/app/api/rounds/[route.ts, [clientId]/route.ts]
 ```
 
-## Known gaps
+## Dirty tracking on bulk saves
 
-"Save all rounds"/"Save flows not in a round" save every item
-unconditionally — no dirty tracking to skip an unchanged item.
+"Save all rounds" and "Save flows not in a round" skip re-PUTting a flow or
+round whose content hasn't changed since it was last saved successfully this
+session: `state/bulkRoundSave.ts`'s `hashFlowContent`/`hashRoundContent`
+fingerprint each item's JSON payload, and `filterDirtyFlows`/
+`filterDirtyRounds` compare that against a hash recorded after each
+successful save (`FlowHistoryDialog`'s `lastSavedFlowHashes`/
+`lastSavedRoundHashes` state, which — unlike the per-item save-status maps —
+survives the dialog closing and reopening). A clean item is reported as
+"saved" in the bulk summary without a network round-trip. The per-item cloud
+icon is unaffected and always saves, since that's an explicit user action.
+This closes the "no dirty tracking" half of the gap this section used to
+record (#810); the hash cache only lives for the current page session, so a
+fresh page load re-saves everything once, same as before.

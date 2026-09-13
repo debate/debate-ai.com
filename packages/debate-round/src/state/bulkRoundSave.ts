@@ -84,6 +84,54 @@ export function mapFlowsToReferencingRound(rounds: Round[]): Map<number, Round> 
   return result;
 }
 
+/**
+ * Deterministic, non-cryptographic content fingerprint (djb2 over the JSON
+ * encoding) used to detect whether a flow/round has changed since it was
+ * last successfully saved — see `filterDirtyFlows`/`filterDirtyRounds`
+ * below and #810. This is the exact JSON `saveFlowToAccount`/
+ * `saveRoundToAccount` PUT as the item's body, so an unchanged hash means
+ * an unchanged payload. A hash collision would only cause a changed item
+ * to be skipped for one bulk-save pass — the per-item cloud icon still
+ * always saves regardless — so a 32-bit hash is more than adequate here.
+ */
+function hashJsonContent(value: unknown): string {
+  const json = JSON.stringify(value);
+  let hash = 5381;
+  for (let i = 0; i < json.length; i++) {
+    hash = (hash * 33) ^ json.charCodeAt(i);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/** Content fingerprint of a `Flow`, as it would be PUT to `/api/flows/[clientId]`. */
+export function hashFlowContent(flow: Flow): string {
+  return hashJsonContent(flow);
+}
+
+/** Content fingerprint of a `Round`, as it would be PUT to `/api/rounds/[clientId]`. */
+export function hashRoundContent(round: Round): string {
+  return hashJsonContent(round);
+}
+
+/**
+ * Filters `flows` down to those whose content has changed since the last
+ * time each was successfully saved to the account, per `lastSavedHashes`
+ * (a flow id -> `hashFlowContent` result map, populated by the caller after
+ * each successful save). A flow with no entry — never yet saved this
+ * session — is always considered dirty. Used by `FlowHistoryDialog`'s bulk
+ * save actions to skip re-PUTting a flow whose cloud copy is already
+ * current (#810); the per-item cloud icon intentionally bypasses this and
+ * always saves, since that's an explicit user action.
+ */
+export function filterDirtyFlows(flows: Flow[], lastSavedHashes: Record<number, string>): Flow[] {
+  return flows.filter((flow) => lastSavedHashes[flow.id] !== hashFlowContent(flow));
+}
+
+/** Same as `filterDirtyFlows`, for rounds — see that function's docs. */
+export function filterDirtyRounds(rounds: Round[], lastSavedHashes: Record<number, string>): Round[] {
+  return rounds.filter((round) => lastSavedHashes[round.id] !== hashRoundContent(round));
+}
+
 /** Outcome of one item's save within a bulk-save pass (a round or a flow), keyed by its local `id`. */
 export type BulkSaveOutcome = "saved" | "error";
 
