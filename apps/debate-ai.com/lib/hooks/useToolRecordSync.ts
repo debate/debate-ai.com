@@ -43,6 +43,7 @@ import {
   resetToolRecordAutoSync,
   startToolRecordAutoSync,
   stopToolRecordAutoSync,
+  type ToolRecordFlushResult,
 } from "debate-data-sync/src/state/tool-record-auto-sync"
 import { setSignedIn } from "debate-data-sync/src/state/sign-in-prompt"
 import { useSession } from "./useSession"
@@ -94,7 +95,12 @@ export interface ToolRecordSyncState {
   enabled: boolean
   /** Whether the account merge has finished (or been skipped) this tab. */
   reconciled: boolean
-  /** One entry per collection from the most recent merge, in catalog order. */
+  /**
+   * One entry per collection the most recent merge or background flush had
+   * something to report for. A collection the watcher later reports an error
+   * or a push for overwrites its reconcile-time entry, so this always
+   * reflects the latest known state, not just the tab's initial reconcile.
+   */
   results: ToolRecordHydrationResult[]
   /** Re-runs the merge for every collection, ignoring this tab's TTL. */
   resync: () => void
@@ -199,9 +205,31 @@ export function useToolRecordSync(): ToolRecordSyncState {
   // Started here rather than alongside `setToolRecordSyncEnabled` because a
   // watcher running during hydration would race the merge's own writes and
   // push back records it had just adopted.
+  //
+  // The watcher's own ticks run on a timer this hook never awaits, so its
+  // results have to be folded into `results` here rather than read off a
+  // return value — otherwise a record that grows past the sync's size cap
+  // *after* the tab's initial reconcile (the only other producer of
+  // `results`) would never be reflected in `/settings`' "Synced" row, which
+  // would then go on claiming a tool is synced when its latest edit only
+  // ever reached local storage.
   useEffect(() => {
     if (!isAuthenticated || !reconciled) return
-    return startToolRecordAutoSync()
+    return startToolRecordAutoSync((flushed: ToolRecordFlushResult[]) => {
+      setResults((current) => {
+        const byCollection = new Map(current.map((result) => [result.collection, result]))
+        for (const result of flushed) {
+          byCollection.set(result.collection, {
+            collection: result.collection,
+            adopted: 0,
+            pushed: result.pushed,
+            synced: !result.error,
+            ...(result.error ? { error: result.error } : {}),
+          })
+        }
+        return [...byCollection.values()]
+      })
+    })
   }, [isAuthenticated, reconciled])
 
   const resync = useCallback(() => {

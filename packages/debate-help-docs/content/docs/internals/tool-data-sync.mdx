@@ -441,8 +441,14 @@ it and says plainly which state you are in:
 - A record over `MAX_TOOL_RECORD_BYTES` (200 KB) never reaches the account: the
   route refuses it with a 413, and the watcher holds it back from the batch so
   it cannot take its collection's other records down with it. It still saves
-  locally, and it syncs if later edited under the cap — but until then it is
-  browser-only, and nothing says so outside `/settings`' row for that tool.
+  locally, and it syncs if later edited under the cap. ~~until then it is
+  browser-only, and nothing says so outside `/settings`' row for that
+  tool~~ **Fixed:** `/settings`' row now reflects this even when the watcher
+  finds it on a background tick rather than during the tab's initial
+  reconcile — `startToolRecordAutoSync` takes an `onFlush` callback and
+  `useToolRecordSync` folds its results into the same `results` state the
+  reconcile populates, so a record that grows past the cap mid-session no
+  longer leaves that tool showing "Synced" after it has stopped being true.
 - **The guest prompt is per-browser-session, not per-account.** The 30-minute
   per-feature cooldown lives in `sessionStorage`, so a user who keeps declining
   is asked again in a new tab. There is no "don't ask me again" that persists.
