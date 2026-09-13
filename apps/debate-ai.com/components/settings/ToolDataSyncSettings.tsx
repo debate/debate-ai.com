@@ -23,28 +23,43 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { Bell, BellOff, Check, CloudOff, RefreshCw, Cloud } from "lucide-react"
 import { Button } from "../../lib/ui/primitives/button"
-import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections"
+import {
+  TOOL_RECORD_COLLECTIONS,
+  TOOL_RECORD_SECTIONS,
+  type ToolRecordSection,
+} from "debate-data-sync/src/state/toolRecordCollections"
 import { useToolRecordSync } from "@/lib/hooks/useToolRecordSync"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
+
+interface SyncedTool {
+  href: string
+  label: string
+  keys: string[]
+}
 
 /**
  * One row per tool rather than per collection: two collections back the
  * Opponent Team Profiles page (the profiles and the rounds they aggregate)
  * and two back Judge Profiles, and "Opponent round records" is not a tool a
- * reader would go looking for.
+ * reader would go looking for. Grouped by section and in
+ * {@link TOOL_RECORD_SECTIONS} order so a list that has grown past fifty
+ * tools reads as the sidebar's own sections rather than one long scroll.
  */
-const SYNCED_TOOLS = TOOL_RECORD_COLLECTIONS.reduce<{ href: string; label: string; keys: string[] }[]>(
-  (tools, collection) => {
-    const existing = tools.find((tool) => tool.href === collection.href)
-    if (existing) {
-      existing.keys.push(collection.key)
-      return tools
+const SYNCED_TOOL_SECTIONS: { section: ToolRecordSection; tools: SyncedTool[] }[] = TOOL_RECORD_SECTIONS.map(
+  (section) => {
+    const tools: SyncedTool[] = []
+    for (const collection of TOOL_RECORD_COLLECTIONS) {
+      if (collection.section !== section) continue
+      const existing = tools.find((tool) => tool.href === collection.href)
+      if (existing) {
+        existing.keys.push(collection.key)
+        continue
+      }
+      tools.push({ href: collection.href, label: collection.label, keys: [collection.key] })
     }
-    tools.push({ href: collection.href, label: collection.label, keys: [collection.key] })
-    return tools
+    return { section, tools }
   },
-  [],
-)
+).filter((group) => group.tools.length > 0)
 
 export function ToolDataSyncSettings() {
   const { enabled, reconciled, results, resync } = useToolRecordSync()
@@ -109,38 +124,47 @@ export function ToolDataSyncSettings() {
         </div>
       )}
 
-      <ul className="flex flex-col gap-1.5">
-        {SYNCED_TOOLS.map((tool) => {
-          const failed = tool.keys.some((key) => failedKeys.has(key))
-          return (
-            <li
-              key={tool.href}
-              className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2"
-            >
-              <Link
-                href={tool.href}
-                className="flex-1 min-w-0 truncate text-sm font-medium text-foreground hover:underline"
-              >
-                {tool.label}
-              </Link>
-              <span className="shrink-0 text-xs text-muted-foreground">
-                {!enabled ? (
-                  "This browser"
-                ) : failed ? (
-                  "Not synced"
-                ) : reconciled ? (
-                  <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
-                    <Check className="h-3.5 w-3.5" />
-                    Synced
-                  </span>
-                ) : (
-                  "Syncing…"
-                )}
-              </span>
-            </li>
-          )
-        })}
-      </ul>
+      <div className="flex flex-col gap-4">
+        {SYNCED_TOOL_SECTIONS.map((group) => (
+          <div key={group.section}>
+            <h3 className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {group.section}
+            </h3>
+            <ul className="flex flex-col gap-1.5">
+              {group.tools.map((tool) => {
+                const failed = tool.keys.some((key) => failedKeys.has(key))
+                return (
+                  <li
+                    key={tool.href}
+                    className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2"
+                  >
+                    <Link
+                      href={tool.href}
+                      className="flex-1 min-w-0 truncate text-sm font-medium text-foreground hover:underline"
+                    >
+                      {tool.label}
+                    </Link>
+                    <span className="shrink-0 text-xs text-muted-foreground">
+                      {!enabled ? (
+                        "This browser"
+                      ) : failed ? (
+                        "Not synced"
+                      ) : reconciled ? (
+                        <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                          <Check className="h-3.5 w-3.5" />
+                          Synced
+                        </span>
+                      ) : (
+                        "Syncing…"
+                      )}
+                    </span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
 
       {enabled && (
         <Button

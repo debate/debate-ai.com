@@ -54,6 +54,9 @@ One entry per `localStorage` store, from
 `debate-data-sync/src/state/toolRecordCollections.ts`'s
 `TOOL_RECORD_COLLECTIONS` — the list itself is the source of truth, and it is
 long enough now that the table below groups it rather than restating every row.
+Each entry's `section` field (one of `TOOL_RECORD_SECTIONS`) names the same
+group and is what `/settings`' sync-status list renders as a heading — the
+prose below and the UI group tools identically on purpose.
 
 **Videos** (`/videos`) — `debateVideosFavorites` and `debateVideosHidden`, both
 keyed by `videoId`, and `debateVideoReports` keyed by `id`.
@@ -359,7 +362,8 @@ records it had just adopted.
 ## Seeing it
 
 `/settings` → Account → **Tool data** lists every synced tool with a link to
-it and says plainly which state you are in:
+it, grouped under the same section headings as the table above (Videos,
+Practice, Scouting and judging, …), and says plainly which state you are in:
 
 - Signed out — "These tools save to this browser only", every row "This
   browser", plus a row saying whether this browser will be asked to sign in
