@@ -215,6 +215,51 @@ describe("normalizeFavoriteToolOpPatch", () => {
     expect(result.valid).toEqual({});
     expect(result.errors).toHaveLength(1);
   });
+
+  it("accepts a valid removeFavoriteTools batch", () => {
+    expect(normalizeFavoriteToolOpPatch({ removeFavoriteTools: ["/tools", "/drills"] })).toEqual({
+      valid: { removeFavoriteTools: ["/tools", "/drills"] },
+      errors: [],
+    });
+  });
+
+  it("accepts an empty removeFavoriteTools batch", () => {
+    expect(normalizeFavoriteToolOpPatch({ removeFavoriteTools: [] })).toEqual({
+      valid: { removeFavoriteTools: [] },
+      errors: [],
+    });
+  });
+
+  it("rejects a removeFavoriteTools batch containing a malformed href", () => {
+    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTools: ["/tools", "not-a-path"] });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a non-array removeFavoriteTools value", () => {
+    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTools: "/tools" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a removeFavoriteTools batch longer than MAX_FAVORITE_TOOLS", () => {
+    const tooMany = Array.from({ length: MAX_FAVORITE_TOOLS + 1 }, (_, i) => `/tool-${i}`);
+    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTools: tooMany });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a request carrying both removeFavoriteTool and removeFavoriteTools", () => {
+    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTool: "/tools", removeFavoriteTools: ["/drills"] });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a request carrying both addFavoriteTool and removeFavoriteTools", () => {
+    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", removeFavoriteTools: ["/drills"] });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
 });
 
 describe("applyFavoriteToolOp", () => {
@@ -255,5 +300,38 @@ describe("applyFavoriteToolOp", () => {
     const afterTabA = applyFavoriteToolOp(starting, { addFavoriteTool: "/drills" });
     const afterTabB = applyFavoriteToolOp(afterTabA, { addFavoriteTool: "/rank" });
     expect(afterTabB).toEqual(["/tools", "/drills", "/rank"]);
+  });
+
+  it("removes every matching href on removeFavoriteTools", () => {
+    expect(applyFavoriteToolOp(["/tools", "/drills", "/rank"], { removeFavoriteTools: ["/tools", "/rank"] })).toEqual(
+      ["/drills"],
+    );
+  });
+
+  it("is idempotent when removeFavoriteTools names only absent hrefs", () => {
+    const current = ["/tools", "/drills"];
+    expect(applyFavoriteToolOp(current, { removeFavoriteTools: ["/gone", "/also-gone"] })).toBe(current);
+  });
+
+  it("returns the current list unchanged for an empty removeFavoriteTools batch", () => {
+    const current = ["/tools", "/drills"];
+    expect(applyFavoriteToolOp(current, { removeFavoriteTools: [] })).toBe(current);
+  });
+
+  it("drops only the hrefs named in removeFavoriteTools, keeping the rest and their order", () => {
+    const current = ["/a", "/b", "/c", "/d"];
+    expect(applyFavoriteToolOp(current, { removeFavoriteTools: ["/b", "/d"] })).toEqual(["/a", "/c"]);
+  });
+
+  it("resolves a concurrent add and a batch prune onto the same starting list without one undoing the other", () => {
+    // Mirrors the "two different concurrent add ops" case above, but for the
+    // race this batch op exists to fix: one tab stars a new tool while
+    // another tab's `pruneUnknown` bulk-cleanup lands. Applied against the
+    // server's current value one at a time, the addition survives the prune
+    // (since the newly-added href isn't one of the ones being pruned).
+    const starting = ["/tools", "/stale-tool"];
+    const afterAdd = applyFavoriteToolOp(starting, { addFavoriteTool: "/drills" });
+    const afterPrune = applyFavoriteToolOp(afterAdd, { removeFavoriteTools: ["/stale-tool"] });
+    expect(afterPrune).toEqual(["/tools", "/drills"]);
   });
 });
