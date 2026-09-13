@@ -44,7 +44,7 @@ import {
 } from "@/lib/reason-docs/route-selection"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
-import { TopicStarterTree } from "./TopicStarterTree"
+import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
 import type { ReasonDocument } from "./types"
 
@@ -112,6 +112,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     importFiles,
     importing,
     downloadDocument,
+    downloadTopicDocument,
   } = useReasonDocs()
 
   const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
@@ -121,6 +122,9 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
   const [importErrors, setImportErrors] = useState<string[]>([])
   /** Why the last download failed, shown the same way until the next attempt. */
   const [downloadError, setDownloadError] = useState<string | null>(null)
+  /** Same as `downloadError`, for the Topic Starters panel — kept separate so
+   *  a failure in one panel isn't shown under the other. */
+  const [topicDownloadError, setTopicDownloadError] = useState<string | null>(null)
   const uploadInputRef = useRef<HTMLInputElement>(null)
 
   // Panel choice and collapse state are per-device view preferences (same as
@@ -237,6 +241,16 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
       })
     },
     [downloadDocument],
+  )
+
+  const downloadTopicFile = useCallback(
+    (item: TopicStarterItem) => {
+      setTopicDownloadError(null)
+      void downloadTopicDocument(item).then((result) => {
+        if (!result.ok) setTopicDownloadError(result.error)
+      })
+    },
+    [downloadTopicDocument],
   )
 
   return (
@@ -380,7 +394,11 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                       selectTopicDocument(item)
                       goToEditor({ kind: "topic", id: item.id })
                     }}
+                    onDownload={downloadTopicFile}
                   />
+                  {topicDownloadError && (
+                    <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
+                  )}
                 </div>
               )}
 
