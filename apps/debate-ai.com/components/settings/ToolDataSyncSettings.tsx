@@ -20,10 +20,12 @@
  */
 
 import Link from "next/link"
-import { Check, CloudOff, RefreshCw, Cloud } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Bell, BellOff, Check, CloudOff, RefreshCw, Cloud } from "lucide-react"
 import { Button } from "../../lib/ui/primitives/button"
 import { TOOL_RECORD_COLLECTIONS } from "debate-data-sync/src/state/toolRecordCollections"
 import { useToolRecordSync } from "@/lib/hooks/useToolRecordSync"
+import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
 
 /**
  * One row per tool rather than per collection: two collections back the
@@ -47,6 +49,14 @@ const SYNCED_TOOLS = TOOL_RECORD_COLLECTIONS.reduce<{ href: string; label: strin
 export function ToolDataSyncSettings() {
   const { enabled, reconciled, results, resync } = useToolRecordSync()
 
+  // Read after mount, not during render: the opt-out lives in localStorage,
+  // which a server render can't see, so starting from its default (asking)
+  // avoids a hydration mismatch.
+  const [promptsOptedOut, setPromptsOptedOut] = useState(false)
+  useEffect(() => {
+    setPromptsOptedOut(isSignInPromptOptedOut())
+  }, [])
+
   const failedKeys = new Set(results.filter((result) => result.error).map((result) => result.collection))
 
   return (
@@ -65,6 +75,39 @@ export function ToolDataSyncSettings() {
           ? "What you save in these tools is stored on your account, so it follows you to another device. Everything still works offline — this browser keeps its own copy either way."
           : "These tools save to this browser only. Sign in and your saved work is kept on your account instead, and follows you to another device."}
       </p>
+
+      {!enabled && (
+        <div className="mb-4 flex items-center justify-between gap-3 rounded-md border border-border bg-background px-3 py-2">
+          <p className="text-sm text-muted-foreground">
+            {promptsOptedOut
+              ? "You won't be asked to sign in when you save in a tool."
+              : "You'll occasionally be asked to sign in when you save in a tool."}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="shrink-0"
+            onClick={() => {
+              const next = !promptsOptedOut
+              setSignInPromptOptedOut(next)
+              setPromptsOptedOut(next)
+            }}
+          >
+            {promptsOptedOut ? (
+              <>
+                <Bell className="h-4 w-4" />
+                Ask me
+              </>
+            ) : (
+              <>
+                <BellOff className="h-4 w-4" />
+                Stop asking
+              </>
+            )}
+          </Button>
+        </div>
+      )}
 
       <ul className="flex flex-col gap-1.5">
         {SYNCED_TOOLS.map((tool) => {
