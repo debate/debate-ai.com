@@ -8,25 +8,34 @@ A roster of every contributor's daily-quest streak and milestone badges,
 plus an on-demand action to compute today's mission result.
 
 - **Route:** `/cards/streaks`
-- **Package:** `debate-card-search`
+- **Package:** `debate-community`
 
 ## What it shows
 
 Current/longest streak, badges, a **streak freeze** ("grace day") action
 for a missed day (up to 2 per rolling 30 days), and an opt-in
-streak-lapse reminder banner.
+streak-lapse reminder banner. The signed-in visitor's own streak freezes and
+reminder opt-in follow them to another device; see
+[Quest Streaks](../internals/quest-streaks.mdx) for how.
 
 ## Data flow
 
 ```
 state/dailyMissionResults.ts (localStorage: dailyMissionResults)
 state/streakFreezes.ts (localStorage: streakFreezes)
+state/streakLapseReminders.ts (localStorage: streakLapseReminders)
   → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
   → panels/QuestStreaksPanel.tsx
+  → hooks/useQuestStreakSync.ts — syncs the signed-in visitor's own freezes/
+      opt-in to their account (see the internals doc)
   → apps/debate-ai.com/app/cards/streaks/page.tsx
 ```
 
 ## Known gaps
 
-The trigger is a manual button click, not a scheduled job. Streak freezes
-and reminder opt-ins are localStorage-only, not account-synced.
+The trigger is a manual button click, not a scheduled job — there is no
+scheduled-job infrastructure in this repo for it to run on. Streak freezes
+and the reminder opt-in sync to the signed-in visitor's own account across
+devices, but every other contributor's row in the roster stays
+localStorage-only, since there's no contributor-identity system to sync
+anyone else's row to.
