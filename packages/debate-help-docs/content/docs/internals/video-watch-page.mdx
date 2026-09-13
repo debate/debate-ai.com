@@ -92,13 +92,33 @@ from the video rather than from a client fetch a crawler never waits for.
   same tournament (searched by its year-stripped name), then the same
   style or lecture category, then recency; each pass tops the list up.
 
+## Transcript search highlighting
+
+`WatchTranscriptPanel`'s search still filters to lines whose text contains
+the query, but each surviving line now also highlights *where* it matched
+instead of leaving the reader to find it. `transcriptUtils.ts`'s
+`splitOnMatch(text, needle)` is the pure half: a case-insensitive split of
+`text` around every occurrence of `needle` into `{ text, matched }`
+segments, with an empty/whitespace-only `needle` short-circuiting to the
+whole text unmatched (a cleared search box highlights nothing rather than
+matching every position). `TranscriptLine` — shared with the transcript
+modal and the popout player's caption tray, neither of which searches —
+takes the query as an optional `highlightQuery` prop rather than reading it
+itself, so only the watch page's own per-word rendering runs `splitOnMatch`
+(on each word already split out for the karaoke sweep) and wraps a matched
+segment in `<mark>`; the other two callers pass nothing and render exactly
+as before. Tested in
+`packages/debate-videos/test/transcript-match-highlight.test.ts`: no
+needle, a whitespace-only needle, a single match, multiple matches, no
+match, a whole-text match, and a needle containing regex metacharacters
+(treated as literal text, not a pattern).
+
 ## Known gaps
 
 Related videos are query passes, not a relevance model — the tournament
 pass is a `LIKE` search on the tournament name, so a tournament whose name
-appears in unrelated descriptions pulls those in too. The transcript
-column's search is a substring filter with no highlighting of the match.
-Fullscreen covers the player *and* its metadata column (the whole left
-stage), not the video alone. The position handed back to the floating
+appears in unrelated descriptions pulls those in too. Fullscreen covers
+the player *and* its metadata column (the whole left stage), not the
+video alone. The position handed back to the floating
 player comes from YouTube's `infoDelivery` broadcasts, so a video closed
 in the first second before any broadcast arrives resumes from 0.

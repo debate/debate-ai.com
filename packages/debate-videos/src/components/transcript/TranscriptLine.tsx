@@ -7,7 +7,7 @@
 
 import { forwardRef, useMemo } from "react"
 import { cn } from "../../ui/lib/utils"
-import type { TranscriptSnippet } from "./transcriptUtils"
+import { splitOnMatch, type TranscriptSnippet } from "./transcriptUtils"
 
 interface TranscriptLineProps {
   snippet: TranscriptSnippet
@@ -16,10 +16,12 @@ interface TranscriptLineProps {
   onSeek: () => void
   /** Tighter padding/type size for the popout player's subtitles panel. */
   compact?: boolean
+  /** The watch page transcript search's current query, to highlight matches within this line. Omitted where there is no search (the transcript modal, the popout captions). */
+  highlightQuery?: string
 }
 
 export const TranscriptLine = forwardRef<HTMLButtonElement, TranscriptLineProps>(
-  function TranscriptLine({ snippet, isActive, currentTime, onSeek, compact }, ref) {
+  function TranscriptLine({ snippet, isActive, currentTime, onSeek, compact, highlightQuery }, ref) {
     const words = useMemo(() => snippet.text.split(/\s+/).filter(Boolean), [snippet.text])
 
     // Words don't carry their own timestamps — approximate a karaoke-style
@@ -50,7 +52,17 @@ export const TranscriptLine = forwardRef<HTMLButtonElement, TranscriptLineProps>
             key={i}
             className={cn(i === activeWordIndex && "bg-primary/30 rounded px-0.5 font-medium text-primary")}
           >
-            {word}{" "}
+            {highlightQuery
+              ? splitOnMatch(word, highlightQuery).map((segment, segmentIndex) =>
+                  segment.matched ? (
+                    <mark key={segmentIndex} className="bg-yellow-300/70 dark:bg-yellow-500/40 text-inherit rounded-sm">
+                      {segment.text}
+                    </mark>
+                  ) : (
+                    segment.text
+                  ),
+                )
+              : word}{" "}
           </span>
         ))}
       </button>
