@@ -44,6 +44,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   judgeParadigmSelections: "roundId",
   flowSummaries: "roundId",
   argumentTrees: "roundId",
+  argumentTreeFilters: "roundId",
   prepNotes: "id",
   flowAnnotations: "id",
   coachConversation: "id",
@@ -74,6 +75,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   topicCoverageSnapshots: "id",
   brainstormIdeas: "id",
   prepNoteReplies: "id",
+  prepNoteNotifications: "id",
   prepRoomChecklist: "id",
   sprintSessions: "id",
   sprintNotes: "id",
@@ -83,6 +85,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   contributorAvailability: "contributorId",
   groupChallenges: "id",
   dailyQuestTemplates: "id",
+  questTeams: "id",
   contributorAwardNominations: "id",
   dailyBestCardComments: "id",
   dailyBestCardAnnouncements: "dayKey",
@@ -170,6 +173,33 @@ describe("the synced collection catalog", () => {
       storageKey: "contributorAwardAnnouncements",
       idField: "dayKey",
       href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs prep note notifications, quest-competition teams, and argument-tree filter selections", () => {
+    // Three stores that shared the exact shape this catalog requires
+    // (a JSON array under one localStorage key, each record keyed by one
+    // stable string field) but had never been added: `state/prepNoteNotifications.ts`'s
+    // `PrepNoteNotification`s (id-keyed, same shape as the already-synced
+    // `prepNoteReplies`), `state/dailyQuests.ts`'s `questTeams` roster
+    // (id-keyed, stored under its own key alongside the already-synced
+    // `dailyQuestTemplates`), and `state/argumentTreeFilters.ts`'s per-round
+    // filter selection (roundId-keyed, same shape as the already-synced
+    // `argumentTrees`).
+    expect(findToolRecordCollection("prepNoteNotifications")).toMatchObject({
+      storageKey: "prepNoteNotifications",
+      idField: "id",
+      href: "/prep-notes",
+    });
+    expect(findToolRecordCollection("questTeams")).toMatchObject({
+      storageKey: "questTeams",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+    expect(findToolRecordCollection("argumentTreeFilters")).toMatchObject({
+      storageKey: "argumentTreeFilters",
+      idField: "roundId",
+      href: "/outline",
     });
   });
 
