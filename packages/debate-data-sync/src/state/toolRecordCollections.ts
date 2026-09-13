@@ -39,12 +39,7 @@
  * each element an object carrying a stable string `idField`. Single-object
  * settings stores (`myTeamProfile`, `fontFamily`), presence heartbeats and
  * per-device playback state are deliberately absent — the first cannot be
- * keyed, and the last two describe this browser rather than this user. So is
- * `flowEdits`, whose `SharedFlowSyncPanel`/`FlowEditLogPanel` is not mounted at
- * any route yet: `test/tool-record-sync-catalog.test.ts` requires every `href`
- * here to be a tool the sidebar actually links to, so listing it would put a
- * dead link in `/settings` for data no panel can show. It joins the catalog
- * when its panel gets a route.
+ * keyed, and the last two describe this browser rather than this user.
  *
  * @module state/toolRecordCollections
  */
@@ -208,6 +203,13 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     // version history can, and each entry names the round and side it belongs
     // to, so what the user wrote is kept either way.
     label: "Coach Workspace History",
+    href: "/coach",
+  },
+  {
+    key: "flowEdits",
+    storageKey: "flowEdits",
+    idField: "id",
+    label: "Flow Edit Log",
     href: "/coach",
   },
   // — Practice —

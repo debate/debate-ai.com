@@ -51,6 +51,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   coachMaterials: "id",
   coachMaterialVersions: "id",
   coachingSessionHistory: "id",
+  flowEdits: "id",
   drillSets: "roundId",
   aiVersusRounds: "roundId",
   judgeDecisions: "id",
@@ -139,6 +140,17 @@ describe("the synced collection catalog", () => {
     expect(isSyncedToolCollection("")).toBe(false);
     expect(isSyncedToolCollection("__proto__")).toBe(false);
     expect(findToolRecordCollection("notATool")).toBeUndefined();
+  });
+
+  it("syncs the Flow Edit Log now that its panel has a route", () => {
+    // `SharedFlowSyncPanel`/`FlowEditLogPanel` mount at `/coach` via
+    // `CoachHub`, closing the gap `tool-data-sync.mdx` used to note under
+    // "What deliberately does not sync".
+    expect(findToolRecordCollection("flowEdits")).toMatchObject({
+      storageKey: "flowEdits",
+      idField: "id",
+      href: "/coach",
+    });
   });
 
   it("syncs the video library's favourites, hidden list and reports", () => {
