@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deriveFlowLabel, isValidFlow } from "../src/state/savedFlows";
+import { deriveFlowLabel, hasFlowSaveConflict, isValidFlow } from "../src/state/savedFlows";
 import type { Box, Flow } from "../src/types/flow";
 
 function makeBox(overrides: Partial<Box> = {}): Box {
@@ -113,5 +113,26 @@ describe("deriveFlowLabel", () => {
     const label = deriveFlowLabel({ content: long, speechNumber: undefined });
     expect(label).toHaveLength(120);
     expect(label).toBe("x".repeat(120));
+  });
+});
+
+describe("hasFlowSaveConflict", () => {
+  it("never conflicts when no saved row exists yet, regardless of baseUpdatedAt", () => {
+    expect(hasFlowSaveConflict(null, null)).toBe(false);
+    expect(hasFlowSaveConflict(null, undefined)).toBe(false);
+    expect(hasFlowSaveConflict(null, "2024-01-01T00:00:00.000Z")).toBe(false);
+  });
+
+  it("does not conflict when baseUpdatedAt matches the saved row's updatedAt", () => {
+    expect(hasFlowSaveConflict("2024-01-01T00:00:00.000Z", "2024-01-01T00:00:00.000Z")).toBe(false);
+  });
+
+  it("conflicts when baseUpdatedAt is older than the saved row's updatedAt", () => {
+    expect(hasFlowSaveConflict("2024-01-02T00:00:00.000Z", "2024-01-01T00:00:00.000Z")).toBe(true);
+  });
+
+  it("conflicts when a row exists but the caller has no baseline (null or undefined)", () => {
+    expect(hasFlowSaveConflict("2024-01-01T00:00:00.000Z", null)).toBe(true);
+    expect(hasFlowSaveConflict("2024-01-01T00:00:00.000Z", undefined)).toBe(true);
   });
 });
