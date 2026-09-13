@@ -43,6 +43,7 @@ import {
 } from "@/lib/ui/primitives/command"
 import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "@/app/tools/tool-groups"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
+import { onQuickLaunchText } from "@/lib/native/tauri"
 
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
 const QUICK_ACTIONS: Tool[] = [
@@ -82,9 +83,19 @@ function toolHaystack(tool: Tool): string {
 
 export function GlobalCommandPalette() {
   const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState("")
   const router = useRouter()
   const pathname = usePathname()
   const { favorites } = useFavoriteTools()
+
+  useEffect(() => {
+    return onQuickLaunchText((text) => {
+      if (text) {
+        setSearch(text)
+      }
+      setOpen(true)
+    })
+  }, [])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -140,7 +151,11 @@ export function GlobalCommandPalette() {
       description="Jump to any tool, workspace, or settings page"
       className="top-[12%] translate-y-0 sm:max-w-xl"
     >
-      <CommandInput placeholder="Jump to a tool… (Ctrl/Cmd-Shift-Space)" />
+      <CommandInput
+        value={search}
+        onValueChange={setSearch}
+        placeholder="Jump to a tool… (Ctrl/Cmd-Shift-Space)"
+      />
       <CommandList>
         <CommandEmpty>No matching tool.</CommandEmpty>
         {favoriteTools.length > 0 && (

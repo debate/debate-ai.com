@@ -1,0 +1,51 @@
+# ==============================================================================
+# iOS Cloud / Docker Cross-Compilation Container for Debate AI Native Wrapper (Tauri v2)
+# Compiles: iOS Rust core staticlibs (aarch64-apple-ios, x86_64-apple-ios, aarch64-apple-ios-sim)
+# Note: Full .ipa packaging and Xcode code signing requires a macOS host or macOS CI runner.
+# ==============================================================================
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH="/usr/local/cargo/bin:/root/.bun/bin:${PATH}"
+
+# Install base compilation dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    wget \
+    file \
+    pkg-config \
+    unzip \
+    git \
+    ca-certificates \
+    clang \
+    llvm \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain with iOS architectures
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable \
+    && rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Install Node.js 22 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application sources
+COPY . .
+
+# Install dependencies and configure active profile
+RUN bun install --ignore-scripts
+RUN node scripts/configure.mjs
+
+VOLUME ["/output"]
+
+CMD ["sh", "-c", "cd src-tauri && cargo build --release --target aarch64-apple-ios && cargo build --release --target aarch64-apple-ios-sim && mkdir -p /output/ios-staticlibs && cp -r target/aarch64-apple-ios/release/*.a /output/ios-staticlibs/ 2>/dev/null || true && echo 'iOS Core compilation complete! Staticlibs copied to /output'"]

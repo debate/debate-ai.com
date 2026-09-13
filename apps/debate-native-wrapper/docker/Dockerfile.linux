@@ -1,0 +1,56 @@
+# ==============================================================================
+# Linux Cloud / Docker Build Container for Debate AI Native Wrapper (Tauri v2)
+# Produces: .deb, .rpm, .AppImage
+# Base: Ubuntu 22.04 LTS (glibc 2.35 for maximum Linux distro compatibility)
+# ==============================================================================
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH="/usr/local/cargo/bin:/root/.bun/bin:/usr/local/bin:${PATH}"
+
+# Install native compilation dependencies and WebKitGTK 4.1 prerequisites
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    wget \
+    file \
+    pkg-config \
+    libgtk-3-dev \
+    libwebkit2gtk-4.1-dev \
+    libayatana-appindicator3-dev \
+    librsvg2-dev \
+    libxdo-dev \
+    libssl-dev \
+    patchelf \
+    unzip \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust toolchain
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Install Node.js 22 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application sources
+COPY . .
+
+# Install dependencies and configure active profile
+RUN bun install --ignore-scripts
+RUN node scripts/configure.mjs
+
+# Output volume for generated packages
+VOLUME ["/output"]
+
+CMD ["sh", "-c", "npm run build:desktop && mkdir -p /output && cp -r src-tauri/target/release/bundle/* /output/ && echo 'Build complete! Artifacts copied to /output'"]

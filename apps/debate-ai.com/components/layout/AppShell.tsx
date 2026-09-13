@@ -29,7 +29,7 @@ import {
   FrameNavigationHost,
   useFrameNavigationHandoff,
 } from "@/components/layout/FrameNavigationBridge"
-import { MixpanelProvider } from "@/components/analytics/MixpanelProvider"
+import { MixpanelProvider } from "../analytics/MixpanelProvider"
 import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { Toaster } from "sonner"
 
