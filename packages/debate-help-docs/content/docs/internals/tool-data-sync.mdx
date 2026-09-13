@@ -366,7 +366,11 @@ records it had just adopted.
 
 `/settings` → Account → **Tool data** lists every synced tool with a link to
 it, grouped under the same section headings as the table above (Videos,
-Practice, Scouting and judging, …), and says plainly which state you are in:
+Practice, Scouting and judging, …), and says plainly which state you are in.
+A search box above the list (`lib/settings/filter-synced-tool-sections.ts`)
+filters it by tool label or section name, case-insensitively, and drops a
+section down to only its matching tools rather than hiding the whole group —
+needed now that the catalog runs past fifty tools across seven sections.
 
 - Signed out — "These tools save to this browser only", every row "This
   browser", plus a row saying whether this browser will be asked to sign in
@@ -416,6 +420,11 @@ Practice, Scouting and judging, …), and says plainly which state you are in:
 - `packages/debate-videos/test/tool-record-sync-catalog.test.ts` — every
   collection's `href` is a destination the sidebar links to, so
   `/settings`' list can't point at a 404.
+- `apps/debate-ai.com/lib/settings/__tests__/filter-synced-tool-sections.test.ts`
+  — the search box's matching logic: an empty or whitespace-only query
+  changes nothing, a label match is case-insensitive and by substring, a
+  section-name match keeps every tool under it, and a section left with no
+  match is dropped rather than rendered as an empty heading.
 
 ## Known gaps
 

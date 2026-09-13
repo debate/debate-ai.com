@@ -20,9 +20,10 @@
  */
 
 import Link from "next/link"
-import { useEffect, useState } from "react"
-import { Bell, BellOff, Check, CloudOff, RefreshCw, Cloud } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { Bell, BellOff, Check, CloudOff, RefreshCw, Cloud, Search } from "lucide-react"
 import { Button } from "../../lib/ui/primitives/button"
+import { Input } from "../../lib/ui/primitives/input"
 import {
   TOOL_RECORD_COLLECTIONS,
   TOOL_RECORD_SECTIONS,
@@ -30,6 +31,7 @@ import {
 } from "debate-data-sync/src/state/toolRecordCollections"
 import { useToolRecordSync } from "@/lib/hooks/useToolRecordSync"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
+import { filterSyncedToolSections } from "@/lib/settings/filter-synced-tool-sections"
 
 interface SyncedTool {
   href: string
@@ -73,6 +75,12 @@ export function ToolDataSyncSettings() {
   }, [])
 
   const failedKeys = new Set(results.filter((result) => result.error).map((result) => result.collection))
+
+  const [query, setQuery] = useState("")
+  const visibleSections = useMemo(
+    () => filterSyncedToolSections(SYNCED_TOOL_SECTIONS, query),
+    [query],
+  )
 
   return (
     <div className="max-w-lg mx-auto px-4 sm:px-6 pb-6">
@@ -124,8 +132,24 @@ export function ToolDataSyncSettings() {
         </div>
       )}
 
+      <div className="relative mb-3">
+        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search tool data…"
+          className="pl-8"
+          aria-label="Search tool data"
+        />
+      </div>
+
+      {visibleSections.length === 0 && (
+        <p className="px-1 py-4 text-sm text-muted-foreground">No tools match "{query.trim()}".</p>
+      )}
+
       <div className="flex flex-col gap-4">
-        {SYNCED_TOOL_SECTIONS.map((group) => (
+        {visibleSections.map((group) => (
           <div key={group.section}>
             <h3 className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {group.section}
