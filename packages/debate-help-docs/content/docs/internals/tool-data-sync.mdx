@@ -81,8 +81,8 @@ replies (`prepNoteReplies`) and Flow Annotations (`flowAnnotations`), by `id`.
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
 (`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
-(`coachMaterialVersions`), and the Coach Workspace's session history
-(`coachingSessionHistory`), all by `id`.
+(`coachMaterialVersions`), the Coach Workspace's session history
+(`coachingSessionHistory`), and the Flow Edit Log (`flowEdits`), all by `id`.
 
 **Research** — the Evidence Library (`evidenceLibraryEntries`), card scores
 (`cardScores`) and their history (`cardScoreHistory`), the Contributions Feed
@@ -127,11 +127,6 @@ these stay local on purpose —
   the round and side it belongs to, so what the user wrote is kept — but the
   "current" pointer is rebuilt locally rather than synced. Giving the record its
   own id is what it would take to sync directly.
-- **`flowEdits`**, whose `SharedFlowSyncPanel`/`FlowEditLogPanel` has no route
-  yet. Every `href` in the catalog has to be a destination the sidebar links to
-  (`packages/debate-videos/test/tool-record-sync-catalog.test.ts` enforces it),
-  so listing it would put a dead link in `/settings` for data no panel can
-  show. It joins when its panel gets a route.
 
 Tools already backed by a `saved_*` table of their own — flows, rounds,
 tournament results — keep those. This table is for the stores that had nothing.
