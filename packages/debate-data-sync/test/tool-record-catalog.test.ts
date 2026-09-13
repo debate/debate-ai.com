@@ -83,6 +83,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   routedTaskQueues: "topicId",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
+  completedResearchTasks: "id",
   groupChallenges: "id",
   dailyQuestTemplates: "id",
   questTeams: "id",
@@ -200,6 +201,19 @@ describe("the synced collection catalog", () => {
       storageKey: "argumentTreeFilters",
       idField: "roundId",
       href: "/outline",
+    });
+  });
+
+  it("syncs completed research-task history now that its records carry a stable id", () => {
+    // `state/researchProgress.ts`'s `CompletedTaskRecord` had no per-record id
+    // until now — the same reason `coachingSessions` still can't join this
+    // catalog (see "What deliberately does not sync" in tool-data-sync.mdx) —
+    // so `/cards/progress-tracking`'s completed-task history stayed per-browser
+    // even though every sibling store on that page already synced.
+    expect(findToolRecordCollection("completedResearchTasks")).toMatchObject({
+      storageKey: "completedResearchTasks",
+      idField: "id",
+      href: "/cards/progress-tracking",
     });
   });
 
