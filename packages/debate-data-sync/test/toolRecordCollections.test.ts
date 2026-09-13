@@ -14,6 +14,7 @@
 import { describe, it, expect } from "vitest";
 import {
   TOOL_RECORD_COLLECTIONS,
+  TOOL_RECORD_SECTIONS,
   findToolRecordCollection,
   isSyncableToolRecord,
   isSyncedToolCollection,
@@ -43,6 +44,26 @@ describe("TOOL_RECORD_COLLECTIONS", () => {
       expect(collection.idField, collection.key).toBeTruthy();
       expect(collection.label, collection.key).toBeTruthy();
       expect(collection.href.startsWith("/"), collection.key).toBe(true);
+      expect(TOOL_RECORD_SECTIONS, collection.key).toContain(collection.section);
+    }
+  });
+
+  it("groups every collection under one of the documented sections", () => {
+    // The sync-status UI (`/settings` → Account → Tool data) renders one
+    // heading per section — a typo'd section here would silently either
+    // create a stray heading or, worse, TypeScript would already have
+    // rejected it since `section` is typed to the union.
+    const sections = new Set(TOOL_RECORD_COLLECTIONS.map((collection) => collection.section));
+    for (const section of sections) {
+      expect(TOOL_RECORD_SECTIONS).toContain(section);
+    }
+    // Every declared section actually has at least one tool in it, so the UI
+    // never renders an empty heading.
+    for (const section of TOOL_RECORD_SECTIONS) {
+      expect(
+        TOOL_RECORD_COLLECTIONS.some((collection) => collection.section === section),
+        section,
+      ).toBe(true);
     }
   });
 
