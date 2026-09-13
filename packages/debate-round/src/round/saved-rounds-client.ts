@@ -12,12 +12,20 @@
  * an error. The write calls (`saveRoundToAccount`, `deleteSavedRound`) throw
  * on failure since the caller already has the round in local state either
  * way — a failed cloud sync is reported but never blocks local editing.
+ * `saveRoundToAccount` resolves to a conflict result rather than throwing
+ * on a 409 (see `hasRoundSaveConflict`), so an optimistic-concurrency
+ * rejection can be surfaced as its own UI state instead of a generic error.
  *
  * @module round/saved-rounds-client
  */
 
 import type { Round } from "../types/flow";
 import type { SavedRoundSummary } from "../state/savedRounds";
+
+/** Result of a `saveRoundToAccount` call: either it saved, or it hit a conflict (see `hasRoundSaveConflict`). */
+export type SaveRoundResult =
+  | { conflict: false; summary: SavedRoundSummary }
+  | { conflict: true; current: SavedRoundSummary };
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
@@ -48,17 +56,32 @@ export async function fetchSavedRound(clientId: number, endpoint = "/api/rounds"
   return (await res.json()) as Round;
 }
 
-/** Saves (upserts, keyed by `round.id`) a round to the current user's account. Throws on failure, `401` included. */
-export async function saveRoundToAccount(round: Round, endpoint = "/api/rounds"): Promise<SavedRoundSummary> {
+/**
+ * Saves (upserts, keyed by `round.id`) a round to the current user's account.
+ * `baseUpdatedAt` should be the `updatedAt` of the last saved version the
+ * caller knows about (`null`/omitted if it has no idea one exists); a
+ * mismatch against what's actually saved resolves to `{ conflict: true }`
+ * rather than overwriting it, unless `force` is set. Throws on any other
+ * failure, `401` included.
+ */
+export async function saveRoundToAccount(
+  round: Round,
+  opts: { baseUpdatedAt?: string | null; force?: boolean } = {},
+  endpoint = "/api/rounds",
+): Promise<SaveRoundResult> {
   const res = await fetch(`${endpoint}/${round.id}`, {
     method: "PUT",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ round }),
+    body: JSON.stringify({ round, baseUpdatedAt: opts.baseUpdatedAt ?? null, force: opts.force ?? false }),
   });
+  if (res.status === 409) {
+    const payload = (await res.json()) as { current: SavedRoundSummary };
+    return { conflict: true, current: payload.current };
+  }
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, "Failed to save this round to your account."));
   }
-  return (await res.json()) as SavedRoundSummary;
+  return { conflict: false, summary: (await res.json()) as SavedRoundSummary };
 }
 
 /** Deletes a saved round from the current user's account. Throws on failure, `401` included. */

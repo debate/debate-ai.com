@@ -34,10 +34,3 @@ round/saved-flows-client.ts (fetch: list/fetch/save/delete)
 dialogs/FlowHistoryDialog.tsx
 apps/debate-ai.com/app/api/flows/[route.ts, [clientId]/route.ts]
 ```
-
-## Known gaps
-
-Optimistic-concurrency protection is flow-only — `saved_rounds` (round cloud
-save) has no equivalent check yet, so the same last-PUT-wins race still
-applies there. See [Round Cloud Save](/docs/features/round-cloud-save)'s
-Known gaps.
