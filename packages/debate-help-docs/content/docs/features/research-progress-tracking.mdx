@@ -30,3 +30,8 @@ state/researchProgress.ts (localStorage: completedResearchTasks)
 
 No contributor identity/permission checks — a signed-in session only
 highlights the visitor's own row.
+
+Completed-task history syncs to a signed-in user's account as the
+`completedResearchTasks` collection (see
+[Tool Data Sync](tool-data-sync.md)); a signed-out browser still keeps it in
+`localStorage` only.

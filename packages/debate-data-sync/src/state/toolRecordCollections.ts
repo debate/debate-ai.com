@@ -504,6 +504,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "completedResearchTasks",
+    storageKey: "completedResearchTasks",
+    idField: "id",
+    label: "Completed Research Tasks",
+    href: "/cards/progress-tracking",
+    section: "Team",
+  },
+  {
     key: "groupChallenges",
     storageKey: "groupChallenges",
     idField: "id",
