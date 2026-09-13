@@ -74,3 +74,9 @@ export {
   MAX_SAVED_SPEECH_SEND_LOG_BYTES,
 } from './editor/speech-send-log.js';
 export type { SpeechSendLogEntry } from './editor/speech-send-log.js';
+
+// Quick Cards — account-sync validation, shared by the store itself and by
+// `apps/debate-ai.com`'s `/api/quick-cards` routes (see
+// `quick-cards-store.ts`'s "Account sync" module-doc section).
+export { isValidQuickCardRecord, MAX_SAVED_QUICK_CARD_BYTES } from './editor/quick-cards-store.js';
+export type { QuickCard } from './editor/quick-cards-store.js';
