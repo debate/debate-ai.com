@@ -31,3 +31,8 @@ state/dailyBestCardAnnouncements.ts
 
 - No scheduled job announces automatically.
 - A comment's "Your name" field is a free-form prefill, not an identity gate.
+- Frozen daily winners sync to a signed-in user's account as the
+  `dailyBestCardAnnouncements` collection, alongside the comment thread
+  (`dailyBestCardComments`) — see
+  [Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user,
+  not a shared team resource.

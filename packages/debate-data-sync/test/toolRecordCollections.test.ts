@@ -25,6 +25,10 @@ import {
 
 const flowAnnotations = findToolRecordCollection("flowAnnotations") as ToolRecordCollection;
 const judgeProfiles = findToolRecordCollection("judgeProfiles") as ToolRecordCollection;
+const dailyBestCardAnnouncements = findToolRecordCollection("dailyBestCardAnnouncements") as ToolRecordCollection;
+const contributorAwardAnnouncements = findToolRecordCollection(
+  "contributorAwardAnnouncements",
+) as ToolRecordCollection;
 
 describe("TOOL_RECORD_COLLECTIONS", () => {
   it("gives every collection a unique key", () => {
@@ -148,6 +152,50 @@ describe("mergeToolRecords", () => {
     const merged = mergeToolRecords(flowAnnotations, [], [{ id: "" }, { id: "a" }]);
 
     expect(merged).toEqual([{ id: "a" }]);
+  });
+});
+
+describe("the daily/award announcement collections, keyed by dayKey", () => {
+  it("keys a frozen announcement by its dayKey, not by an id field it doesn't have", () => {
+    expect(toolRecordId(dailyBestCardAnnouncements, { dayKey: "2026-09-12", cardId: "c1" })).toBe(
+      "2026-09-12",
+    );
+    expect(toolRecordId(contributorAwardAnnouncements, { dayKey: "2026-09-12", awards: [] })).toBe(
+      "2026-09-12",
+    );
+  });
+
+  it("lets each device's own frozen day survive the merge — one row per day, not per device", () => {
+    // Two browsers that each announced a *different* day before ever signing
+    // in both keep their day once merged; freezing is per-day, so there is no
+    // conflict to resolve between them.
+    const merged = mergeToolRecords(
+      dailyBestCardAnnouncements,
+      [{ dayKey: "2026-09-11", cardId: "local-winner" }],
+      [{ dayKey: "2026-09-10", cardId: "remote-winner" }],
+    );
+
+    expect(merged).toEqual([
+      { dayKey: "2026-09-11", cardId: "local-winner" },
+      { dayKey: "2026-09-10", cardId: "remote-winner" },
+    ]);
+  });
+
+  it("lets the account's frozen result win when both sides announced the same day", () => {
+    // `announceDailyBestCard`/`announceContributorAwards` are idempotent per
+    // dayKey — once a day is announced, it's supposed to stay frozen. If two
+    // devices independently froze the same day before ever syncing (e.g. a
+    // race between two tabs), the account's copy is the one that sticks,
+    // matching every other collection's "account wins per id" merge rule.
+    const merged = mergeToolRecords(
+      contributorAwardAnnouncements,
+      [{ dayKey: "2026-09-12", awards: [{ kind: "explainer", contributorId: "local" }] }],
+      [{ dayKey: "2026-09-12", awards: [{ kind: "explainer", contributorId: "remote" }] }],
+    );
+
+    expect(merged).toEqual([
+      { dayKey: "2026-09-12", awards: [{ kind: "explainer", contributorId: "remote" }] },
+    ]);
   });
 });
 

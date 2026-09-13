@@ -32,5 +32,9 @@ state/contributorAwardAnnouncements.ts
 ## Known gaps
 
 - No scheduled job announces automatically.
-- No reviewer-identity/permission checks; nominations/seconds aren't
-  account-synced.
+- No reviewer-identity/permission checks on nominations or seconds.
+- Frozen award announcements sync to a signed-in user's account as the
+  `contributorAwardAnnouncements` collection, alongside nominations
+  (`contributorAwardNominations`) — see
+  [Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user,
+  not a shared team resource.

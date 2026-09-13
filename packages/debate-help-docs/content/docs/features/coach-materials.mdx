@@ -36,4 +36,7 @@ an answer.
 
 - No transcription of an uploaded audio/video recording file.
 - `.docx` upload only works from the browser (needs `DOMParser`).
-- Conversation history is per-browser localStorage, not shared.
+- Conversation history syncs to a signed-in user's account (the same
+  `coachConversation` collection AI Coach Mode uses — see
+  [Tool Data Sync](../internals/tool-data-sync.mdx)), but it is still
+  per-user, not a shared team resource.

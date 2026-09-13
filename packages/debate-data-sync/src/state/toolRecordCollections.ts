@@ -446,6 +446,20 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Daily Best Card Comments",
     href: "/cards/leaderboard",
   },
+  {
+    key: "dailyBestCardAnnouncements",
+    storageKey: "dailyBestCardAnnouncements",
+    idField: "dayKey",
+    label: "Daily Best Card Announcements",
+    href: "/cards/leaderboard",
+  },
+  {
+    key: "contributorAwardAnnouncements",
+    storageKey: "contributorAwardAnnouncements",
+    idField: "dayKey",
+    label: "Contributor Award Announcements",
+    href: "/cards/leaderboard",
+  },
   // — Videos —
   {
     key: "debateVideosFavorites",
