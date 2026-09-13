@@ -139,6 +139,7 @@ export function WatchTranscriptPanel({
                 isActive={index === activeIndex}
                 currentTime={currentTime}
                 onSeek={() => onSeek(snippet.start)}
+                highlightQuery={needle}
               />
             </div>
           ))}
