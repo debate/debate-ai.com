@@ -270,10 +270,18 @@ naming the failure rather than a blank document.
   request, leaving the files converted before it in the library. Splitting
   the archive is the workaround; moving the conversion into the browser (as
   the Parquet card importer does) is the fix.
-- There is no way to download a topic starter's `.cmir`. The file is stored
+- ~~There is no way to download a topic starter's `.cmir`. The file is stored
   and opened in the editor, but the library exposes no file endpoint. The
   same holds for an uploaded document: it goes in as a `.docx` and can only
-  come back out through the editor.
+  come back out through the editor.~~ **Partially fixed:** `FileTree`'s row
+  menu has a "Download as .docx" item for an owned (non-folder) document —
+  `ReasonDocsProvider.downloadDocument` runs the row's HTML (whatever shape it
+  is stored in — `documentHtml` already resolves that, live edits included)
+  through `htmlToDocxBytes` (`lib/cardmirror/stored-cmir.ts`, `htmlToDoc` +
+  `debate-editor/engine`'s `toDocx`) and triggers a browser download named by
+  `docxDownloadFilename`. `TopicStarterTree` still has no row menu and the
+  editor itself exposes no export action, so a topic starter still can't be
+  gotten out as a file at all — tracked as a follow-up.
 - Renaming a file changes its URL, and nothing redirects the old one — it
   falls through to the first-file fallback like any other name that no longer
   resolves.

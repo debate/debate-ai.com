@@ -28,6 +28,7 @@ import {
   parseNative,
   serializeNative,
   serializeNativeAsync,
+  toDocx,
 } from "debate-editor/engine";
 import { STORED_FORMATS, type StoredContent } from "./format";
 import { isCmirContent } from "./content-format";
@@ -88,6 +89,41 @@ export function storedContentToHtml(item: StoredContent): string {
       error instanceof Error ? error.message : String(error),
     )}).</p>`;
   }
+}
+
+/**
+ * Converts a document's HTML — the same shape {@link storedContentToHtml}
+ * (and the provider's `documentHtml`) hand the editor — into `.docx` bytes,
+ * so the sidebar can offer a file to download without first opening it in
+ * CardMirror. Goes through the schema (`htmlToDoc`) rather than re-emitting a
+ * stored `.cmir` directly, so a document written in the editor (`format:
+ * "html"`, never uploaded) downloads too, not just an imported one.
+ *
+ * `htmlToDoc` never throws — empty or unparsable HTML falls back to a blank
+ * document — so this only fails if `toDocx` itself does.
+ */
+export async function htmlToDocxBytes(html: string): Promise<Uint8Array> {
+  return toDocx(htmlToDoc(html));
+}
+
+/**
+ * The filename a downloaded `.docx` gets, from a row's title.
+ *
+ * A title carrying one of {@link IMPORTABLE_EXTENSIONS} (an uploaded `.cmir`
+ * or `.docx`, kept verbatim in the tree per `FileTree`'s `sourceLabel`) has
+ * that extension stripped first, so converting it back to `.docx` doesn't
+ * double up (`"Brief.cmir"` → `"Brief.docx"`, not `"Brief.cmir.docx"`). A
+ * title with no recognized extension is used as-is (`"Notes"` →
+ * `"Notes.docx"`). Path separators are replaced so the title can't be read as
+ * a directory by whatever the browser hands it to.
+ */
+export function docxDownloadFilename(title: string): string {
+  const extension = fileExtension(title);
+  const base = (IMPORTABLE_EXTENSIONS as readonly string[]).includes(extension)
+    ? title.slice(0, -extension.length)
+    : title;
+  const safe = base.trim().replace(/[\\/]/g, "-");
+  return `${safe || "Untitled"}.docx`;
 }
 
 /**
