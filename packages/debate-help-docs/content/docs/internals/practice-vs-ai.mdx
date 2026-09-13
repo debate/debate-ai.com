@@ -65,10 +65,30 @@ renders the award's points and any newly-awarded badges in a "Round Rewards"
 section when the judge response includes one; the concede flow's toast adds
 a `(+N points)` note instead, since conceding doesn't show the scorecard.
 
+## Resuming a round after a reload
+
+`DebateRoom` already kept its own transcript in a
+`debate_${userId}_${topic}_${debateId}` localStorage key, restored whenever
+it mounts with matching props — but `DebatePracticeVsAi` (the screen the
+route renders) only ever learned which round to mount from a plain
+`useState`, which a hard reload discards, so the round always fell back to
+the picker even though the transcript was still sitting in localStorage.
+
+`packages/debate-round-practice-ai/src/ui/active-round.ts` closes that gap:
+`writeActiveRound(userId, started)` mirrors the round's setup (`debateId`,
+bot, topic, stance, phase timings — everything `DebateRoom` needs as props)
+into a `practiceVsAiActiveRound_${userId}` key when a round starts;
+`DebatePracticeVsAi` reads it back with `readActiveRound(userId)` as its
+`debate` state's initializer, so a reload mounts straight into `DebateRoom`
+with the same props, which then resumes its own transcript as it always
+did. `clearActiveRound(userId)` runs on `onExit` (judged or conceded), so a
+finished round doesn't keep resuming. Signed-out users share one `_guest`
+bucket, the same fallback `DebateRoom`'s own resume key already uses.
+
 ## Known gaps
 
 See the feature doc's Known gaps: no persisted streak (`Streak5` therefore
-unreachable), and a reload during a round returns to the picker.
+unreachable).
 
 ## Tests
 
@@ -79,3 +99,6 @@ gamification hooks omits `gamification` from the response entirely.
 D1-backed `getGamificationProfile`/`applyGamificationAward` against a real
 in-memory SQLite database: badge accumulation across rounds, de-duplication,
 and per-user isolation.
+`packages/debate-round-practice-ai/test/active-round.test.ts` covers
+`active-round.ts`: round-trip read/write, per-user namespacing, the shared
+guest bucket, and tolerating a missing, corrupt, or malformed-shape record.
