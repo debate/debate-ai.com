@@ -18,7 +18,16 @@
 "use client"
 
 import { Button } from "debate-speech-writer/src/ui/primitives/button"
+import type { GamificationAward } from "../backend/gamification"
 import type { JudgedScore, JudgmentData } from "../backend/types"
+
+/** Human-readable labels for the badge ids `computeGamificationAward` grants. */
+const BADGE_LABELS: Record<string, string> = {
+  FirstWin: "First Win",
+  Novice: "Novice",
+  Streak5: "5-Day Streak",
+  FactMaster: "Fact Master",
+}
 
 type Scored = JudgedScore
 
@@ -97,6 +106,8 @@ export interface JudgmentPopupProps {
   opponentDisplayName?: string | null
   opponentAvatarUrl?: string | null
   ratingSummary?: RatingSummary | null
+  /** This round's points/badges, when the host's store persists gamification. */
+  gamification?: GamificationAward | null
   /** Recommendation cards. Defaults to `DEFAULT_COACH_SKILLS`. */
   coachSkills?: CoachSkill[]
   /** "Back to Home" — upstream navigated to `/startdebate`. */
@@ -156,6 +167,7 @@ export function JudgmentPopup({
   opponentDisplayName,
   opponentAvatarUrl,
   ratingSummary,
+  gamification,
   coachSkills = DEFAULT_COACH_SKILLS,
   onHome,
   onClose,
@@ -436,6 +448,29 @@ export function JudgmentPopup({
                   </p>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Gamification — only for the user-vs-bot format the score/badge system tracks */}
+        {isUserBotFormat && gamification && (
+          <div className="mt-10 rounded-lg border border-border bg-card p-6 shadow-md">
+            <h3 className="mb-4 text-center text-2xl font-bold text-foreground">Round Rewards</h3>
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-3xl font-bold text-primary">+{gamification.points} points</p>
+              <p className="text-sm text-muted-foreground">Total score: {gamification.newScore}</p>
+              {gamification.badgesAwarded.length > 0 && (
+                <div className="mt-2 flex flex-wrap justify-center gap-2">
+                  {gamification.badgesAwarded.map((badge) => (
+                    <span
+                      key={badge}
+                      className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground"
+                    >
+                      New Badge: {BADGE_LABELS[badge] ?? badge}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

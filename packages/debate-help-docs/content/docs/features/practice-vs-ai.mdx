@@ -31,6 +31,9 @@ each persona answers with an in-character "my systems are offline" line.
 
 ## Known gaps
 
-Gamification is computed but not persisted (no `score`/`badges`/`streak`
-columns on the `user` table). A reload during a round returns to the
-picker. Only the vs-bot slice of the Go server is ported.
+Gamification's score and badges are persisted (`user_settings.practiceVsAiScore`/
+`practiceVsAiBadges`) and shown on the scorecard, but there is no real streak
+yet: `getGamificationProfile` always reports `currentStreak: 0`, since a real
+day-over-day streak needs a dated activity log this table doesn't have — so
+the `Streak5` badge is currently unreachable. A reload during a round returns
+to the picker. Only the vs-bot slice of the Go server is ported.

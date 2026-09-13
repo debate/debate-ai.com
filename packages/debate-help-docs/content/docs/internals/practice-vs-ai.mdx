@@ -1,0 +1,81 @@
+---
+title: "Practice vs AI"
+---
+
+# Practice vs AI
+
+The `/versus-ai` round is a Node/TypeScript port of the Go `arguehub` vs-bot
+server (`packages/debate-round-practice-ai`, published as
+`debate-practice-vs-ai`), kept as reference sources in the package. Persona
+data, prompt construction and AI judging come straight from that port. This
+note covers what the app layer supplies: persistence.
+
+## The `DebateStore` seam
+
+`debate-practice-vs-ai`'s `./backend` export defines a `DebateStore`
+interface and ships `createInMemoryDebateStore` for tests. Everything but
+`createDebate`/`getLatestDebate`/`setOutcome` is optional, so a host can start
+with bare persistence and add transcripts or scoring later — exactly what
+happened here. `apps/debate-ai.com/lib/practice-vs-ai/store.ts` supplies the
+Drizzle/D1-backed implementation the `/api/vsbot/*` routes use
+(`apps/debate-ai.com/lib/practice-vs-ai/backend.ts` wires the two together).
+
+## Rounds and transcripts
+
+Each round is one row in `practice_vs_ai_debates`, keyed by `user_id`. The
+full `DebateVsBotRecord` (history, phase timings, stance, bot level) lives in
+the row's `data` JSON blob — the same pattern `saved_flows`/`saved_rounds`
+use — with owner, bot, topic, outcome and result lifted into columns so the
+round list can be queried without parsing the blob. `saveTranscript` stays
+unset: `createDebate`/`appendMessage`/`setOutcome` already keep that blob
+current, so a second transcript table would just be a redundant write.
+
+## Gamification
+
+`packages/debate-round-practice-ai/src/backend/gamification.ts` ports the Go
+controller's `updateGamificationAfterBotDebate`/
+`checkAndAwardAutomaticBadges` as pure functions: `computeGamificationAward`
+takes a `{ score, badges, currentStreak }` profile and a result, and returns
+the points, badges and new score to apply — the same point values (50/25/10
+for a win/draw/loss) and badge thresholds (`FirstWin`, `Novice` at 10,
+`Streak5` at a 5-day streak, `FactMaster` at 500) as the Go switch. The
+package's `handlers.ts` calls this from `recordCompletedRound`, which every
+`/judge` and `/concede` request runs after storing the round's outcome, and
+returns the award in the response body so the client can show it.
+
+The app's store persists the result on the signed-in user's `user_settings`
+row rather than a separate table, mirroring the account-preferences pattern
+`app/api/settings/route.ts` already uses:
+
+- `practiceVsAiScore` (integer) — the running total.
+- `practiceVsAiBadges` (JSON array of badge ids) — merged with, never
+  replacing, whatever the row already holds, so a repeat badge check never
+  drops one earned in an earlier round.
+
+`getGamificationProfile` reads these two columns (defaulting to `0`/`[]` when
+the user has no row yet) and always reports `currentStreak: 0` —
+there is no dated activity log to derive a real streak from, so `Streak5` is
+unreachable until one exists. `applyGamificationAward` does a read-then-merge
+upsert (`insert … onConflictDoUpdate`) rather than trusting the caller's copy
+of the badge list, the same reason `favoriteTools`' star/unstar op reads the
+row's current value first.
+
+The scorecard (`packages/debate-round-practice-ai/src/ui/JudgmentPopup.tsx`)
+renders the award's points and any newly-awarded badges in a "Round Rewards"
+section when the judge response includes one; the concede flow's toast adds
+a `(+N points)` note instead, since conceding doesn't show the scorecard.
+
+## Known gaps
+
+See the feature doc's Known gaps: no persisted streak (`Streak5` therefore
+unreachable), and a reload during a round returns to the picker.
+
+## Tests
+
+`packages/debate-round-practice-ai/test/handlers.test.ts` drives the four
+handlers against the in-memory store, including that a store without the
+gamification hooks omits `gamification` from the response entirely.
+`apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts` exercises the
+D1-backed `getGamificationProfile`/`applyGamificationAward` against a real
+in-memory SQLite database: badge accumulation across rounds, de-duplication,
+and per-user isolation.
