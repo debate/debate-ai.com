@@ -19,6 +19,7 @@ import { type DragEvent, type ReactNode, useMemo, useState } from "react"
 import {
   ChevronDown,
   ChevronRight,
+  Download,
   FilePlus2,
   FileText,
   FolderIcon,
@@ -93,6 +94,9 @@ interface FileTreeProps {
   onMove: (id: number, parentId: number | null) => void
   /** Files dropped from outside the browser, to import into `parentId`. */
   onUpload?: (files: File[], parentId: number | null) => void
+  /** Downloads a file as `.docx`, without opening it in CardMirror first. Not
+   *  offered for folders — there is nothing to convert. */
+  onDownload?: (id: number) => void
 }
 
 /** The extension a row was uploaded under, uppercased for the badge — `""`
@@ -106,7 +110,7 @@ function sourceLabel(doc: ReasonDocument): string {
     : ""
 }
 
-export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDelete, onMove, onUpload }: FileTreeProps) {
+export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDelete, onMove, onUpload, onDownload }: FileTreeProps) {
   const tree = useMemo(() => buildTree(documents), [documents])
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set(documents.filter((d) => d.isFolder).map((d) => d.id)))
   const [renamingId, setRenamingId] = useState<number | null>(null)
@@ -259,6 +263,15 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
                   <DropdownMenuItem onClick={() => onAdd(doc.id, true)}>
                     <FolderPlus className="mr-2 h-4 w-4" />
                     New Folder
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              {!doc.isFolder && onDownload && (
+                <>
+                  <DropdownMenuItem onClick={() => onDownload(doc.id)}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download as .docx
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                 </>
