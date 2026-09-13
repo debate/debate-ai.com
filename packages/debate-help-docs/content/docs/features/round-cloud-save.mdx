@@ -21,11 +21,21 @@ round also saves each flow it references first. "Save all rounds" and
 tab's Flows section badges a flow "via round" when it was only saved as
 part of a round's cascade.
 
+The round save is optimistic-concurrency checked, mirroring [Flow Cloud
+Save](/docs/features/flow-cloud-save): it sends along the `updatedAt` of
+the cloud copy this browser last knew about (from the last list/load/save
+response it saw). If that doesn't match what's actually saved — someone
+else saved a newer version since — the save is rejected with a conflict
+instead of silently overwriting it, and the round's cloud icon turns into a
+warning that a second click (an explicit "save anyway") resolves. This
+covers the round row itself; each referenced flow's own save still goes
+through flow cloud save's own conflict check independently.
+
 ## Data flow
 
 ```
 state/bulkRoundSave.ts (pure) — collectFlowsForRounds / collectUnreferencedFlows
-state/savedRounds.ts (pure) — isValidRound / deriveRoundLabel
+state/savedRounds.ts (pure) — isValidRound / deriveRoundLabel / hasRoundSaveConflict
 round/saved-rounds-client.ts (fetch) — list/fetch/save/delete
 apps/debate-ai.com/app/api/rounds/[route.ts, [clientId]/route.ts]
 ```
@@ -33,5 +43,4 @@ apps/debate-ai.com/app/api/rounds/[route.ts, [clientId]/route.ts]
 ## Known gaps
 
 "Save all rounds"/"Save flows not in a round" save every item
-unconditionally — no dirty tracking to skip an unchanged item. No
-optimistic-concurrency handling.
+unconditionally — no dirty tracking to skip an unchanged item.

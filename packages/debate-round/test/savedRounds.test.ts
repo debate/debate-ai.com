@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deriveRoundLabel, isValidRound } from "../src/state/savedRounds";
+import { deriveRoundLabel, hasRoundSaveConflict, isValidRound } from "../src/state/savedRounds";
 import type { Round } from "../src/types/flow";
 
 function makeRound(overrides: Partial<Round> = {}): Round {
@@ -135,5 +135,26 @@ describe("deriveRoundLabel", () => {
     const label = deriveRoundLabel({ title: long, tournamentName: "T", roundLevel: "R" });
     expect(label).toHaveLength(120);
     expect(label).toBe("x".repeat(120));
+  });
+});
+
+describe("hasRoundSaveConflict", () => {
+  it("never conflicts when no saved row exists yet, regardless of baseUpdatedAt", () => {
+    expect(hasRoundSaveConflict(null, null)).toBe(false);
+    expect(hasRoundSaveConflict(null, undefined)).toBe(false);
+    expect(hasRoundSaveConflict(null, "2024-01-01T00:00:00.000Z")).toBe(false);
+  });
+
+  it("does not conflict when baseUpdatedAt matches the saved row's updatedAt", () => {
+    expect(hasRoundSaveConflict("2024-01-01T00:00:00.000Z", "2024-01-01T00:00:00.000Z")).toBe(false);
+  });
+
+  it("conflicts when baseUpdatedAt is older than the saved row's updatedAt", () => {
+    expect(hasRoundSaveConflict("2024-01-02T00:00:00.000Z", "2024-01-01T00:00:00.000Z")).toBe(true);
+  });
+
+  it("conflicts when a row exists but the caller has no baseline (null or undefined)", () => {
+    expect(hasRoundSaveConflict("2024-01-01T00:00:00.000Z", null)).toBe(true);
+    expect(hasRoundSaveConflict("2024-01-01T00:00:00.000Z", undefined)).toBe(true);
   });
 });

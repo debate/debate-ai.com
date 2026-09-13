@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedRounds } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { deriveRoundLabel, isValidRound, MAX_SAVED_ROUND_BYTES } from "debate-round"
+import { deriveRoundLabel, hasRoundSaveConflict, isValidRound, MAX_SAVED_ROUND_BYTES } from "debate-round"
 
 /**
  * Account-linked round cloud save — TODO.md idea #17, follow-up (3)/(b),
@@ -13,8 +13,11 @@ import { deriveRoundLabel, isValidRound, MAX_SAVED_ROUND_BYTES } from "debate-ro
  * without a session) mode.
  *
  * GET    — the full saved `Round` for this `clientId`, or 404.
- * PUT    { round: Round } — validates (`isValidRound`) and upserts, keyed by
- *   `(userId, clientId)`; the route's `clientId` must match `round.id`.
+ * PUT    { round: Round, baseUpdatedAt?: string | null, force?: boolean } —
+ *   validates (`isValidRound`) and upserts, keyed by `(userId, clientId)`;
+ *   the route's `clientId` must match `round.id`. Rejects with 409 (see
+ *   `hasRoundSaveConflict`) instead of overwriting when a row already
+ *   exists and `baseUpdatedAt` doesn't match it, unless `force` is set.
  * DELETE — removes the saved round for this `clientId`.
  */
 
@@ -75,8 +78,26 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ clie
     return NextResponse.json({ error: "This round is too large to save to your account." }, { status: 413 })
   }
 
-  const label = deriveRoundLabel(round)
+  const { baseUpdatedAt, force } = body as { baseUpdatedAt?: string | null; force?: boolean }
+
   const db = await getDBFromContext()
+  const [existing] = await db
+    .select({ label: savedRounds.label, updatedAt: savedRounds.updatedAt })
+    .from(savedRounds)
+    .where(and(eq(savedRounds.userId, userId), eq(savedRounds.clientId, clientId)))
+    .limit(1)
+
+  if (!force && hasRoundSaveConflict(existing ? existing.updatedAt.toISOString() : null, baseUpdatedAt)) {
+    return NextResponse.json(
+      {
+        error: "This round was saved from elsewhere since you last loaded it.",
+        current: { clientId, label: existing!.label, updatedAt: existing!.updatedAt.toISOString() },
+      },
+      { status: 409 },
+    )
+  }
+
+  const label = deriveRoundLabel(round)
   const now = new Date()
 
   await db
