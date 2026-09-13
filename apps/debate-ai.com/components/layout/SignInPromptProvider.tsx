@@ -27,6 +27,7 @@ import {
 } from "debate-data-sync/src/state/sign-in-prompt"
 import { LoginDialog } from "./LoginDialog"
 import { useSession } from "@/lib/hooks/useSession"
+import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
 
 /**
  * How long to wait before prompting the same feature again, in ms.
@@ -79,6 +80,12 @@ export function SignInPromptProvider() {
       // somebody who is already signed in.
       if (authedRef.current) return
 
+      // A guest who has explicitly asked not to be asked again. Checked here
+      // rather than in the bus itself: `requireSignIn` still reports "no
+      // account" so the caller's own local-save/offer logic doesn't change,
+      // only whether the app actually renders the dialog for it.
+      if (isSignInPromptOptedOut()) return
+
       const now = Date.now()
       const shownAt = readShown()[raised.feature]
       if (typeof shownAt === "number" && now - shownAt < PROMPT_COOLDOWN_MS) return
@@ -105,6 +112,13 @@ export function SignInPromptProvider() {
       title={`Sign in to save your ${prompt.feature}`}
       description={prompt.message}
       returnTo={prompt.returnTo}
+      secondaryAction={{
+        label: "Don't ask me again",
+        onClick: () => {
+          setSignInPromptOptedOut(true)
+          setPrompt(null)
+        },
+      }}
     />
   )
 }
