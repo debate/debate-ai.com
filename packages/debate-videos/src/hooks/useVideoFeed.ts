@@ -60,6 +60,12 @@ export interface VideoFeedFilters {
   q?: string;
   /** Explicit id allow-list — how the favourites filter is applied server-side. */
   ids?: string[] | null;
+  /**
+   * Explicit id deny-list — how hidden videos are kept out of both the grid
+   * and the facet counts server-side. Leave unset while searching, so a
+   * hidden video can still be found in order to unhide it.
+   */
+  excludeIds?: string[] | null;
   /** Page size override. */
   pageSize?: number;
   /** Whether to ask for the season/style dropdown counts. */
@@ -127,6 +133,7 @@ export function buildVideoParams(
   // An empty list still has to be sent: "favourites only" with no favourites
   // must return nothing rather than everything.
   if (filters.ids) params.ids = filters.ids.join(",");
+  if (filters.excludeIds?.length) params.excludeIds = filters.excludeIds.join(",");
   if (filters.withFacets) params.facets = "1";
   params.limit = String(limit);
   params.offset = String(offset);

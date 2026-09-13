@@ -11,7 +11,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import type { CategoryType, VideoType } from "../types/videos"
+import type { CategoryType } from "../types/videos"
 import type { DebateStyle } from "../types/videos"
 import { setStateInURL } from "../ui/lib/utils"
 
@@ -91,6 +91,14 @@ export function DebateVideosPage() {
     [state.showFavoritesOnly, state.favorites],
   )
 
+  // Hidden videos are a browser-local preference; an explicit search still
+  // surfaces them, as it always has, so the deny-list is only sent while not
+  // searching — otherwise a hidden video could never be found again to unhide.
+  const excludeIds = useMemo(
+    () => (state.searchTerm.trim() || state.hiddenVideos.size === 0 ? null : Array.from(state.hiddenVideos)),
+    [state.searchTerm, state.hiddenVideos],
+  )
+
   const filters: VideoFeedFilters = {
     // A search spans rounds and lectures, matching the old client-side
     // behaviour of searching the whole library from any tab.
@@ -101,18 +109,14 @@ export function DebateVideosPage() {
     sort: state.sortOrder,
     q: state.searchTerm,
     ids: favoriteIds,
+    excludeIds,
     withFacets: true,
     enabled: state.currentCategory !== "leaderboard",
   }
 
   const feed = useVideoFeed(filters)
 
-  // Hidden videos are a browser-local preference; an explicit search still
-  // surfaces them, as it always has.
-  const currentVideos = useMemo<VideoType[]>(() => {
-    if (state.searchTerm.trim() || state.hiddenVideos.size === 0) return feed.videos
-    return feed.videos.filter((video) => !state.hiddenVideos.has(video[0]))
-  }, [feed.videos, state.hiddenVideos, state.searchTerm])
+  const currentVideos = feed.videos
 
   const topPicksSet = useMemo(
     () => new Set(feed.videos.filter((video) => video[15] === true).map((video) => video[0])),

@@ -21,6 +21,8 @@ import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
  * - `year` — season year (`2026`) or `legacy`
  * - `q` — free-text search over title, channel and description
  * - `ids` — comma-separated id allow-list (used by the favourites filter)
+ * - `excludeIds` — comma-separated id deny-list (used to keep hidden videos
+ *   out of both the grid and the facet counts)
  * - `sort` — `Views` or `Recency` (default)
  * - `limit` / `offset` — page size (max 200) and page start
  * - `facets` — `1` to include the season/style dropdown counts
@@ -36,6 +38,7 @@ export async function GET(request: NextRequest) {
   const limitParam = Number.parseInt(searchParams.get("limit") ?? "", 10);
   const offsetParam = Number.parseInt(searchParams.get("offset") ?? "", 10);
   const idsParam = searchParams.get("ids");
+  const excludeIdsParam = searchParams.get("excludeIds");
 
   const params: VideoQueryParams = {
     source,
@@ -46,6 +49,9 @@ export async function GET(request: NextRequest) {
     year: searchParams.get("year"),
     q: searchParams.get("q"),
     ids: idsParam ? idsParam.split(",").map((id) => id.trim()).filter(Boolean).slice(0, 500) : null,
+    excludeIds: excludeIdsParam
+      ? excludeIdsParam.split(",").map((id) => id.trim()).filter(Boolean).slice(0, 500)
+      : null,
     sort: searchParams.get("sort"),
     limit: Number.isFinite(limitParam) ? limitParam : undefined,
     offset: Number.isFinite(offsetParam) ? offsetParam : 0,

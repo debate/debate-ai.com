@@ -9,7 +9,7 @@
  * @module lib/videos/video-repository
  */
 
-import { and, asc, count, desc, eq, inArray, isNotNull, isNull, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNotNull, isNull, notInArray, sql, type SQL } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
@@ -153,6 +153,9 @@ function buildConditions(
   }
   if (params.ids && params.ids.length) {
     conditions.push(inArray(videos.videoId, params.ids));
+  }
+  if (params.excludeIds && params.excludeIds.length) {
+    conditions.push(notInArray(videos.videoId, params.excludeIds));
   }
   if (!options.skipSearch) {
     for (const token of searchTokens(params.q)) {
