@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedFlows } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { deriveFlowLabel, isValidFlow, MAX_SAVED_FLOW_BYTES } from "debate-round"
+import { deriveFlowLabel, hasFlowSaveConflict, isValidFlow, MAX_SAVED_FLOW_BYTES } from "debate-round"
 
 /**
  * Account-linked flow cloud save — TODO.md idea #17, follow-up (3), "flows"
@@ -15,8 +15,11 @@ import { deriveFlowLabel, isValidFlow, MAX_SAVED_FLOW_BYTES } from "debate-round
  * account.
  *
  * GET    — the full saved `Flow` for this `clientId`, or 404.
- * PUT    { flow: Flow } — validates (`isValidFlow`) and upserts, keyed by
- *   `(userId, clientId)`; the route's `clientId` must match `flow.id`.
+ * PUT    { flow: Flow, baseUpdatedAt?: string | null, force?: boolean } —
+ *   validates (`isValidFlow`) and upserts, keyed by `(userId, clientId)`;
+ *   the route's `clientId` must match `flow.id`. Rejects with 409 (see
+ *   `hasFlowSaveConflict`) instead of overwriting when a row already exists
+ *   and `baseUpdatedAt` doesn't match it, unless `force` is set.
  * DELETE — removes the saved flow for this `clientId`.
  */
 
@@ -77,8 +80,26 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ clie
     return NextResponse.json({ error: "This flow is too large to save to your account." }, { status: 413 })
   }
 
-  const label = deriveFlowLabel(flow)
+  const { baseUpdatedAt, force } = body as { baseUpdatedAt?: string | null; force?: boolean }
+
   const db = await getDBFromContext()
+  const [existing] = await db
+    .select({ label: savedFlows.label, updatedAt: savedFlows.updatedAt })
+    .from(savedFlows)
+    .where(and(eq(savedFlows.userId, userId), eq(savedFlows.clientId, clientId)))
+    .limit(1)
+
+  if (!force && hasFlowSaveConflict(existing ? existing.updatedAt.toISOString() : null, baseUpdatedAt)) {
+    return NextResponse.json(
+      {
+        error: "This flow was saved from elsewhere since you last loaded it.",
+        current: { clientId, label: existing!.label, updatedAt: existing!.updatedAt.toISOString() },
+      },
+      { status: 409 },
+    )
+  }
+
+  const label = deriveFlowLabel(flow)
   const now = new Date()
 
   await db

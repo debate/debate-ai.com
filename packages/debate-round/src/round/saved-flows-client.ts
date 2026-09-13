@@ -19,6 +19,11 @@
 import type { Flow } from "../types/flow";
 import type { SavedFlowSummary } from "../state/savedFlows";
 
+/** Result of a `saveFlowToAccount` call: either it saved, or it hit a conflict (see `hasFlowSaveConflict`). */
+export type SaveFlowResult =
+  | { conflict: false; summary: SavedFlowSummary }
+  | { conflict: true; current: SavedFlowSummary };
+
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
     const payload = (await res.json()) as { error?: string };
@@ -48,17 +53,32 @@ export async function fetchSavedFlow(clientId: number, endpoint = "/api/flows"):
   return (await res.json()) as Flow;
 }
 
-/** Saves (upserts, keyed by `flow.id`) a flow to the current user's account. Throws on failure, `401` included. */
-export async function saveFlowToAccount(flow: Flow, endpoint = "/api/flows"): Promise<SavedFlowSummary> {
+/**
+ * Saves (upserts, keyed by `flow.id`) a flow to the current user's account.
+ * `baseUpdatedAt` should be the `updatedAt` of the last saved version the
+ * caller knows about (`null`/omitted if it has no idea one exists); a
+ * mismatch against what's actually saved resolves to `{ conflict: true }`
+ * rather than overwriting it, unless `force` is set. Throws on any other
+ * failure, `401` included.
+ */
+export async function saveFlowToAccount(
+  flow: Flow,
+  opts: { baseUpdatedAt?: string | null; force?: boolean } = {},
+  endpoint = "/api/flows",
+): Promise<SaveFlowResult> {
   const res = await fetch(`${endpoint}/${flow.id}`, {
     method: "PUT",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ flow }),
+    body: JSON.stringify({ flow, baseUpdatedAt: opts.baseUpdatedAt ?? null, force: opts.force ?? false }),
   });
+  if (res.status === 409) {
+    const payload = (await res.json()) as { current: SavedFlowSummary };
+    return { conflict: true, current: payload.current };
+  }
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, "Failed to save this flow to your account."));
   }
-  return (await res.json()) as SavedFlowSummary;
+  return { conflict: false, summary: (await res.json()) as SavedFlowSummary };
 }
 
 /** Deletes a saved flow from the current user's account. Throws on failure, `401` included. */

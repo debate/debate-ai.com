@@ -22,7 +22,7 @@ import { ScrollArea } from "../ui/primitives/scroll-area"
 import { Input } from "../ui/primitives/input"
 import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
-import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload } from "lucide-react"
+import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload, AlertTriangle } from "lucide-react"
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
@@ -51,7 +51,7 @@ type CloudRoundListState =
   | { kind: "error"; message: string }
 
 /** Per-flow/per-round save/load/remove status, keyed by the flow's/round's local `id`. */
-type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error"
+type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error" | "conflict"
 
 /**
  * Round level ordering for sorting.
@@ -247,12 +247,29 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * the flow's local `id`). A failed save is reported inline next to the
    * flow rather than blocking anything, since the flow already exists
    * locally either way.
+   *
+   * Passes along the `updatedAt` of the cloud copy this browser last knew
+   * about (from the "Saved to account" list, or an earlier save this
+   * session) so the server can reject a save that would silently clobber a
+   * newer version saved elsewhere — surfaced as a `"conflict"` status
+   * rather than an error. Passing `force: true` (the chip's own conflict
+   * icon does this on a second click) saves over that version anyway.
    */
-  const handleSaveFlowToAccount = async (flow: Flow) => {
+  const handleSaveFlowToAccount = async (flow: Flow, force = false) => {
     setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
+    const known = cloudList.kind === "loaded" ? cloudList.flows.find((f) => f.clientId === flow.id) : undefined
     try {
-      await saveFlowToAccount(flow)
+      const result = await saveFlowToAccount(flow, { baseUpdatedAt: known?.updatedAt ?? null, force })
+      if (result.conflict) {
+        setCloudActions((prev) => ({ ...prev, [flow.id]: "conflict" }))
+        return
+      }
       setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+      setCloudList((prev) => {
+        if (prev.kind !== "loaded") return prev
+        const others = prev.flows.filter((f) => f.clientId !== result.summary.clientId)
+        return { kind: "loaded", flows: [...others, result.summary] }
+      })
     } catch {
       setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
     }
@@ -371,9 +388,22 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     await Promise.all(
       unreferencedFlows.map(async (flow) => {
         setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
+        const known = cloudList.kind === "loaded" ? cloudList.flows.find((f) => f.clientId === flow.id) : undefined
         try {
-          await saveFlowToAccount(flow)
+          const result = await saveFlowToAccount(flow, { baseUpdatedAt: known?.updatedAt ?? null })
+          if (result.conflict) {
+            // Reported as a chip-level conflict (so it can be retried with force
+            // individually) but still counted as "failed" in the bulk summary.
+            setCloudActions((prev) => ({ ...prev, [flow.id]: "conflict" }))
+            outcomes[flow.id] = "error"
+            return
+          }
           setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+          setCloudList((prev) => {
+            if (prev.kind !== "loaded") return prev
+            const others = prev.flows.filter((f) => f.clientId !== result.summary.clientId)
+            return { kind: "loaded", flows: [...others, result.summary] }
+          })
           outcomes[flow.id] = "saved"
         } catch {
           setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
@@ -1062,19 +1092,23 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation()
-                                      handleSaveFlowToAccount(flow)
+                                      handleSaveFlowToAccount(flow, cloudActions[flow.id] === "conflict")
                                     }}
                                     className="p-0.5 rounded-full hover:bg-background/60"
                                     title={
                                       cloudActions[flow.id] === "saved"
                                         ? "Saved to your account"
-                                        : "Save this flow to your account"
+                                        : cloudActions[flow.id] === "conflict"
+                                          ? "Saved from elsewhere since you last loaded it — click again to overwrite"
+                                          : "Save this flow to your account"
                                     }
                                   >
                                     {cloudActions[flow.id] === "saving" ? (
                                       <Loader2 className="h-3 w-3 animate-spin" />
                                     ) : cloudActions[flow.id] === "error" ? (
                                       <UploadCloud className="h-3 w-3 text-destructive" />
+                                    ) : cloudActions[flow.id] === "conflict" ? (
+                                      <AlertTriangle className="h-3 w-3 text-amber-500" />
                                     ) : cloudActions[flow.id] === "saved" ? (
                                       <Cloud className="h-3 w-3 text-primary" />
                                     ) : (
