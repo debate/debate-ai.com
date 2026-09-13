@@ -221,3 +221,43 @@ describe("concedeDebate", () => {
     expect(result.status).toBe(400)
   })
 })
+
+describe("listDebates", () => {
+  it("returns the actor's past debates, newest first", async () => {
+    const { backend, store } = setup()
+    const base = {
+      email: actor.email,
+      botName: "Yoda",
+      botLevel: "Legends",
+      topic: "older",
+      stance: "for",
+      history: [],
+      phaseTimings: [],
+    }
+    await store.createDebate({ ...base, topic: "older", createdAt: 100 })
+    await store.createDebate({ ...base, topic: "newer", createdAt: 200 })
+
+    const result = await backend.listDebates(actor)
+    expect(result.status).toBe(200)
+    const debates = (result.body as { debates: { topic: string }[] }).debates
+    expect(debates.map((d) => d.topic)).toEqual(["newer", "older"])
+  })
+
+  it("returns an empty list for a store without listDebates", async () => {
+    const bareStore = {
+      async createDebate() {
+        return "id-1"
+      },
+      async getDebate() {
+        return null
+      },
+      async getLatestDebate() {
+        return null
+      },
+      async setOutcome() {},
+    }
+    const backend = createPracticeVsAiBackend({ store: bareStore, model: null })
+    const result = await backend.listDebates(actor)
+    expect(result).toEqual({ status: 200, body: { debates: [] } })
+  })
+})

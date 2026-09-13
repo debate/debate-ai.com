@@ -131,6 +131,17 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
       return row ? rowToRecord(row) : null
     },
 
+    async listDebates() {
+      const db = await getDBFromContext()
+      const rows = await db
+        .select(SELECTED)
+        .from(practiceVsAiDebates)
+        .where(eq(practiceVsAiDebates.userId, userId))
+        .orderBy(desc(practiceVsAiDebates.createdAt), desc(practiceVsAiDebates.id))
+        .limit(50)
+      return rows.map(rowToRecord)
+    },
+
     async appendMessage(id: string, message: DebateMessage) {
       const numericId = Number(id)
       if (!Number.isInteger(numericId)) return

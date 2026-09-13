@@ -7,6 +7,7 @@
 export * from "./bots"
 export { BotSelection, type BotSelectionProps, type StartedDebate } from "./BotSelection"
 export { DebateRoom, type DebateRoomProps } from "./DebateRoom"
+export { DebateHistory, type DebateHistoryProps } from "./DebateHistory"
 export {
   JudgmentPopup,
   DEFAULT_COACH_SKILLS,

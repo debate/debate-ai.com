@@ -317,7 +317,20 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
     }
   }
 
-  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate }
+  /**
+   * List the caller's past debates, newest first. Not a Go-ported route —
+   * added alongside `DebateStore.listDebates` so a host can offer a debate
+   * history view over rounds that were already being persisted in full.
+   * Returns an empty list rather than an error when the store doesn't
+   * implement `listDebates`, the same "optional hook, harmless absence"
+   * treatment `recordCompletedRound` gives the gamification hooks.
+   */
+  async function listDebates(actor: DebateActor): Promise<HandlerResult<{ debates: DebateVsBotRecord[] }>> {
+    const debates = (await store.listDebates?.(actor.email)) ?? []
+    return { status: 200, body: { debates } }
+  }
+
+  return { createDebate, sendDebateMessage, judgeDebate: judge, concedeDebate, listDebates }
 }
 
 export type PracticeVsAiBackend = ReturnType<typeof createPracticeVsAiBackend>
