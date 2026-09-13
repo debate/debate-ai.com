@@ -45,6 +45,7 @@ import {
   htmlToStoredCmirSync,
   storedContentToHtml,
 } from "@/lib/cardmirror/stored-cmir"
+import { topicStarterHtml } from "@/lib/topic-starters/content"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterItem } from "./TopicStarterTree"
 
@@ -54,6 +55,24 @@ import type { TopicStarterItem } from "./TopicStarterTree"
  *  extra wait is not felt, long enough that a burst of typing gzips the
  *  document once instead of per keystroke. */
 const CMIR_ENCODE_DELAY_MS = 600
+
+/** Triggers a browser download of `.docx` bytes under `filename` — shared by
+ *  `downloadDocument` and `downloadTopicDocument`, which differ only in where
+ *  the bytes and filename come from. */
+function triggerDocxDownload(bytes: Uint8Array, filename: string): void {
+  // `Blob` wants an `ArrayBuffer`-backed part; `toDocx`'s `Uint8Array` is
+  // typed over the wider `ArrayBufferLike`, so slice out a concrete one.
+  const arrayBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer
+  const blob = new Blob([arrayBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
 
 /** What one upload produced, for the caller that has to report it. */
 export interface ImportOutcome {
@@ -116,6 +135,13 @@ export interface ReasonDocsContextValue {
    * `{ ok: false }` for the caller to show.
    */
   downloadDocument: (id: number) => Promise<DownloadOutcome>
+  /**
+   * Converts a public topic starter to `.docx` and triggers a browser
+   * download, mirroring {@link downloadDocument} for the read-only catalogue.
+   * Never throws — a folder or a conversion failure comes back as
+   * `{ ok: false }` for the caller to show.
+   */
+  downloadTopicDocument: (item: TopicStarterItem) => Promise<DownloadOutcome>
   /**
    * Opens a public file by the name a URL carries, for a link whose file this
    * client hasn't loaded — the catalogue is capped, and a signed-out reader
@@ -344,21 +370,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       if (!doc || doc.isFolder) return { ok: false, error: "That file could not be found." }
       try {
         const bytes = await htmlToDocxBytes(documentHtml(doc))
-        // `Blob` wants an `ArrayBuffer`-backed part; `toDocx`'s `Uint8Array` is
-        // typed over the wider `ArrayBufferLike`, so slice out a concrete one.
-        const arrayBuffer = bytes.buffer.slice(
-          bytes.byteOffset,
-          bytes.byteOffset + bytes.byteLength,
-        ) as ArrayBuffer
-        const blob = new Blob([arrayBuffer], {
-          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        })
-        const url = URL.createObjectURL(blob)
-        const link = document.createElement("a")
-        link.href = url
-        link.download = docxDownloadFilename(doc.title)
-        link.click()
-        URL.revokeObjectURL(url)
+        triggerDocxDownload(bytes, docxDownloadFilename(doc.title))
         return { ok: true }
       } catch (error) {
         console.error("[reason-docs] could not convert document to .docx", error)
@@ -372,6 +384,26 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     },
     [documents, documentHtml],
   )
+
+  // Read-only, so no `documentHtml`-style live-edit lookup: a topic starter's
+  // `content`/`format` are whatever the catalogue handed the tree, unlike an
+  // owned document which may have an unsaved in-session edit.
+  const downloadTopicDocument = useCallback(async (item: TopicStarterItem): Promise<DownloadOutcome> => {
+    if (item.isFolder) return { ok: false, error: "That file could not be found." }
+    try {
+      const bytes = await htmlToDocxBytes(topicStarterHtml(item))
+      triggerDocxDownload(bytes, docxDownloadFilename(item.title))
+      return { ok: true }
+    } catch (error) {
+      console.error("[reason-docs] could not convert topic starter to .docx", error)
+      return {
+        ok: false,
+        error: `${item.title || "This file"} could not be downloaded (${
+          error instanceof Error ? error.message : String(error)
+        }).`,
+      }
+    }
+  }, [])
 
   const updateContent = useCallback(
     (id: number, html: string) => {
@@ -508,6 +540,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       importFiles,
       documentHtml,
       downloadDocument,
+      downloadTopicDocument,
       openPublicByRef,
     }),
     [
@@ -533,6 +566,7 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       importFiles,
       documentHtml,
       downloadDocument,
+      downloadTopicDocument,
       openPublicByRef,
     ],
   )
