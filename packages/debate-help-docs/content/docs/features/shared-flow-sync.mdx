@@ -35,3 +35,9 @@ Live sync:
 
 Live sync is opt-in, per-Flow-ID, off by default, and polls on a ~4s
 interval rather than pushing instantly.
+
+Logged edits themselves follow the account-wide
+[Tool Data Sync](../internals/tool-data-sync.mdx): they sync to your account
+like any other tool's saved work, so signing in on another device carries
+your flow edit log with you — separate from the live sync toggle above, which
+is about sharing *in-progress* edits with teammates in real time.

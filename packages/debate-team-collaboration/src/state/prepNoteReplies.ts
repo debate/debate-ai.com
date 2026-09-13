@@ -7,10 +7,11 @@
  * `noteId`, one per `PrepNote`), so `listRepliesForNote` filters and sorts
  * oldest-first for a chronological thread.
  *
- * Unlike `dailyBestCardComments.ts`, this store has no account-sync
- * counterpart yet — `state/prepNotes.ts` itself isn't account-synced (see
- * `packages/debate-help-docs/content/docs/internals/prep-notes.mdx`'s Known gaps), so there's no `/api/`-backed
- * D1 table for this slice to sync replies into either.
+ * Like `dailyBestCardComments.ts`, this store syncs to the signed-in user's
+ * account as the `prepNoteReplies` collection — one entry in
+ * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, the same generic sync
+ * `prepNotes` itself rides on (see `docs/internals/tool-data-sync.mdx`),
+ * with no wiring needed in this file.
  *
  * @module state/prepNoteReplies
  */

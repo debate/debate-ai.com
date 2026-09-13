@@ -9,11 +9,14 @@
  * pattern `saved_flows`/`saved_rounds` use — and lifts owner, bot, topic,
  * outcome and result into columns so the round list can be queried.
  *
- * Transcripts and gamification are deliberately not implemented here: this
- * app has no `score`/`badges` columns on `user`, so `recordCompletedRound`'s
- * optional hooks stay unset and the round's `result` is recorded on the
- * debate row instead. `computeGamificationAward` remains exported from the
- * package for whenever those columns land.
+ * Gamification is persisted on the `user_settings` row's `practiceVsAiScore`/
+ * `practiceVsAiBadges` columns (see schema.ts's comment on those). There is
+ * no persisted transcript beyond the debate row itself: `saveTranscript`
+ * stays unset, since `createDebate`/`appendMessage`/`setOutcome` already keep
+ * the full history in `practiceVsAiDebates.data` and a second copy would just
+ * be a redundant write. There is also no real streak yet —
+ * `getGamificationProfile` always reports `currentStreak: 0` — see the
+ * schema comment for why.
  */
 
 import { and, desc, eq } from "drizzle-orm"
@@ -21,10 +24,23 @@ import type {
   DebateMessage,
   DebateStore,
   DebateVsBotRecord,
+  GamificationAward,
+  GamificationProfile,
 } from "debate-practice-vs-ai"
 import { resolveResultStatus } from "debate-practice-vs-ai"
 import { getDBFromContext } from "@/lib/database/context"
-import { practiceVsAiDebates } from "@/lib/database/schema"
+import { practiceVsAiDebates, userSettings } from "@/lib/database/schema"
+
+/** Badge ids earned so far, tolerating a corrupt or missing blob. */
+function parseBadges(raw: string | null | undefined): string[] {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    return Array.isArray(parsed) ? parsed.filter((badge): badge is string => typeof badge === "string") : []
+  } catch {
+    return []
+  }
+}
 
 /** Rebuild a record from a row, tolerating a `data` blob that fails to parse. */
 function rowToRecord(row: {
@@ -153,6 +169,46 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
         .where(
           and(eq(practiceVsAiDebates.id, numericId), eq(practiceVsAiDebates.userId, userId)),
         )
+    },
+
+    async getGamificationProfile(): Promise<GamificationProfile> {
+      const db = await getDBFromContext()
+      const [row] = await db
+        .select({ score: userSettings.practiceVsAiScore, badges: userSettings.practiceVsAiBadges })
+        .from(userSettings)
+        .where(eq(userSettings.userId, userId))
+        .limit(1)
+      return {
+        score: row?.score ?? 0,
+        badges: parseBadges(row?.badges),
+        // No dated activity log to derive a real streak from yet — see the
+        // schema comment on `practiceVsAiScore`/`practiceVsAiBadges`.
+        currentStreak: 0,
+      }
+    },
+
+    async applyGamificationAward(_userId: string, award: GamificationAward) {
+      const db = await getDBFromContext()
+      const [existing] = await db
+        .select({ badges: userSettings.practiceVsAiBadges })
+        .from(userSettings)
+        .where(eq(userSettings.userId, userId))
+        .limit(1)
+      const badges = JSON.stringify([...new Set([...parseBadges(existing?.badges), ...award.badgesAwarded])])
+      const now = new Date()
+      await db
+        .insert(userSettings)
+        .values({
+          userId,
+          practiceVsAiScore: award.newScore,
+          practiceVsAiBadges: badges,
+          createdAt: now,
+          updatedAt: now,
+        })
+        .onConflictDoUpdate({
+          target: userSettings.userId,
+          set: { practiceVsAiScore: award.newScore, practiceVsAiBadges: badges, updatedAt: now },
+        })
     },
   }
 }

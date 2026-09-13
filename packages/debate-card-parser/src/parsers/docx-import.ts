@@ -15,21 +15,13 @@
  */
 import JSZip from "jszip";
 
-/** Size and count ceilings applied to a single import request. */
-export const DOCX_IMPORT_LIMITS = {
-  /** Most DOCX files accepted from one upload. */
-  maxFiles: 100,
-  /** Largest single DOCX, uncompressed. Verbatim files rarely pass ~10MB. */
-  maxFileBytes: 25 * 1024 * 1024,
-  /** Largest upload body accepted, DOCX or ZIP. */
-  maxUploadBytes: 100 * 1024 * 1024,
-} as const;
-
 /**
  * Machine-readable cause of an import failure.
  *
  * Kept stable so logs and the admin UI can group failures by cause instead of
- * by message text.
+ * by message text. `too-large` and `too-many-files` are no longer raised —
+ * imports are no longer capped by size or file count — but stay in the union
+ * so archived logs from before the caps were lifted still type-check.
  */
 export type DocxImportErrorCode =
   | "empty-file"
@@ -323,17 +315,12 @@ export async function docxBytesToHtml(bytes: ArrayBuffer): Promise<string> {
  * Rejects bytes that cannot be a DOCX, naming which impostor they are.
  *
  * @param bytes - The uploaded file's bytes.
- * @throws {DocxImportError} When the signature or size rules out a DOCX.
+ * @throws {DocxImportError} When the signature or an empty body rules out a
+ *   DOCX. Size is not checked — imports are not capped.
  */
 export function assertReadableDocxBytes(bytes: ArrayBuffer): void {
   if (bytes.byteLength === 0) {
     throw new DocxImportError("empty-file", "The file is empty (0 bytes).");
-  }
-  if (bytes.byteLength > DOCX_IMPORT_LIMITS.maxFileBytes) {
-    throw new DocxImportError(
-      "too-large",
-      `The file is ${formatBytes(bytes.byteLength)}, over the ${formatBytes(DOCX_IMPORT_LIMITS.maxFileBytes)} per-file limit.`,
-    );
   }
 
   const signature = detectFileSignature(bytes);
@@ -375,12 +362,6 @@ export async function collectDocxEntries(
   const name = fileName.toLowerCase();
   if (bytes.byteLength === 0) {
     throw new DocxImportError("empty-file", "The upload is empty (0 bytes).");
-  }
-  if (bytes.byteLength > DOCX_IMPORT_LIMITS.maxUploadBytes) {
-    throw new DocxImportError(
-      "too-large",
-      `The upload is ${formatBytes(bytes.byteLength)}, over the ${formatBytes(DOCX_IMPORT_LIMITS.maxUploadBytes)} limit.`,
-    );
   }
 
   if (name.endsWith(".docx")) {
@@ -430,12 +411,6 @@ export async function collectDocxEntries(
       skipped > 0
         ? `No DOCX files were found in that ZIP — its ${skipped} file${skipped === 1 ? "" : "s"} are all other formats, macOS resource forks, or Word lock files.`
         : "The ZIP is empty.",
-    );
-  }
-  if (entries.length > DOCX_IMPORT_LIMITS.maxFiles) {
-    throw new DocxImportError(
-      "too-many-files",
-      `The ZIP holds ${entries.length} DOCX files; uploads are limited to ${DOCX_IMPORT_LIMITS.maxFiles}. Split it into smaller archives.`,
     );
   }
   return entries;

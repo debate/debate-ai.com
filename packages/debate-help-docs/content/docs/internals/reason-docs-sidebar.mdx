@@ -270,10 +270,36 @@ naming the failure rather than a blank document.
   request, leaving the files converted before it in the library. Splitting
   the archive is the workaround; moving the conversion into the browser (as
   the Parquet card importer does) is the fix.
-- There is no way to download a topic starter's `.cmir`. The file is stored
+- ~~There is no way to download a topic starter's `.cmir`. The file is stored
   and opened in the editor, but the library exposes no file endpoint. The
   same holds for an uploaded document: it goes in as a `.docx` and can only
-  come back out through the editor.
+  come back out through the editor.~~ **Fixed:** both `FileTree`'s and
+  `TopicStarterTree`'s row menus have a "Download as .docx" item (not offered
+  for a folder row — there is nothing to convert). `FileTree`'s wires to
+  `ReasonDocsProvider.downloadDocument`, which runs the row's HTML (whatever
+  shape it is stored in — `documentHtml` already resolves that, live edits
+  included) through `htmlToDocxBytes` (`lib/cardmirror/stored-cmir.ts`,
+  `htmlToDoc` + `debate-editor/engine`'s `toDocx`) and triggers a browser
+  download named by `docxDownloadFilename`. `TopicStarterTree`'s wires to the
+  new `ReasonDocsProvider.downloadTopicDocument`, the same conversion run
+  against `topicStarterHtml(item)` instead — a topic starter is read-only, so
+  unlike `downloadDocument` there is no live-edit lookup to resolve first.
+  Both share the actual browser-download trigger (`triggerDocxDownload`, a
+  small helper in `ReasonDocsProvider.tsx`) so the `Blob`/anchor-click
+  mechanics live in one place. `ReasonDocsSidebarPanels` shows a download
+  failure from either tree under that tree specifically (`downloadError` for
+  Files, `topicDownloadError` for Topic Starters), not the other. The editor
+  itself still exposes no export action of its own — opening the sidebar row
+  menu is still the only way to export — which is unchanged and not tracked
+  as a gap, since it was never a stated goal. Vitest-covered:
+  `apps/debate-ai.com/lib/cardmirror/__tests__/stored-cmir-render.test.ts`
+  adds the `storedContentToHtml`/`topicStarterHtml` coverage this download
+  path leans on (a legacy HTML row passed through untouched, a `.cmir` row
+  parsed and reserialized, format-less sniffing, an absent-content row, and a
+  `.cmir` that fails to parse rendering its escaped-safe notice instead of
+  throwing) that neither function had before — previously they only fed the
+  editor's `content` prop, where the same bug would have been a rendering
+  glitch rather than a broken or silently wrong file download.
 - Renaming a file changes its URL, and nothing redirects the old one — it
   falls through to the first-file fallback like any other name that no longer
   resolves.

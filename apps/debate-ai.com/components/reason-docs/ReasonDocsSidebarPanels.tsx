@@ -44,7 +44,7 @@ import {
 } from "@/lib/reason-docs/route-selection"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
-import { TopicStarterTree } from "./TopicStarterTree"
+import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
 import type { ReasonDocument } from "./types"
 
@@ -111,6 +111,8 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     selectTopicDocument,
     importFiles,
     importing,
+    downloadDocument,
+    downloadTopicDocument,
   } = useReasonDocs()
 
   const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
@@ -118,6 +120,11 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
   /** What the last upload couldn't take, shown under the tree until the next
    *  one. Silence would leave a reader watching a file that never appears. */
   const [importErrors, setImportErrors] = useState<string[]>([])
+  /** Why the last download failed, shown the same way until the next attempt. */
+  const [downloadError, setDownloadError] = useState<string | null>(null)
+  /** Same as `downloadError`, for the Topic Starters panel — kept separate so
+   *  a failure in one panel isn't shown under the other. */
+  const [topicDownloadError, setTopicDownloadError] = useState<string | null>(null)
   const uploadInputRef = useRef<HTMLInputElement>(null)
 
   // Panel choice and collapse state are per-device view preferences (same as
@@ -224,6 +231,26 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
       if (first) goToEditor({ kind: "document", id: first.id }, created)
     },
     [importFiles, goToEditor],
+  )
+
+  const downloadFile = useCallback(
+    (id: number) => {
+      setDownloadError(null)
+      void downloadDocument(id).then((result) => {
+        if (!result.ok) setDownloadError(result.error)
+      })
+    },
+    [downloadDocument],
+  )
+
+  const downloadTopicFile = useCallback(
+    (item: TopicStarterItem) => {
+      setTopicDownloadError(null)
+      void downloadTopicDocument(item).then((result) => {
+        if (!result.ok) setTopicDownloadError(result.error)
+      })
+    },
+    [downloadTopicDocument],
   )
 
   return (
@@ -341,6 +368,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     onDelete={(id) => void deleteDocument(id)}
                     onMove={(id, parentId) => void moveDocument(id, parentId)}
                     onUpload={(files, parentId) => void uploadFiles(files, parentId)}
+                    onDownload={downloadFile}
                   />
                   {importErrors.length > 0 && (
                     <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
@@ -348,6 +376,9 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                         <li key={message}>{message}</li>
                       ))}
                     </ul>
+                  )}
+                  {downloadError && (
+                    <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{downloadError}</p>
                   )}
                 </div>
               )}
@@ -363,7 +394,11 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                       selectTopicDocument(item)
                       goToEditor({ kind: "topic", id: item.id })
                     }}
+                    onDownload={downloadTopicFile}
                   />
+                  {topicDownloadError && (
+                    <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
+                  )}
                 </div>
               )}
 

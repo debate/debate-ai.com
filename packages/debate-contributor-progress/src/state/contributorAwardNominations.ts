@@ -10,9 +10,11 @@
  * This is a lightweight, informal signal — unlike `lib/reviewer-permissions.ts`'s
  * tier-gated review actions, anyone can nominate anyone (but not themself,
  * enforced by `canNominatePeer`) and a nomination has no effect on the
- * helpfulness-score-based award winners in `lib/contributor-awards.ts`. No
- * account-sync exists yet — see `packages/debate-help-docs/content/docs/features/contributor-awards.mdx`'s
- * Known gaps.
+ * helpfulness-score-based award winners in `lib/contributor-awards.ts`.
+ * Syncs to the signed-in user's account as the `contributorAwardNominations`
+ * collection in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, with no
+ * wiring needed in this file — see
+ * `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`.
  *
  * `secondPeerNomination` closes the "🏆 Top Contributor Awards" bullet's
  * next-named follow-up after peer nominations, "per-nomination 'seconding'/

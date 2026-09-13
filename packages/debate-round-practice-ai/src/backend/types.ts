@@ -10,6 +10,8 @@
  * @module backend/types
  */
 
+import type { GamificationAward } from "./gamification"
+
 /**
  * Who produced a line of the transcript. Ported from `models.Message.Sender`,
  * which was a plain Go `string`: the three values below are what the UI
@@ -102,12 +104,21 @@ export interface JudgeRequestBody {
 /** POST /vsbot/judge response. Ported from `JudgeResponse`. */
 export interface JudgeResponse {
   result: string
+  /** Set only when the store implements the gamification hooks. */
+  gamification?: GamificationAward
 }
 
 /** POST /vsbot/concede body. Ported from `ConcedeRequest`. */
 export interface ConcedeRequestBody {
   debateId: string
   history?: DebateMessage[]
+}
+
+/** POST /vsbot/concede response. */
+export interface ConcedeResponse {
+  message: string
+  /** Set only when the store implements the gamification hooks. */
+  gamification?: GamificationAward
 }
 
 /** How a finished debate resolved, as the Go controller classified it. */

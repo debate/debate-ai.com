@@ -283,6 +283,20 @@ export const userSettings = sqliteTable("user_settings", {
   // `saved_tournament_results` table below, one row per result.
   qualificationPointsTable: text("qualification_points_table"),
   qualificationCutoff: text("qualification_cutoff"),
+  // Practice vs AI's gamification score and JSON-serialized array of earned
+  // badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts
+  // and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx).
+  // Read/written by apps/debate-ai.com/lib/practice-vs-ai/store.ts's
+  // `getGamificationProfile`/`applyGamificationAward`, not through the
+  // generic `/api/settings` PUT — these are server-computed round results,
+  // not a user preference. Null/zero means "no round scored yet", same
+  // semantics as every other nullable column here. There is deliberately no
+  // persisted streak counter yet: a real day-over-day streak needs a dated
+  // activity log this table doesn't have, so `getGamificationProfile`
+  // reports `currentStreak: 0` and the `Streak5` badge is unreachable until
+  // that follow-up lands.
+  practiceVsAiScore: integer("practice_vs_ai_score"),
+  practiceVsAiBadges: text("practice_vs_ai_badges"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),

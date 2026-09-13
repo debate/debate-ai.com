@@ -1,0 +1,199 @@
+---
+title: "Quest Streaks"
+---
+
+# Quest Streaks
+
+A roster of every contributor's daily-quest streak and milestone badges, a
+manual "Run today's mission check" trigger, a **streak freeze** ("grace day")
+action for a missed day, and an opt-in streak-lapse reminder banner — with the
+signed-in visitor's own freeze usage and reminder opt-in synced to their
+account.
+
+- **Route:** `/cards/streaks`
+- **Nav:** the Tools page's Community group
+- **Package:** [`debate-contributor-progress`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-contributor-progress/README.md)
+  (package name `debate-community`; `apps/debate-ai.com`
+  (`/api/settings`'s `questStreakSync` field, the `user_settings.quest_streak_sync`
+  D1 column).
+
+## What it shows
+
+`QuestStreaksPanel.tsx` renders one row per contributor with at least one
+persisted daily-mission result or streak freeze: current streak, longest
+streak, last completed day, every milestone badge earned, a **Streak freeze**
+column, and a **Reminder** column. Above the table, a "Run today's mission
+check" form lets any contributor id compute and save that day's mission
+result on demand — there is no scheduled-job infrastructure in this repo, so
+this manual trigger is the only way a day's result gets recorded. The
+signed-in visitor's own row (via an optional `signedInContributorId` prop,
+derived from a real session by `debate-research-evidence`'s
+`deriveContributorIdFromSessionIdentity`) is highlighted with a "You" badge.
+
+**Streak freeze:** when yesterday broke an in-progress streak
+(`lib/gamified-quests.ts#findFreezableStreakGapDayKey`), a "Use a grace day
+for …" button spends one of up to `MAX_STREAK_FREEZES_PER_WINDOW` (2) freezes
+per rolling `STREAK_FREEZE_WINDOW_DAYS` (30) window
+(`state/streakFreezes.ts#applyPersistedStreakFreeze`), bridging the streak
+instead of resetting it to zero. Denied attempts (future day, already
+complete, already frozen, no freezes left) show a message instead of writing
+anything.
+
+**Reminder:** a per-contributor 🔔 toggle
+(`state/streakLapseReminders.ts`) that, once on, shows a warning banner on
+that row whenever the contributor's in-progress streak is at risk of lapsing
+today (`lib/gamified-quests.ts#getStreakLapseRiskLength`). There is no
+push-notification infrastructure either, so the "reminder" is this in-app
+banner, seen when the contributor visits the panel — not a real push
+notification.
+
+## Data flow
+
+```
+state/dailyMissionResults.ts    (localStorage: dailyMissionResults)
+state/streakFreezes.ts          (localStorage: streakFreezes)
+  → applyPersistedStreakFreeze / mergeRemoteStreakFreezeDayKeys
+  → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
+state/streakLapseReminders.ts   (localStorage: streakLapseReminders)
+  → setStreakLapseReminderEnabled / mergeRemoteStreakLapseReminderEnabled
+  → getPersistedStreakLapseReminderInfo
+panels/QuestStreaksPanel.tsx
+  → useQuestStreakSync(signedInContributorId, refresh) — the account sync below
+apps/debate-ai.com/app/cards/streaks/page.tsx — mounts the panel as a route
+
+Account sync (signed-in visitor's own row only):
+lib/quest-streak-sync.ts        (pure — no fetch, no localStorage)
+  → QuestStreakSyncPayload          { lapseReminderEnabled, freezeDayKeys }
+  → isValidQuestStreakSyncPayload   exactly these two keys, freezeDayKeys
+                                       capped at MAX_QUEST_STREAK_FREEZE_DAY_KEYS
+                                       (366) YYYY-MM-DD strings
+  → normalizeQuestStreakSyncPatch   validates an untrusted PUT body's
+                                       `questStreakSync` field (null clears it)
+  → serializeQuestStreakSync / parseQuestStreakSync
+                                     the user_settings.quest_streak_sync
+                                       column, JSON-stringified
+
+lib/quest-streak-sync-client.ts (fetch only)
+  → fetchQuestStreakSync            GET /api/settings (null on 401)
+  → saveQuestStreakSync             PUT /api/settings { questStreakSync }
+
+hooks/useQuestStreakSync.ts     (the glue QuestStreaksPanel calls)
+  → on mount: fetches the account's payload, merges its freezeDayKeys/
+      lapseReminderEnabled into the local stores via mergeRemoteStreakFreezeDayKeys/
+      mergeRemoteStreakLapseReminderEnabled, calls the caller's onMerged()
+      if anything actually changed
+  → pushLocalState()                reads the contributor's current local
+      freezeDayKeys/lapseReminderEnabled and PUTs them — called by
+      QuestStreaksPanel after every local freeze/reminder-toggle write for
+      that one contributor
+
+apps/debate-ai.com
+  → app/api/settings/route.ts       GET/PUT — one user_settings row per
+                                       signed-in user; requires a session,
+                                       401 without one
+```
+
+## Account sync, in detail
+
+Only the **signed-in visitor's own row** syncs — every other contributor's
+row in the roster is local-only, same as before this sync existed. That
+matches every other per-contributor localStorage store in this package
+(`dailyMissionResults`, the roster itself): there is no contributor identity
+system, only a free-text contributor id, so "sync this contributor" would
+have no way to know whose account to write to for anyone but the one real
+session in the room.
+
+Unlike [Tool Data Sync](tool-data-sync.md)'s `saved_tool_records` table, this
+sync does not go through `TOOL_RECORD_COLLECTIONS`: neither store fits that
+allowlist's required shape (a JSON array of objects each carrying one stable
+string id field).
+
+- `streakFreezes` records are naturally keyed by the *pair*
+  `(contributorId, dayKey)`, not a single field.
+- `streakLapseReminders` isn't an array of records at all — it's a bare
+  `string[]` of opted-in contributor ids.
+
+So this sync instead bundles both preferences into one JSON value —
+`QuestStreakSyncPayload`, `{ lapseReminderEnabled, freezeDayKeys }` — on the
+`quest_streak_sync` column of the same `user_settings` row every other
+per-user setting (theme, favorite tools, Research Progress's goal,
+Standings' point-weight table) already uses, mirroring
+`research-progress-goal-sync.ts`'s split exactly: a framework-free
+validation/serialization module (`lib/quest-streak-sync.ts`), a fetch-only
+client (`lib/quest-streak-sync-client.ts`), and a React hook
+(`hooks/useQuestStreakSync.ts`) that wires the two together against the
+existing local stores.
+
+**The merge is additive-only, never a whole-value replace.**
+`mergeRemoteStreakFreezeDayKeys` adds only the remote dayKeys this device
+doesn't already have (mirroring `tool-data-sync.mdx`'s "union, never remove"
+merge convention) and deliberately bypasses `canApplyStreakFreeze` —
+re-validating a freeze that was already spent and synced from another device
+against *this* device's copy of the mission history could reject a freeze
+that's already real (e.g. if this device hasn't synced the mission result
+that justified it yet). `mergeRemoteStreakLapseReminderEnabled` only ever
+turns the local opt-in **on** when the remote says `true`; a remote `false`
+means "not yet synced from elsewhere," not "explicitly disabled" (there is no
+way to distinguish those from a single boolean), so it is never used to turn
+a locally-enabled reminder back off.
+
+**Local write always wins, sync is best-effort.** `applyPersistedStreakFreeze`
+and `setStreakLapseReminderEnabled` write to `localStorage` synchronously and
+return before any network call. `QuestStreaksPanel`'s `handleUseFreeze`/
+`handleToggleReminder` call `pushLocalState()` afterward, only when the row
+being changed is the signed-in visitor's own (`id === signedInContributorId`)
+— every other row's change never reaches the network, since there's no
+account to sync it to. `pushLocalState` itself is a no-op until the mount-time
+fetch has resolved (`remoteAvailableRef`), so a push can't race ahead of the
+merge and re-upload a value the merge hasn't reconciled yet; its `saveQuestStreakSync`
+call swallows its own rejection, matching every other synced store's "local
+apply is never blocked by a sync failure" rule.
+
+## Cross-tab live update
+
+`QuestStreaksPanel` subscribes to the browser's `storage` event via
+`state/live-update.ts`'s `isQuestStreaksLiveUpdateStorageEvent` and calls its
+`refresh()` closure when a daily mission result or streak freeze changes in
+another tab of the same browser — the `storage` event never fires in the tab
+that made the write. This covers other tabs on the *same device* only; a
+change synced in from a different device is picked up on this device's next
+mount (the account merge above), not live.
+
+## Tests
+
+- `packages/debate-contributor-progress/test/streakFreezes.test.ts` —
+  `applyPersistedStreakFreeze`'s denial reasons, `mergeRemoteStreakFreezeDayKeys`'s
+  additive-only merge (adds only new dayKeys, never removes one, reports
+  whether anything actually changed), and the roster builders.
+- `packages/debate-contributor-progress/test/streakLapseReminders.test.ts` —
+  the opt-in toggle's no-duplicate-write behavior and
+  `mergeRemoteStreakLapseReminderEnabled`'s "only ever turns on, never off"
+  rule.
+- `packages/debate-contributor-progress/test/quest-streak-sync.test.ts` —
+  `isValidQuestStreakSyncPayload`'s full validation surface (the day-key
+  format, the `MAX_QUEST_STREAK_FREEZE_DAY_KEYS` cap, rejecting an
+  unrecognized field such as a smuggled `contributorId`),
+  `normalizeQuestStreakSyncPatch`'s PUT-body handling, and the
+  serialize/parse round-trip (corrupt or invalid-shape JSON degrades to
+  `null` rather than throwing).
+- `useQuestStreakSync` and its wiring in `QuestStreaksPanel` are intentionally
+  untested, matching this repo's existing convention for account-synced,
+  `localStorage`-backed hooks and their UI (e.g. `tool-data-sync.md`'s
+  `useToolRecordSync`, `judge-paradigm-selections.md`'s `useJudgeDecisions`).
+
+## Known gaps
+
+- Only the signed-in visitor's own row syncs to an account. Every other
+  contributor's row in the roster stays per-browser `localStorage`, the same
+  "per-browser, not a shared team resource" gap
+  [Tool Data Sync](tool-data-sync.md) notes for Judge Profiles and Opponent
+  Team Profiles — there is no contributor-identity system in this repo to
+  sync anyone else's row to.
+- The account merge runs once, on mount, and on a manual freeze/reminder
+  change; there is no push channel, so a freeze spent or a reminder toggled
+  on another device shows up on this device's next page load rather than
+  live.
+- The trigger for a day's mission result is a manual button click, not a
+  scheduled job — there is no cron/scheduled-job infrastructure in this repo
+  for it to run on. See the feature doc's Known gaps for the same point from
+  a user's perspective.

@@ -91,11 +91,11 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  * GET  — the current user's saved settings, or the matching `DEFAULT_*`
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
- *   addFavoriteTool?, removeFavoriteTool?, wordLimitPresets?,
- *   outlineFilterPresets?, newsRead?, newsLiked?, savedArgumentCollections?,
- *   researchProgressGoal?, questStreakSync?, qualificationPointsTable?,
- *   qualificationCutoff? } — validates and upserts the
- *   given fields (validated by `debate-round`'s
+ *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
+ *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked?,
+ *   savedArgumentCollections?, researchProgressGoal?, questStreakSync?,
+ *   qualificationPointsTable?, qualificationCutoff? } — validates and
+ *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
  *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`,
@@ -110,13 +110,17 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
  *   collections", Research Progress "My research goal", and Quest Streaks
  *   reminder/freeze UIs themselves use), returning the resulting full
- *   settings row. `addFavoriteTool`/`removeFavoriteTool` resolve a single
- *   star/unstar against the row's *current* stored `favoriteTools` value
- *   (read-then-write, like the `editorPreferences` merge below) instead of
- *   trusting the caller's own copy of the list, which two tabs starring
- *   different tools in quick succession could otherwise race — a plain
- *   `favoriteTools` array is still accepted for callers that legitimately
- *   need a whole-list replace (e.g. pruning stale entries).
+ *   settings row. `addFavoriteTool`/`removeFavoriteTool`/`removeFavoriteTools`
+ *   resolve a single star/unstar, or a batch prune, against the row's
+ *   *current* stored `favoriteTools` value (read-then-write, like the
+ *   `editorPreferences` merge below) instead of trusting the caller's own
+ *   copy of the list, which two tabs editing favorites at once could
+ *   otherwise race — see `state/favoriteTools.ts#applyFavoriteToolOp`'s
+ *   docstring and `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   Known gaps. A plain `favoriteTools` array is still accepted for a
+ *   caller that genuinely needs a whole-list replace, but no code path in
+ *   this app sends one anymore — `pruneUnknown`'s bulk cleanup, the last
+ *   one that did, now sends `removeFavoriteTools` instead.
  */
 
 type SettingsRow = {
@@ -252,6 +256,7 @@ export async function PUT(req: NextRequest) {
     favoriteToolsResult.valid.favoriteTools === undefined &&
     favoriteToolOpResult.valid.addFavoriteTool === undefined &&
     favoriteToolOpResult.valid.removeFavoriteTool === undefined &&
+    favoriteToolOpResult.valid.removeFavoriteTools === undefined &&
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
@@ -265,7 +270,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -292,14 +297,16 @@ export async function PUT(req: NextRequest) {
   } = { ...valid }
   if (
     favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
-    favoriteToolOpResult.valid.removeFavoriteTool !== undefined
+    favoriteToolOpResult.valid.removeFavoriteTool !== undefined ||
+    favoriteToolOpResult.valid.removeFavoriteTools !== undefined
   ) {
-    // A single star/unstar op is resolved against the row's *current*
-    // stored list rather than the caller's own copy — see this route's
-    // docstring and `state/favoriteTools.ts#applyFavoriteToolOp`. Narrows,
-    // but doesn't eliminate, the lost-update race two tabs starring
-    // different tools in quick succession used to hit with a plain
-    // `favoriteTools` whole-list replace.
+    // A single star/unstar op, or a batch prune, is resolved against the
+    // row's *current* stored list rather than the caller's own copy — see
+    // this route's docstring and `state/favoriteTools.ts#applyFavoriteToolOp`.
+    // This is what closes the lost-update race two tabs editing favorites at
+    // once used to hit with a plain `favoriteTools` whole-list replace —
+    // `removeFavoriteTools` is the batch form `pruneUnknown`'s bulk cleanup
+    // now uses instead of that whole-list replace.
     const [existing] = await db
       .select({ favoriteTools: userSettings.favoriteTools })
       .from(userSettings)

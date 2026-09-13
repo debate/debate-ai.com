@@ -54,6 +54,9 @@ One entry per `localStorage` store, from
 `debate-data-sync/src/state/toolRecordCollections.ts`'s
 `TOOL_RECORD_COLLECTIONS` — the list itself is the source of truth, and it is
 long enough now that the table below groups it rather than restating every row.
+Each entry's `section` field (one of `TOOL_RECORD_SECTIONS`) names the same
+group and is what `/settings`' sync-status list renders as a heading — the
+prose below and the UI group tools identically on purpose.
 
 **Videos** (`/videos`) — `debateVideosFavorites` and `debateVideosHidden`, both
 keyed by `videoId`, and `debateVideoReports` keyed by `id`.
@@ -75,14 +78,16 @@ aggregate (`judgeRoundRecords`, by `id`); the Judge Paradigm Picker
 (`opponentPersonaSelections`, by `sessionId`) and its custom library
 (`customOpponentPersonaLibrary`, by `id`).
 
-**Flowing and writing** — Speech Summaries (`flowSummaries`) and the Argument
-Tree Outline (`argumentTrees`), by `roundId`; Prep Notes (`prepNotes`), their
-replies (`prepNoteReplies`) and Flow Annotations (`flowAnnotations`), by `id`.
+**Flowing and writing** — Speech Summaries (`flowSummaries`), the Argument
+Tree Outline (`argumentTrees`) and its per-round filter selection
+(`argumentTreeFilters`), by `roundId`; Prep Notes (`prepNotes`), their
+replies (`prepNoteReplies`) and assignment notifications
+(`prepNoteNotifications`), and Flow Annotations (`flowAnnotations`), by `id`.
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
 (`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
-(`coachMaterialVersions`), and the Coach Workspace's session history
-(`coachingSessionHistory`), all by `id`.
+(`coachMaterialVersions`), the Coach Workspace's session history
+(`coachingSessionHistory`), and the Flow Edit Log (`flowEdits`), all by `id`.
 
 **Research** — the Evidence Library (`evidenceLibraryEntries`), card scores
 (`cardScores`) and their history (`cardScoreHistory`), the Contributions Feed
@@ -94,11 +99,15 @@ Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
 (`prepRoomChecklist`), its sprints (`sprintSessions`), notes (`sprintNotes`) and
 whiteboard (`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`),
-Daily Quests (`dailyQuestTemplates`), award nominations
+Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
+(`questTeams`), award nominations
 (`contributorAwardNominations`) and daily best-card comments
-(`dailyBestCardComments`), all by `id`; the Task Inbox (`routedTaskQueues`) by
-`topicId`; contributor flows (`roundContributorFlows`) and availability
-(`contributorAvailability`) by `contributorId`.
+(`dailyBestCardComments`), all by `id`; frozen Daily Best Card winners
+(`dailyBestCardAnnouncements`) and Top Contributor Award standings
+(`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
+(`routedTaskQueues`) by `topicId`; contributor flows (`roundContributorFlows`)
+and availability (`contributorAvailability`) by `contributorId`; completed
+research-task history (`completedResearchTasks`) by `id`.
 
 `TOOL_RECORD_COLLECTIONS` is an **allowlist**, not a convenience: the route
 rejects any collection key not in it, so the table can't be used as a
@@ -127,11 +136,6 @@ these stay local on purpose —
   the round and side it belongs to, so what the user wrote is kept — but the
   "current" pointer is rebuilt locally rather than synced. Giving the record its
   own id is what it would take to sync directly.
-- **`flowEdits`**, whose `SharedFlowSyncPanel`/`FlowEditLogPanel` has no route
-  yet. Every `href` in the catalog has to be a destination the sidebar links to
-  (`packages/debate-videos/test/tool-record-sync-catalog.test.ts` enforces it),
-  so listing it would put a dead link in `/settings` for data no panel can
-  show. It joins when its panel gets a route.
 
 Tools already backed by a `saved_*` table of their own — flows, rounds,
 tournament results — keep those. This table is for the stores that had nothing.
@@ -362,7 +366,12 @@ records it had just adopted.
 ## Seeing it
 
 `/settings` → Account → **Tool data** lists every synced tool with a link to
-it and says plainly which state you are in:
+it, grouped under the same section headings as the table above (Videos,
+Practice, Scouting and judging, …), and says plainly which state you are in.
+A search box above the list (`lib/settings/filter-synced-tool-sections.ts`)
+filters it by tool label or section name, case-insensitively, and drops a
+section down to only its matching tools rather than hiding the whole group —
+needed now that the catalog runs past fifty tools across seven sections.
 
 - Signed out — "These tools save to this browser only", every row "This
   browser", plus a row saying whether this browser will be asked to sign in
@@ -412,6 +421,11 @@ it and says plainly which state you are in:
 - `packages/debate-videos/test/tool-record-sync-catalog.test.ts` — every
   collection's `href` is a destination the sidebar links to, so
   `/settings`' list can't point at a 404.
+- `apps/debate-ai.com/lib/settings/__tests__/filter-synced-tool-sections.test.ts`
+  — the search box's matching logic: an empty or whitespace-only query
+  changes nothing, a label match is case-insensitive and by substring, a
+  section-name match keeps every tool under it, and a section left with no
+  match is dropped rather than rendered as an empty heading.
 
 ## Known gaps
 
@@ -441,11 +455,19 @@ it and says plainly which state you are in:
 - A record over `MAX_TOOL_RECORD_BYTES` (200 KB) never reaches the account: the
   route refuses it with a 413, and the watcher holds it back from the batch so
   it cannot take its collection's other records down with it. It still saves
-  locally, and it syncs if later edited under the cap — but until then it is
-  browser-only, and nothing says so outside `/settings`' row for that tool.
-- **The guest prompt is per-browser-session, not per-account.** The 30-minute
-  per-feature cooldown lives in `sessionStorage`, so a user who keeps declining
-  is asked again in a new tab. There is no "don't ask me again" that persists.
+  locally, and it syncs if later edited under the cap. ~~until then it is
+  browser-only, and nothing says so outside `/settings`' row for that
+  tool~~ **Fixed:** `/settings`' row now reflects this even when the watcher
+  finds it on a background tick rather than during the tab's initial
+  reconcile — `startToolRecordAutoSync` takes an `onFlush` callback and
+  `useToolRecordSync` folds its results into the same `results` state the
+  reconcile populates, so a record that grows past the cap mid-session no
+  longer leaves that tool showing "Synced" after it has stopped being true.
+- **The 30-minute per-feature cooldown is per-browser-session, not
+  per-account.** It lives in `sessionStorage`, so a user who dismisses a
+  prompt without opting out entirely is asked again about that feature in a
+  new tab. (A guest who instead picks "don't ask me again" gets the
+  persistent, cross-tab opt-out described above.)
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it

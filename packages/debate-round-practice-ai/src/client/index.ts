@@ -13,6 +13,7 @@
 
 import type {
   ConcedeRequestBody,
+  ConcedeResponse,
   CreateDebateResponse,
   DebateMessage,
   DebateRequestBody,
@@ -112,9 +113,9 @@ export async function concedeDebate(
   debateId: string,
   history: DebateMessage[] = [],
   options: VsBotClientOptions = {},
-): Promise<void> {
+): Promise<ConcedeResponse> {
   const body: ConcedeRequestBody = { debateId, history }
-  await postJson<{ message: string }>("/concede", body, options, "Failed to concede debate")
+  return postJson<ConcedeResponse>("/concede", body, options, "Failed to concede debate")
 }
 
 /** Score a finished round. Returns the judge's raw reply, as upstream did. */

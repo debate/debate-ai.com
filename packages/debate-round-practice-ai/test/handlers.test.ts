@@ -137,6 +137,12 @@ describe("judgeDebate", () => {
     expect(profile?.score).toBe(50)
     expect(profile?.badges).toContain("FirstWin")
     expect(profile?.badges).toContain("Novice")
+
+    // The response echoes the same award back for the scorecard to show.
+    const award = (result.body as { gamification?: { newScore: number; badgesAwarded: string[] } })
+      .gamification
+    expect(award?.newScore).toBe(50)
+    expect(award?.badgesAwarded).toEqual(["FirstWin", "Novice"])
   })
 
   it("falls back to the user's latest round when no debateId is given", async () => {
@@ -166,6 +172,41 @@ describe("concedeDebate", () => {
     const profile = await store.getGamificationProfile!(actor.userId)
     expect(profile?.score).toBe(10)
     expect(profile?.badges).not.toContain("FirstWin")
+
+    const award = (result.body as { gamification?: { newScore: number; points: number } }).gamification
+    // A loss over the 10-point Novice threshold still earns that badge, just not FirstWin.
+    expect(award).toEqual({ points: 10, action: "debate_loss", badgesAwarded: ["Novice"], newScore: 10 })
+  })
+
+  it("omits gamification from the response when the store doesn't implement the hooks", async () => {
+    const bareStore = {
+      async createDebate() {
+        return "id-1"
+      },
+      async getDebate() {
+        return {
+          id: "id-1",
+          email: actor.email,
+          botName: "Yoda",
+          botLevel: "Legends",
+          topic: "Topic",
+          stance: "for",
+          history: [],
+          phaseTimings: [],
+          outcome: "",
+          createdAt: 0,
+        }
+      },
+      async getLatestDebate() {
+        return null
+      },
+      async setOutcome() {},
+    }
+    const backend = createPracticeVsAiBackend({ store: bareStore, model: createStaticModelClient("") })
+
+    const result = await backend.concedeDebate(actor, { debateId: "id-1", history: [] })
+    expect(result.status).toBe(200)
+    expect(result.body).toEqual({ message: "Debate conceded successfully" })
   })
 
   it("404s on an unknown debate", async () => {
