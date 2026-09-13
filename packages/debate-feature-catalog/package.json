@@ -3,8 +3,16 @@
   "version": "0.1.0",
   "description": "Canonical APP_FEATURES catalog (data + section/search/doc-url helpers) for the /features page, shared by the app, debate-ui's reference panel, and debate-community's News Stream spotlights",
   "private": true,
+  "type": "module",
   "author": "vtempest",
   "license": "rights.institute/prosper",
+  "main": "./src/feature-catalog.ts",
+  "types": "./src/feature-catalog.ts",
+  "exports": {
+    ".": "./src/feature-catalog.ts",
+    "./src/feature-catalog": "./src/feature-catalog.ts",
+    "./*": "./*"
+  },
   "scripts": {
     "coverage": "vitest run --coverage",
     "test": "vitest run",
