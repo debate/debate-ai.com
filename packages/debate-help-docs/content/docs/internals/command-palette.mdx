@@ -44,6 +44,10 @@ already show for the same tool, with no new catalog to keep in sync.
 
 - **Favorites** — the signed-in-or-local `useFavoriteTools` list, first,
   when it isn't empty.
+- **Recent** — the last few tools actually opened from the palette
+  (`useRecentTools`, most-recent-first), when it isn't empty. Local-only
+  (`localStorage`, not synced to the account) — see `lib/recentTools.ts`'s
+  header for why this doesn't reuse `useFavoriteTools`' account sync.
 - **Go to** — `/tools`, `/features`, `/news`, `/settings`: destinations that
   aren't themselves a cataloged tool.
 - One group per `/tools` heading (Workspaces, Community & Progress, Prep &
@@ -76,6 +80,8 @@ combo.
 app/tools/tool-groups.ts        — ALL_TOOLS / TOOL_GROUPS (existing; also
                                     used by /tools and FavoriteToolsSettings)
 lib/hooks/useFavoriteTools.ts   — existing account-linked favorites list
+lib/recentTools.ts              — pure push/parse helpers for the "Recent" group
+lib/hooks/useRecentTools.ts     — localStorage-only, cross-instance-synced recent list
 lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
                                     (the shadcn/ui-standard shape; cmdk had
                                     been a dependency with no caller yet)
@@ -111,6 +117,7 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
   of silently under-reaching. The lists themselves still have to be edited by
   hand in three places — this catches the omission, it doesn't remove the
   edit.
-- No recent-items or usage-based ranking — every open starts from the same
-  static favorites-then-catalog order regardless of what was picked last
-  time.
+- The "Recent" group tracks *palette selections only* — a tool opened via
+  its own `/tools` card, a direct link, or the editor's Workspace menu
+  doesn't promote it here. It's also capped at 5 and per-browser
+  (`localStorage`, no account sync), so it resets on a new device.

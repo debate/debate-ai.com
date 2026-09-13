@@ -29,7 +29,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { LayoutGrid, Rss, Settings as SettingsIcon, Star } from "lucide-react"
+import { Clock, LayoutGrid, Rss, Settings as SettingsIcon, Star } from "lucide-react"
 
 import {
   CommandDialog,
@@ -43,6 +43,7 @@ import {
 } from "@/lib/ui/primitives/command"
 import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "@/app/tools/tool-groups"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
+import { useRecentTools } from "@/lib/hooks/useRecentTools"
 import { onQuickLaunchText } from "@/lib/native/tauri"
 
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
@@ -87,6 +88,7 @@ export function GlobalCommandPalette() {
   const router = useRouter()
   const pathname = usePathname()
   const { favorites } = useFavoriteTools()
+  const { recent, recordVisit } = useRecentTools()
 
   useEffect(() => {
     return onQuickLaunchText((text) => {
@@ -119,13 +121,21 @@ export function GlobalCommandPalette() {
     (href: string) => {
       setOpen(false)
       router.push(href)
+      // Only cataloged tools build "Recent" — QUICK_ACTIONS destinations
+      // (Settings, News, …) aren't themselves a tool to resurface here.
+      if (ALL_TOOLS.some((t) => t.href === href)) recordVisit(href)
     },
-    [router],
+    [router, recordVisit],
   )
 
   const favoriteTools = useMemo(
     () => favorites.map((href) => ALL_TOOLS.find((t) => t.href === href)).filter((t): t is Tool => t !== undefined),
     [favorites],
+  )
+
+  const recentTools = useMemo(
+    () => recent.map((href) => ALL_TOOLS.find((t) => t.href === href)).filter((t): t is Tool => t !== undefined),
+    [recent],
   )
 
   // Rendered as-typed by cmdk's own fuzzy filter for label/value, but tool
@@ -168,6 +178,24 @@ export function GlobalCommandPalette() {
                   onSelect={() => go(tool.href)}
                 >
                   <Star className="fill-current text-amber-500" />
+                  <span className="flex-1 truncate">{tool.label}</span>
+                  <CommandShortcut className="hidden sm:inline">{tool.href}</CommandShortcut>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            <CommandSeparator />
+          </>
+        )}
+        {recentTools.length > 0 && (
+          <>
+            <CommandGroup heading="Recent">
+              {recentTools.map((tool) => (
+                <CommandItem
+                  key={`recent-${tool.href}`}
+                  value={`recent ${toolHaystack(tool)}`}
+                  onSelect={() => go(tool.href)}
+                >
+                  <Clock className="text-muted-foreground" />
                   <span className="flex-1 truncate">{tool.label}</span>
                   <CommandShortcut className="hidden sm:inline">{tool.href}</CommandShortcut>
                 </CommandItem>
