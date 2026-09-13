@@ -317,14 +317,25 @@ export async function flushToolRecords(): Promise<ToolRecordFlushResult[]> {
  * stacking a second watcher, which matters because `ToolRecordSyncProvider`
  * mounts in both the shell document and each dock frame.
  *
+ * @param onFlush - Called with a tick's results, when it had any worth
+ * reporting (something pushed, deleted, or held back — see
+ * {@link flushToolRecords}). This is the only way a caller learns about a
+ * background-tick failure, e.g. a record that grew past
+ * `MAX_TOOL_RECORD_BYTES` after the tab's initial reconcile: nothing else
+ * surfaces it, since the tick that finds it runs on its own, unobserved
+ * timer rather than in response to a call the caller is awaiting.
  * @returns A function that stops the watcher.
  */
-export function startToolRecordAutoSync(): () => void {
+export function startToolRecordAutoSync(
+  onFlush?: (results: ToolRecordFlushResult[]) => void,
+): () => void {
   stopToolRecordAutoSync();
   if (typeof window === "undefined") return () => {};
 
   const tick = () => {
-    void flushToolRecords();
+    void flushToolRecords().then((results) => {
+      if (onFlush && results.length > 0) onFlush(results);
+    });
   };
 
   const interval = setInterval(tick, TOOL_RECORD_AUTO_SYNC_INTERVAL_MS);
