@@ -39,6 +39,15 @@ ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-fil
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
+## debate-feature-catalog
+
+Canonical `APP_FEATURES` catalog for the `/features` page — data plus
+section/search/doc-url helpers, with no dependencies of its own (a leaf
+package, like `debate-data-sync`). Depended on by the app's live `/features`
+page, `debate-ui`'s reference `FeaturesPanel`, and `debate-contributor-progress`'s
+News Stream "Tool spotlight" posts, so a feature only needs to be registered
+once instead of hand-synced across three forks.
+
 ## debate-flow
 
 Package name `debate-flow-ebb`. The `ebb` local-first, keyboard-first flow editor, ported

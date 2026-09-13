@@ -172,7 +172,7 @@ const SettingsContent = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full w-full">
-        <Loader />
+        <AnimatedLoader />
       </div>
     );
   }

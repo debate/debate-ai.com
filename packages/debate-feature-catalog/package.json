@@ -1,0 +1,20 @@
+{
+  "name": "debate-feature-catalog",
+  "version": "0.1.0",
+  "description": "Canonical APP_FEATURES catalog (data + section/search/doc-url helpers) for the /features page, shared by the app, debate-ui's reference panel, and debate-community's News Stream spotlights",
+  "private": true,
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "scripts": {
+    "coverage": "vitest run --coverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}

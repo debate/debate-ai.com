@@ -13,6 +13,8 @@
   },
   "permissions": [
     "opener:allow-open-url",
-    "allow-system-info"
+    "allow-system-info",
+    "allow-quick-launch",
+    "autostart:default"
   ]
 }

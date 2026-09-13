@@ -443,11 +443,19 @@ it and says plainly which state you are in:
   it cannot take its collection's other records down with it. It still saves
   locally, and it syncs if later edited under the cap — but until then it is
   browser-only, and nothing says so outside `/settings`' row for that tool.
-- **The persistent opt-out is per-browser, not per-account.** "Don't ask me
-  again" and the `/settings` toggle both write to `localStorage`, so the
-  choice doesn't follow a guest to another browser or device the way an
-  account-linked preference would — signing in is what would make the
-  preference itself portable, which is the one thing the opted-out guest has
-  declined. The 30-minute per-feature cooldown (`sessionStorage`, unaffected
-  by the opt-out) is what a browser that has never opted out falls back to
-  between prompts.
+- **The guest prompt is per-browser-session, not per-account.** The 30-minute
+  per-feature cooldown lives in `sessionStorage`, so a user who keeps declining
+  is asked again in a new tab. There is no "don't ask me again" that persists.
+- **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
+  `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
+  system, and the command palette. This is deliberate, not an oversight: it
+  is an opt-in allowlist of the specific `localStorage` stores that still had
+  the "per-browser, not account-synced" gap and happen to share one shape (a
+  JSON array keyed by one string id field) — not a list of every tool, and
+  several `ALL_TOOLS` entries correctly have no row here at all (they're
+  backed by their own `saved_*` table, like flows and rounds, or they persist
+  nothing). Deriving it from `ALL_TOOLS` would either pull in tools that
+  can't be keyed this way or silently drop the shape check this table's
+  safety depends on, so it keeps its own list. See
+  [Unify the four hand-maintained tool catalogs](https://github.com/debate/debate-ai.com/issues/785)
+  for the sibling catalogs that *do* now cross-check each other.

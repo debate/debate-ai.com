@@ -14,7 +14,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["tray-icon"] }
 tauri-plugin-opener = "2"
 tauri-plugin-deep-link = "2"
 serde = { version = "1", features = ["derive"] }
@@ -29,6 +29,7 @@ urlencoding = "2"
 # electron-updater/tauri-updater's job on mobile).
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2"
+tauri-plugin-autostart = "2"
 # Backs the fullscreen toggle: the window opens in true OS fullscreen by
 # default (profile "window.fullscreen"), which has no title bar to click a
 # restore button on, so an OS-level shortcut is the only reliable way out
