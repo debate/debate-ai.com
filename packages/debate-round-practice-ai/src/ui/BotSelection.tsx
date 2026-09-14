@@ -51,6 +51,8 @@ export interface BotSelectionProps {
   onStart: (debate: StartedDebate) => void
   /** Where the client posts. Defaults to the app's `/api/vsbot`. */
   apiBaseUrl?: string
+  /** Called when the user asks to view their past debates. Omit to hide the button. */
+  onViewHistory?: () => void
 }
 
 const DRAFT_KEY = "botSelectionState"
@@ -78,7 +80,7 @@ function Loader() {
   )
 }
 
-export function BotSelection({ onStart, apiBaseUrl }: BotSelectionProps) {
+export function BotSelection({ onStart, apiBaseUrl, onViewHistory }: BotSelectionProps) {
   const [selectedBot, setSelectedBot] = useState<string | null>(null)
   const [topic, setTopic] = useState<string>("custom")
   const [customTopic, setCustomTopic] = useState<string>("")
@@ -244,6 +246,11 @@ export function BotSelection({ onStart, apiBaseUrl }: BotSelectionProps) {
           <p className="mt-1 text-sm text-muted-foreground sm:text-base">
             Select a bot and set up your debate challenge.
           </p>
+          {onViewHistory && (
+            <Button variant="outline" className="mt-3" onClick={onViewHistory}>
+              View Debate History
+            </Button>
+          )}
         </div>
 
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2">

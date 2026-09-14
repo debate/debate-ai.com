@@ -78,9 +78,9 @@ describe("buildSearchParams", () => {
 });
 
 describe("buildSearchUrl", () => {
-  it("prefixes the serialized params with the search path", () => {
+  it("prefixes the serialized params with the cards API path", () => {
     expect(buildSearchUrl({ ...base, searchTerm: "nuclear war" })).toBe(
-      "search?sort=_text_match%3Adesc&q=nuclear+war",
+      "/api/search?sort=_text_match%3Adesc&q=nuclear+war",
     );
   });
 });

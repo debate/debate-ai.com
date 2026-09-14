@@ -534,6 +534,39 @@ export const savedSpeechSendLog = sqliteTable(
 
 export type SavedSpeechSendLogRow = typeof savedSpeechSendLog.$inferSelect;
 
+// Account-linked Quick Cards library sync — closes the same standing "docs"
+// gap as `savedSpeechSendLog` above: the Quick Cards reusable-snippet library
+// (`packages/debate-editor/src/editor/quick-cards-store.ts`, IndexedDB on
+// web) was device-local only, unlike CardMirror's own documents
+// (`documents` above), which are already per-user D1 rows. Same
+// one-row-per-card, upsert-by-caller-id shape as `savedSpeechSendLog` — a
+// `QuickCard` is looked up/edited by its own `id` (not appended to a growing
+// log), so `clientId` holds that id and `GET /api/quick-cards` returns every
+// synced card in full for `quickCardsStore`'s merge-on-init.
+export const savedQuickCards = sqliteTable(
+  "saved_quick_cards",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_quick_cards_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_quick_cards_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedQuickCardRow = typeof savedQuickCards.$inferSelect;
+
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel
 // assessments for a round, not just the latest" follow-up. Same

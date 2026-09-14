@@ -10,7 +10,7 @@ import { drizzle } from "drizzle-orm/libsql"
 import { eq } from "drizzle-orm"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import * as schema from "../../database/schema"
-import { userSettings } from "../../database/schema"
+import { practiceVsAiDebates, userSettings } from "../../database/schema"
 
 const getDBFromContext = vi.fn()
 vi.mock("../../database/context", () => ({
@@ -47,6 +47,20 @@ async function freshDb() {
       qualification_cutoff TEXT,
       practice_vs_ai_score INTEGER,
       practice_vs_ai_badges TEXT,
+      created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+      updated_at INTEGER NOT NULL DEFAULT (unixepoch())
+    )
+  `)
+  await client.execute(`
+    CREATE TABLE practice_vs_ai_debates (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+      email TEXT NOT NULL DEFAULT '',
+      bot_name TEXT NOT NULL DEFAULT '',
+      topic TEXT NOT NULL DEFAULT '',
+      outcome TEXT NOT NULL DEFAULT '',
+      result TEXT NOT NULL DEFAULT 'pending',
+      data TEXT NOT NULL,
       created_at INTEGER NOT NULL DEFAULT (unixepoch()),
       updated_at INTEGER NOT NULL DEFAULT (unixepoch())
     )
@@ -132,5 +146,60 @@ describe("createPracticeVsAiStore gamification", () => {
       badges: [],
       currentStreak: 0,
     })
+  })
+})
+
+describe("createPracticeVsAiStore listDebates", () => {
+  let db: Awaited<ReturnType<typeof freshDb>>
+
+  beforeEach(async () => {
+    db = await freshDb()
+    getDBFromContext.mockResolvedValue(db)
+  })
+
+  async function insertDebate(overrides: { userId: string; topic: string; createdAt: number }) {
+    await db.insert(practiceVsAiDebates).values({
+      userId: overrides.userId,
+      email: "debater@example.com",
+      botName: "Yoda",
+      topic: overrides.topic,
+      outcome: "",
+      result: "pending",
+      data: JSON.stringify({
+        email: "debater@example.com",
+        botName: "Yoda",
+        botLevel: "Legends",
+        topic: overrides.topic,
+        stance: "for",
+        history: [],
+        phaseTimings: [],
+        createdAt: overrides.createdAt,
+      }),
+      createdAt: new Date(overrides.createdAt * 1000),
+    })
+  }
+
+  it("lists a user's debates newest first, full transcript included", async () => {
+    await insertDebate({ userId: "user-1", topic: "older", createdAt: 100 })
+    await insertDebate({ userId: "user-1", topic: "newer", createdAt: 200 })
+
+    const store = createPracticeVsAiStore("user-1")
+    const debates = await store.listDebates!("debater@example.com")
+    expect(debates.map((d) => d.topic)).toEqual(["newer", "older"])
+    expect(debates[0].botName).toBe("Yoda")
+  })
+
+  it("does not include another user's debates", async () => {
+    await insertDebate({ userId: "user-1", topic: "mine", createdAt: 100 })
+    await insertDebate({ userId: "user-2", topic: "not mine", createdAt: 200 })
+
+    const store = createPracticeVsAiStore("user-1")
+    const debates = await store.listDebates!("debater@example.com")
+    expect(debates.map((d) => d.topic)).toEqual(["mine"])
+  })
+
+  it("returns an empty list when the user has no debates", async () => {
+    const store = createPracticeVsAiStore("user-1")
+    expect(await store.listDebates!("debater@example.com")).toEqual([])
   })
 })

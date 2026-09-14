@@ -19,10 +19,27 @@
  * scheduling/retrieval state isn't part of a quick card. Content is a
  * serialized ProseMirror `Slice` (`Slice.toJSON()`), stored opaquely —
  * only the insert path parses it.
+ *
+ * Account sync (web only, closes the same standing "docs" gap
+ * `speech-send-log.ts` closed): on `init()`, a best-effort merge against
+ * `/api/quick-cards` (`saved_quick_cards` in `apps/debate-ai.com`'s D1
+ * schema) adopts any remote card missing locally and best-effort pushes any
+ * local-only card up — mirrors `useCoachMaterialsSync`'s "fills gaps, never
+ * resolves conflicts" merge rule. Every subsequent web-branch mutation
+ * (`upsert`/`importMany`/`remove`/`clear`) mirrors itself to the account
+ * when signed in (`remoteAvailable`); a failed remote call never blocks or
+ * rolls back the local change, which is already the source of truth for
+ * this browser. Electron keeps its existing main-process-file backend
+ * untouched — this sync layer only runs in the web branch.
  */
 
 import { getElectronHost } from './host/index.js';
 import { WebSharedStore } from './web-shared-store.js';
+import {
+  deleteSavedQuickCardFromAccount,
+  listSavedQuickCards,
+  saveQuickCardToAccount,
+} from './quick-cards-client.js';
 
 export interface QuickCard {
   /** UUID minted at creation — stable identity. */
@@ -139,11 +156,13 @@ export function buildQuickCard(input: {
   };
 }
 
-class QuickCardsStore {
+/** Exported (not just the `quickCardsStore` singleton below) so tests can construct isolated instances instead of sharing one module-level singleton's state. */
+export class QuickCardsStore {
   private cards: QuickCard[] = [];
   private listeners: Set<Listener> = new Set();
   private hostUnsubscribe: (() => void) | null = null;
   private initialized = false;
+  private remoteAvailable = false;
 
   /** Eagerly load from whichever backend is active. Idempotent.
    *  Call once during renderer boot — every surface (add / search /
@@ -168,8 +187,40 @@ class QuickCardsStore {
         this.cards = sanitizeCards(await webLibrary.load());
         this.fire();
       });
+      await this.mergeRemote();
     }
     this.fire();
+  }
+
+  /** Web-only best-effort merge with this account's synced library — see
+   *  the module doc's "Account sync" section. No-op (`remoteAvailable`
+   *  stays `false`) when signed out or the request fails. */
+  private async mergeRemote(): Promise<void> {
+    const remote = await listSavedQuickCards().catch(() => null);
+    if (!remote) return;
+    this.remoteAvailable = true;
+
+    const localIds = new Set(this.cards.map((c) => c.id));
+    const missingLocally = remote.filter((c) => !localIds.has(c.id));
+    if (missingLocally.length > 0) {
+      this.cards = [...this.cards, ...missingLocally];
+      void webLibrary.save(this.cards);
+    }
+
+    const remoteIds = new Set(remote.map((c) => c.id));
+    for (const local of this.cards) {
+      if (!remoteIds.has(local.id)) {
+        void saveQuickCardToAccount(local).catch(() => {
+          // Best-effort — this card stays local-only until a later
+          // successful sync (e.g. the next mutation or app load).
+        });
+      }
+    }
+  }
+
+  /** Whether this browser is signed in and syncing the quick-card library to the account (web only — always `false` under Electron). */
+  isSynced(): boolean {
+    return this.remoteAvailable;
   }
 
   /** Snapshot of the full library (unfiltered, unsorted — insertion
@@ -191,6 +242,11 @@ class QuickCardsStore {
       await electron.quickCardsUpsert(card);
     } else {
       void webLibrary.save(this.cards);
+      if (this.remoteAvailable) {
+        void saveQuickCardToAccount(card).catch(() => {
+          // Best-effort — already saved locally above.
+        });
+      }
     }
     this.fire();
   }
@@ -204,6 +260,13 @@ class QuickCardsStore {
       await electron.quickCardsBulkUpsert(cards);
     } else {
       void webLibrary.save(this.cards);
+      if (this.remoteAvailable) {
+        for (const card of cards) {
+          void saveQuickCardToAccount(card).catch(() => {
+            // Best-effort, same as upsert above.
+          });
+        }
+      }
     }
     this.fire();
   }
@@ -215,17 +278,30 @@ class QuickCardsStore {
       await electron.quickCardsRemove(id);
     } else {
       void webLibrary.save(this.cards);
+      if (this.remoteAvailable) {
+        void deleteSavedQuickCardFromAccount(id).catch(() => {
+          // Best-effort — the card is already gone locally either way.
+        });
+      }
     }
     this.fire();
   }
 
   async clear(): Promise<void> {
+    const clearedIds = this.cards.map((c) => c.id);
     this.cards = [];
     const electron = getElectronHost();
     if (electron) {
       await electron.quickCardsClear();
     } else {
       void webLibrary.save(this.cards);
+      if (this.remoteAvailable) {
+        for (const id of clearedIds) {
+          void deleteSavedQuickCardFromAccount(id).catch(() => {
+            // Best-effort, same as remove above.
+          });
+        }
+      }
     }
     this.fire();
   }
@@ -247,8 +323,12 @@ const webLibrary = new WebSharedStore<QuickCard[]>(
   'quick-cards library',
 );
 
+/** Hard cap on a single card's JSON size when synced to an account —
+ *  generous for a rich-text snippet, well short of D1's row-size limits. */
+export const MAX_SAVED_QUICK_CARD_BYTES = 500_000;
+
 function sanitizeCards(raw: QuickCard[] | null): QuickCard[] {
-  return Array.isArray(raw) ? raw.filter(isQuickCard) : [];
+  return Array.isArray(raw) ? raw.filter(isValidQuickCardRecord) : [];
 }
 
 /** Web load: IndexedDB, migrating once from the old localStorage backend while
@@ -270,14 +350,19 @@ function readLegacyLocalCards(): QuickCard[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isQuickCard) : [];
+    return Array.isArray(parsed) ? parsed.filter(isValidQuickCardRecord) : [];
   } catch {
     return [];
   }
 }
 
-/** Shape guard for tolerating malformed persisted entries. */
-function isQuickCard(e: unknown): e is QuickCard {
+/**
+ * Structural guard for an untrusted value claiming to be a `QuickCard` —
+ * tolerates malformed persisted entries locally, and doubles as the
+ * `/api/quick-cards` account-sync routes' request-body validator, mirroring
+ * `speech-send-log.ts#isValidSpeechSendLogEntry`'s convention.
+ */
+export function isValidQuickCardRecord(e: unknown): e is QuickCard {
   if (!e || typeof e !== 'object') return false;
   const c = e as Record<string, unknown>;
   return (

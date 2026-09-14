@@ -1,0 +1,31 @@
+---
+title: "Quick Cards Cloud Save"
+---
+
+# Quick Cards Cloud Save
+
+Syncs the CardMirror Quick Cards reusable-snippet library to a signed-in
+user's account, closing the same account-linking gap flows, rounds,
+word-count history, judge decisions, Reason Editor documents, and the
+Speech Documents send log already closed — the library was device-local
+(IndexedDB) only.
+
+- **Package:** `debate-editor` (`quickCardsStore`, validator),
+  `apps/debate-ai.com` (`/api/quick-cards`, `saved_quick_cards` D1 table)
+
+## What it does
+
+On boot, `quickCardsStore.init()` merges once against the account: any
+card synced from another device but missing from this browser's IndexedDB
+library is adopted, and any card that exists only here (saved offline, or
+before this feature shipped) is best-effort pushed up — neither side ever
+overwrites the other, it only fills gaps. Every later add, edit, bulk
+import, delete, or full-library clear mirrors itself to the account the
+same way. Signed out, the library keeps working exactly as before, purely
+on-device.
+
+## Known gaps
+
+No optimistic-concurrency handling — editing the same card from two
+signed-in devices at once has the last write win. A full-library "clear"
+issues one delete per card rather than a single bulk call.

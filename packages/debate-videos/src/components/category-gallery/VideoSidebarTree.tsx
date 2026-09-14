@@ -192,10 +192,10 @@ export function VideoSidebarTree({
               href={buildLectureCategoryHref(item.id)}
               title={item.title}
               count={item.count}
-              isActive={
-                browsingLectures &&
-                (selectedCategory === item.id || (item.id === "all" && !selectedCategory))
-              }
+              // A style/round route resets the lecture filter to "all" as an
+              // implementation detail. Do not therefore leave All Lectures
+              // selected alongside the active debate-video tab.
+              isActive={lecturesActive && (selectedCategory === item.id || (item.id === "all" && !selectedCategory))}
             />
           ))}
         </TreeItem>

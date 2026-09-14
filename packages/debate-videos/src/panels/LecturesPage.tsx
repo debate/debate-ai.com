@@ -92,7 +92,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
-  const { meta, counts, lectureCategories, suggestions } = useVideoMeta()
 
   // ---------------------------------------------------------------------------
   // UI state
@@ -102,28 +101,8 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
+  const [stackLinkedRounds, setStackLinkedRounds] = useState(false)
   const youtubeStats = useYouTubeStats()
-
-  // ---------------------------------------------------------------------------
-  // Quick-link counts (per-category video tallies for navigation cards)
-  // ---------------------------------------------------------------------------
-
-  const quickLinkCounts = useMemo(
-    () =>
-      ({
-        lectures: counts.lectures,
-        policy: counts.byStyle[1] ?? 0,
-        ld: counts.byStyle[3] ?? 0,
-        pf: counts.byStyle[2] ?? 0,
-        college: counts.byStyle[4] ?? 0,
-        topPicks: counts.topPicks,
-        favorites: state.favorites.size,
-        rankings: 4,
-        statistics: counts.total,
-        dictionary: DICTIONARY_ENTRY_COUNT,
-      }) as Record<string, number>,
-    [counts, state.favorites],
-  )
 
   // Leaderboard states managed at page level for top-bar sticky header integration
   const router = useRouter()
@@ -186,7 +165,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       const nextView: CategoryType = slugState.view ?? "lectures"
       actions.setCurrentCategory(nextView)
       setSelectedCategory("all")
-      if (nextView !== "lectures") setShowLectureCategories(false)
+      // A style route still uses the shared "lectures" grid view internally,
+      // but it is a round-archive destination.  Do not leave the Lectures
+      // section expanded/looking selected after clicking College, Policy, PF,
+      // or LD merely because that implementation detail says "lectures".
+      setShowLectureCategories(nextView === "lectures" && !slugState.style)
       scrollToVideos()
     } else if (slug) {
       // Unknown slug → treat as lecture-category id
@@ -257,7 +240,31 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     enabled: isVideoCategory,
   }
 
+  // Search chips must describe the active library category rather than the
+  // whole archive. The hook deliberately ignores the typed search term.
+  const { meta, counts, lectureCategories, suggestions } = useVideoMeta(filters)
   const feed = useVideoFeed(filters)
+
+  // ---------------------------------------------------------------------------
+  // Quick-link counts (per-category video tallies for navigation cards)
+  // ---------------------------------------------------------------------------
+
+  const quickLinkCounts = useMemo(
+    () =>
+      ({
+        lectures: counts.lectures,
+        policy: counts.byStyle[1] ?? 0,
+        ld: counts.byStyle[3] ?? 0,
+        pf: counts.byStyle[2] ?? 0,
+        college: counts.byStyle[4] ?? 0,
+        topPicks: counts.topPicks,
+        favorites: state.favorites.size,
+        rankings: 4,
+        statistics: counts.total,
+        dictionary: DICTIONARY_ENTRY_COUNT,
+      }) as Record<string, number>,
+    [counts, state.favorites],
+  )
 
   const currentVideos = feed.videos
 
@@ -468,6 +475,8 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       onHideVideo={actions.hideVideo}
       onUnhideVideo={actions.unhideVideo}
       onStatsModalOpenChange={setStatsModalOpen}
+      stackLinkedRounds={stackLinkedRounds}
+      onToggleStackLinkedRounds={() => setStackLinkedRounds((stacked) => !stacked)}
       selectedStyle={state.selectedStyle}
       onStyleChange={(style) => {
         actions.setSelectedStyle(style)

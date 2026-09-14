@@ -282,8 +282,9 @@ export async function getVideoPage(
  * @param db - Drizzle handle.
  * @returns See {@link VideoSuggestions}.
  */
-async function suggestionsFromSql(db: any): Promise<VideoSuggestions> {
+async function suggestionsFromSql(db: any, params: VideoQueryParams = {}): Promise<VideoSuggestions> {
   const keywordSelect: Record<string, SQL<number>> = {};
+  const scopeConditions = buildConditions(params, { skipSearch: true });
   SUGGESTED_KEYWORDS.forEach((keyword, index) => {
     // Same all-tokens-must-match rule the search box applies, so a chip's
     // count is exactly what clicking it returns.
@@ -291,14 +292,17 @@ async function suggestionsFromSql(db: any): Promise<VideoSuggestions> {
       (token) => sql`${videos.searchText} LIKE ${likePattern(token)} ESCAPE '\\'`,
     );
     const matches = conditions.length > 1 ? and(...conditions)! : conditions[0];
-    keywordSelect[`k${index}`] = sql<number>`sum(case when ${matches} then 1 else 0 end)`;
+    const scopedMatches = scopeConditions.length > 0 ? and(...scopeConditions, matches)! : matches;
+    keywordSelect[`k${index}`] = sql<number>`sum(case when ${scopedMatches} then 1 else 0 end)`;
   });
+
+  const scope = whereClause(scopeConditions);
 
   const [tournamentRows, keywordRows] = await Promise.all([
     db
       .select({ tournament: videos.tournament, value: count() })
       .from(videos)
-      .where(isNotNull(videos.tournament))
+      .where(whereClause([...(scope ? [scope] : []), isNotNull(videos.tournament)]))
       .groupBy(videos.tournament),
     db.select(keywordSelect).from(videos),
   ]);
@@ -317,6 +321,26 @@ async function suggestionsFromSql(db: any): Promise<VideoSuggestions> {
       })),
     ),
   };
+}
+
+/**
+ * Gets popular searches for a particular video-library category. Search text
+ * is intentionally ignored: chips describe the category, not a narrowing
+ * query the user has already typed.
+ */
+export async function getVideoSuggestions(params: VideoQueryParams = {}): Promise<VideoSuggestions> {
+  const scopedParams = { ...params, q: null };
+  const db = await tryGetDb();
+  if (db && (await isTableSeeded(db))) {
+    try {
+      return await suggestionsFromSql(db, scopedParams);
+    } catch (error) {
+      console.error("videos: SQL suggestions query failed, falling back to JSON", error);
+      backendProbe = { ready: false, checkedAt: Date.now() };
+    }
+  }
+
+  return computeVideoSuggestions(filterVideoRows(await getVideoRowsFromJson(), scopedParams));
 }
 
 /**
