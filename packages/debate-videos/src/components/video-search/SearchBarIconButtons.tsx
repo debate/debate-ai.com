@@ -5,7 +5,7 @@
  */
 
 import Image from "next/image"
-import { Calendar, Eye, Trophy, LayoutGrid, Rows3 } from "lucide-react"
+import { Calendar, Eye, Trophy, LayoutGrid, Rows3, Layers } from "lucide-react"
 import { IconTopRounds } from "../../ui/icons"
 import { Button } from "../../ui/primitives/button"
 import {
@@ -36,6 +36,13 @@ interface SearchBarIconButtonsProps {
    * When omitted the Top Picks button is hidden.
    */
   onToggleTopPicks?: () => void
+  /** Whether related videos are folded into one stacked card/row. */
+  stackedPlaylists?: boolean
+  /**
+   * Toggles stacked playlists. When omitted the button is hidden — the
+   * rankings and glossary toolbars have no results grid to stack.
+   */
+  onToggleStackedPlaylists?: () => void
   /** Whether the Rankings view is currently active. */
   showRankingsActive?: boolean
   /**
@@ -61,6 +68,8 @@ export function SearchBarIconButtons({
   onViewModeChange,
   showFavoritesOnly,
   onToggleFavoritesOnly,
+  stackedPlaylists,
+  onToggleStackedPlaylists,
   showTopPicksActive,
   onToggleTopPicks,
   showRankingsActive,
@@ -117,6 +126,34 @@ export function SearchBarIconButtons({
             {viewMode === "list"
               ? "Switch to grid view"
               : "Switch to row view"}
+          </TooltipContent>
+        </Tooltip>
+      )}
+
+      {/* Stacked playlists toggle: one card per group of related videos
+          (a round and the analysis of it) instead of one card per video. */}
+      {onToggleStackedPlaylists && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              className={`shrink-0 ${
+                stackedPlaylists ? "bg-primary/20 ring-2 ring-primary" : ""
+              }`}
+              variant="outline"
+              size="icon"
+              onClick={onToggleStackedPlaylists}
+              aria-pressed={!!stackedPlaylists}
+              aria-label={
+                stackedPlaylists ? "Unstack related videos" : "Stack related videos together"
+              }
+            >
+              <Layers className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            {stackedPlaylists
+              ? "Related videos share a card — click to list them separately"
+              : "Stack related videos (a round and its analysis) onto one card"}
           </TooltipContent>
         </Tooltip>
       )}

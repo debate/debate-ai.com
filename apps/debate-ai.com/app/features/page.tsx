@@ -1,7 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { Suspense } from "react"
-import { ArrowLeft } from "lucide-react"
 import { FeaturesPanel } from "../../lib/ui/features/FeaturesPanel"
 
 export const metadata: Metadata = {
@@ -13,19 +11,14 @@ export const metadata: Metadata = {
 export default function FeaturesPage() {
   return (
     // No page padding: the panel's hero is full-bleed, so its aurora backdrop
-    // and grid have to reach the edges. The Back link floats over the hero
-    // instead of pushing it down.
+    // and grid have to reach the edges of the column it is given.
+    //
+    // The page carries no chrome of its own. `/features` is one of the
+    // sidebar's routes (`EXTRA_SIDEBAR_HREFS`), so `AppSidebarShell` wraps it
+    // in the same dock and nav tree as every surface it catalogues — which is
+    // also what replaced the "Back to lectures" pill this page used to float
+    // over its hero. It is a page in the app, not a page away from it.
     <div className="relative min-h-screen bg-background">
-      <div className="absolute top-3 left-3 z-20 sm:top-5 sm:left-5">
-        <Link
-          href="/videos"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full border border-border bg-card/80 backdrop-blur-sm hover:bg-accent text-sm font-medium text-foreground transition-colors"
-          aria-label="Back to lectures"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
-      </div>
       <Suspense>
         <FeaturesPanel />
       </Suspense>

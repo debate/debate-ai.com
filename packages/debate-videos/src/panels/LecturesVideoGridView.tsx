@@ -25,6 +25,7 @@ import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
+import { useVideoStacks } from "../hooks/useVideoStacks"
 
 /** Props for the {@link LecturesVideoGridView} component. */
 interface LecturesVideoGridViewProps {
@@ -43,6 +44,8 @@ interface LecturesVideoGridViewProps {
   viewMode: VideoViewMode
   /** Whether only favorited videos are shown. */
   showFavoritesOnly: boolean
+  /** Whether related videos share one card/row with `<` / `>` arrows. */
+  stackedPlaylists: boolean
   /** Active category (`"lectures"` or `"topPicks"`). */
   currentCategory: CategoryType
   /** Total number of videos matching the current filters, across every page. */
@@ -121,6 +124,8 @@ interface LecturesVideoGridViewProps {
   onViewModeChange: (mode: VideoViewMode) => void
   /** Toggles the favorites-only filter. */
   onToggleFavoritesOnly: () => void
+  /** Toggles whether related videos are stacked onto one card/row. */
+  onToggleStackedPlaylists: () => void
   /** Toggles the lecture category gallery visibility. */
   onToggleLectureCategories: () => void
   /** Loads one more page past the capacity ceiling. */
@@ -163,6 +168,7 @@ export function LecturesVideoGridView({
   showThumbnails,
   viewMode,
   showFavoritesOnly,
+  stackedPlaylists,
   currentCategory,
   totalVideos,
   facets,
@@ -195,6 +201,7 @@ export function LecturesVideoGridView({
   onToggleThumbnails,
   onViewModeChange,
   onToggleFavoritesOnly,
+  onToggleStackedPlaylists,
   onToggleLectureCategories,
   onToggleFavorite,
   onHideVideo,
@@ -231,6 +238,19 @@ export function LecturesVideoGridView({
     return undefined
   }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
+  // Members of every stacked playlist the loaded page touches. The feed marks
+  // each row with its stack key but cannot carry the companion video — a
+  // round and the analysis of it are pages apart in any ordering — so they are
+  // resolved here and handed to whichever layout is rendering.
+  const stacks = useVideoStacks(currentVideos, stackedPlaylists)
+
+  // Whether the page is browsing the lecture library at all. The tree's
+  // lecture-category rows highlight only then: `selectedCategory` stays at
+  // "all" while a round collection is open, which used to light up "All
+  // Lectures" alongside College Debates.
+  const browsingLectures =
+    currentCategory === "lectures" && !selectedStyle && !showFavoritesOnly
+
   // Always stacked: the floating panel it opens in is a narrow column, not
   // the full-width row the old sticky header gave it.
   const searchBarNode = (
@@ -242,6 +262,8 @@ export function LecturesVideoGridView({
       viewMode={viewMode}
       onViewModeChange={onViewModeChange}
       showFavoritesOnly={showFavoritesOnly}
+      stackedPlaylists={stackedPlaylists}
+      onToggleStackedPlaylists={onToggleStackedPlaylists}
       selectedYear={selectedYear}
       onYearChange={onYearChange}
       facets={facets}
@@ -290,6 +312,7 @@ export function LecturesVideoGridView({
           counts={quickLinkCounts}
           lectureCategories={lectureCategories}
           selectedCategory={selectedCategory}
+          browsingLectures={browsingLectures}
           activeId={activeQuickLinkId}
           lecturesExpanded={showLectureCategories}
           onToggleLectures={onToggleLectureCategories}
@@ -391,6 +414,8 @@ export function LecturesVideoGridView({
                 onUnhideVideo={onUnhideVideo}
                 hiddenVideos={hiddenVideos}
                 topPicks={topPicks}
+                stacks={stacks}
+                stacksEnabled={stackedPlaylists}
               />
             ) : (
               <VideoGrid
@@ -405,6 +430,8 @@ export function LecturesVideoGridView({
                 onUnhideVideo={onUnhideVideo}
                 hiddenVideos={hiddenVideos}
                 topPicks={topPicks}
+                stacks={stacks}
+                stacksEnabled={stackedPlaylists}
                 showFullDate={true}
                 showDescription={true}
               />

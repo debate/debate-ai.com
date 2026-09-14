@@ -56,6 +56,10 @@ interface VideoSearchBarProps {
   showFavoritesOnly: boolean
   /** Callback invoked to toggle the favourites filter. */
   onToggleFavoritesOnly: () => void
+  /** Whether related videos are folded into one stacked card/row. */
+  stackedPlaylists?: boolean
+  /** Callback invoked to toggle stacked playlists. When omitted the button is hidden. */
+  onToggleStackedPlaylists?: () => void
   /** Whether the Top Picks view is currently active. */
   showTopPicksActive?: boolean
   /** Callback invoked to toggle the Top Picks view. When omitted the button is hidden. */
@@ -112,6 +116,8 @@ export function VideoSearchBar({
   onToggleThumbnails,
   showFavoritesOnly,
   onToggleFavoritesOnly,
+  stackedPlaylists,
+  onToggleStackedPlaylists,
   showTopPicksActive,
   onToggleTopPicks,
   showRankingsActive,
@@ -167,6 +173,8 @@ export function VideoSearchBar({
         onViewModeChange={onViewModeChange}
         showFavoritesOnly={showFavoritesOnly}
         onToggleFavoritesOnly={onToggleFavoritesOnly}
+        stackedPlaylists={stackedPlaylists}
+        onToggleStackedPlaylists={onToggleStackedPlaylists}
         showTopPicksActive={showTopPicksActive}
         onToggleTopPicks={onToggleTopPicks}
         showRankingsActive={showRankingsActive}

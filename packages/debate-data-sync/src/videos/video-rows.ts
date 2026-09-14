@@ -9,12 +9,14 @@
  * @module videos/video-rows
  */
 
+import { assignVideoStacks } from "./video-stacks";
+
 /**
  * Positional video record as stored in the JSON assets and consumed by the UI.
  *
  * `[videoId, title, date, channel, viewCount, description, style|category,
  *   tournament, roundLevel, affTeam, negTeam, affWin, judgeDecision, arg1AC,
- *   arg2NR, isTopPick, speechDocsUrl]`
+ *   arg2NR, isTopPick, speechDocsUrl, seasonYear, stackKey, stackPosition]`
  */
 export type VideoTuple = any[];
 
@@ -62,6 +64,14 @@ export interface VideoRow {
    * published before June 1st 2010 (and unparseable dates).
    */
   seasonYear: number;
+  /**
+   * Id of the stacked playlist this video belongs to — the group's primary
+   * member's own video id — or `null` when it stands alone. Set by
+   * `assignVideoStacks`; see `video-stacks.ts` for what makes a stack.
+   */
+  stackKey: string | null;
+  /** Zero-based position within {@link VideoRow.stackKey}'s stack; `0` when unstacked. */
+  stackPosition: number;
   /** Lowercased `title + channel + description`, used for `LIKE` search. */
   searchText: string;
 }
@@ -189,6 +199,11 @@ export function tupleToVideoRow(
     isTopPick: tuple[15] === true || !!topPickIds?.has(videoId),
     speechDocsUrl: str(tuple[16]),
     seasonYear: seasonYearForDate(publishedAt),
+    // Stacks are a property of the library as a whole (they join two rows), so
+    // they cannot be read off one tuple: `buildVideoRows` fills these in once
+    // every row exists.
+    stackKey: null,
+    stackPosition: 0,
     searchText: `${title} ${channel} ${description}`.toLowerCase(),
   };
 }
@@ -200,7 +215,9 @@ export function tupleToVideoRow(
  * missing indices as `undefined`, which is how short tuples already behave in
  * the JSON assets. `seasonYear` (tuple index 17) is always kept, so it stops
  * the trim at index 18 for every row — a single extra number is a cheap
- * trade-off for a sortable, displayable season on every video.
+ * trade-off for a sortable, displayable season on every video. The two stack
+ * slots after it (18, 19) are null for a video in no stack, so they trim away
+ * again for the overwhelming majority of rows.
  *
  * @param row - Flat row, typically a `videos` table record.
  * @returns The positional tuple, trimmed to its last meaningful slot.
@@ -227,6 +244,10 @@ export function videoRowToTuple(row: VideoRow): VideoTuple {
     row.isTopPick || null,
     row.speechDocsUrl,
     row.seasonYear,
+    row.stackKey ?? null,
+    // Only meaningful alongside a key; `null` without one so an unstacked
+    // video's tuple still trims back to its old length.
+    row.stackKey ? row.stackPosition : null,
   ];
 
   // Keep the first seven slots (the fields every consumer reads) and drop
@@ -258,6 +279,10 @@ export interface VideoAssets {
  * the lectures asset keeps its round metadata — matching the existing
  * `dedupeById` behaviour of the old `/api/videos` response.
  *
+ * Rows come back stamped with their stacked-playlist membership (see
+ * `video-stacks.ts`), which the SQL projection stores and the JSON fallback
+ * therefore matches without a second pass.
+ *
  * @param assets - See {@link VideoAssets}.
  * @returns One row per unique video id, in ingest order.
  */
@@ -275,5 +300,10 @@ export function buildVideoRows(assets: VideoAssets): VideoRow[] {
   for (const asset of assets.rounds) ingest(asset?.data ?? [], "round");
   ingest(assets.lectures?.data ?? [], "lecture");
 
-  return [...byId.values()];
+  const rows = [...byId.values()];
+  // Stacks join two rows through a link in one row's description, so they can
+  // only be resolved once every row exists — which is here, not in
+  // `tupleToVideoRow`.
+  assignVideoStacks(rows);
+  return rows;
 }

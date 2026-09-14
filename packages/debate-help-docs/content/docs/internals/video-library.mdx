@@ -116,6 +116,54 @@ Two details of that store are load-bearing:
   time, so re-reading does not sync the same report as a new row each page
   load.
 
+## Stacked playlists
+
+A **stack** is a small group of videos the library shows in one slot: a round
+and the round-analysis video made from it, a round split across two uploads, a
+lecture series. The grid renders one card per *slot*, flipped with `<` / `>`.
+
+**Where the links come from.** `src/videos/video-stacks.ts` reads the YouTube
+ids out of every description (`watch?v=`, `youtu.be/`, `/embed/`), keeps the
+ones the library actually holds, and unions the pairs — a one-sided "Full
+Debate:" link joins the two just as a mutual pair does. Two ceilings keep a
+verbose uploader from chaining the library together: a description linking
+more than `MAX_LINKS_PER_DESCRIPTION` (8) library videos is a playlist dump
+and is ignored, and a group over `MAX_STACK_SIZE` (12) is a channel index and
+is dropped. Members are ordered round-first, then by publish date, then by id;
+the first member's own video id is the stack key. Against today's assets that
+yields 10 stacks over 29 videos.
+
+Nothing here is hand-maintained: an editor links two videos by editing a
+description on YouTube. There is no override list to keep in sync.
+
+**How it is stored.** `buildVideoRows` runs `assignVideoStacks` once every row
+exists — a stack joins two rows, so it cannot be read off one tuple — and
+stamps `stack_key` / `stack_position` onto each row. Both are columns on the
+`videos` table (migration `0041_video_stacks.sql`) and slots 18 and 19 of the
+UI tuple; they are `null` for an unstacked video, so the tuple trims back to
+its old length for almost every row. **A database seeded before this existed
+has null keys and no stacks until it is re-seeded** — the JSON fallback
+computes them either way.
+
+**How the client gets the companion.** The feed marks a row with its stack key
+but cannot carry the other members, so:
+
+```
+GET /api/videos/stacks?keys=T77G1CdZx9E,qx7Xx_6exzk
+  → { stacks: { T77G1CdZx9E: [ …members, primary first ] }, backend }
+```
+
+`hooks/useVideoStacks.ts` collects the keys of the loaded feed and requests
+only the ones it has not asked for yet — infinite scroll appends pages
+continuously, and re-requesting the whole set per page would be a request per
+page for data that does not change. `components/video-grid/video-stacks.ts`
+then does the positional half: `buildVideoSlots` folds a stack into the slot
+its *first* member occupies, so the results keep the feed's order and no video
+is dropped; a stack whose members have not arrived yet renders as plain cards,
+so the grid never waits on the request. The **Stacked playlists** toggle
+(`useVideoState`, on by default) passes `enabled: false` and gives every video
+its own slot again.
+
 ## What a big grid costs
 
 The grid is unbounded: every page of infinite scroll appends sixty more cards
@@ -167,6 +215,12 @@ committed; regenerate it from the assets.
 
 ## Known gaps
 
+- Stacked playlists are only as good as the descriptions: a round-analysis
+  video that names its round in the title but does not link it is not paired
+  with it, and there is no curated override list — the fix is an edit to the
+  YouTube description.
+- `stack_key`/`stack_position` are written by the seed, so an existing
+  database shows no stacks until it is re-seeded.
 - Search is `LIKE`-based token matching (every token must appear in title,
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now

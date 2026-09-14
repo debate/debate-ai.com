@@ -17,9 +17,21 @@ import {
   TOOLS_ROOT_HREF,
 } from "./sidebar-tool-sections";
 
+/**
+ * Routes that get the sidebar without being one of the tree's own links.
+ *
+ * `/features` is the catalog of every surface in the app, reached from the
+ * footer and from the dock's Site Links menu. It used to render as a bare
+ * full-page panel with a "Back" pill of its own, which read as leaving the
+ * app — so it is wrapped in the same sidebar as everything else it links to,
+ * and the sidebar is how you leave it.
+ */
+export const EXTRA_SIDEBAR_HREFS: readonly string[] = ["/features"];
+
 /** Every destination the tool sidebar links to, deduplicated. */
 export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([
   TOOLS_ROOT_HREF,
+  ...EXTRA_SIDEBAR_HREFS,
   ...APP_DOCK_LINKS.map((link) => link.href),
   ...SIDEBAR_TOOL_SECTIONS.flatMap((section) => [
     section.href,

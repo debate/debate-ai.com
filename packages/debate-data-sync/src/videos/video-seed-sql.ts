@@ -36,6 +36,8 @@ export const VIDEO_SEED_COLUMNS = [
   "is_top_pick",
   "speech_docs_url",
   "season_year",
+  "stack_key",
+  "stack_position",
   "search_text",
 ] as const;
 
@@ -108,6 +110,8 @@ export function videoSeedValues(row: VideoRow): (string | number | boolean | nul
     row.isTopPick,
     row.speechDocsUrl,
     row.seasonYear,
+    row.stackKey,
+    row.stackPosition,
     row.searchText,
   ];
 }
