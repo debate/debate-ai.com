@@ -13,12 +13,35 @@
  * Before this, an account-synced word was invisible anywhere in the UI —
  * only the context-menu action could add one, and nothing could remove one
  * short of clearing `localStorage`.
+ *
+ * Each row also carries a "Synced" / "Not yet synced" badge — the same
+ * per-record status `FlowHistoryList`'s History tab surfaces via
+ * `getToolRecordSyncStatus`, now reused here as the follow-up flagged when
+ * that status was first exposed. Omitted (not shown as a third "unknown"
+ * state) before this collection has a baseline to compare against, same
+ * rule `FlowHistoryList` follows. Refreshed on the watcher's own tick
+ * interval so a badge does not stay "Not yet synced" once a background
+ * flush actually lands it, without needing this store's own change events.
  */
 
 import { setIcon } from './icons.js';
-import { loadUserDictionary, saveUserDictionary } from './user-dictionary.js';
+import { loadUserDictionary, saveUserDictionary, type UserDictionaryEntry } from './user-dictionary.js';
+import {
+  getToolRecordSyncStatus,
+  TOOL_RECORD_AUTO_SYNC_INTERVAL_MS,
+} from 'debate-data-sync/src/state/tool-record-auto-sync';
 
-export function buildUserDictionarySection(): HTMLElement {
+/** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
+const SPELLCHECK_DICTIONARY_COLLECTION_KEY = 'spellcheckDictionary';
+
+export interface UserDictionarySection {
+  /** The section's root element — append it wherever it should be shown. */
+  element: HTMLElement;
+  /** Stops the periodic sync-status refresh. Call on unmount. */
+  destroy: () => void;
+}
+
+export function buildUserDictionarySection(): UserDictionarySection {
   const section = document.createElement('section');
   section.className = 'pmd-settings-dictionary';
 
@@ -80,6 +103,17 @@ export function buildUserDictionarySection(): HTMLElement {
       label.textContent = word;
       row.appendChild(label);
 
+      const entry: UserDictionaryEntry = { id: word, word };
+      const syncStatus = getToolRecordSyncStatus(SPELLCHECK_DICTIONARY_COLLECTION_KEY, entry);
+      if (syncStatus !== 'unknown') {
+        const badge = document.createElement('span');
+        badge.className = `pmd-dictionary-sync-badge pmd-dictionary-sync-badge--${syncStatus}`;
+        badge.textContent = syncStatus === 'synced' ? 'Synced' : 'Not yet synced';
+        badge.title =
+          syncStatus === 'synced' ? 'This word has reached your account' : 'Not yet synced to your account';
+        row.appendChild(badge);
+      }
+
       const delBtn = document.createElement('button');
       delBtn.type = 'button';
       delBtn.className = 'pmd-dictionary-delete';
@@ -114,5 +148,13 @@ export function buildUserDictionarySection(): HTMLElement {
   });
 
   render();
-  return section;
+  // Re-renders on the same cadence the account-sync watcher ticks on, so a
+  // badge reflects a background flush landing without this store having any
+  // change event of its own to react to (see the module doc comment).
+  const refreshInterval = setInterval(render, TOOL_RECORD_AUTO_SYNC_INTERVAL_MS);
+
+  return {
+    element: section,
+    destroy: () => clearInterval(refreshInterval),
+  };
 }

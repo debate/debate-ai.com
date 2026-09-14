@@ -6942,6 +6942,28 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   word-break: break-word;
 }
 
+/* "Synced" / "Not yet synced" — same small-chip language as
+   .pmd-qcs-row-badge, reused here for a record's account-sync status. */
+.pmd-dictionary-sync-badge {
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  border: 1px solid var(--pmd-c-border-soft);
+}
+
+.pmd-dictionary-sync-badge--synced {
+  color: var(--pmd-c-accent);
+  border-color: var(--pmd-c-accent);
+}
+
+.pmd-dictionary-sync-badge--pending {
+  color: var(--pmd-c-text-muted);
+  background: var(--pmd-c-surface-soft);
+}
+
 .pmd-dictionary-delete {
   flex: 0 0 auto;
   background: var(--pmd-c-bg);
