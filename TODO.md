@@ -1,5 +1,91 @@
 # TODO: Ideas for New Contributors
 
+## Tracker Status
+
+### In progress
+
+_No task currently in progress._
+
+### Completed
+
+- **🔤 Sync the CardMirror editor's personal spellcheck dictionary to the
+  account.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built and reconfirmed again this run: `user_settings`/`documents`/
+  `saved_flows`/`saved_rounds` and 25+ other `saved_*`/`saved_tool_records`
+  D1 tables all linked to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`),
+  and every tool already reachable from the Tools page, CardMirror's own
+  `MenuBar`/command palette (`Mod-Shift-Space`), and the feature catalog
+  (`apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
+  reconfirmed all three catalogs still agree). A repo-wide audit for a
+  `localStorage`-backed store with real per-user content and no account sync
+  at all (not already covered by `TOOL_RECORD_COLLECTIONS` or a bespoke
+  `saved_*` table) turned up one: `packages/debate-editor/src/editor/viewport-spellcheck.ts`'s
+  `pmd-user-dictionary` store (words added via the editor's right-click "Add
+  to Dictionary") was a bare `string[]`, unsynced and undocumented as an
+  intentional exclusion in `tool-data-sync.mdx`.
+
+  Pulled the store into its own module, `packages/debate-editor/src/editor/user-dictionary.ts`
+  (`parseUserDictionary`/`serializeUserDictionary`/`loadUserDictionary`/
+  `saveUserDictionary`), reshaped to `{ id, word }[]` (id === word) so it fits
+  `TOOL_RECORD_COLLECTIONS`'s required shape — a JSON array under one
+  `localStorage` key, each record keyed by one stable string field.
+  `loadUserDictionary` reads the older bare-string-array shape transparently
+  and migrates it to the new shape in place on load, so an existing
+  dictionary starts syncing on the editor's next load rather than only after
+  the next word is added; a dictionary with nothing saved yet is left alone
+  rather than seeded with `[]`. `viewport-spellcheck.ts` now calls this
+  module instead of owning the storage format itself — no behavior change to
+  spellchecking, suggestions, or the "Add to Dictionary"/"Ignore" menu
+  actions. Registered one new entry, `spellcheckDictionary`
+  (`packages/debate-data-sync/src/state/toolRecordCollections.ts`, section
+  "Flowing and writing", href `/reason-editor`) — the sync mechanism itself
+  needed no changes, matching this catalog's "adding a tool to the sync is
+  one entry in this list, and nothing else" design; it now also appears
+  automatically under Settings → Account → Tool data.
+
+  Vitest-covered: `packages/debate-editor/test/user-dictionary.test.ts` (new
+  — parses the current and legacy shapes, drops malformed entries, handles
+  null/corrupt/non-array input, round-trips through serialize, and covers
+  `loadUserDictionary`'s in-place migration and no-op-when-already-current
+  and nothing-saved-yet cases) and
+  `packages/debate-data-sync/test/tool-record-catalog.test.ts` (added
+  `spellcheckDictionary` to `EXPECTED_ID_FIELDS` and a dedicated
+  `findToolRecordCollection` assertion, following this file's existing
+  per-addition test convention). Updated `tool-data-sync.mdx`'s "Flowing and
+  writing" enumeration to name the new collection.
+
+  Ran the full verification gate: `bun install`, `bun run test` (root config
+  — 439 files, 8534 tests passing), `packages/debate-editor`'s own
+  `bun run test` (29 files, 699 tests) and `packages/debate-data-sync`'s
+  (32 files, 592 tests) both passing standalone, `bun run typecheck`
+  (18/18 packages green, `debate-ai-web` included), and `bun run build`
+  (production build). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the dictionary has no view/remove UI
+  anywhere — only the right-click "Add to Dictionary" action exists, so a
+  synced word is invisible until CardMirror's own settings UI
+  (`packages/debate-editor/src/editor/settings-ui.ts`, ~6700 lines of
+  hand-built DOM, no React) grows a small management list. Left out of this
+  slice to keep the sync change (and its risk) isolated from a UI addition
+  to that large vanilla-DOM file. A background audit this run also
+  identified CardMirror's "Learn" flashcards/spaced-repetition system
+  (`packages/debate-editor/src/editor/learn-store.ts`, localStorage key
+  `pmd-learn-store`) as unsynced — cards, SM2 schedules, review log, AI Q&A
+  threads, anchored notes, and custom decks all in one JSON blob. Real
+  user-authored content lost on a cleared browser or a device switch, but
+  **not** a small first slice: the blob mixes several record types that
+  don't fit `TOOL_RECORD_COLLECTIONS`'s one-array-of-id-bearing-records
+  shape, so it needs a bespoke table (or several) plus API routes, closer to
+  `saved_flows`/`documents` than to this dictionary fix. Worth a dedicated
+  future task once someone has time to design that schema.
+
+---
+
 ## Top 5 Ideas for New Contributors
 
 ### 1. **Real-time Debate Rooms with WebSockets**
