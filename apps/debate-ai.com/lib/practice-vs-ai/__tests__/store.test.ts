@@ -35,6 +35,7 @@ async function freshDb() {
       color_theme TEXT,
       theme_mode TEXT,
       favorite_tools TEXT,
+      recent_tools TEXT,
       editor_preferences TEXT,
       news_read TEXT,
       news_liked TEXT,

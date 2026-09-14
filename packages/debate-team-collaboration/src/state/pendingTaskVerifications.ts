@@ -23,6 +23,18 @@
  * Mirrors `routedTaskQueues.ts`'s persistence convention (SSR/no-storage-safe,
  * corrupt or missing JSON degrades to an empty list rather than throwing).
  *
+ * `PendingTaskVerification.id` closes the "per-browser localStorage, not
+ * account-synced" gap: like `state/coachingSessions.ts`'s
+ * `CoachingSessionRecord` before it, this store used to be keyed only by the
+ * `(topicId, argBlock)` pair with no single stable string field, so
+ * `debate-data-sync`'s `saved_tool_records` catalog (which requires every
+ * record to carry one) couldn't key a row for it.
+ * `markRoutedTaskAwaitingVerification` now stamps every record with a
+ * derived `${topicId}::${argBlock}` id, and `pendingTaskVerifications` is
+ * registered in `TOOL_RECORD_COLLECTIONS`, so a task a contributor marks
+ * done on one device still shows up "Awaiting verification" for a teammate
+ * on another.
+ *
  * @module state/pendingTaskVerifications
  */
 
@@ -31,12 +43,28 @@ import { completePersistedRoutedTask } from "./routedTaskQueues";
 
 /** One routed task marked done, awaiting a different contributor's verification. */
 export interface PendingTaskVerification {
+  /**
+   * Stable id this record is keyed by — `${topicId}::${argBlock}` — what
+   * lets it join `debate-data-sync`'s account-sync allowlist (see
+   * `state/toolRecordCollections.ts`'s `pendingTaskVerifications` entry).
+   * `markRoutedTaskAwaitingVerification` always derives and stamps this
+   * rather than trusting a caller-supplied value. A record persisted before
+   * this field existed has none and is simply never matched by id: it stays
+   * valid and locally readable, just un-synced, mirroring how every other
+   * `TOOL_RECORD_COLLECTIONS` store tolerates a pre-existing id-less record.
+   */
+  id: string;
   topicId: string;
   assignment: RoutedAssignment;
   markedDoneAt: string;
 }
 
 const STORAGE_KEY = "pendingTaskVerifications";
+
+/** The stable id a topic+argBlock pair's `PendingTaskVerification` is always stamped with. */
+function pendingTaskVerificationId(topicId: string, argBlock: string): string {
+  return `${topicId}::${argBlock}`;
+}
 
 function readAll(): PendingTaskVerification[] {
   if (typeof localStorage === "undefined") return [];
@@ -88,7 +116,7 @@ export function markRoutedTaskAwaitingVerification(
   if (!assignment) return undefined;
 
   const records = readAll();
-  records.push({ topicId, assignment, markedDoneAt });
+  records.push({ id: pendingTaskVerificationId(topicId, argBlock), topicId, assignment, markedDoneAt });
   writeAll(records);
   return assignment;
 }

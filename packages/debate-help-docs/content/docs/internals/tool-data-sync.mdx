@@ -82,12 +82,16 @@ aggregate (`judgeRoundRecords`, by `id`); the Judge Paradigm Picker
 Tree Outline (`argumentTrees`) and its per-round filter selection
 (`argumentTreeFilters`), by `roundId`; Prep Notes (`prepNotes`), their
 replies (`prepNoteReplies`) and assignment notifications
-(`prepNoteNotifications`), and Flow Annotations (`flowAnnotations`), by `id`.
+(`prepNoteNotifications`), Flow Annotations (`flowAnnotations`), the
+CardMirror editor's personal spellcheck dictionary
+(`spellcheckDictionary`), and the Debate Flow workspace's auto-saved
+undo/version history (`flowHistory`), by `id`.
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
 (`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
-(`coachMaterialVersions`), the Coach Workspace's session history
-(`coachingSessionHistory`), and the Flow Edit Log (`flowEdits`), all by `id`.
+(`coachMaterialVersions`), the Coach Workspace's current coaching session
+(`coachingSessions`) and its session history (`coachingSessionHistory`), and
+the Flow Edit Log (`flowEdits`), all by `id`.
 
 **Research** — the Evidence Library (`evidenceLibraryEntries`), card scores
 (`cardScores`) and their history (`cardScoreHistory`), the Contributions Feed
@@ -106,9 +110,11 @@ Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
 (`dailyBestCardComments`), all by `id`; frozen Daily Best Card winners
 (`dailyBestCardAnnouncements`) and Top Contributor Award standings
 (`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
-(`routedTaskQueues`) by `topicId`; contributor flows (`roundContributorFlows`)
-and availability (`contributorAvailability`) by `contributorId`; completed
-research-task history (`completedResearchTasks`) by `id`.
+(`routedTaskQueues`) by `topicId` and its pending verification queue
+(`pendingTaskVerifications`) by a derived `id`; contributor flows
+(`roundContributorFlows`) and availability (`contributorAvailability`) by
+`contributorId`; completed research-task history (`completedResearchTasks`)
+by `id`.
 
 `TOOL_RECORD_COLLECTIONS` is an **allowlist**, not a convenience: the route
 rejects any collection key not in it, so the table can't be used as a
@@ -130,13 +136,12 @@ these stay local on purpose —
   where the video is paused.
 - **Undo/redo stacks** (`judgeRoundRecordEditHistory` and friends). What syncs
   is the current version of a record.
-- **`coachingSessions`**, the Coach Workspace's current session per round and
-  side. `CoachingSessionRecord` is keyed by `(roundId, sideKey)` and carries no
-  single id field, so `saved_tool_records` cannot key a row for it. Its version
-  history (`coachingSessionHistory`) *does* have an `id` and each entry names
-  the round and side it belongs to, so what the user wrote is kept — but the
-  "current" pointer is rebuilt locally rather than synced. Giving the record its
-  own id is what it would take to sync directly.
+- ~~`coachingSessions`, the Coach Workspace's current session per round and
+  side, kept only by `(roundId, sideKey)` with no single id field to key a row
+  by. Giving the record its own id is what it would take to sync directly.~~
+  **Fixed:** `saveCoachingSession` now stamps every record with a derived
+  `${roundId}::${sideKey}` id, so the current session per round+side syncs
+  alongside its own version history (`coachingSessionHistory`).
 
 Tools already backed by a `saved_*` table of their own — flows, rounds,
 tournament results — keep those. This table is for the stores that had nothing.

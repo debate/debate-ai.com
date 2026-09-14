@@ -8,9 +8,10 @@
  * roundId+sideKey pair, mirroring `debate-speech-writer`'s
  * `state/coachMaterialVersions.ts` pattern exactly (same snapshot-on-
  * overwrite shape, same per-key cap, same `listVersionsFor.../delete
- * VersionsFor.../...FromVersion` helper trio). Local-only, matching the
- * base `state/coachingSessions.ts` store itself — no account sync exists
- * for coaching sessions yet.
+ * VersionsFor.../...FromVersion` helper trio). Local-only — this history
+ * timeline itself is a separate `TOOL_RECORD_COLLECTIONS` entry
+ * (`coachingSessionHistory`) from the base `state/coachingSessions.ts` store
+ * it snapshots (`coachingSessions`), and both now account-sync independently.
  *
  * @module state/coachingSessionHistory
  */
@@ -19,6 +20,8 @@ import type { CoachingPrompt } from "debate-round/src/flow/coach-mode";
 
 /** The fields of a `CoachingSessionRecord` a snapshot needs — kept independent of that module's own type to avoid a circular import. */
 export type CoachingSessionSnapshotInput = {
+  /** Derivable from `roundId`+`sideKey` alone; `saveCoachingSession` recomputes it rather than trusting this value. */
+  id: string;
   roundId: string;
   sideKey: string;
   prompts: CoachingPrompt[];
@@ -138,6 +141,7 @@ export function deleteVersionsForCoachingSession(roundId: string, sideKey: strin
 /** Rebuilds a `CoachingSessionSnapshotInput` from a snapshot, ready to pass back to `saveCoachingSession` to restore it. */
 export function coachingSessionFromVersion(entry: CoachingSessionHistoryEntry): CoachingSessionSnapshotInput {
   return {
+    id: `${entry.roundId}::${entry.sideKey}`,
     roundId: entry.roundId,
     sideKey: entry.sideKey,
     prompts: entry.prompts,

@@ -196,17 +196,29 @@ export async function writeDebateCardBatch(
   const unique = [...byId.values()];
 
   const set = buildUpsertSet();
-  let imported = 0;
+  const statements = [];
   for (let start = 0; start < unique.length; start += CARD_ROWS_PER_STATEMENT) {
     const slice = unique.slice(start, start + CARD_ROWS_PER_STATEMENT);
-    await db
-      .insert(debateCards)
-      .values(slice.map((card) => buildCardValues(card, sourceFile)))
-      .onConflictDoUpdate({ target: debateCards.id, set });
-    imported += slice.length;
+    statements.push(
+      db
+        .insert(debateCards)
+        .values(slice.map((card) => buildCardValues(card, sourceFile)))
+        .onConflictDoUpdate({ target: debateCards.id, set }),
+    );
   }
 
-  return { imported, skipped: failures.length, failures };
+  // The parameter ceiling turns one posted batch into ~50 statements, and
+  // awaiting them one at a time is ~50 D1 round trips inside a single
+  // request — the slowest part of a shard that arrives in thousands of
+  // batches. `batch()` sends them together, and applies them as one
+  // transaction, so a batch either lands whole or not at all.
+  if (typeof db.batch === "function") {
+    await db.batch(statements);
+  } else {
+    for (const statement of statements) await statement;
+  }
+
+  return { imported: unique.length, skipped: failures.length, failures };
 }
 
 /**

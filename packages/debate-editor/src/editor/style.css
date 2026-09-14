@@ -6884,6 +6884,85 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   background: var(--pmd-c-hover);
 }
 
+.pmd-settings-dictionary {
+  margin-top: 1rem;
+}
+
+.pmd-dictionary-add-row {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+
+.pmd-dictionary-add-input {
+  flex: 1 1 auto;
+  font-family: inherit;
+  font-size: 0.85rem;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 3px;
+  padding: 0.3rem 0.5rem;
+  min-width: 0;
+}
+
+.pmd-dictionary-add-btn {
+  flex: 0 0 auto;
+  background: var(--pmd-c-bg);
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 3px;
+  padding: 0.3rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pmd-dictionary-add-btn:hover {
+  background: var(--pmd-c-hover);
+}
+
+.pmd-dictionary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.pmd-dictionary-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 3px;
+}
+
+.pmd-dictionary-word {
+  flex: 1 1 auto;
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+.pmd-dictionary-delete {
+  flex: 0 0 auto;
+  background: var(--pmd-c-bg);
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 3px;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pmd-dictionary-delete:hover {
+  background: var(--pmd-c-hover);
+}
+
+.pmd-dictionary-empty {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
 /* Word Count modal */
 .pmd-wc-scope {
   margin: 0 0 0.75rem 0;
@@ -12281,6 +12360,10 @@ textarea.pmd-text-prompt-input {
 }
 .pmd-learn-manage-count {
   font-size: 0.8rem;
+  color: var(--pmd-c-text-muted);
+}
+.pmd-learn-manage-sync-status {
+  font-size: 0.75rem;
   color: var(--pmd-c-text-muted);
 }
 .pmd-learn-manage-new {

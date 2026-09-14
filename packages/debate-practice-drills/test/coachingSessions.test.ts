@@ -37,6 +37,7 @@ class MemoryStorage {
 }
 
 const SESSION_AFF: CoachingSessionRecord = {
+  id: "round-1::AFF",
   roundId: "round-1",
   sideKey: "AFF",
   prompts: [
@@ -45,6 +46,7 @@ const SESSION_AFF: CoachingSessionRecord = {
   ],
 };
 const SESSION_NEG: CoachingSessionRecord = {
+  id: "round-1::NEG",
   roundId: "round-1",
   sideKey: "NEG",
   prompts: [
@@ -52,6 +54,7 @@ const SESSION_NEG: CoachingSessionRecord = {
   ],
 };
 const SESSION_OTHER_ROUND: CoachingSessionRecord = {
+  id: "round-2::AFF",
   roundId: "round-2",
   sideKey: "AFF",
   prompts: [{ kind: "collapse", rowIndex: 1, prompt: "Collapse onto the most vulnerable opposing argument." }],
@@ -157,6 +160,12 @@ describe("saveCoachingSession", () => {
     expect(listCoachingSessions()).toHaveLength(2);
   });
 
+  it("stamps id as `${roundId}::${sideKey}`, ignoring any id the caller passed in", () => {
+    const result = saveCoachingSession({ ...SESSION_AFF, id: "some-other-id" });
+    expect(result.record.id).toBe("round-1::AFF");
+    expect(getCoachingSession("round-1", "AFF")?.id).toBe("round-1::AFF");
+  });
+
   it("returns the saved record with no version on the first save for a roundId+sideKey pair", () => {
     const result = saveCoachingSession(SESSION_AFF);
     expect(result).toEqual({ record: SESSION_AFF });
@@ -256,6 +265,7 @@ describe("buildAndSaveCoachingSession", () => {
 
     expect(record.roundId).toBe("round-3");
     expect(record.sideKey).toBe("A");
+    expect(record.id).toBe("round-3::A");
     expect(record.prompts.length).toBeGreaterThan(0);
     expect(getCoachingSession("round-3", "A")).toEqual(record);
   });
@@ -378,7 +388,7 @@ describe("buildCoachingNotesText", () => {
   });
 
   it("renders the no-prompts placeholder for a session with no prompts", () => {
-    const session: CoachingSessionRecord = { roundId: "round-9", sideKey: "NEG", prompts: [] };
+    const session: CoachingSessionRecord = { id: "round-9::NEG", roundId: "round-9", sideKey: "NEG", prompts: [] };
     const text = buildCoachingNotesText(session);
     expect(text).toContain("No coaching prompts available yet — nothing has been flowed.");
   });
@@ -467,7 +477,7 @@ describe("coachingSessionComparisonFilename", () => {
   });
 
   it("keeps the literal 'vs' separator even when both sessions otherwise sanitize to nothing", () => {
-    const blank: CoachingSessionRecord = { roundId: "###", sideKey: "!!!", prompts: [] };
+    const blank: CoachingSessionRecord = { id: "###::!!!", roundId: "###", sideKey: "!!!", prompts: [] };
     expect(coachingSessionComparisonFilename(blank, blank)).toBe("coaching-comparison-vs.txt");
   });
 });

@@ -58,6 +58,7 @@ import {
   serializeEditorPreferences,
   type EditorPreferencesPayload,
 } from "@/lib/editor-preferences"
+import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "@/lib/recentTools"
 import {
   DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
   normalizeQualificationPointsTablePatch,
@@ -92,9 +93,9 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
- *   wordLimitPresets?, outlineFilterPresets?, newsRead?, newsLiked?,
- *   savedArgumentCollections?, researchProgressGoal?, questStreakSync?,
- *   qualificationPointsTable?, qualificationCutoff? } — validates and
+ *   recordRecentTool?, wordLimitPresets?, outlineFilterPresets?, newsRead?,
+ *   newsLiked?, savedArgumentCollections?, researchProgressGoal?,
+ *   questStreakSync?, qualificationPointsTable?, qualificationCutoff? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
@@ -120,7 +121,11 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   Known gaps. A plain `favoriteTools` array is still accepted for a
  *   caller that genuinely needs a whole-list replace, but no code path in
  *   this app sends one anymore — `pruneUnknown`'s bulk cleanup, the last
- *   one that did, now sends `removeFavoriteTools` instead.
+ *   one that did, now sends `removeFavoriteTools` instead. `recordRecentTool`
+ *   is the same op-based approach for the "Recent" tools list, validated by
+ *   this app's own `lib/recentTools.ts#normalizeRecentToolOpPatch` (that
+ *   field's app-specific rationale is in that file's header) and resolved
+ *   against the row's current `recentTools` value the same way.
  */
 
 type SettingsRow = {
@@ -129,6 +134,7 @@ type SettingsRow = {
   colorTheme: string | null
   themeMode: string | null
   favoriteTools: string | null
+  recentTools: string | null
   editorPreferences: string | null
   newsRead: string | null
   newsLiked: string | null
@@ -145,6 +151,7 @@ type SettingsPayload = UserSettingsPayload & {
   colorTheme: string
   themeMode: ThemeMode
   favoriteTools: string[]
+  recentTools: string[]
   editorPreferences: EditorPreferencesPayload
   newsRead: string[]
   newsLiked: string[]
@@ -164,6 +171,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     colorTheme: row?.colorTheme ?? DEFAULT_THEME_SETTINGS.colorTheme,
     themeMode: (row?.themeMode as ThemeMode | null) ?? DEFAULT_THEME_SETTINGS.themeMode,
     favoriteTools: row?.favoriteTools ? parseFavoriteTools(row.favoriteTools) : DEFAULT_FAVORITE_TOOLS.favoriteTools,
+    recentTools: row?.recentTools ? parseRecentTools(row.recentTools) : [],
     editorPreferences: parseEditorPreferences(row?.editorPreferences),
     newsRead: row?.newsRead ? parseNewsIdList(row.newsRead) : DEFAULT_NEWS_SYNC.newsRead,
     newsLiked: row?.newsLiked ? parseNewsIdList(row.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked,
@@ -220,6 +228,7 @@ export async function PUT(req: NextRequest) {
   const themeSettingsResult = normalizeThemeSettingsPatch(body)
   const favoriteToolsResult = normalizeFavoriteToolsPatch(body)
   const favoriteToolOpResult = normalizeFavoriteToolOpPatch(body)
+  const recentToolOpResult = normalizeRecentToolOpPatch(body)
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
@@ -237,6 +246,7 @@ export async function PUT(req: NextRequest) {
     ...themeSettingsResult.errors,
     ...favoriteToolsResult.errors,
     ...favoriteToolOpResult.errors,
+    ...recentToolOpResult.errors,
     ...wordLimitPresetsResult.errors,
     ...outlineFilterPresetsResult.errors,
     ...savedArgumentCollectionsResult.errors,
@@ -257,6 +267,7 @@ export async function PUT(req: NextRequest) {
     favoriteToolOpResult.valid.addFavoriteTool === undefined &&
     favoriteToolOpResult.valid.removeFavoriteTool === undefined &&
     favoriteToolOpResult.valid.removeFavoriteTools === undefined &&
+    recentToolOpResult.valid.recordRecentTool === undefined &&
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
@@ -270,7 +281,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -284,6 +295,7 @@ export async function PUT(req: NextRequest) {
   // as-is) and merged in here.
   const dbPatch: typeof valid & {
     favoriteTools?: string | null
+    recentTools?: string | null
     editorPreferences?: string | null
     newsRead?: string | null
     newsLiked?: string | null
@@ -318,6 +330,20 @@ export async function PUT(req: NextRequest) {
     dbPatch.favoriteTools = serializeFavoriteTools(applyFavoriteToolOp(current, favoriteToolOpResult.valid))
   } else if (favoriteToolsResult.valid.favoriteTools !== undefined) {
     dbPatch.favoriteTools = serializeFavoriteTools(favoriteToolsResult.valid.favoriteTools)
+  }
+  if (recentToolOpResult.valid.recordRecentTool !== undefined) {
+    // Same read-then-write shape as the favoriteTools op above, resolved
+    // against the row's current `recentTools` value rather than the
+    // caller's own (possibly stale) copy.
+    const [existing] = await db
+      .select({ recentTools: userSettings.recentTools })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.recentTools ? parseRecentTools(existing.recentTools) : []
+    dbPatch.recentTools = serializeRecentTools(
+      applyRecentToolOp(current, { recordRecentTool: recentToolOpResult.valid.recordRecentTool }),
+    )
   }
   if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
     dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(outlineFilterPresetsResult.valid.outlineFilterPresets)

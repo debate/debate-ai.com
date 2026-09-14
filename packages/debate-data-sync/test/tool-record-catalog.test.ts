@@ -27,9 +27,10 @@ import {
  * against `localStorage`, and nothing anywhere reports that it stopped
  * syncing. This map is what turns that into a failing test.
  *
- * It caught a real one: the Coach Workspace's `coachingSessions` store is keyed
- * by `(roundId, sideKey)` and carries no single id field at all, so it could
- * not join the catalog — only its version history could.
+ * It caught a real one: the Coach Workspace's `coachingSessions` store used to
+ * be keyed by `(roundId, sideKey)` alone, with no single id field, so only its
+ * version history could join the catalog — until `saveCoachingSession` was
+ * changed to stamp a derived `id` onto every record (see below).
  *
  * Adding a collection means adding it here too, having actually read the
  * owning store rather than guessing from the tool's name.
@@ -47,11 +48,14 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   argumentTreeFilters: "roundId",
   prepNotes: "id",
   flowAnnotations: "id",
+  spellcheckDictionary: "id",
+  flowHistory: "id",
   coachConversation: "id",
   coachingPrograms: "id",
   coachMaterials: "id",
   coachMaterialVersions: "id",
   coachingSessionHistory: "id",
+  coachingSessions: "id",
   flowEdits: "id",
   drillSets: "roundId",
   aiVersusRounds: "roundId",
@@ -82,6 +86,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   sprintNotes: "id",
   sprintWhiteboardNotes: "id",
   routedTaskQueues: "topicId",
+  pendingTaskVerifications: "id",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
   completedResearchTasks: "id",
@@ -207,14 +212,52 @@ describe("the synced collection catalog", () => {
 
   it("syncs completed research-task history now that its records carry a stable id", () => {
     // `state/researchProgress.ts`'s `CompletedTaskRecord` had no per-record id
-    // until now — the same reason `coachingSessions` still can't join this
-    // catalog (see "What deliberately does not sync" in tool-data-sync.mdx) —
-    // so `/cards/progress-tracking`'s completed-task history stayed per-browser
-    // even though every sibling store on that page already synced.
+    // until now, so `/cards/progress-tracking`'s completed-task history stayed
+    // per-browser even though every sibling store on that page already synced.
     expect(findToolRecordCollection("completedResearchTasks")).toMatchObject({
       storageKey: "completedResearchTasks",
       idField: "id",
       href: "/cards/progress-tracking",
+    });
+  });
+
+  it("syncs the Task Inbox's pending verification queue now that its records carry a stable id", () => {
+    // `state/pendingTaskVerifications.ts`'s `PendingTaskVerification` was keyed
+    // only by the `(topicId, argBlock)` pair, with no single id field, the same
+    // shape problem `coachingSessions` has — so a task a contributor marked
+    // done on one device didn't show up "Awaiting verification" for a teammate
+    // on another, even though its own `routedTaskQueues` sibling already synced.
+    expect(findToolRecordCollection("pendingTaskVerifications")).toMatchObject({
+      storageKey: "pendingTaskVerifications",
+      idField: "id",
+      href: "/cards/inbox",
+    });
+  });
+
+  it("syncs the CardMirror editor's personal spellcheck dictionary now that its records carry a stable id", () => {
+    // `editor/user-dictionary.ts`'s `pmd-user-dictionary` store used to be a
+    // bare `string[]` of words, the same shape problem `coachingSessions`
+    // still has — `loadUserDictionary` now migrates it to `{ id, word }[]`
+    // (id === word) on load, so it fits this catalog's required shape.
+    expect(findToolRecordCollection("spellcheckDictionary")).toMatchObject({
+      storageKey: "pmd-user-dictionary",
+      idField: "id",
+      href: "/reason-editor",
+    });
+  });
+
+  it("syncs the Debate Flow workspace's auto-saved history now that its entries carry a stable id", () => {
+    // `debate-round/src/state/store.ts`'s `saveToHistory` already keyed each
+    // entry by a stable `id` (`${flow.id}-${Date.now()}`, assigned once and
+    // never mutated) — the same JSON-array-under-one-key shape as every other
+    // collection here — but the `flow-history` store itself had never been
+    // added. Distinct from `saved_flows` (`flow-cloud-save.md`'s explicit,
+    // per-flow "save to account" action): this is the auto-saved undo/version
+    // log `FlowHistoryDialog`'s own "History" tab reads.
+    expect(findToolRecordCollection("flowHistory")).toMatchObject({
+      storageKey: "flow-history",
+      idField: "id",
+      href: "/debate",
     });
   });
 

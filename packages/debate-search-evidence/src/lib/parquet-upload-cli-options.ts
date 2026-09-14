@@ -26,8 +26,12 @@ export interface CardUploadCliOptions {
   cookie?: string;
   /** Cards per posted batch. */
   batchRows: number;
-  /** Rows decoded per read window. */
-  chunkRows: number;
+  /**
+   * Ceiling on the rows in one read window. Unset by default: the reader sizes
+   * windows from the shard's own row groups, which is what keeps a read from
+   * decoding the same group once per window.
+   */
+  chunkRows?: number;
   /** First row to import from each shard. */
   startRow: number;
   /** Stop each shard after this many rows; `undefined` means the whole file. */
@@ -71,7 +75,8 @@ Options:
   --cookie <cookie>   Cookie header from a signed-in admin session, instead
                       of a token (env DEBATE_ADMIN_COOKIE)
   --batch <rows>      Cards per request [default: ${CARD_UPLOAD_BATCH_ROWS}]
-  --chunk <rows>      Rows decoded per read [default: ${CARD_READ_CHUNK_ROWS}]
+  --chunk <rows>      Cap the rows decoded per read window [default: sized
+                      from the shard's row groups, at least ${CARD_READ_CHUNK_ROWS}]
   --start-row <n>     Skip the first n rows of each shard, to resume a run
   --max-rows <n>      Import at most n rows per shard
   --per-file-dedupe   Dedupe ids within each shard only, not across the run
@@ -208,7 +213,7 @@ export function parseCardUploadArgs(
       token: values["--token"] ?? env.CARD_IMPORT_TOKEN,
       cookie: values["--cookie"] ?? env.DEBATE_ADMIN_COOKIE,
       batchRows: counts["--batch"] ?? CARD_UPLOAD_BATCH_ROWS,
-      chunkRows: counts["--chunk"] ?? CARD_READ_CHUNK_ROWS,
+      chunkRows: counts["--chunk"],
       startRow: counts["--start-row"] ?? 0,
       maxRows: counts["--max-rows"],
       dryRun: flags.has("--dry-run"),

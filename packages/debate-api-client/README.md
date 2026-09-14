@@ -101,9 +101,8 @@ await syncFlow({ body: flow }, { grab: { retryAttempts: 3 } })
 
 ## Inspecting requests — Ctrl+Alt+I
 
-In development, creating a client attaches grab's request inspector:
-**Ctrl+Alt+I** opens a modal listing every request the SDK made, with its
-parsed response.
+In a browser, creating a client attaches grab's request inspector: **Ctrl+Alt+I**
+opens a modal listing every request the SDK made, with its parsed response.
 
 grab keeps that log on the global `window.grab` rather than on the instance the
 SDK holds, so the client publishes its grab there when nothing else has —
@@ -111,17 +110,10 @@ without that the shortcut opens onto a log the SDK never wrote to. An app that
 imports grab itself keeps its own global, and its log, untouched, and the
 shortcut is bound once per page however many clients are created.
 
-**It stays off in production.** A public origin is someone's production site,
-and every request the SDK made is not something to hand its visitors a
-keystroke away, so `devtools` left unset binds only on a loopback host
-(`localhost`, `127.0.0.1`, `*.localhost`, …) or a `NODE_ENV=development` build.
-It also does nothing outside a browser.
-
-Both overrides are explicit:
+It does nothing outside a browser, and `devtools: false` turns it off:
 
 ```ts
-createClient({ devtools: true })   // inspect a deployed build
-createClient({ devtools: false })  // off, even locally
+const client = createClient({ devtools: false })
 ```
 
 ## Regenerating types

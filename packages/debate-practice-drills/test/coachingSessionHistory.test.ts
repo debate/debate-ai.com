@@ -26,6 +26,7 @@ class MemoryStorage {
 }
 
 const SESSION: CoachingSessionSnapshotInput = {
+  id: "round-1::AFF",
   roundId: "round-1",
   sideKey: "AFF",
   prompts: [

@@ -40,6 +40,18 @@
  * `CoachingSessionRecord`s; no new coaching-prompt derivation logic is
  * introduced.
  *
+ * `CoachingSessionRecord.id` closes the "per-browser localStorage, not
+ * account-synced" Known gap recorded in
+ * `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+ * "What deliberately does not sync": every other synced store keys its
+ * records by one stable string field, and this one didn't have one — it was
+ * keyed only by the `(roundId, sideKey)` pair. `saveCoachingSession` now
+ * stamps that pair into a single `id` field before persisting, and
+ * `coachingSessions` is registered in `debate-data-sync`'s
+ * `TOOL_RECORD_COLLECTIONS`, so a signed-in user's current coaching session
+ * per round+side follows them across devices like its own version history
+ * (`coachingSessionHistory`) already did.
+ *
  * @module state/coachingSessions
  */
 
@@ -58,6 +70,18 @@ import {
 } from "./coachingSessionHistory";
 
 export type CoachingSessionRecord = {
+  /**
+   * Stable id this record is keyed by — `${roundId}::${sideKey}` — what lets
+   * it join `debate-data-sync`'s account-sync allowlist (see
+   * `state/toolRecordCollections.ts`'s `coachingSessions` entry).
+   * `saveCoachingSession` always derives and stamps this from the record's
+   * own `roundId`/`sideKey` rather than trusting a caller-supplied value. A
+   * record persisted before this field existed has none and is simply never
+   * matched by id: it stays valid and locally readable, just un-synced,
+   * mirroring how every other `TOOL_RECORD_COLLECTIONS` store tolerates a
+   * pre-existing id-less record.
+   */
+  id: string;
   roundId: string;
   sideKey: string;
   prompts: CoachingPrompt[];
@@ -68,6 +92,11 @@ export type CoachingSessionRecord = {
 };
 
 const STORAGE_KEY = "coachingSessions";
+
+/** The stable id a round+side pair's `CoachingSessionRecord` is always stamped with. */
+function coachingSessionId(roundId: string, sideKey: string): string {
+  return `${roundId}::${sideKey}`;
+}
 
 function readAll(): CoachingSessionRecord[] {
   if (typeof localStorage === "undefined") return [];
@@ -120,18 +149,19 @@ export type SaveCoachingSessionResult = {
  * `listVersionsForCoachingSession`.
  */
 export function saveCoachingSession(record: CoachingSessionRecord): SaveCoachingSessionResult {
+  const withId: CoachingSessionRecord = { ...record, id: coachingSessionId(record.roundId, record.sideKey) };
   const records = readAll();
-  const index = records.findIndex((existing) => matches(existing, record.roundId, record.sideKey));
+  const index = records.findIndex((existing) => matches(existing, withId.roundId, withId.sideKey));
   if (index === -1) {
-    records.push(record);
+    records.push(withId);
     writeAll(records);
-    return { record };
+    return { record: withId };
   }
 
   const version = appendCoachingSessionVersion(records[index] as CoachingSessionRecord);
-  records[index] = record;
+  records[index] = withId;
   writeAll(records);
-  return { record, version };
+  return { record: withId, version };
 }
 
 /**
@@ -187,6 +217,7 @@ export function buildAndSaveCoachingSession(
   options: { collapseLimit?: number } = {},
 ): CoachingSessionRecord {
   const record: CoachingSessionRecord = {
+    id: coachingSessionId(roundId, sideKey),
     roundId,
     sideKey,
     prompts: buildCoachingSession(flow, sideKey, options),

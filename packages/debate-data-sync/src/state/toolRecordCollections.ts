@@ -206,6 +206,26 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/annotations",
     section: "Flowing and writing",
   },
+  {
+    key: "spellcheckDictionary",
+    storageKey: "pmd-user-dictionary",
+    idField: "id",
+    label: "Personal Dictionary",
+    href: "/reason-editor",
+    section: "Flowing and writing",
+  },
+  {
+    key: "flowHistory",
+    storageKey: "flow-history",
+    idField: "id",
+    // Distinct from `saved_flows` (the explicit, user-triggered cloud save on
+    // each flow chip): this is the auto-saved undo/version log the same
+    // dialog's "History" tab reads, kept in its own `flow-history` key by
+    // `debate-round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
+    label: "Flow History",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
   // — Coaching —
   {
     key: "coachConversation",
@@ -243,13 +263,16 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "coachingSessionHistory",
     storageKey: "coachingSessionHistory",
     idField: "id",
-    // The Coach Workspace's own `coachingSessions` store is deliberately not
-    // here: `CoachingSessionRecord` is keyed by `(roundId, sideKey)` and
-    // carries no single id field, so it cannot be keyed by this table. Its
-    // version history can, and each entry names the round and side it belongs
-    // to, so what the user wrote is kept either way.
     label: "Coach Workspace History",
     href: "/coach",
+    section: "Coaching",
+  },
+  {
+    key: "coachingSessions",
+    storageKey: "coachingSessions",
+    idField: "id",
+    label: "AI Coach Mode",
+    href: "/coaching",
     section: "Coaching",
   },
   {
@@ -492,6 +515,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "routedTaskQueues",
     idField: "topicId",
     label: "Task Inbox",
+    href: "/cards/inbox",
+    section: "Team",
+  },
+  {
+    key: "pendingTaskVerifications",
+    storageKey: "pendingTaskVerifications",
+    idField: "id",
+    label: "Task Verification Queue",
     href: "/cards/inbox",
     section: "Team",
   },

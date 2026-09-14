@@ -39,7 +39,13 @@ client-computed whole-list replace, so two tabs adding, removing or pruning
 different entries at once can no longer drop each other's change. A plain
 whole-list `favoriteTools` replace is still accepted by the route for a
 caller that genuinely needs one, but nothing in the app sends one anymore.
-Every other field (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.)
-is still a plain whole-value replace with no such protection — low risk in
-practice since each is normally edited from one open settings tab at a
-time, but a real gap if that changes.
+`recentTools` (see [Command Palette](/docs/internals/command-palette)'s
+"Recent" section) joins it as an op-based field — each tool visit sends a
+single `recordRecentTool` op, resolved the same read-then-write way — since
+it writes far more often than any picker-style field here (every tool open,
+not just an explicit Save) and two tabs opening different tools in quick
+succession would otherwise race the same way favorites used to. Every other
+field (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.) is still a
+plain whole-value replace with no such protection — low risk in practice
+since each is normally edited from one open settings tab at a time, but a
+real gap if that changes.
