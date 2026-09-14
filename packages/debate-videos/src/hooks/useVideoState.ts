@@ -49,6 +49,11 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
   // panel for anyone who wants it.
   const [viewMode, setViewMode] = useState<VideoViewMode>("list");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  // Stacked playlists on by default: a round and the analysis made from it are
+  // the same debate, and the whole point of the feature is that they arrive
+  // together. The toggle in the search panel turns the library back into one
+  // card per video for anyone who wants the flat list.
+  const [stackedPlaylists, setStackedPlaylists] = useState(true);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [selectedStyle, setSelectedStyle] = useState<DebateStyle | "">("");
   const [hiddenVideos, setHiddenVideos] = useState<Set<string>>(new Set());
@@ -120,6 +125,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       viewMode,
       /** Whether to only show favorited videos. */
       showFavoritesOnly,
+      /** Whether related videos share one card/row with flip arrows. */
+      stackedPlaylists,
       /** Set of favorite video IDs. */
       favorites,
       /** Currently active debate style filter. */
@@ -151,6 +158,8 @@ export function useVideoState(initialCategory: CategoryType = "rounds") {
       setViewMode,
       /** Sets whether to only show favorited videos. */
       setShowFavoritesOnly,
+      /** Sets whether related videos are folded into one stacked card/row. */
+      setStackedPlaylists,
       /** Toggles a video in the favorites set. */
       toggleFavorite,
       /** Sets the active debate style filter. */

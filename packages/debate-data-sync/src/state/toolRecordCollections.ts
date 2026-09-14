@@ -375,6 +375,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Research",
   },
   {
+    key: "aiCardAssessments",
+    storageKey: "aiCardAssessments",
+    idField: "cardId",
+    label: "AI Card Assessments",
+    href: "/cards/reviews",
+    section: "Research",
+  },
+  {
     key: "peerReviews",
     storageKey: "peerReviews",
     idField: "cardId",

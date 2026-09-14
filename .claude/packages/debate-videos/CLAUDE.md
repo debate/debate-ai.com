@@ -54,6 +54,21 @@ three things a bare `localStorage.setItem` does not:
 - **Offers a signed-out user somewhere to keep it**, once per feature. The save
   happens either way — the prompt is an offer, never a gate.
 
+## Stacked playlists are a property of the library, not of a row
+
+A round and the round-analysis video made from it share one grid slot, flipped
+with `<` / `>`. Two things follow from where that link comes from:
+
+- **It is derived from descriptions, not curated.** `debate-data-sync`'s
+  `video-stacks.ts` unions videos whose YouTube descriptions link to each
+  other, and stamps `stack_key` / `stack_position` onto the row. Don't add an
+  overrides list here — linking two videos is an edit to a description.
+- **The companion is usually not in the loaded page.** The feed carries the
+  key, `/api/videos/stacks` carries the members, and `useVideoStacks` fetches
+  each key once (infinite scroll would otherwise re-request the set per page).
+  `components/video-grid/video-stacks.ts` does the collapsing: a stack takes
+  the slot its *first* member occupies, so the grid keeps the feed's order.
+
 ## Data
 
 Video metadata comes from `debate-data-sync`'s bundled assets, kept fresh by a

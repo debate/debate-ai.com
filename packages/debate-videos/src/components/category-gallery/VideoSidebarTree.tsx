@@ -14,6 +14,13 @@
  * subsets of it — they are sibling collections of the same library, and the
  * extra level only bought an indent and a second chevron to fight with.
  *
+ * Exactly one row in the tree is highlighted at a time. The round collections
+ * and the lecture categories are two separate highlight rules — `activeId` for
+ * the first, `selectedCategory` for the second — and the second only applies
+ * while `browsingLectures` says the page is in the lecture library, because
+ * `selectedCategory` defaults to "all" everywhere else and lit "All Lectures"
+ * up next to whichever round collection was open.
+ *
  * Lectures is a top-level section rather than a node inside the video tree:
  * the two libraries are peers — rounds recorded at tournaments on one side,
  * teaching videos on the other — and burying one two levels inside the other
@@ -60,6 +67,16 @@ interface VideoSidebarTreeProps {
   lectureCategories: LectureCategoryFacet[];
   /** Slug of the lecture category currently being browsed, or `"all"`. */
   selectedCategory?: string;
+  /**
+   * Whether the page is browsing the lecture library at all.
+   *
+   * `selectedCategory` alone cannot answer that: it sits at `"all"` on every
+   * video route, including the round collections and the glossary and
+   * rankings pages, which is what used to light up "All Lectures" at the same
+   * time as College Debates. The category rows highlight only when this is
+   * set.
+   */
+  browsingLectures?: boolean;
   /** Id of the currently active nav item, used for highlighting. */
   activeId?: string;
   /** Whether the "Lectures" section is expanded. */
@@ -72,6 +89,7 @@ export function VideoSidebarTree({
   counts,
   lectureCategories,
   selectedCategory,
+  browsingLectures = false,
   activeId,
   lecturesExpanded,
   onToggleLectures,

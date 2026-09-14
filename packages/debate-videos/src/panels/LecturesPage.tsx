@@ -104,27 +104,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const [stackLinkedRounds, setStackLinkedRounds] = useState(false)
   const youtubeStats = useYouTubeStats()
 
-  // ---------------------------------------------------------------------------
-  // Quick-link counts (per-category video tallies for navigation cards)
-  // ---------------------------------------------------------------------------
-
-  const quickLinkCounts = useMemo(
-    () =>
-      ({
-        lectures: counts.lectures,
-        policy: counts.byStyle[1] ?? 0,
-        ld: counts.byStyle[3] ?? 0,
-        pf: counts.byStyle[2] ?? 0,
-        college: counts.byStyle[4] ?? 0,
-        topPicks: counts.topPicks,
-        favorites: state.favorites.size,
-        rankings: 4,
-        statistics: counts.total,
-        dictionary: DICTIONARY_ENTRY_COUNT,
-      }) as Record<string, number>,
-    [counts, state.favorites],
-  )
-
   // Leaderboard states managed at page level for top-bar sticky header integration
   const router = useRouter()
   const initialDivision = useMemo(() => {
@@ -265,6 +244,27 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // whole archive. The hook deliberately ignores the typed search term.
   const { meta, counts, lectureCategories, suggestions } = useVideoMeta(filters)
   const feed = useVideoFeed(filters)
+
+  // ---------------------------------------------------------------------------
+  // Quick-link counts (per-category video tallies for navigation cards)
+  // ---------------------------------------------------------------------------
+
+  const quickLinkCounts = useMemo(
+    () =>
+      ({
+        lectures: counts.lectures,
+        policy: counts.byStyle[1] ?? 0,
+        ld: counts.byStyle[3] ?? 0,
+        pf: counts.byStyle[2] ?? 0,
+        college: counts.byStyle[4] ?? 0,
+        topPicks: counts.topPicks,
+        favorites: state.favorites.size,
+        rankings: 4,
+        statistics: counts.total,
+        dictionary: DICTIONARY_ENTRY_COUNT,
+      }) as Record<string, number>,
+    [counts, state.favorites],
+  )
 
   const currentVideos = feed.videos
 
@@ -436,6 +436,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       showThumbnails={state.showThumbnails}
       viewMode={state.viewMode}
       showFavoritesOnly={state.showFavoritesOnly}
+      stackedPlaylists={state.stackedPlaylists}
       currentCategory={state.currentCategory}
       totalVideos={feed.total}
       facets={feed.facets}
@@ -468,6 +469,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       onToggleThumbnails={handleToggleThumbnails}
       onViewModeChange={actions.setViewMode}
       onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
+      onToggleStackedPlaylists={() => actions.setStackedPlaylists(!state.stackedPlaylists)}
       onToggleLectureCategories={() => setShowLectureCategories((v) => !v)}
       onToggleFavorite={actions.toggleFavorite}
       onHideVideo={actions.hideVideo}

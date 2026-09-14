@@ -45,8 +45,8 @@ describe("getAiAssessment", () => {
     expect(getAiAssessment("card-1")).toBeUndefined();
   });
 
-  it("returns undefined when the stored value isn't an object", () => {
-    localStorage.setItem("aiCardAssessments", JSON.stringify(["not", "an", "object"]));
+  it("returns undefined when the stored value isn't an array", () => {
+    localStorage.setItem("aiCardAssessments", JSON.stringify({ "card-1": ASSESSMENT }));
     expect(getAiAssessment("card-1")).toBeUndefined();
   });
 
@@ -76,5 +76,17 @@ describe("saveAiAssessment", () => {
 
     expect(getAiAssessment("card-1")).toEqual(ASSESSMENT);
     expect(getAiAssessment("card-2")).toEqual(other);
+  });
+
+  it("persists as a JSON array of records tagged with cardId, not an object keyed by id", () => {
+    // `debate-data-sync`'s TOOL_RECORD_COLLECTIONS sync requires this exact
+    // shape — a JSON array under one localStorage key, each record carrying a
+    // stable string id field — so this pins the on-disk format directly
+    // rather than only exercising it through the public get/save functions.
+    saveAiAssessment("card-1", ASSESSMENT);
+    const stored = JSON.parse(localStorage.getItem("aiCardAssessments")!);
+
+    expect(Array.isArray(stored)).toBe(true);
+    expect(stored).toEqual([{ cardId: "card-1", ...ASSESSMENT }]);
   });
 });

@@ -4,6 +4,12 @@
  * thumbnails, for scanning many videos' details at once. Columns are
  * drag-resizable and click-sortable.
  *
+ * Rows are laid out one per *slot*, not one per video: a stacked playlist
+ * (a round and the round-analysis video made from it) occupies the single row
+ * its first member would have, and the `<` / `>` control at the head of the
+ * Actions cell swaps which member that row is showing. The grouping rule
+ * lives in `video-stacks.ts`, shared with the card grid.
+ *
  * The 1AC/2NR argument labels are not one of those columns: two wrapped
  * lines of prose per row in a table built for scanning, and the widest
  * thing in it, for the one field nothing here sorts or filters on. They
@@ -23,6 +29,8 @@ import { TopPickBadge } from "../video-card/TopPickBadge"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { useResizableColumns } from "./useResizableColumns"
+import { StackNav, stackMemberLabel } from "../video-card/StackNav"
+import { buildVideoSlots, type VideoStackMap } from "./video-stacks"
 import type { VideoType } from "../../types/videos"
 import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
 
@@ -35,6 +43,10 @@ interface VideoListRowsProps {
   onUnhideVideo: (videoId: string) => void
   hiddenVideos: Set<string>
   topPicks?: Set<string>
+  /** Members of the stacked playlists on screen, from `/api/videos/stacks`. */
+  stacks?: VideoStackMap | null
+  /** Whether stacking is on; `false` gives every video its own row. */
+  stacksEnabled?: boolean
 }
 
 function formatDate(date: string): string {
@@ -137,6 +149,9 @@ function ColumnResizeHandle({ onResizeStart }: { onResizeStart: (clientX: number
 function VideoRow({
   video,
   index,
+  stackVideos,
+  stackIndex,
+  onStackSelect,
   isFavorite,
   isHidden,
   isTopPick,
@@ -147,6 +162,12 @@ function VideoRow({
 }: {
   video: VideoType
   index: number
+  /** The stack this row stands for; one entry for a standalone video. */
+  stackVideos: VideoType[]
+  /** Index of {@link video} within `stackVideos`. */
+  stackIndex: number
+  /** Flips the row to another member of the stack. */
+  onStackSelect: (index: number) => void
   isFavorite: boolean
   isHidden: boolean
   isTopPick: boolean
@@ -287,6 +308,17 @@ function VideoRow({
         )}
         <td className="px-3 py-2 align-top">
           <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+            {stackVideos.length > 1 && (
+              <StackNav
+                index={stackIndex}
+                count={stackVideos.length}
+                label={stackMemberLabel(video)}
+                onSelect={onStackSelect}
+                variant="inline"
+                className="mr-1"
+              />
+            )}
+
             {isTopPick && (
               <TopPickBadge
                 videoId={videoId}
@@ -399,6 +431,8 @@ export function VideoListRows({
   onUnhideVideo,
   hiddenVideos,
   topPicks,
+  stacks,
+  stacksEnabled = true,
 }: VideoListRowsProps) {
   // Round (debate) videos carry tournament/aff/neg data that lectures never
   // populate, so that presence alone tells the two layouts apart — no need
@@ -424,11 +458,35 @@ export function VideoListRows({
     }
   }
 
-  const sortedVideos = useMemo(() => {
+  // Which member of each stacked playlist its row is currently showing, keyed
+  // by slot. Held here rather than in the row so that re-sorting the table —
+  // which re-orders the rows — cannot reset a flipped row back to its round.
+  const [stackSelection, setStackSelection] = useState<Record<string, number>>({})
+
+  const slots = useMemo(
+    () => buildVideoSlots(videos, stacks, stacksEnabled),
+    [videos, stacks, stacksEnabled],
+  )
+
+  /** One rendered row: the slot, and the member of it on screen. */
+  const rows = useMemo(
+    () =>
+      slots.map((slot) => {
+        const selected = stackSelection[slot.key] ?? slot.initialIndex
+        const stackIndex = Math.min(Math.max(selected, 0), slot.videos.length - 1)
+        return { slot, stackIndex, video: slot.videos[stackIndex] }
+      }),
+    [slots, stackSelection],
+  )
+
+  // Sorting runs on the video each row is showing, not on the stack's primary:
+  // a row flipped to the analysis sorts by the analysis' own date and views,
+  // which is what the row has on screen.
+  const sortedRows = useMemo(() => {
     const column = columns.find((c) => c.key === sortColumn)
-    if (!column?.sortValue) return videos
+    if (!column?.sortValue) return rows
     const { sortValue } = column
-    const withKeys = videos.map((video, index) => ({ video, index, value: sortValue(video) }))
+    const withKeys = rows.map((row, index) => ({ row, index, value: sortValue(row.video) }))
     withKeys.sort((a, b) => {
       const cmp =
         typeof a.value === "number" && typeof b.value === "number"
@@ -436,9 +494,9 @@ export function VideoListRows({
           : String(a.value).localeCompare(String(b.value))
       return cmp !== 0 ? cmp : a.index - b.index
     })
-    const ordered = withKeys.map((entry) => entry.video)
+    const ordered = withKeys.map((entry) => entry.row)
     return sortDirection === "asc" ? ordered : ordered.reverse()
-  }, [videos, columns, sortColumn, sortDirection])
+  }, [rows, columns, sortColumn, sortDirection])
 
   return (
     <TooltipProvider>
@@ -479,11 +537,16 @@ export function VideoListRows({
             </tr>
           </thead>
           <tbody>
-            {sortedVideos.map((video, index) => (
+            {sortedRows.map(({ slot, stackIndex, video }, index) => (
               <VideoRow
-                key={`${video[0]}-${index}`}
+                key={slot.key}
                 video={video}
                 index={index}
+                stackVideos={slot.videos}
+                stackIndex={stackIndex}
+                onStackSelect={(next) =>
+                  setStackSelection((current) => ({ ...current, [slot.key]: next }))
+                }
                 isFavorite={favorites.has(video[0])}
                 isHidden={hiddenVideos.has(video[0])}
                 isTopPick={topPicks?.has(video[0]) || false}
