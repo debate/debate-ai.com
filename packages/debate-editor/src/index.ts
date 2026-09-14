@@ -80,3 +80,9 @@ export type { SpeechSendLogEntry } from './editor/speech-send-log.js';
 // `quick-cards-store.ts`'s "Account sync" module-doc section).
 export { isValidQuickCardRecord, MAX_SAVED_QUICK_CARD_BYTES } from './editor/quick-cards-store.js';
 export type { QuickCard } from './editor/quick-cards-store.js';
+
+// Learn flashcard-content account-sync validation, shared by the store
+// itself and by `apps/debate-ai.com`'s `/api/learn-cards` routes (see
+// `learn-cards-sync.ts`'s module doc).
+export { isValidLearnCardRecord, MAX_SAVED_LEARN_CARD_BYTES } from './editor/learn-store.js';
+export type { CardDef } from './editor/learn-store.js';

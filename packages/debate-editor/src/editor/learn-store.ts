@@ -25,6 +25,28 @@ export interface CardDef {
   back: string;
 }
 
+/** Byte cap for one card's account-synced JSON (`learn-cards-client.ts`
+ *  PUTs a single card at a time, mirroring `quick-cards-store.ts`'s
+ *  `MAX_SAVED_QUICK_CARD_BYTES`). */
+export const MAX_SAVED_LEARN_CARD_BYTES = 200_000;
+
+/**
+ * Structural guard for an untrusted value claiming to be a `CardDef` —
+ * doubles as the `/api/learn-cards` account-sync routes' request-body
+ * validator, mirroring `quick-cards-store.ts#isValidQuickCardRecord`'s
+ * convention.
+ */
+export function isValidLearnCardRecord(e: unknown): e is CardDef {
+  if (!e || typeof e !== 'object') return false;
+  const c = e as Record<string, unknown>;
+  return (
+    typeof c.id === 'string' &&
+    (c.type === 'qa' || c.type === 'cloze') &&
+    typeof c.front === 'string' &&
+    typeof c.back === 'string'
+  );
+}
+
 export interface CardAnchor {
   cardId: string;
   docId: string;

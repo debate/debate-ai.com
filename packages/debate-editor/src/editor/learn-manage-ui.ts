@@ -11,6 +11,7 @@
  */
 
 import { learnStore, localToday } from './learn-store-host.js';
+import { learnCardsSync } from './learn-cards-sync.js';
 import { openCardEditor } from './learn-create-ui.js';
 import { openLearnSession } from './learn-session-ui.js';
 import { isDue } from './learn-scheduler.js';
@@ -154,6 +155,10 @@ export function openLearnManage(): void {
   title.textContent = 'Flashcards';
   const count = document.createElement('span');
   count.className = 'pmd-learn-manage-count';
+  // Flashcard CONTENT (not schedule/anchors) mirrors to the account when
+  // signed in — see learn-cards-sync.ts's module doc for the split.
+  const syncStatus = document.createElement('span');
+  syncStatus.className = 'pmd-learn-manage-sync-status';
   const newCard = document.createElement('button');
   newCard.type = 'button';
   newCard.className = 'pmd-learn-manage-new';
@@ -196,7 +201,7 @@ export function openLearnManage(): void {
   close.setAttribute('aria-label', 'Close');
   close.textContent = '✕';
   close.addEventListener('click', cleanup);
-  bar.append(title, count, newCard, importBtn, exportBtn, reviewAll, close);
+  bar.append(title, count, syncStatus, newCard, importBtn, exportBtn, reviewAll, close);
 
   const toolbar = document.createElement('div');
   toolbar.className = 'pmd-learn-manage-toolbar';
@@ -258,6 +263,7 @@ export function openLearnManage(): void {
     const docs = new Map(learnStore.listDocs().map((d) => [d.docId, d]));
 
     count.textContent = cards.length === 1 ? '1 card' : `${cards.length} cards`;
+    syncStatus.textContent = learnCardsSync.isSynced() ? 'Synced to your account' : 'Not synced — sign in to sync';
 
     // Group cardIds by docId; track which cards are anchored anywhere and
     // how many files each is shared across.
