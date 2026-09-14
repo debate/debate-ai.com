@@ -8,6 +8,80 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔄 Sync the Debate Flow workspace's auto-saved history to the account.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all linked
+  to `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. A fresh repo-wide audit (this
+  run's designated branch had already been merged as PR #835, so it
+  restarted from `master` and re-audited rather than resuming stale work)
+  cross-referenced every `localStorage` key in the repo against both the
+  `TOOL_RECORD_COLLECTIONS` catalog and the bespoke `saved_*` tables, and
+  found one real gap: `/debate`'s Debate Flow workspace already
+  account-syncs the flows and rounds you explicitly click "save to cloud"
+  on (`saved_flows`/`saved_rounds`), but a *second*, separate store —
+  `debate-round/src/state/store.ts`'s `flow-history` key, the auto-saved
+  undo/version log `FlowHistoryDialog`'s own "History" tab reads — had no
+  sync at all, and wasn't named in `tool-data-sync.mdx`'s catalog or any
+  Known-gaps list. Each entry (`{ id, flow, timestamp, label }`, `id` a
+  stable `${flow.id}-${Date.now()}` assigned once and never mutated)
+  already matched the generic catalog's required shape exactly, so this
+  was a one-entry addition rather than a schema-design task.
+
+  Added `flowHistory` to `packages/debate-data-sync/src/state/toolRecordCollections.ts`'s
+  `TOOL_RECORD_COLLECTIONS` (`storageKey: "flow-history"`, `idField: "id"`,
+  section "Flowing and writing", href `/debate`) — per that module's own
+  design ("Adding a tool to the sync is one entry in this list, and nothing
+  else"), no change was needed to `debate-round` itself: the generic
+  watcher in `tool-record-auto-sync.ts` picks up any collection named in
+  the catalog without the owning package knowing the sync exists, and
+  already handles an oversized record (a very large flow past the generic
+  mechanism's 200KB-per-record cap, vs. `saved_flows`' own 2MB cap) by
+  holding just that record back locally rather than failing the whole
+  collection's sync or retrying forever — confirmed by reading
+  `tool-record-auto-sync.ts`'s existing oversized-record handling rather
+  than assuming it, since that was the one real risk worth checking before
+  picking this candidate.
+
+  Vitest-covered: added `flowHistory: "id"` to
+  `packages/debate-data-sync/test/tool-record-catalog.test.ts`'s
+  `EXPECTED_ID_FIELDS` map and a dedicated `findToolRecordCollection`
+  regression test, following this file's existing per-addition convention
+  (the catalog's own generic tests in `toolRecordCollections.test.ts`
+  already cover any new entry's shape automatically). Updated
+  `tool-data-sync.mdx`'s "Flowing and writing" enumeration to name the new
+  collection. No UI changes: the History tab already reads/writes the same
+  `flow-history` key, so it starts reflecting synced data with no code
+  changes there, matching this catalog's established pattern for a
+  pure data-layer addition.
+
+  Ran the full verification gate: `bun install`, `packages/debate-data-sync`'s
+  own `bun run test` (32 files, 593 tests passing), the root `bun run test`
+  (440 files, 8558 tests passing), `bun run typecheck` (18/18 packages
+  green), and `bun run build` (production build, all three targets green).
+  No `lint`/`format:check` script exists anywhere in this repo, so that
+  step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the "History" tab still has no way to
+  tell a synced entry apart from a local-only one, or to see it arrive on a
+  second device without reopening the dialog — the same "no view/remove UI
+  beyond the raw sync" gap the personal spellcheck dictionary had before
+  its own follow-up UI pass. Left out here to keep this slice a pure,
+  low-risk data-layer addition, consistent with how every other collection
+  in this catalog first joined it. `dailyMissionResults`/`challengeWinEvents`
+  (`packages/debate-contributor-progress/src/state/dailyMissionResults.ts`,
+  `packages/debate-team-collaboration/src/state/challengeWinEvents.ts`)
+  remain flagged as real gamification history with no sync, but their
+  records carry no single stable id field (composite
+  `(contributorId, dayKey)` or none at all) — joining the catalog would mean
+  adding a synthetic id to the record type in the owning package first, a
+  larger change than "one entry in a list."
+
 - **📖 Give CardMirror's synced personal spellcheck dictionary a view/remove
   UI.** Another repeat of the standing autonomous-routine prompt ("integrate
   all the tools into the UI... create user settings and link user db SQL
