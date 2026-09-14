@@ -41,6 +41,27 @@ bun run build    # build:docs → vinext build → build:sw
 A `vinext build` on its own produces an app with **stale docs and no service
 worker**. Use `bun run build`.
 
+### The service worker and build swaps
+
+`lib/offline-sw/service-worker.ts` keys its cache on a digest of `dist/client`,
+so every deploy lands in a new cache and drops the previous one. Two rules keep
+a page from ever running half of one build and half of another — the failure
+that shows up as a 404 on a `/_next/static/chunks/…` file followed by
+`ReferenceError: Cannot access '<name>' before initialization` from whatever
+component rendered next:
+
+- **Never `skipWaiting()` while a page is open.** A build's chunks are
+  content-hashed and only exist while that build is deployed, so activating a
+  new worker under a running page deletes the cache its remaining chunks come
+  from. The worker waits instead, and the browser activates it once the last
+  page from the old build closes.
+- **Never read from `caches.match()` (origin-wide).** Every lookup goes through
+  `matchInCache`, scoped to this build's cache, so the paths that keep their
+  name across builds (`/`, the icons, `site.webmanifest`) can't come back from
+  an older one.
+
+`lib/offline-sw/__tests__/service-worker.test.ts` covers both.
+
 `preview` raises the heap (`--max-old-space-size=4096`) and then runs
 `wrangler dev` — the build is memory-hungry enough to need it.
 
@@ -116,6 +137,8 @@ bun run preview           # local wrangler dev against the real build
 ## Testing against Workers
 
 Tests run under Node. **Passing tests do not prove the code runs on a Worker.**
-The app's own test project only covers `lib/**/__tests__` — routes, the worker
-entrypoint and the service worker are not covered by anything. Exercise those
-with `bun run preview` before shipping.
+The app's own test project only covers `lib/**/__tests__` — routes and the
+worker entrypoint are not covered by anything. Exercise those with
+`bun run preview` before shipping. The service worker's install/activate/fetch
+handlers do have unit coverage (`lib/offline-sw/__tests__`), against a fake
+`ServiceWorkerGlobalScope`; that is not the same as running in a browser.
