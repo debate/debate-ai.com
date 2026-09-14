@@ -8,6 +8,75 @@ _No task currently in progress._
 
 ### Completed
 
+- **🕘 Restore Debate Flow's missing "History" tab UI for the auto-saved
+  flow log.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built: `user_settings`/`documents`/`saved_flows`/`saved_rounds`,
+  25+ bespoke `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS`
+  entries all linked to `user.id`, and every tool already reachable from
+  the Tools page, the command palette and the feature catalog. Picked up
+  the previous run's own flagged follow-up ("the History tab still has no
+  way to tell a synced entry apart from a local-only one") and found it
+  understated the gap: `packages/debate-round/src/dialogs/FlowHistoryDialog.tsx`
+  had no History tab at all. Its `dateGroups`/`toggleDate`/`expandedRounds`/
+  `toggleRound`/`selectedId`/`handleLoadFlow`/`handleClearHistory` state and
+  logic all still existed — none of it was ever removed — but the dialog's
+  JSX only ever rendered two tabs ("Rounds" and "Saved to account"), so
+  every one of those was dead code computing a view nothing displayed. The
+  `flow-history` auto-saved undo/version log (`packages/debate-round/src/state/store.ts`,
+  account-synced two runs ago via the `flowHistory` `TOOL_RECORD_COLLECTIONS`
+  entry) had, in effect, no user-facing surface at all — not even a
+  "synced vs. local" distinction to build, since there was no view to add
+  one to.
+
+  Added a real "History" tab: `packages/debate-round/src/state/flowHistoryGrouping.ts`
+  (`groupFlowHistoryByDate`, a pure day-grouping helper extracted from the
+  dead `dateGroups` logic, mirroring `state/bulkRoundSave.ts`'s
+  framework-free split so it's unit-testable without rendering the dialog)
+  and `packages/debate-round/src/dialogs/FlowHistoryList.tsx` (a new
+  presentational component: collapsible day groups, newest first, each
+  entry showing its label and time with a restore action, an empty state,
+  and a "Clear history" action wired to the dialog's existing
+  `handleClearHistory`). `FlowHistoryDialog.tsx` now renders this as a
+  third tab and had its orphaned `dateGroups`/`toggleDate`/`expandedDates`/
+  `expandedRounds`/`toggleRound`/`selectedId` state and logic deleted —
+  fully superseded, not just unused. Deliberately did not attempt a
+  synced-vs-local-only indicator per entry: `debate-data-sync`'s watcher
+  syncs by periodic snapshot-diff (see `tool-record-auto-sync.ts`) and
+  exposes no per-record sync status to the UI layer, so that would be new
+  sync infrastructure, not a UI fix — flagging as a real follow-up rather
+  than guessing at a design for it.
+
+  Vitest-covered: `packages/debate-round/test/flowHistoryGrouping.test.ts`
+  (new — empty input, single-day grouping preserves order, multiple days
+  split and order correctly, and an interleaved history re-groups onto its
+  day boundaries) and `packages/debate-round/test/FlowHistoryList.test.tsx`
+  (new — `react-dom/server` render test following `test/panels.test.tsx`'s
+  established pattern for this package's DOM-less `environment: "node"`
+  Vitest config: empty state, entries grouped and labelled under their
+  day, singular/plural entry count, and multiple days rendered separately).
+
+  Ran the full verification gate: `bun install`, `packages/debate-round`'s
+  own `bun run test` (60 files, 1202 tests — 8 new) and `bun run typecheck`,
+  the root `bun run test` (442 files, 8566 tests passing) and
+  `bun run typecheck` (18/18 packages green), and `bun run build`
+  (production build, all three targets green). No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** a per-entry "synced to your account"
+  indicator on the History tab needs `debate-data-sync`'s watcher to
+  surface per-record sync status to callers first (it currently only
+  diffs-and-pushes; nothing tracks or exposes "has record X's current
+  value reached the account"), which is sync-layer design work, not a UI
+  addition — noted rather than attempted here. The `dailyMissionResults`/
+  `challengeWinEvents` (composite-key, no single stable id) and
+  `qwksearch` file-sources credential-sync gaps flagged by earlier runs
+  remain open for the same reasons those runs recorded.
+
 - **🔄 Sync the Debate Flow workspace's auto-saved history to the account.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with

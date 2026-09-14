@@ -22,7 +22,8 @@ import { ScrollArea } from "../ui/primitives/scroll-area"
 import { Input } from "../ui/primitives/input"
 import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
-import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload, AlertTriangle } from "lucide-react"
+import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload, AlertTriangle, History as HistoryIcon } from "lucide-react"
+import { FlowHistoryList } from "./FlowHistoryList"
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
@@ -104,18 +105,6 @@ interface FlowHistoryDialogProps {
 }
 
 /**
- * Structure for grouping history entries by date
- */
-interface DateGroup {
-  /** Formatted date string used as group key */
-  dateKey: string
-  /** History entries belonging to this date */
-  entries: FlowHistory[]
-  /** Whether this group is currently expanded */
-  expanded: boolean
-}
-
-/**
  * FlowHistoryDialog - Browse and load historical rounds and flows
  *
  * Features:
@@ -157,10 +146,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   // Local state
   const [history, setHistory] = useState<FlowHistory[]>([])
   const [rounds, setRounds] = useState<Round[]>([])
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [expandedDates, setExpandedDates] = useState<Set<string>>(new Set())
-  const [expandedRounds, setExpandedRounds] = useState<Set<number>>(new Set())
-  const [activeTab, setActiveTab] = useState<"rounds" | "cloud">("rounds")
+  const [activeTab, setActiveTab] = useState<"rounds" | "cloud" | "history">("rounds")
   const [searchQuery, setSearchQuery] = useState("")
   const [cloudList, setCloudList] = useState<CloudListState>({ kind: "loading" })
   const [cloudActions, setCloudActions] = useState<Record<number, CloudActionStatus>>({})
@@ -595,76 +581,6 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }, [rounds, searchQuery, flows])
 
   /**
-   * Group history entries by date for organized display.
-   */
-  const dateGroups = useMemo(() => {
-    const groups: Record<string, FlowHistory[]> = {}
-
-    history.forEach((entry) => {
-      const date = new Date(entry.timestamp)
-      const dateKey = date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-
-      if (!groups[dateKey]) {
-        groups[dateKey] = []
-      }
-      groups[dateKey].push(entry)
-    })
-
-    return Object.entries(groups).map(([dateKey, entries]) => ({
-      dateKey,
-      entries,
-      expanded: expandedDates.has(dateKey),
-    }))
-  }, [history, expandedDates])
-
-  /**
-   * Expand all date groups when dialog opens.
-   */
-  useEffect(() => {
-    if (open && dateGroups.length > 0) {
-      setExpandedDates(new Set(dateGroups.map((g) => g.dateKey)))
-    }
-  }, [open, dateGroups.length])
-
-  /**
-   * Toggle expansion of a date group.
-   *
-   * @param dateKey - The date string key identifying the group to toggle
-   */
-  const toggleDate = (dateKey: string) => {
-    setExpandedDates((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(dateKey)) {
-        newSet.delete(dateKey)
-      } else {
-        newSet.add(dateKey)
-      }
-      return newSet
-    })
-  }
-
-  /**
-   * Toggle expansion of a round's flows.
-   *
-   * @param roundId - The numeric ID of the round to toggle
-   */
-  const toggleRound = (roundId: number) => {
-    setExpandedRounds((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(roundId)) {
-        newSet.delete(roundId)
-      } else {
-        newSet.add(roundId)
-      }
-      return newSet
-    })
-  }
-
-  /**
    * Load all flows from a specific round.
    * Archives other flows and shows only this round's flows.
    *
@@ -700,13 +616,12 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   }
 
   /**
-   * Load a specific flow from history by the currently selected ID.
+   * Restores a history entry as a new flow (passed to `FlowHistoryList` as
+   * `onLoad`) and closes the dialog.
    */
-  const handleLoadFlow = () => {
-    if (selectedId) {
-      loadFromHistory(selectedId)
-      onOpenChange(false)
-    }
+  const handleLoadFlow = (historyId: string) => {
+    loadFromHistory(historyId)
+    onOpenChange(false)
   }
 
   /**
@@ -716,7 +631,6 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     if (confirm("Are you sure you want to clear all flow history?")) {
       localStorage.removeItem("flow-history")
       setHistory([])
-      setSelectedId(null)
     }
   }
 
@@ -778,6 +692,15 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
             >
               <Cloud className="h-3.5 w-3.5" />
               Saved to account
+            </Button>
+            <Button
+              size="sm"
+              variant={activeTab === "history" ? "default" : "outline"}
+              onClick={() => setActiveTab("history")}
+              className="gap-1.5"
+            >
+              <HistoryIcon className="h-3.5 w-3.5" />
+              History
             </Button>
           </div>
 
@@ -1003,6 +926,10 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                     ))}
                 </div>
               )}
+            </ScrollArea>
+          ) : activeTab === "history" ? (
+            <ScrollArea className="h-[440px] border rounded-md">
+              <FlowHistoryList history={history} onLoad={handleLoadFlow} onClear={handleClearHistory} />
             </ScrollArea>
           ) : (
             <>
