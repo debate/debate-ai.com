@@ -63,6 +63,59 @@ const client: Client = createClient({
 await searchCards({ query: { q: "climate change" } }, { client })
 ```
 
+## grab defaults
+
+Requests are sent with **`grab-url/slim`** — the same `grab()`, without the
+bundled `linkedom`/`archiver-web` HTML and archive extractors an API response
+never needs. Anything reaching for `grab.mock` or `grab.log` alongside this SDK
+has to import the same entry: `grab-url` and `grab-url/slim` are separate
+modules with separate `mock` and `log`, and a stub registered on one is
+invisible to the other.
+
+Every client starts from `DEFAULT_GRAB_OPTIONS`, so a call gets grab's behavior
+without being configured:
+
+```ts
+import { DEFAULT_GRAB_OPTIONS } from "debate-api-client"
+
+// { cache: false, cacheForTime: 60, retryAttempts: 2, timeout: 30 }
+```
+
+`cache` is configured but off: an SDK that served a GET from a minute-old cache
+would hand back pre-write data after a POST to the same resource, and that is
+not something a caller can opt out of after the fact. Turn it on with
+`grab: { cache: true }` — the window is already set.
+
+`cache`, `cacheForTime` and `retryAttempts` apply to `GET` only. Setting them
+client-wide leaves writes alone, since serving a POST from cache or replaying a
+`DELETE` that failed changes what the API was asked to do; a single call can
+still ask for them with its own `{ grab }`.
+
+```ts
+// Client-wide, reads only:
+client.setConfig({ grab: { cache: true, rateLimit: 1 } })
+
+// Per call, whatever the method:
+await syncFlow({ body: flow }, { grab: { retryAttempts: 3 } })
+```
+
+## Inspecting requests — Ctrl+Alt+I
+
+In a browser, creating a client attaches grab's request inspector: **Ctrl+Alt+I**
+opens a modal listing every request the SDK made, with its parsed response.
+
+grab keeps that log on the global `window.grab` rather than on the instance the
+SDK holds, so the client publishes its grab there when nothing else has —
+without that the shortcut opens onto a log the SDK never wrote to. An app that
+imports grab itself keeps its own global, and its log, untouched, and the
+shortcut is bound once per page however many clients are created.
+
+It does nothing outside a browser, and `devtools: false` turns it off:
+
+```ts
+const client = createClient({ devtools: false })
+```
+
 ## Regenerating types
 
 Request/response types live in `src/generated/` and are regenerated from
