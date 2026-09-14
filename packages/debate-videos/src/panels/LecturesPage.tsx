@@ -436,6 +436,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       showThumbnails={state.showThumbnails}
       viewMode={state.viewMode}
       showFavoritesOnly={state.showFavoritesOnly}
+      stackedPlaylists={state.stackedPlaylists}
       currentCategory={state.currentCategory}
       totalVideos={feed.total}
       facets={feed.facets}
@@ -468,6 +469,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       onToggleThumbnails={handleToggleThumbnails}
       onViewModeChange={actions.setViewMode}
       onToggleFavoritesOnly={() => actions.setShowFavoritesOnly(!state.showFavoritesOnly)}
+      onToggleStackedPlaylists={() => actions.setStackedPlaylists(!state.stackedPlaylists)}
       onToggleLectureCategories={() => setShowLectureCategories((v) => !v)}
       onToggleFavorite={actions.toggleFavorite}
       onHideVideo={actions.hideVideo}

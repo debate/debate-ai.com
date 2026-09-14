@@ -36,16 +36,29 @@ export interface FooterLink {
   /** Which Settings-menu submenu this link belongs to: the site's own
    *  meta/legal links, or the outside debate community. */
   group: "site" | "debate";
+  /**
+   * Forces a full page load for an in-app-looking URL.
+   *
+   * Only `/docs` needs it: the help site is a statically exported build
+   * served out of `public/docs`, not a route the Next router knows, so
+   * pushing it client-side lands on the app's 404. Everything else on the
+   * site is a real route and is followed in place — the app keeps its
+   * sidebar and its player instead of reloading the whole document.
+   */
+  hardNavigate?: boolean;
 }
 
 export const FOOTER_LINKS: FooterLink[] = [
   // `/docs` is the help site (`packages/debate-help-docs`), statically
   // exported into the app's `public/docs` — not a Next route, so it is
   // reached by a plain navigation like any other entry here.
-  { url: "/docs", text: "Docs", icon: BookOpen, group: "site" },
+  { url: "/docs", text: "Docs", icon: BookOpen, group: "site", hardNavigate: true },
   // `/features` is the whole catalog. It is listed here because the app
   // dock's Settings menu no longer carries an "Apps" submenu spelling that
-  // catalog out, so this row is how the menu reaches it.
+  // catalog out, so this row is how the menu reaches it. An ordinary in-app
+  // route: following it keeps the sidebar (`/features` is one of the
+  // sidebar's own destinations — see `sidebar-routes.ts`) rather than
+  // reloading into a bare page.
   { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
   { url: "https://github.com/debate", text: "Github", icon: Code2, group: "site" },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare, group: "debate" },

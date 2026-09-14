@@ -236,6 +236,34 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 - `apps/debate-ai.com/lib/layout/__tests__/frame-navigation.test.ts` — which
   links a framed page hands up to the shell and which it leaves alone.
 
+## One collection highlighted at a time
+
+The sidebar's round collections (College Debates, Policy, PF, LD, Greatest of
+All-Time) and its lecture categories are highlighted by two different rules,
+and the second used to fire everywhere: opening **College Debates** lit up
+**All Lectures** with it, as if two collections were open at once. The lecture
+rows now highlight only while the lecture library is actually what is being
+browsed — so a round collection, the glossary and the rankings pages each
+leave them alone. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
+pins it.
+
+## The feature catalog opens inside the app
+
+`/features` — the catalog of every surface in the app — is reached from the
+footer under the sidebar and from the dock's **Site Links** menu. Following
+either used to reload the whole tab into a bare page: the sidebar and the dock
+were gone, the persistent player stopped mid-lecture, and the page's only way
+back was a "Back" pill of its own.
+
+It is now an ordinary page of the app. It renders in the same sidebar as every
+surface it catalogues, the footer and the menu reach it through the router
+rather than by loading a new document, and the "Back" pill is gone — the
+sidebar is how you leave it.
+
+One link is deliberately still a full page load: `/docs` is a separately built
+help site served as static files, not a route this app knows, so it is
+followed the old way. Outside sites still open in a new tab.
+
 ## Following a sidebar link never costs you the sidebar
 
 The shell runs each dock destination in a same-origin frame, which puts

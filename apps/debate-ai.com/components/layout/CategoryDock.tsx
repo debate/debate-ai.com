@@ -244,19 +244,36 @@ function SettingsMenu({
           Site Links
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent className="w-56" collisionPadding={8} avoidCollisions>
-          {SITE_LINKS.map((link) => (
-            <DropdownMenuItem key={link.text} asChild>
-              <a
-                href={link.url}
-                target={link.url.startsWith("http") ? "_blank" : "_self"}
-                rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}
+          {/* An app route (`/features`, `/legal/privacy`) is pushed through
+              the router so it opens inside the app — sidebar, dock and the
+              persistent player all still there. Only an outside site or the
+              statically exported `/docs` build gets a real page load; see
+              `footer-links.ts`'s `hardNavigate`. */}
+          {SITE_LINKS.map((link) => {
+            const isExternal = link.url.startsWith("http")
+            return isExternal || link.hardNavigate ? (
+              <DropdownMenuItem key={link.text} asChild>
+                <a
+                  href={link.url}
+                  target={isExternal ? "_blank" : "_self"}
+                  rel={isExternal ? "noopener noreferrer" : undefined}
+                  className="cursor-pointer"
+                >
+                  <link.icon className="mr-2 h-4 w-4" />
+                  {link.text}
+                </a>
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                key={link.text}
                 className="cursor-pointer"
+                onSelect={(e) => { e.preventDefault(); router.push(link.url) }}
               >
                 <link.icon className="mr-2 h-4 w-4" />
                 {link.text}
-              </a>
-            </DropdownMenuItem>
-          ))}
+              </DropdownMenuItem>
+            )
+          })}
         </DropdownMenuSubContent>
       </DropdownMenuSub>
       <DropdownMenuSub>
