@@ -94,11 +94,11 @@ export function buildSearchParams({
 }
 
 /**
- * Builds the relative search URL fetched by the search hook.
+ * Builds the cards API URL fetched by the search hook.
  *
  * @param input - Current search term, sort order and filter state.
- * @returns The `search?…` path with serialized query parameters.
+ * @returns The `/api/search?…` path with serialized query parameters.
  */
 export function buildSearchUrl(input: SearchQueryInput): string {
-  return `search?${buildSearchParams(input).toString()}`;
+  return `/api/search?${buildSearchParams(input).toString()}`;
 }
