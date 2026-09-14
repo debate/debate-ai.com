@@ -8,6 +8,100 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗂️ Sync CardMirror's Learn custom decks to the account.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL with the
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 26+ bespoke
+  `saved_*`/`saved_tool_records` D1 tables all linked to `user.id`, and
+  every tool already reachable from the Tools page, the command palette
+  and the feature catalog. Picked up the immediately preceding run's own
+  flagged follow-up: Learn's flashcard store (`learn-store.ts`) keeps 8
+  sub-collections in one shared blob, and that run synced only `cards` (a
+  bespoke table, since the generic `TOOL_RECORD_COLLECTIONS` mechanism's
+  one-array-per-key shape would have destroyed the other 7 sub-collections
+  sharing the same key), leaving the other 7 explicitly flagged as future
+  slices. Of those 7, custom decks (`CustomDeck`: `deckId`/`name`/
+  `cardIds`/`createdAt`) was the next genuinely small one: it already has
+  a stable id field and portable content, unlike schedules/anchors/AI
+  threads/notes/log (all keyed by `cardId`/`docId` pairs, tied to
+  device-local review state) or the doc registry (tracks local file
+  paths, not portable content).
+
+  Added `packages/debate-editor/src/editor/learn-decks-sync.ts`
+  (`LearnDecksSync`, exported as a class like `LearnCardsSync`) and
+  `learn-decks-client.ts` (fetch calls), following `learn-cards-sync.ts`/
+  `learn-cards-client.ts`'s pattern exactly: `init()` best-effort merges
+  against `/api/learn-decks` (adopts a remote deck missing locally by its
+  own `deckId` via a new `LearnStore.upsertDeck` — a small additive
+  create-or-replace mutation mirroring `upsertCard`, since no such method
+  existed for decks), then subscribes to `LearnStore`'s existing generic
+  `subscribe()` and diffs each deck's `{name, cardIds}` against the last-
+  synced snapshot, catching `createDeck`/`renameDeck`/
+  `setDeckMembership`/`deleteDeck` without `LearnStore` naming them
+  individually. A synced deck's `cardIds` can reference a card that
+  hasn't reached this device yet (a soft reference, same gap
+  `learn-cards-sync.ts` already accepts) — not reconciled here.
+  Web-only, same Electron boundary as the cards sync.
+
+  Added the server side following `saved_learn_cards`'s exact shape: a
+  new `saved_learn_decks` D1 table (`apps/debate-ai.com/lib/database/schema.ts`,
+  migration `drizzle/0044_learn_decks_account_sync.sql`), one row per
+  (user, deck) keyed by the deck's own id, and `/api/learn-decks`
+  (`GET`) + `/api/learn-decks/[deckId]` (`PUT` upsert, `DELETE`) —
+  validated by a new `isValidLearnDeckRecord`/`MAX_SAVED_LEARN_DECK_BYTES`
+  pair added to `learn-store.ts` next to `CustomDeck`, re-exported via
+  `debate-editor/engine`. Wired `learnDecksSync.init()` into the existing
+  `void loadLearnStore().then(...)` boot call alongside
+  `learnCardsSync.init()`. Documented at
+  `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`
+  and cross-linked it from `learn-cards-cloud-sync.mdx`'s "What's
+  intentionally excluded" section (decks are no longer excluded from
+  sync — updated that list rather than leaving it stale).
+
+  Vitest-covered: `packages/debate-editor/test/learn-decks-sync.test.ts`
+  (new — 13 cases mirroring `learn-cards-sync.test.ts`'s coverage: stays
+  unsynced when signed out, adopts a remote-only deck by its own id,
+  pushes a local-only deck during merge, does not touch a deck present on
+  both sides, `init()` is idempotent, pushes a newly created deck, pushes
+  a renamed deck, pushes a deck on membership change, does NOT re-push on
+  an unrelated store change like grading a card, deletes on `deleteDeck`,
+  never mirrors while signed out, and applies the local change even when
+  the account push rejects), `learn-decks-client.test.ts` (new — mirrors
+  `learn-cards-client.test.ts`: GET/PUT/DELETE, 401 handling, id
+  URL-encoding, server-error and non-JSON-body fallback messages), and 8
+  new cases added to `learn-store.test.ts` (`isValidLearnDeckRecord`'s
+  accept/reject cases, plus `upsertDeck` adding a new deck and replacing
+  an existing one by id).
+
+  Ran the full verification gate: `bun install`, `packages/debate-editor`'s
+  own `bun run test` (34 files, 764 tests — 30 new), the root `bun run test`
+  (449 files, 8678 tests, all passing), `bun run typecheck` (18/18 packages
+  green, `debate-ai-web` included), and `bun run build` (production build,
+  all three targets green — `/api/learn-decks` and `/api/learn-decks/:deckId`
+  correctly listed among the built API routes). No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** the remaining 6 Learn sub-collections
+  (schedules, anchors, AI threads, notes, review log, doc registry) remain
+  local-only by design — device-local review state or file-path
+  bookkeeping, not portable shareable content, so they don't fit this
+  sync's per-record shape without a materially different design (e.g.
+  merging review state needs a real conflict-resolution policy, not
+  last-write-wins). No optimistic-concurrency handling on the deck sync
+  itself (documented as a known gap in the new doc page), matching every
+  other `saved_*`/Learn-style sync in this repo except `saved_flows`. No
+  dedicated deck-management UI exists yet (decks are only created/edited
+  from the home screen's scope picker), so there's no natural place yet
+  for a per-deck sync-status indicator — flagged rather than building a
+  new UI surface to hang it on. The `qwksearch` file-sources
+  credential-sync question, flagged by several prior runs, remains open
+  for the same reason those runs recorded — it needs a maintainer
+  product/security decision, not a mechanical fix.
+
 - **🔁 Sync CardMirror's Learn flashcard content to the account.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL with the

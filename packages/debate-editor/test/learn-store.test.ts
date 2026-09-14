@@ -10,7 +10,15 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import { LearnStore, isValidLearnCardRecord, type CardDef, type Note, type AiThread } from "../src/editor/learn-store";
+import {
+  LearnStore,
+  isValidLearnCardRecord,
+  isValidLearnDeckRecord,
+  type CardDef,
+  type CustomDeck,
+  type Note,
+  type AiThread,
+} from "../src/editor/learn-store";
 import { addDays, newSchedule } from "../src/editor/learn-scheduler";
 
 const TODAY = "2026-03-14";
@@ -426,6 +434,64 @@ describe("decks", () => {
     store.renameDeck("gone", "x");
     store.setDeckMembership("gone", "c1", true);
     expect(persisted).toHaveLength(0);
+  });
+
+  it("upsertDeck adds a deck that isn't held yet", () => {
+    const { store } = makeStore();
+    const remote: CustomDeck = { deckId: "d1", name: "Impacts", cardIds: ["c1"], createdAt: NOW };
+    store.upsertDeck(remote);
+    expect(store.listDecks()).toEqual([remote]);
+  });
+
+  it("upsertDeck replaces an existing deck's full record by id", () => {
+    const { store } = makeStore();
+    store.createDeck("Impacts", "d1", NOW);
+    const replacement: CustomDeck = { deckId: "d1", name: "Renamed", cardIds: ["c1", "c2"], createdAt: NOW };
+    store.upsertDeck(replacement);
+    expect(store.listDecks()).toEqual([replacement]);
+  });
+});
+
+describe("isValidLearnDeckRecord", () => {
+  const deck = (deckId: string, over: Partial<CustomDeck> = {}): CustomDeck => ({
+    deckId,
+    name: "Impacts",
+    cardIds: [],
+    createdAt: NOW,
+    ...over,
+  });
+
+  it("accepts a well-formed CustomDeck", () => {
+    expect(isValidLearnDeckRecord(deck("d1"))).toBe(true);
+  });
+
+  it("accepts a deck with card members", () => {
+    expect(isValidLearnDeckRecord(deck("d1", { cardIds: ["c1", "c2"] }))).toBe(true);
+  });
+
+  it("rejects a non-object", () => {
+    expect(isValidLearnDeckRecord(null)).toBe(false);
+    expect(isValidLearnDeckRecord("deck")).toBe(false);
+    expect(isValidLearnDeckRecord(undefined)).toBe(false);
+  });
+
+  it("rejects a missing or non-string deckId", () => {
+    const { deckId, ...rest } = deck("d1");
+    expect(isValidLearnDeckRecord(rest)).toBe(false);
+    expect(isValidLearnDeckRecord({ ...deck("d1"), deckId: 1 })).toBe(false);
+  });
+
+  it("rejects a non-string name", () => {
+    expect(isValidLearnDeckRecord({ ...deck("d1"), name: 1 })).toBe(false);
+  });
+
+  it("rejects a non-array or non-string-array cardIds", () => {
+    expect(isValidLearnDeckRecord({ ...deck("d1"), cardIds: "c1" })).toBe(false);
+    expect(isValidLearnDeckRecord({ ...deck("d1"), cardIds: [1, 2] })).toBe(false);
+  });
+
+  it("rejects a non-string createdAt", () => {
+    expect(isValidLearnDeckRecord({ ...deck("d1"), createdAt: 123 })).toBe(false);
   });
 });
 

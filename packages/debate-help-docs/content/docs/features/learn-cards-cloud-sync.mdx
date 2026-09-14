@@ -31,14 +31,16 @@ keeps working exactly as before, purely on-device.
 
 Only a card's portable content syncs — its review **schedule** (due date,
 interval, lapses), file **anchors**, AI **threads**, private **notes**,
-the review **log**, custom **decks**, and the doc **registry** all stay
-local-only. A card adopted on a new device starts with no schedule
-pressure, the same way the manage GUI's own JSON export/import already
-treats a card whose carried schedule is absent — restoring a card is not
-meant to restore a specific device's review history. The other 7
-sub-collections live in one shared blob per device (not one row per
-record), so they don't fit this sync's per-record shape; syncing them
-would need a bespoke schema of their own.
+and the review **log** all stay local-only. A card adopted on a new
+device starts with no schedule pressure, the same way the manage GUI's
+own JSON export/import already treats a card whose carried schedule is
+absent — restoring a card is not meant to restore a specific device's
+review history. **Custom decks** sync separately — see
+[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync). The
+remaining sub-collections (anchors, AI threads, notes, review log, doc
+registry) live in one shared blob per device (not one row per record), so
+they don't fit this sync's per-record shape; syncing them would need a
+bespoke schema of their own.
 
 ## Known gaps
 

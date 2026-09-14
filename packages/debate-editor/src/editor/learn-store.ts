@@ -117,6 +117,27 @@ export interface CustomDeck {
   createdAt: string;
 }
 
+/** Byte cap for one deck's account-synced JSON, mirroring
+ *  `MAX_SAVED_LEARN_CARD_BYTES`'s per-record cap. */
+export const MAX_SAVED_LEARN_DECK_BYTES = 200_000;
+
+/**
+ * Structural guard for an untrusted value claiming to be a `CustomDeck` —
+ * doubles as the `/api/learn-decks` account-sync routes' request-body
+ * validator, mirroring `isValidLearnCardRecord`'s convention.
+ */
+export function isValidLearnDeckRecord(e: unknown): e is CustomDeck {
+  if (!e || typeof e !== 'object') return false;
+  const d = e as Record<string, unknown>;
+  return (
+    typeof d.deckId === 'string' &&
+    typeof d.name === 'string' &&
+    Array.isArray(d.cardIds) &&
+    d.cardIds.every((c) => typeof c === 'string') &&
+    typeof d.createdAt === 'string'
+  );
+}
+
 export interface DocRegistryEntry {
   docId: string;
   knownPaths: string[]; // newest first
@@ -501,6 +522,14 @@ export class LearnStore {
   // decks
   createDeck(name: string, deckId: string, now: string): void {
     this.decks.push({ deckId, name, cardIds: [], createdAt: now });
+    this.changed();
+  }
+  /** Create or replace a deck's full record (id/name/cardIds/createdAt) —
+   *  the account-sync merge's adoption path, mirroring `upsertCard`. */
+  upsertDeck(deck: CustomDeck): void {
+    const i = this.decks.findIndex((d) => d.deckId === deck.deckId);
+    if (i === -1) this.decks.push(deck);
+    else this.decks[i] = deck;
     this.changed();
   }
   renameDeck(deckId: string, name: string): void {

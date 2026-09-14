@@ -618,6 +618,40 @@ export const savedLearnCards = sqliteTable(
 
 export type SavedLearnCardRow = typeof savedLearnCards.$inferSelect;
 
+// Account-linked Learn custom-deck sync — the same standing follow-up
+// TODO.md has flagged across several runs, picking up the next of the 8
+// sub-collections in `learn-store.ts`'s shared blob: custom decks
+// (`CustomDeck`: `deckId`/`name`/`cardIds`/`createdAt`). Same
+// one-row-per-deck, upsert-by-caller-id shape as `savedLearnCards` above:
+// `clientId` holds the deck's own `deckId`, and `GET /api/learn-decks`
+// returns every synced deck in full for `learn-decks-sync.ts`'s
+// merge-on-init. Schedules/anchors/AI threads/notes/review log/doc
+// registry remain local-only, same reasoning as `savedLearnCards`'s
+// comment.
+export const savedLearnDecks = sqliteTable(
+  "saved_learn_decks",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_learn_decks_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_learn_decks_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedLearnDeckRow = typeof savedLearnDecks.$inferSelect;
+
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel
 // assessments for a round, not just the latest" follow-up. Same
