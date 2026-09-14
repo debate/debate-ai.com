@@ -68,7 +68,7 @@ export interface UploadDebateCardShardOptions {
   endRow?: number;
   /** Cards per posted batch. */
   batchRows?: number;
-  /** Rows decoded per read window. */
+  /** Ceiling on the rows in one read window; omit to size them per row group. */
   chunkRows?: number;
   /** Aborts between batches. */
   signal?: { aborted: boolean };
@@ -138,6 +138,30 @@ export async function uploadDebateCardShard(
   const failures: DebateCardRowFailure[] = [];
   let batches = 0;
 
+  /** Posts one batch and folds what the server reported into the totals. */
+  const post = async (batch: DebateCardRecord[]) => {
+    if (dryRun) {
+      progress.imported += batch.length;
+      onProgress?.({ ...progress });
+      return;
+    }
+    const result = await send(batch, { fileName, batchIndex: batches });
+    batches++;
+    progress.imported += result.imported;
+    progress.skipped += result.skipped ?? 0;
+    for (const failure of result.failures ?? []) {
+      if (failures.length < maxReportedFailures) failures.push(failure);
+    }
+    onProgress?.({ ...progress });
+  };
+
+  // Cards left over from a window that did not divide evenly into batches.
+  // Carried into the next window rather than posted short: read windows are
+  // cut on the shard's row groups, so a shard written in small groups would
+  // otherwise send one undersized request per group.
+  let pending: DebateCardRecord[] = [];
+  let pendingStart = 0;
+
   for await (const chunk of readDebateCardChunks(source, {
     startRow,
     endRow,
@@ -157,23 +181,21 @@ export async function uploadDebateCardShard(
     const { cards, duplicates } = dedupeCardsById(normalized.cards, seenIds);
     progress.duplicates += duplicates;
 
-    for (const batch of chunkForUpload(cards, batchRows)) {
+    // Walked with an index rather than re-sliced: a row-group-sized window can
+    // hold tens of thousands of cards, and dropping the front of that array
+    // once per batch would copy it hundreds of times.
+    pending = pendingStart === pending.length ? cards : pending.slice(pendingStart).concat(cards);
+    pendingStart = 0;
+    while (pending.length - pendingStart >= batchRows) {
       if (signal?.aborted) break;
-      if (dryRun) {
-        progress.imported += batch.length;
-        onProgress?.({ ...progress });
-        continue;
-      }
-
-      const result = await send(batch, { fileName, batchIndex: batches });
-      batches++;
-      progress.imported += result.imported;
-      progress.skipped += result.skipped ?? 0;
-      for (const failure of result.failures ?? []) {
-        if (failures.length < maxReportedFailures) failures.push(failure);
-      }
-      onProgress?.({ ...progress });
+      await post(pending.slice(pendingStart, pendingStart + batchRows));
+      pendingStart += batchRows;
     }
+  }
+
+  // The shard's tail: whatever the last window left under one full batch.
+  if (!signal?.aborted) {
+    for (const batch of chunkForUpload(pending.slice(pendingStart), batchRows)) await post(batch);
   }
 
   return { fileName, progress: { ...progress }, failures, batches, extraColumns };

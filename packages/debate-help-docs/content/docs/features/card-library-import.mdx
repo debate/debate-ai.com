@@ -28,8 +28,8 @@ A shard is hundreds of megabytes of card HTML — past a Worker's request limit,
 and past the memory a Worker has to decode Parquet in. So the decode happens
 where the file already is:
 
-1. The **client** (CLI or browser) reads the shard's footer, then walks it in
-   row windows — nothing holds the whole file.
+1. The **client** (CLI or browser) reads the shard's footer, then walks it one
+   row group at a time — nothing holds the whole file.
 2. Each window is normalized into card records and split into batches of ~250.
 3. Each batch is `POST`ed to `/api/admin/debate-cards`, which re-validates
    every row and upserts it.
@@ -40,6 +40,21 @@ the same code path as a 40 MB one.
 Both importers call the *same* functions to read and normalize, so a row the
 CLI skips is a row the admin panel skips, with the same code and the same
 reason.
+
+### How a read window is sized
+
+A row group is the smallest thing a Parquet decoder can read: asking for rows
+0–2,000 of a 500,000-row group decodes all 500,000 and discards the rest. So
+windows are cut on the shard's **own row groups**, never on a flat row count —
+a window that straddles a boundary, or a run of windows inside one group, pays
+to decode that group again every time. The importer reads a group in one window
+whenever its card columns fit in 32 MB (the footer's uncompressed sizes say
+whether they do), and splits the group only when they do not, at most 100,000
+rows at a time. `--chunk` forces a smaller ceiling; leave it unset and the
+shard decides.
+
+The footer is parsed once per shard and handed to every window, so a wide dump
+does not re-read megabytes of metadata per read.
 
 ## Columns
 
@@ -105,7 +120,7 @@ bunx debate-cards-upload cards-0000.parquet --dry-run
 | `--token <token>` | Bearer token matching the server's `CARD_IMPORT_TOKEN` (env `CARD_IMPORT_TOKEN`). |
 | `--cookie <cookie>` | A signed-in admin session's cookie, instead of a token (env `DEBATE_ADMIN_COOKIE`). |
 | `--batch <rows>` | Cards per request (default 250). |
-| `--chunk <rows>` | Rows decoded per read (default 2,000). |
+| `--chunk <rows>` | Cap the rows decoded per read window. Unset by default — windows are sized from the shard's row groups. |
 | `--start-row <n>` | Skip the first *n* rows of each shard — how an interrupted import resumes. |
 | `--max-rows <n>` | Import at most *n* rows per shard. |
 | `--per-file-dedupe` | Dedupe ids within each shard only, not across the run. |
