@@ -10,7 +10,6 @@
 
 import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
-import { Link2 } from "lucide-react"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
@@ -150,8 +149,6 @@ interface LecturesVideoGridViewProps {
    * (auth session, routing, settings menu).
    */
   dockSlot?: React.ReactNode
-  stackLinkedRounds: boolean
-  onToggleStackLinkedRounds: () => void
 }
 
 /**
@@ -213,8 +210,6 @@ export function LecturesVideoGridView({
   selectedStyle,
   onStyleChange,
   dockSlot,
-  stackLinkedRounds,
-  onToggleStackLinkedRounds,
 }: LecturesVideoGridViewProps) {
   const params = useParams()
   const slug = useMemo(() => {
@@ -409,14 +404,6 @@ export function LecturesVideoGridView({
           </div>
         ) : (
           <>
-            {viewMode === "grid" && (
-              <div className="mb-4 flex justify-end">
-                <button type="button" onClick={onToggleStackLinkedRounds} aria-pressed={stackLinkedRounds} className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border bg-background px-2.5 text-xs font-medium hover:bg-accent">
-                  <Link2 className="h-3.5 w-3.5" />
-                  {stackLinkedRounds ? "Linked rounds stacked" : "Stack linked rounds"}
-                </button>
-              </div>
-            )}
             {viewMode === "list" ? (
               <VideoListRows
                 videos={currentVideos}
@@ -447,7 +434,6 @@ export function LecturesVideoGridView({
                 stacksEnabled={stackedPlaylists}
                 showFullDate={true}
                 showDescription={true}
-                stackLinkedRounds={stackLinkedRounds}
               />
             )}
 
