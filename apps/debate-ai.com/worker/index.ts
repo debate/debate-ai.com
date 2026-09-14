@@ -15,6 +15,7 @@ import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import { handleCanonicalHostRedirect } from "../lib/redirects";
+import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 
 interface Env extends TurnstileEnv {
   ASSETS: Fetcher;
@@ -68,6 +69,12 @@ export default {
     // See lib/redirects/canonical-host.ts.
     const redirect = handleCanonicalHostRedirect(request);
     if (redirect) return redirect;
+
+    // App-owned `/youtube` links are convenience links only: send the viewer
+    // to YouTube's normal watch page. Do not proxy YouTube content, user
+    // credentials, or account-specific entitlements through this Worker.
+    const youtubeDestination = youtubeWatchRedirect(request);
+    if (youtubeDestination) return Response.redirect(youtubeDestination, 302);
 
     // Cloudflare Turnstile, in front of everything else: a desktop browser's
     // first HTML page view is answered with a "just a moment" check until it
