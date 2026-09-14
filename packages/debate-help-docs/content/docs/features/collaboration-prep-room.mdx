@@ -33,12 +33,17 @@ state/evidenceLibraryEntries.ts (localStorage)
 state/trackedArguments.ts (localStorage)
 state/contributorAvailability.ts (localStorage)
   → buildPersistedPrepRoom(topic) — state/prepRooms.ts
+state/prepRoomChecklist.ts (localStorage) — the "Shared task checklist" section
   → panels/PrepRoomPanel.tsx
   → apps/debate-ai.com/app/cards/prep-room/page.tsx
 ```
 
 ## Known gaps
 
-- The room is per-browser localStorage, not a shared team resource.
+- Every store the room reads (`evidenceLibraryEntries`, `trackedArguments`,
+  `contributorAvailability`, `prepRoomChecklist`) syncs to a signed-in
+  user's account — see [Tool Data Sync](../internals/tool-data-sync.mdx) —
+  but still per-user, not a shared team resource: each teammate's browser
+  keeps its own copy rather than reading and writing one server-side room.
 - No reviewer-identity/permission checks.
 - No "shared file/attachment area".
