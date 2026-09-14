@@ -18,6 +18,7 @@
 import { useState } from "react"
 import { clearActiveRound, readActiveRound, writeActiveRound } from "./active-round"
 import { BotSelection, type StartedDebate } from "./BotSelection"
+import { DebateHistory } from "./DebateHistory"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
 
@@ -47,6 +48,7 @@ export function DebatePracticeVsAi({
   onStartDebate,
 }: DebatePracticeVsAiProps = {}) {
   const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
+  const [showHistory, setShowHistory] = useState(false)
 
   const handleStart = (started: StartedDebate) => {
     writeActiveRound(userId, started)
@@ -60,7 +62,12 @@ export function DebatePracticeVsAi({
   }
 
   if (!debate) {
-    return <BotSelection onStart={handleStart} apiBaseUrl={apiBaseUrl} />
+    if (showHistory) {
+      return <DebateHistory apiBaseUrl={apiBaseUrl} onBack={() => setShowHistory(false)} />
+    }
+    return (
+      <BotSelection onStart={handleStart} apiBaseUrl={apiBaseUrl} onViewHistory={() => setShowHistory(true)} />
+    )
   }
 
   return (

@@ -11,7 +11,8 @@ and closing statements, then get an AI-judged scorecard.
 
 - **Route:** `/versus-ai`
 - **Package:** `debate-practice-vs-ai`
-- **API:** `POST /api/vsbot/create`, `/debate`, `/judge`, `/concede`
+- **API:** `POST /api/vsbot/create`, `/debate`, `/judge`, `/concede`;
+  `GET /api/vsbot/history`
 
 ## What it shows
 
@@ -20,6 +21,10 @@ panel (topic, stance, per-phase clocks), the live round (two side-by-side
 panels with countdowns, typed or dictated turns), and a scorecard (each
 phase scored out of 10 for both sides, totals, a verdict, and follow-up
 drill recommendations).
+
+A "View Debate History" button on the bot picker opens **Debate History**:
+every past round (topic, opponent, result, date), newest first, each
+expandable in place to its full transcript.
 
 ## How it works
 
