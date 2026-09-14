@@ -146,6 +146,41 @@ export function resetToolRecordAutoSync(): void {
   rawSnapshots.clear();
 }
 
+/**
+ * Whether one record's *current* value has reached the account — the
+ * per-entry status a "synced to your account" indicator needs (see
+ * `FlowHistoryList`'s History tab), as distinct from the coarse,
+ * whole-collection question `isToolRecordSyncEnabled` answers.
+ *
+ * `"unknown"` when this collection has no baseline yet to compare against —
+ * before the first post-sign-in hydrate, or while signed out/sync disabled —
+ * since neither "synced" nor "pending" would be honest without one.
+ * `"pending"` covers both a record that has never reached the account and
+ * one whose value has changed locally since it last did. The comparison
+ * mirrors `flushToolRecordCollection`'s own diff exactly: the record is
+ * "synced" only if its id is in the snapshot *and* its serialized value
+ * still matches what last landed.
+ */
+export type ToolRecordSyncStatus = "synced" | "pending" | "unknown";
+
+export function getToolRecordSyncStatus(
+  collectionKey: string,
+  record: unknown,
+): ToolRecordSyncStatus {
+  const collection = findToolRecordCollection(collectionKey);
+  if (!collection) return "unknown";
+  const snapshot = snapshots.get(collectionKey);
+  if (!snapshot) return "unknown";
+  const id = toolRecordId(collection, record);
+  if (id === null) return "unknown";
+  try {
+    return snapshot.get(id) === JSON.stringify(record) ? "synced" : "pending";
+  } catch {
+    // A record carrying a cycle or a BigInt, same as `snapshotOf` guards against.
+    return "unknown";
+  }
+}
+
 /** What one collection's flush sent. */
 export interface ToolRecordFlushResult {
   collection: string;
