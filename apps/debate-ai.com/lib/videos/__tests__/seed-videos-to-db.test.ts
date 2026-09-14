@@ -1,6 +1,8 @@
 /**
  * @fileoverview Exercises `seedVideosIntoDb` against a real in-memory SQLite
- * database (the `videos` table migration, `drizzle/0005_green_redwing.sql`),
+ * database (the `videos` table migration, `drizzle/0005_green_redwing.sql`,
+ * plus every later migration that alters `videos` — currently just
+ * `drizzle/0041_video_stacks.sql`'s `stack_key`/`stack_position` columns),
  * the same approach `lib/admin/__tests__/debate-card-import.test.ts` uses —
  * atomic-batch behavior isn't provable with a mock of `db.run`/`db.batch`,
  * since a mock can't reproduce SQLite actually rolling back a failed
@@ -23,17 +25,24 @@ import { tupleToVideoRow, type VideoRow } from "debate-data-sync/src/videos/vide
 import * as schema from "../../database/schema";
 import { videos } from "../../database/schema";
 
-const migrationPath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../drizzle/0005_green_redwing.sql",
-);
+const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
+
+/**
+ * Every migration that creates or alters the `videos` table, in application
+ * order. Keep this in sync with `drizzle/` — add a migration here whenever
+ * one touches `videos`, or `freshDb()` drifts from the real schema again.
+ */
+const VIDEOS_TABLE_MIGRATIONS = ["0005_green_redwing.sql", "0041_video_stacks.sql"];
 
 /** A fresh in-memory database with just the `videos` table migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
-    const trimmed = statement.trim();
-    if (trimmed) await client.execute(trimmed);
+  for (const migration of VIDEOS_TABLE_MIGRATIONS) {
+    const contents = readFileSync(path.join(drizzleDir, migration), "utf8");
+    for (const statement of contents.split("--> statement-breakpoint")) {
+      const trimmed = statement.trim();
+      if (trimmed) await client.execute(trimmed);
+    }
   }
   return drizzle(client, { schema });
 }
