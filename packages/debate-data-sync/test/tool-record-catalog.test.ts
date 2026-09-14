@@ -82,6 +82,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   sprintNotes: "id",
   sprintWhiteboardNotes: "id",
   routedTaskQueues: "topicId",
+  pendingTaskVerifications: "id",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
   completedResearchTasks: "id",
@@ -215,6 +216,19 @@ describe("the synced collection catalog", () => {
       storageKey: "completedResearchTasks",
       idField: "id",
       href: "/cards/progress-tracking",
+    });
+  });
+
+  it("syncs the Task Inbox's pending verification queue now that its records carry a stable id", () => {
+    // `state/pendingTaskVerifications.ts`'s `PendingTaskVerification` was keyed
+    // only by the `(topicId, argBlock)` pair, with no single id field, the same
+    // shape problem `coachingSessions` has — so a task a contributor marked
+    // done on one device didn't show up "Awaiting verification" for a teammate
+    // on another, even though its own `routedTaskQueues` sibling already synced.
+    expect(findToolRecordCollection("pendingTaskVerifications")).toMatchObject({
+      storageKey: "pendingTaskVerifications",
+      idField: "id",
+      href: "/cards/inbox",
     });
   });
 

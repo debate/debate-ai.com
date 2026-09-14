@@ -28,6 +28,11 @@ state/pendingTaskVerifications.ts (localStorage: pendingTaskVerifications)
   → panels/TaskInboxPanel.tsx
 ```
 
+Both stores account-sync via [Tool Data Sync](../internals/tool-data-sync.md)
+(`routedTaskQueues` by `topicId`, `pendingTaskVerifications` by a derived
+`${topicId}::${argBlock}` id), so a task marked done on one device still
+shows up "Awaiting verification" for a teammate checking from another.
+
 ## Known gaps
 
 "My tasks" is still free-form text — a signed-in session only prefills it.

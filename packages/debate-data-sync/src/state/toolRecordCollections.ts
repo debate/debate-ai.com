@@ -496,6 +496,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "pendingTaskVerifications",
+    storageKey: "pendingTaskVerifications",
+    idField: "id",
+    label: "Task Verification Queue",
+    href: "/cards/inbox",
+    section: "Team",
+  },
+  {
     key: "roundContributorFlows",
     storageKey: "roundContributorFlows",
     idField: "contributorId",

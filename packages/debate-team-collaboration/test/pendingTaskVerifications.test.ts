@@ -75,11 +75,19 @@ describe("markRoutedTaskAwaitingVerification", () => {
     expect(getContributorAvailability("alice")?.activeTaskCount).toBe(1);
     expect(listPendingTaskVerifications()).toEqual([
       {
+        id: "topic-ai::Solvency",
         topicId: "topic-ai",
         assignment: { task: SOLVENCY_TASK, contributorId: "alice" },
         markedDoneAt: "2026-01-05T00:00:00Z",
       },
     ]);
+  });
+
+  it("stamps id as `${topicId}::${argBlock}`", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    markRoutedTaskAwaitingVerification("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+
+    expect(getPendingTaskVerification("topic-ai", "Solvency")?.id).toBe("topic-ai::Solvency");
   });
 
   it("returns undefined and stores nothing when the topic has no persisted queue", () => {
@@ -108,6 +116,7 @@ describe("getPendingTaskVerification", () => {
     markRoutedTaskAwaitingVerification("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
 
     expect(getPendingTaskVerification("topic-ai", "Solvency")).toEqual({
+      id: "topic-ai::Solvency",
       topicId: "topic-ai",
       assignment: { task: SOLVENCY_TASK, contributorId: "alice" },
       markedDoneAt: "2026-01-05T00:00:00Z",
@@ -129,6 +138,7 @@ describe("removePendingTaskVerification", () => {
 
     expect(listPendingTaskVerifications()).toEqual([
       {
+        id: "topic-ai::Impacts",
         topicId: "topic-ai",
         assignment: { task: IMPACTS_TASK, contributorId: "alice" },
         markedDoneAt: "2026-01-06T00:00:00Z",
