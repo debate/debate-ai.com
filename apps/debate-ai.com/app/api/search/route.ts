@@ -5,11 +5,10 @@
  * route is deliberately the other half of that feature: `/cards` reads those
  * rows directly instead of falling back to a separate in-memory demo corpus.
  */
-import { and, asc, desc, eq, or, sql } from "drizzle-orm";
+import { and, ilike, or, sql } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
-import { desc, sql, and, or, like, ilike } from "drizzle-orm";
 
 function extractTagText(html: string, tag: string): string {
   const regex = new RegExp(`<${tag}>(.*?)</${tag}>`, "gi");
@@ -176,7 +175,7 @@ export async function GET(request: NextRequest) {
 
     const [field, order] = sortBy.split(":");
 
-    results.sort((a, b) => {
+    results.sort((a: any, b: any) => {
       let aVal: any;
       let bVal: any;
 
