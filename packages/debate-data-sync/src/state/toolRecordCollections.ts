@@ -214,6 +214,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/reason-editor",
     section: "Flowing and writing",
   },
+  {
+    key: "flowHistory",
+    storageKey: "flow-history",
+    idField: "id",
+    // Distinct from `saved_flows` (the explicit, user-triggered cloud save on
+    // each flow chip): this is the auto-saved undo/version log the same
+    // dialog's "History" tab reads, kept in its own `flow-history` key by
+    // `debate-round/src/state/store.ts`'s `saveToHistory`/`getFlowHistory`.
+    label: "Flow History",
+    href: "/debate",
+    section: "Flowing and writing",
+  },
   // — Coaching —
   {
     key: "coachConversation",

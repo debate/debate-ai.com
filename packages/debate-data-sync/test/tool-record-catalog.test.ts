@@ -48,6 +48,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   prepNotes: "id",
   flowAnnotations: "id",
   spellcheckDictionary: "id",
+  flowHistory: "id",
   coachConversation: "id",
   coachingPrograms: "id",
   coachMaterials: "id",
@@ -242,6 +243,21 @@ describe("the synced collection catalog", () => {
       storageKey: "pmd-user-dictionary",
       idField: "id",
       href: "/reason-editor",
+    });
+  });
+
+  it("syncs the Debate Flow workspace's auto-saved history now that its entries carry a stable id", () => {
+    // `debate-round/src/state/store.ts`'s `saveToHistory` already keyed each
+    // entry by a stable `id` (`${flow.id}-${Date.now()}`, assigned once and
+    // never mutated) — the same JSON-array-under-one-key shape as every other
+    // collection here — but the `flow-history` store itself had never been
+    // added. Distinct from `saved_flows` (`flow-cloud-save.md`'s explicit,
+    // per-flow "save to account" action): this is the auto-saved undo/version
+    // log `FlowHistoryDialog`'s own "History" tab reads.
+    expect(findToolRecordCollection("flowHistory")).toMatchObject({
+      storageKey: "flow-history",
+      idField: "id",
+      href: "/debate",
     });
   });
 
