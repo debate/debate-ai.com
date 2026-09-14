@@ -206,6 +206,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/annotations",
     section: "Flowing and writing",
   },
+  {
+    key: "spellcheckDictionary",
+    storageKey: "pmd-user-dictionary",
+    idField: "id",
+    label: "Personal Dictionary",
+    href: "/reason-editor",
+    section: "Flowing and writing",
+  },
   // — Coaching —
   {
     key: "coachConversation",

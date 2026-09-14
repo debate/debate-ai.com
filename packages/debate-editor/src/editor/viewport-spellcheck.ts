@@ -20,35 +20,20 @@ import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 import { settings } from './settings.js';
 import { showToast } from './toast.js';
 import { registerOpenContextMenu, clearOpenContextMenu } from './context-menu-registry.js';
+import { loadUserDictionary, saveUserDictionary } from './user-dictionary.js';
 
 const key = new PluginKey<DecorationSet>('viewportSpellcheck');
 
-/** Words the user added to their personal dictionary — persisted and
- *  global, applied to nspell so they're also dropped from suggestions. */
-const USER_DICT_KEY = 'pmd-user-dictionary';
-const userDict: Set<string> = loadUserDict();
+/** Words the user added to their personal dictionary — persisted, synced to
+ *  the account (see `user-dictionary.ts`), and applied to nspell so they're
+ *  also dropped from suggestions. */
+const userDict: Set<string> = loadUserDictionary();
 /** Words the user chose to ignore this session — suppressed but not
  *  "learned" (not persisted, not added to nspell). */
 const ignored = new Set<string>();
 
-function loadUserDict(): Set<string> {
-  try {
-    const raw = localStorage.getItem(USER_DICT_KEY);
-    if (raw) {
-      const arr = JSON.parse(raw);
-      if (Array.isArray(arr)) return new Set(arr.filter((x): x is string => typeof x === 'string'));
-    }
-  } catch {
-    /* ignore corrupt store */
-  }
-  return new Set();
-}
 function persistUserDict(): void {
-  try {
-    localStorage.setItem(USER_DICT_KEY, JSON.stringify([...userDict]));
-  } catch {
-    /* localStorage full / disabled */
-  }
+  saveUserDictionary(userDict);
 }
 
 /** Memoized lookups — debate text repeats words heavily, so a cache

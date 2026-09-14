@@ -47,6 +47,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   argumentTreeFilters: "roundId",
   prepNotes: "id",
   flowAnnotations: "id",
+  spellcheckDictionary: "id",
   coachConversation: "id",
   coachingPrograms: "id",
   coachMaterials: "id",
@@ -229,6 +230,18 @@ describe("the synced collection catalog", () => {
       storageKey: "pendingTaskVerifications",
       idField: "id",
       href: "/cards/inbox",
+    });
+  });
+
+  it("syncs the CardMirror editor's personal spellcheck dictionary now that its records carry a stable id", () => {
+    // `editor/user-dictionary.ts`'s `pmd-user-dictionary` store used to be a
+    // bare `string[]` of words, the same shape problem `coachingSessions`
+    // still has — `loadUserDictionary` now migrates it to `{ id, word }[]`
+    // (id === word) on load, so it fits this catalog's required shape.
+    expect(findToolRecordCollection("spellcheckDictionary")).toMatchObject({
+      storageKey: "pmd-user-dictionary",
+      idField: "id",
+      href: "/reason-editor",
     });
   });
 
