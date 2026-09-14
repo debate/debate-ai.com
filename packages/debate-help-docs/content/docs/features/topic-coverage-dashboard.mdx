@@ -29,4 +29,7 @@ state/trackedArguments.ts (localStorage — topic checklist)
 
 ## Known gaps
 
-The checklist is per-browser localStorage, not a shared team resource.
+The checklist (`trackedArguments`) syncs to a signed-in user's account —
+see [Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user,
+not a shared team resource: two contributors tracking the same topic each
+keep their own checklist rather than editing one shared list.

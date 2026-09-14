@@ -33,4 +33,7 @@ state/opponentTeamProfiles.ts (localStorage: opponentTeamProfiles)
 ## Known gaps
 
 No real round-history data source — every round is entered by hand or via
-CSV import. Profiles are per-browser localStorage.
+CSV import. Profiles (`opponentTeamProfiles`) and their logged rounds
+(`opponentRoundRecords`) sync to a signed-in user's account — see
+[Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user, not
+a shared team resource.
