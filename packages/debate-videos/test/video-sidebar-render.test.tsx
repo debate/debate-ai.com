@@ -14,7 +14,7 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { createElement, type FunctionComponent } from "react";
+import { createElement, type ComponentProps, type FunctionComponent } from "react";
 import { GraduationCap } from "lucide-react";
 
 /**
@@ -55,7 +55,7 @@ const { QuickLinksGrid } = await import(
   "../src/components/category-gallery/QuickLinksGrid"
 );
 
-function renderSidebar(): string {
+function renderSidebar(overrides: Partial<ComponentProps<typeof VideoSidebarTree>> = {}): string {
   return renderToStaticMarkup(
     createElement(VideoSidebarTree, {
       counts: { college: 12, favorites: 3, lectures: 40 },
@@ -70,6 +70,7 @@ function renderSidebar(): string {
       activeId: "lectures",
       lecturesExpanded: true,
       onToggleLectures: () => {},
+      ...overrides,
     }),
   );
 }
@@ -119,6 +120,12 @@ describe("VideoSidebarTree", () => {
   it("still renders the imported-image icons as images", () => {
     const html = renderSidebar();
     expect(html).toContain("<img");
+  });
+
+  it("does not select All Lectures while a debate-video tab is active", () => {
+    const html = renderSidebar({ activeId: "pf", selectedCategory: "all" });
+    expect(html).toMatch(/<h2 class="[^"]*text-primary[^"]*">PF Debates/);
+    expect(html).not.toMatch(/<h2 class="[^"]*text-primary[^"]*">All Lectures/);
   });
 });
 
