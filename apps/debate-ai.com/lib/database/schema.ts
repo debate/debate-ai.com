@@ -579,6 +579,45 @@ export const savedQuickCards = sqliteTable(
 
 export type SavedQuickCardRow = typeof savedQuickCards.$inferSelect;
 
+// Account-linked Learn flashcard sync — the standing follow-up TODO.md has
+// flagged across several runs: CardMirror's "Learn" spaced-repetition store
+// (`packages/debate-editor/src/editor/learn-store.ts`) was entirely
+// device-local. That store keeps 8 sub-collections (cards, schedules,
+// anchors, AI threads, notes, review log, decks, doc registry) merged in
+// one localStorage/IndexedDB blob, which doesn't fit this table's
+// one-row-per-record shape — so, deliberately, only `cards` (a card's
+// portable CONTENT: `id`/`type`/`front`/`back`) is synced here, same split
+// `savedQuickCards` above draws between a snippet's definition and any
+// per-user state. A restored card starts with no schedule pressure on
+// whichever device adopts it — already how `upsertCard` and the manage
+// GUI's own JSON export/import treat a card with no carried schedule.
+// Same one-row-per-card, upsert-by-caller-id shape as `savedQuickCards`:
+// `clientId` holds the card's own `id`, and `GET /api/learn-cards` returns
+// every synced card in full for `learn-cards-sync.ts`'s merge-on-init.
+export const savedLearnCards = sqliteTable(
+  "saved_learn_cards",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_learn_cards_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_learn_cards_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedLearnCardRow = typeof savedLearnCards.$inferSelect;
+
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel
 // assessments for a round, not just the latest" follow-up. Same

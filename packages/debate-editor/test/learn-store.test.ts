@@ -10,7 +10,7 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
-import { LearnStore, type CardDef, type Note, type AiThread } from "../src/editor/learn-store";
+import { LearnStore, isValidLearnCardRecord, type CardDef, type Note, type AiThread } from "../src/editor/learn-store";
 import { addDays, newSchedule } from "../src/editor/learn-scheduler";
 
 const TODAY = "2026-03-14";
@@ -666,5 +666,36 @@ describe("exportCards and importCards", () => {
     const { store, persisted } = makeStore();
     expect(store.importCards([], TODAY)).toBe(0);
     expect(persisted).toHaveLength(0);
+  });
+});
+
+describe("isValidLearnCardRecord", () => {
+  it("accepts a well-formed CardDef", () => {
+    expect(isValidLearnCardRecord(card("c1"))).toBe(true);
+  });
+
+  it("accepts a 'cloze' card", () => {
+    expect(isValidLearnCardRecord(card("c1", { type: "cloze" }))).toBe(true);
+  });
+
+  it("rejects a non-object", () => {
+    expect(isValidLearnCardRecord(null)).toBe(false);
+    expect(isValidLearnCardRecord("card")).toBe(false);
+    expect(isValidLearnCardRecord(undefined)).toBe(false);
+  });
+
+  it("rejects a missing or non-string id", () => {
+    const { id, ...rest } = card("c1");
+    expect(isValidLearnCardRecord(rest)).toBe(false);
+    expect(isValidLearnCardRecord({ ...card("c1"), id: 1 })).toBe(false);
+  });
+
+  it("rejects an invalid type", () => {
+    expect(isValidLearnCardRecord({ ...card("c1"), type: "essay" })).toBe(false);
+  });
+
+  it("rejects a non-string front or back", () => {
+    expect(isValidLearnCardRecord({ ...card("c1"), front: 1 })).toBe(false);
+    expect(isValidLearnCardRecord({ ...card("c1"), back: null })).toBe(false);
   });
 });

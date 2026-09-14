@@ -12362,6 +12362,10 @@ textarea.pmd-text-prompt-input {
   font-size: 0.8rem;
   color: var(--pmd-c-text-muted);
 }
+.pmd-learn-manage-sync-status {
+  font-size: 0.75rem;
+  color: var(--pmd-c-text-muted);
+}
 .pmd-learn-manage-new {
   margin-left: auto;
   background: transparent;

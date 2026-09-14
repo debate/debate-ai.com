@@ -8,6 +8,119 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔁 Sync CardMirror's Learn flashcard content to the account.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL with the
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*`/`saved_tool_records` D1 tables all linked to `user.id`, and
+  every tool already reachable from the Tools page, the command palette
+  and the feature catalog. This run finally picked up the standing
+  follow-up three prior runs had each re-flagged and deferred: CardMirror's
+  "Learn" spaced-repetition flashcard store
+  (`packages/debate-editor/src/editor/learn-store.ts`) was entirely
+  device-local. Each prior run judged it too large a first slice because
+  the store keeps 8 sub-collections (cards, schedules, anchors, AI
+  threads, notes, review log, decks, doc registry) merged in ONE
+  localStorage/IndexedDB blob under one key, which doesn't fit the generic
+  `TOOL_RECORD_COLLECTIONS` mechanism's one-array-per-key shape (confirmed
+  again this run by reading `tool-record-mirror.ts`: it overwrites the
+  entire key with just an array, which would have destroyed the other 7
+  sub-collections). Rather than deferring again, decomposed it into a
+  genuinely small first slice: sync only `cards` (a card's portable
+  CONTENT — `id`/`type`/`front`/`back`), leaving schedule/anchors/threads/
+  notes/log/decks/docs local-only, mirroring the exact split
+  `packages/debate-editor/src/editor/quick-cards-store.ts` already
+  established for its own sibling reusable-content library ("the card
+  DEFINITION is the durable, shareable unit; per-user scheduling/retrieval
+  state isn't part of a quick card") — a restored card starting with no
+  schedule pressure is already how `upsertCard` and the manage GUI's own
+  JSON export/import treat a card with no carried schedule, so this isn't
+  a new product behavior, just its cloud equivalent.
+
+  Added `packages/debate-editor/src/editor/learn-cards-sync.ts`
+  (`LearnCardsSync`, exported as a class — not just its `learnCardsSync`
+  singleton — so tests can construct isolated instances, mirroring
+  `QuickCardsStore`'s own convention) and `learn-cards-client.ts` (fetch
+  calls), following `quick-cards-store.ts`/`quick-cards-client.ts`'s
+  pattern almost exactly: `init()` best-effort merges against
+  `/api/learn-cards` (adopts a remote card missing locally by its own id
+  via `upsertCard`, so an adopted card keeps its identity instead of
+  duplicating; pushes any local-only card up), then subscribes to
+  `LearnStore`'s existing generic `subscribe()` (fires on *any* mutation)
+  and diffs the current card list's content against the last-synced
+  snapshot on each notification — this, not patching individual mutator
+  methods, is what catches every card-mutating path (`upsertCard`,
+  `importCards`, `deleteCard`, and `forgetDoc`'s bulk prune) without
+  `LearnStore` having to name them individually, and keeps `LearnStore`
+  itself host-agnostic/pure per its own module doc (no changes to it
+  beyond one additive validator). Web-only (Electron's Learn store stays
+  local-only for now, same boundary `quick-cards-store.ts` draws for its
+  own Electron backend) — gated on `getElectronHost()`.
+
+  Added the server side following `saved_quick_cards`'s exact shape: a new
+  `saved_learn_cards` D1 table (`apps/debate-ai.com/lib/database/schema.ts`,
+  migration `drizzle/0043_learn_cards_account_sync.sql`), one row per
+  (user, card) keyed by the card's own id, and `/api/learn-cards`
+  (`GET`, returning every synced card in full for the merge-on-init) +
+  `/api/learn-cards/[cardId]` (`PUT` upsert, `DELETE`) — validated by
+  `isValidLearnCardRecord`/`MAX_SAVED_LEARN_CARD_BYTES`, added to
+  `learn-store.ts` next to `CardDef` and re-exported via
+  `debate-editor/engine`, mirroring `isValidQuickCardRecord`'s exact
+  precedent for cross-package import into the Next.js route. Wired
+  `learnCardsSync.init()` into the existing `void loadLearnStore()` boot
+  call in `packages/debate-editor/src/editor/index.ts`. Added a small
+  "Synced to your account" / "Not synced — sign in to sync" status line to
+  the Learn manage GUI's toolbar (`learn-manage-ui.ts`), next to the
+  existing Export/Import buttons, updated on the same store-subscription
+  render pass the card count already uses. Documented the feature at
+  `packages/debate-help-docs/content/docs/features/learn-cards-cloud-sync.mdx`,
+  mirroring `quick-cards-cloud-save.mdx`'s template (not wired into the
+  feature catalog, matching that doc's own precedent — both document a
+  sub-feature of the single `reason-editor` catalog entry, not a
+  standalone tool).
+
+  Vitest-covered: `packages/debate-editor/test/learn-cards-sync.test.ts`
+  (new — 12 cases: stays unsynced when signed out, adopts a remote-only
+  card by its own id, pushes a local-only card during merge, does not
+  touch an id present on both sides, `init()` is idempotent, pushes a
+  newly created card, pushes an edited card keyed by content, does NOT
+  re-push on an unrelated store change like grading, deletes on
+  `deleteCard`, deletes on `forgetDoc`'s bulk prune — not just
+  `deleteCard` — never mirrors while signed out, and applies the local
+  change even when the account push rejects), `learn-cards-client.test.ts`
+  (new — mirrors `quick-cards-client.test.ts`'s convention: GET/PUT/DELETE,
+  401 handling, id URL-encoding, server-error and non-JSON-body fallback
+  messages), and 6 new `isValidLearnCardRecord` cases added to
+  `learn-store.test.ts`.
+
+  Ran the full verification gate: `bun install`, `packages/debate-editor`'s
+  own `bun run test` (32 files, 734 tests — 27 new), the root `bun run test`
+  (447 files, 8648 tests, all passing), `bun run typecheck` (18/18 packages
+  green, `debate-ai-web` included — confirms the new API routes and schema
+  compile), `packages/debate-help-docs`'s own typecheck (confirms the new
+  MDX page compiles), and `bun run build` (production build, all three
+  targets green — `/api/learn-cards` and `/api/learn-cards/:cardId`
+  correctly listed among the built API routes). No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** the other 7 Learn sub-collections
+  (schedules, anchors, AI threads, notes, review log, decks, doc registry)
+  remain local-only by design — they live in one shared blob per device,
+  not one row per record, so syncing any of them needs its own bespoke
+  schema/merge design, not an extension of this slice. No optimistic-
+  concurrency handling on the card-content sync itself (documented as a
+  known gap in the new doc page) — editing the same card from two
+  signed-in devices at once has the last write win, matching every other
+  `saved_*`/quick-cards-style sync in this repo except `saved_flows`
+  (which alone has conflict detection). The `qwksearch` file-sources
+  credential-sync question, flagged by several prior runs, remains open
+  for the same reason those runs recorded — it needs a maintainer
+  product/security decision, not a mechanical fix.
+
 - **🔗 Give the Debate Flow History tab a per-entry "synced to your account"
   indicator.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
