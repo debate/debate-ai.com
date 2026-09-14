@@ -39,7 +39,6 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "@/lib/ui/primitives/command"
 import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "@/app/tools/tool-groups"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
@@ -176,10 +175,13 @@ export function GlobalCommandPalette() {
                   key={`fav-${tool.href}`}
                   value={`favorite ${toolHaystack(tool)}`}
                   onSelect={() => go(tool.href)}
+                  className="items-start gap-2"
                 >
-                  <Star className="fill-current text-amber-500" />
-                  <span className="flex-1 truncate">{tool.label}</span>
-                  <CommandShortcut className="hidden sm:inline">{tool.href}</CommandShortcut>
+                  <Star className="fill-current text-amber-500 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium leading-snug break-words">{tool.label}</div>
+                    <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -194,10 +196,13 @@ export function GlobalCommandPalette() {
                   key={`recent-${tool.href}`}
                   value={`recent ${toolHaystack(tool)}`}
                   onSelect={() => go(tool.href)}
+                  className="items-start gap-2"
                 >
-                  <Clock className="text-muted-foreground" />
-                  <span className="flex-1 truncate">{tool.label}</span>
-                  <CommandShortcut className="hidden sm:inline">{tool.href}</CommandShortcut>
+                  <Clock className="text-muted-foreground mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium leading-snug break-words">{tool.label}</div>
+                    <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
+                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -206,20 +211,34 @@ export function GlobalCommandPalette() {
         )}
         <CommandGroup heading="Go to">
           {QUICK_ACTIONS.map((tool) => (
-            <CommandItem key={tool.href} value={toolHaystack(tool)} onSelect={() => go(tool.href)}>
-              <tool.icon />
-              <span className="flex-1 truncate">{tool.label}</span>
-              <span className="text-muted-foreground hidden truncate text-xs sm:inline">{tool.description}</span>
+            <CommandItem
+              key={tool.href}
+              value={toolHaystack(tool)}
+              onSelect={() => go(tool.href)}
+              className="items-start gap-2"
+            >
+              <tool.icon className="mt-0.5" />
+              <div className="min-w-0 flex-1">
+                <div className="font-medium leading-snug break-words">{tool.label}</div>
+                <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
+              </div>
             </CommandItem>
           ))}
         </CommandGroup>
         {groupsWithHaystack.map((group) => (
           <CommandGroup key={group.heading} heading={group.heading}>
             {group.tools.map(({ tool, value }) => (
-              <CommandItem key={tool.href} value={value} onSelect={() => go(tool.href)}>
-                <tool.icon />
-                <span className="flex-1 truncate">{tool.label}</span>
-                <span className="text-muted-foreground hidden truncate text-xs sm:inline">{tool.description}</span>
+              <CommandItem
+                key={tool.href}
+                value={value}
+                onSelect={() => go(tool.href)}
+                className="items-start gap-2"
+              >
+                <tool.icon className="mt-0.5" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium leading-snug break-words">{tool.label}</div>
+                  <div className="mt-0.5 text-xs leading-snug text-muted-foreground break-words">{tool.description}</div>
+                </div>
               </CommandItem>
             ))}
           </CommandGroup>
