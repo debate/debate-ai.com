@@ -33,5 +33,7 @@ state/judgeProfiles.ts (localStorage: judgeProfiles)
 ## Known gaps
 
 No real ballot data source — every round is entered by hand, one at a time
-or in a CSV batch via Bulk import. Profiles are per-browser localStorage,
-with no identity/permission checks.
+or in a CSV batch via Bulk import. Profiles (`judgeProfiles`) and their
+logged rounds (`judgeRoundRecords`) sync to a signed-in user's account —
+see [Tool Data Sync](../internals/tool-data-sync.mdx) — but still per-user,
+not a shared team resource, and with no identity/permission checks.
