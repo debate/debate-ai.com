@@ -8,6 +8,78 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔗 Give the Debate Flow History tab a per-entry "synced to your account"
+  indicator.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built: `user_settings`/`documents`/`saved_flows`/`saved_rounds`,
+  25+ bespoke `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS`
+  entries all linked to `user.id`, and every tool already reachable from
+  the Tools page, the command palette and the feature catalog. Picked up
+  the immediately preceding run's own flagged follow-up rather than
+  starting a fresh audit: the new "History" tab (`FlowHistoryDialog.tsx`/
+  `FlowHistoryList.tsx`) had no way to tell a synced entry apart from a
+  local-only one, and that run assumed closing the gap needed new
+  sync-layer design work first, since `tool-record-auto-sync.ts`'s watcher
+  "currently only diffs-and-pushes; nothing tracks or exposes 'has record
+  X's current value reached the account'". Reading that module rather than
+  taking the assumption at face value found the opposite: the watcher
+  already keeps exactly that answer in memory (`snapshots`, a per-collection
+  map of each record's last-landed serialized JSON, advanced only once a
+  push actually succeeds) — it just never exposed it to a caller. Surfacing
+  it was one small, pure query function, not a sync redesign.
+
+  Added `getToolRecordSyncStatus(collectionKey, record)` to
+  `packages/debate-data-sync/src/state/tool-record-auto-sync.ts`, returning
+  `"synced"` | `"pending"` | `"unknown"` by re-running the exact same
+  id-then-JSON-equality comparison `flushToolRecordCollection` already uses
+  to decide what to push, against the same `snapshots` map — `"unknown"`
+  before this collection has ever been baselined (signed out, or before the
+  first post-sign-in hydrate), so a viewer is never told a record is "not
+  synced" when sync hasn't even started yet. No changes to the watcher's
+  own push/diff logic. Wired it into `FlowHistoryList.tsx`: each entry now
+  renders a small badge — "Synced" or "Not yet synced" — next to its label,
+  reusing the same `Badge` primitive `FlowHistoryDialog.tsx`'s "via round"
+  badge already uses; the badge is omitted entirely (rather than shown as
+  a third state) when the status is `"unknown"`. Replaced the tab's old
+  blanket "Auto-saved as you work. Synced to your account." caption — which
+  asserted sync unconditionally, even signed out — with the per-entry badges
+  and a plain "Auto-saved as you work."
+
+  Vitest-covered: `packages/debate-data-sync/test/tool-record-auto-sync.test.ts`
+  (7 new cases — unknown before baselining, synced after a real flush,
+  pending for a record that never reached the account, pending again once a
+  synced record's value changes locally, unknown for an unkeyable record,
+  unknown for an unregistered collection, and back to unknown after a
+  sign-out reset) and `packages/debate-round/test/FlowHistoryList.test.tsx`
+  (4 new cases — no badge before any baseline exists, "Synced" once an
+  entry's exact value has landed, "Not yet synced" for an entry baselined
+  with nothing in it yet, and "Not yet synced" for a locally-edited entry
+  even though an earlier value of it landed).
+
+  Ran the full verification gate: `bun install`, `packages/debate-data-sync`'s
+  own `bun run test` (32 files, 600 tests — 7 new) and `packages/debate-round`'s
+  (60 files, 1206 tests — 4 new), the root `bun run test` (445 files, 8621
+  tests passing), `bun run typecheck` (18/18 packages green), and
+  `bun run build` (production build, all three targets green). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the same per-record status is now
+  available to any other synced tool's list UI (e.g. CardMirror's personal
+  dictionary, the flow-edit log) that wants the same "synced vs. local-only"
+  distinction — this run only wired it into the one tab the prior run's
+  follow-up named. The `dailyMissionResults`/`challengeWinEvents`
+  (composite-key/no-id gamification history — confirmed this run that
+  giving them a synthetic `id` would mean reshaping the record type across
+  ~80 existing call sites in `debate-contributor-progress`'s and
+  `debate-team-collaboration`'s test suites, a materially larger change
+  than "one entry in a list") and `qwksearch` file-sources credential-sync
+  gaps flagged by earlier runs remain open for the same reasons those runs
+  recorded.
+
 - **🕘 Restore Debate Flow's missing "History" tab UI for the auto-saved
   flow log.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link

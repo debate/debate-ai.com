@@ -20,6 +20,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   flushToolRecordCollection,
   flushToolRecords,
+  getToolRecordSyncStatus,
   isToolRecordAutoSyncRunning,
   markToolRecordsSynced,
   resetToolRecordAutoSync,
@@ -214,6 +215,62 @@ describe("tool-record auto-sync", () => {
     const result = await flushToolRecordCollection("notATool");
     expect(result.error).toBeDefined();
     expect(calls).toEqual([]);
+  });
+});
+
+describe("getToolRecordSyncStatus", () => {
+  it("is 'unknown' before this collection has ever been baselined", () => {
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+    expect(getToolRecordSyncStatus(favorites.key, { videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" })).toBe(
+      "unknown",
+    );
+  });
+
+  it("is 'synced' once the record's current value matches what landed", async () => {
+    markToolRecordsSynced(favorites.key);
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+    await flushToolRecordCollection(favorites.key);
+
+    expect(getToolRecordSyncStatus(favorites.key, { videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" })).toBe(
+      "synced",
+    );
+  });
+
+  it("is 'pending' for a record that has never reached the account", () => {
+    markToolRecordsSynced(favorites.key);
+    expect(getToolRecordSyncStatus(favorites.key, { videoId: "new", savedAt: "2026-01-01T00:00:00.000Z" })).toBe(
+      "pending",
+    );
+  });
+
+  it("is 'pending' once a synced record's value changes locally", async () => {
+    markToolRecordsSynced(favorites.key);
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+    await flushToolRecordCollection(favorites.key);
+
+    expect(getToolRecordSyncStatus(favorites.key, { videoId: "abc", savedAt: "2026-06-06T00:00:00.000Z" })).toBe(
+      "pending",
+    );
+  });
+
+  it("is 'unknown' for a record the sync cannot key", () => {
+    markToolRecordsSynced(favorites.key);
+    expect(getToolRecordSyncStatus(favorites.key, { savedAt: "2026-01-01T00:00:00.000Z" })).toBe("unknown");
+  });
+
+  it("is 'unknown' for a collection nothing syncs under", () => {
+    expect(getToolRecordSyncStatus("notATool", { id: "abc" })).toBe("unknown");
+  });
+
+  it("goes back to 'unknown' after a reset, as at sign-out", async () => {
+    markToolRecordsSynced(favorites.key);
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+    await flushToolRecordCollection(favorites.key);
+    resetToolRecordAutoSync();
+
+    expect(getToolRecordSyncStatus(favorites.key, { videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" })).toBe(
+      "unknown",
+    );
   });
 });
 
