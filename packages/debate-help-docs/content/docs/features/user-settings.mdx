@@ -30,5 +30,16 @@ lib/hooks/useFavoriteTools.ts
 
 ## Known gaps
 
-No optimistic-concurrency handling — two tabs editing settings at once has
-the last PUT win, most exposed on `favoriteTools`' whole-list replace.
+No optimistic-concurrency handling in general — two tabs editing the *same*
+field at once has the last PUT win. `favoriteTools` no longer has this
+problem: every code path that changes it (`toggleFavorite`/`removeFavorite`'s
+single add/remove op, and `pruneUnknown`'s batch `removeFavoriteTools` op)
+now resolves against the account's row as it stands at write time, not a
+client-computed whole-list replace, so two tabs adding, removing or pruning
+different entries at once can no longer drop each other's change. A plain
+whole-list `favoriteTools` replace is still accepted by the route for a
+caller that genuinely needs one, but nothing in the app sends one anymore.
+Every other field (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.)
+is still a plain whole-value replace with no such protection — low risk in
+practice since each is normally edited from one open settings tab at a
+time, but a real gap if that changes.

@@ -18,15 +18,33 @@
  * so this catalog reads the same as the page a reader lands on after
  * clicking through.
  *
+ * This is the single canonical copy: `apps/debate-ai.com`'s live `/features`
+ * page, `packages/debate-ui`'s reference `FeaturesPanel`, and
+ * `packages/debate-contributor-progress`'s News Stream "Tool spotlight" posts
+ * all import from here (a leaf package with no dependency of its own, the
+ * same shape as `debate-data-sync`) instead of each keeping a hand-synced
+ * fork — see `features-page.mdx`'s "One shared catalog" section.
+ *
  * Like `debate-card-search`'s narrower community-hub directory, this module
  * is pure: it has no store of its own, because every entry links to a
  * surface that already persists (or doesn't need to persist) its own state.
  *
- * @module features/feature-catalog
+ * @module feature-catalog
  */
 
-/** Repository the feature docs are published from. */
-const DOCS_BASE_URL = "https://github.com/debate/debate-ai.com/blob/master/docs/features";
+/**
+ * Where the feature docs are served from by default: same origin as the app
+ * (`/docs/features/<name>`, extension stripped) — the live `/features` page's
+ * own docs site (`scripts/build-docs.mjs` static-exports
+ * `packages/debate-help-docs/content/docs/features/<name>.mdx` into
+ * `public/docs`). Renderers with no docs site of their own to link into
+ * (`packages/debate-ui`'s reference panel, News Stream's spotlights) pass
+ * {@link GITHUB_DOCS_BASE_URL} to {@link featureDocUrl} instead.
+ */
+const DEFAULT_DOCS_BASE_URL = "/docs/features";
+
+/** Docs base URL for a renderer with no in-app docs site to link into. */
+export const GITHUB_DOCS_BASE_URL = "https://github.com/debate/debate-ai.com/blob/master/docs/features";
 
 /**
  * Groups the catalog by the job a debater is doing, rather than by the
@@ -636,14 +654,40 @@ export function searchFeatures(entries: FeatureEntry[], query: string): FeatureE
   );
 }
 
+/** Options controlling how {@link featureDocUrl} resolves an entry's doc link. */
+export interface FeatureDocUrlOptions {
+  /**
+   * Base URL to resolve `entry.doc` against.
+   * Defaults to the live docs site's `/docs/features`.
+   */
+  baseUrl?: string;
+  /**
+   * Whether to drop `doc`'s `.md`/`.mdx` extension, matching the published
+   * docs site's route (extensionless). Defaults to `true`.
+   */
+  stripExtension?: boolean;
+}
+
 /**
- * Absolute URL of an entry's long-form feature doc.
+ * URL of an entry's long-form feature doc.
+ *
+ * `doc` names the source file (`drill-sets.md`) under
+ * `packages/debate-help-docs/content/docs/features/`. By default this
+ * resolves to the published, extensionless route on the app's own docs site
+ * (`/docs/features/drill-sets`); pass `{ baseUrl: GITHUB_DOCS_BASE_URL,
+ * stripExtension: false }` for a renderer with no docs site of its own to
+ * link into instead.
  *
  * @param entry - The catalog entry.
+ * @param options - See {@link FeatureDocUrlOptions}.
  * @returns The doc's URL, or `undefined` when the entry has no doc.
  */
-export function featureDocUrl(entry: FeatureEntry): string | undefined {
-  return entry.doc ? `${DOCS_BASE_URL}/${entry.doc}` : undefined;
+export function featureDocUrl(entry: FeatureEntry, options: FeatureDocUrlOptions = {}): string | undefined {
+  if (!entry.doc) return undefined;
+  const baseUrl = options.baseUrl ?? DEFAULT_DOCS_BASE_URL;
+  const stripExtension = options.stripExtension ?? true;
+  const doc = stripExtension ? entry.doc.replace(/\.mdx?$/, "") : entry.doc;
+  return `${baseUrl}/${doc}`;
 }
 
 /**

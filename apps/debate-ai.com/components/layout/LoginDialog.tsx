@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../lib/ui/primitives/dialog"
+import { Button } from "../../lib/ui/primitives/button"
 import { LoginForm } from "./LoginForm"
 import { useSession } from "@/lib/hooks/useSession"
 import { APP_NAME } from "@/lib/config/site"
@@ -34,6 +35,12 @@ export interface LoginDialogProps {
   description?: string
   /** Where to return after signing in. Defaults to the current page. */
   returnTo?: string
+  /**
+   * An optional secondary action below the form — the guest sign-in prompt's
+   * "Don't ask me again" (see `SignInPromptProvider`). Absent from the
+   * settings-menu sign-in, where there is nothing to decline.
+   */
+  secondaryAction?: { label: string; onClick: () => void }
 }
 
 export function LoginDialog({
@@ -42,6 +49,7 @@ export function LoginDialog({
   title,
   description,
   returnTo,
+  secondaryAction,
 }: LoginDialogProps) {
   const { isAuthenticated } = useSession()
   const pathname = usePathname()
@@ -65,6 +73,17 @@ export function LoginDialog({
         {/* Returning to the current page keeps the sign-in from doubling as
             navigation the user did not ask for. */}
         <LoginForm callbackURL={returnTo || pathname || "/"} />
+        {secondaryAction && (
+          <Button
+            type="button"
+            variant="link"
+            size="sm"
+            className="mx-auto h-auto p-0 text-muted-foreground"
+            onClick={secondaryAction.onClick}
+          >
+            {secondaryAction.label}
+          </Button>
+        )}
       </DialogContent>
     </Dialog>
   )

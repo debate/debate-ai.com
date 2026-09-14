@@ -1,3 +1,10 @@
+/**
+ * Rubric the card flaw-finder asks the model to fill in.
+ *
+ * The card itself is passed alongside this prompt (as qwksearch's
+ * `articleQA` `article` field), so the rubric carries no trailing
+ * "Research Quote:" seam to concatenate content onto.
+ */
 export const findFlawsPrompt = `
 
 1. Read the debate research quote carefully.
@@ -17,7 +24,4 @@ export const findFlawsPrompt = `
     "<flaw 3>"
   ]
 }
-
-Research Quote:
-
 `

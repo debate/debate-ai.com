@@ -18,6 +18,7 @@ import { useEffect, useState } from "react"
 
 import { authClient } from "@/lib/auth/client"
 import { NATIVE_DEEP_LINK_SCHEME } from "@/lib/config/site"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 
 export default function NativeCompletePage() {
   const [status, setStatus] = useState<"working" | "done" | "error">("working")

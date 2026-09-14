@@ -13,15 +13,17 @@
 
 import type {
   ConcedeRequestBody,
+  ConcedeResponse,
   CreateDebateResponse,
   DebateMessage,
   DebateRequestBody,
+  DebateVsBotRecord,
   JudgeResponse,
   PhaseTiming,
   StoredPhaseTiming,
 } from "../backend/types"
 
-export type { DebateMessage, PhaseTiming }
+export type { DebateMessage, PhaseTiming, DebateVsBotRecord }
 
 /** Where the vs-bot routes are mounted in the host app. */
 export const DEFAULT_VSBOT_BASE_URL = "/api/vsbot"
@@ -48,6 +50,28 @@ async function postJson<T>(path: string, body: unknown, options: VsBotClientOpti
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify(body),
+    signal: options.signal,
+  })
+
+  if (!response.ok) {
+    let detail = ""
+    try {
+      const payload = (await response.json()) as { error?: string }
+      detail = payload?.error ? `: ${payload.error}` : ""
+    } catch {
+      // A non-JSON error body adds nothing beyond the status.
+    }
+    throw new Error(`${failure}${detail}`)
+  }
+
+  return (await response.json()) as T
+}
+
+async function getJson<T>(path: string, options: VsBotClientOptions, failure: string): Promise<T> {
+  const baseUrl = options.baseUrl ?? DEFAULT_VSBOT_BASE_URL
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "GET",
+    credentials: "include",
     signal: options.signal,
   })
 
@@ -112,9 +136,9 @@ export async function concedeDebate(
   debateId: string,
   history: DebateMessage[] = [],
   options: VsBotClientOptions = {},
-): Promise<void> {
+): Promise<ConcedeResponse> {
   const body: ConcedeRequestBody = { debateId, history }
-  await postJson<{ message: string }>("/concede", body, options, "Failed to concede debate")
+  return postJson<ConcedeResponse>("/concede", body, options, "Failed to concede debate")
 }
 
 /** Score a finished round. Returns the judge's raw reply, as upstream did. */
@@ -123,4 +147,14 @@ export async function judgeDebate(
   options: VsBotClientOptions = {},
 ): Promise<JudgeResponse> {
   return postJson<JudgeResponse>("/judge", data, options, "Failed to judge debate")
+}
+
+/** The signed-in user's past debates, newest first, full transcript included. */
+export async function listDebateHistory(options: VsBotClientOptions = {}): Promise<DebateVsBotRecord[]> {
+  const result = await getJson<{ debates: DebateVsBotRecord[] }>(
+    "/history",
+    options,
+    "Failed to load debate history",
+  )
+  return result.debates
 }

@@ -34,6 +34,12 @@ export interface VideoQueryParams {
   q?: string | null;
   /** Restrict to an explicit id list — used by the favourites-only filter. */
   ids?: string[] | null;
+  /**
+   * Drop an explicit id list — used to keep hidden videos out of both the
+   * grid and the season/style facet counts, without affecting search (which
+   * still needs to surface a hidden video so it can be unhidden).
+   */
+  excludeIds?: string[] | null;
   /** Sort order; defaults to recency. */
   sort?: string | null;
   /** Page size. */
@@ -99,6 +105,9 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
   const tokens = searchTokens(params.q);
   const season = parseSeasonFilter(params.year);
   const idSet = params.ids && params.ids.length ? new Set(params.ids) : null;
+  const excludeSet = params.excludeIds && params.excludeIds.length
+    ? new Set(params.excludeIds)
+    : null;
 
   return rows.filter((row) => {
     if (params.source && params.source !== "all" && row.source !== params.source) return false;
@@ -108,6 +117,7 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     if (params.style != null && row.style !== params.style) return false;
     if (season !== null && row.seasonYear !== season) return false;
     if (idSet && !idSet.has(row.videoId)) return false;
+    if (excludeSet && excludeSet.has(row.videoId)) return false;
     if (tokens.length && !tokens.every((token) => row.searchText.includes(token))) return false;
     return true;
   });

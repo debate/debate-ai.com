@@ -20,6 +20,13 @@ is a small fetch-once companion for counts/topics/champions. If the table
 is missing or unseeded, both endpoints fall back to rebuilding from the
 JSON assets in memory with identical semantics.
 
+## Category search suggestions
+
+The search chips beneath the grid are specific to the category, debate format,
+season, or top-picks view currently open. Their counts come from the titles and
+metadata of videos in that selection, so choosing a chip never sends you to
+unrelated lectures or rounds from elsewhere in the library.
+
 ## Client paging
 
 ```
@@ -27,11 +34,12 @@ hooks/useVideoFeed.ts — useVideoFeed(filters) / useVideoMeta()
 hooks/useInfiniteScroll.ts — loads the next page as the grid is scrolled
 ```
 
-Favourites and hidden videos are still *filtered* client-side — favourites as
-an explicit `ids` allow-list, hidden videos by dropping them from the loaded
-pages — but they are no longer *stored* only client-side: both are kept on your
-account and follow you to another device. See
-[Tool Data Sync](../internals/tool-data-sync.mdx).
+Favourites and hidden videos are sent to the feed as explicit id lists rather
+than columns the query already understands — favourites as an `ids`
+allow-list, hidden videos as an `excludeIds` deny-list (so a hidden video also
+stops inflating the season/style dropdown counts) — but they are no longer
+*stored* only client-side: both are kept on your account and follow you to
+another device. See [Tool Data Sync](../internals/tool-data-sync.mdx).
 
 Signed out, they save in that browser alone, and favouriting a video says so
 once — with an offer to sign in and keep the collection. Declining is fine: the

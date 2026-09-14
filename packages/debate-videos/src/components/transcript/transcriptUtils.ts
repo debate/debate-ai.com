@@ -78,3 +78,40 @@ export function groupIntoSentences(snippets: TranscriptSnippet[]): TranscriptSni
   flush()
   return sentences
 }
+
+/** One piece of text, with whether it's a search match to highlight. */
+export interface TextMatchSegment {
+  text: string
+  matched: boolean
+}
+
+/**
+ * Splits `text` around every case-insensitive occurrence of `needle`, so a
+ * caller can wrap the matched segments (e.g. in `<mark>`) without touching
+ * the rest of the text. An empty or whitespace-only `needle` — nothing
+ * typed, or a search box just cleared — returns the whole text unmatched
+ * rather than matching every position.
+ */
+export function splitOnMatch(text: string, needle: string): TextMatchSegment[] {
+  const trimmed = needle.trim()
+  if (!trimmed) return [{ text, matched: false }]
+
+  const pattern = new RegExp(trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "ig")
+  const segments: TextMatchSegment[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ text: text.slice(lastIndex, match.index), matched: false })
+    }
+    segments.push({ text: match[0], matched: true })
+    lastIndex = match.index + match[0].length
+    // A zero-length needle can't happen (guarded above), so no infinite-loop guard is needed here.
+  }
+  if (lastIndex < text.length) {
+    segments.push({ text: text.slice(lastIndex), matched: false })
+  }
+
+  return segments.length > 0 ? segments : [{ text, matched: false }]
+}

@@ -23,6 +23,7 @@ import { useEffect } from "react"
 import Link from "next/link"
 import { Star, X } from "lucide-react"
 import { Button } from "../../lib/ui/primitives/button"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
 import { ALL_TOOLS } from "@/app/tools/tool-groups"
 

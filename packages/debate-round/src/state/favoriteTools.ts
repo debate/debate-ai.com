@@ -87,8 +87,16 @@ export function normalizeFavoriteToolsPatch(input: unknown): FavoriteToolsPatchR
   return { valid, errors };
 }
 
-/** A single star/unstar operation, applied server-side against the caller's currently stored list rather than a client-computed whole-list replacement. */
-export type FavoriteToolOp = { addFavoriteTool?: string; removeFavoriteTool?: string };
+/**
+ * A single star/unstar operation, or a batch prune, applied server-side
+ * against the caller's currently stored list rather than a client-computed
+ * whole-list replacement.
+ */
+export type FavoriteToolOp = {
+  addFavoriteTool?: string;
+  removeFavoriteTool?: string;
+  removeFavoriteTools?: string[];
+};
 
 export type FavoriteToolOpPatchResult = {
   valid: FavoriteToolOp;
@@ -96,16 +104,20 @@ export type FavoriteToolOpPatchResult = {
 };
 
 /**
- * Validates an untrusted `{ addFavoriteTool }` / `{ removeFavoriteTool }`
- * patch — the fix for the "two tabs star different tools in quick
- * succession" lost-update race `normalizeFavoriteToolsPatch`'s whole-list
+ * Validates an untrusted `{ addFavoriteTool }` / `{ removeFavoriteTool }` /
+ * `{ removeFavoriteTools }` patch — the fix for the "two tabs edit favorites
+ * at once" lost-update race `normalizeFavoriteToolsPatch`'s whole-list
  * replace is exposed to (see `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s Known
- * gaps): the caller sends just the one href being added or removed, and
- * `/api/settings`'s route resolves it against the row's current value
+ * gaps): the caller sends just the href(s) being added or removed, and
+ * `/api/settings`'s route resolves them against the row's current value
  * (read-then-write, mirroring how `editorPreferences` already merges onto
  * its existing stored map instead of replacing it) via
  * {@link applyFavoriteToolOp} rather than trusting a client-computed list
- * that may already be stale by the time it lands.
+ * that may already be stale by the time it lands. `removeFavoriteTools` is
+ * the batch form `pruneUnknown`'s bulk cleanup uses — it used to be the one
+ * remaining caller of `normalizeFavoriteToolsPatch`'s racy whole-list
+ * replace, since a single add/remove op didn't fit "drop N stale entries at
+ * once".
  */
 export function normalizeFavoriteToolOpPatch(input: unknown): FavoriteToolOpPatchResult {
   if (typeof input !== "object" || input === null || Array.isArray(input)) {
@@ -115,11 +127,14 @@ export function normalizeFavoriteToolOpPatch(input: unknown): FavoriteToolOpPatc
   const record = input as Record<string, unknown>;
   const hasAdd = "addFavoriteTool" in record;
   const hasRemove = "removeFavoriteTool" in record;
+  const hasRemoveMany = "removeFavoriteTools" in record;
 
-  if (hasAdd && hasRemove) {
+  if ([hasAdd, hasRemove, hasRemoveMany].filter(Boolean).length > 1) {
     return {
       valid: {},
-      errors: ['Provide only one of "addFavoriteTool" or "removeFavoriteTool" per request.'],
+      errors: [
+        'Provide only one of "addFavoriteTool", "removeFavoriteTool" or "removeFavoriteTools" per request.',
+      ],
     };
   }
   if (hasAdd) {
@@ -132,13 +147,22 @@ export function normalizeFavoriteToolOpPatch(input: unknown): FavoriteToolOpPatc
       ? { valid: { removeFavoriteTool: record.removeFavoriteTool }, errors: [] }
       : { valid: {}, errors: ['"removeFavoriteTool" must be a single in-app path (e.g. "/reason-editor").'] };
   }
+  if (hasRemoveMany) {
+    const list = record.removeFavoriteTools;
+    return Array.isArray(list) && list.length <= MAX_FAVORITE_TOOLS && list.every(isValidToolHref)
+      ? { valid: { removeFavoriteTools: list }, errors: [] }
+      : {
+          valid: {},
+          errors: [`"removeFavoriteTools" must be an array of up to ${MAX_FAVORITE_TOOLS} in-app paths.`],
+        };
+  }
   return { valid: {}, errors: [] };
 }
 
 /**
- * Applies one validated add/remove op to a currently stored favorites list.
- * Pure and idempotent: adding an already-present href, or removing an
- * absent one, returns the same array reference unchanged; adding past
+ * Applies one validated add/remove/prune op to a currently stored favorites
+ * list. Pure and idempotent: adding an already-present href, or removing
+ * absent one(s), returns the same array reference unchanged; adding past
  * {@link MAX_FAVORITE_TOOLS} is silently dropped, mirroring
  * `useFavoriteTools.ts#toggleFavorite`'s own client-side cap guard.
  */
@@ -150,6 +174,11 @@ export function applyFavoriteToolOp(current: string[], op: FavoriteToolOp): stri
   if (op.removeFavoriteTool) {
     if (!current.includes(op.removeFavoriteTool)) return current;
     return current.filter((href) => href !== op.removeFavoriteTool);
+  }
+  if (op.removeFavoriteTools && op.removeFavoriteTools.length > 0) {
+    const toRemove = new Set(op.removeFavoriteTools);
+    if (!current.some((href) => toRemove.has(href))) return current;
+    return current.filter((href) => !toRemove.has(href));
   }
   return current;
 }

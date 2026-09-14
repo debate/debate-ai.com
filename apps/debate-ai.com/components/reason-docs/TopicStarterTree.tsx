@@ -1,8 +1,14 @@
 "use client"
 
 import { type ReactNode, useMemo, useState } from "react"
-import { ChevronDown, ChevronRight, FileText, Folder, Search } from "lucide-react"
+import { ChevronDown, ChevronRight, Download, FileText, Folder, MoreHorizontal, Search } from "lucide-react"
 import { Input } from "@/lib/ui/primitives/input"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/lib/ui/primitives/dropdown-menu"
 import { cn } from "@/lib/ui/lib/utils"
 
 /** A row of the public catalogue. `content` is the stored file — a base64
@@ -17,7 +23,17 @@ function tree(items: TopicStarterItem[]) {
   const make = (parentId: number | null): Node[] => (children.get(parentId) ?? []).sort((a, b) => Number(b.isFolder) - Number(a.isFolder) || a.title.localeCompare(b.title)).map((item) => ({ item, children: make(item.id) }))
   return make(null)
 }
-export function TopicStarterTree({ items, onSelect }: { items: TopicStarterItem[]; onSelect: (item: TopicStarterItem) => void }) {
+export function TopicStarterTree({
+  items,
+  onSelect,
+  onDownload,
+}: {
+  items: TopicStarterItem[]
+  onSelect: (item: TopicStarterItem) => void
+  /** Downloads a file as `.docx`, without opening it in the editor first. Not
+   *  offered for folders — there is nothing to convert. */
+  onDownload?: (item: TopicStarterItem) => void
+}) {
   const [query, setQuery] = useState("")
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set(items.filter((item) => item.isFolder).map((item) => item.id)))
   const nodes = useMemo(() => tree(items), [items])
@@ -28,13 +44,35 @@ export function TopicStarterTree({ items, onSelect }: { items: TopicStarterItem[
     const childMatches = node.children.some((child) => JSON.stringify(child).toLowerCase().includes(term))
     if (!matches && !childMatches) return null
     const open = expanded.has(node.item.id) || Boolean(term)
-    return <div key={node.item.id}>
-      <button type="button" onClick={() => node.item.isFolder ? setExpanded((old) => { const next = new Set(old); next.has(node.item.id) ? next.delete(node.item.id) : next.add(node.item.id); return next }) : onSelect(node.item)} className="flex w-full items-center gap-1 rounded px-2 py-1.5 text-left text-sm hover:bg-muted" style={{ paddingLeft: 8 + depth * 14 }}>
-        {node.item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
-        {node.item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
-        <span className="min-w-0 flex-1 truncate">{node.item.title}</span>
-        {!node.item.isFolder && tags.slice(0, 1).map((tag) => <span key={tag} className="rounded bg-muted px-1 text-[10px] text-muted-foreground">{tag}</span>)}
-      </button>
+    const showDownload = !node.item.isFolder && Boolean(onDownload)
+    return <div key={node.item.id} className="group">
+      <div className="flex items-center gap-1 rounded pr-1 hover:bg-muted">
+        <button type="button" onClick={() => node.item.isFolder ? setExpanded((old) => { const next = new Set(old); next.has(node.item.id) ? next.delete(node.item.id) : next.add(node.item.id); return next }) : onSelect(node.item)} className="flex min-w-0 flex-1 items-center gap-1 px-2 py-1.5 text-left text-sm" style={{ paddingLeft: 8 + depth * 14 }}>
+          {node.item.isFolder ? (open ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />) : <span className="w-3.5" />}
+          {node.item.isFolder ? <Folder className="h-4 w-4 text-amber-500" /> : <FileText className="h-4 w-4 text-muted-foreground" />}
+          <span className="min-w-0 flex-1 truncate">{node.item.title}</span>
+          {!node.item.isFolder && tags.slice(0, 1).map((tag) => <span key={tag} className="rounded bg-muted px-1 text-[10px] text-muted-foreground">{tag}</span>)}
+        </button>
+        {showDownload && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded opacity-0 hover:bg-accent group-hover:opacity-100"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <MoreHorizontal className="h-3.5 w-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" onClick={(event) => event.stopPropagation()}>
+              <DropdownMenuItem onClick={() => onDownload?.(node.item)}>
+                <Download className="mr-2 h-4 w-4" />
+                Download as .docx
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
       {node.item.isFolder && open && node.children.map((child) => render(child, depth + 1))}
     </div>
   }

@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import topics from "debate-data-sync/data/metadata/debate-topics.json";
 import champions from "debate-data-sync/data/metadata/debate-champions.json";
-import { getVideoMeta } from "@/lib/videos/video-repository";
+import { getVideoMeta, getVideoSuggestions } from "@/lib/videos/video-repository";
+import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
 
 /**
  * Page-level video metadata: library counts for the quick-link cards, the
@@ -25,11 +26,23 @@ function getDebateHistory() {
   return history;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const meta = await getVideoMeta();
+    const { searchParams } = new URL(request.url);
+    const style = Number.parseInt(searchParams.get("style") ?? "", 10);
+    const source = searchParams.get("source");
+    const suggestionScope: VideoQueryParams = {
+      source: source === "round" || source === "lecture" ? source : "all",
+      lecturesOnly: searchParams.get("lecturesOnly") === "1",
+      topPicksOnly: searchParams.get("topPicks") === "1",
+      categoryKey: searchParams.get("category") || null,
+      style: Number.isFinite(style) ? style : null,
+      year: searchParams.get("year"),
+    };
+    const [meta, suggestions] = await Promise.all([getVideoMeta(), getVideoSuggestions(suggestionScope)]);
     return NextResponse.json({
       ...meta,
+      suggestions,
       topics: topics.data,
       champions: champions.data,
       history: getDebateHistory(),

@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { FeaturesPanel } from "../src/features/FeaturesPanel";
-import { cardHueShift } from "../src/features/effects";
-import { APP_FEATURES } from "../src/features/feature-catalog";
+import { SpotlightCard, cardHueShift } from "../src/features/effects";
+import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog";
 
 describe("FeaturesPanel", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
@@ -75,6 +75,30 @@ describe("FeaturesPanel", () => {
   });
 });
 
+describe("SpotlightCard", () => {
+  it("renders static markup with initial hueShift style", () => {
+    const cardHtml = renderToStaticMarkup(
+      <SpotlightCard hueShift={120}>
+        <div>Card Content</div>
+      </SpotlightCard>,
+    );
+    expect(cardHtml).toContain("--da-card-hue:120");
+    expect(cardHtml).toContain("da-card-tint");
+    expect(cardHtml).toContain("da-border-beam");
+    expect(cardHtml).toContain("Card Content");
+  });
+
+  it("renders without tint when hueShift is omitted", () => {
+    const cardHtml = renderToStaticMarkup(
+      <SpotlightCard>
+        <div>Plain Card</div>
+      </SpotlightCard>,
+    );
+    expect(cardHtml).not.toContain("da-card-tint");
+    expect(cardHtml).toContain("Plain Card");
+  });
+});
+
 describe("cardHueShift", () => {
   it("stays inside one turn of the wheel", () => {
     for (let i = 0; i < 200; i++) {
@@ -96,5 +120,24 @@ describe("cardHueShift", () => {
   it("is stable for a given index", () => {
     expect(cardHueShift(7)).toBe(cardHueShift(7));
     expect(cardHueShift(0)).toBe(0);
+  });
+
+  it("shifts hues predictably when an offset is provided", () => {
+    expect(cardHueShift(0, 90)).toBe(90);
+    expect(cardHueShift(0, 360)).toBe(0);
+    expect(cardHueShift(0, 450)).toBe(90);
+    for (let i = 0; i < 50; i++) {
+      const hue = cardHueShift(i, 120);
+      expect(hue).toBeGreaterThanOrEqual(0);
+      expect(hue).toBeLessThan(360);
+    }
+  });
+
+  it("maintains separation between neighbouring cards even with an offset", () => {
+    const offset = 77;
+    for (let i = 0; i < 50; i++) {
+      const gap = Math.abs(cardHueShift(i + 1, offset) - cardHueShift(i, offset));
+      expect(Math.min(gap, 360 - gap)).toBeGreaterThan(80);
+    }
   });
 });

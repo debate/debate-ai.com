@@ -44,6 +44,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   judgeParadigmSelections: "roundId",
   flowSummaries: "roundId",
   argumentTrees: "roundId",
+  argumentTreeFilters: "roundId",
   prepNotes: "id",
   flowAnnotations: "id",
   coachConversation: "id",
@@ -51,6 +52,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   coachMaterials: "id",
   coachMaterialVersions: "id",
   coachingSessionHistory: "id",
+  flowEdits: "id",
   drillSets: "roundId",
   aiVersusRounds: "roundId",
   judgeDecisions: "id",
@@ -73,6 +75,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   topicCoverageSnapshots: "id",
   brainstormIdeas: "id",
   prepNoteReplies: "id",
+  prepNoteNotifications: "id",
   prepRoomChecklist: "id",
   sprintSessions: "id",
   sprintNotes: "id",
@@ -80,10 +83,14 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   routedTaskQueues: "topicId",
   roundContributorFlows: "contributorId",
   contributorAvailability: "contributorId",
+  completedResearchTasks: "id",
   groupChallenges: "id",
   dailyQuestTemplates: "id",
+  questTeams: "id",
   contributorAwardNominations: "id",
   dailyBestCardComments: "id",
+  dailyBestCardAnnouncements: "dayKey",
+  contributorAwardAnnouncements: "dayKey",
   debateVideosFavorites: "videoId",
   debateVideosHidden: "videoId",
   debateVideoReports: "id",
@@ -139,6 +146,75 @@ describe("the synced collection catalog", () => {
     expect(isSyncedToolCollection("")).toBe(false);
     expect(isSyncedToolCollection("__proto__")).toBe(false);
     expect(findToolRecordCollection("notATool")).toBeUndefined();
+  });
+
+  it("syncs the Flow Edit Log now that its panel has a route", () => {
+    // `SharedFlowSyncPanel`/`FlowEditLogPanel` mount at `/coach` via
+    // `CoachHub`, closing the gap `tool-data-sync.mdx` used to note under
+    // "What deliberately does not sync".
+    expect(findToolRecordCollection("flowEdits")).toMatchObject({
+      storageKey: "flowEdits",
+      idField: "id",
+      href: "/coach",
+    });
+  });
+
+  it("syncs the frozen daily/award announcements now that both are keyed by dayKey", () => {
+    // `announceDailyBestCard`/`announceContributorAwards` each freeze at most
+    // one record per UTC day under `dayKey`, mirroring `dailyBestCardComments`'
+    // own precedent of reusing that panel's existing sidebar destination —
+    // `DailyBestCardPanel`/`ContributorAwardsPanel` render both a collection's
+    // records and its frozen announcements on the same page.
+    expect(findToolRecordCollection("dailyBestCardAnnouncements")).toMatchObject({
+      storageKey: "dailyBestCardAnnouncements",
+      idField: "dayKey",
+      href: "/cards/leaderboard",
+    });
+    expect(findToolRecordCollection("contributorAwardAnnouncements")).toMatchObject({
+      storageKey: "contributorAwardAnnouncements",
+      idField: "dayKey",
+      href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs prep note notifications, quest-competition teams, and argument-tree filter selections", () => {
+    // Three stores that shared the exact shape this catalog requires
+    // (a JSON array under one localStorage key, each record keyed by one
+    // stable string field) but had never been added: `state/prepNoteNotifications.ts`'s
+    // `PrepNoteNotification`s (id-keyed, same shape as the already-synced
+    // `prepNoteReplies`), `state/dailyQuests.ts`'s `questTeams` roster
+    // (id-keyed, stored under its own key alongside the already-synced
+    // `dailyQuestTemplates`), and `state/argumentTreeFilters.ts`'s per-round
+    // filter selection (roundId-keyed, same shape as the already-synced
+    // `argumentTrees`).
+    expect(findToolRecordCollection("prepNoteNotifications")).toMatchObject({
+      storageKey: "prepNoteNotifications",
+      idField: "id",
+      href: "/prep-notes",
+    });
+    expect(findToolRecordCollection("questTeams")).toMatchObject({
+      storageKey: "questTeams",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+    expect(findToolRecordCollection("argumentTreeFilters")).toMatchObject({
+      storageKey: "argumentTreeFilters",
+      idField: "roundId",
+      href: "/outline",
+    });
+  });
+
+  it("syncs completed research-task history now that its records carry a stable id", () => {
+    // `state/researchProgress.ts`'s `CompletedTaskRecord` had no per-record id
+    // until now — the same reason `coachingSessions` still can't join this
+    // catalog (see "What deliberately does not sync" in tool-data-sync.mdx) —
+    // so `/cards/progress-tracking`'s completed-task history stayed per-browser
+    // even though every sibling store on that page already synced.
+    expect(findToolRecordCollection("completedResearchTasks")).toMatchObject({
+      storageKey: "completedResearchTasks",
+      idField: "id",
+      href: "/cards/progress-tracking",
+    });
   });
 
   it("syncs the video library's favourites, hidden list and reports", () => {

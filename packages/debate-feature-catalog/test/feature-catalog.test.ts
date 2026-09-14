@@ -4,13 +4,14 @@ import {
   APP_FEATURES,
   FEATURE_CATEGORY_DESCRIPTIONS,
   FEATURE_CATEGORY_LABELS,
+  GITHUB_DOCS_BASE_URL,
   buildFeatureCatalogSummaryText,
   buildFeatureSections,
   featureDocUrl,
   searchFeatures,
   type FeatureCategory,
   type FeatureEntry,
-} from "../src/features/feature-catalog";
+} from "../src/feature-catalog";
 
 const entry = (over: Partial<FeatureEntry> = {}): FeatureEntry => ({
   id: "a",
@@ -119,10 +120,21 @@ describe("searchFeatures", () => {
 });
 
 describe("featureDocUrl", () => {
-  it("builds a docs URL for an entry with a doc", () => {
-    expect(featureDocUrl(entry({ doc: "task-inbox.md" }))).toBe(
-      "https://github.com/debate/debate-ai.com/blob/master/docs/features/task-inbox.md",
-    );
+  it("defaults to a same-origin, extensionless docs-site URL", () => {
+    expect(featureDocUrl(entry({ doc: "task-inbox.md" }))).toBe("/docs/features/task-inbox");
+  });
+
+  it("accepts .mdx sources and still drops the extension by default", () => {
+    expect(featureDocUrl(entry({ doc: "task-inbox.mdx" }))).toBe("/docs/features/task-inbox");
+  });
+
+  it("builds a GitHub blob URL, extension kept, when told to", () => {
+    expect(
+      featureDocUrl(entry({ doc: "task-inbox.md" }), {
+        baseUrl: GITHUB_DOCS_BASE_URL,
+        stripExtension: false,
+      }),
+    ).toBe("https://github.com/debate/debate-ai.com/blob/master/docs/features/task-inbox.md");
   });
 
   it("returns undefined when the entry has no doc", () => {

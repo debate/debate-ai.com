@@ -72,3 +72,25 @@ export type SavedFlowSummary = {
   label: string;
   updatedAt: string;
 };
+
+/**
+ * Optimistic-concurrency check for `PUT /api/flows/[clientId]`: is a save
+ * about to clobber a version the caller doesn't know about?
+ *
+ * `currentUpdatedAt` is the currently-saved row's `updatedAt` (ISO string),
+ * or `null` if no row exists yet for this `(userId, clientId)` — a brand
+ * new save never conflicts. `baseUpdatedAt` is what the caller believes is
+ * saved: the `updatedAt` from the last list/load/save response it saw, or
+ * `null`/`undefined` if it has no idea a saved version might already exist
+ * (e.g. it never opened the "Saved to account" tab this session). An
+ * unknown baseline against an existing row is treated as a conflict rather
+ * than allowed through, so a save can't silently overwrite a version the
+ * caller never saw.
+ */
+export function hasFlowSaveConflict(
+  currentUpdatedAt: string | null,
+  baseUpdatedAt: string | null | undefined,
+): boolean {
+  if (currentUpdatedAt === null) return false;
+  return baseUpdatedAt == null || baseUpdatedAt !== currentUpdatedAt;
+}

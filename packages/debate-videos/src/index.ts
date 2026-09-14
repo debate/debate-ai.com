@@ -64,4 +64,10 @@ export {
 } from "./context/category-dock-context";
 export { useVideoPlayerStore, sendYouTubeCommand, videoPlayerIframeRef } from "./state/videoPlayerStore";
 export { VideoPlayerFrameBridge } from "./state/videoPlayerFrameBridge";
+export { TopPickBadge, type TopPickBadgeProps } from "./components/video-card/TopPickBadge";
+export {
+  TOP_PICK_BADGES,
+  getTopPickBadgeInfo,
+  type TopPickBadgeInfo,
+} from "./lib/topPickBadges";
 export * from "./types/videos";

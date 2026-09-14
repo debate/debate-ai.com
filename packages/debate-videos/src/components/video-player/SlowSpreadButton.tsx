@@ -43,8 +43,8 @@ export function SlowSpreadButton({ size = "sm" }: SlowSpreadButtonProps = {}) {
     <PlayerIconButton
       size={size}
       icon={Gauge}
-      label={isSlowed ? "Normal speed" : "Slow down debate spread"}
-      tooltip={isSlowed ? "Back to debate spread speed (1x)" : "Slow down debate spread 65%"}
+      label={isSlowed ? "Normal speed" : "Slow down speech rate"}
+      tooltip={isSlowed ? "Back to normal speed (1x)" : "Slow down speech rate 65%"}
       active={isSlowed}
       className={isSlowed ? "text-red-300" : "text-red-600 hover:text-foreground"}
       onClick={toggle}

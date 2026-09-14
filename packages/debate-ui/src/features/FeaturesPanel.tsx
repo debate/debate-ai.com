@@ -28,7 +28,7 @@
 
 "use client";
 
-import { useMemo, useState, type ComponentType } from "react";
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   BarChart3,
   Dumbbell,
@@ -55,13 +55,14 @@ import {
 } from "./effects";
 import {
   APP_FEATURES,
+  GITHUB_DOCS_BASE_URL,
   buildFeatureCatalogSummaryText,
   buildFeatureSections,
   featureDocUrl,
   searchFeatures,
   type FeatureCategory,
   type FeatureEntry,
-} from "./feature-catalog";
+} from "debate-feature-catalog/src/feature-catalog";
 
 /**
  * A glyph per category, so a section is identifiable before its heading is
@@ -95,6 +96,12 @@ export interface FeaturesPanelProps {
  */
 export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPanelProps) {
   const [query, setQuery] = useState("");
+  const [hueOffset, setHueOffset] = useState(0);
+
+  useEffect(() => {
+    // Randomize card hover colours on each page load so every visit gets a unique, vibrant palette
+    setHueOffset(Math.floor(Math.random() * 360));
+  }, []);
 
   const sections = useMemo(
     () => buildFeatureSections(searchFeatures(entries, query)),
@@ -115,14 +122,15 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
     [entries],
   );
 
-  // A card's hover colour comes from its place in the whole catalog, not in
-  // the filtered grid, so a feature keeps the same colour while someone types
-  // rather than every card changing hue on each keystroke.
+  // A card's hover colour comes from its place in the whole catalog plus the
+  // randomized page-load offset, not in the filtered grid, so a feature keeps
+  // the same colour while someone types rather than every card changing hue on
+  // each keystroke.
   const hueShifts = useMemo(() => {
     const byId = new Map<string, number>();
-    entries.forEach((entry, index) => byId.set(entry.id, cardHueShift(index)));
+    entries.forEach((entry, index) => byId.set(entry.id, cardHueShift(index, hueOffset)));
     return byId;
-  }, [entries]);
+  }, [entries, hueOffset]);
 
   // Two ticker rows out of one list, so the second can run the other way and
   // the pair doesn't read as one long line wrapped twice.
@@ -282,7 +290,14 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {section.entries.map((entry, index) => {
-                      const docUrl = featureDocUrl(entry);
+                      // This package has no docs site of its own to link into
+                      // (only the live app's `/features` does), so this
+                      // reference implementation links to the doc's source
+                      // on GitHub instead.
+                      const docUrl = featureDocUrl(entry, {
+                        baseUrl: GITHUB_DOCS_BASE_URL,
+                        stripExtension: false,
+                      });
                       return (
                         <Reveal
                           key={entry.id}

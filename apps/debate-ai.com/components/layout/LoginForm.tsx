@@ -13,11 +13,13 @@ import { Mail } from "lucide-react"
 import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
 import { toast } from "sonner"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 
 import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
 import { Label } from "../../lib/ui/primitives/label"
 import { authClient } from "@/lib/auth/client"
+import { trackSignUpCompleted } from "@/lib/analytics/mixpanel"
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders"
 import { isNativeWrapper, openInSystemBrowser } from "@/lib/native/tauri"
 
@@ -56,6 +58,7 @@ function SocialSignIn({
   const handleSignIn = async () => {
     setIsLoading(true)
     try {
+      trackSignUpCompleted({ sign_up_method: provider })
       // better-auth resolves with `{ error }` rather than throwing, so a failed
       // sign-in only surfaces if the result is inspected. On success the call
       // redirects and this component unmounts mid-flight.
@@ -92,6 +95,7 @@ function MagicLinkSignIn({ callbackURL }: { callbackURL: string }) {
     setIsLoading(true)
 
     try {
+      trackSignUpCompleted({ sign_up_method: "magic_link" })
       const { error } = await authClient.signIn.magicLink({ email, callbackURL })
       if (error) throw new Error(error.message || error.statusText)
       setEmailSent(true)

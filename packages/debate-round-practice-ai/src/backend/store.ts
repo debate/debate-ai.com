@@ -39,6 +39,13 @@ export interface DebateStore {
   getDebate(id: string): Promise<DebateVsBotRecord | null>
   /** The user's most recent debate. Go: `GetLatestDebateVsBot`. */
   getLatestDebate(email: string): Promise<DebateVsBotRecord | null>
+  /**
+   * The user's past debates, newest first. Not part of the Go port — added
+   * so a host can offer a debate-history view now that every round is
+   * already persisted in full. Optional so a bare store (like the "omits
+   * gamification" test double) still satisfies the interface.
+   */
+  listDebates?(email: string): Promise<DebateVsBotRecord[]>
   /** Append the bot's turn to a debate's history. Go: `SaveDebateVsBot`. */
   appendMessage?(id: string, message: DebateMessage): Promise<void>
   /** Record a debate's outcome. Go: `UpdateDebateVsBotOutcome`. */
@@ -81,6 +88,11 @@ export function createInMemoryDebateStore(): DebateStore {
         if (!latest || debate.createdAt >= latest.createdAt) latest = debate
       }
       return latest
+    },
+    async listDebates(email) {
+      return [...debates.values()]
+        .filter((debate) => debate.email === email)
+        .sort((a, b) => b.createdAt - a.createdAt)
     },
     async appendMessage(id, message) {
       const debate = debates.get(id)

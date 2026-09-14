@@ -38,6 +38,14 @@
  * `completeAndRecordResearchTask` is unchanged and still credits a
  * completion immediately, with no verification required.
  *
+ * `CompletedTaskRecord.id` closes the "per-browser localStorage, not
+ * account-synced" gap this store shared with the tools `tool-data-sync.mdx`
+ * already lists: every other synced store keys its records by one stable
+ * string field, and this one didn't have one. `completedResearchTasks` is
+ * now registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, so a
+ * signed-in contributor's completed-task history follows them across
+ * devices like the rest of `/cards/progress-tracking`'s data already does.
+ *
  * @module state/researchProgress
  */
 
@@ -64,6 +72,16 @@ import { getPendingTaskVerification, removePendingTaskVerification } from "./pen
 
 /** One completed research task, remembered after `completePersistedRoutedTask` removes it from its active queue. */
 export interface CompletedTaskRecord {
+  /**
+   * Stable id this record is keyed by — what lets it join
+   * `debate-data-sync`'s account-sync allowlist (see
+   * `state/toolRecordCollections.ts`'s `completedResearchTasks` entry). A
+   * record persisted before this field existed has none and is simply never
+   * matched by id: it stays valid and locally readable, just un-synced,
+   * mirroring how every other `TOOL_RECORD_COLLECTIONS` store tolerates a
+   * pre-existing id-less record.
+   */
+  id: string;
   topic: string;
   assignment: RoutedAssignment;
   completedAt: string;
@@ -74,6 +92,10 @@ export interface CompletedTaskRecord {
 }
 
 const STORAGE_KEY = "completedResearchTasks";
+
+function generateCompletedTaskId(): string {
+  return `completed-research-task-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 function readAll(): CompletedTaskRecord[] {
   if (typeof localStorage === "undefined") return [];
@@ -126,7 +148,7 @@ export function completeAndRecordResearchTask(
   if (!assignment) return undefined;
 
   const records = readAll();
-  records.push({ topic: topicId, assignment, completedAt });
+  records.push({ id: generateCompletedTaskId(), topic: topicId, assignment, completedAt });
   writeAll(records);
   return assignment;
 }
@@ -155,6 +177,7 @@ export function verifyAndRecordResearchTask(
   const trimmedVerifierId = assertVerifierAllowed(pending.assignment, verifierId);
 
   const record: CompletedTaskRecord = {
+    id: generateCompletedTaskId(),
     topic: topicId,
     assignment: pending.assignment,
     completedAt: verifiedAt,

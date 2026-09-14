@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build",
+    "build": "turbo build --filter='!debate-help-docs'",
     "dev:web": "turbo dev --filter=debate-ai-web",
     "build:web": "turbo build --filter=debate-ai-web",
     "dev:editor": "turbo dev --filter=reason-editor",

@@ -22,7 +22,7 @@ import { ScrollArea } from "../ui/primitives/scroll-area"
 import { Input } from "../ui/primitives/input"
 import { useFlowStore, type FlowHistory } from "../state/store"
 import type { Flow, Round } from "../types/flow"
-import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload } from "lucide-react"
+import { Clock, FileText, Users, Edit, Gavel, Search, Cloud, UploadCloud, Download, Trash2, Loader2, CloudUpload, AlertTriangle } from "lucide-react"
 import { deleteSavedFlow, fetchSavedFlow, listSavedFlows, saveFlowToAccount } from "../round/saved-flows-client"
 import type { SavedFlowSummary } from "../state/savedFlows"
 import { deleteSavedRound, fetchSavedRound, listSavedRounds, saveRoundToAccount } from "../round/saved-rounds-client"
@@ -30,6 +30,10 @@ import { deriveRoundLabel, type SavedRoundSummary } from "../state/savedRounds"
 import {
   collectFlowsForRounds,
   collectUnreferencedFlows,
+  filterDirtyFlows,
+  filterDirtyRounds,
+  hashFlowContent,
+  hashRoundContent,
   mapFlowsToReferencingRound,
   summarizeBulkSaveOutcomes,
   type BulkSaveOutcome,
@@ -51,7 +55,7 @@ type CloudRoundListState =
   | { kind: "error"; message: string }
 
 /** Per-flow/per-round save/load/remove status, keyed by the flow's/round's local `id`. */
-type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error"
+type CloudActionStatus = "saving" | "saved" | "loading" | "removing" | "error" | "conflict"
 
 /**
  * Round level ordering for sorting.
@@ -168,6 +172,16 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
   const [bulkFlowSaveSummary, setBulkFlowSaveSummary] = useState<{ savedCount: number; errorCount: number } | null>(
     null,
   )
+  /**
+   * Content-hash of each flow/round as of its last successful save this
+   * session (see `filterDirtyFlows`/`filterDirtyRounds`), keyed by local
+   * id. Deliberately *not* reset by the "dialog opened" effect below, unlike
+   * `cloudActions`/`cloudRoundActions` — it needs to survive the dialog
+   * closing and reopening so a second "Save all rounds" click (in this same
+   * page session) can skip whatever hasn't changed since the first (#810).
+   */
+  const [lastSavedFlowHashes, setLastSavedFlowHashes] = useState<Record<number, string>>({})
+  const [lastSavedRoundHashes, setLastSavedRoundHashes] = useState<Record<number, string>>({})
 
   /**
    * Load history and rounds when dialog opens.
@@ -247,12 +261,30 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * the flow's local `id`). A failed save is reported inline next to the
    * flow rather than blocking anything, since the flow already exists
    * locally either way.
+   *
+   * Passes along the `updatedAt` of the cloud copy this browser last knew
+   * about (from the "Saved to account" list, or an earlier save this
+   * session) so the server can reject a save that would silently clobber a
+   * newer version saved elsewhere — surfaced as a `"conflict"` status
+   * rather than an error. Passing `force: true` (the chip's own conflict
+   * icon does this on a second click) saves over that version anyway.
    */
-  const handleSaveFlowToAccount = async (flow: Flow) => {
+  const handleSaveFlowToAccount = async (flow: Flow, force = false) => {
     setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
+    const known = cloudList.kind === "loaded" ? cloudList.flows.find((f) => f.clientId === flow.id) : undefined
     try {
-      await saveFlowToAccount(flow)
+      const result = await saveFlowToAccount(flow, { baseUpdatedAt: known?.updatedAt ?? null, force })
+      if (result.conflict) {
+        setCloudActions((prev) => ({ ...prev, [flow.id]: "conflict" }))
+        return
+      }
       setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+      setCloudList((prev) => {
+        if (prev.kind !== "loaded") return prev
+        const others = prev.flows.filter((f) => f.clientId !== result.summary.clientId)
+        return { kind: "loaded", flows: [...others, result.summary] }
+      })
+      setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
     } catch {
       setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
     }
@@ -300,14 +332,32 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * that exist locally (reusing `handleSaveFlowToAccount`, which never
    * throws) before saving the round itself — otherwise a round loaded on
    * another device would have no flows to resolve `flowIds` against.
+   *
+   * Passes along the `updatedAt` of the cloud copy this browser last knew
+   * about (from the "Saved to account" list, or an earlier save this
+   * session) so the server can reject a save that would silently clobber a
+   * newer version saved elsewhere — surfaced as a `"conflict"` status
+   * rather than an error. Passing `force: true` (the chip's own conflict
+   * icon does this on a second click) saves over that version anyway.
    */
-  const handleSaveRoundToAccount = async (round: Round) => {
+  const handleSaveRoundToAccount = async (round: Round, force = false) => {
     setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saving" }))
     const roundFlows = flows.filter((f) => round.flowIds.includes(f.id))
     await Promise.all(roundFlows.map((flow) => handleSaveFlowToAccount(flow)))
+    const known = cloudRoundList.kind === "loaded" ? cloudRoundList.rounds.find((r) => r.clientId === round.id) : undefined
     try {
-      await saveRoundToAccount(round)
+      const result = await saveRoundToAccount(round, { baseUpdatedAt: known?.updatedAt ?? null, force })
+      if (result.conflict) {
+        setCloudRoundActions((prev) => ({ ...prev, [round.id]: "conflict" }))
+        return
+      }
       setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saved" }))
+      setCloudRoundList((prev) => {
+        if (prev.kind !== "loaded") return prev
+        const others = prev.rounds.filter((r) => r.clientId !== result.summary.clientId)
+        return { kind: "loaded", rounds: [...others, result.summary] }
+      })
+      setLastSavedRoundHashes((prev) => ({ ...prev, [round.id]: hashRoundContent(round) }))
     } catch {
       setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
     }
@@ -325,22 +375,50 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * individual save buttons already render, so a round's icon updates in
    * place exactly as if it had been saved on its own. Best-effort per item:
    * one flow or round failing to save doesn't stop the others.
+   *
+   * Skips re-PUTting a flow or round whose content hasn't changed since its
+   * last successful save this session (`filterDirtyFlows`/
+   * `filterDirtyRounds`, against `lastSavedFlowHashes`/
+   * `lastSavedRoundHashes`) — a clean item is marked "saved" directly
+   * without a network call, since it already is. #810.
    */
   const handleSaveAllRoundsToAccount = async () => {
     if (rounds.length === 0 || bulkSaveStatus === "saving") return
     setBulkSaveStatus("saving")
     setBulkSaveSummary(null)
 
-    const flowsToSave = collectFlowsForRounds(rounds, flows)
+    const flowsToSave = filterDirtyFlows(collectFlowsForRounds(rounds, flows), lastSavedFlowHashes)
     await Promise.all(flowsToSave.map((flow) => handleSaveFlowToAccount(flow)))
 
     const outcomes: Record<number, BulkSaveOutcome> = {}
+    const dirtyRounds = filterDirtyRounds(rounds, lastSavedRoundHashes)
+    const dirtyRoundIds = new Set(dirtyRounds.map((round) => round.id))
+    for (const round of rounds) {
+      if (!dirtyRoundIds.has(round.id)) {
+        outcomes[round.id] = "saved"
+        setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saved" }))
+      }
+    }
     await Promise.all(
-      rounds.map(async (round) => {
+      dirtyRounds.map(async (round) => {
         setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saving" }))
+        const known = cloudRoundList.kind === "loaded" ? cloudRoundList.rounds.find((r) => r.clientId === round.id) : undefined
         try {
-          await saveRoundToAccount(round)
+          const result = await saveRoundToAccount(round, { baseUpdatedAt: known?.updatedAt ?? null })
+          if (result.conflict) {
+            // Reported as a chip-level conflict (so it can be retried with force
+            // individually) but still counted as "failed" in the bulk summary.
+            setCloudRoundActions((prev) => ({ ...prev, [round.id]: "conflict" }))
+            outcomes[round.id] = "error"
+            return
+          }
           setCloudRoundActions((prev) => ({ ...prev, [round.id]: "saved" }))
+          setCloudRoundList((prev) => {
+            if (prev.kind !== "loaded") return prev
+            const others = prev.rounds.filter((r) => r.clientId !== result.summary.clientId)
+            return { kind: "loaded", rounds: [...others, result.summary] }
+          })
+          setLastSavedRoundHashes((prev) => ({ ...prev, [round.id]: hashRoundContent(round) }))
           outcomes[round.id] = "saved"
         } catch {
           setCloudRoundActions((prev) => ({ ...prev, [round.id]: "error" }))
@@ -359,7 +437,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
    * it still has no bulk path" gap `packages/debate-help-docs/content/docs/features/flow-cloud-save.mdx`
    * recorded once "Save all rounds" (above) closed the common case. Mirrors
    * that action's shape exactly, just over `collectUnreferencedFlows`'s
-   * result instead of `collectFlowsForRounds`'s.
+   * result instead of `collectFlowsForRounds`'s — dirty-tracking (#810)
+   * included.
    */
   const handleSaveUnreferencedFlowsToAccount = async () => {
     const unreferencedFlows = collectUnreferencedFlows(rounds, flows)
@@ -368,12 +447,34 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
     setBulkFlowSaveSummary(null)
 
     const outcomes: Record<number, BulkSaveOutcome> = {}
+    const dirtyFlows = filterDirtyFlows(unreferencedFlows, lastSavedFlowHashes)
+    const dirtyFlowIds = new Set(dirtyFlows.map((flow) => flow.id))
+    for (const flow of unreferencedFlows) {
+      if (!dirtyFlowIds.has(flow.id)) {
+        outcomes[flow.id] = "saved"
+        setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+      }
+    }
     await Promise.all(
-      unreferencedFlows.map(async (flow) => {
+      dirtyFlows.map(async (flow) => {
         setCloudActions((prev) => ({ ...prev, [flow.id]: "saving" }))
+        const known = cloudList.kind === "loaded" ? cloudList.flows.find((f) => f.clientId === flow.id) : undefined
         try {
-          await saveFlowToAccount(flow)
+          const result = await saveFlowToAccount(flow, { baseUpdatedAt: known?.updatedAt ?? null })
+          if (result.conflict) {
+            // Reported as a chip-level conflict (so it can be retried with force
+            // individually) but still counted as "failed" in the bulk summary.
+            setCloudActions((prev) => ({ ...prev, [flow.id]: "conflict" }))
+            outcomes[flow.id] = "error"
+            return
+          }
           setCloudActions((prev) => ({ ...prev, [flow.id]: "saved" }))
+          setCloudList((prev) => {
+            if (prev.kind !== "loaded") return prev
+            const others = prev.flows.filter((f) => f.clientId !== result.summary.clientId)
+            return { kind: "loaded", flows: [...others, result.summary] }
+          })
+          setLastSavedFlowHashes((prev) => ({ ...prev, [flow.id]: hashFlowContent(flow) }))
           outcomes[flow.id] = "saved"
         } catch {
           setCloudActions((prev) => ({ ...prev, [flow.id]: "error" }))
@@ -950,12 +1051,14 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                 variant="ghost"
                                 onClick={(e) => {
                                   e.stopPropagation()
-                                  handleSaveRoundToAccount(round)
+                                  handleSaveRoundToAccount(round, cloudRoundActions[round.id] === "conflict")
                                 }}
                                 title={
                                   cloudRoundActions[round.id] === "saved"
                                     ? "Saved to your account"
-                                    : "Save this round (and its flows) to your account"
+                                    : cloudRoundActions[round.id] === "conflict"
+                                      ? "Saved from elsewhere since you last loaded it — click again to overwrite"
+                                      : "Save this round (and its flows) to your account"
                                 }
                                 className="h-8 w-8 p-0"
                               >
@@ -963,6 +1066,8 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                   <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : cloudRoundActions[round.id] === "error" ? (
                                   <UploadCloud className="h-4 w-4 text-destructive" />
+                                ) : cloudRoundActions[round.id] === "conflict" ? (
+                                  <AlertTriangle className="h-4 w-4 text-amber-500" />
                                 ) : cloudRoundActions[round.id] === "saved" ? (
                                   <Cloud className="h-4 w-4 text-primary" />
                                 ) : (
@@ -1062,19 +1167,23 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation()
-                                      handleSaveFlowToAccount(flow)
+                                      handleSaveFlowToAccount(flow, cloudActions[flow.id] === "conflict")
                                     }}
                                     className="p-0.5 rounded-full hover:bg-background/60"
                                     title={
                                       cloudActions[flow.id] === "saved"
                                         ? "Saved to your account"
-                                        : "Save this flow to your account"
+                                        : cloudActions[flow.id] === "conflict"
+                                          ? "Saved from elsewhere since you last loaded it — click again to overwrite"
+                                          : "Save this flow to your account"
                                     }
                                   >
                                     {cloudActions[flow.id] === "saving" ? (
                                       <Loader2 className="h-3 w-3 animate-spin" />
                                     ) : cloudActions[flow.id] === "error" ? (
                                       <UploadCloud className="h-3 w-3 text-destructive" />
+                                    ) : cloudActions[flow.id] === "conflict" ? (
+                                      <AlertTriangle className="h-3 w-3 text-amber-500" />
                                     ) : cloudActions[flow.id] === "saved" ? (
                                       <Cloud className="h-3 w-3 text-primary" />
                                     ) : (

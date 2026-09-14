@@ -1,0 +1,21 @@
+services:
+  build-linux:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.linux
+    volumes:
+      - ../dist-artifacts/linux:/output
+
+  build-android:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.android
+    volumes:
+      - ../dist-artifacts/android:/output
+
+  build-ios-core:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ios
+    volumes:
+      - ../dist-artifacts/ios:/output

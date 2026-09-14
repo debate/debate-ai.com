@@ -82,11 +82,23 @@ describe("completeAndRecordResearchTask", () => {
     });
     expect(listCompletedTaskHistory()).toEqual([
       {
+        id: expect.any(String),
         topic: "topic-ai",
         assignment: { task: SOLVENCY_TASK, contributorId: "alice" },
         completedAt: "2026-01-05T00:00:00Z",
       },
     ]);
+  });
+
+  it("gives each completion a stable id, distinct across records, so it can join the account sync", () => {
+    saveRoutedTaskQueue(AI_QUEUE);
+    completeAndRecordResearchTask("topic-ai", "Solvency", "2026-01-05T00:00:00Z");
+    completeAndRecordResearchTask("topic-ai", "Impacts", "2026-01-06T00:00:00Z");
+
+    const [first, second] = listCompletedTaskHistory();
+    expect(first.id).toEqual(expect.any(String));
+    expect(first.id.length).toBeGreaterThan(0);
+    expect(second.id).not.toBe(first.id);
   });
 
   it("returns undefined and records nothing when the topic has no persisted queue", () => {
@@ -117,6 +129,7 @@ describe("verifyAndRecordResearchTask", () => {
     const record = verifyAndRecordResearchTask("topic-ai", "Solvency", "bob", "2026-01-06T00:00:00Z");
 
     expect(record).toEqual({
+      id: expect.any(String),
       topic: "topic-ai",
       assignment: { task: SOLVENCY_TASK, contributorId: "alice" },
       completedAt: "2026-01-06T00:00:00Z",
@@ -161,7 +174,12 @@ describe("verifyAndRecordResearchTask", () => {
 
     expect(completed).toEqual({ task: IMPACTS_TASK, contributorId: "alice" });
     expect(listCompletedTaskHistory()).toEqual([
-      { topic: "topic-ai", assignment: { task: IMPACTS_TASK, contributorId: "alice" }, completedAt: "2026-01-06T00:00:00Z" },
+      {
+        id: expect.any(String),
+        topic: "topic-ai",
+        assignment: { task: IMPACTS_TASK, contributorId: "alice" },
+        completedAt: "2026-01-06T00:00:00Z",
+      },
     ]);
     expect(listPendingTaskVerifications()).toEqual([]);
   });
@@ -192,7 +210,12 @@ describe("deleteCompletedTaskHistoryForTopic", () => {
     deleteCompletedTaskHistoryForTopic("topic-ai");
 
     expect(listCompletedTaskHistory()).toEqual([
-      { topic: "topic-ballot", assignment: { task: BALLOT_TASK, contributorId: "carol" }, completedAt: "2026-01-06T00:00:00Z" },
+      {
+        id: expect.any(String),
+        topic: "topic-ballot",
+        assignment: { task: BALLOT_TASK, contributorId: "carol" },
+        completedAt: "2026-01-06T00:00:00Z",
+      },
     ]);
   });
 

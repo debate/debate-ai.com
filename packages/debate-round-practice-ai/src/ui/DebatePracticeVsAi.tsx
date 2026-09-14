@@ -6,7 +6,9 @@
  * picker, `/debate/:id` for the round, and the scorecard inside it), passing
  * round setup through `location.state`. Under Next.js that state would be
  * lost on reload, so the two screens live behind one route here and hand
- * the round off in local state instead.
+ * the round off in local state instead — mirrored into `active-round.ts`'s
+ * localStorage record so a reload resumes the round instead of dropping
+ * back to the picker.
  *
  * @module ui/DebatePracticeVsAi
  */
@@ -14,7 +16,9 @@
 "use client"
 
 import { useState } from "react"
+import { clearActiveRound, readActiveRound, writeActiveRound } from "./active-round"
 import { BotSelection, type StartedDebate } from "./BotSelection"
+import { DebateHistory } from "./DebateHistory"
 import { DebateRoom } from "./DebateRoom"
 import type { CoachSkill } from "./JudgmentPopup"
 
@@ -29,6 +33,8 @@ export interface DebatePracticeVsAiProps {
   apiBaseUrl?: string
   /** Recommendation cards shown on the scorecard. */
   coachSkills?: CoachSkill[]
+  /** Called when a debate round is initiated. */
+  onStartDebate?: (debate: StartedDebate) => void
 }
 
 export function DebatePracticeVsAi({
@@ -39,11 +45,29 @@ export function DebatePracticeVsAi({
   userAvatar,
   apiBaseUrl,
   coachSkills,
+  onStartDebate,
 }: DebatePracticeVsAiProps = {}) {
-  const [debate, setDebate] = useState<StartedDebate | null>(null)
+  const [debate, setDebate] = useState<StartedDebate | null>(() => readActiveRound(userId))
+  const [showHistory, setShowHistory] = useState(false)
+
+  const handleStart = (started: StartedDebate) => {
+    writeActiveRound(userId, started)
+    setDebate(started)
+    onStartDebate?.(started)
+  }
+
+  const handleExit = () => {
+    clearActiveRound(userId)
+    setDebate(null)
+  }
 
   if (!debate) {
-    return <BotSelection onStart={setDebate} apiBaseUrl={apiBaseUrl} />
+    if (showHistory) {
+      return <DebateHistory apiBaseUrl={apiBaseUrl} onBack={() => setShowHistory(false)} />
+    }
+    return (
+      <BotSelection onStart={handleStart} apiBaseUrl={apiBaseUrl} onViewHistory={() => setShowHistory(true)} />
+    )
   }
 
   return (
@@ -62,7 +86,7 @@ export function DebatePracticeVsAi({
       userAvatar={userAvatar}
       apiBaseUrl={apiBaseUrl}
       coachSkills={coachSkills}
-      onExit={() => setDebate(null)}
+      onExit={handleExit}
     />
   )
 }

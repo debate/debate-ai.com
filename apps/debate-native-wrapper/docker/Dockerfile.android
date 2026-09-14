@@ -1,0 +1,73 @@
+# ==============================================================================
+# Android Cloud / Docker Build Container for Debate AI Native Wrapper (Tauri v2)
+# Produces: .apk, .aab
+# Base: Ubuntu 22.04 LTS + OpenJDK 21 + Android SDK 34/35/36 + NDK r28 (16KB page aligned)
+# ==============================================================================
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ANDROID_HOME=/opt/android-sdk
+ENV NDK_HOME=/opt/android-sdk/ndk/28.0.13004108
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH="/usr/local/cargo/bin:/root/.bun/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
+
+# Install base dependencies, OpenJDK 21, and tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    wget \
+    file \
+    pkg-config \
+    unzip \
+    git \
+    ca-certificates \
+    openjdk-21-jdk \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Android SDK Command-line Tools
+RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
+    && wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip \
+    && unzip -q /tmp/cmdline-tools.zip -d ${ANDROID_HOME}/cmdline-tools \
+    && mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest \
+    && rm /tmp/cmdline-tools.zip
+
+# Accept licenses and install Android SDK platforms, build tools, and NDK r28
+RUN yes | sdkmanager --licenses > /dev/null \
+    && sdkmanager \
+        "platform-tools" \
+        "platforms;android-34" \
+        "platforms;android-35" \
+        "platforms;android-36" \
+        "build-tools;34.0.0" \
+        "build-tools;35.0.0" \
+        "ndk;28.0.13004108"
+
+# Install Rust toolchain with all 4 Android architectures
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable \
+    && rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Install Node.js 22 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy application sources
+COPY . .
+
+# Install dependencies and configure active profile
+RUN bun install --ignore-scripts
+RUN node scripts/configure.mjs
+
+# Initialize Tauri Android project
+RUN npx @tauri-apps/cli@2 android init
+
+VOLUME ["/output"]
+
+CMD ["sh", "-c", "npx @tauri-apps/cli@2 android build --apk && npx @tauri-apps/cli@2 android build --aab && mkdir -p /output/apk /output/aab && cp -r src-tauri/gen/android/app/build/outputs/apk/* /output/apk/ 2>/dev/null || true && cp -r src-tauri/gen/android/app/build/outputs/bundle/* /output/aab/ 2>/dev/null || true && echo 'Android build complete! Artifacts copied to /output'"]

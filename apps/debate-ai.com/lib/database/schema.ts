@@ -283,6 +283,20 @@ export const userSettings = sqliteTable("user_settings", {
   // `saved_tournament_results` table below, one row per result.
   qualificationPointsTable: text("qualification_points_table"),
   qualificationCutoff: text("qualification_cutoff"),
+  // Practice vs AI's gamification score and JSON-serialized array of earned
+  // badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts
+  // and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx).
+  // Read/written by apps/debate-ai.com/lib/practice-vs-ai/store.ts's
+  // `getGamificationProfile`/`applyGamificationAward`, not through the
+  // generic `/api/settings` PUT — these are server-computed round results,
+  // not a user preference. Null/zero means "no round scored yet", same
+  // semantics as every other nullable column here. There is deliberately no
+  // persisted streak counter yet: a real day-over-day streak needs a dated
+  // activity log this table doesn't have, so `getGamificationProfile`
+  // reports `currentStreak: 0` and the `Streak5` badge is unreachable until
+  // that follow-up lands.
+  practiceVsAiScore: integer("practice_vs_ai_score"),
+  practiceVsAiBadges: text("practice_vs_ai_badges"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -519,6 +533,39 @@ export const savedSpeechSendLog = sqliteTable(
 );
 
 export type SavedSpeechSendLogRow = typeof savedSpeechSendLog.$inferSelect;
+
+// Account-linked Quick Cards library sync — closes the same standing "docs"
+// gap as `savedSpeechSendLog` above: the Quick Cards reusable-snippet library
+// (`packages/debate-editor/src/editor/quick-cards-store.ts`, IndexedDB on
+// web) was device-local only, unlike CardMirror's own documents
+// (`documents` above), which are already per-user D1 rows. Same
+// one-row-per-card, upsert-by-caller-id shape as `savedSpeechSendLog` — a
+// `QuickCard` is looked up/edited by its own `id` (not appended to a growing
+// log), so `clientId` holds that id and `GET /api/quick-cards` returns every
+// synced card in full for `quickCardsStore`'s merge-on-init.
+export const savedQuickCards = sqliteTable(
+  "saved_quick_cards",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_quick_cards_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_quick_cards_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedQuickCardRow = typeof savedQuickCards.$inferSelect;
 
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel

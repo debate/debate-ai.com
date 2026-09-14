@@ -426,4 +426,34 @@ describe("what wakes the watcher", () => {
     expect(() => startToolRecordAutoSync()()).not.toThrow();
     expect(isToolRecordAutoSyncRunning()).toBe(false);
   });
+
+  it("reports a tick's results through onFlush, so a background-only failure is not silently dropped", async () => {
+    const dom = installDom();
+    markToolRecordsSynced(favorites.key);
+    const onFlush = vi.fn();
+    startToolRecordAutoSync(onFlush);
+
+    // Grows past MAX_TOOL_RECORD_BYTES after the watcher's already running —
+    // the case the reconcile-only `results` state this fed into used to miss
+    // entirely, since nothing awaits a tick's own flush.
+    writeLocalToolRecords(favorites, [{ videoId: "huge", savedAt: "x".repeat(300_000) }]);
+    await dom.fire("storage", { key: favorites.storageKey });
+
+    expect(onFlush).toHaveBeenCalledTimes(1);
+    expect(onFlush).toHaveBeenCalledWith([
+      expect.objectContaining({ collection: favorites.key, error: expect.stringMatching(/too large/i) }),
+    ]);
+  });
+
+  it("does not call onFlush for a tick with nothing to report", async () => {
+    const dom = installDom();
+    writeLocalToolRecords(favorites, [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }]);
+    markToolRecordsSynced(favorites.key);
+    const onFlush = vi.fn();
+    startToolRecordAutoSync(onFlush);
+
+    await dom.fire("storage", { key: favorites.storageKey });
+
+    expect(onFlush).not.toHaveBeenCalled();
+  });
 });

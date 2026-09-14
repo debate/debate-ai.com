@@ -1,3 +1,11 @@
+/**
+ * Public search endpoint for the imported debate-card corpus.
+ *
+ * The admin Parquet importer writes normalized rows to `debate_cards`.  This
+ * route is deliberately the other half of that feature: `/cards` reads those
+ * rows directly instead of falling back to a separate in-memory demo corpus.
+ */
+import { and, asc, desc, eq, or, sql } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";

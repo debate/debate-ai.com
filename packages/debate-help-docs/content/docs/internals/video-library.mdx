@@ -58,6 +58,14 @@ even though the client no longer holds the whole library.
 quick-link cards, the lecture-category cards, and the season topic/champion
 tables. Nothing in it grows with the number of videos.
 
+When its query includes a category, style, season, or top-picks filter,
+`/api/videos/meta` also scopes its keyword and tournament chips to that same
+selection. `getVideoSuggestions` applies the shared `VideoQueryParams` rules
+before counting title/search-text matches in the JSON fallback; the SQL path
+uses the equivalent `buildConditions` predicates. The typed query is omitted
+on purpose: chips describe the open category rather than the user's already
+narrowed result set.
+
 **JSON fallback.** If the `videos` table is missing, unreachable, or not yet
 seeded, both endpoints rebuild the same rows from the JSON assets and answer
 from memory with identical semantics (`src/videos/video-query.ts` is the
@@ -79,11 +87,16 @@ hooks/useVideoFeed.ts
 ```
 
 Filter state (search, season, style, sort, category, top picks) lives in
-`useVideoState` and is sent to the server. Two preferences are applied on the
-client because the feed query has no knowledge of them: **favourites** are sent
-as an explicit `ids` allow-list when the favourites filter is on, and **hidden
-videos** are filtered out of the loaded pages in the browser (an explicit
-search still surfaces them, as it always has).
+`useVideoState` and is sent to the server. Two preferences ride alongside it as
+explicit id lists rather than being columns the query already understands:
+**favourites** are sent as an `ids` allow-list when the favourites filter is
+on, and **hidden videos** are sent as an `excludeIds` deny-list — both applied
+in `filterVideoRows`/`computeVideoFacets` (the JSON fallback) and
+`buildConditions`'s `inArray`/`notInArray` (the SQL path), so a hidden video
+disappears from the grid *and* stops inflating the season/style dropdown
+counts. The deny-list is left off while a search is active, so an explicit
+search still surfaces a hidden video, as it always has — otherwise there would
+be no way to find it again to unhide it.
 
 Applied on the client, but no longer *stored* there alone. Both live in
 `state/videoLibrary.ts`, which persists them, mirrors each change to the
@@ -166,8 +179,16 @@ committed; regenerate it from the assets.
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now
   returns nothing.
-- Facet counts do not deduct hidden videos: hiding a video removes it
-  from the grid, but the season and style dropdowns still count it.
+- ~~Facet counts do not deduct hidden videos: hiding a video removes it
+  from the grid, but the season and style dropdowns still count it.~~
+  **Fixed:** `VideoQueryParams` now carries an `excludeIds` deny-list
+  alongside the existing `ids` allow-list, applied by `filterVideoRows` (the
+  JSON fallback and `computeVideoFacets`) and by `buildConditions`'
+  `notInArray` (the SQL path, which both the row query and `facetsFromSql`
+  build on) — the same one-parameter-two-consumers shape favourites already
+  used. `DebateVideosPanel` and `LecturesPage` send the hidden-video set as
+  `excludeIds` except while a search is active, so a hidden video can still be
+  found in order to unhide it.
 - Favourites are sent to the feed as an explicit `ids` allow-list, so the
   favourites filter is bounded by how many ids fit in a request. A user with a
   very large collection would need the filter pushed into the query instead.

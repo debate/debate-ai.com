@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   collectFlowsForRounds,
   collectUnreferencedFlows,
+  filterDirtyFlows,
+  filterDirtyRounds,
+  hashFlowContent,
+  hashRoundContent,
   mapFlowsToReferencingRound,
   summarizeBulkSaveOutcomes,
 } from "../src/state/bulkRoundSave";
@@ -161,6 +165,85 @@ describe("mapFlowsToReferencingRound", () => {
     const round = makeRound({ flowIds: [1] });
     const result = mapFlowsToReferencingRound([round]);
     expect(result.has(2)).toBe(false);
+  });
+});
+
+describe("hashFlowContent", () => {
+  it("returns the same hash for two structurally identical flows", () => {
+    expect(hashFlowContent(makeFlow({ id: 1 }))).toBe(hashFlowContent(makeFlow({ id: 1 })));
+  });
+
+  it("returns a different hash when flow content changes", () => {
+    const original = makeFlow({ content: "1AC" });
+    const edited = makeFlow({ content: "1AC (edited)" });
+    expect(hashFlowContent(original)).not.toBe(hashFlowContent(edited));
+  });
+
+  it("returns a different hash when a nested box changes", () => {
+    const original = makeFlow({ children: [makeBox({ content: "original" })] });
+    const edited = makeFlow({ children: [makeBox({ content: "edited" })] });
+    expect(hashFlowContent(original)).not.toBe(hashFlowContent(edited));
+  });
+});
+
+describe("hashRoundContent", () => {
+  it("returns the same hash for two structurally identical rounds", () => {
+    expect(hashRoundContent(makeRound({ id: 100 }))).toBe(hashRoundContent(makeRound({ id: 100 })));
+  });
+
+  it("returns a different hash when round content changes", () => {
+    const original = makeRound({ tournamentName: "Glenbrooks" });
+    const edited = makeRound({ tournamentName: "Blake" });
+    expect(hashRoundContent(original)).not.toBe(hashRoundContent(edited));
+  });
+});
+
+describe("filterDirtyFlows", () => {
+  it("treats every flow as dirty when the hash map is empty (never saved this session)", () => {
+    const flow1 = makeFlow({ id: 1 });
+    const flow2 = makeFlow({ id: 2 });
+    expect(filterDirtyFlows([flow1, flow2], {})).toEqual([flow1, flow2]);
+  });
+
+  it("excludes a flow whose current content hash matches its last-saved hash", () => {
+    const flow = makeFlow({ id: 1 });
+    const lastSavedHashes = { 1: hashFlowContent(flow) };
+    expect(filterDirtyFlows([flow], lastSavedHashes)).toEqual([]);
+  });
+
+  it("includes a flow whose content changed since it was last saved", () => {
+    const savedVersion = makeFlow({ id: 1, content: "1AC" });
+    const lastSavedHashes = { 1: hashFlowContent(savedVersion) };
+    const editedVersion = makeFlow({ id: 1, content: "1AC (edited)" });
+    expect(filterDirtyFlows([editedVersion], lastSavedHashes)).toEqual([editedVersion]);
+  });
+
+  it("only skips the unchanged flow out of a mixed list", () => {
+    const clean = makeFlow({ id: 1, content: "clean" });
+    const dirty = makeFlow({ id: 2, content: "dirty" });
+    const lastSavedHashes = { 1: hashFlowContent(clean), 2: hashFlowContent(makeFlow({ id: 2, content: "old" })) };
+    expect(filterDirtyFlows([clean, dirty], lastSavedHashes)).toEqual([dirty]);
+  });
+});
+
+describe("filterDirtyRounds", () => {
+  it("treats every round as dirty when the hash map is empty (never saved this session)", () => {
+    const round1 = makeRound({ id: 100 });
+    const round2 = makeRound({ id: 101 });
+    expect(filterDirtyRounds([round1, round2], {})).toEqual([round1, round2]);
+  });
+
+  it("excludes a round whose current content hash matches its last-saved hash", () => {
+    const round = makeRound({ id: 100 });
+    const lastSavedHashes = { 100: hashRoundContent(round) };
+    expect(filterDirtyRounds([round], lastSavedHashes)).toEqual([]);
+  });
+
+  it("includes a round whose content changed since it was last saved", () => {
+    const savedVersion = makeRound({ id: 100, tournamentName: "Glenbrooks" });
+    const lastSavedHashes = { 100: hashRoundContent(savedVersion) };
+    const editedVersion = makeRound({ id: 100, tournamentName: "Blake" });
+    expect(filterDirtyRounds([editedVersion], lastSavedHashes)).toEqual([editedVersion]);
   });
 });
 

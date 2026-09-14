@@ -79,9 +79,6 @@
           "appLink": false
         }
       ]
-    },
-    "updater": {
-      "active": false
     }
   }
 }

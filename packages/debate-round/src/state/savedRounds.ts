@@ -93,3 +93,26 @@ export type SavedRoundSummary = {
   label: string;
   updatedAt: string;
 };
+
+/**
+ * Optimistic-concurrency check for `PUT /api/rounds/[clientId]`: is a save
+ * about to clobber a version the caller doesn't know about? Same semantics
+ * as `hasFlowSaveConflict` (`state/savedFlows.ts`), applied to `saved_rounds`
+ * instead of `saved_flows` — see #808.
+ *
+ * `currentUpdatedAt` is the currently-saved row's `updatedAt` (ISO string),
+ * or `null` if no row exists yet for this `(userId, clientId)` — a brand
+ * new save never conflicts. `baseUpdatedAt` is what the caller believes is
+ * saved: the `updatedAt` from the last list/load/save response it saw, or
+ * `null`/`undefined` if it has no idea a saved version might already exist.
+ * An unknown baseline against an existing row is treated as a conflict
+ * rather than allowed through, so a save can't silently overwrite a version
+ * the caller never saw.
+ */
+export function hasRoundSaveConflict(
+  currentUpdatedAt: string | null,
+  baseUpdatedAt: string | null | undefined,
+): boolean {
+  if (currentUpdatedAt === null) return false;
+  return baseUpdatedAt == null || baseUpdatedAt !== currentUpdatedAt;
+}

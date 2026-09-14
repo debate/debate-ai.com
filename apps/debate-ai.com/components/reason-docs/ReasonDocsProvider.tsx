@@ -38,11 +38,14 @@ import { STORED_FORMATS } from "@/lib/cardmirror/format"
 import { isCmirContent } from "@/lib/cardmirror/content-format"
 import {
   CardMirrorImportError,
+  docxDownloadFilename,
   fileToStoredCmir,
+  htmlToDocxBytes,
   htmlToStoredCmir,
   htmlToStoredCmirSync,
   storedContentToHtml,
 } from "@/lib/cardmirror/stored-cmir"
+import { topicStarterHtml } from "@/lib/topic-starters/content"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterItem } from "./TopicStarterTree"
 
@@ -53,6 +56,24 @@ import type { TopicStarterItem } from "./TopicStarterTree"
  *  document once instead of per keystroke. */
 const CMIR_ENCODE_DELAY_MS = 600
 
+/** Triggers a browser download of `.docx` bytes under `filename` — shared by
+ *  `downloadDocument` and `downloadTopicDocument`, which differ only in where
+ *  the bytes and filename come from. */
+function triggerDocxDownload(bytes: Uint8Array, filename: string): void {
+  // `Blob` wants an `ArrayBuffer`-backed part; `toDocx`'s `Uint8Array` is
+  // typed over the wider `ArrayBufferLike`, so slice out a concrete one.
+  const arrayBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer
+  const blob = new Blob([arrayBuffer], {
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
 /** What one upload produced, for the caller that has to report it. */
 export interface ImportOutcome {
   /** Documents created, in upload order. */
@@ -60,6 +81,11 @@ export interface ImportOutcome {
   /** One message per file that could not be imported, ready to show. */
   failures: string[]
 }
+
+/** The result of {@link ReasonDocsContextValue.downloadDocument} — a plain
+ *  result rather than a throw, so a failed conversion can be shown next to
+ *  the tree the same way an import failure is. */
+export type DownloadOutcome = { ok: true } | { ok: false; error: string }
 
 export interface ReasonDocsContextValue {
   documents: ReasonDocument[]
@@ -101,6 +127,21 @@ export interface ReasonDocsContextValue {
   importFiles: (files: readonly File[], parentId?: number | null) => Promise<ImportOutcome>
   /** The open document's content as HTML, whatever shape the row is stored in. */
   documentHtml: (doc: ReasonDocument) => string
+  /**
+   * Converts an owned document to `.docx` and triggers a browser download,
+   * so the sidebar can offer a file without opening it in CardMirror first.
+   * Includes any edit made this session, the same as `documentHtml`. Never
+   * throws — a missing/folder id or a conversion failure comes back as
+   * `{ ok: false }` for the caller to show.
+   */
+  downloadDocument: (id: number) => Promise<DownloadOutcome>
+  /**
+   * Converts a public topic starter to `.docx` and triggers a browser
+   * download, mirroring {@link downloadDocument} for the read-only catalogue.
+   * Never throws — a folder or a conversion failure comes back as
+   * `{ ok: false }` for the caller to show.
+   */
+  downloadTopicDocument: (item: TopicStarterItem) => Promise<DownloadOutcome>
   /**
    * Opens a public file by the name a URL carries, for a link whose file this
    * client hasn't loaded — the catalogue is capped, and a signed-out reader
@@ -323,6 +364,47 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
     return openHtmlRef.current.get(doc.id) ?? storedContentToHtml(doc)
   }, [])
 
+  const downloadDocument = useCallback(
+    async (id: number): Promise<DownloadOutcome> => {
+      const doc = documents.find((d) => d.id === id)
+      if (!doc || doc.isFolder) return { ok: false, error: "That file could not be found." }
+      try {
+        const bytes = await htmlToDocxBytes(documentHtml(doc))
+        triggerDocxDownload(bytes, docxDownloadFilename(doc.title))
+        return { ok: true }
+      } catch (error) {
+        console.error("[reason-docs] could not convert document to .docx", error)
+        return {
+          ok: false,
+          error: `${doc.title || "This file"} could not be downloaded (${
+            error instanceof Error ? error.message : String(error)
+          }).`,
+        }
+      }
+    },
+    [documents, documentHtml],
+  )
+
+  // Read-only, so no `documentHtml`-style live-edit lookup: a topic starter's
+  // `content`/`format` are whatever the catalogue handed the tree, unlike an
+  // owned document which may have an unsaved in-session edit.
+  const downloadTopicDocument = useCallback(async (item: TopicStarterItem): Promise<DownloadOutcome> => {
+    if (item.isFolder) return { ok: false, error: "That file could not be found." }
+    try {
+      const bytes = await htmlToDocxBytes(topicStarterHtml(item))
+      triggerDocxDownload(bytes, docxDownloadFilename(item.title))
+      return { ok: true }
+    } catch (error) {
+      console.error("[reason-docs] could not convert topic starter to .docx", error)
+      return {
+        ok: false,
+        error: `${item.title || "This file"} could not be downloaded (${
+          error instanceof Error ? error.message : String(error)
+        }).`,
+      }
+    }
+  }, [])
+
   const updateContent = useCallback(
     (id: number, html: string) => {
       openHtmlRef.current.set(id, html)
@@ -457,6 +539,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       selectTopicDocument,
       importFiles,
       documentHtml,
+      downloadDocument,
+      downloadTopicDocument,
       openPublicByRef,
     }),
     [
@@ -481,6 +565,8 @@ export function ReasonDocsProvider({ children }: { children: ReactNode }) {
       selectTopicDocument,
       importFiles,
       documentHtml,
+      downloadDocument,
+      downloadTopicDocument,
       openPublicByRef,
     ],
   )

@@ -27,6 +27,7 @@ import {
 } from "debate-editor/engine"
 import { Button } from "../../lib/ui/primitives/button"
 import { EmptyState } from "../../lib/ui/panels/panel-shell"
+import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 import { useSpeechSendLogSync } from "@/lib/hooks/useSpeechSendLogSync"
 
 function formatSentAt(sentAt: number): string {

@@ -27,6 +27,7 @@ import {
   concedeDebate,
   createDebate,
   judgeDebate,
+  listDebateHistory,
   sendDebateMessage,
 } from "../src/client";
 import type { DebateVsBotRecord } from "../src/backend/types";
@@ -85,6 +86,30 @@ describe("createInMemoryDebateStore", () => {
       topic: "a",
     });
     expect(await store.getLatestDebate("c@example.com")).toBeNull();
+  });
+
+  it("lists a user's debates newest first", async () => {
+    const store = createInMemoryDebateStore();
+    await store.createDebate(record({ topic: "older", createdAt: 100 }));
+    await store.createDebate(record({ topic: "newer", createdAt: 200 }));
+
+    const debates = await store.listDebates?.("debater@example.com");
+    expect(debates?.map((d) => d.topic)).toEqual(["newer", "older"]);
+  });
+
+  it("excludes another user's debates from the list", async () => {
+    const store = createInMemoryDebateStore();
+    await store.createDebate(record({ email: "a@example.com", topic: "a" }));
+    await store.createDebate(record({ email: "b@example.com", topic: "b" }));
+
+    expect(
+      (await store.listDebates?.("a@example.com"))?.map((d) => d.topic),
+    ).toEqual(["a"]);
+  });
+
+  it("returns an empty list for a user with no debates", async () => {
+    const store = createInMemoryDebateStore();
+    expect(await store.listDebates?.("nobody@example.com")).toEqual([]);
   });
 
   it("appends a turn to a debate's history", async () => {
@@ -417,5 +442,31 @@ describe("vs-bot browser client", () => {
       signal: controller.signal,
     });
     expect(initOf().signal).toBe(controller.signal);
+  });
+
+  it("lists past debates with a GET request", async () => {
+    const debates = [
+      { id: "1", email: "a@example.com", botName: "Yoda", botLevel: "Legends", topic: "t", stance: "for", history: [], phaseTimings: [], createdAt: 1 },
+    ];
+    fetchMock.mockResolvedValue(ok({ debates }));
+
+    const result = await listDebateHistory();
+
+    expect(urlOf()).toBe(`${DEFAULT_VSBOT_BASE_URL}/history`);
+    expect(initOf().method).toBe("GET");
+    expect(initOf().credentials).toBe("include");
+    expect(result).toEqual(debates);
+  });
+
+  it("surfaces the server's error message for a failed history fetch", async () => {
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: "Sign in to view your debate history." }),
+    } as unknown as Response);
+
+    await expect(listDebateHistory()).rejects.toThrow(
+      "Failed to load debate history: Sign in to view your debate history.",
+    );
   });
 });

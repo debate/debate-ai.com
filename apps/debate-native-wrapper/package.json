@@ -22,7 +22,11 @@
     "preios:dev": "node scripts/configure.mjs",
     "ios:dev": "tauri ios dev",
     "preios:build": "node scripts/configure.mjs",
-    "ios:build": "tauri ios build"
+    "ios:build": "tauri ios build",
+    "docker:build:linux": "bash scripts/build-docker.sh --linux",
+    "docker:build:android": "bash scripts/build-docker.sh --android",
+    "docker:build:ios-core": "bash scripts/build-docker.sh --ios-core",
+    "docker:build:all": "bash scripts/build-docker.sh --all"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2"

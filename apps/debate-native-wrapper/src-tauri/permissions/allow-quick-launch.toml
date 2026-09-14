@@ -1,0 +1,9 @@
+# Grants background service, window toggle, and selected text retrieval commands.
+[[permission]]
+identifier = "allow-quick-launch"
+description = "Allows the webview to query the latest quick-launch text and control window background visibility."
+commands.allow = [
+  "get_last_selected_text",
+  "show_main_window",
+  "hide_to_tray"
+]

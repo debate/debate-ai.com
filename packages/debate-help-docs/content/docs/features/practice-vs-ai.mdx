@@ -11,7 +11,8 @@ and closing statements, then get an AI-judged scorecard.
 
 - **Route:** `/versus-ai`
 - **Package:** `debate-practice-vs-ai`
-- **API:** `POST /api/vsbot/create`, `/debate`, `/judge`, `/concede`
+- **API:** `POST /api/vsbot/create`, `/debate`, `/judge`, `/concede`;
+  `GET /api/vsbot/history`
 
 ## What it shows
 
@@ -20,6 +21,10 @@ panel (topic, stance, per-phase clocks), the live round (two side-by-side
 panels with countdowns, typed or dictated turns), and a scorecard (each
 phase scored out of 10 for both sides, totals, a verdict, and follow-up
 drill recommendations).
+
+A "View Debate History" button on the bot picker opens **Debate History**:
+every past round (topic, opponent, result, date), newest first, each
+expandable in place to its full transcript.
 
 ## How it works
 
@@ -31,6 +36,11 @@ each persona answers with an in-character "my systems are offline" line.
 
 ## Known gaps
 
-Gamification is computed but not persisted (no `score`/`badges`/`streak`
-columns on the `user` table). A reload during a round returns to the
-picker. Only the vs-bot slice of the Go server is ported.
+Gamification's score and badges are persisted (`user_settings.practiceVsAiScore`/
+`practiceVsAiBadges`) and shown on the scorecard, but there is no real streak
+yet: `getGamificationProfile` always reports `currentStreak: 0`, since a real
+day-over-day streak needs a dated activity log this table doesn't have — so
+the `Streak5` badge is currently unreachable. ~~A reload during a round
+returns to the picker.~~ **Fixed:** reloading mid-round now resumes the same
+round instead of dropping back to the picker. Only the vs-bot slice of the
+Go server is ported.

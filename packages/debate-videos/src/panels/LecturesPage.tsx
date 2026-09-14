@@ -18,7 +18,7 @@ import Link from "next/link"
 import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
-import type { CategoryType, DebateStyle, VideoType } from "../types/videos"
+import type { CategoryType, DebateStyle } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
@@ -92,7 +92,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
-  const { meta, counts, lectureCategories, suggestions } = useVideoMeta()
 
   // ---------------------------------------------------------------------------
   // UI state
@@ -102,6 +101,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
+  const [stackLinkedRounds, setStackLinkedRounds] = useState(false)
   const youtubeStats = useYouTubeStats()
 
   // ---------------------------------------------------------------------------
@@ -186,7 +186,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       const nextView: CategoryType = slugState.view ?? "lectures"
       actions.setCurrentCategory(nextView)
       setSelectedCategory("all")
-      if (nextView !== "lectures") setShowLectureCategories(false)
+      // A style route still uses the shared "lectures" grid view internally,
+      // but it is a round-archive destination.  Do not leave the Lectures
+      // section expanded/looking selected after clicking College, Policy, PF,
+      // or LD merely because that implementation detail says "lectures".
+      setShowLectureCategories(nextView === "lectures" && !slugState.style)
       scrollToVideos()
     } else if (slug) {
       // Unknown slug → treat as lecture-category id
@@ -229,6 +233,14 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const isVideoCategory =
     state.currentCategory !== "leaderboard" && state.currentCategory !== "dictionary"
 
+  // Hidden videos are a browser-local preference; an explicit search still
+  // surfaces them, as it always has, so the deny-list is only sent while not
+  // searching — otherwise a hidden video could never be found again to unhide.
+  const excludeIds = useMemo(
+    () => (state.searchTerm.trim() || state.hiddenVideos.size === 0 ? null : Array.from(state.hiddenVideos)),
+    [state.searchTerm, state.hiddenVideos],
+  )
+
   const filters: VideoFeedFilters = {
     source: "all",
     // "All Lectures" means everything without a numeric debate style — rounds
@@ -244,16 +256,17 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     sort: state.sortOrder,
     q: state.searchTerm,
     ids: favoriteIds,
+    excludeIds,
     withFacets: true,
     enabled: isVideoCategory,
   }
 
+  // Search chips must describe the active library category rather than the
+  // whole archive. The hook deliberately ignores the typed search term.
+  const { meta, counts, lectureCategories, suggestions } = useVideoMeta(filters)
   const feed = useVideoFeed(filters)
 
-  const currentVideos = useMemo<VideoType[]>(() => {
-    if (state.searchTerm.trim() || state.hiddenVideos.size === 0) return feed.videos
-    return feed.videos.filter((video) => !state.hiddenVideos.has(video[0]))
-  }, [feed.videos, state.hiddenVideos, state.searchTerm])
+  const currentVideos = feed.videos
 
   const topPicksSet = useMemo(
     () => new Set(feed.videos.filter((video) => video[15] === true).map((video) => video[0])),
@@ -460,6 +473,8 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       onHideVideo={actions.hideVideo}
       onUnhideVideo={actions.unhideVideo}
       onStatsModalOpenChange={setStatsModalOpen}
+      stackLinkedRounds={stackLinkedRounds}
+      onToggleStackLinkedRounds={() => setStackLinkedRounds((stacked) => !stacked)}
       selectedStyle={state.selectedStyle}
       onStyleChange={(style) => {
         actions.setSelectedStyle(style)

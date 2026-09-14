@@ -11,7 +11,7 @@ import {
   toggleNewsItemLiked,
 } from "../src/state/newsStream";
 import { PRODUCT_NEWS, buildAutoFeatureNews, sortNewsFeed } from "../src/lib/news-stream";
-import { APP_FEATURES } from "../src/ui/features/feature-catalog";
+import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
 import { saveGroupChallenge } from "debate-team-collaboration/src/state/groupChallenges";
 import { recordChallengeWinEvent } from "debate-team-collaboration/src/state/challengeWinEvents";

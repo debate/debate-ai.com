@@ -109,9 +109,6 @@ const tauriConf = {
         },
       ],
     },
-    updater: {
-      active: false,
-    },
   },
 };
 
