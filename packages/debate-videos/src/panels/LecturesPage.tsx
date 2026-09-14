@@ -101,7 +101,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
-  const [stackLinkedRounds, setStackLinkedRounds] = useState(false)
   const youtubeStats = useYouTubeStats()
 
   // Leaderboard states managed at page level for top-bar sticky header integration
@@ -475,8 +474,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       onHideVideo={actions.hideVideo}
       onUnhideVideo={actions.unhideVideo}
       onStatsModalOpenChange={setStatsModalOpen}
-      stackLinkedRounds={stackLinkedRounds}
-      onToggleStackLinkedRounds={() => setStackLinkedRounds((stacked) => !stacked)}
       selectedStyle={state.selectedStyle}
       onStyleChange={(style) => {
         actions.setSelectedStyle(style)

@@ -136,6 +136,12 @@ export function VideoSidebarTree({
 
   const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
   const lecturesActive = activeId === "lectures";
+  // The "Lectures" heading itself only lights up via `activeId`, matching
+  // "Round Videos" never highlighting either — but the category rows below it
+  // (their own separate highlight rule) light up while `browsingLectures` says
+  // the page is in the lecture library at all, not only when `activeId` is
+  // literally `"lectures"`.
+  const lectureCategoriesActive = lecturesActive || browsingLectures;
 
   return (
     <nav className="flex flex-col gap-3 text-sm" aria-label="Videos">
@@ -195,7 +201,7 @@ export function VideoSidebarTree({
               // A style/round route resets the lecture filter to "all" as an
               // implementation detail. Do not therefore leave All Lectures
               // selected alongside the active debate-video tab.
-              isActive={lecturesActive && (selectedCategory === item.id || (item.id === "all" && !selectedCategory))}
+              isActive={lectureCategoriesActive && (selectedCategory === item.id || (item.id === "all" && !selectedCategory))}
             />
           ))}
         </TreeItem>
