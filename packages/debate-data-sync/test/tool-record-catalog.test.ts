@@ -27,9 +27,10 @@ import {
  * against `localStorage`, and nothing anywhere reports that it stopped
  * syncing. This map is what turns that into a failing test.
  *
- * It caught a real one: the Coach Workspace's `coachingSessions` store is keyed
- * by `(roundId, sideKey)` and carries no single id field at all, so it could
- * not join the catalog — only its version history could.
+ * It caught a real one: the Coach Workspace's `coachingSessions` store used to
+ * be keyed by `(roundId, sideKey)` alone, with no single id field, so only its
+ * version history could join the catalog — until `saveCoachingSession` was
+ * changed to stamp a derived `id` onto every record (see below).
  *
  * Adding a collection means adding it here too, having actually read the
  * owning store rather than guessing from the tool's name.
@@ -52,6 +53,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   coachMaterials: "id",
   coachMaterialVersions: "id",
   coachingSessionHistory: "id",
+  coachingSessions: "id",
   flowEdits: "id",
   drillSets: "roundId",
   aiVersusRounds: "roundId",
@@ -207,14 +209,26 @@ describe("the synced collection catalog", () => {
 
   it("syncs completed research-task history now that its records carry a stable id", () => {
     // `state/researchProgress.ts`'s `CompletedTaskRecord` had no per-record id
-    // until now — the same reason `coachingSessions` still can't join this
-    // catalog (see "What deliberately does not sync" in tool-data-sync.mdx) —
-    // so `/cards/progress-tracking`'s completed-task history stayed per-browser
-    // even though every sibling store on that page already synced.
+    // until now, so `/cards/progress-tracking`'s completed-task history stayed
+    // per-browser even though every sibling store on that page already synced.
     expect(findToolRecordCollection("completedResearchTasks")).toMatchObject({
       storageKey: "completedResearchTasks",
       idField: "id",
       href: "/cards/progress-tracking",
+    });
+  });
+
+  it("syncs the Coach Workspace's current coaching session now that it carries a stable id", () => {
+    // `state/coachingSessions.ts`'s `CoachingSessionRecord` used to be keyed
+    // only by the `(roundId, sideKey)` pair — the last of this catalog's
+    // "What deliberately does not sync" stores per tool-data-sync.mdx.
+    // `saveCoachingSession` now stamps a derived `${roundId}::${sideKey}` id
+    // onto every record, so the current session per round+side syncs
+    // alongside its own version history (`coachingSessionHistory`).
+    expect(findToolRecordCollection("coachingSessions")).toMatchObject({
+      storageKey: "coachingSessions",
+      idField: "id",
+      href: "/coaching",
     });
   });
 

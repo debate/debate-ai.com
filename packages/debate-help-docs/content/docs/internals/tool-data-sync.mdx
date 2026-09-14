@@ -86,8 +86,9 @@ replies (`prepNoteReplies`) and assignment notifications
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
 (`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
-(`coachMaterialVersions`), the Coach Workspace's session history
-(`coachingSessionHistory`), and the Flow Edit Log (`flowEdits`), all by `id`.
+(`coachMaterialVersions`), the Coach Workspace's current coaching session
+(`coachingSessions`) and its session history (`coachingSessionHistory`), and
+the Flow Edit Log (`flowEdits`), all by `id`.
 
 **Research** — the Evidence Library (`evidenceLibraryEntries`), card scores
 (`cardScores`) and their history (`cardScoreHistory`), the Contributions Feed
@@ -130,13 +131,12 @@ these stay local on purpose —
   where the video is paused.
 - **Undo/redo stacks** (`judgeRoundRecordEditHistory` and friends). What syncs
   is the current version of a record.
-- **`coachingSessions`**, the Coach Workspace's current session per round and
-  side. `CoachingSessionRecord` is keyed by `(roundId, sideKey)` and carries no
-  single id field, so `saved_tool_records` cannot key a row for it. Its version
-  history (`coachingSessionHistory`) *does* have an `id` and each entry names
-  the round and side it belongs to, so what the user wrote is kept — but the
-  "current" pointer is rebuilt locally rather than synced. Giving the record its
-  own id is what it would take to sync directly.
+- ~~`coachingSessions`, the Coach Workspace's current session per round and
+  side, kept only by `(roundId, sideKey)` with no single id field to key a row
+  by. Giving the record its own id is what it would take to sync directly.~~
+  **Fixed:** `saveCoachingSession` now stamps every record with a derived
+  `${roundId}::${sideKey}` id, so the current session per round+side syncs
+  alongside its own version history (`coachingSessionHistory`).
 
 Tools already backed by a `saved_*` table of their own — flows, rounds,
 tournament results — keep those. This table is for the stores that had nothing.
