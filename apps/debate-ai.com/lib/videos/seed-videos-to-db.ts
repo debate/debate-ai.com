@@ -46,9 +46,14 @@ export async function seedVideosIntoDb(db: any): Promise<VideoSeedResult> {
   const rows = await getVideoRowsFromJson();
   const statements = buildVideoSeedStatements(rows, Math.floor(startedAt / 1000), SEED_BATCH);
 
-  for (const statement of statements) {
-    await db.run(sql.raw(statement));
-  }
+  // Run every upsert/prune statement as one atomic batch rather than
+  // sequential awaited `db.run()` calls, so a run that fails partway (an
+  // oversized statement, a dropped connection) leaves the table exactly as
+  // it was instead of committing whatever ran before the failure. `db.run()`
+  // returns an unexecuted query builder when not awaited, which is what
+  // `db.batch()` expects — both the D1 driver and the local libSQL driver
+  // `getDB()` can return support `.batch()`.
+  await db.batch(statements.map((statement) => db.run(sql.raw(statement))));
 
   return {
     rows: rows.length,
