@@ -57,6 +57,21 @@ describe("APP_FEATURES", () => {
       if (feature.doc) expect(feature.doc.endsWith(".md")).toBe(true);
     }
   });
+
+  // A feature with a real doc under `packages/debate-help-docs/content/docs/features`
+  // silently rendered no "Learn more" link anywhere `feature-catalog.ts` is read
+  // (`/features`, `FeaturesPanel`, News Stream's "Tool spotlight" posts) — the
+  // check above only validates a `doc` that's already present, so a missing one
+  // was invisible to CI. These three entries had matching doc files with no
+  // `doc` field wired up; pinned individually (rather than a filename-derived
+  // sweep) since a doc's filename doesn't always match its entry's `id`.
+  it.each([
+    ["videos", "video-library.md"],
+    ["common-argument-library", "argument-library-collections.md"],
+    ["contributions-feed", "contributions-feed.md"],
+  ])("wires %s to its doc file", (id, doc) => {
+    expect(APP_FEATURES.find((feature) => feature.id === id)?.doc).toBe(doc);
+  });
 });
 
 describe("buildFeatureSections", () => {

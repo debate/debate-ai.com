@@ -8,6 +8,75 @@ _No task currently in progress._
 
 ### Completed
 
+- **📄 Wire three real feature docs into the feature catalog's "Learn more"
+  links.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built: `user_settings`/`documents`/`saved_flows`/`saved_rounds`,
+  25+ bespoke `saved_*` tables, and 60+ `saved_tool_records` collections
+  all linked to `user.id`. A background audit re-checked every remaining
+  localStorage-backed store in the repo for an un-synced gap and found
+  only two: `qwksearch/lib/file-sources.ts` (configured SSH/S3/R2/B2/Google
+  Docs/Turso research backends) embeds plaintext credentials, so syncing it
+  raises a security/product design question outside this routine's
+  "unambiguous, low-risk" scope rather than a mechanical fix; and
+  `researchProgressGoals.ts` turned out to already be fully account-synced
+  via `/api/settings`'s `researchProgressGoal` field
+  (`lib/research-progress-goal-sync.ts` / `useResearchProgressGoalSync.ts`),
+  so re-doing it would have duplicated existing work.
+
+  Pivoted to the same theme's "tool discoverability / better tool UI"
+  angle instead. `packages/debate-feature-catalog/src/feature-catalog.ts`'s
+  `APP_FEATURES` catalog backs `/features`, `debate-ui`'s `FeaturesPanel`
+  (both copies, `packages/debate-ui` and its `apps/debate-ai.com` mirror),
+  and News Stream's "Tool spotlight" posts — each renders a "Learn more"
+  link from an entry's optional `doc` field via `featureDocUrl`/
+  `docs-links.ts`. Three entries with a real, on-topic doc file already
+  sitting under `packages/debate-help-docs/content/docs/features/` had no
+  `doc` field wired up, so those three tools rendered no "Learn more" link
+  anywhere the catalog is read: `videos` (missing `video-library.md`),
+  `common-argument-library` (missing `argument-library-collections.md`),
+  and `contributions-feed` (missing `contributions-feed.md`). Invisible to
+  CI because `feature-catalog.test.ts`'s existing check only validates a
+  `doc` field *if present* (ends in `.md`), never that one exists when a
+  matching doc file does. A repo-wide cross-check of every file under that
+  docs directory against every catalog `doc:` reference confirmed these
+  three were the only gap in either direction — no catalog entry points at
+  a missing file, and every other doc-less file under that directory
+  (`app-nav-dock.mdx`, `flow-cloud-save.mdx`, `user-settings.mdx`, and 15
+  others) documents an internal mechanism or sub-topic with no matching
+  top-level catalog `id`, not a missed 1:1 mapping.
+
+  Added the three `doc` fields (`.md`, matching every other entry's
+  convention even though the files on disk are `.mdx` — `featureDocUrl`
+  strips the extension either way) and a pinned `it.each` regression test
+  naming exactly these three `{id, doc}` pairs, rather than a
+  filename-derived sweep, since a doc's filename doesn't reliably match its
+  catalog entry's `id` (e.g. `videos` ↔ `video-library.md`).
+
+  Ran the full verification gate: `bun install`, `bun run typecheck`
+  (18/18 packages green), `bun run test` (439 files, 8537 tests passing —
+  3 new), and `bun run build` (production build, all three targets green).
+  No `lint`/`format:check` script exists anywhere in this repo, so that
+  step was skipped as not applicable.
+
+  **Follow-ups (not in scope here):** (1) the `qwksearch` file-sources
+  credential-sync question above needs a maintainer decision (encrypt
+  server-side, split credential fields out of the synced payload, or leave
+  local-only by design) before it's implementable — flagging rather than
+  guessing. (2) CardMirror's "Learn" flashcards/spaced-repetition store
+  (`packages/debate-editor/src/editor/learn-store.ts`, localStorage key
+  `pmd-learn-store`) remains unsynced and remains too large for a first
+  slice, as previously noted: one blob mixes 8 sub-collections (cards,
+  schedules, anchors, AI threads, notes, review log, decks, doc registry)
+  with no flat-array shape, so joining the generic `TOOL_RECORD_COLLECTIONS`
+  mechanism would mean splitting the host's persistence format entirely
+  (`learn-store-host.ts`'s single `pmd-learn-store` key, mirrored in both
+  the browser and Electron hosts) — a bespoke-schema design task, not a
+  mechanical one.
+
 - **🔤 Sync the CardMirror editor's personal spellcheck dictionary to the
   account.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
