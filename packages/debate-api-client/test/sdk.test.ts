@@ -2,8 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const grabMock = vi.fn()
 
-vi.mock("grab-url", () => ({
+vi.mock("grab-url/slim", () => ({
   default: (...args: unknown[]) => grabMock(...args),
+  setupDevTools: () => {},
 }))
 
 const { createClient, DEFAULT_BASE_URL } = await import("../src/client")
