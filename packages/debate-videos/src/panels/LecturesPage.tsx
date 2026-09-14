@@ -102,6 +102,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
+  const [stackLinkedRounds, setStackLinkedRounds] = useState(false)
   const youtubeStats = useYouTubeStats()
 
   // ---------------------------------------------------------------------------
@@ -186,7 +187,11 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       const nextView: CategoryType = slugState.view ?? "lectures"
       actions.setCurrentCategory(nextView)
       setSelectedCategory("all")
-      if (nextView !== "lectures") setShowLectureCategories(false)
+      // A style route still uses the shared "lectures" grid view internally,
+      // but it is a round-archive destination.  Do not leave the Lectures
+      // section expanded/looking selected after clicking College, Policy, PF,
+      // or LD merely because that implementation detail says "lectures".
+      setShowLectureCategories(nextView === "lectures" && !slugState.style)
       scrollToVideos()
     } else if (slug) {
       // Unknown slug → treat as lecture-category id
@@ -466,6 +471,8 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       onHideVideo={actions.hideVideo}
       onUnhideVideo={actions.unhideVideo}
       onStatsModalOpenChange={setStatsModalOpen}
+      stackLinkedRounds={stackLinkedRounds}
+      onToggleStackLinkedRounds={() => setStackLinkedRounds((stacked) => !stacked)}
       selectedStyle={state.selectedStyle}
       onStyleChange={(style) => {
         actions.setSelectedStyle(style)
