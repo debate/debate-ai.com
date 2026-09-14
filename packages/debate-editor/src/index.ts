@@ -86,3 +86,9 @@ export type { QuickCard } from './editor/quick-cards-store.js';
 // `learn-cards-sync.ts`'s module doc).
 export { isValidLearnCardRecord, MAX_SAVED_LEARN_CARD_BYTES } from './editor/learn-store.js';
 export type { CardDef } from './editor/learn-store.js';
+
+// Learn custom-deck account-sync validation, shared by the store itself and
+// by `apps/debate-ai.com`'s `/api/learn-decks` routes (see
+// `learn-decks-sync.ts`'s module doc).
+export { isValidLearnDeckRecord, MAX_SAVED_LEARN_DECK_BYTES } from './editor/learn-store.js';
+export type { CustomDeck } from './editor/learn-store.js';
