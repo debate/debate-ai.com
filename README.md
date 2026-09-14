@@ -28,9 +28,9 @@
 <!-- template-git-repo:badges:end -->
 
 <p align="center">
-    <a href="https://doi.org/10.5281/zenodo.22170412"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.22170412.svg" alt="DOI"></a>
-      <a href="https://doi.org/10.5281/zenodo.20574318"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20574318.svg" alt="DOI" /></a>
-  <a href="https://doi.org/10.5281/zenodo.21881743"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.21881743.svg" alt="DOI"></a>
+    <a href="https://doi.org/10.5281/zenodo.20320435"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320435.svg" alt="DOI"></a>
+      <a href="https://doi.org/10.5281/zenodo.20320093"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320093.svg" alt="DOI" /></a>
+  <a href="https://doi.org/10.5281/zenodo.20517983"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20517983.svg" alt="DOI"></a>
     <br />
     <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
     <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
