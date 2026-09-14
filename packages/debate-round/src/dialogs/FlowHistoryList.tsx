@@ -20,8 +20,13 @@
 import { useMemo, useState } from "react"
 import { ChevronDown, ChevronRight, Clock, Download, FileText, Trash2 } from "lucide-react"
 import { Button } from "../ui/primitives/button"
+import { Badge } from "../ui/primitives/badge"
 import type { FlowHistory } from "../state/store"
 import { groupFlowHistoryByDate } from "../state/flowHistoryGrouping"
+import { getToolRecordSyncStatus } from "debate-data-sync/src/state/tool-record-auto-sync"
+
+/** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
+const FLOW_HISTORY_COLLECTION_KEY = "flowHistory"
 
 interface FlowHistoryListProps {
   /** The full auto-saved history, newest entry first — `useFlowStore().getFlowHistory()`'s return value. */
@@ -70,7 +75,7 @@ export function FlowHistoryList({ history, onLoad, onClear }: FlowHistoryListPro
   return (
     <div className="p-2 space-y-2">
       <div className="flex items-center justify-between gap-2 px-1 pb-1">
-        <p className="text-xs text-muted-foreground">Auto-saved as you work. Synced to your account.</p>
+        <p className="text-xs text-muted-foreground">Auto-saved as you work.</p>
         <Button
           size="sm"
           variant="ghost"
@@ -100,28 +105,46 @@ export function FlowHistoryList({ history, onLoad, onClear }: FlowHistoryListPro
             </button>
             {!collapsed && (
               <div className="divide-y">
-                {group.entries.map((entry) => (
-                  <div key={entry.id} className="flex items-center justify-between gap-2 px-3 py-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      <div className="min-w-0">
-                        <div className="text-sm truncate">{entry.label}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {new Date(entry.timestamp).toLocaleTimeString()}
+                {group.entries.map((entry) => {
+                  const syncStatus = getToolRecordSyncStatus(FLOW_HISTORY_COLLECTION_KEY, entry)
+                  return (
+                    <div key={entry.id} className="flex items-center justify-between gap-2 px-3 py-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <div className="text-sm truncate">{entry.label}</div>
+                            {syncStatus !== "unknown" && (
+                              <Badge
+                                variant="outline"
+                                className="flex-shrink-0 text-[10px]"
+                                title={
+                                  syncStatus === "synced"
+                                    ? "This version has reached your account"
+                                    : "Not yet synced to your account"
+                                }
+                              >
+                                {syncStatus === "synced" ? "Synced" : "Not yet synced"}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(entry.timestamp).toLocaleTimeString()}
+                          </div>
                         </div>
                       </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0 flex-shrink-0"
+                        title="Restore this version as a new flow"
+                        onClick={() => onLoad(entry.id)}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 w-8 p-0 flex-shrink-0"
-                      title="Restore this version as a new flow"
-                      onClick={() => onLoad(entry.id)}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
