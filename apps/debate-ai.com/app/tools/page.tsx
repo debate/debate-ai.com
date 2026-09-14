@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { FavoriteToolButton } from "@/components/tools/FavoriteToolButton"
 import { FavoritesController } from "@/components/tools/FavoritesController"
+import { RecentlyOpenedTools } from "@/components/tools/RecentlyOpenedTools"
+import { RecordVisitLink } from "@/components/tools/RecordVisitLink"
 import { MySavedItems } from "./MySavedItems"
 import { ToolsSearch } from "./ToolsSearch"
 import { ALL_TOOLS, TOOL_GROUPS } from "./tool-groups"
@@ -31,13 +32,13 @@ export default function ToolsPage() {
           <div className="flex flex-wrap gap-2">
             {ALL_TOOLS.map((tool) => (
               <div key={tool.href} hidden data-tool-href={tool.href} className="relative shrink-0">
-                <Link
+                <RecordVisitLink
                   href={tool.href}
                   className="flex items-center gap-2 rounded-full border border-border bg-background py-1.5 pl-3 pr-9 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:border-accent-foreground/20"
                 >
                   <tool.icon className="h-4 w-4 shrink-0" />
                   {tool.label}
-                </Link>
+                </RecordVisitLink>
                 <FavoriteToolButton
                   href={tool.href}
                   label={tool.label}
@@ -48,6 +49,7 @@ export default function ToolsPage() {
           </div>
         </section>
         <FavoritesController />
+        <RecentlyOpenedTools />
 
         <div className="flex flex-col gap-10" data-tools-grid>
           {TOOL_GROUPS.map((group) => (
@@ -60,7 +62,7 @@ export default function ToolsPage() {
                     className="relative h-full"
                     data-tool-search={[tool.label, tool.description, ...(tool.highlights ?? [])].join(" ").toLowerCase()}
                   >
-                    <Link href={tool.href} className="block h-full">
+                    <RecordVisitLink href={tool.href} className="block h-full">
                       <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
                         <CardHeader className="px-4">
                           <div className="flex items-center gap-2 pr-7">
@@ -80,7 +82,7 @@ export default function ToolsPage() {
                           )}
                         </CardHeader>
                       </Card>
-                    </Link>
+                    </RecordVisitLink>
                     <FavoriteToolButton href={tool.href} label={tool.label} className="absolute right-2 top-2" />
                   </div>
                 ))}

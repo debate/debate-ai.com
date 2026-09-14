@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { MAX_RECENT_TOOLS, parseRecentTools, pushRecentTool } from "@/lib/recentTools"
+import { MAX_RECENT_TOOLS, parseRecentTools, pushRecentTool, resolveRecentTools } from "@/lib/recentTools"
+import type { Tool } from "@/app/tools/tool-groups"
+
+function stubTool(href: string, label: string): Tool {
+  return { href, label, description: "", icon: (() => null) as unknown as Tool["icon"] }
+}
 
 describe("pushRecentTool", () => {
   it("adds a new href to the front of an empty list", () => {
@@ -59,5 +64,23 @@ describe("parseRecentTools", () => {
   it("caps the parsed list at MAX_RECENT_TOOLS", () => {
     const tooMany = Array.from({ length: MAX_RECENT_TOOLS + 3 }, (_, i) => `/tool-${i}`)
     expect(parseRecentTools(JSON.stringify(tooMany))).toHaveLength(MAX_RECENT_TOOLS)
+  })
+})
+
+describe("resolveRecentTools", () => {
+  const reasonEditor = stubTool("/reason-editor", "Reason Editor")
+  const drills = stubTool("/drills", "Practice Drills")
+  const catalog = [reasonEditor, drills]
+
+  it("resolves hrefs to their catalog tools, preserving recency order", () => {
+    expect(resolveRecentTools(["/drills", "/reason-editor"], catalog)).toEqual([drills, reasonEditor])
+  })
+
+  it("drops an href whose tool was renamed or removed from the catalog", () => {
+    expect(resolveRecentTools(["/reason-editor", "/removed-tool"], catalog)).toEqual([reasonEditor])
+  })
+
+  it("returns an empty list for an empty recent list", () => {
+    expect(resolveRecentTools([], catalog)).toEqual([])
   })
 })
