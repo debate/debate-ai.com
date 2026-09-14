@@ -263,13 +263,16 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "coachingSessionHistory",
     storageKey: "coachingSessionHistory",
     idField: "id",
-    // The Coach Workspace's own `coachingSessions` store is deliberately not
-    // here: `CoachingSessionRecord` is keyed by `(roundId, sideKey)` and
-    // carries no single id field, so it cannot be keyed by this table. Its
-    // version history can, and each entry names the round and side it belongs
-    // to, so what the user wrote is kept either way.
     label: "Coach Workspace History",
     href: "/coach",
+    section: "Coaching",
+  },
+  {
+    key: "coachingSessions",
+    storageKey: "coachingSessions",
+    idField: "id",
+    label: "AI Coach Mode",
+    href: "/coaching",
     section: "Coaching",
   },
   {
