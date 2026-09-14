@@ -13,6 +13,7 @@
  * @module lib/recentTools
  */
 import { isValidToolHref } from "debate-round"
+import type { Tool } from "@/app/tools/tool-groups"
 
 /** Short enough that the group stays a quick glance, not a second favorites list. */
 export const MAX_RECENT_TOOLS = 5
@@ -45,4 +46,18 @@ export function parseRecentTools(raw: string | null): string[] {
   } catch {
     return []
   }
+}
+
+/**
+ * Resolves recent hrefs (most-recent-first, as returned by
+ * {@link parseRecentTools}/`useRecentTools`) back into their full `Tool`
+ * records from the catalog. Drops any href whose tool was since renamed or
+ * removed rather than rendering a broken entry for it — the same
+ * `pruneUnknown`-style tolerance `useFavoriteTools` needs for the same
+ * reason (see `FavoritesController.tsx`).
+ */
+export function resolveRecentTools(recent: string[], allTools: Tool[]): Tool[] {
+  return recent
+    .map((href) => allTools.find((tool) => tool.href === href))
+    .filter((tool): tool is Tool => tool !== undefined)
 }
