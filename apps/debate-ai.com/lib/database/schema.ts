@@ -203,6 +203,17 @@ export type FlowPresenceHeartbeatRow = typeof flowPresenceHeartbeats.$inferSelec
 // `debateStyle`/`colorTheme`) can only check shape, not membership in the
 // real tool catalog — that catalog is app-specific (`app/tools/
 // tool-groups.tsx`), not something the shared package knows about.
+// `recentTools` mirrors `favoriteTools` above — the last few `/tools` hrefs a
+// user opened (via the app-wide command palette), most-recent-first, JSON
+// array or null when empty. Closes command-palette.mdx's "recents don't
+// follow a signed-in user across devices" gap: `lib/recentTools.ts` already
+// owned this list as a localStorage-only convenience, so it keeps owning the
+// validation/serialization here too rather than moving that into
+// `debate-round`, matching `editorPreferences`'s "app-specific field, not a
+// package one" precedent below. Applied via a single `recordRecentTool` op
+// (append-to-front, dedupe, cap) resolved against the row's current value,
+// the same lost-update fix `favoriteTools`' add/remove ops already use,
+// rather than a client-computed whole-list replace.
 export const userSettings = sqliteTable("user_settings", {
   userId: text("user_id")
     .primaryKey()
@@ -212,6 +223,7 @@ export const userSettings = sqliteTable("user_settings", {
   colorTheme: text("color_theme"),
   themeMode: text("theme_mode"),
   favoriteTools: text("favorite_tools"),
+  recentTools: text("recent_tools"),
   // JSON-serialized map of CardMirror editor-preference keys (General /
   // Appearance / Accessibility settings, e.g. `displayColors`, `bodyFont`,
   // `reduceMotion`) to their current values — moved here from the editor's

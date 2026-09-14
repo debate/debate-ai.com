@@ -46,9 +46,10 @@ already show for the same tool, with no new catalog to keep in sync.
   when it isn't empty.
 - **Recent** — the last few tools actually opened, from the palette or from
   `/tools` itself (`useRecentTools`, most-recent-first), when it isn't empty.
-  Local-only (`localStorage`, not synced to the account) — see
-  `lib/recentTools.ts`'s header for why this doesn't reuse `useFavoriteTools`'
-  account sync.
+  Local-first, best-effort account-synced via a `recordRecentTool` op on the
+  same `/api/settings` row `useFavoriteTools` uses — see `lib/recentTools.ts`'s
+  header for why that field's validation/serialization stays in this app
+  rather than moving into `debate-round`, unlike `favoriteTools`.
 - **Go to** — `/tools`, `/features`, `/news`, `/settings`: destinations that
   aren't themselves a cataloged tool.
 - One group per `/tools` heading (Workspaces, Community & Progress, Prep &
@@ -81,9 +82,12 @@ combo.
 app/tools/tool-groups.ts        — ALL_TOOLS / TOOL_GROUPS (existing; also
                                     used by /tools and FavoriteToolsSettings)
 lib/hooks/useFavoriteTools.ts   — existing account-linked favorites list
-lib/recentTools.ts              — pure push/parse/resolve helpers for the
-                                    "Recent" group and /tools' matching strip
-lib/hooks/useRecentTools.ts     — localStorage-only, cross-instance-synced recent list
+lib/recentTools.ts              — pure push/parse/resolve/op helpers for the
+                                    "Recent" group and /tools' matching strip,
+                                    plus the recordRecentTool op /api/settings
+                                    validates against
+lib/hooks/useRecentTools.ts     — localStorage-first, cross-instance-synced,
+                                    best-effort account-synced recent list
 lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
                                     (the shadcn/ui-standard shape; cmdk had
                                     been a dependency with no caller yet)
@@ -135,5 +139,10 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
   (typed URL, bookmark, another page's own link to a tool) and the editor's
   Workspace menu still don't record a visit — wiring either would mean a
   global click listener or instrumenting call sites this doc doesn't own.
-  It's also still capped at 5 and per-browser (`localStorage`, no account
-  sync), so it resets on a new device.
+  It's also still capped at 5. ~~Per-browser (`localStorage`, no account
+  sync), so it resets on a new device.~~ Closed: a `recordRecentTool` op
+  best-effort syncs each visit to the same `user_settings` row
+  `favoriteTools` uses (`apps/debate-ai.com/app/api/settings/route.ts`,
+  `recent_tools` D1 column), read back on mount the same way
+  `useFavoriteTools` hydrates — so recents now follow a signed-in user across
+  devices, `localStorage` staying the signed-out/first-paint source of truth.
