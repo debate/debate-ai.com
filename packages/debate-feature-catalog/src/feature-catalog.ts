@@ -122,6 +122,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     href: "/videos",
     category: "workspaces",
     tags: ["learn", "lectures", "rounds", "youtube", "archive", "debate-videos"],
+    doc: "video-library.md",
   },
   {
     id: "card-search",
@@ -205,6 +206,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     href: "/cards/argument-library",
     category: "evidence",
     tags: ["folders", "case areas", "tags", "blocks"],
+    doc: "argument-library-collections.md",
   },
   {
     id: "contributions-feed",
@@ -213,6 +215,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     href: "/cards/contributions",
     category: "evidence",
     tags: ["feed", "endorse", "upvote", "helpfulness"],
+    doc: "contributions-feed.md",
   },
   {
     id: "llm-card-scoring",
