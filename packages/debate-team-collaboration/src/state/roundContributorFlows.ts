@@ -4,7 +4,7 @@
  * remaining)" follow-up named under idea #13 ("Coaching Programs and Group
  * Challenges") in TODO.md: "a roundId-to-contributor mapping so a member's
  * already-flowed practice round can generate a drill set on this board."
- * Also closes `docs/features/coaching-programs.md`'s "Known gaps" entry.
+ * Also closes `packages/debate-help-docs/content/docs/internals/coaching-programs.mdx`'s "Known gaps" entry.
  *
  * Mirrors the existing `argumentTrees.ts`/`vulnerabilityReports.ts`
  * `roundId`-keyed localStorage-store convention, but keyed by

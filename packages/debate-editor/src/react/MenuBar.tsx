@@ -1,23 +1,29 @@
 "use client";
 
 /**
- * Top menu bar sitting above the CardMirror ribbon — File / Speech / Card /
- * Edit / Format / Color / Insert / AI / View / Panes / Tools / Flow /
- * Workspace / Plugins dropdowns exposing every ribbon command via
- * `runRibbon(id)`, grouped into labeled sections that mirror CardMirror's
- * own `RIBBON_GROUPS` taxonomy (see menu-bar-categories.ts). Every entry
- * here is one more way to reach a command already bound to a ribbon button
- * and/or the Ctrl/Cmd-Shift-Space command palette — this doesn't replace
- * either, it's the third, browsable path. Categories are kept small (a
- * handful of source groups each) and the dropdown rows dense, so browsing
- * one doesn't mean scrolling a long list to find a command. Two categories
- * aren't sourced from `RIBBON_GROUPS`: Plugins lists whatever the palette's
- * `command` search source pulls from the runtime plugin registry, so a
- * plugin-registered command reachable via the palette is always reachable
- * here too; Workspace lists `WORKSPACE_LINKS` — the app's other tools and
- * pages, the same list the palette's `t` prefix searches — so switching
- * workspaces doesn't require leaving the editor to find the Tools page
- * first.
+ * A compact dropdown menu bar — File / Speech / Card / Edit / Format /
+ * Color / Insert / AI / View / Panes / Tools / Flow / Workspace / Plugins —
+ * exposing every ribbon command via `runRibbon(id)`, grouped into labeled
+ * sections that mirror CardMirror's own `RIBBON_GROUPS` taxonomy.
+ *
+ * `CardMirrorEditor` stacks this above its own ribbon (Google-Docs-style: a
+ * text-labeled menu strip above an icon toolbar), gated by the same
+ * `showToolbar` prop that pages the ribbon into Word-style tabs
+ * (`editor/ribbon-tabs.ts`). The two aren't duplicate surfaces for one job —
+ * the ribbon is the always-visible icon strip, this is the click-to-browse
+ * index over the same commands — and its categories are projected straight
+ * from `RIBBON_TABS` (see menu-bar-categories.ts), so this menu can't drift
+ * from the ribbon it mirrors. The component also stays exported from this
+ * package for hosts that want a command menu somewhere else on their page
+ * (a compact header, a kebab menu beside a document title).
+ *
+ * Two categories aren't sourced from `RIBBON_GROUPS`: Plugins lists whatever
+ * the palette's `command` search source pulls from the runtime plugin
+ * registry, so a plugin-registered command reachable via the palette is
+ * always reachable here too; Workspace lists `WORKSPACE_LINKS` — the app's
+ * other tools and pages, the same list the palette's `t` prefix searches —
+ * so switching workspaces doesn't require leaving the editor to find the
+ * Tools page first.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -40,10 +46,10 @@ export interface MenuBarProps {
 }
 
 /** Category list is loaded via dynamic `import()` rather than a
- *  module-scope import — `menu-bar-categories.js` pulls in `RIBBON_GROUPS`
- *  (and, transitively, the whole ribbon command/table-plugin graph) for
- *  its drift-guard assertion, which is exactly the engine weight this
- *  component otherwise keeps out of the initial render path. A
+ *  module-scope import — `menu-bar-categories.js` pulls in `RIBBON_TABS`
+ *  and (transitively, through its drift guard over `RIBBON_GROUPS`) the
+ *  whole ribbon command/table-plugin graph, which is exactly the engine
+ *  weight this component otherwise keeps out of the initial render path. A
  *  module-scope import here would force that graph to load — and its
  *  side effects (e.g. prosemirror-tables' selection-type registration) to
  *  run — every time this file is merely imported, including during SSR of

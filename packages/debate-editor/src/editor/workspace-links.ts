@@ -52,6 +52,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
 
   // ── Prep & Practice ─────────────────────────────────────────────────────
   { href: '/prep-notes', label: 'Prep Notes', description: 'Live prep notes across every flow', category: 'Prep & Practice' },
+  { href: '/contacts', label: 'Contacts', description: "Requests, blocking, who's online, and live cards shared with you", category: 'Prep & Practice' },
   { href: '/notifications', label: 'Notifications', description: 'Assignee notifications for handed-off prep notes', category: 'Prep & Practice' },
   { href: '/judges', label: 'Judge Profiles', description: 'Side-vote bias and speaker-point tendencies', category: 'Prep & Practice' },
   { href: '/opponents', label: 'Opponent Team Profiles', description: 'Side-record tendencies and common arguments per opponent', category: 'Prep & Practice' },

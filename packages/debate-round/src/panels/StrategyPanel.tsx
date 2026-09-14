@@ -59,7 +59,7 @@ import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/primitives/select"
 import { Textarea } from "../ui/primitives/textarea"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "../ui/panels/panel-shell"
 import {
   buildCaseComparisonTable,
   buildStrategyRecommendationFromStores,
@@ -227,18 +227,13 @@ export function StrategyPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Scout-to-Strategy</h1>
-        <p className="text-sm text-muted-foreground">
-          Rank case options against an opponent's scouted tendencies, get judge-adaptation notes,
-          and see an overall matchup risk level. Every recommendation built for a matchup is kept
-          as history, newest first.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {synced ? "Recommendation history is synced to your account." : "Sign in to sync your recommendation history."}
-        </p>
-      </div>
+    <PanelShell
+      title="Scout-to-Strategy"
+      description="Rank case options against an opponent's scouted tendencies, get judge-adaptation notes, and see an overall matchup risk level. Every recommendation built for a matchup is kept as history, newest first."
+    >
+      <p className="text-xs text-muted-foreground">
+        {synced ? "Recommendation history is synced to your account." : "Sign in to sync your recommendation history."}
+      </p>
 
       <div className="space-y-3 rounded-lg border border-border p-4">
         <div className="grid gap-3 sm:grid-cols-4">
@@ -502,6 +497,6 @@ export function StrategyPanel() {
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

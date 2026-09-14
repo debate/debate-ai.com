@@ -12,7 +12,7 @@
  * `buildCustomOpponentPersona` additionally mirrors
  * `judge-paradigms.ts`'s `buildCustomJudgeParadigm` — the "custom
  * opponent-persona authoring flow" follow-up named in
- * `docs/features/practice-opponent.md`'s Known gaps.
+ * `packages/debate-help-docs/content/docs/features/practice-opponent.mdx`'s Known gaps.
  *
  * `OpponentDifficulty`/`opponentDifficulties` close the "🤖 AI Practice
  * Opponent" idea's "a difficulty slider layered on top of persona choice"

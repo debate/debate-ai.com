@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedWordCountRounds } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked word-count-round history sync — TODO.md idea #2
@@ -27,30 +28,36 @@ import { getUserId } from "@/lib/auth/session"
  *   counterpart to that route.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced word-count rounds." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/word-count-rounds",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced word-count rounds." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedWordCountRounds.data })
-    .from(savedWordCountRounds)
-    .where(eq(savedWordCountRounds.userId, userId))
-    .orderBy(asc(savedWordCountRounds.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedWordCountRounds.data })
+      .from(savedWordCountRounds)
+      .where(eq(savedWordCountRounds.userId, userId))
+      .orderBy(asc(savedWordCountRounds.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)
 
-export async function DELETE(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to manage your synced word-count rounds." }, { status: 401 })
-  }
+export const DELETE = withRouteErrors(
+  "DELETE /api/word-count-rounds",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to manage your synced word-count rounds." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  await db.delete(savedWordCountRounds).where(eq(savedWordCountRounds.userId, userId))
+    const db = await getDBFromContext()
+    await db.delete(savedWordCountRounds).where(eq(savedWordCountRounds.userId, userId))
 
-  return NextResponse.json({ success: true })
-}
+    return NextResponse.json({ success: true })
+  },
+)

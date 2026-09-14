@@ -25,12 +25,23 @@
  * same in-flight promise, so exactly one GET fires per page load
  * regardless of how many components mount this hook.
  *
+ * `toggleFavorite`/`removeFavorite` sync a single `addFavoriteTool`/
+ * `removeFavoriteTool` op (`saveFavoriteToolOp`) rather than a whole-list
+ * `favoriteTools` replace, so two tabs starring different tools in quick
+ * succession both land instead of the second PUT silently dropping the
+ * first tab's addition — see `state/favoriteTools.ts#applyFavoriteToolOp`'s
+ * docstring. `pruneUnknown` still replaces the whole list: it's a bulk
+ * cleanup pass, not a single star/unstar, and is convergent under a race
+ * either way (it only ever drops entries the current catalog no longer
+ * recognizes).
+ *
  * @module lib/hooks/useFavoriteTools
  */
 
 import { useCallback, useEffect, useState } from "react"
 import {
   fetchUserSettings,
+  saveFavoriteToolOp,
   saveUserSettings,
   filterKnownFavoriteTools,
   isValidToolHref,
@@ -101,17 +112,28 @@ export function useFavoriteTools() {
     }
   }, [])
 
-  const persist = useCallback((next: string[]) => {
+  // Applies a change to local state/storage; the two sync helpers below
+  // decide *how* that change reaches the account.
+  const persistLocal = useCallback((next: string[]) => {
     setFavorites(next)
     writeLocal(next)
     window.dispatchEvent(new Event(CHANGE_EVENT))
-    if (remoteAvailable) {
-      saveUserSettings({ favoriteTools: next }).catch(() => {
-        // Best-effort — the change already applied locally above, matching
-        // useThemeState's/UserSettingsPanel's "local apply is never
-        // blocked by a sync failure" convention.
-      })
-    }
+  }, [])
+
+  const syncOp = useCallback((op: { addFavoriteTool?: string; removeFavoriteTool?: string }) => {
+    if (!remoteAvailable) return
+    saveFavoriteToolOp(op).catch(() => {
+      // Best-effort — the change already applied locally above, matching
+      // useThemeState's/UserSettingsPanel's "local apply is never
+      // blocked by a sync failure" convention.
+    })
+  }, [])
+
+  const syncWholeList = useCallback((next: string[]) => {
+    if (!remoteAvailable) return
+    saveUserSettings({ favoriteTools: next }).catch(() => {
+      // Best-effort, same as syncOp above.
+    })
   }, [])
 
   const isFavorite = useCallback((href: string) => favorites.includes(href), [favorites])
@@ -120,19 +142,22 @@ export function useFavoriteTools() {
     (href: string) => {
       if (!isValidToolHref(href)) return
       if (favorites.includes(href)) {
-        persist(favorites.filter((h) => h !== href))
+        persistLocal(favorites.filter((h) => h !== href))
+        syncOp({ removeFavoriteTool: href })
       } else if (favorites.length < MAX_FAVORITE_TOOLS) {
-        persist([...favorites, href])
+        persistLocal([...favorites, href])
+        syncOp({ addFavoriteTool: href })
       }
     },
-    [favorites, persist],
+    [favorites, persistLocal, syncOp],
   )
 
   const removeFavorite = useCallback(
     (href: string) => {
-      persist(favorites.filter((h) => h !== href))
+      persistLocal(favorites.filter((h) => h !== href))
+      syncOp({ removeFavoriteTool: href })
     },
-    [favorites, persist],
+    [favorites, persistLocal, syncOp],
   )
 
   // A favorite whose tool was since renamed/removed from the catalog would
@@ -146,10 +171,11 @@ export function useFavoriteTools() {
     (validHrefs: readonly string[]) => {
       const next = filterKnownFavoriteTools(favorites, validHrefs)
       if (next !== favorites) {
-        persist(next)
+        persistLocal(next)
+        syncWholeList(next)
       }
     },
-    [favorites, persist],
+    [favorites, persistLocal, syncWholeList],
   )
 
   return { favorites, loaded, isFavorite, toggleFavorite, removeFavorite, pruneUnknown }

@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildContributorAvailabilityProfile,
   buildRoutingResult,
   buildRoutingSummaryText,
   buildTaskQueue,
   routeTasks,
   setAssignmentPriority,
+  setTaskPriority,
   sortAssignmentsByPriority,
+  sortTasksByPriority,
   type ContributorAvailability,
   type ResearchTask,
   type RoutedAssignment,
@@ -201,6 +204,53 @@ describe("sortAssignmentsByPriority", () => {
   });
 });
 
+describe("setTaskPriority", () => {
+  it("flags a still-unassigned task high priority", () => {
+    expect(setTaskPriority(missingTask, "high")).toEqual({ ...missingTask, priority: "high" });
+  });
+
+  it("omits the priority key entirely when set back to normal", () => {
+    const flagged: ResearchTask = { ...missingTask, priority: "high" };
+    expect(setTaskPriority(flagged, "normal")).toEqual(missingTask);
+    expect(setTaskPriority(flagged, "normal")).not.toHaveProperty("priority");
+  });
+
+  it("does not mutate the original task", () => {
+    setTaskPriority(missingTask, "high");
+    expect(missingTask).not.toHaveProperty("priority");
+  });
+});
+
+describe("sortTasksByPriority", () => {
+  const flaggedMissing: ResearchTask = { ...missingTask, priority: "high" };
+
+  it("sorts high-priority tasks ahead of normal ones", () => {
+    expect(sortTasksByPriority([missingTask, thinTask, flaggedMissing])).toEqual([
+      flaggedMissing,
+      missingTask,
+      thinTask,
+    ]);
+  });
+
+  it("preserves relative order within a priority tier (stable sort)", () => {
+    const secondFlagged: ResearchTask = { ...thinTask, priority: "high" };
+    expect(sortTasksByPriority([missingTask, flaggedMissing, thinTask, secondFlagged])).toEqual([
+      flaggedMissing,
+      secondFlagged,
+      missingTask,
+      thinTask,
+    ]);
+  });
+
+  it("returns an empty list unchanged", () => {
+    expect(sortTasksByPriority([])).toEqual([]);
+  });
+
+  it("leaves an all-normal-priority list in its original order", () => {
+    expect(sortTasksByPriority([missingTask, thinTask])).toEqual([missingTask, thinTask]);
+  });
+});
+
 describe("buildRoutingSummaryText", () => {
   it("renders one line per assignment plus an unassigned-count line", () => {
     const text = buildRoutingSummaryText({
@@ -222,5 +272,93 @@ describe("buildRoutingSummaryText", () => {
 
   it("renders an empty string when there is nothing to report", () => {
     expect(buildRoutingSummaryText({ assignments: [], unassignedTasks: [] })).toBe("");
+  });
+});
+
+describe("buildContributorAvailabilityProfile", () => {
+  it("builds a brand-new profile starting at activeTaskCount 0", () => {
+    const profile = buildContributorAvailabilityProfile({
+      contributorId: "dana",
+      skillLevel: "intermediate",
+      maxConcurrentTasks: 3,
+    });
+
+    expect(profile).toEqual({
+      contributorId: "dana",
+      skillLevel: "intermediate",
+      maxConcurrentTasks: 3,
+      activeTaskCount: 0,
+    });
+  });
+
+  it("trims a padded contributor id", () => {
+    const profile = buildContributorAvailabilityProfile({
+      contributorId: "  dana  ",
+      skillLevel: "novice",
+      maxConcurrentTasks: 1,
+    });
+
+    expect(profile.contributorId).toBe("dana");
+  });
+
+  it("carries the existing profile's activeTaskCount over unchanged when editing the same contributor", () => {
+    const existing: ContributorAvailability = {
+      contributorId: "dana",
+      skillLevel: "novice",
+      activeTaskCount: 2,
+      maxConcurrentTasks: 2,
+    };
+
+    const updated = buildContributorAvailabilityProfile(
+      { contributorId: "dana", skillLevel: "advanced", maxConcurrentTasks: 5 },
+      existing,
+    );
+
+    expect(updated).toEqual({
+      contributorId: "dana",
+      skillLevel: "advanced",
+      maxConcurrentTasks: 5,
+      activeTaskCount: 2,
+    });
+  });
+
+  it("starts at activeTaskCount 0 when existing belongs to a different contributor", () => {
+    const existing: ContributorAvailability = {
+      contributorId: "elle",
+      skillLevel: "advanced",
+      activeTaskCount: 4,
+      maxConcurrentTasks: 4,
+    };
+
+    const created = buildContributorAvailabilityProfile(
+      { contributorId: "dana", skillLevel: "novice", maxConcurrentTasks: 1 },
+      existing,
+    );
+
+    expect(created.activeTaskCount).toBe(0);
+  });
+
+  it("throws when the contributor id is blank", () => {
+    expect(() =>
+      buildContributorAvailabilityProfile({ contributorId: "   ", skillLevel: "novice", maxConcurrentTasks: 1 }),
+    ).toThrow("Enter a contributor id.");
+  });
+
+  it("throws when maxConcurrentTasks is zero or negative", () => {
+    expect(() =>
+      buildContributorAvailabilityProfile({ contributorId: "dana", skillLevel: "novice", maxConcurrentTasks: 0 }),
+    ).toThrow("Max concurrent tasks must be a whole number of at least 1.");
+    expect(() =>
+      buildContributorAvailabilityProfile({ contributorId: "dana", skillLevel: "novice", maxConcurrentTasks: -1 }),
+    ).toThrow("Max concurrent tasks must be a whole number of at least 1.");
+  });
+
+  it("throws when maxConcurrentTasks is not a whole number", () => {
+    expect(() =>
+      buildContributorAvailabilityProfile({ contributorId: "dana", skillLevel: "novice", maxConcurrentTasks: 1.5 }),
+    ).toThrow("Max concurrent tasks must be a whole number of at least 1.");
+    expect(() =>
+      buildContributorAvailabilityProfile({ contributorId: "dana", skillLevel: "novice", maxConcurrentTasks: NaN }),
+    ).toThrow("Max concurrent tasks must be a whole number of at least 1.");
   });
 });

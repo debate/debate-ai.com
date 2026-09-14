@@ -3,6 +3,12 @@
  * {@link VideoGrid}'s cards, but as a header + one row per video with no
  * thumbnails, for scanning many videos' details at once. Columns are
  * drag-resizable and click-sortable.
+ *
+ * The 1AC/2NR argument labels are not one of those columns: two wrapped
+ * lines of prose per row in a table built for scanning, and the widest
+ * thing in it, for the one field nothing here sorts or filters on. They
+ * still ride on the cards (`VideoCardThumbnail`) and in the round's own
+ * page, which is where a matchup is read rather than scanned.
  */
 
 "use client"
@@ -12,9 +18,9 @@ import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown } fr
 import { cn } from "../../ui/lib/utils"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
-import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor } from "../video-card/videoCardUtils"
+import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
-import { TranscriptModal } from "../transcript-modal/TranscriptModal"
+import { WatchPageLink } from "../watch/WatchPageLink"
 import { useResizableColumns } from "./useResizableColumns"
 import type { VideoType } from "../../types/videos"
 import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
@@ -31,9 +37,7 @@ interface VideoListRowsProps {
 }
 
 function formatDate(date: string): string {
-  const d = new Date(date)
-  if (Number.isNaN(d.getTime())) return "—"
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+  return formatVideoDate(date, "full", "—")
 }
 
 function getStyleLabel(video: VideoType): string {
@@ -47,7 +51,6 @@ type ColumnKey =
   | "level"
   | "aff"
   | "neg"
-  | "arguments"
   | "channel"
   | "season"
   | "title"
@@ -59,7 +62,8 @@ interface ColumnDef {
   key: ColumnKey
   label: string
   headerClassName?: string
-  /** Omit for columns (like "Arguments") that have no single sortable value. */
+  /** Omit for a column with no single sortable value; its header is then
+   *  plain text rather than a sort button. */
   sortValue?: (video: VideoType) => string | number
 }
 
@@ -68,7 +72,6 @@ const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   level: 100,
   aff: 150,
   neg: 150,
-  arguments: 200,
   channel: 160,
   season: 90,
   title: 260,
@@ -96,7 +99,6 @@ const ROUND_COLUMNS: ColumnDef[] = [
   { key: "level", label: "Level", headerClassName: "hidden sm:table-cell", sortValue: (v) => v[8]?.toLowerCase() ?? "" },
   { key: "aff", label: "Aff", sortValue: (v) => v[9]?.toLowerCase() ?? "" },
   { key: "neg", label: "Neg", sortValue: (v) => v[10]?.toLowerCase() ?? "" },
-  { key: "arguments", label: "Arguments", headerClassName: "hidden lg:table-cell" },
   SEASON_COLUMN,
   DATE_COLUMN,
   VIEWS_COLUMN,
@@ -166,17 +168,23 @@ function VideoRow({
     negTeam,
     _affWin,
     _judgeDecision,
-    arg1AC,
-    arg2NR,
+    _arg1AC,
+    _arg2NR,
     _isTopPickFlag,
     _speechDocsUrl,
     seasonYear,
   ] = video
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
-  const { activeVideoId, setActiveVideo, addToQueue, queue } = useVideoPlayerStore()
-  const isPlaying = activeVideoId === videoId
-  const isInQueue = queue.some((q) => q.videoId === videoId)
+  // Per-field selectors rather than the whole store — see `VideoCard` for
+  // why: a list holds one of these rows per loaded video, and subscribing
+  // each to the store object re-rendered all of them on any player change.
+  const isPlaying = useVideoPlayerStore((state) => state.activeVideoId === videoId)
+  const isInQueue = useVideoPlayerStore((state) =>
+    state.queue.some((item) => item.videoId === videoId),
+  )
+  const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
+  const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
 
   const styleNumber = typeof style === "number" ? style : undefined
   const styleLabel = styleNumber
@@ -188,7 +196,7 @@ function VideoRow({
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
   // Without a Title column, Tournament and the Aff/Neg matchup are what
-  // actually identify a round — Level and Arguments alone don't. When
+  // actually identify a round — Level alone doesn't. When
   // neither is available (no tournament, or no team on either side), the
   // row has nothing to scan, so show the video title across the full width
   // instead of a row of dashes.
@@ -234,19 +242,9 @@ function VideoRow({
               <td className="px-3 py-2 align-top text-sm truncate">
                 {negTeam || <span className="text-muted-foreground">—</span>}
               </td>
-              <td className="px-3 py-2 align-top hidden lg:table-cell text-xs text-muted-foreground">
-                {arg1AC || arg2NR ? (
-                  <div className="flex flex-col gap-0.5">
-                    {arg1AC && <span className="truncate">1AC: {arg1AC}</span>}
-                    {arg2NR && <span className="truncate">2NR: {arg2NR}</span>}
-                  </div>
-                ) : (
-                  "—"
-                )}
-              </td>
             </>
           ) : (
-            <td colSpan={5} className="px-3 py-2 align-top text-sm text-foreground truncate">
+            <td colSpan={4} className="px-3 py-2 align-top text-sm text-foreground truncate">
               {title}
             </td>
           )
@@ -323,12 +321,12 @@ function VideoRow({
                       ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
                       : "text-muted-foreground hover:text-foreground",
                   )}
-                  aria-label={isFavorite ? "Remove from favorites" : "Save to favorites"}
+                  aria-label={isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
                 >
                   <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
                 </button>
               </TooltipTrigger>
-              <TooltipContent>{isFavorite ? "Remove from favorites" : "Save to favorites"}</TooltipContent>
+              <TooltipContent>{isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}</TooltipContent>
             </Tooltip>
 
             <Tooltip>
@@ -350,7 +348,7 @@ function VideoRow({
               <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
             </Tooltip>
 
-            <TranscriptModal videoId={videoId} title={title} />
+            <WatchPageLink videoId={videoId} title={title} className="p-1" iconClassName="h-3.5 w-3.5" />
 
             <Tooltip>
               <TooltipTrigger asChild>

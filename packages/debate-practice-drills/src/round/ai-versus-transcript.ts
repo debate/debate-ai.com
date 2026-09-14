@@ -9,6 +9,16 @@
  * repo's existing pure-builder/thin-caller split (e.g.
  * `ai-versus-speech-ai.ts` vs `ai-versus-speech-client.ts`).
  *
+ * `buildAiVersusTranscriptComparison`/`buildAiVersusTranscriptComparisonText`
+ * below close idea #3's other named next-step: "a side-by-side transcript
+ * diff between two rounds". Speeches are zipped positionally by delivery
+ * index (round `a`'s Nth submitted speech against round `b`'s Nth), the same
+ * convention `practice-round-simulator.ts#buildPracticeRoundReplaySteps`
+ * already relies on for a single round's own speech order, and each aligned
+ * pair is word-diffed via the existing, already-Vitest-covered
+ * `flow-edit-diff.ts#diffFlowEditContent` (generic over any two strings, not
+ * `FlowEdit`-specific) rather than a second diff implementation.
+ *
  * @module round/ai-versus-transcript
  */
 
@@ -19,7 +29,11 @@ import {
   type DebateStyleKey,
 } from "debate-timer/src/formats/debate-format-times";
 import type { AiVersusRoundRecord } from "debate-round/src/state/aiVersusRounds";
-import type { AiVersusSide } from "debate-round/src/round/ai-versus-speech-order";
+import type {
+  AiVersusSide,
+  PriorSpeechRecord,
+} from "debate-round/src/round/ai-versus-speech-order";
+import { diffFlowEditContent, type DiffSegment } from "debate-round/src/flow/flow-edit-diff";
 
 function styleDisplayName(styleKey: DebateStyleKey): string {
   const index = debateStyleMap.indexOf(styleKey);
@@ -70,4 +84,88 @@ export function aiVersusTranscriptFilename(roundId: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
   return `ai-versus-${safeId || "round"}-transcript.txt`;
+}
+
+/** One aligned pair of speeches from two compared rounds, by delivery index. */
+export type AiVersusTranscriptComparisonRow = {
+  index: number;
+  a: PriorSpeechRecord | null;
+  b: PriorSpeechRecord | null;
+  /** Word-level diff of `a`/`b`'s text, or `null` when either side has no speech at this index. */
+  diff: { left: DiffSegment[]; right: DiffSegment[] } | null;
+};
+
+export type AiVersusTranscriptComparison = {
+  a: AiVersusRoundRecord;
+  b: AiVersusRoundRecord;
+  rows: AiVersusTranscriptComparisonRow[];
+};
+
+/**
+ * Builds a side-by-side comparison of two persisted AI-versus rounds' delivered
+ * speeches, zipped positionally (`a`'s Nth submitted speech against `b`'s Nth) —
+ * no assumption that the two rounds share a format or side, so this works for
+ * two attempts at the same round id resubmitted under a different one, two
+ * different formats, or anything else. A row whose two speeches are both
+ * present is word-diffed via `diffFlowEditContent`; a row where only one round
+ * has a speech at that index is included undiffed, so a shorter round's
+ * missing tail still shows up as its own rows rather than being dropped.
+ */
+export function buildAiVersusTranscriptComparison(
+  a: AiVersusRoundRecord,
+  b: AiVersusRoundRecord,
+): AiVersusTranscriptComparison {
+  const length = Math.max(a.submittedSpeeches.length, b.submittedSpeeches.length);
+  const rows: AiVersusTranscriptComparisonRow[] = [];
+  for (let index = 0; index < length; index++) {
+    const speechA = a.submittedSpeeches[index] ?? null;
+    const speechB = b.submittedSpeeches[index] ?? null;
+    rows.push({
+      index,
+      a: speechA,
+      b: speechB,
+      diff: speechA && speechB ? diffFlowEditContent(speechA.text, speechB.text) : null,
+    });
+  }
+  return { a, b, rows };
+}
+
+function renderComparisonSpeech(speech: PriorSpeechRecord | null): string {
+  if (!speech) return "  (not delivered in this round)";
+  return `  ${speech.speaker === "user" ? "You" : "AI"} — ${speech.name}\n  ${speech.text}`;
+}
+
+/**
+ * Renders an `AiVersusTranscriptComparison` as a downloadable plain-text
+ * document — one section per aligned speech position, each showing both
+ * rounds' speeches stacked underneath their own round label. Diff detail
+ * (which words each side added/removed relative to the other) is visual-only
+ * — carried by `AiVersusTranscriptComparisonRow.diff` for the panel's own
+ * highlighted rendering — since a removed/added word marking has no faithful
+ * plain-text form here; the full, undiffed text of both speeches is still
+ * included so nothing is lost in the download.
+ */
+export function buildAiVersusTranscriptComparisonText(comparison: AiVersusTranscriptComparison): string {
+  const { a, b, rows } = comparison;
+  const labelA = `Round ${a.roundId}`;
+  const labelB = `Round ${b.roundId}`;
+  const sections = rows.map(
+    (row) =>
+      `### Speech ${row.index + 1}\n${labelA}:\n${renderComparisonSpeech(row.a)}\n\n${labelB}:\n${renderComparisonSpeech(row.b)}`,
+  );
+  return `AI-Versus Transcript Comparison — ${labelA} vs. ${labelB}\n\n${sections.join("\n\n")}`;
+}
+
+/**
+ * A filesystem-safe filename for a comparison download, e.g.
+ * `ai-versus-comparison-round-1-vs-round-2.txt`, mirroring
+ * `aiVersusTranscriptFilename`'s exact sanitization rule.
+ */
+export function aiVersusTranscriptComparisonFilename(a: AiVersusRoundRecord, b: AiVersusRoundRecord): string {
+  const safeId = `${a.roundId}-vs-${b.roundId}`
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `ai-versus-comparison-${safeId || "rounds"}.txt`;
 }

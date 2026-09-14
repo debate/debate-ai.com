@@ -11,20 +11,41 @@
  * switching exclusively, so Files and Open Tabs are both visible at once
  * (its default view). Unlike that sidebar this lives in the app's persistent
  * left sidebar (`AppSidebarShell`) instead of a second sidebar owned by the
- * editor route, so the tree stays on screen across tool pages; picking a file
- * anywhere routes to `/reason-editor` with it open.
+ * editor route.
+ *
+ * It is mounted only where the documents are the subject — `/cards` and
+ * `/reason-editor` (`lib/reason-docs/sidebar-routes.ts`). Elsewhere the
+ * sidebar is that page's own nav: `/videos`, which renders its own sidebar
+ * rather than the shell, shows the video library and nothing else.
+ *
+ * Picking a file anywhere routes to `/reason-editor?doc=<file name>` (or
+ * `?topic=<file name>` for a public topic starter), which brings CardMirror up
+ * in the main column with that file loaded — see `ReasonDocsRouteSync` for why
+ * the selection travels in the URL and not only in provider state, and
+ * `lib/reason-docs/doc-path.ts` for how the file's own name becomes that URL.
+ *
+ * Files also arrive here: the Upload button and a drop onto the tree import
+ * `.docx` (and `.cmir`, and plain text) as CardMirror native files, so a card
+ * document dropped in the sidebar is one click from opening in CardMirror with
+ * its cards, highlighting and comments intact.
  */
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft } from "lucide-react"
+import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
 import { cn } from "@/lib/ui/lib/utils"
+import { IMPORT_ACCEPT } from "@/lib/cardmirror/stored-cmir"
+import {
+  REASON_EDITOR_ROUTE,
+  editorHrefForSelection,
+  isEditorPathname,
+  type ReasonDocsSelection,
+} from "@/lib/reason-docs/route-selection"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
-
-export const REASON_EDITOR_ROUTE = "/reason-editor"
+import type { ReasonDocument } from "./types"
 
 type SidebarPanel = "files" | "topicStarters" | "openTabs"
 
@@ -59,7 +80,7 @@ function loadPanels(): SidebarPanel[] {
 }
 
 /** The user's explicit collapse choice, or `null` when they've never made
- *  one (in which case the section follows the current route). */
+ *  one (in which case the section starts open — see `isOpen` below). */
 function loadSectionOpen(): boolean | null {
   try {
     const raw = localStorage.getItem(SECTION_STORAGE_KEY)
@@ -87,10 +108,16 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     moveDocument,
     updateTitle,
     selectTopicDocument,
+    importFiles,
+    importing,
   } = useReasonDocs()
 
   const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
   const [openOverride, setOpenOverride] = useState<boolean | null>(null)
+  /** What the last upload couldn't take, shown under the tree until the next
+   *  one. Silence would leave a reader watching a file that never appears. */
+  const [importErrors, setImportErrors] = useState<string[]>([])
+  const uploadInputRef = useRef<HTMLInputElement>(null)
 
   // Panel choice and collapse state are per-device view preferences (same as
   // the source sidebar's persisted panel list); read after mount so the SSR
@@ -100,14 +127,16 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     setOpenOverride(loadSectionOpen())
   }, [])
 
-  const onEditorRoute = pathname === REASON_EDITOR_ROUTE
-  // Expanded by default where the docs are the page's subject, collapsed on
-  // the other tool pages the sidebar also covers — until the user says
-  // otherwise, which sticks.
-  const isOpen = openOverride ?? onEditorRoute
+  const onEditorRoute = isEditorPathname(pathname)
+  // Expanded by default: this only mounts where the documents *are* the
+  // page's subject (`/cards` and the editor), and on `/cards` the sidebar is
+  // now these panels plus the Research tool list — a collapsed "Documents"
+  // row would leave that column with no file tree in it at all. The user's
+  // own collapse still wins, and sticks.
+  const isOpen = openOverride ?? true
 
-  // Nothing is fetched until the section is actually on screen, so tool pages
-  // that leave it collapsed make no document requests at all.
+  // Nothing is fetched until the section is actually on screen, so a reader
+  // who collapses it makes no document requests at all.
   useEffect(() => {
     if (isOpen) ensureLoaded()
   }, [isOpen, ensureLoaded])
@@ -136,10 +165,65 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     })
   }, [])
 
-  /** Selections made from another tool page carry the reader to the editor. */
-  const goToEditor = useCallback(() => {
+  /** A new document has no id until the POST resolves, so its hop carries no
+   *  selection — `createDocument` opens the created file itself. */
+  const goToBlankEditor = useCallback(() => {
     if (!onEditorRoute) router.push(REASON_EDITOR_ROUTE)
   }, [onEditorRoute, router])
+
+  /**
+   * Carries a selection into the editor's main column, as a URL the editor
+   * route can reopen on its own: `?doc=<file name>` for an owned document,
+   * `?topic=<file name>` for a public topic starter. The name comes from the
+   * tree the file is in, folders included, so the link reads as the file's own
+   * path rather than a row id.
+   *
+   * The provider state set alongside this makes the switch immediate on a
+   * client-side hop; the URL is what makes the same click survive a reload, a
+   * shared link, or a hard navigation (`/videos` is a different layout
+   * branch), so CardMirror always comes up with *that* file rather than
+   * whatever the editor would otherwise fall back to.
+   *
+   * Already on the route, nothing is routed at all: the provider has the file
+   * open, and `ReasonDocsRouteSync` renames the address bar in place. Routing
+   * would mean a Next route change between `/reason-editor/<a>` and
+   * `/reason-editor/<b>`, which remounts CardMirror — ten files opened in a
+   * row would be ten editor remounts, and ten Back presses to leave.
+   */
+  const goToEditor = useCallback(
+    (selection: ReasonDocsSelection, extraItems: readonly ReasonDocument[] = []) => {
+      // `extraItems` covers a file whose row hasn't reached state yet — a
+      // just-uploaded one — so its link is its name rather than its id.
+      const href = editorHrefForSelection(
+        selection,
+        selection.kind === "document" ? [...extraItems, ...documents] : topicItems,
+      )
+      if (onEditorRoute) router.replace(href)
+      else router.push(href)
+    },
+    [onEditorRoute, router, documents, topicItems],
+  )
+
+  /**
+   * Takes files from the Upload button or a drop onto the tree.
+   *
+   * Everything becomes a CardMirror native file on the way in — the sidebar
+   * never stores a `.docx` as-is and never runs it through the card parser, so
+   * an imported Verbatim document keeps its cards, highlighting and comments
+   * (`lib/cardmirror/stored-cmir.ts`). The first file imported is opened, which
+   * is what makes uploading and clicking one file the same gesture.
+   */
+  const uploadFiles = useCallback(
+    async (files: readonly File[], parentId: number | null) => {
+      if (files.length === 0) return
+      setImportErrors([])
+      const { created, failures } = await importFiles(files, parentId)
+      setImportErrors(failures)
+      const first = created[0]
+      if (first) goToEditor({ kind: "document", id: first.id }, created)
+    },
+    [importFiles, goToEditor],
+  )
 
   return (
     <div className={cn("flex min-h-0 flex-col", className)}>
@@ -159,7 +243,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
               type="button"
               onClick={() => {
                 void createDocument(null, false)
-                goToEditor()
+                goToBlankEditor()
               }}
               title="New document"
               className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -174,6 +258,29 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
             >
               <FolderPlus className="h-3.5 w-3.5" />
             </button>
+            <button
+              type="button"
+              onClick={() => uploadInputRef.current?.click()}
+              disabled={importing}
+              title={`Upload a file (${IMPORT_ACCEPT})`}
+              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-50"
+            >
+              {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+            </button>
+            <input
+              ref={uploadInputRef}
+              type="file"
+              multiple
+              accept={IMPORT_ACCEPT}
+              className="hidden"
+              onChange={(event) => {
+                const files = Array.from(event.target.files ?? [])
+                // Cleared before the await so picking the same file twice in a
+                // row still fires `change` the second time.
+                event.target.value = ""
+                void uploadFiles(files, null)
+              }}
+            />
           </>
         )}
       </div>
@@ -226,13 +333,21 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     activeId={activeId}
                     onSelect={(id) => {
                       openDocument(id)
-                      goToEditor()
+                      goToEditor({ kind: "document", id })
                     }}
                     onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
                     onRename={updateTitle}
                     onDelete={(id) => void deleteDocument(id)}
                     onMove={(id, parentId) => void moveDocument(id, parentId)}
+                    onUpload={(files, parentId) => void uploadFiles(files, parentId)}
                   />
+                  {importErrors.length > 0 && (
+                    <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
+                      {importErrors.map((message) => (
+                        <li key={message}>{message}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               )}
 
@@ -245,7 +360,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     items={topicItems}
                     onSelect={(item) => {
                       selectTopicDocument(item)
-                      goToEditor()
+                      goToEditor({ kind: "topic", id: item.id })
                     }}
                   />
                 </div>
@@ -269,7 +384,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                       type="button"
                       onClick={() => {
                         void createDocument(null, false)
-                        goToEditor()
+                        goToBlankEditor()
                       }}
                       title="New File"
                       className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -283,7 +398,7 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
                     activeId={activeId}
                     onSelect={(id) => {
                       selectTab(id)
-                      goToEditor()
+                      goToEditor({ kind: "document", id })
                     }}
                     onClose={closeTab}
                   />

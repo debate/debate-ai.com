@@ -7,7 +7,7 @@
  * Encoded as a `Set` for O(1) lookup performance.
  */
 export const TERMS_ORG = new Set(
-  "abc,ag,ap,academy,advisors,agency,airbnb,amazon,america,american,apple,associated,association," +
+  ("abc,ag,ap,academy,advisors,agency,airbnb,amazon,america,american,apple,associated,association," +
     "atlantic,attorneys,authority,axel,bank,baptiste,bbc,bertelsmann,blackrock,bloomberg,bmw,boston," +
     "broadcasting,bureau,business,buzzfeed,cambridge,capital,cbs,center,chase,chicago,china,church,citigroup," +
     "clinic,club,cnn,coca-cola,college,commission,communications,condé,consulting,corp,corps,costco,daily," +
@@ -30,7 +30,7 @@ export const TERMS_ORG = new Set(
     "relations,cfr,cnas,monetary,petroleum,exporting,countries,opec,north,treaty,african,asean,southeast,asian," +
     "nations,g7,g8,g20,seven,eight,twenty,assembly,court,icj,criminal,icc,ilo,food,fao,unesco,cultural," +
     "telecommunication,itu,meteorological,wmo,maritime,imo,civil,aviation,icao,atomic,iaea,prohibition,chemical," +
-    "weapons,opcw,comprehensive,nuclear,test,ban,ctbto,preparatory".split(","),
+    "weapons,opcw,comprehensive,nuclear,test,ban,ctbto,preparatory").split(","),
 );
 
 /**

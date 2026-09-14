@@ -29,6 +29,7 @@
 
 import { useMemo, useState } from "react"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildCommunityResearchHubSections,
   buildCommunityResearchHubSummaryText,
@@ -80,26 +81,22 @@ export function CommunityResearchHubPanel({ favoriteHrefs = [] }: CommunityResea
   )
 
   return (
-    <div className="p-4 sm:p-6">
-      <h1 className="mb-1 text-xl font-semibold text-foreground">Community Research Hub</h1>
-      <p className="mb-1 text-sm text-muted-foreground">
-        Every shared research, collaboration, and pre-round/practice space in one place.
-      </p>
-      <p className="mb-4 text-xs text-muted-foreground">{summaryText}</p>
+    <PanelShell
+      title="Community Research Hub"
+      description="Every shared research, collaboration, and pre-round/practice space in one place."
+    >
+      <p className="text-xs text-muted-foreground">{summaryText}</p>
 
       <Input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by name or what it does…"
         aria-label="Search the Community Research Hub"
-        className="mb-6 max-w-md"
+        className="max-w-md"
       />
 
       {forYouEntries.length > 0 && (
-        <div className="mb-6">
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            For You
-          </h2>
+        <PanelSection title="For You">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {forYouEntries.map((entry) => (
               <a
@@ -112,13 +109,11 @@ export function CommunityResearchHubPanel({ favoriteHrefs = [] }: CommunityResea
               </a>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
 
       {sections.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No spaces match "{query}".
-        </div>
+        <EmptyState title={`No spaces match "${query}".`} />
       ) : (
         <div className="flex flex-col gap-6">
           {sections.map((section) => (
@@ -142,6 +137,6 @@ export function CommunityResearchHubPanel({ favoriteHrefs = [] }: CommunityResea
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

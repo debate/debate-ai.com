@@ -2,6 +2,7 @@
 import JSZip from "jszip";
 import { Parser } from "htmlparser2";
 import { parseAsync, renderDocument } from "docx-preview";
+import type { HElement } from "docx-preview";
 import { parseHTML } from "linkedom";
 import grab from "grab-url";
 
@@ -188,6 +189,55 @@ async function parseStylesXML(styleXML: string): Promise<HeadingStyles> {
 }
 
 /**
+ * Build the node factory docx-preview renders through, bound to a linkedom
+ * document instead of the ambient browser one. Mirrors the library's own
+ * default factory so class names, inline styles, attributes, and children are
+ * applied the same way.
+ * @param {Object} virtualDom - Result of linkedom's parseHTML
+ * @returns {Function} Factory that turns docx-preview elements into DOM nodes
+ */
+function createVirtualNode(virtualDom: ReturnType<typeof parseHTML>) {
+  const { document, Node } = virtualDom;
+
+  const h = (elem: HElement | Node | string): Node => {
+    if (typeof elem === "string") return document.createTextNode(elem) as any;
+    if (elem instanceof Node) return elem;
+
+    const { ns, tagName, className, style, children, ...props } =
+      elem as HElement;
+
+    if (tagName === "#fragment") {
+      const fragment = document.createDocumentFragment();
+      children?.forEach((child) => fragment.appendChild(h(child as any) as any));
+      return fragment as any;
+    }
+
+    if (tagName === "#comment")
+      return document.createComment(String(children?.[0] ?? "")) as any;
+
+    const result: any = ns
+      ? document.createElementNS(ns, tagName)
+      : document.createElement(tagName);
+
+    if (className) result.setAttribute("class", className);
+
+    if (style) {
+      if (typeof style === "string") result.setAttribute("style", style);
+      else Object.assign(result.style, style);
+    }
+
+    for (const [key, value] of Object.entries(props))
+      if (value !== undefined) result[key] = value;
+
+    children?.forEach((child) => result.appendChild(h(child as any)));
+
+    return result;
+  };
+
+  return h;
+}
+
+/**
  * Render DOCX using docx-preview library
  * @param {ArrayBuffer} arrayBuffer - DOCX file as ArrayBuffer
  * @param {Object} headingStyles - Parsed heading styles from styles.xml
@@ -200,9 +250,10 @@ async function renderWithDocxPreview(
   plainTextOnly: boolean,
 ): Promise<string> {
   // Create virtual DOM using linkedom for server-side rendering
-  const { document } = parseHTML(
+  const virtualDom = parseHTML(
     "<!DOCTYPE html><html><head></head><body></body></html>",
   );
+  const { document } = virtualDom;
 
   const bodyContainer = document.createElement("div");
   const styleContainer = document.createElement("style");
@@ -221,7 +272,10 @@ async function renderWithDocxPreview(
   });
 
   // Render to virtual DOM so this works in server-side environments too.
-  await renderDocument(wordDocument, bodyContainer, styleContainer, {
+  // docx-preview returns detached nodes and builds them with the ambient
+  // `document`, which Node does not have, so hand it a factory bound to the
+  // linkedom document and place the nodes the way renderAsync would.
+  const nodes = await renderDocument(wordDocument, {
     className: "docx",
     ignoreWidth: true,
     ignoreHeight: true,
@@ -232,7 +286,13 @@ async function renderWithDocxPreview(
     renderFootnotes: false,
     renderEndnotes: false,
     useBase64URL: true,
+    h: createVirtualNode(virtualDom),
   });
+
+  for (const node of nodes) {
+    const container = node.nodeName === "STYLE" ? styleContainer : bodyContainer;
+    container.appendChild(node as any);
+  }
 
   if (plainTextOnly) {
     // Collapse whitespace for stable downstream plain-text parsing.

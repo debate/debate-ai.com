@@ -191,7 +191,13 @@ export function VideoGridView({
         </div>
       ) : currentVideos.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No videos found matching your search.</p>
+          {showFavoritesOnly && favorites.size === 0 ? (
+            <p className="text-muted-foreground">
+              Star videos to add them to My Favorites.
+            </p>
+          ) : (
+            <p className="text-muted-foreground">No videos found matching your search.</p>
+          )}
         </div>
       ) : (
         <>

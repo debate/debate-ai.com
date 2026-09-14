@@ -2,7 +2,7 @@
  * @fileoverview Reviewer permission gating for `lib/peer-review.ts`'s
  * highest-stakes lifecycle transitions — closes follow-up (b) named under
  * the "🗣️ Peer Review System" bullet in TODO.md ("reviewer identity/
- * permission checks once auth/roles exist") and `docs/features/review-queue.md`'s
+ * permission checks once auth/roles exist") and `packages/debate-help-docs/content/docs/features/review-queue.mdx`'s
  * "Known gaps" entry ("No reviewer identity/permission checks ... so any
  * visitor can act as any reviewer and take any lifecycle action").
  *

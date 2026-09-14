@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { QuestStreaksPanel } from "debate-community"
+import { QuestStreaksWithIdentity } from "@/components/research/QuestStreaksWithIdentity"
 
 export const metadata: Metadata = {
   title: "Quest Streaks",
@@ -23,7 +23,7 @@ export default function CardsStreaksPage() {
         </Link>
       </div>
       <Suspense>
-        <QuestStreaksPanel />
+        <QuestStreaksWithIdentity />
       </Suspense>
     </div>
   )

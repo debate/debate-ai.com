@@ -17,7 +17,7 @@
  * storing it, mirroring `wordCountRounds.ts`'s `getWordCountRoundStatuses`.
  *
  * `canRegenerateAiSpeechAt`/`replaceAiSpeechAt` close the "regenerate
- * affordance" follow-up noted in `docs/features/ai-versus-rounds.md`'s
+ * affordance" follow-up noted in `packages/debate-help-docs/content/docs/features/ai-versus-rounds.mdx`'s
  * Known gaps: replacing any already-submitted AI speech in place (keeping
  * its slot name, every earlier speech, and every later speech untouched)
  * rather than clearing the whole round and starting over, or only ever

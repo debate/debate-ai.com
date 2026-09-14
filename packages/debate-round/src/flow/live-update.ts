@@ -14,7 +14,8 @@
  *
  * Also hosts the equivalent per-panel predicates for `PrepNotesPanel`,
  * `PrepNoteNotificationsPanel`, the standalone `FlowAnnotationsPanel` list
- * view, and `StrategyPanel` — each closes the same "every other
+ * view, `StrategyPanel`, `PreRoundBriefingsPanel`, and
+ * `OpponentTeamProfilesPanel` — each closes the same "every other
  * localStorage-backed panel in this repo still has no cross-tab live-update
  * mechanism" Known gap noted in `shared-flow-sync.md`, for its own store.
  */
@@ -140,5 +141,101 @@ export function isFlowEditLogPanelLiveUpdateStorageEvent(event: { key: string | 
   return (
     event.key === null ||
     (FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `panels/PreRoundBriefingsPanel.tsx` reads from —
+ * `state/preRoundBriefings.ts` (the briefing list itself), `ownRoundHistory`
+ * (its "Log a round" head-to-head history feeding "Prior meetings"), and
+ * `roundPairings` (its "Pairing schedule" section, read via
+ * `hooks/useRoundPairings.ts`).
+ */
+export const PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "preRoundBriefings",
+  "ownRoundHistory",
+  "roundPairings",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `PreRoundBriefingsPanel` (or
+ * `useRoundPairings`) to re-read its persisted state. A `null` key (e.g.
+ * from `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isPreRoundBriefingsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `panels/OpponentTeamProfilesPanel.tsx` reads from
+ * for its roster and logged-rounds list — `debate-data-sync`'s
+ * `state/opponentTeamProfiles.ts` (`opponentTeamProfiles`, the aggregated
+ * roster) and `state/opponentRoundRecords.ts` (`opponentRoundRecords`, the
+ * logged-round history, plus `opponentRoundRecordEditHistory`/
+ * `opponentRoundRecordRedoHistory`, which decide whether a logged round shows
+ * an Undo/Redo action). Deliberately excludes `ownRoundHistory`: the panel
+ * only reads it inside the on-demand "Compare vs. opponent" action, not on
+ * refresh, so a cross-tab change there doesn't need to force a re-render —
+ * the user's next "Compare" click already re-reads it fresh.
+ */
+export const OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "opponentTeamProfiles",
+  "opponentRoundRecords",
+  "opponentRoundRecordEditHistory",
+  "opponentRoundRecordRedoHistory",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `OpponentTeamProfilesPanel` to
+ * re-read its persisted roster and logged-round list. A `null` key (e.g.
+ * from `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
+  );
+}
+
+/**
+ * The `localStorage` keys `panels/UserSettingsPanel.tsx` reads directly:
+ * `state/settings.ts`'s own `"settings"` store (the `debateStyle`/
+ * `fontSize` fields, re-read via `state/userSettings.ts`'s
+ * `refreshLocalUserSettingsFromStorage`), `"color-theme"` (the `colorTheme`
+ * field, shared with `components/theme-dropdown.tsx`'s dock picker),
+ * `"theme"` (next-themes' own default storage key, backing the
+ * `themeMode` field), and `state/fontSettings.ts`'s `"fontFamily"` (the
+ * separate, always-immediate font-family picker, not part of the
+ * Save-gated form).
+ *
+ * Unlike this panel's other backing stores, `UserSettingsPanel`'s form is a
+ * live, directly-editable draft rather than a derived list/roster view — so
+ * its `storage`-event handler only refreshes a field that still matches
+ * what was last loaded/saved (i.e. the user hasn't started editing it),
+ * leaving an in-progress, not-yet-saved edit on any other field alone
+ * rather than stomping it.
+ */
+export const USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS = [
+  "settings",
+  "color-theme",
+  "theme",
+  "fontFamily",
+] as const;
+
+/**
+ * Whether a `storage` event should trigger `UserSettingsPanel` to refresh
+ * its not-yet-edited fields from `localStorage`. A `null` key (e.g. from
+ * `localStorage.clear()`) counts too, for the same reason as
+ * `isFlowLiveUpdateStorageEvent` above.
+ */
+export function isUserSettingsPanelLiveUpdateStorageEvent(event: { key: string | null }): boolean {
+  return (
+    event.key === null ||
+    (USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS as readonly string[]).includes(event.key)
   );
 }

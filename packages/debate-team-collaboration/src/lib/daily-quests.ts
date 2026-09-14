@@ -39,6 +39,16 @@
  * `computeQuestProgress`/`buildQuestBoardPointsSummary` carry that through to
  * a point total a quest board can display.
  *
+ * `QuestTeam`/`buildTeamQuestCompetitionStandings` close the "team-vs-team
+ * quest competitions" follow-up named under the "🎯 Daily Quests and
+ * Targets" bullet in TODO.md: a team is just a named roster of contributor
+ * ids, and its standing is the sum of its own members'
+ * `computeContributorQuestPoints` (each member scored against the exact same
+ * quest board, narrowed to their own contributions first) — reusing
+ * `buildDailyQuestBoard`/`buildQuestBoardPointsSummary` rather than a
+ * separate team-scoring rule. See `state/dailyQuests.ts` for the persisted
+ * team roster and `panels/DailyQuestsPanel.tsx` for the UI.
+ *
  * @module lib/daily-quests
  */
 
@@ -250,6 +260,87 @@ export function buildQuestBoardPointsSummary(board: QuestProgress[]): QuestBoard
 export function buildQuestBoardPointsSummaryText(board: QuestProgress[]): string {
   const { earnedPoints, totalPoints } = buildQuestBoardPointsSummary(board);
   return `${earnedPoints}/${totalPoints} points earned today`;
+}
+
+/**
+ * A named roster of contributor ids competing together on the quest board —
+ * the "team-vs-team quest competitions" follow-up named under the "🎯 Daily
+ * Quests and Targets" bullet in TODO.md. Kept separate from
+ * `CoachingProgramConfig`'s roster (`debate-team-collaboration`'s own
+ * `round/coaching-program.ts`) rather than reusing it: a coaching program is
+ * one squad a coach manages, while a quest competition is two or more squads
+ * competing against each other on the same board, and this module has no
+ * dependency on that one.
+ */
+export interface QuestTeam {
+  id: string;
+  name: string;
+  contributorIds: string[];
+}
+
+/** One team member's own points earned today, same denominator (`totalPoints`) every member and team shares since they're all scored against the same board. */
+export interface TeamMemberQuestPoints extends QuestBoardPointsSummary {
+  contributorId: string;
+}
+
+/** One team's standing in a quest competition: its own board, scored only against its members' contributions, rolled up. */
+export interface TeamQuestStanding {
+  teamId: string;
+  teamName: string;
+  earnedPoints: number;
+  totalPoints: number;
+  members: TeamMemberQuestPoints[];
+}
+
+/**
+ * Scores one contributor's own points earned today: the same quest board
+ * every contributor is scored against, but narrowed first to just this
+ * contributor's own contributions — mirroring `computeQuestProgress`'s
+ * day-scoping via `buildDailyQuestBoard`, then folding it with
+ * `buildQuestBoardPointsSummary`.
+ */
+export function computeContributorQuestPoints(
+  quests: QuestTemplate[],
+  contributions: QuestContribution[],
+  contributorId: string,
+  now: number,
+): QuestBoardPointsSummary {
+  const ownContributions = contributions.filter((contribution) => contribution.contributorId === contributorId);
+  return buildQuestBoardPointsSummary(buildDailyQuestBoard(quests, ownContributions, now));
+}
+
+/**
+ * Builds every team's standing for today's quest board: each team's
+ * `earnedPoints`/`totalPoints` is the sum of its own members'
+ * `computeContributorQuestPoints`, so a team with more active members (or
+ * members further along on today's quests) ranks higher, not just whichever
+ * single contributor is furthest ahead. Sorted by `earnedPoints` descending,
+ * tie-broken by `teamId` for a stable, deterministic order (mirroring
+ * `buildDailyQuestBoard`'s own tie-break convention). A team with no members
+ * scores 0/0.
+ */
+export function buildTeamQuestCompetitionStandings(
+  teams: QuestTeam[],
+  quests: QuestTemplate[],
+  contributions: QuestContribution[],
+  now: number,
+): TeamQuestStanding[] {
+  return teams
+    .map((team) => {
+      const members = team.contributorIds.map((contributorId) => ({
+        contributorId,
+        ...computeContributorQuestPoints(quests, contributions, contributorId, now),
+      }));
+      const totals = members.reduce(
+        (summary, member) => ({
+          earnedPoints: summary.earnedPoints + member.earnedPoints,
+          totalPoints: summary.totalPoints + member.totalPoints,
+        }),
+        { earnedPoints: 0, totalPoints: 0 },
+      );
+      return { teamId: team.id, teamName: team.name, members, ...totals };
+    })
+    .sort((a, b) => b.earnedPoints - a.earnedPoints || a.teamId.localeCompare(b.teamId));
 }
 
 /**

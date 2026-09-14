@@ -1,21 +1,33 @@
 /**
- * @fileoverview Player control buttons component for video player UI
+ * @fileoverview Player control buttons component for video player UI.
+ *
+ * Only controls that mean the same thing for any video live here. Anything
+ * debate-specific — the slow-the-spread speed toggle, say — is passed in as
+ * `extraControls` by whoever mounts the player, so this strip stays generic
+ * and matches the seam in the extracted `extract-youtube/react` package.
+ *
+ * The buttons themselves are {@link PlayerIconButton}s, shared with the
+ * full-page watch toolbar so the same control never drifts between the two.
  */
 
-import { X, Minus, Maximize2, SkipForward, Play, Pause, Gauge, PictureInPicture2, Captions } from "lucide-react"
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "../../ui/primitives/tooltip"
+import type { ReactNode } from "react"
+import { X, Minus, Maximize2, SkipForward, Play, Pause, PictureInPicture2, Captions } from "lucide-react"
+import { TooltipProvider } from "../../ui/primitives/tooltip"
+import { PlayerIconButton } from "./PlayerIconButton"
 import type { QueueItem } from "../../state/videoPlayerStore"
 
 interface PlayerControlsProps {
   isPlaying: boolean
   isMinimized: boolean
-  isSlowMode: boolean
   queue: QueueItem[]
   isPipSupported: boolean
   isPipActive: boolean
   isSubtitlesOpen: boolean
+  /** Whether the current video has a transcript to show. Hides the button when it doesn't. */
+  showSubtitles: boolean
+  /** Host-supplied buttons, rendered right after play/pause. */
+  extraControls?: ReactNode
   onPlayPause: () => void
-  onToggleSlowMode: () => void
   onPlayNext: () => void
   onToggleMinimize: () => void
   onTogglePip: () => void
@@ -26,13 +38,13 @@ interface PlayerControlsProps {
 export function PlayerControls({
   isPlaying,
   isMinimized,
-  isSlowMode,
   queue,
   isPipSupported,
   isPipActive,
   isSubtitlesOpen,
+  showSubtitles,
+  extraControls,
   onPlayPause,
-  onToggleSlowMode,
   onPlayNext,
   onToggleMinimize,
   onTogglePip,
@@ -42,117 +54,58 @@ export function PlayerControls({
   return (
     <TooltipProvider delayDuration={300}>
       <div className="flex items-center gap-1 shrink-0">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onPlayPause}
-              className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-              aria-label={isPlaying ? "Pause video" : "Play video"}
-            >
-              {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs">
-            {isPlaying ? "Pause" : "Play"}
-          </TooltipContent>
-        </Tooltip>
+        <PlayerIconButton
+          icon={isPlaying ? Pause : Play}
+          label={isPlaying ? "Pause video" : "Play video"}
+          tooltip={isPlaying ? "Pause" : "Play"}
+          onClick={onPlayPause}
+        />
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onToggleSlowMode}
-              className={`p-1 rounded hover:bg-accent transition-colors ${isSlowMode ? "text-red-300 bg-accent" : "text-red-600 text-muted-foreground hover:text-foreground"}`}
-              aria-label={isSlowMode ? "Normal speed" : "Slow down debate spread"}
-            >
-              <Gauge className="h-3 w-3" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs">
-            {isSlowMode ? "Back to debate spread speed (1x)" : "Slow down debate spread 65%"}
-          </TooltipContent>
-        </Tooltip>
+        {extraControls}
 
         {queue.length > 0 && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={onPlayNext}
-                className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground flex items-center gap-0.5"
-                aria-label="Play next in queue"
-              >
-                <SkipForward className="h-3 w-3" />
-                <span className="text-[10px] tabular-nums">{queue.length}</span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-xs">
-              Skip to next ({queue.length} in queue)
-            </TooltipContent>
-          </Tooltip>
+          <PlayerIconButton
+            icon={SkipForward}
+            label="Play next in queue"
+            tooltip={`Skip to next (${queue.length} in queue)`}
+            onClick={onPlayNext}
+            badge={<span className="text-[10px] tabular-nums">{queue.length}</span>}
+          />
         )}
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onToggleSubtitles}
-              className={`p-1 rounded hover:bg-accent transition-colors ${isSubtitlesOpen ? "text-primary bg-accent" : "text-muted-foreground hover:text-foreground"}`}
-              aria-label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
-            >
-              <Captions className="h-3 w-3" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs">
-            {isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
-          </TooltipContent>
-        </Tooltip>
+        {showSubtitles && (
+          <PlayerIconButton
+            icon={Captions}
+            label={isSubtitlesOpen ? "Hide subtitles" : "Show subtitles"}
+            active={isSubtitlesOpen}
+            onClick={onToggleSubtitles}
+          />
+        )}
 
         {isPipSupported && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={onTogglePip}
-                className={`p-1 rounded hover:bg-accent transition-colors ${isPipActive ? "text-primary bg-accent" : "text-muted-foreground hover:text-foreground"}`}
-                aria-label={isPipActive ? "Exit picture-in-picture" : "Pop out picture-in-picture"}
-              >
-                <PictureInPicture2 className="h-3 w-3" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="text-xs">
-              {isPipActive ? "Exit picture-in-picture" : "Pop out picture-in-picture"}
-            </TooltipContent>
-          </Tooltip>
+          <PlayerIconButton
+            icon={PictureInPicture2}
+            label={isPipActive ? "Exit picture-in-picture" : "Pop out picture-in-picture"}
+            active={isPipActive}
+            onClick={onTogglePip}
+          />
         )}
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onToggleMinimize}
-              className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-              aria-label={isMinimized ? "Expand player" : "Minimize player"}
-            >
-              {isMinimized ? <Maximize2 className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs max-w-48 text-center">
-            {isMinimized ? "Expand player" : "Minimize player"}
-            <br />
-            <span className="text-muted-foreground">Drag to move · Resize from edges</span>
-          </TooltipContent>
-        </Tooltip>
+        <PlayerIconButton
+          icon={isMinimized ? Maximize2 : Minus}
+          label={isMinimized ? "Expand player" : "Minimize player"}
+          tooltip={
+            <>
+              {isMinimized ? "Expand player" : "Minimize player"}
+              <br />
+              <span className="text-muted-foreground">Drag to move · Resize from edges</span>
+            </>
+          }
+          tooltipClassName="max-w-48 text-center"
+          onClick={onToggleMinimize}
+        />
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={onClose}
-              className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
-              aria-label="Close video"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </TooltipTrigger>
-          <TooltipContent side="top" className="text-xs">
-            Close player
-          </TooltipContent>
-        </Tooltip>
+        <PlayerIconButton icon={X} label="Close video" tooltip="Close player" onClick={onClose} />
       </div>
     </TooltipProvider>
   )

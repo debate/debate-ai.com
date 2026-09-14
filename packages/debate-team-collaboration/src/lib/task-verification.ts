@@ -2,7 +2,7 @@
  * @fileoverview Verifier guard for confirming a routed research task's
  * completion — closes the "No reviewer/verification step before a task is
  * marked complete; any visitor can mark any assignment done" Known gap
- * recorded in `docs/features/task-inbox.md` under the "🧭 Research Task
+ * recorded in `packages/debate-help-docs/content/docs/features/task-inbox.mdx` under the "🧭 Research Task
  * Routing" bullet in TODO.md. This repo has no auth/identity system, so —
  * mirroring `lib/peer-review.ts`'s identical self-review guard on
  * approve/reject/publish — a task's completion can be *marked* by anyone,

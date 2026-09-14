@@ -16,6 +16,8 @@ import { MultiSelect } from "../ui/primitives/multi-select"
 import { Autocomplete } from "../ui/primitives/autocomplete"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { searchSchools, searchTournaments, searchNames } from "../cache/client-cache"
+import { resultCountLabel } from "../lib/card-display"
+import { EMPTY_FILTERS } from "../lib/search-query"
 
 const SUGGESTION_LIMIT = 20
 const SEARCH_DROPDOWN_CLASS = "right-auto w-[14rem]"
@@ -90,6 +92,11 @@ export function ResearchSearchSidebar({
   const years = Array.from({ length: maxYear - 2012 }, (_, i) => String(maxYear - i))
 
   const activeFilterCount = Object.values(filters).filter((v) => v && v !== "all").length
+  const hasActiveFilters = activeFilterCount > 0
+  const countLabel = resultCountLabel(searchResults?.length ?? 0, totalResults)
+
+  /** Resets every filter to its empty value, leaving the search term alone. */
+  const clearFilters = () => setFilters({ ...EMPTY_FILTERS })
 
   return (
     <div className="mt-[50px] w-full h-full flex flex-col bg-background overflow-hidden min-w-0">
@@ -326,24 +333,63 @@ export function ResearchSearchSidebar({
         </div>
       </TooltipProvider>
 
-      {/* Results count + list */}
-      {/* <div className="px-3 py-1.5 text-xs text-muted-foreground flex justify-between border-b">
-        <span>{(searchResults?.length || 0)} shown</span>
-        <span>{totalResults} total</span>
-      </div> */}
+      {/* Result count — how much of the match set is on screen. */}
+      {!isLoading && countLabel && (
+        <div className="flex items-center justify-between border-b px-3 py-1.5 text-xs text-muted-foreground">
+          <span>{countLabel}</span>
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="underline-offset-2 transition-colors hover:text-foreground hover:underline"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      )}
 
-      <div className="flex-1 overflow-y-auto p-2 space-y-1">
+      <div
+        role="listbox"
+        aria-label="Evidence cards"
+        aria-busy={isLoading}
+        className="flex-1 space-y-1.5 overflow-y-auto p-2"
+      >
         {isLoading ? (
-          <div className="flex items-center justify-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          // Skeleton rows in the shape of the cards they replace, so the list
+          // does not collapse and reflow when results land.
+          Array.from({ length: 6 }, (_, index) => (
+            <div key={index} className="flex gap-0 overflow-hidden rounded-lg border" aria-hidden="true">
+              <span className="w-1 shrink-0 animate-pulse bg-muted" />
+              <div className="flex-1 space-y-2 p-3">
+                <div className="h-3.5 w-4/5 animate-pulse rounded bg-muted" />
+                <div className="h-3 w-2/5 animate-pulse rounded bg-muted" />
+                <div className="h-3 w-full animate-pulse rounded bg-muted" />
+              </div>
+            </div>
+          ))
+        ) : !searchResults || searchResults.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+            <Search className="h-6 w-6 text-muted-foreground/60" aria-hidden="true" />
+            <p className="text-sm font-medium">No cards found</p>
+            <p className="text-xs text-muted-foreground">
+              {searchTerm
+                ? `Nothing matches "${searchTerm}"${hasActiveFilters ? " with these filters" : ""}.`
+                : "Try a search term, or widen the filters."}
+            </p>
+            {hasActiveFilters && (
+              <Button variant="outline" size="sm" className="mt-1 h-7 text-xs" onClick={clearFilters}>
+                Clear filters
+              </Button>
+            )}
           </div>
-        ) : (!searchResults || searchResults.length === 0) ? (
-          <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">No results found</div>
         ) : (
           searchResults.map((result, index) => (
             <SearchResultCard
               key={result.id}
               result={result}
+              index={index}
+              total={searchResults.length}
+              searchTerm={searchTerm}
               isSelected={selectedIndex === index}
               onClick={() => selectResult(result, index)}
             />

@@ -31,6 +31,12 @@ export default defineConfig({
       "@": appDir,
       "@emotion/is-prop-valid": require.resolve("@emotion/is-prop-valid"),
       "@better-auth/kysely-adapter": path.resolve(appDir, "lib/stubs/kysely-adapter.ts"),
+      // linkedom (and jsdom) treat `canvas` as an optional peer and require it
+      // lazily, falling back to a no-op shim when it is missing. It is a native
+      // `.node` addon that cannot run on Workers, and the rsc build fails
+      // outright trying to parse the binary, so always resolve it to our own
+      // copy of that shim.
+      canvas: path.resolve(appDir, "lib/stubs/canvas.ts"),
       // debate-editor's card-cutter-port.ts dynamically imports
       // `@cardcutter/browser` — the separately-versioned, NOT-shipped
       // card-cutter engine, present only when checked out as a sibling of
@@ -61,11 +67,10 @@ export default defineConfig({
     ],
   },
   optimizeDeps: {
-    exclude: ["canvas"],
     include: ["@emotion/is-prop-valid"],
   },
   ssr: {
-    external: ["canvas", "@libsql/client"],
+    external: ["@libsql/client"],
     noExternal: [
       "better-auth",
       "better-auth-cloudflare",

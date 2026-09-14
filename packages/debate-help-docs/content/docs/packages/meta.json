@@ -1,1 +1,7 @@
-{ "title": "Packages" }
+{
+  "title": "Packages",
+  "pages": [
+    "index",
+    "..."
+  ]
+}

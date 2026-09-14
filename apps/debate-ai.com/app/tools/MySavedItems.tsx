@@ -3,8 +3,8 @@
 /**
  * Surfaces the signed-in user's cloud-saved Documents, Flows, and Rounds at
  * the top of the Tools directory, so the SQL-backed save feature (see
- * /settings, docs/features/flow-cloud-save.md, and
- * docs/features/round-cloud-save.md) is actually discoverable from the one
+ * /settings, packages/debate-help-docs/content/docs/features/flow-cloud-save.mdx, and
+ * packages/debate-help-docs/content/docs/features/round-cloud-save.mdx) is actually discoverable from the one
  * page that already lists every tool. Renders nothing when signed out or
  * empty.
  *

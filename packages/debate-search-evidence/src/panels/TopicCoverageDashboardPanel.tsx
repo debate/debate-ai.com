@@ -15,6 +15,14 @@
  * here — this is a read/write composition and rendering layer, mirroring the
  * existing `ArgumentLibraryPanel`/`SprintNotesPanel` panel convention.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isTopicCoverageDashboardLiveUpdateStorageEvent`, so a tracked argument, an
+ * evidence-library entry or tagged contribution, or a coverage snapshot
+ * added/removed in another browser tab refreshes this panel's coverage
+ * report, checklist, snapshot history, and cross-topic comparison here too —
+ * the `storage` event never fires in the tab that made the write, only in
+ * other tabs.
+ *
  * @module panels/TopicCoverageDashboardPanel
  */
 
@@ -25,7 +33,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { MeterBar } from "../ui/panels/panel-shell"
+import { EmptyState, MeterBar, PanelShell } from "../ui/panels/panel-shell"
 import {
   buildPersistedCrossTopicCoverageComparison,
   buildPersistedTopicCoverageReport,
@@ -43,6 +51,7 @@ import {
 } from "../state/topicCoverageSnapshots"
 import { buildTopicCoverageSummaryText, getUnderCoveredArguments } from "../lib/topic-coverage"
 import type { ArgumentCoverage, CoverageLevel, CrossTopicCoverageRow, TopicCoverageReport } from "../lib/topic-coverage"
+import { isTopicCoverageDashboardLiveUpdateStorageEvent } from "../state/live-update"
 
 const LEVEL_LABEL: Record<CoverageLevel, string> = {
   missing: "Missing",
@@ -94,11 +103,27 @@ export function TopicCoverageDashboardPanel() {
 
   const refresh = (activeTopic: string) => {
     setTopics(listTrackedTopics())
-    setReport(buildPersistedTopicCoverageReport(activeTopic))
-    setRecords(listTrackedArguments(activeTopic))
-    setSnapshots(listCoverageSnapshots(activeTopic))
+    setReport(activeTopic ? buildPersistedTopicCoverageReport(activeTopic) : null)
+    setRecords(activeTopic ? listTrackedArguments(activeTopic) : [])
+    setSnapshots(activeTopic ? listCoverageSnapshots(activeTopic) : [])
     setCrossTopicRows(buildPersistedCrossTopicCoverageComparison())
   }
+
+  /**
+   * Live-update the rendered coverage report, tracked-argument checklist,
+   * snapshot history, and cross-topic comparison when another browser tab
+   * tracks/removes an argument, submits an evidence-library entry or
+   * tagged contribution, or records/clears a coverage snapshot.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isTopicCoverageDashboardLiveUpdateStorageEvent(event)) return
+      refresh(topic.trim())
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic])
 
   const handleRecordSnapshot = () => {
     const activeTopic = topic.trim()
@@ -149,15 +174,10 @@ export function TopicCoverageDashboardPanel() {
   const underCovered = report ? getUnderCoveredArguments(report) : []
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Topic Coverage Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Track which arguments a topic's checklist calls for, and see which are missing, thin, or
-          covered based on the shared evidence library's submitted cards.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Topic Coverage Dashboard"
+      description="Track which arguments a topic's checklist calls for, and see which are missing, thin, or covered based on the shared evidence library's submitted cards."
+    >
       {crossTopicRows.length > 1 && <CrossTopicComparisonHeatmap rows={crossTopicRows} />}
 
       <div className="space-y-2">
@@ -186,9 +206,7 @@ export function TopicCoverageDashboardPanel() {
       </div>
 
       {topic.trim() === "" ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          Enter a topic above to view or build its coverage checklist.
-        </div>
+        <EmptyState title="Enter a topic above to view or build its coverage checklist." />
       ) : (
         <>
           <div className="rounded-lg border border-border p-4 space-y-3">
@@ -258,9 +276,10 @@ export function TopicCoverageDashboardPanel() {
               )}
             </div>
           ) : (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              No tracked arguments yet for {topic.trim()}. Add one above to start the checklist.
-            </div>
+            <EmptyState
+              title={`No tracked arguments yet for ${topic.trim()}.`}
+              message="Add one above to start the checklist."
+            />
           )}
 
           {snapshots.length > 0 && (
@@ -280,7 +299,7 @@ export function TopicCoverageDashboardPanel() {
           )}
         </>
       )}
-    </div>
+    </PanelShell>
   )
 }
 

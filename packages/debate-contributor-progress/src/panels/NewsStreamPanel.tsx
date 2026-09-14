@@ -19,7 +19,7 @@
  * Held in a ref rather than a `buildNewsFeed` dependency so a caller passing
  * a fresh array literal each render doesn't re-trigger the mount effect.
  *
- * An optional `syncRemote` prop closes `docs/features/news-stream.md`'s
+ * An optional `syncRemote` prop closes `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s
  * "Read/like state is per-browser" Known gap the same way `extraItems`
  * closes the coaching-sessions gap: this package has no way to call the
  * app's `/api/settings` route without a dependency this shared package

@@ -16,7 +16,19 @@ A division tab and season-year selector drive a sortable table (state,
 bids, TOC score, Debate Elo, Elo rank and derived columns), plus a champion
 banner surfacing recorded champion/topic history.
 
+## When a ranking source is down
+
+The table is built from two third-party sources — the TOC bid list (rank, bids,
+TOC score) and DebateDrills (Debate Elo) — which go down independently. If one
+of them is unreachable you still get the other: the bid list without an Elo
+column, or Elo-only rows if the bid list is the one that is out. Only when
+neither responds does the panel say the leaderboard is temporarily
+unavailable, rather than showing an empty table with no explanation.
+
 ## Known gaps
 
 Elo and TOC-score computation aren't documented in detail here — see
 `packages/debate-videos/src/panels/leaderboard/leaderboardUtils.ts`.
+
+Rankings are fetched live on each visit with no cache, so the page is only as
+fast and as available as the two upstream sources.

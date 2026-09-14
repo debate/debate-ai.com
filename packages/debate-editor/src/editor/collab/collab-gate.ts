@@ -79,7 +79,7 @@ export function collabDevRelay(): { url: string; token: string } | null {
     /* no localStorage (non-DOM host) */
   }
   try {
-    const env = (import.meta as { env?: Record<string, string> }).env;
+    const env = (import.meta as unknown as { env?: Record<string, string> }).env;
     const url = (env?.['VITE_COLLAB_RELAY'] ?? '').trim();
     const token = (env?.['VITE_COLLAB_TOKEN'] ?? '').trim();
     if (url && token) return { url, token };

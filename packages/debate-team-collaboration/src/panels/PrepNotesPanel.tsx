@@ -12,7 +12,7 @@
  *
  * Each note also links "Jump to argument" — `strategy-sync-notes.ts`'s
  * `buildPrepNoteJumpHref` — to `/debate`, closing the "No 'jump to
- * argument' link" bullet in `docs/features/prep-notes.md`'s Known gaps.
+ * argument' link" bullet in `packages/debate-help-docs/content/docs/internals/prep-notes.mdx`'s Known gaps.
  * See `hooks/useJumpToPrepNoteBox.ts` for the flow-select + grid-scroll
  * side of that link.
  *
@@ -41,7 +41,7 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, PanelRow } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelRow, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   assignPersistedPrepNote,
   buildPrepNotesPanelView,
@@ -245,14 +245,10 @@ export function PrepNotesPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Prep Notes</h1>
-        <p className="text-sm text-muted-foreground">
-          Live prep notes across every flow, grouped by status. Cycle a note's status, flag it high
-          priority, or assign it to a teammate as a task.
-        </p>
-      </div>
+    <PanelShell
+      title="Prep Notes"
+      description="Live prep notes across every flow, grouped by status. Cycle a note's status, flag it high priority, or assign it to a teammate as a task."
+    >
       {groups
         .filter((group) => group.notes.length > 0)
         .map((group) => (
@@ -353,6 +349,6 @@ export function PrepNotesPanel() {
             </div>
           </div>
         ))}
-    </div>
+    </PanelShell>
   )
 }

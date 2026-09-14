@@ -23,6 +23,12 @@
  * `MAX_COUNSEL_PANEL_ASSESSMENTS_PER_ROUND` cap, best-effort deleting any
  * ids trimmed locally from the account too.
  *
+ * Also subscribes to the browser's `storage` event via `state/live-update.ts`'s
+ * `isCounselPanelAssessmentsLiveUpdateStorageEvent`, mirroring
+ * `useStrategyRecommendations`'s own `storage`-event subscription — an
+ * assessment requested or a round's history cleared in another same-origin
+ * tab refreshes this one too.
+ *
  * @module hooks/useCounselPanelAssessments
  */
 
@@ -43,6 +49,7 @@ import {
   saveCounselPanelAssessmentToAccount,
 } from "../flow/counsel-panel-assessments-client";
 import type { CounselPanelAiResult } from "../flow/response-outcome-ai";
+import { isCounselPanelAssessmentsLiveUpdateStorageEvent } from "../state/live-update";
 
 // Module-level (not per-hook-instance) so multiple mounts of this hook in
 // one page load share one account fetch and one "is this browser signed
@@ -110,6 +117,20 @@ export function useCounselPanelAssessments(): UseCounselPanelAssessmentsResult {
       setSynced(remoteAvailable);
       if (changed) setGroups(buildCounselPanelAssessmentsPanelView());
     });
+  }, []);
+
+  /**
+   * Live-update the assessment history when another browser tab requests an
+   * assessment or clears a round's history. A `storage` event never fires in
+   * the tab that made the write, only in other tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isCounselPanelAssessmentsLiveUpdateStorageEvent(event)) return;
+      setGroups(buildCounselPanelAssessmentsPanelView());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   const appendAssessment = useCallback((roundId: string, result: CounselPanelAiResult) => {

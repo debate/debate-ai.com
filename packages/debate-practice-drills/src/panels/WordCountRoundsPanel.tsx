@@ -46,7 +46,13 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState, MeterBar, PanelRow } from "debate-round/src/ui/panels/panel-shell"
+import {
+  EmptyState,
+  MeterBar,
+  PanelRow,
+  PanelSection,
+  PanelShell,
+} from "debate-round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -172,27 +178,24 @@ export function WordCountRoundsPanel() {
     trendSpeechFilter === "all" ? trendPoints : trendPoints.filter((point) => point.name === trendSpeechFilter)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Word-Count-Only Speech Format</h1>
-        <p className="text-sm text-muted-foreground">
-          Practice speeches bounded by a maximum word count instead of a time limit.
+    <PanelShell
+      title="Word-Count-Only Speech Format"
+      description="Practice speeches bounded by a maximum word count instead of a time limit."
+    >
+      {presets.length > 0 && (
+        <p className="-mt-3 text-xs text-muted-foreground">
+          {presets.length} custom word limit{presets.length === 1 ? "" : "s"} applied — manage them in{" "}
+          <Link href="/settings" className="underline underline-offset-2 hover:text-foreground">
+            Settings
+          </Link>
+          .
         </p>
-        {presets.length > 0 && (
-          <p className="mt-1 text-xs text-muted-foreground">
-            {presets.length} custom word limit{presets.length === 1 ? "" : "s"} applied — manage them in{" "}
-            <Link href="/settings" className="underline underline-offset-2 hover:text-foreground">
-              Settings
-            </Link>
-            .
-          </p>
-        )}
-        <p className="mt-1 text-xs text-muted-foreground">
-          {synced
-            ? "Round history — including the trend below — is synced to your account."
-            : "Sign in to sync your round history — including the trend below — across devices."}
-        </p>
-      </div>
+      )}
+      <p className="-mt-3 text-xs text-muted-foreground">
+        {synced
+          ? "Round history — including the trend below — is synced to your account."
+          : "Sign in to sync your round history — including the trend below — across devices."}
+      </p>
 
       {justSyncedRoundIds.length > 0 && (
         <div className="flex items-center justify-between gap-3 rounded-md border border-primary/30 bg-primary/10 p-3 text-sm">
@@ -297,13 +300,14 @@ export function WordCountRoundsPanel() {
       {rounds.length === 0 ? (
         <EmptyState title="No word-count rounds yet." message="Save one above to see it here." />
       ) : (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">Round history</h2>
+        <PanelSection
+          title="Round history"
+          actions={
             <Button size="sm" variant="ghost" onClick={clearAllRounds}>
               Delete all synced history
             </Button>
-          </div>
+          }
+        >
           {rounds.map((round) => {
             const statuses = getWordCountRoundStatuses(round.roundId, presets)
             return (
@@ -345,13 +349,14 @@ export function WordCountRoundsPanel() {
               </div>
             )
           })}
-        </div>
+        </PanelSection>
       )}
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-sm font-semibold text-foreground">Word-count trend</h2>
-          {trendSpeechNames.length > 1 && (
+      <PanelSection
+        title="Word-count trend"
+        className="rounded-lg border border-border p-4 space-y-3"
+        actions={
+          trendSpeechNames.length > 1 && (
             <Select value={trendSpeechFilter} onValueChange={setTrendSpeechFilter}>
               <SelectTrigger className="h-8 w-40 text-xs">
                 <SelectValue />
@@ -365,8 +370,9 @@ export function WordCountRoundsPanel() {
                 ))}
               </SelectContent>
             </Select>
-          )}
-        </div>
+          )
+        }
+      >
         {filteredTrendPoints.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             No dated submissions yet — save a round above to start tracking your history.
@@ -385,7 +391,7 @@ export function WordCountRoundsPanel() {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </PanelSection>
+    </PanelShell>
   )
 }

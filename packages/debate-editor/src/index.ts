@@ -42,6 +42,17 @@ export type {
   SaveHealReport,
 } from './native/index.js';
 
+// Headless .docx → .cmir conversion (no DOM, no host): the server-side half
+// of the desktop bulk converter, used by debate-ai.com's admin importer so
+// every uploaded file lands in the library as a CardMirror native file.
+export {
+  docxToCmir,
+  cmirToBase64,
+  base64ToCmir,
+  looksLikeCmirBase64,
+} from './native/convert.js';
+export type { DocxToCmirResult, DocxToCmirOptions } from './native/convert.js';
+
 export { Docx } from './ooxml/docx.js';
 
 export { readDocIdFromBytes, stampDocId } from './docid.js';

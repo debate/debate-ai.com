@@ -11,7 +11,7 @@
  * tier-gated review actions, anyone can nominate anyone (but not themself,
  * enforced by `canNominatePeer`) and a nomination has no effect on the
  * helpfulness-score-based award winners in `lib/contributor-awards.ts`. No
- * account-sync exists yet — see `docs/features/contributor-awards.md`'s
+ * account-sync exists yet — see `packages/debate-help-docs/content/docs/features/contributor-awards.mdx`'s
  * Known gaps.
  *
  * `secondPeerNomination` closes the "🏆 Top Contributor Awards" bullet's

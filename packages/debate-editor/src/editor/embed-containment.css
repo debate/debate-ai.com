@@ -25,6 +25,16 @@
  * escape the column when open, the same way a native tooltip or a portalled
  * popover would — transient, on-top-of-everything UI is expected to do that;
  * it is the permanent chrome this file confines.
+ *
+ * These are DESCENDANT selectors, so a rule here only bites when the element
+ * actually sits inside `.dec-cardmirror-embed`. Chrome the engine builds in
+ * JS used to be appended straight to `document.body`, which is a descendant
+ * of nothing — the full-window home hub (`position: fixed; inset: 0`) and the
+ * crash-recovery sidebar (pinned at `left: var(--nav-width)`) sailed past
+ * every rule below and painted over the host page's own sidebar. They now
+ * mount into the engine container instead (`chromeHost()`, chrome-host.ts),
+ * which is both inside the embed and the node the React singleton re-parents,
+ * so they travel with it. Anything permanent added later must do the same.
  */
 
 .dec-cardmirror-embed {
@@ -39,6 +49,7 @@
 .dec-cardmirror-embed .pmd-nav-panel,
 .dec-cardmirror-embed #speech-doc-banner,
 .dec-cardmirror-embed .pmd-home-screen,
+.dec-cardmirror-embed .pmd-recovery-sidebar,
 .dec-cardmirror-embed #nav-pane-pull-tab,
 .dec-cardmirror-embed .pmd-home-pill-dock,
 .dec-cardmirror-embed .pmd-pill-tray {
@@ -57,12 +68,15 @@ body.pmd-multi-doc .dec-cardmirror-embed #app {
    window) never get CardMirror's own page-owning mobile shell — see
    `detectEmbedded()`/`resolveMobileLayout` in mobile-layout.ts — so the
    full desktop ribbon stays mounted here instead of being replaced by it.
-   `initRibbonResizer()` (editor/index.ts) already drops least-essential
-   panels first as the ribbon narrows, but whatever it leaves mounted must
-   stay reachable rather than being squeezed illegibly or clipped by this
-   file's `overflow: hidden` on `.dec-cardmirror-embed` — so scroll the
-   remainder horizontally instead. */
-.dec-cardmirror-embed #ribbon {
+   Paging the ribbon into tabs (editor/ribbon-tabs.ts) means a narrow embed
+   now shows one tab's panels rather than all of them at once, but whatever
+   the active tab mounts must stay reachable rather than being squeezed
+   illegibly or clipped by this file's `overflow: hidden` on
+   `.dec-cardmirror-embed` — so scroll the remainder horizontally instead.
+   Both ribbon rows get this: the tab strip can outgrow a narrow column
+   just as the button strip can. */
+.dec-cardmirror-embed .ribbon-strip,
+.dec-cardmirror-embed .ribbon-tabstrip {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;

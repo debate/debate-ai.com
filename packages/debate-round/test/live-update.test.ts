@@ -3,15 +3,21 @@ import {
   FLOW_ANNOTATIONS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_EDIT_LOG_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   FLOW_LIVE_UPDATE_STORAGE_KEYS,
+  OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
+  PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTE_NOTIFICATIONS_LIVE_UPDATE_STORAGE_KEYS,
   PREP_NOTES_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   STRATEGY_LIVE_UPDATE_STORAGE_KEYS,
+  USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS,
   isFlowAnnotationsPanelLiveUpdateStorageEvent,
   isFlowEditLogPanelLiveUpdateStorageEvent,
   isFlowLiveUpdateStorageEvent,
+  isOpponentTeamProfilesPanelLiveUpdateStorageEvent,
+  isPreRoundBriefingsPanelLiveUpdateStorageEvent,
   isPrepNoteNotificationsLiveUpdateStorageEvent,
   isPrepNotesPanelLiveUpdateStorageEvent,
   isStrategyLiveUpdateStorageEvent,
+  isUserSettingsPanelLiveUpdateStorageEvent,
 } from "../src/flow/live-update";
 
 describe("isFlowLiveUpdateStorageEvent", () => {
@@ -145,5 +151,76 @@ describe("isFlowEditLogPanelLiveUpdateStorageEvent", () => {
   it("is false for a key that merely contains the store name as a substring", () => {
     expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "flowEditsBackup" })).toBe(false);
     expect(isFlowEditLogPanelLiveUpdateStorageEvent({ key: "old_flowEdits" })).toBe(false);
+  });
+});
+
+describe("isPreRoundBriefingsPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel (and useRoundPairings) reads", () => {
+    for (const key of PRE_ROUND_BRIEFINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "strategyRecommendations" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a covered store name as a substring", () => {
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "preRoundBriefingsBackup" })).toBe(false);
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "old_ownRoundHistory" })).toBe(false);
+    expect(isPreRoundBriefingsPanelLiveUpdateStorageEvent({ key: "roundPairingsArchive" })).toBe(false);
+  });
+});
+
+describe("isOpponentTeamProfilesPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of OPPONENT_TEAM_PROFILES_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key, including the on-demand-only ownRoundHistory key", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "ownRoundHistory" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a covered store name as a substring", () => {
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentTeamProfilesBackup" })).toBe(false);
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "old_opponentRoundRecords" })).toBe(false);
+    expect(isOpponentTeamProfilesPanelLiveUpdateStorageEvent({ key: "opponentRoundRecordEditHistoryArchive" })).toBe(
+      false,
+    );
+  });
+});
+
+describe("isUserSettingsPanelLiveUpdateStorageEvent", () => {
+  it("is true for every store key the panel reads", () => {
+    for (const key of USER_SETTINGS_PANEL_LIVE_UPDATE_STORAGE_KEYS) {
+      expect(isUserSettingsPanelLiveUpdateStorageEvent({ key })).toBe(true);
+    }
+  });
+
+  it("is true for a null key (localStorage.clear())", () => {
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: null })).toBe(true);
+  });
+
+  it("is false for an unrelated store's key", () => {
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "prepNotes" })).toBe(false);
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "wordLimitPresets" })).toBe(false);
+  });
+
+  it("is false for a key that merely contains a covered store name as a substring", () => {
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "settingsBackup" })).toBe(false);
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "old_color-theme" })).toBe(false);
+    expect(isUserSettingsPanelLiveUpdateStorageEvent({ key: "themeMode" })).toBe(false);
   });
 });

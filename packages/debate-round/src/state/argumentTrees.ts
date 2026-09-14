@@ -16,6 +16,11 @@
 import type { Flow } from "../types/flow";
 import { buildArgumentTree, type ArgumentTreeNode } from "../flow/argument-tree";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type ArgumentTreeRecord = {
   roundId: string;
   tree: ArgumentTreeNode[];
@@ -60,11 +65,13 @@ export function saveArgumentTree(record: ArgumentTreeRecord): void {
     records[index] = record;
   }
   writeAll(records);
+  mirrorToolRecordSave("argumentTrees", record);
 }
 
 /** Deletes a round's persisted argument tree; a no-op if it isn't stored. */
 export function deleteArgumentTree(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+  mirrorToolRecordDelete("argumentTrees", roundId);
 }
 
 /**
@@ -103,7 +110,7 @@ export function buildArgumentTreesPanelView(): ArgumentTreeRecord[] {
  * action, extracted so it doesn't need a live `Flow` object mounted in a
  * browser to Vitest-cover — closing the "Nothing in the live round-flowing
  * page ... calls `buildAndSaveArgumentTree` yet" gap noted in
- * `docs/features/argument-tree-outline.md`.
+ * `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`.
  */
 export function buildAndSaveArgumentTreeFromCurrentFlow(
   flow: Pick<Flow, "id" | "children" | "columns">,

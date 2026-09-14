@@ -53,7 +53,8 @@ function requestSize(messages: AnthropicMessage[], system?: string): number {
 }
 
 export async function POST(request: Request) {
-  const session = await getAuth().api.getSession({ headers: request.headers })
+  const auth = await getAuth()
+  const session = await auth.api.getSession({ headers: request.headers })
   if (!session) {
     return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
   }

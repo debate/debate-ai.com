@@ -43,7 +43,7 @@
  * Each non-heading row in a round whose flow is the round workspace's
  * *currently selected* one also has a "Tag…" action — restoring the only
  * write path for `Box.argumentType`/`authorId`/`evidenceStatus` after PR
- * #498 deleted it (see `docs/features/argument-tree-outline.md`'s "Known
+ * #498 deleted it (see `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`'s "Known
  * regression" note and `debate-round`'s `flow/argument-tagging.ts` for why
  * this lives here rather than in `debate-flow`'s Handsontable editor).
  * Saving writes the tags onto the flow's underlying `Box` via
@@ -56,7 +56,7 @@
  *
  * Each non-heading row in a taggable round also has a checkbox (idea #10's
  * "checkbox-selection mode … if bulk tagging is worth restoring" follow-up,
- * see `docs/features/argument-tree-outline.md`'s "Known gaps"). Once at
+ * see `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx`'s "Known gaps"). Once at
  * least one row is checked, a "Tag selected…" bulk toolbar appears above the
  * row list; it opens the same dialog (with a blank draft rather than one
  * row's current tags, since a mixed selection has no single "current" value)
@@ -78,6 +78,14 @@
  * dialog as a manually-checked selection would. Hidden for a heading with no
  * surviving filtered rows under it (nothing to select).
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts#isArgumentTreePanelLiveUpdateStorageEvent`)
+ * refreshes the rendered outlines and per-round filter selections when
+ * another tab generates, clears, or tags an outline, or saves/clears a
+ * round's filter — closing the "Every other localStorage-backed panel in
+ * this repo still has no cross-tab live-update mechanism" Known gap noted in
+ * `shared-flow-sync.md`, for this panel.
+ *
  * @module panels/ArgumentTreePanel
  */
 
@@ -89,7 +97,7 @@ import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import { Switch } from "debate-round/src/ui/primitives/switch"
 import {
   Select,
@@ -128,6 +136,7 @@ import {
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
 import { useOutlineFilterPresets } from "../hooks/useOutlineFilterPresets"
+import { isArgumentTreePanelLiveUpdateStorageEvent } from "../state/live-update"
 import { useFlowStore } from "debate-round/src/state/store"
 import type { Flow } from "debate-round/src/types/flow"
 
@@ -202,8 +211,8 @@ export function ArgumentTreePanel() {
   const selected = useFlowStore((state) => state.selected)
   const currentFlow = mounted ? flows[selected] : undefined
 
-  useEffect(() => {
-    setMounted(true)
+  /** Re-reads every persisted outline and each one's saved filter selection, mirroring the initial-mount read below. */
+  const refreshAll = () => {
     const view = buildArgumentTreesPanelView()
     setRecords(view)
     setFilters(
@@ -211,6 +220,26 @@ export function ArgumentTreePanel() {
         view.map((record) => [record.roundId, getArgumentTreeFilterSelection(record.roundId)?.filter ?? {}]),
       ),
     )
+  }
+
+  useEffect(() => {
+    setMounted(true)
+    refreshAll()
+  }, [])
+
+  /**
+   * Live-update this panel when another browser tab generates, clears, or
+   * tags an outline, or saves/clears a round's filter — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isArgumentTreePanelLiveUpdateStorageEvent(event)) return
+      refreshAll()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
   }, [])
 
   const refresh = () => setRecords(buildArgumentTreesPanelView())
@@ -354,15 +383,10 @@ export function ArgumentTreePanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Outline Filters and Argument Tree</h1>
-        <p className="text-sm text-muted-foreground">
-          A filterable outline of each round's flow, grouped under its headings — filter by speech,
-          side, unanswered status, or heading-vs-argument kind.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Outline Filters and Argument Tree"
+      description="A filterable outline of each round's flow, grouped under its headings — filter by speech, side, unanswered status, or heading-vs-argument kind."
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <div>
           <Label className="text-sm font-medium text-foreground">Generate outline for current round</Label>
@@ -857,6 +881,6 @@ export function ArgumentTreePanel() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </PanelShell>
   )
 }

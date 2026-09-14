@@ -3,57 +3,14 @@
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { createAppAuthClient } from "@/lib/auth/client";
+import {
+  describeOneTapMoment,
+  isBenignOneTapError,
+  type OneTapMoment,
+} from "@/lib/auth/one-tap";
 import { useAuthProviders } from "@/lib/hooks/useAuthProviders";
 import { useSession } from "@/lib/hooks/useSession";
 import { debugLog } from "@/lib/debug-log";
-
-/**
- * Skipped-prompt reasons worth another try on the next page.
- *
- * Everything else — the user closing the prompt, a returned credential, or any
- * `isNotDisplayed` reason (no Google session, unregistered origin, a
- * suppression cooldown) — is settled for this page load, so re-prompting on
- * every navigation would only spend requests on a prompt that cannot appear.
- */
-const RETRYABLE_SKIP_REASONS = new Set([
-  "auto_cancel",
-  "tap_outside",
-  "issuing_failed",
-]);
-
-/**
- * Names of rejections Google's identity script throws for outcomes outside
- * our control — the browser aborting a stale FedCM request on navigation, or
- * FedCM/third-party sign-in being disabled in the browser's own site
- * settings — rather than an application bug. Google's script already logs
- * these itself (`[GSI_LOGGER]`), so re-logging them as `console.error` here
- * would just be alarming, redundant noise on every affected page load.
- */
-const BENIGN_ONE_TAP_ERROR_NAMES = new Set(["AbortError", "NetworkError"]);
-
-/**
- * The subset of Google's `PromptMomentNotification` this file reads. The
- * one-tap plugin hands the notification through untyped.
- */
-interface PromptNotification {
-  isSkippedMoment?: () => boolean;
-  getSkippedReason?: () => string | undefined;
-  isDismissedMoment?: () => boolean;
-  getDismissedReason?: () => string | undefined;
-  isNotDisplayed?: () => boolean;
-  getNotDisplayedReason?: () => string | undefined;
-}
-
-/** The reason Google gives for a prompt that did not sign the user in. */
-function promptReason(notification?: PromptNotification): string | undefined {
-  if (notification?.isSkippedMoment?.())
-    return notification.getSkippedReason?.();
-  if (notification?.isDismissedMoment?.())
-    return notification.getDismissedReason?.();
-  if (notification?.isNotDisplayed?.())
-    return notification.getNotDisplayedReason?.();
-  return undefined;
-}
 
 /**
  * Google One Tap prompt, mounted in the root layout so every page of the app
@@ -136,17 +93,34 @@ export function OneTap() {
     oneTapAuthClient
       .oneTap({
         callbackURL: pathname,
-        onPromptNotification: (notification?: PromptNotification) => {
+        // Google hands back a verified id token; the sign-in itself happens at
+        // POST /api/auth/one-tap/callback. The plugin checks that response for
+        // an error and then returns without telling anyone, so a prompt the
+        // visitor completed and a sign-in the server rejected are
+        // indistinguishable from out here. Ask to see the rejection.
+        fetchOptions: {
+          onError: ({ error, response }) => {
+            console.error("[one-tap] sign-in rejected by the server:", {
+              status: response?.status,
+              code: error?.code,
+              message: error?.message,
+            });
+            // The credential was spent; only a fresh prompt can retry.
+            settled.current = true;
+          },
+        },
+        onPromptNotification: (notification?: OneTapMoment) => {
           // Only fires when the prompt did not produce a sign-in. Google
           // throttles callers that re-prompt after a dismissal, so a settled
-          // outcome ends the prompting for this page load.
-          const reason = promptReason(notification);
+          // outcome ends the prompting for this page load. Under FedCM most
+          // outcomes arrive with no reason at all — see lib/auth/one-tap.
+          const { reason, retryable } = describeOneTapMoment(notification);
           debugLog("[one-tap] prompt notification:", {
             reason,
+            retryable,
             notification,
           });
-          if (!reason || !RETRYABLE_SKIP_REASONS.has(reason))
-            settled.current = true;
+          if (!retryable) settled.current = true;
         },
       })
       .then(() => {
@@ -155,9 +129,7 @@ export function OneTap() {
         );
       })
       .catch((error: unknown) => {
-        const isBenign =
-          error instanceof Error && BENIGN_ONE_TAP_ERROR_NAMES.has(error.name);
-        if (isBenign) {
+        if (isBenignOneTapError(error)) {
           debugLog("[one-tap] prompt failed (expected):", error);
         } else {
           console.error("[one-tap] prompt failed:", error);

@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyFavoriteToolOp,
   DEFAULT_FAVORITE_TOOLS,
   filterKnownFavoriteTools,
   isValidFavoriteToolsList,
   isValidToolHref,
   MAX_FAVORITE_TOOLS,
+  normalizeFavoriteToolOpPatch,
   normalizeFavoriteToolsPatch,
   parseFavoriteTools,
   serializeFavoriteTools,
@@ -163,5 +165,95 @@ describe("filterKnownFavoriteTools", () => {
 describe("DEFAULT_FAVORITE_TOOLS", () => {
   it("is itself a valid payload", () => {
     expect(isValidFavoriteToolsList(DEFAULT_FAVORITE_TOOLS.favoriteTools)).toBe(true);
+  });
+});
+
+describe("normalizeFavoriteToolOpPatch", () => {
+  it("accepts a valid addFavoriteTool op", () => {
+    expect(normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools" })).toEqual({
+      valid: { addFavoriteTool: "/tools" },
+      errors: [],
+    });
+  });
+
+  it("accepts a valid removeFavoriteTool op", () => {
+    expect(normalizeFavoriteToolOpPatch({ removeFavoriteTool: "/tools" })).toEqual({
+      valid: { removeFavoriteTool: "/tools" },
+      errors: [],
+    });
+  });
+
+  it("returns no valid op and no errors for an empty object", () => {
+    expect(normalizeFavoriteToolOpPatch({})).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("ignores unrelated fields alongside a valid op", () => {
+    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", debateStyle: 1 });
+    expect(result).toEqual({ valid: { addFavoriteTool: "/tools" }, errors: [] });
+  });
+
+  it("rejects a malformed addFavoriteTool value", () => {
+    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "not-a-path" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a malformed removeFavoriteTool value", () => {
+    const result = normalizeFavoriteToolOpPatch({ removeFavoriteTool: 5 });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a request carrying both addFavoriteTool and removeFavoriteTool", () => {
+    const result = normalizeFavoriteToolOpPatch({ addFavoriteTool: "/tools", removeFavoriteTool: "/drills" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it.each([null, undefined, "not an object", 5, ["array"]])("rejects a non-object body %p", (body) => {
+    const result = normalizeFavoriteToolOpPatch(body);
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+});
+
+describe("applyFavoriteToolOp", () => {
+  it("appends a new href on addFavoriteTool", () => {
+    expect(applyFavoriteToolOp(["/tools"], { addFavoriteTool: "/drills" })).toEqual(["/tools", "/drills"]);
+  });
+
+  it("is idempotent when adding an already-favorited href", () => {
+    const current = ["/tools", "/drills"];
+    expect(applyFavoriteToolOp(current, { addFavoriteTool: "/tools" })).toBe(current);
+  });
+
+  it("does not add past MAX_FAVORITE_TOOLS", () => {
+    const current = Array.from({ length: MAX_FAVORITE_TOOLS }, (_, i) => `/tool-${i}`);
+    expect(applyFavoriteToolOp(current, { addFavoriteTool: "/one-too-many" })).toBe(current);
+  });
+
+  it("removes a matching href on removeFavoriteTool", () => {
+    expect(applyFavoriteToolOp(["/tools", "/drills"], { removeFavoriteTool: "/tools" })).toEqual(["/drills"]);
+  });
+
+  it("is idempotent when removing an absent href", () => {
+    const current = ["/tools", "/drills"];
+    expect(applyFavoriteToolOp(current, { removeFavoriteTool: "/rank" })).toBe(current);
+  });
+
+  it("returns the current list unchanged for an empty op", () => {
+    const current = ["/tools"];
+    expect(applyFavoriteToolOp(current, {})).toBe(current);
+  });
+
+  it("resolves two different concurrent add ops onto the same starting list without dropping either", () => {
+    // The scenario this op-based approach exists to fix: two tabs read the
+    // same starting list and each add a different tool. Applied against the
+    // *server's* current value one at a time (rather than each tab PUTting
+    // its own whole-list copy), both additions survive.
+    const starting = ["/tools"];
+    const afterTabA = applyFavoriteToolOp(starting, { addFavoriteTool: "/drills" });
+    const afterTabB = applyFavoriteToolOp(afterTabA, { addFavoriteTool: "/rank" });
+    expect(afterTabB).toEqual(["/tools", "/drills", "/rank"]);
   });
 });

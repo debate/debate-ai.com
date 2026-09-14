@@ -5,7 +5,10 @@
  * one exists, its localStorage store in `src/state`).
  */
 
-export { CoachingProgramRosterAnalyticsPanel } from "./CoachingProgramRosterAnalyticsPanel";
+export {
+  CoachingProgramRosterAnalyticsPanel,
+  type MemberDrillPracticeStatus,
+} from "./CoachingProgramRosterAnalyticsPanel";
 export { CommunityResearchHubPanel } from "./CommunityResearchHubPanel";
 export { ContributionLeaderboardPanel, TIER_VARIANT } from "./ContributionLeaderboardPanel";
 export { ContributorAwardsPanel } from "./ContributorAwardsPanel";

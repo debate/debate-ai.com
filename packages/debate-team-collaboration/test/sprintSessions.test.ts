@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptSprintSession,
   deleteSprintSession,
   getSprintSession,
+  isValidSprintSession,
   listSprintSessions,
   listSprintSessionsForTopic,
   saveSprintSession,
@@ -119,5 +121,42 @@ describe("deleteSprintSession", () => {
     saveSprintSession(TOPICALITY_SESSION);
     deleteSprintSession("missing");
     expect(listSprintSessions()).toEqual([TOPICALITY_SESSION]);
+  });
+});
+
+describe("adoptSprintSession", () => {
+  it("adopts a remote session not yet stored locally", () => {
+    adoptSprintSession(SOLVENCY_SESSION);
+    expect(listSprintSessions()).toEqual([SOLVENCY_SESSION]);
+  });
+
+  it("upserts by id, like saveSprintSession", () => {
+    saveSprintSession(SOLVENCY_SESSION);
+    const rescheduled: SprintSession = { ...SOLVENCY_SESSION, scheduledDayKey: "2026-09-18" };
+    adoptSprintSession(rescheduled);
+    expect(listSprintSessions()).toEqual([rescheduled]);
+  });
+});
+
+describe("isValidSprintSession", () => {
+  it("accepts a well-formed session", () => {
+    expect(isValidSprintSession(SOLVENCY_SESSION)).toBe(true);
+  });
+
+  it.each([
+    [null],
+    [undefined],
+    ["a string"],
+    [42],
+    [{ ...SOLVENCY_SESSION, id: "" }],
+    [{ ...SOLVENCY_SESSION, id: undefined }],
+    [{ ...SOLVENCY_SESSION, topic: "" }],
+    [{ ...SOLVENCY_SESSION, title: "" }],
+    [{ ...SOLVENCY_SESSION, title: "x".repeat(201) }],
+    [{ ...SOLVENCY_SESSION, scheduledDayKey: "not-a-date" }],
+    [{ ...SOLVENCY_SESSION, scheduledDayKey: undefined }],
+    [{ ...SOLVENCY_SESSION, createdAt: "100" }],
+  ])("rejects %p", (value) => {
+    expect(isValidSprintSession(value)).toBe(false);
   });
 });

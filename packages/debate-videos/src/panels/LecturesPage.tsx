@@ -27,12 +27,14 @@ import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
+import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
 import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
+import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
 
 /** Number of entries in the debate dictionary, shown on its quick-link card. */
@@ -41,9 +43,11 @@ const DICTIONARY_ENTRY_COUNT = 203
 /** Props for the {@link LecturesPage} component. */
 interface LecturesPageProps {
   /**
-   * App-owned navigation dock, forwarded to {@link LecturesVideoGridView} for
-   * the top of its persistent left sidebar (md+ only). Omitted for the
-   * leaderboard and dictionary branches, which keep their own top layout.
+   * App-owned navigation dock, rendered at the top of the persistent left
+   * sidebar (md+ only) — by {@link LecturesVideoGridView} on the grid, and by
+   * {@link LecturesSidebarShell} on the rankings and glossary branches, which
+   * keep their own *content* layout but share that column. They used to drop
+   * it, which left both with no dock and no nav tree at all.
    */
   dockSlot?: React.ReactNode
 }
@@ -88,7 +92,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
-  const { meta, counts, lectureCategories } = useVideoMeta()
+  const { meta, counts, lectureCategories, suggestions } = useVideoMeta()
 
   // ---------------------------------------------------------------------------
   // UI state
@@ -98,7 +102,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [showLectureCategories, setShowLectureCategories] = useState(true)
   const [statsModalOpen, setStatsModalOpen] = useState(false)
-  const [youtubeStats, setYoutubeStats] = useState<any>(null)
+  const youtubeStats = useYouTubeStats()
 
   // ---------------------------------------------------------------------------
   // Quick-link counts (per-category video tallies for navigation cards)
@@ -143,13 +147,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     params.set("format", val)
     router.replace(`?${params.toString()}`, { scroll: false })
   }, [searchParams, router])
-
-  useEffect(() => {
-    fetch("/api/youtube-stats")
-      .then((res) => res.json())
-      .then((data) => setYoutubeStats(data))
-      .catch((err) => console.error("Failed to load YouTube stats:", err))
-  }, [])
 
   // Initialize state from URL parameters on mount
   useEffect(() => {
@@ -329,12 +326,18 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Infinite scroll
   // ---------------------------------------------------------------------------
 
+  // `atCapacity` stops the automatic paging at `MAX_LOADED_VIDEOS`: past that
+  // the next page comes from the button in `LecturesVideoGridView`, which the
+  // user has to press. Scrolling on its own can no longer grow the grid past
+  // the point where the page stops responding.
   useInfiniteScroll(
     state.loadMoreTriggerRef,
-    feed.hasMore,
+    feed.hasMore && !feed.atCapacity,
     feed.isLoading || feed.isLoadingMore,
     feed.loadMore,
   )
+
+  const handleLoadMore = useCallback(() => feed.loadMore({ force: true }), [feed.loadMore])
 
   // ---------------------------------------------------------------------------
   // Shared back button
@@ -355,43 +358,59 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   // Branch rendering
   // ---------------------------------------------------------------------------
 
+  // Both branches below are wrapped in the same sidebar the grid renders, so
+  // a tree link into either one lands on a page you can navigate out of.
+  // `sidebarShellProps` is shared between them rather than spelled twice.
+  const sidebarShellProps = {
+    dockSlot,
+    counts: quickLinkCounts,
+    lectureCategories,
+    selectedCategory,
+    lecturesExpanded: showLectureCategories,
+    onToggleLectures: () => setShowLectureCategories((shown) => !shown),
+  }
+
   if (state.currentCategory === "leaderboard") {
     return (
-      <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
-        <div>
-          <StickyHeader
-            controls={
-              <div className="flex flex-row items-center gap-3 w-full justify-between sm:justify-start">
-                {backButton}
-                <LeaderboardFilterBar
-                  division={leaderboardDivision}
-                  year={leaderboardYear}
-                  years={leaderboardYears}
-                  onChangeDivision={handleDivisionChange}
-                  onChangeYear={setLeaderboardYear}
-                />
-              </div>
-            }
-          />
-          <LeaderboardPanel
-            controlledDivision={leaderboardDivision}
-            controlledYear={leaderboardYear}
-            onControlledDivisionChange={handleDivisionChange}
-            onControlledYearChange={setLeaderboardYear}
-            history={meta?.history}
-          />
+      <LecturesSidebarShell {...sidebarShellProps} activeId="rankings">
+        <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
+          <div>
+            <StickyHeader
+              controls={
+                <div className="flex flex-row items-center gap-3 w-full justify-between sm:justify-start">
+                  {backButton}
+                  <LeaderboardFilterBar
+                    division={leaderboardDivision}
+                    year={leaderboardYear}
+                    years={leaderboardYears}
+                    onChangeDivision={handleDivisionChange}
+                    onChangeYear={setLeaderboardYear}
+                  />
+                </div>
+              }
+            />
+            <LeaderboardPanel
+              controlledDivision={leaderboardDivision}
+              controlledYear={leaderboardYear}
+              onControlledDivisionChange={handleDivisionChange}
+              onControlledYearChange={setLeaderboardYear}
+              history={meta?.history}
+            />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </LecturesSidebarShell>
     )
   }
 
   if (state.currentCategory === "dictionary") {
     return (
-      <LecturesDictionaryView
-        dictSearchTerm={dictSearchTerm}
-        onDictSearchTermChange={setDictSearchTerm}
-      />
+      <LecturesSidebarShell {...sidebarShellProps} activeId="dictionary">
+        <LecturesDictionaryView
+          dictSearchTerm={dictSearchTerm}
+          onDictSearchTermChange={setDictSearchTerm}
+        />
+      </LecturesSidebarShell>
     )
   }
 
@@ -407,9 +426,12 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
       currentCategory={state.currentCategory}
       totalVideos={feed.total}
       facets={feed.facets}
+      searchSuggestions={suggestions}
       isLoading={feed.isLoading}
       errorMessage={feed.errorMessage}
       isLoadingMore={feed.isLoadingMore}
+      atCapacity={feed.atCapacity}
+      onLoadMore={handleLoadMore}
       currentVideos={currentVideos}
       favorites={state.favorites}
       hiddenVideos={state.hiddenVideos}

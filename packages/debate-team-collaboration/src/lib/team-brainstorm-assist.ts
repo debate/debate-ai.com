@@ -180,7 +180,7 @@ export function buildBrainstormBoardsForCoverageGaps(
  * Merges a duplicate-flagged idea into another idea on the same board — a
  * moderator action for the "no reviewer/moderator merge action for ideas
  * flagged as likely duplicates" Known gap recorded in
- * `docs/features/brainstorm-board.md`. Returns a copy of `target` with
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`. Returns a copy of `target` with
  * `duplicate`'s upvotes folded in, rather than splitting the same support
  * across two near-identical entries; `duplicate` itself is left unchanged —
  * the caller is expected to delete it once the merge is saved. Throws if

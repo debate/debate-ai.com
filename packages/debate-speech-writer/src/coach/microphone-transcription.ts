@@ -4,7 +4,7 @@
  * #8 ("Video-Lecture-Training Coach AI") in TODO.md's Product Feature Ideas
  * list: "audio/video transcription... remains open — not started; no
  * transcription service exists in this repo," the same gap recorded in
- * `docs/features/coach-materials.md`'s Known gaps.
+ * `packages/debate-help-docs/content/docs/internals/coach-materials.mdx`'s Known gaps.
  *
  * This mirrors `debate-round`'s `round/microphone-transcription.ts`, which
  * closed the identical gap under idea #6 ("Speech Transcript Summaries and

@@ -3,7 +3,7 @@
  * history (`CoachConversationTurn`s) — closes the "No conversation
  * history — each question is answered independently; a prior
  * question/answer isn't persisted or fed back into a later one" Known gap
- * recorded in `docs/features/coach-materials.md` for idea #8
+ * recorded in `packages/debate-help-docs/content/docs/internals/coach-materials.mdx` for idea #8
  * ("Video-Lecture-Training Coach AI") in TODO.md. Stores turns in
  * localStorage, mirroring `coachMaterials.ts`'s persistence convention.
  *
@@ -12,6 +12,11 @@
 
 import type { CoachConversationTurn } from "../coach/team-coach-materials";
 
+
+import {
+  mirrorToolRecordSave,
+  mirrorToolRecordsClear,
+} from "debate-data-sync/src/state/tool-record-mirror";
 const STORAGE_KEY = "coachConversation";
 
 /**
@@ -66,10 +71,15 @@ export function appendCoachConversationTurn(input: {
 
   const turns = [...readAll(), turn].slice(-MAX_STORED_TURNS);
   writeAll(turns);
+  // Only the new turn is pushed up: trimming past `MAX_STORED_TURNS` drops
+  // turns from *this browser's* copy, and an older device's history is not
+  // something a newer one's cap should delete from the account.
+  mirrorToolRecordSave("coachConversation", turn);
   return turn;
 }
 
 /** Clears the entire persisted conversation history. */
 export function clearCoachConversationHistory(): void {
   writeAll([]);
+  mirrorToolRecordsClear("coachConversation");
 }

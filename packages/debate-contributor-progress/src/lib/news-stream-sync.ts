@@ -1,6 +1,6 @@
 /**
  * @fileoverview Account-linked News Stream read/like sync — closes
- * `docs/features/news-stream.md`'s "Read/like state is per-browser
+ * `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like state is per-browser
  * (localStorage), not per-account" Known gap. Pure validation/serialization
  * helpers shared by the `/api/settings` D1-backed route
  * (`apps/debate-ai.com`) and `state/newsStream.ts`'s local viewer-state

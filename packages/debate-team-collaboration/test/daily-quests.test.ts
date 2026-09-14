@@ -4,7 +4,9 @@ import {
   buildQuestBoardPointsSummary,
   buildQuestBoardPointsSummaryText,
   buildQuestBoardSummaryText,
+  buildTeamQuestCompetitionStandings,
   buildUnderCoveredArgumentQuests,
+  computeContributorQuestPoints,
   computeQuestProgress,
   DEFAULT_QUEST_DIFFICULTY,
   filterQuestBoardByDifficulty,
@@ -15,6 +17,7 @@ import {
   remainingCardsToQuestDifficulty,
   rolloverRecurringQuestTemplate,
   type QuestContribution,
+  type QuestTeam,
   type QuestTemplate,
 } from "../src/lib/daily-quests";
 import { buildTopicCoverageReport, type CoverageCardSummary, type TrackedArgument } from "debate-research-evidence/src/lib/topic-coverage";
@@ -356,5 +359,90 @@ describe("buildQuestBoardPointsSummary / buildQuestBoardPointsSummaryText", () =
 
   it("returns zero over zero for an empty board", () => {
     expect(buildQuestBoardPointsSummary([])).toEqual({ earnedPoints: 0, totalPoints: 0 });
+  });
+});
+
+function cardFor(id: string, contributorId: string, argBlock: string, submittedAt: number): QuestContribution {
+  return { ...card(id, argBlock, submittedAt), contributorId };
+}
+
+describe("computeContributorQuestPoints", () => {
+  const easyQuest: QuestTemplate = { ...findSolvencyCards, id: "easy", targetCount: 1, difficulty: "easy" };
+
+  it("scores a contributor against only their own contributions", () => {
+    const contributions = [
+      cardFor("a", "alex", "Solvency", DAY_ONE),
+      cardFor("b", "jordan", "Solvency", DAY_ONE),
+    ];
+    expect(computeContributorQuestPoints([easyQuest], contributions, "alex", DAY_ONE)).toEqual({
+      earnedPoints: QUEST_DIFFICULTY_POINTS.easy,
+      totalPoints: QUEST_DIFFICULTY_POINTS.easy,
+    });
+  });
+
+  it("returns zero earned points for a contributor with no matching contributions", () => {
+    const contributions = [cardFor("a", "jordan", "Solvency", DAY_ONE)];
+    expect(computeContributorQuestPoints([easyQuest], contributions, "alex", DAY_ONE)).toEqual({
+      earnedPoints: 0,
+      totalPoints: QUEST_DIFFICULTY_POINTS.easy,
+    });
+  });
+});
+
+describe("buildTeamQuestCompetitionStandings", () => {
+  const easyQuest: QuestTemplate = { ...findSolvencyCards, id: "easy", targetCount: 1, difficulty: "easy" };
+  // A different argBlock than the "Solvency" contributions below satisfy, so
+  // it stays incomplete — keeping earnedPoints and totalPoints distinct.
+  const hardQuest: QuestTemplate = {
+    ...findSolvencyCards,
+    id: "hard",
+    target: { kind: "card", argBlock: "Topicality" },
+    targetCount: 1,
+    difficulty: "hard",
+  };
+
+  it("sums each team's own members' points and ranks teams by earned points descending", () => {
+    const contributions = [
+      cardFor("a", "alex", "Solvency", DAY_ONE), // alex completes the easy quest, not the hard one
+      cardFor("b", "jordan", "Solvency", DAY_ONE), // jordan also completes the easy quest, not the hard one
+    ];
+    // Team Alpha (alex + jordan) both complete the easy quest — 2x easy points.
+    // Team Beta (sam) completes nothing.
+    const teams: QuestTeam[] = [
+      { id: "beta", name: "Team Beta", contributorIds: ["sam"] },
+      { id: "alpha", name: "Team Alpha", contributorIds: ["alex", "jordan"] },
+    ];
+    const standings = buildTeamQuestCompetitionStandings(teams, [easyQuest, hardQuest], contributions, DAY_ONE);
+
+    expect(standings.map((s) => s.teamId)).toEqual(["alpha", "beta"]);
+    expect(standings[0]).toMatchObject({
+      teamId: "alpha",
+      earnedPoints: QUEST_DIFFICULTY_POINTS.easy * 2,
+      totalPoints: (QUEST_DIFFICULTY_POINTS.easy + QUEST_DIFFICULTY_POINTS.hard) * 2,
+    });
+    expect(standings[0].members).toEqual([
+      { contributorId: "alex", earnedPoints: QUEST_DIFFICULTY_POINTS.easy, totalPoints: QUEST_DIFFICULTY_POINTS.easy + QUEST_DIFFICULTY_POINTS.hard },
+      { contributorId: "jordan", earnedPoints: QUEST_DIFFICULTY_POINTS.easy, totalPoints: QUEST_DIFFICULTY_POINTS.easy + QUEST_DIFFICULTY_POINTS.hard },
+    ]);
+    expect(standings[1]).toMatchObject({ teamId: "beta", earnedPoints: 0 });
+  });
+
+  it("tie-breaks equal-scoring teams by team id", () => {
+    const teams: QuestTeam[] = [
+      { id: "z-team", name: "Z Team", contributorIds: ["nobody"] },
+      { id: "a-team", name: "A Team", contributorIds: ["nobody-else"] },
+    ];
+    const standings = buildTeamQuestCompetitionStandings(teams, [easyQuest], [], DAY_ONE);
+    expect(standings.map((s) => s.teamId)).toEqual(["a-team", "z-team"]);
+  });
+
+  it("scores a team with no members as 0/0", () => {
+    const teams: QuestTeam[] = [{ id: "empty", name: "Empty", contributorIds: [] }];
+    const standings = buildTeamQuestCompetitionStandings(teams, [easyQuest], [], DAY_ONE);
+    expect(standings).toEqual([{ teamId: "empty", teamName: "Empty", earnedPoints: 0, totalPoints: 0, members: [] }]);
+  });
+
+  it("returns an empty list for no teams", () => {
+    expect(buildTeamQuestCompetitionStandings([], [easyQuest], [], DAY_ONE)).toEqual([]);
   });
 });

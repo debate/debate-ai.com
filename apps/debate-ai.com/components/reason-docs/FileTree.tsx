@@ -6,6 +6,13 @@
  * `packages/reason-editor/src/file-tree`), simplified to this app's flat
  * `parentId`/`isFolder` document model (no drag library, no tags/file
  * sources) and rebuilt on this app's own local UI primitives.
+ *
+ * The tree is also a drop target for files from the desktop, not just for
+ * rows being re-filed: dropping a `.docx` on a folder imports it there (as a
+ * CardMirror `.cmir` — see `lib/cardmirror/stored-cmir.ts`), and clicking the
+ * row that appears opens it in CardMirror. Rows keep the name they were
+ * uploaded under, extension included, so the file you dropped is the file you
+ * see.
  */
 
 import { type DragEvent, type ReactNode, useMemo, useState } from "react"
@@ -22,6 +29,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { cn } from "@/lib/ui/lib/utils"
+import { IMPORTABLE_EXTENSIONS, fileExtension } from "@/lib/cardmirror/stored-cmir"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,9 +91,22 @@ interface FileTreeProps {
   onRename: (id: number, title: string) => void
   onDelete: (id: number) => void
   onMove: (id: number, parentId: number | null) => void
+  /** Files dropped from outside the browser, to import into `parentId`. */
+  onUpload?: (files: File[], parentId: number | null) => void
 }
 
-export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDelete, onMove }: FileTreeProps) {
+/** The extension a row was uploaded under, uppercased for the badge — `""`
+ *  for a document written in the editor, which needs no label. Only the
+ *  extensions the upload path knows count, so a title that merely contains a
+ *  dot ("Notes v1.2") isn't labelled "2". */
+function sourceLabel(doc: ReasonDocument): string {
+  const extension = fileExtension(doc.title)
+  return (IMPORTABLE_EXTENSIONS as readonly string[]).includes(extension)
+    ? extension.slice(1).toUpperCase()
+    : ""
+}
+
+export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDelete, onMove, onUpload }: FileTreeProps) {
   const tree = useMemo(() => buildTree(documents), [documents])
   const [expanded, setExpanded] = useState<Set<number>>(() => new Set(documents.filter((d) => d.isFolder).map((d) => d.id)))
   const [renamingId, setRenamingId] = useState<number | null>(null)
@@ -118,6 +139,13 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
     e.stopPropagation()
     setDragOverId(null)
     setDragOverRoot(false)
+    // A drop from the desktop carries files and no row id — import those into
+    // the folder they landed on rather than treating the drop as a re-file.
+    const files = Array.from(e.dataTransfer.files ?? [])
+    if (files.length > 0) {
+      onUpload?.(files, targetFolderId)
+      return
+    }
     const draggedId = Number(e.dataTransfer.getData("text/reason-document-id"))
     if (!draggedId) return
     if (targetFolderId != null && isSelfOrDescendant(documents, draggedId, targetFolderId)) return
@@ -147,6 +175,9 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
             e.preventDefault()
             e.stopPropagation()
             setDragOverId(doc.id)
+          }}
+          onDragEnter={(e) => {
+            if (doc.isFolder) e.preventDefault()
           }}
           onDragLeave={() => setDragOverId((prev) => (prev === doc.id ? null : prev))}
           onDrop={(e) => handleDrop(e, doc.isFolder ? doc.id : (doc.parentId ?? null))}
@@ -195,7 +226,17 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
               className="h-6 flex-1 px-1 text-sm"
             />
           ) : (
-            <span className="flex-1 truncate">{doc.title || "Untitled"}</span>
+            <>
+              <span className="flex-1 truncate">{doc.title || "Untitled"}</span>
+              {!doc.isFolder && sourceLabel(doc) && (
+                <span
+                  className="shrink-0 rounded bg-muted px-1 text-[10px] uppercase text-muted-foreground"
+                  title="Opens in CardMirror"
+                >
+                  {sourceLabel(doc)}
+                </span>
+              )}
+            </>
           )}
 
           <DropdownMenu>
@@ -253,7 +294,9 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
       onDrop={(e) => handleDrop(e, null)}
     >
       {tree.length === 0 ? (
-        <p className="px-3 py-4 text-sm text-muted-foreground">No documents yet. Create one to get started.</p>
+        <p className="px-3 py-4 text-sm text-muted-foreground">
+          No documents yet. Create one, or drop a .docx here to open it in CardMirror.
+        </p>
       ) : (
         tree.map((node) => renderNode(node, 0))
       )}

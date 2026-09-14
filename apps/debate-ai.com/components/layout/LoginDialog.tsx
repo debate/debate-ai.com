@@ -24,9 +24,25 @@ import { APP_NAME } from "@/lib/config/site"
 export interface LoginDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /**
+   * Replaces the default title. A prompt raised by a tool names what the user
+   * was saving ("Sign in to save your video favorites"), which reads as an
+   * answer to the click they just made rather than as a generic gate.
+   */
+  title?: string
+  /** Replaces the default description with why signing in is worth it here. */
+  description?: string
+  /** Where to return after signing in. Defaults to the current page. */
+  returnTo?: string
 }
 
-export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
+export function LoginDialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  returnTo,
+}: LoginDialogProps) {
   const { isAuthenticated } = useSession()
   const pathname = usePathname()
 
@@ -41,14 +57,14 @@ export function LoginDialog({ open, onOpenChange }: LoginDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Sign in to {APP_NAME}</DialogTitle>
+          <DialogTitle>{title ?? `Sign in to ${APP_NAME}`}</DialogTitle>
           <DialogDescription>
-            Save your rounds, flows and research across devices.
+            {description ?? "Save your rounds, flows and research across devices."}
           </DialogDescription>
         </DialogHeader>
         {/* Returning to the current page keeps the sign-in from doubling as
             navigation the user did not ask for. */}
-        <LoginForm callbackURL={pathname || "/"} />
+        <LoginForm callbackURL={returnTo || pathname || "/"} />
       </DialogContent>
     </Dialog>
   )

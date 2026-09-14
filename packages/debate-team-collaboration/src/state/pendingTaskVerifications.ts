@@ -2,7 +2,7 @@
  * @fileoverview Persistent "awaiting verification" queue for routed research
  * tasks — closes the "No reviewer/verification step before a task is marked
  * complete; any visitor can mark any assignment done" Known gap recorded in
- * `docs/features/task-inbox.md` under the "🧭 Research Task Routing" bullet
+ * `packages/debate-help-docs/content/docs/features/task-inbox.mdx` under the "🧭 Research Task Routing" bullet
  * in TODO.md.
  *
  * `markRoutedTaskAwaitingVerification` is the new "mark done" step

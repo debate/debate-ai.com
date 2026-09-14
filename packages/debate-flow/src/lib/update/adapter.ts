@@ -1,3 +1,5 @@
+import type { SystemInfo } from "../system/types";
+
 import { parseManifest } from "./policy";
 import type { UpdateManifest } from "./types";
 
@@ -91,15 +93,32 @@ export async function getCurrentVersion(): Promise<string> {
 }
 
 /**
- * `[os, arch]` of the running desktop binary, e.g. `["macos", "aarch64"]`.
- * Null on web or if the runtime can't be reached.
+ * The wrapper's description of the host machine — OS name and version, kernel,
+ * Linux distro and packaging, and so on. Null on web, and also on a desktop
+ * build predating the command (the invoke rejects, which is indistinguishable
+ * from and handled the same as not being on desktop at all).
+ *
+ * The command is defined in
+ * `apps/debate-native-wrapper/src-tauri/src/system_info.rs`; because the
+ * wrapper loads this site as *remote* content, it is reachable only while the
+ * wrapper's `remote` capability grants `allow-system-info`.
  */
-export async function getSystemInfo(): Promise<[string, string] | null> {
+export async function invokeSystemInfo(): Promise<SystemInfo | null> {
     if (!isDesktop()) return null;
     try {
         const { invoke } = await import("@tauri-apps/api/core");
-        return await invoke<[string, string]>("system_info");
+        return await invoke<SystemInfo>("system_info");
     } catch {
         return null;
     }
+}
+
+/**
+ * `[os, arch]` of the running desktop binary, e.g. `["macos", "aarch64"]` —
+ * the two fields the update settings' Platform row needs. Null on web or if
+ * the runtime can't be reached.
+ */
+export async function getSystemInfo(): Promise<[string, string] | null> {
+    const info = await invokeSystemInfo();
+    return info ? [info.os, info.arch] : null;
 }

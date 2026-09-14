@@ -36,6 +36,13 @@ tauri-plugin-updater = "2"
 # regardless of what the wrapped page's own JS does.
 tauri-plugin-global-shortcut = "2"
 
+# Windows-only: the version, edition and build number of the running Windows
+# all live in one registry key, and reading it is the only way to get them
+# right — GetVersionEx reports a capped version unless the binary ships a
+# compatibility manifest naming every Windows it was tested on.
+[target.'cfg(target_os = "windows")'.dependencies]
+winreg = "0.52"
+
 [profile.release]
 panic = "abort"
 codegen-units = 1

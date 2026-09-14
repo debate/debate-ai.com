@@ -48,7 +48,6 @@ next-env.d.ts
 src/sw/app-file-list.ts
 src/sw/version.ts
 public/service-worker.js
-.claude
 pnpm-lock.yaml
 open-when-ready.log
 # Generated video seed SQL (regenerate with `bun run db:seed:videos`)
@@ -64,3 +63,20 @@ packages/debate-api-client/dist/
 # debate-help-docs: Next.js build output and fumadocs-mdx generated files
 packages/debate-help-docs/.next/
 packages/debate-help-docs/.source/
+packages/debate-help-docs/out/
+# …and the copy of that export the web app serves at /docs, staged by
+# `apps/debate-ai.com/scripts/build-docs.mjs` on every build.
+apps/debate-ai.com/public/docs/
+
+# WXT browser extensions: build output and generated types
+apps/*/.output/
+apps/*/.wxt/
+
+.claude/*
+# Agent docs for Claude Code — checked in on purpose (see CLAUDE.md)
+!.claude/apps
+!.claude/packages
+!.claude/architecture
+!.claude/settings.json
+.claude/settings.local.json
+CLAUDE.local.md

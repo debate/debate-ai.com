@@ -1,0 +1,31 @@
+{
+  "title": "Internals",
+  "description": "Engineering notes on how each feature is actually built — routes, components, data flow and known gaps.",
+  "pages": [
+    "index",
+    "app-nav-dock",
+    "argument-tree-outline",
+    "canonical-host-redirect",
+    "caselist-sync",
+    "coach-materials",
+    "coaching-programs",
+    "command-palette",
+    "features-page",
+    "flow-annotations",
+    "flow-summaries",
+    "judge-paradigm-selections",
+    "judge-profiles",
+    "news-stream",
+    "opponent-team-profiles",
+    "practice-round-simulator",
+    "pre-round-briefings",
+    "prep-notes",
+    "reason-docs-sidebar",
+    "tool-data-sync",
+    "turnstile-bot-gate",
+    "video-library",
+    "video-watch-page",
+    "youtube-transcript-proxy"
+  ],
+  "icon": "Wrench"
+}

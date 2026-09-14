@@ -21,6 +21,14 @@
  * so an extracted argument renders exactly like one derived from a manually
  * flowed grid.
  *
+ * Also subscribes to the browser's `storage` event via
+ * `state/live-update.ts`'s `isFlowSummariesPanelLiveUpdateStorageEvent` —
+ * closing the "every other localStorage-backed panel in this repo still has
+ * no cross-tab live-update mechanism" Known gap noted in
+ * `packages/debate-help-docs/content/docs/features/shared-flow-sync.mdx`, for `FlowSummariesPanel` — so a
+ * summary generated, extracted, or cleared in another same-origin tab shows
+ * up here without a manual reload.
+ *
  * A "🎤 Record" button next to the transcript field closes the "recording"
  * half of follow-up (a) — `hooks/useMicrophoneTranscription.ts` dictates
  * directly into the same field via the browser's own Web Speech API, with
@@ -65,7 +73,12 @@ import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import {
+  EmptyState,
+  PanelSection,
+  PanelShell,
+  SummaryText,
+} from "debate-round/src/ui/panels/panel-shell"
 import {
   buildFlowSummariesPanelView,
   deleteFlowSummary,
@@ -83,6 +96,7 @@ import { extractTranscriptsBulk, summarizeBulkTranscriptOutcomes } from "../roun
 import { requestTranscriptExtraction } from "../round/transcript-extraction-client"
 import { appendDictatedSegment } from "../round/microphone-transcription"
 import { useMicrophoneTranscription } from "../hooks/useMicrophoneTranscription"
+import { isFlowSummariesPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 /** One speech/transcript entry in the bulk-extraction form, before trimming/validation. */
 interface ExtractEntryDraft {
@@ -137,6 +151,18 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
   }, [])
 
   const refresh = () => setRecords(buildFlowSummariesPanelView())
+
+  // A `storage` event never fires in the tab that made the write, only in
+  // other same-origin tabs — this is the cross-tab signal a mount-only read
+  // can't catch on its own.
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isFlowSummariesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleClear = (roundId: string) => {
     deleteFlowSummary(roundId)
@@ -228,23 +254,15 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Speech Transcript Summaries</h1>
-        <p className="text-sm text-muted-foreground">
-          Per-argument summaries derived from each round's flow, with suggested
-          cross-examination questions and extension ideas for anything still unanswered.
-        </p>
-      </div>
-
-      <div className="rounded-lg border border-border p-4 space-y-4">
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">Generate from raw speech text</h2>
-          <p className="text-sm text-muted-foreground">
-            Paste one or more speech transcripts and let AI extract each one's claims, warrants,
-            impacts, and evidence into this round's flow summary — no manually flowed grid required.
-          </p>
-        </div>
+    <PanelShell
+      title="Speech Transcript Summaries"
+      description="Per-argument summaries derived from each round's flow, with suggested cross-examination questions and extension ideas for anything still unanswered."
+    >
+      <PanelSection
+        title="Generate from raw speech text"
+        description="Paste one or more speech transcripts and let AI extract each one's claims, warrants, impacts, and evidence into this round's flow summary — no manually flowed grid required."
+        className="rounded-lg border border-border p-4 space-y-4"
+      >
         <div className="space-y-1.5">
           <Label htmlFor="flow-summaries-extract-round-id">Round ID</Label>
           <Input
@@ -331,7 +349,7 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
               ? `Extract ${extractEntries.length} speeches with AI`
               : "Extract with AI"}
         </Button>
-      </div>
+      </PanelSection>
 
       {records.length === 0 ? (
         <EmptyState
@@ -367,9 +385,7 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
                   </Button>
                 </div>
               </div>
-              <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground">
-                {buildFlowSummaryTextFromRows(rows)}
-              </pre>
+              <SummaryText text={buildFlowSummaryTextFromRows(rows)} />
               {sendFormOpenRoundId === record.roundId && (
                 <div className="mt-3 space-y-2 rounded-md border border-border p-3">
                   <p className="text-xs text-muted-foreground">
@@ -447,6 +463,6 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
           )
         })
       )}
-    </div>
+    </PanelShell>
   )
 }

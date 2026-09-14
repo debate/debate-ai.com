@@ -15,6 +15,7 @@ import {
 } from "../../ui/primitives/dialog"
 import { Button } from "../../ui/primitives/button"
 import { Textarea } from "../../ui/primitives/textarea"
+import { saveVideoReport } from "../../state/videoLibrary"
 
 interface ReportDialogProps {
   open: boolean
@@ -28,11 +29,9 @@ export function ReportDialog({ open, onOpenChange, videoId, title }: ReportDialo
   const [reportSubmitted, setReportSubmitted] = useState(false)
 
   const handleReport = () => {
-    try {
-      const existing = JSON.parse(localStorage.getItem("debateVideoReports") || "[]")
-      existing.push({ videoId, title, report: reportText, date: new Date().toISOString() })
-      localStorage.setItem("debateVideoReports", JSON.stringify(existing))
-    } catch { }
+    // The store keys the report so it can reach the reporter's account, rather
+    // than sitting in one browser where nobody can follow it up.
+    saveVideoReport({ videoId, title, report: reportText })
     setReportSubmitted(true)
     setTimeout(() => {
       onOpenChange(false)

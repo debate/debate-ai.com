@@ -103,6 +103,28 @@ export function applyPersistedStreakFreeze(
 }
 
 /**
+ * Merges a contributor's remotely-synced freeze dayKeys into the local
+ * store, adding only the ones not already present — mirroring
+ * `newsStream.ts#mergeRemoteViewerState`'s "union, never remove" convention
+ * for syncing an array from the account. Bypasses `canApplyStreakFreeze`
+ * deliberately: these dayKeys were already validated and spent on another
+ * device, so re-validating them against *this* device's copy of the mission
+ * history could reject a freeze that's already real (e.g. if this device
+ * hasn't synced the mission result that justified it yet). Returns whether
+ * anything was actually added.
+ */
+export function mergeRemoteStreakFreezeDayKeys(contributorId: string, remoteDayKeys: string[]): boolean {
+  const existingDayKeys = new Set(listStreakFreezeDayKeysForContributor(contributorId));
+  const newRecords = remoteDayKeys
+    .filter((dayKey) => !existingDayKeys.has(dayKey))
+    .map((dayKey) => ({ contributorId, dayKey }));
+  if (newRecords.length === 0) return false;
+
+  writeAll([...readAll(), ...newRecords]);
+  return true;
+}
+
+/**
  * How many streak freezes a contributor has left to spend, as of
  * `asOfDayKey`, directly from their persisted freeze-usage history.
  */

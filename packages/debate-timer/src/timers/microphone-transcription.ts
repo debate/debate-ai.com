@@ -2,7 +2,7 @@
  * @fileoverview Microphone dictation for the live in-round word-limit popover
  * (`SpeechWordCounter`) — the last remaining half of the "Speech text is
  * typed or pasted; there is no transcription path feeding the word counter"
- * Known gap recorded in `docs/features/word-count-rounds.md`. The standalone
+ * Known gap recorded in `packages/debate-help-docs/content/docs/features/word-count-rounds.mdx`. The standalone
  * `/word-count` submission form and the transcript-extraction/coach-materials
  * forms already closed their halves of this gap the same way.
  *

@@ -3,7 +3,7 @@
 ## Local desktop dev
 
 ```bash
-cd packages/native-wrapper
+cd apps/debate-native-wrapper
 npm run dev          # regenerates tauri.conf.json from the debate-ai profile, then `tauri dev`
 ```
 
@@ -21,9 +21,14 @@ npm run build:desktop
 ```
 
 Requires the platform's own Tauri prerequisites (a C toolchain; on Linux,
-`libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev` — see
-[Tauri's prerequisites guide](https://v2.tauri.app/start/prerequisites/) for Windows/macOS).
-Output lands under `src-tauri/target/release/bundle/`.
+`libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev`). Output
+lands under `src-tauri/target/release/bundle/`.
+
+`docs/PLATFORMS.md` has the per-platform detail this one line compresses: install
+commands for every Linux distro family, which bundle formats each host produces, the
+glibc floor that decides which Linux releases your `.deb`/`.AppImage` will start on,
+Windows' MSVC + WebView2 + VBScript prerequisites, the macOS universal build, and how
+to confirm a build worked from the app's own Settings -> System panel.
 
 ## Android / iOS
 
@@ -40,12 +45,13 @@ for you.
 - **`.github/workflows/native-wrapper-release.yml`** — on a `native-wrapper-vX.Y.Z` tag (or
   manually via workflow_dispatch), builds Windows (`.exe`/`.msi`), macOS (universal `.dmg`), and
   Linux (`.AppImage`/`.deb`) via [`tauri-apps/tauri-action`](https://github.com/tauri-apps/tauri-action),
-  and a best-effort unsigned Android `.aab`, attaching everything to a draft GitHub Release the
+  a best-effort Android `.aab`, and a best-effort iOS `.ipa`, attaching everything to a draft GitHub Release the
   same two-stage way `debate/cardmirror`'s own `release.yml` avoids a multi-job race on the
   release draft. Desktop code signing (macOS notarization, Windows Authenticode) activates
   automatically once the relevant secrets are set — see the workflow file's comments for exact
-  names, and `docs/APP_STORES.md` for where those credentials come from. There is no iOS CI job;
-  see that workflow's trailing comment and `docs/MOBILE.md` for why and how to add one.
+  names, and `docs/APP_STORES.md` for where those credentials come from. Both mobile jobs degrade
+  gracefully without signing secrets rather than failing the run — `docs/MOBILE.md`'s CI section
+  has the table of what each tier actually produces.
 
 To cut a release: bump `version` in `profiles/<name>.json`, run `npm run configure`, commit, then
 `git tag native-wrapper-v1.0.0 && git push origin native-wrapper-v1.0.0`.

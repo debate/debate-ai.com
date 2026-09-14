@@ -31,7 +31,7 @@
  *
  * `verifyAndRecordResearchTask` closes the "No reviewer/verification step
  * before a task is marked complete" Known gap recorded in
- * `docs/features/task-inbox.md`: it credits a task marked done through
+ * `packages/debate-help-docs/content/docs/features/task-inbox.mdx`: it credits a task marked done through
  * `state/pendingTaskVerifications.ts`'s `markRoutedTaskAwaitingVerification`
  * only once a *different* contributor confirms it, gated by
  * `lib/task-verification.ts`'s `assertVerifierAllowed`. This is additive —
@@ -102,7 +102,7 @@ export function listCompletedTaskHistory(): CompletedTaskRecord[] {
  * other topic's history (and the active-queue store) untouched; a no-op if
  * the topic has no completed-task history. Mirrors `routedTaskQueues.ts`'s
  * `deleteRoutedTaskQueue(topicId)` — closes the "a completed task's history
- * record is never deleted" Known gap in `docs/features/research-progress-tracking.md`.
+ * record is never deleted" Known gap in `packages/debate-help-docs/content/docs/features/research-progress-tracking.mdx`.
  */
 export function deleteCompletedTaskHistoryForTopic(topic: string): void {
   writeAll(readAll().filter((record) => record.topic !== topic));
@@ -136,7 +136,7 @@ export function completeAndRecordResearchTask(
  * `state/pendingTaskVerifications.ts`'s `markRoutedTaskAwaitingVerification`,
  * crediting it only once — closing the "No reviewer/verification step
  * before a task is marked complete" Known gap recorded in
- * `docs/features/task-inbox.md`. Requires a `verifierId` different from the
+ * `packages/debate-help-docs/content/docs/features/task-inbox.mdx`. Requires a `verifierId` different from the
  * assignment's own `contributorId` (via `assertVerifierAllowed`); throws
  * `VerifierIdRequiredError`/`SelfVerificationNotAllowedError` and leaves both
  * the pending and completed stores untouched if the guard fails. Returns

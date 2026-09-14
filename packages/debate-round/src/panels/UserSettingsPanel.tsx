@@ -20,12 +20,20 @@
  * another device — a failed account sync is reported but never blocks the
  * local apply.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `flow/live-update.ts#isUserSettingsPanelLiveUpdateStorageEvent`) refreshes
+ * `fontFamily` unconditionally (it applies instantly everywhere, like a
+ * derived-view field) and each `form` field individually — but only when
+ * that field still matches what was last loaded/saved here, so an
+ * in-progress, not-yet-saved edit on any field is never overwritten by
+ * another tab's change.
+ *
  * @module panels/UserSettingsPanel
  */
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTheme } from "next-themes"
 import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
@@ -38,12 +46,14 @@ import {
   SelectValue,
 } from "../ui/primitives/select"
 import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "../round/user-settings-client"
+import { isUserSettingsPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   applyUserSettingsToLocalStore,
   DEBATE_STYLE_OPTIONS,
   DEFAULT_USER_SETTINGS,
   FONT_SIZE_OPTIONS,
   readLocalUserSettings,
+  refreshLocalUserSettingsFromStorage,
 } from "../state/userSettings"
 import {
   DEFAULT_THEME_SETTINGS,
@@ -85,11 +95,17 @@ function formatThemeName(name: string) {
     .join(" ")
 }
 
-/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `theme-dropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
-function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (mode: string) => void) {
+/** Swaps the `theme-*` class on `<html>` to `colorTheme`, leaving `localStorage`/the cookie untouched — the piece of `applyThemeLocally` that a cross-tab refresh (whose write already landed in `localStorage`/the cookie, a store shared across tabs) still needs to redo, since each tab has its own in-memory `document`. */
+function applyColorThemeClass(colorTheme: string) {
   if (typeof document === "undefined") return
   THEME_NAMES.forEach((t) => document.documentElement.classList.remove(`theme-${t}`))
   document.documentElement.classList.add(`theme-${colorTheme}`)
+}
+
+/** Applies a resolved colorTheme/themeMode to localStorage/cookie/DOM class, mirroring `theme-dropdown.tsx`'s `applyColorTheme`/`handleThemeChange` so this panel's Save button and the dock's picker never disagree about how a theme choice is persisted locally. */
+function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (mode: string) => void) {
+  if (typeof document === "undefined") return
+  applyColorThemeClass(colorTheme)
   localStorage.setItem("color-theme", colorTheme)
   document.cookie = `color-theme=${colorTheme}; path=/; max-age=31536000`
   setTheme(themeMode)
@@ -113,6 +129,13 @@ export function UserSettingsPanel() {
   // so it lives outside `form` and applies as soon as it's picked rather than
   // waiting on the Save button below.
   const [fontFamily, setFontFamily] = useState(DEFAULT_FONT_FAMILY)
+  // The last values `form` was loaded/saved from — i.e. what's actually
+  // persisted right now, as far as this tab knows. The cross-tab
+  // `storage`-event handler below only refreshes a field whose current
+  // `form` value still matches its `baselineRef` entry (meaning the user
+  // hasn't started editing it since); a field that differs is an
+  // in-progress edit and is left alone.
+  const baselineRef = useRef<FormState | null>(null)
 
   useEffect(() => {
     setFontFamily(readLocalFontFamily())
@@ -128,11 +151,13 @@ export function UserSettingsPanel() {
 
     const localColorTheme = localStorage.getItem("color-theme")
     const localThemeMode = resolvedTheme || theme
-    setForm({
+    const initialForm: FormState = {
       ...readLocalUserSettings(),
       colorTheme: localColorTheme && isValidColorTheme(localColorTheme) ? localColorTheme : DEFAULT_THEME_SETTINGS.colorTheme,
       themeMode: localThemeMode && isValidThemeMode(localThemeMode) ? localThemeMode : DEFAULT_THEME_SETTINGS.themeMode,
-    })
+    }
+    setForm(initialForm)
+    baselineRef.current = initialForm
 
     fetchUserSettings()
       .then((remote) => {
@@ -140,7 +165,9 @@ export function UserSettingsPanel() {
         if (remote) {
           setRemoteAvailable(true)
           const { debateStyle, fontSize, colorTheme, themeMode } = remote
-          setForm({ debateStyle, fontSize, colorTheme, themeMode })
+          const remoteForm: FormState = { debateStyle, fontSize, colorTheme, themeMode }
+          setForm(remoteForm)
+          baselineRef.current = remoteForm
           applyUserSettingsToLocalStore(remote)
           applyThemeLocally(colorTheme, themeMode, setTheme)
         }
@@ -159,6 +186,69 @@ export function UserSettingsPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once on mount, same as before this slice; theme/resolvedTheme are only read for their initial value.
   }, [])
 
+  /**
+   * Live-updates this form across browser tabs — e.g. another tab's own
+   * `UserSettingsPanel` Save, or `theme-dropdown.tsx`'s dock picker
+   * changing `color-theme`/`theme` — but only fields that still match
+   * `baselineRef` (untouched since they were last loaded/saved here), so an
+   * in-progress, not-yet-saved edit is never overwritten. `fontFamily` is
+   * refreshed unconditionally since it isn't a Save-gated draft; it always
+   * applies immediately, so there's nothing to protect. A `colorTheme`
+   * refresh also reapplies the `theme-*` class, since that's per-tab DOM
+   * state that a `storage` event alone doesn't update — `themeMode`'s
+   * equivalent DOM effect is already handled by next-themes' own storage
+   * listener.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isUserSettingsPanelLiveUpdateStorageEvent(event)) return
+      setFontFamily(readLocalFontFamily())
+
+      const baseline = baselineRef.current
+      if (!baseline) return
+
+      const localColorTheme = localStorage.getItem("color-theme")
+      const localThemeMode = resolvedTheme || theme
+      const next: FormState = {
+        ...refreshLocalUserSettingsFromStorage(),
+        colorTheme:
+          localColorTheme && isValidColorTheme(localColorTheme) ? localColorTheme : DEFAULT_THEME_SETTINGS.colorTheme,
+        themeMode:
+          localThemeMode && isValidThemeMode(localThemeMode) ? localThemeMode : DEFAULT_THEME_SETTINGS.themeMode,
+      }
+
+      setForm((prev) => {
+        if (!prev) return prev
+        const updated: FormState = {
+          debateStyle: prev.debateStyle === baseline.debateStyle ? next.debateStyle : prev.debateStyle,
+          fontSize: prev.fontSize === baseline.fontSize ? next.fontSize : prev.fontSize,
+          colorTheme: prev.colorTheme === baseline.colorTheme ? next.colorTheme : prev.colorTheme,
+          themeMode: prev.themeMode === baseline.themeMode ? next.themeMode : prev.themeMode,
+        }
+        if (
+          updated.debateStyle === prev.debateStyle &&
+          updated.fontSize === prev.fontSize &&
+          updated.colorTheme === prev.colorTheme &&
+          updated.themeMode === prev.themeMode
+        ) {
+          return prev
+        }
+
+        baselineRef.current = {
+          debateStyle: prev.debateStyle === baseline.debateStyle ? next.debateStyle : baseline.debateStyle,
+          fontSize: prev.fontSize === baseline.fontSize ? next.fontSize : baseline.fontSize,
+          colorTheme: prev.colorTheme === baseline.colorTheme ? next.colorTheme : baseline.colorTheme,
+          themeMode: prev.themeMode === baseline.themeMode ? next.themeMode : baseline.themeMode,
+        }
+        if (updated.colorTheme !== prev.colorTheme) applyColorThemeClass(updated.colorTheme)
+        return updated
+      })
+    }
+
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [theme, resolvedTheme])
+
   if (!form) {
     return (
       <div className="max-w-lg mx-auto p-4 sm:p-6">
@@ -172,6 +262,10 @@ export function UserSettingsPanel() {
     setStatus({ kind: "saving" })
     applyUserSettingsToLocalStore(form)
     applyThemeLocally(form.colorTheme, form.themeMode, setTheme)
+    // These values are now what's actually persisted locally, so a later
+    // cross-tab refresh should treat them as the new baseline rather than
+    // as an unsaved edit relative to whatever was loaded before this Save.
+    baselineRef.current = form
 
     if (!remoteAvailable) {
       setStatus({
@@ -184,7 +278,9 @@ export function UserSettingsPanel() {
     try {
       const saved = await saveUserSettings(form)
       const { debateStyle, fontSize, colorTheme, themeMode } = saved
-      setForm({ debateStyle, fontSize, colorTheme, themeMode })
+      const savedForm: FormState = { debateStyle, fontSize, colorTheme, themeMode }
+      setForm(savedForm)
+      baselineRef.current = savedForm
       setStatus({ kind: "saved-account", message: "Saved to your account." })
     } catch (err) {
       setStatus({

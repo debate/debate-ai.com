@@ -9,10 +9,12 @@
  * @module lib/videos/video-repository
  */
 
-import { and, asc, count, desc, eq, inArray, isNull, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNotNull, isNull, sql, type SQL } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
+  normalizeCategoryKey,
+  stripTournamentYear,
   videoRowToTuple,
   type VideoRow,
   type VideoTuple,
@@ -21,13 +23,18 @@ import {
   clampPageSize,
   computeLectureCategories,
   computeVideoFacets,
+  computeVideoSuggestions,
   filterVideoRows,
   parseSeasonFilter,
   queryVideoRows,
+  rankKeywordSuggestions,
+  rankTournamentSuggestions,
   searchTokens,
+  SUGGESTED_KEYWORDS,
   type LectureCategoryFacet,
   type VideoFacets,
   type VideoQueryParams,
+  type VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
 import { getVideoRowsFromJson } from "./video-json-source";
 
@@ -62,10 +69,12 @@ export interface VideoCounts {
   byStyle: Record<number, number>;
 }
 
-/** Metadata payload backing the page chrome (counts, category cards). */
+/** Metadata payload backing the page chrome (counts, category cards, chips). */
 export interface VideoMeta {
   counts: VideoCounts;
   lectureCategories: LectureCategoryFacet[];
+  /** Popular keyword and tournament searches shown under the video grid. */
+  suggestions: VideoSuggestions;
   backend: VideoBackend;
 }
 
@@ -263,6 +272,51 @@ export async function getVideoPage(
 }
 
 /**
+ * Computes the popular-search chips from SQL: one grouped query for the
+ * tournament names in the library, and a single scan that counts every
+ * candidate keyword at once.
+ *
+ * @param db - Drizzle handle.
+ * @returns See {@link VideoSuggestions}.
+ */
+async function suggestionsFromSql(db: any): Promise<VideoSuggestions> {
+  const keywordSelect: Record<string, SQL<number>> = {};
+  SUGGESTED_KEYWORDS.forEach((keyword, index) => {
+    // Same all-tokens-must-match rule the search box applies, so a chip's
+    // count is exactly what clicking it returns.
+    const conditions = searchTokens(keyword).map(
+      (token) => sql`${videos.searchText} LIKE ${likePattern(token)} ESCAPE '\\'`,
+    );
+    const matches = conditions.length > 1 ? and(...conditions)! : conditions[0];
+    keywordSelect[`k${index}`] = sql<number>`sum(case when ${matches} then 1 else 0 end)`;
+  });
+
+  const [tournamentRows, keywordRows] = await Promise.all([
+    db
+      .select({ tournament: videos.tournament, value: count() })
+      .from(videos)
+      .where(isNotNull(videos.tournament))
+      .groupBy(videos.tournament),
+    db.select(keywordSelect).from(videos),
+  ]);
+
+  const keywordCounts: Record<string, number> = {};
+  SUGGESTED_KEYWORDS.forEach((keyword, index) => {
+    keywordCounts[keyword] = Number(keywordRows?.[0]?.[`k${index}`] ?? 0);
+  });
+
+  return {
+    keywords: rankKeywordSuggestions(keywordCounts),
+    tournaments: rankTournamentSuggestions(
+      (tournamentRows as Array<{ tournament: string | null; value: number }>).map((row) => ({
+        tournament: row.tournament,
+        count: row.value,
+      })),
+    ),
+  };
+}
+
+/**
  * Fetches the library-wide counts and lecture-category cards.
  *
  * @returns See {@link VideoMeta}.
@@ -271,8 +325,15 @@ export async function getVideoMeta(): Promise<VideoMeta> {
   const db = await tryGetDb();
   if (db && (await isTableSeeded(db))) {
     try {
-      const [[totalRow], sourceRows, styleRows, [lecturesOnlyRow], [topPicksRow], categoryRows] =
-        await Promise.all([
+      const [
+        [totalRow],
+        sourceRows,
+        styleRows,
+        [lecturesOnlyRow],
+        [topPicksRow],
+        categoryRows,
+        suggestions,
+      ] = await Promise.all([
           db.select({ value: count() }).from(videos),
           db.select({ source: videos.source, value: count() }).from(videos).groupBy(videos.source),
           db.select({ style: videos.style, value: count() }).from(videos).groupBy(videos.style),
@@ -288,6 +349,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
             .from(videos)
             .where(isNull(videos.style))
             .groupBy(videos.categoryKey, videos.category),
+          suggestionsFromSql(db),
         ]);
 
       const byStyle: Record<number, number> = {};
@@ -319,6 +381,7 @@ export async function getVideoMeta(): Promise<VideoMeta> {
           byStyle,
         },
         lectureCategories,
+        suggestions,
         backend: "sql",
       };
     } catch (error) {
@@ -344,6 +407,73 @@ export async function getVideoMeta(): Promise<VideoMeta> {
       byStyle,
     },
     lectureCategories: computeLectureCategories(allRows),
+    suggestions: computeVideoSuggestions(allRows),
     backend: "json",
   };
+}
+
+/** Index of the fields the watch page reads out of a {@link VideoTuple}. */
+const TUPLE = { videoId: 0, title: 1, style: 6, tournament: 7 } as const;
+
+/**
+ * Fetches a single video by its YouTube id.
+ *
+ * @param videoId - YouTube video id.
+ * @returns The video in UI tuple form, or `null` when the library has no such
+ *   video.
+ */
+export async function getVideoById(videoId: string): Promise<VideoTuple | null> {
+  const page = await getVideoPage({ source: "all", ids: [videoId], limit: 1, offset: 0 });
+  return page.videos[0] ?? null;
+}
+
+/**
+ * Fetches the videos shown under a video on its watch page.
+ *
+ * Relatedness is ordered by how specific it is: the rest of the same
+ * tournament first (the other rounds of a bracket are what a viewer usually
+ * wants next), then the same lecture category or debate format, then the
+ * most recent videos in the library — each pass topping up the list until it
+ * is full, so a video with no tournament and no format still gets a full row.
+ *
+ * @param video - The video being watched, as a tuple.
+ * @param limit - How many related videos to return at most.
+ * @returns Related videos in UI tuple form, never including `video` itself.
+ */
+export async function getRelatedVideos(
+  video: VideoTuple,
+  limit = 12,
+): Promise<VideoTuple[]> {
+  const videoId = video[TUPLE.videoId] as string;
+  const style = video[TUPLE.style];
+  const tournament = video[TUPLE.tournament] as string | null | undefined;
+
+  const passes: VideoQueryParams[] = [];
+  // Tournament names are prefixed with the year of the event; searching the
+  // bare name keeps the rest of that bracket without excluding other years.
+  const tournamentName = tournament ? stripTournamentYear(tournament) : null;
+  if (tournamentName) passes.push({ source: "all", q: tournamentName, sort: "Recency" });
+  if (typeof style === "number") passes.push({ source: "all", style, sort: "Recency" });
+  if (typeof style === "string") {
+    passes.push({ source: "all", categoryKey: normalizeCategoryKey(style), sort: "Recency" });
+  }
+  passes.push({ source: "all", sort: "Recency" });
+
+  const seen = new Set<string>([videoId]);
+  const related: VideoTuple[] = [];
+
+  for (const params of passes) {
+    if (related.length >= limit) break;
+    // Over-fetch by one pass' worth: every row may already be in the list.
+    const page = await getVideoPage({ ...params, limit: limit + related.length + 1, offset: 0 });
+    for (const candidate of page.videos) {
+      const id = candidate[TUPLE.videoId] as string;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      related.push(candidate);
+      if (related.length >= limit) break;
+    }
+  }
+
+  return related;
 }

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Bulk cloud-save helpers — TODO.md idea #17. Started by
  * closing the "No bulk 'save all my rounds' action" Known gap
- * `docs/features/round-cloud-save.md` recorded (each round could only be
+ * `packages/debate-help-docs/content/docs/features/round-cloud-save.mdx` recorded (each round could only be
  * pushed to the account one at a time via its own cloud icon), then
  * extended to close that same doc's remaining gap: "a flow with no round
  * referencing it still has no bulk path — only its own per-flow cloud
@@ -19,7 +19,7 @@ import type { Flow, Round } from "../types/flow";
  * Collects the deduplicated set of locally-available flows referenced by
  * any of the given rounds, in first-referencing-round order. Saving a
  * round to the account cascade-saves each flow it references (see
- * `docs/features/round-cloud-save.md`); when saving *every* round in one
+ * `packages/debate-help-docs/content/docs/features/round-cloud-save.mdx`); when saving *every* round in one
  * bulk action, a flow shared by more than one round (or a round that lists
  * the same flow id twice) would otherwise be PUT to `/api/flows` once per
  * round that references it — this collapses that down to exactly one save
@@ -66,7 +66,7 @@ export function collectUnreferencedFlows(rounds: Round[], flows: Flow[]): Flow[]
 /**
  * Maps each flow id referenced by any round's `flowIds` to the first such
  * round (by `rounds` order). Saving a round cascade-saves each flow it
- * references (see `docs/features/round-cloud-save.md`); this lets the
+ * references (see `packages/debate-help-docs/content/docs/features/round-cloud-save.mdx`); this lets the
  * "Saved to account" tab's flow list badge a cascade-saved flow with the
  * round that saved it, distinguishing it from a flow saved on its own via
  * its individual cloud icon. A flow id referenced by more than one round

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   STYLE_COLORS,
   TOURNAMENT_COLORS,
+  formatVideoDate,
   getRoundBadgeColor,
   getYearTopic,
 } from "../src/components/video-card/videoCardUtils";
@@ -61,5 +62,23 @@ describe("badge color maps", () => {
       expect(STYLE_COLORS[style], `style ${style}`).toBeTruthy();
       expect(TOURNAMENT_COLORS[style], `style ${style}`).toBeTruthy();
     }
+  });
+});
+
+describe("formatVideoDate", () => {
+  it("formats a full date and a bare month", () => {
+    // Parsed as UTC midnight, so assert on the parts rather than a locale
+    // string that shifts with the runner's timezone.
+    expect(formatVideoDate("2026-03-14T12:00:00Z")).toContain("2026");
+    expect(formatVideoDate("2026-03-14T12:00:00Z")).toContain("Mar");
+    expect(formatVideoDate("2026-03-14T12:00:00Z")).toContain("14");
+    expect(formatVideoDate("2026-03-14T12:00:00Z", "month")).toBe("Mar");
+  });
+
+  it("returns the fallback for a date that does not parse", () => {
+    // The grid renders one of these per row; an unparseable date has to read
+    // as missing rather than as the literal "Invalid Date".
+    expect(formatVideoDate("not a date")).toBe("");
+    expect(formatVideoDate("", "full", "—")).toBe("—");
   });
 });

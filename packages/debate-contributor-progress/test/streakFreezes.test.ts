@@ -6,6 +6,7 @@ import {
   getPersistedAvailableStreakFreezes,
   listStreakFreezeDayKeysForContributor,
   listStreakFreezes,
+  mergeRemoteStreakFreezeDayKeys,
 } from "../src/state/streakFreezes";
 import { saveDailyMissionResult } from "../src/state/dailyMissionResults";
 import { MAX_STREAK_FREEZES_PER_WINDOW } from "../src/lib/gamified-quests";
@@ -98,6 +99,51 @@ describe("applyPersistedStreakFreeze", () => {
 
     expect(listStreakFreezeDayKeysForContributor("alice")).toEqual(["2026-08-09"]);
     expect(listStreakFreezeDayKeysForContributor("bob")).toEqual([]);
+  });
+});
+
+describe("mergeRemoteStreakFreezeDayKeys", () => {
+  it("adds remote dayKeys not already present locally and reports a change", () => {
+    const changed = mergeRemoteStreakFreezeDayKeys("alice", ["2026-08-09", "2026-08-15"]);
+    expect(changed).toBe(true);
+    expect(listStreakFreezeDayKeysForContributor("alice").sort()).toEqual(["2026-08-09", "2026-08-15"]);
+  });
+
+  it("is a no-op reporting no change when every remote dayKey is already local", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: false });
+    applyPersistedStreakFreeze("alice", "2026-08-09", "2026-08-10");
+
+    const changed = mergeRemoteStreakFreezeDayKeys("alice", ["2026-08-09"]);
+    expect(changed).toBe(false);
+    expect(listStreakFreezeDayKeysForContributor("alice")).toEqual(["2026-08-09"]);
+  });
+
+  it("only adds the dayKeys not already present, without duplicating overlapping ones", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: false });
+    applyPersistedStreakFreeze("alice", "2026-08-09", "2026-08-10");
+
+    const changed = mergeRemoteStreakFreezeDayKeys("alice", ["2026-08-09", "2026-08-20"]);
+    expect(changed).toBe(true);
+    expect(listStreakFreezeDayKeysForContributor("alice").sort()).toEqual(["2026-08-09", "2026-08-20"]);
+  });
+
+  it("bypasses validation — a remote dayKey merges in even if it wouldn't pass canApplyStreakFreeze locally", () => {
+    // No mission-result history at all for alice, which `applyPersistedStreakFreeze`
+    // would deny — merging still succeeds since it's replaying an
+    // already-approved freeze from another device.
+    const changed = mergeRemoteStreakFreezeDayKeys("alice", ["2026-08-09"]);
+    expect(changed).toBe(true);
+    expect(listStreakFreezeDayKeysForContributor("alice")).toEqual(["2026-08-09"]);
+  });
+
+  it("keeps different contributors' freezes independent", () => {
+    mergeRemoteStreakFreezeDayKeys("alice", ["2026-08-09"]);
+    expect(listStreakFreezeDayKeysForContributor("bob")).toEqual([]);
+  });
+
+  it("is a no-op for an empty remote list", () => {
+    expect(mergeRemoteStreakFreezeDayKeys("alice", [])).toBe(false);
+    expect(listStreakFreezeDayKeysForContributor("alice")).toEqual([]);
   });
 });
 

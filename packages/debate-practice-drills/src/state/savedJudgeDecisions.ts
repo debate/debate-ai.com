@@ -52,6 +52,7 @@ export function isValidJudgeDecisionRecord(value: unknown): value is JudgeDecisi
   if (!isValidSideNames(record.sideNames)) return false;
   if (!isValidResult(record.result)) return false;
   if (typeof record.generatedAt !== "number") return false;
+  if (record.batchId !== undefined && typeof record.batchId !== "string") return false;
 
   return true;
 }

@@ -1,6 +1,10 @@
 /**
  * @fileoverview Fetches a YouTube video's timed captions without a browser.
  *
+ * Every request can be routed through a fetch-through proxy — see
+ * `proxiedUrl` below and `docs/youtube-transcript-proxy.md` — which is how a
+ * server whose IP YouTube has started bot-checking gets unblocked.
+ *
  * The public `/api/timedtext` URLs scraped from a watch page now come back
  * empty (HTTP 200, zero bytes) for non-browser callers, which is why the
  * transcript route used to 404 for every video. Asking InnerTube's `player`
@@ -8,6 +12,8 @@
  * serves real content, so that is what this uses. Plain `fetch` only, so it
  * runs unchanged on the Cloudflare Worker.
  */
+
+import { getCloudflareContext } from "@/lib/database/context";
 
 /** One timed caption line. */
 export interface TranscriptSnippet {
@@ -17,6 +23,36 @@ export interface TranscriptSnippet {
   start: number;
   /** How long the line stays on screen, in seconds. */
   duration: number;
+}
+
+/**
+ * Optional fetch-through proxy, as a URL template containing `{url}` — e.g.
+ * `https://proxy.example.com/fetch?key=abc&url={url}`. A template without the
+ * placeholder gets the target appended as a `url` query param.
+ *
+ * Cloudflare Workers has no socket layer, so the usual `HttpsProxyAgent`
+ * approach doesn't exist here: the proxy has to be an HTTP endpoint that
+ * fetches the target on our behalf and returns its response body verbatim.
+ * Read from the Worker binding first (a `wrangler secret`), then
+ * `process.env` for local dev; unset means fetch YouTube directly.
+ */
+function proxyTemplate(): string | undefined {
+  let fromWorker: string | undefined;
+  try {
+    fromWorker = getCloudflareContext()?.env?.YOUTUBE_PROXY_URL as string | undefined;
+  } catch {
+    // No request context (build time, scripts) — fall through to process.env.
+  }
+  const fromEnv = typeof process !== "undefined" ? process.env?.YOUTUBE_PROXY_URL : undefined;
+  return fromWorker || fromEnv || undefined;
+}
+
+/** Rewrites `url` to go through the configured proxy, if there is one. */
+function proxiedUrl(url: string): string {
+  const template = proxyTemplate();
+  if (!template) return url;
+  if (template.includes("{url}")) return template.replace("{url}", encodeURIComponent(url));
+  return `${template}${template.includes("?") ? "&" : "?"}url=${encodeURIComponent(url)}`;
 }
 
 /** Public InnerTube key — the same one youtube.com ships in its own page source. */
@@ -77,7 +113,7 @@ async function fetchCaptionTracks(
   clientConfig: (typeof CLIENTS)[number],
 ): Promise<{ tracks: CaptionTrack[]; status?: string }> {
   const response = await fetch(
-    `https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}&prettyPrint=false`,
+    proxiedUrl(`https://www.youtube.com/youtubei/v1/player?key=${INNERTUBE_KEY}&prettyPrint=false`),
     {
       method: "POST",
       headers: {
@@ -201,7 +237,7 @@ async function fetchTrack(track: CaptionTrack, userAgent: string): Promise<Trans
   const url = new URL(track.baseUrl);
   url.searchParams.set("fmt", "json3");
 
-  const response = await fetch(url.toString(), {
+  const response = await fetch(proxiedUrl(url.toString()), {
     headers: { "User-Agent": userAgent, "Accept-Language": "en-US,en" },
   });
   if (!response.ok) return [];

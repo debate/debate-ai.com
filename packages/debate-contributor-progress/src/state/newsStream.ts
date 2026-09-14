@@ -20,7 +20,7 @@
  *
  * A fourth Community source, `sprintNotes.ts`'s `listSprintNotes`, closes
  * the "a Prep Room note ... [isn't] wired in" Known gap recorded in
- * `docs/features/news-stream.md` — unlike the streak/challenge/revision
+ * `packages/debate-help-docs/content/docs/internals/news-stream.mdx` — unlike the streak/challenge/revision
  * sources above, a `SprintNote` is already the atomic event (no derivation
  * over a longer history is needed): every persisted note becomes one
  * `NewsItem`, rendered via `team-collaboration-mode.ts`'s new
@@ -49,7 +49,7 @@
  * per-viewer localStorage convention.
  *
  * `sprintNoteNews()` and `argumentLibraryNews()` close the "no volume
- * control" Known gap recorded in `docs/features/news-stream.md`: unlike the
+ * control" Known gap recorded in `packages/debate-help-docs/content/docs/internals/news-stream.mdx`: unlike the
  * streak/challenge/revision sources (naturally bounded to at most one event
  * per contributor per milestone, per challenge, or per day), a sprint note
  * or an Argument Library entry is posted every single time one is logged or
@@ -351,7 +351,7 @@ export function listLikedIds(): string[] {
  * caught up yet, and vice versa. Unliking on one device therefore doesn't
  * clear a like already merged onto another until that other device's own
  * next toggle pushes the new state — an accepted, documented limitation
- * (see `docs/features/news-stream.md`'s Known gaps), matching every other
+ * (see `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s Known gaps), matching every other
  * best-effort sync in this repo.
  *
  * @returns Whether anything actually changed (so a caller can skip a

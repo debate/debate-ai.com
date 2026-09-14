@@ -3,7 +3,7 @@
  * Fetches JSON directly from tocbidlist.com's internal API for CX, PF, and LD.
  */
 
-import axios from "axios";
+import grab from "grab-url";
 import { LeaderboardEntry } from "./sync-rankings-debatedrills";
 
 const API_BASE = "https://tocbidlist.com/api/enriched-leaderboard?event=";
@@ -35,16 +35,50 @@ function parseRows(rows: any[]): LeaderboardEntry[] {
     );
 }
 
-export async function scrapeToc(event: TocEvent): Promise<LeaderboardEntry[]> {
-  const response = await axios.get(`${API_BASE}${event}`, { timeout: 20_000 });
+/**
+ * Pull the `rows` array out of a grab response.
+ *
+ * grab lifts a JSON body onto the root of its result object, so the array
+ * normally arrives as `result.rows`. It also mirrors the body under `.data`,
+ * which is where a non-JSON content type (or a `data`-wrapped envelope) ends
+ * up, so check both before giving up.
+ */
+function extractRows(result: any): any[] | null {
+  if (Array.isArray(result?.rows)) return result.rows;
+  if (Array.isArray(result?.data?.rows)) return result.data.rows;
+  return null;
+}
 
-  if (!response.data || !Array.isArray(response.data.rows)) {
+export async function scrapeToc(event: TocEvent): Promise<LeaderboardEntry[]> {
+  // `grab` rather than axios: this runs inside the Cloudflare Worker that
+  // serves /api/leaderboard, where axios is a liability — it picks its
+  // transport at import time and reaches for XMLHttpRequest or node:http,
+  // neither of which is the runtime's real fetch. Every other scraper in this
+  // folder already goes through grab; this was the last axios holdout.
+  //
+  // `cancelOngoingIfNew` is off because grab defaults it on and keys it by
+  // path: on the server two visitors asking for the same division at the same
+  // moment would otherwise cancel each other, turning a fine request into a
+  // failed one. Cancellation only makes sense for the browser's one-user-at-a
+  // -time assumption.
+  const result = await grab(`${API_BASE}${event}`, {
+    headers: { Accept: "application/json" },
+    timeout: 20,
+    cancelOngoingIfNew: false,
+  });
+
+  if (result?.error) {
+    throw new Error(`TOC API request failed for ${event}: ${result.error}`);
+  }
+
+  const rows = extractRows(result);
+  if (!rows) {
     throw new Error(
       `Invalid TOC API response for ${event}: 'rows' array not found`,
     );
   }
 
-  return parseRows(response.data.rows);
+  return parseRows(rows);
 }
 
 export const scrapeVCX = () => scrapeToc("CX");

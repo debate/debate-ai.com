@@ -1,6 +1,6 @@
 /**
  * @fileoverview Main video grid view for the lectures page.
- * Renders the sticky search/filter bar, quick-link navigation cards,
+ * Renders the floating search/filter control, quick-link navigation cards,
  * the lecture-category gallery, and the paginated video grid with
  * infinite-scroll trigger.
  * @module components/debate/DebateVideos/panels/LecturesVideoGridView
@@ -10,16 +10,18 @@
 
 import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
-import type { CategoryType, TopicType, VideoFacets } from "../types/videos"
+import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
-import { StickyHeader } from "../components/layout/StickyHeader"
+import { FloatingVideoSearch } from "../components/video-search/FloatingVideoSearch"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
+import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
 import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
+import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { YouTubeStatsModal } from "../components/youtube-stats-modal/YouTubeStatsModal"
 import type { DebateStyle } from "../types/videos"
 import type { VideoViewMode } from "../hooks/useVideoState"
@@ -47,6 +49,8 @@ interface LecturesVideoGridViewProps {
   totalVideos: number
   /** Season/style counts for the filter dropdowns, or `null` before they load. */
   facets: VideoFacets | null
+  /** Popular keyword and tournament searches offered under the grid. */
+  searchSuggestions: VideoSuggestions
 
   // ---- Load state ----
   /** `true` while the initial video data is loading. */
@@ -55,6 +59,12 @@ interface LecturesVideoGridViewProps {
   errorMessage: string
   /** `true` while additional pages are loading (infinite scroll). */
   isLoadingMore: boolean
+  /**
+   * `true` once the feed has loaded as many videos as it will hold at once
+   * and more remain. Scrolling stops paging here; the button rendered below
+   * the grid is how the next page is asked for.
+   */
+  atCapacity?: boolean
 
   // ---- Video data ----
   /** Videos loaded so far for the active filters. */
@@ -113,6 +123,8 @@ interface LecturesVideoGridViewProps {
   onToggleFavoritesOnly: () => void
   /** Toggles the lecture category gallery visibility. */
   onToggleLectureCategories: () => void
+  /** Loads one more page past the capacity ceiling. */
+  onLoadMore?: () => void
   /** Toggles the favorite state of a single video. */
   onToggleFavorite: (id: string) => void
   /** Hides a video from the grid. */
@@ -154,9 +166,12 @@ export function LecturesVideoGridView({
   currentCategory,
   totalVideos,
   facets,
+  searchSuggestions,
   isLoading,
   errorMessage,
   isLoadingMore,
+  atCapacity = false,
+  onLoadMore,
   currentVideos,
   favorites,
   hiddenVideos,
@@ -216,7 +231,9 @@ export function LecturesVideoGridView({
     return undefined
   }, [showFavoritesOnly, currentCategory, selectedStyle, slug])
 
-  const searchBarNode = (stacked: boolean) => (
+  // Always stacked: the floating panel it opens in is a narrow column, not
+  // the full-width row the old sticky header gave it.
+  const searchBarNode = (
     <VideoSearchBar
       searchTerm={searchTerm}
       sortOrder={sortOrder}
@@ -236,7 +253,7 @@ export function LecturesVideoGridView({
       onToggleThumbnails={onToggleThumbnails}
       onToggleFavoritesOnly={onToggleFavoritesOnly}
       totalVideos={totalVideos}
-      stacked={stacked}
+      stacked
       extraButtons={
         youtubeStats ? (
           <YouTubeStatsModal
@@ -254,17 +271,21 @@ export function LecturesVideoGridView({
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Persistent left sidebar (md+): app dock, search controls, video
-          categories, lecture categories, footer. Below md the same controls
-          render inline above the grid instead — see the mobile block below.
-          `min-w-0` keeps every child bound to this column; the dock arrives
-          in `dockSlot` already sized to the column rather than to its own
+      {/* Persistent left sidebar (md+): app dock, video categories, lecture
+          categories, footer. The search and filter controls are deliberately
+          not here — they float over the results panel instead
+          (`FloatingVideoSearch`), which is what lets this column be the same
+          column on the glossary and rankings pages, where there is nothing to
+          search. `min-w-0` keeps every child bound to it; the dock arrives in
+          `dockSlot` already sized to the column rather than to its own
           contents, so it can't reach across the border onto the grid. */}
       <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
         {dockSlot}
 
-        {searchBarNode(true)}
-
+        {/* Videos only: the app's REASON document panels used to mount here
+            (`docsSlot`), above the tree. They belong on the routes the
+            documents are the subject of — the sidebar of the video library is
+            the video library. */}
         <VideoSidebarTree
           counts={quickLinkCounts}
           lectureCategories={lectureCategories}
@@ -278,10 +299,16 @@ export function LecturesVideoGridView({
       </aside>
 
       <div className="min-w-0 flex-1 p-3 sm:p-6">
-        {/* Mobile-only controls (sidebar above is md+ only) */}
-        <div className="md:hidden">
-          <StickyHeader controls={searchBarNode(false)} />
+        {/* The one instance of the search and filter controls, on every
+            breakpoint: an icon in the top-right corner of this panel that
+            opens on hover, on tap and on focus. It is `sticky` with no height,
+            so it follows the scroll without moving the grid down. */}
+        <FloatingVideoSearch keepOpen={!!searchTerm || isSearchFocused}>
+          {searchBarNode}
+        </FloatingVideoSearch>
 
+        {/* Mobile-only nav (sidebar above is md+ only) */}
+        <div className="md:hidden">
           <QuickLinksGrid
             counts={quickLinkCounts}
             showLectures={showLectureCategories}
@@ -298,10 +325,30 @@ export function LecturesVideoGridView({
             </div>
           )}
 
+          {/* The rest of the sidebar tree — Apps / Coaching / Research /
+              Practice and the glossary/rankings pair. The tiles above cover
+              only its Videos section, so without this the tool sections had
+              no counterpart on a phone anywhere on the page (the dock's
+              Settings menu carries them too, as its Videos/Apps/… submenus).
+              Sections start collapsed here: expanded, forty rows would push
+              the video grid off the screen. */}
+          <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
+            <ToolNavTree defaultExpanded={false} />
+          </nav>
+
           <Footer />
         </div>
 
         <div ref={videosSectionRef} className="scroll-mt-20" />
+
+        {/* One-click searches drawn from the library: popular debate terms and
+            the tournaments with the most rounds. */}
+        <VideoSearchSuggestions
+          suggestions={searchSuggestions}
+          searchTerm={searchTerm}
+          onSelect={onSearchChange}
+          className="mb-6"
+        />
 
         {isLoading ? (
           <div className="text-center py-12">
@@ -313,7 +360,24 @@ export function LecturesVideoGridView({
           </div>
         ) : currentVideos.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No videos found matching your filters.</p>
+            {showFavoritesOnly && favorites.size === 0 ? (
+              <>
+                <p className="text-muted-foreground">
+                  Star videos to add them to My Favorites.
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Click the star on any video and it will show up here.
+                </p>
+              </>
+            ) : showFavoritesOnly ? (
+              <p className="text-muted-foreground">
+                None of My Favorites match your filters.
+              </p>
+            ) : (
+              <p className="text-muted-foreground">
+                No videos found matching your filters — try one of the searches above.
+              </p>
+            )}
           </div>
         ) : (
           <>
@@ -346,11 +410,36 @@ export function LecturesVideoGridView({
               />
             )}
 
-            <div ref={loadMoreTriggerRef} className="h-10" />
+            {/* The sentinel only exists while scrolling is allowed to page:
+                past the ceiling it is removed, so the observer above it has
+                nothing to fire against and the grid can only grow when the
+                button below is pressed. */}
+            {!atCapacity && <div ref={loadMoreTriggerRef} className="h-10" />}
 
             {isLoadingMore && (
               <div className="text-center py-4">
                 <p className="text-sm text-muted-foreground">Loading more...</p>
+              </div>
+            )}
+
+            {atCapacity && !isLoadingMore && (
+              <div className="flex flex-col items-center gap-2 py-8">
+                <p className="text-sm text-muted-foreground">
+                  Showing {currentVideos.length.toLocaleString()} of{" "}
+                  {totalVideos.toLocaleString()} videos.
+                </p>
+                <button
+                  type="button"
+                  onClick={onLoadMore}
+                  className="inline-flex h-9 items-center rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+                >
+                  Load more
+                </button>
+                <p className="max-w-md text-center text-xs text-muted-foreground">
+                  Loading every video at once is what made this page stop
+                  responding — search or pick a category above to narrow the
+                  list instead.
+                </p>
               </div>
             )}
           </>

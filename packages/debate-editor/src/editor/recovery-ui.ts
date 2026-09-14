@@ -20,6 +20,7 @@
 import type { JournalEntry } from './host/index.js';
 import { setIcon } from './icons';
 import { isAnyOverlayOpen } from './overlay-stack.js';
+import { chromeHost } from './chrome-host.js';
 
 export interface RecoverySidebarCallbacks {
   /** Called when the user clicks Save on a row. Should write the
@@ -69,7 +70,11 @@ class RecoverySidebar {
 
     this.root = document.createElement('aside');
     this.root.className = 'pmd-recovery-sidebar';
-    document.body.appendChild(this.root);
+    // Into the engine's own container, not `<body>` — it is permanent
+    // chrome pinned with the same --ribbon-height/--nav-width offsets as
+    // #app, so in an embed it has to measure them against the embed's
+    // column rather than the window. See chrome-host.ts.
+    chromeHost().appendChild(this.root);
     document.body.classList.add('pmd-recovery-active');
 
     document.addEventListener('keydown', this.handleKey);

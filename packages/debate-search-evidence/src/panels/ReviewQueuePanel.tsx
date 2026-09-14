@@ -50,6 +50,7 @@ import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import { Textarea } from "../ui/primitives/textarea"
 import {
   addReviewComment,
@@ -258,24 +259,16 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
   const workload = buildReviewerWorkload(reviews)
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Review Queue</h1>
-        <p className="text-sm text-muted-foreground">
-          Move a submitted card through peer review — comment, request changes, approve, and
-          publish — before it goes live in the shared library.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Review Queue"
+      description="Move a submitted card through peer review — comment, request changes, approve, and publish — before it goes live in the shared library."
+    >
       {workload.length > 0 && (
-        <div className="rounded-lg border border-border p-4 space-y-2">
-          <div>
-            <h2 className="text-sm font-medium text-foreground">Reviewer workload</h2>
-            <p className="text-xs text-muted-foreground">
-              Who's carrying the queue right now — busiest first — so new review requests can be
-              steered toward reviewers with room to take them.
-            </p>
-          </div>
+        <PanelSection
+          title="Reviewer workload"
+          description="Who's carrying the queue right now — busiest first — so new review requests can be steered toward reviewers with room to take them."
+          className="rounded-lg border border-border p-4"
+        >
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -306,7 +299,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
               </tbody>
             </table>
           </div>
-        </div>
+        </PanelSection>
       )}
 
       <div className="rounded-lg border border-border p-4 space-y-4">
@@ -358,9 +351,7 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
       </div>
 
       {reviews.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          No cards in review yet. Start one above to see it here.
-        </div>
+        <EmptyState title="No cards in review yet." message="Start one above to see it here." />
       ) : (
         <div className="space-y-3">
           {reviews.map((review) => {
@@ -529,6 +520,6 @@ export function ReviewQueuePanel({ signedInContributorId }: ReviewQueuePanelProp
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

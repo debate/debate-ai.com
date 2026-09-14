@@ -1,6 +1,12 @@
 /**
- * @fileoverview Fetches a YouTube video's transcript for the transcript
- * modal's synced captions panel.
+ * @fileoverview Serves a YouTube video's transcript for the transcript modal
+ * and the player's synced captions panel.
+ *
+ * Three layers sit in front of YouTube, because YouTube bot-checks server IPs
+ * at random and a blocked fetch has no fallback: the edge cache, then the
+ * `video_transcripts` table (every transcript ever fetched, kept because a
+ * video's captions don't change), then the fetcher itself — whose result is
+ * written back to the table.
  */
 
 import { NextResponse } from "next/server";
@@ -8,6 +14,7 @@ import {
   fetchYouTubeTranscript,
   TranscriptUnavailableError,
 } from "@/lib/youtube/transcript";
+import { readCachedTranscript, writeCachedTranscript } from "@/lib/youtube/transcript-cache";
 
 /** `videoId` values are 11-character YouTube ids — reject anything else outright. */
 const VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
@@ -38,8 +45,20 @@ export async function GET(request: Request) {
   const cached = await cache?.match(cacheKey).catch(() => undefined);
   if (cached) return cached;
 
+  const stored = await readCachedTranscript(videoId, lang);
+  if (stored) {
+    const response = NextResponse.json(
+      { videoId, snippets: stored },
+      { headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800" } },
+    );
+    await cache?.put(cacheKey, response.clone()).catch(() => undefined);
+    return response;
+  }
+
   try {
     const snippets = await fetchYouTubeTranscript(videoId, lang);
+    // Keep what YouTube gave us, so this video never has to be fetched again.
+    await writeCachedTranscript(videoId, lang, snippets);
     const response = NextResponse.json(
       { videoId, snippets },
       { headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800" } },

@@ -9,6 +9,7 @@
 
 import { Trophy } from "lucide-react"
 import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills"
+import { Pill } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { hasValue, getNumericValue } from "./leaderboardUtils"
 import type { Division } from "./leaderboardTypes"
 
@@ -156,13 +157,10 @@ export function LeaderboardDataRow({
           {entry.details && entry.details.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {entry.details.map((d, di) => (
-                <span
-                  key={di}
-                  className="inline-flex items-center gap-1 text-xs bg-muted text-muted-foreground rounded-full px-2 py-0.5"
-                >
+                <Pill key={di} className="gap-1 font-normal">
                   <Trophy className="h-2.5 w-2.5 text-yellow-500 shrink-0" />
                   {d.tournament} · {d.placementNormalized}
-                </span>
+                </Pill>
               ))}
             </div>
           )}

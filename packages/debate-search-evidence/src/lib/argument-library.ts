@@ -254,7 +254,7 @@ export function renameTagInList(tags: string[], oldTag: string, newTag: string):
 /**
  * Renames (or, when `newTag` is already used elsewhere, merges into) a tag
  * across every card that carries it — the "no tag rename/merge tool" gap
- * recorded in `docs/features/evidence-library.md`'s Known gaps. Cards not
+ * recorded in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`'s Known gaps. Cards not
  * carrying `oldTag` are returned as the exact same object (no new
  * reference), so an unaffected card never appears "changed" to a caller
  * doing identity comparison. Throws if either tag, once trimmed, is blank,
@@ -340,7 +340,7 @@ export function applyBulkTagEditToCards<T extends LibraryCard>(
  * matching casing encountered wins. A tag with no case-insensitive match in
  * `knownTags` is returned unchanged. Closes the remaining "typed tag isn't
  * normalized" half of the tag-identity Known gap recorded in
- * `docs/features/evidence-library.md`.
+ * `packages/debate-help-docs/content/docs/features/evidence-library.mdx`.
  */
 export function normalizeTagsToKnownCasing(tags: string[], knownTags: string[]): string[] {
   const byLowerCase = new Map<string, string>();
@@ -366,7 +366,7 @@ export interface TagCaseVariantGroup {
  * Finds tags that are used under more than one exact-string casing (e.g.
  * `warming` and `Warming`) so a caller can suggest merging them — the
  * "nothing merges two casings already in use" half of the tag-identity
- * Known gap recorded in `docs/features/evidence-library.md`. A tag used
+ * Known gap recorded in `packages/debate-help-docs/content/docs/features/evidence-library.mdx`. A tag used
  * under only one casing never appears in the result. Deterministic:
  * groups are sorted by their most-used casing, and each group's tags are
  * sorted by card count (descending) then alphabetically.

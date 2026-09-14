@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedStrategyRecommendations } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked strategy-recommendation-history sync — the "🧭
@@ -23,18 +24,21 @@ import { getUserId } from "@/lib/auth/session"
  *   follow-up fetch.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced strategy recommendations." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/strategy-recommendations",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced strategy recommendations." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedStrategyRecommendations.data })
-    .from(savedStrategyRecommendations)
-    .where(eq(savedStrategyRecommendations.userId, userId))
-    .orderBy(asc(savedStrategyRecommendations.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedStrategyRecommendations.data })
+      .from(savedStrategyRecommendations)
+      .where(eq(savedStrategyRecommendations.userId, userId))
+      .orderBy(asc(savedStrategyRecommendations.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)

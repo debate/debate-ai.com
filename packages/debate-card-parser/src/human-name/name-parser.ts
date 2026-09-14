@@ -72,20 +72,24 @@ export const extractHumanNameParts = (input: string): ParsedNameParts => {
 
   const parts = processedInput.split(/\s+/).filter(Boolean);
 
+  // Isolate prefix titled elements. Titles are pulled out *before* honorifics:
+  // the two lists overlap ("Dr", "Mr", "Ms", "Mrs", "Miss" appear in both), and
+  // the honorific pass below swallows everything from its match to the end of
+  // the name. Running it first on "Dr. John Q. Public Jr." would file the whole
+  // name away as an honorific and leave every other field empty.
+  const titleIndex = parts.findIndex((part) =>
+    PARSE_LISTS.title.has(part.toLowerCase().replace(/\.$/, "")),
+  );
+  if (titleIndex !== -1) {
+    result.title = parts.splice(titleIndex, 1)[0] ?? "";
+  }
+
   // Isolate and extract honorifics logically
   const honorificIndex = parts.findIndex((part) =>
     PARSE_LISTS.honorific.has(part.toLowerCase().replace(/\.$/, "")),
   );
   if (honorificIndex !== -1) {
     result.honorific = parts.splice(honorificIndex).join(", ");
-  }
-
-  // Isolate prefix titled elements
-  const titleIndex = parts.findIndex((part) =>
-    PARSE_LISTS.title.has(part.toLowerCase().replace(/\.$/, "")),
-  );
-  if (titleIndex !== -1) {
-    result.title = parts.splice(titleIndex, 1)[0] ?? "";
   }
 
   // Group traditional multi-word family prefixes efficiently

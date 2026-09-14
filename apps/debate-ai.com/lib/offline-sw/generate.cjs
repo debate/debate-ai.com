@@ -22,10 +22,22 @@ const EXCLUDE_EXACT = new Set([
   ".assetsignore",
   ".DS_Store",
 ]);
+// The help docs (`scripts/build-docs.mjs` stages them at `public/docs`, so the
+// build emits them under `dist/client/docs`) are a separate statically-exported
+// site — some 600 files and tens of megabytes. `onInstall` precaches every path
+// in this list one by one, so including them would have every first-time
+// visitor download the whole documentation site before the app was usable, to
+// cache pages almost none of them will open. They stay out of the precache and
+// out of the version digest: the worker's network-first document handling
+// serves them normally, and a docs-only change no longer invalidates the app's
+// cache.
+const isDocsAsset = (relPath) => relPath === "docs" || relPath.startsWith("docs/");
+
 const isExcluded = (relPath) => {
   if (relPath.endsWith(".map")) return true;
   if (relPath.split("/").includes(".vite")) return true;
   if (EXCLUDE_EXACT.has(relPath)) return true;
+  if (isDocsAsset(relPath)) return true;
   return false;
 };
 

@@ -86,8 +86,23 @@ export function useLeaderboardData(
         const payload = await grab(`leaderboard?${params.toString()}`, {
           cache: false,
         })
-        const rows = payload.data || []
-        setData(Array.isArray(rows) ? rows : [])
+        if (controller.signal.aborted) return
+
+        // grab reports a failed request on `.error` instead of rejecting, so
+        // an upstream outage never reached the catch below: the panel just
+        // rendered an empty table with no explanation. The route answers a
+        // failure with `{ error, details }`, which is not an array — treating
+        // "not an array" as empty hid it a second time.
+        const rows = payload.data
+        if (payload.error || !Array.isArray(rows)) {
+          setError(
+            (typeof payload.error === "string" && payload.error) ||
+              "Leaderboard data is temporarily unavailable",
+          )
+          setData([])
+          return
+        }
+        setData(rows)
       } catch (err) {
         if (controller.signal.aborted) return
         setError(

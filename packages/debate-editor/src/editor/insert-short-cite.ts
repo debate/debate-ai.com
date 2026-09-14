@@ -1,7 +1,7 @@
 /**
  * "Insert short cite" — Mod-Shift-k. The one Verbatim shortcut with no
- * direct CardMirror equivalent (see `docs/features/legacy-verbatim-
- * shortcuts.md`'s Known gaps): a pure "format `Smith 24` and insert it at
+ * direct CardMirror equivalent (see the `legacy-verbatim-shortcuts` feature
+ * doc's Known gaps): a pure "format `Smith 24` and insert it at
  * the cursor" command, distinct from the three tools that solve an
  * adjacent need — F8 (`applyCite`, styles already-typed text), Alt-F8
  * (`copyPreviousCite`, reuses the nearest earlier cite instead of
@@ -11,8 +11,7 @@
  * `formatShortCiteTag` is reused directly from `debate-card-parser` — the
  * same pure formatter `reason-editor`'s now-dead equivalent
  * (`engine/verbatim-shortcuts.ts`) used before that package stopped being
- * depended on by the app (see `docs/features/legacy-verbatim-
- * shortcuts.md`).
+ * depended on by the app (see the `legacy-verbatim-shortcuts` feature doc).
  */
 import type { EditorState, Transaction } from 'prosemirror-state';
 import type { EditorView } from 'prosemirror-view';

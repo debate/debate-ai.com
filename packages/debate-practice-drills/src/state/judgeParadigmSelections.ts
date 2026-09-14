@@ -14,6 +14,11 @@
 
 import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type JudgeParadigmSelection = {
   roundId: string;
   paradigm: JudgeParadigm;
@@ -58,11 +63,13 @@ export function saveJudgeParadigmSelection(selection: JudgeParadigmSelection): v
     selections[index] = selection;
   }
   writeAll(selections);
+  mirrorToolRecordSave("judgeParadigmSelections", selection);
 }
 
 /** Deletes a round's persisted judge-paradigm selection; a no-op if it isn't stored. */
 export function deleteJudgeParadigmSelection(roundId: string): void {
   writeAll(readAll().filter((selection) => selection.roundId !== roundId));
+  mirrorToolRecordDelete("judgeParadigmSelections", roundId);
 }
 
 /**
@@ -79,7 +86,7 @@ export function buildJudgeParadigmSelectionsPanelView(): JudgeParadigmSelection[
 /**
  * Builds the `debate-round` AI Judge Decision page's deep link for a round
  * that already has a saved paradigm here — closes the
- * `docs/features/judge-paradigm-selections.md` Known gap that this panel
+ * `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx` Known gap that this panel
  * "doesn't itself invoke a judge decision": `JudgeParadigmPickerPanel.tsx`
  * renders this as a link next to each saved selection, and
  * `JudgeDecisionPanel.tsx` (`debate-round`) reads the same `roundId` query

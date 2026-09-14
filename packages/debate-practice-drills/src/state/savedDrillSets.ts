@@ -2,7 +2,7 @@
  * @fileoverview Account-linked drill-set sync — the "sharing the 'Practice
  * tier' status across devices for a signed-in user" follow-up named under
  * the "📚 AI Drill Generator" bullet in TODO.md's Research Crowdsourcing
- * Organizer Features, and `docs/features/drill-sets.md`'s Known gaps. Pure
+ * Organizer Features, and `packages/debate-help-docs/content/docs/features/drill-sets.mdx`'s Known gaps. Pure
  * validation helpers shared by the `/api/drill-sets` D1-backed routes
  * (`apps/debate-ai.com`) and `hooks/useDrillSets.ts`, mirroring
  * `state/savedWordCountRounds.ts`'s split — kept framework/fetch-free so

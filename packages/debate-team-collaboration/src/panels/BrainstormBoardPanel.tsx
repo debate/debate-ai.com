@@ -25,7 +25,7 @@
  *
  * A topic switcher (mirroring `TopicCoverageDashboardPanel`'s) closes the
  * "boards aren't seeded from the coverage-gap prompts" gap noted in
- * `docs/features/brainstorm-board.md` — picking a tracked topic swaps the
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx` — picking a tracked topic swaps the
  * board list to `state/brainstormIdeas.ts`'s
  * `buildBrainstormBoardsPanelViewForTopic`, which shows one board per
  * under-covered tracked argument/category pair (with its seeding prompt
@@ -101,7 +101,7 @@
  * itself gained a chevron-up icon. Both are presentation-only — no new
  * ranking, scoring, or persistence logic — so, matching this panel's
  * existing convention (see "Cross-tab live update" in
- * `docs/features/brainstorm-board.md`), the animation's own timer/state
+ * `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`), the animation's own timer/state
  * wiring is intentionally untested; only the new pure `buildBrainstormIdeaRankBadge`
  * helper is Vitest-covered.
  *
@@ -133,6 +133,7 @@ import { Label } from "debate-research-evidence/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "debate-research-evidence/src/ui/primitives/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "debate-research-evidence/src/ui/primitives/select"
 import { Textarea } from "debate-research-evidence/src/ui/primitives/textarea"
+import { EmptyState, PanelSection, PanelShell } from "debate-research-evidence/src/ui/panels/panel-shell"
 import {
   buildBrainstormBoardsPanelView,
   buildBrainstormBoardsPanelViewForTopic,
@@ -428,21 +429,15 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Team Brainstorm Assist</h1>
-        <p className="text-sm text-muted-foreground">
-          Submit and upvote squad ideas for an argument block, grouped into boards by category.
-        </p>
-      </div>
-
+    <PanelShell
+      title="Team Brainstorm Assist"
+      description="Submit and upvote squad ideas for an argument block, grouped into boards by category."
+    >
       {timer && (
-        <div className="rounded-lg border border-border p-4 space-y-2">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h2 className="text-sm font-semibold text-foreground">Session timer</h2>
-              <p className="text-xs text-muted-foreground">Optional — time-box the sprint before reviewing boards.</p>
-            </div>
+        <PanelSection
+          title="Session timer"
+          description="Optional — time-box the sprint before reviewing boards."
+          actions={
             <span
               className={`text-2xl font-semibold tabular-nums ${
                 isBrainstormSessionTimerExpired(timer, timerNow) ? "text-destructive" : "text-foreground"
@@ -450,7 +445,8 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
             >
               {formatBrainstormSessionTimerRemaining(getBrainstormSessionTimerRemainingSeconds(timer, timerNow))}
             </span>
-          </div>
+          }
+        >
           {isBrainstormSessionTimerExpired(timer, timerNow) && (
             <p className="text-xs font-medium text-destructive">Time's up!</p>
           )}
@@ -481,7 +477,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
               </Button>
             )}
           </div>
-        </div>
+        </PanelSection>
       )}
 
       <div className="space-y-2">
@@ -577,11 +573,14 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
       </div>
 
       {boards.length === 0 ? (
-        <div className="p-6 text-center text-sm text-muted-foreground">
-          {topic.trim() !== ""
-            ? `No coverage-gap boards for "${topic.trim()}" — its checklist has no under-covered arguments.`
-            : "No brainstorm ideas yet. Submit one above to start a board."}
-        </div>
+        topic.trim() !== "" ? (
+          <EmptyState
+            title={`No coverage-gap boards for "${topic.trim()}".`}
+            message="Its checklist has no under-covered arguments."
+          />
+        ) : (
+          <EmptyState title="No brainstorm ideas yet." message="Submit one above to start a board." />
+        )
       ) : (
         <div className="space-y-4">
           {boards.map((board) => (
@@ -707,6 +706,6 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
           ))}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

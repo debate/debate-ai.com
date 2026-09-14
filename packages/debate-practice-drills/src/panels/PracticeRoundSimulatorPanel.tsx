@@ -48,7 +48,7 @@
  * coaching session for current round" action uses) and, given a side, calls
  * the new `state/practiceRounds.ts`'s `buildAndSavePracticeRoundFeedback` to
  * derive and save that round's `PracticeRoundFeedback` — closing
- * `docs/features/practice-round-simulator.md`'s "feedback generation isn't
+ * `packages/debate-help-docs/content/docs/internals/practice-round-simulator.mdx`'s "feedback generation isn't
  * wired to a live round flow" Known gap. The button is only enabled while
  * the workspace's selected flow's id matches this card's `roundId`, since
  * feedback is judged under that round's own already-saved judge paradigm.
@@ -72,7 +72,7 @@
  * Practice Opponent" idea's "unifying the Practice Round Simulator's own
  * separate persona setup with [the custom-persona] library" Next item
  * (TODO.md's Research Crowdsourcing Organizer Features list;
- * `docs/features/practice-opponent.md`'s Known gaps): this panel's own
+ * `packages/debate-help-docs/content/docs/features/practice-opponent.mdx`'s Known gaps): this panel's own
  * opponent-persona picker could previously only choose a built-in persona,
  * with no custom-persona authoring and no way to reuse an entry already
  * saved to (or shared through) `OpponentPersonaPickerPanel`'s "My persona
@@ -92,6 +92,13 @@
  * showing that step's speaker/name and delivered text (or "Not yet
  * delivered." for a slot beyond how far the round has progressed).
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `state/live-update.ts`) refreshes the rendered round list whenever another
+ * tab saves, clears, or advances a round's `practiceRounds` or
+ * `aiVersusRounds` record, closing the "Every other localStorage-backed
+ * panel in this repo still has no cross-tab live-update mechanism" Known gap
+ * noted in `packages/debate-help-docs/content/docs/features/shared-flow-sync.mdx` for this panel.
+ *
  * @module panels/PracticeRoundSimulatorPanel
  */
 
@@ -105,7 +112,7 @@ import { Input } from "debate-round/src/ui/primitives/input"
 import { Label } from "debate-round/src/ui/primitives/label"
 import { RadioGroup, RadioGroupItem } from "../ui/primitives/radio-group"
 import { Textarea } from "debate-round/src/ui/primitives/textarea"
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "debate-round/src/ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -160,6 +167,7 @@ import {
   type PracticeRoundRecord,
 } from "debate-round/src/state/practiceRounds"
 import { useFlowStore } from "debate-round/src/state/store"
+import { isPracticeRoundSimulatorPanelLiveUpdateStorageEvent } from "../state/live-update"
 
 const JUDGE_DECISION_SIDE_NAMES = { primary: "Primary", secondary: "Secondary" }
 
@@ -239,6 +247,20 @@ export function PracticeRoundSimulatorPanel() {
   }, [])
 
   const refresh = () => setRounds(buildPracticeRoundsPanelView())
+
+  /**
+   * Live-update this panel when another browser tab saves, clears, or
+   * advances a practice round — a `storage` event never fires in the tab
+   * that made the write, only in other same-origin tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isPracticeRoundSimulatorPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const style = debateStyles[form.styleKey]
   const hasSecondarySide = Boolean(style.secondary)
@@ -429,14 +451,10 @@ export function PracticeRoundSimulatorPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div>
-        <h1 className="mb-1 text-xl font-semibold text-foreground">Practice Round Simulator</h1>
-        <p className="text-sm text-muted-foreground">
-          Recreate a tournament round — pick a format, side, AI judge paradigm, and AI opponent
-          style, then track speeches and feedback for it.
-        </p>
-      </div>
+    <PanelShell
+      title="Practice Round Simulator"
+      description="Recreate a tournament round — pick a format, side, AI judge paradigm, and AI opponent style, then track speeches and feedback for it."
+    >
 
       <div className="rounded-lg border border-border p-4 space-y-4">
         <div className="flex flex-wrap gap-4">
@@ -698,13 +716,15 @@ export function PracticeRoundSimulatorPanel() {
       </div>
 
       {comparison.attempts.length > 0 && (
-        <div className="rounded-lg border border-border p-4 space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-foreground">Compare your past attempts</h2>
+        <PanelSection
+          title="Compare your past attempts"
+          className="rounded-lg border border-border p-4 space-y-3"
+          actions={
             <Button size="sm" variant="outline" onClick={handleDownloadAttemptsComparison}>
               Download comparison
             </Button>
-          </div>
+          }
+        >
           <p className="text-sm text-muted-foreground">
             {comparison.attempts.length} attempt{comparison.attempts.length === 1 ? "" : "s"} logged —{" "}
             {comparison.wins} won, {comparison.losses} lost, {comparison.pending} pending
@@ -735,7 +755,7 @@ export function PracticeRoundSimulatorPanel() {
               </div>
             ))}
           </div>
-        </div>
+        </PanelSection>
       )}
 
       {rounds.length === 0 ? (
@@ -995,6 +1015,6 @@ export function PracticeRoundSimulatorPanel() {
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   )
 }

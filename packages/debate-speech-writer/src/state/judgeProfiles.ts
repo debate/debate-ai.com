@@ -15,6 +15,11 @@
 
 import type { JudgeProfile } from "../judge/judge-profile";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 const STORAGE_KEY = "judgeProfiles";
 
 function readAll(): JudgeProfile[] {
@@ -54,11 +59,13 @@ export function saveJudgeProfile(profile: JudgeProfile): void {
     profiles[index] = profile;
   }
   writeAll(profiles);
+  mirrorToolRecordSave("judgeProfiles", profile);
 }
 
 /** Deletes a persisted judge profile by `judgeId`; a no-op if it isn't stored. */
 export function deleteJudgeProfile(judgeId: string): void {
   writeAll(readAll().filter((profile) => profile.judgeId !== judgeId));
+  mirrorToolRecordDelete("judgeProfiles", judgeId);
 }
 
 /**

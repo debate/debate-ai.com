@@ -3,7 +3,7 @@
  * @module components/debate/videos/hooks/useInfiniteScroll
  */
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Observes a sentinel element and asks the feed for its next page when the
@@ -23,15 +23,21 @@ export function useInfiniteScroll(
   isLoading: boolean,
   loadMore: () => void,
 ) {
+  // The feed hands back a fresh `loadMore` whenever its paging state changes.
+  // Held in a ref so that does not tear down and rebuild the observer — which
+  // re-fires the intersection callback for a sentinel that never moved, and
+  // so kept requesting pages in a loop while the user sat still.
+  const loadMoreRef = useRef(loadMore);
+  loadMoreRef.current = loadMore;
+
   useEffect(() => {
-    if (!loadMoreTriggerRef) return;
-    const trigger = loadMoreTriggerRef.current;
+    const trigger = loadMoreTriggerRef?.current;
     if (!trigger || !hasMore || isLoading) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (entry.isIntersecting) loadMore();
+        if (entry.isIntersecting) loadMoreRef.current();
       },
       {
         root: null,
@@ -42,6 +48,6 @@ export function useInfiniteScroll(
 
     observer.observe(trigger);
 
-    return () => observer.unobserve(trigger);
-  }, [loadMoreTriggerRef, hasMore, isLoading, loadMore]);
+    return () => observer.disconnect();
+  }, [loadMoreTriggerRef, hasMore, isLoading]);
 }

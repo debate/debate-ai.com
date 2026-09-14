@@ -60,6 +60,17 @@
  * mirrors `CoachingSessionsPanel`'s "Compare two sessions" section, plus a
  * "Download comparison" action once a comparison is built.
  *
+ * Also live-updates across browser tabs: a `storage`-event listener (see
+ * `flow/live-update.ts#isOpponentTeamProfilesPanelLiveUpdateStorageEvent`)
+ * refreshes the roster and logged-round list whenever another tab logs,
+ * edits, undoes/redoes, deletes, or bulk-imports a scouted round — closing
+ * the "every other localStorage-backed panel in this repo still has no
+ * cross-tab live-update mechanism" Known gap noted in `shared-flow-sync.md`,
+ * for this panel. The in-progress "Log a scouted round" form draft, bulk-
+ * import CSV textarea, and any built "Compare vs. opponent" comparison are
+ * left untouched, matching every other closed panel's "refresh the derived
+ * view, not the draft" convention.
+ *
  * @module panels/OpponentTeamProfilesPanel
  */
 
@@ -70,7 +81,7 @@ import { Badge } from "../ui/primitives/badge"
 import { Button } from "../ui/primitives/button"
 import { Input } from "../ui/primitives/input"
 import { Label } from "../ui/primitives/label"
-import { EmptyState } from "../ui/panels/panel-shell"
+import { EmptyState, PanelSection, PanelShell } from "../ui/panels/panel-shell"
 import {
   Select,
   SelectContent,
@@ -80,6 +91,7 @@ import {
 } from "../ui/primitives/select"
 import { Switch } from "../ui/primitives/switch"
 import { Textarea } from "../ui/primitives/textarea"
+import { isOpponentTeamProfilesPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import {
   Table,
   TableBody,
@@ -205,6 +217,21 @@ export function OpponentTeamProfilesPanel() {
     setRoster(buildOpponentTeamProfilesRoster())
     setRecords(listOpponentRoundRecords())
   }
+
+  /**
+   * Live-update this panel when another browser tab logs, edits, undoes/
+   * redoes, deletes, or bulk-imports a scouted round — a `storage` event
+   * never fires in the tab that made the write, only in other same-origin
+   * tabs.
+   */
+  useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (!isOpponentTeamProfilesPanelLiveUpdateStorageEvent(event)) return
+      refresh()
+    }
+    window.addEventListener("storage", handleStorage)
+    return () => window.removeEventListener("storage", handleStorage)
+  }, [])
 
   const handleSubmit = () => {
     const teamId = draft.teamId.trim()
@@ -358,21 +385,15 @@ export function OpponentTeamProfilesPanel() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Opponent Team Profiles</h1>
-          <p className="text-sm text-muted-foreground">
-            Overall record, side-record tendencies, and common arguments/cases for every opposing
-            team with a saved scouting profile. Log a scouted round below to create or update one —
-            every column is derived from the rounds logged for that team.
-          </p>
-        </div>
+    <PanelShell
+      title="Opponent Team Profiles"
+      description="Overall record, side-record tendencies, and common arguments/cases for every opposing team with a saved scouting profile. Log a scouted round below to create or update one — every column is derived from the rounds logged for that team."
+      actions={
         <Button size="sm" variant="outline" onClick={handleDownloadReport}>
           Download report
         </Button>
-      </div>
-
+      }
+    >
       <div className="rounded-lg border border-border p-4 space-y-3">
         <h2 className="text-sm font-medium text-foreground">
           {editingId ? "Edit logged round" : "Log a scouted round"}
@@ -476,18 +497,15 @@ export function OpponentTeamProfilesPanel() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-border p-4 space-y-3">
-        <div>
-          <h2 className="text-sm font-medium text-foreground">Bulk import (CSV)</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste a CSV of scouted rounds — a header row naming the columns (any order), then one
-            row per round. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
-            <code>date</code>, <code>division</code>, <code>side</code> (aff/neg), and{" "}
-            <code>won</code> (true/false). Optional: <code>argumentTags</code>{" "}
-            (semicolon-separated), <code>caseName</code>, <code>opponentTeamId</code>. A row that
-            fails to parse is skipped and reported rather than blocking the rest of the import.
-          </p>
-        </div>
+      <PanelSection title="Bulk import (CSV)" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste a CSV of scouted rounds — a header row naming the columns (any order), then one
+          row per round. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
+          <code>date</code>, <code>division</code>, <code>side</code> (aff/neg), and{" "}
+          <code>won</code> (true/false). Optional: <code>argumentTags</code>{" "}
+          (semicolon-separated), <code>caseName</code>, <code>opponentTeamId</code>. A row that
+          fails to parse is skipped and reported rather than blocking the rest of the import.
+        </p>
         <Textarea
           value={bulkCsv}
           onChange={(e) => setBulkCsv(e.target.value)}
@@ -498,7 +516,7 @@ export function OpponentTeamProfilesPanel() {
         <Button variant="outline" onClick={handleBulkImport}>
           Import rounds
         </Button>
-      </div>
+      </PanelSection>
 
       {roster.length === 0 ? (
         <EmptyState
@@ -662,13 +680,10 @@ export function OpponentTeamProfilesPanel() {
       )}
 
       {records.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-sm font-medium text-foreground">Logged rounds</h2>
-          <p className="text-sm text-muted-foreground">
-            Editing a round rewrites it in place, keeping the version it held before the edit so
-            it can be undone; deleting one re-derives that team's profile from whatever rounds
-            remain, and removes the profile entirely once its last round is gone.
-          </p>
+        <PanelSection
+          title="Logged rounds"
+          description="Editing a round rewrites it in place, keeping the version it held before the edit so it can be undone; deleting one re-derives that team's profile from whatever rounds remain, and removes the profile entirely once its last round is gone."
+        >
           <div className="max-w-xs space-y-1.5">
             <Label htmlFor="opponent-round-filter">Filter by team ID</Label>
             <Input
@@ -769,8 +784,8 @@ export function OpponentTeamProfilesPanel() {
               </TableBody>
             </Table>
           )}
-        </div>
+        </PanelSection>
       )}
-    </div>
+    </PanelShell>
   )
 }

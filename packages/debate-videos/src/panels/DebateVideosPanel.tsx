@@ -19,6 +19,7 @@ import { setStateInURL } from "../ui/lib/utils"
 import { useVideoState } from "../hooks/useVideoState"
 import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useVideoFeed"
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
+import { useYouTubeStats } from "../hooks/useYouTubeStats"
 
 // Components
 import { useCategoryDock } from "../context/category-dock-context"
@@ -77,13 +78,7 @@ export function DebateVideosPage() {
 
   const { meta } = useVideoMeta()
 
-  const [youtubeStats, setYoutubeStats] = useState<any>(null)
-  useEffect(() => {
-    fetch("/api/youtube-stats")
-      .then((res) => res.json())
-      .then((data) => setYoutubeStats(data))
-      .catch((err) => console.error("Failed to load YouTube stats:", err))
-  }, [])
+  const youtubeStats = useYouTubeStats()
 
   // ============================================================================
   // Feed

@@ -1,7 +1,7 @@
 /**
  * @fileoverview Version history for a `CoachMaterial` that gets
  * re-uploaded/edited in place — the "Known gap" named in
- * `docs/features/coach-materials.md`: saving over an existing id silently
+ * `packages/debate-help-docs/content/docs/internals/coach-materials.mdx`: saving over an existing id silently
  * overwrote it with no way to see or restore a prior version. Stores a
  * snapshot of a material's fields every time `state/coachMaterials.ts`'s
  * `saveCoachMaterial` overwrites an existing record, mirroring this

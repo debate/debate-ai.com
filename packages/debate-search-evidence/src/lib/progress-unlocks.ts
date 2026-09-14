@@ -52,7 +52,7 @@ export interface UnlockTierRequirement {
  * (`minContributionCount`) and quality (`minTotalHelpfulnessScore`)
  * thresholds, **or** its `minCompletedTaskCount` alone — completing routed
  * research tasks (`research-task-routing.ts` /
- * `docs/features/research-progress-tracking.md`) is real research
+ * `packages/debate-help-docs/content/docs/features/research-progress-tracking.mdx`) is real research
  * contribution in its own right, so a contributor who takes on and finishes
  * enough assigned tasks can unlock a tier even without matching scored-
  * contribution volume. Ordered least to most demanding.

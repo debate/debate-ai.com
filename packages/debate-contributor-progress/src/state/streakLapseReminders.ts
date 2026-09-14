@@ -65,6 +65,21 @@ export function setStreakLapseReminderEnabled(contributorId: string, enabled: bo
   );
 }
 
+/**
+ * Merges a contributor's remotely-synced reminder opt-in into the local
+ * store: enables it locally when the account says it's on and this device
+ * hasn't caught up yet, mirroring `newsStream.ts#mergeRemoteViewerState`'s
+ * "union, never remove" convention. Never turns a locally-enabled reminder
+ * off — a `false` remote value means "not yet synced from elsewhere," not
+ * "explicitly disabled," so there is nothing to reconcile in that
+ * direction. Returns whether anything actually changed.
+ */
+export function mergeRemoteStreakLapseReminderEnabled(contributorId: string, remoteEnabled: boolean): boolean {
+  if (!remoteEnabled || isStreakLapseReminderEnabled(contributorId)) return false;
+  setStreakLapseReminderEnabled(contributorId, true);
+  return true;
+}
+
 /** A contributor's streak-lapse reminder standing: whether they've opted in, and their current risk (if any). */
 export interface StreakLapseReminderInfo {
   enabled: boolean;

@@ -9,6 +9,16 @@
  * this drops into) so those call sites don't need their own props
  * reshaped — only the shim they import through needs to point here.
  *
+ * Command chrome: a Google-Docs-style dropdown `MenuBar` (File / Edit /
+ * Insert / Workspace / …, lazily projected from the same `RIBBON_TABS`
+ * taxonomy the ribbon itself uses — see `menu-bar-categories.ts`) stacked
+ * above the engine's own tabbed ribbon (`editor/ribbon-tabs.ts`). The two
+ * aren't duplicate surfaces for the same job: the ribbon is the always-
+ * visible, icon-driven ribbon strip; the menu bar is the click-to-browse,
+ * text-labeled index over the same commands (plus `WORKSPACE_LINKS`
+ * navigation), the way Docs/Sheets keep a menu bar above their own
+ * toolbar. Both gate on `showToolbar` together.
+ *
  * CardMirror's engine is a page-level singleton (see singleton.ts) — it
  * cannot run two live instances at once. `live` (default true) controls
  * whether THIS instance claims the singleton and renders the real editor,
@@ -18,8 +28,8 @@
  */
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { MenuBar } from "./MenuBar.js";
 import { ReadOnlyPreview } from "./ReadOnlyPreview.js";
+import { MenuBar } from "./MenuBar.js";
 import * as singleton from "./singleton.js";
 import "../editor/style.css";
 import "../editor/icons.css";
@@ -44,6 +54,12 @@ export interface ReasonEditorProps {
   onTitleChange?: (title: string) => void;
   onShareClick?: () => void;
   editable?: boolean;
+  /** Whether the shell renders its own command chrome — the `MenuBar`
+   *  dropdown strip plus the engine's ribbon, paged into Word-style tabs
+   *  (default true). `false` hides the `MenuBar` and un-pages the ribbon:
+   *  the tab strip disappears and every panel shows at once, on one
+   *  horizontally scrolling strip — what hosts that supply their own
+   *  command chrome around the embed want (see `editor/ribbon-tabs.ts`). */
   showToolbar?: boolean;
   showCardTools?: boolean;
   showAiTools?: boolean;
@@ -105,6 +121,10 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
         });
       return () => {
         cancelled = true;
+        // `release` flushes whatever edit is still inside the change
+        // debounce, under THIS key — otherwise switching documents (or
+        // closing the pane) inside that window either drops the last edits
+        // or files them under the document that comes next.
         singleton.release(key);
       };
       // Re-claim when the document identity changes; `content` is applied
@@ -141,6 +161,23 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
       };
     }, [defaultNavPaneHidden, live]);
 
+    // The ribbon is engine-owned, page-singleton DOM, so paging it is a
+    // singleton-level call rather than a rendered element — but only one
+    // CardMirrorEditor is ever live at a time, so it still tracks THIS
+    // instance's prop. Restored on unmount so the next host starts from the
+    // default (paged) ribbon rather than inheriting this one's choice.
+    useEffect(() => {
+      if (!live || !claimed || showToolbar) return;
+      let alive = true;
+      void import("../editor/ribbon-tabs-ui.js").then((m) => {
+        if (alive) m.setRibbonTabsEnabled(false);
+      });
+      return () => {
+        alive = false;
+        void import("../editor/ribbon-tabs-ui.js").then((m) => m.setRibbonTabsEnabled(true));
+      };
+    }, [live, claimed, showToolbar]);
+
     // Same-identity external content updates (e.g. a realtime sync
     // overwriting `content` while this key is still the live doc).
     useEffect(() => {
@@ -161,7 +198,11 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           (singleton.isLiveKey(key) ? singleton.getEngineModule()?.getActiveView() : null)?.state.doc.toJSON() ??
           null,
         setHTML: (html: string) => {
-          void singleton.claim({ key, onChange: (h) => onChangeRef.current?.(h) }, html);
+          void singleton.claim(
+            { key, onChange: (h) => onChangeRef.current?.(h) },
+            html,
+            { report: true },
+          );
         },
         focus: () => {
           singleton.getEngineModule()?.getActiveView()?.focus();
@@ -170,7 +211,11 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           const engineApi = await import("../index.js");
           const doc = await engineApi.fromDocx(bytes);
           const bridge = await import("./html-bridge.js");
-          await singleton.claim({ key, onChange: (h) => onChangeRef.current?.(h) }, bridge.docToHtml(doc));
+          await singleton.claim(
+            { key, onChange: (h) => onChangeRef.current?.(h) },
+            bridge.docToHtml(doc),
+            { report: true },
+          );
         },
         exportDocx: async () => {
           const view = singleton.isLiveKey(key) ? singleton.getEngineModule()?.getActiveView() : null;
@@ -182,7 +227,11 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
           const engineApi = await import("../index.js");
           const { doc } = engineApi.parseNative(bytes);
           const bridge = await import("./html-bridge.js");
-          await singleton.claim({ key, onChange: (h) => onChangeRef.current?.(h) }, bridge.docToHtml(doc));
+          await singleton.claim(
+            { key, onChange: (h) => onChangeRef.current?.(h) },
+            bridge.docToHtml(doc),
+            { report: true },
+          );
         },
         exportCmir: async () => {
           const view = singleton.isLiveKey(key) ? singleton.getEngineModule()?.getActiveView() : null;
@@ -203,12 +252,14 @@ export const CardMirrorEditor = forwardRef<LexicalEditorHandle, ReasonEditorProp
     return (
       <div className={"dec-cardmirror-embed flex h-full w-full flex-col overflow-hidden" + (className ? ` ${className}` : "")}>
         {showToolbar && <MenuBar />}
-        <div ref={hostRef} className="dec-cardmirror-viewport relative min-h-0 flex-1 overflow-hidden" />
-        {!claimed && (
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
-            Loading editor…
-          </div>
-        )}
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          <div ref={hostRef} className="dec-cardmirror-viewport h-full w-full" />
+          {!claimed && (
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">
+              Loading editor…
+            </div>
+          )}
+        </div>
       </div>
     );
   },

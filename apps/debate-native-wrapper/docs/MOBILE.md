@@ -61,9 +61,23 @@ clobbering them.
 
 ## CI
 
-The Android job in `.github/workflows/native-wrapper-build.yml` builds a signed `.aab` when
-release-signing secrets are configured, and is skipped otherwise (see that workflow's comments).
-There is currently no iOS CI job — GitHub's hosted `macos-*` runners can build one (see
-`docs/APP_STORES.md` for the Xcode/signing steps involved), but wiring up certificate and
-provisioning-profile secrets is a decision for whoever holds the Apple Developer account, not
-something to default to for every fork of this package.
+`.github/workflows/native-wrapper-release.yml` has a job for each mobile platform, and both are
+"best-effort": they do as much as an unenrolled fork can, and produce a store-ready artifact only
+once signing secrets exist.
+
+| | Without signing secrets | With signing secrets |
+| --- | --- | --- |
+| **`build-android`** | builds a debug-signed `.aab`, uploaded as a workflow artifact for inspection | builds a release-signed `.aab`, also attached to the GitHub Release |
+| **`build-ios`** | generates `gen/apple` and compiles the Rust core for `aarch64-apple-ios` | additionally archives and exports a signed `.ipa`, attached to the GitHub Release |
+
+The iOS job splits in two because — unlike Android — there is no useful *unsigned* iOS build:
+Xcode refuses to archive without a development team, so a fork with no Apple Developer account
+would otherwise get nothing from the job at all. Compiling the Rust core needs no account and is
+the part a source change can actually break (a desktop-only dependency slipping past the `cfg`
+gates in `Cargo.toml`, say); everything past it is packaging and signing.
+
+Secrets the `.ipa` tier reads, all of which come from the Apple Developer account (see
+`docs/APP_STORES.md`): `APPLE_CERTIFICATE` (base64 of a distribution `.p12`),
+`APPLE_CERTIFICATE_PASSWORD`, `IOS_PROVISIONING_PROFILE_BASE64`, and `APPLE_TEAM_ID`. The job
+produces the `.ipa` but does **not** upload it to App Store Connect — submission still needs the
+Guideline 4.2 "minimum functionality" question in `docs/APP_STORES.md` answered first.

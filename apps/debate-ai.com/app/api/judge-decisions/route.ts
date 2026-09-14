@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedJudgeDecisions } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
  * Account-linked judge-decision-history sync — TODO.md idea #5 ("AI Judge
@@ -21,18 +22,21 @@ import { getUserId } from "@/lib/auth/session"
  *   both use this one call directly without a per-decision follow-up fetch.
  */
 
-export async function GET(req: NextRequest) {
-  const userId = await getUserId()
-  if (!userId) {
-    return NextResponse.json({ error: "Sign in to view your synced judge decisions." }, { status: 401 })
-  }
+export const GET = withRouteErrors(
+  "GET /api/judge-decisions",
+  async (req: NextRequest) => {
+    const userId = await getUserId()
+    if (!userId) {
+      return NextResponse.json({ error: "Sign in to view your synced judge decisions." }, { status: 401 })
+    }
 
-  const db = await getDBFromContext()
-  const rows = await db
-    .select({ data: savedJudgeDecisions.data })
-    .from(savedJudgeDecisions)
-    .where(eq(savedJudgeDecisions.userId, userId))
-    .orderBy(asc(savedJudgeDecisions.createdAt))
+    const db = await getDBFromContext()
+    const rows = await db
+      .select({ data: savedJudgeDecisions.data })
+      .from(savedJudgeDecisions)
+      .where(eq(savedJudgeDecisions.userId, userId))
+      .orderBy(asc(savedJudgeDecisions.createdAt))
 
-  return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
-}
+    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+  },
+)

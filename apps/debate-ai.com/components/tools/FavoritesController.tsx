@@ -20,7 +20,7 @@
  * `useFavoriteTools().pruneUnknown`, so a stale chip here just silently
  * never matched any pre-rendered chip and stayed invisible until a
  * `/settings` visit happened to prune the underlying list (see
- * `docs/features/user-settings.md`'s Known gaps).
+ * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s Known gaps).
  *
  * @module components/tools/FavoritesController
  */

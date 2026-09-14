@@ -137,7 +137,7 @@ export function useFlowPersistence(flows: Flow[], setFlows: (flows: Flow[]) => v
  * "`ArgumentTreePanel.tsx`'s 'Generate outline for current round' action is
  * a manual trigger... the live round-flowing page still doesn't call
  * `buildAndSaveArgumentTree` automatically as a round is flowed" Known gap
- * in `docs/features/argument-tree-outline.md` — previously the tree only
+ * in `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx` — previously the tree only
  * updated via that panel's manual button.
  *
  * @param flows - Current flows array

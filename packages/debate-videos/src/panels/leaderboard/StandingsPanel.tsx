@@ -27,12 +27,19 @@
  * Below that, the ranked standings table itself, each row expandable to see
  * (and delete) its individual tournament results.
  *
+ * All three sections' writes go through `useStandingsAccountSync`
+ * (`../../hooks/useStandingsAccountSync.ts`), closing
+ * `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s "Standings data... stored in
+ * localStorage only" Known gap — local-first (fully usable signed out),
+ * best-effort synced to the account when signed in.
+ *
  * @module panels/leaderboard/StandingsPanel
  */
 
 "use client"
 
 import { useMemo, useState } from "react"
+import { EmptyState, PanelSection } from "debate-research-evidence/src/ui/panels/panel-shell"
 import { Badge } from "../../ui/primitives/badge"
 import { Button } from "../../ui/primitives/button"
 import { Input } from "../../ui/primitives/input"
@@ -54,21 +61,12 @@ import {
 } from "../../ui/primitives/table"
 import {
   buildStandingsFromStore,
-  bulkImportTournamentResults,
-  deleteTournamentResult,
-  saveTournamentResult,
   type TournamentResultRecord,
 } from "debate-data-sync/src/state/tournamentResults"
-import {
-  getEffectiveQualificationPointsTable,
-  resetPersistedQualificationPointsTable,
-  savePersistedQualificationPointsTable,
-} from "debate-data-sync/src/state/qualificationPointsTable"
+import { getEffectiveQualificationPointsTable } from "debate-data-sync/src/state/qualificationPointsTable"
 import {
   getEffectiveQualificationCutoff,
   isQualificationCutoffConfigured,
-  resetPersistedQualificationCutoff,
-  savePersistedQualificationCutoff,
   toQualificationOptions,
   type QualificationCutoffSettings,
 } from "debate-data-sync/src/state/qualificationCutoff"
@@ -79,6 +77,7 @@ import {
   type QualificationPointsTable,
   type RankedTeamStanding,
 } from "debate-data-sync/src/rankings/ndca-standings"
+import { useStandingsAccountSync } from "../../hooks/useStandingsAccountSync"
 
 const FINISH_OPTIONS: { value: OutroundFinish; label: string }[] = [
   { value: "champion", label: "Champion" },
@@ -152,6 +151,21 @@ export function StandingsPanel() {
 
   const refresh = () => setStandings(loadStandings())
 
+  const {
+    synced,
+    saveTournamentResult,
+    deleteTournamentResult,
+    bulkImportTournamentResults,
+    saveQualificationPointsTable,
+    resetQualificationPointsTable,
+    saveQualificationCutoff,
+    resetQualificationCutoff,
+  } = useStandingsAccountSync(() => {
+    refresh()
+    setPointsTable(getEffectiveQualificationPointsTable())
+    setCutoff(getEffectiveQualificationCutoff())
+  })
+
   const handleLogResult = () => {
     const teamId = entryForm.teamId.trim()
     const tournamentName = entryForm.tournamentName.trim()
@@ -196,27 +210,33 @@ export function StandingsPanel() {
   }
 
   const handleSavePointsTable = () => {
-    savePersistedQualificationPointsTable(pointsTable)
-    setPointsTableStatus("Saved — new points weights apply immediately.")
+    saveQualificationPointsTable(pointsTable)
+    setPointsTableStatus(
+      synced
+        ? "Saved to your account — new points weights apply immediately."
+        : "Saved — new points weights apply immediately.",
+    )
     refresh()
   }
 
   const handleResetPointsTable = () => {
-    resetPersistedQualificationPointsTable()
-    const defaults = getEffectiveQualificationPointsTable()
+    const defaults = resetQualificationPointsTable()
     setPointsTable(defaults)
     setPointsTableStatus("Reset to the default point table.")
     refresh()
   }
 
   const handleSaveCutoff = () => {
-    savePersistedQualificationCutoff(cutoff)
-    setCutoffStatus("Saved — the qualified list below applies it immediately.")
+    saveQualificationCutoff(cutoff)
+    setCutoffStatus(
+      synced
+        ? "Saved to your account — the qualified list below applies it immediately."
+        : "Saved — the qualified list below applies it immediately.",
+    )
   }
 
   const handleResetCutoff = () => {
-    resetPersistedQualificationCutoff()
-    setCutoff(getEffectiveQualificationCutoff())
+    setCutoff(resetQualificationCutoff())
     setCutoffStatus("Cleared — no cutoff is configured.")
   }
 
@@ -240,8 +260,7 @@ export function StandingsPanel() {
   return (
     <div className="space-y-6">
       {/* Log a result ------------------------------------------------- */}
-      <div className="space-y-3 rounded-lg border border-border p-4">
-        <h2 className="text-sm font-medium text-foreground">Log a result</h2>
+      <PanelSection title="Log a result" className="rounded-lg border border-border p-4">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <Input
             placeholder="Team"
@@ -302,22 +321,19 @@ export function StandingsPanel() {
         </div>
         {entryError && <p className="text-sm text-destructive">{entryError}</p>}
         <Button onClick={handleLogResult}>Log result</Button>
-      </div>
+      </PanelSection>
 
       {/* Bulk import (CSV) ---------------------------------------------- */}
-      <div className="space-y-3 rounded-lg border border-border p-4">
-        <div className="space-y-1">
-          <h2 className="text-sm font-medium text-foreground">Bulk import (CSV)</h2>
-          <p className="text-xs text-muted-foreground">
-            Paste a CSV of tournament results — a header row naming the columns (any order), then
-            one row per result. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
-            <code>date</code>, <code>division</code>, and <code>finish</code> (one of{" "}
-            {FINISH_OPTIONS.map((option) => option.value).join(", ")}). Optional:{" "}
-            <code>bidLevel</code>, <code>prelimWins</code>, <code>prelimLosses</code> (default 0). A
-            row that fails to parse is skipped and reported rather than blocking the rest of the
-            import.
-          </p>
-        </div>
+      <PanelSection title="Bulk import (CSV)" className="rounded-lg border border-border p-4">
+        <p className="text-xs text-muted-foreground">
+          Paste a CSV of tournament results — a header row naming the columns (any order), then
+          one row per result. Required columns: <code>teamId</code>, <code>tournamentName</code>,{" "}
+          <code>date</code>, <code>division</code>, and <code>finish</code> (one of{" "}
+          {FINISH_OPTIONS.map((option) => option.value).join(", ")}). Optional:{" "}
+          <code>bidLevel</code>, <code>prelimWins</code>, <code>prelimLosses</code> (default 0). A
+          row that fails to parse is skipped and reported rather than blocking the rest of the
+          import.
+        </p>
         <Textarea
           value={bulkCsv}
           onChange={(e) => setBulkCsv(e.target.value)}
@@ -328,7 +344,7 @@ export function StandingsPanel() {
         <Button variant="outline" onClick={handleBulkImport}>
           Import results
         </Button>
-      </div>
+      </PanelSection>
 
       {/* Qualification points table -------------------------------------- */}
       <details className="space-y-3 rounded-lg border border-border p-4">
@@ -454,21 +470,21 @@ export function StandingsPanel() {
       </details>
 
       {/* Ranked standings -------------------------------------------------- */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-foreground">Standings</h2>
+      <PanelSection
+        title="Standings"
+        actions={
           <span className="text-xs text-muted-foreground">
             {standings.length} team{standings.length === 1 ? "" : "s"}, {totalResultsLogged} result
             {totalResultsLogged === 1 ? "" : "s"} logged
             {cutoffConfigured
               ? ` · ${qualifiedTeamIds.size} of ${standings.length} currently qualify`
               : ""}
+            {synced ? " · synced to your account" : ""}
           </span>
-        </div>
+        }
+      >
         {standings.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            No tournament results logged yet. Log one above, or bulk-import a CSV.
-          </p>
+          <EmptyState title="No tournament results logged yet." message="Log one above, or bulk-import a CSV." />
         ) : (
           <Table>
             <TableHeader>
@@ -550,7 +566,7 @@ export function StandingsPanel() {
             </TableBody>
           </Table>
         )}
-      </div>
+      </PanelSection>
     </div>
   )
 }

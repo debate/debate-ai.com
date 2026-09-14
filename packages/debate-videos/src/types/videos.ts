@@ -1,6 +1,8 @@
 import type {
   LectureCategoryFacet,
   VideoFacets,
+  VideoSuggestion,
+  VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
 
 /** Debate style/format category */
@@ -93,13 +95,15 @@ export type VideoCounts = {
 export type VideoMetaResponse = {
   counts: VideoCounts;
   lectureCategories: LectureCategoryFacet[];
+  /** Popular keyword and tournament searches shown under the video grid. */
+  suggestions?: VideoSuggestions;
   topics?: TopicType[];
   champions?: ChampionType[];
   history?: Record<string, any>;
   backend: string;
 };
 
-export type { LectureCategoryFacet, VideoFacets };
+export type { LectureCategoryFacet, VideoFacets, VideoSuggestion, VideoSuggestions };
 
 /** Union of all valid video page category identifiers. */
 export type CategoryType =

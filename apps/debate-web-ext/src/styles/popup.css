@@ -1,0 +1,9 @@
+/* Toolbar popup shell. Deliberately small: the popup is only the on-page card
+ * reuse check plus the button that opens the timer in its own window. */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 320px;
+  overflow-x: hidden;
+}

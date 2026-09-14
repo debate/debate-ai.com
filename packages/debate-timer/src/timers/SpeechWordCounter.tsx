@@ -16,7 +16,7 @@
  * `SpeechRecognition`/`webkitSpeechRecognition` API) — closing the last
  * remaining half of the "Speech text is typed or pasted; there is no
  * transcription path feeding the word counter" Known gap recorded in
- * `docs/features/word-count-rounds.md`, mirroring the same dictation button
+ * `packages/debate-help-docs/content/docs/features/word-count-rounds.mdx`, mirroring the same dictation button
  * already shipped on the standalone `/word-count` submission form.
  *
  * @module timers/SpeechWordCounter

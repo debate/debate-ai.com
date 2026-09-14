@@ -7,8 +7,8 @@ import {
   Compass,
   Search,
   Package,
-  Github,
 } from "lucide-react"
+import { Github } from "./github-icon"
 
 const features = [
   {

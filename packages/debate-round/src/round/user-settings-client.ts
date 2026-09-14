@@ -19,11 +19,11 @@
 
 import type { UserSettingsPayload } from "../state/userSettings";
 import type { ThemeSettingsPayload } from "../state/themeSettings";
-import type { FavoriteToolsPayload } from "../state/favoriteTools";
+import type { FavoriteToolOp, FavoriteToolsPayload } from "../state/favoriteTools";
 import type { WordLimitPresetsPayload } from "../state/wordLimitPresets";
 import type { OutlineFilterPresetsPayload } from "../state/outlineFilterPresets";
 
-/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), and the named Outline filter presets list (idea #10's "Save and reuse named filter presets" follow-up). The News Stream read/liked id lists (`docs/features/news-stream.md`'s "Read/like state is per-browser" Known gap) are typed separately by `debate-community` to avoid a package cycle (`debate-team-collaboration` already depends on this package) — the `/api/settings` route still reads/writes them on the same row. */
+/** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), and the named Outline filter presets list (idea #10's "Save and reuse named filter presets" follow-up). The News Stream read/liked id lists (`packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like state is per-browser" Known gap) are typed separately by `debate-community` to avoid a package cycle (`debate-team-collaboration` already depends on this package) — the `/api/settings` route still reads/writes them on the same row. */
 export type FullUserSettingsPayload = UserSettingsPayload &
   ThemeSettingsPayload &
   FavoriteToolsPayload &
@@ -65,6 +65,26 @@ export async function saveUserSettings(
   patch: Partial<FullUserSettingsPayload>,
   endpoint = "/api/settings",
 ): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(patch, endpoint);
+}
+
+/**
+ * Saves a single star/unstar op — `{ addFavoriteTool }` or
+ * `{ removeFavoriteTool }` — instead of a whole-list `favoriteTools`
+ * replace. The route resolves it against the account's currently stored
+ * list rather than the caller's own (possibly stale) copy, closing the
+ * "two tabs star different tools in quick succession" lost-update gap
+ * `saveUserSettings({ favoriteTools })` is exposed to — see
+ * `state/favoriteTools.ts#applyFavoriteToolOp`'s docstring.
+ */
+export async function saveFavoriteToolOp(
+  op: FavoriteToolOp,
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+async function putSettingsPatch(patch: unknown, endpoint: string): Promise<FullUserSettingsPayload> {
   const res = await fetch(endpoint, {
     method: "PUT",
     headers: { "content-type": "application/json" },

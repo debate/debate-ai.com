@@ -13,6 +13,11 @@ import type { DebateSide } from "debate-data-sync/src/rankings/opponent-team-pro
 import { appendNoteToPreRoundBriefing, buildPreRoundBriefingFromStores } from "../round/pre-round-briefing";
 import type { PreRoundBriefing } from "../round/pre-round-briefing";
 
+import {
+  mirrorToolRecordDelete,
+  mirrorToolRecordSave,
+} from "debate-data-sync/src/state/tool-record-mirror";
+
 export type PreRoundBriefingRecord = {
   roundId: string;
   briefing: PreRoundBriefing;
@@ -74,11 +79,13 @@ export function savePreRoundBriefing(record: PreRoundBriefingRecord, now: number
     records[index] = stamped;
   }
   writeAll(records);
+  mirrorToolRecordSave("preRoundBriefings", stamped);
 }
 
 /** Deletes a round's persisted briefing; a no-op if it isn't stored. */
 export function deletePreRoundBriefing(roundId: string): void {
   writeAll(readAll().filter((record) => record.roundId !== roundId));
+  mirrorToolRecordDelete("preRoundBriefings", roundId);
 }
 
 /**
@@ -114,7 +121,7 @@ export type PreRoundBriefingDraftResult =
 /**
  * Validates and composes a `PreRoundBriefingRecord` from a "create briefing"
  * form draft — the panel's previously-missing "generate a new briefing for a
- * round" affordance named in `docs/features/pre-round-briefings.md`'s
+ * round" affordance named in `packages/debate-help-docs/content/docs/internals/pre-round-briefings.mdx`'s
  * "Known gaps." Resolves an opponent/judge profile from their persisted
  * stores by id via `buildPreRoundBriefingFromStores` rather than introducing
  * new briefing-composition logic. Does not persist the result — call

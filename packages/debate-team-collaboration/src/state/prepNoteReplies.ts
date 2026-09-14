@@ -9,7 +9,7 @@
  *
  * Unlike `dailyBestCardComments.ts`, this store has no account-sync
  * counterpart yet — `state/prepNotes.ts` itself isn't account-synced (see
- * `docs/features/prep-notes.md`'s Known gaps), so there's no `/api/`-backed
+ * `packages/debate-help-docs/content/docs/internals/prep-notes.mdx`'s Known gaps), so there's no `/api/`-backed
  * D1 table for this slice to sync replies into either.
  *
  * @module state/prepNoteReplies

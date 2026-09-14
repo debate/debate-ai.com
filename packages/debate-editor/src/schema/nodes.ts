@@ -352,6 +352,16 @@ export const nodes: { [name: string]: NodeSpec } = {
     },
     parseDOM: [
       {
+        // Above the default 50 the generic `superscript` mark rule
+        // (`{ tag: 'sup' }`) sits at: ProseMirror collects MARK rules before
+        // node rules, so at equal priority a serialized footnote ref — an
+        // EMPTY `<sup>` carrying its content in `data-content` — parsed back
+        // as a superscript mark on no text and vanished. That silently
+        // dropped every footnote from any HTML round trip (the React
+        // embed's `content`/`onChange` contract, and pasted CardMirror
+        // markup). Superscript text still parses as superscript: this rule
+        // only matches the `pmd-footnote-ref` class.
+        priority: 60,
         tag: 'sup.pmd-footnote-ref',
         getAttrs: (dom: HTMLElement) => {
           const kind = dom.getAttribute('data-kind') === 'endnote' ? 'endnote' : 'footnote';

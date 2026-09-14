@@ -19,7 +19,7 @@
 
 export function bulkCompressEnabled(): boolean {
   try {
-    if ((import.meta as { env?: Record<string, string> }).env?.['VITE_COMPRESS'] === '1') {
+    if ((import.meta as unknown as { env?: Record<string, string> }).env?.['VITE_COMPRESS'] === '1') {
       return true;
     }
   } catch {

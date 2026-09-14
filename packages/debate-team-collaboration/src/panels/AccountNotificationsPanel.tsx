@@ -13,7 +13,7 @@
 import Link from "next/link";
 import { Badge } from "debate-round/src/ui/primitives/badge";
 import { Button } from "debate-round/src/ui/primitives/button";
-import { EmptyState } from "debate-round/src/ui/panels/panel-shell";
+import { EmptyState, PanelShell } from "debate-round/src/ui/panels/panel-shell";
 import { useAccountNotifications } from "../hooks/useAccountNotifications";
 
 /** Renders the current user's account notifications (round invites, etc.), newest first, with per-item and mark-all-read actions. */
@@ -21,12 +21,10 @@ export function AccountNotificationsPanel() {
   const { notifications, unreadCount, loading, markRead, markAllRead } = useAccountNotifications(true);
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <h1 className="mb-1 text-xl font-semibold text-foreground">Notifications</h1>
-          <p className="text-sm text-muted-foreground">Invites and updates addressed to your account.</p>
-        </div>
+    <PanelShell
+      title="Notifications"
+      description="Invites and updates addressed to your account."
+      actions={
         <div className="flex items-center gap-2">
           <Badge variant={unreadCount > 0 ? "default" : "outline"}>{unreadCount} unread</Badge>
           {unreadCount > 0 && (
@@ -35,7 +33,8 @@ export function AccountNotificationsPanel() {
             </Button>
           )}
         </div>
-      </div>
+      }
+    >
       {loading && notifications.length === 0 ? (
         <div className="p-6 text-sm text-muted-foreground">Loading notifications…</div>
       ) : notifications.length === 0 ? (
@@ -76,6 +75,6 @@ export function AccountNotificationsPanel() {
           })}
         </div>
       )}
-    </div>
+    </PanelShell>
   );
 }

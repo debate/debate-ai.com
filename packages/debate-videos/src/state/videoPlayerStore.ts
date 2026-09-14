@@ -23,10 +23,17 @@ interface VideoPlayerStore {
   activeVideoMeta: VideoMeta | null
   isMinimized: boolean
   isPlaying: boolean
-  isSlowMode: boolean
+  /** Playback speed applied to the embed. Owned here so it survives a video switch, a reload, and a hop between frames. */
+  playbackRate: number
   queue: QueueItem[]
   /** Seconds to start the video from (for YouTube &start= param). Reset to 0 after each new video. */
   startTime: number
+  /**
+   * Video id of a full-page watch player that has taken over playback, if one
+   * is mounted. The floating popout player stands down while this is set, so
+   * only ever one embed is playing — see `PersistentVideoPlayer`.
+   */
+  theaterVideoId: string | null
   searchHandler: ((searchTerm: string) => void) | null
   /** Store the current playback time getter function */
   getCurrentTimeRef: (() => number) | null
@@ -39,8 +46,10 @@ interface VideoPlayerStore {
   ) => void
   clearActiveVideo: () => void
   setMinimized: (minimized: boolean) => void
+  /** Hand playback to (`videoId`) or back from (`null`) a full-page watch player. */
+  setTheaterVideoId: (videoId: string | null) => void
   setIsPlaying: (playing: boolean) => void
-  setSlowMode: (slow: boolean) => void
+  setPlaybackRate: (rate: number) => void
   addToQueue: (videoId: string, title: string, meta?: VideoMeta) => void
   removeFromQueue: (videoId: string) => void
   playNextInQueue: () => void
@@ -52,7 +61,7 @@ interface VideoPlayerStore {
     videoId: string,
     title: string,
     meta: VideoMeta | null,
-    opts: { isMinimized: boolean; isSlowMode: boolean; queue: QueueItem[]; savedTime: number }
+    opts: { isMinimized: boolean; playbackRate: number; queue: QueueItem[]; savedTime: number }
   ) => void
 }
 
@@ -62,9 +71,10 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
   activeVideoMeta: null,
   isMinimized: false,
   isPlaying: false,
-  isSlowMode: false,
+  playbackRate: 1,
   queue: [],
   startTime: 0,
+  theaterVideoId: null,
   searchHandler: null,
   getCurrentTimeRef: null,
   setActiveVideo: (videoId, title, meta, startTimeSeconds) => {
@@ -79,7 +89,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
           title: state.activeVideoTitle ?? "",
           meta: state.activeVideoMeta,
           isMinimized: state.isMinimized,
-          isSlowMode: state.isSlowMode,
+          playbackRate: state.playbackRate,
           queue: state.queue,
           savedTime: currentTime,
         })
@@ -95,8 +105,9 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
     set({ activeVideoId: null, activeVideoTitle: null, activeVideoMeta: null, isMinimized: false, isPlaying: false, startTime: 0 })
   },
   setMinimized: (minimized) => set({ isMinimized: minimized }),
+  setTheaterVideoId: (videoId) => set({ theaterVideoId: videoId }),
   setIsPlaying: (playing) => set({ isPlaying: playing }),
-  setSlowMode: (slow) => set({ isSlowMode: slow }),
+  setPlaybackRate: (rate) => set({ playbackRate: rate }),
   addToQueue: (videoId, title, meta) =>
     set((state) => ({
       queue: state.queue.some((q) => q.videoId === videoId)
@@ -120,7 +131,7 @@ export const useVideoPlayerStore = create<VideoPlayerStore>((set, get) => ({
       activeVideoTitle: title,
       activeVideoMeta: meta,
       isMinimized: opts.isMinimized,
-      isSlowMode: opts.isSlowMode,
+      playbackRate: opts.playbackRate,
       queue: opts.queue,
       startTime: opts.savedTime,
       isPlaying: true,

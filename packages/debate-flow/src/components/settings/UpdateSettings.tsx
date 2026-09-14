@@ -7,23 +7,13 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { Tip } from "../ui/tooltip";
 import { useFlowStore } from "../../lib/store/useFlowStore";
+import { ARCH_LABELS, OS_LABELS } from "../../lib/system/about";
 import { getCurrentVersion, getSystemInfo } from "../../lib/update/adapter";
 import type { UpdateUiState } from "../../lib/update/useAutoUpdate";
 import { cn } from "../../lib/utils";
 
 import { useUpdate } from "../update/UpdateProvider";
 import SettingRow from "./SettingRow";
-
-/** Rust's `std::env::consts` names, spelled the way people say them. */
-const OS_LABELS: Record<string, string> = {
-    macos: "macOS",
-    windows: "Windows",
-    linux: "Linux",
-};
-const ARCH_LABELS: Record<string, string> = {
-    aarch64: "arm64",
-    x86_64: "x86-64",
-};
 
 /** Why the install button is disabled, shown as its hover tooltip. */
 function idleTooltip(state: UpdateUiState): string {

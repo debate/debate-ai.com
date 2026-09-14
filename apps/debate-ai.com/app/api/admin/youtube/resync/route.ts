@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { desc } from "drizzle-orm";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import { youtubeSyncRuns } from "@/lib/database/schema";
 import { resyncYouTubeRounds } from "@/lib/youtube/resync-rounds";
 
@@ -16,9 +17,14 @@ export async function POST() {
     const result = await resyncYouTubeRounds(email);
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error resyncing YouTube rounds:", error);
+    // Drizzle's wrapper message names only the SQL it ran, so the stack alone
+    // left Workers Logs showing a failed query with no reason attached. Log
+    // the flattened cause chain alongside the error itself, and hand the same
+    // line to the admin page rather than the bare wrapper message.
+    const details = describeError(error);
+    console.error("Error resyncing YouTube rounds:", details, error);
     return NextResponse.json(
-      { error: "Failed to resync videos", details: (error as Error).message },
+      { error: "Failed to resync videos", details },
       { status: 500 },
     );
   }
