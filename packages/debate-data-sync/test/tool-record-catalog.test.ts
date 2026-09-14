@@ -67,6 +67,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   evidenceLibraryEntries: "id",
   cardScores: "id",
   cardScoreHistory: "id",
+  aiCardAssessments: "cardId",
   peerReviews: "cardId",
   contributions: "id",
   trackedArguments: "id",
