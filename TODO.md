@@ -8,6 +8,70 @@ _No task currently in progress._
 
 ### Completed
 
+- **📖 Give CardMirror's synced personal spellcheck dictionary a view/remove
+  UI.** Another repeat of the standing autonomous-routine prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL
+  with the ability to save flows/docs/debates in SQL and link to users...
+  add tools into where needed in the UI... develop better tool UI") — as
+  with every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` tables, and 60+ `saved_tool_records` collections (including
+  `spellcheckDictionary`, added two runs ago) all linked to `user.id`. This
+  run picked up that same run's own flagged follow-up instead of searching
+  for a new gap: the personal dictionary synced to the account but stayed
+  invisible everywhere except the editor's right-click "Add to Dictionary"
+  action — no page could show what words were saved or remove one, short of
+  clearing `localStorage` by hand. A one-line "better tool UI" gap in an
+  already-synced tool, and exactly the kind of small, mechanical slice this
+  routine should prefer over a fresh audit.
+
+  Added `packages/debate-editor/src/editor/user-dictionary-ui.ts`
+  (`buildUserDictionarySection`) — pulled into its own module rather than
+  inlined in `settings-ui.ts`, matching that file's own precedent
+  (`user-dictionary.ts` itself was split out the same way) so the new DOM
+  logic stays unit-testable without importing `settings-ui.ts`'s much larger
+  dependency graph (host detection, pairing, collab, ...). Renders the
+  current dictionary alphabetically with a per-word remove button, an empty
+  state when nothing's saved, and an "Add a word" field (button + Enter) so
+  a word can be added without the right-click flow. `settings-ui.ts` wires
+  it in with one `querySelector('[data-setting-key="editorSpellcheck"]')` +
+  `insertAdjacentElement('afterend', ...)` call inside
+  `buildEmbeddedSettingsPanel`'s existing `category === 'general'` branch —
+  right after the "Editor spellcheck" toggle it belongs to, on the app's own
+  `/settings` page (where that toggle already lives; the in-editor gear-icon
+  modal renders no General-category rows at all, by existing design, so
+  there was nothing to wire there). New CSS (`.pmd-dictionary-*`) mirrors
+  the existing `.pmd-reader-*` add/remove-list rows already in
+  `style.css` rather than inventing a new visual pattern.
+
+  Vitest-covered: `packages/debate-editor/test/user-dictionary-ui.test.ts`
+  (new — empty state, alphabetical listing, remove-and-persist, back to
+  empty state after removing the last word, add via button, add via Enter,
+  and blank/whitespace-only input is ignored). No changes needed to
+  `user-dictionary.ts` itself or the sync mechanism — this was purely a UI
+  gap.
+
+  Ran the full verification gate: `bun install`, `packages/debate-editor`'s
+  own `bun run test` (30 files, 707 tests — 8 new), the root `bun run test`
+  (440 files, 8545 tests, all passing), `bun run typecheck` (18/18 packages
+  green), and `bun run build` (production build, all three targets green).
+  No `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** CardMirror's "Learn"
+  flashcards/spaced-repetition system (`packages/debate-editor/src/editor/learn-store.ts`,
+  localStorage key `pmd-learn-store`) remains unsynced — still flagged by
+  the last two runs as real user-authored content with no account sync, but
+  not a small first slice: the blob mixes cards, SM2 schedules, a review
+  log, AI Q&A threads, anchored notes, and custom decks in one JSON blob
+  that doesn't fit `TOOL_RECORD_COLLECTIONS`'s one-array-of-id-bearing-
+  records shape, so it needs a bespoke table (or several) plus API routes —
+  closer to `saved_flows`/`documents` in scope than to this fix. The
+  `qwksearch` file-sources credential-sync question (configured SSH/S3/R2/
+  B2/Google Docs/Turso research backends embedding plaintext credentials)
+  also remains open, still needing a maintainer product/security decision
+  before it's implementable.
+
 - **📄 Wire three real feature docs into the feature catalog's "Learn more"
   links.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link

@@ -49,6 +49,7 @@ import {
   type StyleAlignment,
 } from './settings.js';
 import { CATEGORY_TABS, visibleCategoryTabs, type SettingsTarget } from './settings-categories.js';
+import { buildUserDictionarySection } from './user-dictionary-ui.js';
 import { generateGroupId, normalizePairingCode } from './pairing/pairing-ids.js';
 import { inboxStore, recentSenders } from './pairing/inbox-store.js';
 import { regenerateOwnCode } from './pairing/pairing-wiring.js';
@@ -1389,6 +1390,14 @@ export function buildEmbeddedSettingsPanel(category: SettingsCategory): Embedded
   // (the gear-icon modal keeps them only on hosts with no /settings route —
   // see `SettingsModal.render()`). No dialog to close here, hence the no-op.
   if (category === 'general') {
+    // Personal dictionary: sits right after the "Editor spellcheck" toggle
+    // it belongs to, rather than as its own top-level section — it's the
+    // only place a synced dictionary word is visible or removable (see
+    // `user-dictionary-ui.ts`).
+    const spellcheckRow = panel.querySelector('[data-setting-key="editorSpellcheck"]');
+    if (spellcheckRow) {
+      spellcheckRow.insertAdjacentElement('afterend', buildUserDictionarySection());
+    }
     panel.appendChild(buildBenchmarkSection(() => {}));
     panel.appendChild(buildInstallInfoSection());
   }
