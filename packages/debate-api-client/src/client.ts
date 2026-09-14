@@ -73,6 +73,29 @@ function forMethod(
   return scoped as Partial<GrabOptions>
 }
 
+/** Loopback hostnames a development server is reached on. */
+const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "0.0.0.0"])
+
+/**
+ * Whether this is a development environment: a page served from a loopback
+ * host, or a bundle built with NODE_ENV=development. A public origin is
+ * neither, which is what keeps the inspector out of production.
+ *
+ * Detected here rather than with grab's own `isLocalhost()`, which the slim
+ * entry of the pinned grab-url does not export.
+ */
+function isDevEnvironment(): boolean {
+  const scope = globalThis as unknown as Record<string, any>
+  const host = scope.location?.hostname
+
+  if (typeof host === "string")
+    return LOOPBACK_HOSTS.has(host) || host.endsWith(".localhost")
+
+  // Bundlers substitute this at build time, so it survives into the browser
+  // bundle on a dev server reached at something other than localhost.
+  return scope.process?.env?.NODE_ENV === "development"
+}
+
 /**
  * Attaches grab's Ctrl+Alt+I request inspector — a modal listing every request
  * this SDK made, with its parsed response — and makes sure the log it reads is
@@ -120,8 +143,10 @@ export interface ClientConfig {
    */
   grab?: Partial<GrabOptions>
   /**
-   * default=true Attach grab's Ctrl+Alt+I request inspector. Set false to
-   * leave the keyboard shortcut and the global `window.grab` alone.
+   * default=true in development Attach grab's Ctrl+Alt+I request inspector.
+   * Left unset it binds only on a loopback host or a NODE_ENV=development
+   * build. Set true to inspect a deployed build, false to leave the keyboard
+   * shortcut and the global `window.grab` alone.
    */
   devtools?: boolean
 }
@@ -185,13 +210,16 @@ export interface Client {
  * (via `grab.mock`) all apply — starting from {@link DEFAULT_GRAB_OPTIONS},
  * which `config.grab` overrides.
  *
- * In a browser it also attaches grab's Ctrl+Alt+I request inspector, unless
- * `config.devtools` is false.
+ * In development it also attaches grab's Ctrl+Alt+I request inspector — see
+ * `config.devtools`.
  */
 export function createClient(config: ClientConfig = {}): Client {
   let _config: ClientConfig = { baseUrl: DEFAULT_BASE_URL, ...config }
 
-  if (_config.devtools !== false) attachDevTools()
+  // Unset means "when developing": a public origin is someone's production
+  // site, and every request this SDK made is not something to hand its
+  // visitors a keystroke away. `true` and `false` both override that.
+  if (_config.devtools ?? isDevEnvironment()) attachDevTools()
 
   const getConfig = (): ClientConfig => ({ ..._config })
 

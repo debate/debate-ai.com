@@ -149,6 +149,7 @@ describe("attachDevTools", () => {
   describe("with a DOM", () => {
     beforeEach(() => {
       vi.stubGlobal("document", {})
+      vi.stubGlobal("location", { hostname: "localhost" })
     })
 
     afterEach(() => {
@@ -188,6 +189,23 @@ describe("attachDevTools", () => {
     it("stays out of the way when a client opts out", () => {
       createClient({ devtools: false })
       expect(setupDevToolsMock).not.toHaveBeenCalled()
+    })
+
+    it("leaves a production origin alone", () => {
+      vi.stubGlobal("location", { hostname: "debate-ai.com" })
+
+      createClient()
+
+      expect(setupDevToolsMock).not.toHaveBeenCalled()
+      expect((globalThis as Record<string, any>).grab).toBeUndefined()
+    })
+
+    it("binds on a deployed build when a client asks for it", () => {
+      vi.stubGlobal("location", { hostname: "debate-ai.com" })
+
+      createClient({ devtools: true })
+
+      expect(setupDevToolsMock).toHaveBeenCalledTimes(1)
     })
   })
 })
