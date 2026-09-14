@@ -152,13 +152,33 @@ export interface DebateCardNormalizeResult {
 export const CARD_UPLOAD_BATCH_ROWS = 250;
 
 /**
- * Rows decoded from the shard at a time.
+ * Smallest read window the reader will shrink to, in rows.
  *
- * Larger than the upload batch because decoding is the expensive half:
- * reading 2,000 rows and posting them as eight requests beats eight separate
- * reads of the same row group.
+ * Window size is chosen per row group from {@link CARD_READ_WINDOW_BYTES};
+ * this floor keeps a shard of unusually fat cards from being read a handful
+ * of rows at a time, which would cost one decode and one request per handful.
  */
 export const CARD_READ_CHUNK_ROWS = 2_000;
+
+/**
+ * Decoded card text held in one read window, in bytes.
+ *
+ * The reader prefers to read a whole row group at once — that is what makes a
+ * shard cost one decoding pass instead of one per window — and only splits a
+ * group when the group's own columns are heavier than this. Measured against
+ * the footer's uncompressed sizes, so the figure tracks what the window will
+ * actually occupy rather than its size on disk.
+ */
+export const CARD_READ_WINDOW_BYTES = 32 * 1024 * 1024;
+
+/**
+ * Rows held in one read window, whatever {@link CARD_READ_WINDOW_BYTES} says.
+ *
+ * A shard of taglines and nothing else would otherwise put millions of
+ * decoded objects in one window and spend the memory the byte budget just
+ * saved on object overhead.
+ */
+export const CARD_READ_MAX_WINDOW_ROWS = 100_000;
 
 /**
  * Largest single row the importer accepts, in characters of text.

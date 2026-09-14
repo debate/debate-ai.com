@@ -35,6 +35,8 @@ export {
 } from "./lib/argument-library-collections";
 export {
   CARD_READ_CHUNK_ROWS,
+  CARD_READ_MAX_WINDOW_ROWS,
+  CARD_READ_WINDOW_BYTES,
   CARD_UPLOAD_BATCH_ROWS,
   DEBATE_CARD_PARQUET_COLUMNS,
   DEBATE_CARD_PARQUET_COLUMN_ALIASES,
@@ -56,8 +58,11 @@ export {
 export {
   countDebateCardRows,
   inspectDebateCardShard,
+  planReadWindows,
   readDebateCardChunks,
+  type DebateCardReadWindow,
   type DebateCardRowChunk,
+  type DebateCardRowGroup,
   type DebateCardShardInfo,
   type ParquetSource,
   type ReadDebateCardOptions,
