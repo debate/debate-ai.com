@@ -340,13 +340,23 @@ export interface VideoMetaState {
  *
  * @returns See {@link VideoMetaState}.
  */
-export function useVideoMeta(): VideoMetaState {
+export function useVideoMeta(suggestionFilters?: VideoFeedFilters): VideoMetaState {
   const [meta, setMeta] = useState<VideoMetaResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const suggestionParams = useMemo(() => {
+    const params = new URLSearchParams();
+    if (suggestionFilters?.lecturesOnly) params.set("lecturesOnly", "1");
+    if (suggestionFilters?.topPicksOnly) params.set("topPicks", "1");
+    if (suggestionFilters?.categoryKey && suggestionFilters.categoryKey !== "all") params.set("category", suggestionFilters.categoryKey);
+    if (suggestionFilters?.style) params.set("style", String(suggestionFilters.style));
+    if (suggestionFilters?.year) params.set("year", suggestionFilters.year);
+    return params.toString();
+  }, [suggestionFilters?.lecturesOnly, suggestionFilters?.topPicksOnly, suggestionFilters?.categoryKey, suggestionFilters?.style, suggestionFilters?.year]);
+
   useEffect(() => {
     let active = true;
-    grab("videos/meta", { cache: true })
+    grab(`videos/meta${suggestionParams ? `?${suggestionParams}` : ""}`, { cache: true })
       .then((data: VideoMetaResponse) => {
         if (!active) return;
         // grab resolves with an `error` field rather than throwing on a
@@ -367,7 +377,7 @@ export function useVideoMeta(): VideoMetaState {
     return () => {
       active = false;
     };
-  }, []);
+  }, [suggestionParams]);
 
   const lectureCategories = useMemo(() => meta?.lectureCategories ?? [], [meta]);
   const suggestions = useMemo(() => meta?.suggestions ?? EMPTY_SUGGESTIONS, [meta]);
