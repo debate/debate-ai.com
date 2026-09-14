@@ -439,6 +439,66 @@ export async function getVideoMeta(): Promise<VideoMeta> {
   };
 }
 
+/** Members of one stacked playlist, in display order. */
+export interface VideoStackPage {
+  /** Stack members keyed by `stack_key`; a key with no members is omitted. */
+  stacks: Record<string, VideoTuple[]>;
+  backend: VideoBackend;
+}
+
+/** How many stack keys one request may resolve. */
+export const MAX_STACK_KEYS = 120;
+
+/**
+ * Fetches the full membership of the given stacked playlists.
+ *
+ * The feed itself only carries the stack key on each row it happens to
+ * return, so the companion video is usually missing from the page (a round
+ * and its analysis rarely sort next to each other, and the analysis is often
+ * filtered out entirely). This resolves the keys on screen to their whole
+ * stacks, which is what lets one card flip between them.
+ *
+ * @param keys - Stack keys, as read off the loaded rows.
+ * @returns Members per key, ordered by `stack_position`. See {@link VideoStackPage}.
+ */
+export async function getVideoStacks(keys: string[]): Promise<VideoStackPage> {
+  const wanted = [...new Set(keys.filter(Boolean))].slice(0, MAX_STACK_KEYS);
+  if (wanted.length === 0) return { stacks: {}, backend: "sql" };
+
+  const collect = (rows: VideoRow[]): Record<string, VideoTuple[]> => {
+    const byKey: Record<string, VideoTuple[]> = {};
+    const ordered = [...rows].sort((a, b) => a.stackPosition - b.stackPosition);
+    for (const row of ordered) {
+      if (!row.stackKey) continue;
+      (byKey[row.stackKey] ??= []).push(videoRowToTuple(row));
+    }
+    // A key whose stack lost a member upstream is no longer a stack; dropping
+    // it here keeps the grid from rendering flip arrows over a single video.
+    for (const [key, members] of Object.entries(byKey)) {
+      if (members.length < 2) delete byKey[key];
+    }
+    return byKey;
+  };
+
+  const db = await tryGetDb();
+  if (db && (await isTableSeeded(db))) {
+    try {
+      const rows = await db.select().from(videos).where(inArray(videos.stackKey, wanted));
+      return { stacks: collect(rows as VideoRow[]), backend: "sql" };
+    } catch (error) {
+      console.error("videos: SQL stack query failed, falling back to JSON", error);
+      backendProbe = { ready: false, checkedAt: Date.now() };
+    }
+  }
+
+  const allRows = await getVideoRowsFromJson();
+  const wantedSet = new Set(wanted);
+  return {
+    stacks: collect(allRows.filter((row) => row.stackKey && wantedSet.has(row.stackKey))),
+    backend: "json",
+  };
+}
+
 /** Index of the fields the watch page reads out of a {@link VideoTuple}. */
 const TUPLE = { videoId: 0, title: 1, style: 6, tournament: 7 } as const;
 

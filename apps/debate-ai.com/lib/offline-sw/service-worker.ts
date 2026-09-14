@@ -46,8 +46,42 @@ async function onActivate() {
   await Promise.all(
     cacheNames.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))
   );
-  // Take control of all clients immediately
+  // Safe here in a way `skipWaiting()` is not: the browser only activates a
+  // waiting worker once every page the previous one controlled has gone, so
+  // claiming takes over pages that either have no controller yet or are
+  // already running this build's code. See `mayTakeOverOpenPages`.
   return sw.clients.claim();
+}
+
+/**
+ * Whether this worker may take over the pages that are open right now.
+ *
+ * A build's client chunks only exist for as long as that build is the one
+ * deployed — every path under `/_next/static/` is content-hashed, and a deploy
+ * replaces the whole set. A page can therefore only ever finish loading the
+ * chunks of the build it started from. Calling `skipWaiting()` while a page
+ * from the *previous* build is open activates this worker under it, and
+ * `onActivate` immediately deletes the cache that page's chunks were coming
+ * from; from then on every module it lazily imports misses the cache, misses
+ * the network (the origin now serves the new build's hashes), and the
+ * half-initialised module graph surfaces as a chunk 404 followed by
+ * `ReferenceError: Cannot access '<name>' before initialization` thrown out of
+ * whichever component rendered next — a blank route behind the error boundary.
+ *
+ * So only take over immediately when there is nothing to disturb: a first
+ * install, or an update that lands with every tab closed. Otherwise stay in
+ * `waiting`, leaving the old worker and its cache serving the pages that need
+ * them, and let the browser activate this one when the last of those pages
+ * goes away — which is exactly when the swap is free.
+ */
+async function mayTakeOverOpenPages(): Promise<boolean> {
+  // `includeUncontrolled` covers the first-install case, where the page that
+  // registered this worker is open but not yet controlled by anything. There
+  // is no previous worker to wait behind then, so declining to skip waiting
+  // costs nothing: with no active worker the browser activates this one
+  // straight away regardless.
+  const windows = await sw.clients.matchAll({ includeUncontrolled: true, type: "window" });
+  return windows.length === 0;
 }
 
 /**
@@ -115,6 +149,24 @@ function isImmutableAsset(url: URL): boolean {
   return url.pathname.startsWith("/assets/") || PRECACHED.has(url.pathname);
 }
 
+/**
+ * Look a request up in *this build's* cache only.
+ *
+ * `caches.match(request)` without a `cacheName` searches every cache in the
+ * origin, so while a new build is installing — its cache created, the previous
+ * build's cache not yet dropped by `onActivate` — it can answer a request from
+ * the older build. The hashed paths under `/assets/` are safe either way, but
+ * the rest of `PRECACHED` (the app shell `/`, icons, the manifest) keeps the
+ * same path in every build and would come back as the *previous* build's copy:
+ * an app shell naming chunk URLs this deploy no longer serves. Scoping every
+ * read to `CACHE_NAME` means a cache entry and the build it belongs to can
+ * never be separated.
+ */
+async function matchInCache(request: Request): Promise<Response | undefined> {
+  const cache = await caches.open(CACHE_NAME);
+  return cache.match(request);
+}
+
 // Cache.put rejects for non-GET requests and can throw on opaque/odd
 // responses; it's fire-and-forget by design (the response is already on its
 // way back to the page), so failures here must never surface as unhandled
@@ -164,7 +216,7 @@ async function onFetch(event: FetchEvent): Promise<Response> {
       }
       return networkResponse;
     } catch (error) {
-      const cachedResponse = await caches.match(event.request);
+      const cachedResponse = await matchInCache(event.request);
       if (cachedResponse) return cachedResponse;
       // Last resort: serve app shell for navigation requests
       if (isNavigationRequest(event.request)) {
@@ -178,7 +230,7 @@ async function onFetch(event: FetchEvent): Promise<Response> {
 
   // Cache-first for this build's static assets (JS, CSS, images, fonts).
   if (isImmutableAsset(url)) {
-    const cachedResponse = await caches.match(event.request);
+    const cachedResponse = await matchInCache(event.request);
     if (cachedResponse) return cachedResponse;
 
     try {
@@ -188,7 +240,7 @@ async function onFetch(event: FetchEvent): Promise<Response> {
       }
       return networkResponse;
     } catch (err) {
-      const fallback = await caches.match(event.request);
+      const fallback = await matchInCache(event.request);
       if (fallback) return fallback;
       return networkError(event.request, err);
     }
@@ -200,15 +252,18 @@ async function onFetch(event: FetchEvent): Promise<Response> {
   try {
     return await fetch(event.request);
   } catch (err) {
-    const cached = await caches.match(event.request);
+    const cached = await matchInCache(event.request);
     if (cached) return cached;
     return networkError(event.request, err);
   }
 }
 
 sw.addEventListener("install", (event) => {
-  sw.skipWaiting();
-  event.waitUntil(onInstall());
+  event.waitUntil(
+    onInstall().then(async () => {
+      if (await mayTakeOverOpenPages()) sw.skipWaiting();
+    })
+  );
 });
 sw.addEventListener("activate", (event) => event.waitUntil(onActivate()));
 sw.addEventListener("fetch", (event) => {

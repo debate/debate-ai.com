@@ -17,11 +17,15 @@ export const DEBATE_STYLE_LABELS: Record<DebateStyle, string> = {
 };
 
 /** Video data tuple:
- * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?]
+ * [videoId, title, date, channel, viewCount, description, style?, tournament?, roundLevel?, affTeam?, negTeam?, affWin?, judgeDecision?, arg1AC?, arg2NR?, isTopPick?, speechDocsUrl?, seasonYear?, stackKey?, stackPosition?]
  * Note: For lectures, index 6 can be either a DebateStyle number OR a category string.
  * `seasonYear` (index 17) is the competition season the video's publish date
  * falls in (e.g. `2025` for the 2024-25 season), 0 for legacy/unparseable
  * dates — format it for display with `formatSeasonLabel`.
+ * `stackKey` (index 18) names the stacked playlist this video shares a grid
+ * slot with and `stackPosition` (index 19) is its place in it; both are null
+ * — and usually absent, since the tuple is trimmed — for a video that stands
+ * on its own. See `components/video-grid/video-stacks.ts`.
  */
 export type VideoType = [
   string,
@@ -42,6 +46,8 @@ export type VideoType = [
   boolean?,
   (string | null)?,
   number?,
+  (string | null)?,
+  (number | null)?,
 ];
 
 export type TopicType = {
@@ -104,6 +110,14 @@ export type VideoMetaResponse = {
 };
 
 export type { LectureCategoryFacet, VideoFacets, VideoSuggestion, VideoSuggestions };
+
+/** Response of `/api/videos/stacks` — members of the requested stacks. */
+export type VideoStacksResponse = {
+  /** Members per stack key, ordered primary-first. */
+  stacks: Record<string, VideoType[]>;
+  /** Which backend answered — `"sql"`, or `"json"` before the table is seeded. */
+  backend: string;
+};
 
 /** Union of all valid video page category identifiers. */
 export type CategoryType =

@@ -963,6 +963,14 @@ export const videos = sqliteTable(
     isTopPick: integer("is_top_pick", { mode: "boolean" }).notNull().default(false),
     speechDocsUrl: text("speech_docs_url"),
     seasonYear: integer("season_year").notNull().default(0),
+    // Stacked playlists: `stack_key` is the id of the group's primary video
+    // (a round, say) and is shared by every member, `stack_position` orders
+    // them within it. Both are derived from the links the descriptions carry
+    // — see `debate-data-sync/src/videos/video-stacks.ts` — and are written
+    // by the seed, so a database seeded before they existed simply has null
+    // keys and no stacks until it is re-seeded.
+    stackKey: text("stack_key"),
+    stackPosition: integer("stack_position").notNull().default(0),
     searchText: text("search_text").notNull().default(""),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
@@ -976,6 +984,7 @@ export const videos = sqliteTable(
     categoryKeyIdx: index("idx_videos_category_key").on(table.categoryKey),
     sourceIdx: index("idx_videos_source").on(table.source),
     topPickIdx: index("idx_videos_is_top_pick").on(table.isTopPick),
+    stackKeyIdx: index("idx_videos_stack_key").on(table.stackKey),
   }),
 );
 

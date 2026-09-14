@@ -165,6 +165,43 @@ normal case.
 Hover labels stay `overflow-visible`: the sidebar column is the clipping
 boundary, and clipping at the dock would hide every tooltip.
 
+## One collection highlighted at a time
+
+Two highlight rules meet in `VideoSidebarTree`: the round collections come
+from `activeId` (derived in `LecturesVideoGridView` from the style filter, the
+favourites toggle and the slug), the lecture categories from
+`selectedCategory`. The second is the trap — `LecturesPage` resets
+`selectedCategory` to `"all"` on *every* video route, not only inside the
+lecture library, so "All Lectures" was highlighted alongside whichever round
+collection was open, and on the rankings and glossary pages as well.
+
+The tree now takes `browsingLectures` (`currentCategory === "lectures" &&
+!selectedStyle && !showFavoritesOnly`, and unset on the rankings/glossary
+shell) and applies the category rule only when it is set.
+`test/sidebar-single-highlight.test.tsx` asserts the highlighted rows of the
+rendered tree in all three cases.
+
+## The feature catalog is a sidebar route
+
+`/features` is not one of the nav tree's own links, but it gets the tree
+anyway: `EXTRA_SIDEBAR_HREFS` in
+`debate-videos/src/components/category-gallery/sidebar-routes.ts` adds it to
+`TOOL_SIDEBAR_HREFS`, so `isGenericToolSidebarRoute` is true for it and
+`AppSidebarShell` wraps it — which also suppresses `CategoryDock`'s floating
+instance, since the column now hosts one. The page itself carries no chrome
+of its own any more; the "Back to lectures" pill it used to float over its
+hero is the sidebar's job now.
+
+Getting there had to change too. The footer under the tree rendered every
+in-app row as `origin + url` — an absolute URL, which Next treats as external,
+so "Features" tore the document down and rebuilt it with no sidebar and no
+player. The footer's links now carry a `hardNavigate` flag
+(`ui/layout/footer-links.ts`): only `/docs`, the statically exported help site
+served from `public/`, sets it and keeps its full page load; every other app
+route is a relative `next/link` href, and the dock's Site Links menu pushes
+the same routes through the router. `test/footer-links-navigation.test.tsx`
+pins that split.
+
 ## The nav tree's headings
 
 Below the dock, the same column carries the nav tree

@@ -88,7 +88,9 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
   });
 
   it("falls back to the fixed dock only off the sidebar routes", () => {
-    for (const route of ["/", "/login", "/legal/privacy", "/features"]) {
+    // `/features` used to be in this list. It is a sidebar route now — see
+    // "the features catalog" below.
+    for (const route of ["/", "/login", "/legal/privacy"]) {
       expect(hasEmbeddedDock(route)).toBe(false);
       expect(isGenericToolSidebarRoute(route)).toBe(false);
     }
@@ -99,5 +101,15 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
     expect(hasEmbeddedDock(undefined)).toBe(false);
     expect(hasEmbeddedDock("")).toBe(false);
     expect(isGenericToolSidebarRoute(null)).toBe(false);
+  });
+});
+
+describe("the features catalog", () => {
+  it("is a sidebar route, so it opens inside the app rather than as a bare page", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/features")).toBe(true);
+    expect(isGenericToolSidebarRoute("/features")).toBe(true);
+    // …and the dock's own floating instance stays hidden, since the sidebar
+    // it is wrapped in already hosts one.
+    expect(hasEmbeddedDock("/features")).toBe(true);
   });
 });

@@ -1,5 +1,11 @@
 /**
- * @fileoverview Standard video grid component for displaying video cards
+ * @fileoverview Standard video grid component for displaying video cards.
+ *
+ * Cards are laid out one per *slot* rather than one per video: a stacked
+ * playlist (a round and the analysis of it, say) folds its members into the
+ * slot the first of them occupies and is flipped through in place with the
+ * `<` / `>` arrows on the card. See `video-stacks.ts` for the collapsing rule
+ * and `StackedVideoCard` for the card itself.
  */
 
 "use client"
@@ -7,7 +13,7 @@
 import React, { memo, useEffect, useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight, Link2 } from "lucide-react"
 import type { VideoType, TopicType } from "../../types/videos"
-import { VideoCard } from "../video-card/VideoCard"
+import { StackedVideoCard } from "../video-card/StackedVideoCard"
 import { HoverCardWrapper } from "../../ui/primitives/hover-card-wrapper"
 import { ROUND_ANALYSIS_LINKS, linkedRoundVideoId } from "../../lib/round-analysis-links"
 
@@ -78,13 +84,13 @@ function VideoGridComponent({ videos, showThumbnails, topics, videoContainerRef,
             video={video}
             showThumbnails={showThumbnails}
             topics={topics}
-            isFavorite={favorites.has(video[0])}
+            favorites={favorites}
             onToggleFavorite={onToggleFavorite}
             onBadgeClick={onBadgeClick}
             onHideVideo={onHideVideo}
             onUnhideVideo={onUnhideVideo}
-            isHidden={hiddenVideos.has(video[0])}
-            isTopPick={topPicks?.has(video[0]) || false}
+            hiddenVideos={hiddenVideos}
+            topPicks={topPicks}
             showFullDate={showFullDate}
             showDescription={showDescription}
           />}

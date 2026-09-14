@@ -34,5 +34,7 @@ state/cardScores.ts (localStorage)
 
 ## Known gaps
 
-Bulk import is pasted plain text, not a real file upload. Assessments are
-per-browser localStorage, not a shared team resource.
+Bulk import is pasted plain text, not a real file upload. AI assessments sync
+to your account like card scores do (see [Tool Data Sync](../internals/tool-data-sync.mdx))
+but are still not a shared team resource — a squad member scoring the same
+card sees their own assessment, not a teammate's.
