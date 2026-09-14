@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest"
 
-import { MAX_RECENT_TOOLS, parseRecentTools, pushRecentTool, resolveRecentTools } from "@/lib/recentTools"
+import {
+  applyRecentToolOp,
+  MAX_RECENT_TOOLS,
+  normalizeRecentToolOpPatch,
+  parseRecentTools,
+  pushRecentTool,
+  resolveRecentTools,
+  serializeRecentTools,
+} from "@/lib/recentTools"
 import type { Tool } from "@/app/tools/tool-groups"
 
 function stubTool(href: string, label: string): Tool {
@@ -64,6 +72,55 @@ describe("parseRecentTools", () => {
   it("caps the parsed list at MAX_RECENT_TOOLS", () => {
     const tooMany = Array.from({ length: MAX_RECENT_TOOLS + 3 }, (_, i) => `/tool-${i}`)
     expect(parseRecentTools(JSON.stringify(tooMany))).toHaveLength(MAX_RECENT_TOOLS)
+  })
+})
+
+describe("serializeRecentTools", () => {
+  it("serializes a non-empty list as JSON", () => {
+    expect(serializeRecentTools(["/tools", "/drills"])).toBe(JSON.stringify(["/tools", "/drills"]))
+  })
+
+  it("serializes an empty list as null", () => {
+    expect(serializeRecentTools([])).toBeNull()
+  })
+})
+
+describe("applyRecentToolOp", () => {
+  it("behaves identically to pushRecentTool", () => {
+    const current = ["/tools", "/reason-editor"]
+    expect(applyRecentToolOp(current, { recordRecentTool: "/drills" })).toEqual(
+      pushRecentTool(current, "/drills"),
+    )
+  })
+
+  it("ignores an invalid href, returning the list unchanged", () => {
+    const current = ["/tools"]
+    expect(applyRecentToolOp(current, { recordRecentTool: "not-a-path" })).toBe(current)
+  })
+})
+
+describe("normalizeRecentToolOpPatch", () => {
+  it("accepts a valid recordRecentTool op", () => {
+    expect(normalizeRecentToolOpPatch({ recordRecentTool: "/tools" })).toEqual({
+      valid: { recordRecentTool: "/tools" },
+      errors: [],
+    })
+  })
+
+  it("returns no valid op and no errors when the field is absent", () => {
+    expect(normalizeRecentToolOpPatch({ debateStyle: 1 })).toEqual({ valid: {}, errors: [] })
+  })
+
+  it("rejects a malformed recordRecentTool value", () => {
+    const result = normalizeRecentToolOpPatch({ recordRecentTool: "https://example.com/tools" })
+    expect(result.valid).toEqual({})
+    expect(result.errors).toHaveLength(1)
+  })
+
+  it.each([null, undefined, "not an object", 5, ["array"]])("rejects a non-object body %p", (body) => {
+    const result = normalizeRecentToolOpPatch(body)
+    expect(result.valid).toEqual({})
+    expect(result.errors).toHaveLength(1)
   })
 })
 

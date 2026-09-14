@@ -84,6 +84,21 @@ export async function saveFavoriteToolOp(
   return putSettingsPatch(op, endpoint);
 }
 
+/**
+ * Saves a single "just opened this tool" op — `{ recordRecentTool }` —
+ * instead of a whole-list `recentTools` replace, for the same lost-update
+ * reason `saveFavoriteToolOp` avoids one. The `recentTools` field itself
+ * (validation, serialization, the op type) lives in `apps/debate-ai.com`'s
+ * `lib/recentTools.ts` rather than this package — see that file's header —
+ * so the op shape is inlined here rather than imported.
+ */
+export async function saveRecentToolOp(
+  op: { recordRecentTool: string },
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
 async function putSettingsPatch(patch: unknown, endpoint: string): Promise<FullUserSettingsPayload> {
   const res = await fetch(endpoint, {
     method: "PUT",
