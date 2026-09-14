@@ -1,5 +1,9 @@
 <!-- template-git-repo:badges:start -->
 <p align="center">
+    <a href="https://doi.org/10.5281/zenodo.20320435"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320435.svg" alt="DOI"></a>
+      <a href="https://doi.org/10.5281/zenodo.20320093"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320093.svg" alt="DOI" /></a>
+  <a href="https://doi.org/10.5281/zenodo.20517983"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20517983.svg" alt="DOI"></a>
+    <br />
     <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
     <a href="https://debate-ai.com"><img height="20px" src="https://img.shields.io/badge/App-blueviolet?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" /></a>
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
@@ -24,13 +28,6 @@
     <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
     <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" />  <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" />  <img src="https://img.shields.io/badge/ProseMirror-000000" alt="ProseMirror" /> 
     <img src="https://img.shields.io/badge/Fumadocs-000000" alt="Fumadocs" /> 
-</p>
-<!-- template-git-repo:badges:end -->
-
-<p align="center">
-    <a href="https://doi.org/10.5281/zenodo.20320435"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320435.svg" alt="DOI"></a>
-      <a href="https://doi.org/10.5281/zenodo.20320093"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320093.svg" alt="DOI" /></a>
-  <a href="https://doi.org/10.5281/zenodo.20517983"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20517983.svg" alt="DOI"></a>
     <br />
     <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
     <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
@@ -38,11 +35,7 @@
     <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
     <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Ranks-informational?style=for-the-badge" alt="Results"></a>
     <br />
-    <img src="https://i.imgur.com/c3mT4oo.png" width="800px" />
-</p>
- 
-
-<p align="center">
+    <img src="https://i.imgur.com/c3mT4oo.png" width="800px" />    <br />    <br />
     <img src="https://i.imgur.com/VbJF0Bx.png" width="300">
 </p>
 
