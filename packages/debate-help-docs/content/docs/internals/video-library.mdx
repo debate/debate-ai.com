@@ -200,7 +200,7 @@ committed; regenerate it from the assets.
 - The seed runs as a separate step from `sync-youtube`, so newly synced videos
   reach the site only after the seed is re-run (until then the JSON fallback,
   not the table, is what carries them).
-- A seed run is not atomic. Statements commit as they go, so an interrupted
+- ~~A seed run is not atomic. Statements commit as they go, so an interrupted
   run leaves the rows it already wrote — and because the feed decides where to
   read from by asking whether the table has *any* rows, a partial table is
   served as if it were complete. This is not theoretical: the first run
@@ -208,7 +208,20 @@ committed; regenerate it from the assets.
   Re-running the seed converges (rows are upserted and stale ones pruned), and
   `GET /api/admin/videos/seed` reports the row count so the state is visible,
   but a run that fails needs a re-run rather than being left alone. Making the
-  statements one atomic D1 batch would close this.
+  statements one atomic D1 batch would close this.~~ Closed:
+  `seedVideosIntoDb` (`lib/videos/seed-videos-to-db.ts`) now runs every
+  generated statement — the upsert batches and the trailing prune `DELETE` —
+  as one `db.batch()` call instead of sequential awaited `db.run()`s, so a
+  mid-run failure leaves the table exactly as it was rather than partially
+  written. Both drivers `getDB()` can return (`drizzle-orm/d1` in production,
+  `drizzle-orm/libsql` locally) support `.batch()`, so this is uniform across
+  environments. `lib/videos/__tests__/seed-videos-to-db.test.ts` proves the
+  rollback against a real in-memory SQLite database (a mock of `db.run`
+  couldn't demonstrate an actual rollback) and adds regression coverage for
+  the upsert/prune behavior that had none before. This has not been verified
+  against a live production D1 instance at the video table's real row count —
+  same "unverified against production" caveat
+  [openCaselist Sync](caselist-sync.md) already carries for its own API guess.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page
