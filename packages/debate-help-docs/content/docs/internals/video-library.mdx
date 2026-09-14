@@ -58,6 +58,14 @@ even though the client no longer holds the whole library.
 quick-link cards, the lecture-category cards, and the season topic/champion
 tables. Nothing in it grows with the number of videos.
 
+When its query includes a category, style, season, or top-picks filter,
+`/api/videos/meta` also scopes its keyword and tournament chips to that same
+selection. `getVideoSuggestions` applies the shared `VideoQueryParams` rules
+before counting title/search-text matches in the JSON fallback; the SQL path
+uses the equivalent `buildConditions` predicates. The typed query is omitted
+on purpose: chips describe the open category rather than the user's already
+narrowed result set.
+
 **JSON fallback.** If the `videos` table is missing, unreachable, or not yet
 seeded, both endpoints rebuild the same rows from the JSON assets and answer
 from memory with identical semantics (`src/videos/video-query.ts` is the

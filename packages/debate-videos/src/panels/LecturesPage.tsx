@@ -92,7 +92,6 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
 
   const { state, actions } = useVideoState(initialCategory)
   const setSearchHandler = useVideoPlayerStore((state) => state.setSearchHandler)
-  const { meta, counts, lectureCategories, suggestions } = useVideoMeta()
 
   // ---------------------------------------------------------------------------
   // UI state
@@ -262,6 +261,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     enabled: isVideoCategory,
   }
 
+  // Search chips must describe the active library category rather than the
+  // whole archive. The hook deliberately ignores the typed search term.
+  const { meta, counts, lectureCategories, suggestions } = useVideoMeta(filters)
   const feed = useVideoFeed(filters)
 
   const currentVideos = feed.videos
