@@ -8,6 +8,83 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧪 Give the Progress Unlocks panel its first test coverage.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the
+  tools into the UI... create user settings and link user db SQL with the
+  ability to save flows/docs/debates in SQL and link to users... add tools
+  into where needed in the UI... develop better tool UI") — as with every
+  recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 26+ bespoke
+  `saved_*`/`saved_tool_records` D1 tables all linked to `user.id`, and
+  every tool already reachable from the Tools page, the command palette
+  and the feature catalog.
+
+  The immediately preceding run's own doc-staleness audit path
+  (`packages/debate-help-docs/content/docs/{features,internals}/*.mdx`'s
+  "Known gaps" sections) was already worked twice in a row; this run
+  confirmed it's exhausted for now — `guides/` and `packages/` have no
+  "Known gaps" sections at all to go stale, and re-checking `features/`/
+  `internals/` turned up nothing new. Went back to the other standing gap
+  class instead: a real-logic UI panel with zero test coverage, the same
+  class `ArgumentLibraryPanel.test.tsx`, `PrepNoteNotificationsPanel.test.tsx`
+  and `FlowEditLogPanel.test.tsx` closed for their own packages. An audit
+  agent confirmed `ProgressUnlocksPanel.tsx`
+  (`packages/debate-contributor-progress/src/panels/`) was the best
+  candidate: three `useEffect`s (initial roster load, a badge-celebration
+  diff against a persisted "last-seen" baseline, and a cross-tab `storage`
+  listener), an interactive Dismiss handler, and meaningful branching
+  (loading/empty states, "You" row highlighting, top-tier-vs-progress-meter)
+  — yet `debate-contributor-progress`'s `test/` folder had zero `*.test.tsx`
+  files, only `.test.ts` coverage of its pure `lib`/`state` modules. Ruled
+  out `QuestStreaksPanel`/`JudgeDecisionPanel`/`PreRoundBriefingsPanel`/
+  `BrainstormBoardPanel`, each documented elsewhere as intentionally
+  untested account-sync/animation-timer wiring.
+
+  Added `packages/debate-contributor-progress/test/helpers/mount.tsx` (this
+  package's first jsdom + `react-dom/client` + `act` mount helper, copied
+  verbatim from `debate-team-collaboration/test/helpers/mount.tsx` rather
+  than reinvented — this panel loads its roster inside a `useEffect`, so a
+  `node`-environment `renderToStaticMarkup` snapshot would never see it) and
+  `packages/debate-contributor-progress/test/ProgressUnlocksPanel.test.tsx`
+  (11 cases: the empty state, a contributor's tier/badge/next-tier-progress
+  rendering, the streak display with and without an active streak, "Top
+  tier reached" replacing the meter at the top tier, "You" highlighting the
+  signed-in contributor's row and no row when no id matches, the
+  unlock-celebration banner appearing only against an *existing* seen-badges
+  baseline — never on a contributor's first-ever sight, per
+  `unlock-celebration.ts`'s own documented rule — and never without a
+  `signedInContributorId`, its Dismiss action, and the cross-tab
+  `storage`-event refresh for a tracked key vs. an ignored unrelated one).
+  Two early assertions needed correcting against the real code rather than
+  assumption: `apprentice` unlocks the `novice` skill level, not
+  `intermediate` (that's `veteran`'s), and a mission-result streak has to be
+  dated against the panel's own real `todayUtcDayKey()` (today's actual UTC
+  date), not an arbitrary fixed date, to register as active. Passing
+  `signedInContributorId` as a prop also needed real JSX
+  (`<ProgressUnlocksPanel signedInContributorId="alice" />`) instead of
+  `createElement(ProgressUnlocksPanel, { signedInContributorId: "alice" })`
+  — the latter failed `tsc` with a spurious "not in type `Attributes`"
+  overload-resolution error against this component's defaulted-destructured
+  props parameter, which plain JSX doesn't trigger.
+
+  Ran the full verification gate: `bun install`, `packages/debate-contributor-progress`'s
+  own `bun run test` (22 files, 431 tests — 11 new), the root `bun run test`
+  (454 files, 8722 tests, all passing), `bun run typecheck` (17/17 packages
+  green), and `bun run build` (production build, all three targets green —
+  the build's own regenerated service-worker file list/version stamp were
+  reverted before committing since they're unrelated build output, not a
+  source change). No `lint`/`format:check` script exists anywhere in this
+  repo, so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** `ContributorProfilePanel.tsx` (same
+  package) has the same shape — load-on-mount and `storage`-listener
+  effects, "You" highlighting — but no interactive handler, and remains
+  untested; a reasonable next candidate for the same audit. The
+  `dailyMissionResults`/`challengeWinEvents` ownership-scoping question and
+  the `qwksearch` file-sources credential-sync question, flagged by several
+  prior runs, remain open for the same reasons those runs recorded — both
+  need a maintainer product/security decision, not a mechanical fix.
+
 - **🧪 Give the Prep Notes assignee-notifications panel its first test
   coverage.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
