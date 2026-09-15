@@ -1,5 +1,4 @@
-
-Commit counts are commits authored that month on the default branch, merge commits included.
+# Changelog
 
 # MVP Phase (2026)
 
@@ -18,7 +17,6 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 - Chased down a run of `/videos` bugs — a route crash from Lucide icons reaching `next/image`, the service worker's fabricated 502, a YouTube "error 153," and a transcript API that always 404'd.
 - Reworked the videos experience with a **collapsible sidebar nav tree**, persistent left-sidebar controls, a **transcript modal with synced YouTube playback**, and resizable/sortable list columns.
 - Added admin YouTube video management with per-video publish/delete and a weekly resync cron that both scans the subscribed channels for new videos and refreshes every stored video's view count, so the library's "most viewed" sort stops drifting.
-- Extended that admin page past the publish queue to the **published library itself**: search any video already on the site by title, channel, tournament or id, edit its whole record (title, channel, date, format, tournament, teams, winner, description, top-pick flag), or remove it — a removal is recorded as a resync exclusion so the weekly sync cannot quietly re-publish it.
 
 ### Collaboration and coaching
 
@@ -77,7 +75,6 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 ### Platform and packages
 
 - Split debate-card-search and debate-round into four category packages, and vendored debate-ui into each consumer.
-- **Retired `debate-ui`.** The vendoring pass above had already left every app and package rendering its own `ui/` folder, so the shared kit was a stale duplicate nothing imported: deleted it, and with it fourteen effect, layout and primitive components no surface had ever mounted. Its tests moved to the code that survived them — the dock, features panel, panel shell and `cn`/URL-state suites to `apps/debate-ai.com/lib/ui/__tests__`, the table and textarea suites to `debate-research-evidence`. Tailwind's `@source` list was the one real casualty waiting to happen: it still named the long-gone `debate-card-search` and leaned on the kit's copy of a primitive to generate classes for packages it never listed, so it now names every package that renders JSX. Net effect on the built stylesheet is 64 classes gained (`debate-search-evidence`, `debate-speech-writer`, `debate-team-collaboration`, `debate-practice-drills` and `debate-community` had been rendering partly unstyled) and none lost outside the deleted dead components.
 - Published a typed **OpenAPI SDK** (`debate-api-client`) to npm.
 - Added `native-wrapper`, a Tauri desktop/mobile shell shipped as Debate AI.
 - Stood up a `debate-ai-docs` package and fixed an EventEmitter memory leak.
@@ -239,7 +236,7 @@ The biggest month of development.
 - Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, and redesigned the **ChampionsPanel**.
 - Restructured documentation into a new `docs/` directory with project vision and feature docs.
 
-# Prototype Phase (2023–2025)
+# Prototype Phase (2024–2025)
 
 ## December 2025 — 6 commits
 
@@ -250,7 +247,3 @@ The biggest month of development.
 ## July 2024 — 2 commits
 
 Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation.
-
-## September 2023
-
-Project inception. Initial docs, schema, and UI experiments; **Google One Tap sign-in** testing; first dev example (v0.1).
