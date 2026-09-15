@@ -25,6 +25,28 @@ export interface CardDef {
   back: string;
 }
 
+/** Byte cap for one card's account-synced JSON (`learn-cards-client.ts`
+ *  PUTs a single card at a time, mirroring `quick-cards-store.ts`'s
+ *  `MAX_SAVED_QUICK_CARD_BYTES`). */
+export const MAX_SAVED_LEARN_CARD_BYTES = 200_000;
+
+/**
+ * Structural guard for an untrusted value claiming to be a `CardDef` —
+ * doubles as the `/api/learn-cards` account-sync routes' request-body
+ * validator, mirroring `quick-cards-store.ts#isValidQuickCardRecord`'s
+ * convention.
+ */
+export function isValidLearnCardRecord(e: unknown): e is CardDef {
+  if (!e || typeof e !== 'object') return false;
+  const c = e as Record<string, unknown>;
+  return (
+    typeof c.id === 'string' &&
+    (c.type === 'qa' || c.type === 'cloze') &&
+    typeof c.front === 'string' &&
+    typeof c.back === 'string'
+  );
+}
+
 export interface CardAnchor {
   cardId: string;
   docId: string;
@@ -93,6 +115,27 @@ export interface CustomDeck {
   name: string;
   cardIds: string[];
   createdAt: string;
+}
+
+/** Byte cap for one deck's account-synced JSON, mirroring
+ *  `MAX_SAVED_LEARN_CARD_BYTES`'s per-record cap. */
+export const MAX_SAVED_LEARN_DECK_BYTES = 200_000;
+
+/**
+ * Structural guard for an untrusted value claiming to be a `CustomDeck` —
+ * doubles as the `/api/learn-decks` account-sync routes' request-body
+ * validator, mirroring `isValidLearnCardRecord`'s convention.
+ */
+export function isValidLearnDeckRecord(e: unknown): e is CustomDeck {
+  if (!e || typeof e !== 'object') return false;
+  const d = e as Record<string, unknown>;
+  return (
+    typeof d.deckId === 'string' &&
+    typeof d.name === 'string' &&
+    Array.isArray(d.cardIds) &&
+    d.cardIds.every((c) => typeof c === 'string') &&
+    typeof d.createdAt === 'string'
+  );
 }
 
 export interface DocRegistryEntry {
@@ -479,6 +522,14 @@ export class LearnStore {
   // decks
   createDeck(name: string, deckId: string, now: string): void {
     this.decks.push({ deckId, name, cardIds: [], createdAt: now });
+    this.changed();
+  }
+  /** Create or replace a deck's full record (id/name/cardIds/createdAt) —
+   *  the account-sync merge's adoption path, mirroring `upsertCard`. */
+  upsertDeck(deck: CustomDeck): void {
+    const i = this.decks.findIndex((d) => d.deckId === deck.deckId);
+    if (i === -1) this.decks.push(deck);
+    else this.decks[i] = deck;
     this.changed();
   }
   renameDeck(deckId: string, name: string): void {
