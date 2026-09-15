@@ -33,8 +33,9 @@ state/streakLapseReminders.ts (localStorage: streakLapseReminders)
 
 ## Known gaps
 
-The trigger is a manual button click, not a scheduled job — there is no
-scheduled-job infrastructure in this repo for it to run on. Streak freezes
+The trigger is a manual button click, not a scheduled job — nothing wires
+mission-result computation to the repo's cron trigger (see the internals
+doc), so it doesn't run on its own. Streak freezes
 and the reminder opt-in sync to the signed-in visitor's own account across
 devices, but every other contributor's row in the roster stays
 localStorage-only, since there's no contributor-identity system to sync
