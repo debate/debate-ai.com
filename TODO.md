@@ -8,6 +8,61 @@ _No task currently in progress._
 
 ### Completed
 
+- **📅 Close the stale "no cron infrastructure" Known gaps on Quest
+  Streaks.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built: `user_settings`/`documents`/`saved_flows`/`saved_rounds`,
+  26+ bespoke `saved_*`/`saved_tool_records` D1 tables all linked to
+  `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. The immediately preceding run's
+  own flagged follow-up was to audit
+  `packages/debate-help-docs/content/docs/internals/*.mdx` (27 files) for
+  the same "gap already closed in code, doc never updated" staleness its
+  own fix (`argument-library-collections.mdx`) had found in `features/`.
+  Did that audit (delegated across all 27 files) and confirmed every other
+  spot-checked "Known gaps" bullet still held — one came back stale.
+
+  `internals/quest-streaks.mdx` and its sibling `features/quest-streaks.mdx`
+  both said, in three places, that the repo has "no cron/scheduled-job
+  infrastructure" for a scheduled mission-result check to run on. That
+  stopped being true in commit `865e254` (2026-09-09, predating this doc's
+  own last edit): `apps/debate-ai.com/wrangler.jsonc` now defines a real
+  Cloudflare Workers cron trigger (`triggers.crons: ["0 8 * * 1"]`) and
+  `worker/index.ts` exports a `scheduled` handler that already runs two
+  independent jobs off that one weekly tick (the YouTube channel/view-count
+  sync and a `reuse_check_log` purge) — the exact "piggyback on the one
+  cron trigger this app has" pattern the doc claimed didn't exist.
+  Quest-streak mission results genuinely aren't wired to it (the manual
+  "Run today's mission check" button is still the only trigger), so
+  reworded all three spots to say precisely that — infra exists, this job
+  just isn't on it — instead of overclaiming there's no infra at all.
+
+  This is a prose-only correctness fix (no behavior, schema, or API
+  change), so no new Vitest coverage applies; ran the full verification
+  gate anyway to confirm the doc edits didn't disturb anything: `bun
+  install`, `bun run typecheck` (18/18 packages green), `bun run test`
+  (451 files, 8700 tests, all passing, unchanged from before this edit),
+  and `bun run build` (production build, all three targets green — the
+  build's own regenerated service-worker file list/version stamp were
+  reverted before committing since they're unrelated build output, not a
+  source change). No `lint`/`format:check` script exists anywhere in this
+  repo, so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the audit's one low-confidence,
+  unverifiable-from-code candidate — `internals/canonical-host-redirect.mdx`'s
+  claim that nothing asserts `d.ebate.app` routing — is a Cloudflare
+  dashboard config claim outside repo code, so it couldn't be confirmed or
+  refuted here; worth a maintainer check rather than a guess. The
+  `docs/guides/*.mdx` and `docs/reference/*.mdx` (if any) doc sets remain
+  unaudited for the same staleness pattern. The remaining 6 Learn
+  sub-collections, `dailyMissionResults`/`challengeWinEvents`, and the
+  `qwksearch` credential-sync question all remain open for the same
+  reasons every prior run recorded — none is a small mechanical slice, and
+  the last still needs a maintainer product/security decision.
+
 - **🧪 Close the stale "no rename/no tag editing" Known gaps on the Common
   Argument Library's saved collections, and give `ArgumentLibraryPanel` its
   first test coverage.** Another repeat of the standing autonomous-routine
