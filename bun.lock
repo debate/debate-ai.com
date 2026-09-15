@@ -252,6 +252,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "debate-card-parser": "workspace:*",
+        "debate-data-sync": "workspace:*",
         "fast-xml-parser": "^5.11.1",
         "fflate": "^0.8.3",
         "loro-crdt": "1.16.0",

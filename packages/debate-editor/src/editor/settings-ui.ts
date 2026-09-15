@@ -1396,7 +1396,9 @@ export function buildEmbeddedSettingsPanel(category: SettingsCategory): Embedded
     // `user-dictionary-ui.ts`).
     const spellcheckRow = panel.querySelector('[data-setting-key="editorSpellcheck"]');
     if (spellcheckRow) {
-      spellcheckRow.insertAdjacentElement('afterend', buildUserDictionarySection());
+      const dictionarySection = buildUserDictionarySection();
+      spellcheckRow.insertAdjacentElement('afterend', dictionarySection.element);
+      registerRowCleanup(dictionarySection.element, dictionarySection.destroy);
     }
     panel.appendChild(buildBenchmarkSection(() => {}));
     panel.appendChild(buildInstallInfoSection());

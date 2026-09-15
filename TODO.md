@@ -8,6 +8,92 @@ _No task currently in progress._
 
 ### Completed
 
+- **🏷️ Give CardMirror's personal dictionary the same "synced to your
+  account" badge the Debate Flow History tab already has.** Another repeat
+  of the standing autonomous-routine prompt ("integrate all the tools into
+  the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 26+ bespoke
+  `saved_*`/`saved_tool_records` D1 tables all linked to `user.id`, and
+  every tool already reachable from the Tools page, the command palette
+  and the feature catalog. Picked up a standing follow-up rather than
+  starting a fresh audit: the run that added `getToolRecordSyncStatus`
+  (`packages/debate-data-sync/src/state/tool-record-auto-sync.ts`) and
+  wired it into `FlowHistoryList.tsx`'s History tab flagged that "the same
+  per-record status is now available to any other synced tool's list UI
+  (e.g. CardMirror's personal dictionary, the flow-edit log) that wants the
+  same 'synced vs. local-only' distinction — this run only wired it into
+  the one tab the prior run's follow-up named." A later run built the
+  personal dictionary's only view/remove UI
+  (`packages/debate-editor/src/editor/user-dictionary-ui.ts`) but never
+  closed that flagged gap, so every word in the (already-synced,
+  `spellcheckDictionary`) dictionary still looked identical whether it had
+  reached the account or not — indistinguishable from a word added the
+  same second, offline.
+
+  Wired `getToolRecordSyncStatus('spellcheckDictionary', { id: word, word
+  })` into `buildUserDictionarySection`'s row renderer, exactly mirroring
+  `FlowHistoryList`'s own pattern: a small "Synced" / "Not yet synced"
+  badge next to each word, omitted entirely (not shown as a third state)
+  when the status is `"unknown"` — before this collection has ever been
+  baselined against the account. New CSS
+  (`.pmd-dictionary-sync-badge{,--synced,--pending}`) reuses the same
+  small-chip language `.pmd-qcs-row-badge` already established rather than
+  inventing a new visual pattern. `debate-editor` had no dependency on
+  `debate-data-sync` before this (only `debate-round` and `debate-ui` did),
+  so added `"debate-data-sync": "workspace:*"` to its `package.json` — the
+  same workspace, no circular reference (`debate-data-sync` does not import
+  `debate-editor`).
+
+  Unlike `FlowHistoryList` (a React component that gets a fresh render
+  whenever its host dialog's other state changes), the vanilla-DOM
+  dictionary section has no natural re-render trigger once mounted, so a
+  badge would otherwise stay "Not yet synced" for the rest of the session
+  even after the account-sync watcher's next background tick actually
+  landed it. Added a `setInterval(render, TOOL_RECORD_AUTO_SYNC_INTERVAL_MS)`
+  — the same cadence the watcher itself polls on — and changed
+  `buildUserDictionarySection`'s return type from a bare `HTMLElement` to
+  `{ element, destroy }` (mirroring `settings-ui.ts`'s own
+  `EmbeddedSettingsPanel` shape) so the interval is released via that
+  file's existing `registerRowCleanup` mechanism rather than leaking one
+  timer per settings-panel mount.
+
+  Vitest-covered: extended `packages/debate-editor/test/user-dictionary-ui.test.ts`
+  with a new `sync status badge` describe block (6 cases — no badge before
+  the collection has a baseline, "Synced" once a word's exact value has
+  landed, "Not yet synced" for a word baselined before it existed, "Not yet
+  synced" immediately for a newly-typed word, the badge flipping to
+  "Synced" once a simulated background flush lands under a fake-timers
+  advance of exactly one watcher interval, and no further refresh — and no
+  throw querying the now-detached-from-updates DOM — once `destroy()` has
+  been called), reusing `debate-data-sync`'s own
+  `markToolRecordsSynced`/`resetToolRecordAutoSync` test helpers the same
+  way `FlowHistoryList.test.tsx` already does. Existing tests updated for
+  the new `{ element, destroy }` return shape.
+
+  Ran the full verification gate: `bun install`, `packages/debate-editor`'s
+  own `bun run test` (34 files, 770 tests — 6 new), the root `bun run test`
+  (449 files, 8684 tests, all passing), `bun run typecheck` (18/18 packages
+  green, confirms the new `debate-data-sync` import resolves), and
+  `bun run build` (production build, all three targets green). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the flow-edit log
+  (`packages/debate-team-collaboration`'s `flowEdits` collection, per
+  `tool-data-sync.mdx`'s "Coaching" section) was named alongside the
+  personal dictionary in the same flagged follow-up and remains undone —
+  it has its own list UI this run did not audit closely enough to touch
+  safely in the same slice. The remaining 6 Learn sub-collections
+  (schedules, anchors, AI threads, notes, review log, doc registry),
+  `dailyMissionResults`/`challengeWinEvents` (composite-key gamification
+  history), and the `qwksearch` file-sources credential-sync question all
+  remain open for the same reasons every prior run recorded — none is a
+  small mechanical slice, and the last still needs a maintainer
+  product/security decision.
+
 - **🗂️ Sync CardMirror's Learn custom decks to the account.** Another
   repeat of the standing autonomous-routine prompt ("integrate all the
   tools into the UI... create user settings and link user db SQL with the
