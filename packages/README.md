@@ -3,6 +3,23 @@
 Workspace packages used by the debate-ai.com apps. Section headings are the
 directory names; the npm package name is called out where it differs.
 
+## UI primitives live in the package that renders them
+
+There is no shared `debate-ui` package. Each package and app keeps its own
+`ui/` folder (`src/ui/` in a package, `lib/ui/` in the web app) holding *only*
+the shadcn/Radix primitives, icons, panel shells and `cn`/URL-state helpers
+that package actually imports — so a package pulls in no primitive it does not
+render, and no dependency it does not need.
+
+When a package needs a primitive it does not have yet, copy the file from a
+package that already has one into its own `ui/primitives/`, add the matching
+`@radix-ui/*` dependency to that package's `package.json`, and register the
+directory with Tailwind in `apps/debate-ai.com/app/globals.css` if it isn't
+covered already. Keep the copies in the shadcn idiom — unstyled Radix behaviour
+plus `cn`-composed classes, variants over one-off props, `asChild` for
+composition — and keep them domain-free: a primitive that knows what a "card"
+or a "round" is belongs in the package that owns the concept.
+
 ## debate-api-client
 
 Typed SDK for the [Debate AI API](https://debate-ai.com/api/api-docs), generated from
@@ -44,9 +61,9 @@ a React editor shell sized for the site's speech-doc and `/reason-editor` surfac
 Canonical `APP_FEATURES` catalog for the `/features` page — data plus
 section/search/doc-url helpers, with no dependencies of its own (a leaf
 package, like `debate-data-sync`). Depended on by the app's live `/features`
-page, `debate-ui`'s reference `FeaturesPanel`, and `debate-contributor-progress`'s
-News Stream "Tool spotlight" posts, so a feature only needs to be registered
-once instead of hand-synced across three forks.
+page (`apps/debate-ai.com/lib/ui/features/FeaturesPanel`) and
+`debate-contributor-progress`'s News Stream "Tool spotlight" posts, so a feature
+only needs to be registered once instead of hand-synced across forks.
 
 ## debate-flow
 
@@ -114,11 +131,6 @@ assist, group challenges, research-progress tracking, sprint notes, and (moved f
 
 Speech and prep timers for live rounds, with per-format speech times built in. Also
 includes an in-round speech recorder with mic selection, live waveform, and playback.
-
-## debate-ui
-
-Shared UI kit for the debate apps. Provides shadcn/Radix primitives, a custom icon set,
-the site footer, and the `cn`/URL-state helpers other packages build on.
 
 ## debate-videos
 

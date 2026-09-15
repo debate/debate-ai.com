@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { FeaturesPanel } from "../src/features/FeaturesPanel";
-import { SpotlightCard, cardHueShift } from "../src/features/effects";
+import { FeaturesPanel } from "../features/FeaturesPanel";
+import { SpotlightCard, cardHueShift } from "../features/effects";
 import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog";
 
 describe("FeaturesPanel", () => {
@@ -20,10 +20,11 @@ describe("FeaturesPanel", () => {
     expect(html).toContain(`${APP_FEATURES.length} features across 8 categories`);
   });
 
-  it("links entries that have a long-form doc", () => {
-    expect(html).toContain(
-      "https://github.com/debate/debate-ai.com/blob/master/docs/features/task-inbox.md",
-    );
+  it("links entries that have a long-form doc into the app's own docs site", () => {
+    // The panel takes `featureDocUrl`'s default base, so a doc lands on
+    // `/docs/features/…` without the source file's extension.
+    expect(html).toContain("/docs/features/task-inbox");
+    expect(html).not.toContain("task-inbox.md");
   });
 
   it("renders a jump-to-category nav", () => {

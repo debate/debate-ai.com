@@ -21,14 +21,23 @@
 
 /* The debate component packages are symlinked in through node_modules, which
    Tailwind's automatic source detection skips — register them explicitly so
-   their class names end up in the generated stylesheet. */
-@source "../../../packages/debate-ui/src";
-@source "../../../packages/debate-card-search/src";
-@source "../../../packages/debate-timer/src";
-@source "../../../packages/debate-videos/src";
-@source "../../../packages/debate-round/src";
+   their class names end up in the generated stylesheet. Every package that
+   renders JSX belongs here, its own `src/ui` primitives included: there is no
+   shared UI package left whose single copy of a primitive could stand in for
+   theirs. (`debate-card-search` used to cover the three packages it was later
+   split into — `debate-search-evidence`, `debate-team-collaboration` and
+   `debate-contributor-progress` — which are now listed in its place.) */
+@source "../../../packages/debate-contributor-progress/src";
 @source "../../../packages/debate-editor/src";
 @source "../../../packages/debate-flow/src";
+@source "../../../packages/debate-practice-drills/src";
+@source "../../../packages/debate-round/src";
+@source "../../../packages/debate-round-practice-ai/src";
+@source "../../../packages/debate-search-evidence/src";
+@source "../../../packages/debate-speech-writer/src";
+@source "../../../packages/debate-team-collaboration/src";
+@source "../../../packages/debate-timer/src";
+@source "../../../packages/debate-videos/src";
 
 /* The embedded qwksearch workspace (/doc) is built from npm/workspace
    packages whose Tailwind classes must be registered the same way —

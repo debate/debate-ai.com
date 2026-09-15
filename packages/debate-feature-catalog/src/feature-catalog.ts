@@ -19,9 +19,9 @@
  * clicking through.
  *
  * This is the single canonical copy: `apps/debate-ai.com`'s live `/features`
- * page, `packages/debate-ui`'s reference `FeaturesPanel`, and
+ * page (`lib/ui/features/FeaturesPanel`) and
  * `packages/debate-contributor-progress`'s News Stream "Tool spotlight" posts
- * all import from here (a leaf package with no dependency of its own, the
+ * both import from here (a leaf package with no dependency of its own, the
  * same shape as `debate-data-sync`) instead of each keeping a hand-synced
  * fork — see `features-page.mdx`'s "One shared catalog" section.
  *
@@ -38,8 +38,8 @@
  * own docs site (`scripts/build-docs.mjs` static-exports
  * `packages/debate-help-docs/content/docs/features/<name>.mdx` into
  * `public/docs`). Renderers with no docs site of their own to link into
- * (`packages/debate-ui`'s reference panel, News Stream's spotlights) pass
- * {@link GITHUB_DOCS_BASE_URL} to {@link featureDocUrl} instead.
+ * (News Stream's spotlights, say) pass {@link GITHUB_DOCS_BASE_URL} to
+ * {@link featureDocUrl} instead.
  */
 const DEFAULT_DOCS_BASE_URL = "/docs/features";
 
