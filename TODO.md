@@ -8,6 +8,87 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧪 Close the stale "no rename/no tag editing" Known gaps on the Common
+  Argument Library's saved collections, and give `ArgumentLibraryPanel` its
+  first test coverage.** Another repeat of the standing autonomous-routine
+  prompt ("integrate all the tools into the UI... create user settings and
+  link user db SQL with the ability to save flows/docs/debates in SQL and
+  link to users... add tools into where needed in the UI... develop better
+  tool UI") — as with every recent repeat, that prompt's own asks are
+  already fully built: `user_settings`/`documents`/`saved_flows`/
+  `saved_rounds`, 26+ bespoke `saved_*`/`saved_tool_records` D1 tables all
+  linked to `user.id`, and every tool already reachable from the Tools page,
+  the command palette and the feature catalog. The immediately preceding
+  run's own flagged follow-up (the remaining Learn sub-collections,
+  `dailyMissionResults`/`challengeWinEvents`, `qwksearch` credential-sync)
+  was explicitly recorded as containing no small mechanical slice, so this
+  run did a fresh audit of `packages/debate-help-docs/content/docs/features/*.mdx`'s
+  "Known gaps" sections instead of forcing one of those.
+
+  Found one already fixed in code but never in its doc:
+  `argument-library-collections.mdx` still listed "No rename for an existing
+  collection" and "No editing a saved collection's tag list directly" as
+  open gaps, but `hooks/useSavedArgumentCollections.ts`'s
+  `renameCollection`/`updateCollection` (backed by
+  `validateSavedArgumentCollectionRename`/`validateSavedArgumentCollectionTagsUpdate`
+  in `lib/argument-library-collections.ts`, both already fully unit-tested)
+  and `panels/ArgumentLibraryPanel.tsx`'s "Rename"/"Update" buttons were
+  already written and wired together — git history shows both landed before
+  the doc's last touch, which was only a package-rename commit. The doc also
+  still named the panel's old package (`debate-card-search`, since renamed
+  to `debate-search-evidence`). Rewrote the "Known gaps" section to "None
+  open" (with the still-real no-optimistic-concurrency caveat every other
+  `/api/settings` field has), corrected the package name, and expanded "What
+  it shows"/"Data flow" to mention Rename/Update and the client module.
+
+  While auditing this file to confirm the UI behavior actually matched the
+  code (not just trusting the file existed), found the deeper gap: despite
+  being a real, meaningfully-logicked panel (tag-chip filtering, saved-
+  collection CRUD, a cross-store tag rename/merge tool, case-variant
+  merging), `ArgumentLibraryPanel.tsx` had zero test coverage — no
+  `ArgumentLibraryPanel.test.*` existed anywhere, unlike every sibling panel
+  this repo's history has since added tests for (`FlowEditLogPanel`,
+  `FlowHistoryList`, etc.). Added
+  `packages/debate-search-evidence/test/ArgumentLibraryPanel.test.tsx` (11
+  cases: empty state, topic-folder/tag-collection rendering, tag-chip
+  toggle/clear, saving a collection, refusing a duplicate name, applying a
+  saved collection's tags, renaming a collection, refusing a rename onto
+  another collection's name, replacing a collection's tags via "Update",
+  removing a collection, and the tag rename/merge tool rewriting a tag
+  across every entry that carries it) — this is what actually verified the
+  rename/update doc fix was safe to make, rather than taking the code at
+  face value. Since this panel loads its library and saved collections
+  inside `useEffect` (not from props), a `node`-environment
+  `renderToStaticMarkup` snapshot would never see any of it — used the same
+  real `jsdom` + `react-dom/client` + `act` pattern
+  `debate-round/test/FlowEditLogPanel.test.tsx` and
+  `debate-videos/test/glowing-effect-listeners.test.tsx` established, and
+  added `packages/debate-search-evidence/test/helpers/mount.tsx` (this
+  package's first use of that pattern), mirroring
+  `debate-timer/test/helpers/mount.tsx`'s exact `mount`/`click`/`type`/
+  `flush` API rather than inventing a new one — this repo has no
+  `@testing-library` dependency, so every component test wraps `createRoot`/
+  `act` directly.
+
+  Ran the full verification gate: `bun install`, `packages/debate-search-evidence`'s
+  own `bun run test` (40 files, 1178 tests — 11 new), the root `bun run test`
+  (451 files, 8700 tests, all passing), `bun run typecheck` (18/18 packages
+  green), and `bun run build` (production build, all three targets green).
+  No `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** this run only audited the "Known gaps"
+  sections under `packages/debate-help-docs/content/docs/features/`; the
+  `internals/` doc set (e.g. `tool-data-sync.mdx`) wasn't re-checked for the
+  same "gap already closed in code" staleness and may be worth the same
+  audit next. `ArgumentLibraryPanel`'s "Possible duplicate tags" case-variant
+  merge button and its cross-tab `storage`-event live-update path remain
+  untested by the new file — real behavior, not a doc/code mismatch, so
+  lower priority than the rename/update gap this run closed. The
+  Learn-sub-collections/`dailyMissionResults`/`challengeWinEvents`/
+  `qwksearch` follow-ups earlier runs flagged remain open for the same
+  reasons those runs recorded.
+
 - **🏷️ Give the Flow Edit Log its own "synced to your account" badge.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
