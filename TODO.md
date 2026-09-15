@@ -8,6 +8,95 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧪 Give the Prep Notes assignee-notifications panel its first test
+  coverage.** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built: `user_settings`/`documents`/`saved_flows`/`saved_rounds`,
+  26+ bespoke `saved_*`/`saved_tool_records` D1 tables all linked to
+  `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog.
+
+  This run first chased the immediately preceding run's own flagged
+  follow-up — syncing `dailyMissionResults`/`challengeWinEvents` into the
+  `TOOL_RECORD_COLLECTIONS` catalog now that a synthetic composite id
+  (`contributorId:dayKey`/`contributorId:occurredAt`) would fix the "no
+  single stable id field" blocker every prior run recorded — and got far
+  enough to confirm that blocker is fixable (mirroring
+  `user-dictionary.ts`'s own `{ id, word }[]` reshape), but stopped short of
+  making the change: both stores can hold *other* contributors' rows in the
+  same browser (a coach or teammate computing/recording a squad-mate's
+  entry from their own device, per `internals/quest-streaks.mdx`'s "there is
+  no contributor-identity system, only a free-text contributor id" note),
+  and `TOOL_RECORD_COLLECTIONS`'s generic watcher syncs a collection's
+  *entire* localStorage array to whichever account is currently signed in —
+  it has no per-record ownership check. Joining the catalog as-is would
+  therefore let one contributor's browser upload another contributor's
+  computed mission-result/win-event rows into the *signed-in* contributor's
+  own synced records, a data-ownership mismatch none of this catalog's
+  existing entries have (every other synced store's records genuinely
+  belong to the one signed-in browser). That is a product/schema judgment
+  call — filter which rows this device may sync (e.g. only the
+  session's own `contributorId`), or accept the mismatch — not a
+  mechanical one, so left both stores out of the catalog and flagged this
+  precisely below instead of guessing.
+
+  Picked up a safer, unambiguous gap instead: `PrepNoteNotificationsPanel.tsx`
+  (the Prep Notes assignee-notification digest — recipient lookup, one
+  digest card per UTC day with expand/collapse, per-notification and
+  per-group "Mark read", and a cross-tab `storage`-event live refresh) had
+  zero component test coverage, unlike its own state layer
+  (`state/prepNoteNotifications.ts`/`flow/prep-note-notifications.ts`,
+  already covered by `prepNoteNotifications.test.ts`/
+  `prep-note-notifications.test.ts`) — the same "real logic, never
+  exercised end-to-end" gap `ArgumentLibraryPanel.test.tsx` closed two runs
+  ago. Confirmed it wasn't an intentional exclusion first: unlike
+  `useQuestStreakSync`/`useToolRecordSync` (documented as "intentionally
+  untested" account-sync hooks), this panel is pure `localStorage` with no
+  fetch, and `internals/prep-notes.mdx` has no "Tests" section calling out
+  the gap as deliberate.
+
+  Added `packages/debate-team-collaboration/test/helpers/mount.tsx` (this
+  package's first use of the `debate-search-evidence`/`debate-timer`
+  `mount`/`click`/`type`/`flush` `react-dom/client` + `act` pattern, copied
+  verbatim rather than reinvented — this panel loads its notifications
+  inside a `useEffect`, so a `node`-environment `renderToStaticMarkup`
+  snapshot would never see them) and
+  `packages/debate-team-collaboration/test/PrepNoteNotificationsPanel.test.tsx`
+  (12 cases: the empty state before and after a lookup, restoring the last
+  looked-up recipient on mount, persisting a new lookup to localStorage,
+  looking up on Enter, grouping into one digest per UTC day newest-first,
+  the total-unread badge, expand/collapse, marking one notification read,
+  marking a whole digest group read, and the cross-tab `storage`-event
+  refresh both firing on the matching key and being ignored for an
+  unrelated one).
+
+  Ran the full verification gate: `bun install`,
+  `packages/debate-team-collaboration`'s own `bun run test` (47 files, 844
+  tests — 12 new), the root `bun run test` (453 files, 8711 tests, all
+  passing), `bun run typecheck` (17/17 packages green), and `bun run build`
+  (production build, all three targets green — the build's own regenerated
+  service-worker file list/version stamp were reverted before committing
+  since they're unrelated build output, not a source change). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** syncing `dailyMissionResults`/
+  `challengeWinEvents` still needs the ownership-scoping decision above
+  before it can join `TOOL_RECORD_COLLECTIONS` — e.g. teaching the generic
+  watcher to sync only the records whose `contributorId` matches the
+  session's own, or a bespoke route the way `saved_flows`/`documents` have
+  one, rather than the generic allowlist. The `qwksearch` file-sources
+  credential-sync question, flagged by several prior runs, remains open for
+  the same reason those runs recorded — it needs a maintainer
+  product/security decision. `PrepNoteNotificationsPanel`'s loading-skeleton
+  state (`digestGroups === null`, shown only before the first effect
+  flushes) is unexercised by the new file, same as every other
+  effect-loaded panel's equivalent transient state in this repo's existing
+  tests.
+
 - **📅 Close the stale "no cron infrastructure" Known gaps on Quest
   Streaks.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link
