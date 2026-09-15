@@ -35,6 +35,12 @@ const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * this shell at all — it is the video library
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
+ * `/debate` is the one tree destination this shell deliberately skips
+ * (`ownsItsLayout`, in debate-videos' `sidebar-routes`): the flow workspace
+ * already fills the viewport with a top bar and a flows/rounds sidebar of its
+ * own, so wrapping it here put two sidebars side by side. It keeps the dock —
+ * `CategoryDock`'s floating instance, since there is no column to host one.
+ *
  * `/cards` goes one step further and is the docs panels plus the Research tool
  * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,
  * the glossary and rankings links and the site footer are all about somewhere

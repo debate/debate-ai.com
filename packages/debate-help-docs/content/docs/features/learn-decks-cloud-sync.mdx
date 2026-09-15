@@ -1,0 +1,49 @@
+---
+title: "Learn Decks Cloud Sync"
+---
+
+# Learn Decks Cloud Sync
+
+Syncs CardMirror's Learn custom decks (`deckId`/`name`/`cardIds`/
+`createdAt`) to a signed-in user's account, the same way
+[Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync)
+syncs a card's own content — the Learn store
+(`packages/debate-editor/src/editor/learn-store.ts`) was device-local
+only.
+
+- **Package:** `debate-editor` (`learnDecksSync`, `LearnDecksSync`,
+  `learn-decks-client`), `apps/debate-ai.com` (`/api/learn-decks`,
+  `saved_learn_decks` D1 table)
+
+## What it does
+
+On boot, once the local Learn store has loaded, `learnDecksSync.init()`
+merges once against the account: any deck synced from another device but
+missing locally is adopted under its own id, and any deck that exists
+only on this device is best-effort pushed up — neither side ever
+overwrites the other, it only fills gaps. After the merge, every later
+deck create, rename, membership change, or delete mirrors itself to the
+account the same way. Signed out, or under the Electron desktop build,
+decks keep working exactly as before, purely on-device.
+
+A deck's `cardIds` reference cards synced separately by
+[Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync); a
+deck can legitimately reference a card that hasn't reached this device
+yet, the same soft-reference gap that sync already accepts for card
+content.
+
+## What's intentionally excluded
+
+The other Learn sub-collections (schedules, anchors, AI threads, notes,
+review log, doc registry) stay local-only for the same reason
+`learn-cards-cloud-sync.mdx` documents: they live in one shared blob per
+device, not one row per record, so they don't fit this sync's per-record
+shape.
+
+## Known gaps
+
+No optimistic-concurrency handling — editing the same deck (renaming it,
+or changing its members) from two signed-in devices at once has the last
+write win. No dedicated deck-management UI shows a per-deck sync status
+yet; decks are currently created/edited from the home screen's scope
+picker, which has no sync indicator.

@@ -1,0 +1,48 @@
+---
+title: "Learn Flashcards Cloud Sync"
+---
+
+# Learn Flashcards Cloud Sync
+
+Syncs the CONTENT (`id`/`type`/`front`/`back`) of CardMirror's Learn
+spaced-repetition flashcards to a signed-in user's account, closing the
+same account-linking gap [Quick Cards Cloud Save](/docs/features/quick-cards-cloud-save)
+closed for the reusable-snippet library — the Learn store
+(`packages/debate-editor/src/editor/learn-store.ts`) was device-local
+only.
+
+- **Package:** `debate-editor` (`learnCardsSync`, `LearnCardsSync`,
+  `learn-cards-client`), `apps/debate-ai.com` (`/api/learn-cards`,
+  `saved_learn_cards` D1 table)
+
+## What it does
+
+On boot, once the local Learn store has loaded, `learnCardsSync.init()`
+merges once against the account: any card synced from another device but
+missing locally is adopted under its own id (never duplicated), and any
+card that exists only on this device is best-effort pushed up — neither
+side ever overwrites the other, it only fills gaps. After the merge,
+every later card create, edit, or delete (including a file's cards being
+pruned via "forget this file") mirrors itself to the account the same
+way. Signed out, or under the Electron desktop build, the Learn store
+keeps working exactly as before, purely on-device.
+
+## What's intentionally excluded
+
+Only a card's portable content syncs — its review **schedule** (due date,
+interval, lapses), file **anchors**, AI **threads**, private **notes**,
+and the review **log** all stay local-only. A card adopted on a new
+device starts with no schedule pressure, the same way the manage GUI's
+own JSON export/import already treats a card whose carried schedule is
+absent — restoring a card is not meant to restore a specific device's
+review history. **Custom decks** sync separately — see
+[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync). The
+remaining sub-collections (anchors, AI threads, notes, review log, doc
+registry) live in one shared blob per device (not one row per record), so
+they don't fit this sync's per-record shape; syncing them would need a
+bespoke schema of their own.
+
+## Known gaps
+
+No optimistic-concurrency handling — editing the same card's content from
+two signed-in devices at once has the last write win.

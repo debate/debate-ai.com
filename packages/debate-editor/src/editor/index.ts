@@ -106,6 +106,8 @@ import {
   setShowInContextHandler,
   type ShowInContextRequest,
 } from './learn-store-host.js';
+import { learnCardsSync } from './learn-cards-sync.js';
+import { learnDecksSync } from './learn-decks-sync.js';
 import { buildDescriptor, resolveDescriptor, type AnchorDescriptor } from './learn-anchor.js';
 import { countSelectionImages } from './ai/explain-context.js';
 import { preciseScrollIntoView } from './precise-scroll.js';
@@ -9043,7 +9045,13 @@ function positionDropzone(): void {
 }
 // Load the per-user Learn annotation store (flashcards / schedules /
 // anchors) so review counts + the comments column have it available.
-void loadLearnStore();
+// Once loaded, best-effort merge + mirror the flashcards' CONTENT (not
+// schedule/anchors/etc.) and custom decks to the account — see
+// learn-cards-sync.ts and learn-decks-sync.ts.
+void loadLearnStore().then(() => {
+  void learnCardsSync.init();
+  void learnDecksSync.init();
+});
 
 // Drag-and-drop file opening works in both single-doc and multi-pane modes.
 installDragToOpen();

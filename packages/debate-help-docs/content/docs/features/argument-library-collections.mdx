@@ -5,7 +5,7 @@ title: "Common Argument Library — Saved Collections"
 # Common Argument Library — Saved Collections
 
 - **Route:** `/cards/argument-library`
-- **Package:** `debate-card-search`
+- **Package:** `debate-search-evidence`
 
 ## What it shows
 
@@ -15,7 +15,11 @@ collection:
 
 - Every saved collection renders as a button (its name plus tag count) —
   clicking it replaces the current tag-chip selection with that
-  collection's saved tags, next to a small "✕" remove button.
+  collection's saved tags, next to "Rename", "Update" (shown once at least
+  one tag is active — replaces the collection's tags with the current
+  selection), and a small "✕" remove button.
+- "Rename" swaps the button for a text field; renaming onto another saved
+  collection's name is refused (case-insensitively) rather than merging.
 - A "Save current selection as" field + "Save collection" button saves the
   currently active tag chips under a new name. Disabled until at least one
   tag is selected and a name is typed.
@@ -24,6 +28,7 @@ collection:
 
 ```
 lib/argument-library-collections.ts (pure validation/(de)serialization)
+  → lib/argument-library-collections-client.ts (GET/PUT /api/settings)
   → hooks/useSavedArgumentCollections.ts (localStorage: saved-argument-collections)
   → panels/ArgumentLibraryPanel.tsx
 ```
@@ -34,6 +39,10 @@ the same `/api/settings` row every other picker-style setting uses. Up to
 
 ## Known gaps
 
-- No rename for an existing collection — only add and remove.
-- No editing a saved collection's tag list directly — re-saving under the
-  same name is rejected as a duplicate.
+None open. A saved collection can be renamed ("Rename" next to its button)
+and have its tag list replaced with the current selection ("Update", shown
+once at least one tag is active) — both close the two gaps this page
+previously tracked. No optimistic-concurrency handling: the whole
+`savedArgumentCollections` list is a single account-settings field, so a
+rename/update/add/remove from two signed-in devices at once has the last
+write win, matching every other picker-style `/api/settings` field.

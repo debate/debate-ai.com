@@ -10,7 +10,7 @@ grouped into eight categories and filtered by a single search box.
 
 - **Route:** `/features`
 - **Nav:** the global dock's Settings menu → **All Features** (the first item)
-- **Package:** [`debate-ui`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-ui/README.md)
+- **Panel:** [`apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx)
 
 ## Why this exists
 
@@ -65,23 +65,14 @@ it stays a stable "how big is this app" answer while someone types.
   Like `debate-community`'s narrower community-hub directory it has no
   store — every entry links to a surface that already persists (or doesn't
   need to persist) its own state. It is a dependency-free leaf package (the
-  same shape as `debate-data-sync`) that the app, `debate-ui`, and
-  `debate-community` all import from directly — see "One shared catalog"
-  below for why this needed its own package rather than living in any of
-  the three.
-- [`packages/debate-ui/src/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-ui/src/features/FeaturesPanel.tsx)
-  renders it, holding only the search string in local state. This is not
-  what the live `/features` route mounts (see below); it stays as the
-  package's own tested reference implementation, and links each card's doc
-  to its GitHub source (`GITHUB_DOCS_BASE_URL`) since this package has no
-  docs site of its own to link into.
+  same shape as `debate-data-sync`) that the app and `debate-community`
+  both import from directly — see "One shared catalog" below for why this
+  needed its own package rather than living in either.
 - [`apps/debate-ai.com/app/features/page.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/app/features/page.tsx)
-  mounts `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx` — today an
-  identical copy of the component above (an aurora hero, counted-up totals,
-  a marquee, and scroll-reveal spotlight cards), kept as its own file for
-  the same reason as the catalog used to be: the app doesn't depend on
-  `debate-ui` at runtime (see "One shared catalog" below). It links each
-  card's doc to the app's own same-origin docs site instead, via
+  mounts [`apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx),
+  which renders the catalog (an aurora hero, counted-up totals, a marquee,
+  and scroll-reveal spotlight cards) holding only the search string in local
+  state. It links each card's doc to the app's own same-origin docs site via
   `featureDocUrl`'s default options.
 
 ### Per-card hover colour
@@ -122,13 +113,12 @@ at.
 ### One shared catalog
 
 `APP_FEATURES` used to exist in three hand-synced places — this app's own
-copy, `packages/debate-ui`'s seed copy, and
+copy, the old shared UI kit's seed copy, and
 `packages/debate-contributor-progress`'s News Stream copy — because none of
-the three packages involved (`debate-ui`, `debate-community`, and the app)
-shared a dependency edge that would let one `import` another's copy:
-`debate-ui` is deliberately not a runtime dependency of the app or of
-`debate-community` (the September 2026 changelog's "vendored `debate-ui`
-into each consumer" pass).
+the packages involved shared a dependency edge that would let one `import`
+another's copy. The UI kit was deliberately not a runtime dependency of the
+app or of `debate-community`, and it has since been dissolved into a
+per-package `ui/` folder (see [Packages](https://github.com/debate/debate-ai.com/blob/master/packages/README.md)).
 
 That's now resolved by promoting the catalog into its own dependency-free
 leaf package, `debate-feature-catalog` (the same shape as `debate-data-sync`:
@@ -141,14 +131,12 @@ and `buildFeatureCatalogSummaryText`:
 | Consumer | Renders via |
 | --- | --- |
 | `apps/debate-ai.com` (`/features`, live) | `apps/debate-ai.com/lib/ui/features/FeaturesPanel.tsx` |
-| `packages/debate-ui` (reference implementation, not mounted by the app) | `packages/debate-ui/src/features/FeaturesPanel.tsx` |
 | `packages/debate-contributor-progress` ([News Stream](news-stream.md) "Tool spotlight" posts) | `src/lib/news-stream.ts`'s `buildAutoFeatureNews()` |
 
-The one real difference between the two `FeaturesPanel` renderers — where a
-feature's doc link points — is now a parameter rather than a forked file:
+Where a feature's doc link points is a parameter rather than a forked file:
 `featureDocUrl(entry, options)` defaults to the live app's same-origin,
 extensionless docs route (`/docs/features/task-inbox`), and a renderer with
-no docs site of its own (the `debate-ui` reference panel) passes
+no docs site of its own can pass
 `{ baseUrl: GITHUB_DOCS_BASE_URL, stripExtension: false }` to link to the
 doc's source on GitHub instead. `buildAutoFeatureNews` doesn't call
 `featureDocUrl` at all, so it's unaffected either way.
@@ -178,7 +166,7 @@ catalog's own invariants (unique ids and routes, every entry categorized,
 every category used, docs pointing at `.md` files), section grouping and
 ordering, search across all four matched fields, `featureDocUrl` in both its
 default and GitHub-blob-URL forms, and summary-line pluralization.
-`packages/debate-ui/test/features-panel.test.tsx` renders the reference
+`apps/debate-ai.com/lib/ui/__tests__/features-panel.test.tsx` renders the
 panel and asserts every catalogued route, the category headings, the summary
 line, a docs link, the jump nav, and that a one-entry catalog renders without
 the jump nav. It also covers the per-card hover colour: that every card
@@ -208,6 +196,7 @@ Reason Editor's `WORKSPACE_LINKS`.
   bug can no longer recur.
 - `/login` is intentionally absent: it's a step on the way to a feature
   rather than a feature, and it's already reachable from the Settings menu.
-- The `debate-ui` reference panel's **Docs** links point at the feature docs
-  on GitHub's `master` branch, since that package has no docs site of its
-  own; the live `/features` page's links stay same-origin.
+- The live `/features` page's **Docs** links stay same-origin; a renderer
+  with no docs site of its own would have to pass `GITHUB_DOCS_BASE_URL` to
+  `featureDocUrl` to point at the feature docs on GitHub's `master` branch
+  instead.
