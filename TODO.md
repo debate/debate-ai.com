@@ -8,6 +8,68 @@ _No task currently in progress._
 
 ### Completed
 
+- **🏷️ Give the Flow Edit Log its own "synced to your account" badge.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 26+ bespoke
+  `saved_*`/`saved_tool_records` D1 tables all linked to `user.id`, and
+  every tool already reachable from the Tools page, the command palette and
+  the feature catalog. Picked up the standing follow-up the immediately
+  preceding run flagged rather than starting a fresh audit: the run that
+  added `getToolRecordSyncStatus` and wired it into `FlowHistoryList.tsx`'s
+  History tab, then into CardMirror's personal dictionary, named "the
+  flow-edit log (`packages/debate-team-collaboration`'s `flowEdits`
+  collection, per `tool-data-sync.mdx`'s 'Coaching' section)" as the next
+  list UI that wanted the same "synced vs. local-only" distinction and
+  never closed it. (The `flowEdits` collection in question turned out to
+  live in `debate-round`, not `debate-team-collaboration` — the earlier
+  note conflated it with that package's similarly-named
+  `roundContributorFlows`; `packages/debate-round/src/panels/
+  FlowEditLogPanel.tsx`'s "Logged edits" list is `flowEdits`'s only reader.)
+
+  Wired `getToolRecordSyncStatus('flowEdits', edit)` into
+  `FlowEditLogPanel`'s "Logged edits" row renderer, mirroring
+  `FlowHistoryList`'s exact pattern: a small "Synced" / "Not yet synced"
+  `Pill` next to each edit's timestamp, omitted entirely (not a third
+  state) when the status is `"unknown"` — before this collection has ever
+  been baselined against the account. Unlike the vanilla-DOM dictionary
+  section, this panel is already a plain React component that re-renders
+  with its host, so no extra polling/refresh wiring was needed beyond the
+  existing `useEffect`/`storage`-event refresh it already had.
+
+  Vitest-covered: added `packages/debate-round/test/FlowEditLogPanel.test.tsx`
+  (5 cases — no badge before the collection has a baseline, "Synced" once
+  an edit's exact value has landed, "Not yet synced" for an edit baselined
+  before it existed, "Not yet synced" for an edit changed after an earlier
+  value landed, and no badge rendered alongside the empty state), reusing
+  `debate-data-sync`'s own `markToolRecordsSynced`/`resetToolRecordAutoSync`
+  test helpers the same way `FlowHistoryList.test.tsx` already does.
+  Because `FlowEditLogPanel` loads its edits itself inside a `useEffect`
+  (unlike `FlowHistoryList`, which receives its data as a prop),
+  `renderToStaticMarkup` — which never runs effects — couldn't see the
+  loaded list at all; used a real `jsdom` + `react-dom/client` render
+  flushed with `act` instead, the same pattern
+  `debate-videos/test/glowing-effect-listeners.test.tsx` already
+  established for this repo's React-hook-driven component tests.
+
+  Ran the full verification gate: `bun install`, `packages/debate-round`'s
+  own `bun run test` (61 files, 1211 tests — 5 new), the root `bun run test`
+  (450 files, 8689 tests, all passing), `bun run typecheck` (18/18 packages
+  green), and `bun run build` (production build, all three targets green).
+  No `lint`/`format:check` script exists anywhere in this repo, so that
+  step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the remaining 6 Learn sub-collections
+  (schedules, anchors, AI threads, notes, review log, doc registry),
+  `dailyMissionResults`/`challengeWinEvents` (composite-key gamification
+  history), and the `qwksearch` file-sources credential-sync question all
+  remain open for the same reasons every prior run recorded — none is a
+  small mechanical slice, and the last still needs a maintainer
+  product/security decision.
+
 - **🏷️ Give CardMirror's personal dictionary the same "synced to your
   account" badge the Debate Flow History tab already has.** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
