@@ -26,11 +26,7 @@
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
 import { isDockNavPath } from "@/lib/nav/dock-nav-paths"
-import {
-  beginLoading,
-  finishLoading,
-  useLoadingStore,
-} from "@/lib/ui/loading-store"
+import { beginLoading, finishLoading } from "@/lib/ui/loading-store"
 
 /** Minimum time the orb stays up on a transition, in ms. Short hops still
  *  read as intentional loading rather than a flicker. */
@@ -77,10 +73,6 @@ export function useRouteLoading() {
   const isFirstRender = useRef(true)
 
   useEffect(() => {
-    // The store is the single source of truth for the overlay; this hook only
-    // decides *when* to arm and drop it.
-    const depth = useLoadingStore.getState().depth
-
     if (isFirstRender.current) {
       isFirstRender.current = false
       lastPathRef.current = pathname

@@ -10,7 +10,6 @@
  * `beginLoading`, so pages that never use it pay for nothing.
  */
 
-import { useEffect } from "react"
 import { LoadingOverlay } from "@/components/ui/LoadingOverlay"
 import {
   useLoadingStore,
@@ -31,10 +30,6 @@ export function LoadingProvider() {
   // The overlay is a client-only layer: on the server it renders nothing, so
   // the first paint is the page itself and the orb only appears once the
   // client bundle hydrates and a transition asks for it.
-  useEffect(() => {
-    return
-  }, [])
-
   return (
     <LoadingOverlay
       active={isActive}
