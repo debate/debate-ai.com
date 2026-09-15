@@ -77,6 +77,7 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 ### Platform and packages
 
 - Split debate-card-search and debate-round into four category packages, and vendored debate-ui into each consumer.
+- **Retired `debate-ui`.** The vendoring pass above had already left every app and package rendering its own `ui/` folder, so the shared kit was a stale duplicate nothing imported: deleted it, and with it fourteen effect, layout and primitive components no surface had ever mounted. Its tests moved to the code that survived them — the dock, features panel, panel shell and `cn`/URL-state suites to `apps/debate-ai.com/lib/ui/__tests__`, the table and textarea suites to `debate-research-evidence`. Tailwind's `@source` list was the one real casualty waiting to happen: it still named the long-gone `debate-card-search` and leaned on the kit's copy of a primitive to generate classes for packages it never listed, so it now names every package that renders JSX. Net effect on the built stylesheet is 64 classes gained (`debate-search-evidence`, `debate-speech-writer`, `debate-team-collaboration`, `debate-practice-drills` and `debate-community` had been rendering partly unstyled) and none lost outside the deleted dead components.
 - Published a typed **OpenAPI SDK** (`debate-api-client`) to npm.
 - Added `native-wrapper`, a Tauri desktop/mobile shell shipped as Debate AI.
 - Stood up a `debate-ai-docs` package and fixed an EventEmitter memory leak.

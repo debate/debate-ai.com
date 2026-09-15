@@ -10,13 +10,10 @@
  * set fits without wrapping in the first place.
  */
 
-import { readFileSync } from "node:fs";
-import path from "node:path";
-
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { Dock, DockIcon, DockItem, DockLabel, dockVariants } from "../src/layout/dock";
+import { Dock, DockIcon, DockItem, DockLabel, dockVariants } from "../layout/dock";
 
 function renderItem(props: Record<string, unknown> = {}) {
   return renderToStaticMarkup(
@@ -176,19 +173,5 @@ describe("DockLabel", () => {
     expect(classes).toContain("opacity-0");
     expect(classes).toContain("group-hover:opacity-100");
     expect(classes).toContain("pointer-events-none");
-  });
-
-  it("keeps the web app's copy of the dock in step", () => {
-    // `apps/debate-ai.com/lib/ui/layout/dock.tsx` is a second copy of this
-    // file — the one the app actually renders, and the one the tooltip bug
-    // was seen in. Only the package copy is unit-tested, so compare the label
-    // markup directly rather than let the two drift apart again.
-    const appDock = readFileSync(
-      path.resolve(import.meta.dirname, "../../../apps/debate-ai.com/lib/ui/layout/dock.tsx"),
-      "utf8",
-    );
-    const appClasses = /"absolute top-full[^"]*"/.exec(appDock)?.[0];
-    expect(appClasses).toBeDefined();
-    expect(appClasses!.slice(1, -1)).toBe(labelClasses(renderItem()));
   });
 });

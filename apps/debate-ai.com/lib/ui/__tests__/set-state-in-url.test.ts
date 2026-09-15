@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { beforeEach, describe, expect, it } from "vitest";
-import { setStateInURL } from "../src/lib/utils";
+import { setStateInURL } from "../lib/utils";
 
 beforeEach(() => {
   window.history.replaceState({}, "", "/cards");

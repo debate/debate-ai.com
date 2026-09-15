@@ -13,8 +13,8 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { Badge, badgeVariants } from "../src/primitives/badge";
-import { Button, buttonVariants } from "../src/primitives/button";
+import { Badge, badgeVariants } from "../primitives/badge";
+import { Button, buttonVariants } from "../primitives/button";
 import {
   Card,
   CardAction,
@@ -23,21 +23,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../src/primitives/card";
-import { Input } from "../src/primitives/input";
-import { Label } from "../src/primitives/label";
-import { Skeleton } from "../src/primitives/skeleton";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../src/primitives/table";
-import { Textarea } from "../src/primitives/textarea";
+} from "../primitives/card";
+import { Input } from "../primitives/input";
+import { Label } from "../primitives/label";
 
 describe("Button", () => {
   it("renders a button carrying its slot hook", () => {
@@ -174,73 +162,12 @@ describe("Card", () => {
   });
 });
 
-describe("Table", () => {
-  it("renders a full table, each part carrying its own slot hook", () => {
-    const html = renderToStaticMarkup(
-      <Table>
-        <TableCaption>Speaker points</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Debater</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>Lovelace</TableCell>
-          </TableRow>
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell>Total</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>,
-    );
-    for (const slot of [
-      "table",
-      "table-caption",
-      "table-header",
-      "table-body",
-      "table-footer",
-      "table-row",
-      "table-head",
-      "table-cell",
-    ]) {
-      expect(html).toContain(`data-slot="${slot}"`);
-    }
-    expect(html).toContain("<table");
-    expect(html).toContain("<thead");
-    expect(html).toContain("<tbody");
-    expect(html).toContain("Lovelace");
-  });
-
-  it("wraps the table so a wide one scrolls inside its own container", () => {
-    const html = renderToStaticMarkup(
-      <Table>
-        <TableBody>
-          <TableRow>
-            <TableCell>x</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>,
-    );
-    expect(html).toContain("overflow-x-auto");
-  });
-});
-
-describe("Input, Textarea, Label and Skeleton", () => {
+describe("Input and Label", () => {
   it("renders an input carrying its slot hook and type", () => {
     const html = renderToStaticMarkup(<Input type="email" placeholder="you@example.com" />);
     expect(html).toContain('data-slot="input"');
     expect(html).toContain('type="email"');
     expect(html).toContain('placeholder="you@example.com"');
-  });
-
-  it("renders a textarea carrying its slot hook", () => {
-    const html = renderToStaticMarkup(<Textarea rows={4} defaultValue="notes" />);
-    expect(html).toContain('data-slot="textarea"');
-    expect(html).toContain('rows="4"');
-    expect(html).toContain("notes");
   });
 
   it("renders a label bound to its field", () => {
@@ -250,16 +177,8 @@ describe("Input, Textarea, Label and Skeleton", () => {
     expect(html).toContain("Tournament");
   });
 
-  it("renders a pulsing skeleton at the caller's own size", () => {
-    const html = renderToStaticMarkup(<Skeleton className="h-4 w-32" />);
-    expect(html).toContain("animate-pulse");
-    expect(html).toContain("h-4");
-    expect(html).toContain("w-32");
-  });
-
   it("keeps each caller's className alongside the base one", () => {
     expect(renderToStaticMarkup(<Input className="border-red-500" />)).toContain("border-red-500");
-    expect(renderToStaticMarkup(<Textarea className="min-h-40" />)).toContain("min-h-40");
     expect(renderToStaticMarkup(<Label className="sr-only">x</Label>)).toContain("sr-only");
   });
 });
