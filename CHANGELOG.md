@@ -19,6 +19,7 @@ Practice, collaboration, and a wave of "second draft" polish across research too
 - Chased down a run of `/videos` bugs — a route crash from Lucide icons reaching `next/image`, the service worker's fabricated 502, a YouTube "error 153," and a transcript API that always 404'd.
 - Reworked the videos experience with a **collapsible sidebar nav tree**, persistent left-sidebar controls, a **transcript modal with synced YouTube playback**, and resizable/sortable list columns.
 - Added admin YouTube video management with per-video publish/delete and a weekly resync cron that both scans the subscribed channels for new videos and refreshes every stored video's view count, so the library's "most viewed" sort stops drifting.
+- Extended that admin page past the publish queue to the **published library itself**: search any video already on the site by title, channel, tournament or id, edit its whole record (title, channel, date, format, tournament, teams, winner, description, top-pick flag), or remove it — a removal is recorded as a resync exclusion so the weekly sync cannot quietly re-publish it.
 
 ### Collaboration and coaching
 
