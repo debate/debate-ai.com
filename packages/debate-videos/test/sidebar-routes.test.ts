@@ -13,6 +13,7 @@ import {
 import {
   TOOL_SIDEBAR_HREFS,
   matchesToolSidebarHref,
+  ownsItsLayout,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
 } from "../src/components/category-gallery/sidebar-routes";
@@ -111,5 +112,32 @@ describe("the features catalog", () => {
     // …and the dock's own floating instance stays hidden, since the sidebar
     // it is wrapped in already hosts one.
     expect(hasEmbeddedDock("/features")).toBe(true);
+  });
+});
+
+describe("the flow workspace", () => {
+  it("is still a tree destination, so the sidebar keeps linking to it", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/debate")).toBe(true);
+    expect(matchesToolSidebarHref("/debate")).toBe(true);
+    expect(matchesToolSidebarHref("/debate/glenbrooks")).toBe(true);
+  });
+
+  it("owns its layout, itself and every round beneath it", () => {
+    expect(ownsItsLayout("/debate")).toBe(true);
+    expect(ownsItsLayout("/debate/glenbrooks")).toBe(true);
+    // A sibling that merely shares the prefix is not the workspace.
+    expect(ownsItsLayout("/debates")).toBe(false);
+    expect(ownsItsLayout("/cards")).toBe(false);
+    expect(ownsItsLayout(null)).toBe(false);
+  });
+
+  it("is not wrapped in the generic sidebar, which would be a second nav column", () => {
+    expect(isGenericToolSidebarRoute("/debate")).toBe(false);
+    expect(isGenericToolSidebarRoute("/debate/glenbrooks")).toBe(false);
+  });
+
+  it("keeps the dock as the floating instance, since it hosts no sidebar one", () => {
+    expect(hasEmbeddedDock("/debate")).toBe(false);
+    expect(hasEmbeddedDock("/debate/glenbrooks")).toBe(false);
   });
 });
