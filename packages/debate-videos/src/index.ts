@@ -52,7 +52,9 @@ export {
 } from "./ui/layout/footer-links";
 export {
   TOOL_SIDEBAR_HREFS,
+  OWN_LAYOUT_SIDEBAR_HREFS,
   matchesToolSidebarHref,
+  ownsItsLayout,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
 } from "./components/category-gallery/sidebar-routes";
