@@ -107,7 +107,7 @@ describe("topNavigationTarget", () => {
     expect(
       topNavigationTarget(anchor("/docs/features/flowing"), ORIGIN, IN_VIDEOS_FRAME, dockNavRootFor),
     ).toBeNull()
-    expect(topNavigationTarget(anchor("/api/api-docs"), ORIGIN, IN_VIDEOS_FRAME, dockNavRootFor)).toBeNull()
+    expect(topNavigationTarget(anchor("/api"), ORIGIN, IN_VIDEOS_FRAME, dockNavRootFor)).toBeNull()
   })
 
   it("leaves another origin, a new tab and a download alone", () => {
