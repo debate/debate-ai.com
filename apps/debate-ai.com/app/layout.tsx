@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AppShell } from "@/components/layout/AppShell"
+import { LoadingProvider } from "@/components/layout/LoadingProvider"
 
 export const metadata: Metadata = {
   title: "Debate AI",
@@ -72,6 +73,12 @@ export default function RootLayout({
       </head>
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          {/* The loading overlay sits above the whole app shell — dock, sidebar
+              and framed destinations alike — so the first paint and every major
+              transition show one orb instead of a half-hydrated page. It is
+              a no-op until something calls `beginLoading`, so pages that never
+              ask for it pay for nothing. */}
+          <LoadingProvider />
           <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
