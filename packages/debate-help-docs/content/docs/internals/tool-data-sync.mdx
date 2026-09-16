@@ -33,16 +33,18 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
 [word-count rounds](word-count-rounds.md), [drill sets](drill-sets.md) and
 [standings](team-rankings.md) already had.
 
-- **Route:** none of its own. The sync runs app-wide; `/settings` → Account →
-  **Tool data** is where you can see it (and re-run it).
-- **Nav:** the dock's gear-icon menu → "Preferences".
+- **Route:** none of its own, and no UI of its own either. The sync runs
+  app-wide, in the background. `/settings` → Account → **Tool data** used to
+  list every collection's state and offer a **Sync now** button; that page is
+  the card editor's settings now (see
+  [User Settings](/docs/features/user-settings)), so the sync is unobservable
+  from inside the app — see **Known gaps**.
 - **Package:** [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
   (the catalog, the fetch client, the mirror), `apps/debate-ai.com`
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
   `lib/hooks/useToolRecordSync.ts`, `lib/sign-in-prompt-preference.ts`,
   `components/layout/ToolRecordSyncProvider.tsx`,
-  `components/layout/SignInPromptProvider.tsx`,
-  `components/settings/ToolDataSyncSettings.tsx`). Some tool packages
+  `components/layout/SignInPromptProvider.tsx`). Some tool packages
   (`debate-round`, `debate-practice-rounds`, `debate-speech-writer`,
   `debate-team-collaboration`, `debate-videos`) additionally call the mirror
   from their own stores; most do not need to — see
@@ -55,8 +57,9 @@ One entry per `localStorage` store, from
 `TOOL_RECORD_COLLECTIONS` — the list itself is the source of truth, and it is
 long enough now that the table below groups it rather than restating every row.
 Each entry's `section` field (one of `TOOL_RECORD_SECTIONS`) names the same
-group and is what `/settings`' sync-status list renders as a heading — the
-prose below and the UI group tools identically on purpose.
+group, which is what the table below is ordered by. It was the heading
+`/settings`' sync-status list rendered, and outlives that list as the
+catalog's own grouping.
 
 **Videos** (`/videos`) — `debateVideosFavorites` and `debateVideosHidden`, both
 keyed by `videoId`, and `debateVideoReports` keyed by `id`.
@@ -323,10 +326,11 @@ Three rules keep it an offer rather than a gate:
   secondary action calls `setSignInPromptOptedOut(true)`
   (`lib/sign-in-prompt-preference.ts`), a plain `localStorage` flag the
   provider checks before raising any prompt — unlike the cooldown above, this
-  survives new tabs and new days, on purpose. `/settings` → Account →
-  **Tool data** shows the current state to a signed-out visitor and offers a
-  button to reverse it, since the dialog that could otherwise change their
-  mind never shows again once they've opted out.
+  survives new tabs and new days, on purpose. Nothing surfaces or reverses
+  it any more: the row that showed a signed-out visitor the current state and
+  offered a button to flip it back was on `/settings`, and the dialog that
+  could otherwise change their mind never shows again once they've opted out
+  (see **Known gaps**).
 
 ## The merge
 
@@ -371,20 +375,19 @@ records it had just adopted.
 
 ## Seeing it
 
-`/settings` → Account → **Tool data** lists every synced tool with a link to
-it, grouped under the same section headings as the table above (Videos,
-Practice, Scouting and judging, …), and says plainly which state you are in.
-A search box above the list (`lib/settings/filter-synced-tool-sections.ts`)
-filters it by tool label or section name, case-insensitively, and drops a
-section down to only its matching tools rather than hiding the whole group —
-needed now that the catalog runs past fifty tools across seven sections.
+Nothing shows it now. `/settings` → Account → **Tool data** listed every
+synced tool with a link to it, grouped under the same section headings as the
+table above, and said plainly which state you were in — "This browser" while
+signed out, "Syncing…" then "Synced" (or "Not synced" for a collection whose
+merge failed) once signed in — with a search box over the list and a **Sync
+now** button. That page is the card editor's settings now, and the list, its
+search box and the button went with it.
 
-- Signed out — "These tools save to this browser only", every row "This
-  browser", plus a row saying whether this browser will be asked to sign in
-  when it saves in a tool, with a button to flip that.
-- Signed in — rows read "Syncing…" then "Synced", or "Not synced" for a
-  collection whose merge failed, plus a **Sync now** button for the case where
-  a merge failed or another device has since saved something.
+What it reported is all still computed: `useToolRecordSync` returns the same
+per-collection `results`, and `syncToolRecords` is still what a **Sync now**
+would have called. Only the surface is gone, so a failed merge, a
+browser-only record over the size cap, and a guest's sign-in opt-out are
+each invisible until something renders them again — see **Known gaps**.
 
 ## Tests
 
@@ -425,13 +428,8 @@ needed now that the catalog runs past fifty tools across seven sections.
   format, and is dated to the epoch rather than to the upgrade (which would
   reorder a season's collection).
 - `packages/debate-videos/test/tool-record-sync-catalog.test.ts` — every
-  collection's `href` is a destination the sidebar links to, so
-  `/settings`' list can't point at a 404.
-- `apps/debate-ai.com/lib/settings/__tests__/filter-synced-tool-sections.test.ts`
-  — the search box's matching logic: an empty or whitespace-only query
-  changes nothing, a label match is case-insensitive and by substring, a
-  section-name match keeps every tool under it, and a section left with no
-  match is dropped rather than rendered as an empty heading.
+  collection's `href` is a destination the sidebar links to, so a catalog
+  entry can't point at a 404.
 
 ## Known gaps
 
@@ -442,10 +440,12 @@ needed now that the catalog runs past fifty tools across seven sections.
   a team beyond "it's your own account's data" — the same gap
   [Judge Profiles](judge-profiles.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) already note.
-- The merge runs once per tab (10-minute TTL) and on **Sync now**; there is no
-  push channel, so a record saved on another device mid-session shows up on
-  the next reload rather than live. The synthetic `storage` event covers other
-  tabs of the *same* browser only.
+- The merge runs once per tab (10-minute TTL), and that is now the only time
+  it runs — **Sync now** was on `/settings`' removed **Tool data** list. There
+  is no push channel either, so a record saved on another device mid-session
+  shows up on the next reload rather than live, and a reload is the only way
+  to ask for it. The synthetic `storage` event covers other tabs of the
+  *same* browser only.
 - **The watcher is a poll, so an uninstrumented store's change reaches the
   account at the next tick** (up to 15 seconds, or immediately when the tab is
   hidden or closed) rather than on the click. A store that also calls
@@ -461,14 +461,20 @@ needed now that the catalog runs past fifty tools across seven sections.
 - A record over `MAX_TOOL_RECORD_BYTES` (200 KB) never reaches the account: the
   route refuses it with a 413, and the watcher holds it back from the batch so
   it cannot take its collection's other records down with it. It still saves
-  locally, and it syncs if later edited under the cap. ~~until then it is
-  browser-only, and nothing says so outside `/settings`' row for that
-  tool~~ **Fixed:** `/settings`' row now reflects this even when the watcher
-  finds it on a background tick rather than during the tab's initial
-  reconcile — `startToolRecordAutoSync` takes an `onFlush` callback and
-  `useToolRecordSync` folds its results into the same `results` state the
-  reconcile populates, so a record that grows past the cap mid-session no
-  longer leaves that tool showing "Synced" after it has stopped being true.
+  locally, and it syncs if later edited under the cap — but until then it is
+  browser-only and nothing says so. `/settings`' row for that tool used to,
+  including when the watcher found it on a background tick rather than during
+  the tab's initial reconcile (`startToolRecordAutoSync` takes an `onFlush`
+  callback and `useToolRecordSync` folds its results into the same `results`
+  state the reconcile populates, so the row never showed "Synced" after that
+  stopped being true). The reporting is intact; the row that read it is not.
+- **Nothing surfaces the sync any more, and two things can only be reached
+  through it.** A guest who picked "don't ask me again" has no way back short
+  of clearing site data, and a collection whose merge failed has no **Sync
+  now** to retry with — both controls were on `/settings`' **Tool data** list,
+  which went when that page became the card editor's settings. Re-mounting
+  that panel somewhere the tools live (`/tools`, say) would restore both; the
+  state behind them never stopped being computed.
 - **The 30-minute per-feature cooldown is per-browser-session, not
   per-account.** It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a

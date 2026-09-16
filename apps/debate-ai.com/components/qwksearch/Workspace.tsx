@@ -8,9 +8,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { ChatInputBox, ChatWindow, configureResearchAgentUI, useChat } from "research-agent-ui"
 import { ReasonDocs } from "react-reason-editor/reason-docs"
-import { Sidebar, SidebarContent } from "react-reason-editor-sidebar"
+import { SidebarContent } from "react-reason-editor-sidebar"
 import { themeActions } from "react-reason-editor/theme"
 import { localeActions } from "react-reason-editor/locale-bundle"
+import { SidebarWithAppDock } from "./SidebarWithAppDock"
 import { useMainView } from "./MainViewProvider"
 import { useChatTabs } from "./useChatTabs"
 import { getPageTips, htmlToPlainText } from "./reason-docs/page-tips"
@@ -207,8 +208,13 @@ export function QwksearchWorkspace() {
   // injected components; `react-reason-editor-sidebar` ships the pair the
   // editor is built against. Only the main-content slot differs between the
   // two views.
+  //
+  // The left one is that package's `Sidebar` with the app dock mounted above
+  // it: this workspace's sidebar is the only one `/doc` renders (the app's
+  // generic tool column is skipped there — see `lib/sidebar-routes`), so it
+  // is where the dock has to live for the route to keep one.
   const sidebarProps = {
-    SidebarComponent: Sidebar,
+    SidebarComponent: SidebarWithAppDock,
     SidebarContentComponent: SidebarContent,
   }
 

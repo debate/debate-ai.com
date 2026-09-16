@@ -224,14 +224,17 @@ export const userSettings = sqliteTable("user_settings", {
   themeMode: text("theme_mode"),
   favoriteTools: text("favorite_tools"),
   recentTools: text("recent_tools"),
-  // JSON-serialized map of CardMirror editor-preference keys (General /
-  // Appearance / Accessibility settings, e.g. `displayColors`, `bodyFont`,
-  // `reduceMotion`) to their current values — moved here from the editor's
-  // own gear-icon settings modal (see /settings and
-  // packages/debate-editor/src/editor/settings.ts) so a
+  // JSON-serialized map of CardMirror editor-setting keys (e.g.
+  // `displayColors`, `bodyFont`, `reduceMotion`, `smartQuotes`) to their
+  // current values, for every category /settings hosts — that page is the
+  // editor's settings surface (see lib/editor-preferences.ts's
+  // EDITOR_PREFERENCE_KEYS, which is both the allow-list and the read-back
+  // filter, and packages/debate-editor/src/editor/settings.ts) so a
   // signed-in user's choices follow them across devices instead of staying
-  // in that browser's localStorage. Null/absent means "use the client
-  // default", same semantics as every other nullable column here.
+  // in that browser's localStorage. Credentials are never among them: an API
+  // key or relay token stays in the browser that holds it. Null/absent means
+  // "use the client default", same semantics as every other nullable column
+  // here.
   editorPreferences: text("editor_preferences"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts

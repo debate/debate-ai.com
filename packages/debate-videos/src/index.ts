@@ -53,8 +53,10 @@ export {
 export {
   TOOL_SIDEBAR_HREFS,
   OWN_LAYOUT_SIDEBAR_HREFS,
+  OWN_SIDEBAR_DOCK_HREFS,
   matchesToolSidebarHref,
   ownsItsLayout,
+  hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
 } from "./components/category-gallery/sidebar-routes";

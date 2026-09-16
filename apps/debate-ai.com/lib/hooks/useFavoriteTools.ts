@@ -9,9 +9,8 @@
  * `UserSettingsPanel`'s other fields use.
  *
  * Every consumer on a page — the star toggle on each `/tools` card
- * (`FavoriteToolButton`), every chip in the favorites strip
- * (`FavoritesController`'s markup), and the "Favorite tools" list on
- * `/settings` (`components/settings/FavoriteToolsSettings.tsx`) — mounts
+ * (`FavoriteToolButton`) and every chip in the favorites strip
+ * (`FavoritesController`'s markup) — mounts
  * this hook independently rather than sharing one lifted instance (`/tools`
  * alone renders one instance per tool, ~50+ on a page load). A change in
  * one instance writes `localStorage` and dispatches a same-tab
@@ -155,9 +154,9 @@ export function useFavoriteTools() {
 
   // A favorite whose tool was since renamed/removed from the catalog would
   // otherwise sit inertly in the saved list forever, since nothing ever
-  // removes it (`FavoriteToolsSettings`/the favorites strip both just skip
-  // rendering it — see `state/favoriteTools.ts`'s header comment). The one
-  // consumer that knows the real catalog (`FavoriteToolsSettings`) calls
+  // removes it (the favorites strip just skips rendering it — see
+  // `state/favoriteTools.ts`'s header comment). The one consumer that knows
+  // the real catalog (`FavoritesController`, on `/tools`) calls
   // this once loaded to prune and best-effort sync the cleanup, the same
   // way any other favorites change persists. Synced as a batch
   // `removeFavoriteTools` op — resolved server-side against the account's

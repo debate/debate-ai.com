@@ -70,7 +70,7 @@ import {
   setLocalFontFamily,
 } from "../state/fontSettings"
 
-// `favoriteTools` has its own `FavoriteToolsSettings` UI; `wordLimitPresets`
+// `favoriteTools` is starred from the app's `/tools` page; `wordLimitPresets`
 // has its own `WordLimitPresetsPanel` UI; `outlineFilterPresets` is managed
 // from the Outline tool's own "Filter presets" row, not this form;
 // `newsRead`/`newsLiked` are synced automatically by `NewsStreamPanel`'s
