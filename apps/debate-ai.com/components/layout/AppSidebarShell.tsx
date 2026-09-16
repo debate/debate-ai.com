@@ -35,11 +35,20 @@ const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * this shell at all — it is the video library
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
- * `/debate` is the one tree destination this shell deliberately skips
- * (`ownsItsLayout`, in debate-videos' `sidebar-routes`): the flow workspace
- * already fills the viewport with a top bar and a flows/rounds sidebar of its
- * own, so wrapping it here put two sidebars side by side. It keeps the dock —
- * `CategoryDock`'s floating instance, since there is no column to host one.
+ * `/debate` and `/doc` are the two tree destinations this shell deliberately
+ * skips (`ownsItsLayout`, in debate-videos' `sidebar-routes`), both because
+ * they already fill the viewport with a sidebar of their own and wrapping
+ * them here put two sidebars side by side.
+ *
+ * `/debate` is the flow workspace, with its own top bar and flows/rounds
+ * sidebar; it keeps `CategoryDock`'s floating instance, since there is no
+ * column left to host one. `/doc` is the REASON research workspace, whose
+ * sidebar is the files tree and the "Open Tabs" list — and that one *does*
+ * host the dock, at the top of its own column
+ * (`components/qwksearch/SidebarWithAppDock`), so the floating instance stays
+ * suppressed there (`hostsOwnSidebarDock`). The docs panels below are for
+ * `/cards` and `/reason-editor`, which read documents out of this app's own
+ * store rather than the editor's.
  *
  * `/cards` goes one step further and is the docs panels plus the Research tool
  * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,

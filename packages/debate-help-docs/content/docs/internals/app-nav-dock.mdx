@@ -73,6 +73,20 @@ The dock has two forms, and which one a route gets is decided by
 route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
 the generic sidebar), the dock sits at the top of that 300px column.
 
+`/doc` hosts it in a column of its own instead. The REASON research
+workspace already renders a sidebar — the files tree and the "Open Tabs"
+list — and the generic one stood beside it as a second, taller nav column, so
+that route is skipped by `AppSidebarShell` (`hostsOwnSidebarDock`, in
+`packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`).
+The dock moves into the sidebar that remains:
+`apps/debate-ai.com/components/qwksearch/SidebarWithAppDock.tsx` is the
+`SidebarComponent` the workspace injects into `ReasonDocs`, and it puts
+`<CategoryDock embedded />` above the editor's own toolbar — in the band the
+published `<aside>` reserves (`pt-14`) for the header qwksearch's own app
+renders there. `hasEmbeddedDock` stays true for the route, so the fixed
+fallback does not appear on top of it; below `md` the sidebar is a slide-over
+sheet and the dock is left to its own mobile bottom bar.
+
 `/videos/rankings` and `/videos/dictionary` are branches of `LecturesPage`
 that render their own content instead of the grid, and they used to return it
 bare. Because `hasEmbeddedDock` reports *every* `/videos` path as already

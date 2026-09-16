@@ -53,15 +53,45 @@ export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([
 export const OWN_LAYOUT_SIDEBAR_HREFS: readonly string[] = ["/debate"];
 
 /**
- * True on {@link OWN_LAYOUT_SIDEBAR_HREFS} and anything nested under one
- * (`/debate/<tournament>`), matched the same prefix way as
- * {@link matchesToolSidebarHref}.
+ * The same opt-out, for a workspace that hosts the app dock *inside* its own
+ * sidebar rather than leaving it to float.
+ *
+ * `/doc` is the REASON research workspace: its own sidebar is the files tree
+ * and the "Open Tabs" list, and the generic tool tree stood beside that as a
+ * second, taller column — the tree's dock at the top of one, the documents at
+ * the top of the other. The workspace's sidebar carries the dock now (the
+ * app's `SidebarWithAppDock`, injected as `ReasonDocs`' `SidebarComponent`),
+ * so this route wants what `/videos` gets: no generic sidebar, and no
+ * floating dock either, since a dock is already on screen.
+ */
+export const OWN_SIDEBAR_DOCK_HREFS: readonly string[] = ["/doc"];
+
+/** True when `pathname` is `href` or a page below it. */
+function isAtOrUnder(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+/**
+ * True on {@link OWN_SIDEBAR_DOCK_HREFS} and anything nested under one
+ * (`/doc/<document name>`) — the routes whose own sidebar hosts the dock.
+ */
+export function hostsOwnSidebarDock(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return OWN_SIDEBAR_DOCK_HREFS.some((href) => isAtOrUnder(pathname, href));
+}
+
+/**
+ * True on {@link OWN_LAYOUT_SIDEBAR_HREFS} and
+ * {@link OWN_SIDEBAR_DOCK_HREFS}, and on anything nested under one
+ * (`/debate/<tournament>`, `/doc/<document name>`), matched the same prefix
+ * way as {@link matchesToolSidebarHref}. Whether the floating dock stands in
+ * for the column that is skipped is the one thing the two lists differ on —
+ * see {@link hasEmbeddedDock}.
  */
 export function ownsItsLayout(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
-  return OWN_LAYOUT_SIDEBAR_HREFS.some(
-    (href) => pathname === href || pathname.startsWith(`${href}/`),
-  );
+  if (hostsOwnSidebarDock(pathname)) return true;
+  return OWN_LAYOUT_SIDEBAR_HREFS.some((href) => isAtOrUnder(pathname, href));
 }
 
 /**
@@ -93,9 +123,12 @@ export function matchesToolSidebarHref(pathname: string): boolean {
  */
 export function hasEmbeddedDock(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
-  // A route that owns its layout has no sidebar column to host a dock, so
-  // the floating one is the only dock it gets — suppressing it there would
-  // leave the page with no way back into the app.
+  // A route that hosts the dock in its own sidebar already has one on
+  // screen — the floating instance would be the second.
+  if (hostsOwnSidebarDock(pathname)) return true;
+  // Every other route that owns its layout has no sidebar column to host a
+  // dock, so the floating one is the only dock it gets — suppressing it there
+  // would leave the page with no way back into the app.
   if (ownsItsLayout(pathname)) return false;
   return pathname.startsWith("/videos") || matchesToolSidebarHref(pathname);
 }
