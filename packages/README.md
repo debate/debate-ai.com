@@ -5,7 +5,7 @@ directory names; the npm package name is called out where it differs.
 
 ## debate-api-client
 
-Typed SDK for the [Debate AI API](https://debate-ai.com/api/api-docs), generated from
+Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated from
 `apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through `grab-url`
 instead of fetch/axios, so every operation gets caching, retries, rate limiting, and
 request dedupe. Each `operationId` has a matching function that resolves to

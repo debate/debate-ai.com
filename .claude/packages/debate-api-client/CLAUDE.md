@@ -1,7 +1,7 @@
 # CLAUDE.md — `debate-api-client`
 
 **The only published package in this repo.** A typed SDK for the
-[Debate AI API](https://debate-ai.com/api/api-docs), **generated** from
+[Debate AI API](https://debate-ai.com/api), **generated** from
 `apps/debate-ai.com/public/debate-openapi.yml` with Hey API.
 
 ## Two things that make this package unusual
