@@ -14,13 +14,12 @@
  * React state.
  *
  * Also prunes any favorite whose tool was since renamed/removed from the
- * catalog, the same way `components/settings/FavoriteToolsSettings.tsx`
- * already does — previously this was the one favorites surface that knew
- * the real `/tools` catalog (`ALL_TOOLS`) but never called
- * `useFavoriteTools().pruneUnknown`, so a stale chip here just silently
- * never matched any pre-rendered chip and stayed invisible until a
- * `/settings` visit happened to prune the underlying list (see
- * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s Known gaps).
+ * catalog. It is the only surface that does: `/settings` used to carry a
+ * "Favorite tools" list that pruned on every visit, and that page is the
+ * card editor's settings now, so a stale entry would otherwise sit in the
+ * saved list forever — invisible here, and never cleaned up anywhere else
+ * (see `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * Known gaps).
  *
  * @module components/tools/FavoritesController
  */

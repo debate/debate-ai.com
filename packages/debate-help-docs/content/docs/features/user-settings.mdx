@@ -4,29 +4,92 @@ title: "User Settings"
 
 # User Settings
 
-Gives a signed-in user a real settings page for debate style/font size/
-color theme/light-dark-mode preferences, synced to their account, plus a
-favorite-tools list.
+`/settings` is the CardMirror editor's settings page, and a signed-in user's
+choices there follow them across devices instead of staying in one browser's
+localStorage.
 
-- **Route:** `/settings`
-- **Package:** `debate-round` (panel + validation + fetch client),
-  `apps/debate-ai.com` (`/api/settings`, `user_settings` D1 table)
+- **Route:** `/settings` (the panel itself renders in an isolated iframe at
+  `/settings/editor-panel`)
+- **Package:** `debate-editor` (the settings store, `SETTING_METADATA`, and
+  the embedded panel builder), `apps/debate-ai.com`
+  (`lib/editor-preferences.ts`, `/api/settings`, `user_settings` D1 table)
 
 ## What it shows
 
-A form with Debate style/Font size/Color theme/Light-dark-mode pickers, a
-Save button, and a "Favorite tools" section (starred from `/tools` or
-managed here).
+The editor's whole tab set — **General**, **Files**, **Appearance**,
+**Accessibility**, **Editing**, **Keyboard**, **Comments & AI**,
+**Collaboration** — built by `debate-editor`'s own
+`buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
+gear-icon modal renders under it, minus the dialog chrome. General also
+carries the personal dictionary, the performance benchmark and this install's
+version info.
+
+Appearance and Accessibility appear *only* here: they moved out of that modal
+when they moved to this page. Everything else is a second surface onto the
+same local store, so a change here shows up in the editor and the other way
+round.
+
+`EDITOR_SETTINGS_TABS` (`apps/debate-ai.com/lib/editor-preferences.ts`) is the
+one list of which categories those are, read both by the panel route that
+renders them and by the API route that validates what they save. `plugins` is
+deliberately not among them — every row in it is Electron-only, so the tab
+would render empty on the web.
+
+## What it no longer shows
+
+The page used to be this app's own account form, and that whole section is
+gone:
+
+- the Debate style / Font size / Font family / Colour theme / Light-dark
+  pickers (`debate-round`'s `UserSettingsPanel`) — the dock's gear-icon menu
+  still carries the colour theme and light/dark rows; debate style and the
+  font pickers have no other surface
+- **Favorite tools** — a tool is still starred from `/tools`, which is also
+  where a renamed or removed tool now gets pruned from the saved list
+- **Tool data** — see
+  [Tool Data Sync](/docs/internals/tool-data-sync)'s Known gaps for what went
+  with it (the sync itself is untouched and still runs app-wide)
+- **Word limit presets** (`debate-round`'s `WordLimitPresetsPanel`) — the
+  presets still apply on `/word-count` and in the live word-limit meter, but
+  nothing edits them
+- **Ebb Flow preferences** — reachable with `Cmd/Ctrl+,` inside a flow, where
+  they apply
+
+Their `/api/settings` fields (`debateStyle`, `fontSize`, `wordLimitPresets`, …)
+are all still stored and served; what changed is that nothing writes them from
+here any more.
 
 ## Data flow
 
 ```
-state/userSettings.ts / state/themeSettings.ts / state/favoriteTools.ts (pure validation)
-round/user-settings-client.ts (fetch) → GET/PUT /api/settings
-panels/UserSettingsPanel.tsx
-components/theme-dropdown.tsx's useThemeState()
-lib/hooks/useFavoriteTools.ts
+debate-editor/settings.ts (the store, SETTING_METADATA, SECRET_SETTING_KEYS)
+debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
+app/settings/editor-panel/page.tsx (iframe document: tabs, hydrate, debounced push)
+  → GET/PUT /api/settings { editorPreferences }
+lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
+components/settings/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)
 ```
+
+The local store stays authoritative: the page hydrates from the account on
+load (a `401` just means signed out), and every change writes localStorage
+immediately and mirrors to the account on a 600ms debounce. A failed mirror
+never undoes the local change.
+
+## Credentials stay in the browser
+
+The mirrored keys are the hosted categories' settings **minus** the
+credentials among them — the provider API keys and the translation key that
+`debate-editor`'s `SECRET_SETTING_KEYS` already keeps out of a settings
+export, plus the self-hosted relay's bearer token. `EDITOR_PREFERENCE_KEYS`
+excludes them, so they are refused on the way in (reported as unknown keys,
+not silently dropped) and filtered on the way back out of a stored row.
+`apps/debate-ai.com/lib/__tests__/editor-preferences.test.ts` pins that.
+
+The push is also limited to the rows that actually rendered — each one tagged
+`data-setting-key` by the editor — rather than to every key in a hosted
+category. A row this host hides (desktop-only card sharing, say) would
+otherwise be mirrored at its default and overwrite whatever the account holds
+for it.
 
 ## Known gaps
 
@@ -44,8 +107,11 @@ caller that genuinely needs one, but nothing in the app sends one anymore.
 single `recordRecentTool` op, resolved the same read-then-write way — since
 it writes far more often than any picker-style field here (every tool open,
 not just an explicit Save) and two tabs opening different tools in quick
-succession would otherwise race the same way favorites used to. Every other
-field (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.) is still a
-plain whole-value replace with no such protection — low risk in practice
-since each is normally edited from one open settings tab at a time, but a
-real gap if that changes.
+succession would otherwise race the same way favorites used to.
+
+`editorPreferences` is a plain merge of whatever the page last pushed, so it
+has the same last-write-wins property: the editor's settings open in two
+tabs, changed in both, end at whichever debounce landed second. Every other
+field (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.) is a plain
+whole-value replace with no such protection — and now that this page no
+longer writes them, mostly nothing does.
