@@ -168,7 +168,7 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
             </DropdownMenu>
           </div>
 
-          {/* Citation and summary info */}
+          {/* Citation info */}
           <div className="space-y-2">
             <p className="text-sm">
               <span className="font-semibold">{author}</span>{" "}
@@ -179,7 +179,6 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
               </span>
             </p>
             <p className="text-sm text-muted-foreground">{selectedResult.cite}</p>
-            <p className="text-sm font-medium">{selectedResult.summary}</p>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span>{wordCount} words</span>
             </div>
