@@ -24,8 +24,10 @@ persisted daily-mission result or streak freeze: current streak, longest
 streak, last completed day, every milestone badge earned, a **Streak freeze**
 column, and a **Reminder** column. Above the table, a "Run today's mission
 check" form lets any contributor id compute and save that day's mission
-result on demand — there is no scheduled-job infrastructure in this repo, so
-this manual trigger is the only way a day's result gets recorded. The
+result on demand — nothing wires mission-result computation to the repo's
+cron trigger (`worker/index.ts`'s `scheduled` export; see the Known gaps
+section below), so this manual trigger is the only way a day's result gets
+recorded. The
 signed-in visitor's own row (via an optional `signedInContributorId` prop,
 derived from a real session by `debate-research-evidence`'s
 `deriveContributorIdFromSessionIdentity`) is highlighted with a "You" badge.
@@ -194,6 +196,10 @@ mount (the account merge above), not live.
   on another device shows up on this device's next page load rather than
   live.
 - The trigger for a day's mission result is a manual button click, not a
-  scheduled job — there is no cron/scheduled-job infrastructure in this repo
-  for it to run on. See the feature doc's Known gaps for the same point from
-  a user's perspective.
+  scheduled job. The repo does now have one cron trigger
+  (`apps/debate-ai.com/wrangler.jsonc`'s `triggers.crons`, handled by
+  `worker/index.ts`'s `scheduled` export), but it only runs the weekly
+  YouTube channel/view-count sync and the reuse-check-log purge — nothing
+  wires mission-result computation to it, so the manual trigger stays the
+  only way a day's result gets recorded. See the feature doc's Known gaps
+  for the same point from a user's perspective.

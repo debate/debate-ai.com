@@ -67,9 +67,26 @@ edit to a description on YouTube, not a change to the site.
 The **Stacked playlists** button in the search panel (the layers icon) turns
 it off, giving one card per video again.
 
+## Fixing a video (admins)
+
+`/admin` has a **Video library** card listing every video already published to
+the site, searchable by title, channel, tournament or YouTube id and filterable
+by format. **Edit** opens the whole record — title, channel, publish date,
+format, tournament, round level, teams, winner, judge decision, description,
+speech-docs link and the top-pick flag — and saving it updates the public
+library right away, including how the video sorts and what searches find it.
+**Remove** takes the video off the site for good: it is also added to the
+resync exclusion list, so the weekly YouTube sync will not quietly bring it
+back.
+
+The **Round videos** queue further down the page is separate — those are
+rounds still waiting to be published, not videos already on the site.
+
 ## Known gaps
 
 Stacks only exist where a description links the videos, so a round-analysis
 video that names its round in the title alone is not paired with it. Search
 is `LIKE`-based token matching, not fuzzy. A seed run is not atomic
-— an interrupted run leaves partial rows served as if complete.
+— an interrupted run leaves partial rows served as if complete. An admin edit
+lives in the database only, so re-seeding from the committed JSON assets
+restores the original values.

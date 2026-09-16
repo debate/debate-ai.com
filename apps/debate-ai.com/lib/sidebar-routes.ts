@@ -11,6 +11,10 @@
  * sidebar-hosted one is already on screen) and `AppSidebarShell` (to decide
  * whether to wrap a page in the generic sidebar) — see `AppSidebarShell`'s
  * file comment for why this exists.
+ *
+ * `ownsItsLayout` is the opt-out both of those consult: a tree destination
+ * that renders its own full-height workspace chrome (`/debate`) gets neither
+ * the generic sidebar nor the dock suppression that goes with it.
  */
 
-export { hasEmbeddedDock, isGenericToolSidebarRoute } from "debate-videos"
+export { hasEmbeddedDock, isGenericToolSidebarRoute, ownsItsLayout } from "debate-videos"

@@ -21,6 +21,7 @@ import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
+import { VideoLibraryTable } from "./VideoLibraryTable";
 
 interface YoutubeRoundVideo { id: string; title: string; publishedAt: string; channel: string; views: number; style: number; tournament: string | null; }
 interface SyncRun { id: number; status: "running" | "success" | "error"; triggeredBy?: string | null; channelsSynced: number; videosUpserted: number; error: string | null; }
@@ -268,7 +269,7 @@ export function AdminDashboard() {
     <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10">
       <div>
         <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground text-sm">Accounts, usage and YouTube round video sync</p>
+        <p className="text-muted-foreground text-sm">Accounts, usage, the published video library and YouTube round video sync</p>
       </div>
 
       <UsersTable />
@@ -362,8 +363,16 @@ export function AdminDashboard() {
 
       <DebateCardParquetUpload />
 
+      <VideoLibraryTable />
+
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-medium">Round videos</h2>
+        <div>
+          <h2 className="text-lg font-medium">Round videos</h2>
+          <p className="text-muted-foreground text-sm">
+            Queued rounds waiting to be published. Already-published videos live in the library
+            above.
+          </p>
+        </div>
         <div className="flex items-center gap-3">
           <Button
             variant="outline"

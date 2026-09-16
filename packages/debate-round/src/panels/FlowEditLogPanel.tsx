@@ -26,6 +26,15 @@
  * still has no cross-tab live-update mechanism" Known gap noted in
  * `shared-flow-sync.md`, for this panel.
  *
+ * `flowEdits` is one of the generic `TOOL_RECORD_COLLECTIONS` (see
+ * `tool-data-sync.mdx`'s "Coaching" section), synced to the account by
+ * `debate-data-sync`'s background watcher without this package knowing the
+ * sync exists. Each logged edit's "Logged edits" row carries a "Synced" /
+ * "Not yet synced" badge from `getToolRecordSyncStatus`, the same
+ * per-record indicator `FlowHistoryList`'s History tab and CardMirror's
+ * personal dictionary already show — omitted entirely (not a third state)
+ * before this collection has ever been baselined against the account.
+ *
  * @module panels/FlowEditLogPanel
  */
 
@@ -57,6 +66,10 @@ import { isFlowEditLogPanelLiveUpdateStorageEvent } from "../flow/live-update"
 import { useFlowSyncPolling } from "../hooks/useFlowSyncPolling"
 import { useFlowPresencePolling } from "../hooks/useFlowPresencePolling"
 import { buildFlowPresenceSummaryText } from "../flow/flow-presence"
+import { getToolRecordSyncStatus } from "debate-data-sync/src/state/tool-record-auto-sync"
+
+/** The `key` this store is registered under in `TOOL_RECORD_COLLECTIONS`. */
+const FLOW_EDITS_COLLECTION_KEY = "flowEdits"
 
 function newFlowEditId(): string {
   return `edit-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
@@ -283,15 +296,30 @@ export function FlowEditLogPanel({ onChange }: FlowEditLogPanelProps = {}) {
                   }
                 >
                   <div className="flex flex-col gap-2">
-                    {flowEdits.map((edit) => (
-                      <PanelRow
-                        key={edit.id}
-                        leading={edit.boxPath.join(".")}
-                        title={edit.content || "(cleared)"}
-                        subtitle={edit.authorId}
-                        trailing={<Pill>{new Date(edit.timestampMs).toLocaleTimeString()}</Pill>}
-                      />
-                    ))}
+                    {flowEdits.map((edit) => {
+                      const syncStatus = getToolRecordSyncStatus(FLOW_EDITS_COLLECTION_KEY, edit)
+                      return (
+                        <PanelRow
+                          key={edit.id}
+                          leading={edit.boxPath.join(".")}
+                          title={edit.content || "(cleared)"}
+                          subtitle={edit.authorId}
+                          trailing={
+                            <>
+                              {syncStatus !== "unknown" ? (
+                                <Pill
+                                  tone={syncStatus === "synced" ? "positive" : "neutral"}
+                                  className="text-[10px]"
+                                >
+                                  {syncStatus === "synced" ? "Synced" : "Not yet synced"}
+                                </Pill>
+                              ) : null}
+                              <Pill>{new Date(edit.timestampMs).toLocaleTimeString()}</Pill>
+                            </>
+                          }
+                        />
+                      )
+                    })}
                   </div>
                 </PanelSection>
               )

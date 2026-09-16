@@ -40,6 +40,31 @@ export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([
 ]);
 
 /**
+ * Destinations that the tool tree links to but that render their own
+ * full-height workspace chrome — a sidebar of their own, and a top bar above
+ * it — so the generic sidebar lands beside that as a second nav column.
+ *
+ * `/debate` is the flow workspace: it owns the whole viewport, with its own
+ * flows/rounds/tools sidebar, and wrapping it in the tool tree left the page
+ * showing two side-by-side sidebars, the tree's and its own. It keeps the
+ * app dock, just the floating instance rather than one hosted in a column
+ * that is no longer there (see {@link hasEmbeddedDock}).
+ */
+export const OWN_LAYOUT_SIDEBAR_HREFS: readonly string[] = ["/debate"];
+
+/**
+ * True on {@link OWN_LAYOUT_SIDEBAR_HREFS} and anything nested under one
+ * (`/debate/<tournament>`), matched the same prefix way as
+ * {@link matchesToolSidebarHref}.
+ */
+export function ownsItsLayout(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return OWN_LAYOUT_SIDEBAR_HREFS.some(
+    (href) => pathname === href || pathname.startsWith(`${href}/`),
+  );
+}
+
+/**
  * True when `pathname` is one of the sidebar's destinations or sits beneath
  * one.
  *
@@ -68,6 +93,10 @@ export function matchesToolSidebarHref(pathname: string): boolean {
  */
 export function hasEmbeddedDock(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
+  // A route that owns its layout has no sidebar column to host a dock, so
+  // the floating one is the only dock it gets — suppressing it there would
+  // leave the page with no way back into the app.
+  if (ownsItsLayout(pathname)) return false;
   return pathname.startsWith("/videos") || matchesToolSidebarHref(pathname);
 }
 
@@ -78,5 +107,6 @@ export function hasEmbeddedDock(pathname: string | null | undefined): boolean {
 export function isGenericToolSidebarRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
   if (pathname.startsWith("/videos")) return false;
+  if (ownsItsLayout(pathname)) return false;
   return matchesToolSidebarHref(pathname);
 }

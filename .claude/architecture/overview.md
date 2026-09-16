@@ -51,7 +51,6 @@ Everything is private except `debate-api-client`.
 | `debate-speech-writer` | *(same)* | The AI prompt library: flow extraction, judge decisions, flaw finding, research outlines, batch quote analysis |
 | `debate-team-collaboration` | *(same)* | Task inbox, prep room, topic sprints, brainstorm assist, group challenges, research-progress tracking, sprint notes, prep notes and notifications |
 | `debate-timer` | *(same)* | Speech and prep timers with per-format speech times; in-round recorder with mic selection, live waveform, playback |
-| `debate-ui` | *(same)* | shadcn/Radix primitives, the custom icon set, the site footer, `cn` and URL-state helpers |
 | `debate-videos` | *(same)* | LEARN: video search and filtering, grids and cards, the persistent YouTube player with PiP, lecture pages, rankings |
 
 ## The dependency edges
@@ -60,8 +59,6 @@ These are real and they are the reason a "small" change can ripple. Know them
 before adding another.
 
 ```
-debate-ui ──────────────► everything (primitives, icons, cn)
-
 debate-search-evidence ──┬─► debate-contributor-progress
                          └─► debate-team-collaboration
         (both were split out of the old debate-card-search and still build on it)
@@ -76,9 +73,13 @@ debate-flow ─────────────► embedded by debate-round 
 ```
 
 `debate-search-evidence` and `debate-round` are the two load-bearing packages:
-changing their public exports moves several others. `debate-ui` is load-bearing
-in a different way — it is cheap to change and expensive to get wrong, because
-every surface renders it.
+changing their public exports moves several others.
+
+There is deliberately no shared UI package. Every package and app owns its own
+`ui/` folder — `src/ui/` in a package, `lib/ui/` in the web app — holding only
+the primitives, icons and `cn`/URL-state helpers it actually renders. A
+primitive change is therefore local to one surface; a fix worth having
+everywhere has to be carried to each copy that renders it.
 
 ## `debate-api-client` never throws
 
