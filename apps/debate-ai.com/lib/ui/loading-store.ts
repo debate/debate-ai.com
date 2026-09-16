@@ -87,5 +87,11 @@ export function useIsLoading() {
   return useLoadingStore((s) => s.isActive)
 }
 
+/**
+ * Imperative handles for callers outside React — `use-route-loading` arms and
+ * drops the orb from effects and timers, not from render. The actions live on
+ * the store's state, and zustand never replaces them after `create`, so these
+ * references stay valid for the life of the store.
+ */
 export const { beginLoading, finishLoading, setLoading, resetLoading } =
-  useLoadingStore
+  useLoadingStore.getState()
