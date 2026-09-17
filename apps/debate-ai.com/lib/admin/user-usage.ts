@@ -154,6 +154,40 @@ export async function loadUserUsagePage(db: AdminDB, options: UserUsageQuery) {
 }
 
 /**
+ * Full usage profile for a single account — the same column set and correlated
+ * subqueries that `loadUserUsagePage` computes, narrowed to one user. Used by the
+ * admin user detail view.
+ */
+export async function loadUserUsage(db: AdminDB, id: string) {
+  const [row] = await db
+    .select({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      emailVerified: user.emailVerified,
+      isAnonymous: user.isAnonymous,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      lastActiveSeconds: lastActiveExpression,
+      sessions: sessionsExpression,
+      total: totalExpression,
+      ...usageExpressions,
+    })
+    .from(user)
+    .where(eq(user.id, id))
+    .limit(1);
+
+  if (!row) return null;
+
+  const { lastActiveSeconds, ...rest } = row;
+  return {
+    ...rest,
+    lastActiveAt: lastActiveSeconds ? new Date(lastActiveSeconds * 1000).toISOString() : null,
+  };
+}
+
+/**
  * Site-wide row counts for the summary strip above the table. These
  * deliberately ignore the search and filter, so the headline numbers stay a
  * stable reference while an admin narrows the table underneath them.
