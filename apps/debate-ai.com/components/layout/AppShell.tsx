@@ -14,7 +14,7 @@
 import type React from "react"
 import { usePathname } from "next/navigation"
 
-import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoPlayerFrameBridge } from "debate-videos"
+import { CategoryDockProvider, PersistentVideoPlayer, SlowSpreadButton, VideoIndexPrefetcher, VideoPlayerFrameBridge } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { AppSidebarShell } from "@/components/layout/AppSidebarShell"
 import { AppFrameProvider, AppFrameSurface } from "@/components/layout/AppFrameProvider"
@@ -126,6 +126,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       <ChromeErrorBoundary label="VideoPlayerFrameBridge">
         <VideoPlayerFrameBridge />
+      </ChromeErrorBoundary>
+      {/* Pulls the video library into `localStorage` once the page has loaded,
+          so the video pages filter, search and page without a request. It is
+          idle-scheduled and failure-tolerant — see `videoIndexCache.ts`. */}
+      <ChromeErrorBoundary label="VideoIndexPrefetcher">
+        <VideoIndexPrefetcher />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ToolRecordSyncProvider">
         <ToolRecordSyncProvider />

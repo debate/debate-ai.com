@@ -40,6 +40,30 @@ export {
   useWatchStatus,
 } from "./hooks/useWatchHistory";
 export {
+  VIDEO_INDEX_MAX_AGE_MS,
+  VIDEO_INDEX_STORAGE_KEY,
+  clearVideoIndex,
+  getVideoIndexRows,
+  getVideoIndexState,
+  hydrateVideoIndex,
+  isVideoIndexReady,
+  isVideoIndexStale,
+  queryVideoIndex,
+  queryVideoIndexMeta,
+  queryVideoIndexStacks,
+  refreshVideoIndex,
+  scheduleVideoIndexRefresh,
+  subscribeToVideoIndex,
+  type LocalVideoPage,
+  type VideoIndexState,
+} from "./state/videoIndexCache";
+export {
+  VideoIndexPrefetcher,
+  useVideoIndexPrefetch,
+  useVideoIndexReady,
+  useVideoIndexState,
+} from "./hooks/useVideoIndex";
+export {
   WatchProgressBadge,
   WatchProgressBar,
   type WatchProgressBadgeProps,
