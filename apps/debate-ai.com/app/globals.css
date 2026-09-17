@@ -828,6 +828,25 @@ html[data-embedded="1"] [data-app-chrome] {
 }
 
 /* ---------------------------------------------------------------------------
+   Loading animation keyframes — used by OrbitalLoader (replaces grab-url's
+   QuantumOrbital which bundles its own React and crashes on useRef).
+--------------------------------------------------------------------------- */
+@keyframes orbitalSpin {
+  from { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  to   { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+}
+
+@keyframes orbitalLineSpin {
+  from { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  to   { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+}
+
+@keyframes orbPulse {
+  0%, 100% { transform: scale(0.95); opacity: 0.85; }
+  50%      { transform: scale(1.05); opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
    Features page effects (/features)
 
    Keyframes and accent helpers for `lib/ui/features/effects.tsx`. Ported from
