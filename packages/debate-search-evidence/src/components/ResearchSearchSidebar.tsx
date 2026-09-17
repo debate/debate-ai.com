@@ -32,6 +32,7 @@ export interface SearchFilters {
   searchHighlighted: boolean
   searchUnderlined: boolean
   searchSummaries: boolean
+  searchBlockAndFileTitles: boolean
   searchOutlines: boolean
   searchRoundSpeeches: boolean
   searchQuotes: boolean
@@ -53,7 +54,13 @@ interface ResearchSearchSidebarProps {
   onClose?: () => void
 }
 
-const MULTISELECT_SEARCH_KEYS = ["searchHighlighted", "searchUnderlined", "searchSummaries", "searchAllText"] as const
+const MULTISELECT_SEARCH_KEYS = [
+  "searchHighlighted",
+  "searchUnderlined",
+  "searchSummaries",
+  "searchBlockAndFileTitles",
+  "searchAllText",
+] as const
 
 const TOGGLE_BAR_ITEMS = [
   { key: "searchRoundSpeeches" as const, label: "Debates", tooltip: "Show recent rounds", icon: Scale },
@@ -208,7 +215,7 @@ export function ResearchSearchSidebar({
                           { value: "searchHighlighted", label: "Highlight" },
                           { value: "searchUnderlined", label: "Underlined" },
                           { value: "searchSummaries", label: "Summaries" },
-                          { value: "searchTitles", label: "Blocks" },
+                          { value: "searchBlockAndFileTitles", label: "Blocks" },
                           { value: "searchAllText", label: "All" },
                         ]}
                         selected={MULTISELECT_SEARCH_KEYS.filter((k) => filters[k] === true)}
