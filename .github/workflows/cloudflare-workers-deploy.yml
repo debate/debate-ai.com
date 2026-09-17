@@ -107,8 +107,11 @@ jobs:
         working-directory: .
         run: bun install --frozen-lockfile
 
+      # `--if-present` has to precede the script name: after it, bun stops
+      # parsing flags and forwards the rest to the script, so the app's build
+      # chain ended up running `cp ... --if-present` and failing.
       - name: Build app
-        run: bun run build --if-present
+        run: bun run --if-present build
 
       - name: Deploy Worker with Wrangler
         env:
