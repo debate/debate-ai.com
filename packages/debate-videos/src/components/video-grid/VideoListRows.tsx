@@ -328,7 +328,10 @@ function VideoRow({
               />
             )}
 
-            <WatchProgressBadge entry={watched} size={14} plain />
+            {/* Every row carries it, watched or not: the point of the marker
+                is that you can hover any row and learn where you got to —
+                "Not watched" included. */}
+            <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
 
             {isTopPick && (
               <TopPickBadge

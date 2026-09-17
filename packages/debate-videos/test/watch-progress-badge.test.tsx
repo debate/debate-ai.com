@@ -2,11 +2,12 @@
  * @fileoverview Pins what the grid's watch marker renders — the thing a user
  * actually sees, as opposed to the record behind it.
  *
- * Two properties are worth holding still. An unwatched library must look
- * exactly as it did before this feature existed (no badge, no bar, no stray
- * wrapper), and every badge that does render must carry its percentage as
- * text: the tooltip is a hover, and a hover is not available to a screen
- * reader or to a phone.
+ * Three properties are worth holding still. A thumbnail overlay must not
+ * decorate an unwatched video (no badge, no bar, no stray wrapper); the
+ * surfaces that *do* want a marker on every item ask for it with
+ * `showUnwatched`, and get a ring with no arc labelled "Not watched"; and
+ * every badge that renders must carry its label as text, because the tooltip
+ * is a hover and a hover is not available to a screen reader or to a phone.
  */
 
 import { describe, expect, it } from "vitest"
@@ -43,6 +44,33 @@ describe("WatchProgressBadge", () => {
     expect(
       render(createElement(WatchProgressBadge, { entry: entry({ positionSeconds: 2 }) })),
     ).toBe("")
+  })
+
+  it("draws a plain ring labelled \"Not watched\" when asked to show one", () => {
+    // What every row and every card's action row passes, so the marker is
+    // there to hover on a video the user has never played.
+    const html = render(
+      createElement(WatchProgressBadge, { entry: null, showUnwatched: true }),
+    )
+
+    expect(html).toContain("Not watched")
+    expect(html).toContain('data-watch-status="unwatched"')
+    expect(html).toContain('data-watch-percent="0"')
+    // The track alone: no progress arc, so it cannot read as partly watched.
+    expect(html).toContain("<svg")
+    expect(html).not.toContain("stroke-dashoffset")
+  })
+
+  it("calls a click that never became playback unwatched, not started", () => {
+    const html = render(
+      createElement(WatchProgressBadge, {
+        entry: entry({ positionSeconds: 2 }),
+        showUnwatched: true,
+      }),
+    )
+
+    expect(html).toContain("Not watched")
+    expect(html).not.toContain("stroke-dashoffset")
   })
 
   it("labels a part-watched video with its percentage and clock", () => {
