@@ -161,6 +161,7 @@ function VideoCardComponent({
           />
 
           <VideoCardActions
+            video={video}
             videoId={videoId}
             title={title}
             youtubeUrl={youtubeUrl}

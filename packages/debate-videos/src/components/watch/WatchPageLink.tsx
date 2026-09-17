@@ -20,22 +20,40 @@ import { Captions } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import { cn } from "../../ui/lib/utils"
 import { videoWatchHref } from "../../lib/video-slug"
+import { videoRouteHref } from "../../lib/video-route"
+import type { VideoType } from "../../types/videos"
 
 interface WatchPageLinkProps {
   videoId: string
   title: string
+  /**
+   * The whole video row, when the caller has it. The canonical address is
+   * built from the season, tournament and teams — see `lib/video-route` — so
+   * a caller that can hand those over links straight to it. Without them the
+   * old flat `/videos/watch/<slug>` link still works; it just costs the
+   * reader a redirect.
+   */
+  video?: VideoType
   /** Extra classes for the anchor — the list rows pad theirs differently. */
   className?: string
   /** Icon size classes; defaults to the card row's `w-4 h-4`. */
   iconClassName?: string
 }
 
-export function WatchPageLink({ videoId, title, className, iconClassName }: WatchPageLinkProps) {
+export function WatchPageLink({
+  videoId,
+  title,
+  video,
+  className,
+  iconClassName,
+}: WatchPageLinkProps) {
+  const href = video ? videoRouteHref(video) : videoWatchHref(title, videoId)
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Link
-          href={videoWatchHref(title, videoId)}
+          href={href}
           // Cards and rows are themselves clickable (they start playback in
           // the popout player); this control has its own destination.
           onClick={(e) => e.stopPropagation()}

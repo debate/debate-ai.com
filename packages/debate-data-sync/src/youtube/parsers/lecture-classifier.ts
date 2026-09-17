@@ -2,6 +2,43 @@
  * Classifier for categorizing lecture videos into educational topics
  */
 
+/**
+ * Every category {@link classifyLecture} can return, in the order a picker
+ * should offer them — broadest first, then by side, then by skill.
+ *
+ * Exported so that anything letting a person *choose* a category (the
+ * "miscategorized" video report, the admin metadata form) offers exactly the
+ * set the classifier produces. A free-typed category silently creates a new
+ * bucket in the library's category facets, which is how a single mistyped
+ * label ends up as its own lecture shelf.
+ */
+export const LECTURE_CATEGORIES = [
+  "Novice & Introductory",
+  "Topic Lectures",
+  "Affirmative Strategy",
+  "Negative Strategy",
+  "Kritik / Critical Theory",
+  "Counterplans & Theory",
+  "Topicality & Framework",
+  "Disadvantages",
+  "Impact Calculus & Evidence",
+  "Speaking & Delivery",
+  "Research & Flowing",
+  "Public Forum",
+  "Demo Debates",
+  "Judge & Tournament Skills",
+  "Philosophy & IR Theory",
+  "Camp & Coaching Advice",
+  "Documentaries & Culture",
+] as const;
+
+export type LectureCategory = (typeof LECTURE_CATEGORIES)[number];
+
+/** Whether a label is one of the classifier's own categories. */
+export function isLectureCategory(value: unknown): value is LectureCategory {
+  return typeof value === "string" && (LECTURE_CATEGORIES as readonly string[]).includes(value);
+}
+
 export function classifyLecture(title: string, description: string): string {
   const t = title.toLowerCase();
   const d = (description || "").toLowerCase();

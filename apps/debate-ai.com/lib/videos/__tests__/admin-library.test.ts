@@ -46,6 +46,8 @@ const MIGRATIONS = [
   "0005_green_redwing.sql", // videos
   "0026_admin_youtube_management.sql", // youtube_video_exclusions
   "0041_video_stacks.sql", // videos.stack_key / stack_position
+  "0045_video_documents_relations_issues.sql", // videos.availability, and the
+  // video_documents / video_relations / video_issues tables
 ];
 
 async function freshDb() {

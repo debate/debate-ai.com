@@ -1,11 +1,96 @@
 import grab from "grab-url";
 
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+/**
+ * @fileoverview The YouTube Data API client shared by the sync CLI and the
+ * Worker.
+ *
+ * Two things here are not incidental.
+ *
+ * **The key is resolved per request, not at import.** This module started as
+ * CLI-only, where `process.env.YOUTUBE_API_KEY` is read at startup and is
+ * correct forever. In the Worker it is not: secrets arrive on the request's
+ * `env` binding, and `process.env` is empty at module scope. Baking the key
+ * into the client at import therefore sent every production sync request
+ * with no key at all — a 403 from YouTube for every batch, on a deployment
+ * whose admin page had just checked that the key was configured. The Worker
+ * hands its key over with {@link setYouTubeApiKey} and every request reads
+ * it at call time.
+ *
+ * **A failed request throws.** `grab` resolves with an `error` field rather
+ * than rejecting on a non-2xx response, so `data.items` is simply
+ * `undefined` on failure. Every helper below used to read straight through
+ * that, which turned an authentication failure into "the API returned no
+ * videos" — a resync that reported every video missing, with nothing in the
+ * logs saying why. {@link youtubeRequest} raises {@link YouTubeApiError}
+ * instead, so a caller can tell "YouTube said no" from "that video is gone".
+ * @module youtube/youtube-api
+ */
+
+/** A YouTube API request that failed — transport, quota, key or HTTP status. */
+export class YouTubeApiError extends Error {
+  constructor(
+    message: string,
+    /** The API path that failed, for the log line. */
+    readonly path?: string,
+  ) {
+    super(message);
+    this.name = "YouTubeApiError";
+  }
+}
+
+/** Key handed over by a host that has one, e.g. the Worker's `env` binding. */
+let apiKeyOverride: string | null = null;
+
+/**
+ * Sets the API key for subsequent requests.
+ *
+ * The Worker calls this with the key from its own `env` binding before a
+ * sync; the CLI does not need to, because `process.env` is populated for it.
+ *
+ * @param key - The key, or `null` to fall back to `process.env`.
+ */
+export function setYouTubeApiKey(key: string | null | undefined): void {
+  apiKeyOverride = key?.trim() || null;
+}
+
+/** The key in force right now, or `""` when none is configured. */
+export function getYouTubeApiKey(): string {
+  return apiKeyOverride ?? process.env.YOUTUBE_API_KEY ?? "";
+}
 
 export const YoutubeAPI = grab.instance({
   baseURL: "https://www.googleapis.com/youtube/v3",
-  key: YOUTUBE_API_KEY,
 });
+
+/**
+ * Makes one YouTube API request and returns its JSON body.
+ *
+ * @param path - API path, e.g. `/videos`.
+ * @param params - Query parameters; the key is added here.
+ * @returns The parsed response body.
+ * @throws {YouTubeApiError} When no key is configured, or the API declines
+ *   the request — quota, a bad key, or any non-2xx status.
+ */
+async function youtubeRequest(path: string, params: Record<string, unknown>): Promise<any> {
+  const key = getYouTubeApiKey();
+  if (!key) {
+    throw new YouTubeApiError("YouTube API key not configured", path);
+  }
+
+  const res: any = await YoutubeAPI(path, { ...params, key });
+  // JSON bodies are spread onto the response root, so `res.data` is only set
+  // for non-JSON; read through both rather than assuming either.
+  const data = res?.data && typeof res.data === "object" ? res.data : res;
+
+  const failure = res?.error ?? data?.error;
+  if (failure) {
+    const message =
+      typeof failure === "string" ? failure : failure?.message || "YouTube API request failed";
+    throw new YouTubeApiError(message, path);
+  }
+
+  return data ?? {};
+}
 
 export async function getChannelId(channelName: string): Promise<string | null> {
   try {
@@ -14,14 +99,14 @@ export async function getChannelId(channelName: string): Promise<string | null> 
 
     // Try to get channel by forUsername (legacy username)
     try {
-      const byUsername = await YoutubeAPI("/channels", {
+      const byUsername = await youtubeRequest("/channels", {
         part: "id",
         forUsername: cleanName,
       });
 
-      if (byUsername.data?.items && byUsername.data.items.length > 0) {
-        console.log(`Found channel by username: ${channelName} -> ${byUsername.data.items[0].id}`);
-        return byUsername.data.items[0].id;
+      if (byUsername.items?.length > 0) {
+        console.log(`Found channel by username: ${channelName} -> ${byUsername.items[0].id}`);
+        return byUsername.items[0].id;
       }
     } catch (err) {
       // Username not found, continue to handle
@@ -29,14 +114,14 @@ export async function getChannelId(channelName: string): Promise<string | null> 
 
     // Try to get channel by handle (modern @handle format)
     try {
-      const byHandle = await YoutubeAPI("/channels", {
+      const byHandle = await youtubeRequest("/channels", {
         part: "id",
         forHandle: channelName.startsWith("@") ? channelName : `@${channelName}`,
       });
 
-      if (byHandle.data?.items && byHandle.data.items.length > 0) {
-        console.log(`Found channel by handle: ${channelName} -> ${byHandle.data.items[0].id}`);
-        return byHandle.data.items[0].id;
+      if (byHandle.items?.length > 0) {
+        console.log(`Found channel by handle: ${channelName} -> ${byHandle.items[0].id}`);
+        return byHandle.items[0].id;
       }
     } catch (err) {
       // Handle not found
@@ -58,7 +143,7 @@ export async function getVideosByIds(videoIds: string[]): Promise<any[]> {
     const batch = videoIds.slice(i, i + 50);
     const ids = batch.join(",");
 
-    const data = await YoutubeAPI("/videos", {
+    const data = await youtubeRequest("/videos", {
       part: "snippet,statistics",
       id: ids,
     });
@@ -101,11 +186,10 @@ export async function fetchViewCounts(videoIds: string[]): Promise<Record<string
     const batch = videoIds.slice(i, i + 50);
     const ids = batch.join(",");
 
-    const res: any = await YoutubeAPI("/videos", {
+    const data = await youtubeRequest("/videos", {
       part: "statistics",
       id: ids,
     });
-    const data = res?.data || res;
 
     if (data?.items) {
       for (const item of data.items) {
@@ -120,6 +204,82 @@ export async function fetchViewCounts(videoIds: string[]): Promise<Record<string
   return viewCounts;
 }
 
+/** What YouTube currently says about one stored video. */
+export interface YouTubeVideoStatus {
+  videoId: string;
+  /** Current view count, or `null` when the API withheld statistics. */
+  viewCount: number | null;
+  /** `public`, `unlisted` or `private`. */
+  privacyStatus: string | null;
+  /** `processed`, `uploaded`, `rejected`, `failed` or `deleted`. */
+  uploadStatus: string | null;
+  /** Whether the video may still be played in an embed. */
+  embeddable: boolean | null;
+}
+
+/** One availability pass over a set of stored ids. */
+export interface YouTubeStatusReport {
+  /** Everything the API returned, keyed by video id. */
+  statuses: Record<string, YouTubeVideoStatus>;
+  /**
+   * Ids the API did not return at all. A `/videos` lookup by id simply omits
+   * a video that has been deleted or made private, so an id that goes in and
+   * does not come back is exactly the takedown case.
+   */
+  missing: string[];
+}
+
+/**
+ * Fetches view count *and* availability for each id in one pass.
+ *
+ * {@link fetchViewCounts} answers "how many views", and treats an id the API
+ * skipped as merely absent. This answers the question the library actually
+ * needs — "is this video still there?" — by asking for `status` alongside
+ * `statistics` and reporting the skipped ids rather than swallowing them. A
+ * video can be gone in three different ways and only one of them is a
+ * deletion: private and region-blocked videos come back with a status that
+ * says so, while a deleted one is simply not in the response.
+ *
+ * @param videoIds - Stored YouTube ids, in any quantity; batched by 50.
+ * @returns Statuses and the ids that came back empty. See
+ *   {@link YouTubeStatusReport}.
+ * @throws {YouTubeApiError} When the API declines the request, so a caller
+ *   never mistakes an outage for a library of deleted videos.
+ */
+export async function fetchVideoStatuses(videoIds: string[]): Promise<YouTubeStatusReport> {
+  const statuses: Record<string, YouTubeVideoStatus> = {};
+  const missing: string[] = [];
+
+  // YouTube API allows max 50 IDs per request
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const batch = videoIds.slice(i, i + 50);
+
+    const data = await youtubeRequest("/videos", {
+      part: "statistics,status",
+      id: batch.join(","),
+    });
+
+    for (const item of data?.items ?? []) {
+      const views = Number.parseInt(item.statistics?.viewCount ?? "", 10);
+      statuses[item.id] = {
+        videoId: item.id,
+        viewCount: Number.isFinite(views) ? views : null,
+        privacyStatus: item.status?.privacyStatus ?? null,
+        uploadStatus: item.status?.uploadStatus ?? null,
+        embeddable: typeof item.status?.embeddable === "boolean" ? item.status.embeddable : null,
+      };
+    }
+
+    for (const videoId of batch) {
+      if (!statuses[videoId]) missing.push(videoId);
+    }
+
+    console.log(`Checked ${Math.min(i + 50, videoIds.length)}/${videoIds.length} videos`);
+  }
+
+  return { statuses, missing };
+}
+
 export async function fetchFullDescriptions(videoIds: string[]): Promise<Record<string, string>> {
   const descriptions: Record<string, string> = {};
 
@@ -128,7 +288,7 @@ export async function fetchFullDescriptions(videoIds: string[]): Promise<Record<
     const batch = videoIds.slice(i, i + 50);
     const ids = batch.join(",");
 
-    const data = await YoutubeAPI("/videos", {
+    const data = await youtubeRequest("/videos", {
       part: "snippet",
       id: ids,
     });
@@ -167,8 +327,7 @@ export async function getVideosForChannel(
     };
     if (nextPageToken) params.pageToken = nextPageToken;
 
-    const res: any = await YoutubeAPI("/playlistItems", params);
-    const data = res.data || res;
+    const data = await youtubeRequest("/playlistItems", params);
 
     if (!data.items || data.items.length === 0) break;
 
@@ -193,11 +352,10 @@ export async function getVideosForChannel(
     const batch = allVideoIds.slice(i, i + 50);
     const ids = batch.join(",");
 
-    const res: any = await YoutubeAPI("/videos", {
+    const data = await youtubeRequest("/videos", {
       part: "snippet,statistics",
       id: ids,
     });
-    const data = res.data || res;
 
     if (data.items) {
       for (const item of data.items) {

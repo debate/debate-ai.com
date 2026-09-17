@@ -8,6 +8,11 @@
  * A video whose captions can't be read renders nothing here and the page
  * simply widens; that is not an error worth showing, because most of the
  * library has no captions at all.
+ *
+ * It renders either on its own — its own bordered column — or `embedded`
+ * inside {@link WatchSidePanel}'s tab strip, which already draws that border
+ * and already names the tab. The `embedded` form drops both rather than
+ * nesting a second card and a second "Transcript" heading inside the first.
  * @module components/watch/WatchTranscriptPanel
  */
 
@@ -25,6 +30,8 @@ interface WatchTranscriptPanelProps {
   loading: boolean
   currentTime: number
   onSeek: (seconds: number) => void
+  /** Rendered inside the side panel's tab strip, which owns the frame. */
+  embedded?: boolean
 }
 
 /** Formats seconds as `m:ss`, or `h:mm:ss` past an hour. */
@@ -43,6 +50,7 @@ export function WatchTranscriptPanel({
   loading,
   currentTime,
   onSeek,
+  embedded = false,
 }: WatchTranscriptPanelProps) {
   const [query, setQuery] = useState("")
   const lineRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -73,11 +81,19 @@ export function WatchTranscriptPanel({
     lineRefs.current[activeIndex]?.scrollIntoView({ block: "center", behavior: "smooth" })
   }, [activeIndex, needle])
 
+  const Frame = embedded ? "div" : "aside"
+
   return (
-    <aside className="flex flex-col min-h-0 rounded-lg border border-border bg-card/40 overflow-hidden">
+    <Frame
+      className={
+        embedded
+          ? "flex flex-col min-h-0 flex-1"
+          : "flex flex-col min-h-0 rounded-lg border border-border bg-card/40 overflow-hidden"
+      }
+    >
       <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border shrink-0">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Transcript
+          {embedded ? "YouTube captions" : "Transcript"}
         </h2>
         {sentences.length > 0 && (
           <span className="text-[10px] tabular-nums text-muted-foreground">
@@ -145,6 +161,6 @@ export function WatchTranscriptPanel({
           ))}
         </div>
       </ScrollArea>
-    </aside>
+    </Frame>
   )
 }
