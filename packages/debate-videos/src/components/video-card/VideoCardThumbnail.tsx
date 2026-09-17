@@ -10,6 +10,8 @@ import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TOURNAMENT_COLORS, getRoundBadgeColor } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
+import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
+import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 
 /** Shape of the video metadata forwarded to the player store on play. */
 interface VideoMeta {
@@ -105,6 +107,10 @@ export function VideoCardThumbnail({
   setActiveVideo,
 }: VideoCardThumbnailProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  // Subscribed here rather than passed down: the grid's cards are memoised and
+  // a progress write every twenty seconds would otherwise re-render all of
+  // them. See `hooks/useWatchHistory.ts`.
+  const watched = useWatchHistoryEntry(videoId)
 
   // Grids reuse card instances as the user filters and pages, so a failure
   // recorded for one video must not stick to the next one rendered here.
@@ -278,6 +284,9 @@ export function VideoCardThumbnail({
         </div>
       </div>
 
+      {/* How much of this the user has already watched */}
+      <WatchProgressBadge entry={watched} className="absolute right-1.5 top-1.5 z-10" />
+
       {/* Play state overlay */}
       {isPlaying ? (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60">
@@ -293,6 +302,8 @@ export function VideoCardThumbnail({
           </div>
         </div>
       )}
+
+      <WatchProgressBar entry={watched} />
     </div>
   )
 }

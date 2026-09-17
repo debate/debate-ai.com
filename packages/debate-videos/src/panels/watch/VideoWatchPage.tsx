@@ -74,6 +74,7 @@ import {
   videoPlayerIframeRef,
 } from "../../state/videoPlayerStore"
 import { savePlayerState } from "../../state/videoPlayerPersistence"
+import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
@@ -158,6 +159,8 @@ export function VideoWatchPage({
   const stageRef = useRef<HTMLDivElement | null>(null)
   /** Latest position reported by the embed — handed back to the popout player on the way out. */
   const currentTimeRef = useRef(0)
+  /** The video's length as the embed reports it, for the watch history's percentage. */
+  const durationRef = useRef(0)
   /** The rate still needs applying to this load: a fresh embed always starts at 1x. */
   const pendingPlaybackRate = useRef(false)
 
@@ -221,6 +224,7 @@ export function VideoWatchPage({
     // tracked about the outgoing video is cleared here rather than relying on
     // an unmount that doesn't happen.
     currentTimeRef.current = 0
+    durationRef.current = 0
     setCurrentTime(0)
     setResumeSeconds(null)
     setPlayerError(null)
@@ -233,6 +237,15 @@ export function VideoWatchPage({
     return () => {
       const store = useVideoPlayerStore.getState()
       const seconds = currentTimeRef.current
+      // Leaving the page is the last chance to record how far this got — the
+      // next position report belongs to whatever plays next.
+      recordWatchProgress({
+        videoId,
+        positionSeconds: seconds,
+        durationSeconds: durationRef.current,
+        title,
+        flush: true,
+      })
       if (seconds > 0 && store.activeVideoId === videoId) {
         setActiveVideo(videoId, title, videoMeta, seconds)
         savePlayerState({
@@ -301,15 +314,39 @@ export function VideoWatchPage({
             }
           } else if (data.info === 2 || data.info === 0) {
             setIsPlaying(false)
+            recordWatchProgress({
+              videoId,
+              positionSeconds:
+                data.info === 0
+                  ? durationRef.current || currentTimeRef.current
+                  : currentTimeRef.current,
+              durationSeconds: durationRef.current,
+              title,
+              // Only "ended" proves the video was watched through; a pause
+              // just flushes whatever position it stopped at.
+              completed: data.info === 0,
+              flush: true,
+            })
           }
         }
         if (data.event === "infoDelivery" && data.info?.errorCode != null) {
           const code = Number(data.info.errorCode)
           if (!Number.isNaN(code)) setPlayerError(code)
         }
+        if (data.event === "infoDelivery" && data.info?.duration != null) {
+          const duration = Number(data.info.duration)
+          if (Number.isFinite(duration) && duration > 0) durationRef.current = duration
+        }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           currentTimeRef.current = data.info.currentTime as number
           setCurrentTime(data.info.currentTime as number)
+          // Throttled in the store; see `state/videoWatchHistory.ts`.
+          recordWatchProgress({
+            videoId,
+            positionSeconds: currentTimeRef.current,
+            durationSeconds: durationRef.current,
+            title,
+          })
         }
       } catch {
         // ignore non-JSON messages
@@ -317,7 +354,7 @@ export function VideoWatchPage({
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [playbackRate, setIsPlaying])
+  }, [playbackRate, setIsPlaying, videoId, title])
 
   // Re-send the handshake for a few seconds after every load: YouTube ignores
   // commands and posts no events until it lands, and moving the iframe into a

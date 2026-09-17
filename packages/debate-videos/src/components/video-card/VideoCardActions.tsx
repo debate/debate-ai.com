@@ -24,6 +24,8 @@ import {
 import { formatVideoDate } from "./videoCardUtils"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
+import { WatchProgressBadge } from "./WatchProgressBadge"
+import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import type { VideoType } from "../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
@@ -120,6 +122,9 @@ export function VideoCardActions({
   showDescription,
 }: VideoCardActionsProps) {
   const [showHideConfirm, setShowHideConfirm] = useState(false)
+  // The action row carries the marker too, so a grid with thumbnails turned
+  // off — and the dense rows below it — still say what has been watched.
+  const watched = useWatchHistoryEntry(videoId)
 
   return (
     <>
@@ -136,6 +141,9 @@ export function VideoCardActions({
           >
             <ExternalLink className="w-4 h-4" />
           </a>
+
+          {/* Watch progress, when this video has been played before */}
+          <WatchProgressBadge entry={watched} size={14} plain />
 
           {/* Favourite toggle */}
           <Tooltip>

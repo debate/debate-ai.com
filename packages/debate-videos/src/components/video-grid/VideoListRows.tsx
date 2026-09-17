@@ -26,6 +26,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
 import { TopPickBadge } from "../video-card/TopPickBadge"
+import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
+import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { useResizableColumns } from "./useResizableColumns"
@@ -207,6 +209,7 @@ function VideoRow({
   )
   const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
   const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
+  const watched = useWatchHistoryEntry(videoId)
 
   const styleNumber = typeof style === "number" ? style : undefined
   const styleLabel = styleNumber
@@ -318,6 +321,8 @@ function VideoRow({
                 className="mr-1"
               />
             )}
+
+            <WatchProgressBadge entry={watched} size={14} plain />
 
             {isTopPick && (
               <TopPickBadge
