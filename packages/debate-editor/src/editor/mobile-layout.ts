@@ -72,3 +72,46 @@ export function resolveMobileLayout(
 export function mobileDensity(viewportWidth: number): 'phone' | 'tablet' {
   return viewportWidth >= 768 ? 'tablet' : 'phone';
 }
+
+/** Below this width the desktop chrome's two fixed-width left
+ *  sidebars stop fitting. `#app` insets from BOTH of them —
+ *  `left: var(--nav-width)` (300px) normally, and
+ *  `left: calc(var(--nav-width) + var(--pmd-recovery-width))`
+ *  (580px) while the crash-recovery sidebar is up — so in any
+ *  column narrower than that the document is pushed clean off the
+ *  right edge: ribbon and sidebars paint, and not one pixel of the
+ *  doc is on screen. Same threshold as `MOBILE_AUTO_ANY_POINTER_WIDTH`
+ *  and for the same reason (a phone-class box can't hold the desktop
+ *  chrome), but a separate constant because it answers a different
+ *  question — that one picks a SHELL, this one only fixes how the
+ *  desktop shell's chrome lays out. */
+export const NARROW_CHROME_MAX_WIDTH = 768;
+
+/** True when the desktop chrome is laying out into a box too narrow
+ *  for its sidebars to take their width out of the document's.
+ *
+ *  This is deliberately NOT `resolveMobileLayout`'s job: that one
+ *  refuses embeds outright (the view-first shell hardcodes viewport
+ *  positioning, so it would paint over the host page), which leaves
+ *  a phone-width embed rendering the full desktop chrome with no
+ *  narrow handling at all. `.dec-cardmirror-embed` is exactly where
+ *  the squeeze happens, so it needs its own answer. */
+export function isNarrowChrome(boxWidth: number): boolean {
+  return boxWidth > 0 && boxWidth < NARROW_CHROME_MAX_WIDTH;
+}
+
+/** The width of the box CardMirror's chrome actually lays out in.
+ *  In an embed that is the host's column, not the window:
+ *  `embed-containment.css` re-pins the chrome to
+ *  `.dec-cardmirror-embed`, so the column's width is what its
+ *  sidebars have to fit inside — a narrow split pane on a wide
+ *  desktop is just as squeezed as a phone. Falls back to the
+ *  viewport when there is no embed, or when the embed measures 0
+ *  (a `display: none` ancestor, or a read before first layout)
+ *  rather than calling a hidden deployment narrow. */
+export function chromeBoxWidth(): number {
+  if (typeof document === 'undefined' || typeof window === 'undefined') return 0;
+  const embed = document.querySelector('.dec-cardmirror-embed');
+  const embedWidth = embed instanceof HTMLElement ? embed.clientWidth : 0;
+  return embedWidth > 0 ? embedWidth : window.innerWidth;
+}

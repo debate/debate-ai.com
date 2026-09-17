@@ -15949,3 +15949,72 @@ body.pmd-multi-doc #collab-chip {
   display: flex;
   gap: 0.4rem;
 }
+
+/* ═══════════════════════════════════════════════ Narrow chrome ═══
+
+   The desktop chrome's two left sidebars are FIXED-WIDTH, and `#app`
+   insets from both of them: `left: var(--nav-width)` (300px) normally,
+   and `left: calc(var(--nav-width) + var(--pmd-recovery-width))`
+   (580px) while the crash-recovery sidebar is up. In a phone-width
+   column that inset is wider than the whole column, so the document is
+   pushed clean off the right edge — the ribbon paints, the sidebars
+   paint, and not one pixel of the doc is on screen.
+
+   That is what `/debate`'s speech-doc panel looked like on a phone.
+   Embeds never get the view-first mobile shell (it hardcodes viewport
+   positioning and would paint over the host page — see
+   mobile-layout.ts), so a 360px embed renders this desktop chrome at
+   full desktop widths.
+
+   `pmd-narrow-chrome` (index.ts, measured off the EMBED's own column
+   rather than the viewport, so a dragged-narrow split pane on a
+   desktop gets it too) switches the sidebars from displacing `#app` to
+   overlaying it. They already stack above `#app` (`z-index: 10` and
+   `100` against its auto) and paint an opaque `--pmd-c-bg`, so
+   overlaying needs nothing beyond dropping the insets.
+
+   Placed LAST in this file on purpose. Every rule it has to beat
+   carries the same specificity it does — `body.pmd-recovery-active:
+   not(.pmd-multi-doc) #app` and `body.pmd-recovery-active.pmd-multi-doc
+   #app` are both 1 id + 2 classes + 1 type, exactly like the selectors
+   below — so source order is what decides, and a new rule added after
+   this block would silently take the layout back. Add narrow-chrome
+   rules here, not above.
+
+   `body.pmd-mobile` is excluded throughout: the view-first shell
+   already solves this with a real drawer (mobile-shell.ts), and two
+   layouts fighting over the same properties is worse than either. */
+
+body.pmd-narrow-chrome:not(.pmd-mobile) #app,
+body.pmd-narrow-chrome:not(.pmd-mobile) #status-bar,
+body.pmd-narrow-chrome:not(.pmd-mobile) #speech-doc-banner {
+  left: 0;
+  margin-left: 0;
+}
+
+/* The bottom-left pill tray anchors to the editor's corner, which it
+   reaches by clearing the nav pane's width. `positionDropzone`
+   re-anchors it to a measured rect once it runs; this is the
+   pre-positioning fallback, and at `--nav-width + 0.5rem` it starts
+   life off the right edge of a narrow column. */
+body.pmd-narrow-chrome:not(.pmd-mobile) .pmd-pill-tray {
+  left: 0.5rem;
+}
+
+/* Both sidebars overlay from the left edge now, so they stack in the
+   same slot — the recovery sidebar sits ON the outline pane (which
+   boots closed in narrow chrome anyway, see index.ts) instead of
+   beside it. `min(…, 85%)` keeps a strip of the document visible
+   behind whichever one is open, so it reads as a panel over the doc
+   rather than as the whole screen; the percentage resolves against the
+   embed's column, since that is the containing block
+   embed-containment.css pins them to. */
+body.pmd-narrow-chrome:not(.pmd-mobile) .pmd-nav-panel {
+  left: 0;
+  width: min(var(--nav-width), 85%);
+}
+
+body.pmd-narrow-chrome:not(.pmd-mobile) .pmd-recovery-sidebar {
+  left: 0;
+  width: min(var(--pmd-recovery-width), 85%);
+}
