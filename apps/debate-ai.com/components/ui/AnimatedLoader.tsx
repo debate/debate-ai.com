@@ -1,7 +1,7 @@
 "use client"
 
-import QuantumOrbital, { DEFAULT_ORBITAL_SPHERE_CONFIG } from "grab-url/icons/quantum-sphere"
 import { cn } from "@/lib/ui/lib/utils"
+import { OrbitalLoader } from "@/components/ui/OrbitalLoader"
 
 export type AnimatedLoaderSize = "sm" | "md" | "lg"
 
@@ -37,8 +37,6 @@ export function AnimatedLoader({
   size = "md",
   className,
 }: AnimatedLoaderProps) {
-  const config = sizeConfig[size]
-
   return (
     <div
       role="status"
@@ -46,30 +44,7 @@ export function AnimatedLoader({
       aria-label={label}
       className={cn("flex flex-col items-center justify-center gap-4 text-center", className)}
     >
-      <QuantumOrbital
-        autoRandomize
-        className="pointer-events-none"
-        config={{
-          ...DEFAULT_ORBITAL_SPHERE_CONFIG,
-          minLines: config.minLines,
-          maxLines: config.maxLines,
-          minSphereSize: config.sphereSize,
-          maxSphereSize: config.sphereSize,
-          minLineWidth: 1,
-          maxLineWidth: 1.5,
-          minGlowIntensity: 5,
-          maxGlowIntensity: 9,
-          minRotationSpeed: config.rotationSpeed[0],
-          maxRotationSpeed: config.rotationSpeed[1],
-          minSaturation: 75,
-          maxSaturation: 90,
-          minLightness: 55,
-          maxLightness: 68,
-          autoRandomizeMin: 6000,
-          autoRandomizeMax: 10000,
-          opacity: 0.85,
-        }}
-      />
+      <OrbitalLoader size={size} className="pointer-events-none" />
       {label && (
         <p className="max-w-xs text-sm font-medium text-muted-foreground">{label}</p>
       )}

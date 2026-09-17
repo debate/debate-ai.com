@@ -91,6 +91,7 @@ const SORT_COLUMNS = {
   title: videos.title,
   channel: videos.channel,
   style: videos.style,
+  category: videos.category,
   updated: videos.updatedAt,
 } as const;
 

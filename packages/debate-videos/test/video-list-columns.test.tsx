@@ -165,4 +165,42 @@ describe("the lecture list's columns", () => {
     expect(columnHeaders).toEqual(["Channel", "Season", "Title", "Category", "Actions"]);
     expect(cellCount(html, "Kritik Basics")).toBe(columnHeaders.length);
   });
+
+  it("names the channel and the category on every row, at every width", () => {
+    // The two columns a lecture is actually scanned by. They used to carry
+    // `hidden md:table-cell` / `hidden sm:table-cell`, which dropped both on a
+    // phone and left the listing reading as a bare column of titles.
+    const lecture: VideoType = [
+      "vid-lecture",
+      "Kritik Basics",
+      "2025-03-01",
+      "Lecture Channel",
+      500,
+      "",
+      "Kritik / Critical Theory",
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      false,
+      null,
+      2025,
+    ];
+    const html = renderList([lecture]);
+    expect(html).toContain("Lecture Channel");
+    expect(html).toContain("Kritik / Critical Theory");
+
+    const headerRow = html.slice(html.indexOf("<thead"), html.indexOf("</thead>"));
+    const cells = [...headerRow.matchAll(/<th([^>]*)>([\s\S]*?)<\/th>/g)];
+    for (const [, attributes, cell] of cells) {
+      const label = cell.replace(/<[^>]*>/g, "").trim();
+      if (label === "Channel" || label === "Category") {
+        expect(attributes).not.toContain("hidden");
+      }
+    }
+  });
 });
