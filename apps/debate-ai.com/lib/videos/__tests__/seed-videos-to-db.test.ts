@@ -2,7 +2,8 @@
  * @fileoverview Exercises `seedVideosIntoDb` against a real in-memory SQLite
  * database (the `videos` table migration, `drizzle/0005_green_redwing.sql`,
  * plus every later migration that alters `videos` — currently just
- * `drizzle/0041_video_stacks.sql`'s `stack_key`/`stack_position` columns),
+ * `drizzle/0041_video_stacks.sql`'s `stack_key`/`stack_position` columns, and
+ * `drizzle/0045_video_documents_relations_issues.sql`'s availability columns),
  * the same approach `lib/admin/__tests__/debate-card-import.test.ts` uses —
  * atomic-batch behavior isn't provable with a mock of `db.run`/`db.batch`,
  * since a mock can't reproduce SQLite actually rolling back a failed
@@ -32,7 +33,11 @@ const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../.
  * order. Keep this in sync with `drizzle/` — add a migration here whenever
  * one touches `videos`, or `freshDb()` drifts from the real schema again.
  */
-const VIDEOS_TABLE_MIGRATIONS = ["0005_green_redwing.sql", "0041_video_stacks.sql"];
+const VIDEOS_TABLE_MIGRATIONS = [
+  "0005_green_redwing.sql",
+  "0041_video_stacks.sql",
+  "0045_video_documents_relations_issues.sql",
+];
 
 /** A fresh in-memory database with just the `videos` table migrated in. */
 async function freshDb() {

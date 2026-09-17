@@ -50,7 +50,7 @@ const QUICK_ACTIONS: Tool[] = [
   { href: "/tools", label: "All Tools", description: "Every workspace, research, and practice tool", icon: LayoutGrid },
   { href: "/features", label: "All Features", description: "Every user-facing surface in the app, with docs", icon: LayoutGrid },
   { href: "/news", label: "News Stream", description: "Product updates and community announcements", icon: Rss },
-  { href: "/settings", label: "Settings", description: "Account, favorite tools, and preferences", icon: SettingsIcon },
+  { href: "/settings", label: "Settings", description: "Card editor settings — files, editing, appearance, shortcuts, AI", icon: SettingsIcon },
 ]
 
 /** Routes where the CardMirror editor engine mounts its own, richer

@@ -1,11 +1,22 @@
 /**
  * @fileoverview Dialog components for video card actions (report and hide)
+ *
+ * The report dialog used to be a single free-text box, and by far the most
+ * common thing typed into it was that a video is filed in the wrong place —
+ * a college round shelved as high school, a kritik lecture under novice. As
+ * prose that is a research task for whoever reads it: find the video, work
+ * out which category the reporter meant, then apply it. So "miscategorized"
+ * is now a reason of its own that collects the correction itself — the
+ * format, the lecture category, or the competition level — from the same
+ * lists the library files videos under, and an admin gets an answer rather
+ * than a description.
  */
 
 "use client"
 
 import React, { useState } from "react"
 import { Flag } from "lucide-react"
+import { LECTURE_CATEGORIES } from "debate-data-sync/src/youtube/parsers/lecture-classifier"
 import {
   Dialog,
   DialogContent,
@@ -15,7 +26,44 @@ import {
 } from "../../ui/primitives/dialog"
 import { Button } from "../../ui/primitives/button"
 import { Textarea } from "../../ui/primitives/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/primitives/select"
 import { saveVideoReport } from "../../state/videoLibrary"
+
+/** What a report can be about. Matches the API's own `kind` values. */
+const REPORT_REASONS = [
+  { value: "miscategorized", label: "It is in the wrong category" },
+  { value: "unavailable", label: "The video does not play" },
+  { value: "metadata", label: "Wrong teams, tournament or round" },
+  { value: "quality", label: "Poor quality or wrong content" },
+  { value: "other", label: "Something else" },
+] as const
+
+/** Is the video a round, or a lecture? Decides which correction to ask for. */
+const VIDEO_SHAPES = [
+  { value: "round", label: "A competitive round" },
+  { value: "lecture", label: "A lecture or other video" },
+] as const
+
+/** Numeric debate styles, matching `videos.style`. */
+const STYLE_OPTIONS = [
+  { value: "1", label: "Policy" },
+  { value: "2", label: "PF" },
+  { value: "3", label: "LD" },
+  { value: "4", label: "College" },
+] as const
+
+/** Competition levels a miscategorised round can be moved between. */
+const ROUND_LEVEL_OPTIONS = [
+  { value: "college", label: "College" },
+  { value: "high-school", label: "High school" },
+  { value: "middle-school", label: "Middle school" },
+] as const
 
 interface ReportDialogProps {
   open: boolean
@@ -25,19 +73,74 @@ interface ReportDialogProps {
 }
 
 export function ReportDialog({ open, onOpenChange, videoId, title }: ReportDialogProps) {
+  const [reason, setReason] = useState<string>("miscategorized")
+  const [shape, setShape] = useState<string>("round")
+  const [style, setStyle] = useState<string>("")
+  const [roundLevel, setRoundLevel] = useState<string>("")
+  const [category, setCategory] = useState<string>("")
   const [reportText, setReportText] = useState("")
   const [reportSubmitted, setReportSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleReport = () => {
-    // The store keys the report so it can reach the reporter's account, rather
-    // than sitting in one browser where nobody can follow it up.
+  const isMiscategorized = reason === "miscategorized"
+  const hasCorrection = isMiscategorized && (shape === "round" ? !!style || !!roundLevel : !!category)
+  // Every other reason needs words; a miscategorisation can be filed by
+  // picking the category alone, which is the whole point of the dropdowns.
+  const canSubmit = hasCorrection || !!reportText.trim()
+
+  const reset = () => {
+    setReportText("")
+    setReportSubmitted(false)
+    setError(null)
+    setStyle("")
+    setRoundLevel("")
+    setCategory("")
+  }
+
+  const handleReport = async () => {
+    if (!canSubmit || isSubmitting) return
+    setIsSubmitting(true)
+    setError(null)
+
+    const correction = isMiscategorized
+      ? {
+          suggestedStyle: shape === "round" && style ? Number(style) : null,
+          suggestedRoundLevel: shape === "round" ? roundLevel || null : null,
+          suggestedCategory: shape === "lecture" ? category || null : null,
+        }
+      : {}
+
+    // The local store keeps the report against the reporter's own library, as
+    // it always has; the API is what makes it reach an admin.
     saveVideoReport({ videoId, title, report: reportText })
-    setReportSubmitted(true)
-    setTimeout(() => {
-      onOpenChange(false)
-      setReportText("")
-      setReportSubmitted(false)
-    }, 1500)
+
+    try {
+      const res = await fetch("/api/video-issues", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId,
+          title,
+          kind: reason,
+          issue: reportText.trim(),
+          ...correction,
+        }),
+      })
+      if (!res.ok) {
+        const body = await res.json().catch(() => null)
+        throw new Error(body?.error || "Could not send that report")
+      }
+      setReportSubmitted(true)
+      setTimeout(() => {
+        onOpenChange(false)
+        reset()
+      }, 1500)
+    } catch (err) {
+      setError((err as Error).message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -54,17 +157,111 @@ export function ReportDialog({ open, onOpenChange, videoId, title }: ReportDialo
         ) : (
           <>
             <p className="text-sm text-muted-foreground">
-              Describe the issue with <span className="font-medium text-foreground">{title}</span>:
+              What is wrong with <span className="font-medium text-foreground">{title}</span>?
             </p>
+
+            <Select value={reason} onValueChange={setReason}>
+              <SelectTrigger aria-label="Reason">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {REPORT_REASONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {isMiscategorized && (
+              <div className="space-y-2 rounded-md border border-border p-3">
+                <p className="text-xs font-medium text-foreground">Where does it belong?</p>
+
+                <Select
+                  value={shape}
+                  onValueChange={(value) => {
+                    setShape(value)
+                    setStyle("")
+                    setRoundLevel("")
+                    setCategory("")
+                  }}
+                >
+                  <SelectTrigger aria-label="Round or lecture">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {VIDEO_SHAPES.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {shape === "round" ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Select value={style} onValueChange={setStyle}>
+                      <SelectTrigger aria-label="Correct format">
+                        <SelectValue placeholder="Format" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {STYLE_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={roundLevel} onValueChange={setRoundLevel}>
+                      <SelectTrigger aria-label="Correct level">
+                        <SelectValue placeholder="Level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ROUND_LEVEL_OPTIONS.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : (
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger aria-label="Correct lecture category">
+                      <SelectValue placeholder="Lecture category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {LECTURE_CATEGORIES.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            )}
+
             <Textarea
-              placeholder="Wrong category, broken link, inappropriate content..."
+              placeholder={
+                isMiscategorized
+                  ? "Anything else worth knowing (optional)"
+                  : "Describe the issue..."
+              }
               value={reportText}
               onChange={(e) => setReportText(e.target.value)}
               className="min-h-[80px]"
             />
+
+            {error && <p className="text-sm text-destructive">{error}</p>}
+
             <DialogFooter>
-              <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button onClick={handleReport} disabled={!reportText.trim()}>Submit</Button>
+              <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+                Cancel
+              </Button>
+              <Button onClick={handleReport} disabled={!canSubmit || isSubmitting}>
+                {isSubmitting ? "Sending..." : "Submit"}
+              </Button>
             </DialogFooter>
           </>
         )}
@@ -97,8 +294,8 @@ export function HideConfirmDialog({ open, onOpenChange, onConfirm, videoId, titl
           body: JSON.stringify({
             videoId,
             title,
+            kind: "other",
             issue: issueText.trim(),
-            timestamp: new Date().toISOString()
           })
         })
       } catch (error) {

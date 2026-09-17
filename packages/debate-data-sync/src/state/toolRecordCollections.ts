@@ -631,6 +631,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/videos",
     section: "Videos",
   },
+  {
+    key: "debateVideoWatchHistory",
+    storageKey: "debateVideoWatchHistory",
+    idField: "videoId",
+    label: "Video Watch History",
+    href: "/videos",
+    section: "Videos",
+  },
 ];
 
 const BY_KEY = new Map(TOOL_RECORD_COLLECTIONS.map((collection) => [collection.key, collection]));

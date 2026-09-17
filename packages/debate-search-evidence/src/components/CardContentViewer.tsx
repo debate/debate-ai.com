@@ -11,6 +11,7 @@ import { Button } from "../ui/primitives/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/primitives/dropdown-menu"
 import { Eye, Check } from "lucide-react"
 import { IntroTextOverview } from "./IntroTextOverview"
+import { citationDetail, extractAuthor, extractYear, stripDuplicateHeader } from "../lib/card-content"
 
 /**
  * Type definition for search result data
@@ -49,7 +50,7 @@ type SearchResult = {
 }
 
 /**
- * Get a Tailwind color shade class based on a two-digit year string.
+ * Get a Tailwind color shade class based on a year string.
  * Newer years receive more prominent yellow shades.
  *
  * @param year - Two-digit year string (e.g. "24" for 2024)
@@ -57,33 +58,13 @@ type SearchResult = {
  */
 const getYearShade = (year: string) => {
   const yearNum = Number.parseInt(year)
+  if (!Number.isFinite(yearNum)) return "bg-yellow-50 text-yellow-500"
   if (yearNum >= 24) return "bg-yellow-500 text-yellow-950"
   if (yearNum >= 23) return "bg-yellow-400 text-yellow-900"
   if (yearNum >= 22) return "bg-yellow-300 text-yellow-800"
   if (yearNum >= 21) return "bg-yellow-200 text-yellow-700"
   if (yearNum >= 20) return "bg-yellow-100 text-yellow-600"
   return "bg-yellow-50 text-yellow-500"
-}
-
-/**
- * Extract the author name from a short citation string.
- *
- * @param citeShort - Short citation in "Author Year" format (e.g. "Smith 2023")
- * @returns Author name with the trailing year removed
- */
-const extractAuthor = (citeShort: string) => {
-  return citeShort.replace(/\s+\d{4}$/, "")
-}
-
-/**
- * Extract the four-digit year from a short citation string.
- *
- * @param citeShort - Short citation in "Author Year" format (e.g. "Smith 2023")
- * @returns Four-digit year string, or empty string if not found
- */
-const extractYear = (citeShort: string) => {
-  const match = citeShort.match(/\d{4}/)
-  return match ? match[0] : ""
 }
 
 /**
@@ -106,6 +87,13 @@ interface CardContentViewerProps {
  * Shows the complete content of a selected research card with
  * citation information, view mode controls, and formatted content.
  * Renders a product information page when no card is selected.
+ *
+ * The stored card markup opens with its own tag heading and citation line, so
+ * the header here and the body below it were showing the same two lines twice
+ * — the second time in bold, as the card's own heading. The header is treated
+ * as the one place those belong: {@link citationDetail} drops a full citation
+ * that only repeats the author line, and {@link stripDuplicateHeader} removes
+ * the opening blocks of the body that the header already says.
  *
  * @param props - Component props
  * @param props.selectedResult - Currently selected research result, or null for empty state
@@ -132,7 +120,10 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
 
   // Extract author and year from citation
   const author = extractAuthor(selectedResult.cite_short)
-  const year = extractYear(selectedResult.cite_short)
+  const year = extractYear(selectedResult.year, selectedResult.cite_short)
+  const authorLine = [author, year].filter(Boolean).join(" ")
+  const cite = citationDetail(selectedResult.cite, authorLine)
+  const html = stripDuplicateHeader(selectedResult.html, [selectedResult.tag, authorLine, cite])
 
   return (
     <div className="h-full overflow-y-auto p-4 max-w-full overflow-x-hidden">
@@ -168,18 +159,22 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
             </DropdownMenu>
           </div>
 
-          {/* Citation and summary info */}
+          {/* Citation info */}
           <div className="space-y-2">
             <p className="text-sm">
-              <span className="font-semibold">{author}</span>{" "}
-              <span
-                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getYearShade(selectedResult.year)}`}
-              >
-                {year}
-              </span>
+              <span className="font-semibold">{author}</span>
+              {year && (
+                <>
+                  {" "}
+                  <span
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getYearShade(year)}`}
+                  >
+                    {year}
+                  </span>
+                </>
+              )}
             </p>
-            <p className="text-sm text-muted-foreground">{selectedResult.cite}</p>
-            <p className="text-sm font-medium">{selectedResult.summary}</p>
+            {cite && <p className="text-sm text-muted-foreground">{cite}</p>}
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span>{wordCount} words</span>
             </div>
@@ -189,7 +184,7 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
           <div
             className={`prose prose-sm dark:prose-invert max-w-none editor ${viewMode === "read" ? "show-all" : viewMode === "highlight" ? "highlighted" : "underlined"
               }`}
-            dangerouslySetInnerHTML={{ __html: selectedResult.html }}
+            dangerouslySetInnerHTML={{ __html: html }}
           />
         </CardContent>
       </Card>

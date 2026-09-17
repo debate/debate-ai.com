@@ -10,12 +10,19 @@ import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
 import { GlowingEffect } from "../../ui/effects/glowing-effect";
 import { cn } from "../../ui/lib/utils";
+import { History, type LucideIcon } from "lucide-react";
 import { IconBook, IconTrophyGoat, IconLeaderboard, IconTrophy, IconRoundsYoutube, IconLectures } from "../../ui/icons";
 import { isImageIcon } from "./tree-item-icon";
 import { SIDEBAR_VIDEO_LINKS, type SidebarVideoLink } from "./sidebar-video-links";
 
 interface QuickLinkStyle {
   icon?: React.ReactNode;
+  /**
+   * A Lucide glyph for a tile with no artwork of its own. Kept as the
+   * component rather than a rendered element so each layout can size it —
+   * the tiles draw a 40px icon and the sidebar rows a 20px one.
+   */
+  glyph?: LucideIcon;
   logo?: string | StaticImageData;
   gradient: string;
   iconBg: string;
@@ -65,6 +72,11 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
     iconBg: "bg-rose-500/15 ring-1 ring-rose-500/30",
   },
+  history: {
+    glyph: History,
+    gradient: "from-cyan-500/20 via-sky-500/10 to-transparent",
+    iconBg: "bg-cyan-500/15 ring-1 ring-cyan-500/30",
+  },
   dictionary: {
     logo: IconBook,
     gradient: "from-indigo-500/20 via-blue-500/10 to-transparent",
@@ -89,6 +101,7 @@ const QUICK_LINK_ORDER = [
   "pf",
   "ld",
   "lectures",
+  "history",
   "topPicks",
   "favorites",
   "dictionary",
@@ -144,6 +157,8 @@ function CardBody({ link, showLectures, count, isActive }: { link: QuickLink; sh
           <div className={cn("rounded-md p-1.5 flex items-center justify-center transition-transform group-hover:scale-110", link.iconBg)}>
             {isImageIcon(link.logo) ? (
               <Image src={link.logo} alt={link.title} width={48} height={48} className="h-10 w-10 object-contain" unoptimized />
+            ) : link.glyph ? (
+              <link.glyph className="h-10 w-10 text-foreground/70" />
             ) : (
               link.icon
             )}
@@ -174,6 +189,8 @@ function ListRow({ link, count, isActive }: { link: QuickLink; count?: number; i
       <div className={cn("shrink-0 rounded-md p-1 flex items-center justify-center", link.iconBg)}>
         {isImageIcon(link.logo) ? (
           <Image src={link.logo} alt={link.title} width={20} height={20} className="h-5 w-5 object-contain" unoptimized />
+        ) : link.glyph ? (
+          <link.glyph className="h-5 w-5 text-foreground/70" />
         ) : (
           link.icon
         )}

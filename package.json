@@ -33,7 +33,8 @@
     "grab-url": "^1.6.22",
     "htmlparser2": "^12.0.0",
     "jszip": "^3.10.2",
-    "linkedom": "^0.18.13"
+    "linkedom": "^0.18.13",
+    "react-reason-editor-sidebar": "^0.1.98"
   },
   "overrides": {
     "@ricky0123/vad-web": "^0.0.30"

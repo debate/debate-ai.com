@@ -14,7 +14,7 @@ import {
  * `app/tools/page.tsx` (which still owns the grid layout) so this data can
  * also drive the favorite-tools UI: `lib/hooks/useFavoriteTools.ts`'s
  * favorites strip on `/tools` and the "Favorite tools" section on
- * `/settings` (`components/settings/FavoriteToolsSettings.tsx`) both need
+ * `/settings` (which carried a favourites list of its own) both needed
  * to resolve a starred `href` back to its label/icon/description, which
  * only this module — not the account-linked `favoriteTools` list itself —
  * knows how to do. `debate-round`'s `state/favoriteTools.ts` (the shared
@@ -322,5 +322,5 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
   },
 ]
 
-/** Every tool across every group, flattened — the lookup `useFavoriteTools`-consuming UI (the favorites strip on `/tools`, `FavoriteToolsSettings` on `/settings`) uses to resolve a starred `href` back to its label/icon/description. */
+/** Every tool across every group, flattened — the lookup `useFavoriteTools`-consuming UI (the favorites strip on `/tools`) uses to resolve a starred `href` back to its label/icon/description. */
 export const ALL_TOOLS: Tool[] = TOOL_GROUPS.flatMap((group) => group.tools)

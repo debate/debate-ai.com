@@ -28,9 +28,13 @@
  * `.docx` (and `.cmir`, and plain text) as CardMirror native files, so a card
  * document dropped in the sidebar is one click from opening in CardMirror with
  * its cards, highlighting and comments intact.
+ *
+ * And they leave here: the row above the tree is where the open file is shared
+ * with a contact (`ShareWithContacts`), next to New file / New folder /
+ * Upload, so every action on a file is in the row the files are in.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
 import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
@@ -42,6 +46,7 @@ import {
   isEditorPathname,
   type ReasonDocsSelection,
 } from "@/lib/reason-docs/route-selection"
+import { ShareWithContacts } from "@/components/reason-editor/ShareWithContacts"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
@@ -136,6 +141,12 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
   }, [])
 
   const onEditorRoute = isEditorPathname(pathname)
+
+  /** The open document, which is what the share control shares. */
+  const activeDocument = useMemo(
+    () => (activeId == null ? null : documents.find((doc) => doc.id === activeId) ?? null),
+    [documents, activeId],
+  )
   // Expanded by default: this only mounts where the documents *are* the
   // page's subject (`/cards` and the editor), and on `/cards` the sidebar is
   // now these panels plus the Research tool list — a collapsed "Documents"
@@ -295,6 +306,18 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
             >
               {importing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
             </button>
+            {/* Sharing rides in this row rather than in the editor's own
+                header strip: it is a thing done to the open file, and this is
+                the row the file's other actions are in. Only on the editor
+                route — sharing starts a live co-editing session through the
+                CardMirror engine, which is mounted by that page, so the
+                control would fail anywhere else. `?shareWith=` puts it
+                straight into the dialog, hence the Suspense. */}
+            {onEditorRoute && activeDocument && (
+              <Suspense>
+                <ShareWithContacts variant="icon" title={activeDocument.title} />
+              </Suspense>
+            )}
             <input
               ref={uploadInputRef}
               type="file"

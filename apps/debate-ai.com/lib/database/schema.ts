@@ -224,14 +224,17 @@ export const userSettings = sqliteTable("user_settings", {
   themeMode: text("theme_mode"),
   favoriteTools: text("favorite_tools"),
   recentTools: text("recent_tools"),
-  // JSON-serialized map of CardMirror editor-preference keys (General /
-  // Appearance / Accessibility settings, e.g. `displayColors`, `bodyFont`,
-  // `reduceMotion`) to their current values — moved here from the editor's
-  // own gear-icon settings modal (see /settings and
-  // packages/debate-editor/src/editor/settings.ts) so a
+  // JSON-serialized map of CardMirror editor-setting keys (e.g.
+  // `displayColors`, `bodyFont`, `reduceMotion`, `smartQuotes`) to their
+  // current values, for every category /settings hosts — that page is the
+  // editor's settings surface (see lib/editor-preferences.ts's
+  // EDITOR_PREFERENCE_KEYS, which is both the allow-list and the read-back
+  // filter, and packages/debate-editor/src/editor/settings.ts) so a
   // signed-in user's choices follow them across devices instead of staying
-  // in that browser's localStorage. Null/absent means "use the client
-  // default", same semantics as every other nullable column here.
+  // in that browser's localStorage. Credentials are never among them: an API
+  // key or relay token stays in the browser that holds it. Null/absent means
+  // "use the client default", same semantics as every other nullable column
+  // here.
   editorPreferences: text("editor_preferences"),
   // JSON-serialized arrays of News Stream item ids the signed-in user has
   // read/liked (see packages/debate-card-search/src/lib/news-stream-sync.ts
@@ -578,6 +581,79 @@ export const savedQuickCards = sqliteTable(
 );
 
 export type SavedQuickCardRow = typeof savedQuickCards.$inferSelect;
+
+// Account-linked Learn flashcard sync — the standing follow-up TODO.md has
+// flagged across several runs: CardMirror's "Learn" spaced-repetition store
+// (`packages/debate-editor/src/editor/learn-store.ts`) was entirely
+// device-local. That store keeps 8 sub-collections (cards, schedules,
+// anchors, AI threads, notes, review log, decks, doc registry) merged in
+// one localStorage/IndexedDB blob, which doesn't fit this table's
+// one-row-per-record shape — so, deliberately, only `cards` (a card's
+// portable CONTENT: `id`/`type`/`front`/`back`) is synced here, same split
+// `savedQuickCards` above draws between a snippet's definition and any
+// per-user state. A restored card starts with no schedule pressure on
+// whichever device adopts it — already how `upsertCard` and the manage
+// GUI's own JSON export/import treat a card with no carried schedule.
+// Same one-row-per-card, upsert-by-caller-id shape as `savedQuickCards`:
+// `clientId` holds the card's own `id`, and `GET /api/learn-cards` returns
+// every synced card in full for `learn-cards-sync.ts`'s merge-on-init.
+export const savedLearnCards = sqliteTable(
+  "saved_learn_cards",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_learn_cards_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_learn_cards_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedLearnCardRow = typeof savedLearnCards.$inferSelect;
+
+// Account-linked Learn custom-deck sync — the same standing follow-up
+// TODO.md has flagged across several runs, picking up the next of the 8
+// sub-collections in `learn-store.ts`'s shared blob: custom decks
+// (`CustomDeck`: `deckId`/`name`/`cardIds`/`createdAt`). Same
+// one-row-per-deck, upsert-by-caller-id shape as `savedLearnCards` above:
+// `clientId` holds the deck's own `deckId`, and `GET /api/learn-decks`
+// returns every synced deck in full for `learn-decks-sync.ts`'s
+// merge-on-init. Schedules/anchors/AI threads/notes/review log/doc
+// registry remain local-only, same reasoning as `savedLearnCards`'s
+// comment.
+export const savedLearnDecks = sqliteTable(
+  "saved_learn_decks",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_learn_decks_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_learn_decks_user_client").on(table.userId, table.clientId),
+  }),
+);
+
+export type SavedLearnDeckRow = typeof savedLearnDecks.$inferSelect;
 
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel
@@ -984,12 +1060,26 @@ export const videos = sqliteTable(
     stackKey: text("stack_key"),
     stackPosition: integer("stack_position").notNull().default(0),
     searchText: text("search_text").notNull().default(""),
+    // Whether YouTube still serves this video. The weekly resync asks the
+    // API for every stored id; an id the API declines to return has been
+    // deleted, made private, or region-blocked, and the row is marked here
+    // rather than silently left in the library pointing at a dead embed.
+    // `available` until a check says otherwise, so a library seeded before
+    // this existed reads as available rather than unknown.
+    availability: text("availability").notNull().default("available"),
+    /** When availability was last confirmed by a sync, null if never. */
+    availabilityCheckedAt: integer("availability_checked_at", { mode: "timestamp" }),
+    /** How many consecutive checks have failed to find the video. */
+    missingChecks: integer("missing_checks").notNull().default(0),
+    /** When the view count was last refreshed from YouTube. */
+    viewCountSyncedAt: integer("view_count_synced_at", { mode: "timestamp" }),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
   },
   (table) => ({
     publishedMsIdx: index("idx_videos_published_ms").on(table.publishedMs),
+    availabilityIdx: index("idx_videos_availability").on(table.availability),
     viewCountIdx: index("idx_videos_view_count").on(table.viewCount),
     styleIdx: index("idx_videos_style").on(table.style),
     seasonYearIdx: index("idx_videos_season_year").on(table.seasonYear),
@@ -1028,6 +1118,130 @@ export const videoTranscripts = sqliteTable(
 );
 
 export type VideoTranscriptRow = typeof videoTranscripts.$inferSelect;
+
+// Long-form, human- or AI-authored writing *about* one video, one row per
+// kind. Distinct from `video_transcripts` above, which caches YouTube's own
+// caption cues as fetched and is keyed by language: these are documents —
+// the full speech-by-speech transcript of a round typed up or cleaned up by
+// an editor, the AI summary of it, the written analysis beside it — and they
+// are what the watch page's side tabs read. `body` is markdown whose `##`
+// headings name the speeches (`## 1AC — Aff, 0:00`), because a round's
+// transcript is only navigable if the speeches are; see
+// `packages/debate-videos/src/lib/video-documents.ts` for the parser the
+// panel and the admin word count share. Bodies run to tens of thousands of
+// words, so nothing here is loaded by the feed — only by the one page (or
+// one admin dialog) that is about this video.
+export const videoDocuments = sqliteTable(
+  "video_documents",
+  {
+    videoId: text("video_id").notNull(),
+    /** `transcript`, `summary` or `analysis` — see `VIDEO_DOCUMENT_KINDS`. */
+    kind: text("kind").notNull(),
+    /** Heading shown on the tab's panel; falls back to the kind's label. */
+    title: text("title"),
+    body: text("body").notNull().default(""),
+    /** Who wrote it: `editor`, `ai`, or `youtube` for a cleaned-up caption dump. */
+    author: text("author").notNull().default("editor"),
+    /** Model that generated an `ai` document, for the attribution line. */
+    model: text("model"),
+    /** Words in `body`, stored so the tab strip can say so without shipping it. */
+    wordCount: integer("word_count").notNull().default(0),
+    /** Admin email of the last editor, for the audit trail. */
+    updatedBy: text("updated_by"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.videoId, table.kind] }),
+  }),
+);
+
+export type VideoDocumentRow = typeof videoDocuments.$inferSelect;
+export type VideoDocumentInsert = typeof videoDocuments.$inferInsert;
+
+// Admin-curated links between two videos — the round and the analysis videos
+// that dissect it, a lecture and the round it teaches from.
+//
+// Not to be confused with `videos.stack_key`, which is derived by the sync
+// from links the YouTube descriptions happen to carry and groups videos into
+// one grid slot. These are stated by an editor, survive a re-seed, and carry
+// a direction: `video_id` is the video being watched and `related_video_id`
+// is what is offered beside it, so a round lists its analysis rather than
+// every analysis video listing every round.
+export const videoRelations = sqliteTable(
+  "video_relations",
+  {
+    videoId: text("video_id").notNull(),
+    relatedVideoId: text("related_video_id").notNull(),
+    /** `analysis`, `related`, `rematch` — see `VIDEO_RELATION_KINDS`. */
+    relation: text("relation").notNull().default("analysis"),
+    /** Editor's one-line note on why these belong together. */
+    note: text("note"),
+    /** Order within the relation, lowest first. */
+    position: integer("position").notNull().default(0),
+    createdBy: text("created_by"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.videoId, table.relatedVideoId, table.relation] }),
+    // The reverse lookup: "what is this analysis video about?", which is how
+    // an analysis video links back to the round on its own watch page.
+    relatedIdx: index("idx_video_relations_related").on(table.relatedVideoId),
+  }),
+);
+
+export type VideoRelationRow = typeof videoRelations.$inferSelect;
+export type VideoRelationInsert = typeof videoRelations.$inferInsert;
+
+// Viewer-reported problems with a video. This used to be a JSON file written
+// with `fs.writeFile`, which cannot work on Workers at all — the filesystem
+// is read-only there, so every report from production was lost. Reports are
+// rows now, and `kind` is what makes them actionable: a miscategorised video
+// carries the category the reporter says it should have (`suggested_style`
+// for a round's format, `suggested_category` for a lecture's topic,
+// `suggested_round_level` for college vs. high school), so an admin can
+// apply the correction instead of re-deriving it from prose.
+export const videoIssues = sqliteTable(
+  "video_issues",
+  {
+    id: text("id").primaryKey(),
+    videoId: text("video_id").notNull(),
+    /** Title as the reporter saw it, so a later retitle still reads sensibly. */
+    title: text("title").notNull().default(""),
+    /** `miscategorized`, `unavailable`, `quality`, `metadata` or `other`. */
+    kind: text("kind").notNull().default("other"),
+    /** The reporter's own words; optional once a `kind` is chosen. */
+    issue: text("issue").notNull().default(""),
+    /** Numeric debate style the reporter says this should be filed under. */
+    suggestedStyle: integer("suggested_style"),
+    /** Lecture category the reporter says this belongs to. */
+    suggestedCategory: text("suggested_category"),
+    /** `college`, `high-school` or an explicit round for a miscategorised round. */
+    suggestedRoundLevel: text("suggested_round_level"),
+    /** Account email when the reporter was signed in. */
+    reportedBy: text("reported_by"),
+    /** `open`, `applied` or `dismissed`. */
+    status: text("status").notNull().default("open"),
+    resolvedBy: text("resolved_by"),
+    resolvedAt: integer("resolved_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    videoIdx: index("idx_video_issues_video").on(table.videoId),
+    statusIdx: index("idx_video_issues_status").on(table.status),
+  }),
+);
+
+export type VideoIssueRow = typeof videoIssues.$inferSelect;
+export type VideoIssueInsert = typeof videoIssues.$inferInsert;
 
 // Account-linked in-app notifications — backs the Create New Round dialog's
 // "invite a registered user" flow (an invitee with a matching `user` row

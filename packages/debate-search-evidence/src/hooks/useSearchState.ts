@@ -93,6 +93,7 @@ export function useSearchState() {
     try {
       const response = await grab(
         buildSearchUrl({ searchTerm, sortBy, filters }),
+        { baseURL: "" },
       );
       if (id !== requestId.current) return;
       const data = response.data;

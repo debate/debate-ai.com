@@ -10,11 +10,15 @@
  * live in-round meter (`useWordCountSpeechMode`) already check ahead of
  * `debate-timer`'s single hardcoded "Public Forum (Word Count)" style.
  *
- * Mirrors `components/settings/FavoriteToolsSettings.tsx`'s
- * "own dedicated settings-page section, backed by its own account-synced
- * hook" shape rather than folding into `UserSettingsPanel`'s form, which
+ * An "own dedicated settings-page section, backed by its own account-synced
+ * hook" rather than a field folded into `UserSettingsPanel`'s form, which
  * already excludes list-type fields (`favoriteTools`, `newsRead`/`newsLiked`)
  * for the same reason.
+ *
+ * Nothing in `debate-ai.com` mounts this now: `/settings` is the card
+ * editor's settings page (see that app's `app/settings/page.tsx`), and the
+ * section this panel rendered went with the rest of the account form. The
+ * presets it manages are still read by both consumers above.
  *
  * @module panels/WordLimitPresetsPanel
  */

@@ -124,5 +124,7 @@ export type CategoryType =
   | "rounds"
   | "lectures"
   | "topPicks"
+  /** The videos this browser (or account) has actually watched. */
+  | "history"
   | "dictionary"
   | "leaderboard";

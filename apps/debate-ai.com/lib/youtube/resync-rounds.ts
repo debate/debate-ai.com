@@ -3,6 +3,7 @@ import {
   getChannelId,
   getVideosForChannel,
   fetchFullDescriptions,
+  setYouTubeApiKey,
 } from "debate-data-sync/src/youtube/youtube-api";
 import { channels, publishedAfter } from "debate-data-sync/src/youtube/channel-config";
 import {
@@ -30,9 +31,15 @@ import { getEnv } from "../env";
  * in this app, so the caller (the admin resync button) waits for it.
  */
 export async function resyncYouTubeRounds(triggeredBy: string | null) {
-  if (!getEnv("YOUTUBE_API_KEY")) {
+  const apiKey = getEnv("YOUTUBE_API_KEY");
+  if (!apiKey) {
     throw new Error("YouTube API key not configured");
   }
+  // The API client is shared with the sync CLI, which reads the key from
+  // `process.env` at import. That is empty inside the Worker, where the key
+  // arrives on the request's `env` binding — so hand it over before the
+  // first request rather than letting every batch go out unauthenticated.
+  setYouTubeApiKey(apiKey);
 
   const db = await getDBFromContext();
 

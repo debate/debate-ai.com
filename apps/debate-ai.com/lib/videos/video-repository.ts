@@ -9,7 +9,7 @@
  * @module lib/videos/video-repository
  */
 
-import { and, asc, count, desc, eq, inArray, isNotNull, isNull, notInArray, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, sql, type SQL } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
@@ -36,6 +36,11 @@ import {
   type VideoQueryParams,
   type VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
+import {
+  VIDEO_INDEX_FORMAT_VERSION,
+  videoRowToIndexTuple,
+  type VideoIndexResponse,
+} from "debate-data-sync/src/videos/video-index";
 import { getVideoRowsFromJson } from "./video-json-source";
 
 /** Which backend answered a request — surfaced for debugging. */
@@ -435,6 +440,82 @@ export async function getVideoMeta(): Promise<VideoMeta> {
     },
     lectureCategories: computeLectureCategories(allRows),
     suggestions: computeVideoSuggestions(allRows),
+    backend: "json",
+  };
+}
+
+/**
+ * Builds the whole-library index the client caches in `localStorage`, or the
+ * slice of it that changed since the client last asked.
+ *
+ * The delta is the point of the `since` cursor: the library is thousands of
+ * rows and a megabyte of JSON, and on almost every page load the honest
+ * answer to "what changed?" is "nothing". Only the SQL backend can answer it
+ * — the JSON assets carry no per-row timestamp — so the JSON fallback returns
+ * the whole library with `partial: false`, and the client replaces its cache
+ * rather than merging a delta that was never computed.
+ *
+ * Deletions are not tracked row by row. `total` is the library's true size,
+ * so a client whose merged cache is larger (or smaller) than that knows it
+ * has drifted and refetches in full. That costs one extra request on the rare
+ * page load after a video is pulled, and saves a tombstone table.
+ *
+ * What moves `updated_at`, and so what a delta carries: the seed's upsert
+ * (which stamps every row it writes, so a re-seed makes the next delta the
+ * whole library — correct, just not minimal), a view-count resync, and the
+ * admin library's edits. The weekly availability pass deliberately does not
+ * stamp it: availability is not part of the tuple the grid renders, and
+ * stamping it would rewrite every row's timestamp once a week for a field no
+ * client reads.
+ *
+ * @param since - Epoch ms cursor from the client's last sync, or `null` for
+ *   a first, whole-library fetch.
+ * @returns See {@link VideoIndexResponse}.
+ */
+export async function getVideoIndex(since: number | null): Promise<VideoIndexResponse> {
+  // The cursor the client stores is generated here, before the read, so a row
+  // written *during* the read is picked up next time rather than skipped.
+  const syncedAt = Date.now();
+
+  const db = await tryGetDb();
+  if (db && (await isTableSeeded(db))) {
+    try {
+      const changedOnly = since !== null && Number.isFinite(since) && since > 0;
+      const [rows, totals] = await Promise.all([
+        changedOnly
+          ? db
+              .select()
+              .from(videos)
+              // `updated_at` is a second-resolution timestamp column, so the
+              // cursor is floored to whole seconds; a row written in the same
+              // second as the last sync comes back once more rather than
+              // being missed.
+              .where(gt(videos.updatedAt, new Date(Math.floor(since / 1000) * 1000)))
+          : db.select().from(videos),
+        db.select({ value: count() }).from(videos),
+      ]);
+
+      return {
+        version: VIDEO_INDEX_FORMAT_VERSION,
+        rows: (rows as VideoRow[]).map(videoRowToIndexTuple),
+        partial: changedOnly,
+        total: totals[0]?.value ?? 0,
+        syncedAt,
+        backend: "sql",
+      };
+    } catch (error) {
+      console.error("videos: SQL index query failed, falling back to JSON", error);
+      backendProbe = { ready: false, checkedAt: Date.now() };
+    }
+  }
+
+  const allRows = await getVideoRowsFromJson();
+  return {
+    version: VIDEO_INDEX_FORMAT_VERSION,
+    rows: allRows.map(videoRowToIndexTuple),
+    partial: false,
+    total: allRows.length,
+    syncedAt,
     backend: "json",
   };
 }
