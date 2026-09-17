@@ -13,6 +13,14 @@
  * so the same video reads the same way in the grid, the rows and the watch
  * page.
  *
+ * `showUnwatched` adds the third state: an empty, muted ring for a video with
+ * no record. It is what the card's action row and the list rows pass, so that
+ * *every* card and row carries the marker and hovering any of them answers
+ * "how much of this have I watched?" — including with "Not watched". The
+ * thumbnail overlay deliberately does not: an empty ring on every thumbnail
+ * in an unwatched library is noise on top of the artwork, and the same card's
+ * action row is already saying it.
+ *
  * @module components/video-card/WatchProgressBadge
  */
 
@@ -25,12 +33,16 @@ import {
   describeWatchProgress,
   watchPercent,
   watchStatus,
+  WATCH_STATUS_LABELS,
   type WatchHistoryEntry,
   type WatchStatus,
 } from "../../state/videoWatchHistory"
 
 /** Colour per band — amber while in progress, emerald once finished. */
-const STATUS_CLASSES: Record<Exclude<WatchStatus, "unwatched">, string> = {
+const STATUS_CLASSES: Record<WatchStatus, string> = {
+  // Muted, and the only band with no arc drawn: an unwatched marker is there
+  // to be hovered, not to compete with the ones that carry progress.
+  unwatched: "text-muted-foreground/60",
   started: "text-sky-300",
   partly: "text-amber-300",
   mostly: "text-amber-200",
@@ -47,6 +59,12 @@ export interface WatchProgressBadgeProps {
   className?: string
   /** Drops the dark disc behind the glyph, for use on an opaque surface. */
   plain?: boolean
+  /**
+   * Renders an empty ring labelled "Not watched" for a video with no record,
+   * instead of rendering nothing. See the file comment for which surfaces
+   * want that.
+   */
+  showUnwatched?: boolean
 }
 
 /**
@@ -55,7 +73,16 @@ export interface WatchProgressBadgeProps {
  * @param percent - How much of the video has been watched, 0–100.
  * @param size - Diameter in pixels.
  */
-function ProgressRing({ percent, size }: { percent: number; size: number }) {
+function ProgressRing({
+  percent,
+  size,
+  trackOnly = false,
+}: {
+  percent: number
+  size: number
+  /** Draws the track alone — the unwatched marker, which has no progress. */
+  trackOnly?: boolean
+}) {
   const stroke = Math.max(2, Math.round(size / 7))
   const radius = (size - stroke) / 2
   const circumference = 2 * Math.PI * radius
@@ -73,26 +100,29 @@ function ProgressRing({ percent, size }: { percent: number; size: number }) {
         fill="none"
         stroke="currentColor"
         strokeWidth={stroke}
-        className="opacity-25"
+        className={trackOnly ? "opacity-60" : "opacity-25"}
       />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={stroke}
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={circumference * (1 - Math.min(100, drawn) / 100)}
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
+      {!trackOnly && (
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference * (1 - Math.min(100, drawn) / 100)}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      )}
     </svg>
   )
 }
 
 /**
- * The watch marker for one video, or nothing when it has not been watched.
+ * The watch marker for one video — nothing for an unwatched one, unless
+ * `showUnwatched` asks for the empty ring.
  *
  * Must be rendered inside a `TooltipProvider`; every surface that uses it
  * (the card, the rows table) already has one.
@@ -104,12 +134,17 @@ export function WatchProgressBadge({
   size = 18,
   className,
   plain = false,
+  showUnwatched = false,
 }: WatchProgressBadgeProps) {
   const status = watchStatus(entry)
-  if (!entry || status === "unwatched") return null
+  const isUnwatched = !entry || status === "unwatched"
+  if (isUnwatched && !showUnwatched) return null
 
-  const percent = watchPercent(entry)
-  const description = describeWatchProgress(entry)
+  // `entry` can exist and still be unwatched — a click that never became
+  // playback — so both branches key off `isUnwatched`, not off the record.
+  const percent = isUnwatched ? 0 : watchPercent(entry)
+  const description =
+    isUnwatched || !entry ? WATCH_STATUS_LABELS.unwatched : describeWatchProgress(entry)
 
   return (
     <Tooltip>
@@ -137,7 +172,7 @@ export function WatchProgressBadge({
           {status === "watched" ? (
             <CircleCheckBig style={{ width: size, height: size }} strokeWidth={2.5} />
           ) : (
-            <ProgressRing percent={percent} size={size} />
+            <ProgressRing percent={percent} size={size} trackOnly={isUnwatched} />
           )}
         </span>
       </TooltipTrigger>

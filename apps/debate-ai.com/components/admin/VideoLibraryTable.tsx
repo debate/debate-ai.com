@@ -412,6 +412,7 @@ export function VideoLibraryTable() {
               <tr className="text-muted-foreground border-b text-left text-xs">
                 <th className="py-2 pr-3 font-normal">{headerButton("title", "Video")}</th>
                 <th className="px-2 py-2 font-normal">{headerButton("style", "Style")}</th>
+                <th className="px-2 py-2 font-normal">{headerButton("category", "Category")}</th>
                 <th className="px-2 py-2 font-normal">{headerButton("channel", "Channel")}</th>
                 <th className="px-2 py-2 font-normal">{headerButton("published", "Published")}</th>
                 <th className="px-2 py-2 text-right font-normal">{headerButton("views", "Views")}</th>
@@ -452,8 +453,21 @@ export function VideoLibraryTable() {
                   </td>
                   <td className="px-2 py-2">
                     <Badge variant="outline" className="font-normal">
-                      {video.style === null ? video.category || "Lecture" : STYLE_NAMES[video.style] ?? "Unknown"}
+                      {video.style === null ? "Lecture" : STYLE_NAMES[video.style] ?? "Unknown"}
                     </Badge>
+                  </td>
+                  {/* The lecture category label, its own column rather than
+                      standing in for the style badge: a lecture has both a
+                      kind and a subject, and folding them into one cell meant
+                      the table could not be scanned (or sorted) by either. */}
+                  <td className="px-2 py-2">
+                    {video.category ? (
+                      <Badge variant="secondary" className="font-normal">
+                        {video.category}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">—</span>
+                    )}
                   </td>
                   <td className="text-muted-foreground max-w-40 truncate px-2 py-2 text-xs">
                     {video.channel || "—"}
@@ -499,7 +513,7 @@ export function VideoLibraryTable() {
               ))}
               {videos.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-muted-foreground py-6 text-center text-sm">
+                  <td colSpan={7} className="text-muted-foreground py-6 text-center text-sm">
                     {isLoading ? "Loading videos…" : "No published videos match this filter."}
                   </td>
                 </tr>

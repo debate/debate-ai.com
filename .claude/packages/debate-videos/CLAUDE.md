@@ -54,6 +54,21 @@ three things a bare `localStorage.setItem` does not:
 - **Offers a signed-out user somewhere to keep it**, once per feature. The save
   happens either way — the prompt is an offer, never a gate.
 
+## The watch history is a listing, not a fourth filter
+
+`/videos/history` (the "Watch History" row under Lectures in the sidebar) is
+the ordinary video listing over an explicit id allow-list — the same
+mechanism My Favorites uses, because `state/videoWatchHistory.ts` stores only
+the id, position, duration and title, and the listing's columns need the
+channel, category and season the library holds. Two consequences:
+
+- **An empty allow-list still filters.** A history with nothing in it must
+  list nothing, not everything; `ids: []` is deliberate, and both the API and
+  the browser-side index treat it that way.
+- **The order is this side's.** The feed answers in the library's order, so
+  `LecturesPage` re-sorts the page newest-watched first from the history's own
+  `watchedAt` — no server sort knows about it.
+
 ## Stacked playlists are a property of the library, not of a row
 
 A round and the round-analysis video made from it share one grid slot, flipped

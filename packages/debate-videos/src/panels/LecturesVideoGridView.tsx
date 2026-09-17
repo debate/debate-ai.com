@@ -46,7 +46,7 @@ interface LecturesVideoGridViewProps {
   showFavoritesOnly: boolean
   /** Whether related videos share one card/row with `<` / `>` arrows. */
   stackedPlaylists: boolean
-  /** Active category (`"lectures"` or `"topPicks"`). */
+  /** Active category (`"lectures"`, `"topPicks"` or `"history"`). */
   currentCategory: CategoryType
   /** Total number of videos matching the current filters, across every page. */
   totalVideos: number
@@ -222,6 +222,7 @@ export function LecturesVideoGridView({
   /** Derive the active quick-link card ID from filter state and active slug. */
   const activeQuickLinkId = useMemo(() => {
     if (showFavoritesOnly) return "favorites"
+    if (currentCategory === "history") return "history"
     if (currentCategory === "topPicks") return "topPicks"
     
     // Map selected debate style to highlight the respective quick links
@@ -250,6 +251,9 @@ export function LecturesVideoGridView({
   // Lectures" alongside College Debates.
   const browsingLectures =
     currentCategory === "lectures" && !selectedStyle && !showFavoritesOnly
+
+  /** The watch-history listing, which is neither a category nor a filter. */
+  const isHistory = currentCategory === "history"
 
   // Always stacked: the floating panel it opens in is a narrow column, not
   // the full-width row the old sticky header gave it.
@@ -383,7 +387,17 @@ export function LecturesVideoGridView({
           </div>
         ) : currentVideos.length === 0 ? (
           <div className="text-center py-12">
-            {showFavoritesOnly && favorites.size === 0 ? (
+            {isHistory ? (
+              <>
+                <p className="text-muted-foreground">
+                  Nothing watched yet.
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Play any video and it will show up here, with how far through
+                  it you got.
+                </p>
+              </>
+            ) : showFavoritesOnly && favorites.size === 0 ? (
               <>
                 <p className="text-muted-foreground">
                   Star videos to add them to My Favorites.

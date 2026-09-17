@@ -5,6 +5,7 @@
  *     -> College Debates / Policy / PF / LD / Greatest of All-Time /
  *        My Favorites (h2, plain links, all peers)
  *   Lectures (h1, expandable, heading-only) -> lecture categories (h2)
+ *   Watch History (h1, plain link) — a sibling row directly under Lectures
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
@@ -43,7 +44,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Clapperboard } from "lucide-react";
+import { Clapperboard, History } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
@@ -135,6 +136,7 @@ export function VideoSidebarTree({
   };
 
   const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
+  const historyLink = SIDEBAR_VIDEO_LINKS_BY_ID.history;
   const lecturesActive = activeId === "lectures";
   // The "Lectures" heading itself only lights up via `activeId`, matching
   // "Round Videos" never highlighting either — but the category rows below it
@@ -218,6 +220,18 @@ export function VideoSidebarTree({
           isActive={lecturesActive}
         />
       )}
+
+      {/* Watch history is its own destination rather than a filter inside the
+          lecture categories: it spans both libraries and is not a category,
+          so it sits directly under the Lectures section as a peer row. */}
+      <TreeItem
+        level={1}
+        href={historyLink.href}
+        title={historyLink.title}
+        icon={History}
+        count={counts?.history}
+        isActive={activeId === "history"}
+      />
 
       <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />
     </nav>

@@ -123,7 +123,9 @@ export function VideoCardActions({
 }: VideoCardActionsProps) {
   const [showHideConfirm, setShowHideConfirm] = useState(false)
   // The action row carries the marker too, so a grid with thumbnails turned
-  // off — and the dense rows below it — still say what has been watched.
+  // off — and the dense rows below it — still say what has been watched. It
+  // is the one place the marker shows on an *unwatched* video as well: every
+  // card then has it, and hovering any card answers how far you got.
   const watched = useWatchHistoryEntry(videoId)
 
   return (
@@ -142,8 +144,9 @@ export function VideoCardActions({
             <ExternalLink className="w-4 h-4" />
           </a>
 
-          {/* Watch progress, when this video has been played before */}
-          <WatchProgressBadge entry={watched} size={14} plain />
+          {/* Watch progress — an empty ring reading "Not watched" until it
+              has been played, so the marker is on every card in the grid */}
+          <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
 
           {/* Favourite toggle */}
           <Tooltip>
