@@ -47,26 +47,30 @@ In the sidebar the panels sit under the dock and above the nav tree: the
 tree is long enough (a section auto-expands to show where you are) that
 anything below it starts under the fold.
 
-## What else the `/cards` sidebar carries
+## What else these sidebars carry
 
 Nothing but the Research tool list. Clicking "Shared" in the dock used to
 land on a column holding four navigations at once — the document panels, the
 whole Apps / Coaching / Research / Practice tree, the glossary and rankings
 links, and the site footer — on a page that is about the first of them.
-`showsCardsOnlySidebar` (same module) marks the `/cards` subtree, and there
-`AppSidebarShell` renders the tree as `ToolNavTree sectionIds={[…]}`: only
-the named sections, no "Apps" node above them and no reference pair below,
-and no footer.
+`showsResearchOnlySidebar` (same module) marks the `/cards` and
+`/reason-editor` subtrees, and there `AppSidebarShell` renders the tree as
+`ToolNavTree sectionIds={[…]}`: only the named sections, no "Apps" node above
+them and no reference pair below, and no footer.
 
 Research is the section that lists the cards pages themselves (Evidence
-Library, Argument Library, Topic Coverage, the prep room, the review queue),
-so it is the one kept — and because `/cards` matches the *Apps* node by
-route, `ToolNavTree` falls back to opening the first section it was given
-rather than leaving a heading with nothing under it. The dock stays: it is
-the control the reader clicked "Shared" in, and the way back to `/videos`.
+Library, Argument Library, Topic Coverage, the prep room, the review queue)
+and the editor alongside them, so it is the one kept — and because `/cards`
+matches the *Apps* node by route, `ToolNavTree` falls back to opening the
+first section it was given rather than leaving a heading with nothing under
+it. The dock stays: it is the control the reader clicked "Shared" in, and the
+way back to `/videos`.
 
-`/reason-editor` keeps the full tree — it is reached *from* those other
-sections rather than being one of them.
+`/reason-editor` is trimmed for the same reason `/cards` is, not because of
+where it is reached from: its sidebar is the file tree, and Coaching and
+Practice stacked under a file tree are two more navigations on a page about
+writing. Research is the section the editor is itself listed in and the one
+whose tools it is used alongside.
 
 The section is expanded by default on both routes — they are the only two it
 mounts on, and on `/cards` the sidebar is now these panels plus the Research
@@ -173,6 +177,18 @@ returns the one file, content included, so the editor opens it in the same
 trip. Published rows only, in both the match and the ancestry. A lookup that
 comes back empty is remembered for that URL, so the link falls through to the
 normal fallback instead of asking again on every render.
+
+## The Documents row
+
+Above the panels sits the row of actions on files: New file, New folder,
+Upload, and — on the editor route, signed in, with a document open — **Share
+with contacts** (`components/reason-editor/ShareWithContacts`, drawn in its
+`icon` variant so it matches the three beside it). Sharing was a labelled
+button in the editor's own header strip; it is an action on the open file, so
+it belongs in the row that file's other actions are in. It is scoped to the
+editor route because sharing starts a live co-editing session through the
+CardMirror engine, and that page is what mounts the engine — on `/cards` the
+control would open a dialog that could only fail.
 
 ## Uploading a file
 

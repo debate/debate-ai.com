@@ -7,11 +7,12 @@ import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
+import { showsReasonDocsPanels, showsResearchOnlySidebar } from "@/lib/reason-docs/sidebar-routes"
 
-/** The one tool section the `/cards` sidebar keeps. Module-level so the array
- *  identity is stable across renders of the tree below. */
-const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
+/** The one tool section the `/cards` and `/reason-editor` sidebars keep.
+ *  Module-level so the array identity is stable across renders of the tree
+ *  below. */
+const RESEARCH_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -50,16 +51,16 @@ const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * `/cards` and `/reason-editor`, which read documents out of this app's own
  * store rather than the editor's.
  *
- * `/cards` goes one step further and is the docs panels plus the Research tool
- * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,
- * the glossary and rankings links and the site footer are all about somewhere
- * else, and stacking them under a file tree made the column a scroll rather
- * than a place. The dock stays — it is the control you clicked "Shared" in,
- * and the way back to videos.
+ * Both of those go one step further and are the docs panels plus the Research
+ * tool list only (`showsResearchOnlySidebar`): the Apps / Coaching / Practice
+ * sections, the glossary and rankings links and the site footer are all about
+ * somewhere else, and stacking them under a file tree made the column a scroll
+ * rather than a place. The dock stays — it is the control you clicked "Shared"
+ * in, and the way back to videos.
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const cardsOnly = showsCardsOnlySidebar(pathname)
+  const researchOnly = showsResearchOnlySidebar(pathname)
 
   if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
@@ -90,8 +91,8 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
           </ChromeErrorBoundary>
         )}
         <ChromeErrorBoundary label="ToolNavTree">
-          {cardsOnly ? (
-            <ToolNavTree sectionIds={CARDS_SIDEBAR_SECTIONS} />
+          {researchOnly ? (
+            <ToolNavTree sectionIds={RESEARCH_SIDEBAR_SECTIONS} />
           ) : (
             <>
               <ToolNavTree />
