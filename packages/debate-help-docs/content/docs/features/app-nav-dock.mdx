@@ -11,8 +11,7 @@ the sidebar column that hosts it on every tool route.
 - **Sidebar shell:** `apps/debate-ai.com/components/layout/AppSidebarShell.tsx`
 - **Route predicates:** `packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`
   (re-exported for app code as `apps/debate-ai.com/lib/sidebar-routes.ts`)
-- **Dock primitive:** `packages/debate-ui/src/layout/dock.tsx`
-  (`apps/debate-ai.com/lib/ui/layout/dock.tsx` is the app's copy)
+- **Dock primitive:** `apps/debate-ai.com/lib/ui/layout/dock.tsx`
 
 ## What it shows
 
@@ -72,6 +71,20 @@ The dock has two forms, and which one a route gets is decided by
 `<aside>` takes it through `LecturesVideoGridView`'s `dockSlot`) and on every
 route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
 the generic sidebar), the dock sits at the top of that 300px column.
+
+`/doc` hosts it in a column of its own instead. The REASON research
+workspace already renders a sidebar — the files tree and the "Open Tabs"
+list — and the generic one stood beside it as a second, taller nav column, so
+that route is skipped by `AppSidebarShell` (`hostsOwnSidebarDock`, in
+`packages/debate-videos/src/components/category-gallery/sidebar-routes.ts`).
+The dock moves into the sidebar that remains:
+`apps/debate-ai.com/components/qwksearch/SidebarWithAppDock.tsx` is the
+`SidebarComponent` the workspace injects into `ReasonDocs`, and it puts
+`<CategoryDock embedded />` above the editor's own toolbar — in the band the
+published `<aside>` reserves (`pt-14`) for the header qwksearch's own app
+renders there. `hasEmbeddedDock` stays true for the route, so the fixed
+fallback does not appear on top of it; below `md` the sidebar is a slide-over
+sheet and the dock is left to its own mobile bottom bar.
 
 That now includes `/videos/rankings` and `/videos/dictionary`. Both are rows
 in the sidebar's own tree, and both used to answer with a bare page — no
@@ -212,7 +225,7 @@ full-color artwork sitting among the grey glyphs — and now match the rest.
 - `packages/debate-videos/test/sidebar-active-section.test.ts` — the
   route-to-section mapping itself, including the longest-match and
   dock-wins-a-tie rules above.
-- `packages/debate-ui/test/dock.test.tsx` — the `fluid` variant's classes,
+- `apps/debate-ai.com/lib/ui/__tests__/dock.test.tsx` — the `fluid` variant's classes,
   host-set icon sizing, and that magnification never shrinks an icon below
   its resting size.
 - `packages/debate-videos/test/sidebar-routes.test.ts` — that `/tools` is no

@@ -4,8 +4,9 @@
  * @fileoverview Star toggle for pinning/unpinning a tool as a favorite —
  * TODO.md idea #17, "integrate tools into user settings" follow-up. Used
  * on every `/tools` card and on each chip in the favorites strip
- * (`FavoritesController`'s markup in `app/tools/page.tsx`), and reused by
- * `components/settings/FavoriteToolsSettings.tsx` on `/settings`.
+ * (`FavoritesController`'s markup in `app/tools/page.tsx`). `/settings`
+ * used to carry a "Favorite tools" list of its own; that page is the card
+ * editor's settings now, so `/tools` is where a tool is starred.
  *
  * Rendered as a sibling of the card's `<Link>`, not nested inside it — a
  * `<button>` inside an `<a>` is invalid HTML and confuses screen readers,

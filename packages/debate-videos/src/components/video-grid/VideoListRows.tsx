@@ -26,6 +26,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../
 import { useVideoPlayerStore } from "../../state/videoPlayerStore"
 import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
 import { TopPickBadge } from "../video-card/TopPickBadge"
+import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
+import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
 import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { useResizableColumns } from "./useResizableColumns"
@@ -117,11 +119,17 @@ const ROUND_COLUMNS: ColumnDef[] = [
   VIEWS_COLUMN,
 ]
 
+/**
+ * Lecture columns. Channel and Category are *not* hidden at narrow widths the
+ * way Season is: who taught a lecture and what it is about are the two things
+ * a lecture listing is scanned by, and a phone dropping them left rows that
+ * read as a bare list of titles. The table scrolls horizontally instead.
+ */
 const LECTURE_COLUMNS: ColumnDef[] = [
-  { key: "channel", label: "Channel", headerClassName: "hidden md:table-cell", sortValue: (v) => v[3]?.toLowerCase() ?? "" },
+  { key: "channel", label: "Channel", sortValue: (v) => v[3]?.toLowerCase() ?? "" },
   SEASON_COLUMN,
   { key: "title", label: "Title", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
-  { key: "category", label: "Category", headerClassName: "hidden sm:table-cell", sortValue: (v) => getStyleLabel(v).toLowerCase() },
+  { key: "category", label: "Category", sortValue: (v) => getStyleLabel(v).toLowerCase() },
 ]
 
 type SortDirection = "asc" | "desc"
@@ -207,6 +215,7 @@ function VideoRow({
   )
   const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
   const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
+  const watched = useWatchHistoryEntry(videoId)
 
   const styleNumber = typeof style === "number" ? style : undefined
   const styleLabel = styleNumber
@@ -271,8 +280,8 @@ function VideoRow({
             </td>
           )
         ) : (
-          <td className="px-3 py-2 align-top hidden md:table-cell text-sm text-muted-foreground truncate">
-            {channel}
+          <td className="px-3 py-2 align-top text-sm text-muted-foreground truncate">
+            {channel || "—"}
           </td>
         )}
         <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground whitespace-nowrap">
@@ -290,7 +299,7 @@ function VideoRow({
         ) : (
           <>
             <td className="px-3 py-2 align-top text-sm text-foreground truncate">{title}</td>
-            <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
+            <td className="px-3 py-2 align-top whitespace-nowrap">
               {styleLabel ? (
                 <span
                   className={cn(
@@ -318,6 +327,11 @@ function VideoRow({
                 className="mr-1"
               />
             )}
+
+            {/* Every row carries it, watched or not: the point of the marker
+                is that you can hover any row and learn where you got to —
+                "Not watched" included. */}
+            <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
 
             {isTopPick && (
               <TopPickBadge
@@ -383,7 +397,13 @@ function VideoRow({
               <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
             </Tooltip>
 
-            <WatchPageLink videoId={videoId} title={title} className="p-1" iconClassName="h-3.5 w-3.5" />
+            <WatchPageLink
+              videoId={videoId}
+              title={title}
+              video={video}
+              className="p-1"
+              iconClassName="h-3.5 w-3.5"
+            />
 
             <Tooltip>
               <TooltipTrigger asChild>

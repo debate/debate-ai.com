@@ -21,6 +21,15 @@
  * the store — so the floating player resumes mid-sentence instead of
  * restarting, which is the whole point of it being persistent.
  *
+ * ## What sits beside the player
+ *
+ * The right-hand column is a tab strip rather than one panel — YouTube's
+ * caption cues, then the long-form documents (the round typed up speech by
+ * speech, the AI summary of it), then the analysis videos an editor has tied
+ * to this one. Those arrive as props from the server rather than being
+ * fetched here: they are the reason this page is worth indexing, and a
+ * crawler never waits for a client fetch.
+ *
  * ## Switching videos navigates
  *
  * Anything on this page that changes the store's active video — clicking a
@@ -39,7 +48,8 @@ import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
-import { WatchTranscriptPanel } from "../../components/watch/WatchTranscriptPanel"
+import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
+import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
 import { VideoGrid } from "../../components/video-grid/VideoGrid"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
@@ -64,7 +74,10 @@ import {
   videoPlayerIframeRef,
 } from "../../state/videoPlayerStore"
 import { savePlayerState } from "../../state/videoPlayerPersistence"
+import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
+import { videoRouteHref } from "../../lib/video-route"
+import type { VideoDocument } from "../../lib/video-documents"
 import type { TopicType, VideoType } from "../../types/videos"
 
 /** How long the permalink control shows its "copied" tick. */
@@ -75,6 +88,13 @@ export interface VideoWatchPageProps {
   video: VideoType
   /** Videos shown under the player — same tournament, format or category. */
   related?: VideoType[]
+  /**
+   * Long-form documents for this video — the speech-by-speech transcript, the
+   * AI summary, the written analysis. Each becomes a tab beside the player.
+   */
+  documents?: VideoDocument[]
+  /** Videos an editor tied to this one; they fill the "Analysis" tab. */
+  links?: LinkedVideo[]
   /** Season topics, for the related cards' "T" tooltip button. */
   topics?: TopicType[]
   /** App-owned navigation dock, rendered at the top of the sidebar. */
@@ -86,6 +106,8 @@ export interface VideoWatchPageProps {
 export function VideoWatchPage({
   video,
   related = [],
+  documents = [],
+  links = [],
   topics,
   dockSlot,
   extraControls,
@@ -137,6 +159,8 @@ export function VideoWatchPage({
   const stageRef = useRef<HTMLDivElement | null>(null)
   /** Latest position reported by the embed — handed back to the popout player on the way out. */
   const currentTimeRef = useRef(0)
+  /** The video's length as the embed reports it, for the watch history's percentage. */
+  const durationRef = useRef(0)
   /** The rate still needs applying to this load: a fresh embed always starts at 1x. */
   const pendingPlaybackRate = useRef(false)
 
@@ -182,6 +206,16 @@ export function VideoWatchPage({
   const { snippets: cues, loading: transcriptLoading } = useTranscript(videoId, true)
   const sentences = useMemo(() => (cues ? groupIntoSentences(cues) : []), [cues])
   const hasTranscript = sentences.length > 0
+  /**
+   * Whether the column beside the player has anything in it. Captions arrive
+   * after the first paint, so this stays true while they load and the page
+   * widens only once it is settled that there is nothing to show.
+   */
+  const hasSidePanel =
+    hasTranscript ||
+    transcriptLoading ||
+    documents.some((document) => (document.body ?? "").trim().length > 0) ||
+    links.length > 0
 
   // Claim playback from the floating popout player for as long as this page
   // is mounted, and hand it back — with the position — on the way out.
@@ -190,6 +224,7 @@ export function VideoWatchPage({
     // tracked about the outgoing video is cleared here rather than relying on
     // an unmount that doesn't happen.
     currentTimeRef.current = 0
+    durationRef.current = 0
     setCurrentTime(0)
     setResumeSeconds(null)
     setPlayerError(null)
@@ -202,6 +237,15 @@ export function VideoWatchPage({
     return () => {
       const store = useVideoPlayerStore.getState()
       const seconds = currentTimeRef.current
+      // Leaving the page is the last chance to record how far this got — the
+      // next position report belongs to whatever plays next.
+      recordWatchProgress({
+        videoId,
+        positionSeconds: seconds,
+        durationSeconds: durationRef.current,
+        title,
+        flush: true,
+      })
       if (seconds > 0 && store.activeVideoId === videoId) {
         setActiveVideo(videoId, title, videoMeta, seconds)
         savePlayerState({
@@ -229,8 +273,19 @@ export function VideoWatchPage({
     // would bounce the page straight back to the previous video.
     const store = useVideoPlayerStore.getState()
     if (!store.activeVideoId || store.activeVideoId === videoId) return
-    router.push(videoWatchHref(store.activeVideoTitle ?? "", store.activeVideoId))
-  }, [activeVideoId, activeVideoTitle, videoId, router])
+    // A related card is the usual way this fires, and those rows carry the
+    // season, tournament and teams the canonical address is built from — so
+    // that case navigates straight to it. The queue can also hold a video
+    // this page has never seen, and the store keeps only an id and a title;
+    // that falls back to the flat `/videos/watch/` address, which exists for
+    // exactly this and redirects to the canonical one on arrival.
+    const next = related.find((candidate) => candidate[0] === store.activeVideoId)
+    router.push(
+      next
+        ? videoRouteHref(next)
+        : videoWatchHref(store.activeVideoTitle ?? "", store.activeVideoId),
+    )
+  }, [activeVideoId, activeVideoTitle, videoId, related, router])
 
   // A fresh embed always starts at 1x, so re-apply the chosen rate on first play.
   useEffect(() => {
@@ -259,15 +314,39 @@ export function VideoWatchPage({
             }
           } else if (data.info === 2 || data.info === 0) {
             setIsPlaying(false)
+            recordWatchProgress({
+              videoId,
+              positionSeconds:
+                data.info === 0
+                  ? durationRef.current || currentTimeRef.current
+                  : currentTimeRef.current,
+              durationSeconds: durationRef.current,
+              title,
+              // Only "ended" proves the video was watched through; a pause
+              // just flushes whatever position it stopped at.
+              completed: data.info === 0,
+              flush: true,
+            })
           }
         }
         if (data.event === "infoDelivery" && data.info?.errorCode != null) {
           const code = Number(data.info.errorCode)
           if (!Number.isNaN(code)) setPlayerError(code)
         }
+        if (data.event === "infoDelivery" && data.info?.duration != null) {
+          const duration = Number(data.info.duration)
+          if (Number.isFinite(duration) && duration > 0) durationRef.current = duration
+        }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           currentTimeRef.current = data.info.currentTime as number
           setCurrentTime(data.info.currentTime as number)
+          // Throttled in the store; see `state/videoWatchHistory.ts`.
+          recordWatchProgress({
+            videoId,
+            positionSeconds: currentTimeRef.current,
+            durationSeconds: durationRef.current,
+            title,
+          })
         }
       } catch {
         // ignore non-JSON messages
@@ -275,7 +354,7 @@ export function VideoWatchPage({
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [playbackRate, setIsPlaying])
+  }, [playbackRate, setIsPlaying, videoId, title])
 
   // Re-send the handshake for a few seconds after every load: YouTube ignores
   // commands and posts no events until it lands, and moving the iframe into a
@@ -445,7 +524,7 @@ export function VideoWatchPage({
                 isPipActive={isPipActive}
                 isFullscreen={isFullscreen}
                 isTranscriptOpen={isTranscriptOpen}
-                hasTranscript={hasTranscript}
+                hasTranscript={hasSidePanel}
                 isFavorite={viewState.favorites.has(videoId)}
                 isInQueue={isInQueue}
                 isLinkCopied={isLinkCopied}
@@ -562,11 +641,13 @@ export function VideoWatchPage({
             </div>
           </div>
 
-          {isTranscriptOpen && (hasTranscript || transcriptLoading) && (
+          {isTranscriptOpen && hasSidePanel && (
             <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] flex flex-col min-h-0">
-              <WatchTranscriptPanel
+              <WatchSidePanel
                 sentences={sentences}
-                loading={transcriptLoading}
+                captionsLoading={transcriptLoading}
+                documents={documents}
+                links={links}
                 currentTime={currentTime}
                 onSeek={seekTo}
               />

@@ -11,6 +11,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import grab from "grab-url";
+import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
+import {
+  hydrateVideoIndex,
+  queryVideoIndex,
+  queryVideoIndexMeta,
+  scheduleVideoIndexRefresh,
+} from "../state/videoIndexCache";
+import { useVideoIndexReady } from "./useVideoIndex";
 import type {
   LectureCategoryFacet,
   VideoFacets,
@@ -152,7 +160,50 @@ export function videoFeedKey(params: Record<string, string>): string {
 }
 
 /**
+ * Turns the same filters into the parameter object the shared query functions
+ * take, for a page answered out of the browser's copy of the library.
+ *
+ * Kept beside {@link buildVideoParams} deliberately: the two must describe the
+ * same request, or a locally-served grid would disagree with the one the API
+ * returns for the same controls.
+ *
+ * @param filters - See {@link VideoFeedFilters}.
+ * @param offset - Zero-based offset of the requested page.
+ * @param limit - Page size.
+ * @returns Parameters for `queryVideoRows` and friends.
+ */
+export function toVideoQueryParams(
+  filters: VideoFeedFilters,
+  offset: number,
+  limit: number,
+): VideoQueryParams {
+  return {
+    source: filters.source && filters.source !== "all" ? filters.source : "all",
+    lecturesOnly: Boolean(filters.lecturesOnly),
+    topPicksOnly: Boolean(filters.topPicksOnly),
+    categoryKey: filters.categoryKey && filters.categoryKey !== "all" ? filters.categoryKey : null,
+    style: filters.style === "" || filters.style == null ? null : Number(filters.style),
+    year: filters.year || null,
+    q: filters.q?.trim() || null,
+    // An empty list still filters: "favourites only" with no favourites must
+    // return nothing rather than everything, exactly as the API treats it.
+    ids: filters.ids ?? null,
+    excludeIds: filters.excludeIds?.length ? filters.excludeIds : null,
+    sort: filters.sort ?? null,
+    limit,
+    offset,
+  };
+}
+
+/**
  * Loads one paginated video feed and keeps it in sync with its filters.
+ *
+ * Pages come from the browser's own copy of the library when it has one (see
+ * `state/videoIndexCache.ts`) and from `/api/videos` when it does not — which
+ * is the first visit, and any visit where the cache could not be stored. Both
+ * paths run the same query over the same rows, so the grid cannot tell which
+ * answered; the difference is that the cached one costs no request at all,
+ * for any filter, search or page.
  *
  * @param filters - See {@link VideoFeedFilters}.
  * @returns The loaded videos plus paging state. See {@link VideoFeed}.
@@ -185,9 +236,71 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
 
+  /**
+   * Appends (or replaces) one page of results, whichever side answered.
+   *
+   * Shared by the cached and the networked path so the de-duplication, the
+   * offset bookkeeping and the capacity accounting cannot drift apart.
+   */
+  const applyPage = useCallback(
+    (
+      offset: number,
+      page: { videos: VideoType[]; total: number; hasMore: boolean; facets?: VideoFacets },
+    ) => {
+      // Rows already on screen are dropped rather than appended again: the
+      // library is ordered by view count or recency, both of which shift
+      // under a feed that is read a page at a time, so the same video can
+      // legitimately come back in a later page. Appending it grew the grid
+      // without advancing through the library.
+      if (offset === 0) seenIdsRef.current = new Set();
+      const seen = seenIdsRef.current;
+      const fresh: VideoType[] = [];
+      for (const video of page.videos) {
+        if (seen.has(video[0])) continue;
+        seen.add(video[0]);
+        fresh.push(video);
+      }
+
+      // The next request continues from where the *source* left off, not from
+      // the number of rows kept, so dropping a duplicate never makes the feed
+      // ask for the same window again.
+      nextOffsetRef.current = offset + page.videos.length;
+
+      setVideos((previous) => {
+        const next = offset === 0 ? fresh : [...previous, ...fresh];
+        loadedRef.current = next.length;
+        return next;
+      });
+      setTotal(page.total);
+      // A page that returned nothing at all ends the feed whatever the source
+      // says about `hasMore`. Without this the sentinel sat in view asking for
+      // the same offset over and over — a request loop that only stopped when
+      // the tab did. A page of rows the client already had still counts as
+      // progress, because the offset advanced past them.
+      setHasMore(page.hasMore && page.videos.length > 0);
+      if (page.facets) setFacets(page.facets);
+      setErrorMessage("");
+    },
+    [],
+  );
+
   const fetchPage = useCallback(
     async (offset: number) => {
       const requestId = ++requestRef.current;
+
+      // The browser's own copy of the library answers first when it has one.
+      // No request, no loading flicker, and the same query the API would have
+      // run — see `state/videoIndexCache.ts`.
+      const local = queryVideoIndex(
+        toVideoQueryParams(filtersRef.current, offset, pageSize),
+        Boolean(filtersRef.current.withFacets),
+      );
+      if (local) {
+        applyPage(offset, local);
+        setIsLoading(false);
+        setIsLoadingMore(false);
+        return;
+      }
 
       if (offset === 0) {
         setIsLoading(true);
@@ -208,39 +321,7 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
           throw new Error((data as { error?: string })?.error || "Malformed videos response");
         }
 
-        // Rows already on screen are dropped rather than appended again: the
-        // library is ordered by view count or recency, both of which shift
-        // under a feed that is read a page at a time, so the same video can
-        // legitimately come back in a later page. Appending it grew the grid
-        // without advancing through the library.
-        if (offset === 0) seenIdsRef.current = new Set();
-        const seen = seenIdsRef.current;
-        const fresh: VideoType[] = [];
-        for (const video of data.videos) {
-          if (seen.has(video[0])) continue;
-          seen.add(video[0]);
-          fresh.push(video);
-        }
-
-        // The next request continues from where the *server* left off, not
-        // from the number of rows kept, so dropping a duplicate never makes
-        // the feed ask for the same window again.
-        nextOffsetRef.current = offset + data.videos.length;
-
-        setVideos((previous) => {
-          const next = offset === 0 ? fresh : [...previous, ...fresh];
-          loadedRef.current = next.length;
-          return next;
-        });
-        setTotal(data.total);
-        // A page that returned nothing at all ends the feed whatever the
-        // server says about `hasMore`. Without this the sentinel sat in view
-        // asking for the same offset over and over — a request loop that only
-        // stopped when the tab did. A page of rows the client already had
-        // still counts as progress, because the offset advanced past them.
-        setHasMore(data.hasMore && data.videos.length > 0);
-        if (data.facets) setFacets(data.facets);
-        setErrorMessage("");
+        applyPage(offset, data);
       } catch (error) {
         // A superseded request (cancelled, or simply overtaken) must not
         // report an error over the feed the user is now looking at.
@@ -264,19 +345,37 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
     },
     // `feedKey` is the serialised filter set: a change to it is a new feed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [feedKey, pageSize],
+    [feedKey, pageSize, applyPage],
   );
+
+  const indexReady = useVideoIndexReady();
 
   useEffect(() => {
     if (!enabled) {
       setIsLoading(false);
       return;
     }
+    // Read the stored library before the first page is asked for, so a repeat
+    // visit is served locally from the very first request rather than making
+    // one round trip and then going quiet. It parses once per page load.
+    hydrateVideoIndex();
+    // And bring it up to date once the page has finished loading.
+    scheduleVideoIndexRefresh();
     loadedRef.current = 0;
     nextOffsetRef.current = 0;
     seenIdsRef.current = new Set();
     void fetchPage(0);
   }, [fetchPage, enabled, reloadToken]);
+
+  // The library landing mid-visit — a first-ever load, or a cache that had to
+  // be rebuilt — re-runs a feed that has nothing to show. A feed that already
+  // has rows is left alone: replacing a grid the user is reading, to render
+  // the same rows from a different source, would be a worse experience than
+  // the one saved request it buys. Its next filter change is served locally.
+  useEffect(() => {
+    if (!enabled || !indexReady || loadedRef.current > 0) return;
+    void fetchPage(0);
+  }, [indexReady, enabled, fetchPage]);
 
   // Reached the ceiling with more still available: automatic paging stops and
   // the view puts the next page behind a button. `videos.length` rather than
@@ -343,6 +442,7 @@ export interface VideoMetaState {
 export function useVideoMeta(suggestionFilters?: VideoFeedFilters): VideoMetaState {
   const [meta, setMeta] = useState<VideoMetaResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const indexReady = useVideoIndexReady();
 
   const suggestionParams = useMemo(() => {
     const params = new URLSearchParams();
@@ -353,6 +453,29 @@ export function useVideoMeta(suggestionFilters?: VideoFeedFilters): VideoMetaSta
     if (suggestionFilters?.year) params.set("year", suggestionFilters.year);
     return params.toString();
   }, [suggestionFilters?.lecturesOnly, suggestionFilters?.topPicksOnly, suggestionFilters?.categoryKey, suggestionFilters?.style, suggestionFilters?.year]);
+
+  // Counts, category cards and popular searches are all derivable from the
+  // cached library, so a browser that has it skips this request too. The
+  // season topics and champions are not — they are a different dataset — but
+  // they are static, cached by `grab`, and only the history panel reads them.
+  useEffect(() => {
+    if (!indexReady) return;
+    // Pagination is meaningless here — the counts and chips describe the
+    // whole library, or the whole category — so the page size is a formality.
+    const local = queryVideoIndexMeta(toVideoQueryParams(suggestionFilters ?? {}, 0, 0));
+    if (!local) return;
+    setMeta((previous) => ({
+      ...(previous ?? {}),
+      counts: local.counts,
+      lectureCategories: local.lectureCategories,
+      suggestions: local.suggestions,
+      backend: "index",
+    }) as VideoMetaResponse);
+    setIsLoading(false);
+    // The filters are read through `suggestionParams`, which is the stable
+    // serialisation of exactly the fields this uses.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [indexReady, suggestionParams]);
 
   useEffect(() => {
     let active = true;
@@ -366,7 +489,9 @@ export function useVideoMeta(suggestionFilters?: VideoFeedFilters): VideoMetaSta
           console.error("Failed to load video metadata", failure ?? "empty response");
           return;
         }
-        setMeta(data);
+        // Keep whatever the cached library already answered for the fields it
+        // owns; this response is authoritative for the rest (topics, champions).
+        setMeta((previous) => (previous?.backend === "index" ? { ...data, ...previous, topics: data.topics, champions: data.champions, history: data.history } : data));
       })
       .catch((error: unknown) => {
         if (active) console.error("Failed to load video metadata", error);

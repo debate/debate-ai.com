@@ -6,13 +6,15 @@
  * packages/debate-help-docs/content/docs/features/contacts.mdx). Two components, both talking to the engine
  * through `debate-editor/collab-bridge`:
  *
- * `ShareWithContacts` (header button + dialog): pick contacts and an
- * optional note; the control starts a co-editing session on the open
- * document if it has none yet (the engine's own confirm), then posts the
- * session's share code + guest pass to `/api/card-shares` so the card shows
- * up as available on each contact's account — no clipboard, no pasting a
- * `cmshare…` code. `?shareWith=<userId>` (from /contacts' "Share a card")
- * opens the dialog with that contact preselected.
+ * `ShareWithContacts` (trigger + dialog): pick contacts and an optional note;
+ * the control starts a co-editing session on the open document if it has none
+ * yet (the engine's own confirm), then posts the session's share code + guest
+ * pass to `/api/card-shares` so the card shows up as available on each
+ * contact's account — no clipboard, no pasting a `cmshare…` code.
+ * `?shareWith=<userId>` (from /contacts' "Share a card") opens the dialog with
+ * that contact preselected. Its trigger lives in the sidebar's Documents row
+ * beside Upload (`ReasonDocsSidebarPanels`, `variant="icon"`), with the open
+ * file's other actions, rather than in a header strip of the editor's own.
  *
  * `SharedCardOpener` (mounted once on the page, renders nothing): handles
  * `?share=<id>` from /contacts' "Open" — creates a fresh document to hold
@@ -170,10 +172,16 @@ export function SharedCardOpener() {
 export interface ShareWithContactsProps {
   /** Title of the open document — becomes the shared card's title. */
   title: string
+  /**
+   * How the trigger draws. `"icon"` is the sidebar's document-actions row,
+   * where it sits beside New file / New folder / Upload and has to match
+   * those 24px glyph buttons; `"button"` is the labelled control.
+   */
+  variant?: "button" | "icon"
 }
 
-/** The header's "Share with contacts" button and its dialog. */
-export function ShareWithContacts({ title }: ShareWithContactsProps) {
+/** The "Share with contacts" trigger and its dialog. */
+export function ShareWithContacts({ title, variant = "button" }: ShareWithContactsProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { isAuthenticated } = useSession()
@@ -259,19 +267,33 @@ export function ShareWithContacts({ title }: ShareWithContactsProps) {
 
   if (!isAuthenticated) return null
 
+  const triggerTitle = "Share this document as a live card with your contacts"
+
   return (
     <>
-      <Button
-        type="button"
-        size="sm"
-        variant="outline"
-        className="h-8 gap-1.5"
-        onClick={() => setOpen(true)}
-        title="Share this document as a live card with your contacts"
-      >
-        <Share2 className="h-4 w-4" />
-        <span className="hidden sm:inline">Share with contacts</span>
-      </Button>
+      {variant === "icon" ? (
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          title={triggerTitle}
+          aria-label="Share with contacts"
+          className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <Share2 className="h-3.5 w-3.5" />
+        </button>
+      ) : (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="h-8 gap-1.5"
+          onClick={() => setOpen(true)}
+          title={triggerTitle}
+        >
+          <Share2 className="h-4 w-4" />
+          <span className="hidden sm:inline">Share with contacts</span>
+        </Button>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">

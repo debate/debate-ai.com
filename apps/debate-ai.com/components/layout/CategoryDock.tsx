@@ -34,6 +34,7 @@ import { useSession } from "@/lib/hooks/useSession"
 import { hasEmbeddedDock } from "@/lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "@/lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "@/lib/nav/dock-nav-items"
+import { accountLabel } from "@/lib/nav/account-label"
 import { useAppFrame } from "@/components/layout/AppFrameProvider"
 import { useIsFramedDocument } from "@/lib/layout/use-framed-document"
 import { openGlobalCommandPalette } from "@/components/layout/GlobalCommandPalette"
@@ -104,7 +105,11 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
     )
   }
 
-  const displayName = user?.name || user?.email || "Signed in"
+  // Who is signed in, in one line. The address used to sit under the name as
+  // a second line, and it is the longest string in the menu — on a phone it
+  // was what pushed this panel out to the width that left its submenus no
+  // room to open into. The full address is still there on hover/long-press.
+  const displayName = accountLabel({ name: user?.name, email: user?.email })
 
   return (
     <>
@@ -116,10 +121,9 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{displayName}</p>
-          {user?.email && user.email !== displayName && (
-            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-          )}
+          <p className="truncate text-sm font-medium" title={user?.email ?? undefined}>
+            {displayName}
+          </p>
         </div>
       </div>
       <DropdownMenuItem onSelect={() => { handleSignOut() }}>
@@ -129,6 +133,18 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
     </>
   )
 }
+
+/**
+ * Width for a submenu of the dock's Settings menu.
+ *
+ * A fixed `w-56` is wider than the gap left beside the panel on a phone: the
+ * submenu opens to whichever side has more room, and with 224px of content
+ * and ~100px of room the rest of it hung off the edge of the screen, cutting
+ * the links in half. Capping the width at the viewport (less a gutter) is
+ * what lets Radix's collision handling keep the whole thing on screen —
+ * overlapping the panel it came from rather than running past the edge.
+ */
+const SUBMENU_WIDTH = "w-[min(14rem,calc(100vw-1.5rem))]"
 
 function SettingsMenu({
   side,
@@ -147,7 +163,7 @@ function SettingsMenu({
       // Tall enough (the nav submenus above the account block) to run past a
       // phone viewport, which would otherwise cut the account rows off with
       // no way to reach them.
-      className="w-48 max-h-[min(560px,80vh)] overflow-y-auto"
+      className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
       collisionPadding={8}
       avoidCollisions
     >
@@ -169,7 +185,7 @@ function SettingsMenu({
             <section.icon className="mr-2 h-4 w-4 shrink-0" />
             {section.title}
           </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent className="w-56 max-h-[min(500px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+          <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(500px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
             {section.links.map((link) => (
               <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
                 {link.title}
@@ -192,7 +208,7 @@ function SettingsMenu({
           <Palette className="mr-2 h-4 w-4" />
           Theme
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-56 max-h-[min(400px,70vh)] overflow-y-auto" collisionPadding={8} avoidCollisions>
+        <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(400px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
           <DropdownMenuLabel>Appearance</DropdownMenuLabel>
           <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.setMode("light") }} className={cn("cursor-pointer", themeState.mode === "light" && "bg-accent")}>
             <Sun className="mr-2 h-4 w-4" />
@@ -243,7 +259,7 @@ function SettingsMenu({
           <Globe className="mr-2 h-4 w-4" />
           Site Links
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-56" collisionPadding={8} avoidCollisions>
+        <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(400px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
           {/* An app route (`/features`, `/legal/privacy`) is pushed through
               the router so it opens inside the app — sidebar, dock and the
               persistent player all still there. Only an outside site or the
@@ -281,7 +297,7 @@ function SettingsMenu({
           <Swords className="mr-2 h-4 w-4" />
           Debate Links
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className="w-56" collisionPadding={8} avoidCollisions>
+        <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(400px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
           {DEBATE_LINKS.map((link) => (
             <DropdownMenuItem key={link.text} asChild>
               <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer">

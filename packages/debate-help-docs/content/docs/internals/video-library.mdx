@@ -221,6 +221,54 @@ sync mirrors them exactly — and because the prune only removes rows the run
 did not touch, the table is never empty mid-run. The generated SQL file is not
 committed; regenerate it from the assets.
 
+## Admin management of published videos
+
+`/admin` used to only reach videos on their way *in*: the "Round videos" queue
+lists `youtube_round_videos` rows, and publishing or deleting one is the last
+moment an admin could touch it. Once published, a video left that queue (the
+listing left-joins `videos` and drops the matches), so a wrong title, a
+misparsed tournament or a video that should never have gone live could only be
+fixed from a database console.
+
+The **Video library** card (`components/admin/VideoLibraryTable.tsx`) is the
+other half: it pages the public `videos` table itself.
+
+```
+GET    /api/admin/videos/library         q, style, source, sort, dir, page, limit
+PATCH  /api/admin/videos/library/[id]    partial row — only the fields sent are written
+DELETE /api/admin/videos/library/[id]    remove from the library, and exclude from resync
+```
+
+All three are admin-gated by `getAdminAccess()` like every other
+`/api/admin/*` route, and all three delegate to
+`lib/videos/admin-library.ts` so the rules live in one testable module rather
+than in the route handlers.
+
+Two behaviours are worth knowing before changing this:
+
+- **An edit rewrites the derived columns.** `title`, `channel`,
+  `published_at` and `description` are what an admin sees, but the feed sorts
+  on `published_ms`, season-filters on `season_year` and searches
+  `search_text`. `buildLibraryUpdate` recomputes all three from the *merged*
+  row, so editing a title alone still leaves `search_text` matching the stored
+  channel and description, and a corrected date re-sorts the video. Writing
+  the columns directly would silently leave the video searchable only under
+  its old title.
+- **A removal is recorded, not just applied.** `deleteLibraryVideo` deletes
+  from `videos` *and* `youtube_round_videos`, then upserts
+  `youtube_video_exclusions` — the same table `resyncYouTubeRounds` reads
+  before its channel loop. Without that row the next Monday sync would
+  re-ingest the video and the next "Publish all" would put it back, which is
+  exactly the loop the queue's own delete was given an exclusion row to avoid.
+
+Listing uses offset paging rather than the queue's `(publishedAt, id)` keyset
+cursor: this table has numbered pages and sorts on columns that are not unique
+(view count, channel), which a two-column cursor cannot express.
+
+`lib/videos/__tests__/admin-library.test.ts` covers the merge, the derived
+columns, the search/filter/sort/paging and the exclusion write against a real
+in-memory SQLite database.
+
 ## Known gaps
 
 - Stacked playlists are only as good as the descriptions: a round-analysis
@@ -276,6 +324,12 @@ committed; regenerate it from the assets.
   against a live production D1 instance at the video table's real row count —
   same "unverified against production" caveat
   [openCaselist Sync](caselist-sync.md) already carries for its own API guess.
+- An admin edit to a published video is written to the `videos` table only.
+  The committed JSON assets under `debate-data-sync/data/videos/` are still
+  the seed's source of truth, so re-running `db:seed:videos` upserts the
+  asset's version back over the edit. Removals survive a resync (the
+  exclusion row) but not a re-seed. Persisting edits means writing them back
+  to the assets, or teaching the seed to skip rows an admin has edited.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page

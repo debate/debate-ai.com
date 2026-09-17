@@ -10,7 +10,7 @@
     <a href="https://debate-ai.com/api"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API" /></a>
     <a href="https://youtu.be/XB0tzpBUEKQ"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
     <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime--Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
-    <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
+    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-77k-yellow" />
     <br />
     <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg" alt="Coverage" /></a>
@@ -25,9 +25,9 @@
     <a href="https://discord.gg/dh8UKEaYA5"><img src="https://img.shields.io/discord/1110227955554209923.svg?label=Chat&logo=Discord&colorB=7289da&style=flat" alt="Join Discord" /></a>
         <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"><img src="https://img.shields.io/badge/PRs--welcome-brightgreen" alt="PRs Welcome" /></a>
     <br />
-    <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
-    <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" /> <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" /> <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" />  <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" />  <img src="https://img.shields.io/badge/ProseMirror-000000" alt="ProseMirror" /> 
-    <img src="https://img.shields.io/badge/Fumadocs-000000" alt="Fumadocs" /> 
+       <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
+     <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
+    <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" />  <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" />  <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" /> 
     <br />
     <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
     <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>

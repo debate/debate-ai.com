@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../sidebar-routes"
+import { showsReasonDocsPanels, showsResearchOnlySidebar } from "../sidebar-routes"
 
 describe("showsReasonDocsPanels", () => {
   it("shows them on /cards, the dock destination they belong to", () => {
@@ -58,43 +58,45 @@ describe("showsReasonDocsPanels", () => {
 })
 
 /**
- * The second half of the same question: `/cards` gets the docs panels *and*
- * nothing else — no Apps/Coaching/Practice sections, no glossary/rankings
- * pair, no site footer. Before this the column carried four navigations at
- * once on the page about one of them.
+ * The second half of the same question: the document routes get the docs
+ * panels *and* nothing else — no Apps/Coaching/Practice sections, no
+ * glossary/rankings pair, no site footer. Before this the column carried four
+ * navigations at once on the page about one of them.
  */
-describe("showsCardsOnlySidebar", () => {
+describe("showsResearchOnlySidebar", () => {
   it("trims the sidebar on /cards and the pages under it", () => {
-    expect(showsCardsOnlySidebar("/cards")).toBe(true)
-    expect(showsCardsOnlySidebar("/cards/library")).toBe(true)
-    expect(showsCardsOnlySidebar("/cards/leaderboard/42")).toBe(true)
+    expect(showsResearchOnlySidebar("/cards")).toBe(true)
+    expect(showsResearchOnlySidebar("/cards/library")).toBe(true)
+    expect(showsResearchOnlySidebar("/cards/leaderboard/42")).toBe(true)
   })
 
-  it("leaves the editor's sidebar whole", () => {
-    // /reason-editor is reached *from* the other tool sections rather than
-    // being one of them, so it keeps the full tree under its docs panels.
-    expect(showsCardsOnlySidebar("/reason-editor")).toBe(false)
+  it("trims the editor's sidebar to the research tools too", () => {
+    // Its sidebar is the file tree; Coaching and Practice stacked under that
+    // are two more navigations on a page about writing.
+    expect(showsResearchOnlySidebar("/reason-editor")).toBe(true)
   })
 
   it("leaves every other tool route alone", () => {
     for (const path of ["/", "/videos", "/coach", "/research", "/doc", "/practice-round"]) {
-      expect(showsCardsOnlySidebar(path)).toBe(false)
+      expect(showsResearchOnlySidebar(path)).toBe(false)
     }
   })
 
-  it("does not match a route that merely starts with /cards", () => {
-    expect(showsCardsOnlySidebar("/cardsomething")).toBe(false)
+  it("does not match a route that merely starts with a trimmed one", () => {
+    expect(showsResearchOnlySidebar("/cardsomething")).toBe(false)
+    expect(showsResearchOnlySidebar("/reason-editor-old")).toBe(false)
   })
 
   it("ignores a trailing slash and a query string, as the dock writes them", () => {
-    expect(showsCardsOnlySidebar("/cards/")).toBe(true)
-    expect(showsCardsOnlySidebar("/cards?tab=library")).toBe(true)
-    expect(showsCardsOnlySidebar("/cards#top")).toBe(true)
+    expect(showsResearchOnlySidebar("/cards/")).toBe(true)
+    expect(showsResearchOnlySidebar("/cards?tab=library")).toBe(true)
+    expect(showsResearchOnlySidebar("/cards#top")).toBe(true)
+    expect(showsResearchOnlySidebar("/reason-editor?doc=12")).toBe(true)
   })
 
   it("reads a missing pathname as the full sidebar rather than throwing", () => {
-    expect(showsCardsOnlySidebar(null)).toBe(false)
-    expect(showsCardsOnlySidebar(undefined)).toBe(false)
-    expect(showsCardsOnlySidebar("")).toBe(false)
+    expect(showsResearchOnlySidebar(null)).toBe(false)
+    expect(showsResearchOnlySidebar(undefined)).toBe(false)
+    expect(showsResearchOnlySidebar("")).toBe(false)
   })
 })

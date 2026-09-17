@@ -7,11 +7,12 @@ import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
 import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
-import { showsCardsOnlySidebar, showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
+import { showsReasonDocsPanels, showsResearchOnlySidebar } from "@/lib/reason-docs/sidebar-routes"
 
-/** The one tool section the `/cards` sidebar keeps. Module-level so the array
- *  identity is stable across renders of the tree below. */
-const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
+/** The one tool section the `/cards` and `/reason-editor` sidebars keep.
+ *  Module-level so the array identity is stable across renders of the tree
+ *  below. */
+const RESEARCH_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -35,16 +36,31 @@ const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * this shell at all — it is the video library
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
- * `/cards` goes one step further and is the docs panels plus the Research tool
- * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,
- * the glossary and rankings links and the site footer are all about somewhere
- * else, and stacking them under a file tree made the column a scroll rather
- * than a place. The dock stays — it is the control you clicked "Shared" in,
- * and the way back to videos.
+ * `/debate` and `/doc` are the two tree destinations this shell deliberately
+ * skips (`ownsItsLayout`, in debate-videos' `sidebar-routes`), both because
+ * they already fill the viewport with a sidebar of their own and wrapping
+ * them here put two sidebars side by side.
+ *
+ * `/debate` is the flow workspace, with its own top bar and flows/rounds
+ * sidebar; it keeps `CategoryDock`'s floating instance, since there is no
+ * column left to host one. `/doc` is the REASON research workspace, whose
+ * sidebar is the files tree and the "Open Tabs" list — and that one *does*
+ * host the dock, at the top of its own column
+ * (`components/qwksearch/SidebarWithAppDock`), so the floating instance stays
+ * suppressed there (`hostsOwnSidebarDock`). The docs panels below are for
+ * `/cards` and `/reason-editor`, which read documents out of this app's own
+ * store rather than the editor's.
+ *
+ * Both of those go one step further and are the docs panels plus the Research
+ * tool list only (`showsResearchOnlySidebar`): the Apps / Coaching / Practice
+ * sections, the glossary and rankings links and the site footer are all about
+ * somewhere else, and stacking them under a file tree made the column a scroll
+ * rather than a place. The dock stays — it is the control you clicked "Shared"
+ * in, and the way back to videos.
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const cardsOnly = showsCardsOnlySidebar(pathname)
+  const researchOnly = showsResearchOnlySidebar(pathname)
 
   if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
@@ -75,8 +91,8 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
           </ChromeErrorBoundary>
         )}
         <ChromeErrorBoundary label="ToolNavTree">
-          {cardsOnly ? (
-            <ToolNavTree sectionIds={CARDS_SIDEBAR_SECTIONS} />
+          {researchOnly ? (
+            <ToolNavTree sectionIds={RESEARCH_SIDEBAR_SECTIONS} />
           ) : (
             <>
               <ToolNavTree />

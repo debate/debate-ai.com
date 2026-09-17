@@ -15,7 +15,7 @@ export default defineConfig({
   manifest: {
     name: 'Debate AI — Timer & Card Reuse Check',
     description:
-      'Critical times call for critical thinking! A debate round timer with prep clocks and a round timeline, plus an on-page card reuse check against your team\'s shared evidence library.',
+      'Critical times call for critical thinking! Debate-AI.com extension: a debate round timer with round timeline and card reuse check.',
     // Kept from the original timer manifest so the extension ID (and therefore
     // the user's existing chrome.storage data) stays stable across both the
     // WXT migration and the merge with the card-reuse extension.

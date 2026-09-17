@@ -33,8 +33,8 @@ Scope is the package or surface name without its `debate-` prefix.
 
 - Target `master`. One concern per PR; no drive-by refactors.
 - Say what changed, why, and which packages are affected — especially if you
-  touched `debate-ui`, `debate-search-evidence` or `debate-round`, which several
-  packages build on.
+  touched `debate-search-evidence` or `debate-round`, which several packages
+  build on, or a `ui/` primitive several surfaces copy.
 - **Say explicitly if you changed `apps/debate-web-ext` or
   `apps/debate-native-wrapper`** — they are outside the workspace, so nothing in
   the root CI will catch a break.

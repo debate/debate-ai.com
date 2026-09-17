@@ -9,6 +9,7 @@ import { createPortal } from "react-dom"
 import { AlertCircle } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../state/videoPlayerPersistence"
+import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { useDragResize } from "./useDragResize"
 import { useDocumentPictureInPicture } from "./useDocumentPictureInPicture"
 import { PlayerTitleBar } from "./PlayerTitleBar"
@@ -69,6 +70,10 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   // Time tracking refs for persisting playback position
   const playStartedAtRef = useRef<number | null>(null) // Date.now() when video last started playing
   const timeOffsetRef = useRef<number>(0) // accumulated seconds before last play event
+  // The video's length, as the embed reports it. Nothing in the library
+  // stores a duration, and the watch history needs one to turn a position
+  // into the percentage the grid shows.
+  const durationRef = useRef<number>(0)
 
   const { position, isDragging, isResizing, playerWidth, startDrag, startResize } = useDragResize(containerRef)
 
@@ -107,6 +112,16 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
       playbackRate: store.playbackRate,
       queue: store.queue,
       savedTime: getCurrentTime(),
+    })
+    // The same moment, in the account-synced history: the snapshot above is a
+    // 24-hour resume cursor for this browser, this is the durable record of
+    // having watched the video. `recordWatchProgress` throttles itself.
+    recordWatchProgress({
+      videoId: store.activeVideoId,
+      positionSeconds: getCurrentTime(),
+      durationSeconds: durationRef.current,
+      title: store.activeVideoTitle ?? "",
+      flush: true,
     })
   }, [getCurrentTime])
 
@@ -152,10 +167,12 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     }
   }, [activeVideoId, startTime])
 
-  // A new video starts from a clean slate: no stale error, no resume offset
+  // A new video starts from a clean slate: no stale error, no resume offset,
+  // and no length carried over from the video before it.
   useEffect(() => {
     setPlayerError(null)
     setResumeSeconds(null)
+    durationRef.current = 0
   }, [activeVideoId])
 
   // A fresh embed always starts at 1x, so re-apply the chosen rate on first play
@@ -196,6 +213,21 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
               playStartedAtRef.current = null
             }
             setIsPlaying(false)
+            // "Ended" is the only signal that says a video was watched *through*:
+            // a user who skips the last minute of an hour-long round has still
+            // finished it, and a position can never prove that on its own.
+            if (data.info === 0) {
+              const store = useVideoPlayerStore.getState()
+              if (store.activeVideoId) {
+                recordWatchProgress({
+                  videoId: store.activeVideoId,
+                  positionSeconds: durationRef.current || getCurrentTime(),
+                  durationSeconds: durationRef.current,
+                  title: store.activeVideoTitle ?? "",
+                  completed: true,
+                })
+              }
+            }
             persistState()
           }
         }
@@ -205,6 +237,10 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
           if (!Number.isNaN(code)) setPlayerError(code)
         }
         // YouTube infoDelivery includes currentTime when available — use it for accuracy
+        if (data.event === "infoDelivery" && data.info?.duration != null) {
+          const duration = Number(data.info.duration)
+          if (Number.isFinite(duration) && duration > 0) durationRef.current = duration
+        }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           const yt = data.info.currentTime as number
           // Sync our tracking with YouTube's reported time
@@ -213,6 +249,17 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
             playStartedAtRef.current = Date.now()
           }
           if (showSubtitles) setSubtitleTime(yt)
+          // Throttled inside the store to one write every twenty seconds per
+          // video, so this can safely ride the embed's own reporting rate.
+          const store = useVideoPlayerStore.getState()
+          if (store.activeVideoId) {
+            recordWatchProgress({
+              videoId: store.activeVideoId,
+              positionSeconds: yt,
+              durationSeconds: durationRef.current,
+              title: store.activeVideoTitle ?? "",
+            })
+          }
         }
       } catch {
         // ignore non-JSON messages
@@ -220,7 +267,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [setIsPlaying, persistState, showSubtitles, playbackRate])
+  }, [setIsPlaying, persistState, showSubtitles, playbackRate, getCurrentTime])
 
   // Re-send the "listening" handshake for a few seconds after every embed load.
   // `onLoad` alone is not enough: React's delegated events stop reaching the

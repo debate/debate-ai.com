@@ -37,7 +37,7 @@ import { cn } from "@/lib/ui/lib/utils"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
 import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
-import { ShareWithContacts, SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
+import { SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
 
 export function ReasonEditorScreen() {
   const {
@@ -141,21 +141,14 @@ export function ReasonEditorScreen() {
 
         {selected || topicDocument ? (
           <>
-            {/* No rename field here: the tab strip above already names the
-                open document, and renaming lives in the sidebar file tree
-                (`ReasonDocsSidebarPanels` → `onRename`). This row is just
-                the status/sharing strip. */}
+            {/* No rename field here, and no share button: the tab strip above
+                already names the open document, and renaming and sharing are
+                both in the sidebar's document row
+                (`ReasonDocsSidebarPanels` → `onRename`, `ShareWithContacts`)
+                next to New file / New folder / Upload. This row is just the
+                status line. */}
             <div className="flex items-center gap-2 px-4 py-2 border-b">
               {topicDocument ? <span className="text-xs text-muted-foreground">Public topic starter</span> : saving && <span className="text-xs text-muted-foreground">Saving…</span>}
-              {selected && (
-                <div className="ml-auto">
-                  {/* Account-linked live sharing (contacts list, /contacts).
-                      Reads `?shareWith=`, hence the Suspense. */}
-                  <Suspense>
-                    <ShareWithContacts title={selected.title} />
-                  </Suspense>
-                </div>
-              )}
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
               {/* No React `key` here on purpose: `contentKey` already gives
