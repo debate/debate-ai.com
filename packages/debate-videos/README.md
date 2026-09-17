@@ -38,6 +38,9 @@ takes playback over from the persistent player for as long as it is mounted and 
 it back, at the same second, on the way out. See
 [internals/video-watch-page.mdx](../debate-help-docs/content/docs/internals/video-watch-page.mdx).
 
+`LecturesPage` also backs `/videos/history` — the watch history as a listing, newest
+watched first, with the same channel and category columns every lecture listing has.
+
 Video and ranking data comes from `debate-data-sync`, projected into the app's `videos` SQL
 table and served a page at a time by `/api/videos` — `hooks/useVideoFeed.ts` pages through
 it as the grid is scrolled, so no screen loads the whole library (see

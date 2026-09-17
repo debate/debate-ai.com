@@ -40,5 +40,7 @@ export const SLUG_MAP: Record<string, SlugState> = {
   statistics: { stats: true },
   stats: { stats: true },
   lectures: { view: "lectures" },
+  history: { view: "history" },
+  watchhistory: { view: "history" },
 }
 
