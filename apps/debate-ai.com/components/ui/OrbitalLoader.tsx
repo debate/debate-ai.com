@@ -39,8 +39,6 @@ function OrbitalLine({
   color: string
   speed: number
 }) {
-  const transformStyle = "preserve-3d" as const
-  const lineRotate = `rotateX(${angle}deg)`
   const animDuration = `${speed + (index % 3)}s`
 
   return (
@@ -51,7 +49,7 @@ function OrbitalLine({
         borderColor: color,
         borderWidth: "1.5px",
         opacity: 0.7 + (index % 3) * 0.1,
-        transformStyle,
+        transformStyle: "preserve-3d",
         animation: `orbitalLineSpin ${animDuration} infinite linear`,
         boxShadow: `0 0 ${4 + (index % 4) * 2}px ${color}`,
       }}
