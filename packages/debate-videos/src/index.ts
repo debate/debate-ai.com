@@ -14,6 +14,36 @@ export {
   type VideoFavorite,
   type VideoReport,
 } from "./state/videoLibrary";
+export {
+  MOSTLY_WATCHED_PERCENT,
+  PARTLY_WATCHED_PERCENT,
+  VIDEO_WATCH_HISTORY_KEY,
+  WATCHED_PERCENT,
+  WATCH_STATUS_LABELS,
+  clearWatchHistory,
+  describeWatchProgress,
+  forgetWatchedVideo,
+  formatWatchClock,
+  getWatchHistoryEntry,
+  listWatchHistory,
+  recordWatchProgress,
+  subscribeToWatchHistory,
+  watchHistoryById,
+  watchPercent,
+  watchStatus,
+  type WatchHistoryEntry,
+  type WatchStatus,
+} from "./state/videoWatchHistory";
+export {
+  useWatchHistory,
+  useWatchHistoryEntry,
+  useWatchStatus,
+} from "./hooks/useWatchHistory";
+export {
+  WatchProgressBadge,
+  WatchProgressBar,
+  type WatchProgressBadgeProps,
+} from "./components/video-card/WatchProgressBadge";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
