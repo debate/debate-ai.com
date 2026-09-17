@@ -72,6 +72,17 @@ describe("buildSearchParams", () => {
     expect(params.has("searchAllText")).toBe(false);
   });
 
+  it("sends the block-titles scope the search sidebar offers", () => {
+    // The sidebar's "Blocks" option used to set a key the filter state did not
+    // have, so choosing it sent nothing and scoped nothing.
+    const params = buildSearchParams({
+      ...base,
+      filters: { ...EMPTY_FILTERS, searchBlockAndFileTitles: true },
+    });
+
+    expect(params.get("searchBlockAndFileTitles")).toBe("1");
+  });
+
   it("sends nothing but the sort order for the empty filter state", () => {
     expect([...buildSearchParams(base).keys()]).toEqual(["sort"]);
   });
