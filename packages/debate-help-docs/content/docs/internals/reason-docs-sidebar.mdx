@@ -178,6 +178,18 @@ trip. Published rows only, in both the match and the ancestry. A lookup that
 comes back empty is remembered for that URL, so the link falls through to the
 normal fallback instead of asking again on every render.
 
+## The Documents row
+
+Above the panels sits the row of actions on files: New file, New folder,
+Upload, and — on the editor route, signed in, with a document open — **Share
+with contacts** (`components/reason-editor/ShareWithContacts`, drawn in its
+`icon` variant so it matches the three beside it). Sharing was a labelled
+button in the editor's own header strip; it is an action on the open file, so
+it belongs in the row that file's other actions are in. It is scoped to the
+editor route because sharing starts a live co-editing session through the
+CardMirror engine, and that page is what mounts the engine — on `/cards` the
+control would open a dialog that could only fail.
+
 ## Uploading a file
 
 The Documents header has an Upload button, and the file tree takes a drop

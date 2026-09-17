@@ -106,9 +106,13 @@ export function ResearchSearchSidebar({
   const clearFilters = () => setFilters({ ...EMPTY_FILTERS })
 
   return (
-    <div className="mt-[50px] w-full h-full flex flex-col bg-background overflow-hidden min-w-0">
+    /* No top margin: this fills its panel, so a margin pushed the same height
+       down and clipped the last 50px of the result list out of the column.
+       The app dock this used to clear is cleared by the page now
+       (`app/cards/page.tsx`), which offsets all three columns together. */
+    <div className="w-full h-full min-h-0 flex flex-col bg-background overflow-hidden min-w-0">
       <TooltipProvider>
-        <div className="p-3 border-b space-y-2">
+        <div className="shrink-0 p-3 border-b space-y-2">
           {/* Mobile header */}
           <div className="flex items-center justify-between md:hidden mb-2">
             <h2 className="font-semibold text-lg">Search</h2>
@@ -342,7 +346,7 @@ export function ResearchSearchSidebar({
 
       {/* Result count — how much of the match set is on screen. */}
       {!isLoading && countLabel && (
-        <div className="flex items-center justify-between border-b px-3 py-1.5 text-xs text-muted-foreground">
+        <div className="flex shrink-0 items-center justify-between border-b px-3 py-1.5 text-xs text-muted-foreground">
           <span>{countLabel}</span>
           {hasActiveFilters && (
             <button
@@ -355,11 +359,16 @@ export function ResearchSearchSidebar({
         </div>
       )}
 
+      {/* `min-h-0` is what makes this list scroll on its own rather than
+          stretching the column to its content: without it a flex child
+          refuses to shrink below its content height, so 200 result cards
+          pushed the panel — and the page — to their own length, and the
+          open card scrolled away with them. */}
       <div
         role="listbox"
         aria-label="Evidence cards"
         aria-busy={isLoading}
-        className="flex-1 space-y-1.5 overflow-y-auto p-2"
+        className="min-h-0 flex-1 space-y-1.5 overflow-y-auto p-2"
       >
         {isLoading ? (
           // Skeleton rows in the shape of the cards they replace, so the list
