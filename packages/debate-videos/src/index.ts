@@ -24,6 +24,42 @@ export {
   videoWatchHref,
   videoWatchSlug,
 } from "./lib/video-slug";
+export {
+  ARCHIVE_SEASON_SEGMENT,
+  UNSORTED_EVENT_SEGMENT,
+  eventSegment,
+  isCanonicalVideoRoute,
+  matchupSegment,
+  parseVideoRouteMatchup,
+  seasonSegment,
+  videoRouteHref,
+  videoRouteParts,
+  videoRouteSegments,
+  type VideoRouteParts,
+  type VideoRouteSegments,
+} from "./lib/video-route";
+export {
+  VIDEO_DOCUMENT_KINDS,
+  VIDEO_DOCUMENT_LABELS,
+  countWords,
+  formatTimecode,
+  isVideoDocumentKind,
+  orderDocuments,
+  parseDocumentSections,
+  parseTimecode,
+  toParagraphs,
+  type DocumentSection,
+  type VideoDocument,
+  type VideoDocumentKind,
+} from "./lib/video-documents";
+export {
+  VIDEO_RELATION_KINDS,
+  VIDEO_RELATION_LABELS,
+  WatchAnalysisPanel,
+  type LinkedVideo,
+  type VideoRelationKind,
+} from "./components/watch/WatchAnalysisPanel";
+export { WatchSidePanel } from "./components/watch/WatchSidePanel";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";

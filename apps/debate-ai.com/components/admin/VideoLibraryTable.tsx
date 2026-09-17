@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../lib/ui/primitives/select";
+import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 
 /** One row of the published `videos` table, as the admin API returns it. */
 interface LibraryVideo {
@@ -188,6 +189,7 @@ export function VideoLibraryTable() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  const [contentVideo, setContentVideo] = useState<ContentDialogVideo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<LibraryVideo | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -342,8 +344,9 @@ export function VideoLibraryTable() {
         <CardDescription>
           Every video already published to the site. Search for one, correct its metadata, or
           remove it — a removed video is also recorded so the weekly YouTube resync does not
-          bring it back. The round queue further down only holds videos still waiting to be
-          published.
+          bring it back. “Transcripts” opens the long-form content beside the video: the
+          speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
+          The round queue further down only holds videos still waiting to be published.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -465,6 +468,20 @@ export function VideoLibraryTable() {
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="outline" onClick={() => openEditor(video)}>
                         Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() =>
+                          setContentVideo({
+                            videoId: video.videoId,
+                            title: video.title,
+                            channel: video.channel,
+                            tournament: video.tournament,
+                          })
+                        }
+                      >
+                        Transcripts
                       </Button>
                       <Button
                         size="sm"
@@ -623,6 +640,12 @@ export function VideoLibraryTable() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <VideoContentDialog
+        video={contentVideo}
+        onOpenChange={(open) => (open ? undefined : setContentVideo(null))}
+        onSaved={setNotice}
+      />
 
       <Dialog
         open={!!confirmDelete}

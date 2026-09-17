@@ -383,7 +383,13 @@ function VideoRow({
               <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
             </Tooltip>
 
-            <WatchPageLink videoId={videoId} title={title} className="p-1" iconClassName="h-3.5 w-3.5" />
+            <WatchPageLink
+              videoId={videoId}
+              title={title}
+              video={video}
+              className="p-1"
+              iconClassName="h-3.5 w-3.5"
+            />
 
             <Tooltip>
               <TooltipTrigger asChild>

@@ -24,6 +24,7 @@ import {
 import { formatVideoDate } from "./videoCardUtils"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
+import type { VideoType } from "../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -36,6 +37,8 @@ interface VideoMeta {
 
 /** Props for the {@link VideoCardActions} component. */
 interface VideoCardActionsProps {
+  /** The whole video row, so the watch link can use the canonical address. */
+  video?: VideoType
   /** YouTube video ID. */
   videoId: string
   /** Video title (used in tooltip and dialog copy). */
@@ -94,6 +97,7 @@ interface VideoCardActionsProps {
  * @param props - See {@link VideoCardActionsProps}.
  */
 export function VideoCardActions({
+  video,
   videoId,
   title,
   youtubeUrl,
@@ -187,7 +191,7 @@ export function VideoCardActions({
           </Tooltip>
 
           {/* Watch page — the video, its transcript and related videos */}
-          <WatchPageLink videoId={videoId} title={title} />
+          <WatchPageLink videoId={videoId} title={title} video={video} />
 
           {/* Topic tooltip button */}
           {yearTopic && (
