@@ -156,7 +156,6 @@ export function VideoWatchPage({
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const videoWrapperRef = useRef<HTMLDivElement | null>(null)
-  const stageRef = useRef<HTMLDivElement | null>(null)
   /** Latest position reported by the embed — handed back to the popout player on the way out. */
   const currentTimeRef = useRef(0)
   /** The video's length as the embed reports it, for the watch history's percentage. */
@@ -412,7 +411,10 @@ export function VideoWatchPage({
       void document.exitFullscreen().catch(() => undefined)
       return
     }
-    void stageRef.current?.requestFullscreen?.().catch(() => undefined)
+    // Fullscreen the video wrapper alone (the same element PiP hands off
+    // from), not the whole left stage — a viewer asking for fullscreen wants
+    // the video, not the title/description column beside it.
+    void videoWrapperRef.current?.requestFullscreen?.().catch(() => undefined)
   }, [])
 
   const handleRetry = useCallback(() => {
@@ -495,7 +497,7 @@ export function VideoWatchPage({
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
-          <div ref={stageRef} className="min-w-0 space-y-3 bg-background">
+          <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                 {styleLabel && (

@@ -17,6 +17,53 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎦 The video watch page's fullscreen toggle now fullscreens the video
+  alone, not the whole left-column stage.** Another repeat of the standing
+  autonomous-routine prompt above — as with every prior repeat (reconfirmed
+  fresh this run: 19+ `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already
+  fully built. A subagent scanned all 79 `packages/debate-help-docs` docs
+  with a "Known gaps" section against this file's full history and ranked
+  `internals/video-watch-page.mdx`'s "Fullscreen covers the player *and*
+  its metadata column (the whole left stage), not the video alone" as the
+  best-scoped candidate — small, single-file, concretely reproducible, no
+  product decision or missing infra involved.
+
+  `VideoWatchPage.tsx`'s `handleToggleFullscreen` called
+  `.requestFullscreen()` on `stageRef` — a ref on the outer div wrapping the
+  toolbar, the video, *and* the title/description column below it — instead
+  of `videoWrapperRef`, the tighter ref around just the iframe (the same
+  element the picture-in-picture handoff already uses). Swapped the call to
+  `videoWrapperRef` and removed the now-unused `stageRef` (both its
+  `useRef` and its `ref={stageRef}` prop) rather than leaving dead code
+  behind.
+
+  Vitest-covered:
+  `packages/debate-videos/test/video-watch-page.test.tsx` gets a new
+  `describe("VideoWatchPage fullscreen")` block. Since jsdom has no real
+  Fullscreen API, the test replaces `HTMLElement.prototype.requestFullscreen`
+  with a spy that records which element it was called on, clicks the
+  toolbar's "Fullscreen" button, and asserts the call landed on the video
+  wrapper (the iframe's parent) and not on that element's parent (the old
+  stage) — confirmed to fail against the pre-fix code (asserting the stage
+  instead) before passing against the fix.
+
+  Ran the full verification gate: `bun install`, the updated test file (7
+  passing) plus `packages/debate-videos`'s own `bunx vitest run` (42 files,
+  483 tests), `bun run test` (477 files, 8990 tests passing, repo-wide —
+  one more than before this change, matching the one new passing case),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web`
+  included), and `bun run build:web` (production build succeeded; the
+  build's regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,
+  version}.ts` and `public/service-worker.js` were reverted rather than
+  committed, since nothing they describe changed). No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable. Docs updated: `internals/video-watch-page.mdx`'s Known gaps
+  entry (marked fixed).
+
 - **🔗 A renamed REASON document's old URL now redirects to it instead of
   falling through to "first file."** Another repeat of the standing
   autonomous-routine prompt above — as with every prior repeat (reconfirmed
@@ -199,6 +246,13 @@ _No task currently in progress._
   applicable. Docs updated: `internals/team-rankings.mdx`'s Known gaps
   entry (NDT bullet reworded to describe the new notice; the
   `CURRENT_YEAR` bullet is unchanged and left as a genuine follow-up).
+
+  This slice's code and tests were actually written by a prior run, on an
+  orphaned branch (`claude/gifted-babbage-ix0e8a`) that had no open PR and
+  wasn't reflected in this file — rediscovered and rebased cleanly onto
+  current `master` this run rather than redone from scratch, then verified
+  fresh (same gate as above) and opened as
+  [PR #875](https://github.com/debate/debate-ai.com/pull/875).
 
 - **📇 Quick Cards full-library "clear" now issues one bulk delete instead of
   one per card.** Another repeat of the standing autonomous-routine prompt
