@@ -17,6 +17,67 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔖 Jump to a saved Outline filter preset's origin round when applying
+  it.** Another repeat of the standing autonomous-routine prompt above — as
+  with every prior repeat (per the lost history noted above, and
+  reconfirmed fresh this run), that prompt's own asks are already fully
+  built: 19 `saved_*` D1 tables (`user_settings`/`documents`/`saved_flows`/
+  `saved_rounds` among them) all link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65 entries of
+  `TOOL_RECORD_COLLECTIONS` (`packages/debate-data-sync`) sync their
+  localStorage-backed tool to the account through the generic
+  `saved_tool_records` table, and every tool is already reachable from the
+  `/tools` page, CardMirror's own `MenuBar`/command palette, and the feature
+  catalog. There were no open PRs to build on, so this slice picked up the
+  first item already named in this file's own Follow-ups below:
+  `argument-tree-outline.mdx`'s Known gap that applying a saved outline
+  filter preset only ever changed the filter of whichever round card was
+  already on screen — it never selected or scrolled to a particular round.
+
+  `packages/debate-round/src/state/outlineFilterPresets.ts`'s
+  `OutlineFilterPreset` gets an optional `roundId` field recording which
+  round's outline a preset was saved from (validated in `isValidPreset`,
+  round-trips through the existing `serializeOutlineFilterPresets`/
+  `parseOutlineFilterPresets` JSON column unchanged). `handleSavePreset` in
+  `packages/debate-practice-drills/src/panels/ArgumentTreePanel.tsx` now
+  passes that round's id through `useOutlineFilterPresets`' `addPreset`.
+  The panel's global "Saved filter presets" list (previously just a
+  removable badge per preset) now also makes each preset's name clickable:
+  clicking it applies the preset to its origin round and
+  `scrollIntoView`s that round's card, via a new pure
+  `state/outlineFilterPresetJump.ts#resolvePresetJumpRoundId` (preset +
+  round-card refs in a `useRef` map) that decides whether there's a round
+  left to jump to — `null` for a preset saved before this field existed, or
+  whose origin round's outline was since cleared, in which case the name
+  stays inert and the preset remains usable from any round's own
+  pre-existing "Filter presets" dropdown exactly as before.
+
+  Vitest-covered: `packages/debate-round/test/outlineFilterPresets.test.ts`
+  (new cases — a preset list with/without `roundId` validates, a
+  non-string `roundId` is rejected, `roundId` round-trips through
+  serialize/parse) and a new
+  `packages/debate-practice-drills/test/outlineFilterPresetJump.test.ts`
+  covering `resolvePresetJumpRoundId`'s four cases (round still exists,
+  preset predates tracking, origin round deleted, empty round list). The
+  DOM-touching half (`scrollIntoView`, the `useRef` map, the button's
+  disabled/title state) isn't independently tested, mirroring this
+  package's existing convention for its other localStorage/DOM-bound hooks
+  (e.g. `useOutlineFilterPresets`/`useWordLimitPresets` each only unit-test
+  their pure `storage`-event predicate, not `addPreset`/`removePreset`
+  themselves) — no test in this package renders `ArgumentTreePanel` or any
+  other panel component today.
+
+  Ran the full verification gate: `bun install`, the new/updated test files
+  (32 passing) plus `bun run test` (477 files, 8973 tests passing,
+  repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` included), and `bun run build:web` (production build,
+  succeeded — the pre-existing `no output files found for task
+  debate-editor#build` warning is unrelated `turbo.json` `outputs` config,
+  not a build failure). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable. Docs updated:
+  `argument-tree-outline.mdx`'s Filter presets section (describes the new
+  jump behavior) and Known gaps (entry removed).
+
 - **📎 Offer a download of unreadable CardMirror content instead of just
   discarding it.** Another repeat of the standing autonomous-routine prompt
   above — as with every prior repeat (per the lost history noted above, and
@@ -79,13 +140,6 @@ _No task currently in progress._
 
 ## Follow-ups
 
-- `docs/features/argument-tree-outline.md`'s Known gaps: applying a saved
-  outline filter preset only sets the filter — it doesn't select or scroll
-  to the round it was saved from, so a preset saved while looking at one
-  round still needs that round's card to already be visible to see the
-  effect (`packages/debate-practice-drills/src/panels/ArgumentTreePanel.tsx`'s
-  `applyPreset`, ~line 257). Small, concretely-scoped, not picked up this
-  run only because one slice per run is the standing rule.
 - `docs/internals/quest-streaks.md`'s Known gaps: a day's mission result is
   still computed by a manual button click rather than the existing weekly
   cron (`apps/debate-ai.com/wrangler.jsonc`'s `triggers.crons` /

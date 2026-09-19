@@ -98,8 +98,12 @@ function ensureRemoteLoaded(): Promise<void> {
 export type UseOutlineFilterPresetsResult = {
   presets: OutlineFilterPreset[];
   loaded: boolean;
-  /** Adds a preset. Fails (returns `false`) if the name is a duplicate or the list is already at capacity. */
-  addPreset: (name: string, filter: ArgumentTreeFilter) => boolean;
+  /**
+   * Adds a preset. Fails (returns `false`) if the name is a duplicate or the
+   * list is already at capacity. `roundId`, when given, records which
+   * round's outline the preset was saved from, so it can later be jumped to.
+   */
+  addPreset: (name: string, filter: ArgumentTreeFilter, roundId?: string) => boolean;
   removePreset: (name: string) => void;
 };
 
@@ -150,11 +154,11 @@ export function useOutlineFilterPresets(): UseOutlineFilterPresetsResult {
   }, []);
 
   const addPreset = useCallback(
-    (name: string, filter: ArgumentTreeFilter) => {
+    (name: string, filter: ArgumentTreeFilter, roundId?: string) => {
       const normalized = normalizeOutlineFilterPresetName(name);
       if (presets.some((preset) => normalizeOutlineFilterPresetName(preset.name) === normalized)) return false;
       if (presets.length >= MAX_OUTLINE_FILTER_PRESETS) return false;
-      persist([...presets, { name: name.trim(), filter }]);
+      persist([...presets, { name: name.trim(), filter, ...(roundId ? { roundId } : {}) }]);
       return true;
     },
     [presets, persist],
