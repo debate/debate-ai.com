@@ -10,6 +10,7 @@ import { useState, useEffect } from "react"
 import grab from "grab-url"
 import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills"
 import type { Division, DebateHistory } from "../panels/leaderboard/leaderboardTypes"
+import { hasLiveLeaderboard } from "../panels/leaderboard/leaderboardUtils"
 
 /**
  * Return value from {@link useLeaderboardData}.
@@ -70,7 +71,7 @@ export function useLeaderboardData(
 
   /** Fetches leaderboard rows for the current division+year combination. */
   useEffect(() => {
-    if (division === "NDT") {
+    if (!hasLiveLeaderboard(division)) {
       setData([])
       setLoading(false)
       return
