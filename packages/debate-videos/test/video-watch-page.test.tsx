@@ -160,6 +160,36 @@ describe("VideoWatchPage playback handoff", () => {
     expect(store().startTime).toBe(96.5)
   })
 
+  it("pops out at the video's saved second, not 0, when toggled before any playback report arrives", () => {
+    // Moving the iframe into the PiP window forces it to reload, so the embed
+    // is rebuilt from `resumeSeconds` — seeded from `currentTimeRef` at the
+    // moment of the toggle. Only `infoDelivery` broadcasts ever advance that
+    // ref past its initial value, so toggling PiP in the gap before the first
+    // one arrives must not lose the second the video actually opened at.
+    Object.defineProperty(window, "documentPictureInPicture", {
+      configurable: true,
+      value: { window: null, requestWindow: () => new Promise<Window>(() => {}) },
+    })
+    saveVideoTimestamp(VIDEO_ID, 128)
+    mount()
+
+    // No `reportPlaybackTime` here — the embed's first `infoDelivery`
+    // broadcast never arrives before PiP is toggled.
+    const pipButton = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Pop out picture-in-picture"]',
+    )
+    expect(pipButton).not.toBeNull()
+    act(() => {
+      pipButton!.click()
+    })
+
+    const src = container.querySelector("iframe")?.getAttribute("src") ?? ""
+    expect(new URL(src).searchParams.get("start")).toBe("128")
+
+    unmount()
+    Reflect.deleteProperty(window, "documentPictureInPicture")
+  })
+
   it("hands nothing back when the video was closed rather than left", () => {
     mount()
     reportPlaybackTime(96.5)

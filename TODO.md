@@ -17,6 +17,66 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎬 The video watch page's PiP toggle no longer loses a resumed video's
+  position when toggled before playback reports in.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 19 `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already
+  fully built. There were no open PRs to build on (the branch this routine
+  runs on had already been fully merged to `master` — via other agent
+  runs' branches carrying the same commits — before this run started, so
+  no PR was needed for prior work either). Re-scanned every remaining
+  `packages/debate-help-docs` doc's "Known gaps" section for a still-open,
+  small, concretely-scoped item and picked
+  `internals/video-watch-page.mdx`'s: "a video closed in the first second
+  before any broadcast arrives resumes from 0."
+
+  Investigating that gap found the actual mechanism: `VideoWatchPage.tsx`'s
+  `currentTimeRef` — the ref that both the popout-handoff cleanup and the
+  picture-in-picture toggle read the "current position" from — was seeded
+  to a hard `0` on mount rather than to the video's own resolved saved
+  position, and only ever advanced once YouTube's first `infoDelivery`
+  broadcast arrived. The popout-handoff path already guarded against this
+  (`if (seconds > 0 ...)`, so a stray `0` there never overwrote a real saved
+  position), but `handleTogglePip`'s `setResumeSeconds(currentTimeRef.current)`
+  has no such guard, and moving the iframe into the PiP window resets its
+  navigation state, forcing a reload from `resumeSeconds`. Toggling PiP
+  before the first `infoDelivery` broadcast therefore reopened the popped-out
+  embed at `0` instead of wherever the video had actually opened.
+
+  Fix is one seed: the mount effect in
+  `packages/debate-videos/src/panels/watch/VideoWatchPage.tsx` now reads the
+  store's resolved `startTime` right after `setActiveVideo` and assigns it to
+  `currentTimeRef.current` (previously hard-coded to `0`) in the same place
+  it already used that value for `startSeconds` — one extra line, no new
+  state, no change to the normal path once `infoDelivery` starts reporting.
+
+  Vitest-covered:
+  `packages/debate-videos/test/video-watch-page.test.tsx` gets a new case
+  that opens a video at a saved timestamp, toggles PiP (via a stubbed
+  `window.documentPictureInPicture`) before ever dispatching a simulated
+  `infoDelivery` message, and asserts the iframe's rebuilt `src` still opens
+  at the saved second — confirmed to fail (asserting `null` instead of the
+  saved second) against the pre-fix code, then pass against the fix.
+
+  Ran the full verification gate: `bun install`, the updated test file (6
+  passing) plus `packages/debate-videos`'s test file directly, `bun run test`
+  (repo-wide, 477 files / 8980 tests passing — same counts as before this
+  change, since this only adds one new passing case), `bunx turbo run
+  typecheck` (17/17 packages green, `debate-ai-web` included), and `bun run
+  build:web` (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-watch-page.mdx`'s Known gaps entry (marked
+  fixed, and the section reformatted from one paragraph into a bulleted
+  list so a fixed item can be struck through without reflowing the other
+  two).
+
 - **📇 Quick Cards full-library "clear" now issues one bulk delete instead of
   one per card.** Another repeat of the standing autonomous-routine prompt
   above — as with every prior repeat (reconfirmed fresh this run: 19
