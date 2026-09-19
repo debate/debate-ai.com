@@ -126,5 +126,11 @@ empty table with no explanation — the error state existed but was unreachable.
   `LeaderboardEntry` simply comes back without `debateElo`.)
 - `CURRENT_YEAR` is hardcoded. Each new season needs it bumped, or `/rank`
   serves the new year from the historical Elo-only path.
-- NDT appears as a division tab but has no ranking source; the hook
-  short-circuits it to an empty table.
+- NDT has no bid-list or Elo data source (`DIVISION_CONFIG`'s
+  `hasLiveLeaderboard: false`), so `useLeaderboardData` short-circuits it to
+  an empty row set and `RankingsLeaderboardPanel` renders the champion
+  banner (when history exists for the selected season) plus a "no live team
+  leaderboard is published" notice instead of a table — closed as of this
+  writing; previously the panel rendered nothing for NDT when a season had
+  no champion/topic data either, which looked indistinguishable from a
+  loading or broken state.
