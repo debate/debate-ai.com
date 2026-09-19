@@ -34,6 +34,12 @@ export const DIVISION_CONFIG: {
   topicKey: keyof YearData;
   championKey: keyof YearData;
   logoSrc: string;
+  /**
+   * Whether a live per-team leaderboard data source exists for this
+   * division. NDT has no TOC bid list or DebateDrills Elo dataset behind
+   * it — only the historical champion/topic data shown in the banner.
+   */
+  hasLiveLeaderboard: boolean;
 }[] = [
   {
     value: "VPF",
@@ -41,6 +47,7 @@ export const DIVISION_CONFIG: {
     topicKey: "pf_topic",
     championKey: "pf_champion",
     logoSrc: "https://i.imgur.com/92V0FBF.png",
+    hasLiveLeaderboard: true,
   },
   {
     value: "VLD",
@@ -48,6 +55,7 @@ export const DIVISION_CONFIG: {
     topicKey: "ld_topic",
     championKey: "ld_champion",
     logoSrc: "https://i.imgur.com/3xFjCvO.png",
+    hasLiveLeaderboard: true,
   },
   {
     value: "VCX",
@@ -55,6 +63,7 @@ export const DIVISION_CONFIG: {
     topicKey: "policy_topic",
     championKey: "policy_champion",
     logoSrc: "https://i.imgur.com/CMuiSKj.png",
+    hasLiveLeaderboard: true,
   },
   {
     value: "NDT",
@@ -62,8 +71,20 @@ export const DIVISION_CONFIG: {
     topicKey: "ndt_topic",
     championKey: "ndt_champion",
     logoSrc: "https://i.imgur.com/cFmTAdJ.png",
+    hasLiveLeaderboard: false,
   },
 ];
+
+/**
+ * Whether `division` has a live per-team leaderboard data source, per
+ * {@link DIVISION_CONFIG}. Falls back to `false` for an unrecognized value.
+ */
+export function hasLiveLeaderboard(division: Division): boolean {
+  return (
+    DIVISION_CONFIG.find((d) => d.value === division)?.hasLiveLeaderboard ??
+    false
+  );
+}
 
 /**
  * Tooltip copy describing the Debate Elo rating formula shown on the Elo

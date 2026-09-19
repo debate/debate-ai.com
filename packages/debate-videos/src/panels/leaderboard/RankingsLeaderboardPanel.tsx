@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../ui/primitives/ta
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
+  hasLiveLeaderboard,
   sortEntries,
   type Division,
   type SortKey,
@@ -188,8 +189,8 @@ export function LeaderboardPanel({
               />
             )}
 
-            {/* NDT: champions-only view (no leaderboard rows) */}
-            {division === "NDT" ? (
+            {/* Divisions with no live per-team data source: champions-only view */}
+            {!hasLiveLeaderboard(division) ? (
               championsLoading ? (
                 <div className="flex items-center justify-center min-h-[400px]">
                   <div className="text-center">
@@ -197,7 +198,13 @@ export function LeaderboardPanel({
                     <p className="text-muted-foreground">Loading data...</p>
                   </div>
                 </div>
-              ) : null
+              ) : (
+                <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
+                  No live team leaderboard is published for {divConfig.label}.
+                  Historical champion and topic data is shown above when
+                  available for the selected season.
+                </div>
+              )
             ) : (
               <>
                 {loading ? (
