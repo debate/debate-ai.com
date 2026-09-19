@@ -17,6 +17,64 @@ _No task currently in progress._
 
 ### Completed
 
+- **📇 Quick Cards full-library "clear" now issues one bulk delete instead of
+  one per card.** Another repeat of the standing autonomous-routine prompt
+  above — as with every prior repeat (reconfirmed fresh this run: 19
+  `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already
+  fully built. There were no open PRs to build on. This run first
+  investigated this file's own flagged follow-up —
+  `docs/internals/quest-streaks.mdx`'s "wire mission-result computation to
+  the weekly cron" gap — and confirmed it's more blocked than previously
+  framed: `computeAndSavePersistedDailyMissionResult`
+  (`packages/debate-contributor-progress/src/state/dailyMissionResults.ts`)
+  derives a day's result from `state/contributions.ts`, which is pure
+  browser `localStorage` with no D1 table or server API at all, so the
+  Worker's `scheduled` export (`apps/debate-ai.com/worker/index.ts`) has
+  nothing server-side to iterate — this needs a new D1 table and sync layer
+  (a real backend-architecture decision, including how to migrate existing
+  localStorage data), not a single-PR wiring fix, so it stays a follow-up,
+  reframed below. Re-scanned other `packages/debate-help-docs` "Known gaps"
+  sections instead and picked `quick-cards-cloud-save.mdx`'s: a full-library
+  "clear" issued one `DELETE /api/quick-cards/[cardId]` call per card
+  instead of a single bulk request, unlike `/api/tool-records/[collection]`'s
+  existing bulk-clear route for the sidebar's other localStorage-backed
+  tools.
+
+  `apps/debate-ai.com/app/api/quick-cards/route.ts` gets a new `DELETE`
+  handler (mirroring `/api/tool-records/[collection]`'s) that deletes every
+  `saved_quick_cards` row for the signed-in user in one query.
+  `packages/debate-editor/src/editor/quick-cards-client.ts` gets a matching
+  `clearSavedQuickCardsFromAccount()`. `quick-cards-store.ts`'s `clear()`
+  now calls it once instead of looping `deleteSavedQuickCardFromAccount`
+  per id.
+
+  Vitest-covered: `packages/debate-editor/test/quick-cards-client.test.ts`
+  gets a new `describe` block for `clearSavedQuickCardsFromAccount` (the
+  right endpoint/method, and the server-error-message passthrough).
+  `packages/debate-editor/test/quick-cards-store.test.ts`'s existing clear
+  test now asserts a single bulk-clear call instead of one delete per card
+  (its shared `stubFetch` helper learned to route a DELETE to the bare
+  `/api/quick-cards` endpoint to a new `onClear` callback). The API route's
+  `DELETE` handler itself isn't independently tested — no route handler in
+  `apps/debate-ai.com/app/api` has a test file in this repo (0 found), so
+  this doesn't add the first one.
+
+  Ran the full verification gate: `bun install`, the two updated test files
+  (34 passing) plus `packages/debate-editor`'s own `bunx vitest run` (37
+  files, 794 tests), `bun run test` (477 files, 8980 tests passing,
+  repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` included), and `bun run build:web` (production build,
+  succeeded — the pre-existing `no output files found for task
+  debate-editor#build` warning is unrelated `turbo.json` `outputs` config,
+  not a build failure). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable. Docs updated:
+  `quick-cards-cloud-save.mdx`'s feature description and Known gaps (entry
+  removed).
+
 - **🖨️ Print/Export the shortcuts reference scoped to an active search,
   instead of always the full list.** Another repeat of the standing
   autonomous-routine prompt above — as with every prior repeat (reconfirmed
@@ -187,12 +245,18 @@ _No task currently in progress._
 
 ## Follow-ups
 
-- `docs/internals/quest-streaks.md`'s Known gaps: a day's mission result is
+- `docs/internals/quest-streaks.mdx`'s Known gaps: a day's mission result is
   still computed by a manual button click rather than the existing weekly
   cron (`apps/debate-ai.com/wrangler.jsonc`'s `triggers.crons` /
-  `worker/index.ts`'s `scheduled` export). Larger than the item above —
-  needs iterating every synced account inside the scheduled handler — so
-  left as a follow-up rather than this run's slice.
+  `worker/index.ts`'s `scheduled` export). Investigated this run and it's
+  blocked on more than just wiring: `computeAndSavePersistedDailyMissionResult`
+  derives a result from `state/contributions.ts`, which is pure browser
+  `localStorage` with no D1 table or server API — the Worker's `scheduled`
+  export has no server-side data to iterate at all. Closing this for real
+  needs a new D1 table plus a sync layer for contributions (what to persist,
+  how to migrate a device's existing localStorage history), which is a
+  backend-architecture decision this routine defers rather than one small
+  PR's worth of wiring. Left as a follow-up, not picked up this run.
 
 ---
 
