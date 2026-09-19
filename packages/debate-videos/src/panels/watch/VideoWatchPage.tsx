@@ -232,8 +232,14 @@ export function VideoWatchPage({
     setActiveVideo(videoId, title, videoMeta)
     setTheaterVideoId(videoId)
     // `setActiveVideo` resolves the video's saved timestamp; read it back
-    // rather than duplicating that lookup here.
-    setStartSeconds({ videoId, seconds: useVideoPlayerStore.getState().startTime })
+    // rather than duplicating that lookup here. Seed the tracked position
+    // with it too: until the embed's first `infoDelivery` broadcast arrives,
+    // this is the only position known, and `handleTogglePip` reads this same
+    // ref with no fallback — popping into PiP in that window should reopen
+    // at the video's actual second, not a hard 0.
+    const resolvedStartSeconds = useVideoPlayerStore.getState().startTime
+    currentTimeRef.current = resolvedStartSeconds
+    setStartSeconds({ videoId, seconds: resolvedStartSeconds })
     return () => {
       const store = useVideoPlayerStore.getState()
       const seconds = currentTimeRef.current
