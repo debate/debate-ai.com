@@ -79,7 +79,11 @@ _No task currently in progress._
   anywhere in this repo, so that step was skipped as not applicable. Docs
   updated: `internals/reason-docs-sidebar.mdx`'s Known gaps entry (marked
   fixed) and its "The URL is the file's name" section's "Forgiving" bullet
-  (describes the new one-rename-back redirect).
+  (describes the new one-rename-back redirect). Unlike every prior repeat of
+  this routine, the branch this ran on had *not* already been merged to
+  `master` by another agent run, so — per this routine's own PR workflow —
+  this is the first slice of it to actually need one:
+  [PR #874](https://github.com/debate/debate-ai.com/pull/874).
 
 - **🎬 The video watch page's PiP toggle no longer loses a resumed video's
   position when toggled before playback reports in.** Another repeat of the
