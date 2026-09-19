@@ -27,10 +27,36 @@ export interface ShortcutsReferenceGroup {
 const EM_DASH = '—';
 
 /**
+ * Filters groups down to rows whose label or keybinding text contains
+ * `query` (case-insensitive substring, same predicate the on-screen
+ * modal's live search uses in `reference-ui.ts`'s `applyFilter`), and
+ * drops any group left with no rows. An empty/whitespace-only query
+ * returns `groups` unchanged. Shared by Print/Export so they honor an
+ * active search instead of always emitting the full reference.
+ */
+export function filterShortcutsReferenceGroups(
+  groups: ShortcutsReferenceGroup[],
+  query: string,
+): ShortcutsReferenceGroup[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return groups;
+  return groups
+    .map((group) => ({
+      title: group.title,
+      rows: group.rows.filter(
+        (row) =>
+          row.label.toLowerCase().includes(q) ||
+          row.keyText.toLowerCase().includes(q),
+      ),
+    }))
+    .filter((group) => group.rows.length > 0);
+}
+
+/**
  * Renders the reference as plain text: a title, then one heading per
- * non-empty group with its rows key-aligned underneath. Matches the
- * on-screen modal's content exactly (same groups/rows, no search
- * filter applied — an export/print is always the full reference).
+ * non-empty group with its rows key-aligned underneath. Callers that
+ * want it scoped to a search first pass `groups` through
+ * `filterShortcutsReferenceGroups`.
  */
 export function formatShortcutsReferenceText(
   groups: ShortcutsReferenceGroup[],
