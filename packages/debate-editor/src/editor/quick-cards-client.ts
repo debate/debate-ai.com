@@ -63,3 +63,11 @@ export async function deleteSavedQuickCardFromAccount(
     throw new Error(await readErrorMessage(res, 'Failed to remove this synced quick card.'));
   }
 }
+
+/** Deletes every synced quick card from the current user's account in one call. Throws on failure, `401` included. */
+export async function clearSavedQuickCardsFromAccount(endpoint = '/api/quick-cards'): Promise<void> {
+  const res = await fetch(endpoint, { method: 'DELETE' });
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, 'Failed to clear your synced quick cards.'));
+  }
+}

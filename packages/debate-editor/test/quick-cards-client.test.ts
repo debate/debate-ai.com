@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  clearSavedQuickCardsFromAccount,
   deleteSavedQuickCardFromAccount,
   listSavedQuickCards,
   saveQuickCardToAccount,
@@ -127,5 +128,27 @@ describe('deleteSavedQuickCardFromAccount', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(deleteSavedQuickCardFromAccount('card-1')).rejects.toThrow('Something broke.');
+  });
+});
+
+describe('clearSavedQuickCardsFromAccount', () => {
+  it('DELETEs the unscoped endpoint', async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    await clearSavedQuickCardsFromAccount();
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/quick-cards', { method: 'DELETE' });
+  });
+
+  it("throws the server's error message on failure", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'Something broke.' }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(clearSavedQuickCardsFromAccount()).rejects.toThrow('Something broke.');
   });
 });
