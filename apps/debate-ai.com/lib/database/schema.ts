@@ -80,6 +80,12 @@ export const documents = sqliteTable(
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     parentId: integer("parent_id"),
     isFolder: integer("is_folder", { mode: "boolean" }).notNull().default(false),
+    // The file's own slug just before its most recent rename — lets a
+    // bookmarked `/reason-editor?doc=<old slug>` link keep resolving after a
+    // title edit changes it. `lib/reason-docs/doc-path.ts#findItemByRef`
+    // reads it as a fallback; null until the first rename, and only ever
+    // remembers one rename back (not a full history).
+    previousSlug: text("previous_slug"),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),

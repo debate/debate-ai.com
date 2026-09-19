@@ -17,6 +17,74 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔗 A renamed REASON document's old URL now redirects to it instead of
+  falling through to "first file."** Another repeat of the standing
+  autonomous-routine prompt above — as with every prior repeat (reconfirmed
+  fresh this run: 19 `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already fully
+  built. There were no open PRs to build on. A general Explore pass across
+  three fresh `packages/debate-help-docs` "Known gaps" candidates (an
+  in-grid flow-annotation indicator, a synced-deck-management UI, and this
+  one) found the other two either not actually small — the "ebb flow" grid
+  package has no dependency on the annotation data's package, and the two
+  address boxes/cells by incompatible schemes — or premised on UI that no
+  longer exists (the "deck scope picker" doc referenced was retired months
+  ago, with zero live call sites for deck create/rename/delete). This run
+  picked `internals/reason-docs-sidebar.mdx`'s remaining small, concrete one:
+  "Renaming a file changes its URL, and nothing redirects the old one."
+
+  `documents` gets a nullable `previous_slug` column
+  (`apps/debate-ai.com/drizzle/0046_document_previous_slug.sql`, hand-written
+  to match this repo's migration lineage rather than `drizzle-kit generate`'s
+  output — its tracked snapshot history is stale relative to the files
+  already on disk past `0035`, the same drift `lib/database/migration-sql.ts`'s
+  own header already documents). `PUT /api/doc/documents/:id` now sets it to
+  `slugifySegment(doc.title)` — the file's own slug just before this edit —
+  whenever a title change actually moves the slug; a capitalization/
+  punctuation-only edit that resolves to the same slug leaves it alone, and an
+  old title with nothing sluggable in it (already falls back to the row id)
+  has nothing worth remembering. `lib/reason-docs/doc-path.ts#findItemByRef`
+  gets a new `previousPath` fallback: for each file, its current path with
+  only the leaf segment swapped back to `previousSlug`, tried the same
+  exact-then-suffix way the current path already is, after both of those come
+  up empty and before the folder/first-file fallback. This remembers one
+  rename back, not a full history, and only a file's own leaf rename — a
+  folder rename (which would move every path under it) isn't tracked, matching
+  the doc's own scoped wording ("Renaming *a file*").
+
+  Vitest-covered: `apps/debate-ai.com/lib/reason-docs/__tests__/doc-path.test.ts`
+  gets a new `describe` block (5 cases — old bare name and old full path both
+  still resolve while the new name also does, only one rename back is
+  remembered, an old name two files' *previous* paths would now share is
+  refused rather than guessed, a never-renamed file is unaffected, and a
+  folder's own rename is not considered). The route handler's `previousSlug`
+  write itself isn't independently tested — no route handler anywhere in
+  `apps/debate-ai.com/app/api` has a test file in this repo (0 found, matching
+  prior runs' finding), so this doesn't add the first one; the pure slug-diff
+  condition it applies (`oldSlug && oldSlug !== slugifySegment(nextTitle)`) is
+  a direct, easily-audited call into the now-tested `slugifySegment`.
+
+  Ran the full verification gate: `bun install`, the new/updated test file
+  (26 passing, 5 new cases) plus this package's own
+  `bunx vitest run lib/reason-docs` (5 files, 101 tests), `bun run test` (477
+  files, 8986 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
+  packages green, `debate-ai-web` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/reason-docs-sidebar.mdx`'s Known gaps entry (marked
+  fixed) and its "The URL is the file's name" section's "Forgiving" bullet
+  (describes the new one-rename-back redirect). Unlike every prior repeat of
+  this routine, the branch this ran on had *not* already been merged to
+  `master` by another agent run, so — per this routine's own PR workflow —
+  this is the first slice of it to actually need one:
+  [PR #874](https://github.com/debate/debate-ai.com/pull/874).
+
 - **🎬 The video watch page's PiP toggle no longer loses a resumed video's
   position when toggled before playback reports in.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat

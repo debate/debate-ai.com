@@ -157,6 +157,54 @@ describe("findItemByRef", () => {
     expect(findItemByRef(TREE, "does-not-exist")).toBeNull()
     expect(findItemByRef(TREE, "   ")).toBeNull()
   })
+
+  describe("a renamed file's stale link", () => {
+    it("still opens the file, by its old bare name or old full path", () => {
+      const renamed: PathItem[] = [
+        { id: 1, title: "Impacts", parentId: null, isFolder: true },
+        { id: 2, title: "Warming Impacts 1AC.docx", parentId: 1, isFolder: false, previousSlug: "warming-1ac" },
+        { id: 3, title: "Economy 1AC.docx", parentId: 1, isFolder: false },
+      ]
+      expect(findItemByRef(renamed, "warming-1ac")?.id).toBe(2)
+      expect(findItemByRef(renamed, "impacts/warming-1ac")?.id).toBe(2)
+      // The new name resolves too — the fallback doesn't replace the normal path.
+      expect(findItemByRef(renamed, "impacts/warming-impacts-1ac")?.id).toBe(2)
+    })
+
+    it("only remembers one rename back", () => {
+      // Renamed twice: previousSlug holds only the slug from just before the
+      // *second* rename, so a link from before the first no longer resolves.
+      const twiceRenamed: PathItem[] = [
+        { id: 1, title: "Final Name 1AC", parentId: null, isFolder: false, previousSlug: "middle-name-1ac" },
+      ]
+      expect(findItemByRef(twiceRenamed, "middle-name-1ac")?.id).toBe(1)
+      expect(findItemByRef(twiceRenamed, "original-name-1ac")).toBeNull()
+    })
+
+    it("refuses an old name two files would now share, rather than guessing", () => {
+      const clashing: PathItem[] = [
+        { id: 1, title: "Impacts 1AC v2", parentId: null, isFolder: false, previousSlug: "warming-1ac" },
+        { id: 2, title: "Impacts 1AC v3", parentId: null, isFolder: false, previousSlug: "warming-1ac" },
+      ]
+      expect(findItemByRef(clashing, "warming-1ac")).toBeNull()
+    })
+
+    it("does nothing for a file that was never renamed", () => {
+      expect(findItemByRef(TREE, "warming-1ac")?.id).toBe(2)
+      const untouched: PathItem[] = [{ id: 5, title: "Untouched", parentId: null, isFolder: false }]
+      expect(findItemByRef(untouched, "untouched")?.id).toBe(5)
+      expect(findItemByRef(untouched, "old-name")).toBeNull()
+    })
+
+    it("is never considered for a folder", () => {
+      const folderRenamed: PathItem[] = [
+        { id: 1, title: "New Folder Name", parentId: null, isFolder: true, previousSlug: "old-folder-name" },
+        { id: 2, title: "1AC", parentId: 1, isFolder: false },
+      ]
+      // A folder rename isn't tracked here — only a file's own leaf rename is.
+      expect(findItemByRef(folderRenamed, "old-folder-name")).toBeNull()
+    })
+  })
 })
 
 describe("firstFileIn", () => {
