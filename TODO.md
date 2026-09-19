@@ -17,6 +17,53 @@ _No task currently in progress._
 
 ### Completed
 
+- **🖨️ Print/Export the shortcuts reference scoped to an active search,
+  instead of always the full list.** Another repeat of the standing
+  autonomous-routine prompt above — as with every prior repeat (reconfirmed
+  fresh this run: 19 `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already
+  fully built. There were no open PRs to build on. The prior run's two
+  fresh candidates (outline-preset jump, CardMirror download) are both
+  already fixed, so this run re-scanned every `packages/debate-help-docs`
+  doc's "Known gaps" section for a still-open, small, concretely-scoped
+  item (two more turned out stale — already fixed in code, not flagged
+  here) and picked `legacy-verbatim-shortcuts.mdx`'s: "Print/Export always
+  render the full reference, ignoring an active search filter."
+
+  `packages/debate-editor/src/editor/reference-export.ts` gets a new pure
+  `filterShortcutsReferenceGroups(groups, query)` — same case-insensitive
+  label-or-keybinding substring predicate the on-screen modal's
+  `applyFilter` already used for DOM show/hide, now reusable off the DOM.
+  `reference-ui.ts`'s Print/Export/Download-PDF button handlers in
+  `render()` now call it with the live `this.searchQuery` at click time
+  (via a `filteredGroups()` closure) instead of passing the unfiltered
+  `groups` straight through to `print()`/`exportAsText()`/`exportAsPdf()`;
+  their button `title`s dropped the now-inaccurate "full" wording.
+
+  Vitest-covered: `packages/debate-editor/test/reference-export.test.ts`
+  gets a new `describe` block (5 cases — empty/whitespace query is a
+  no-op, matches by label, matches by keybinding text, a group with every
+  row filtered out is dropped entirely, no match returns `[]`).
+  `reference-ui.ts`'s click-handler wiring itself isn't independently
+  tested, matching this file's existing convention (no test in this
+  package renders `ReferenceModal` — `applyFilter`'s own DOM behavior next
+  to it isn't unit-tested either).
+
+  Ran the full verification gate: `bun install`, the new/updated test file
+  (10 passing) plus `packages/debate-editor`'s own `bunx vitest run` (37
+  files, 792 tests), `bunx tsc --noEmit` (clean), `bun run test` (477
+  files, 8978 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
+  packages green, `debate-ai-web` included), and `bun run build:web`
+  (production build, succeeded — the pre-existing `no output files found
+  for task debate-editor#build` warning is unrelated `turbo.json`
+  `outputs` config, not a build failure). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not
+  applicable. Docs updated: `legacy-verbatim-shortcuts.mdx`'s Known gaps
+  entry (fixed, folded into the feature description).
+
 - **🔖 Jump to a saved Outline filter preset's origin round when applying
   it.** Another repeat of the standing autonomous-routine prompt above — as
   with every prior repeat (per the lost history noted above, and
