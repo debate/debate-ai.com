@@ -17,6 +17,77 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧭 The tool-catalog consistency test now walks `app/` itself, instead of
+  only cross-checking the three hand-maintained catalogs against each
+  other.** Another repeat of the standing autonomous-routine prompt above
+  — as with every prior repeat (reconfirmed fresh this run: 19+ `saved_*`
+  D1 tables link to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`),
+  all 65 `TOOL_RECORD_COLLECTIONS` entries sync through
+  `saved_tool_records`, and every tool is reachable from `/tools`,
+  CardMirror's `MenuBar`/command palette, and the feature catalog), that
+  prompt's own asks are already fully built. There were no open PRs to
+  build on, and this branch's own prior history (PRs #869–#875) had already
+  landed on `master` by the time this run started, so this is a fresh slice
+  on top of current `master`. A dedicated subagent scanned every
+  `packages/debate-help-docs` doc's "Known gaps"/"Known limitations"
+  section (79 files have one) for a still-open, concretely-scoped,
+  single-PR item, cross-checking each candidate against current source
+  rather than trusting the doc text, and turned up several stale entries
+  (already fixed in code without the doc being updated: the outline-preset
+  jump-to-round gap, a roster-analytics gap, a feature-catalog drift gap,
+  and a breadcrumb multi-pane gap) before landing on
+  `internals/features-page.mdx`'s: "The catalog is a hand-maintained
+  registry, so a new route has to be added to it as well. Nothing fails if
+  it isn't — the tests assert the catalog's internal consistency, not that
+  it covers every file under `apps/debate-ai.com/app/`, because the app is
+  outside the packages Vitest runs over."
+
+  Confirmed still open: `apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
+  only cross-checked `ALL_TOOLS` (`/tools`), `APP_FEATURES` (`/features`),
+  and `WORKSPACE_LINKS` (the Reason Editor's Workspace menu) against each
+  other — a route added to `app/` and to none of the three reached no
+  catalog at all with nothing to catch it.
+
+  That test file gains a `findAppPageRoutes` walker (plain `node:fs`/
+  `node:path`, mirroring the existing precedent in
+  `lib/database/__tests__/migration-sql.test.ts`) that collects every
+  route under `apps/debate-ai.com/app/` with its own `page.tsx` (skipping
+  `api/`, which has none), filtered down to static routes — a
+  dynamic-segment route like `/cards/leaderboard/[contributorId]` is a
+  detail page under an already-covered static parent, not a distinct
+  catalog entry, so it's excluded from the requirement rather than added to
+  it. A new test asserts every one of those 62 static routes appears in at
+  least one of the three catalogs, except a documented
+  `ROUTES_WITHOUT_A_CATALOG_ENTRY` (the homepage, `/admin`, the two
+  auth-flow steps, `/legal/privacy`, `/login` — already established
+  elsewhere in this same file as "a step on the way to a feature rather
+  than a feature" — and the editor's own two settings pages; `/features`
+  and `/tools` are the catalog pages themselves, and `/tools` needed no
+  entry in the exclude set since `WORKSPACE_LINKS`'s own trailing "All
+  Tools" link already covers it). A companion test keeps that exclude set
+  honest the same way the file's pre-existing exclude sets already are —
+  each excluded route must really be absent from every catalog — and a
+  canary test guards against the walker silently resolving to the wrong
+  directory and returning nothing.
+
+  Vitest-covered by construction: the new checks are tests, not
+  implementation with tests bolted on. Confirmed they fail correctly before
+  the fix — deliberately mis-adding `/tools` to the exclude set (already
+  covered via `WORKSPACE_LINKS`) failed the "keeps ... honest" case with a
+  clear message during development, then passed once removed.
+
+  Ran the full verification gate: `bun install`, the updated test file (8
+  passing, up from 5) plus `bun run test` (477 files, 8992 tests passing,
+  repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` included), and `bun run build:web` (production build
+  succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/features-page.mdx`'s Known gaps entry (marked fixed)
+  and Tests list.
+
 - **🔗 A renamed REASON document's old URL now redirects to it instead of
   falling through to "first file."** Another repeat of the standing
   autonomous-routine prompt above — as with every prior repeat (reconfirmed
