@@ -15,6 +15,16 @@
  * whose outline doesn't have a matching speech/side/contributor/etc. value
  * simply leaves that field with no match, the same as picking it by hand.
  *
+ * `roundId` optionally records which round's outline the preset was saved
+ * from, so `ArgumentTreePanel`'s global "Saved filter presets" list can
+ * jump to (select and scroll to) that round when the preset is applied from
+ * there, rather than only ever changing the filter of whichever round card
+ * happens to already be on screen — closing
+ * `packages/debate-help-docs/content/docs/features/argument-tree-outline.mdx`'s
+ * "doesn't select or scroll to a particular round" Known gap. It's absent
+ * on presets saved before this field existed, and on those the panel falls
+ * back to the pre-existing per-round behavior.
+ *
  * @module state/outlineFilterPresets
  */
 
@@ -24,6 +34,8 @@ export type OutlineFilterPreset = {
   /** User-chosen label for this filter combination, e.g. "Unanswered AC turns". */
   name: string;
   filter: ArgumentTreeFilter;
+  /** The round this preset was saved from, if saved after this field was introduced. */
+  roundId?: string;
 };
 
 export type OutlineFilterPresetsPayload = {
@@ -85,6 +97,7 @@ export function isValidArgumentTreeFilter(value: unknown): value is ArgumentTree
 function isValidPreset(value: unknown): value is OutlineFilterPreset {
   if (typeof value !== "object" || value === null) return false;
   const preset = value as Record<string, unknown>;
+  if (!isOptionalString(preset.roundId)) return false;
   return isValidOutlineFilterPresetName(preset.name) && isValidArgumentTreeFilter(preset.filter);
 }
 

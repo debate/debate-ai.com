@@ -25,6 +25,14 @@ Each round card has a "Filter presets" row: apply a saved preset, or save
 the round's current filter combination under a new name. Local-first and
 best-effort account-synced through the same `/api/settings` row.
 
+The panel also has one global "Saved filter presets" list, above every
+round card. There, each preset's name records which round it was saved
+from; clicking it applies that filter to its origin round and scrolls that
+round's card into view, so a preset saved from a round that isn't currently
+on screen is still reachable. A preset saved before this existed, or whose
+origin round's outline was since cleared, stays inert there — it's still
+usable from any round's own "Filter presets" dropdown.
+
 ## Tagging an argument from the flow grid
 
 Right-clicking any row in the live flow grid offers **Tag Argument…**,
@@ -54,5 +62,3 @@ state/argumentTrees.ts (localStorage: argumentTrees)
 
 - Tagging is row-level, not per-speech.
 - The contributor field is a free-form typed id, not an authenticated user.
-- Applying a preset only sets the round's filter; it doesn't select or
-  scroll to a particular round.
