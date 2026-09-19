@@ -86,7 +86,8 @@ _No task currently in progress._
   nothing they describe changed). No `lint`/`format:check` script exists
   anywhere in this repo, so that step was skipped as not applicable. Docs
   updated: `internals/features-page.mdx`'s Known gaps entry (marked fixed)
-  and Tests list.
+  and Tests list. Shipped as
+  [PR #876](https://github.com/debate/debate-ai.com/pull/876).
 
 - **🔗 A renamed REASON document's old URL now redirects to it instead of
   falling through to "first file."** Another repeat of the standing
@@ -522,6 +523,30 @@ _No task currently in progress._
   live requests to the wrong data path. Needs a human decision about the
   actual rollover rule (or at minimum an explicit ops alert/checklist item)
   before it's a mechanical fix.
+
+- Four `packages/debate-help-docs` "Known gaps" entries were found stale
+  during this run's candidate search — each describes a gap the code no
+  longer has, but the doc text was never updated when it was fixed
+  elsewhere. Not picked up as this run's slice (a doc-only correction, not
+  the code fix itself), but worth a future small doc-accuracy pass:
+  - `internals/argument-tree-outline.mdx`: still describes the
+    preset-doesn't-scroll-to-a-round gap that `features/argument-tree-outline.mdx`
+    and this file's own "Completed" entry above already record as fixed
+    (`outlineFilterPresetJump.ts`).
+  - `features/coaching-programs.mdx`: still describes roster analytics not
+    folding in drill-completion/practice-round counts, which
+    `internals/coaching-programs.mdx`'s "Per-member drill/practice-round
+    status" section shows was already built.
+  - `internals/news-stream.mdx`: still describes `APP_FEATURES` existing as
+    "one of three hand-synced copies," but the catalog was already unified
+    into `packages/debate-feature-catalog` (see this file's own "One shared
+    catalog" section) — only one copy exists now.
+  - `features/reason-editor-outline-nav.mdx`: still describes the
+    heading-breadcrumb bar as single-doc-only with "multi-pane... doesn't
+    have one yet," but `debate-editor/src/editor/multi-pane-shell.ts`
+    already mounts a per-pane `HeadingBreadcrumbBar`; only an adjacent
+    module comment in `heading-breadcrumb-bar.ts` still calls this out as
+    unbuilt.
 
 ---
 
