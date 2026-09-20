@@ -17,6 +17,71 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎯 Related-videos' "same tournament" pass no longer pulls in a video that
+  merely mentions the tournament in its description.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 19+ `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), `TOOL_RECORD_COLLECTIONS`
+  entries sync every localStorage-backed tool without its own dedicated
+  table to the account, and every tool is reachable from `/tools`,
+  CardMirror's `MenuBar`/command palette, and the feature catalog), that
+  prompt's own asks are already fully built. There was one open PR (#880,
+  "Merge claude/gifted-babbage-ix0e8a into master") — confirmed fully
+  superseded (its single commit is identical, file-for-file, to the
+  already-merged #875) and closed as such rather than built on. No other
+  unfinished branch work existed, so this run had a subagent scan
+  `packages/debate-help-docs` "Known gaps" sections for a fresh,
+  concretely-scoped candidate, verifying each against current source rather
+  than trusting the doc text. It picked
+  `internals/video-watch-page.mdx`'s: "the tournament pass is a `LIKE`
+  search on the tournament name, so a tournament whose name appears in
+  unrelated descriptions pulls those in too."
+
+  Confirmed still open: `getRelatedVideos`
+  (`apps/debate-ai.com/lib/videos/video-repository.ts`) built its "same
+  tournament" pass as `{ source: "all", q: tournamentName, sort: "Recency" }`
+  — routing the tournament name through the generic `q` free-text filter,
+  which matches against title, channel *and description* (`searchText` in
+  the JSON fallback, a `LIKE` over the same concatenation in SQL), even
+  though every video row already carries its own dedicated `tournament`
+  field/column that nothing filtered on directly.
+
+  `VideoQueryParams` (`packages/debate-data-sync/src/videos/video-query.ts`)
+  gains a `tournament?: string | null` field, applied in `filterVideoRows`
+  as a case-insensitive substring match against `row.tournament` alone (not
+  `searchText`). `buildConditions`
+  (`apps/debate-ai.com/lib/videos/video-repository.ts`) mirrors it as a
+  `LIKE` on the `videos.tournament` column for the SQL backend, matching the
+  file's existing categoryKey/style predicate pattern. `getRelatedVideos`'s
+  tournament pass now passes `{ tournament: tournamentName, ... }` instead
+  of `{ q: tournamentName, ... }`.
+
+  Vitest-covered:
+  `packages/debate-data-sync/test/video-query.test.ts` gains two new
+  `filterVideoRows` cases — a case-insensitive tournament match that
+  excludes a different-tournament video whose description merely mentions
+  the search term (the exact false positive the doc described, shown
+  side-by-side against `q`'s broader match on the same input to make the
+  fix's effect explicit), and a row with no tournament value is dropped when
+  a tournament filter is set. The SQL `buildConditions` mirror and
+  `getRelatedVideos`'s two-line wiring change aren't independently tested —
+  matching this file's own header comment that the filter semantics are
+  "expressed twice... and [the JSON fallback] is what the unit tests
+  exercise," the same convention its existing categoryKey/style/source
+  predicates already follow; no test file for `video-repository.ts` exists
+  in this repo (getRelatedVideos/getVideoPage have never had one).
+
+  Ran the full verification gate: `bun install`, the updated test file (39
+  passing, up from 37) plus `debate-data-sync`'s own `bunx vitest run` (34
+  files, 618 tests) and `bunx tsc --noEmit` (clean), `bun run test` (478
+  files, 9001 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
+  packages green, `debate-ai-web` included), and `bun run build:web`
+  (production build). No `lint`/`format:check` script exists anywhere in
+  this repo, so that step was skipped as not applicable. Docs updated:
+  `internals/video-watch-page.mdx`'s Known gaps entry (split in two; the
+  `LIKE`-across-descriptions half marked fixed, the "query passes, not a
+  relevance model" framing left open as a genuine, larger follow-up).
+
 - **🔁 Eleven tool-record collections were syncing to two different D1 tables
   at once — one of them dead.** Another repeat of the standing
   autonomous-routine prompt above — reconfirmed again this run: 31 `saved_*`
