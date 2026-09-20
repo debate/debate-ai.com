@@ -432,6 +432,11 @@ each invisible until something renders them again — see **Known gaps**.
 - `apps/debate-ai.com/lib/__tests__/sign-in-prompt-preference.test.ts` — the
   persistent opt-out: defaults to "ask", persists across reads, clears, and
   never throws when `localStorage` is unavailable or refuses the read/write.
+- `apps/debate-ai.com/lib/tools/__tests__/tool-sync-status.test.ts` —
+  `ToolSyncStatusPanel`'s `summarizeToolSyncFailures`: a genuine failure
+  surfaces with its tool's label and link, a signed-out-shaped
+  `synced: false` with no `error` is not mistaken for one, a stale collection
+  key is dropped, and multiple failures sort by label.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
   videos and reports, with the legacy bare-id format cases: a store written in
   the old format still reads, keeps its order, de-duplicates against the new
@@ -472,19 +477,21 @@ each invisible until something renders them again — see **Known gaps**.
   route refuses it with a 413, and the watcher holds it back from the batch so
   it cannot take its collection's other records down with it. It still saves
   locally, and it syncs if later edited under the cap — but until then it is
-  browser-only and nothing says so. `/settings`' row for that tool used to,
-  including when the watcher found it on a background tick rather than during
-  the tab's initial reconcile (`startToolRecordAutoSync` takes an `onFlush`
-  callback and `useToolRecordSync` folds its results into the same `results`
-  state the reconcile populates, so the row never showed "Synced" after that
-  stopped being true). The reporting is intact; the row that read it is not.
-- **Nothing surfaces the sync any more, and two things can only be reached
-  through it.** A guest who picked "don't ask me again" has no way back short
-  of clearing site data, and a collection whose merge failed has no **Sync
-  now** to retry with — both controls were on `/settings`' **Tool data** list,
-  which went when that page became the card editor's settings. Re-mounting
-  that panel somewhere the tools live (`/tools`, say) would restore both; the
-  state behind them never stopped being computed.
+  browser-only. `ToolSyncStatusPanel` (`/tools`, see below) shows it as a
+  sync failure with the 413's own message, including when the watcher finds
+  it on a background tick rather than during the tab's initial reconcile
+  (`startToolRecordAutoSync` takes an `onFlush` callback and
+  `useToolRecordSync` folds its results into the same `results` state the
+  reconcile populates).
+- ~~Nothing surfaces the sync any more, and two things can only be reached
+  through it.~~ **Fixed:** `components/tools/ToolSyncStatusPanel.tsx`, mounted
+  on `/tools`, renders `useToolRecordSync`'s `results` as a list of any
+  collection whose merge or flush failed (name, link to the tool, the error),
+  next to a **Sync now** button wired to `resync()`; and when a guest has
+  opted out of the sign-in prompt, a "Turn sign-in reminders back on" button
+  calling `setSignInPromptOptedOut(false)`. Both controls, and the state
+  behind them, already existed — this is `/settings`' old **Tool data** list
+  re-mounted at `/tools` instead, per this entry's own prior suggestion.
 - **The 30-minute per-feature cooldown is per-browser-session, not
   per-account.** It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a

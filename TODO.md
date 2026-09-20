@@ -17,6 +17,68 @@ _No task currently in progress._
 
 ### Completed
 
+- **⚙️ `/tools` now shows the account tool-data sync status, with a manual
+  retry and a way back in for an opted-out guest.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84 `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`, `TOOL_RECORD_COLLECTIONS`
+  syncs every localStorage-backed tool without its own dedicated table to the
+  account, and every tool is reachable from `/tools`, CardMirror's
+  `MenuBar`/command palette, and the feature catalog), that prompt's own asks
+  are already fully built. There were no open PRs and this branch carried no
+  unfinished work of its own (its prior commits were already on `master`), so
+  a subagent scanned `packages/debate-help-docs` "Known gaps" sections for a
+  fresh, concretely-scoped candidate, verifying each against current source.
+  It picked `internals/tool-data-sync.mdx`'s: "Nothing surfaces the sync any
+  more, and two things can only be reached through it. A guest who picked
+  'don't ask me again' has no way back short of clearing site data, and a
+  collection whose merge failed has no Sync now to retry with."
+
+  Confirmed still open: `apps/debate-ai.com/app/settings/page.tsx` is now
+  only `CardMirrorSettingsPanel` — the status list `useToolRecordSync`'s own
+  doc comment still says is "for the `/settings` status list" was removed
+  when that page became the card editor's settings, and nothing replaced it.
+  `useToolRecordSync`'s `results`/`resync` and
+  `setSignInPromptOptedOut(false)` (the opt-out's undo path) were both fully
+  built and had zero call sites in app code.
+
+  `apps/debate-ai.com/lib/tools/tool-sync-status.ts` adds a pure
+  `summarizeToolSyncFailures(results)`, turning the hook's raw per-collection
+  results into the one thing worth surfacing without reading every row: which
+  tools, if any, actually failed (not merely unsynced because nobody is
+  signed in — `ToolRecordHydrationResult.error` is only set for a real
+  failure), with each one's label and link via `findToolRecordCollection`.
+  `components/tools/ToolSyncStatusPanel.tsx` (new, mounted on `/tools` above
+  `MySavedItems`, per the doc's own "`/tools`, say" suggestion) renders it:
+  an "Account sync" row with a **Sync now** button wired to `resync()`, the
+  failure list underneath when there is one, and — when signed out and the
+  guest has opted out of the sign-in prompt — a "Turn sign-in reminders back
+  on" button calling `setSignInPromptOptedOut(false)`.
+
+  Vitest-covered: `apps/debate-ai.com/lib/tools/__tests__/tool-sync-status.test.ts`
+  (6 cases — a real failure surfaces with its label/link, a signed-out-shaped
+  `synced: false` with no `error` is not mistaken for a failure, a synced
+  result with a stray `error` is ignored, a result for a collection key the
+  catalog no longer recognizes is dropped, multiple failures sort by label,
+  and an empty result list). `ToolSyncStatusPanel` itself isn't independently
+  tested — no component test in this app renders a `useSession`-backed
+  component (0 found), matching this repo's existing convention for
+  DOM/hook-wired components elsewhere in this file's history.
+
+  Ran the full verification gate: `bun install`, the new test file (6
+  passing) plus `bun run test` (479 files, 9012 tests passing, repo-wide, up
+  6 from the new cases), `bunx tsc --noEmit` on the web app (clean),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web`
+  included), and `bun run build:web` (production build succeeded, `/tools`
+  present in the route list; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/tool-data-sync.mdx`'s Known gaps entry (marked fixed,
+  and the oversized-record bullet's now-stale "the row that read it is not"
+  line corrected) and Tests list.
+
 - **🎯 Related-videos' "same tournament" pass no longer pulls in a video that
   merely mentions the tournament in its description.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat
