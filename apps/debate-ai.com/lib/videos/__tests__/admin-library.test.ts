@@ -169,6 +169,22 @@ describe("listLibraryVideos", () => {
     expect(byId.videos.map((v: any) => v.videoId)).toEqual(["zqx9"]);
   });
 
+  it("treats a literal % or _ in the search text as itself, not a SQL wildcard", async () => {
+    const db = await freshDb();
+    await db.insert(videos).values([
+      videoRow("a", { title: "Win 50% of the time" }),
+      videoRow("b", { title: "Win 50 of the time" }),
+      videoRow("c", { title: "Case_Neg debrief" }),
+      videoRow("d", { title: "CaseXNeg debrief" }),
+    ]);
+
+    const byPercent = await listLibraryVideos(db, { q: "50%" });
+    expect(byPercent.videos.map((v: any) => v.videoId)).toEqual(["a"]);
+
+    const byUnderscore = await listLibraryVideos(db, { q: "Case_Neg" });
+    expect(byUnderscore.videos.map((v: any) => v.videoId)).toEqual(["c"]);
+  });
+
   it("filters lectures by their missing numeric style", async () => {
     const db = await freshDb();
     await db.insert(videos).values([

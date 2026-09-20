@@ -13,7 +13,7 @@
  * @module lib/videos/admin-library
  */
 
-import { and, asc, count, desc, eq, isNull, like, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNull, or, sql, type SQL } from "drizzle-orm";
 import {
   publishedMsForDate,
   seasonYearForDate,
@@ -193,10 +193,10 @@ function libraryConditions(query: LibraryQuery): SQL[] {
   if (search) {
     const pattern = likePattern(search);
     const match = or(
-      like(videos.title, pattern),
-      like(videos.channel, pattern),
-      like(videos.tournament, pattern),
-      like(videos.videoId, pattern),
+      sql`${videos.title} LIKE ${pattern} ESCAPE '\\'`,
+      sql`${videos.channel} LIKE ${pattern} ESCAPE '\\'`,
+      sql`${videos.tournament} LIKE ${pattern} ESCAPE '\\'`,
+      sql`${videos.videoId} LIKE ${pattern} ESCAPE '\\'`,
     );
     if (match) conditions.push(match);
   }

@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, like, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, or, sql, type SQL } from "drizzle-orm";
 import type { AnySQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
 import {
@@ -104,7 +104,9 @@ function buildFilter({ search, hideAnonymous }: Pick<UserUsageQuery, "search" | 
   const conditions = [];
   if (search) {
     const pattern = `%${search.replace(/[\\%_]/g, "\\$&")}%`;
-    conditions.push(or(like(user.name, pattern), like(user.email, pattern)));
+    conditions.push(
+      or(sql`${user.name} LIKE ${pattern} ESCAPE '\\'`, sql`${user.email} LIKE ${pattern} ESCAPE '\\'`),
+    );
   }
   if (hideAnonymous) conditions.push(eq(user.isAnonymous, false));
   return conditions.length ? and(...conditions) : undefined;

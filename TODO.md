@@ -17,6 +17,68 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔍 Three admin search boxes now actually find a title, tournament, or
+  name containing a literal `%` or `_`.** A subagent scan for a new,
+  well-scoped gap (the established lost-update-race shape having already
+  been exhaustively checked in the prior run) found a different bug class
+  entirely: `apps/debate-ai.com/lib/admin/user-usage.ts#buildFilter` (backs
+  the admin users directory search), `apps/debate-ai.com/lib/videos/admin-library.ts#libraryConditions`
+  (backs the admin video library search), and
+  `apps/debate-ai.com/app/api/admin/youtube/videos/route.ts` (backs the
+  admin "Round videos" resync queue search) all manually escaped `\`, `%`
+  and `_` in the search text before handing the pattern to drizzle-orm's
+  `like(column, pattern)` helper — but `like()` compiles to plain `column
+  LIKE 'pattern'` with no `ESCAPE` clause. SQLite only treats `\` as an
+  escape character when the query says `LIKE ... ESCAPE '\'`; without it the
+  inserted backslashes are just literal characters, and `%`/`_` stay live
+  wildcards. So the escaping was a complete no-op: searching `user-usage`
+  for `50%` or the video library for a tournament code like `Nats_18`
+  produced a pattern SQLite reads as a literal `"...\"` plus a live
+  wildcard, which almost never matches real data — these three search boxes
+  silently returned wrong (usually empty) results for any query containing
+  `%` or `_`.
+
+  The fix reuses the exact `LIKE ... ESCAPE '\\'` pattern this repo's
+  *correct* `LIKE` call sites already use (`lib/search/debate-card-search.ts`'s
+  `contains()`, `lib/videos/video-repository.ts`'s `likePattern`/
+  `buildConditions`): each broken `like(column, pattern)` call became
+  `` sql`${column} LIKE ${pattern} ESCAPE '\\'` ``. A fourth `like()` call
+  site (`app/api/users/search/route.ts`) was confirmed intentionally
+  unescaped, per its own comment ("acceptable tradeoff for an autocomplete
+  field"), and left untouched. The youtube-videos admin route had no
+  extracted, independently-testable query function (unlike
+  `admin-library.ts`'s `listLibraryVideos`), so its query-building moved
+  into a new `apps/debate-ai.com/lib/youtube/admin-round-videos.ts#listPendingRoundVideos`,
+  mirroring that same split — the route itself is now a thin
+  params-parsing wrapper, matching `app/api/admin/videos/library/route.ts`'s
+  shape.
+
+  Vitest-covered: `lib/videos/__tests__/admin-library.test.ts` gained a case
+  searching a title containing `%`/`_`; `lib/admin/__tests__/user-usage.test.ts`
+  (new — no test file existed for this module before) covers the same shape
+  against a real in-memory SQLite database plus a plain name/email search;
+  `lib/youtube/__tests__/admin-round-videos.test.ts` (new) covers the same
+  shape for the extracted round-videos query plus its existing
+  title/channel search and already-published-video exclusion behavior. Each
+  new `%`/`_` case was confirmed to fail against the pre-fix code (reverting
+  the source file while keeping the test reproduces an empty result where a
+  match was expected) before being left in its fixed, passing state.
+
+  Ran the full verification gate: `bun install`, the three affected/new test
+  files (24 passing) plus `bun run test` (488 files, 9211 tests passing —
+  up from 486/9205, exactly the 2 new files and 6 new cases, repo-wide),
+  `bunx turbo run typecheck` (17/17 packages green), and `bun run build:web`
+  (production build succeeded — the pre-existing "no output files found for
+  task debate-editor#build" warning is unrelated `turbo.json` `outputs`
+  config, not a build failure; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. No
+  help-docs "Known gaps" entry named this bug (it wasn't a documented gap,
+  just an oversight caught by direct code inspection), so no doc correction
+  was needed.
+
 - **🎞️ A published, admin-corrected video can no longer be silently reverted
   by a later "Publish all"/per-row "Publish" click.** A subagent scan for a
   new, not-yet-fixed instance of the established lost-update shape confirmed
