@@ -20,11 +20,9 @@ GitHub Discussions, pull requests, or public chat channels.
 
 Report suspected vulnerabilities privately using one of the following methods:
 
-1. GitHub Private Vulnerability Reporting:
+ GitHub Private Vulnerability Reporting:
    https://github.com/debate/debate-ai.com/security/advisories/new
 
-2. Email:
-   **grokthiscontact@gmail.com**
 
 Please include as much of the following information as possible:
 
