@@ -19,12 +19,6 @@ _No task currently in progress._
 
 - **📤 "Share speech with round participants" now actually notifies the
   round's participants, instead of always nobody.** Another repeat of the
-  standing autonomous-routine prompt above — as with every prior repeat
-  (reconfirmed fresh this run: 84+ `user.id` references across `saved_*` D1
-  tables in `apps/debate-ai.com/lib/database/schema.ts`,
-  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
-  own dedicated table to the account, and every tool is reachable from
-  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
   that prompt's own asks are already fully built. There were no open PRs and
   no branches other than `master`/`prod` on the remote, so this branch was
   restarted from `master`'s tip (341a4ef, PR #889 already merged). Scanned
@@ -86,6 +80,183 @@ _No task currently in progress._
   this "Share speech" action was never part of that catalog's covered
   feature set (no `Known gaps` entry named it), so there was no stale doc
   text to correct alongside the code fix.
+
+- **📰 Two tabs or devices marking different News Stream items read/liked at
+  the same time no longer silently drop each other's change.** Another
+  repeat of the standing autonomous-routine prompt above — as with every
+  prior repeat (reconfirmed fresh this run: 84+ `user.id` references across
+  `saved_*` D1 tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. This branch's own
+  designated PR (from the prior run, #890) was already merged into `master`
+  with no open PRs on the remote, so this branch was restarted from
+  `master`'s tip (a different branch, `claude/gifted-babbage-6yecr0`, exists
+  on the remote with no open PR and no relation to this task — left
+  untouched). Found the same "client computes the whole next array and PUTs
+  it" lost-update race `favoriteTools`/`recentTools`/
+  `savedArgumentCollections`/`wordLimitPresets`/`outlineFilterPresets` all
+  had before their op-based fixes, this time in the News Stream's read/like
+  account sync: `packages/debate-contributor-progress/src/panels/NewsStreamPanel.tsx`'s
+  `handleRead`/`handleToggleLike` called `syncRemote.pushRead(listReadIds())`/
+  `pushLiked(listLikedIds())` with the browser's *entire* current read/liked
+  id list, and `apps/debate-ai.com/app/api/settings/route.ts`'s handling of
+  `newsRead`/`newsLiked` was a blind whole-column overwrite with no
+  read-then-apply-op step. Two tabs (or two devices) marking different items
+  read/liked close together could silently drop each other's change, and —
+  worse than the other fixed fields — an *unrelated* like/unlike toggle on
+  one device could accidentally re-add or drop an id it never touched, since
+  every push resent that device's whole list rather than just the one id
+  being toggled; `news-stream.mdx`'s own "Known gaps" already documented the
+  read-side union-merge asymmetry this caused as an accepted tradeoff,
+  without naming the write-side race underneath it.
+
+  Mirrored the established fix a sixth time, following `recentTools`' (an
+  add-only op, for `newsRead` — marking read has no "unread" counterpart)
+  and `favoriteTools`' (an add/remove op pair, for `newsLiked`'s like/unlike
+  toggle) shapes: `packages/debate-contributor-progress/src/lib/news-stream-sync.ts`
+  gains `NewsReadOp`/`applyNewsReadOp` (append-if-absent, capped at
+  `MAX_NEWS_SYNC_ITEMS`) and `NewsLikedOp`/`applyNewsLikedOp`
+  (add/remove-if-present, same cap), plus `normalizeNewsReadOpPatch`/
+  `normalizeNewsLikedOpPatch` for shape validation. `apps/debate-ai.com/app/api/settings/route.ts`
+  wires both ops in exactly like the `recentTools`/`favoriteTools` op
+  branches: reads the row's current `newsRead`/`newsLiked`, applies the op,
+  and writes the result; the plain whole-list `newsRead`/`newsLiked` PUT
+  stays accepted (same "still accepted for a caller that genuinely needs
+  one" carve-out as every other fixed field) but nothing in the app sends
+  one anymore. `NewsStreamPanel.tsx`'s `NewsStreamSyncAdapter.pushRead`/
+  `pushLiked` signatures changed from "the whole current list" to "the
+  single id just marked read" / "the single id just toggled plus its new
+  liked state," since the panel already has the single id at both call
+  sites — no more reason to round-trip through `listReadIds()`/
+  `listLikedIds()` at all. `apps/debate-ai.com/lib/hooks/useNewsStreamSync.ts`'s
+  `pushRead`/`pushLiked` now call new `packages/debate-round/src/round/user-settings-client.ts`
+  functions `saveNewsReadOp`/`saveNewsLikedOp` (inlining the op shape rather
+  than importing it from `debate-community`, mirroring `saveRecentToolOp`'s
+  own out-of-package-field precedent, since `debate-round` can't depend back
+  on `debate-community`) instead of `saveUserSettings`'s whole-payload PUT.
+  `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s Known
+  gaps gains a paragraph on the op-based fix and a correction to the
+  existing union-merge paragraph distinguishing the now-fixed *write*-side
+  race from the still-open *read*-side "hydrate never removes" asymmetry.
+
+  Vitest-covered: `packages/debate-contributor-progress/test/news-stream-sync.test.ts`
+  gains cases for `normalizeNewsReadOpPatch`/`normalizeNewsLikedOpPatch`
+  (valid/malformed ops, an absent field, a non-object body, and
+  `newsLiked`'s "provide only one of add/remove" rejection) and
+  `applyNewsReadOp`/`applyNewsLikedOp` (append, dedupe, at-capacity drop,
+  remove, idempotent remove-of-absent, an empty op, two-concurrent-ops
+  resolving onto the same starting list without dropping either, and an
+  explicit "unlike on device B is no longer dropped by a like device A
+  already resolved" case demonstrating the exact race this closes) — 76
+  tests in that file, up from 43.
+
+  Ran the full verification gate: `bun install`, `bunx turbo run typecheck`
+  (17/17 packages green, `debate-community`/`debate-round`/`debate-ai-web`/
+  `debate-help-docs` included), `bun run test` (481 files, 9160 tests
+  passing — up from 9127 by exactly the 33 new cases above, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
+  **Update:** this branch (`claude/gifted-babbage-322v41`) had accumulated
+  this fix plus 26 further commits from prior runs (back through #869)
+  that were fully implemented and individually verified at the time but
+  never pushed or opened as a PR — `git ls-remote` showed no matching
+  remote branch and `origin/master` contained none of their commits,
+  contradicting this file's own prior belief (recorded just above) that
+  PR #890 had already merged. Re-ran the full verification gate fresh
+  against the branch tip (`bun install`; `bunx turbo run typecheck`,
+  17/17 packages; `bun run test`, 481 files / 9160 tests; `bun run
+  build:web`, production build succeeded) — all still green — removed one
+  unrelated stray file (`output.json`, a scraped GitHub page for an
+  unrelated third-party repo, accidentally committed several commits back
+  and unrelated to any of this work), pushed the branch, and opened
+  [PR #892](https://github.com/debate/debate-ai.com/pull/892).
+
+- **🔀 Two tabs or devices editing named Outline filter presets at the same
+  time no longer silently drop each other's change.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84+ `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. There were no open PRs on
+  the remote and this branch's own designated PR (from the prior run) was
+  already merged into `master`, so this branch was restarted from `master`'s
+  tip. (A different in-flight branch, `claude/gifted-babbage-6yecr0`, had an
+  unrelated unpushed-PR commit for a `speech-share` participant-email bug —
+  left untouched since it isn't this branch's work.) A subagent confirmed
+  `outlineFilterPresets` (`packages/debate-round/src/state/outlineFilterPresets.ts`)
+  had the exact same unfixed "client computes the whole next array and PUTs
+  it" lost-update race that `favoriteTools`/`recentTools`/
+  `savedArgumentCollections`/`wordLimitPresets` all had before their
+  op-based fixes — `packages/debate-practice-drills/src/hooks/useOutlineFilterPresets.ts`'s
+  `persist()` called `saveUserSettings({ outlineFilterPresets: next })` with
+  a full client-computed array, and `apps/debate-ai.com/app/api/settings/route.ts`'s
+  handling of `outlineFilterPresets` was a blind whole-column overwrite with
+  no read-then-apply-op step, unlike the fixed fields in the same file. It's
+  real user-editable state — add (per-round "Save preset" button) and remove
+  (global "Saved filter presets" badge list) both write the same array, the
+  preset list is explicitly global/not per-round, and the hook already has a
+  cross-tab `storage`-event listener for *read* freshness, meaning the
+  *write* race was a real, already-partially-addressed-but-not-fully-closed
+  gap.
+
+  Mirrored the `wordLimitPresets` fix, minus the `update` op (the UI only
+  ever adds or removes a preset, no rename/edit-in-place exists):
+  `packages/debate-round/src/state/outlineFilterPresets.ts` gains
+  `OutlineFilterPresetOp` (`addOutlineFilterPreset` / `removeOutlineFilterPreset`),
+  `normalizeOutlineFilterPresetOpPatch` (shape-only validation — exactly one
+  op per request, reusing `isValidArgumentTreeFilter` for the nested filter
+  object), `validateNewOutlineFilterPreset` (business-rule checks: name
+  validity, duplicate name, capacity), `buildOutlineFilterPresetFailureMessage`,
+  and `applyOutlineFilterPresetOp` (applies the op against a `current` list,
+  returning `{ next, failure }`; a refused add returns the unchanged `next`
+  reference, and removing an absent name is a silent no-op like
+  `applyWordLimitPresetOp`'s). `apps/debate-ai.com/app/api/settings/route.ts`
+  wires the op in exactly like the `wordLimitPresets` op branch: reads the
+  row's current `outlineFilterPresets`, applies the op, and either writes
+  the result or returns `400` with `buildOutlineFilterPresetFailureMessage`'s
+  message on failure. The plain whole-list `outlineFilterPresets` PUT stays
+  accepted (same "still accepted for a caller that genuinely needs one"
+  carve-out as the other fixed fields) but nothing in the app sends one
+  anymore. `useOutlineFilterPresets.ts`'s `persist` split into
+  `persistLocal` (local state/localStorage, applied immediately and
+  optimistically, unchanged) and `syncOp` (best-effort account sync sending
+  just the op), matching `useWordLimitPresets.ts`'s own split.
+  `packages/debate-round/src/round/user-settings-client.ts` gains
+  `saveOutlineFilterPresetOp`, mirroring `saveWordLimitPresetOp`.
+
+  Vitest-covered: `packages/debate-round/test/outlineFilterPresets.test.ts`
+  gains cases for `validateNewOutlineFilterPreset` (valid/invalid
+  name/filter, duplicate name, at-capacity), `buildOutlineFilterPresetFailureMessage`
+  (one message per failure), `normalizeOutlineFilterPresetOpPatch`
+  (valid/malformed add and remove ops, a `roundId`-carrying add, more than
+  one op per request, a non-object body), and `applyOutlineFilterPresetOp`
+  (append, trim, duplicate refusal, remove, idempotent remove-of-absent,
+  empty op, and a two-concurrent-adds-resolve-onto-the-same-list scenario —
+  the exact race this closes). `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+  Known gaps gains a paragraph documenting the fix, mirroring the
+  `wordLimitPresets` paragraph immediately above it.
+
+  Ran the full verification gate: `bun install`, `bunx turbo run typecheck`
+  (17/17 packages green, `debate-round`/`debate-practice-rounds`/
+  `debate-ai-web` included), `bun run test` (481 files, 9127 tests passing —
+  up from 9105 by exactly the 22 new cases above, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
 
 - **📝 Five stale `packages/debate-help-docs` "Known gaps" entries corrected
   — each described a gap the code no longer had, left over from a fix

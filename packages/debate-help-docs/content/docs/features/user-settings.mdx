@@ -127,3 +127,15 @@ invalid word limit is refused with a `400` rather than silently corrupting
 the stored list. A plain whole-list `wordLimitPresets` replace is still
 accepted by the route for a caller that genuinely needs one, but
 `useWordLimitPresets.ts` no longer sends one.
+
+`outlineFilterPresets` (`debate-practice-drills`'s named Outline filter
+presets bar — see [Argument Tree Outline](/docs/internals/argument-tree-outline))
+is op-based the same way: `addPreset`/`removePreset` each send a single
+`addOutlineFilterPreset`/`removeOutlineFilterPreset` op, resolved against
+the account's current list at write time instead of a client-computed
+whole-list replace, mirroring `wordLimitPresets`'s fix above. A duplicate
+name, an at-capacity list, or an invalid filter is refused with a `400`
+rather than silently corrupting the stored list. A plain whole-list
+`outlineFilterPresets` replace is still accepted by the route for a caller
+that genuinely needs one, but `useOutlineFilterPresets.ts` no longer sends
+one.
