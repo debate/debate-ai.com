@@ -41,6 +41,19 @@ interface StoredRecording {
     durationSeconds?: number
 }
 
+/**
+ * Mock network call behind "Share with Opponents", mirroring
+ * `debate-round`'s `useSpeechHandlers.ts#shareSpeech` (the equivalent mock
+ * for sharing a speech's text document) — no real email-sending backend
+ * exists for either feature yet, so this only simulates the round trip.
+ */
+export async function shareRecording(emails: string[], speechName: string, audioDataUrl: string) {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    return { success: true, message: `Shared with ${emails.length} participant${emails.length === 1 ? "" : "s"}` }
+}
+
 /** Format seconds as m:ss, e.g. 312.4 → "5:12" */
 function formatDuration(s: number): string {
     const m = Math.floor(s / 60)
@@ -196,6 +209,13 @@ interface SpeechRecordingMenuProps {
     playbackRate?: number
     /** Callback when playback rate changes */
     onPlaybackRateChange?: (rate: number) => void
+    /**
+     * Emails to notify via "Share with Opponents" — the caller's own round
+     * participants (debaters/judges/spectators), resolved outside this
+     * package since `debate-timer` doesn't know about `debate-round`'s
+     * `Round` type. Defaults to `[]` for a caller with no round context.
+     */
+    participantEmails?: string[]
 }
 
 interface SpeechRecordingPlayerProps {
@@ -263,6 +283,7 @@ export function SpeechRecordingMenu({
     speeds = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
     playbackRate = 1,
     onPlaybackRateChange,
+    participantEmails = [],
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
@@ -272,6 +293,22 @@ export function SpeechRecordingMenu({
 
     const handleUploadAudio = () => {
         fileInputRef.current?.click()
+    }
+
+    const handleShareRecording = async () => {
+        const [recording] = loadRecordings(speechName)
+        if (!recording) {
+            alert("Record this speech first, then share it with opponents.")
+            return
+        }
+
+        try {
+            const result = await shareRecording(participantEmails, speechName, recording.audio)
+            alert(result.message)
+        } catch (error) {
+            console.error("Failed to share recording:", error)
+            alert("Failed to share recording. Please try again.")
+        }
     }
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -374,10 +411,12 @@ export function SpeechRecordingMenu({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     {/* Share with Opponents & Judge - First menu item */}
-                    <DropdownMenuItem onClick={() => { /* TODO: Implement sharing */ }}>
-                        <Users className="h-4 w-4 mr-2" />
-                        Share with Opponents
-                    </DropdownMenuItem>
+                    {recordingKey && (
+                        <DropdownMenuItem onClick={() => { void handleShareRecording() }}>
+                            <Users className="h-4 w-4 mr-2" />
+                            Share with Opponents
+                        </DropdownMenuItem>
+                    )}
 
                     {/* Playback Speed submenu */}
                     {onPlaybackRateChange && (
