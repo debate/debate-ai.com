@@ -1,12 +1,20 @@
 export * from "./panels";
 export {
+  applyNewsLikedOp,
+  applyNewsReadOp,
   DEFAULT_NEWS_SYNC,
   MAX_NEWS_SYNC_ITEMS,
   isValidNewsIdList,
   isValidNewsItemId,
+  normalizeNewsLikedOpPatch,
+  normalizeNewsReadOpPatch,
   normalizeNewsSyncPatch,
   parseNewsIdList,
   serializeNewsIdList,
+  type NewsLikedOp,
+  type NewsLikedOpPatchResult,
+  type NewsReadOp,
+  type NewsReadOpPatchResult,
   type NewsSyncPatchResult,
   type NewsSyncPayload,
 } from "./lib/news-stream-sync";

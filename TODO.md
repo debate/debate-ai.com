@@ -17,6 +17,89 @@ _No task currently in progress._
 
 ### Completed
 
+- **📰 Two tabs or devices marking different News Stream items read/liked at
+  the same time no longer silently drop each other's change.** Another
+  repeat of the standing autonomous-routine prompt above — as with every
+  prior repeat (reconfirmed fresh this run: 84+ `user.id` references across
+  `saved_*` D1 tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. This branch's own
+  designated PR (from the prior run, #890) was already merged into `master`
+  with no open PRs on the remote, so this branch was restarted from
+  `master`'s tip (a different branch, `claude/gifted-babbage-6yecr0`, exists
+  on the remote with no open PR and no relation to this task — left
+  untouched). Found the same "client computes the whole next array and PUTs
+  it" lost-update race `favoriteTools`/`recentTools`/
+  `savedArgumentCollections`/`wordLimitPresets`/`outlineFilterPresets` all
+  had before their op-based fixes, this time in the News Stream's read/like
+  account sync: `packages/debate-contributor-progress/src/panels/NewsStreamPanel.tsx`'s
+  `handleRead`/`handleToggleLike` called `syncRemote.pushRead(listReadIds())`/
+  `pushLiked(listLikedIds())` with the browser's *entire* current read/liked
+  id list, and `apps/debate-ai.com/app/api/settings/route.ts`'s handling of
+  `newsRead`/`newsLiked` was a blind whole-column overwrite with no
+  read-then-apply-op step. Two tabs (or two devices) marking different items
+  read/liked close together could silently drop each other's change, and —
+  worse than the other fixed fields — an *unrelated* like/unlike toggle on
+  one device could accidentally re-add or drop an id it never touched, since
+  every push resent that device's whole list rather than just the one id
+  being toggled; `news-stream.mdx`'s own "Known gaps" already documented the
+  read-side union-merge asymmetry this caused as an accepted tradeoff,
+  without naming the write-side race underneath it.
+
+  Mirrored the established fix a sixth time, following `recentTools`' (an
+  add-only op, for `newsRead` — marking read has no "unread" counterpart)
+  and `favoriteTools`' (an add/remove op pair, for `newsLiked`'s like/unlike
+  toggle) shapes: `packages/debate-contributor-progress/src/lib/news-stream-sync.ts`
+  gains `NewsReadOp`/`applyNewsReadOp` (append-if-absent, capped at
+  `MAX_NEWS_SYNC_ITEMS`) and `NewsLikedOp`/`applyNewsLikedOp`
+  (add/remove-if-present, same cap), plus `normalizeNewsReadOpPatch`/
+  `normalizeNewsLikedOpPatch` for shape validation. `apps/debate-ai.com/app/api/settings/route.ts`
+  wires both ops in exactly like the `recentTools`/`favoriteTools` op
+  branches: reads the row's current `newsRead`/`newsLiked`, applies the op,
+  and writes the result; the plain whole-list `newsRead`/`newsLiked` PUT
+  stays accepted (same "still accepted for a caller that genuinely needs
+  one" carve-out as every other fixed field) but nothing in the app sends
+  one anymore. `NewsStreamPanel.tsx`'s `NewsStreamSyncAdapter.pushRead`/
+  `pushLiked` signatures changed from "the whole current list" to "the
+  single id just marked read" / "the single id just toggled plus its new
+  liked state," since the panel already has the single id at both call
+  sites — no more reason to round-trip through `listReadIds()`/
+  `listLikedIds()` at all. `apps/debate-ai.com/lib/hooks/useNewsStreamSync.ts`'s
+  `pushRead`/`pushLiked` now call new `packages/debate-round/src/round/user-settings-client.ts`
+  functions `saveNewsReadOp`/`saveNewsLikedOp` (inlining the op shape rather
+  than importing it from `debate-community`, mirroring `saveRecentToolOp`'s
+  own out-of-package-field precedent, since `debate-round` can't depend back
+  on `debate-community`) instead of `saveUserSettings`'s whole-payload PUT.
+  `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s Known
+  gaps gains a paragraph on the op-based fix and a correction to the
+  existing union-merge paragraph distinguishing the now-fixed *write*-side
+  race from the still-open *read*-side "hydrate never removes" asymmetry.
+
+  Vitest-covered: `packages/debate-contributor-progress/test/news-stream-sync.test.ts`
+  gains cases for `normalizeNewsReadOpPatch`/`normalizeNewsLikedOpPatch`
+  (valid/malformed ops, an absent field, a non-object body, and
+  `newsLiked`'s "provide only one of add/remove" rejection) and
+  `applyNewsReadOp`/`applyNewsLikedOp` (append, dedupe, at-capacity drop,
+  remove, idempotent remove-of-absent, an empty op, two-concurrent-ops
+  resolving onto the same starting list without dropping either, and an
+  explicit "unlike on device B is no longer dropped by a like device A
+  already resolved" case demonstrating the exact race this closes) — 76
+  tests in that file, up from 43.
+
+  Ran the full verification gate: `bun install`, `bunx turbo run typecheck`
+  (17/17 packages green, `debate-community`/`debate-round`/`debate-ai-web`/
+  `debate-help-docs` included), `bun run test` (481 files, 9160 tests
+  passing — up from 9127 by exactly the 33 new cases above, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
 - **🔀 Two tabs or devices editing named Outline filter presets at the same
   time no longer silently drop each other's change.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat
