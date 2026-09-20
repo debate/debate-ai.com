@@ -17,6 +17,80 @@ _No task currently in progress._
 
 ### Completed
 
+- **🤺 Two Practice vs AI rounds finishing close together no longer let the
+  second one silently erase the first one's points.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat,
+  that prompt's own asks are already fully built. PR #895 (this branch's own
+  designated work) had already merged into `master` with no open PRs on the
+  remote, so this branch continued from `master`'s tip. A subagent scan for
+  the established "client/caller computes the whole next value from an
+  earlier read, then a later write blindly trusts it" lost-update shape
+  (already fixed for `favoriteTools`/`recentTools`/`savedArgumentCollections`/
+  `wordLimitPresets`/`outlineFilterPresets`/`newsRead`/`newsLiked`/Quest
+  Streaks' freeze-and-reminder sync) found the same race in Practice vs AI's
+  scoring: `packages/debate-round-practice-ai/src/backend/handlers.ts`'s
+  `recordCompletedRound` read the user's gamification profile via
+  `store.getGamificationProfile`, computed the round's award
+  (`computeGamificationAward`) from that snapshot, and only *afterward* — once
+  the AI judging call had finished — handed the store a precomputed
+  `{ points, badgesAwarded, newScore }` to persist as an absolute value.
+  Unlike the badge list (already read-then-merged inside the store write),
+  the score was written as whatever `newScore` the caller had computed
+  minutes earlier. Two rounds finishing close together (two tabs/devices, a
+  retried request, or simply two judge calls landing back-to-back) each
+  computed their award from the same stale starting score, and whichever
+  `applyGamificationAward` write landed second silently overwrote the first
+  round's points — worse, it could also under- or over-award score-threshold
+  badges (`Novice` at 10, `FactMaster` at 500) since those were decided
+  against the stale snapshot too.
+
+  `DebateStore.applyGamificationAward` (`packages/debate-round-practice-ai/src/backend/store.ts`)
+  no longer accepts a precomputed award at all — its signature dropped the
+  `award` parameter entirely, so there is no longer any way for a caller to
+  pass a stale snapshot through. Instead it re-reads the user's current
+  score/badges immediately before writing and runs the existing pure
+  `computeGamificationAward` against that fresh read, returning the
+  resulting `GamificationAward` to the caller. Both implementations were
+  updated: the D1-backed store
+  (`apps/debate-ai.com/lib/practice-vs-ai/store.ts`) now selects `score`
+  alongside `badges` in its pre-write read and computes both the new score
+  and the badge list from it before the `insert … onConflictDoUpdate`; the
+  package's in-memory test double got the same treatment.
+  `handlers.ts`'s `recordCompletedRound` was simplified to hand the round's
+  `{ debateType, topic, result }` straight to `applyGamificationAward` and
+  return whatever it computes, instead of computing an award itself first.
+  `getGamificationProfile` is no longer called on this path at all (kept in
+  the interface purely as a capability probe and for any host wanting to
+  display a profile), which is what makes the fix airtight rather than just
+  narrowing the window: the vector for a stale snapshot to reach a write is
+  gone by construction, not just made less likely.
+
+  Vitest-covered: `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`
+  and `packages/debate-round-practice-ai/test/store-and-client.test.ts` both
+  gained a case reproducing the exact historical race shape — read a
+  zeroed profile, then apply two sequential rounds' awards without ever
+  handing that earlier read back in — and assert both rounds' points
+  survive (score 60, not 10 or 50) rather than the second clobbering the
+  first; existing badge-accumulation/de-duplication/per-user-isolation
+  cases were updated to call the new two-argument signature and assert the
+  real (previously hand-picked) `computeGamificationAward` output.
+
+  Ran the full verification gate: `bun install`, the two affected test files
+  directly (9 + 149 passing) plus `bunx turbo run typecheck` (17/17 packages
+  green, including `debate-help-docs`), `bun run test` (485 files, 9199
+  tests passing — up from 9197 by exactly the 2 new cases, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx`'s
+  Gamification section (describes the read-immediately-before-write shape
+  and the race it closes) and Tests list. Opened
+  [PR #896](https://github.com/debate/debate-ai.com/pull/896).
+
 - **🎮 Two tabs or devices spending a Quest Streak freeze on different days
   (or toggling the streak-lapse reminder) at the same time no longer
   silently drop each other's change.** Another repeat of the standing
