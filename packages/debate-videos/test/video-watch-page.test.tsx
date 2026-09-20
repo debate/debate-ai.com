@@ -226,3 +226,37 @@ describe("VideoWatchPage playback handoff", () => {
     unmount()
   })
 })
+
+describe("VideoWatchPage fullscreen", () => {
+  it("fullscreens the video wrapper alone, not the surrounding title/description stage", () => {
+    // jsdom has no real Fullscreen API — record which element each call was
+    // made on so the test can tell "the video" from "the whole left column".
+    const requestedOn: HTMLElement[] = []
+    Object.defineProperty(HTMLElement.prototype, "requestFullscreen", {
+      configurable: true,
+      value: function requestFullscreen(this: HTMLElement) {
+        requestedOn.push(this)
+        return Promise.resolve()
+      },
+    })
+
+    mount()
+
+    const videoWrapper = container.querySelector("iframe")!.parentElement as HTMLElement
+    const stage = videoWrapper.parentElement as HTMLElement
+
+    const fullscreenButton = container.querySelector<HTMLButtonElement>(
+      '[aria-label="Fullscreen"]',
+    )
+    expect(fullscreenButton).not.toBeNull()
+    act(() => {
+      fullscreenButton!.click()
+    })
+
+    expect(requestedOn).toEqual([videoWrapper])
+    expect(requestedOn).not.toContain(stage)
+
+    unmount()
+    Reflect.deleteProperty(HTMLElement.prototype, "requestFullscreen")
+  })
+})
