@@ -53,6 +53,8 @@ export interface SpeechControlsTopBarProps {
   onDeleteRecording: (key: string) => void
   /** localStorage key for the saved recording, when one exists. */
   recordingKey?: string
+  /** Emails to notify via the recording menu's "Share with Opponents" — see `round/round-recording-share.ts`. */
+  participantEmails?: string[]
 }
 
 /**
@@ -78,6 +80,7 @@ export function SpeechControlsTopBar({
   hasRecording,
   onDeleteRecording,
   recordingKey,
+  participantEmails,
 }: SpeechControlsTopBarProps) {
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
@@ -129,6 +132,7 @@ export function SpeechControlsTopBar({
         onResetPrepTimers={onResetPrepTimers}
         onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
         recordingKey={recordingKey}
+        participantEmails={participantEmails}
         inHeader={true}
       />
 
