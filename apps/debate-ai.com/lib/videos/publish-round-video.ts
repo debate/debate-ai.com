@@ -9,6 +9,7 @@
  * @module lib/videos/publish-round-video
  */
 
+import { and, eq, inArray } from "drizzle-orm";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
 import { videos, type VideoTableInsert, type YoutubeRoundVideo } from "@/lib/database/schema";
 
@@ -48,12 +49,43 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  * rather than batched, since D1 caps bound parameters per statement and a
  * `videos` row already uses most of that budget.
  *
+ * The weekly/manual resync (`lib/youtube/resync-rounds.ts`) re-walks every
+ * subscribed channel's uploads since a fixed `2023-05-01` floor on every
+ * run, with no check against `videos` — only an explicit admin removal
+ * (`youtube_video_exclusions`) keeps a video out of the queue. So a round
+ * published (and possibly corrected via the admin library, which sets
+ * `admin_edited`) days or months ago can resurface in
+ * `youtube_round_videos` and reach this function again, computed fresh from
+ * the (unedited) YouTube listing. Re-reads which of `rows`' ids are already
+ * published *and* admin-edited immediately before writing, and leaves those
+ * rows alone entirely instead of letting the recomputed round data silently
+ * overwrite an admin's title/category/tournament/speech-doc correction —
+ * the same "an admin's edit is this row's source of truth once made" rule
+ * `video-seed-sql.ts#buildVideoSeedStatements` already guards for the
+ * JSON-seed path, applied here to the resync/publish path.
+ *
  * @param db - Drizzle handle bound to D1 (or local SQLite in development).
  * @param rows - Queued round videos to publish.
- * @returns Number of rows upserted.
+ * @returns Number of rows actually upserted — excludes any left untouched
+ *   because they were already published and admin-edited.
  */
 export async function publishRoundVideos(db: any, rows: YoutubeRoundVideo[]): Promise<number> {
+  const ids = rows.map((row) => row.id);
+  const adminEditedIds: Set<string> =
+    ids.length === 0
+      ? new Set()
+      : new Set(
+          (
+            await db
+              .select({ videoId: videos.videoId })
+              .from(videos)
+              .where(and(inArray(videos.videoId, ids), eq(videos.adminEdited, true)))
+          ).map((row: { videoId: string }) => row.videoId),
+        );
+
+  let published = 0;
   for (const row of rows) {
+    if (adminEditedIds.has(row.id)) continue;
     const values = roundVideoToVideoRow(row);
     await db
       .insert(videos)
@@ -62,6 +94,7 @@ export async function publishRoundVideos(db: any, rows: YoutubeRoundVideo[]): Pr
         target: videos.videoId,
         set: { ...values, updatedAt: new Date() },
       });
+    published++;
   }
-  return rows.length;
+  return published;
 }

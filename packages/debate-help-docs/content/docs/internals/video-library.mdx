@@ -284,6 +284,19 @@ Two behaviours are worth knowing before changing this:
   the JSON asset's stale value — the seed-side counterpart to the exclusion
   row above. The flag is never cleared; there is no "go back to asset-driven"
   action.
+- **A published, admin-edited round also survives a re-publish.**
+  `resyncYouTubeRounds` re-walks every subscribed channel's uploads since a
+  fixed floor date on *every* run, with no check against `videos` — only an
+  explicit admin removal (the exclusion row above) keeps a video out of the
+  queue. So a round published (and possibly corrected here) weeks ago can
+  resurface in `youtube_round_videos` and reach `publishRoundVideos`
+  (`lib/videos/publish-round-video.ts`) again, computed fresh from the
+  unedited YouTube listing — the "Publish all" and per-row "Publish" actions
+  both go through it. `publishRoundVideos` now re-reads which of the batch's
+  ids are already published *and* `admin_edited` immediately before writing,
+  and skips those rows entirely rather than letting the recomputed round data
+  overwrite the correction — the same guarantee `admin_edited` already gives
+  `db:seed:videos` above, closed for this second writer of the table.
 
 Listing uses offset paging rather than the queue's `(publishedAt, id)` keyset
 cursor: this table has numbered pages and sorts on columns that are not unique
@@ -367,6 +380,21 @@ database.
   `youtube_video_exclusions` row already set for removals. `updated_at` stays
   unconditional so the row still reads as fresh and the trailing prune
   doesn't mistake it for one the assets dropped.
+- ~~A round published and then corrected in the admin library could be
+  silently reverted by a later "Publish all"/per-row "Publish": the weekly
+  and manual YouTube resyncs re-walk every subscribed channel's uploads since
+  a fixed floor date with no check against the already-published `videos`
+  table, so an admin-edited round could resurface in `youtube_round_videos`
+  and reach `publishRoundVideos` again computed fresh from the unedited
+  YouTube listing, overwriting the correction.~~ **Fixed:**
+  `publishRoundVideos` (`lib/videos/publish-round-video.ts`) re-reads which
+  of the batch's ids already carry `admin_edited` immediately before writing
+  and skips those rows entirely, matching the guard `admin_edited` already
+  gives `db:seed:videos` above. `lib/videos/__tests__/publish-round-video.test.ts`
+  covers first-time publish, a plain (non-admin-edited) republish, a resync
+  that resurfaces an admin-edited round leaving its correction untouched, and
+  a mixed batch where an untouched sibling round still publishes normally —
+  against a real in-memory SQLite database.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page
