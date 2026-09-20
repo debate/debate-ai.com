@@ -6,7 +6,7 @@
   ("integrate all the tools into the UI... create user settings and link
   user db SQL with the ability to save flows/docs/debates in SQL and link
   to users... add tools into where needed in the UI... develop better tool
-  UI") — as with every recent repeat, that prompt's own asks are already
+  UI") — as with every re cent repeat, that prompt's own asks are already
   fully built: `user_settings`/`documents`/`saved_flows`/`saved_rounds`,
   25+ bespoke `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS`
   entries all linked to `user.id`, and every tool already reachable from
