@@ -17,6 +17,61 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧰 `/speech-documents` and `/rank` get the standard `ToolPageHeader`,
+  plus a coverage test guarding the rest of the migration.** Picked up the
+  standing "integrate tools into the UI / user settings / link user DB /
+  better tool UI" backlog item. A subagent investigation first confirmed
+  most of that theme is already extensively built out from prior automated
+  runs — `userSettings` (D1, one row per user, cascade-deleted with the
+  account) already backs a large `/api/settings` GET/PUT surface
+  (`debateStyle`, `favoriteTools`, `recentTools`, `editorPreferences`,
+  `wordLimitPresets`, `outlineFilterPresets`, `savedArgumentCollections`,
+  `questStreakSync`, etc.), and flows/rounds/docs/word-count-rounds/
+  tournament-results/judge-decisions/quick-cards/learn-decks/coach-materials
+  are all already D1-backed and user-linked (`savedFlows`, `savedRounds`,
+  `savedWordCountRounds`, `documents`, and a dozen more `saved_*` tables) —
+  nothing found still localStorage-only without a migration path. The
+  concrete remaining gap was UI consistency: `components/tools/ToolPageHeader.tsx`
+  (favorite-star toggle, Docs/Guide links, consistent chrome) replaced the
+  old hand-rolled "← Back"-only header on ~29 of 49 `/tools`-catalog pages,
+  but 20 pages never got migrated and still show the bare-bones header with
+  no favorite toggle or docs link.
+
+  Migrated the two most self-contained of those 20:
+  `apps/debate-ai.com/app/speech-documents/page.tsx` and
+  `apps/debate-ai.com/app/rank/page.tsx`, both now rendering
+  `ToolPage`/`ToolPageHeader` with `guide="training-tools"` (matching their
+  `tool-groups.ts` section's siblings) and the same back-link destination/
+  wording the old hand-rolled header used. The other 18 — mostly `/cards/*`
+  (leaderboard, library, quests, streaks, awards, best-card, etc.) plus
+  `/contacts`, `/news`, `/notifications` — are a same-shape mechanical
+  follow-up, deliberately left for a separate PR rather than folding all 20
+  into one diff.
+
+  New test: `apps/debate-ai.com/lib/__tests__/tool-page-header-coverage.test.ts`,
+  mirroring `tool-catalog-consistency.test.ts`'s exclude-set-with-a-reason
+  pattern — asserts every `ALL_TOOLS` entry's page imports `ToolPageHeader`
+  unless listed in `TOOLS_WITHOUT_TOOL_PAGE_HEADER`, which now documents the
+  remaining 18 pages as a tracked gap plus the three legitimate permanent
+  opt-outs (`/reason-editor`, `/doc` — large native editor workspaces with
+  their own chrome; `/tools/mobile-setup` — a companion guide page). This
+  turns "migrate the next page" into a one-line diff (drop its href from the
+  set) with an immediate red/green signal, instead of a silent gap nothing
+  would catch.
+
+  Ran the full verification gate: `bun install`, the two new/affected test
+  files (10 passing) plus `bun run coverage` (489 files, 9213 tests passing,
+  repo-wide), `bun run typecheck` (`turbo typecheck`, 17/17 packages green),
+  and `bun run build:web` (production build succeeded; the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure). No `lint`/
+  `format:check` script exists anywhere in this repo, so that step was
+  skipped as not applicable.
+
+  PR: [#900](https://github.com/debate/debate-ai.com/pull/900). Follow-up:
+  migrate the remaining 18 `/cards/*`-heavy tool pages to `ToolPageHeader`
+  (tracked by `TOOLS_WITHOUT_TOOL_PAGE_HEADER` in the new coverage test).
+
 - **🔍 Three admin search boxes now actually find a title, tournament, or
   name containing a literal `%` or `_`.** A subagent scan for a new,
   well-scoped gap (the established lost-update-race shape having already
@@ -1938,6 +1993,20 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
+
+- Migrate the remaining 18 `/tools`-catalog pages off the old hand-rolled
+  back-button-only header onto `components/tools/ToolPageHeader.tsx` — same
+  mechanical change as PR #900's `/speech-documents`/`/rank` migration:
+  `/cards/argument-library`, `/cards/awards`, `/cards/best-card`,
+  `/cards/contributions`, `/cards/coverage`, `/cards/leaderboard`,
+  `/cards/library`, `/cards/progress`, `/cards/progress-tracking`,
+  `/cards/quests`, `/cards/reviews`, `/cards/revisions`, `/cards/scoring`,
+  `/cards/streaks`, `/contacts`, `/news`, `/notifications`. Each page's fix
+  is small and independently verifiable — drop its href from
+  `apps/debate-ai.com/lib/__tests__/tool-page-header-coverage.test.ts`'s
+  `TOOLS_WITHOUT_TOOL_PAGE_HEADER` set and the new coverage test goes green
+  for that route. Left as its own PR (or a few small PRs) rather than one
+  18-file diff.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
