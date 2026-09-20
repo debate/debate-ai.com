@@ -37,6 +37,7 @@ const VIDEOS_TABLE_MIGRATIONS = [
   "0005_green_redwing.sql",
   "0041_video_stacks.sql",
   "0045_video_documents_relations_issues.sql",
+  "0047_video_admin_edited.sql",
 ];
 
 /** A fresh in-memory database with just the `videos` table migrated in. */
@@ -103,6 +104,39 @@ describe("seedVideosIntoDb", () => {
 
     const stored = await db.select().from(videos);
     expect(stored.map((r) => r.videoId).sort()).toEqual(["a", "b"]);
+  });
+
+  it("leaves an admin-edited row's columns alone on a re-seed, but still refreshes it", async () => {
+    // The previous test's `.mockResolvedValue` outlives it — `vi.mock`'s
+    // auto-mocked `vi.fn()` isn't a spy, so `restoreAllMocks()` in `afterEach`
+    // doesn't reset it. Restate the full fixture explicitly.
+    vi.mocked((await import("../video-json-source")).getVideoRowsFromJson).mockResolvedValue(
+      fixtureRows,
+    );
+
+    const db = await freshDb();
+    await seedVideosIntoDb(db);
+
+    // Mirrors what `updateLibraryVideo` does to a row an admin edits: flip
+    // `admin_edited` and change a column the JSON asset will disagree with.
+    await db.run(
+      sql`UPDATE videos SET admin_edited = 1, title = 'Admin Title' WHERE video_id = 'a'`,
+    );
+
+    // Re-seed with the same asset row for "a", whose title is still the
+    // original — if the upsert didn't guard on `admin_edited`, this would
+    // overwrite the admin's correction right back.
+    await seedVideosIntoDb(db);
+
+    const all = await db.select().from(videos);
+    const stored = all.find((r) => r.videoId === "a");
+    expect(stored?.title).toBe("Admin Title");
+    expect(stored?.adminEdited).toBe(true);
+    // `updated_at` still advanced with the rest of the run, so the row read
+    // as fresh and the trailing prune (anything older than this run's
+    // `seededAt`) didn't mistake the admin-edited row for one the assets
+    // dropped.
+    expect(all.map((r) => r.videoId).sort()).toEqual(["a", "b", "c"]);
   });
 
   it("runs every statement as one atomic batch, not sequential awaited calls", async () => {

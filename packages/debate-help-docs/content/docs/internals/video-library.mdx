@@ -260,6 +260,12 @@ Two behaviours are worth knowing before changing this:
   before its channel loop. Without that row the next Monday sync would
   re-ingest the video and the next "Publish all" would put it back, which is
   exactly the loop the queue's own delete was given an exclusion row to avoid.
+- **An edit is recorded too.** `buildLibraryUpdate` always sets
+  `admin_edited`, so `db:seed:videos` (or the admin seed endpoint) leaves the
+  row's columns alone on its next run instead of overwriting the edit with
+  the JSON asset's stale value — the seed-side counterpart to the exclusion
+  row above. The flag is never cleared; there is no "go back to asset-driven"
+  action.
 
 Listing uses offset paging rather than the queue's `(publishedAt, id)` keyset
 cursor: this table has numbered pages and sorts on columns that are not unique
@@ -324,12 +330,23 @@ in-memory SQLite database.
   against a live production D1 instance at the video table's real row count —
   same "unverified against production" caveat
   [openCaselist Sync](caselist-sync.md) already carries for its own API guess.
-- An admin edit to a published video is written to the `videos` table only.
+- ~~An admin edit to a published video is written to the `videos` table only.
   The committed JSON assets under `debate-data-sync/data/videos/` are still
   the seed's source of truth, so re-running `db:seed:videos` upserts the
   asset's version back over the edit. Removals survive a resync (the
   exclusion row) but not a re-seed. Persisting edits means writing them back
-  to the assets, or teaching the seed to skip rows an admin has edited.
+  to the assets, or teaching the seed to skip rows an admin has edited.~~
+  **Fixed:** a new `admin_edited` column (migration `0047_video_admin_edited.sql`,
+  default `false`) is set by `updateLibraryVideo`
+  (`lib/videos/admin-library.ts`) whenever an admin edit is applied and never
+  cleared. `buildVideoSeedStatements` guards every seeded column of the
+  `ON CONFLICT` upsert with `CASE WHEN "admin_edited" = 1 THEN "<col>" ELSE
+  excluded."<col>" END`, so a re-seed leaves an admin-edited row's columns
+  exactly as the admin left them instead of overwriting them with the JSON
+  asset's value — matching the precedent `deleteLibraryVideo`'s
+  `youtube_video_exclusions` row already set for removals. `updated_at` stays
+  unconditional so the row still reads as fresh and the trailing prune
+  doesn't mistake it for one the assets dropped.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page

@@ -24,6 +24,7 @@ const VIDEOS_TABLE_MIGRATIONS = [
   "0005_green_redwing.sql",
   "0041_video_stacks.sql",
   "0045_video_documents_relations_issues.sql",
+  "0047_video_admin_edited.sql",
 ];
 
 async function freshDb() {

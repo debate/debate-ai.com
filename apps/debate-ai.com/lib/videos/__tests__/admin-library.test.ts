@@ -48,6 +48,7 @@ const MIGRATIONS = [
   "0041_video_stacks.sql", // videos.stack_key / stack_position
   "0045_video_documents_relations_issues.sql", // videos.availability, and the
   // video_documents / video_relations / video_issues tables
+  "0047_video_admin_edited.sql", // videos.admin_edited
 ];
 
 async function freshDb() {
@@ -139,6 +140,12 @@ describe("buildLibraryUpdate", () => {
 
     expect(update.style).toBeNull();
   });
+
+  it("flags the row as admin-edited so a re-seed leaves it alone", () => {
+    const update = buildLibraryUpdate(current, { title: "New title" }) as any;
+
+    expect(update.adminEdited).toBe(true);
+  });
 });
 
 describe("listLibraryVideos", () => {
@@ -218,6 +225,7 @@ describe("updateLibraryVideo", () => {
     expect(updated?.tournament).toBe("Glenbrooks");
     expect(updated?.channel).toBe("Channel One");
     expect(updated?.searchText).toBe("corrected title channel one description a");
+    expect(updated?.adminEdited).toBe(true);
   });
 
   it("returns null for a video that is not published", async () => {

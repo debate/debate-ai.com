@@ -177,6 +177,10 @@ export function buildLibraryUpdate(
     update.searchText = `${title} ${channel} ${description}`.toLowerCase();
   }
 
+  // Marks the row so a later `db:seed:videos` re-run leaves it alone instead
+  // of overwriting this edit with the JSON asset's value. Never cleared —
+  // there's no signal that a row should go back to being asset-driven.
+  update.adminEdited = true;
   update.updatedAt = new Date();
   return update as Partial<VideoTableRow>;
 }

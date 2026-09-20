@@ -17,6 +17,92 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎞️ An admin's fix to a published video's metadata now survives the next
+  `db:seed:videos` re-seed instead of being silently overwritten by the
+  committed JSON asset.** Another repeat of the standing autonomous-routine
+  prompt above — as with every prior repeat (reconfirmed fresh this run: 84
+  `user.id` references across `saved_*` D1 tables in
+  `apps/debate-ai.com/lib/database/schema.ts`, `TOOL_RECORD_COLLECTIONS`
+  syncs every localStorage-backed tool without its own dedicated table to
+  the account, and every tool is reachable from `/tools`, CardMirror's
+  `MenuBar`/command palette, and the feature catalog), that prompt's own
+  asks are already fully built. There were no open PRs and no branches other
+  than `master` on the remote, and this branch's own prior commits were
+  already on `master` (a merged PR), so it was restarted from `master`'s
+  tip. A subagent scanned `packages/debate-help-docs` "Known gaps" sections
+  for a fresh, concretely-scoped candidate — checking ~25 entries against
+  current source, most either stale (already fixed elsewhere, doc just
+  never updated), an intentional documented tradeoff, or blocked on a
+  product/architecture decision — before landing on
+  `internals/video-library.mdx`'s own admitted gap: "An admin edit to a
+  published video is written to the `videos` table only... re-running
+  `db:seed:videos` upserts the asset's version back over the edit... Persisting
+  edits means writing them back to the assets, or teaching the seed to skip
+  rows an admin has edited."
+
+  Confirmed still open: `buildVideoSeedStatements`
+  (`packages/debate-data-sync/src/videos/video-seed-sql.ts`) generated an
+  `ON CONFLICT("video_id") DO UPDATE SET "col" = excluded."col", ...` for
+  every seeded column with no guard, so any re-seed (the CLI script, the
+  admin seed endpoint, or the weekly YouTube resync's own re-seed step)
+  clobbered whatever an admin had corrected through `/admin`'s Video
+  library card. The sibling case — a *removed* video — was already solved:
+  `deleteLibraryVideo` (`lib/videos/admin-library.ts`) records the removal
+  in `youtube_video_exclusions` so a resync respects it; edits had no
+  equivalent memory.
+
+  Took the doc's own second option (skip rows an admin has edited) rather
+  than writing edits back to the JSON assets, which would need a
+  write-back path to a committed file the seed doesn't otherwise touch. A
+  new `admin_edited` boolean column (migration
+  `apps/debate-ai.com/drizzle/0047_video_admin_edited.sql`, default
+  `false`, plus the matching `schema.ts` field) is set by
+  `buildLibraryUpdate` on every admin edit and never cleared.
+  `buildVideoSeedStatements`'s `DO UPDATE SET` now guards every seeded
+  column with `CASE WHEN "admin_edited" = 1 THEN "col" ELSE
+  excluded."col" END`, so an admin-edited row's stored values win over the
+  asset's on any re-seed; `admin_edited` itself is left out of the SET
+  list, so SQLite's upsert semantics leave it untouched, and `"updated_at"
+  = unixepoch()` stays unconditional so the row keeps reading as fresh and
+  isn't swept up by the trailing `DELETE ... WHERE "updated_at" <
+  seededAt` prune.
+
+  Vitest-covered: `packages/debate-data-sync/test/video-seed-sql.test.ts`
+  gains a case asserting the generated SQL's `CASE WHEN "admin_edited" = 1`
+  guard on a seeded column, that `admin_edited` is never itself an
+  assignment target, and that `updated_at` stays unconditional.
+  `apps/debate-ai.com/lib/videos/__tests__/seed-videos-to-db.test.ts` gains
+  an end-to-end case against a real in-memory SQLite database: mark a row
+  admin-edited with a raw `UPDATE`, re-seed with the JSON fixture's
+  original (different) title, and assert the admin's title survives while
+  the row is neither pruned nor stale. `admin-library.test.ts` gains a case
+  asserting `buildLibraryUpdate` sets `adminEdited: true`, plus an
+  assertion on the existing `updateLibraryVideo` persistence test. The new
+  migration was added to all three test files' hand-maintained
+  `VIDEOS_TABLE_MIGRATIONS` lists (`seed-videos-to-db.test.ts`,
+  `admin-library.test.ts`, and `resync-view-counts.test.ts`, which also
+  builds the `videos` table and would otherwise fail with "no such column"
+  the moment the schema change landed).
+
+  Ran the full verification gate: `bun install`, the three focused test
+  files (`video-seed-sql.test.ts`, `seed-videos-to-db.test.ts`,
+  `admin-library.test.ts`) plus `debate-data-sync`'s own `bunx vitest run`
+  (34 files, 619 tests), `bun run test` (480 files, 9045 tests passing,
+  repo-wide — this also caught `resync-view-counts.test.ts`'s migration
+  list needing the same update, which the three files above alone would
+  have missed), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` included), and `bun run build:web` (production build
+  succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-library.mdx`'s Known gaps entry (marked fixed)
+  and its "Admin management" section (a third bullet on the new
+  `admin_edited` bookkeeping); `features/video-library.mdx`'s Known gaps
+  also had this same gap, plus an already-stale "a seed run is not atomic"
+  line left over from an earlier fix — both removed.
+
 - **🔀 A speech-document send synced from another device no longer shows up
   as the newest entry if it was actually sent earlier.** Another repeat of
   the standing autonomous-routine prompt above — as with every prior
