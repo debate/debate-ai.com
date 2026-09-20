@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   adoptJudgeDecision,
   appendJudgeDecision,
+  buildJudgeDecisionHistoryItems,
   buildJudgeDecisionsPanelView,
   deleteJudgeDecision,
   deleteJudgeDecisionsForRound,
@@ -225,6 +226,53 @@ describe("deleteJudgeDecisionsForRound", () => {
     const removedIds = deleteJudgeDecisionsForRound("round-does-not-exist");
     expect(removedIds).toEqual([]);
     expect(listJudgeDecisions()).toEqual([record]);
+  });
+});
+
+describe("buildJudgeDecisionHistoryItems — rubric agreement", () => {
+  it("computes a rubric agreement breakdown when every batch member resolves to a known built-in paradigm", () => {
+    const flow = append({
+      ...INPUT_A,
+      paradigmName: "Flow / Tech Judge",
+      batchId: "panel-1",
+      result: { winner: "primary", keyVotingIssues: ["Dropped disadvantage"], rationale: "Clean drop." },
+    });
+    const policymaker = append({
+      ...INPUT_A,
+      paradigmName: "Policymaker",
+      batchId: "panel-1",
+      result: { winner: "primary", keyVotingIssues: ["Net benefits favor the plan"], rationale: "Solvency held." },
+    });
+
+    const [item] = buildJudgeDecisionHistoryItems([flow, policymaker]);
+    expect(item!.kind).toBe("panel");
+    if (item!.kind !== "panel") throw new Error("expected a panel item");
+
+    expect(item.rubricAgreement).not.toBeNull();
+    const names = item.rubricAgreement!.perParadigm.map((p) => p.paradigmName).sort();
+    expect(names).toEqual(["Flow / Tech Judge", "Policymaker"]);
+    expect(item.rubricAgreement!.totalCriteria).toBe(8); // 4 voting priorities per built-in paradigm
+    expect(item.rubricAgreement!.totalAddressed).toBeGreaterThanOrEqual(0);
+    expect(item.rubricAgreement!.totalAddressed).toBeLessThanOrEqual(item.rubricAgreement!.totalCriteria);
+    expect(item.rubricAgreement!.agreementRate).toBe(
+      item.rubricAgreement!.totalAddressed / item.rubricAgreement!.totalCriteria,
+    );
+  });
+
+  it("is null when fewer than 2 batch members resolve to a known paradigm by name", () => {
+    const flow = append({ ...INPUT_A, paradigmName: "Flow / Tech Judge", batchId: "panel-2" });
+    const unknown = append({ ...INPUT_A, paradigmName: "Some renamed paradigm", batchId: "panel-2" });
+
+    const [item] = buildJudgeDecisionHistoryItems([flow, unknown]);
+    expect(item!.kind).toBe("panel");
+    if (item!.kind !== "panel") throw new Error("expected a panel item");
+    expect(item.rubricAgreement).toBeNull();
+  });
+
+  it("leaves a lone single decision's rubricAgreement absent (not a panel item at all)", () => {
+    const lone = append({ ...INPUT_A, paradigmName: "Flow / Tech Judge" });
+    const [item] = buildJudgeDecisionHistoryItems([lone]);
+    expect(item!.kind).toBe("single");
   });
 });
 

@@ -17,6 +17,60 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧮 Rubric-based agreement breakdown for the multi-judge panel.**
+  `judge-paradigm-selections.mdx`'s Known gaps named this as the fresh
+  next-step for idea #5 once the multi-judge panel mode's raw
+  winner/`keyVotingIssues` union shipped: reuse each paradigm's own
+  `buildJudgeDecisionRubric` scoring rubric so a panel run shows how
+  thoroughly each paradigm's own voting priorities were actually engaged,
+  not just the vote tally.
+
+  New `getJudgeParadigmByName` (`debate-speech-writer`'s
+  `judge-paradigms.ts`) resolves a `JudgeDecisionRecord`'s stored
+  `paradigmName` display string back to its full `JudgeParadigm` (for its
+  `votingPriorities`) — an exact match against `listJudgeParadigms()`, so it
+  only ever resolves a built-in, which is all the panel's checkboxes ever
+  offer. New `buildJudgePanelRubricAgreement`
+  (`debate-round`'s `round/judge-decision-panel.ts`) reuses the existing
+  `buildJudgeDecisionRubric` once per paradigm (no new scoring logic) and
+  sums the result into each paradigm's own addressed/total count plus an
+  overall `totalAddressed`/`totalCriteria`/`agreementRate` across the whole
+  panel — throws below 2 entries, mirroring `combineJudgePanelDecisions`.
+
+  `state/judgeDecisions.ts`'s `buildJudgeDecisionHistoryItems` now resolves
+  every panel batch member's paradigm by name and attaches the breakdown as
+  each panel history item's new `rubricAgreement` field (`null` when fewer
+  than 2 members resolve — defensive, not expected through the current UI).
+  `JudgeDecisionPanel.tsx`'s panel-run card shows an overall "X/Y rubric
+  criteria addressed (Z%)" badge next to the existing winner/Unanimous
+  badges, plus a "Rubric agreement" section listing each paradigm's own
+  criteria with a ✓/✗ per row.
+
+  Vitest-covered: `packages/debate-speech-writer/test/judge-paradigms.test.ts`
+  (`getJudgeParadigmByName` — exact match, unknown/custom names, case
+  sensitivity); `packages/debate-round/test/judge-decision-panel.test.ts`
+  (`buildJudgePanelRubricAgreement` — throws below 2 entries, per-paradigm
+  and overall counts, zero-criteria division guard);
+  `packages/debate-practice-drills/test/judgeDecisions.test.ts`
+  (`buildJudgeDecisionHistoryItems` — a resolvable panel gets a non-null
+  breakdown, an unresolvable paradigm name falls back to `null`, a lone
+  single decision has no `rubricAgreement` at all). The panel's own UI
+  wiring remains intentionally untested, matching this package's existing
+  convention.
+
+  Ran the full verification gate: `bun install`; the four new/affected test
+  files (72 passing) plus `bun run test` (490 files, 9246 tests passing,
+  repo-wide); `bun run typecheck` (`turbo typecheck`, 17/17 packages green);
+  and `bun run build:web` (production build succeeded). No `lint`/
+  `format:check` script exists in this repo, so that step was skipped as
+  not applicable.
+
+  Docs: `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx`
+  ("Rubric agreement breakdown" section; closes this doc's own Known gap).
+
+  PR: [#903](https://github.com/debate/debate-ai.com/pull/903).
+  Branch: `claude/gifted-babbage-9im8j4`.
+
 - **🔀 Close the Learn custom-deck "two devices edit the same deck at once"
   lost-update race.** `learn-decks-cloud-save.mdx`'s Known gaps documented
   that renaming a deck or changing its card membership pushed a

@@ -275,6 +275,12 @@ export function JudgeDecisionPanel() {
                             : `${item.combined.winner === "primary" ? item.decisions[0]!.sideNames.primary : item.decisions[0]!.sideNames.secondary} wins ${item.combined.winner === "primary" ? item.combined.primaryVotes : item.combined.secondaryVotes}-${item.combined.winner === "primary" ? item.combined.secondaryVotes : item.combined.primaryVotes}`}
                         </Badge>
                         {item.combined.unanimous && <Badge variant="outline">Unanimous</Badge>}
+                        {item.rubricAgreement && (
+                          <Badge variant="outline">
+                            {item.rubricAgreement.totalAddressed}/{item.rubricAgreement.totalCriteria} rubric
+                            criteria addressed ({Math.round(item.rubricAgreement.agreementRate * 100)}%)
+                          </Badge>
+                        )}
                       </div>
                       <Button
                         size="sm"
@@ -294,6 +300,32 @@ export function JudgeDecisionPanel() {
                         ))}
                       </ul>
                     </div>
+                    {item.rubricAgreement && (
+                      <div>
+                        <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+                          Rubric agreement
+                        </h3>
+                        <div className="space-y-2">
+                          {item.rubricAgreement.perParadigm.map((breakdown) => (
+                            <div key={breakdown.paradigmName} className="text-sm">
+                              <p className="font-medium text-foreground">
+                                {breakdown.paradigmName}{" "}
+                                <span className="font-normal text-muted-foreground">
+                                  ({breakdown.addressedCount}/{breakdown.totalCount} addressed)
+                                </span>
+                              </p>
+                              <ul className="space-y-0.5 pl-5 text-muted-foreground">
+                                {breakdown.rubric.map((row, index) => (
+                                  <li key={index}>
+                                    {row.addressed ? "✓" : "✗"} {row.criterion}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
