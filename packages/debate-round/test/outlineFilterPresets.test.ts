@@ -101,6 +101,19 @@ describe("isValidOutlineFilterPresetsList", () => {
   it("rejects a non-array value", () => {
     expect(isValidOutlineFilterPresetsList({ name: "X", filter: {} })).toBe(false);
   });
+
+  it("accepts an entry with a roundId and one without", () => {
+    expect(
+      isValidOutlineFilterPresetsList([
+        { name: "Unanswered", filter: {}, roundId: "round-1" },
+        { name: "Cited only", filter: {} },
+      ]),
+    ).toBe(true);
+  });
+
+  it("rejects an entry with a non-string roundId", () => {
+    expect(isValidOutlineFilterPresetsList([{ name: "X", filter: {}, roundId: 5 }])).toBe(false);
+  });
 });
 
 describe("normalizeOutlineFilterPresetsPatch", () => {
@@ -134,6 +147,11 @@ describe("normalizeOutlineFilterPresetsPatch", () => {
 describe("serializeOutlineFilterPresets / parseOutlineFilterPresets", () => {
   it("round-trips a non-empty list", () => {
     const list: OutlineFilterPreset[] = [{ name: "Unanswered", filter: { onlyUnanswered: true, kind: "argument" } }];
+    expect(parseOutlineFilterPresets(serializeOutlineFilterPresets(list))).toEqual(list);
+  });
+
+  it("round-trips a preset's roundId", () => {
+    const list: OutlineFilterPreset[] = [{ name: "Unanswered", filter: {}, roundId: "round-42" }];
     expect(parseOutlineFilterPresets(serializeOutlineFilterPresets(list))).toEqual(list);
   });
 

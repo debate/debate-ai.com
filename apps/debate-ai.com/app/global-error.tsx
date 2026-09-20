@@ -16,6 +16,7 @@
  */
 
 import { useEffect } from "react"
+import { shouldReloadForStaleBuild } from "@/lib/layout/stale-build-recovery"
 
 export default function GlobalError({
   error,
@@ -26,6 +27,25 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error("Root layout error:", error)
+
+    // A tab open across a deploy is running chunk hashes the origin no longer
+    // serves, so its lazy imports resolve to null and the first component to
+    // touch one throws out here. `reset()` re-renders that same dead graph and
+    // can never recover it — only a reload can, and documents are
+    // network-first in the service worker, so it comes back on the current
+    // build. Rate-limited to one attempt per tab per cooldown, so a build
+    // that is genuinely broken shows the message below instead of looping.
+    // See lib/layout/stale-build-recovery.ts.
+    if (typeof window === "undefined") return
+    let store: Storage | undefined
+    try {
+      store = window.sessionStorage
+    } catch {
+      // Storage is blocked (privacy mode); recovery is skipped, not attempted
+      // unguarded.
+      return
+    }
+    if (shouldReloadForStaleBuild(store)) window.location.reload()
   }, [error])
 
   return (

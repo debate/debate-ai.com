@@ -13,19 +13,26 @@
  * The overlay is opt-in: a page that never asks for it renders bare. That
  * keeps the login/callback routes — which already render their own loader —
  * from stacking a second one on top.
+ *
+ * What sits in the middle is {@link LoadingVideo}: a looping clip that opens
+ * on a random frame, so repeated transitions don't replay the same seconds.
+ * It falls back to the orb until it can play, and permanently if it can't, so
+ * the centre of the screen is never empty. The small inline loaders in panels
+ * and sidebars keep using {@link AnimatedLoader} directly — a video belongs to
+ * the full-screen moment, not to a spinner in the corner of a settings pane.
  */
 
 import { useEffect, useState, type ReactNode } from "react"
 import { cn } from "@/lib/ui/lib/utils"
-import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
+import { LoadingVideo } from "@/components/ui/LoadingVideo"
 
 interface LoadingOverlayProps {
   /** When true the overlay is visible; when false it fades out. */
   active: boolean
-  /** Short line under the orb, e.g. the page the app is loading. */
+  /** Short line under the clip, e.g. the page the app is loading. */
   label?: ReactNode
   /**
-   * How long to keep showing the orb after `active` flips to false, so the
+   * How long to keep showing the loader after `active` flips to false, so the
    * fade-out is an animation, not a cut. Defaults to 400 ms.
    */
   fadeOutMs?: number
@@ -72,7 +79,14 @@ export function LoadingOverlay({
         passthrough && "pointer-events-auto",
       )}
     >
-      <AnimatedLoader label={typeof label === "string" ? label : undefined} size="lg" />
+      {/* No role/aria-live here: the overlay root above is already the live
+          region announcing this, and nesting a second one double-announces. */}
+      <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <LoadingVideo />
+        {typeof label === "string" && label && (
+          <p className="max-w-xs text-sm font-medium text-muted-foreground">{label}</p>
+        )}
+      </div>
       {label && typeof label !== "string" && (
         <div className="absolute bottom-[15vh] text-center">{label}</div>
       )}

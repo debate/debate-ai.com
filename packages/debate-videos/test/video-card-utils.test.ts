@@ -11,10 +11,17 @@ import type { TopicType } from "../src/types/videos";
 const topics = [
   {
     year: 2024,
-    policy_topic: "Fiscal redistribution",
-    pf_topic: "AI regulation",
-    ld_topic: "Wealth tax",
-    ndt_topic: "Arctic policy",
+    policy_topic_name: "Fiscal redistribution",
+    policy_topic: "The United States federal government should substantially increase fiscal redistribution.",
+    pf_topics: [
+      { start_month: "September", topic_name: "AI", topic: "AI regulation" },
+      { start_month: "January", topic_name: "NATO", topic: "NATO expansion" },
+    ],
+    ld_topics: [
+      { start_month: "September", topic_name: "Wealth tax", topic: "Wealth tax" },
+    ],
+    ndt_topic_name: "Arctic policy",
+    ndt_topic: "The United States Federal Government should substantially increase its exploration of the Arctic.",
   },
 ] satisfies TopicType[];
 
@@ -42,10 +49,28 @@ describe("getRoundBadgeColor", () => {
 
 describe("getYearTopic", () => {
   it("picks the topic field matching the debate style", () => {
-    expect(getYearTopic(2024, 1, topics)).toBe("Fiscal redistribution");
-    expect(getYearTopic(2024, 2, topics)).toBe("AI regulation");
-    expect(getYearTopic(2024, 3, topics)).toBe("Wealth tax");
-    expect(getYearTopic(2024, 4, topics)).toBe("Arctic policy");
+    expect(getYearTopic(2024, 1, topics)).toBe(
+      "Fiscal redistribution<br>The United States federal government should substantially increase fiscal redistribution.",
+    );
+    expect(getYearTopic(2024, 2, topics)).toBe("September: AI regulation<br>January: NATO expansion");
+    expect(getYearTopic(2024, 3, topics)).toBe("September: Wealth tax");
+    expect(getYearTopic(2024, 4, topics)).toBe(
+      "Arctic policy<br>The United States Federal Government should substantially increase its exploration of the Arctic.",
+    );
+  });
+
+  it("falls back to legacy ld_topic/pf_topic strings", () => {
+    const legacy = [
+      {
+        year: 2010,
+        pf_topic: "Bush tax cuts<br>Armed pilots",
+        ld_topic: "Violent revolution",
+        policy_topic: "Education",
+        ndt_topic: "Sanctions",
+      },
+    ] satisfies TopicType[];
+    expect(getYearTopic(2010, 2, legacy)).toBe("Bush tax cuts<br>Armed pilots");
+    expect(getYearTopic(2010, 3, legacy)).toBe("Violent revolution");
   });
 
   it("returns undefined for unknown years, styles or missing data", () => {

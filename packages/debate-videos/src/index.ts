@@ -71,6 +71,13 @@ export {
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
+export type { DebateHistory, YearData } from "./panels/leaderboard/leaderboardTypes";
+export {
+  formatNamedTopic,
+  formatSeasonalTopics,
+  getStyleTopicText,
+  topicDisplayLines,
+} from "./lib/debate-topics";
 export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
 export {
   parseVideoWatchSlug,

@@ -16,6 +16,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../ui/primitives/ta
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
+  hasLiveLeaderboard,
+  resolveDivisionTopic,
   sortEntries,
   type Division,
   type SortKey,
@@ -136,8 +138,15 @@ export function LeaderboardPanel({
 
   const divConfig = DIVISION_CONFIG.find((d) => d.value === division)!
   const yearData = debateHistory?.[year]
-  const topic = yearData?.[divConfig.topicKey]
-  const champion = yearData?.[divConfig.championKey]
+  const topic = resolveDivisionTopic(yearData, division)
+  const topicName =
+    divConfig.topicNameKey && typeof yearData?.[divConfig.topicNameKey] === "string"
+      ? (yearData[divConfig.topicNameKey] as string)
+      : undefined
+  const champion =
+    typeof yearData?.[divConfig.championKey] === "string"
+      ? (yearData[divConfig.championKey] as string)
+      : undefined
 
   // ---------------------------------------------------------------------------
   // Render
@@ -184,12 +193,13 @@ export function LeaderboardPanel({
                 division={division}
                 year={year}
                 topic={topic}
+                topicName={topicName}
                 champion={champion}
               />
             )}
 
-            {/* NDT: champions-only view (no leaderboard rows) */}
-            {division === "NDT" ? (
+            {/* Divisions with no live per-team data source: champions-only view */}
+            {!hasLiveLeaderboard(division) ? (
               championsLoading ? (
                 <div className="flex items-center justify-center min-h-[400px]">
                   <div className="text-center">
@@ -197,7 +207,13 @@ export function LeaderboardPanel({
                     <p className="text-muted-foreground">Loading data...</p>
                   </div>
                 </div>
-              ) : null
+              ) : (
+                <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
+                  No live team leaderboard is published for {divConfig.label}.
+                  Historical champion and topic data is shown above when
+                  available for the selected season.
+                </div>
+              )
             ) : (
               <>
                 {loading ? (

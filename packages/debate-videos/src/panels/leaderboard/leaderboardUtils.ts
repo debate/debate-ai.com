@@ -6,6 +6,7 @@
  */
 
 import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills";
+import type { SeasonalTopic } from "../../lib/debate-topics";
 import type { Division, SortState, YearData } from "./leaderboardTypes";
 
 // Re-export all types and the VALID_DIVISIONS set for backward compatibility.
@@ -32,38 +33,81 @@ export const DIVISION_CONFIG: {
   value: Division;
   label: string;
   topicKey: keyof YearData;
+  topicNameKey?: keyof YearData;
   championKey: keyof YearData;
   logoSrc: string;
+  /**
+   * Whether a live per-team leaderboard data source exists for this
+   * division. NDT has no TOC bid list or DebateDrills Elo dataset behind
+   * it — only the historical champion/topic data shown in the banner.
+   */
+  hasLiveLeaderboard: boolean;
 }[] = [
   {
     value: "VPF",
     label: "Public Forum",
-    topicKey: "pf_topic",
+    topicKey: "pf_topics",
     championKey: "pf_champion",
     logoSrc: "https://i.imgur.com/92V0FBF.png",
+    hasLiveLeaderboard: true,
   },
   {
     value: "VLD",
     label: "LD",
-    topicKey: "ld_topic",
+    topicKey: "ld_topics",
     championKey: "ld_champion",
     logoSrc: "https://i.imgur.com/3xFjCvO.png",
+    hasLiveLeaderboard: true,
   },
   {
     value: "VCX",
     label: "Policy",
     topicKey: "policy_topic",
+    topicNameKey: "policy_topic_name",
     championKey: "policy_champion",
     logoSrc: "https://i.imgur.com/CMuiSKj.png",
+    hasLiveLeaderboard: true,
   },
   {
     value: "NDT",
     label: "College NDT",
     topicKey: "ndt_topic",
+    topicNameKey: "ndt_topic_name",
     championKey: "ndt_champion",
     logoSrc: "https://i.imgur.com/cFmTAdJ.png",
+    hasLiveLeaderboard: false,
   },
 ];
+
+/**
+ * Resolves the banner topic for a division/year, including the legacy
+ * `ld_topic` / `pf_topic` HTML strings from older debate-topics.json.
+ */
+export function resolveDivisionTopic(
+  yearData: YearData | undefined,
+  division: Division,
+): string | SeasonalTopic[] | undefined {
+  if (!yearData) return undefined;
+  const config = DIVISION_CONFIG.find((d) => d.value === division);
+  if (!config) return undefined;
+  const current = yearData[config.topicKey];
+  if (Array.isArray(current) && current.length > 0) return current;
+  if (typeof current === "string" && current) return current;
+  if (division === "VPF" && yearData.pf_topic) return yearData.pf_topic;
+  if (division === "VLD" && yearData.ld_topic) return yearData.ld_topic;
+  return undefined;
+}
+
+/**
+ * Whether `division` has a live per-team leaderboard data source, per
+ * {@link DIVISION_CONFIG}. Falls back to `false` for an unrecognized value.
+ */
+export function hasLiveLeaderboard(division: Division): boolean {
+  return (
+    DIVISION_CONFIG.find((d) => d.value === division)?.hasLiveLeaderboard ??
+    false
+  );
+}
 
 /**
  * Tooltip copy describing the Debate Elo rating formula shown on the Elo

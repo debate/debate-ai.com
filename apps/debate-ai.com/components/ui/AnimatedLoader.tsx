@@ -1,5 +1,23 @@
 "use client"
 
+/**
+ * @fileoverview The app's one loading orb, used by {@link LoadingOverlay} and
+ * by the panels that render their own loader.
+ *
+ * The orb is drawn by {@link OrbitalLoader}, an in-repo component, and that is
+ * deliberate. It used to be `grab-url/icons/quantum-sphere`, which ships its
+ * own React *bundled into the published file* — a second copy (19.2.5) beside
+ * the one `react-dom` renders with (19.2.8). Hooks called from that copy read
+ * a `ReactSharedInternals` that no renderer ever populates, so the first
+ * `useRef` threw `Cannot read properties of null (reading 'useRef')`. Because
+ * `LoadingProvider` mounts this in the root layout, that single import took
+ * down every route through `global-error`.
+ *
+ * `resolve.dedupe` cannot fix that: the duplicate is inlined in the
+ * dependency's own dist file, not resolved from node_modules. So: never render
+ * a React component out of a package that bundles React — draw it here.
+ */
+
 import { cn } from "@/lib/ui/lib/utils"
 import { OrbitalLoader } from "@/components/ui/OrbitalLoader"
 
@@ -10,27 +28,6 @@ interface AnimatedLoaderProps {
   size?: AnimatedLoaderSize
   className?: string
 }
-
-const sizeConfig = {
-  sm: {
-    sphereSize: 64,
-    minLines: 5,
-    maxLines: 8,
-    rotationSpeed: [4, 9],
-  },
-  md: {
-    sphereSize: 96,
-    minLines: 6,
-    maxLines: 10,
-    rotationSpeed: [4, 11],
-  },
-  lg: {
-    sphereSize: 144,
-    minLines: 8,
-    maxLines: 12,
-    rotationSpeed: [5, 13],
-  },
-} as const
 
 export function AnimatedLoader({
   label = "Loading",

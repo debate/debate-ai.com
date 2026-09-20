@@ -28,6 +28,7 @@ import {
 } from './text-prompt.js';
 import { getHost } from './host/index.js';
 import {
+  filterShortcutsReferenceGroups,
   formatShortcutsReferenceText,
   type ShortcutsReferenceGroup,
 } from './reference-export.js';
@@ -154,8 +155,9 @@ class ReferenceModal {
    *  (fixed height + internal scroll, would clip to one page). Builds
    *  the fragment fresh from `groups` each call rather than caching it,
    *  since it must reflect whatever's current when the button is
-   *  clicked (a rebind since the modal opened, a search that doesn't
-   *  apply here — print/export always show everything). */
+   *  clicked (a rebind since the modal opened, or the active search —
+   *  callers pass `groups` already scoped to it via
+   *  `filterShortcutsReferenceGroups`). */
   private print(groups: ShortcutsReferenceGroup[]): void {
     const root = document.createElement('div');
     root.className = 'pmd-reference-print-root';
@@ -200,7 +202,9 @@ class ReferenceModal {
 
   /** Saves the reference as a plain-text file via the platform host
    *  (native "Save As" picker where available, download fallback
-   *  otherwise — the same path Settings → Export settings… uses). */
+   *  otherwise — the same path Settings → Export settings… uses).
+   *  Callers pass `groups` already scoped to the active search via
+   *  `filterShortcutsReferenceGroups`. */
   private async exportAsText(
     groups: ShortcutsReferenceGroup[],
   ): Promise<void> {
@@ -213,7 +217,9 @@ class ReferenceModal {
 
   /** Saves the reference as a portable, already-paginated PDF file via
    *  the platform host — for a user who wants a shareable document
-   *  without invoking their browser's own print-to-PDF flow. */
+   *  without invoking their browser's own print-to-PDF flow. Callers
+   *  pass `groups` already scoped to the active search via
+   *  `filterShortcutsReferenceGroups`. */
   private async exportAsPdf(groups: ShortcutsReferenceGroup[]): Promise<void> {
     const bytes = await buildShortcutsReferencePdf(groups);
     await getHost().saveAs('cardmirror-shortcuts.pdf', bytes, {
@@ -234,28 +240,38 @@ class ReferenceModal {
     const actions = document.createElement('div');
     actions.className = 'pmd-reference-header-actions';
 
+    // Print/Export scope to the active search, same as the on-screen
+    // list — read `this.searchQuery` at click time so a query typed
+    // after render() still applies.
+    const filteredGroups = () =>
+      filterShortcutsReferenceGroups(groups, this.searchQuery);
+
     const printBtn = document.createElement('button');
     printBtn.type = 'button';
     printBtn.className = 'pmd-reference-action-btn';
     printBtn.textContent = 'Print';
-    printBtn.title = 'Print the full shortcuts reference';
-    printBtn.addEventListener('click', () => this.print(groups));
+    printBtn.title = 'Print the shortcuts reference';
+    printBtn.addEventListener('click', () => this.print(filteredGroups()));
     actions.appendChild(printBtn);
 
     const exportBtn = document.createElement('button');
     exportBtn.type = 'button';
     exportBtn.className = 'pmd-reference-action-btn';
     exportBtn.textContent = 'Export…';
-    exportBtn.title = 'Save the full shortcuts reference as a text file';
-    exportBtn.addEventListener('click', () => void this.exportAsText(groups));
+    exportBtn.title = 'Save the shortcuts reference as a text file';
+    exportBtn.addEventListener('click', () =>
+      void this.exportAsText(filteredGroups()),
+    );
     actions.appendChild(exportBtn);
 
     const pdfBtn = document.createElement('button');
     pdfBtn.type = 'button';
     pdfBtn.className = 'pmd-reference-action-btn';
     pdfBtn.textContent = 'Download PDF';
-    pdfBtn.title = 'Save the full shortcuts reference as a PDF file';
-    pdfBtn.addEventListener('click', () => void this.exportAsPdf(groups));
+    pdfBtn.title = 'Save the shortcuts reference as a PDF file';
+    pdfBtn.addEventListener('click', () =>
+      void this.exportAsPdf(filteredGroups()),
+    );
     actions.appendChild(pdfBtn);
 
     const closeBtn = document.createElement('button');

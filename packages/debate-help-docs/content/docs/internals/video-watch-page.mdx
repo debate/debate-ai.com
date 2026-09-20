@@ -115,10 +115,28 @@ match, a whole-text match, and a needle containing regex metacharacters
 
 ## Known gaps
 
-Related videos are query passes, not a relevance model — the tournament
-pass is a `LIKE` search on the tournament name, so a tournament whose name
-appears in unrelated descriptions pulls those in too. Fullscreen covers
-the player *and* its metadata column (the whole left stage), not the
-video alone. The position handed back to the floating
-player comes from YouTube's `infoDelivery` broadcasts, so a video closed
-in the first second before any broadcast arrives resumes from 0.
+- Related videos are query passes, not a relevance model.
+- ~~The tournament pass was a `LIKE` search across title/channel/description
+  (the same free-text search the search box uses), so a tournament whose
+  name appeared in an unrelated video's description pulled that video in
+  too.~~ **Fixed:** `getRelatedVideos`' tournament pass now filters on
+  `VideoQueryParams.tournament`, a dedicated predicate scoped to the
+  `tournament` column/field alone (`buildConditions` in SQL,
+  `filterVideoRows` for the JSON fallback), instead of routing the
+  tournament name through the generic `q` free-text filter.
+- ~~Fullscreen covers the player *and* its metadata column (the whole left
+  stage), not the video alone.~~ **Fixed:** `handleToggleFullscreen` now
+  calls `requestFullscreen()` on `videoWrapperRef` — the same element the
+  picture-in-picture handoff already uses — instead of the ref on the whole
+  left-column stage, so fullscreen shows only the video.
+- ~~The position handed back to the floating player comes from YouTube's
+  `infoDelivery` broadcasts, so a video closed in the first second before any
+  broadcast arrives resumes from 0.~~ **Fixed:** `currentTimeRef` — the same
+  ref the popout handoff and the picture-in-picture toggle both read from —
+  now seeds itself from the video's resolved saved position when the page
+  claims playback, instead of a hard `0`. Popping into picture-in-picture
+  reloads the embed from `resumeSeconds` (moving the iframe into the PiP
+  window resets its navigation state), and `resumeSeconds` is read straight
+  from `currentTimeRef` at the moment of the toggle — so toggling before the
+  first `infoDelivery` broadcast arrives now reopens at the video's actual
+  second rather than `0`.

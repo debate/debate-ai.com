@@ -102,7 +102,7 @@ describe("first visit", () => {
 
     const state = await refreshVideoIndex();
 
-    expect(requests).toEqual([{ path: "videos/index", params: {} }]);
+    expect(requests).toEqual([{ path: "videos/index", params: { baseURL: "/api/" } }]);
     expect(state).toMatchObject({ ready: true, count: 3, syncedAt: 1_700_000_000_000 });
     expect(localStorage.getItem(VIDEO_INDEX_STORAGE_KEY)).toContain("\"version\":1");
   });
@@ -143,7 +143,7 @@ describe("later visits", () => {
 
     expect(requests[0]).toEqual({
       path: "videos/index",
-      params: { since: "1700000000000" },
+      params: { since: "1700000000000", baseURL: "/api/" },
     });
     expect(getVideoIndexState()).toMatchObject({ count: 3, syncedAt: 1_700_000_100_000 });
   });
@@ -189,8 +189,8 @@ describe("later visits", () => {
     await refreshVideoIndex();
 
     expect(requests.map((request) => request.params)).toEqual([
-      { since: "1700000000000" },
-      {},
+      { since: "1700000000000", baseURL: "/api/" },
+      { baseURL: "/api/" },
     ]);
     expect(getVideoIndexState().count).toBe(2);
     expect(queryVideoIndex({ ids: ["r2"] })?.videos).toEqual([]);

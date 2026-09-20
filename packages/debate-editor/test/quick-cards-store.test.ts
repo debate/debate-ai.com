@@ -29,6 +29,7 @@ function stubFetch(opts: {
   get?: QuickCard[] | 'signed-out';
   onPut?: (id: string, body: unknown) => void;
   onDelete?: (id: string) => void;
+  onClear?: () => void;
 }) {
   const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
     const method = init?.method ?? 'GET';
@@ -44,6 +45,10 @@ function stubFetch(opts: {
       return { ok: true, status: 200 };
     }
     if (method === 'DELETE') {
+      if (url === '/api/quick-cards') {
+        opts.onClear?.();
+        return { ok: true, status: 200 };
+      }
       const id = decodeURIComponent(url.split('/').pop()!);
       opts.onDelete?.(id);
       return { ok: true, status: 200 };
@@ -178,9 +183,14 @@ describe('QuickCardsStore account sync', () => {
     expect(store.list()).toEqual([]);
   });
 
-  it('deletes every card from the account on clear once signed in', async () => {
-    const deleted: string[] = [];
-    stubFetch({ get: [], onDelete: (id) => deleted.push(id) });
+  it('issues a single bulk-clear call to the account on clear once signed in', async () => {
+    const deleteCalls: string[] = [];
+    let clearCalls = 0;
+    stubFetch({
+      get: [],
+      onDelete: (id) => deleteCalls.push(id),
+      onClear: () => clearCalls++,
+    });
     const store = new QuickCardsStore();
     await store.init();
     await store.upsert(card({ id: 'a' }));
@@ -188,7 +198,8 @@ describe('QuickCardsStore account sync', () => {
 
     await store.clear();
 
-    expect(deleted.sort()).toEqual(['a', 'b']);
+    expect(clearCalls).toBe(1);
+    expect(deleteCalls).toEqual([]);
     expect(store.list()).toEqual([]);
   });
 

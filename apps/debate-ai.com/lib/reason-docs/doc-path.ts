@@ -33,6 +33,12 @@ export interface PathItem {
   title: string
   parentId: number | null
   isFolder: boolean
+  /** The file's own slug just before its most recent rename, if any — lets a
+   *  link minted before that rename keep resolving (see {@link findItemByRef}).
+   *  Only ever set on a file, and only remembers one rename back, not a full
+   *  history. Absent for a row from a table that doesn't track it (e.g. the
+   *  public topic starters, which aren't renamed through this flow). */
+  previousSlug?: string | null
 }
 
 /** Extensions dropped before slugging, so `1AC.docx` and the `.cmir` it is
@@ -142,6 +148,19 @@ function sortForOpen(items: readonly PathItem[]): PathItem[] {
   return [...items].sort((a, b) => a.title.localeCompare(b.title) || a.id - b.id)
 }
 
+/** `item`'s path as it read just before its most recent rename: its current
+ *  path (folders unchanged) with only the leaf segment swapped back to
+ *  {@link PathItem.previousSlug}. `null` when it has none — never renamed, or
+ *  its old title had nothing sluggable left in it. */
+function previousPath(paths: Map<number, string>, item: PathItem): string | null {
+  if (!item.previousSlug) return null
+  const current = paths.get(item.id)
+  if (!current) return null
+  const segments = current.split("/")
+  segments[segments.length - 1] = item.previousSlug
+  return segments.join("/")
+}
+
 /**
  * The file a `?doc=`/`?topic=` value names, or `null`.
  *
@@ -152,8 +171,10 @@ function sortForOpen(items: readonly PathItem[]): PathItem[] {
  *  3. A trailing part of a path (`warming-1ac`), when exactly one file ends
  *     that way — the common case for a link typed by hand, and ambiguity here
  *     means the reader gets the fallback rather than a coin flip.
- *  4. A folder, by either of the two rules above, which opens the first file
- *     inside it (recursively) so a folder link lands on something readable.
+ *  4. The same two checks again against each file's *previous* path — a link
+ *     minted before the file's last rename, whose leaf segment is now stale.
+ *  5. A folder, by rule 2 or 3, which opens the first file inside it
+ *     (recursively) so a folder link lands on something readable.
  */
 export function findItemByRef(items: readonly PathItem[], ref: string): PathItem | null {
   if (!ref.trim()) return null
@@ -176,6 +197,19 @@ export function findItemByRef(items: readonly PathItem[], ref: string): PathItem
 
   const suffixFile = matches((path) => path === wanted || path.endsWith(`/${wanted}`), false)
   if (suffixFile.length === 1) return suffixFile[0]!
+
+  const matchesPrevious = (predicate: (path: string) => boolean) =>
+    items.filter((item) => {
+      if (item.isFolder) return false
+      const path = previousPath(paths, item)
+      return path !== null && predicate(path)
+    })
+
+  const previousExact = matchesPrevious((path) => path === wanted)
+  if (previousExact.length === 1) return previousExact[0]!
+
+  const previousSuffix = matchesPrevious((path) => path === wanted || path.endsWith(`/${wanted}`))
+  if (previousSuffix.length === 1) return previousSuffix[0]!
 
   const folder =
     matches((path) => path === wanted, true)[0] ??
