@@ -17,6 +17,102 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔀 Two tabs or devices editing saved Argument Library collections at the
+  same time no longer silently drop each other's change.** Another repeat of
+  the standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84 `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. There were no open PRs and
+  no branches other than `master` on the remote, and this branch's own prior
+  commits were already on `master` (a merged PR), so it was restarted from
+  `master`'s tip. A subagent scanned `packages/debate-help-docs`'s ~81
+  "Known gaps" sections (cross-checked against every doc path already
+  investigated in this file's history) for a fresh, concretely-scoped
+  candidate, landing on
+  `features/argument-library-collections.mdx`'s: "No optimistic-concurrency
+  handling: the whole `savedArgumentCollections` list is a single
+  account-settings field, so a rename/update/add/remove from two signed-in
+  devices at once has the last write win."
+
+  Confirmed still real:
+  `packages/debate-search-evidence/src/hooks/useSavedArgumentCollections.ts`'s
+  `addCollection`/`removeCollection`/`renameCollection`/`updateCollection`
+  all computed the next *full* array from the hook's own in-memory state and
+  PUT it whole via `saveSavedArgumentCollections`, so two tabs each acting
+  from a stale snapshot raced a classic lost update — the exact gap
+  `debate-round`'s `state/favoriteTools.ts#applyFavoriteToolOp` had already
+  closed for `favoriteTools` (and `recentTools` the same way) by resolving a
+  single op server-side against the row's *current* value instead of
+  trusting the caller's copy.
+
+  Mirrored that fix for `SavedArgumentCollection`:
+  `packages/debate-search-evidence/src/lib/argument-library-collections.ts`
+  gains `SavedArgumentCollectionOp` (`addSavedArgumentCollection` /
+  `removeSavedArgumentCollection` / `renameSavedArgumentCollection` /
+  `updateSavedArgumentCollectionTags`), `normalizeSavedArgumentCollectionOpPatch`
+  (shape-only validation — exactly one op per request), and
+  `applySavedArgumentCollectionOp` (applies the op against a `current` list,
+  reusing the existing `validateNewSavedArgumentCollection`/
+  `validateSavedArgumentCollectionRename`/`validateSavedArgumentCollectionTagsUpdate`
+  business-rule guards; unlike `applyFavoriteToolOp`, a collection op can be
+  refused — duplicate name, at capacity, unknown collection — so it returns
+  `{ next, failure }` rather than always succeeding). `remove` stays a
+  silent no-op on an absent name, matching `removeFavoriteTool`'s and
+  `removeCollection`'s own `void` convention. All three are exported from
+  `packages/debate-search-evidence/src/index.ts`.
+
+  `apps/debate-ai.com/app/api/settings/route.ts` wires the op in exactly
+  like the `favoriteTools`/`recentTools` op branches: reads the row's current
+  `savedArgumentCollections`, applies the op, and either writes the result
+  or returns `400` with `buildSavedArgumentCollectionFailureMessage`'s
+  message when `applySavedArgumentCollectionOp` reports a failure. The
+  plain whole-list `savedArgumentCollections` PUT stays accepted (mirroring
+  `favoriteTools`'s "still accepted for a caller that genuinely needs one"
+  carve-out) but nothing in the app sends one anymore.
+  `useSavedArgumentCollections.ts`'s `persist` now takes the op alongside
+  the locally-computed next list — local state/localStorage apply
+  immediately and optimistically (unchanged), while the account sync
+  (`argument-library-collections-client.ts`'s new
+  `sendSavedArgumentCollectionOp`) sends just the op, best-effort, matching
+  the hook's existing "local apply is never blocked by a sync failure"
+  convention.
+
+  Vitest-covered:
+  `packages/debate-search-evidence/test/argument-library-collections.test.ts`
+  gains cases for `normalizeSavedArgumentCollectionOpPatch` (each op's valid
+  shape, malformed values, more-than-one-op-per-request rejection, absent
+  body handling) and `applySavedArgumentCollectionOp` (add/remove/rename/
+  update success and failure paths, idempotent remove-of-absent, and a case
+  chaining two concurrent add ops onto the same starting list to demonstrate
+  neither is dropped). New
+  `packages/debate-search-evidence/test/argument-library-collections-client.test.ts`
+  covers `fetchSavedArgumentCollections`/`saveSavedArgumentCollections`
+  (pre-existing, previously untested) and the new
+  `sendSavedArgumentCollectionOp`, asserting it PUTs just the op body (not a
+  whole-list replace) and surfaces the server's error message on a
+  business-rule refusal. No `renderHook`-based test was added for the hook
+  itself — no sibling hook in this repo (`useFavoriteTools`,
+  `useOutlineFilterPresets`, `useRecentTools`) is tested that way either;
+  each stops at its pure exported helpers and client module, which is what
+  the new coverage above does.
+
+  Ran the full verification gate: `bun install`, the three focused test
+  files (74 tests) plus `debate-search-evidence`'s own `bunx vitest run` (45
+  files, 1249 tests) and `bunx tsc --noEmit` (clean), `bun run test` (481
+  files, 9078 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
+  packages green, `debate-ai-web` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `features/argument-library-collections.mdx`'s Known gaps entry
+  (marked fixed, describing the op-based approach and its
+  `favoriteTools`-fix precedent).
+
 - **🎞️ An admin's fix to a published video's metadata now survives the next
   `db:seed:videos` re-seed instead of being silently overwritten by the
   committed JSON asset.** Another repeat of the standing autonomous-routine
@@ -1015,6 +1111,31 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
+
+- `features/round-invites-and-notifications.mdx`'s Known gaps entry ("Only
+  round creation sends invites, not later edits") is stale, found during
+  this run's candidate search: `useRoundEditorForm.ts`'s edit-mode
+  `handleSubmit` already calls `computeAddedInviteEmails` +
+  `dispatchRoundInvites` for newly-added debaters/judges/spectators on an
+  edit, and `round-invite-client.ts#computeAddedInviteEmails`'s own docstring
+  cites this exact doc/gap as what it closes. Not picked up this run (a
+  doc-only correction, not a code fix) — worth folding into the "four stale
+  Known gaps entries" doc-accuracy pass already tracked below.
+
+- Two candidates considered and not picked this run, found while searching
+  for the saved-Argument-Library-collections race (see this file's
+  "Completed" entry above):
+  - `internals/flow-annotations.mdx`'s Known gaps: the "ebb flow" grid editor
+    has no in-grid annotation-badge indicator yet. Confirmed still real, but
+    the doc's own note says it needs a Handsontable-native custom
+    renderer/cell-metadata mechanism against a 1300+-line `HotGrid.tsx` —
+    more than one focused PR, and awkward to Vitest-cover (rendering-heavy).
+  - `features/practice-vs-ai.mdx`'s Known gaps: `getGamificationProfile`
+    always returns `currentStreak: 0`, making the `Streak5` achievement
+    unreachable. Confirmed in `apps/debate-ai.com/lib/practice-vs-ai/store.ts`;
+    the schema's own comment says it needs a new dated-activity-log D1 table
+    — the same shape of backend-architecture gap as the `quest-streaks`
+    follow-up above, so deferred rather than picked up.
 
 - `docs/internals/quest-streaks.mdx`'s Known gaps: a day's mission result is
   still computed by a manual button click rather than the existing weekly

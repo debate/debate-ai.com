@@ -216,6 +216,175 @@ export function normalizeSavedArgumentCollectionsPatch(input: unknown): SavedArg
   return { valid, errors };
 }
 
+/**
+ * A single add/remove/rename/tags-update operation, applied server-side
+ * against the caller's currently stored collections list rather than a
+ * client-computed whole-list replacement.
+ */
+export type SavedArgumentCollectionOp = {
+  addSavedArgumentCollection?: { name: string; tags: string[] };
+  removeSavedArgumentCollection?: string;
+  renameSavedArgumentCollection?: { oldName: string; newName: string };
+  updateSavedArgumentCollectionTags?: { name: string; tags: string[] };
+};
+
+export type SavedArgumentCollectionOpPatchResult = {
+  valid: SavedArgumentCollectionOp;
+  errors: string[];
+};
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Shape-only check (a non-empty array of strings) — the business rules (count/length limits) are enforced by `validate*` when the op is applied against the current list. */
+function isRawTagsArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((tag) => typeof tag === "string");
+}
+
+/**
+ * Validates an untrusted `{ addSavedArgumentCollection }` /
+ * `{ removeSavedArgumentCollection }` / `{ renameSavedArgumentCollection }` /
+ * `{ updateSavedArgumentCollectionTags }` patch — the fix for the "two
+ * tabs/devices edit saved collections at once" lost-update race
+ * `normalizeSavedArgumentCollectionsPatch`'s whole-list replace is exposed to
+ * (see this package's `features/argument-library-collections.mdx`'s Known
+ * gaps), mirroring `debate-round`'s `state/favoriteTools.ts#normalizeFavoriteToolOpPatch`.
+ * The caller sends just the op being performed, and `/api/settings`'s route
+ * resolves it against the row's current value (read-then-write) via
+ * {@link applySavedArgumentCollectionOp} rather than trusting a
+ * client-computed list that may already be stale by the time it lands. Only
+ * shape is checked here (types, non-empty strings) — name-uniqueness,
+ * capacity, and tag-count business rules can only be enforced once the
+ * current list is known, so `applySavedArgumentCollectionOp` re-uses the
+ * existing `validateNewSavedArgumentCollection`/`validateSavedArgumentCollectionRename`/
+ * `validateSavedArgumentCollectionTagsUpdate` guards for that.
+ */
+export function normalizeSavedArgumentCollectionOpPatch(input: unknown): SavedArgumentCollectionOpPatchResult {
+  if (!isPlainRecord(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+
+  const hasAdd = "addSavedArgumentCollection" in input;
+  const hasRemove = "removeSavedArgumentCollection" in input;
+  const hasRename = "renameSavedArgumentCollection" in input;
+  const hasUpdate = "updateSavedArgumentCollectionTags" in input;
+
+  if ([hasAdd, hasRemove, hasRename, hasUpdate].filter(Boolean).length > 1) {
+    return {
+      valid: {},
+      errors: [
+        'Provide only one of "addSavedArgumentCollection", "removeSavedArgumentCollection", "renameSavedArgumentCollection" or "updateSavedArgumentCollectionTags" per request.',
+      ],
+    };
+  }
+
+  if (hasAdd) {
+    const value = input.addSavedArgumentCollection;
+    if (isPlainRecord(value) && typeof value.name === "string" && isRawTagsArray(value.tags)) {
+      return { valid: { addSavedArgumentCollection: { name: value.name, tags: value.tags } }, errors: [] };
+    }
+    return {
+      valid: {},
+      errors: ['"addSavedArgumentCollection" must be a { name: string, tags: string[] } object.'],
+    };
+  }
+  if (hasRemove) {
+    const value = input.removeSavedArgumentCollection;
+    if (typeof value === "string" && value.trim().length > 0) {
+      return { valid: { removeSavedArgumentCollection: value }, errors: [] };
+    }
+    return { valid: {}, errors: ['"removeSavedArgumentCollection" must be a non-empty collection name.'] };
+  }
+  if (hasRename) {
+    const value = input.renameSavedArgumentCollection;
+    if (isPlainRecord(value) && typeof value.oldName === "string" && typeof value.newName === "string") {
+      return {
+        valid: { renameSavedArgumentCollection: { oldName: value.oldName, newName: value.newName } },
+        errors: [],
+      };
+    }
+    return {
+      valid: {},
+      errors: ['"renameSavedArgumentCollection" must be a { oldName: string, newName: string } object.'],
+    };
+  }
+  if (hasUpdate) {
+    const value = input.updateSavedArgumentCollectionTags;
+    if (isPlainRecord(value) && typeof value.name === "string" && isRawTagsArray(value.tags)) {
+      return { valid: { updateSavedArgumentCollectionTags: { name: value.name, tags: value.tags } }, errors: [] };
+    }
+    return {
+      valid: {},
+      errors: ['"updateSavedArgumentCollectionTags" must be a { name: string, tags: string[] } object.'],
+    };
+  }
+  return { valid: {}, errors: [] };
+}
+
+export type SavedArgumentCollectionOpResult = {
+  /** The resulting list. Equal to `current` (same reference) when the op was refused or was a no-op. */
+  next: SavedArgumentCollection[];
+  /** Set when the op was refused by a business rule (duplicate name, at capacity, unknown collection, …); `next` is unchanged in that case. */
+  failure: SavedArgumentCollectionSaveFailure | null;
+};
+
+/**
+ * Applies one validated add/remove/rename/tags-update op to a currently
+ * stored collections list. Unlike `debate-round`'s
+ * `applyFavoriteToolOp` (which is always silently idempotent), a save here
+ * can be refused by a business rule shared with the local-first hook path
+ * (`validateNewSavedArgumentCollection` etc.) — e.g. a duplicate name or a
+ * rename onto a name already in use — so the caller must check `failure`
+ * before treating the op as applied. `removeSavedArgumentCollection` is the
+ * one exception: like `removeFavoriteTool`, removing an absent name is a
+ * silent no-op rather than an `unknown-collection` failure, matching
+ * `useSavedArgumentCollections.ts#removeCollection`'s own `void` return.
+ */
+export function applySavedArgumentCollectionOp(
+  current: SavedArgumentCollection[],
+  op: SavedArgumentCollectionOp,
+): SavedArgumentCollectionOpResult {
+  if (op.addSavedArgumentCollection) {
+    const { name, tags } = op.addSavedArgumentCollection;
+    const failure = validateNewSavedArgumentCollection(current, name, tags);
+    if (failure) return { next: current, failure };
+    return { next: [...current, { name: name.trim(), tags }], failure: null };
+  }
+  if (op.removeSavedArgumentCollection) {
+    const normalized = normalizeSavedArgumentCollectionName(op.removeSavedArgumentCollection);
+    const next = current.filter((collection) => normalizeSavedArgumentCollectionName(collection.name) !== normalized);
+    return { next: next.length === current.length ? current : next, failure: null };
+  }
+  if (op.renameSavedArgumentCollection) {
+    const { oldName, newName } = op.renameSavedArgumentCollection;
+    const failure = validateSavedArgumentCollectionRename(current, oldName, newName);
+    if (failure) return { next: current, failure };
+    const oldNormalized = normalizeSavedArgumentCollectionName(oldName);
+    return {
+      next: current.map((collection) =>
+        normalizeSavedArgumentCollectionName(collection.name) === oldNormalized
+          ? { ...collection, name: newName.trim() }
+          : collection,
+      ),
+      failure: null,
+    };
+  }
+  if (op.updateSavedArgumentCollectionTags) {
+    const { name, tags } = op.updateSavedArgumentCollectionTags;
+    const failure = validateSavedArgumentCollectionTagsUpdate(current, name, tags);
+    if (failure) return { next: current, failure };
+    const normalized = normalizeSavedArgumentCollectionName(name);
+    return {
+      next: current.map((collection) =>
+        normalizeSavedArgumentCollectionName(collection.name) === normalized ? { ...collection, tags } : collection,
+      ),
+      failure: null,
+    };
+  }
+  return { next: current, failure: null };
+}
+
 /** Serializes a collections list for the `saved_argument_collections` D1 column: `null` when empty, matching the "no saved value yet" semantics every other nullable column here uses. */
 export function serializeSavedArgumentCollections(list: SavedArgumentCollection[]): string | null {
   return list.length === 0 ? null : JSON.stringify(list);

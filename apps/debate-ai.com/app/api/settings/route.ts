@@ -45,7 +45,10 @@ import {
   type ResearchProgressGoalSyncPayload,
 } from "debate-team-collaboration"
 import {
+  applySavedArgumentCollectionOp,
+  buildSavedArgumentCollectionFailureMessage,
   DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
+  normalizeSavedArgumentCollectionOpPatch,
   normalizeSavedArgumentCollectionsPatch,
   parseSavedArgumentCollections,
   serializeSavedArgumentCollections,
@@ -94,7 +97,9 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
  *   recordRecentTool?, wordLimitPresets?, outlineFilterPresets?, newsRead?,
- *   newsLiked?, savedArgumentCollections?, researchProgressGoal?,
+ *   newsLiked?, savedArgumentCollections?, addSavedArgumentCollection?,
+ *   removeSavedArgumentCollection?, renameSavedArgumentCollection?,
+ *   updateSavedArgumentCollectionTags?, researchProgressGoal?,
  *   questStreakSync?, qualificationPointsTable?, qualificationCutoff? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
@@ -102,6 +107,7 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`,
  *   `debate-card-search`'s
  *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
+ *   `normalizeSavedArgumentCollectionOpPatch`/
  *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`,
  *   and `debate-data-sync`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
@@ -126,6 +132,20 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   this app's own `lib/recentTools.ts#normalizeRecentToolOpPatch` (that
  *   field's app-specific rationale is in that file's header) and resolved
  *   against the row's current `recentTools` value the same way.
+ *   `addSavedArgumentCollection`/`removeSavedArgumentCollection`/
+ *   `renameSavedArgumentCollection`/`updateSavedArgumentCollectionTags` are
+ *   the same op-based fix for the equivalent "two tabs/devices edit saved
+ *   Argument Library collections at once" race a plain
+ *   `savedArgumentCollections` whole-list replace is exposed to — see
+ *   `argument-library-collections.ts#applySavedArgumentCollectionOp`'s
+ *   docstring and
+ *   `packages/debate-help-docs/content/docs/features/argument-library-collections.mdx`'s
+ *   Known gaps. Unlike the favorites ops, a collection op can fail a business
+ *   rule (duplicate name, at capacity, unknown collection, …), in which case
+ *   this route returns 400 with that failure's message instead of writing.
+ *   `savedArgumentCollections` itself is still accepted for a caller that
+ *   genuinely needs a whole-list replace, but `useSavedArgumentCollections.ts`
+ *   no longer sends one.
  */
 
 type SettingsRow = {
@@ -232,6 +252,7 @@ export async function PUT(req: NextRequest) {
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
+  const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
@@ -250,6 +271,7 @@ export async function PUT(req: NextRequest) {
     ...wordLimitPresetsResult.errors,
     ...outlineFilterPresetsResult.errors,
     ...savedArgumentCollectionsResult.errors,
+    ...savedArgumentCollectionOpResult.errors,
     ...researchProgressGoalResult.errors,
     ...questStreakSyncResult.errors,
     ...newsSyncResult.errors,
@@ -271,6 +293,10 @@ export async function PUT(req: NextRequest) {
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
+    savedArgumentCollectionOpResult.valid.addSavedArgumentCollection === undefined &&
+    savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection === undefined &&
+    savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection === undefined &&
+    savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
     qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
@@ -281,7 +307,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -348,7 +374,42 @@ export async function PUT(req: NextRequest) {
   if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
     dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(outlineFilterPresetsResult.valid.outlineFilterPresets)
   }
-  if (savedArgumentCollectionsResult.valid.savedArgumentCollections !== undefined) {
+  if (
+    savedArgumentCollectionOpResult.valid.addSavedArgumentCollection !== undefined ||
+    savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection !== undefined ||
+    savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection !== undefined ||
+    savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags !== undefined
+  ) {
+    // An add/remove/rename/tags-update op is resolved against the row's
+    // *current* stored list rather than the caller's own copy — see this
+    // route's docstring and
+    // `argument-library-collections.ts#applySavedArgumentCollectionOp`. This
+    // closes the same lost-update race a plain `savedArgumentCollections`
+    // whole-list replace is exposed to that `favoriteTools`'s op-based patch
+    // above already fixed.
+    const [existing] = await db
+      .select({ savedArgumentCollections: userSettings.savedArgumentCollections })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.savedArgumentCollections
+      ? parseSavedArgumentCollections(existing.savedArgumentCollections)
+      : DEFAULT_SAVED_ARGUMENT_COLLECTIONS.savedArgumentCollections
+    const opName =
+      savedArgumentCollectionOpResult.valid.addSavedArgumentCollection?.name ??
+      savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection ??
+      savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection?.newName ??
+      savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags?.name ??
+      ""
+    const result = applySavedArgumentCollectionOp(current, savedArgumentCollectionOpResult.valid)
+    if (result.failure) {
+      return NextResponse.json(
+        { error: buildSavedArgumentCollectionFailureMessage(result.failure, opName) },
+        { status: 400 },
+      )
+    }
+    dbPatch.savedArgumentCollections = serializeSavedArgumentCollections(result.next)
+  } else if (savedArgumentCollectionsResult.valid.savedArgumentCollections !== undefined) {
     dbPatch.savedArgumentCollections = serializeSavedArgumentCollections(
       savedArgumentCollectionsResult.valid.savedArgumentCollections,
     )
