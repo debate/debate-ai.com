@@ -17,6 +17,85 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔀 Two tabs or devices editing named Outline filter presets at the same
+  time no longer silently drop each other's change.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84+ `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. There were no open PRs on
+  the remote and this branch's own designated PR (from the prior run) was
+  already merged into `master`, so this branch was restarted from `master`'s
+  tip. (A different in-flight branch, `claude/gifted-babbage-6yecr0`, had an
+  unrelated unpushed-PR commit for a `speech-share` participant-email bug —
+  left untouched since it isn't this branch's work.) A subagent confirmed
+  `outlineFilterPresets` (`packages/debate-round/src/state/outlineFilterPresets.ts`)
+  had the exact same unfixed "client computes the whole next array and PUTs
+  it" lost-update race that `favoriteTools`/`recentTools`/
+  `savedArgumentCollections`/`wordLimitPresets` all had before their
+  op-based fixes — `packages/debate-practice-drills/src/hooks/useOutlineFilterPresets.ts`'s
+  `persist()` called `saveUserSettings({ outlineFilterPresets: next })` with
+  a full client-computed array, and `apps/debate-ai.com/app/api/settings/route.ts`'s
+  handling of `outlineFilterPresets` was a blind whole-column overwrite with
+  no read-then-apply-op step, unlike the fixed fields in the same file. It's
+  real user-editable state — add (per-round "Save preset" button) and remove
+  (global "Saved filter presets" badge list) both write the same array, the
+  preset list is explicitly global/not per-round, and the hook already has a
+  cross-tab `storage`-event listener for *read* freshness, meaning the
+  *write* race was a real, already-partially-addressed-but-not-fully-closed
+  gap.
+
+  Mirrored the `wordLimitPresets` fix, minus the `update` op (the UI only
+  ever adds or removes a preset, no rename/edit-in-place exists):
+  `packages/debate-round/src/state/outlineFilterPresets.ts` gains
+  `OutlineFilterPresetOp` (`addOutlineFilterPreset` / `removeOutlineFilterPreset`),
+  `normalizeOutlineFilterPresetOpPatch` (shape-only validation — exactly one
+  op per request, reusing `isValidArgumentTreeFilter` for the nested filter
+  object), `validateNewOutlineFilterPreset` (business-rule checks: name
+  validity, duplicate name, capacity), `buildOutlineFilterPresetFailureMessage`,
+  and `applyOutlineFilterPresetOp` (applies the op against a `current` list,
+  returning `{ next, failure }`; a refused add returns the unchanged `next`
+  reference, and removing an absent name is a silent no-op like
+  `applyWordLimitPresetOp`'s). `apps/debate-ai.com/app/api/settings/route.ts`
+  wires the op in exactly like the `wordLimitPresets` op branch: reads the
+  row's current `outlineFilterPresets`, applies the op, and either writes
+  the result or returns `400` with `buildOutlineFilterPresetFailureMessage`'s
+  message on failure. The plain whole-list `outlineFilterPresets` PUT stays
+  accepted (same "still accepted for a caller that genuinely needs one"
+  carve-out as the other fixed fields) but nothing in the app sends one
+  anymore. `useOutlineFilterPresets.ts`'s `persist` split into
+  `persistLocal` (local state/localStorage, applied immediately and
+  optimistically, unchanged) and `syncOp` (best-effort account sync sending
+  just the op), matching `useWordLimitPresets.ts`'s own split.
+  `packages/debate-round/src/round/user-settings-client.ts` gains
+  `saveOutlineFilterPresetOp`, mirroring `saveWordLimitPresetOp`.
+
+  Vitest-covered: `packages/debate-round/test/outlineFilterPresets.test.ts`
+  gains cases for `validateNewOutlineFilterPreset` (valid/invalid
+  name/filter, duplicate name, at-capacity), `buildOutlineFilterPresetFailureMessage`
+  (one message per failure), `normalizeOutlineFilterPresetOpPatch`
+  (valid/malformed add and remove ops, a `roundId`-carrying add, more than
+  one op per request, a non-object body), and `applyOutlineFilterPresetOp`
+  (append, trim, duplicate refusal, remove, idempotent remove-of-absent,
+  empty op, and a two-concurrent-adds-resolve-onto-the-same-list scenario —
+  the exact race this closes). `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+  Known gaps gains a paragraph documenting the fix, mirroring the
+  `wordLimitPresets` paragraph immediately above it.
+
+  Ran the full verification gate: `bun install`, `bunx turbo run typecheck`
+  (17/17 packages green, `debate-round`/`debate-practice-rounds`/
+  `debate-ai-web` included), `bun run test` (481 files, 9127 tests passing —
+  up from 9105 by exactly the 22 new cases above, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
 - **📝 Five stale `packages/debate-help-docs` "Known gaps" entries corrected
   — each described a gap the code no longer had, left over from a fix
   landed elsewhere that never updated the doc that named the gap.** Another
