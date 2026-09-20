@@ -17,6 +17,94 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔢 Two tabs or devices editing custom word-limit presets at the same time
+  no longer silently drop each other's change.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84+ `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. The prior run's own PR
+  (#887) was already merged into `master` with no open PRs or other branches
+  on the remote, so this branch was restarted from `master`'s tip. A subagent
+  scanned the ~60 `packages/debate-help-docs` "Known gaps" entries not
+  already investigated in this file's history (auth/free-form-identity gaps,
+  per-user-vs-shared-resource sync, transcription-needs-a-paid-service gaps,
+  and infra/deployment items all correctly triaged as out of scope — needing
+  a real auth system, a backend redesign, a product decision, or ops access
+  respectively, not a mechanical fix) and landed on
+  `features/user-settings.mdx`'s own Known gaps: "Every other field
+  (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.) is a plain
+  whole-value replace with no such protection" — the exact same lost-update
+  race `favoriteTools` and `savedArgumentCollections` had already been fixed
+  for elsewhere in this same paragraph.
+
+  Confirmed still real: `packages/debate-round/src/hooks/useWordLimitPresets.ts`'s
+  `addPreset`/`updatePreset`/`removePreset` all computed the next *full*
+  array from the hook's own in-memory `presets` state and called
+  `saveUserSettings({ wordLimitPresets: next })` — a whole-list PUT — and
+  `apps/debate-ai.com/app/api/settings/route.ts`'s handling of
+  `wordLimitPresets` was a blind whole-column overwrite, unlike the
+  read-then-apply-op blocks already in place for `favoriteTools` and
+  `savedArgumentCollections` in the same file.
+
+  Mirrored the same fix a third time:
+  `packages/debate-round/src/state/wordLimitPresets.ts` gains
+  `WordLimitPresetOp` (`addWordLimitPreset` / `updateWordLimitPreset` /
+  `removeWordLimitPreset`), `normalizeWordLimitPresetOpPatch` (shape-only
+  validation — exactly one op per request), and `applyWordLimitPresetOp`
+  (applies the op against a `current` list, reusing new
+  `validateNewWordLimitPreset`/`validateWordLimitPresetUpdate` business-rule
+  guards extracted from the existing add/update logic; like
+  `applySavedArgumentCollectionOp`, an op can be refused — duplicate name, at
+  capacity, unknown preset — so it returns `{ next, failure }`).
+  `apps/debate-ai.com/app/api/settings/route.ts` wires the op in exactly like
+  the `savedArgumentCollections` op branch: reads the row's current
+  `wordLimitPresets`, applies the op, and either writes the result or
+  returns `400` with `buildWordLimitPresetFailureMessage`'s message on
+  failure. The plain whole-list `wordLimitPresets` PUT stays accepted (same
+  "still accepted for a caller that genuinely needs one" carve-out as the
+  other two fields) but nothing in the app sends one anymore.
+  `useWordLimitPresets.ts`'s `persist` split into `persistLocal` (local
+  state/localStorage, applied immediately and optimistically, unchanged) and
+  `syncOp` (best-effort account sync sending just the op), matching
+  `useFavoriteTools.ts`'s own split. `packages/debate-round/src/round/user-settings-client.ts`
+  gains `saveWordLimitPresetOp`, mirroring `saveFavoriteToolOp`.
+
+  Vitest-covered: `packages/debate-round/test/wordLimitPresets.test.ts` gains
+  cases for `validateNewWordLimitPreset`/`validateWordLimitPresetUpdate`
+  (valid/invalid name, invalid word limit, duplicate name, at-capacity,
+  unknown preset), `buildWordLimitPresetFailureMessage` (one message per
+  failure), `normalizeWordLimitPresetOpPatch` (each op's valid shape,
+  malformed values, more-than-one-op-per-request rejection, non-object
+  body), and `applyWordLimitPresetOp` (add/update/remove success and failure
+  paths, idempotent remove-of-absent, and a case chaining two concurrent add
+  ops onto the same starting list to demonstrate neither is dropped). No new
+  test was added for `saveWordLimitPresetOp`/`persistLocal`/`syncOp`
+  themselves — `user-settings-client.ts`'s functions aren't tested anywhere
+  in this repo today (no `fetch` mocking there for `saveFavoriteToolOp`
+  either), and this hook's own existing test
+  (`useWordLimitPresets.test.ts`) only covers the pure
+  `isWordLimitPresetsLiveUpdateStorageEvent` predicate, not `persist`/
+  `addPreset` etc. — matching both files' pre-existing conventions.
+
+  Ran the full verification gate: `bun install`, the two focused test files
+  (51 tests) plus `debate-round`'s own `bunx vitest run` (61 files, 1241
+  tests) and `bunx tsc --noEmit` (clean), `bun run test` (481 files, 9105
+  tests passing, repo-wide), `bunx turbo run typecheck` (17/17 packages
+  green, `debate-ai-web` and `debate-help-docs` included), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `features/user-settings.mdx`'s Known gaps (the `wordLimitPresets`
+  mention removed from the "every other field" list, a new paragraph added
+  describing the op-based fix).
+
 - **🔀 Two tabs or devices editing saved Argument Library collections at the
   same time no longer silently drop each other's change.** Another repeat of
   the standing autonomous-routine prompt above — as with every prior repeat
