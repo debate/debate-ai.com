@@ -17,6 +17,80 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎮 Two tabs or devices spending a Quest Streak freeze on different days
+  (or toggling the streak-lapse reminder) at the same time no longer
+  silently drop each other's change.** Another repeat of the standing
+  autonomous-routine prompt above — as with every prior repeat, that
+  prompt's own asks are already fully built. PR #893 (this branch's own
+  designated work) had already merged into `master` with no open PRs on the
+  remote, so this branch continued from `master`'s tip. A subagent scan for
+  the established "client computes the whole next value and PUTs it"
+  lost-update shape (already fixed for `favoriteTools`/`recentTools`/
+  `savedArgumentCollections`/`wordLimitPresets`/`outlineFilterPresets`/
+  `newsRead`/`newsLiked`) found the same race, unfixed, in Quest Streaks'
+  account sync: `packages/debate-contributor-progress/src/hooks/useQuestStreakSync.ts`'s
+  `pushLocalState` read *both* of a device's local preferences
+  (`lapseReminderEnabled`, `freezeDayKeys`) and PUT the entire
+  `questStreakSync` payload to `/api/settings` on every freeze spend or
+  reminder toggle, and the route's handling of `questStreakSync` was a
+  blind whole-value overwrite with no read-then-apply-op step, unlike the
+  fields above. Two tabs/devices spending a freeze on different days close
+  together could silently drop each other's freeze from the account — and
+  since `canApplyStreakFreeze` validates against this same list, the
+  dropped freeze could let a contributor "re-spend" one already used.
+  Worse, a reminder toggle on one device resent that device's own
+  (possibly stale) `freezeDayKeys` copy too, so it could revert a freeze
+  another device had just spent, even though the toggle never touched
+  freezes at all.
+
+  Added `recordStreakFreezeDayKey`/`setLapseReminderEnabled` ops to
+  `packages/debate-contributor-progress/src/lib/quest-streak-sync.ts`
+  (`normalizeQuestStreakFreezeOpPatch`/`applyQuestStreakFreezeOp` and
+  `normalizeQuestStreakReminderOpPatch`/`applyQuestStreakReminderOp`), each
+  resolved server-side against the row's *current* stored `questStreakSync`
+  value, mirroring `news-stream-sync.ts#applyNewsReadOp`'s shape — the
+  freeze op is add-only (a freeze has no "un-spend"), the reminder op
+  replaces only `lapseReminderEnabled` and leaves `freezeDayKeys`
+  untouched. `apps/debate-ai.com/app/api/settings/route.ts` wires both ops
+  in exactly like the `recordNewsRead` op branch. `useQuestStreakSync.ts`'s
+  `pushLocalState` is replaced by `pushFreezeDayKey`/
+  `pushLapseReminderEnabled`, each sending a single op via new
+  `quest-streak-sync-client.ts` functions `saveStreakFreezeDayKeyOp`/
+  `saveLapseReminderEnabledOp`; `QuestStreaksPanel.tsx`'s two call sites
+  (`handleUseFreeze`/`handleToggleReminder`) updated accordingly. The plain
+  whole-value `questStreakSync` PUT (`saveQuestStreakSync`) stays accepted
+  by the route for a caller that genuinely needs one, but nothing in the
+  app sends one anymore.
+
+  Vitest-covered: `packages/debate-contributor-progress/test/quest-streak-sync.test.ts`
+  gains cases for `normalizeQuestStreakFreezeOpPatch`/`applyQuestStreakFreezeOp`
+  (append, an opted-out default when nothing is stored, same-reference
+  no-ops for an already-recorded or invalid day key, an at-capacity drop,
+  and two-concurrent-freezes resolving onto the same starting payload
+  without dropping either) and `normalizeQuestStreakReminderOpPatch`/
+  `applyQuestStreakReminderOp` (replace, an empty-`freezeDayKeys` default,
+  and an explicit "a reminder toggle on one device never reverts a freeze
+  another device just spent" case demonstrating the exact race this
+  closes) — 24 new cases, 37 total in that file.
+  `packages/debate-help-docs/content/docs/internals/quest-streaks.mdx`'s
+  Data flow diagram and "Account sync, in detail" section updated to
+  describe the op-based push and the race it closes, mirroring the
+  `outlineFilterPresets`/`newsRead` fix paragraphs in `user-settings.mdx`/
+  `news-stream.mdx`.
+
+  Ran the full verification gate: `bun install`, `bunx turbo run typecheck`
+  (17/17 packages green, `debate-community`/`debate-ai-web`/
+  `debate-help-docs` included), `bun run test` (485 files, 9197 tests
+  passing — up from 9173 by exactly the 24 new cases above, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+  Opened [PR #895](https://github.com/debate/debate-ai.com/pull/895).
+
 - **📤 "Share speech with round participants" now actually notifies the
   round's participants, instead of always nobody.** Another repeat of the
   that prompt's own asks are already fully built. There were no open PRs and

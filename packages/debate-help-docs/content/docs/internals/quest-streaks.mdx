@@ -71,23 +71,36 @@ lib/quest-streak-sync.ts        (pure — no fetch, no localStorage)
                                        (366) YYYY-MM-DD strings
   → normalizeQuestStreakSyncPatch   validates an untrusted PUT body's
                                        `questStreakSync` field (null clears it)
+  → normalizeQuestStreakFreezeOpPatch / applyQuestStreakFreezeOp
+                                     validates/applies a single
+                                       `recordStreakFreezeDayKey` op against
+                                       the account's *current* stored payload
+  → normalizeQuestStreakReminderOpPatch / applyQuestStreakReminderOp
+                                     validates/applies a single
+                                       `setLapseReminderEnabled` op the same way
   → serializeQuestStreakSync / parseQuestStreakSync
                                      the user_settings.quest_streak_sync
                                        column, JSON-stringified
 
 lib/quest-streak-sync-client.ts (fetch only)
   → fetchQuestStreakSync            GET /api/settings (null on 401)
-  → saveQuestStreakSync             PUT /api/settings { questStreakSync }
+  → saveStreakFreezeDayKeyOp        PUT /api/settings { recordStreakFreezeDayKey }
+  → saveLapseReminderEnabledOp      PUT /api/settings { setLapseReminderEnabled }
+  → saveQuestStreakSync             PUT /api/settings { questStreakSync } — the
+                                       whole-value replace, kept for a caller
+                                       that genuinely needs one; no code path
+                                       in this app sends one anymore
 
 hooks/useQuestStreakSync.ts     (the glue QuestStreaksPanel calls)
   → on mount: fetches the account's payload, merges its freezeDayKeys/
       lapseReminderEnabled into the local stores via mergeRemoteStreakFreezeDayKeys/
       mergeRemoteStreakLapseReminderEnabled, calls the caller's onMerged()
       if anything actually changed
-  → pushLocalState()                reads the contributor's current local
-      freezeDayKeys/lapseReminderEnabled and PUTs them — called by
-      QuestStreaksPanel after every local freeze/reminder-toggle write for
-      that one contributor
+  → pushFreezeDayKey(dayKey)        called by QuestStreaksPanel right after a
+      freeze is spent for the signed-in visitor's own row
+  → pushLapseReminderEnabled(enabled)
+                                     called by QuestStreaksPanel right after
+      the signed-in visitor's own reminder opt-in is toggled
 
 apps/debate-ai.com
   → app/api/settings/route.ts       GET/PUT — one user_settings row per
@@ -142,14 +155,35 @@ a locally-enabled reminder back off.
 **Local write always wins, sync is best-effort.** `applyPersistedStreakFreeze`
 and `setStreakLapseReminderEnabled` write to `localStorage` synchronously and
 return before any network call. `QuestStreaksPanel`'s `handleUseFreeze`/
-`handleToggleReminder` call `pushLocalState()` afterward, only when the row
-being changed is the signed-in visitor's own (`id === signedInContributorId`)
-— every other row's change never reaches the network, since there's no
-account to sync it to. `pushLocalState` itself is a no-op until the mount-time
-fetch has resolved (`remoteAvailableRef`), so a push can't race ahead of the
-merge and re-upload a value the merge hasn't reconciled yet; its `saveQuestStreakSync`
-call swallows its own rejection, matching every other synced store's "local
-apply is never blocked by a sync failure" rule.
+`handleToggleReminder` call `pushFreezeDayKey`/`pushLapseReminderEnabled`
+afterward, only when the row being changed is the signed-in visitor's own
+(`id === signedInContributorId`) — every other row's change never reaches the
+network, since there's no account to sync it to. Both pushes are a no-op
+until the mount-time fetch has resolved (`remoteAvailableRef`), so a push
+can't race ahead of the merge and re-upload a value the merge hasn't
+reconciled yet; each swallows its own rejection, matching every other synced
+store's "local apply is never blocked by a sync failure" rule.
+
+**The push is op-based, never a whole-value replace.** Before this, `pushLocalState`
+read *both* of this device's local preferences and PUT the entire
+`questStreakSync` payload — the exact "client computes the whole next value
+and PUTs it" lost-update shape `favoriteTools`/`outlineFilterPresets`/
+`newsRead` all had before their own op-based fixes. Two tabs or devices
+spending a streak freeze on different days close together could silently
+drop each other's freeze from the account — and since `canApplyStreakFreeze`
+validates against this same `freezeDayKeys` list, the dropped freeze could
+let a contributor "re-spend" one they'd already used. Worse, a *reminder*
+toggle on one device resent that device's entire (possibly stale)
+`freezeDayKeys` copy too, so it could revert a freeze another device had just
+spent, even though the reminder toggle never touched freezes at all.
+`pushFreezeDayKey` now sends a single `recordStreakFreezeDayKey` op, resolved
+server-side (`quest-streak-sync.ts#applyQuestStreakFreezeOp`) against the
+account's *current* stored `freezeDayKeys`; `pushLapseReminderEnabled` sends
+a single `setLapseReminderEnabled` op (`applyQuestStreakReminderOp`) that
+replaces only the reminder flag, leaving `freezeDayKeys` at its current
+stored value untouched. A plain whole-value `questStreakSync` replace is
+still accepted by the route for a caller that genuinely needs one, but
+`useQuestStreakSync.ts` no longer sends one.
 
 ## Cross-tab live update
 
@@ -175,9 +209,14 @@ mount (the account merge above), not live.
   `isValidQuestStreakSyncPayload`'s full validation surface (the day-key
   format, the `MAX_QUEST_STREAK_FREEZE_DAY_KEYS` cap, rejecting an
   unrecognized field such as a smuggled `contributorId`),
-  `normalizeQuestStreakSyncPatch`'s PUT-body handling, and the
-  serialize/parse round-trip (corrupt or invalid-shape JSON degrades to
-  `null` rather than throwing).
+  `normalizeQuestStreakSyncPatch`'s PUT-body handling, the serialize/parse
+  round-trip (corrupt or invalid-shape JSON degrades to `null` rather than
+  throwing), and `normalizeQuestStreakFreezeOpPatch`/`applyQuestStreakFreezeOp`/
+  `normalizeQuestStreakReminderOpPatch`/`applyQuestStreakReminderOp` (append,
+  dedupe, at-capacity drop, an empty-payload default, two-concurrent-freezes
+  resolving onto the same starting payload without dropping either, and an
+  explicit "a reminder toggle on one device never reverts a freeze another
+  device just spent" case demonstrating the exact race this closes).
 - `useQuestStreakSync` and its wiring in `QuestStreaksPanel` are intentionally
   untested, matching this repo's existing convention for account-synced,
   `localStorage`-backed hooks and their UI (e.g. `tool-data-sync.md`'s

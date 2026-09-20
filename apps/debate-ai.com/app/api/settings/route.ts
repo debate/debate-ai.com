@@ -35,11 +35,15 @@ import {
 import {
   applyNewsLikedOp,
   applyNewsReadOp,
+  applyQuestStreakFreezeOp,
+  applyQuestStreakReminderOp,
   DEFAULT_NEWS_SYNC,
   DEFAULT_QUEST_STREAK_SYNC,
   normalizeNewsLikedOpPatch,
   normalizeNewsReadOpPatch,
   normalizeNewsSyncPatch,
+  normalizeQuestStreakFreezeOpPatch,
+  normalizeQuestStreakReminderOpPatch,
   normalizeQuestStreakSyncPatch,
   parseNewsIdList,
   parseQuestStreakSync,
@@ -196,6 +200,14 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   `newsLiked` themselves are still accepted for a caller that genuinely
  *   needs a whole-list replace, but `useNewsStreamSync.ts` no longer sends
  *   one.
+ *   `recordStreakFreezeDayKey`/`setLapseReminderEnabled` are the same
+ *   op-based fix for the equivalent "two tabs/devices spend a streak freeze,
+ *   or toggle the lapse reminder, at once" race a plain `questStreakSync`
+ *   whole-value replace is exposed to — see
+ *   `quest-streak-sync.ts#applyQuestStreakFreezeOp`/`applyQuestStreakReminderOp`'s
+ *   docstrings. `questStreakSync` itself is still accepted for a caller that
+ *   genuinely needs a whole-value replace, but `useQuestStreakSync.ts` no
+ *   longer sends one.
  */
 
 type SettingsRow = {
@@ -307,6 +319,8 @@ export async function PUT(req: NextRequest) {
   const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
+  const questStreakFreezeOpResult = normalizeQuestStreakFreezeOpPatch(body)
+  const questStreakReminderOpResult = normalizeQuestStreakReminderOpPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
   const newsReadOpResult = normalizeNewsReadOpPatch(body)
   const newsLikedOpResult = normalizeNewsLikedOpPatch(body)
@@ -330,6 +344,8 @@ export async function PUT(req: NextRequest) {
     ...savedArgumentCollectionOpResult.errors,
     ...researchProgressGoalResult.errors,
     ...questStreakSyncResult.errors,
+    ...questStreakFreezeOpResult.errors,
+    ...questStreakReminderOpResult.errors,
     ...newsSyncResult.errors,
     ...newsReadOpResult.errors,
     ...newsLikedOpResult.errors,
@@ -362,6 +378,8 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
+    questStreakFreezeOpResult.valid.recordStreakFreezeDayKey === undefined &&
+    questStreakReminderOpResult.valid.setLapseReminderEnabled === undefined &&
     qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
     qualificationCutoffResult.valid.qualificationCutoff === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
@@ -373,7 +391,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -542,7 +560,45 @@ export async function PUT(req: NextRequest) {
   if (researchProgressGoalResult.valid.researchProgressGoal !== undefined) {
     dbPatch.researchProgressGoal = serializeResearchProgressGoal(researchProgressGoalResult.valid.researchProgressGoal)
   }
-  if (questStreakSyncResult.valid.questStreakSync !== undefined) {
+  if (questStreakFreezeOpResult.valid.recordStreakFreezeDayKey !== undefined) {
+    // A single "spend a freeze on this day" op is resolved against the row's
+    // *current* stored `questStreakSync` value rather than the caller's own
+    // copy — see this route's docstring and
+    // `quest-streak-sync.ts#applyQuestStreakFreezeOp`. This closes the same
+    // lost-update race a plain `questStreakSync` whole-value replace is
+    // exposed to that `favoriteTools`'s op-based patch above already fixed.
+    const [existing] = await db
+      .select({ questStreakSync: userSettings.questStreakSync })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.questStreakSync
+      ? parseQuestStreakSync(existing.questStreakSync)
+      : DEFAULT_QUEST_STREAK_SYNC.questStreakSync
+    dbPatch.questStreakSync = serializeQuestStreakSync(
+      applyQuestStreakFreezeOp(current, {
+        recordStreakFreezeDayKey: questStreakFreezeOpResult.valid.recordStreakFreezeDayKey,
+      }),
+    )
+  } else if (questStreakReminderOpResult.valid.setLapseReminderEnabled !== undefined) {
+    // Same read-then-write shape as the freeze op above, resolved against
+    // the row's current `questStreakSync` value rather than the caller's own
+    // (possibly stale) copy, so a reminder toggle can never revert a freeze
+    // spent moments earlier on another device.
+    const [existing] = await db
+      .select({ questStreakSync: userSettings.questStreakSync })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.questStreakSync
+      ? parseQuestStreakSync(existing.questStreakSync)
+      : DEFAULT_QUEST_STREAK_SYNC.questStreakSync
+    dbPatch.questStreakSync = serializeQuestStreakSync(
+      applyQuestStreakReminderOp(current, {
+        setLapseReminderEnabled: questStreakReminderOpResult.valid.setLapseReminderEnabled,
+      }),
+    )
+  } else if (questStreakSyncResult.valid.questStreakSync !== undefined) {
     dbPatch.questStreakSync = serializeQuestStreakSync(questStreakSyncResult.valid.questStreakSync)
   }
   if (qualificationPointsTableResult.valid.qualificationPointsTable !== undefined) {
