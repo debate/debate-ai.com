@@ -69,6 +69,7 @@ _No task currently in progress._
   No `lint`/`format:check` script exists in this repo, so that step was
   skipped as not applicable.
 
+  PR: [#902](https://github.com/debate/debate-ai.com/pull/902).
   Branch: `claude/gifted-babbage-hiqo2u`.
 
 - **🧰 The remaining 17 `/tools`-catalog pages get the standard
