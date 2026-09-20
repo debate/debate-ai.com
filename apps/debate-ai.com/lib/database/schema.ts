@@ -1079,6 +1079,11 @@ export const videos = sqliteTable(
     missingChecks: integer("missing_checks").notNull().default(0),
     /** When the view count was last refreshed from YouTube. */
     viewCountSyncedAt: integer("view_count_synced_at", { mode: "timestamp" }),
+    // Set by an admin edit (`updateLibraryVideo`) and never cleared. Once set,
+    // `buildVideoSeedStatements` skips re-seeding this row's columns from the
+    // JSON assets, so a re-run of `db:seed:videos` can't silently overwrite an
+    // admin's correction with the asset's stale value.
+    adminEdited: integer("admin_edited", { mode: "boolean" }).notNull().default(false),
     updatedAt: integer("updated_at", { mode: "timestamp" })
       .notNull()
       .default(sql`(unixepoch())`),
