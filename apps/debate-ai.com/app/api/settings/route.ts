@@ -5,6 +5,8 @@ import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
   applyFavoriteToolOp,
+  applyWordLimitPresetOp,
+  buildWordLimitPresetFailureMessage,
   DEFAULT_FAVORITE_TOOLS,
   DEFAULT_OUTLINE_FILTER_PRESETS,
   DEFAULT_THEME_SETTINGS,
@@ -15,6 +17,7 @@ import {
   normalizeOutlineFilterPresetsPatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
+  normalizeWordLimitPresetOpPatch,
   normalizeWordLimitPresetsPatch,
   parseFavoriteTools,
   parseOutlineFilterPresets,
@@ -96,15 +99,18 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
- *   recordRecentTool?, wordLimitPresets?, outlineFilterPresets?, newsRead?,
- *   newsLiked?, savedArgumentCollections?, addSavedArgumentCollection?,
- *   removeSavedArgumentCollection?, renameSavedArgumentCollection?,
- *   updateSavedArgumentCollectionTags?, researchProgressGoal?,
- *   questStreakSync?, qualificationPointsTable?, qualificationCutoff? } — validates and
+ *   recordRecentTool?, wordLimitPresets?, addWordLimitPreset?,
+ *   updateWordLimitPreset?, removeWordLimitPreset?, outlineFilterPresets?,
+ *   newsRead?, newsLiked?, savedArgumentCollections?,
+ *   addSavedArgumentCollection?, removeSavedArgumentCollection?,
+ *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
+ *   researchProgressGoal?, questStreakSync?, qualificationPointsTable?,
+ *   qualificationCutoff? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
- *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`,
+ *   `normalizeWordLimitPresetsPatch`/`normalizeWordLimitPresetOpPatch`/
+ *   `normalizeOutlineFilterPresetsPatch`,
  *   `debate-card-search`'s
  *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
  *   `normalizeSavedArgumentCollectionOpPatch`/
@@ -146,6 +152,18 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   `savedArgumentCollections` itself is still accepted for a caller that
  *   genuinely needs a whole-list replace, but `useSavedArgumentCollections.ts`
  *   no longer sends one.
+ *   `addWordLimitPreset`/`updateWordLimitPreset`/`removeWordLimitPreset` are
+ *   the same op-based fix for the equivalent "two tabs/devices edit
+ *   word-limit presets at once" race a plain `wordLimitPresets` whole-list
+ *   replace is exposed to — see
+ *   `state/wordLimitPresets.ts#applyWordLimitPresetOp`'s docstring and
+ *   `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   Known gaps. Like the collection ops, an add/update op can fail a
+ *   business rule (duplicate name, at capacity, unknown preset), in which
+ *   case this route returns 400 with that failure's message instead of
+ *   writing. `wordLimitPresets` itself is still accepted for a caller that
+ *   genuinely needs a whole-list replace, but `useWordLimitPresets.ts` no
+ *   longer sends one.
  */
 
 type SettingsRow = {
@@ -250,6 +268,7 @@ export async function PUT(req: NextRequest) {
   const favoriteToolOpResult = normalizeFavoriteToolOpPatch(body)
   const recentToolOpResult = normalizeRecentToolOpPatch(body)
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
+  const wordLimitPresetOpResult = normalizeWordLimitPresetOpPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
   const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
@@ -269,6 +288,7 @@ export async function PUT(req: NextRequest) {
     ...favoriteToolOpResult.errors,
     ...recentToolOpResult.errors,
     ...wordLimitPresetsResult.errors,
+    ...wordLimitPresetOpResult.errors,
     ...outlineFilterPresetsResult.errors,
     ...savedArgumentCollectionsResult.errors,
     ...savedArgumentCollectionOpResult.errors,
@@ -291,6 +311,9 @@ export async function PUT(req: NextRequest) {
     favoriteToolOpResult.valid.removeFavoriteTools === undefined &&
     recentToolOpResult.valid.recordRecentTool === undefined &&
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
+    wordLimitPresetOpResult.valid.addWordLimitPreset === undefined &&
+    wordLimitPresetOpResult.valid.updateWordLimitPreset === undefined &&
+    wordLimitPresetOpResult.valid.removeWordLimitPreset === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
     savedArgumentCollectionOpResult.valid.addSavedArgumentCollection === undefined &&
@@ -307,7 +330,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -414,7 +437,36 @@ export async function PUT(req: NextRequest) {
       savedArgumentCollectionsResult.valid.savedArgumentCollections,
     )
   }
-  if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
+  if (
+    wordLimitPresetOpResult.valid.addWordLimitPreset !== undefined ||
+    wordLimitPresetOpResult.valid.updateWordLimitPreset !== undefined ||
+    wordLimitPresetOpResult.valid.removeWordLimitPreset !== undefined
+  ) {
+    // An add/update/remove op is resolved against the row's *current* stored
+    // list rather than the caller's own copy — see this route's docstring
+    // and `state/wordLimitPresets.ts#applyWordLimitPresetOp`. This closes
+    // the same lost-update race a plain `wordLimitPresets` whole-list
+    // replace is exposed to that `favoriteTools`'s op-based patch above
+    // already fixed.
+    const [existing] = await db
+      .select({ wordLimitPresets: userSettings.wordLimitPresets })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.wordLimitPresets
+      ? parseWordLimitPresets(existing.wordLimitPresets)
+      : DEFAULT_WORD_LIMIT_PRESETS.wordLimitPresets
+    const opName =
+      wordLimitPresetOpResult.valid.addWordLimitPreset?.name ??
+      wordLimitPresetOpResult.valid.updateWordLimitPreset?.name ??
+      wordLimitPresetOpResult.valid.removeWordLimitPreset ??
+      ""
+    const result = applyWordLimitPresetOp(current, wordLimitPresetOpResult.valid)
+    if (result.failure) {
+      return NextResponse.json({ error: buildWordLimitPresetFailureMessage(result.failure, opName) }, { status: 400 })
+    }
+    dbPatch.wordLimitPresets = serializeWordLimitPresets(result.next)
+  } else if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
     dbPatch.wordLimitPresets = serializeWordLimitPresets(wordLimitPresetsResult.valid.wordLimitPresets)
   }
   if (researchProgressGoalResult.valid.researchProgressGoal !== undefined) {
