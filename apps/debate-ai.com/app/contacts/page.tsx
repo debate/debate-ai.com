@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 import { ContactsHub } from "@/components/contacts/ContactsHub"
+import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
   title: "Contacts",
@@ -11,18 +10,9 @@ export const metadata: Metadata = {
 
 export default function ContactsPage() {
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6">
-      <div className="mb-4 max-w-2xl mx-auto px-4 sm:px-6">
-        <Link
-          href="/reason-editor"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
-          aria-label="Back to the editor"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
-      </div>
+    <ToolPage>
+      <ToolPageHeader href="/contacts" backHref="/reason-editor" backLabel="the editor" guide="training-tools" />
       <ContactsHub />
-    </div>
+    </ToolPage>
   )
 }

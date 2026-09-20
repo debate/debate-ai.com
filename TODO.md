@@ -17,6 +17,35 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧰 The remaining 17 `/tools`-catalog pages get the standard
+  `ToolPageHeader`.** Picked up the follow-up left by PR #900's
+  `/speech-documents`/`/rank` migration: the mechanical remainder of
+  the "integrate tools into the UI / user settings / link user DB /
+  better tool UI" backlog item. Migrated the 14 `/cards/*` pages
+  (`argument-library`, `awards`, `best-card`, `contributions`,
+  `coverage`, `leaderboard`, `library`, `progress`, `progress-tracking`,
+  `quests`, `reviews`, `revisions`, `scoring`, `streaks`) plus
+  `/contacts`, `/news`, and `/notifications` from the old hand-rolled
+  "← Back"-only header onto `ToolPage`/`ToolPageHeader`, each now with
+  a favorite-star toggle and Docs/Guide links like every other tool
+  page. `/cards/*` pages use `guide="research-collaboration"` and
+  `backHref="/cards"` (matching their already-migrated `/cards/inbox`,
+  `/cards/group-challenges`, etc. siblings); `/news` (same
+  "Community & Progress" catalog heading as the `/cards/*` pages) got
+  the same guide; `/contacts` and `/notifications` (the catalog's
+  "Prep & Practice" heading, alongside `/prep-notes`/`/judges`/
+  `/opponents`) got `guide="training-tools"`. `/news`'s bespoke
+  inline `<h1>`/description block was dropped in favor of
+  `ToolPageHeader`'s catalog-driven title/description, matching the
+  page's own `metadata` copy. Each page kept its original back-link
+  destination.
+
+  `lib/__tests__/tool-page-header-coverage.test.ts`'s
+  `TOOLS_WITHOUT_TOOL_PAGE_HEADER` exclude set now only lists the
+  three legitimate permanent opt-outs (`/reason-editor`, `/doc`,
+  `/tools/mobile-setup`) — every `/tools`-catalog entry now renders
+  `ToolPageHeader`, closing out the tracked gap.
+
 - **🧰 `/speech-documents` and `/rank` get the standard `ToolPageHeader`,
   plus a coverage test guarding the rest of the migration.** Picked up the
   standing "integrate tools into the UI / user settings / link user DB /
@@ -1993,20 +2022,6 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
-
-- Migrate the remaining 18 `/tools`-catalog pages off the old hand-rolled
-  back-button-only header onto `components/tools/ToolPageHeader.tsx` — same
-  mechanical change as PR #900's `/speech-documents`/`/rank` migration:
-  `/cards/argument-library`, `/cards/awards`, `/cards/best-card`,
-  `/cards/contributions`, `/cards/coverage`, `/cards/leaderboard`,
-  `/cards/library`, `/cards/progress`, `/cards/progress-tracking`,
-  `/cards/quests`, `/cards/reviews`, `/cards/revisions`, `/cards/scoring`,
-  `/cards/streaks`, `/contacts`, `/news`, `/notifications`. Each page's fix
-  is small and independently verifiable — drop its href from
-  `apps/debate-ai.com/lib/__tests__/tool-page-header-coverage.test.ts`'s
-  `TOOLS_WITHOUT_TOOL_PAGE_HEADER` set and the new coverage test goes green
-  for that route. Left as its own PR (or a few small PRs) rather than one
-  18-file diff.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
