@@ -5,7 +5,9 @@ import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
   applyFavoriteToolOp,
+  applyOutlineFilterPresetOp,
   applyWordLimitPresetOp,
+  buildOutlineFilterPresetFailureMessage,
   buildWordLimitPresetFailureMessage,
   DEFAULT_FAVORITE_TOOLS,
   DEFAULT_OUTLINE_FILTER_PRESETS,
@@ -14,6 +16,7 @@ import {
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolOpPatch,
   normalizeFavoriteToolsPatch,
+  normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
@@ -101,6 +104,7 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
  *   recordRecentTool?, wordLimitPresets?, addWordLimitPreset?,
  *   updateWordLimitPreset?, removeWordLimitPreset?, outlineFilterPresets?,
+ *   addOutlineFilterPreset?, removeOutlineFilterPreset?,
  *   newsRead?, newsLiked?, savedArgumentCollections?,
  *   addSavedArgumentCollection?, removeSavedArgumentCollection?,
  *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
@@ -164,6 +168,18 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   writing. `wordLimitPresets` itself is still accepted for a caller that
  *   genuinely needs a whole-list replace, but `useWordLimitPresets.ts` no
  *   longer sends one.
+ *   `addOutlineFilterPreset`/`removeOutlineFilterPreset` are the same
+ *   op-based fix for the equivalent "two tabs/devices edit Outline filter
+ *   presets at once" race a plain `outlineFilterPresets` whole-list replace
+ *   is exposed to — see
+ *   `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`'s docstring
+ *   and `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   Known gaps. Like the word-limit-preset ops, an add op
+ *   can fail a business rule (duplicate name, at capacity, invalid filter),
+ *   in which case this route returns 400 with that failure's message
+ *   instead of writing. `outlineFilterPresets` itself is still accepted for
+ *   a caller that genuinely needs a whole-list replace, but
+ *   `useOutlineFilterPresets.ts` no longer sends one.
  */
 
 type SettingsRow = {
@@ -270,6 +286,7 @@ export async function PUT(req: NextRequest) {
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
   const wordLimitPresetOpResult = normalizeWordLimitPresetOpPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
+  const outlineFilterPresetOpResult = normalizeOutlineFilterPresetOpPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
   const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
@@ -290,6 +307,7 @@ export async function PUT(req: NextRequest) {
     ...wordLimitPresetsResult.errors,
     ...wordLimitPresetOpResult.errors,
     ...outlineFilterPresetsResult.errors,
+    ...outlineFilterPresetOpResult.errors,
     ...savedArgumentCollectionsResult.errors,
     ...savedArgumentCollectionOpResult.errors,
     ...researchProgressGoalResult.errors,
@@ -315,6 +333,8 @@ export async function PUT(req: NextRequest) {
     wordLimitPresetOpResult.valid.updateWordLimitPreset === undefined &&
     wordLimitPresetOpResult.valid.removeWordLimitPreset === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
+    outlineFilterPresetOpResult.valid.addOutlineFilterPreset === undefined &&
+    outlineFilterPresetOpResult.valid.removeOutlineFilterPreset === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
     savedArgumentCollectionOpResult.valid.addSavedArgumentCollection === undefined &&
     savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection === undefined &&
@@ -330,7 +350,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -394,7 +414,34 @@ export async function PUT(req: NextRequest) {
       applyRecentToolOp(current, { recordRecentTool: recentToolOpResult.valid.recordRecentTool }),
     )
   }
-  if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
+  if (
+    outlineFilterPresetOpResult.valid.addOutlineFilterPreset !== undefined ||
+    outlineFilterPresetOpResult.valid.removeOutlineFilterPreset !== undefined
+  ) {
+    // An add/remove op is resolved against the row's *current* stored list
+    // rather than the caller's own copy — see this route's docstring and
+    // `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`. This
+    // closes the same lost-update race a plain `outlineFilterPresets`
+    // whole-list replace is exposed to that `wordLimitPresets`'s op-based
+    // patch above already fixed.
+    const [existing] = await db
+      .select({ outlineFilterPresets: userSettings.outlineFilterPresets })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.outlineFilterPresets
+      ? parseOutlineFilterPresets(existing.outlineFilterPresets)
+      : DEFAULT_OUTLINE_FILTER_PRESETS.outlineFilterPresets
+    const opName =
+      outlineFilterPresetOpResult.valid.addOutlineFilterPreset?.name ??
+      outlineFilterPresetOpResult.valid.removeOutlineFilterPreset ??
+      ""
+    const result = applyOutlineFilterPresetOp(current, outlineFilterPresetOpResult.valid)
+    if (result.failure) {
+      return NextResponse.json({ error: buildOutlineFilterPresetFailureMessage(result.failure, opName) }, { status: 400 })
+    }
+    dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(result.next)
+  } else if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
     dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(outlineFilterPresetsResult.valid.outlineFilterPresets)
   }
   if (

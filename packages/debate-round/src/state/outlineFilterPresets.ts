@@ -143,6 +143,155 @@ export function normalizeOutlineFilterPresetsPatch(input: unknown): OutlineFilte
   return { valid, errors };
 }
 
+/**
+ * A single add/remove operation, applied server-side against the caller's
+ * currently stored presets list rather than a client-computed whole-list
+ * replacement. Unlike `state/wordLimitPresets.ts#WordLimitPresetOp`, there is
+ * no `updateOutlineFilterPreset` — `useOutlineFilterPresets.ts` has no
+ * rename/edit-in-place UI today, only add and remove.
+ */
+export type OutlineFilterPresetOp = {
+  addOutlineFilterPreset?: { name: string; filter: ArgumentTreeFilter; roundId?: string };
+  removeOutlineFilterPreset?: string;
+};
+
+export type OutlineFilterPresetOpPatchResult = {
+  valid: OutlineFilterPresetOp;
+  errors: string[];
+};
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/** Why an add op was refused — one value per user-visible message. */
+export type OutlineFilterPresetSaveFailure = "invalid-name" | "invalid-filter" | "duplicate-name" | "at-capacity";
+
+/**
+ * Validates a prospective new preset against the documented limits *before*
+ * it is persisted, mirroring `state/wordLimitPresets.ts#validateNewWordLimitPreset`.
+ * Returns `null` when the add is allowed.
+ */
+export function validateNewOutlineFilterPreset(
+  existing: OutlineFilterPreset[],
+  name: string,
+  filter: ArgumentTreeFilter,
+): OutlineFilterPresetSaveFailure | null {
+  if (!isValidOutlineFilterPresetName(name)) return "invalid-name";
+  if (!isValidArgumentTreeFilter(filter)) return "invalid-filter";
+  const normalized = normalizeOutlineFilterPresetName(name);
+  if (existing.some((preset) => normalizeOutlineFilterPresetName(preset.name) === normalized)) return "duplicate-name";
+  if (existing.length >= MAX_OUTLINE_FILTER_PRESETS) return "at-capacity";
+  return null;
+}
+
+/** User-facing message for a refused preset add. `name` is the name the user typed, quoted into the messages that reference it. */
+export function buildOutlineFilterPresetFailureMessage(failure: OutlineFilterPresetSaveFailure, name: string): string {
+  switch (failure) {
+    case "invalid-name":
+      return `Preset names must be 1-${MAX_PRESET_NAME_LENGTH} characters.`;
+    case "invalid-filter":
+      return "That filter combination isn't valid.";
+    case "duplicate-name":
+      return `A preset named "${name.trim()}" already exists.`;
+    case "at-capacity":
+      return `You already have ${MAX_OUTLINE_FILTER_PRESETS} saved presets — remove one first.`;
+  }
+}
+
+/**
+ * Validates an untrusted `{ addOutlineFilterPreset }` / `{ removeOutlineFilterPreset }`
+ * patch — the fix for the "two tabs/devices edit Outline filter presets at
+ * once" lost-update race `normalizeOutlineFilterPresetsPatch`'s whole-list
+ * replace is exposed to (see
+ * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * Known gaps), mirroring `state/wordLimitPresets.ts#normalizeWordLimitPresetOpPatch`.
+ * The caller sends just the op being performed, and `/api/settings`'s route
+ * resolves it against the row's current value (read-then-write) via
+ * {@link applyOutlineFilterPresetOp} rather than trusting a client-computed
+ * list that may already be stale by the time it lands. Only shape is checked
+ * here (types, a valid nested filter) — name-uniqueness and capacity
+ * business rules can only be enforced once the current list is known, so
+ * {@link applyOutlineFilterPresetOp} re-uses {@link validateNewOutlineFilterPreset}
+ * for that.
+ */
+export function normalizeOutlineFilterPresetOpPatch(input: unknown): OutlineFilterPresetOpPatchResult {
+  if (!isPlainRecord(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+
+  const hasAdd = "addOutlineFilterPreset" in input;
+  const hasRemove = "removeOutlineFilterPreset" in input;
+
+  if (hasAdd && hasRemove) {
+    return {
+      valid: {},
+      errors: ['Provide only one of "addOutlineFilterPreset" or "removeOutlineFilterPreset" per request.'],
+    };
+  }
+
+  if (hasAdd) {
+    const value = input.addOutlineFilterPreset;
+    if (isPlainRecord(value) && typeof value.name === "string" && isValidArgumentTreeFilter(value.filter)) {
+      const roundId = typeof value.roundId === "string" ? value.roundId : undefined;
+      return {
+        valid: { addOutlineFilterPreset: { name: value.name, filter: value.filter, ...(roundId ? { roundId } : {}) } },
+        errors: [],
+      };
+    }
+    return {
+      valid: {},
+      errors: ['"addOutlineFilterPreset" must be a { name: string, filter: object } object with a valid filter.'],
+    };
+  }
+  if (hasRemove) {
+    const value = input.removeOutlineFilterPreset;
+    if (typeof value === "string" && value.trim().length > 0) {
+      return { valid: { removeOutlineFilterPreset: value }, errors: [] };
+    }
+    return { valid: {}, errors: ['"removeOutlineFilterPreset" must be a non-empty preset name.'] };
+  }
+  return { valid: {}, errors: [] };
+}
+
+export type OutlineFilterPresetOpResult = {
+  /** The resulting list. Equal to `current` (same reference) when the op was refused or was a no-op. */
+  next: OutlineFilterPreset[];
+  /** Set when the op was refused by a business rule (duplicate name, at capacity, invalid filter); `next` is unchanged in that case. */
+  failure: OutlineFilterPresetSaveFailure | null;
+};
+
+/**
+ * Applies one validated add/remove op to a currently stored presets list.
+ * Mirrors `state/wordLimitPresets.ts#applyWordLimitPresetOp`: an add can be
+ * refused by a business rule shared with the local-first hook path
+ * ({@link validateNewOutlineFilterPreset}) — a duplicate name or an
+ * at-capacity list — so the caller must check `failure` before treating the
+ * op as applied. `removeOutlineFilterPreset` is the one exception: removing
+ * an absent name is a silent no-op rather than a failure, matching
+ * `useOutlineFilterPresets.ts#removePreset`'s own `void` return.
+ */
+export function applyOutlineFilterPresetOp(
+  current: OutlineFilterPreset[],
+  op: OutlineFilterPresetOp,
+): OutlineFilterPresetOpResult {
+  if (op.addOutlineFilterPreset) {
+    const { name, filter, roundId } = op.addOutlineFilterPreset;
+    const failure = validateNewOutlineFilterPreset(current, name, filter);
+    if (failure) return { next: current, failure };
+    return {
+      next: [...current, { name: name.trim(), filter, ...(roundId ? { roundId } : {}) }],
+      failure: null,
+    };
+  }
+  if (op.removeOutlineFilterPreset) {
+    const normalized = normalizeOutlineFilterPresetName(op.removeOutlineFilterPreset);
+    const next = current.filter((preset) => normalizeOutlineFilterPresetName(preset.name) !== normalized);
+    return { next: next.length === current.length ? current : next, failure: null };
+  }
+  return { next: current, failure: null };
+}
+
 /** Serializes a presets list for the `outline_filter_presets` D1 column: `null` when empty, matching the "no saved value yet" semantics every other nullable column here uses. */
 export function serializeOutlineFilterPresets(list: OutlineFilterPreset[]): string | null {
   return list.length === 0 ? null : JSON.stringify(list);
