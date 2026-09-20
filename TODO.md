@@ -69,7 +69,8 @@ _No task currently in progress._
   anywhere in this repo, so that step was skipped as not applicable. Docs
   updated: `packages/debate-help-docs/content/docs/features/video-library.mdx`
   gains a new "List layout" section — this function, and its Tournament
-  column, had no doc coverage at all until now.
+  column, had no doc coverage at all until now. Shipped as
+  [PR #878](https://github.com/debate/debate-ai.com/pull/878).
 
 - **🎥 The video watch page's fullscreen button now fullscreens the video
   alone, not the whole left-column stage.** Another repeat of the standing
