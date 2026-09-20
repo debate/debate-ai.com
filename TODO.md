@@ -17,6 +17,69 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔀 A speech-document send synced from another device no longer shows up
+  as the newest entry if it was actually sent earlier.** Another repeat of
+  the standing autonomous-routine prompt above — as with every prior
+  repeat (reconfirmed fresh this run: 84 `user.id` references across
+  `saved_*` D1 tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without
+  its own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature
+  catalog), that prompt's own asks are already fully built. There were no
+  open PRs and no branches other than `master`/`prod` on the remote, and
+  this branch's own prior commits were already on `master` (a merged PR),
+  so it was restarted from `master`'s tip. A subagent scanned
+  `packages/debate-help-docs` "Known gaps" sections for a fresh,
+  concretely-scoped candidate, verifying each against current source
+  (ruling out one already-fixed stale doc entry and one that's really a
+  data-migration decision, not a code defect) before landing on
+  `features/speech-documents-cloud-save.mdx`'s own admitted gap: "An entry
+  adopted during merge isn't re-sorted by `sentAt`."
+
+  Confirmed still open: `useSpeechSendLogSync.ts`'s one-time account merge
+  adopted a remote-only entry via `speechSendLogStore.add(entry)`, which
+  (`appendSpeechSendLogEntry`) always appends to the end of local
+  insertion order — correct for a live send (always the newest) but wrong
+  for a merge, where a remote entry can have an older `sentAt` than
+  everything already local (e.g. sent from another device before this
+  browser ever synced). Since `SpeechSendLogPanel.tsx` displays
+  newest-first by reversing array order, that older entry rendered at the
+  top as if it were the most recent send.
+
+  `packages/debate-editor/src/editor/speech-send-log.ts` gains a new pure
+  `mergeSpeechSendLogEntries(log, newEntries, max)` — concatenates then
+  sorts by `sentAt` ascending, applying the same max-size eviction as
+  `appendSpeechSendLogEntry` (now by chronological position instead of
+  array position). `SpeechSendLogStore` gains a matching `mergeRemote`
+  method (one `init`/save/fire for the whole batch, replacing what would
+  otherwise be one `add()` call, and one store write, per adopted entry).
+  `useSpeechSendLogSync.ts`'s merge loop now collects every remote entry
+  missing locally and hands them to `mergeRemote` in one call instead of
+  looping `store.add` per entry.
+
+  Vitest-covered: `packages/debate-editor/test/speech-send-log.test.ts`
+  gains a new `describe("mergeSpeechSendLogEntries", ...)` block (5 cases
+  — an older remote entry is positioned before newer local ones rather
+  than appended after, multiple new entries interleave into full
+  chronological order, eviction past `max` keeps the newest by `sentAt`
+  rather than by array position, inputs aren't mutated, and an empty
+  `newEntries` is a no-op). `SpeechSendLogStore`/`useSpeechSendLogSync`
+  themselves aren't independently tested, matching this repo's existing
+  convention (no test anywhere in this repo covers either).
+
+  Ran the full verification gate: `bun install`, the updated test file (25
+  passing, 5 new cases) plus `debate-editor`'s own `bunx vitest run` (37
+  files, 799 tests) and `bunx tsc --noEmit` (clean), `bun run test` (479
+  files, 9020 tests passing, repo-wide), `bunx turbo run typecheck` (17/17 packages
+  green, `debate-ai-web` included), and `bun run build:web` (production
+  build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `speech-documents-cloud-save.mdx`'s Known gaps entry (marked
+  fixed).
+
 - **⚙️ `/tools` now shows the account tool-data sync status, with a manual
   retry and a way back in for an opted-out guest.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat

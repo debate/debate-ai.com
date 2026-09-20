@@ -20,11 +20,12 @@
  * `knownSyncedIds` set rather than only at explicit call sites, since the
  * store has callers this hook doesn't control (`speech-doc-send.ts`).
  *
- * A remote entry adopted during the merge is appended locally via
- * `store.add`, which places it at the end of local insertion order rather
- * than re-sorting by `sentAt` — same accepted minor ordering gap as
- * `useJudgeDecisions`'s merge (a decision/entry is generated once and never
- * edited, so this only matters for the rare adopted-out-of-order case).
+ * Remote entries adopted during the merge go through `store.mergeRemote`,
+ * which re-sorts the combined log by `sentAt` in one batch rather than
+ * appending each one at the end of local insertion order — so an entry
+ * sent earlier from another device (adopted out of order relative to this
+ * browser's own local history) still lands in its correct chronological
+ * position instead of showing as the newest.
  *
  * @module lib/hooks/useSpeechSendLogSync
  */
@@ -57,10 +58,9 @@ function ensureRemoteMerged(): Promise<void> {
         const localIds = new Set(localEntries.map((e) => e.id))
         const remoteIds = new Set(remoteEntries.map((e) => e.id))
 
-        for (const entry of remoteEntries) {
-          if (!localIds.has(entry.id)) {
-            await speechSendLogStore.add(entry)
-          }
+        const missingLocally = remoteEntries.filter((entry) => !localIds.has(entry.id))
+        if (missingLocally.length > 0) {
+          await speechSendLogStore.mergeRemote(missingLocally)
         }
         for (const entry of localEntries) {
           if (!remoteIds.has(entry.id)) {
