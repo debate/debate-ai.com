@@ -100,6 +100,21 @@ _No task currently in progress._
   nothing they describe changed). No `lint`/`format:check` script exists
   anywhere in this repo, so that step was skipped as not applicable.
 
+  **Update:** this branch (`claude/gifted-babbage-322v41`) had accumulated
+  this fix plus 26 further commits from prior runs (back through #869)
+  that were fully implemented and individually verified at the time but
+  never pushed or opened as a PR — `git ls-remote` showed no matching
+  remote branch and `origin/master` contained none of their commits,
+  contradicting this file's own prior belief (recorded just above) that
+  PR #890 had already merged. Re-ran the full verification gate fresh
+  against the branch tip (`bun install`; `bunx turbo run typecheck`,
+  17/17 packages; `bun run test`, 481 files / 9160 tests; `bun run
+  build:web`, production build succeeded) — all still green — removed one
+  unrelated stray file (`output.json`, a scraped GitHub page for an
+  unrelated third-party repo, accidentally committed several commits back
+  and unrelated to any of this work), pushed the branch, and opened
+  [PR #892](https://github.com/debate/debate-ai.com/pull/892).
+
 - **🔀 Two tabs or devices editing named Outline filter presets at the same
   time no longer silently drop each other's change.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat
