@@ -76,11 +76,16 @@ _No task currently in progress._
   files, 618 tests) and `bunx tsc --noEmit` (clean), `bun run test` (478
   files, 9001 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
   packages green, `debate-ai-web` included), and `bun run build:web`
-  (production build). No `lint`/`format:check` script exists anywhere in
-  this repo, so that step was skipped as not applicable. Docs updated:
-  `internals/video-watch-page.mdx`'s Known gaps entry (split in two; the
-  `LIKE`-across-descriptions half marked fixed, the "query passes, not a
-  relevance model" framing left open as a genuine, larger follow-up).
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-watch-page.mdx`'s Known gaps entry (split in
+  two; the `LIKE`-across-descriptions half marked fixed, the "query passes,
+  not a relevance model" framing left open as a genuine, larger follow-up).
+  Shipped as
+  [PR #881](https://github.com/debate/debate-ai.com/pull/881).
 
 - **🔁 Eleven tool-record collections were syncing to two different D1 tables
   at once — one of them dead.** Another repeat of the standing
