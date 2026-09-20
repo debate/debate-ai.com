@@ -17,6 +17,78 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔁 Eleven tool-record collections were syncing to two different D1 tables
+  at once — one of them dead.** Another repeat of the standing
+  autonomous-routine prompt above — reconfirmed again this run: 31 `saved_*`
+  tables in `apps/debate-ai.com/lib/database/schema.ts` link to `user.id`, and
+  every tool is reachable from `/tools`, the command palette, and the feature
+  catalog. There were no open PRs and no unfinished work on this branch's
+  prior PR (`#878`, already merged; this branch restarted from `master`'s
+  tip), so this run searched for a fresh, concrete gap in the tool-sync layer
+  itself rather than repeating that reconfirmation as the whole slice.
+
+  Found one: `packages/debate-data-sync/src/state/toolRecordCollections.ts`'s
+  own header comment says joining `TOOL_RECORD_COLLECTIONS` exists so a tool
+  doesn't need "a bespoke table, route, client and hook" — explicitly citing
+  `saved_drill_sets` as the *old* pattern it replaces. But `drillSets` was
+  still an entry in that same list, alongside ten other tools that also
+  already had their own dedicated table, route and hook: `judgeDecisions`
+  (`saved_judge_decisions`), `counselPanelAssessments`
+  (`saved_counsel_panel_assessments`), `coachMaterials` /
+  `coachMaterialVersions` (`saved_coach_materials` /
+  `saved_coach_material_versions`), `customOpponentPersonaLibrary`
+  (`saved_custom_opponent_personas`), `wordCountRounds`
+  (`saved_word_count_rounds`), `roundPairings` (`saved_round_pairings`),
+  `strategyRecommendations` (`saved_strategy_recommendations`),
+  `sprintSessions` (`saved_sprint_sessions`), and `dailyBestCardComments`
+  (`saved_daily_best_card_comments`). Each one's real panel reads and writes
+  only its dedicated table through its own hook (confirmed none of the eleven
+  hooks import anything from `debate-data-sync`); the generic catalog entry
+  meant `tool-record-auto-sync.ts`'s 15-second watcher *also* pushed the exact
+  same `localStorage` key (verified by matching `STORAGE_KEY` constants) to
+  `saved_tool_records` — rows nothing ever reads back. Net effect: wasted D1
+  writes and API calls every 15s per open tab across eleven tools, and a
+  second, stale copy of each tool's data sitting in `saved_tool_records` that
+  a future caller of that generic table (an admin view, an export) would read
+  instead of the real one.
+
+  This wasn't a design choice that just needed documenting — the same doc
+  file already listed word-count rounds and drill sets as tools whose
+  bespoke-table pattern *predates* the generic catalog and that the catalog
+  was built to extend to tools that "had nothing," while separately listing
+  both as generic-catalog entries in its own tool-by-tool breakdown. The
+  catalog entries were removed (not the bespoke tables — those are correct
+  and are what each tool's UI actually uses) since nothing pointed at the
+  generic copies to begin with.
+
+  Vitest-covered: `packages/debate-data-sync/test/toolRecordCollections.test.ts`
+  gains a regression test asserting all eleven keys are no longer
+  `isSyncedToolCollection`, and `test/tool-record-catalog.test.ts`'s
+  `EXPECTED_ID_FIELDS` map (which already fails the suite on any stale
+  entry) had its eleven matching rows removed to match.
+
+  Ran the full verification gate: `bun install`, the two touched
+  `debate-data-sync` test files plus that package's own `bunx vitest run` (34
+  files, 616 tests) and `bunx tsc --noEmit` (clean), `debate-videos`'s own
+  `bunx vitest run` (43 files, 488 tests, unaffected — its
+  `tool-record-sync-catalog.test.ts` only asserts every *remaining* entry's
+  route is a real sidebar link), `bun run test` (478 files, 8999 tests
+  passing, repo-wide, up one from the new regression test),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web` included),
+  and `bun run build:web` (production build succeeded; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+  "Which tools sync" breakdown moved these eleven tools out of the
+  generic-table paragraphs and into an explicit list of tools that sync
+  through their own table instead, and its "Tools already backed by a
+  `saved_*` table" line now names all eleven; and
+  `features/daily-best-card.mdx`'s Known gaps entry, which had incorrectly
+  attributed `dailyBestCardComments`'s sync to the shared Tool Data Sync
+  mechanism, now correctly points at its own dedicated table.
+
 - **🏷️ The video list table's Tournament column no longer shows a literal
   "$1" for tournaments like "TOC21"/"Nats18".** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat,
