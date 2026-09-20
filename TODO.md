@@ -17,6 +17,329 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔀 A speech-document send synced from another device no longer shows up
+  as the newest entry if it was actually sent earlier.** Another repeat of
+  the standing autonomous-routine prompt above — as with every prior
+  repeat (reconfirmed fresh this run: 84 `user.id` references across
+  `saved_*` D1 tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without
+  its own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature
+  catalog), that prompt's own asks are already fully built. There were no
+  open PRs and no branches other than `master`/`prod` on the remote, and
+  this branch's own prior commits were already on `master` (a merged PR),
+  so it was restarted from `master`'s tip. A subagent scanned
+  `packages/debate-help-docs` "Known gaps" sections for a fresh,
+  concretely-scoped candidate, verifying each against current source
+  (ruling out one already-fixed stale doc entry and one that's really a
+  data-migration decision, not a code defect) before landing on
+  `features/speech-documents-cloud-save.mdx`'s own admitted gap: "An entry
+  adopted during merge isn't re-sorted by `sentAt`."
+
+  Confirmed still open: `useSpeechSendLogSync.ts`'s one-time account merge
+  adopted a remote-only entry via `speechSendLogStore.add(entry)`, which
+  (`appendSpeechSendLogEntry`) always appends to the end of local
+  insertion order — correct for a live send (always the newest) but wrong
+  for a merge, where a remote entry can have an older `sentAt` than
+  everything already local (e.g. sent from another device before this
+  browser ever synced). Since `SpeechSendLogPanel.tsx` displays
+  newest-first by reversing array order, that older entry rendered at the
+  top as if it were the most recent send.
+
+  `packages/debate-editor/src/editor/speech-send-log.ts` gains a new pure
+  `mergeSpeechSendLogEntries(log, newEntries, max)` — concatenates then
+  sorts by `sentAt` ascending, applying the same max-size eviction as
+  `appendSpeechSendLogEntry` (now by chronological position instead of
+  array position). `SpeechSendLogStore` gains a matching `mergeRemote`
+  method (one `init`/save/fire for the whole batch, replacing what would
+  otherwise be one `add()` call, and one store write, per adopted entry).
+  `useSpeechSendLogSync.ts`'s merge loop now collects every remote entry
+  missing locally and hands them to `mergeRemote` in one call instead of
+  looping `store.add` per entry.
+
+  Vitest-covered: `packages/debate-editor/test/speech-send-log.test.ts`
+  gains a new `describe("mergeSpeechSendLogEntries", ...)` block (5 cases
+  — an older remote entry is positioned before newer local ones rather
+  than appended after, multiple new entries interleave into full
+  chronological order, eviction past `max` keeps the newest by `sentAt`
+  rather than by array position, inputs aren't mutated, and an empty
+  `newEntries` is a no-op). `SpeechSendLogStore`/`useSpeechSendLogSync`
+  themselves aren't independently tested, matching this repo's existing
+  convention (no test anywhere in this repo covers either).
+
+  Ran the full verification gate: `bun install`, the updated test file (25
+  passing, 5 new cases) plus `debate-editor`'s own `bunx vitest run` (37
+  files, 799 tests) and `bunx tsc --noEmit` (clean), `bun run test` (479
+  files, 9020 tests passing, repo-wide), `bunx turbo run typecheck` (17/17 packages
+  green, `debate-ai-web` included), and `bun run build:web` (production
+  build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `speech-documents-cloud-save.mdx`'s Known gaps entry (marked
+  fixed).
+
+- **⚙️ `/tools` now shows the account tool-data sync status, with a manual
+  retry and a way back in for an opted-out guest.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84 `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`, `TOOL_RECORD_COLLECTIONS`
+  syncs every localStorage-backed tool without its own dedicated table to the
+  account, and every tool is reachable from `/tools`, CardMirror's
+  `MenuBar`/command palette, and the feature catalog), that prompt's own asks
+  are already fully built. There were no open PRs and this branch carried no
+  unfinished work of its own (its prior commits were already on `master`), so
+  a subagent scanned `packages/debate-help-docs` "Known gaps" sections for a
+  fresh, concretely-scoped candidate, verifying each against current source.
+  It picked `internals/tool-data-sync.mdx`'s: "Nothing surfaces the sync any
+  more, and two things can only be reached through it. A guest who picked
+  'don't ask me again' has no way back short of clearing site data, and a
+  collection whose merge failed has no Sync now to retry with."
+
+  Confirmed still open: `apps/debate-ai.com/app/settings/page.tsx` is now
+  only `CardMirrorSettingsPanel` — the status list `useToolRecordSync`'s own
+  doc comment still says is "for the `/settings` status list" was removed
+  when that page became the card editor's settings, and nothing replaced it.
+  `useToolRecordSync`'s `results`/`resync` and
+  `setSignInPromptOptedOut(false)` (the opt-out's undo path) were both fully
+  built and had zero call sites in app code.
+
+  `apps/debate-ai.com/lib/tools/tool-sync-status.ts` adds a pure
+  `summarizeToolSyncFailures(results)`, turning the hook's raw per-collection
+  results into the one thing worth surfacing without reading every row: which
+  tools, if any, actually failed (not merely unsynced because nobody is
+  signed in — `ToolRecordHydrationResult.error` is only set for a real
+  failure), with each one's label and link via `findToolRecordCollection`.
+  `components/tools/ToolSyncStatusPanel.tsx` (new, mounted on `/tools` above
+  `MySavedItems`, per the doc's own "`/tools`, say" suggestion) renders it:
+  an "Account sync" row with a **Sync now** button wired to `resync()`, the
+  failure list underneath when there is one, and — when signed out and the
+  guest has opted out of the sign-in prompt — a "Turn sign-in reminders back
+  on" button calling `setSignInPromptOptedOut(false)`.
+
+  Vitest-covered: `apps/debate-ai.com/lib/tools/__tests__/tool-sync-status.test.ts`
+  (6 cases — a real failure surfaces with its label/link, a signed-out-shaped
+  `synced: false` with no `error` is not mistaken for a failure, a synced
+  result with a stray `error` is ignored, a result for a collection key the
+  catalog no longer recognizes is dropped, multiple failures sort by label,
+  and an empty result list). `ToolSyncStatusPanel` itself isn't independently
+  tested — no component test in this app renders a `useSession`-backed
+  component (0 found), matching this repo's existing convention for
+  DOM/hook-wired components elsewhere in this file's history.
+
+  Ran the full verification gate: `bun install`, the new test file (6
+  passing) plus `bun run test` (479 files, 9012 tests passing, repo-wide, up
+  6 from the new cases), `bunx tsc --noEmit` on the web app (clean),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web`
+  included), and `bun run build:web` (production build succeeded, `/tools`
+  present in the route list; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/tool-data-sync.mdx`'s Known gaps entry (marked fixed,
+  and the oversized-record bullet's now-stale "the row that read it is not"
+  line corrected) and Tests list. Shipped as
+  [PR #884](https://github.com/debate/debate-ai.com/pull/884).
+
+- **🎯 Related-videos' "same tournament" pass no longer pulls in a video that
+  merely mentions the tournament in its description.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 19+ `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), `TOOL_RECORD_COLLECTIONS`
+  entries sync every localStorage-backed tool without its own dedicated
+  table to the account, and every tool is reachable from `/tools`,
+  CardMirror's `MenuBar`/command palette, and the feature catalog), that
+  prompt's own asks are already fully built. There was one open PR (#880,
+  "Merge claude/gifted-babbage-ix0e8a into master") — confirmed fully
+  superseded (its single commit is identical, file-for-file, to the
+  already-merged #875) and closed as such rather than built on. No other
+  unfinished branch work existed, so this run had a subagent scan
+  `packages/debate-help-docs` "Known gaps" sections for a fresh,
+  concretely-scoped candidate, verifying each against current source rather
+  than trusting the doc text. It picked
+  `internals/video-watch-page.mdx`'s: "the tournament pass is a `LIKE`
+  search on the tournament name, so a tournament whose name appears in
+  unrelated descriptions pulls those in too."
+
+  Confirmed still open: `getRelatedVideos`
+  (`apps/debate-ai.com/lib/videos/video-repository.ts`) built its "same
+  tournament" pass as `{ source: "all", q: tournamentName, sort: "Recency" }`
+  — routing the tournament name through the generic `q` free-text filter,
+  which matches against title, channel *and description* (`searchText` in
+  the JSON fallback, a `LIKE` over the same concatenation in SQL), even
+  though every video row already carries its own dedicated `tournament`
+  field/column that nothing filtered on directly.
+
+  `VideoQueryParams` (`packages/debate-data-sync/src/videos/video-query.ts`)
+  gains a `tournament?: string | null` field, applied in `filterVideoRows`
+  as a case-insensitive substring match against `row.tournament` alone (not
+  `searchText`). `buildConditions`
+  (`apps/debate-ai.com/lib/videos/video-repository.ts`) mirrors it as a
+  `LIKE` on the `videos.tournament` column for the SQL backend, matching the
+  file's existing categoryKey/style predicate pattern. `getRelatedVideos`'s
+  tournament pass now passes `{ tournament: tournamentName, ... }` instead
+  of `{ q: tournamentName, ... }`.
+
+  Vitest-covered:
+  `packages/debate-data-sync/test/video-query.test.ts` gains two new
+  `filterVideoRows` cases — a case-insensitive tournament match that
+  excludes a different-tournament video whose description merely mentions
+  the search term (the exact false positive the doc described, shown
+  side-by-side against `q`'s broader match on the same input to make the
+  fix's effect explicit), and a row with no tournament value is dropped when
+  a tournament filter is set. The SQL `buildConditions` mirror and
+  `getRelatedVideos`'s two-line wiring change aren't independently tested —
+  matching this file's own header comment that the filter semantics are
+  "expressed twice... and [the JSON fallback] is what the unit tests
+  exercise," the same convention its existing categoryKey/style/source
+  predicates already follow; no test file for `video-repository.ts` exists
+  in this repo (getRelatedVideos/getVideoPage have never had one).
+
+  Ran the full verification gate: `bun install`, the updated test file (39
+  passing, up from 37) plus `debate-data-sync`'s own `bunx vitest run` (34
+  files, 618 tests) and `bunx tsc --noEmit` (clean), `bun run test` (478
+  files, 9001 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
+  packages green, `debate-ai-web` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-watch-page.mdx`'s Known gaps entry (split in
+  two; the `LIKE`-across-descriptions half marked fixed, the "query passes,
+  not a relevance model" framing left open as a genuine, larger follow-up).
+  Shipped as
+  [PR #881](https://github.com/debate/debate-ai.com/pull/881).
+
+- **🔁 Eleven tool-record collections were syncing to two different D1 tables
+  at once — one of them dead.** Another repeat of the standing
+  autonomous-routine prompt above — reconfirmed again this run: 31 `saved_*`
+  tables in `apps/debate-ai.com/lib/database/schema.ts` link to `user.id`, and
+  every tool is reachable from `/tools`, the command palette, and the feature
+  catalog. There were no open PRs and no unfinished work on this branch's
+  prior PR (`#878`, already merged; this branch restarted from `master`'s
+  tip), so this run searched for a fresh, concrete gap in the tool-sync layer
+  itself rather than repeating that reconfirmation as the whole slice.
+
+  Found one: `packages/debate-data-sync/src/state/toolRecordCollections.ts`'s
+  own header comment says joining `TOOL_RECORD_COLLECTIONS` exists so a tool
+  doesn't need "a bespoke table, route, client and hook" — explicitly citing
+  `saved_drill_sets` as the *old* pattern it replaces. But `drillSets` was
+  still an entry in that same list, alongside ten other tools that also
+  already had their own dedicated table, route and hook: `judgeDecisions`
+  (`saved_judge_decisions`), `counselPanelAssessments`
+  (`saved_counsel_panel_assessments`), `coachMaterials` /
+  `coachMaterialVersions` (`saved_coach_materials` /
+  `saved_coach_material_versions`), `customOpponentPersonaLibrary`
+  (`saved_custom_opponent_personas`), `wordCountRounds`
+  (`saved_word_count_rounds`), `roundPairings` (`saved_round_pairings`),
+  `strategyRecommendations` (`saved_strategy_recommendations`),
+  `sprintSessions` (`saved_sprint_sessions`), and `dailyBestCardComments`
+  (`saved_daily_best_card_comments`). Each one's real panel reads and writes
+  only its dedicated table through its own hook (confirmed none of the eleven
+  hooks import anything from `debate-data-sync`); the generic catalog entry
+  meant `tool-record-auto-sync.ts`'s 15-second watcher *also* pushed the exact
+  same `localStorage` key (verified by matching `STORAGE_KEY` constants) to
+  `saved_tool_records` — rows nothing ever reads back. Net effect: wasted D1
+  writes and API calls every 15s per open tab across eleven tools, and a
+  second, stale copy of each tool's data sitting in `saved_tool_records` that
+  a future caller of that generic table (an admin view, an export) would read
+  instead of the real one.
+
+  This wasn't a design choice that just needed documenting — the same doc
+  file already listed word-count rounds and drill sets as tools whose
+  bespoke-table pattern *predates* the generic catalog and that the catalog
+  was built to extend to tools that "had nothing," while separately listing
+  both as generic-catalog entries in its own tool-by-tool breakdown. The
+  catalog entries were removed (not the bespoke tables — those are correct
+  and are what each tool's UI actually uses) since nothing pointed at the
+  generic copies to begin with.
+
+  Vitest-covered: `packages/debate-data-sync/test/toolRecordCollections.test.ts`
+  gains a regression test asserting all eleven keys are no longer
+  `isSyncedToolCollection`, and `test/tool-record-catalog.test.ts`'s
+  `EXPECTED_ID_FIELDS` map (which already fails the suite on any stale
+  entry) had its eleven matching rows removed to match.
+
+  Ran the full verification gate: `bun install`, the two touched
+  `debate-data-sync` test files plus that package's own `bunx vitest run` (34
+  files, 616 tests) and `bunx tsc --noEmit` (clean), `debate-videos`'s own
+  `bunx vitest run` (43 files, 488 tests, unaffected — its
+  `tool-record-sync-catalog.test.ts` only asserts every *remaining* entry's
+  route is a real sidebar link), `bun run test` (478 files, 8999 tests
+  passing, repo-wide, up one from the new regression test),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web` included),
+  and `bun run build:web` (production build succeeded; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+  "Which tools sync" breakdown moved these eleven tools out of the
+  generic-table paragraphs and into an explicit list of tools that sync
+  through their own table instead, and its "Tools already backed by a
+  `saved_*` table" line now names all eleven; and
+  `features/daily-best-card.mdx`'s Known gaps entry, which had incorrectly
+  attributed `dailyBestCardComments`'s sync to the shared Tool Data Sync
+  mechanism, now correctly points at its own dedicated table.
+
+- **🏷️ The video list table's Tournament column no longer shows a literal
+  "$1" for tournaments like "TOC21"/"Nats18".** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat,
+  that prompt's own asks (tool integration, user settings, SQL-linked
+  flows/docs/debates) are already fully built, confirmed again this run:
+  `apps/debate-ai.com/lib/database/schema.ts` still links every `saved_*`
+  table to `user.id`, and `TOOL_RECORD_COLLECTIONS`
+  (`packages/debate-data-sync/src/state/toolRecordCollections.ts`) still
+  syncs every localStorage-backed tool to the account. There were no open
+  PRs to build on, but this branch itself already carried unfinished work:
+  a bare, message-less commit (`.`) had added
+  `cleanTournamentName` to
+  `packages/debate-videos/src/components/video-grid/VideoListRows.tsx` —
+  used to shorten a round's Tournament column cell (e.g. "Tournament of
+  Champions 2023" → "TOC") — with no tests, no docs, and a real bug still
+  live in it. Per this routine's own "resume existing work assigned to this
+  branch" rule, this run finished it rather than starting a fresh slice.
+
+  The bug: `.replace(/\b(?:TOC|Nats)\d{2}\b/gi, "$1")` used a
+  *non-capturing* group (`(?:...)`) but replaced with `"$1"`. With no
+  capture group 1 to back-reference, JavaScript's `String.replace` inserts
+  the literal two-character string `"$1"` instead of substituting anything —
+  so any tournament matching that pattern rendered as `$1` in the table
+  instead of its abbreviation. This wasn't hypothetical: `"TOC21"`,
+  `"Nats18"`, and `"Nats16"` are real `tournament` values in
+  `debate-data-sync/data/videos/rounds-pf.json`. Fix: add the capturing
+  group the replacement already assumed —
+  `.replace(/\b(TOC|Nats)\d{2}\b/gi, "$1")` — one character. `"TOC21"` now
+  cleans to `"TOC"`; `"Nats18"`/`"Nats16"` clean to `undefined` (empty),
+  same as this function already did for a bare `"Nationals"`, since "Nats"
+  alone is one of the generic org words it strips outright.
+
+  Vitest-covered: new
+  `packages/debate-videos/test/video-tournament-name.test.ts` (5 cases) —
+  empty/null input, the `TOC21`/`Nats18`/`Nats16`/`TOC 2025` regression
+  fixtures (confirmed to fail with the literal `"$1"` before the fix, pass
+  after), full-name-to-abbreviation expansion, round/org-word stripping
+  against real `rounds-*.json` values pulled from the repo's own data, and
+  a no-noise pass-through case.
+
+  Ran the full verification gate: `bun install`, the new test file (5
+  passing) plus `packages/debate-videos`'s own `bunx vitest run` (43 files,
+  488 tests, up from 42/483), `bun run test` (478 files, 8998 tests
+  passing, repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` and `debate-help-docs` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/features/video-library.mdx`
+  gains a new "List layout" section — this function, and its Tournament
+  column, had no doc coverage at all until now. Shipped as
+  [PR #878](https://github.com/debate/debate-ai.com/pull/878).
+
 - **🎥 The video watch page's fullscreen button now fullscreens the video
   alone, not the whole left-column stage.** Another repeat of the standing
   autonomous-routine prompt above — as with every prior repeat (reconfirmed

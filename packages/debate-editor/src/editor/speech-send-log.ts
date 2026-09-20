@@ -83,6 +83,22 @@ export function appendSpeechSendLogEntry(
   return next.length > max ? next.slice(next.length - max) : next;
 }
 
+/** Merge `newEntries` into `log`, re-sorting the combined result by
+ *  `sentAt` (ascending) instead of appending them at the end — unlike
+ *  `appendSpeechSendLogEntry`, which assumes `entry` is newer than
+ *  everything already in `log` (true for a live send, not necessarily true
+ *  for an entry adopted from another device during an account merge).
+ *  Applies the same max-size eviction, keeping the newest-by-`sentAt`
+ *  entries rather than the last ones in array order. Pure — no I/O. */
+export function mergeSpeechSendLogEntries(
+  log: SpeechSendLogEntry[],
+  newEntries: SpeechSendLogEntry[],
+  max: number = MAX_SPEECH_SEND_LOG_ENTRIES,
+): SpeechSendLogEntry[] {
+  const merged = [...log, ...newEntries].sort((a, b) => a.sentAt - b.sentAt);
+  return merged.length > max ? merged.slice(merged.length - max) : merged;
+}
+
 /** Remove the entry with `id`, if present. Pure; no-op (same array
  *  contents, new reference) when `id` isn't found. */
 export function removeSpeechSendLogEntry(
@@ -163,6 +179,17 @@ class SpeechSendLogStore {
   async add(entry: SpeechSendLogEntry): Promise<void> {
     await this.init();
     this.items = appendSpeechSendLogEntry(this.items, entry);
+    void webLog.save(this.items);
+    this.fire();
+  }
+
+  /** Merge one or more remote-only entries in, re-sorted by `sentAt`
+   *  rather than appended at the end (see `mergeSpeechSendLogEntries`).
+   *  One save/fire for the whole batch, unlike calling `add` per entry. */
+  async mergeRemote(entries: SpeechSendLogEntry[]): Promise<void> {
+    if (entries.length === 0) return;
+    await this.init();
+    this.items = mergeSpeechSendLogEntries(this.items, entries);
     void webLog.save(this.items);
     this.fire();
   }
