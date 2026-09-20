@@ -13,7 +13,7 @@
  * @module lib/videos/admin-library
  */
 
-import { and, asc, count, desc, eq, isNull, like, or, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, isNull, like, or, sql, type SQL } from "drizzle-orm";
 import {
   publishedMsForDate,
   seasonYearForDate,
@@ -256,6 +256,38 @@ export async function listLibraryVideos(db: any, query: LibraryQuery): Promise<L
 }
 
 /**
+ * Rewrites a not-yet-written `update.searchText` (from {@link buildLibraryUpdate})
+ * into a SQL expression computed from the *live* row rather than the JS
+ * string `buildLibraryUpdate` derived from its caller's `current` snapshot.
+ *
+ * `search_text` depends on three fields (`title`/`channel`/`description`),
+ * but a patch may only touch one of them. Two admins editing *different*
+ * fields on the same video close together — both reading the row before
+ * either writes — each compute `search_text` from their own snapshot of the
+ * field they didn't touch. Whichever write lands second would otherwise
+ * overwrite `search_text` with a stale combination (its own patched field
+ * plus the *other* admin's now-superseded value for the field it left
+ * alone), even though `title`/`channel` themselves land correctly (each
+ * `UPDATE` only sets the columns its own patch touched). Referencing the
+ * table's own columns for whichever field this patch didn't touch defers
+ * that half of the computation to SQL, which evaluates it against the row
+ * as it stands when this statement actually runs — after any earlier
+ * write has already landed — rather than a value read earlier by this
+ * function.
+ */
+export function withLiveSearchText(update: Partial<VideoTableRow>): Partial<VideoTableRow> {
+  if (update.searchText === undefined) return update;
+  const record = update as Record<string, unknown>;
+  const titleExpr = "title" in record ? sql`${record.title}` : videos.title;
+  const channelExpr = "channel" in record ? sql`${record.channel}` : videos.channel;
+  const descriptionExpr = "description" in record ? sql`${record.description}` : videos.description;
+  return {
+    ...update,
+    searchText: sql`lower(${titleExpr} || ' ' || ${channelExpr} || ' ' || ${descriptionExpr})` as unknown as string,
+  };
+}
+
+/**
  * Applies an admin edit to one published video.
  *
  * @param db - Drizzle handle.
@@ -271,7 +303,7 @@ export async function updateLibraryVideo(
   const [current] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
   if (!current) return null;
 
-  const update = buildLibraryUpdate(current, patch);
+  const update = withLiveSearchText(buildLibraryUpdate(current, patch));
   await db.update(videos).set(update).where(eq(videos.videoId, videoId));
 
   const [updated] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);

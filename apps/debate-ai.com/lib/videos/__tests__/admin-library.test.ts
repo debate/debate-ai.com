@@ -33,6 +33,7 @@ import {
   deleteLibraryVideo,
   listLibraryVideos,
   updateLibraryVideo,
+  withLiveSearchText,
 } from "../admin-library";
 
 const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
@@ -232,6 +233,27 @@ describe("updateLibraryVideo", () => {
     const db = await freshDb();
 
     expect(await updateLibraryVideo(db, "missing", { title: "x" })).toBeNull();
+  });
+
+  it("keeps search_text consistent when two admins edit different fields on the same video close together", async () => {
+    // Reproduces the historical race: both admins read the row before
+    // either writes, so each computes `search_text` from a snapshot of the
+    // field they didn't touch — the second write must not let that stale
+    // half win over the first admin's already-landed edit.
+    const db = await freshDb();
+    await db.insert(videos).values(videoRow("a"));
+    const [current] = await db.select().from(videos).where(eq(videos.videoId, "a"));
+
+    const titleEdit = withLiveSearchText(buildLibraryUpdate(current, { title: "New Title" }));
+    const channelEdit = withLiveSearchText(buildLibraryUpdate(current, { channel: "New Channel" }));
+
+    await db.update(videos).set(titleEdit).where(eq(videos.videoId, "a"));
+    await db.update(videos).set(channelEdit).where(eq(videos.videoId, "a"));
+
+    const [final] = await db.select().from(videos).where(eq(videos.videoId, "a"));
+    expect(final?.title).toBe("New Title");
+    expect(final?.channel).toBe("New Channel");
+    expect(final?.searchText).toBe("new title new channel description a");
   });
 });
 

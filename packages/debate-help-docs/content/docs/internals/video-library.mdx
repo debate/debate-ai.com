@@ -254,6 +254,24 @@ Two behaviours are worth knowing before changing this:
   channel and description, and a corrected date re-sorts the video. Writing
   the columns directly would silently leave the video searchable only under
   its old title.
+- **`search_text` is recomputed live, not from the read that started the
+  request.** `search_text` depends on three fields (`title`/`channel`/
+  `description`), but a patch may only touch one of them. Two admins editing
+  *different* fields on the same video close together — both reading the row
+  before either writes — would each compute `search_text` from their own
+  snapshot of the field they didn't touch; `title`/`channel` themselves would
+  still land correctly (each `UPDATE` only sets the columns its own patch
+  touched), but whichever `search_text` write landed second would overwrite it
+  with a stale combination that never matched the row's actual columns until
+  a later edit happened to touch `search_text`'s inputs again.
+  `updateLibraryVideo` closes this with `withLiveSearchText`, which rewrites
+  `buildLibraryUpdate`'s computed `search_text` into a SQL expression that
+  references `videos.title`/`channel`/`description` directly for whichever
+  field the patch didn't touch, evaluated by SQLite when the `UPDATE`
+  statement actually runs rather than by JS against an earlier read — the
+  same "resolve against whatever is currently stored, not the caller's own
+  snapshot" fix this codebase already applies to `favoriteTools` and the
+  other account-settings lists (see `/api/settings`'s docstring).
 - **A removal is recorded, not just applied.** `deleteLibraryVideo` deletes
   from `videos` *and* `youtube_round_videos`, then upserts
   `youtube_video_exclusions` — the same table `resyncYouTubeRounds` reads
@@ -272,8 +290,10 @@ cursor: this table has numbered pages and sorts on columns that are not unique
 (view count, channel), which a two-column cursor cannot express.
 
 `lib/videos/__tests__/admin-library.test.ts` covers the merge, the derived
-columns, the search/filter/sort/paging and the exclusion write against a real
-in-memory SQLite database.
+columns, the search/filter/sort/paging, the exclusion write, and two admins
+editing different fields on the same video close together leaving
+`search_text` consistent with both edits, against a real in-memory SQLite
+database.
 
 ## Known gaps
 

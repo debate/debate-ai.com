@@ -13,7 +13,25 @@ codebase is recorded from here on._
 
 ### In progress
 
-_No task currently in progress._
+- **🎞️ Video-library `search_text` staleness race.** Two exhaustive subagent
+  scans this run for a new instance of the established lost-update shape
+  (client reads a whole value, computes a new one in JS, writes the whole
+  thing back) turned up nothing new outside what's already fixed or already
+  deferred in the Follow-ups below. A narrower variant of the same root
+  cause survives in `lib/videos/admin-library.ts#updateLibraryVideo`,
+  though: its derived `search_text` column is computed once from the row
+  read at the top of the function, merged with the admin's own patch — so
+  two admins editing *different* fields (one `title`, the other `channel`)
+  on the same video close together land both column edits correctly, but
+  whichever `search_text` write lands second is computed from a
+  now-stale combination (its own patched field plus the *other* admin's
+  pre-edit value for the field it didn't touch), permanently mismatching
+  the row's actual title/channel until another edit happens to touch
+  `search_text`'s inputs again. Branch: `claude/gifted-babbage-s1am04`. Fix
+  in progress: recompute `search_text` as a SQL expression referencing the
+  live `videos.title`/`channel`/`description` columns for whichever field
+  the patch didn't touch, evaluated atomically within the same `UPDATE`
+  statement, rather than a JS string built from the stale read.
 
 ### Completed
 
