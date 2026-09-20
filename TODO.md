@@ -17,6 +17,58 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎥 The video watch page's fullscreen button now fullscreens the video
+  alone, not the whole left-column stage.** Another repeat of the standing
+  autonomous-routine prompt above — as with every prior repeat (reconfirmed
+  fresh this run: 19+ `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already
+  fully built. There were no open PRs, but two prior runs had left
+  finished, unshipped work sitting on orphaned branches with no PR ever
+  opened for them: `claude/gifted-babbage-ix0e8a` (a rankings/NDT fix that
+  turned out to already be on `master` under a different commit, landed as
+  [PR #875](https://github.com/debate/debate-ai.com/pull/875) — that branch
+  is now fully superseded and needs nothing further) and
+  `claude/gifted-babbage-22ld6c`, built on top of it, which added one more
+  commit never folded into any PR: `handleToggleFullscreen`
+  (`packages/debate-videos/src/panels/watch/VideoWatchPage.tsx`) called
+  `requestFullscreen()` on `stageRef` — the outer div wrapping the toolbar,
+  video, *and* the title/description column beside it — instead of
+  `videoWrapperRef`, the tighter ref around just the iframe that the
+  picture-in-picture handoff already uses. Confirmed the bug was still live
+  on current `master` before reusing the fix (this exact prior-run
+  regression is why "resume existing work instead of duplicating effort"
+  matters here): a viewer clicking "Fullscreen" got the metadata column
+  fullscreened alongside the video, not the video alone.
+
+  Reapplied that orphaned commit's substantive diff onto current `master`
+  (its own `TODO.md` hunk didn't apply cleanly against this file's current
+  state, so that part was written fresh instead of reused) rather than
+  re-deriving the fix from scratch: `handleToggleFullscreen` now calls
+  `requestFullscreen()` on `videoWrapperRef`, and the now-unused `stageRef`
+  is removed.
+
+  Vitest-covered: `packages/debate-videos/test/video-watch-page.test.tsx`
+  gains a case that stubs `HTMLElement.prototype.requestFullscreen` to
+  record which element it was called on, clicks the Fullscreen button, and
+  asserts the call landed on the video wrapper and never on the surrounding
+  stage.
+
+  Ran the full verification gate: `bun install`, the updated test file (7
+  passing) plus `debate-videos`'s own `bunx vitest run` (42 files, 483
+  tests) and `bunx tsc --noEmit` (clean), `bun run test` (477 files, 8993
+  tests passing, repo-wide), `bunx turbo run typecheck` (17/17 packages
+  green, `debate-ai-web` included), and `bun run build:web` (production
+  build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-watch-page.mdx`'s Known gaps entry (marked
+  fixed).
+
 - **🧭 The tool-catalog consistency test now walks `app/` itself, instead of
   only cross-checking the three hand-maintained catalogs against each
   other.** Another repeat of the standing autonomous-routine prompt above

@@ -118,8 +118,11 @@ match, a whole-text match, and a needle containing regex metacharacters
 - Related videos are query passes, not a relevance model — the tournament
   pass is a `LIKE` search on the tournament name, so a tournament whose name
   appears in unrelated descriptions pulls those in too.
-- Fullscreen covers the player *and* its metadata column (the whole left
-  stage), not the video alone.
+- ~~Fullscreen covers the player *and* its metadata column (the whole left
+  stage), not the video alone.~~ **Fixed:** `handleToggleFullscreen` now
+  calls `requestFullscreen()` on `videoWrapperRef` — the same element the
+  picture-in-picture handoff already uses — instead of the ref on the whole
+  left-column stage, so fullscreen shows only the video.
 - ~~The position handed back to the floating player comes from YouTube's
   `infoDelivery` broadcasts, so a video closed in the first second before any
   broadcast arrives resumes from 0.~~ **Fixed:** `currentTimeRef` — the same
