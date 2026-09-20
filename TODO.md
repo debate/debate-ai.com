@@ -17,6 +17,78 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎞️ A published, admin-corrected video can no longer be silently reverted
+  by a later "Publish all"/per-row "Publish" click.** A subagent scan for a
+  new, not-yet-fixed instance of the established lost-update shape confirmed
+  every previously-fixed field is still fixed (the `/api/settings` op-based
+  fields, the video admin-library `search_text` live-SQL fix from PR #897,
+  Practice vs AI's gamification score, Quest Streaks' freeze/reminder ops)
+  and found nothing new in the well-trodden `/api/settings` PUT handler or
+  any of the ~30 other D1-backed CRUD routes (all either per-record upserts
+  with no merge to race, or already carry proper optimistic-concurrency
+  checks like `/api/flows`/`/api/rounds`'s `baseUpdatedAt`/`force`). A close
+  sibling of the already-fixed `db:seed:videos` race survived one write path
+  over: `apps/debate-ai.com/lib/youtube/resync-rounds.ts#resyncYouTubeRounds`
+  (the weekly cron and the admin "Resync videos" button) re-walks every
+  subscribed channel's uploads since a fixed `2023-05-01` floor on *every*
+  run, with no check against the public `videos` table — only an explicit
+  admin removal (`youtube_video_exclusions`) keeps a video out of the queue.
+  So a round published (and possibly corrected via the admin library, which
+  sets `admin_edited`) weeks earlier could resurface in
+  `youtube_round_videos`, and the next "Publish all" or per-row "Publish"
+  click — both routed through
+  `apps/debate-ai.com/lib/videos/publish-round-video.ts#publishRoundVideos` —
+  would upsert it straight from the freshly-recomputed (unedited) YouTube
+  listing, silently overwriting the admin's title/category/tournament/
+  top-pick/speech-doc correction. `admin_edited` already exists and already
+  guards the *seed* path (`video-seed-sql.ts#buildVideoSeedStatements`'s
+  `CASE WHEN "admin_edited" = 1 THEN "<col>" ELSE excluded."<col>" END`), but
+  nothing guarded this second writer of the same table.
+
+  `publishRoundVideos` now re-reads which of the batch's ids are already
+  published *and* `admin_edited` immediately before writing (one `SELECT ...
+  WHERE video_id IN (...) AND admin_edited = 1`, resolved against the row's
+  current value rather than trusting the round-queue snapshot), and skips
+  those rows entirely instead of letting the recomputed round data land over
+  them — the same "resolve against whatever is currently stored, not a
+  stale snapshot" fix already applied to `favoriteTools` and (via a live SQL
+  expression instead) the video library's own `search_text`, applied here as
+  a boolean-guarded skip since the whole row, not one derived column, is
+  what needed protecting. Its return value now reports how many rows were
+  actually upserted (excluding any skipped for being admin-edited), which
+  both the bulk and per-row publish routes already surface as-is.
+
+  Vitest-covered: a new
+  `apps/debate-ai.com/lib/videos/__tests__/publish-round-video.test.ts`
+  (no prior test file existed for this module) runs against a real
+  in-memory SQLite database, mirroring `admin-library.test.ts`'s approach —
+  the regression needs an actual admin-edited `videos` row to already exist
+  before the publish path runs, which a mocked drizzle handle can't show. It
+  covers a first-time publish, a plain republish of a never-edited round
+  (still updates normally), the exact race (publish → admin-edit directly on
+  the row → the same round resurfaces in the queue with its original data →
+  publish again → the correction survives, `published` reports `0`), and a
+  mixed batch where an untouched sibling round in the same call still
+  publishes normally.
+
+  Ran the full verification gate: `bun install`, the new test file directly
+  (5/5 passing) plus the rest of `lib/videos/` (45/45 passing across 5
+  files), `bunx turbo run typecheck` (17/17 packages green), `bun run test`
+  (486 files, 9205 tests passing — up from 485/9200, exactly the 1 new file
+  and 5 new cases, repo-wide), and `bun run build:web` (production build
+  succeeded — the pre-existing "no output files found for task
+  debate-editor#build" warning is unrelated `turbo.json` `outputs` config,
+  not a build failure; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/internals/video-library.mdx`
+  gained a new bullet under "Admin management of published videos" describing
+  the fix, and a new "Known gaps" entry using this file's own `~~closed
+  gap~~ **Fixed:**` convention, alongside the sibling `admin_edited`/seed
+  entry it mirrors.
+
 - **🎞️ Two admins editing different fields on the same published video close
   together no longer leave its search index permanently mismatched.** Two
   independent exhaustive subagent scans this run for a *new* instance of the
