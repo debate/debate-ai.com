@@ -17,6 +17,71 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎞️ Two admins editing different fields on the same published video close
+  together no longer leave its search index permanently mismatched.** Two
+  independent exhaustive subagent scans this run for a *new* instance of the
+  established lost-update shape (a client/handler reads a whole value,
+  computes a new one in JS, writes the whole thing back) confirmed every
+  previously-fixed field is still fixed and found nothing new outside what's
+  already deferred in the Follow-ups below (team-collaboration's prep-room/
+  sprint/coaching state is confirmed local-storage-only with no server write
+  to race on, matching the already-known "per-user-vs-shared-resource sync"
+  gap category). A narrower variant of the same root cause survived in
+  `lib/videos/admin-library.ts#updateLibraryVideo`, though:
+  `buildLibraryUpdate`'s derived `search_text` column (the lowercased
+  `title`+`channel`+`description` the public feed searches) was computed
+  once from the row `updateLibraryVideo` read at the top of the function,
+  merged with the admin's own patch. Two admins editing *different* fields
+  on the same video close together (one `title`, the other `channel`) still
+  landed both column edits correctly — each `UPDATE` only sets the columns
+  its own patch touches — but whichever `search_text` write landed second
+  overwrote it with a stale combination: its own patched field plus the
+  *other* admin's now-superseded value for the field it didn't touch,
+  permanently mismatching the row's actual title/channel until a later edit
+  happened to touch `search_text`'s inputs again.
+
+  Added `withLiveSearchText` to `lib/videos/admin-library.ts`, which
+  rewrites `buildLibraryUpdate`'s computed `search_text` string into a SQL
+  expression referencing `videos.title`/`channel`/`description` directly
+  for whichever field the patch didn't touch (`sql\`${record.title}\`` for a
+  touched field, the live column reference otherwise), wrapped in
+  `lower(... || ' ' || ... || ' ' || ...)`. `updateLibraryVideo` now applies
+  `withLiveSearchText(buildLibraryUpdate(current, patch))` before writing,
+  so `search_text` is evaluated by SQLite against the row as it stands when
+  the `UPDATE` statement actually runs — after any earlier admin's write has
+  already landed — rather than against `updateLibraryVideo`'s own read from
+  the top of the function. This is the same "resolve against whatever is
+  currently stored, not the caller's own snapshot" fix already applied to
+  `favoriteTools` and the other account-settings lists synced through
+  `/api/settings`, just expressed as a SQL column reference instead of an
+  application-level read-then-merge, since `search_text` lives on the same
+  row being updated rather than in a separate JSON blob.
+
+  Vitest-covered: `apps/debate-ai.com/lib/videos/__tests__/admin-library.test.ts`
+  gained a case that reproduces the exact race — reads the row once, builds
+  two patches (`{ title }` and `{ channel }`) against that single shared
+  snapshot exactly as two admins racing would, applies both writes in
+  sequence, and asserts the final `search_text` reflects *both* edits
+  (`"new title new channel description a"`) rather than either write's
+  stale half. The existing single-edit case continues to pass unchanged,
+  confirming the fix is a no-op for the common non-concurrent path.
+
+  Ran the full verification gate: `bun install`, the focused test file
+  directly (18/18 passing, up from 17 by exactly the new case),
+  `bunx turbo run typecheck` (17/17 packages green), `bun run test` (485
+  files, 9200 tests passing — up from 9199 by exactly the 1 new case,
+  repo-wide), and `bun run build:web` (production build succeeded — the
+  pre-existing "no output files found for task debate-editor#build" warning
+  is unrelated `turbo.json` `outputs` config, not a build failure; the
+  build's regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/internals/video-library.mdx`'s
+  admin-editor section now describes the live-SQL-expression fix and the
+  race it closes, and its Tests-coverage line mentions the new case. Opened
+  [PR #897](https://github.com/debate/debate-ai.com/pull/897).
+
 - **🤺 Two Practice vs AI rounds finishing close together no longer let the
   second one silently erase the first one's points.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat,
