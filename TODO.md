@@ -17,6 +17,61 @@ _No task currently in progress._
 
 ### Completed
 
+- **🏷️ The video list table's Tournament column no longer shows a literal
+  "$1" for tournaments like "TOC21"/"Nats18".** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat,
+  that prompt's own asks (tool integration, user settings, SQL-linked
+  flows/docs/debates) are already fully built, confirmed again this run:
+  `apps/debate-ai.com/lib/database/schema.ts` still links every `saved_*`
+  table to `user.id`, and `TOOL_RECORD_COLLECTIONS`
+  (`packages/debate-data-sync/src/state/toolRecordCollections.ts`) still
+  syncs every localStorage-backed tool to the account. There were no open
+  PRs to build on, but this branch itself already carried unfinished work:
+  a bare, message-less commit (`.`) had added
+  `cleanTournamentName` to
+  `packages/debate-videos/src/components/video-grid/VideoListRows.tsx` —
+  used to shorten a round's Tournament column cell (e.g. "Tournament of
+  Champions 2023" → "TOC") — with no tests, no docs, and a real bug still
+  live in it. Per this routine's own "resume existing work assigned to this
+  branch" rule, this run finished it rather than starting a fresh slice.
+
+  The bug: `.replace(/\b(?:TOC|Nats)\d{2}\b/gi, "$1")` used a
+  *non-capturing* group (`(?:...)`) but replaced with `"$1"`. With no
+  capture group 1 to back-reference, JavaScript's `String.replace` inserts
+  the literal two-character string `"$1"` instead of substituting anything —
+  so any tournament matching that pattern rendered as `$1` in the table
+  instead of its abbreviation. This wasn't hypothetical: `"TOC21"`,
+  `"Nats18"`, and `"Nats16"` are real `tournament` values in
+  `debate-data-sync/data/videos/rounds-pf.json`. Fix: add the capturing
+  group the replacement already assumed —
+  `.replace(/\b(TOC|Nats)\d{2}\b/gi, "$1")` — one character. `"TOC21"` now
+  cleans to `"TOC"`; `"Nats18"`/`"Nats16"` clean to `undefined` (empty),
+  same as this function already did for a bare `"Nationals"`, since "Nats"
+  alone is one of the generic org words it strips outright.
+
+  Vitest-covered: new
+  `packages/debate-videos/test/video-tournament-name.test.ts` (5 cases) —
+  empty/null input, the `TOC21`/`Nats18`/`Nats16`/`TOC 2025` regression
+  fixtures (confirmed to fail with the literal `"$1"` before the fix, pass
+  after), full-name-to-abbreviation expansion, round/org-word stripping
+  against real `rounds-*.json` values pulled from the repo's own data, and
+  a no-noise pass-through case.
+
+  Ran the full verification gate: `bun install`, the new test file (5
+  passing) plus `packages/debate-videos`'s own `bunx vitest run` (43 files,
+  488 tests, up from 42/483), `bun run test` (478 files, 8998 tests
+  passing, repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` and `debate-help-docs` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/features/video-library.mdx`
+  gains a new "List layout" section — this function, and its Tournament
+  column, had no doc coverage at all until now. Shipped as
+  [PR #878](https://github.com/debate/debate-ai.com/pull/878).
+
 - **🎥 The video watch page's fullscreen button now fullscreens the video
   alone, not the whole left-column stage.** Another repeat of the standing
   autonomous-routine prompt above — as with every prior repeat (reconfirmed

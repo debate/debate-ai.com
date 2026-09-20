@@ -68,7 +68,7 @@ export function cleanTournamentName(tournament: string | null | undefined): stri
     .replace(/\bTournament of Champions\b/gi, "TOC")
     .replace(/\bNational Debate Tournament\b/gi, "NDT")
     .replace(/\b(?:19|20)\d{2}\b/g, "")
-    .replace(/\b(?:TOC|Nats)\d{2}\b/gi, "$1")
+    .replace(/\b(TOC|Nats)\d{2}\b/gi, "$1")
     .replace(/[\s,\-–]+(?:\d{2}|\d{2}'?)\s*$/g, "")
     .replace(/\bR\d{1,3}\b/gi, "")
     .replace(/\bround\s+robin\b/gi, "")
