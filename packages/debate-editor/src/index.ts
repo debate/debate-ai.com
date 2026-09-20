@@ -92,3 +92,11 @@ export type { CardDef } from './editor/learn-store.js';
 // `learn-decks-sync.ts`'s module doc).
 export { isValidLearnDeckRecord, MAX_SAVED_LEARN_DECK_BYTES } from './editor/learn-store.js';
 export type { CustomDeck } from './editor/learn-store.js';
+
+// Per-deck add-card/remove-card/rename ops, resolved server-side against a
+// deck's current stored state — the fix for the "two devices edit the same
+// deck at once" lost-update race a whole-deck `PUT` is exposed to (see
+// `learn-deck-op.ts`'s module doc and `/api/learn-decks/[deckId]`'s `PATCH`
+// handler).
+export { normalizeLearnDeckOpPatch, applyLearnDeckOp } from './editor/learn-deck-op.js';
+export type { LearnDeckOp } from './editor/learn-deck-op.js';

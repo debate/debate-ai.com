@@ -17,6 +17,61 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔀 Close the Learn custom-deck "two devices edit the same deck at once"
+  lost-update race.** `learn-decks-cloud-save.mdx`'s Known gaps documented
+  that renaming a deck or changing its card membership pushed a
+  client-computed whole-deck replace (`PUT /api/learn-decks/[deckId]`), so
+  two devices editing the same deck concurrently had the second write
+  silently drop the first's change — the same lost-update shape already
+  fixed for `favoriteTools`/`wordLimitPresets`/`outlineFilterPresets`/
+  `savedArgumentCollections` on `/api/settings`.
+
+  New `packages/debate-editor/src/editor/learn-deck-op.ts` exports pure
+  `normalizeLearnDeckOpPatch`/`applyLearnDeckOp` helpers: a single
+  `addCardId`/`removeCardId`/`rename` op applied to a `CustomDeck`,
+  mirroring `debate-round`'s `favoriteTools.ts#applyFavoriteToolOp`
+  convention. A new `PATCH /api/learn-decks/[deckId]` route
+  (`apps/debate-ai.com`) resolves one such op against the row's *current*
+  stored deck (read-then-write, the same shape `/api/settings`'s op fields
+  already use) instead of trusting a client-computed whole-deck snapshot —
+  404 when the deck has no synced row yet, 413 over the existing
+  `MAX_SAVED_LEARN_DECK_BYTES` cap.
+
+  `LearnDecksSync#handleStoreChange` (`learn-decks-sync.ts`) now clones
+  and keeps the previous deck state per id (rather than a serialized
+  content-key string) so it can diff a changed deck precisely, and its new
+  `pushDeckChange` sends one op per actual change — an `addCardId`/
+  `removeCardId` per card, a `rename` for a name change — instead of the
+  whole `{name, cardIds}` snapshot it used to push; a brand-new deck still
+  pushes in full (no row exists yet to race against), and an op that 404s
+  (this deck's own create push hasn't landed) falls back to a full `PUT`.
+  Cloning the baseline snapshot mattered for correctness, not just style:
+  `setDeckMembership`'s `cardIds.push` mutates the store's deck object in
+  place, so storing a live reference as the "previous" snapshot would have
+  had it silently track every later mutation too, permanently hiding the
+  next diff — a bug caught by (and now regression-tested by) the new
+  "rename immediately followed by a membership change" test.
+
+  Vitest-covered: `packages/debate-editor/test/learn-deck-op.test.ts` (new)
+  covers the pure helpers' validation and apply logic, including
+  idempotency (add-when-present/remove-when-absent/rename-to-same-name are
+  no-ops); `learn-decks-client.test.ts` gained cases for the new
+  `applyLearnDeckOpToAccount` (PATCH call shape, URL-encoding, the 404 →
+  `false` contract, and error propagation); `learn-decks-sync.test.ts`'s
+  rename/membership tests now assert the op-based `PATCH` calls instead of
+  a whole-deck `PUT`, plus new cases for a rename-then-membership-change
+  sequence and the 404-triggered fallback to a full `PUT`.
+
+  Ran the full verification gate: `bun install`; the three new/affected
+  test files (45 passing) plus `bun run test` (490 files, 9237 tests
+  passing, repo-wide); `bun run typecheck` (`turbo typecheck`, 15/15
+  packages green); and `bun run build:web` (production build succeeded).
+  No `lint`/`format:check` script exists in this repo, so that step was
+  skipped as not applicable.
+
+  PR: [#902](https://github.com/debate/debate-ai.com/pull/902).
+  Branch: `claude/gifted-babbage-hiqo2u`.
+
 - **🧰 The remaining 17 `/tools`-catalog pages get the standard
   `ToolPageHeader`.** Picked up the follow-up left by PR #900's
   `/speech-documents`/`/rank` migration: the mechanical remainder of
