@@ -19,7 +19,8 @@
  * @module lib/videos/resync-view-counts
  */
 
-import { eq, inArray, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
+import { sqlLiteral } from "debate-data-sync/src/videos/video-seed-sql";
 import {
   fetchVideoStatuses,
   setYouTubeApiKey,
@@ -160,6 +161,10 @@ const AVAILABILITY_BATCH = 200;
  * response — a batch that 500s, a region hiccup — reads differently from a
  * video that has been gone for weeks; finding the video again resets it.
  *
+ * Uses raw SQL with inlined values (via sqlLiteral) rather than bound
+ * parameters, so D1's per-statement binding limit does not apply —
+ * statement *size* is the real constraint.
+ *
  * @param db - Drizzle handle.
  * @param states - Availability per published video id.
  * @param stored - Availability as currently stored, for the change count.
@@ -184,16 +189,14 @@ async function applyAvailability(
   for (const [availability, ids] of byState) {
     for (let i = 0; i < ids.length; i += AVAILABILITY_BATCH) {
       const batch = ids.slice(i, i + AVAILABILITY_BATCH);
-      await db
-        .update(videos)
-        .set({
-          availability,
-          availabilityCheckedAt: checkedAt,
-          viewCountSyncedAt: checkedAt,
-          missingChecks:
-            availability === "available" ? 0 : sql`${videos.missingChecks} + 1`,
-        })
-        .where(inArray(videos.videoId, batch));
+      const inIds = batch.map((id) => sqlLiteral(id)).join(", ");
+      const missingChecks =
+        availability === "available" ? "0" : `"missing_checks" + 1`;
+      await db.run(
+        sql.raw(
+          `UPDATE "videos" SET "availability" = ${sqlLiteral(availability)}, "availability_checked_at" = unixepoch(), "missing_checks" = ${missingChecks}, "view_count_synced_at" = unixepoch() WHERE "video_id" IN (${inIds})`,
+        ),
+      );
     }
   }
 
@@ -228,16 +231,21 @@ export async function resyncVideoViewCounts(db: any): Promise<ViewCountResyncRes
 
   const startedAt = Date.now();
 
+  // Scan newest first so that if the run is interrupted by a quota error
+  // the freshest videos — the ones most likely to still be relevant — are
+  // the ones YouTube was asked about.
   const publishedRows: StoredRow[] = await db
     .select({
       id: videos.videoId,
       views: videos.viewCount,
       availability: videos.availability,
     })
-    .from(videos);
+    .from(videos)
+    .orderBy(desc(videos.publishedMs));
   const queuedRows: StoredRow[] = await db
     .select({ id: youtubeRoundVideos.id, views: youtubeRoundVideos.views })
-    .from(youtubeRoundVideos);
+    .from(youtubeRoundVideos)
+    .orderBy(desc(youtubeRoundVideos.publishedAt));
 
   const ids = [...new Set([...publishedRows, ...queuedRows].map((row) => row.id))];
 

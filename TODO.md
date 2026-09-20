@@ -647,6 +647,61 @@ _No task currently in progress._
   entry (NDT bullet reworded to describe the new notice; the
   `CURRENT_YEAR` bullet is unchanged and left as a genuine follow-up).
 
+- **🏆 NDT leaderboard tab explains itself instead of rendering nothing.**
+  Another repeat of the standing autonomous-routine prompt above — as with
+  every prior repeat (reconfirmed fresh this run: 19+ `saved_*` D1 tables
+  link to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`), all 65
+  `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
+  every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
+  palette, and the feature catalog), that prompt's own asks are already
+  fully built. There were no open PRs to build on. This run had a subagent
+  scan every `packages/debate-help-docs` doc's "Known gaps" section (79 of
+  92 files have one) for a still-open, concretely-scoped, single-PR item —
+  the two most self-contained were `internals/team-rankings.mdx`'s
+  hardcoded `CURRENT_YEAR` (skipped: auto-deriving a debate season from the
+  calendar date is a product decision about when TOC's bid list actually
+  rolls over, not something this routine should guess at) and its "NDT
+  appears as a division tab but has no ranking source; the hook
+  short-circuits it to an empty table" — picked, since it's a pure UI/UX
+  gap with no external data-source ambiguity.
+
+  Reading `RankingsLeaderboardPanel.tsx` showed the empty-table framing was
+  already half-fixed (a `division === "NDT"` branch skips the table
+  entirely, showing only the champion/topic banner), but when a season had
+  no champion history either — or the tab was still loading — the panel
+  rendered nothing at all, indistinguishable from a stuck loading state.
+  `packages/debate-videos/src/panels/leaderboard/leaderboardUtils.ts`'s
+  `DIVISION_CONFIG` gets a new `hasLiveLeaderboard: boolean` field
+  (`true` for VPF/VLD/VCX, `false` for NDT) and an exported
+  `hasLiveLeaderboard(division)` lookup, replacing the ad hoc `"NDT"`
+  string check in both `RankingsLeaderboardPanel.tsx` (which now also
+  renders an explanatory "No live team leaderboard is published for
+  College NDT…" notice once `championsLoading` resolves) and
+  `useLeaderboardData.ts`'s hook.
+
+  Vitest-covered: `packages/debate-videos/test/leaderboard-utils.test.ts`
+  gets a new `describe("hasLiveLeaderboard")` block (VPF/VLD/VCX true, NDT
+  false, an unrecognized division falls back to false). The panel's JSX
+  branch itself isn't independently tested, matching this package's
+  existing convention (no test in `debate-videos` renders
+  `RankingsLeaderboardPanel`/`LeaderboardView`; only their pure logic
+  modules are unit-tested).
+
+  Ran the full verification gate: `bun install`, the updated test file (15
+  passing) plus `packages/debate-videos`'s own `bunx vitest run` (42 files,
+  481 tests), `bun run test` (477 files, 8983 tests passing, repo-wide),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web`
+  included), and `bun run build:web` (production build, succeeded — the
+  pre-existing `no output files found for task debate-editor#build`
+  warning is unrelated `turbo.json` `outputs` config, not a build failure;
+  the build's generated `offline-sw` file-list/version/service-worker
+  artifacts were reverted, not committed, since they're regenerated on
+  every build and unrelated to this change). No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable. Docs updated: `internals/team-rankings.mdx`'s Known gaps
+  entry (NDT bullet reworded to describe the new notice; the
+  `CURRENT_YEAR` bullet is unchanged and left as a genuine follow-up).
+
 - **📇 Quick Cards full-library "clear" now issues one bulk delete instead of
   one per card.** Another repeat of the standing autonomous-routine prompt
   above — as with every prior repeat (reconfirmed fresh this run: 19
@@ -887,6 +942,41 @@ _No task currently in progress._
   how to migrate a device's existing localStorage history), which is a
   backend-architecture decision this routine defers rather than one small
   PR's worth of wiring. Left as a follow-up, not picked up this run.
+
+- `docs/internals/team-rankings.mdx`'s Known gaps: `CURRENT_YEAR`
+  (`apps/debate-ai.com/lib/leaderboard/resolve.ts`) is a hardcoded season
+  string; a request for the next season's year silently falls through to
+  the historical Elo-only path until someone bumps the constant. Not picked
+  up this run because auto-deriving the season from the current date isn't
+  safe — the TOC bid list's season rollover doesn't necessarily land on a
+  calendar-year boundary, and getting that wrong would silently misroute
+  live requests to the wrong data path. Needs a human decision about the
+  actual rollover rule (or at minimum an explicit ops alert/checklist item)
+  before it's a mechanical fix.
+
+- Four `packages/debate-help-docs` "Known gaps" entries were found stale
+  during this run's candidate search — each describes a gap the code no
+  longer has, but the doc text was never updated when it was fixed
+  elsewhere. Not picked up as this run's slice (a doc-only correction, not
+  the code fix itself), but worth a future small doc-accuracy pass:
+  - `internals/argument-tree-outline.mdx`: still describes the
+    preset-doesn't-scroll-to-a-round gap that `features/argument-tree-outline.mdx`
+    and this file's own "Completed" entry above already record as fixed
+    (`outlineFilterPresetJump.ts`).
+  - `features/coaching-programs.mdx`: still describes roster analytics not
+    folding in drill-completion/practice-round counts, which
+    `internals/coaching-programs.mdx`'s "Per-member drill/practice-round
+    status" section shows was already built.
+  - `internals/news-stream.mdx`: still describes `APP_FEATURES` existing as
+    "one of three hand-synced copies," but the catalog was already unified
+    into `packages/debate-feature-catalog` (see this file's own "One shared
+    catalog" section) — only one copy exists now.
+  - `features/reason-editor-outline-nav.mdx`: still describes the
+    heading-breadcrumb bar as single-doc-only with "multi-pane... doesn't
+    have one yet," but `debate-editor/src/editor/multi-pane-shell.ts`
+    already mounts a per-pane `HeadingBreadcrumbBar`; only an adjacent
+    module comment in `heading-breadcrumb-bar.ts` still calls this out as
+    unbuilt.
 
 - `docs/internals/team-rankings.mdx`'s Known gaps: `CURRENT_YEAR`
   (`apps/debate-ai.com/lib/leaderboard/resolve.ts`) is a hardcoded season

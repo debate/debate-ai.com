@@ -162,3 +162,19 @@ describe("hasLiveLeaderboard", () => {
     expect(hasLiveLeaderboard("BOGUS" as never)).toBe(false);
   });
 });
+
+describe("hasLiveLeaderboard", () => {
+  it("is true for the divisions with a bid-list/Elo data source", () => {
+    expect(hasLiveLeaderboard("VPF")).toBe(true);
+    expect(hasLiveLeaderboard("VLD")).toBe(true);
+    expect(hasLiveLeaderboard("VCX")).toBe(true);
+  });
+
+  it("is false for NDT, which has no per-team data source", () => {
+    expect(hasLiveLeaderboard("NDT")).toBe(false);
+  });
+
+  it("falls back to false for an unrecognized division", () => {
+    expect(hasLiveLeaderboard("BOGUS" as never)).toBe(false);
+  });
+});

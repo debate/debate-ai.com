@@ -24,7 +24,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/videos",
 }));
 
-const { VideoListRows } = await import("../src/components/video-grid/VideoListRows");
+const { VideoListRows, cleanTournamentName } = await import("../src/components/video-grid/VideoListRows");
 
 /** A round with a tournament and both teams — the full-column layout. */
 const identifiableRound: VideoType = [
@@ -102,6 +102,22 @@ function cellCount(html: string, marker: string): number {
     return total + (span ? Number(span[1]) : 1);
   }, 0);
 }
+
+describe("tournament names in round rows", () => {
+  it.each([
+    ["TOC 2025", "TOC"],
+    ["NDT 2025", "NDT"],
+    ["Shirley 2024", "Shirley"],
+    ["Harvard 2024", "Harvard"],
+    ["Northwestern 2024", "Northwestern"],
+    ["Greenhill RR", "Greenhill RR"],
+    ["Shirley 2019 Rd 6", "Shirley"],
+    ["Tournament of Champions 2019", "TOC"],
+    ["ACC Debate Tournament", "ACC"],
+  ])("shortens %p to %p", (tournament, expected) => {
+    expect(cleanTournamentName(tournament)).toBe(expected)
+  })
+})
 
 describe("the round list's columns", () => {
   it("carries no Arguments column", () => {
