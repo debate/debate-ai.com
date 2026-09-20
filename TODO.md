@@ -17,6 +17,78 @@ _No task currently in progress._
 
 ### Completed
 
+- **📝 Five stale `packages/debate-help-docs` "Known gaps" entries corrected
+  — each described a gap the code no longer had, left over from a fix
+  landed elsewhere that never updated the doc that named the gap.** Another
+  repeat of the standing autonomous-routine prompt above — as with every
+  prior repeat (reconfirmed fresh this run: 84+ `user.id` references across
+  `saved_*` D1 tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. There were no open PRs and
+  no branches other than `master`/`prod` on the remote, and this branch's
+  own prior commits were already merged into `master` (PR #888), so it was
+  restarted from `master`'s tip. Rather than a fresh code fix, this run
+  picked up the "four stale Known gaps entries" + the
+  `round-invites-and-notifications.mdx` stale entry this file's own
+  "Follow-ups" section had been carrying forward across several prior runs
+  as "worth a future small doc-accuracy pass" without ever being picked up —
+  each re-verified fresh against the current code before editing:
+  - `internals/argument-tree-outline.mdx`: still said applying a saved
+    Outline filter preset "doesn't select or scroll to a particular round."
+    Confirmed fixed — `debate-practice-drills/src/state/outlineFilterPresetJump.ts#resolvePresetJumpRoundId`
+    is wired into `ArgumentTreePanel.tsx` and does exactly that when the
+    preset's origin round still exists.
+  - `features/coaching-programs.mdx`: still said the roster analytics table
+    "doesn't yet fold in drill-completion rate or practice-round counts."
+    Confirmed fixed — `internals/coaching-programs.mdx`'s own "Per-member
+    drill/practice-round status" section documents the two new columns
+    already built for this.
+  - `internals/news-stream.mdx`: still described `feature-catalog.ts` as
+    "this package's own," one of three hand-synced copies of
+    `APP_FEATURES`. Confirmed fixed — `lib/news-stream.ts` now imports
+    `APP_FEATURES` from the single shared `debate-feature-catalog` package,
+    per `internals/features-page.mdx`'s "One shared catalog" section; the
+    residual "nothing checks the three copies against each other" gap no
+    longer applies since there's only one copy.
+  - `features/reason-editor-outline-nav.mdx`: still said the heading
+    breadcrumb bar was single-doc-only, "multi-pane... doesn't have one
+    yet." Confirmed fixed for multi-pane (still genuinely missing for
+    multi-window, which the doc now says) —
+    `debate-editor/src/editor/multi-pane-shell.ts` mounts a per-pane
+    `HeadingBreadcrumbBar` scoped to that pane's own `.pmd-pane-body`
+    scroller. The adjacent module comment in `heading-breadcrumb-bar.ts`
+    itself was equally stale ("multi-pane/multi-window... are not wired
+    up") and got the same correction.
+  - `features/round-invites-and-notifications.mdx`: still said "only round
+    creation sends invites, not later edits." Confirmed fixed —
+    `useRoundEditorForm.ts#handleSubmit`'s edit-mode branch already calls
+    `computeAddedInviteEmails` + `dispatchRoundInvites` for newly-added
+    debaters/judges/spectators, and `round-invite-client.ts#computeAddedInviteEmails`'s
+    own docstring names this exact gap as what it closes.
+
+  Also removed the two now-redundant "Follow-ups" entries that had been
+  carrying these forward (one of the two duplicate copies of the "four
+  stale entries" list, plus the `round-invites-and-notifications.mdx`
+  entry); the file's pre-existing duplicate `team-rankings.mdx` follow-up
+  entry and its still-genuinely-open items (`flow-annotations.mdx`,
+  `practice-vs-ai.mdx`, `quest-streaks.mdx`) were left as they were, not
+  part of this pass.
+
+  No code behavior changed (doc text only, plus the one stale code comment
+  above) so no new Vitest coverage was needed. Ran the full verification
+  gate: `bun install`, `bunx turbo run typecheck` (17/17 packages green,
+  including `debate-editor` and `debate-help-docs`), `bun run test` (481
+  files, 9105 tests passing, repo-wide), and `bun run build:web` (production
+  build succeeded — the pre-existing "no output files found for task
+  debate-editor#build" warning is unrelated `turbo.json` `outputs` config,
+  not a build failure; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable.
+
 - **🔢 Two tabs or devices editing custom word-limit presets at the same time
   no longer silently drop each other's change.** Another repeat of the
   standing autonomous-routine prompt above — as with every prior repeat
@@ -1200,16 +1272,6 @@ _No task currently in progress._
 
 ## Follow-ups
 
-- `features/round-invites-and-notifications.mdx`'s Known gaps entry ("Only
-  round creation sends invites, not later edits") is stale, found during
-  this run's candidate search: `useRoundEditorForm.ts`'s edit-mode
-  `handleSubmit` already calls `computeAddedInviteEmails` +
-  `dispatchRoundInvites` for newly-added debaters/judges/spectators on an
-  edit, and `round-invite-client.ts#computeAddedInviteEmails`'s own docstring
-  cites this exact doc/gap as what it closes. Not picked up this run (a
-  doc-only correction, not a code fix) — worth folding into the "four stale
-  Known gaps entries" doc-accuracy pass already tracked below.
-
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
   "Completed" entry above):
@@ -1249,30 +1311,6 @@ _No task currently in progress._
   actual rollover rule (or at minimum an explicit ops alert/checklist item)
   before it's a mechanical fix.
 
-- Four `packages/debate-help-docs` "Known gaps" entries were found stale
-  during this run's candidate search — each describes a gap the code no
-  longer has, but the doc text was never updated when it was fixed
-  elsewhere. Not picked up as this run's slice (a doc-only correction, not
-  the code fix itself), but worth a future small doc-accuracy pass:
-  - `internals/argument-tree-outline.mdx`: still describes the
-    preset-doesn't-scroll-to-a-round gap that `features/argument-tree-outline.mdx`
-    and this file's own "Completed" entry above already record as fixed
-    (`outlineFilterPresetJump.ts`).
-  - `features/coaching-programs.mdx`: still describes roster analytics not
-    folding in drill-completion/practice-round counts, which
-    `internals/coaching-programs.mdx`'s "Per-member drill/practice-round
-    status" section shows was already built.
-  - `internals/news-stream.mdx`: still describes `APP_FEATURES` existing as
-    "one of three hand-synced copies," but the catalog was already unified
-    into `packages/debate-feature-catalog` (see this file's own "One shared
-    catalog" section) — only one copy exists now.
-  - `features/reason-editor-outline-nav.mdx`: still describes the
-    heading-breadcrumb bar as single-doc-only with "multi-pane... doesn't
-    have one yet," but `debate-editor/src/editor/multi-pane-shell.ts`
-    already mounts a per-pane `HeadingBreadcrumbBar`; only an adjacent
-    module comment in `heading-breadcrumb-bar.ts` still calls this out as
-    unbuilt.
-
 - `docs/internals/team-rankings.mdx`'s Known gaps: `CURRENT_YEAR`
   (`apps/debate-ai.com/lib/leaderboard/resolve.ts`) is a hardcoded season
   string; a request for the next season's year silently falls through to
@@ -1283,30 +1321,6 @@ _No task currently in progress._
   live requests to the wrong data path. Needs a human decision about the
   actual rollover rule (or at minimum an explicit ops alert/checklist item)
   before it's a mechanical fix.
-
-- Four `packages/debate-help-docs` "Known gaps" entries were found stale
-  during this run's candidate search — each describes a gap the code no
-  longer has, but the doc text was never updated when it was fixed
-  elsewhere. Not picked up as this run's slice (a doc-only correction, not
-  the code fix itself), but worth a future small doc-accuracy pass:
-  - `internals/argument-tree-outline.mdx`: still describes the
-    preset-doesn't-scroll-to-a-round gap that `features/argument-tree-outline.mdx`
-    and this file's own "Completed" entry above already record as fixed
-    (`outlineFilterPresetJump.ts`).
-  - `features/coaching-programs.mdx`: still describes roster analytics not
-    folding in drill-completion/practice-round counts, which
-    `internals/coaching-programs.mdx`'s "Per-member drill/practice-round
-    status" section shows was already built.
-  - `internals/news-stream.mdx`: still describes `APP_FEATURES` existing as
-    "one of three hand-synced copies," but the catalog was already unified
-    into `packages/debate-feature-catalog` (see this file's own "One shared
-    catalog" section) — only one copy exists now.
-  - `features/reason-editor-outline-nav.mdx`: still describes the
-    heading-breadcrumb bar as single-doc-only with "multi-pane... doesn't
-    have one yet," but `debate-editor/src/editor/multi-pane-shell.ts`
-    already mounts a per-pane `HeadingBreadcrumbBar`; only an adjacent
-    module comment in `heading-breadcrumb-bar.ts` still calls this out as
-    unbuilt.
 
 ---
 
