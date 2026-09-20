@@ -115,9 +115,15 @@ match, a whole-text match, and a needle containing regex metacharacters
 
 ## Known gaps
 
-- Related videos are query passes, not a relevance model — the tournament
-  pass is a `LIKE` search on the tournament name, so a tournament whose name
-  appears in unrelated descriptions pulls those in too.
+- Related videos are query passes, not a relevance model.
+- ~~The tournament pass was a `LIKE` search across title/channel/description
+  (the same free-text search the search box uses), so a tournament whose
+  name appeared in an unrelated video's description pulled that video in
+  too.~~ **Fixed:** `getRelatedVideos`' tournament pass now filters on
+  `VideoQueryParams.tournament`, a dedicated predicate scoped to the
+  `tournament` column/field alone (`buildConditions` in SQL,
+  `filterVideoRows` for the JSON fallback), instead of routing the
+  tournament name through the generic `q` free-text filter.
 - ~~Fullscreen covers the player *and* its metadata column (the whole left
   stage), not the video alone.~~ **Fixed:** `handleToggleFullscreen` now
   calls `requestFullscreen()` on `videoWrapperRef` — the same element the

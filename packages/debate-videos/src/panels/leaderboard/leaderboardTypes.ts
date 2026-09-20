@@ -26,16 +26,25 @@ export type SortDir = "asc" | "desc";
 /** Active sort state, or `null` when no column is sorted. */
 export type SortState = { key: SortKey; dir: SortDir } | null;
 
+import type { SeasonalTopic } from "../../lib/debate-topics";
+
+export type { SeasonalTopic };
+
 /** Champion and topic data for a single debate season. */
 export type YearData = {
   ndt_topic?: string;
+  ndt_topic_name?: string;
   ndt_champion?: string;
   policy_topic?: string;
+  policy_topic_name?: string;
   policy_champion?: string;
-  ld_topic?: string;
+  ld_topics?: SeasonalTopic[];
   ld_champion?: string;
-  pf_topic?: string;
+  pf_topics?: SeasonalTopic[];
   pf_champion?: string;
+  /** Legacy HTML strings from older debate-topics.json. */
+  ld_topic?: string;
+  pf_topic?: string;
 };
 
 /** Historical champion/topic data indexed by four-digit year string (e.g. `"2026"`). */

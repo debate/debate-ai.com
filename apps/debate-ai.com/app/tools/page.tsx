@@ -4,6 +4,7 @@ import { FavoriteToolButton } from "@/components/tools/FavoriteToolButton"
 import { FavoritesController } from "@/components/tools/FavoritesController"
 import { RecentlyOpenedTools } from "@/components/tools/RecentlyOpenedTools"
 import { RecordVisitLink } from "@/components/tools/RecordVisitLink"
+import { ToolSyncStatusPanel } from "@/components/tools/ToolSyncStatusPanel"
 import { MySavedItems } from "./MySavedItems"
 import { ToolsSearch } from "./ToolsSearch"
 import { ALL_TOOLS, TOOL_GROUPS } from "./tool-groups"
@@ -21,6 +22,7 @@ export default function ToolsPage() {
           <h1 className="text-2xl font-semibold text-foreground">Tools</h1>
           <p className="mt-1 text-sm text-muted-foreground">Every workspace, research, and practice tool in one place.</p>
         </div>
+        <ToolSyncStatusPanel />
         <MySavedItems />
         <ToolsSearch />
 

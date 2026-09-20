@@ -17,6 +17,7 @@ import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
   hasLiveLeaderboard,
+  resolveDivisionTopic,
   sortEntries,
   type Division,
   type SortKey,
@@ -137,8 +138,15 @@ export function LeaderboardPanel({
 
   const divConfig = DIVISION_CONFIG.find((d) => d.value === division)!
   const yearData = debateHistory?.[year]
-  const topic = yearData?.[divConfig.topicKey]
-  const champion = yearData?.[divConfig.championKey]
+  const topic = resolveDivisionTopic(yearData, division)
+  const topicName =
+    divConfig.topicNameKey && typeof yearData?.[divConfig.topicNameKey] === "string"
+      ? (yearData[divConfig.topicNameKey] as string)
+      : undefined
+  const champion =
+    typeof yearData?.[divConfig.championKey] === "string"
+      ? (yearData[divConfig.championKey] as string)
+      : undefined
 
   // ---------------------------------------------------------------------------
   // Render
@@ -185,6 +193,7 @@ export function LeaderboardPanel({
                 division={division}
                 year={year}
                 topic={topic}
+                topicName={topicName}
                 champion={champion}
               />
             )}

@@ -3,6 +3,7 @@ import topics from "debate-data-sync/data/metadata/debate-topics.json";
 import champions from "debate-data-sync/data/metadata/debate-champions.json";
 import { getVideoMeta, getVideoSuggestions } from "@/lib/videos/video-repository";
 import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
+import type { DebateHistory } from "debate-videos";
 
 /**
  * Page-level video metadata: library counts for the quick-link cards, the
@@ -13,8 +14,8 @@ import type { VideoQueryParams } from "debate-data-sync/src/videos/video-query";
  * feed — everything here is bounded in size and does not grow with the number
  * of videos.
  */
-function getDebateHistory() {
-  const history: Record<string, Record<string, string | number | undefined>> = {};
+function getDebateHistory(): DebateHistory {
+  const history: DebateHistory = {};
   for (const entry of topics.data) {
     const { year, ...rest } = entry;
     history[String(year)] = { ...history[String(year)], ...rest };

@@ -149,6 +149,9 @@ function buildConditions(
   if (params.lecturesOnly) conditions.push(isNull(videos.style));
   if (params.topPicksOnly) conditions.push(eq(videos.isTopPick, true));
   if (params.categoryKey) conditions.push(eq(videos.categoryKey, params.categoryKey));
+  if (params.tournament) {
+    conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
+  }
   if (!options.skipStyle && params.style != null) {
     conditions.push(eq(videos.style, params.style));
   }
@@ -620,7 +623,9 @@ export async function getRelatedVideos(
   // Tournament names are prefixed with the year of the event; searching the
   // bare name keeps the rest of that bracket without excluding other years.
   const tournamentName = tournament ? stripTournamentYear(tournament) : null;
-  if (tournamentName) passes.push({ source: "all", q: tournamentName, sort: "Recency" });
+  if (tournamentName) {
+    passes.push({ source: "all", tournament: tournamentName, sort: "Recency" });
+  }
   if (typeof style === "number") passes.push({ source: "all", style, sort: "Recency" });
   if (typeof style === "string") {
     passes.push({ source: "all", categoryKey: normalizeCategoryKey(style), sort: "Recency" });

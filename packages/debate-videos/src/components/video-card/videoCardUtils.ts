@@ -2,6 +2,7 @@
  * @fileoverview Utility functions and constants for video card styling and metadata
  */
 
+import { getStyleTopicText } from "../../lib/debate-topics";
 import type { TopicType } from "../../types/videos";
 import { DEBATE_STYLE_LABELS } from "../../types/videos";
 
@@ -52,12 +53,7 @@ export function getYearTopic(
 ): string | undefined {
   if (!year || !topics) return undefined;
   const topicEntry = topics.find((t) => Number(t.year) === year);
-  if (!topicEntry) return undefined;
-  if (style === 1) return topicEntry.policy_topic;
-  if (style === 2) return topicEntry.pf_topic;
-  if (style === 3) return topicEntry.ld_topic;
-  if (style === 4) return topicEntry.ndt_topic;
-  return undefined;
+  return getStyleTopicText(topicEntry, style);
 }
 
 /**

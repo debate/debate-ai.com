@@ -94,6 +94,39 @@ describe("TOOL_RECORD_COLLECTIONS", () => {
     expect(isSyncedToolCollection("")).toBe(false);
     expect(findToolRecordCollection("not-a-tool")).toBeUndefined();
   });
+
+  it("excludes tools that already have their own saved_* table", () => {
+    // These eleven keys were once entries here too, so their localStorage
+    // store was reconciled through *both* this generic `saved_tool_records`
+    // path (via `tool-record-auto-sync.ts`'s 15s watcher) and their own
+    // dedicated table/route/hook (drill sets → `saved_drill_sets`, word-count
+    // rounds → `saved_word_count_rounds`, and so on) — the exact "bespoke
+    // table per tool" duplication this module's own header comment says
+    // joining this catalog exists to avoid. Neither the tool's panel nor
+    // anything else ever read the generic copy back, so it was purely wasted
+    // writes and a stale, orphaned `saved_tool_records` row set. Removed in
+    // favor of each tool's dedicated table; this test keeps a "readded a
+    // dead entry" regression from slipping back in unnoticed, since nothing
+    // else would catch it (unlike a bad `idField`, a merely-redundant entry
+    // still behaves correctly on its own).
+    const alreadyHasOwnTable = [
+      "drillSets",
+      "judgeDecisions",
+      "counselPanelAssessments",
+      "coachMaterials",
+      "coachMaterialVersions",
+      "customOpponentPersonaLibrary",
+      "wordCountRounds",
+      "roundPairings",
+      "strategyRecommendations",
+      "sprintSessions",
+      "dailyBestCardComments",
+    ];
+
+    for (const key of alreadyHasOwnTable) {
+      expect(isSyncedToolCollection(key), key).toBe(false);
+    }
+  });
 });
 
 describe("toolRecordId", () => {

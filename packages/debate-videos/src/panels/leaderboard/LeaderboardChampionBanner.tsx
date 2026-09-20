@@ -5,6 +5,7 @@
 
 import Image from "next/image"
 import { Trophy } from "lucide-react"
+import { topicDisplayLines, type SeasonalTopic } from "../../lib/debate-topics"
 import { DIVISION_CONFIG } from "./leaderboardUtils"
 import type { Division } from "./leaderboardUtils"
 
@@ -15,13 +16,51 @@ interface ChampionBannerProps {
   /** Selected season year string (e.g. `"2026"`). */
   year: string
   /**
-   * Resolution topic text for the season.
-   * May contain inline HTML (e.g. `<em>` tags); rendered via
-   * `dangerouslySetInnerHTML`.
+   * Resolution topic for the season: a yearly string, a list of monthly
+   * LD/PF topics, or a legacy HTML string with `<br>` separators.
    */
-  topic?: string
+  topic?: string | SeasonalTopic[]
+  /** Short yearly label (Policy / NDT) shown above the resolution. */
+  topicName?: string
   /** Winning team name for the season. */
   champion?: string
+}
+
+function TopicCopy({
+  topic,
+  topicName,
+}: {
+  topic: string | SeasonalTopic[]
+  topicName?: string
+}) {
+  if (Array.isArray(topic)) {
+    return (
+      <div className="space-y-1.5">
+        {topic.map((item, index) => (
+          <p
+            key={`${item.start_month ?? "topic"}-${index}`}
+            className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
+          >
+            {item.start_month ? (
+              <span className="font-medium text-foreground">{item.start_month}: </span>
+            ) : null}
+            {item.topic}
+          </p>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-1">
+      {topicName ? (
+        <p className="font-semibold text-sm text-foreground">{topicName}</p>
+      ) : null}
+      <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+        {topicDisplayLines(topic)}
+      </p>
+    </div>
+  )
 }
 
 /**
@@ -38,10 +77,12 @@ export function LeaderboardChampionBanner({
   division,
   year,
   topic,
+  topicName,
   champion,
 }: ChampionBannerProps) {
   const divConfig = DIVISION_CONFIG.find((d) => d.value === division)!
-  if (!topic && !champion) return null
+  const hasTopic = Array.isArray(topic) ? topic.length > 0 : Boolean(topic)
+  if (!hasTopic && !champion) return null
 
   return (
     <div className="flex items-center gap-4 rounded-lg border bg-card mb-4">
@@ -82,12 +123,7 @@ export function LeaderboardChampionBanner({
             <span className="font-bold text-sm sm:text-base">{champion}</span>
           </div>
         )}
-        {topic && (
-          <p
-            className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: topic }}
-          />
-        )}
+        {hasTopic && topic ? <TopicCopy topic={topic} topicName={topicName} /> : null}
       </div>
     </div>
   )
