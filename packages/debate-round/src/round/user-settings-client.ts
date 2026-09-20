@@ -132,6 +132,34 @@ export async function saveOutlineFilterPresetOp(
   return putSettingsPatch(op, endpoint);
 }
 
+/**
+ * Saves a single "mark read" op — `{ recordNewsRead }` — instead of a
+ * whole-list `newsRead` replace, for the same lost-update reason
+ * `saveFavoriteToolOp` avoids one. The News Stream fields (validation,
+ * serialization, the op types) live in `debate-community` rather than this
+ * package — see `FullUserSettingsPayload`'s doc comment above — so the op
+ * shape is inlined here rather than imported, mirroring
+ * `saveRecentToolOp`'s own out-of-package field.
+ */
+export async function saveNewsReadOp(
+  op: { recordNewsRead: string },
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+/**
+ * Saves a single like/unlike op — `{ addNewsLiked }` or
+ * `{ removeNewsLiked }` — instead of a whole-list `newsLiked` replace, the
+ * same lost-update fix `saveNewsReadOp` above closes for `newsRead`.
+ */
+export async function saveNewsLikedOp(
+  op: { addNewsLiked: string } | { removeNewsLiked: string },
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
 async function putSettingsPatch(patch: unknown, endpoint: string): Promise<FullUserSettingsPayload> {
   const res = await fetch(endpoint, {
     method: "PUT",
