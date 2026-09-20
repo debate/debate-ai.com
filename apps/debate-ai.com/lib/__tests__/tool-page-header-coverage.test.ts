@@ -31,32 +31,8 @@ import { ALL_TOOLS } from "@/app/tools/tool-groups"
  * - `/tools/mobile-setup` is a companion guide page bundled under the
  *   Mobile Setup group (see `tool-catalog-consistency.test.ts`'s
  *   `FEATURES_EXCLUDE_FROM_TOOLS`), not a tool with its own workspace.
- * - The rest are a known, tracked gap (TODO.md) — not yet migrated. Remove
- *   an entry here as its page adopts `ToolPageHeader`; do not add a new one
- *   without a reason above it.
  */
-const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set([
-  "/reason-editor",
-  "/doc",
-  "/tools/mobile-setup",
-  "/cards/argument-library",
-  "/cards/awards",
-  "/cards/best-card",
-  "/cards/contributions",
-  "/cards/coverage",
-  "/cards/leaderboard",
-  "/cards/library",
-  "/cards/progress",
-  "/cards/progress-tracking",
-  "/cards/quests",
-  "/cards/reviews",
-  "/cards/revisions",
-  "/cards/scoring",
-  "/cards/streaks",
-  "/contacts",
-  "/news",
-  "/notifications",
-])
+const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/doc", "/tools/mobile-setup"])
 
 const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
 const APP_DIR = join(APP_ROOT, "app")
