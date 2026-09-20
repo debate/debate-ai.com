@@ -61,6 +61,29 @@ function getStyleLabel(video: VideoType): string {
   return typeof style === "string" ? style : ""
 }
 
+export function cleanTournamentName(tournament: string | null | undefined): string | undefined {
+  if (!tournament) return undefined
+
+  const cleaned = tournament
+    .replace(/\bTournament of Champions\b/gi, "TOC")
+    .replace(/\bNational Debate Tournament\b/gi, "NDT")
+    .replace(/\b(?:19|20)\d{2}\b/g, "")
+    .replace(/\b(?:TOC|Nats)\d{2}\b/gi, "$1")
+    .replace(/[\s,\-–]+(?:\d{2}|\d{2}'?)\s*$/g, "")
+    .replace(/\bR\d{1,3}\b/gi, "")
+    .replace(/\bround\s+robin\b/gi, "")
+    .replace(/\b(?:round|rd|rounds)\s*(?:\d{1,3}|double|doubles|triple|triples|octos?|octas?|octafinals?|quarters?|quarterfinals?|semis?|semifinals?|finals?|runoffs?|prelims?|eliminations?)\b/gi, "")
+    .replace(/\b(?:round|rd|rounds)\b/gi, "")
+    .replace(/\b(?:finals?|semis?|semifinals?|quarters?|quarterfinals?|octos?|octas?|octafinals?|runoffs?|doubles?|triples?|prelims?|eliminations?)\b/gi, "")
+    .replace(/\b(?:debate\s+)?(?:tournament|championships?|nationals?|nats|invitational|open)\b/gi, "")
+    .replace(/\s+debate\b/gi, "")
+    .replace(/\s+/g, " ")
+    .replace(/^[\s,\-–|]+|[\s,\-–|]+$/g, "")
+    .trim()
+
+  return cleaned || undefined
+}
+
 type ColumnKey =
   | "tournament"
   | "level"
@@ -224,6 +247,7 @@ function VideoRow({
       ? style
       : undefined
   const year = new Date(date).getFullYear()
+  const cleanTournament = cleanTournamentName(tournament)
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
 
   // Without a Title column, Tournament and the Aff/Neg matchup are what
@@ -231,7 +255,7 @@ function VideoRow({
   // neither is available (no tournament, or no team on either side), the
   // row has nothing to scan, so show the video title across the full width
   // instead of a row of dashes.
-  const roundRowIdentifiable = Boolean(tournament) && Boolean(affTeam || negTeam)
+  const roundRowIdentifiable = Boolean(cleanTournament) && Boolean(affTeam || negTeam)
 
   return (
     <>
@@ -251,7 +275,7 @@ function VideoRow({
           roundRowIdentifiable ? (
             <>
               <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate">
-                {tournament || "—"}
+                {cleanTournament || "—"}
               </td>
               <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
                 {roundLevel ? (
