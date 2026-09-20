@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  applyLearnDeckOpToAccount,
   deleteSavedLearnDeckFromAccount,
   listSavedLearnDecks,
   saveLearnDeckToAccount,
@@ -99,6 +100,52 @@ describe('saveLearnDeckToAccount', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(saveLearnDeckToAccount(DECK)).rejects.toThrow('Invalid deck.');
+  });
+});
+
+describe('applyLearnDeckOpToAccount', () => {
+  it("PATCHes the deck's id-scoped endpoint with the op", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    const applied = await applyLearnDeckOpToAccount('deck-1', { addCardId: 'card-2' });
+
+    expect(applied).toBe(true);
+    expect(fetchMock).toHaveBeenCalledWith('/api/learn-decks/deck-1', {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ addCardId: 'card-2' }),
+    });
+  });
+
+  it('URL-encodes the id', async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    await applyLearnDeckOpToAccount('deck 1', { rename: 'New name' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/learn-decks/deck%201',
+      expect.objectContaining({ method: 'PATCH' }),
+    );
+  });
+
+  it('returns false (rather than throwing) on a 404 — the deck is not synced yet', async () => {
+    const fetchMock = vi.fn(async () => ({ ok: false, status: 404 })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    expect(await applyLearnDeckOpToAccount('deck-1', { removeCardId: 'card-1' })).toBe(false);
+  });
+
+  it("throws the server's error message on another failure", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 400,
+      json: async () => ({ error: 'Invalid op.' }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(applyLearnDeckOpToAccount('deck-1', { rename: 'x' })).rejects.toThrow('Invalid op.');
   });
 });
 
