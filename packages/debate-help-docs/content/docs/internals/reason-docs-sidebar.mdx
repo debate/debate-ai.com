@@ -163,7 +163,10 @@ two ends cannot drift. It owes callers three things:
   fallback rather than a coin flip. A folder resolves to the first file
   inside it (descending into subfolders), so a folder link lands on something
   readable. And a numeric ref still resolves as a row id, so links minted
-  before paths keep working.
+  before paths keep working. A rename is forgiven once: `documents.previous_slug`
+  holds the file's own slug from just before its last rename, and a URL that
+  matches neither the current path nor any other file's resolves against that
+  instead before falling through to the fallback.
 
 ## A public file's URL works for anyone
 
@@ -316,9 +319,22 @@ naming the failure rather than a blank document.
   throwing) that neither function had before — previously they only fed the
   editor's `content` prop, where the same bug would have been a rendering
   glitch rather than a broken or silently wrong file download.
-- Renaming a file changes its URL, and nothing redirects the old one — it
+- ~~Renaming a file changes its URL, and nothing redirects the old one — it
   falls through to the first-file fallback like any other name that no longer
-  resolves.
+  resolves.~~ **Fixed:** `documents` gets a nullable `previous_slug` column
+  (`drizzle/0046_document_previous_slug.sql`). `PUT /api/doc/documents/:id`
+  sets it to the file's own old slug (`slugifySegment(doc.title)`) whenever a
+  title edit actually changes that slug — a capitalization or punctuation-only
+  edit that resolves to the same slug leaves it alone, and an old title with
+  nothing sluggable in it has no slug worth remembering. `findItemByRef`
+  (`lib/reason-docs/doc-path.ts`) tries each file's *previous* path — its
+  current path with only the leaf segment swapped back to `previousSlug` — the
+  same exact-then-suffix way it already tries the current path, after both of
+  those come up empty and before falling through to the folder/first-file
+  fallback. This remembers one rename back, not a full history: a link from
+  before a file's second-most-recent rename still falls through, and a folder
+  rename (which moves every file under it) isn't tracked here at all — only a
+  file's own leaf-level rename is.
 - Upload converts one file at a time in the browser and has no `.zip`
   expansion, so a squad file set arrives as a multi-select rather than an
   archive. The admin Topic Starter importer is the one that unpacks a ZIP.

@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
+import { slugifySegment } from "@/lib/reason-docs/doc-path"
 
 /**
  * REASON editor single-document CRUD. Ported from quick search's
@@ -43,10 +44,27 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 })
   }
 
-  const update: { title?: string; content?: string; parentId?: number | null; updatedAt: Date } = {
+  const update: {
+    title?: string
+    content?: string
+    parentId?: number | null
+    previousSlug?: string | null
+    updatedAt: Date
+  } = {
     updatedAt: new Date(),
   }
-  if (body.title !== undefined) update.title = body.title.trim() || "Untitled"
+  if (body.title !== undefined) {
+    const nextTitle = body.title.trim() || "Untitled"
+    if (nextTitle !== doc.title) {
+      const oldSlug = slugifySegment(doc.title)
+      // Only worth remembering when the slug actually moved — a
+      // capitalization/punctuation-only edit still resolves the old link as
+      // the current one, and an old title with nothing sluggable in it
+      // (`findItemByRef`'s row-id fallback) has no slug worth redirecting from.
+      if (oldSlug && oldSlug !== slugifySegment(nextTitle)) update.previousSlug = oldSlug
+    }
+    update.title = nextTitle
+  }
   if (body.content !== undefined) update.content = body.content
   if (body.parentId !== undefined) update.parentId = body.parentId
 

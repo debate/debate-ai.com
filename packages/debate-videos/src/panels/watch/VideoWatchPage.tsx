@@ -156,7 +156,6 @@ export function VideoWatchPage({
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const videoWrapperRef = useRef<HTMLDivElement | null>(null)
-  const stageRef = useRef<HTMLDivElement | null>(null)
   /** Latest position reported by the embed — handed back to the popout player on the way out. */
   const currentTimeRef = useRef(0)
   /** The video's length as the embed reports it, for the watch history's percentage. */
@@ -232,8 +231,14 @@ export function VideoWatchPage({
     setActiveVideo(videoId, title, videoMeta)
     setTheaterVideoId(videoId)
     // `setActiveVideo` resolves the video's saved timestamp; read it back
-    // rather than duplicating that lookup here.
-    setStartSeconds({ videoId, seconds: useVideoPlayerStore.getState().startTime })
+    // rather than duplicating that lookup here. Seed the tracked position
+    // with it too: until the embed's first `infoDelivery` broadcast arrives,
+    // this is the only position known, and `handleTogglePip` reads this same
+    // ref with no fallback — popping into PiP in that window should reopen
+    // at the video's actual second, not a hard 0.
+    const resolvedStartSeconds = useVideoPlayerStore.getState().startTime
+    currentTimeRef.current = resolvedStartSeconds
+    setStartSeconds({ videoId, seconds: resolvedStartSeconds })
     return () => {
       const store = useVideoPlayerStore.getState()
       const seconds = currentTimeRef.current
@@ -406,7 +411,10 @@ export function VideoWatchPage({
       void document.exitFullscreen().catch(() => undefined)
       return
     }
-    void stageRef.current?.requestFullscreen?.().catch(() => undefined)
+    // Fullscreen the video wrapper alone (the same element PiP hands off
+    // from), not the whole left stage — a viewer asking for fullscreen wants
+    // the video, not the title/description column beside it.
+    void videoWrapperRef.current?.requestFullscreen?.().catch(() => undefined)
   }, [])
 
   const handleRetry = useCallback(() => {
@@ -489,7 +497,7 @@ export function VideoWatchPage({
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
-          <div ref={stageRef} className="min-w-0 space-y-3 bg-background">
+          <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                 {styleLabel && (

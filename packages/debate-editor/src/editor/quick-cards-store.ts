@@ -36,6 +36,7 @@
 import { getElectronHost } from './host/index.js';
 import { WebSharedStore } from './web-shared-store.js';
 import {
+  clearSavedQuickCardsFromAccount,
   deleteSavedQuickCardFromAccount,
   listSavedQuickCards,
   saveQuickCardToAccount,
@@ -288,7 +289,6 @@ export class QuickCardsStore {
   }
 
   async clear(): Promise<void> {
-    const clearedIds = this.cards.map((c) => c.id);
     this.cards = [];
     const electron = getElectronHost();
     if (electron) {
@@ -296,11 +296,9 @@ export class QuickCardsStore {
     } else {
       void webLibrary.save(this.cards);
       if (this.remoteAvailable) {
-        for (const id of clearedIds) {
-          void deleteSavedQuickCardFromAccount(id).catch(() => {
-            // Best-effort, same as remove above.
-          });
-        }
+        void clearSavedQuickCardsFromAccount().catch(() => {
+          // Best-effort, same as remove above.
+        });
       }
     }
     this.fire();
