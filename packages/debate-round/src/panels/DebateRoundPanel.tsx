@@ -153,7 +153,7 @@ export function DebateFlowPage() {
     setFlows(newFlows)
   }
 
-  const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow)
+  const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow, rounds)
 
   const splitHandlers = useSplitModeHandlers(flows, selected, updateFlow)
 

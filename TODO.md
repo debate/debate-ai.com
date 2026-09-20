@@ -17,6 +17,76 @@ _No task currently in progress._
 
 ### Completed
 
+- **📤 "Share speech with round participants" now actually notifies the
+  round's participants, instead of always nobody.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 84+ `user.id` references across `saved_*` D1
+  tables in `apps/debate-ai.com/lib/database/schema.ts`,
+  `TOOL_RECORD_COLLECTIONS` syncs every localStorage-backed tool without its
+  own dedicated table to the account, and every tool is reachable from
+  `/tools`, CardMirror's `MenuBar`/command palette, and the feature catalog),
+  that prompt's own asks are already fully built. There were no open PRs and
+  no branches other than `master`/`prod` on the remote, so this branch was
+  restarted from `master`'s tip (341a4ef, PR #889 already merged). Scanned
+  the `packages/debate-help-docs` "Known gaps" entries not already accounted
+  for in this file's history (per-user-vs-shared-resource sync, free-form-
+  identity/no-auth gaps, cron/scheduling and backend-architecture items —
+  all correctly out of scope for one small PR, matching this file's existing
+  "Follow-ups"), found nothing new and mechanical there this run, and instead
+  found a real bug via a direct code scan for stub/mock implementations:
+  `packages/debate-round/src/hooks/useSpeechHandlers.ts#handleShareSpeech` —
+  wired to the "Share speech with round participants" button in
+  `layout/SpeechDocPanel.tsx`, itself rendered from the live `/debate` route
+  (`DebateFlowPage` in `panels/DebateRoundPanel.tsx`) — had a
+  `// TODO: Get actual participant emails from round data` comment sitting
+  directly above `const participantEmails: string[] = []`. Clicking "Share"
+  always sent an empty participant list and then marked the speech
+  "Shared" regardless, even though the round the speech belongs to
+  (`currentFlow.roundId`, resolved against `getRounds()`) already carries
+  real emails on exactly the fields the comment asked for: `Round.debaters
+  .aff`/`.neg`, `Round.judges`, and `Round.spectators` are all populated
+  with emails, not display names, by the Round Editor dialog
+  (`dialogs/CreateRoundDialog/useRoundEditorForm.ts`'s `dispatchRoundInvites`
+  call sends those exact fields to `/api/rounds/invite`) — the data
+  `handleShareSpeech` needed was one `rounds.find` away the whole time.
+
+  Added `getRoundParticipantEmails(round)` to a new
+  `packages/debate-round/src/round/round-participants.ts` (mirroring
+  `round-invite-client.ts#computeAddedInviteEmails`'s shape): collects every
+  debater/judge/spectator email off a round, deduped case-insensitively
+  while keeping each email's first-seen casing, blank entries ignored,
+  missing fields tolerated. `useSpeechHandlers` now takes a `rounds: Round[]`
+  parameter (defaulted to `[]` for callers that don't have any), looks up
+  the current flow's round by `roundId`, and passes the real participant
+  list into `shareSpeech` instead of the hardcoded empty array;
+  `DebateRoundPanel.tsx`'s one call site now passes its already-available
+  `rounds`. `shareSpeech` itself is unchanged (still the pre-existing mocked
+  network call with a simulated delay — no real email-sending backend exists
+  for this feature, which is out of scope here); this fix only closes the
+  "wrong/empty input" bug, not "build a real email service."
+
+  Added `packages/debate-round/test/round-participants.test.ts` (7 cases):
+  no round → `[]`; the happy path collecting all six aff/neg/judge/spectator
+  emails in order; an absent `spectators` field; blank/whitespace-only
+  entries ignored; case-insensitive de-duplication keeping first-seen
+  casing; leading/trailing whitespace trimmed; and a round missing its
+  `debaters`/`judges` fields entirely degrading to just the emails that are
+  present rather than throwing. Ran the full verification gate: `bun
+  install`, `bunx turbo run typecheck` (17/17 packages green), `bun run
+  test` (482 files, 9112 tests passing, repo-wide — up from 481/9105 by
+  exactly this file's 7 new tests), and `bun run build:web` (production
+  build succeeded — the pre-existing "no output files found for task
+  debate-editor#build" warning is unrelated `turbo.json` `outputs` config,
+  not a build failure). The build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed. No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Not
+  documented in `packages/debate-help-docs` before or after this change —
+  this "Share speech" action was never part of that catalog's covered
+  feature set (no `Known gaps` entry named it), so there was no stale doc
+  text to correct alongside the code fix.
+
 - **📝 Five stale `packages/debate-help-docs` "Known gaps" entries corrected
   — each described a gap the code no longer had, left over from a fix
   landed elsewhere that never updated the doc that named the gap.** Another
@@ -1419,4 +1489,4 @@ bun run typecheck
 
 ---
 
-*Last updated: 2026-09-19*
+*Last updated: 2026-09-20*
