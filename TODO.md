@@ -68,6 +68,7 @@ _No task currently in progress._
   Docs: `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx`
   ("Rubric agreement breakdown" section; closes this doc's own Known gap).
 
+  PR: [#903](https://github.com/debate/debate-ai.com/pull/903).
   Branch: `claude/gifted-babbage-9im8j4`.
 
 - **🔀 Close the Learn custom-deck "two devices edit the same deck at once"
