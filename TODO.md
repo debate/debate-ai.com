@@ -81,6 +81,85 @@ _No task currently in progress._
   feature set (no `Known gaps` entry named it), so there was no stale doc
   text to correct alongside the code fix.
 
+- **🎙️ "Share with Opponents" on a speech's audio recording now actually
+  shares it with the round's participants, instead of doing nothing.**
+  Another repeat of the standing autonomous-routine prompt above — as with
+  every prior repeat, that prompt's own asks are already fully built. There
+  were no open PRs on the remote for this branch's own designated work, so
+  it was restarted from `master`'s tip. Before restarting, found (and opened
+  [PR #893](https://github.com/debate/debate-ai.com/pull/893) for, after
+  independently re-verifying it) a complete, fully-tested fix left on an
+  orphaned branch (`claude/gifted-babbage-6yecr0`) from a prior run that had
+  never been pushed as a pull request — a separate "Share speech with round
+  participants" bug (the text-document share button, not this one) always
+  notifying nobody; see that PR's description rather than duplicating it
+  here.
+
+  For this branch's own slice, a direct scan for stub/mock implementations
+  (the same approach that found the text-share bug above) turned up a
+  second, distinct dead click:
+  `packages/debate-timer/src/recorder/SpeechRecordingPlayer.tsx`'s
+  `SpeechRecordingMenu` — the ellipsis menu behind the global topbar's
+  recording controls (`layout/SpeechControlsTopBar.tsx`, rendered from the
+  live `/debate` route) and also the per-recording player row — had its
+  "Share with Opponents" item wired to `onClick={() => { /* TODO: Implement
+  sharing */ }}`, an empty function. Clicking it always did nothing at all,
+  with no error and no feedback.
+
+  Added `shareRecording` (same file) as the mock network call behind it,
+  mirroring `debate-round`'s own `useSpeechHandlers.ts#shareSpeech` mock (no
+  real email-sending backend exists for either feature). `SpeechRecordingMenu`
+  gained a `participantEmails` prop (plain `string[]`, since `debate-timer`
+  doesn't depend on `debate-round`'s `Round` type — the dependency runs the
+  other way) and a `handleShareRecording` handler: loads the speech's saved
+  recording via the file's existing `loadRecordings`, alerts "Record this
+  speech first…" if none is found, otherwise calls `shareRecording` with the
+  resolved emails and alerts the result. The menu item itself is now gated
+  on `recordingKey` being present (mirroring "Delete Recording"'s own
+  gating) instead of always showing regardless of whether a recording
+  exists.
+
+  `packages/debate-round/src/round/round-recording-share.ts` (new) adds
+  `getRoundRecordingShareEmails(round)`, collecting/deduping the same
+  `Round.debaters.aff`/`.neg`/`.judges`/`.spectators` emails
+  `round-participants.ts` (PR #893, unmerged at the time this was written)
+  independently arrives at for the equivalent text-share fix — kept as its
+  own small file rather than importing that PR's module since it hadn't
+  landed on `master` yet; expect the two to converge on one shared helper
+  once both are in. `panels/DebateRoundPanel.tsx` gained a `currentRound`
+  value (replacing an inline `rounds.find(...)` previously duplicated only
+  inside the document-title effect) and passes
+  `getRoundRecordingShareEmails(currentRound)` down through
+  `SpeechControlsTopBar`'s new `participantEmails` prop to the menu.
+
+  Vitest-covered: `packages/debate-round/test/round-recording-share.test.ts`
+  (7 cases — undefined round, the full collection, an absent `spectators`
+  field, blank entries ignored, case-insensitive dedup keeping first-seen
+  casing, whitespace trimmed, and missing `debaters`/`judges` fields
+  degrading gracefully); `packages/debate-timer/test/share-recording.test.ts`
+  (3 cases covering the mock's message for plural/singular/zero
+  participants); and a new
+  `packages/debate-timer/test/SpeechRecordingMenu.test.tsx` (3 cases, using
+  this package's existing `mount`/`pointerDown`/`click` test harness and
+  `navigator.mediaDevices` stub, mirroring `mic-selector.test.tsx`'s own
+  setup) covering the item being hidden with no recording, a real share
+  round-trip alerting the expected message, and the "recording went
+  missing" guard.
+
+  Ran the full verification gate: `bun install`, `bunx turbo run typecheck`
+  (17/17 packages green), `bun run test` (484 files, 9173 tests passing —
+  up from 482/9112 by exactly the 13 new cases above, repo-wide), and
+  `bun run build:web` (production build succeeded — the pre-existing "no
+  output files found for task debate-editor#build" warning is unrelated
+  `turbo.json` `outputs` config, not a build failure; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Not
+  documented in `packages/debate-help-docs` before or after this change —
+  no "Known gaps" entry named this recording-share menu item, so there was
+  no stale doc text to correct alongside the code fix.
+
 - **📰 Two tabs or devices marking different News Stream items read/liked at
   the same time no longer silently drop each other's change.** Another
   repeat of the standing autonomous-routine prompt above — as with every
