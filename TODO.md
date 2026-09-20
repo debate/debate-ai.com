@@ -77,7 +77,8 @@ _No task currently in progress._
   anywhere in this repo, so that step was skipped as not applicable. Docs
   updated: `internals/tool-data-sync.mdx`'s Known gaps entry (marked fixed,
   and the oversized-record bullet's now-stale "the row that read it is not"
-  line corrected) and Tests list.
+  line corrected) and Tests list. Shipped as
+  [PR #884](https://github.com/debate/debate-ai.com/pull/884).
 
 - **🎯 Related-videos' "same tournament" pass no longer pulls in a video that
   merely mentions the tournament in its description.** Another repeat of the
