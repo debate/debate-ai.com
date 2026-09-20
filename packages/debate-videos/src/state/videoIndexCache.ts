@@ -299,22 +299,19 @@ export async function refreshVideoIndex(
     const full = options.force === true || rows === null || syncedAt <= 0;
 
     try {
-      const payload: VideoIndexResponse = await grab(
-        "videos/index",
-        full ? {} : { since: String(syncedAt) },
-      );
+      const payload: VideoIndexResponse = await grab("videos/index", {
+        ...(full ? {} : { since: String(syncedAt) }),
+        baseURL: "/api/",
+      });
       if (!isIndexPayload(payload)) {
         throw new Error((payload as { error?: string })?.error || "Malformed video index");
       }
       if (payload.version !== VIDEO_INDEX_FORMAT_VERSION) {
-        // The server has moved on; take its rows as the whole library and
-        // store them under the version this client knows how to read.
         adopt({ ...payload, partial: false });
       } else if (!payload.partial) {
         adopt(payload);
       } else if (!merge(payload)) {
-        // A video was removed. One more request, unconditional this time.
-        const whole: VideoIndexResponse = await grab("videos/index", {});
+        const whole: VideoIndexResponse = await grab("videos/index", { baseURL: "/api/" });
         if (isIndexPayload(whole)) adopt(whole);
       }
       lastError = "";

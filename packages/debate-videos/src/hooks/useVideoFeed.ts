@@ -312,10 +312,10 @@ export function useVideoFeed(filters: VideoFeedFilters): VideoFeed {
         // grab cancels an in-flight request to the same path when a newer one
         // starts, which is exactly what a filter change should do; the request
         // id guard below makes sure only the newest response updates state.
-        const data: VideoFeedResponse = await grab(
-          "videos",
-          buildVideoParams(filtersRef.current, offset, pageSize),
-        );
+        const data: VideoFeedResponse = await grab("videos", {
+          ...buildVideoParams(filtersRef.current, offset, pageSize),
+          baseURL: "/api/",
+        });
         if (requestId !== requestRef.current) return;
         if (!data || (data as { error?: string }).error || !Array.isArray(data.videos)) {
           throw new Error((data as { error?: string })?.error || "Malformed videos response");
@@ -479,7 +479,7 @@ export function useVideoMeta(suggestionFilters?: VideoFeedFilters): VideoMetaSta
 
   useEffect(() => {
     let active = true;
-    grab(`videos/meta${suggestionParams ? `?${suggestionParams}` : ""}`, { cache: true })
+    grab(`videos/meta${suggestionParams ? `?${suggestionParams}` : ""}`, { cache: true, baseURL: "/api/" })
       .then((data: VideoMetaResponse) => {
         if (!active) return;
         // grab resolves with an `error` field rather than throwing on a

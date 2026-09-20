@@ -10,11 +10,12 @@ yarn.lock
 .yarn/
 /out/
 .turbo/
-
+.kilo/
 dist/*
 apps/debate-ai.com/dist/*
 .vinext/
 .wrangler
+.continue/
 .yarn
 # production
 /build
