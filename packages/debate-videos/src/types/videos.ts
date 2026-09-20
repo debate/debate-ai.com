@@ -4,6 +4,9 @@ import type {
   VideoSuggestion,
   VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
+import type { DebateTopicYear, SeasonalTopic } from "../lib/debate-topics";
+
+export type { DebateTopicYear, SeasonalTopic };
 
 /** Debate style/format category */
 export type DebateStyle = 1 | 2 | 3 | 4;
@@ -50,12 +53,8 @@ export type VideoType = [
   (number | null)?,
 ];
 
-export type TopicType = {
+export type TopicType = DebateTopicYear & {
   year: number;
-  ndt_topic?: string;
-  policy_topic?: string;
-  ld_topic?: string;
-  pf_topic?: string;
 };
 
 export type ChampionType = {

@@ -105,6 +105,31 @@ function blankDocument(videoId: string, kind: VideoDocumentKind): VideoDocument 
   return { videoId, kind, title: "", body: "", author: "editor", model: "", wordCount: 0 };
 }
 
+async function readJsonResponse<T>(response: Response, fallback: string): Promise<T> {
+  if (!response.ok) {
+    let message = fallback;
+    try {
+      const body = (await response.json()) as { error?: unknown; details?: unknown };
+      const detail =
+        typeof body.error === "string"
+          ? body.error
+          : typeof body.details === "string"
+            ? body.details
+            : null;
+      if (detail) message = detail;
+    } catch {
+      message = fallback;
+    }
+    throw new Error(message || fallback);
+  }
+
+  try {
+    return (await response.json()) as T;
+  } catch {
+    throw new Error(`${fallback}: empty or invalid JSON response (${response.status})`);
+  }
+}
+
 export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoContentDialogProps) {
   const [tab, setTab] = useState<string>(VIDEO_DOCUMENT_KINDS[0]);
   const [documents, setDocuments] = useState<Record<string, VideoDocument>>({});
@@ -131,10 +156,14 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
         fetch(`/api/admin/videos/library/${videoId}/documents`),
         fetch(`/api/admin/videos/library/${videoId}/related`),
       ]);
-      const documentsBody = await documentsRes.json();
-      const relationsBody = await relationsRes.json();
-      if (!documentsRes.ok) throw new Error(documentsBody?.error || "Failed to load documents");
-      if (!relationsRes.ok) throw new Error(relationsBody?.error || "Failed to load links");
+      const documentsBody = await readJsonResponse<{ documents?: VideoDocument[] }>(
+        documentsRes,
+        "Failed to load documents",
+      );
+      const relationsBody = await readJsonResponse<{ relations?: RelationRow[] }>(
+        relationsRes,
+        "Failed to load links",
+      );
 
       const byKind: Record<string, VideoDocument> = {};
       for (const kind of VIDEO_DOCUMENT_KINDS) byKind[kind] = blankDocument(videoId, kind);
@@ -174,8 +203,11 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
         const res = await fetch(
           `/api/admin/videos/library?q=${encodeURIComponent(term)}&limit=8`,
         );
-        const body = await res.json();
-        if (res.ok) setResults(body.videos ?? []);
+        const body = await readJsonResponse<{ videos?: SearchResult[] }>(
+          res,
+          "Failed to search videos",
+        );
+        setResults(body.videos ?? []);
       } catch {
         // A failed search leaves the previous results; the add box is not
         // worth an error banner of its own.
@@ -218,8 +250,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
           model: activeDocument.model ?? "",
         }),
       });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body?.details || body?.error || "Save failed");
+      const body = await readJsonResponse<{ document?: VideoDocument }>(res, "Save failed");
       patchDocument(activeDocument.kind, body.document ?? {});
       const message = `Saved the ${VIDEO_DOCUMENT_LABELS[activeDocument.kind].label.toLowerCase()} (${(body.document?.wordCount ?? 0).toLocaleString()} words).`;
       setNotice(message);
@@ -240,8 +271,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
         `/api/admin/videos/library/${videoId}/documents?kind=${activeDocument.kind}`,
         { method: "DELETE" },
       );
-      const body = await res.json();
-      if (!res.ok) throw new Error(body?.details || body?.error || "Delete failed");
+      const body = await readJsonResponse<Record<string, unknown>>(res, "Delete failed");
       patchDocument(activeDocument.kind, blankDocument(videoId, activeDocument.kind));
       setNotice("Document removed.");
     } catch (err) {
@@ -261,8 +291,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ relatedVideoId, relation, note: note.trim() || null }),
       });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body?.details || body?.error || "Link failed");
+      const body = await readJsonResponse<Record<string, unknown>>(res, "Link failed");
       setNote("");
       setSearch("");
       setResults([]);
@@ -284,8 +313,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
         `/api/admin/videos/library/${videoId}/related?relatedVideoId=${row.relatedVideoId}&relation=${row.relation}`,
         { method: "DELETE" },
       );
-      const body = await res.json();
-      if (!res.ok) throw new Error(body?.details || body?.error || "Unlink failed");
+      await readJsonResponse<{ ok?: boolean }>(res, "Unlink failed");
       setRelations((current) =>
         current.filter(
           (item) =>
@@ -302,19 +330,30 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
   /** Moves a link one place up or down and persists the whole new order. */
   const handleMove = async (index: number, delta: number) => {
     if (!videoId) return;
+    const previous = relations;
     const next = [...relations];
     const target = index + delta;
     if (target < 0 || target >= next.length) return;
     [next[index], next[target]] = [next[target], next[index]];
     setRelations(next);
+    setIsSaving(true);
+    setError(null);
     try {
-      await fetch(`/api/admin/videos/library/${videoId}/related`, {
+      const res = await fetch(`/api/admin/videos/library/${videoId}/related`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ order: next.map((row) => row.relatedVideoId) }),
       });
+      const body = await readJsonResponse<{ relations?: RelationRow[] }>(
+        res,
+        "Failed to reorder links",
+      );
+      setRelations(body.relations ?? next);
     } catch (err) {
+      setRelations(previous);
       setError((err as Error).message);
+    } finally {
+      setIsSaving(false);
     }
   };
 

@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "../../ui/primitives/tooltip"
 import { formatVideoDate } from "./videoCardUtils"
+import { topicDisplayLines } from "../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { WatchProgressBadge } from "./WatchProgressBadge"
@@ -221,14 +222,14 @@ export function VideoCardActions({
                   {description ? (
                     <>
                       <p className="font-semibold text-primary">
-                        {yearTopic.replace(/<br\s*\/?>/gi, "\n")}
+                        {topicDisplayLines(yearTopic)}
                       </p>
                       <p>
                         {description.split("\n").slice(2).join("\n").trim()}
                       </p>
                     </>
                   ) : (
-                    <p>{yearTopic.replace(/<br\s*\/?>/gi, "\n")}</p>
+                    <p>{topicDisplayLines(yearTopic)}</p>
                   )}
                 </div>
               </TooltipContent>

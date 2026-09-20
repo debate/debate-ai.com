@@ -17,7 +17,204 @@ _No task currently in progress._
 
 ### Completed
 
-- **🎦 The video watch page's fullscreen toggle now fullscreens the video
+- **🎯 Related-videos' "same tournament" pass no longer pulls in a video that
+  merely mentions the tournament in its description.** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat
+  (reconfirmed fresh this run: 19+ `saved_*` D1 tables link to `user.id`
+  (`apps/debate-ai.com/lib/database/schema.ts`), `TOOL_RECORD_COLLECTIONS`
+  entries sync every localStorage-backed tool without its own dedicated
+  table to the account, and every tool is reachable from `/tools`,
+  CardMirror's `MenuBar`/command palette, and the feature catalog), that
+  prompt's own asks are already fully built. There was one open PR (#880,
+  "Merge claude/gifted-babbage-ix0e8a into master") — confirmed fully
+  superseded (its single commit is identical, file-for-file, to the
+  already-merged #875) and closed as such rather than built on. No other
+  unfinished branch work existed, so this run had a subagent scan
+  `packages/debate-help-docs` "Known gaps" sections for a fresh,
+  concretely-scoped candidate, verifying each against current source rather
+  than trusting the doc text. It picked
+  `internals/video-watch-page.mdx`'s: "the tournament pass is a `LIKE`
+  search on the tournament name, so a tournament whose name appears in
+  unrelated descriptions pulls those in too."
+
+  Confirmed still open: `getRelatedVideos`
+  (`apps/debate-ai.com/lib/videos/video-repository.ts`) built its "same
+  tournament" pass as `{ source: "all", q: tournamentName, sort: "Recency" }`
+  — routing the tournament name through the generic `q` free-text filter,
+  which matches against title, channel *and description* (`searchText` in
+  the JSON fallback, a `LIKE` over the same concatenation in SQL), even
+  though every video row already carries its own dedicated `tournament`
+  field/column that nothing filtered on directly.
+
+  `VideoQueryParams` (`packages/debate-data-sync/src/videos/video-query.ts`)
+  gains a `tournament?: string | null` field, applied in `filterVideoRows`
+  as a case-insensitive substring match against `row.tournament` alone (not
+  `searchText`). `buildConditions`
+  (`apps/debate-ai.com/lib/videos/video-repository.ts`) mirrors it as a
+  `LIKE` on the `videos.tournament` column for the SQL backend, matching the
+  file's existing categoryKey/style predicate pattern. `getRelatedVideos`'s
+  tournament pass now passes `{ tournament: tournamentName, ... }` instead
+  of `{ q: tournamentName, ... }`.
+
+  Vitest-covered:
+  `packages/debate-data-sync/test/video-query.test.ts` gains two new
+  `filterVideoRows` cases — a case-insensitive tournament match that
+  excludes a different-tournament video whose description merely mentions
+  the search term (the exact false positive the doc described, shown
+  side-by-side against `q`'s broader match on the same input to make the
+  fix's effect explicit), and a row with no tournament value is dropped when
+  a tournament filter is set. The SQL `buildConditions` mirror and
+  `getRelatedVideos`'s two-line wiring change aren't independently tested —
+  matching this file's own header comment that the filter semantics are
+  "expressed twice... and [the JSON fallback] is what the unit tests
+  exercise," the same convention its existing categoryKey/style/source
+  predicates already follow; no test file for `video-repository.ts` exists
+  in this repo (getRelatedVideos/getVideoPage have never had one).
+
+  Ran the full verification gate: `bun install`, the updated test file (39
+  passing, up from 37) plus `debate-data-sync`'s own `bunx vitest run` (34
+  files, 618 tests) and `bunx tsc --noEmit` (clean), `bun run test` (478
+  files, 9001 tests passing, repo-wide), `bunx turbo run typecheck` (17/17
+  packages green, `debate-ai-web` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-watch-page.mdx`'s Known gaps entry (split in
+  two; the `LIKE`-across-descriptions half marked fixed, the "query passes,
+  not a relevance model" framing left open as a genuine, larger follow-up).
+  Shipped as
+  [PR #881](https://github.com/debate/debate-ai.com/pull/881).
+
+- **🔁 Eleven tool-record collections were syncing to two different D1 tables
+  at once — one of them dead.** Another repeat of the standing
+  autonomous-routine prompt above — reconfirmed again this run: 31 `saved_*`
+  tables in `apps/debate-ai.com/lib/database/schema.ts` link to `user.id`, and
+  every tool is reachable from `/tools`, the command palette, and the feature
+  catalog. There were no open PRs and no unfinished work on this branch's
+  prior PR (`#878`, already merged; this branch restarted from `master`'s
+  tip), so this run searched for a fresh, concrete gap in the tool-sync layer
+  itself rather than repeating that reconfirmation as the whole slice.
+
+  Found one: `packages/debate-data-sync/src/state/toolRecordCollections.ts`'s
+  own header comment says joining `TOOL_RECORD_COLLECTIONS` exists so a tool
+  doesn't need "a bespoke table, route, client and hook" — explicitly citing
+  `saved_drill_sets` as the *old* pattern it replaces. But `drillSets` was
+  still an entry in that same list, alongside ten other tools that also
+  already had their own dedicated table, route and hook: `judgeDecisions`
+  (`saved_judge_decisions`), `counselPanelAssessments`
+  (`saved_counsel_panel_assessments`), `coachMaterials` /
+  `coachMaterialVersions` (`saved_coach_materials` /
+  `saved_coach_material_versions`), `customOpponentPersonaLibrary`
+  (`saved_custom_opponent_personas`), `wordCountRounds`
+  (`saved_word_count_rounds`), `roundPairings` (`saved_round_pairings`),
+  `strategyRecommendations` (`saved_strategy_recommendations`),
+  `sprintSessions` (`saved_sprint_sessions`), and `dailyBestCardComments`
+  (`saved_daily_best_card_comments`). Each one's real panel reads and writes
+  only its dedicated table through its own hook (confirmed none of the eleven
+  hooks import anything from `debate-data-sync`); the generic catalog entry
+  meant `tool-record-auto-sync.ts`'s 15-second watcher *also* pushed the exact
+  same `localStorage` key (verified by matching `STORAGE_KEY` constants) to
+  `saved_tool_records` — rows nothing ever reads back. Net effect: wasted D1
+  writes and API calls every 15s per open tab across eleven tools, and a
+  second, stale copy of each tool's data sitting in `saved_tool_records` that
+  a future caller of that generic table (an admin view, an export) would read
+  instead of the real one.
+
+  This wasn't a design choice that just needed documenting — the same doc
+  file already listed word-count rounds and drill sets as tools whose
+  bespoke-table pattern *predates* the generic catalog and that the catalog
+  was built to extend to tools that "had nothing," while separately listing
+  both as generic-catalog entries in its own tool-by-tool breakdown. The
+  catalog entries were removed (not the bespoke tables — those are correct
+  and are what each tool's UI actually uses) since nothing pointed at the
+  generic copies to begin with.
+
+  Vitest-covered: `packages/debate-data-sync/test/toolRecordCollections.test.ts`
+  gains a regression test asserting all eleven keys are no longer
+  `isSyncedToolCollection`, and `test/tool-record-catalog.test.ts`'s
+  `EXPECTED_ID_FIELDS` map (which already fails the suite on any stale
+  entry) had its eleven matching rows removed to match.
+
+  Ran the full verification gate: `bun install`, the two touched
+  `debate-data-sync` test files plus that package's own `bunx vitest run` (34
+  files, 616 tests) and `bunx tsc --noEmit` (clean), `debate-videos`'s own
+  `bunx vitest run` (43 files, 488 tests, unaffected — its
+  `tool-record-sync-catalog.test.ts` only asserts every *remaining* entry's
+  route is a real sidebar link), `bun run test` (478 files, 8999 tests
+  passing, repo-wide, up one from the new regression test),
+  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web` included),
+  and `bun run build:web` (production build succeeded; the build's
+  regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts`
+  and `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+  "Which tools sync" breakdown moved these eleven tools out of the
+  generic-table paragraphs and into an explicit list of tools that sync
+  through their own table instead, and its "Tools already backed by a
+  `saved_*` table" line now names all eleven; and
+  `features/daily-best-card.mdx`'s Known gaps entry, which had incorrectly
+  attributed `dailyBestCardComments`'s sync to the shared Tool Data Sync
+  mechanism, now correctly points at its own dedicated table.
+
+- **🏷️ The video list table's Tournament column no longer shows a literal
+  "$1" for tournaments like "TOC21"/"Nats18".** Another repeat of the
+  standing autonomous-routine prompt above — as with every prior repeat,
+  that prompt's own asks (tool integration, user settings, SQL-linked
+  flows/docs/debates) are already fully built, confirmed again this run:
+  `apps/debate-ai.com/lib/database/schema.ts` still links every `saved_*`
+  table to `user.id`, and `TOOL_RECORD_COLLECTIONS`
+  (`packages/debate-data-sync/src/state/toolRecordCollections.ts`) still
+  syncs every localStorage-backed tool to the account. There were no open
+  PRs to build on, but this branch itself already carried unfinished work:
+  a bare, message-less commit (`.`) had added
+  `cleanTournamentName` to
+  `packages/debate-videos/src/components/video-grid/VideoListRows.tsx` —
+  used to shorten a round's Tournament column cell (e.g. "Tournament of
+  Champions 2023" → "TOC") — with no tests, no docs, and a real bug still
+  live in it. Per this routine's own "resume existing work assigned to this
+  branch" rule, this run finished it rather than starting a fresh slice.
+
+  The bug: `.replace(/\b(?:TOC|Nats)\d{2}\b/gi, "$1")` used a
+  *non-capturing* group (`(?:...)`) but replaced with `"$1"`. With no
+  capture group 1 to back-reference, JavaScript's `String.replace` inserts
+  the literal two-character string `"$1"` instead of substituting anything —
+  so any tournament matching that pattern rendered as `$1` in the table
+  instead of its abbreviation. This wasn't hypothetical: `"TOC21"`,
+  `"Nats18"`, and `"Nats16"` are real `tournament` values in
+  `debate-data-sync/data/videos/rounds-pf.json`. Fix: add the capturing
+  group the replacement already assumed —
+  `.replace(/\b(TOC|Nats)\d{2}\b/gi, "$1")` — one character. `"TOC21"` now
+  cleans to `"TOC"`; `"Nats18"`/`"Nats16"` clean to `undefined` (empty),
+  same as this function already did for a bare `"Nationals"`, since "Nats"
+  alone is one of the generic org words it strips outright.
+
+  Vitest-covered: new
+  `packages/debate-videos/test/video-tournament-name.test.ts` (5 cases) —
+  empty/null input, the `TOC21`/`Nats18`/`Nats16`/`TOC 2025` regression
+  fixtures (confirmed to fail with the literal `"$1"` before the fix, pass
+  after), full-name-to-abbreviation expansion, round/org-word stripping
+  against real `rounds-*.json` values pulled from the repo's own data, and
+  a no-noise pass-through case.
+
+  Ran the full verification gate: `bun install`, the new test file (5
+  passing) plus `packages/debate-videos`'s own `bunx vitest run` (43 files,
+  488 tests, up from 42/483), `bun run test` (478 files, 8998 tests
+  passing, repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` and `debate-help-docs` included), and `bun run build:web`
+  (production build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `packages/debate-help-docs/content/docs/features/video-library.mdx`
+  gains a new "List layout" section — this function, and its Tournament
+  column, had no doc coverage at all until now. Shipped as
+  [PR #878](https://github.com/debate/debate-ai.com/pull/878).
+
+- **🎥 The video watch page's fullscreen button now fullscreens the video
   alone, not the whole left-column stage.** Another repeat of the standing
   autonomous-routine prompt above — as with every prior repeat (reconfirmed
   fresh this run: 19+ `saved_*` D1 tables link to `user.id`
@@ -25,44 +222,121 @@ _No task currently in progress._
   `TOOL_RECORD_COLLECTIONS` entries sync through `saved_tool_records`, and
   every tool is reachable from `/tools`, CardMirror's `MenuBar`/command
   palette, and the feature catalog), that prompt's own asks are already
-  fully built. A subagent scanned all 79 `packages/debate-help-docs` docs
-  with a "Known gaps" section against this file's full history and ranked
-  `internals/video-watch-page.mdx`'s "Fullscreen covers the player *and*
-  its metadata column (the whole left stage), not the video alone" as the
-  best-scoped candidate — small, single-file, concretely reproducible, no
-  product decision or missing infra involved.
+  fully built. There were no open PRs, but two prior runs had left
+  finished, unshipped work sitting on orphaned branches with no PR ever
+  opened for them: `claude/gifted-babbage-ix0e8a` (a rankings/NDT fix that
+  turned out to already be on `master` under a different commit, landed as
+  [PR #875](https://github.com/debate/debate-ai.com/pull/875) — that branch
+  is now fully superseded and needs nothing further) and
+  `claude/gifted-babbage-22ld6c`, built on top of it, which added one more
+  commit never folded into any PR: `handleToggleFullscreen`
+  (`packages/debate-videos/src/panels/watch/VideoWatchPage.tsx`) called
+  `requestFullscreen()` on `stageRef` — the outer div wrapping the toolbar,
+  video, *and* the title/description column beside it — instead of
+  `videoWrapperRef`, the tighter ref around just the iframe that the
+  picture-in-picture handoff already uses. Confirmed the bug was still live
+  on current `master` before reusing the fix (this exact prior-run
+  regression is why "resume existing work instead of duplicating effort"
+  matters here): a viewer clicking "Fullscreen" got the metadata column
+  fullscreened alongside the video, not the video alone.
 
-  `VideoWatchPage.tsx`'s `handleToggleFullscreen` called
-  `.requestFullscreen()` on `stageRef` — a ref on the outer div wrapping the
-  toolbar, the video, *and* the title/description column below it — instead
-  of `videoWrapperRef`, the tighter ref around just the iframe (the same
-  element the picture-in-picture handoff already uses). Swapped the call to
-  `videoWrapperRef` and removed the now-unused `stageRef` (both its
-  `useRef` and its `ref={stageRef}` prop) rather than leaving dead code
-  behind.
+  Reapplied that orphaned commit's substantive diff onto current `master`
+  (its own `TODO.md` hunk didn't apply cleanly against this file's current
+  state, so that part was written fresh instead of reused) rather than
+  re-deriving the fix from scratch: `handleToggleFullscreen` now calls
+  `requestFullscreen()` on `videoWrapperRef`, and the now-unused `stageRef`
+  is removed.
 
-  Vitest-covered:
-  `packages/debate-videos/test/video-watch-page.test.tsx` gets a new
-  `describe("VideoWatchPage fullscreen")` block. Since jsdom has no real
-  Fullscreen API, the test replaces `HTMLElement.prototype.requestFullscreen`
-  with a spy that records which element it was called on, clicks the
-  toolbar's "Fullscreen" button, and asserts the call landed on the video
-  wrapper (the iframe's parent) and not on that element's parent (the old
-  stage) — confirmed to fail against the pre-fix code (asserting the stage
-  instead) before passing against the fix.
+  Vitest-covered: `packages/debate-videos/test/video-watch-page.test.tsx`
+  gains a case that stubs `HTMLElement.prototype.requestFullscreen` to
+  record which element it was called on, clicks the Fullscreen button, and
+  asserts the call landed on the video wrapper and never on the surrounding
+  stage.
 
   Ran the full verification gate: `bun install`, the updated test file (7
-  passing) plus `packages/debate-videos`'s own `bunx vitest run` (42 files,
-  483 tests), `bun run test` (477 files, 8990 tests passing, repo-wide —
-  one more than before this change, matching the one new passing case),
-  `bunx turbo run typecheck` (17/17 packages green, `debate-ai-web`
-  included), and `bun run build:web` (production build succeeded; the
-  build's regenerated `apps/debate-ai.com/lib/offline-sw/{app-file-list,
-  version}.ts` and `public/service-worker.js` were reverted rather than
-  committed, since nothing they describe changed). No `lint`/`format:check`
-  script exists anywhere in this repo, so that step was skipped as not
-  applicable. Docs updated: `internals/video-watch-page.mdx`'s Known gaps
-  entry (marked fixed).
+  passing) plus `debate-videos`'s own `bunx vitest run` (42 files, 483
+  tests) and `bunx tsc --noEmit` (clean), `bun run test` (477 files, 8993
+  tests passing, repo-wide), `bunx turbo run typecheck` (17/17 packages
+  green, `debate-ai-web` included), and `bun run build:web` (production
+  build succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/video-watch-page.mdx`'s Known gaps entry (marked
+  fixed).
+
+- **🧭 The tool-catalog consistency test now walks `app/` itself, instead of
+  only cross-checking the three hand-maintained catalogs against each
+  other.** Another repeat of the standing autonomous-routine prompt above
+  — as with every prior repeat (reconfirmed fresh this run: 19+ `saved_*`
+  D1 tables link to `user.id` (`apps/debate-ai.com/lib/database/schema.ts`),
+  all 65 `TOOL_RECORD_COLLECTIONS` entries sync through
+  `saved_tool_records`, and every tool is reachable from `/tools`,
+  CardMirror's `MenuBar`/command palette, and the feature catalog), that
+  prompt's own asks are already fully built. There were no open PRs to
+  build on, and this branch's own prior history (PRs #869–#875) had already
+  landed on `master` by the time this run started, so this is a fresh slice
+  on top of current `master`. A dedicated subagent scanned every
+  `packages/debate-help-docs` doc's "Known gaps"/"Known limitations"
+  section (79 files have one) for a still-open, concretely-scoped,
+  single-PR item, cross-checking each candidate against current source
+  rather than trusting the doc text, and turned up several stale entries
+  (already fixed in code without the doc being updated: the outline-preset
+  jump-to-round gap, a roster-analytics gap, a feature-catalog drift gap,
+  and a breadcrumb multi-pane gap) before landing on
+  `internals/features-page.mdx`'s: "The catalog is a hand-maintained
+  registry, so a new route has to be added to it as well. Nothing fails if
+  it isn't — the tests assert the catalog's internal consistency, not that
+  it covers every file under `apps/debate-ai.com/app/`, because the app is
+  outside the packages Vitest runs over."
+
+  Confirmed still open: `apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
+  only cross-checked `ALL_TOOLS` (`/tools`), `APP_FEATURES` (`/features`),
+  and `WORKSPACE_LINKS` (the Reason Editor's Workspace menu) against each
+  other — a route added to `app/` and to none of the three reached no
+  catalog at all with nothing to catch it.
+
+  That test file gains a `findAppPageRoutes` walker (plain `node:fs`/
+  `node:path`, mirroring the existing precedent in
+  `lib/database/__tests__/migration-sql.test.ts`) that collects every
+  route under `apps/debate-ai.com/app/` with its own `page.tsx` (skipping
+  `api/`, which has none), filtered down to static routes — a
+  dynamic-segment route like `/cards/leaderboard/[contributorId]` is a
+  detail page under an already-covered static parent, not a distinct
+  catalog entry, so it's excluded from the requirement rather than added to
+  it. A new test asserts every one of those 62 static routes appears in at
+  least one of the three catalogs, except a documented
+  `ROUTES_WITHOUT_A_CATALOG_ENTRY` (the homepage, `/admin`, the two
+  auth-flow steps, `/legal/privacy`, `/login` — already established
+  elsewhere in this same file as "a step on the way to a feature rather
+  than a feature" — and the editor's own two settings pages; `/features`
+  and `/tools` are the catalog pages themselves, and `/tools` needed no
+  entry in the exclude set since `WORKSPACE_LINKS`'s own trailing "All
+  Tools" link already covers it). A companion test keeps that exclude set
+  honest the same way the file's pre-existing exclude sets already are —
+  each excluded route must really be absent from every catalog — and a
+  canary test guards against the walker silently resolving to the wrong
+  directory and returning nothing.
+
+  Vitest-covered by construction: the new checks are tests, not
+  implementation with tests bolted on. Confirmed they fail correctly before
+  the fix — deliberately mis-adding `/tools` to the exclude set (already
+  covered via `WORKSPACE_LINKS`) failed the "keeps ... honest" case with a
+  clear message during development, then passed once removed.
+
+  Ran the full verification gate: `bun install`, the updated test file (8
+  passing, up from 5) plus `bun run test` (477 files, 8992 tests passing,
+  repo-wide), `bunx turbo run typecheck` (17/17 packages green,
+  `debate-ai-web` included), and `bun run build:web` (production build
+  succeeded; the build's regenerated
+  `apps/debate-ai.com/lib/offline-sw/{app-file-list,version}.ts` and
+  `public/service-worker.js` were reverted rather than committed, since
+  nothing they describe changed). No `lint`/`format:check` script exists
+  anywhere in this repo, so that step was skipped as not applicable. Docs
+  updated: `internals/features-page.mdx`'s Known gaps entry (marked fixed)
+  and Tests list. Shipped as
+  [PR #876](https://github.com/debate/debate-ai.com/pull/876).
 
 - **🔗 A renamed REASON document's old URL now redirects to it instead of
   falling through to "first file."** Another repeat of the standing
@@ -246,13 +520,6 @@ _No task currently in progress._
   applicable. Docs updated: `internals/team-rankings.mdx`'s Known gaps
   entry (NDT bullet reworded to describe the new notice; the
   `CURRENT_YEAR` bullet is unchanged and left as a genuine follow-up).
-
-  This slice's code and tests were actually written by a prior run, on an
-  orphaned branch (`claude/gifted-babbage-ix0e8a`) that had no open PR and
-  wasn't reflected in this file — rediscovered and rebased cleanly onto
-  current `master` this run rather than redone from scratch, then verified
-  fresh (same gate as above) and opened as
-  [PR #875](https://github.com/debate/debate-ai.com/pull/875).
 
 - **📇 Quick Cards full-library "clear" now issues one bulk delete instead of
   one per card.** Another repeat of the standing autonomous-routine prompt
@@ -505,6 +772,30 @@ _No task currently in progress._
   live requests to the wrong data path. Needs a human decision about the
   actual rollover rule (or at minimum an explicit ops alert/checklist item)
   before it's a mechanical fix.
+
+- Four `packages/debate-help-docs` "Known gaps" entries were found stale
+  during this run's candidate search — each describes a gap the code no
+  longer has, but the doc text was never updated when it was fixed
+  elsewhere. Not picked up as this run's slice (a doc-only correction, not
+  the code fix itself), but worth a future small doc-accuracy pass:
+  - `internals/argument-tree-outline.mdx`: still describes the
+    preset-doesn't-scroll-to-a-round gap that `features/argument-tree-outline.mdx`
+    and this file's own "Completed" entry above already record as fixed
+    (`outlineFilterPresetJump.ts`).
+  - `features/coaching-programs.mdx`: still describes roster analytics not
+    folding in drill-completion/practice-round counts, which
+    `internals/coaching-programs.mdx`'s "Per-member drill/practice-round
+    status" section shows was already built.
+  - `internals/news-stream.mdx`: still describes `APP_FEATURES` existing as
+    "one of three hand-synced copies," but the catalog was already unified
+    into `packages/debate-feature-catalog` (see this file's own "One shared
+    catalog" section) — only one copy exists now.
+  - `features/reason-editor-outline-nav.mdx`: still describes the
+    heading-breadcrumb bar as single-doc-only with "multi-pane... doesn't
+    have one yet," but `debate-editor/src/editor/multi-pane-shell.ts`
+    already mounts a per-pane `HeadingBreadcrumbBar`; only an adjacent
+    module comment in `heading-breadcrumb-bar.ts` still calls this out as
+    unbuilt.
 
 ---
 

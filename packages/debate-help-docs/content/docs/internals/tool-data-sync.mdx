@@ -65,21 +65,16 @@ catalog's own grouping.
 keyed by `videoId`, and `debateVideoReports` keyed by `id`.
 
 **Practice** — the Practice Round Simulator (`practiceRounds`), Pre-Round
-Briefings (`preRoundBriefings`), Practice Drills (`drillSets`), Debate Versus AI
-(`aiVersusRounds`), Word-Count Speeches (`wordCountRounds`) and Round Pairings
-(`roundPairings`), each keyed by `roundId`; your own round history
-(`ownRoundHistory`) and Scout-to-Strategy (`strategyRecommendations`) by `id`.
+Briefings (`preRoundBriefings`) and Debate Versus AI (`aiVersusRounds`), each
+keyed by `roundId`; your own round history (`ownRoundHistory`) by `id`.
 
 **Scouting and judging** — Opponent Team Profiles (`opponentTeamProfiles`, by
 `teamId`) and the scouted rounds they aggregate (`opponentRoundRecords`, by
 `id`); Judge Profiles (`judgeProfiles`, by `judgeId`) and the ballots they
 aggregate (`judgeRoundRecords`, by `id`); the Judge Paradigm Picker
-(`judgeParadigmSelections`, by `roundId`), the AI Judge Decision
-(`judgeDecisions`, by `id`), the Response-Outcome Charts
-(`counselPanelAssessments`, by `id`) and their vulnerability reports
+(`judgeParadigmSelections`, by `roundId`) and vulnerability reports
 (`vulnerabilityReports`, by `roundId`); the Opponent Persona Picker
-(`opponentPersonaSelections`, by `sessionId`) and its custom library
-(`customOpponentPersonaLibrary`, by `id`).
+(`opponentPersonaSelections`, by `sessionId`).
 
 **Flowing and writing** — Speech Summaries (`flowSummaries`), the Argument
 Tree Outline (`argumentTrees`) and its per-round filter selection
@@ -91,8 +86,7 @@ CardMirror editor's personal spellcheck dictionary
 undo/version history (`flowHistory`), by `id`.
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
-(`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
-(`coachMaterialVersions`), the Coach Workspace's current coaching session
+(`coachingPrograms`), the Coach Workspace's current coaching session
 (`coachingSessions`) and its session history (`coachingSessionHistory`), and
 the Flow Edit Log (`flowEdits`), all by `id`.
 
@@ -105,19 +99,28 @@ Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
 assessments (`aiCardAssessments`), both by `cardId`.
 
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
-(`prepRoomChecklist`), its sprints (`sprintSessions`), notes (`sprintNotes`) and
-whiteboard (`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`),
-Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
-(`questTeams`), award nominations
-(`contributorAwardNominations`) and daily best-card comments
-(`dailyBestCardComments`), all by `id`; frozen Daily Best Card winners
-(`dailyBestCardAnnouncements`) and Top Contributor Award standings
-(`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
+(`prepRoomChecklist`), notes (`sprintNotes`) and whiteboard
+(`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`), Daily Quests
+(`dailyQuestTemplates`) and their quest-competition teams (`questTeams`), and
+award nominations (`contributorAwardNominations`), all by `id`; frozen Daily
+Best Card winners (`dailyBestCardAnnouncements`) and Top Contributor Award
+standings (`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
 (`routedTaskQueues`) by `topicId` and its pending verification queue
 (`pendingTaskVerifications`) by a derived `id`; contributor flows
 (`roundContributorFlows`) and availability (`contributorAvailability`) by
 `contributorId`; completed research-task history (`completedResearchTasks`)
 by `id`.
+
+Practice Drills (`saved_drill_sets`), Word-Count Speeches
+(`saved_word_count_rounds`), Round Pairings (`saved_round_pairings`),
+Scout-to-Strategy (`saved_strategy_recommendations`), the AI Judge Decision
+(`saved_judge_decisions`), the Response-Outcome Charts
+(`saved_counsel_panel_assessments`), the Opponent Persona Picker's custom
+library (`saved_custom_opponent_personas`), Coach Materials and their
+versions (`saved_coach_materials` / `saved_coach_material_versions`), the Prep
+Room's sprints (`saved_sprint_sessions`) and daily best-card comments
+(`saved_daily_best_card_comments`) all sync too, but each through its own
+dedicated table and route rather than this one — see the next section.
 
 `TOOL_RECORD_COLLECTIONS` is an **allowlist**, not a convenience: the route
 rejects any collection key not in it, so the table can't be used as a
@@ -147,7 +150,14 @@ these stay local on purpose —
   alongside its own version history (`coachingSessionHistory`).
 
 Tools already backed by a `saved_*` table of their own — flows, rounds,
-tournament results — keep those. This table is for the stores that had nothing.
+tournament results, drill sets, word-count rounds, round pairings,
+scout-to-strategy, AI judge decisions, response-outcome charts, custom
+opponent personas, coach materials and their versions, prep-room sprints, and
+daily best-card comments — keep those. This table is for the stores that had
+nothing. (Eleven of those once had a redundant entry here too — reconciled
+through both their own table *and* this one, with nothing ever reading the
+second copy back. Removed rather than fixed forward, since nothing pointed at
+the generic copy in the first place.)
 
 ## Local-first, by design
 

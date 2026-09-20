@@ -6,6 +6,7 @@ import {
   getStringValue,
   hasLiveLeaderboard,
   hasValue,
+  resolveDivisionTopic,
   sortEntries,
 } from "../src/panels/leaderboard/leaderboardUtils";
 import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills";
@@ -94,6 +95,55 @@ describe("division config", () => {
       expect(division.label.length, division.value).toBeGreaterThan(0);
       expect(division.logoSrc, division.value).toMatch(/^https?:\/\//);
     }
+  });
+
+  it("points LD and PF at the monthly topic lists", () => {
+    expect(DIVISION_CONFIG.find((d) => d.value === "VPF")?.topicKey).toBe("pf_topics");
+    expect(DIVISION_CONFIG.find((d) => d.value === "VLD")?.topicKey).toBe("ld_topics");
+    expect(DIVISION_CONFIG.find((d) => d.value === "VCX")?.topicNameKey).toBe(
+      "policy_topic_name",
+    );
+    expect(DIVISION_CONFIG.find((d) => d.value === "NDT")?.topicNameKey).toBe(
+      "ndt_topic_name",
+    );
+  });
+});
+
+describe("hasLiveLeaderboard", () => {
+  it("is true for the divisions with a bid-list/Elo data source", () => {
+    expect(hasLiveLeaderboard("VPF")).toBe(true);
+    expect(hasLiveLeaderboard("VLD")).toBe(true);
+    expect(hasLiveLeaderboard("VCX")).toBe(true);
+  });
+
+  it("is false for NDT, which has no per-team data source", () => {
+    expect(hasLiveLeaderboard("NDT")).toBe(false);
+  });
+
+  it("falls back to false for an unrecognized division", () => {
+    expect(hasLiveLeaderboard("BOGUS" as never)).toBe(false);
+  });
+});
+
+describe("resolveDivisionTopic", () => {
+  it("returns monthly PF/LD lists", () => {
+    const pf = [
+      { start_month: "September", topic: "Sports betting" },
+      { start_month: "November", topic: "Housing" },
+    ];
+    expect(resolveDivisionTopic({ pf_topics: pf }, "VPF")).toEqual(pf);
+  });
+
+  it("falls back to the legacy HTML string", () => {
+    expect(resolveDivisionTopic({ ld_topic: "Wealth tax<br>AGI" }, "VLD")).toBe(
+      "Wealth tax<br>AGI",
+    );
+  });
+
+  it("returns the yearly Policy/NDT resolution", () => {
+    expect(
+      resolveDivisionTopic({ policy_topic: "Arctic development" }, "VCX"),
+    ).toBe("Arctic development");
   });
 });
 

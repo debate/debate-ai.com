@@ -176,15 +176,28 @@ one turn of the wheel while keeping consecutive cards more than 80° apart.
 
 `apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
 cross-checks this catalog's routes against `/tools`' `ALL_TOOLS` and the
-Reason Editor's `WORKSPACE_LINKS`.
+Reason Editor's `WORKSPACE_LINKS`, and separately walks every static route
+under `apps/debate-ai.com/app/` to assert each appears in at least one of
+the three.
 
 ## Known gaps
 
-- The catalog is a hand-maintained registry, so a new route has to be added
-  to it as well. Nothing fails if it isn't — the tests assert the catalog's
-  internal consistency, not that it covers every file under
-  `apps/debate-ai.com/app/`, because the app is outside the packages Vitest
-  runs over.
+- **Fixed:** the catalog is a hand-maintained registry, so a new route used
+  to have to be added to it by hand with nothing checking that it was — the
+  tests only asserted the catalog's internal consistency, not that it
+  covered every file under `apps/debate-ai.com/app/`, since the app is
+  outside the packages Vitest runs over. `tool-catalog-consistency.test.ts`
+  now also walks `apps/debate-ai.com/app/` for every static route with its
+  own `page.tsx` (skipping dynamic-segment detail routes, which don't get
+  their own catalog entry) and asserts each appears in at least one of
+  `ALL_TOOLS`/`APP_FEATURES`/`WORKSPACE_LINKS`, unless it's in that test's
+  own `ROUTES_WITHOUT_A_CATALOG_ENTRY` (the homepage, `/admin`, an
+  auth-flow step, a legal page, `/login`, or the editor's own settings
+  pages — none of which are "a tool" to list). This is a test-only
+  relative import into the app's own route tree via `node:fs`, so it adds
+  no runtime dependency; a new route added to `app/` and to none of the
+  three catalogs now fails this test instead of silently reaching none of
+  them.
 - **Fixed:** the catalog used to exist as three hand-synced copies (see "One
   shared catalog" above), and they drifted once — `/contacts` was added to
   the app's copy but never carried over to the other two, so

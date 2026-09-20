@@ -67,6 +67,17 @@ edit to a description on YouTube, not a change to the site.
 The **Stacked playlists** button in the search panel (the layers icon) turns
 it off, giving one card per video again.
 
+## List layout
+
+The dense table view (`VideoListRows`, the alternative to the card grid) shows
+a cleaned-up Tournament column rather than the raw stored value: years, round
+labels ("Quarterfinals", "R3", "Round Robin"), and generic org words
+("Tournament", "Nationals", "Invitational") are stripped, and "Tournament of
+Champions"/"National Debate Tournament" collapse to "TOC"/"NDT" —
+`cleanTournamentName` in `VideoListRows.tsx`. A round whose tournament cleans
+to nothing (or that has no team on either side) shows its title across the
+row instead of blank Tournament/Aff/Neg columns.
+
 ## Fixing a video (admins)
 
 `/admin` has a **Video library** card listing every video already published to
