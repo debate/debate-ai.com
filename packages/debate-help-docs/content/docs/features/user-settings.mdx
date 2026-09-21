@@ -42,8 +42,13 @@ gone:
 
 - the Debate style / Font size / Font family / Colour theme / Light-dark
   pickers (`debate-round`'s `UserSettingsPanel`) — the dock's gear-icon menu
-  still carries the colour theme and light/dark rows; debate style and the
-  font pickers have no other surface
+  still carries the colour theme and light/dark rows. Debate style, font
+  size and font family are back at their own page, `/settings/preferences`
+  (still `UserSettingsPanel`, unchanged), reachable from a new "Debate
+  Preferences" row in the same gear-icon menu
+  (`components/layout/CategoryDock.tsx`) — this is a different page from
+  `/settings` above, since these three drive the flow editor rather than
+  the card editor
 - **Favorite tools** — a tool is still starred from `/tools`, which is also
   where a renamed or removed tool now gets pruned from the saved list
 - **Tool data** — see
@@ -112,6 +117,33 @@ succession would otherwise race the same way favorites used to.
 `editorPreferences` is a plain merge of whatever the page last pushed, so it
 has the same last-write-wins property: the editor's settings open in two
 tabs, changed in both, end at whichever debounce landed second. Every other
-field (`debateStyle`, `colorTheme`, `wordLimitPresets`, etc.) is a plain
-whole-value replace with no such protection — and now that this page no
-longer writes them, mostly nothing does.
+field (`debateStyle`, `colorTheme`, etc.) is a plain whole-value replace with
+no such protection — `debateStyle`/`fontSize`/`colorTheme`/`themeMode` are
+written from `/settings/preferences` and the dock's Theme submenu, both of
+which apply and (when signed in) sync a single field at a time rather than a
+whole form Save, so this mostly shows up as "two tabs pick a different
+Debate style within the same second."
+
+`wordLimitPresets` (`debate-round`'s `WordLimitPresetsPanel`, rendered from
+`/word-count` rather than from this page — see "What it no longer shows"
+above) is also op-based now: `addPreset`/`updatePreset`/`removePreset` each
+send a single `addWordLimitPreset`/`updateWordLimitPreset`/
+`removeWordLimitPreset` op, resolved against the account's current list at
+write time instead of a client-computed whole-list replace, mirroring
+`favoriteTools`'s fix above. A duplicate name, an unknown preset, or an
+invalid word limit is refused with a `400` rather than silently corrupting
+the stored list. A plain whole-list `wordLimitPresets` replace is still
+accepted by the route for a caller that genuinely needs one, but
+`useWordLimitPresets.ts` no longer sends one.
+
+`outlineFilterPresets` (`debate-practice-drills`'s named Outline filter
+presets bar — see [Argument Tree Outline](/docs/internals/argument-tree-outline))
+is op-based the same way: `addPreset`/`removePreset` each send a single
+`addOutlineFilterPreset`/`removeOutlineFilterPreset` op, resolved against
+the account's current list at write time instead of a client-computed
+whole-list replace, mirroring `wordLimitPresets`'s fix above. A duplicate
+name, an at-capacity list, or an invalid filter is refused with a `400`
+rather than silently corrupting the stored list. A plain whole-list
+`outlineFilterPresets` replace is still accepted by the route for a caller
+that genuinely needs one, but `useOutlineFilterPresets.ts` no longer sends
+one.

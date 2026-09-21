@@ -11,21 +11,20 @@ the grid, which had no address — nothing to send a teammate, nothing for
 search to index, and no room for anything but the player and a narrow
 column of sentences.
 
-- **Where:** `/videos/watch/<title-slug>-<videoId>`
+- **Where:** `/videos/watch/<title-slug>`
 - **Reach it from:** the transcript (CC) button on any video card or list row
 - **Package:** `debate-videos`
 
 ## The URL
 
 ```
-/videos/watch/2022-ndt-finals-dartmouth-vs-michigan-OXdffJy8HIs
-               └──────────── title ────────────────┘└── id ──┘
+/videos/watch/2022-ndt-finals-dartmouth-vs-michigan
+                └──────────── title ────────────────┘
 ```
 
-The title half is for readers and for search engines; only the
-11-character YouTube id at the end identifies the video. A video that gets
-retitled keeps answering on links already shared, and the page points
-search engines at the current spelling as its canonical URL.
+The title half is for readers and for search engines. A video that gets
+retitled gets a new address — old links stop working, which is the
+trade-off for clean URLs without appended ids.
 
 ## Transcript
 

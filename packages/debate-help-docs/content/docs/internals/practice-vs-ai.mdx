@@ -38,10 +38,19 @@ controller's `updateGamificationAfterBotDebate`/
 takes a `{ score, badges, currentStreak }` profile and a result, and returns
 the points, badges and new score to apply — the same point values (50/25/10
 for a win/draw/loss) and badge thresholds (`FirstWin`, `Novice` at 10,
-`Streak5` at a 5-day streak, `FactMaster` at 500) as the Go switch. The
-package's `handlers.ts` calls this from `recordCompletedRound`, which every
-`/judge` and `/concede` request runs after storing the round's outcome, and
-returns the award in the response body so the client can show it.
+`Streak5` at a 5-day streak, `FactMaster` at 500) as the Go switch.
+`handlers.ts`'s `recordCompletedRound`, which every `/judge` and `/concede`
+request runs after storing the round's outcome, does not call
+`computeGamificationAward` itself — it hands the round's `{ debateType,
+topic, result }` straight to `store.applyGamificationAward`, which is the
+only thing that reads the profile and computes the award, and returns it in
+the response body so the client can show it. (Earlier, the handler read the
+profile and computed the award itself, then handed a `{ points, badges,
+newScore }` snapshot to the store to persist — two rounds finishing close
+together, separated by the AI judging call, could each compute their award
+from the same stale starting score, and the second store write would
+silently overwrite the first round's points. There's no longer a parameter
+for a caller to pass a precomputed award through at all.)
 
 The app's store persists the result on the signed-in user's `user_settings`
 row rather than a separate table, mirroring the account-preferences pattern
@@ -51,13 +60,29 @@ row rather than a separate table, mirroring the account-preferences pattern
 - `practiceVsAiBadges` (JSON array of badge ids) — merged with, never
   replacing, whatever the row already holds, so a repeat badge check never
   drops one earned in an earlier round.
+- `practiceVsAiLastPlayedDayKey` (the UTC `YYYY-MM-DD` of the most recent
+  scored round) and `practiceVsAiCurrentStreak` (integer) — the dated
+  activity log `Streak5` needed. `debate-practice-vs-ai`'s
+  `advanceDailyStreak(lastPlayedDayKey, today, previousStreak)` is the pure
+  rule: a second round the same day leaves it unchanged, the calendar day
+  right after extends it by one, and anything else (first round ever, or a
+  missed day) restarts it at 1. The Go original read `user.CurrentStreak` in
+  its own badge check but never incremented it anywhere in
+  `debatevsbot_controller.go`, so `Streak5` was unreachable there too — this
+  isn't a regression the port introduced.
 
-`getGamificationProfile` reads these two columns (defaulting to `0`/`[]` when
-the user has no row yet) and always reports `currentStreak: 0` —
-there is no dated activity log to derive a real streak from, so `Streak5` is
-unreachable until one exists. `applyGamificationAward` does a read-then-merge
-upsert (`insert … onConflictDoUpdate`) rather than trusting the caller's copy
-of the badge list, the same reason `favoriteTools`' star/unstar op reads the
+`getGamificationProfile` reads all four columns (defaulting to `0`/`[]`/no
+streak when the user has no row yet) and reports the streak via
+`currentDisplayStreak`, which reads as the stored value while the last round
+was today or yesterday and as `0` once a day has been missed — without
+needing a new round played to reset the stored counter first. It is
+otherwise unused by the write path now (kept as a capability probe, and for
+any host that wants to display a profile): `applyGamificationAward` re-reads
+all four columns itself immediately before writing, advances the streak with
+`advanceDailyStreak`, and runs `computeGamificationAward` against that fresh
+profile, then does a read-then-merge upsert (`insert … onConflictDoUpdate`)
+— the score, badge list and streak are always computed from the row's
+current value, the same reason `favoriteTools`' star/unstar op reads the
 row's current value first.
 
 The scorecard (`packages/debate-round-practice-ai/src/ui/JudgmentPopup.tsx`)
@@ -121,8 +146,8 @@ bucket, the same fallback `DebateRoom`'s own resume key already uses.
 
 ## Known gaps
 
-See the feature doc's Known gaps: no persisted streak (`Streak5` therefore
-unreachable).
+See the feature doc's Known gaps — the streak gap it used to describe is
+fixed; nothing else here is currently open.
 
 ## Tests
 
@@ -132,12 +157,20 @@ gamification hooks omits `gamification` from the response entirely, and that
 `listDebates` returns an empty list for a store without that hook.
 `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts` exercises the
 D1-backed `getGamificationProfile`/`applyGamificationAward` against a real
-in-memory SQLite database (badge accumulation across rounds,
-de-duplication, and per-user isolation) plus `listDebates` (newest-first
-ordering, per-user isolation, empty list).
+in-memory SQLite database (score and badge accumulation across rounds,
+de-duplication, per-user isolation, a case demonstrating the lost-update
+race is closed: a profile read before either of two sequential awards still
+ends with both rounds' points, not just the second, and the streak: five
+consecutive simulated days earns `Streak5`, a second round the same day
+doesn't advance it, a missed day restarts it at 1, and a lapsed streak reads
+as 0 without a write) plus `listDebates` (newest-first ordering, per-user
+isolation, empty list). `packages/debate-round-practice-ai/test/gamification.test.ts`
+covers `advanceDailyStreak`/`currentDisplayStreak`/`utcDayKey` directly as
+pure functions, including a UTC month-boundary carry.
 `packages/debate-round-practice-ai/test/store-and-client.test.ts` covers the
-in-memory store's `listDebates` and the client's `listDebateHistory`
-(GET request, session cookie, error surfacing).
+in-memory store's gamification (same race-closed case) and `listDebates`,
+plus the client's `listDebateHistory` (GET request, session cookie, error
+surfacing).
 `packages/debate-round-practice-ai/test/active-round.test.ts` covers
 `active-round.ts`: round-trip read/write, per-user namespacing, the shared
 guest bucket, and tolerating a missing, corrupt, or malformed-shape record.

@@ -1,0 +1,53 @@
+---
+title: "Topic & Video Statistics"
+---
+
+# Topic & Video Statistics
+
+`/videos/statistics` — a standalone page combining a searchable list of every
+season's debate resolutions with the YouTube channel view/upload charts that
+used to live only in a modal.
+
+- **Route:** `/videos/statistics` (also `/videos/stats`)
+- **Package:** `debate-videos`
+
+## What it shows
+
+Two sections, stacked:
+
+- **Debate Topics by Year** (`DebateTopicsExplorer`) — every season's Policy,
+  College (NDT), LD and PF resolutions, newest year first, each behind a
+  style badge. A search box filters by year or by resolution text. The data
+  is the same `topics` field `/api/videos/meta` already returns for the video
+  cards' topic tooltips (`lib/debate-topics.ts`'s formatters), passed down
+  from `LecturesPage` rather than fetched again here.
+- **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
+  table and the views/videos/avg-views-over-time charts `YouTubeStatsModal`
+  already drew in its dialog, extracted so they can render inline on a full
+  page instead. Backed by `useYouTubeStats()` (`GET /api/youtube-stats`,
+  itself optional furniture — a deployment with no YouTube API key just
+  leaves this section off rather than erroring).
+
+Reachable from the sidebar tree's Practice section ("Topic & Video
+Statistics", alongside Glossary and Rankings) and from the `/videos` quick-link
+tile grid.
+
+## Data flow
+
+```
+panels/LecturesPage.tsx — currentCategory === "statistics" branch
+  → panels/statistics/StatisticsPage.tsx
+    → components/topic-explorer/DebateTopicsExplorer.tsx   (topics prop)
+    → components/youtube-stats-modal/YouTubeStatsCharts.tsx (youtubeStats prop)
+```
+
+`StatisticsPage` takes both as props rather than fetching them itself:
+`topics` comes from the same `useVideoMeta()` call every other `/videos`
+branch already makes, and `youtubeStats` from the same `useYouTubeStats()`
+call `LecturesVideoGridView`'s own stats-modal button uses — so landing on
+this page makes no request the rest of `/videos` wasn't already making.
+
+## Known gaps
+
+No per-style filter on the topics grid — search matches across every style's
+text at once, there's no "Policy only" toggle.

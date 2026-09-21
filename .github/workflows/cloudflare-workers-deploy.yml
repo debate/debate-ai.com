@@ -2,8 +2,12 @@ name: Build and deploy web and .com apps to Cloudflare Workers
 
 on:
   push:
+    # `master` is this repository's default branch, and every other workflow
+    # already keys off it. This one listened on `main`, a branch that does not
+    # exist here, so no push ever deployed — production only moved when someone
+    # ran the workflow by hand.
     branches:
-      - main
+      - master
     paths:
       - 'apps/**'
       - '.github/workflows/cloudflare-workers-deploy.yml'
@@ -112,6 +116,22 @@ jobs:
       # chain ended up running `cp ... --if-present` and failing.
       - name: Build app
         run: bun run --if-present build
+
+      # Migrations run first, and on their own step, so a schema change that
+      # fails to apply stops the deploy rather than shipping code whose columns
+      # are not there yet. `scripts/migrate-d1.ts` records what it has already
+      # applied, so a steady-state deploy is a single read. Leaving this out is
+      # how production drifts: the runner has existed since the last drift, but
+      # only `bun run deploy` called it — this workflow went straight to
+      # `wrangler deploy`, so every migration merged since then never landed.
+      - name: Apply D1 migrations
+        env:
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        # `--if-present` has to precede the script name (see the build step
+        # above); an app without a `db:migrate:d1` script has nothing to do.
+        run: bun run --if-present db:migrate:d1
 
       - name: Deploy Worker with Wrangler
         env:

@@ -29,13 +29,13 @@ Its toolbar is the popout player's toolbar: both compose
 `components/video-player/PlayerIconButton.tsx`, so add a control there rather
 than hand-rolling a button in one of them.
 
-## Watch-page URLs are permanent
+## Watch-page URLs are shareable
 
-`/videos/watch/<title-slug>-<videoId>` links are shared and indexed. The id is
-parsed positionally from the end of the slug (`lib/video-slug.ts`) — never
-`split("-")`, because YouTube ids contain `-` and `_`. The title half is
-decoration, so changing how titles are slugified must not stop old links
-resolving.
+`/videos/watch/<title-slug>` links are shared and indexed. The slug is
+built from the title with `slugifyVideoTitle` (`lib/video-slug.ts`) — no
+video id is appended. A video that gets retitled gets a new address;
+old links stop working by design, which is the trade-off for clean
+URLs.
 
 ## Favourites, hidden videos and reports belong to the user
 

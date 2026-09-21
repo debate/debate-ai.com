@@ -20,8 +20,8 @@
 import type { UserSettingsPayload } from "../state/userSettings";
 import type { ThemeSettingsPayload } from "../state/themeSettings";
 import type { FavoriteToolOp, FavoriteToolsPayload } from "../state/favoriteTools";
-import type { WordLimitPresetsPayload } from "../state/wordLimitPresets";
-import type { OutlineFilterPresetsPayload } from "../state/outlineFilterPresets";
+import type { WordLimitPresetOp, WordLimitPresetsPayload } from "../state/wordLimitPresets";
+import type { OutlineFilterPresetOp, OutlineFilterPresetsPayload } from "../state/outlineFilterPresets";
 
 /** The full shape `/api/settings` reads/writes — app preferences, the theme fields (idea #17, follow-up (2)), the favorite-tools list (idea #17, "integrate tools into user settings" follow-up), the custom word-limit presets list (idea #2's "per-style word-limit preset manager" follow-up), and the named Outline filter presets list (idea #10's "Save and reuse named filter presets" follow-up). The News Stream read/liked id lists (`packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s "Read/like state is per-browser" Known gap) are typed separately by `debate-community` to avoid a package cycle (`debate-team-collaboration` already depends on this package) — the `/api/settings` route still reads/writes them on the same row. */
 export type FullUserSettingsPayload = UserSettingsPayload &
@@ -94,6 +94,67 @@ export async function saveFavoriteToolOp(
  */
 export async function saveRecentToolOp(
   op: { recordRecentTool: string },
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+/**
+ * Saves a single add/update/remove op — `{ addWordLimitPreset }`,
+ * `{ updateWordLimitPreset }` or `{ removeWordLimitPreset }` — instead of a
+ * whole-list `wordLimitPresets` replace. The route resolves it against the
+ * account's currently stored list rather than the caller's own (possibly
+ * stale) copy, closing the same "two tabs/devices edit presets at once"
+ * lost-update gap `saveFavoriteToolOp` already closed for `favoriteTools` —
+ * see `state/wordLimitPresets.ts#applyWordLimitPresetOp`'s docstring.
+ */
+export async function saveWordLimitPresetOp(
+  op: WordLimitPresetOp,
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+/**
+ * Saves a single add/remove op — `{ addOutlineFilterPreset }` or
+ * `{ removeOutlineFilterPreset }` — instead of a whole-list
+ * `outlineFilterPresets` replace. The route resolves it against the
+ * account's currently stored list rather than the caller's own (possibly
+ * stale) copy, closing the same "two tabs/devices edit presets at once"
+ * lost-update gap `saveWordLimitPresetOp` already closed for
+ * `wordLimitPresets` — see
+ * `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`'s docstring.
+ */
+export async function saveOutlineFilterPresetOp(
+  op: OutlineFilterPresetOp,
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+/**
+ * Saves a single "mark read" op — `{ recordNewsRead }` — instead of a
+ * whole-list `newsRead` replace, for the same lost-update reason
+ * `saveFavoriteToolOp` avoids one. The News Stream fields (validation,
+ * serialization, the op types) live in `debate-community` rather than this
+ * package — see `FullUserSettingsPayload`'s doc comment above — so the op
+ * shape is inlined here rather than imported, mirroring
+ * `saveRecentToolOp`'s own out-of-package field.
+ */
+export async function saveNewsReadOp(
+  op: { recordNewsRead: string },
+  endpoint = "/api/settings",
+): Promise<FullUserSettingsPayload> {
+  return putSettingsPatch(op, endpoint);
+}
+
+/**
+ * Saves a single like/unlike op — `{ addNewsLiked }` or
+ * `{ removeNewsLiked }` — instead of a whole-list `newsLiked` replace, the
+ * same lost-update fix `saveNewsReadOp` above closes for `newsRead`.
+ */
+export async function saveNewsLikedOp(
+  op: { addNewsLiked: string } | { removeNewsLiked: string },
   endpoint = "/api/settings",
 ): Promise<FullUserSettingsPayload> {
   return putSettingsPatch(op, endpoint);

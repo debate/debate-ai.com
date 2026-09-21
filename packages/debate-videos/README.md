@@ -32,7 +32,7 @@ import {
 } from "debate-videos"
 ```
 
-`VideoWatchPage` backs `/videos/watch/<title-slug>-<videoId>`: one video, its synced
+`VideoWatchPage` backs `/videos/watch/<title-slug>`: one video, its synced
 transcript beside it, related videos underneath. It does not add a second embed — it
 takes playback over from the persistent player for as long as it is mounted and hands
 it back, at the same second, on the way out. See

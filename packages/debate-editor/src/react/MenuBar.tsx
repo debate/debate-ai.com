@@ -40,6 +40,7 @@ import {
 import { Button } from "../ui/primitives/button";
 import type { MenuBarCategory } from "./menu-bar-categories.js";
 import { WORKSPACE_LINKS } from "../editor/workspace-links.js";
+import { recordWorkspaceVisit } from "../editor/recent-tools.js";
 
 export interface MenuBarProps {
   className?: string;
@@ -80,6 +81,7 @@ export function MenuBar({ className }: MenuBarProps): React.JSX.Element {
   // Workspace links navigate away from the editor entirely (a different app
   // route), so this is a full navigation rather than a `runRibbon` dispatch.
   const navigate = useCallback((href: string) => {
+    recordWorkspaceVisit(href);
     window.location.assign(href);
   }, []);
 

@@ -288,7 +288,7 @@ export function VideoWatchPage({
     router.push(
       next
         ? videoRouteHref(next)
-        : videoWatchHref(store.activeVideoTitle ?? "", store.activeVideoId),
+        : videoWatchHref(store.activeVideoTitle ?? ""),
     )
   }, [activeVideoId, activeVideoTitle, videoId, related, router])
 

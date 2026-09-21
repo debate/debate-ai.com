@@ -9,9 +9,9 @@
  * (works fully signed out, mirroring every other synced field's hook in
  * this repo), then best-effort merges in the account's synced copy on mount
  * (via `mergeRemoteStreakFreezeDayKeys`/`mergeRemoteStreakLapseReminderEnabled`'s
- * additive-only merge) and pushes the contributor's current local state back
- * to the account after every local change, via the `/api/settings`
- * `questStreakSync` field — mirroring `useResearchProgressGoalSync.ts`'s
+ * additive-only merge) and pushes each local change back to the account
+ * one op at a time via the `/api/settings` `recordStreakFreezeDayKey`/
+ * `setLapseReminderEnabled` ops, mirroring `useResearchProgressGoalSync.ts`'s
  * split.
  *
  * Unlike that hook, there is no single "current value" to hold in state
@@ -20,25 +20,40 @@
  * visitor's own), so this hook's job is purely to keep that local copy in
  * sync with the account, not to hold its own copy of the data.
  *
+ * `pushFreezeDayKey`/`pushLapseReminderEnabled` each push a single op,
+ * resolved server-side against the account's current stored value — not a
+ * whole-`questStreakSync`-value replace, which let two tabs/devices
+ * silently drop each other's freeze or revert one via a reminder toggle
+ * (see `quest-streak-sync.ts#applyQuestStreakFreezeOp`'s docstring).
+ *
  * @module hooks/useQuestStreakSync
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchQuestStreakSync, saveQuestStreakSync } from "../lib/quest-streak-sync-client";
-import { listStreakFreezeDayKeysForContributor, mergeRemoteStreakFreezeDayKeys } from "../state/streakFreezes";
-import { isStreakLapseReminderEnabled, mergeRemoteStreakLapseReminderEnabled } from "../state/streakLapseReminders";
+import { fetchQuestStreakSync, saveLapseReminderEnabledOp, saveStreakFreezeDayKeyOp } from "../lib/quest-streak-sync-client";
+import { mergeRemoteStreakFreezeDayKeys } from "../state/streakFreezes";
+import { mergeRemoteStreakLapseReminderEnabled } from "../state/streakLapseReminders";
 
 export interface UseQuestStreakSyncResult {
   /** Whether the initial mount-time merge attempt (success, failure, or signed-out no-op) has finished. */
   loaded: boolean;
   /**
-   * Pushes `contributorId`'s current local reminder opt-in and freeze
-   * dayKeys to the account. Best-effort and a no-op when signed out or the
-   * initial account fetch hasn't resolved yet — call this after any local
-   * change made through `state/streakFreezes.ts`/`state/streakLapseReminders.ts`
-   * for this same contributor.
+   * Pushes a single just-spent freeze `dayKey` to the account, resolved
+   * server-side against the account's current stored freeze list. Best-effort
+   * and a no-op when signed out or the initial account fetch hasn't resolved
+   * yet — call this right after `state/streakFreezes.ts#applyPersistedStreakFreeze`
+   * succeeds for this same contributor.
    */
-  pushLocalState: () => void;
+  pushFreezeDayKey: (dayKey: string) => void;
+  /**
+   * Pushes the contributor's current reminder opt-in to the account,
+   * resolved server-side without disturbing the account's stored freeze
+   * list. Best-effort and a no-op when signed out or the initial account
+   * fetch hasn't resolved yet — call this right after
+   * `state/streakLapseReminders.ts#setStreakLapseReminderEnabled` for this
+   * same contributor.
+   */
+  pushLapseReminderEnabled: (enabled: boolean) => void;
 }
 
 /**
@@ -92,15 +107,25 @@ export function useQuestStreakSync(contributorId: string | undefined, onMerged?:
     };
   }, [contributorId]);
 
-  const pushLocalState = useCallback(() => {
-    if (!contributorId || !remoteAvailableRef.current) return;
-    saveQuestStreakSync({
-      lapseReminderEnabled: isStreakLapseReminderEnabled(contributorId),
-      freezeDayKeys: listStreakFreezeDayKeysForContributor(contributorId),
-    }).catch(() => {
-      // Best-effort — the local change above already succeeded.
-    });
-  }, [contributorId]);
+  const pushFreezeDayKey = useCallback(
+    (dayKey: string) => {
+      if (!contributorId || !remoteAvailableRef.current) return;
+      saveStreakFreezeDayKeyOp(dayKey).catch(() => {
+        // Best-effort — the local change above already succeeded.
+      });
+    },
+    [contributorId],
+  );
 
-  return { loaded, pushLocalState };
+  const pushLapseReminderEnabled = useCallback(
+    (enabled: boolean) => {
+      if (!contributorId || !remoteAvailableRef.current) return;
+      saveLapseReminderEnabledOp(enabled).catch(() => {
+        // Best-effort — the local change above already succeeded.
+      });
+    },
+    [contributorId],
+  );
+
+  return { loaded, pushFreezeDayKey, pushLapseReminderEnabled };
 }

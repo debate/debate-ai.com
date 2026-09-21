@@ -159,6 +159,7 @@ Scrapers for leaderboards used by `/api/leaderboard`:
 - `sync-rankings-debatedrills.ts` — Debatedrills rankings (exports the `LeaderboardEntry` type used elsewhere).
 - `sync-rankings-debateland.ts` — Debateland rankings.
 - `sync-rankings-tocbidlist.ts` — TOC bid list.
+- `sync-rankings-ndca.ts` — NDCA Baker standings from Tabroom.com (CX/policy), requires `TABROOM_API_KEY`.
 - `sync-tournaments.ts` — Tournament listings.
 - `ndca-standings.ts` — NDCA-style qualification points and cumulative season standings computation (`computeTournamentPoints`, `buildStandings`, `rankStandings`, `getQualifiedTeams`), against a configurable, illustrative `QualificationPointsTable`. `state/tournamentResults.ts` persists recorded `TournamentResult`s to localStorage and exposes `buildStandingsFromStore` for callers that need ranked tournament-result data.
 

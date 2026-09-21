@@ -78,7 +78,11 @@ export type { SpeechSendLogEntry } from './editor/speech-send-log.js';
 // Quick Cards — account-sync validation, shared by the store itself and by
 // `apps/debate-ai.com`'s `/api/quick-cards` routes (see
 // `quick-cards-store.ts`'s "Account sync" module-doc section).
-export { isValidQuickCardRecord, MAX_SAVED_QUICK_CARD_BYTES } from './editor/quick-cards-store.js';
+export {
+  hasQuickCardSaveConflict,
+  isValidQuickCardRecord,
+  MAX_SAVED_QUICK_CARD_BYTES,
+} from './editor/quick-cards-store.js';
 export type { QuickCard } from './editor/quick-cards-store.js';
 
 // Learn flashcard-content account-sync validation, shared by the store
@@ -92,3 +96,11 @@ export type { CardDef } from './editor/learn-store.js';
 // `learn-decks-sync.ts`'s module doc).
 export { isValidLearnDeckRecord, MAX_SAVED_LEARN_DECK_BYTES } from './editor/learn-store.js';
 export type { CustomDeck } from './editor/learn-store.js';
+
+// Per-deck add-card/remove-card/rename ops, resolved server-side against a
+// deck's current stored state — the fix for the "two devices edit the same
+// deck at once" lost-update race a whole-deck `PUT` is exposed to (see
+// `learn-deck-op.ts`'s module doc and `/api/learn-decks/[deckId]`'s `PATCH`
+// handler).
+export { normalizeLearnDeckOpPatch, applyLearnDeckOp } from './editor/learn-deck-op.js';
+export type { LearnDeckOp } from './editor/learn-deck-op.js';

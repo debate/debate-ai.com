@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { VIDEO_RELATION_KINDS } from "debate-videos";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import {
   addVideoRelation,
   listVideoRelations,
@@ -40,9 +41,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     const db = await getDBFromContext();
     return NextResponse.json({ relations: await listVideoRelations(db, id) });
   } catch (error) {
-    console.error("Failed to list video relations:", error);
+    console.error("Failed to list video relations:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to load related videos", details: (error as Error).message },
+      { error: "Failed to load related videos", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -80,9 +81,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const link = await addVideoRelation(db, id, relatedVideoId, relation, note, email);
     return NextResponse.json({ ok: true, relation: link });
   } catch (error) {
-    console.error("Failed to link videos:", error);
+    console.error("Failed to link videos:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to link videos", details: (error as Error).message },
+      { error: "Failed to link videos", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -116,9 +117,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     await reorderVideoRelations(db, id, order);
     return NextResponse.json({ ok: true, relations: await listVideoRelations(db, id) });
   } catch (error) {
-    console.error("Failed to reorder video relations:", error);
+    console.error("Failed to reorder video relations:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to reorder related videos", details: (error as Error).message },
+      { error: "Failed to reorder related videos", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -148,9 +149,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
     return NextResponse.json({ ok: true, relatedVideoId, relation });
   } catch (error) {
-    console.error("Failed to unlink videos:", error);
+    console.error("Failed to unlink videos:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to unlink videos", details: (error as Error).message },
+      { error: "Failed to unlink videos", details: describeError(error) },
       { status: 500 },
     );
   }

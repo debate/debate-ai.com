@@ -132,14 +132,20 @@ lib/ui/primitives/command.tsx   — cmdk wrapped in the app's Dialog primitive
   edit.
 - ~~The "Recent" group tracks *palette selections only* — a tool opened via
   its own `/tools` card, a direct link, or the editor's Workspace menu
-  doesn't promote it here.~~ Narrowed: `/tools`' grid cards and favorites
-  chips now go through `RecordVisitLink`, so opening a tool from there
+  doesn't promote it here.~~ Narrowed further: `/tools`' grid cards and
+  favorites chips go through `RecordVisitLink`, so opening a tool from there
   promotes it too, and `/tools` itself shows a matching "Recently opened"
-  strip (`RecentlyOpenedTools.tsx`) above the tool groups. A direct link
-  (typed URL, bookmark, another page's own link to a tool) and the editor's
-  Workspace menu still don't record a visit — wiring either would mean a
-  global click listener or instrumenting call sites this doc doesn't own.
-  It's also still capped at 5. ~~Per-browser (`localStorage`, no account
+  strip (`RecentlyOpenedTools.tsx`) above the tool groups. The editor's own
+  Workspace menu (`MenuBar.tsx`'s Workspace category) and its palette's own
+  `t`-prefix results (`quick-card-search-ui.ts`) now record a visit too, via
+  `packages/debate-editor/src/editor/recent-tools.ts`'s
+  `recordWorkspaceVisit` — a package-local mirror of `lib/recentTools.ts`'s
+  `localStorage` shape and `saveRecentToolOp`'s `PUT /api/settings` op, since
+  `debate-editor` can't depend on either directly. Only a direct link (typed
+  URL, bookmark, another page's own link to a tool) still doesn't record a
+  visit — that would need a global click listener or per-link
+  instrumentation this doc doesn't own. It's also still capped at 5.
+  ~~Per-browser (`localStorage`, no account
   sync), so it resets on a new device.~~ Closed: a `recordRecentTool` op
   best-effort syncs each visit to the same `user_settings` row
   `favoriteTools` uses (`apps/debate-ai.com/app/api/settings/route.ts`,

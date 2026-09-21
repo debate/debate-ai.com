@@ -87,6 +87,11 @@ const QUICK_LINK_STYLES: Record<string, QuickLinkStyle> = {
     gradient: "from-yellow-500/20 via-amber-500/10 to-transparent",
     iconBg: "bg-yellow-500/15 ring-1 ring-yellow-500/30",
   },
+  statistics: {
+    logo: IconRoundsYoutube,
+    gradient: "from-rose-500/20 via-pink-500/10 to-transparent",
+    iconBg: "bg-rose-500/15 ring-1 ring-rose-500/30",
+  },
 };
 
 /**
@@ -106,6 +111,7 @@ const QUICK_LINK_ORDER = [
   "favorites",
   "dictionary",
   "rankings",
+  "statistics",
 ];
 
 const QUICK_LINKS: QuickLink[] = [...SIDEBAR_VIDEO_LINKS]

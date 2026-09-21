@@ -52,8 +52,9 @@ import {
   VulnerabilityChartsPanel,
   WordCountRoundsPanel,
 } from "debate-practice-rounds"
-import { CoachingProgramsPanel, PrepNotesPanel } from "debate-team-collaboration"
+import { CoachingProgramsPanel } from "debate-team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "debate-speech-writer"
+import { PrepNotesWithIdentity } from "../research/PrepNotesWithIdentity"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import type { FlowEdit } from "debate-round/src/flow/shared-flow-sync"
 import { panel, type HubSection } from "../hubs/hub-sections"
@@ -288,7 +289,7 @@ export function CoachHub() {
               <PreRoundBriefingsPanel />
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Prep Notes"]}>
-              <PrepNotesPanel />
+              <PrepNotesWithIdentity />
             </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Flow Annotations"]}>
               <FlowAnnotationsPanel />

@@ -126,4 +126,5 @@ export type CategoryType =
   /** The videos this browser (or account) has actually watched. */
   | "history"
   | "dictionary"
-  | "leaderboard";
+  | "leaderboard"
+  | "statistics";

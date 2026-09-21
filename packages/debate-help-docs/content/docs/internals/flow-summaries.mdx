@@ -277,6 +277,15 @@ is the app/page-layer wrapper that resolves the composition (calling
 cross-package split; `app/summaries/page.tsx` renders that wrapper instead of
 `FlowSummariesPanel` directly.
 
+The "Your name" form also takes an optional `signedInContributorId` prop
+(mirroring `PrepRoomPanel`'s identical convention) that prefills it from a
+real signed-in session — the wrapper resolves this via
+`deriveContributorIdFromSessionIdentity`, the same as
+`PrepNotesWithIdentity.tsx` does for `PrepNotesPanel`'s own reply field.
+Still a starting value only; typing over it is always respected. Closes
+`prep-notes.mdx`'s Known gaps entry noting this field had no link to a real
+identity.
+
 Vitest-covered in `packages/debate-round/test/strategy-sync-notes.test.ts`
 (`createRoundPrepNote`'s valid/blank-`roundId`/blank-`authorId`/blank-text/
 overlong-text cases, `isBoxAnchoredPrepNote`/`isRoundAnchoredPrepNote`,

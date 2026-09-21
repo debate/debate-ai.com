@@ -3,10 +3,11 @@
  *
  * Manages filter state, URL sync, and slug-based routing for the /videos and
  * /videos/[category] routes, pages videos in from `/api/videos` through
- * {@link useVideoFeed}, then delegates rendering to one of three branch views:
+ * {@link useVideoFeed}, then delegates rendering to one of four branch views:
  *
  * - {@link LeaderboardPanel} — when the active category is `"leaderboard"`
  * - {@link LecturesDictionaryView} — when the active category is `"dictionary"`
+ * - {@link StatisticsPage} — when the active category is `"statistics"`
  * - {@link LecturesVideoGridView} — for all lecture/video categories, the
  *   watch history (`"history"`) included: it is the same listing over an
  *   explicit id allow-list, the way My Favorites is.
@@ -32,6 +33,7 @@ import { SLUG_MAP } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
+import { StatisticsPage } from "./statistics/StatisticsPage"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -86,6 +88,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     if (view === "dictionary") return "dictionary"
     if (view === "topPicks") return "topPicks"
     if (view === "leaderboard") return "leaderboard"
+    if (view === "statistics") return "statistics"
     return "lectures"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -232,7 +235,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   }, [isHistory, watchHistory])
 
   const isVideoCategory =
-    state.currentCategory !== "leaderboard" && state.currentCategory !== "dictionary"
+    state.currentCategory !== "leaderboard" &&
+    state.currentCategory !== "dictionary" &&
+    state.currentCategory !== "statistics"
 
   // Hidden videos are a browser-local preference; an explicit search still
   // surfaces them, as it always has, so the deny-list is only sent while not
@@ -464,6 +469,14 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
           dictSearchTerm={dictSearchTerm}
           onDictSearchTermChange={setDictSearchTerm}
         />
+      </LecturesSidebarShell>
+    )
+  }
+
+  if (state.currentCategory === "statistics") {
+    return (
+      <LecturesSidebarShell {...sidebarShellProps} activeId="statistics">
+        <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
       </LecturesSidebarShell>
     )
   }

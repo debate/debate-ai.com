@@ -22,9 +22,13 @@ merges once against the account: any deck synced from another device but
 missing locally is adopted under its own id, and any deck that exists
 only on this device is best-effort pushed up — neither side ever
 overwrites the other, it only fills gaps. After the merge, every later
-deck create, rename, membership change, or delete mirrors itself to the
-account the same way. Signed out, or under the Electron desktop build,
-decks keep working exactly as before, purely on-device.
+deck create or delete mirrors itself to the account the same way; a rename
+or membership change instead sends one op
+(`addCardId`/`removeCardId`/`rename`, `PATCH /api/learn-decks/[deckId]`)
+per actual change, resolved against the account's current stored deck
+rather than a whole-deck replace — see **Known gaps**. Signed out, or
+under the Electron desktop build, decks keep working exactly as before,
+purely on-device.
 
 A deck's `cardIds` reference cards synced separately by
 [Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync); a
@@ -42,8 +46,25 @@ shape.
 
 ## Known gaps
 
-No optimistic-concurrency handling — editing the same deck (renaming it,
-or changing its members) from two signed-in devices at once has the last
-write win. No dedicated deck-management UI shows a per-deck sync status
-yet; decks are currently created/edited from the home screen's scope
-picker, which has no sync indicator.
+- ~~No optimistic-concurrency handling — editing the same deck (renaming
+  it, or changing its members) from two signed-in devices at once has the
+  last write win.~~ **Fixed:** `LearnDecksSync#pushDeckChange`
+  (`learn-decks-sync.ts`) now diffs the previous vs. current deck and sends
+  one op per actual change — `addCardId`/`removeCardId` per card,
+  `rename` for a name change — instead of the whole `{name, cardIds}`
+  snapshot it used to push. `PATCH /api/learn-decks/[deckId]` resolves
+  each op against the row's *current* stored deck (read-then-write) via
+  `applyLearnDeckOp` (`debate-editor`'s `learn-deck-op.ts`), the same
+  shape `/api/settings`'s `favoriteTools`/`wordLimitPresets`/
+  `outlineFilterPresets`/`savedArgumentCollections` ops already use — so
+  two devices adding, removing, or renaming at once can no longer drop
+  each other's change. A brand-new deck still pushes in full (there is no
+  row to race against yet); if an op 404s — this deck's own create push
+  hasn't landed yet — `pushDeckChange` falls back to a full `PUT`, which
+  also covers every pending change in one call. `PUT` itself is unchanged
+  and still accepted for a caller that genuinely needs a whole-deck
+  replace, but nothing in this app sends one for a rename or membership
+  change anymore.
+- No dedicated deck-management UI shows a per-deck sync status yet; decks
+  are currently created/edited from the home screen's scope picker, which
+  has no sync indicator.

@@ -31,6 +31,13 @@
  * rolls back the local change, which is already the source of truth for
  * this browser. Electron keeps its existing main-process-file backend
  * untouched — this sync layer only runs in the web branch.
+ *
+ * A per-record push (`pushToAccount`, below) can also hit a stale-write
+ * conflict (`hasQuickCardSaveConflict`) when another device already saved a
+ * newer edit of the same card: the account rejects the write (409) instead
+ * of silently losing that newer edit, and this browser adopts the returned
+ * newer version into its own local library rather than leaving the two out
+ * of sync.
  */
 
 import { getElectronHost } from './host/index.js';
@@ -211,11 +218,27 @@ export class QuickCardsStore {
     const remoteIds = new Set(remote.map((c) => c.id));
     for (const local of this.cards) {
       if (!remoteIds.has(local.id)) {
-        void saveQuickCardToAccount(local).catch(() => {
+        void this.pushToAccount(local).catch(() => {
           // Best-effort — this card stays local-only until a later
           // successful sync (e.g. the next mutation or app load).
         });
       }
+    }
+  }
+
+  /** Pushes a card to the account; on a stale-write conflict (409 — the
+   *  account already has a newer edit of this card from another device),
+   *  adopts that newer version into the local store instead of silently
+   *  losing it, extending `mergeRemote`'s "remote can fill gaps" rule to
+   *  "remote wins when it's genuinely newer." Otherwise best-effort: a
+   *  failed push (network error, any other failure) never blocks or rolls
+   *  back the local change the caller already applied. */
+  private async pushToAccount(card: QuickCard): Promise<void> {
+    const result = await saveQuickCardToAccount(card);
+    if (result.conflict) {
+      this.cards = [...this.cards.filter((c) => c.id !== result.current.id), result.current];
+      void webLibrary.save(this.cards);
+      this.fire();
     }
   }
 
@@ -244,7 +267,7 @@ export class QuickCardsStore {
     } else {
       void webLibrary.save(this.cards);
       if (this.remoteAvailable) {
-        void saveQuickCardToAccount(card).catch(() => {
+        void this.pushToAccount(card).catch(() => {
           // Best-effort — already saved locally above.
         });
       }
@@ -263,7 +286,7 @@ export class QuickCardsStore {
       void webLibrary.save(this.cards);
       if (this.remoteAvailable) {
         for (const card of cards) {
-          void saveQuickCardToAccount(card).catch(() => {
+          void this.pushToAccount(card).catch(() => {
             // Best-effort, same as upsert above.
           });
         }
@@ -352,6 +375,20 @@ function readLegacyLocalCards(): QuickCard[] {
   } catch {
     return [];
   }
+}
+
+/**
+ * Optimistic-concurrency check for `PUT /api/quick-cards/[cardId]`: is an
+ * incoming background sync about to clobber a genuinely newer edit made
+ * from another signed-in device? Compares each side's own `updatedAt`
+ * (already carried on every `QuickCard`) rather than requiring a separate
+ * baseline/force round-trip like `savedFlows.ts#hasFlowSaveConflict` —
+ * quick-card sync is an automatic per-mutation push (see the module doc's
+ * "Account sync" section), not an explicit save action with a "last loaded
+ * version" for the caller to track.
+ */
+export function hasQuickCardSaveConflict(current: QuickCard, incoming: QuickCard): boolean {
+  return current.updatedAt > incoming.updatedAt;
 }
 
 /**

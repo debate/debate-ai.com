@@ -1,29 +1,16 @@
 /**
  * @fileoverview The canonical address of a video: `/videos/<season>/<event>/<matchup>`.
  *
- * The first address a video had was `/videos/watch/<title-slug>-<id>`, which
- * put the whole title in one flat segment. That reads as a page title, not as
- * a place in an archive: nothing in it says which season, tournament or format
- * the round belongs to, two rounds of the same bracket share no prefix, and a
- * reader cannot shorten the URL to see what else is there.
- *
- * The shape here is the one an archive wants, coarse to fine:
- *
- * ```
- * /videos/2006/college-ndt/northwestern-vs-michigan-state-finals-dQw4w9WgXcQ
- *         ^season  ^format-tournament  ^who debated, which round, and the id
- * ```
- *
- * Only the trailing 11-character id identifies the video — the same rule
- * {@link parseVideoWatchSlug} already enforces for the old flat slug, and the
- * reason a retitled video, a corrected team name or a re-tagged tournament
- * never breaks a link that is already out in the world. Everything before the
- * id is for readers and for search engines, so the route re-derives the
- * canonical path and redirects when what was asked for no longer matches.
+ * The three segments are coarse-to-fine, which is what the old flat
+ * `/videos/watch/<title-slug>` could never be: the season, then the format
+ * and tournament, then who debated and which round. Every segment is for
+ * readers and for search engines, and is re-derived on every request so a
+ * corrected team name or a re-tagged tournament redirects to the
+ * current address instead of leaving two indexable URLs for one video.
  * @module lib/video-route
  */
 
-import { parseVideoWatchSlug, slugifyVideoTitle } from "./video-slug";
+import { slugifyVideoTitle } from "./video-slug";
 import type { DebateStyle, VideoType } from "../types/videos";
 
 /** URL word for each numeric debate style. */
@@ -138,12 +125,14 @@ export function eventSegment(parts: VideoRouteParts): string {
 }
 
 /**
- * The matchup segment, ending in the video id.
+ * The matchup segment, naming who debated and which round.
  *
  * Teams first, then the round, then the arguments that were run — each only
  * while the segment has room for it. A video with no teams recorded (a
  * lecture, or a round nobody has tagged yet) falls back to its title, which
  * is what the old flat slug carried and is still better than a bare id.
+ *
+ * The video id is no longer appended — clean URLs are the point.
  */
 export function matchupSegment(parts: VideoRouteParts): string {
   const pieces: string[] = [];
@@ -168,8 +157,7 @@ export function matchupSegment(parts: VideoRouteParts): string {
   add(parts.arg1ac);
   add(parts.arg2nr);
 
-  const described = pieces.join("-") || slugifyVideoTitle(parts.title);
-  return described ? `${described}-${parts.videoId}` : parts.videoId;
+  return pieces.join("-") || slugifyVideoTitle(parts.title) || "video";
 }
 
 /** Builds all three segments of a video's canonical path. */
@@ -185,7 +173,7 @@ export function videoRouteSegments(parts: VideoRouteParts): VideoRouteSegments {
  * Builds a video's canonical path.
  *
  * @param video - The video, as a tuple or as named parts.
- * @returns e.g. `/videos/2006/college-ndt/northwestern-vs-michigan-state-finals-dQw4w9WgXcQ`.
+ * @returns e.g. `/videos/2006/college-ndt/northwestern-vs-michigan-state-finals`.
  */
 export function videoRouteHref(video: VideoType | VideoRouteParts): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
@@ -194,17 +182,17 @@ export function videoRouteHref(video: VideoType | VideoRouteParts): string {
 }
 
 /**
- * Reads the video id back out of a canonical path's last segment.
+ * Reads the matchup segment back from a canonical path.
  *
- * Delegates to the flat slug's parser: both shapes end in `-<id>`, and the
- * id is read from the end rather than by splitting, because YouTube ids may
- * themselves contain `-`.
+ * The URL no longer carries a video id, so the matchup segment
+ * is returned as-is for use as a lookup key.
  *
  * @param matchup - The `[matchup]` route segment.
- * @returns The YouTube video id, or `null` when the segment carries none.
+ * @returns The matchup segment, or `null` when absent.
  */
 export function parseVideoRouteMatchup(matchup: string | null | undefined): string | null {
-  return parseVideoWatchSlug(matchup);
+  if (!matchup) return null;
+  return matchup.trim().replace(/\/+$/, "");
 }
 
 /**

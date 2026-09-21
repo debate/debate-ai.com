@@ -136,5 +136,5 @@ includes an in-round speech recorder with mic selection, live waveform, and play
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
 persistent YouTube player with picture-in-picture, a per-video watch page at
-`/videos/watch/<title-slug>-<videoId>` (player, synced transcript, related videos),
+`/videos/watch/<title-slug>` (player, synced transcript, related videos),
 lecture pages, and rankings leaderboards.

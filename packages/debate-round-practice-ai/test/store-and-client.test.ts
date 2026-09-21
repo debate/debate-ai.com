@@ -151,40 +151,50 @@ describe("createInMemoryDebateStore", () => {
 
   it("applies an award to the profile", async () => {
     const store = createInMemoryDebateStore();
-    await store.applyGamificationAward?.(
-      "u1",
-      { points: 10, action: "win", badgesAwarded: ["First Win"], newScore: 10 },
-      { debateType: "user_vs_bot", topic: "t", result: "win" },
-    );
+    const award = await store.applyGamificationAward?.("u1", {
+      debateType: "user_vs_bot",
+      topic: "t",
+      result: "win",
+    });
 
+    expect(award).toMatchObject({ points: 50, newScore: 50 });
     expect(await store.getGamificationProfile?.("u1")).toMatchObject({
-      score: 10,
-      badges: ["First Win"],
+      score: 50,
+      badges: ["FirstWin", "Novice"],
     });
   });
 
-  it("accumulates badges across rounds", async () => {
+  it("accumulates score across rounds without duplicating badges", async () => {
     const store = createInMemoryDebateStore();
     const context = {
       debateType: "user_vs_bot",
       topic: "t",
       result: "win" as const,
     };
-    await store.applyGamificationAward?.(
-      "u1",
-      { points: 10, action: "win", badgesAwarded: ["First Win"], newScore: 10 },
-      context,
-    );
-    await store.applyGamificationAward?.(
-      "u1",
-      { points: 10, action: "win", badgesAwarded: ["Streak"], newScore: 20 },
-      context,
-    );
+    await store.applyGamificationAward?.("u1", context);
+    await store.applyGamificationAward?.("u1", context);
 
     expect(await store.getGamificationProfile?.("u1")).toMatchObject({
-      score: 20,
-      badges: ["First Win", "Streak"],
+      score: 100,
+      badges: ["FirstWin", "Novice"],
     });
+  });
+
+  it("keeps both rounds' points when a profile fetched earlier is never handed back in (the lost-update race this closes)", async () => {
+    const store = createInMemoryDebateStore();
+
+    // Mirrors the historical bug: something reads the profile long before
+    // either round's award is applied. The new `applyGamificationAward`
+    // signature takes no award/profile parameter at all, so there is no way
+    // for that earlier read to leak into the write — each call re-reads the
+    // stored profile itself immediately before writing.
+    const staleProfile = await store.getGamificationProfile?.("u1");
+    expect(staleProfile?.score).toBe(0);
+
+    await store.applyGamificationAward?.("u1", { debateType: "user_vs_bot", topic: "Round A", result: "win" });
+    await store.applyGamificationAward?.("u1", { debateType: "user_vs_bot", topic: "Round B", result: "loss" });
+
+    expect(await store.getGamificationProfile?.("u1")).toMatchObject({ score: 60 });
   });
 });
 

@@ -42,6 +42,7 @@ import {
   type VideoIndexResponse,
 } from "debate-data-sync/src/videos/video-index";
 import { getVideoRowsFromJson } from "./video-json-source";
+import { slugifyVideoTitle } from "debate-videos";
 
 /** Which backend answered a request — surfaced for debugging. */
 export type VideoBackend = "sql" | "json";
@@ -596,6 +597,93 @@ const TUPLE = { videoId: 0, title: 1, style: 6, tournament: 7 } as const;
 export async function getVideoById(videoId: string): Promise<VideoTuple | null> {
   const page = await getVideoPage({ source: "all", ids: [videoId], limit: 1, offset: 0 });
   return page.videos[0] ?? null;
+}
+
+/**
+ * Fetches a single video by its watch-page slug.
+ *
+ * The slug is the slugified title (`slugifyVideoTitle`), so this searches
+ * the library and verifies the match by rebuilding the slug from each
+ * candidate's title — exact match on first hit.
+ *
+ * @param slug - The watch-page slug from the URL.
+ * @returns The video in UI tuple form, or `null` when no video's title
+ *   slugifies to the given slug.
+ */
+export async function getVideoBySlug(slug: string): Promise<VideoTuple | null> {
+  const page = await getVideoPage({ source: "all", q: slug, limit: 50, offset: 0 });
+  return page.videos.find((v) => slugifyVideoTitle(v[1] as string) === slug) ?? null;
+}
+
+/**
+ * Fetches a single video by its canonical route segments.
+ *
+ * Uses the segments as a search query, then verifies the match by
+ * rebuilding the canonical path from each candidate — exact match
+ * on first hit.
+ *
+ * @param season - The season segment, e.g. `"2006"`.
+ * @param event - The event segment, e.g. `"college-ndt"`.
+ * @param matchup - The matchup segment (without video id).
+ * @returns The video in UI tuple form, or `null` when no video's
+ *   canonical path matches all three segments.
+ */
+export async function getVideoByRouteSlug(
+  season: string,
+  event: string,
+  matchup: string,
+): Promise<VideoTuple | null> {
+  const query = `${season} ${event} ${matchup}`;
+  const page = await getVideoPage({ source: "all", q: query, limit: 50, offset: 0 });
+  const target = `/videos/${season}/${event}/${matchup}`;
+  return page.videos.find((v) => videoRouteHrefInternal(v) === target) ?? null;
+}
+
+/** Rebuilds the canonical path from a video tuple without the debate-videos package. */
+function videoRouteHrefInternal(video: VideoTuple): string {
+  const parts = {
+    videoId: video[0] as string,
+    title: video[1] as string,
+    date: video[2] as string | undefined,
+    style: video[6],
+    tournament: video[7] as string | null | undefined,
+    roundLevel: video[8] as string | null | undefined,
+    affTeam: video[9] as string | null | undefined,
+    negTeam: video[10] as string | null | undefined,
+    arg1ac: video[13] as string | null | undefined,
+    arg2nr: video[14] as string | null | undefined,
+    seasonYear: video[17] as number | null | undefined,
+  };
+  const season = parts.seasonYear && Number.isFinite(parts.seasonYear) && parts.seasonYear > 1900
+    ? String(Math.trunc(parts.seasonYear))
+    : (() => {
+        const year = parts.date ? new Date(parts.date).getUTCFullYear() : Number.NaN;
+        return Number.isFinite(year) && year > 1900 ? String(year) : "archive";
+      })();
+  const styleSlug = typeof parts.style === "number" ? { 1: "policy", 2: "pf", 3: "ld", 4: "college" }[parts.style as number] : undefined;
+  const categorySlug = typeof parts.style === "string" ? slugifyVideoTitle(parts.style) : "";
+  const tournamentSlug = parts.tournament ? slugifyVideoTitle(parts.tournament.replace(/^\s*(19|20)\d{2}\s+/, "").trim()) : "";
+  const event = styleSlug && tournamentSlug ? `${styleSlug}-${tournamentSlug}` : tournamentSlug || styleSlug || categorySlug || "library";
+  const pieces: string[] = [];
+  let length = 0;
+  const add = (value: string | null | undefined) => {
+    const slug = slugifyVideoTitle(value ?? "");
+    if (!slug) return;
+    const cost = slug.length + (pieces.length > 0 ? 1 : 0);
+    if (length + cost > 90) return;
+    pieces.push(slug);
+    length += cost;
+  };
+  if (parts.affTeam && parts.negTeam) {
+    add(`${parts.affTeam} vs ${parts.negTeam}`);
+  } else {
+    add(parts.affTeam ?? parts.negTeam);
+  }
+  add(parts.roundLevel);
+  add(parts.arg1ac);
+  add(parts.arg2nr);
+  const described = pieces.join("-") || slugifyVideoTitle(parts.title) || "video";
+  return `/videos/${season}/${event}/${described}`;
 }
 
 /**
