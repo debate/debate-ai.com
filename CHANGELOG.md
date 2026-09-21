@@ -1,6 +1,72 @@
 
 ### Completed
 
+- **🔐 Fix the guest sign-in prompt's 30-minute cooldown resetting on a new
+  tab.** Another repeat of the standing autonomous-routine prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all linked
+  to `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. Went looking for a still-open,
+  one-PR-sized gap in the tool/account-linking system these entries keep
+  auditing rather than re-auditing the whole thing from scratch, and found
+  one explicitly flagged but never actually fixed:
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+  Known gaps said the guest sign-in prompt's 30-minute per-feature cooldown
+  "lives in `sessionStorage`, so a user who dismisses a prompt without
+  opting out entirely is asked again about that feature in a new tab" — and
+  `components/layout/SignInPromptProvider.tsx` still read and wrote
+  `sessionStorage` directly, unchanged. `lib/sign-in-prompt-preference.ts`
+  (the separate, permanent "don't ask me again" opt-out next to it) even
+  already carried a doc comment describing this exact fix as still to do.
+
+  Extracted the cooldown's read/mark logic out of the provider into its own
+  `apps/debate-ai.com/lib/sign-in-prompt-cooldown.ts`
+  (`wasSignInPromptShownRecently` / `markSignInPromptShown` /
+  `PROMPT_COOLDOWN_MS`), mirroring `sign-in-prompt-preference.ts`'s shape —
+  same guard rails (no-op and never throws with no `localStorage`, swallows
+  a write failure) — and switched its backing store from `sessionStorage` to
+  `localStorage`, which a browser shares across tabs. The 30-minute window
+  itself is unchanged; only the "which tab remembers it" scope moved, same
+  as the opt-out it now sits next to. `SignInPromptProvider.tsx` dropped its
+  own inline `PROMPT_COOLDOWN_MS`/`DISMISSED_KEY`/`readShown`/`markShown` in
+  favour of the two new functions — no behavior change to the dialog itself,
+  the opt-out check, or the "still saves locally either way" guarantee the
+  rest of that flow already had.
+
+  Vitest-covered: `apps/debate-ai.com/lib/__tests__/sign-in-prompt-cooldown.test.ts`
+  (12 cases) — unshown defaults to false, true immediately after marking and
+  up to (not including) the cooldown boundary, false once the window has
+  fully elapsed, a value written for one feature is visible to a fresh call
+  for that same feature with no in-memory state carried over (standing in
+  for "a second tab", since `localStorage` in a unit test is only ever one
+  object anyway), each feature tracked independently without clobbering
+  another's cooldown, re-marking a feature restarts its window, and the same
+  never-throws-with-no/refusing-`localStorage` guarantees
+  `sign-in-prompt-preference.test.ts` already pins for its sibling module.
+  Updated `tool-data-sync.mdx`'s Known gaps entry to a struck-through
+  **Fixed** note (matching this doc's own convention for closed gaps),
+  its "Telling a guest" section's description of the cooldown, and
+  `sign-in-prompt-preference.ts`'s doc comment, which had described the
+  `sessionStorage` version as the current state rather than as the thing it
+  was proposing to fix.
+
+  Ran the full verification gate: `bun install`, the root `bun run test`
+  (504 files, 9406 tests passing, 12 new), `bun run typecheck` (17/17
+  packages green, `debate-help-docs`'s MDX build included), and `bun run
+  build` (production build; `apps/debate-ai.com` built clean, service worker
+  generated). No `lint`/`format:check` script exists anywhere in this repo,
+  so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the two other Known gaps this same doc
+  section still lists — sync running once per tab with no live push channel,
+  and per-user rather than per-team sharing for judge profiles / prep notes —
+  are each a small design decision or a sync-layer change, not a
+  drop-in fix like this one, and neither was touched.
+
 - **📇 Sync CardMirror's Learn review log to the account, and give it its
   first user-facing surface.** Another repeat of the standing
   autonomous-routine prompt ("integrate all the tools into the UI...
