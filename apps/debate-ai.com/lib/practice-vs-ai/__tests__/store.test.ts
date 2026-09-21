@@ -46,6 +46,7 @@ async function freshDb() {
       quest_streak_sync TEXT,
       qualification_points_table TEXT,
       qualification_cutoff TEXT,
+      brainstorm_session_timer TEXT,
       practice_vs_ai_score INTEGER,
       practice_vs_ai_badges TEXT,
       created_at INTEGER NOT NULL DEFAULT (unixepoch()),

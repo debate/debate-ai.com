@@ -60,6 +60,18 @@ export function loadBrainstormSessionTimer(): BrainstormSessionTimerState {
   return readState();
 }
 
+/**
+ * Overwrites the persisted session timer with `state` as-is, bypassing every
+ * pure transition — used only by `hooks/useBrainstormSessionTimerSync.ts` to
+ * adopt a value fetched from the account, which is already a complete,
+ * validated `BrainstormSessionTimerState` rather than something derived from
+ * the current local state.
+ */
+export function adoptBrainstormSessionTimer(state: BrainstormSessionTimerState): BrainstormSessionTimerState {
+  writeState(state);
+  return state;
+}
+
 /** Starts (or resumes) the persisted session timer; see `startBrainstormSessionTimer`. */
 export function startSessionTimer(now: number = Date.now()): BrainstormSessionTimerState {
   const next = startBrainstormSessionTimer(readState(), now);

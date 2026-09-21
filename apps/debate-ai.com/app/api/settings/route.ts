@@ -52,10 +52,15 @@ import {
   type QuestStreakSyncPayload,
 } from "debate-community"
 import {
+  DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC,
   DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
+  normalizeBrainstormSessionTimerPatch,
   normalizeResearchProgressGoalPatch,
+  parseBrainstormSessionTimer,
   parseResearchProgressGoal,
+  serializeBrainstormSessionTimer,
   serializeResearchProgressGoal,
+  type BrainstormSessionTimerSyncPayload,
   type ResearchProgressGoalSyncPayload,
 } from "debate-team-collaboration"
 import {
@@ -118,7 +123,7 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   addSavedArgumentCollection?, removeSavedArgumentCollection?,
  *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
  *   researchProgressGoal?, questStreakSync?, qualificationPointsTable?,
- *   qualificationCutoff? } — validates and
+ *   qualificationCutoff?, brainstormSessionTimer? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
@@ -132,11 +137,16 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   and `debate-data-sync`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
- *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps), the same option
+ *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps),
+ *   and `debate-team-collaboration`'s `normalizeBrainstormSessionTimerPatch`
+ *   (Team Brainstorm Assist's session timer — see
+ *   `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
+ *   Known gaps), the same option
  *   lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
- *   collections", Research Progress "My research goal", and Quest Streaks
- *   reminder/freeze UIs themselves use), returning the resulting full
+ *   collections", Research Progress "My research goal", Quest Streaks
+ *   reminder/freeze, and Team Brainstorm Assist session-timer UIs themselves
+ *   use), returning the resulting full
  *   settings row. `addFavoriteTool`/`removeFavoriteTool`/`removeFavoriteTools`
  *   resolve a single star/unstar, or a batch prune, against the row's
  *   *current* stored `favoriteTools` value (read-then-write, like the
@@ -227,6 +237,7 @@ type SettingsRow = {
   questStreakSync: string | null
   qualificationPointsTable: string | null
   qualificationCutoff: string | null
+  brainstormSessionTimer: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -244,6 +255,7 @@ type SettingsPayload = UserSettingsPayload & {
   questStreakSync: QuestStreakSyncPayload | null
   qualificationPointsTable: QualificationPointsTable | null
   qualificationCutoff: QualificationCutoffSettings | null
+  brainstormSessionTimer: BrainstormSessionTimerSyncPayload | null
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -278,6 +290,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     qualificationCutoff: row?.qualificationCutoff
       ? parseQualificationCutoff(row.qualificationCutoff)
       : DEFAULT_QUALIFICATION_CUTOFF_SYNC.qualificationCutoff,
+    brainstormSessionTimer: row?.brainstormSessionTimer
+      ? parseBrainstormSessionTimer(row.brainstormSessionTimer)
+      : DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC.brainstormSessionTimer,
   }
 }
 
@@ -326,6 +341,7 @@ export async function PUT(req: NextRequest) {
   const newsLikedOpResult = normalizeNewsLikedOpPatch(body)
   const qualificationPointsTableResult = normalizeQualificationPointsTablePatch(body)
   const qualificationCutoffResult = normalizeQualificationCutoffPatch(body)
+  const brainstormSessionTimerResult = normalizeBrainstormSessionTimerPatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
@@ -351,6 +367,7 @@ export async function PUT(req: NextRequest) {
     ...newsLikedOpResult.errors,
     ...qualificationPointsTableResult.errors,
     ...qualificationCutoffResult.errors,
+    ...brainstormSessionTimerResult.errors,
     ...editorPreferencesResult.errors,
   ]
 
@@ -382,6 +399,7 @@ export async function PUT(req: NextRequest) {
     questStreakReminderOpResult.valid.setLapseReminderEnabled === undefined &&
     qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
     qualificationCutoffResult.valid.qualificationCutoff === undefined &&
+    brainstormSessionTimerResult.valid.brainstormSessionTimer === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     newsReadOpResult.valid.recordNewsRead === undefined &&
     newsLikedOpResult.valid.addNewsLiked === undefined &&
@@ -391,7 +409,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, qualificationPointsTable, qualificationCutoff, brainstormSessionTimer, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -416,6 +434,7 @@ export async function PUT(req: NextRequest) {
     questStreakSync?: string | null
     qualificationPointsTable?: string | null
     qualificationCutoff?: string | null
+    brainstormSessionTimer?: string | null
   } = { ...valid }
   if (
     favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
@@ -608,6 +627,11 @@ export async function PUT(req: NextRequest) {
   }
   if (qualificationCutoffResult.valid.qualificationCutoff !== undefined) {
     dbPatch.qualificationCutoff = serializeQualificationCutoff(qualificationCutoffResult.valid.qualificationCutoff)
+  }
+  if (brainstormSessionTimerResult.valid.brainstormSessionTimer !== undefined) {
+    dbPatch.brainstormSessionTimer = serializeBrainstormSessionTimer(
+      brainstormSessionTimerResult.valid.brainstormSessionTimer,
+    )
   }
   if (newsReadOpResult.valid.recordNewsRead !== undefined) {
     // A single mark-read op is resolved against the row's *current* stored

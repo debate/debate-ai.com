@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  adoptBrainstormSessionTimer,
   loadBrainstormSessionTimer,
   pauseSessionTimer,
   resetSessionTimer,
@@ -93,5 +94,24 @@ describe("setSessionTimerDuration", () => {
     startSessionTimer(now);
     setSessionTimerDuration(600);
     expect(loadBrainstormSessionTimer().durationSeconds).toBe(DEFAULT_BRAINSTORM_SESSION_TIMER_SECONDS);
+  });
+});
+
+describe("adoptBrainstormSessionTimer", () => {
+  it("overwrites the persisted timer with the given state as-is", () => {
+    const remote = { durationSeconds: 900, status: "paused" as const, endsAt: null, remainingSecondsWhenPaused: 300 };
+    const adopted = adoptBrainstormSessionTimer(remote);
+
+    expect(adopted).toEqual(remote);
+    expect(loadBrainstormSessionTimer()).toEqual(remote);
+  });
+
+  it("overwrites even an in-progress local timer — callers gate that decision themselves", () => {
+    startSessionTimer(1_700_000_000_000);
+    const remote = createBrainstormSessionTimer(600);
+
+    adoptBrainstormSessionTimer(remote);
+
+    expect(loadBrainstormSessionTimer()).toEqual(remote);
   });
 });

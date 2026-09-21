@@ -83,10 +83,17 @@
  * a squad-wide countdown (duration preset, Start/Pause/Reset) a moderator can
  * run to time-box a sprint before reviewing boards, backed by
  * `lib/brainstorm-session-timer.ts`'s pure state machine through
- * `state/brainstormSessionTimer.ts`'s persistence wrapper. It's a single
- * `localStorage`-backed record (not per-board), refreshed once a second while
- * running and by the same `storage`-event listener as the boards above, so a
- * countdown started in one tab is visible — live — in every other open tab.
+ * `state/brainstormSessionTimer.ts`'s persistence wrapper via
+ * `hooks/useBrainstormSessionTimerSync.ts`. It's a single `localStorage`-backed
+ * record (not per-board), refreshed once a second while running and by the
+ * same `storage`-event listener as the boards above, so a countdown started
+ * in one tab is visible — live — in every other open tab; when
+ * `signedInContributorId` is set, that hook also mirrors it onto the
+ * account, so it's visible across devices too, closing
+ * `brainstorm-board.mdx`'s Known gaps entry "The session timer is
+ * `localStorage`-only, not account-synced." (never adopting a remote value
+ * while the local timer is running or paused, so a stale fetch can't stomp a
+ * countdown already in progress in this browser).
  *
  * Each idea's rank badge (🏆 #1 / 🥈 #2 / 🥉 #3 / plain #N, via
  * `lib/team-brainstorm-assist.ts`'s `buildBrainstormIdeaRankBadge`) and the
@@ -117,15 +124,8 @@ import {
   formatBrainstormSessionTimerRemaining,
   getBrainstormSessionTimerRemainingSeconds,
   isBrainstormSessionTimerExpired,
-  type BrainstormSessionTimerState,
 } from "../lib/brainstorm-session-timer"
-import {
-  loadBrainstormSessionTimer,
-  pauseSessionTimer,
-  resetSessionTimer,
-  setSessionTimerDuration,
-  startSessionTimer,
-} from "../state/brainstormSessionTimer"
+import { useBrainstormSessionTimerSync } from "../hooks/useBrainstormSessionTimerSync"
 import { Badge } from "debate-research-evidence/src/ui/primitives/badge"
 import { Button } from "debate-research-evidence/src/ui/primitives/button"
 import { Input } from "debate-research-evidence/src/ui/primitives/input"
@@ -222,7 +222,14 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   const [sendDraft, setSendDraft] = useState<{ topic: string; caseArea: string }>({ topic: "", caseArea: "" })
   const [sendError, setSendError] = useState<string | null>(null)
   const [sentIdeaIds, setSentIdeaIds] = useState<Set<string>>(new Set())
-  const [timer, setTimer] = useState<BrainstormSessionTimerState | null>(null)
+  const {
+    timer,
+    reload: reloadTimer,
+    start: startTimer,
+    pause: pauseTimer,
+    reset: resetTimer,
+    setDuration: setTimerDuration,
+  } = useBrainstormSessionTimerSync(signedInContributorId)
   const [timerNow, setTimerNow] = useState(() => Date.now())
   const [bumpedIdeaId, setBumpedIdeaId] = useState<string | null>(null)
   const bumpTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -239,7 +246,6 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     const initialBoards = buildBrainstormBoardsPanelView()
     setBoards(initialBoards)
     setSentIdeaIds(computeSentIdeaIds(initialBoards))
-    setTimer(loadBrainstormSessionTimer())
   }, [])
 
   /** Ticks the displayed remaining time once a second while the session timer is running. */
@@ -273,7 +279,7 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
     const handleStorage = (event: StorageEvent) => {
       if (!isBrainstormBoardLiveUpdateStorageEvent(event)) return
       refresh(topic)
-      setTimer(loadBrainstormSessionTimer())
+      reloadTimer()
     }
     window.addEventListener("storage", handleStorage)
     return () => window.removeEventListener("storage", handleStorage)
@@ -417,12 +423,12 @@ export function BrainstormBoardPanel({ signedInContributorId }: BrainstormBoardP
   }
 
   const handleStartTimer = () => {
-    setTimer(startSessionTimer())
+    startTimer()
     setTimerNow(Date.now())
   }
-  const handlePauseTimer = () => setTimer(pauseSessionTimer())
-  const handleResetTimer = () => setTimer(resetSessionTimer())
-  const handleSetTimerDuration = (durationSeconds: number) => setTimer(setSessionTimerDuration(durationSeconds))
+  const handlePauseTimer = () => pauseTimer()
+  const handleResetTimer = () => resetTimer()
+  const handleSetTimerDuration = (durationSeconds: number) => setTimerDuration(durationSeconds)
 
   if (boards === null) {
     return <div className="p-6 text-sm text-muted-foreground">Loading brainstorm boards…</div>
