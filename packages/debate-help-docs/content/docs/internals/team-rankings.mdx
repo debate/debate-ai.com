@@ -42,8 +42,10 @@ forgiving keys:
 2. **LD only:** DebateDrills folds the debater's initials into the team name
    where TOC keeps them in a separate `students` field, so the initials are
    appended before matching (`Harker` + `Ada Lovelace` → `harker al`).
-3. **PF only:** the two partners' initials are not always in the same order,
-   so `Strake Jesuit MS` is also tried as `Strake Jesuit SM`.
+3. **PF only:** partners' initials are not always listed in the same order,
+   so a trailing 2-or-3-letter initials block is also tried under every other
+   ordering — `Strake Jesuit MS` as `Strake Jesuit SM`, or a 3-initial
+   `Strake Jesuit MJS` as each of its other five orderings.
 
 A row that matches nothing is returned **unchanged** rather than dropped: a
 partial or empty Elo dataset costs you the Elo column, not the leaderboard.
@@ -120,10 +122,17 @@ empty table with no explanation — the error state existed but was unreachable.
   each page load costs two third-party round trips and the endpoint is only as
   fast and as available as they are.
 - The name join is exact-match-after-normalization plus two hand-written
-  special cases. A school that renames itself mid-season, or a partnership
-  listed with three initials, silently loses its Elo column. (An earlier
-  revision mentioned a Fuse.js fuzzy fallback; there is none — the
-  `LeaderboardEntry` simply comes back without `debateElo`.)
+  special cases. A school that renames itself mid-season still silently loses
+  its Elo column — there is no Fuse.js-style fuzzy fallback for that, and the
+  `LeaderboardEntry` simply comes back without `debateElo`.
+- ~~A partnership listed with three initials silently loses its Elo column:
+  `swapTrailingInitials` only ever tried the one reversal of a two-letter
+  suffix.~~ **Fixed:** `trailingInitialsVariants` (same file) generalizes this
+  to every other ordering of a 2-or-3-letter trailing initials block — one
+  variant for two letters (unchanged), the other five orderings for three —
+  so a PF partnership like "Strake Jesuit MJS" still matches "Strake Jesuit
+  SMJ" on the other source. A block outside that 2-3 length range still
+  doesn't match, same as before.
 - `CURRENT_YEAR` is hardcoded. Each new season needs it bumped, or `/rank`
   serves the new year from the historical Elo-only path.
 - NDT has no bid-list or Elo data source (`DIVISION_CONFIG`'s
