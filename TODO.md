@@ -17,6 +17,50 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧭 Editor Workspace menu now records a "Recent" tools visit.**
+  `command-palette.mdx`'s Known gaps named the editor's own Workspace menu
+  (and its palette's `t`-prefix results) as the last unclosed gap in
+  "Recent" tracking every way a tool gets opened — `/tools`' grid cards and
+  favorites chips already went through `RecordVisitLink`, but navigating
+  away from the Reason Editor didn't record anything.
+
+  New `recordWorkspaceVisit` (`packages/debate-editor/src/editor/recent-tools.ts`)
+  mirrors `apps/debate-ai.com`'s `lib/recentTools.ts`/`useRecentTools.ts`
+  `localStorage` shape (`recent-tools`, capped at 5, most-recent-first, same
+  `recent-tools-changed` same-tab event) and `saveRecentToolOp`'s
+  `PUT /api/settings` `{ recordRecentTool }` op — `debate-editor` has no
+  dependency on the app or on `debate-round` (which owns `isValidToolHref`),
+  so this is a package-local mirror rather than an import, and skips that
+  validation since every `WORKSPACE_LINKS` href is already a hardcoded,
+  guarded-valid in-app path. Wired into both places `debate-editor`
+  navigates to a `WORKSPACE_LINKS` href before a full-page
+  `window.location.assign`: `MenuBar.tsx`'s Workspace category and
+  `quick-card-search-ui.ts`'s `t`-prefix tool results. The account-sync
+  fetch uses `keepalive: true` since the impending navigation could
+  otherwise cut an in-flight request off before it reaches the server.
+  Best-effort throughout — a signed-out `401`, offline, or a
+  blocked/quota-full `localStorage` never throws or blocks the navigation.
+
+  Vitest-covered: `packages/debate-editor/test/recent-tools.test.ts` (new) —
+  first visit, promoting a repeat to the front without duplicating it, the
+  5-entry cap, a no-op write when already most-recent, tolerating malformed
+  stored JSON, the same-tab change event, the exact `PUT` call shape, and
+  that neither an async-rejected nor a synchronously-throwing `fetch` ever
+  propagates out of the call.
+
+  Ran the full verification gate: `bun install`; `packages/debate-editor`'s
+  own `bunx vitest run` (39 files, 832 tests) and `bunx tsc --noEmit`
+  (clean); `bun run test` (491 files, 9255 tests passing, repo-wide);
+  `bunx turbo run typecheck` (17/17 packages green); and `bun run build:web`
+  (production build succeeded). No `lint`/`format:check` script exists in
+  this repo, so that step was skipped as not applicable. Docs updated:
+  `packages/debate-help-docs/content/docs/internals/command-palette.mdx`'s
+  Known gaps entry, narrowed to note only a direct link/bookmark still
+  doesn't record a visit.
+
+  PR: [#904](https://github.com/debate/debate-ai.com/pull/904).
+  Branch: `claude/gifted-babbage-s8ierh`.
+
 - **🧮 Rubric-based agreement breakdown for the multi-judge panel.**
   `judge-paradigm-selections.mdx`'s Known gaps named this as the fresh
   next-step for idea #5 once the multi-judge panel mode's raw
