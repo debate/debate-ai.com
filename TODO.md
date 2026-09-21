@@ -17,6 +17,58 @@ _No task currently in progress._
 
 ### Completed
 
+- **📊 `/videos/statistics` ("Topic & Video Statistics") actually renders
+  statistics, and the whole repo's `bun run typecheck` builds again.**
+  `packages/debate-videos/src/panels/statistics/StatisticsPage.tsx` existed
+  (from an interrupted prior automated run, commit `e4af716`) but broke the
+  whole `debate-videos` package's typecheck: its relative imports were one
+  directory level too shallow (`../hooks/useYouTubeStats` instead of
+  `../../hooks/...`, same for the two `../components/...` imports), and it
+  imported a `DebateTopicsExplorer` component that was never created. The
+  page was also never wired up — `"statistics"` was already a real
+  `CategoryType`, `lectureRouteConfig.ts`'s `SLUG_MAP` already routed
+  `/videos/statistics` and `/videos/stats` to it, and the sidebar tree +
+  mobile quick-link tiles already linked to it (`sidebar-video-links.ts`'s
+  `VIDEO_REFERENCE_LINKS`) — but `LecturesPage.tsx`'s branch-rendering
+  `if`-chain had no `"statistics"` case, so every one of those links silently
+  fell through to the plain video grid instead.
+
+  Fixed all of it as one slice: `LecturesPage.tsx` now has a `"statistics"`
+  branch (mirroring its existing `"leaderboard"`/`"dictionary"` branches),
+  passing down the `topics` (`useVideoMeta`) and `youtubeStats`
+  (`useYouTubeStats`) it already fetches rather than having `StatisticsPage`
+  fetch either again. New
+  `packages/debate-videos/src/components/topic-explorer/DebateTopicsExplorer.tsx`
+  is a real component — every season's Policy/College/LD/PF resolutions,
+  newest year first, filterable by year or topic text — built on the
+  `lib/debate-topics.ts` formatters `VideoCardActions`/the leaderboard
+  banner already use, so it needed no new data source.
+
+  The same interrupted commit had left two *other* loose threads that this
+  also closes, both pre-existing `bun test` failures on `master` unrelated
+  to anything above except sharing the same root cause: `ToolNavTree.tsx`'s
+  `REFERENCE_ICONS` lookup (glossary/rankings glyphs) never got a
+  `statistics` entry, so that sidebar row rendered with no icon at all
+  (`test/tool-nav-tree-icons.test.tsx`); and
+  `test/sidebar-video-links.test.tsx`'s quick-link-tile title check did a
+  raw `html.toContain(link.title)`, which can never match
+  `"Topic & Video Statistics"` once React HTML-escapes its `&` to `&amp;` —
+  fixed with an `htmlEscaped()` helper rather than by avoiding `&` in the
+  title.
+
+  Vitest-covered: new `packages/debate-videos/test/debate-topics-explorer.test.tsx`
+  (sort order, per-style badge lines, a style with nothing that year is
+  skipped, empty-vs-still-loading states, and `entryMatches`' search
+  predicate) and `test/statistics-page.test.tsx` (topics always render;
+  the YouTube charts section only when `youtubeStats` has actually
+  resolved). New doc:
+  `packages/debate-help-docs/content/docs/features/video-topic-statistics.mdx`.
+
+  Verification: `bun run typecheck` (all 17 packages, was previously failing
+  on `debate-videos`), `bun run test` (496 files / 9275 tests, all passing),
+  `bun run coverage`, and `bun run build:web` (production build succeeds;
+  `/videos/[category]` covers `/videos/statistics`) all pass clean.
+
 - **🔑 Prep Notes and "Send to Prep Notes" prefill the real signed-in
   identity instead of a blank free-form field.**
   `prep-notes.mdx`'s Known gaps named the note-creation popover's "Author
