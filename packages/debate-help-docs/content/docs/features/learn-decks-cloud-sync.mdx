@@ -12,8 +12,8 @@ syncs a card's own content — the Learn store
 only.
 
 - **Package:** `debate-editor` (`learnDecksSync`, `LearnDecksSync`,
-  `learn-decks-client`), `apps/debate-ai.com` (`/api/learn-decks`,
-  `saved_learn_decks` D1 table)
+  `learn-decks-client`, `learn-deck-manage-ui`), `apps/debate-ai.com`
+  (`/api/learn-decks`, `saved_learn_decks` D1 table)
 
 ## What it does
 
@@ -66,6 +66,25 @@ shape. The **review log** syncs separately — see
   and still accepted for a caller that genuinely needs a whole-deck
   replace, but nothing in this app sends one for a rename or membership
   change anymore.
-- No dedicated deck-management UI shows a per-deck sync status yet; decks
+- ~~No dedicated deck-management UI shows a per-deck sync status yet; decks
   are currently created/edited from the home screen's scope picker, which
-  has no sync indicator.
+  has no sync indicator.~~ **Fixed, and the old description was stale on
+  top of being incomplete:** the "home screen's scope picker" it referred
+  to (`home-screen.ts`'s per-scope "due today" rows) can only ever *display*
+  an existing deck — it never called `createDeck`/`renameDeck`/`deleteDeck`/
+  `setDeckMembership` — and that screen has been a permanent no-op since
+  2026-08-26 regardless (see its own `show()` doc comment), so it was never
+  a reachable path either way. Before this fix, a deck could only come to
+  exist on a device via account sync adopting one created *somewhere*, but
+  no device anywhere could create the first one — decks were fully
+  unreachable from the UI.
+  `learn-deck-manage-ui.ts`'s **Decks** button (next to **History** in the
+  "Manage flashcards" overlay's bar) opens create/rename/two-click-delete
+  for decks, and an expandable per-deck card picker (add from a dropdown of
+  cards not yet in the deck, remove with a per-card button) — the first UI
+  surface for any of `LearnStore`'s deck mutators. It shows the same coarse
+  "Synced to your account" / "Not synced — sign in to sync" line (via
+  `learnDecksSync.isSynced()`) the flashcard list and Review history already
+  do; `LearnDecksSync` tracks no *per-deck* status (its pushes/deletes are
+  fire-and-forget), so a per-deck badge would need that state added to the
+  sync class first — a real follow-up, not done here.
