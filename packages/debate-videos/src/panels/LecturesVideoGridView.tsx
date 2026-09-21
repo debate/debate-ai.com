@@ -295,6 +295,19 @@ export function LecturesVideoGridView({
   const showLectureGallery =
     showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0
 
+  /** Favorite round videos, for the separate tables on the favorites page. */
+  const favoriteRounds = useMemo(
+    () => currentVideos.filter((v) => typeof v[6] === "number"),
+    [currentVideos],
+  );
+  /** Favorite lectures, for the separate tables on the favorites page. */
+  const favoriteLectures = useMemo(
+    () => currentVideos.filter((v) => typeof v[6] !== "number"),
+    [currentVideos],
+  );
+
+  const isFavoritesPage = showFavoritesOnly;
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Persistent left sidebar (md+): app dock, video categories, lecture
@@ -418,7 +431,88 @@ export function LecturesVideoGridView({
           </div>
         ) : (
           <>
-            {viewMode === "list" ? (
+            {isFavoritesPage ? (
+              <>
+                {favoriteLectures.length > 0 && (
+                  <>
+                    <h2 className="text-xl font-semibold px-5 pt-6 pb-2">
+                      Lectures
+                    </h2>
+                    {viewMode === "list" ? (
+                      <VideoListRows
+                        videos={favoriteLectures}
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                      />
+                    ) : (
+                      <VideoGrid
+                        videos={favoriteLectures}
+                        showThumbnails={showThumbnails}
+                        topics={topics}
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onBadgeClick={onSearchChange}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                        showFullDate={true}
+                        showDescription={true}
+                      />
+                    )}
+                  </>
+                )}
+                {favoriteRounds.length > 0 && (
+                  <>
+                    <h2 className="text-xl font-semibold px-5 pt-6 pb-2">
+                      Rounds
+                    </h2>
+                    {viewMode === "list" ? (
+                      <VideoListRows
+                        videos={favoriteRounds}
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                      />
+                    ) : (
+                      <VideoGrid
+                        videos={favoriteRounds}
+                        showThumbnails={showThumbnails}
+                        topics={topics}
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onBadgeClick={onSearchChange}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                        showFullDate={true}
+                        showDescription={true}
+                      />
+                    )}
+                  </>
+                )}
+              </>
+            ) : viewMode === "list" ? (
               <VideoListRows
                 videos={currentVideos}
                 videoContainerRef={videoContainerRef}

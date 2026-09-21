@@ -185,8 +185,8 @@ advantage or monetary compensation.
 **Annual revenue** means the total gross revenue you and your company earned in your most
 recently completed fiscal year, from all sources.
 
-**The Revenue Threshold** is US $5,000,000 (five million United States dollars) in annual
-revenue and in raised investor capital.
+**The Revenue Threshold** is US $5,000,000 (five million United States dollars) in total sum of annual
+revenue and raised investor capital.
 
 **Remix** means any change or new work that combines, adapts, samples, or incorporates the
 work in whole or in part, including by automated or machine systems.

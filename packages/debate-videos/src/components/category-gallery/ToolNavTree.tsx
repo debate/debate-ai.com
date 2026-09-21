@@ -14,9 +14,9 @@
  * column said everything twice. The dock is still right there, and its
  * Settings menu still carries the same list for phones.
  *
- * The glossary/rankings pair used to hang below the tree, outside every
- * section. It now sits at the end of Practice, which is where the rest of the
- * round-day reference material lives.
+ * The glossary/rankings/statistics trio used to hang below the tree, outside
+ * every section. It now sits at the end of Practice, which is where the rest
+ * of the round-day reference material lives.
  *
  * Each section heading is a grouping rather than a destination: it renders
  * without an `href`, so clicking it does nothing but toggle the section. Its
@@ -41,7 +41,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChartColumn } from "lucide-react";
+import { BarChart3, BookOpen, ChartColumn } from "lucide-react";
 import { TreeItem } from "./TreeItem";
 import type { TreeItemIcon } from "./tree-item-icon";
 import {
@@ -58,19 +58,20 @@ import {
 import { VIDEO_REFERENCE_LINKS } from "./sidebar-video-links";
 
 /**
- * Per-id glyph for the reference pair at the end of Practice; the hrefs and
+ * Per-id glyph for the reference trio at the end of Practice; the hrefs and
  * titles come from `VIDEO_REFERENCE_LINKS`.
  *
- * Lucide components, not the `ui/icons` images these two used to draw
+ * Lucide components, not the `ui/icons` images the first two used to draw
  * (`IconBook`, `IconLeaderboard`). They hang inside the Practice section
  * alongside 15 tool rows, and an image renders at its own baked-in colors
- * while a Lucide glyph inherits the one color `TreeItem` sets — so the two of
- * them were the only rows in the tool tree whose icons did not match. See
+ * while a Lucide glyph inherits the one color `TreeItem` sets — so those two
+ * were the only rows in the tool tree whose icons did not match. See
  * `TREE_ITEM_ICON_CLASS`.
  */
 const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
   dictionary: BookOpen,
   rankings: ChartColumn,
+  statistics: BarChart3,
 };
 
 export interface ToolNavTreeProps {
@@ -175,13 +176,14 @@ export function ToolNavTree({
               isActive={pathname === tool.href}
             />
           ))}
-          {/* The glossary and the rankings are round-day reference material,
-              so they close out Practice rather than floating below the tree
-              in a section of their own. They stay `VIDEO_REFERENCE_LINKS`
-              rather than becoming Practice tools: `sidebar-tool-sections`
-              feeds `sidebar-routes` and `sidebar-active-section`, and folding
-              two `/videos/*` paths into a tool section would hand the video
-              library's own pages the generic tool sidebar. */}
+          {/* The glossary, rankings and statistics pages are round-day
+              reference material, so they close out Practice rather than
+              floating below the tree in a section of their own. They stay
+              `VIDEO_REFERENCE_LINKS` rather than becoming Practice tools:
+              `sidebar-tool-sections` feeds `sidebar-routes` and
+              `sidebar-active-section`, and folding `/videos/*` paths into a
+              tool section would hand the video library's own pages the
+              generic tool sidebar. */}
           {section.id === PRACTICE_SECTION_ID &&
             VIDEO_REFERENCE_LINKS.map((link) => (
               <TreeItem
