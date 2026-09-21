@@ -13,11 +13,18 @@ import { LearnCardsSync } from '../src/editor/learn-cards-sync';
 
 const TODAY = '2026-03-14';
 
+/** A fixed default `updatedAt` (rather than the store's own `Date.now()`
+ *  stamp) so pushed-body assertions stay deterministic — `upsertCard` only
+ *  stamps `Date.now()` when a caller omits `updatedAt`, so passing it here
+ *  is preserved as-is. */
+const CARD_UPDATED_AT = new Date('2026-03-14T00:00:00.000Z').getTime();
+
 const card = (id: string, over: Partial<CardDef> = {}): CardDef => ({
   id,
   type: 'qa',
   front: 'What warms?',
   back: 'Carbon',
+  updatedAt: CARD_UPDATED_AT,
   ...over,
 });
 
@@ -25,6 +32,8 @@ const card = (id: string, over: Partial<CardDef> = {}): CardDef => ({
 function stubFetch(opts: {
   get?: CardDef[] | 'signed-out';
   onPut?: (id: string, body: unknown) => void;
+  /** When set, a PUT for this card id responds 409 with this card as `current` instead of succeeding. */
+  putConflicts?: Map<string, CardDef>;
   onDelete?: (id: string) => void;
 }) {
   const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
@@ -38,6 +47,10 @@ function stubFetch(opts: {
     if (method === 'PUT') {
       const id = decodeURIComponent(url.split('/').pop()!);
       opts.onPut?.(id, JSON.parse(String(init!.body)));
+      const conflict = opts.putConflicts?.get(id);
+      if (conflict) {
+        return { ok: false, status: 409, json: async () => ({ current: conflict }) };
+      }
       return { ok: true, status: 200 };
     }
     if (method === 'DELETE') {
@@ -219,5 +232,35 @@ describe('LearnCardsSync ongoing mirror', () => {
     store.upsertCard(card('still-local'), TODAY);
 
     expect(store.getCard('still-local')).toBeDefined();
+  });
+
+  it('adopts a newer account version instead of overwriting it on an edit conflict', async () => {
+    const newerRemote = card('raced', { front: 'Newer edit from another device', updatedAt: CARD_UPDATED_AT + 1000 });
+    stubFetch({ get: [], putConflicts: new Map([['raced', newerRemote]]) });
+    const store = new LearnStore();
+    const sync = new LearnCardsSync(store, () => TODAY);
+    await sync.init();
+
+    store.upsertCard(card('raced', { front: 'My local edit' }), TODAY);
+    // The local write applies immediately; the conflict resolves shortly after the fire-and-forget push.
+    expect(store.getCard('raced')!.front).toBe('My local edit');
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.getCard('raced')).toEqual(newerRemote);
+  });
+
+  it('adopts a newer account version pushed during the init merge, without duplicating the card', async () => {
+    const stale = card('raced');
+    const newerRemote = card('raced', { front: 'Server-side edit', updatedAt: CARD_UPDATED_AT + 1000 });
+    stubFetch({ get: [], putConflicts: new Map([['raced', newerRemote]]) });
+    const store = new LearnStore();
+    store.upsertCard(stale, TODAY);
+    const sync = new LearnCardsSync(store, () => TODAY);
+
+    await sync.init();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.listCards()).toEqual([newerRemote]);
   });
 });
