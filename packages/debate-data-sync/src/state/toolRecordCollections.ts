@@ -523,6 +523,14 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "challengeWinEvents",
+    storageKey: "challengeWinEvents",
+    idField: "id",
+    label: "Group Challenge Win Events",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
     key: "dailyQuestTemplates",
     storageKey: "dailyQuestTemplates",
     idField: "id",
