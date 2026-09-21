@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import {
   deleteLibraryVideo,
   updateLibraryVideo,
@@ -41,9 +42,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
     return NextResponse.json({ ok: true, video });
   } catch (error) {
-    console.error("Failed to update library video:", error);
+    console.error("Failed to update library video:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to update video", details: (error as Error).message },
+      { error: "Failed to update video", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -69,9 +70,9 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     }
     return NextResponse.json({ ok: true, id });
   } catch (error) {
-    console.error("Failed to delete library video:", error);
+    console.error("Failed to delete library video:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to delete video", details: (error as Error).message },
+      { error: "Failed to delete video", details: describeError(error) },
       { status: 500 },
     );
   }

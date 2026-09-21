@@ -233,21 +233,6 @@ export const RIBBON_TABS: RibbonTab[] = [
     title: 'Tools',
     groupTitles: ['Timer', 'Diagnostics', 'Learn', 'Cleanup', 'Voice'],
   },
-  {
-    id: 'flow',
-    title: 'Flow',
-    groupTitles: ['Flow'],
-  },
-  {
-    id: 'workspace',
-    title: 'Workspace',
-    isWorkspaceLinks: true,
-  },
-  {
-    id: 'plugins',
-    title: 'Plugins',
-    includesPluginCommands: true,
-  },
 ];
 
 /** Panels no tab claims, so they show on every page of the ribbon. The

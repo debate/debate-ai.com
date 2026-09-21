@@ -17,6 +17,47 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗂️ Quick Cards cloud sync gets real optimistic concurrency instead of
+  last-network-arrival-wins.**
+  `features/quick-cards-cloud-save.mdx`'s Known gaps said "No optimistic-
+  concurrency handling — editing the same card from two signed-in devices
+  at once has the last write win," meaning whichever device's background
+  `PUT /api/quick-cards/[cardId]` happened to *reach the server last* won,
+  even if its edit was chronologically older — a genuine silent-data-loss
+  race, not a documented tradeoff.
+
+  Followed `state/savedFlows.ts#hasFlowSaveConflict`'s precedent but
+  simplified for quick cards' shape: since `QuickCardsStore` pushes every
+  mutation automatically in the background (no explicit "save" action with
+  a "last loaded version" for the caller to track, unlike Flow's
+  `FlowHistoryDialog`), the new
+  `packages/debate-editor/src/editor/quick-cards-store.ts#hasQuickCardSaveConflict`
+  compares each side's own `updatedAt` (already carried on every
+  `QuickCard`) directly — no new request field needed. `PUT
+  /api/quick-cards/[cardId]`
+  (`apps/debate-ai.com/app/api/quick-cards/[cardId]/route.ts`) now reads the
+  existing row before upserting and returns 409 + the current card instead
+  of overwriting when the saved version is newer. `quick-cards-client.ts#saveQuickCardToAccount`
+  now resolves `{ conflict: true, current }` instead of just succeeding/
+  throwing, and `QuickCardsStore` gained a private `pushToAccount` wrapper
+  (used by `mergeRemote`, `upsert`, and `importMany`'s push paths) that
+  adopts the account's newer version into the local library on a conflict
+  instead of leaving the two out of sync.
+
+  Vitest-covered: `packages/debate-editor/test/quick-cards-store.test.ts`
+  (`hasQuickCardSaveConflict` cases, plus two `QuickCardsStore`-level tests
+  proving a losing local edit is replaced by the account's newer version
+  rather than clobbering it, both on `upsert` and during the `init()`
+  merge) and `test/quick-cards-client.test.ts` (`saveQuickCardToAccount`'s
+  new conflict-result branch). `bun run typecheck`, `bun run test` (9328
+  tests), and `bun run build` all pass.
+
+  Follow-up: `features/learn-cards-cloud-sync.mdx`'s Known gaps documents
+  the identical last-write-wins gap for Learn Cards' content sync
+  (`/api/learn-cards/[cardId]`) — its own doc says it mirrors quick-cards'
+  design, so the same fix shape applies there directly. Not folded into
+  this PR to keep the diff small and reviewable; left as a follow-up.
+
 - **⚙️ Debate style, font size and font family regain a settings surface at
   `/settings/preferences`.** `user-settings.mdx`'s "What it no longer shows"
   named a real regression: when `/settings` became the CardMirror editor's
@@ -73,11 +114,25 @@ _No task currently in progress._
   `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
   "What it no longer shows" and "Known gaps" sections.
 
-  **Follow-up noted at the time (since resolved):** this run found the
-  `debate-videos` package's pre-existing, unrelated `StatisticsPage.tsx`
-  typecheck/test failure (see this file's Follow-ups section, added then
-  removed) and left it for someone else — the "📊 `/videos/statistics`"
-  entry immediately below, from a later run, is that fix landing.
+  **Follow-up (not picked up this run):** the `debate-videos` package has a
+  pre-existing, unrelated typecheck/test failure — `StatisticsPage.tsx`
+  imports three modules (`hooks/useYouTubeStats`,
+  `components/youtube-stats-modal/YouTubeStatsCharts`,
+  `components/topic-explorer/DebateTopicsExplorer`) that don't exist in the
+  tree (`DebateTopicsExplorer.tsx` isn't present at all; the other two
+  paths/exports don't resolve either), breaking `debate-videos`'
+  `tsc --noEmit`, `bunx turbo run typecheck`, and two of its own Vitest
+  files (`sidebar-video-links.test.tsx`'s "Topic & Video Statistics" link
+  and `tool-nav-tree-icons.test.tsx`'s glyph-count canary, both counting a
+  row this broken import removes from the sidebar). Needs someone who knows
+  which commit those three modules were meant to land in (or whether
+  `StatisticsPage.tsx`'s import should be reverted) — out of scope for a
+  settings-page fix. **Correction, next run:** this was already fixed before
+  this branch's merge with `master` landed — see this file's "Topic & Video
+  Statistics" Completed entry below, which created `DebateTopicsExplorer.tsx`
+  and repaired the same imports. This PR's branch was cut before that fix
+  merged, so its own verification gate (run against a stale base) reported it
+  as still broken; `bunx turbo run typecheck` is clean on the merged history.
 
 - **🧠 Team Brainstorm Assist's session timer follows a signed-in visitor
   across devices, not just across browser tabs.**
@@ -2459,6 +2514,17 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
+
+- `features/learn-cards-cloud-sync.mdx`'s Known gaps: the same
+  last-write-wins race just fixed for Quick Cards (see this file's
+  "Completed" entry above) also applies to Learn Cards' content sync
+  (`apps/debate-ai.com/app/api/learn-cards/[cardId]/route.ts` — a blind
+  upsert with no version check). The doc's own text says Learn Cards
+  mirrors Quick Cards' design, so the fix is the same shape: add
+  `hasQuickCardSaveConflict`-equivalent comparison of the incoming vs.
+  saved `LearnCard.updatedAt`, a 409 response, and a client-side adopt-the-
+  newer-version step in `learn-cards-sync.ts`. Not picked up in the same PR
+  to keep that change small and reviewable.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
