@@ -20,6 +20,77 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗂️ Learn custom decks (CardMirror's flashcard grouping) had zero UI
+  anywhere — `createDeck`/`renameDeck`/`deleteDeck`/`setDeckMembership`
+  had no caller outside tests, ever, in this package's history.**
+  `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`'s
+  own Known gap said decks were "created/edited from the home screen's
+  scope picker, which has no sync indicator" — checked against the current
+  code and found doubly wrong: `home-screen.ts`'s per-scope "due today"
+  rows could only ever *display* an existing deck (clicking one started a
+  review; nothing there called a deck mutator), and that whole screen has
+  been a permanent no-op since 2026-08-26 per its own `show()` doc comment,
+  so it wasn't a reachable path regardless. The full deck data model,
+  D1-backed account sync (`learn-decks-sync.ts`, `/api/learn-decks`), and
+  concurrent-edit-safe op merge already existed and were fully tested
+  (`learn-decks-sync.test.ts`, `learn-store.test.ts`) — but a deck could
+  only ever come to exist on a device by account sync adopting one created
+  *somewhere*, and nowhere could create the first one. Decks were fully
+  unreachable end to end.
+
+  Added `packages/debate-editor/src/editor/learn-deck-manage-ui.ts`, mirroring
+  `learn-review-log-ui.ts`'s established shape exactly: a `buildDeckManageSection`
+  pure-DOM section (injectable `store`/`sync` pair for testability, no React,
+  matching this package's vanilla-DOM convention) and an `openDeckManage()`
+  overlay wrapper with the same escape-key/click-outside chrome as
+  `openReviewLogHistory`. Wired a new **Decks** button into `learn-manage-ui.ts`'s
+  bar, next to **History**. The section: lists decks sorted by name with a
+  card count; **New deck**/**Rename** (via the shared `promptForText` modal);
+  two-click **Delete** (avoids native `confirm`, which Electron disables —
+  the same arm/disarm pattern the card list's own delete button already
+  uses); and a **Cards** toggle that expands a deck to show its member cards
+  (front text, with a **Remove** button — falling back to "(deleted card)"
+  for the same soft-reference gap `learn-review-log-ui.ts` already accepts)
+  plus an "Add a card…" `<select>` of every card not yet in the deck. Shows
+  the same coarse "Synced to your account" / "Not synced — sign in to sync"
+  line (`learnDecksSync.isSynced()`) the flashcard list and Review history
+  already do — `LearnDecksSync` tracks no per-deck status (pushes/deletes
+  are fire-and-forget), so a per-deck sync badge isn't possible without
+  adding that state to the sync class first (see Follow-up).
+
+  New test file `learn-deck-manage-ui.test.ts` (14 tests, mirroring
+  `learn-review-log-ui.test.ts`'s structure against injected
+  `LearnStore`/`LearnDecksSync` instances rather than the app singletons):
+  empty state; listing/sorting; live re-render on create/rename/delete;
+  destroy stops re-rendering; two-click delete; expanding to show/remove
+  cards; the deleted-card placeholder; adding a card via the select; the
+  select disappearing once every card is already a member; and the three
+  sync-status cases (signed out, signed in once the merge resolves, and
+  reusing an already-in-flight `sync.init()`). "New deck" and "Rename"
+  themselves open a real `promptForText` modal, which no test in this
+  package mocks (matching `learn-manage-ui.ts`'s own untested "New
+  card"/"Edit" buttons for the same reason) — covered indirectly by driving
+  the store mutations those flows would eventually make and asserting the
+  section renders the result.
+
+  Ran the verification gate: `bun install`; the new test file directly
+  (12/12); the rest of `debate-editor`'s suite alongside it (901/901);
+  `bun run typecheck` (17/17 packages); `bun run test` (509 files, 9462
+  tests, repo-wide, all passing); and `bun run build:web` (production build
+  succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`
+  (Known gaps, and the correction to the stale "scope picker" description).
+
+  **Follow-up, deliberately not done here:** `LearnDecksSync` has no
+  per-deck pending/error state — a failed push or delete is silently
+  swallowed (`.catch(() => {})`) with nothing retained anywhere, so the new
+  UI can only show one coarse account-wide sync line, not a per-deck badge
+  the way a genuine conflict-tracking sync would. Adding a
+  `Map<deckId, 'pending' | 'synced' | 'error'>` to the class (populated in
+  `handleStoreChange`/`pushDeckChange`'s catch blocks) is a reasonable
+  follow-up if a user ever needs to tell "still syncing" apart from
+  "actually failed" for a specific deck.
+
 - **🏆 Group Challenge win events never synced to the account — the same
   "per-browser localStorage, not account-synced" gap every other Team
   section store on `/cards/progress-tracking`/`/cards/leaderboard` already
