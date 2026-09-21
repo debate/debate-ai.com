@@ -167,12 +167,25 @@ export function AdminDashboard() {
       const res = await fetch("/api/admin/videos/view-counts", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.details || data?.error || "View count resync failed");
-      const missing = data.missing > 0 ? `, ${data.missing} unavailable on YouTube` : "";
-      setViewResyncResult(
-        data.updated === 0
-          ? `All ${data.videosChecked.toLocaleString()} view counts were already current${missing}.`
-          : `Updated ${data.updated.toLocaleString()} of ${data.videosChecked.toLocaleString()} view counts${missing}.`,
-      );
+       const missing = data.missing > 0 ? `, ${data.missing} unavailable on YouTube` : "";
+      const { availability = null } = data;
+      let summary = "";
+      if (data.updated === 0) {
+        summary = `All ${data.videosChecked.toLocaleString()} view counts were already current${missing}.`;
+      } else {
+        summary = `Updated ${data.updated.toLocaleString()} of ${data.videosChecked.toLocaleString()} view counts${missing}.`;
+      }
+      if (availability) {
+        const parts: string[] = [];
+        if (availability.available > 0) parts.push(`${availability.available} available`);
+        if (availability.private > 0) parts.push(`${availability.private} private`);
+        if (availability.notEmbeddable > 0) parts.push(`${availability.notEmbeddable} not embeddable`);
+        if (availability.removed > 0) parts.push(`${availability.removed} removed`);
+        if (parts.length > 0) {
+          summary += ` — availability: ${parts.join(", ")}.`;
+        }
+      }
+      setViewResyncResult(summary);
       await Promise.all([loadViewCountStatus(), loadFirstPage(style)]);
     } catch (error) {
       setViewResyncError((error as Error).message);

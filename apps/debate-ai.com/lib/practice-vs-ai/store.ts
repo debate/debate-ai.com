@@ -24,10 +24,9 @@ import type {
   DebateMessage,
   DebateStore,
   DebateVsBotRecord,
-  GamificationAward,
   GamificationProfile,
 } from "debate-practice-vs-ai"
-import { resolveResultStatus } from "debate-practice-vs-ai"
+import { computeGamificationAward, resolveResultStatus } from "debate-practice-vs-ai"
 import { getDBFromContext } from "@/lib/database/context"
 import { practiceVsAiDebates, userSettings } from "@/lib/database/schema"
 
@@ -198,14 +197,26 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
       }
     },
 
-    async applyGamificationAward(_userId: string, award: GamificationAward) {
+    async applyGamificationAward(_userId, context) {
       const db = await getDBFromContext()
+      // Re-read score and badges immediately before writing — not the
+      // profile a caller may have fetched earlier in the request — so two
+      // rounds finishing close together each get scored against the
+      // account's current value instead of the second write silently
+      // clobbering the first (the same lost-update shape already fixed for
+      // the various `saved_*`/settings list fields).
       const [existing] = await db
-        .select({ badges: userSettings.practiceVsAiBadges })
+        .select({ score: userSettings.practiceVsAiScore, badges: userSettings.practiceVsAiBadges })
         .from(userSettings)
         .where(eq(userSettings.userId, userId))
         .limit(1)
-      const badges = JSON.stringify([...new Set([...parseBadges(existing?.badges), ...award.badgesAwarded])])
+      const profile: GamificationProfile = {
+        score: existing?.score ?? 0,
+        badges: parseBadges(existing?.badges),
+        currentStreak: 0,
+      }
+      const award = computeGamificationAward(profile, context.result)
+      const badges = JSON.stringify([...new Set([...profile.badges, ...award.badgesAwarded])])
       const now = new Date()
       await db
         .insert(userSettings)
@@ -220,6 +231,7 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
           target: userSettings.userId,
           set: { practiceVsAiScore: award.newScore, practiceVsAiBadges: badges, updatedAt: now },
         })
+      return award
     },
   }
 }

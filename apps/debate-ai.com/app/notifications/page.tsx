@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { Suspense } from "react"
-import { ArrowLeft } from "lucide-react"
 import { AccountNotificationsPanel, PrepNoteNotificationsPanel } from "debate-team-collaboration"
+import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
   title: "Notifications",
@@ -11,17 +10,8 @@ export const metadata: Metadata = {
 
 export default function NotificationsPage() {
   return (
-    <div className="min-h-screen bg-background p-3 sm:p-6">
-      <div className="mb-4">
-        <Link
-          href="/debate"
-          className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"
-          aria-label="Back to debate flow"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Link>
-      </div>
+    <ToolPage>
+      <ToolPageHeader href="/notifications" backHref="/debate" backLabel="debate flow" guide="training-tools" />
       <Suspense>
         <AccountNotificationsPanel />
       </Suspense>
@@ -30,6 +20,6 @@ export default function NotificationsPage() {
           <PrepNoteNotificationsPanel />
         </Suspense>
       </div>
-    </div>
+    </ToolPage>
   )
 }

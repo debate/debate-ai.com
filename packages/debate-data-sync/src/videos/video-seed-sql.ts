@@ -127,7 +127,10 @@ export function videoSeedValues(row: VideoRow): (string | number | boolean | nul
  * Every row present in the assets is stamped with the current time by the
  * upsert, so a row still older than `seededAt` has been removed upstream and
  * is deleted. That makes a re-run mirror the assets exactly without ever
- * emptying the table mid-run.
+ * emptying the table mid-run — except for a row an admin has edited, whose
+ * `admin_edited` flag makes the upsert keep every stored column instead of
+ * overwriting it with the asset's value (`updated_at` still advances, so the
+ * row isn't mistaken for gone and pruned).
  *
  * @param rows - Rows built from the JSON assets.
  * @param seededAt - Unix seconds captured before the upserts; the prune threshold.
@@ -144,8 +147,13 @@ export function buildVideoSeedStatements(
 
   const statements: string[] = [];
   const columnList = VIDEO_SEED_COLUMNS.map((c) => `"${c}"`).join(", ");
+  // `admin_edited` (set by an admin's own edit, never seeded here — see
+  // `lib/videos/admin-library.ts`) guards every other column: once an admin
+  // has touched a row, the JSON assets are no longer its source of truth, so
+  // a re-seed must leave the row exactly as the admin left it rather than
+  // overwriting the correction with the asset's stale value.
   const updateList = VIDEO_SEED_COLUMNS.filter((c) => c !== "video_id")
-    .map((c) => `"${c}" = excluded."${c}"`)
+    .map((c) => `"${c}" = CASE WHEN "admin_edited" = 1 THEN "${c}" ELSE excluded."${c}" END`)
     .join(", ");
 
   let batch: string[] = [];

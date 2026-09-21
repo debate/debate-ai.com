@@ -3,6 +3,7 @@ import {
   buildCustomJudgeParadigm,
   buildJudgeParadigmPrompt,
   getJudgeParadigm,
+  getJudgeParadigmByName,
   isBuiltinJudgeParadigmId,
   judgeParadigmIds,
   judgeParadigms,
@@ -54,6 +55,22 @@ describe("isBuiltinJudgeParadigmId / getJudgeParadigm", () => {
   it("rejects prototype-pollution-style lookups", () => {
     expect(isBuiltinJudgeParadigmId("toString")).toBe(false);
     expect(getJudgeParadigm("constructor")).toBeNull();
+  });
+});
+
+describe("getJudgeParadigmByName", () => {
+  it("resolves a built-in paradigm by its exact display name", () => {
+    expect(getJudgeParadigmByName("Flow / Tech Judge")).toBe(judgeParadigms.flow);
+    expect(getJudgeParadigmByName("Policymaker")).toBe(judgeParadigms.policymaker);
+  });
+
+  it("returns null for an unknown name, including a custom paradigm's label", () => {
+    expect(getJudgeParadigmByName("made-up paradigm")).toBeNull();
+    expect(getJudgeParadigmByName("Custom: Judge Smith")).toBeNull();
+  });
+
+  it("is case-sensitive, since it matches a stored display string exactly", () => {
+    expect(getJudgeParadigmByName("flow / tech judge")).toBeNull();
   });
 });
 

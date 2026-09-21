@@ -33,6 +33,7 @@ import {
   deleteLibraryVideo,
   listLibraryVideos,
   updateLibraryVideo,
+  withLiveSearchText,
 } from "../admin-library";
 
 const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
@@ -48,6 +49,7 @@ const MIGRATIONS = [
   "0041_video_stacks.sql", // videos.stack_key / stack_position
   "0045_video_documents_relations_issues.sql", // videos.availability, and the
   // video_documents / video_relations / video_issues tables
+  "0047_video_admin_edited.sql", // videos.admin_edited
 ];
 
 async function freshDb() {
@@ -139,6 +141,12 @@ describe("buildLibraryUpdate", () => {
 
     expect(update.style).toBeNull();
   });
+
+  it("flags the row as admin-edited so a re-seed leaves it alone", () => {
+    const update = buildLibraryUpdate(current, { title: "New title" }) as any;
+
+    expect(update.adminEdited).toBe(true);
+  });
 });
 
 describe("listLibraryVideos", () => {
@@ -159,6 +167,22 @@ describe("listLibraryVideos", () => {
 
     const byId = await listLibraryVideos(db, { q: "zqx9" });
     expect(byId.videos.map((v: any) => v.videoId)).toEqual(["zqx9"]);
+  });
+
+  it("treats a literal % or _ in the search text as itself, not a SQL wildcard", async () => {
+    const db = await freshDb();
+    await db.insert(videos).values([
+      videoRow("a", { title: "Win 50% of the time" }),
+      videoRow("b", { title: "Win 50 of the time" }),
+      videoRow("c", { title: "Case_Neg debrief" }),
+      videoRow("d", { title: "CaseXNeg debrief" }),
+    ]);
+
+    const byPercent = await listLibraryVideos(db, { q: "50%" });
+    expect(byPercent.videos.map((v: any) => v.videoId)).toEqual(["a"]);
+
+    const byUnderscore = await listLibraryVideos(db, { q: "Case_Neg" });
+    expect(byUnderscore.videos.map((v: any) => v.videoId)).toEqual(["c"]);
   });
 
   it("filters lectures by their missing numeric style", async () => {
@@ -218,12 +242,34 @@ describe("updateLibraryVideo", () => {
     expect(updated?.tournament).toBe("Glenbrooks");
     expect(updated?.channel).toBe("Channel One");
     expect(updated?.searchText).toBe("corrected title channel one description a");
+    expect(updated?.adminEdited).toBe(true);
   });
 
   it("returns null for a video that is not published", async () => {
     const db = await freshDb();
 
     expect(await updateLibraryVideo(db, "missing", { title: "x" })).toBeNull();
+  });
+
+  it("keeps search_text consistent when two admins edit different fields on the same video close together", async () => {
+    // Reproduces the historical race: both admins read the row before
+    // either writes, so each computes `search_text` from a snapshot of the
+    // field they didn't touch — the second write must not let that stale
+    // half win over the first admin's already-landed edit.
+    const db = await freshDb();
+    await db.insert(videos).values(videoRow("a"));
+    const [current] = await db.select().from(videos).where(eq(videos.videoId, "a"));
+
+    const titleEdit = withLiveSearchText(buildLibraryUpdate(current, { title: "New Title" }));
+    const channelEdit = withLiveSearchText(buildLibraryUpdate(current, { channel: "New Channel" }));
+
+    await db.update(videos).set(titleEdit).where(eq(videos.videoId, "a"));
+    await db.update(videos).set(channelEdit).where(eq(videos.videoId, "a"));
+
+    const [final] = await db.select().from(videos).where(eq(videos.videoId, "a"));
+    expect(final?.title).toBe("New Title");
+    expect(final?.channel).toBe("New Channel");
+    expect(final?.searchText).toBe("new title new channel description a");
   });
 });
 

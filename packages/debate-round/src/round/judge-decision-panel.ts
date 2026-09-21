@@ -15,7 +15,8 @@
  * @module round/judge-decision-panel
  */
 
-import type { JudgeDecisionAiResult, JudgeDecisionWinner } from "./judge-decision-ai";
+import type { JudgeParadigm } from "debate-speech-writer/src/judge/judge-paradigms";
+import { buildJudgeDecisionRubric, type JudgeDecisionAiResult, type JudgeDecisionRubricRow, type JudgeDecisionWinner } from "./judge-decision-ai";
 
 /** One paradigm's result within a panel run, identified by that paradigm's display name. */
 export type JudgePanelParadigmResult = {
@@ -72,5 +73,72 @@ export function combineJudgePanelDecisions(
     secondaryVotes,
     unanimous: primaryVotes === 0 || secondaryVotes === 0,
     keyVotingIssues,
+  };
+}
+
+/** One paradigm's own scoring rubric within a panel run's agreement breakdown. */
+export type JudgePanelRubricBreakdown = {
+  paradigmName: string;
+  rubric: JudgeDecisionRubricRow[];
+  addressedCount: number;
+  totalCount: number;
+};
+
+/**
+ * `judge-paradigm-selections.mdx`'s "a future run should pick a fresh
+ * next-step" Known gap: the multi-judge panel's combined decision above
+ * only tallies votes and unions `keyVotingIssues` — it says nothing about
+ * how thoroughly the decision actually engaged each paradigm's own
+ * priorities. This reuses `buildJudgeDecisionRubric` per paradigm (no new
+ * scoring logic) and sums the result into one overall addressed/total count
+ * across every paradigm in the panel.
+ */
+export type JudgePanelRubricAgreement = {
+  perParadigm: JudgePanelRubricBreakdown[];
+  /** Sum of every paradigm's `addressedCount`. */
+  totalAddressed: number;
+  /** Sum of every paradigm's `totalCount`. */
+  totalCriteria: number;
+  /** `totalAddressed / totalCriteria`, or 0 when `totalCriteria` is 0. */
+  agreementRate: number;
+};
+
+/** One paradigm's judge decision, paired with the full paradigm it was judged under (for its `votingPriorities`). */
+export type JudgePanelParadigmDecision = {
+  paradigm: JudgeParadigm;
+  result: JudgeDecisionAiResult;
+};
+
+/**
+ * Builds the rubric-based agreement breakdown for a panel run: each
+ * paradigm's own voting-priority checklist against its own decision, plus
+ * an overall addressed/total count across the whole panel. Throws when
+ * fewer than two entries are given, mirroring `combineJudgePanelDecisions`.
+ */
+export function buildJudgePanelRubricAgreement(
+  entries: readonly JudgePanelParadigmDecision[],
+): JudgePanelRubricAgreement {
+  if (entries.length < 2) {
+    throw new Error("buildJudgePanelRubricAgreement requires at least 2 paradigm results.");
+  }
+
+  const perParadigm = entries.map(({ paradigm, result }) => {
+    const rubric = buildJudgeDecisionRubric(paradigm, result);
+    return {
+      paradigmName: paradigm.name,
+      rubric,
+      addressedCount: rubric.filter((row) => row.addressed).length,
+      totalCount: rubric.length,
+    };
+  });
+
+  const totalAddressed = perParadigm.reduce((sum, entry) => sum + entry.addressedCount, 0);
+  const totalCriteria = perParadigm.reduce((sum, entry) => sum + entry.totalCount, 0);
+
+  return {
+    perParadigm,
+    totalAddressed,
+    totalCriteria,
+    agreementRate: totalCriteria === 0 ? 0 : totalAddressed / totalCriteria,
   };
 }

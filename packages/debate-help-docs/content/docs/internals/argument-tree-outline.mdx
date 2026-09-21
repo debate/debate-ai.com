@@ -548,9 +548,13 @@ every other `isXLiveUpdateStorageEvent` predicate in this repo.
   people type.
 - No follow-ups remain open on the "no saved/reusable filter combinations"
   gap — see "Filter presets" above.
-- Applying a preset only sets the round's filter; it doesn't select or
-  scroll to a particular round, so a preset saved while looking at one round
-  still needs that round's card to already be visible/generated to see the
-  effect.
+- No follow-ups remain open on the "applying a preset doesn't select or
+  scroll to a particular round" gap: applying a preset from the panel's
+  global list now also scrolls that round's card into view, when the
+  preset's origin round still exists (`debate-practice-drills`'
+  `state/outlineFilterPresetJump.ts#resolvePresetJumpRoundId`, wired into
+  `ArgumentTreePanel`). A preset saved before round-scoped tracking existed,
+  or whose origin round's outline has since been cleared, has nothing to
+  jump to and just applies the filter as before.
 - No follow-ups remain open on the "exporting the filtered tree" gap — see
   "Outline export" above.

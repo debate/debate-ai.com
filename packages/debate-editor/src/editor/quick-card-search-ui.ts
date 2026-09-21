@@ -93,6 +93,7 @@ import { toggleManualPin, recordUsage, effectivePins } from './pins-store.js';
 import { listRecents } from './recents-store.js';
 import { scheduleIdle } from './idle-scheduler.js';
 import { WORKSPACE_LINKS, type WorkspaceLink } from './workspace-links.js';
+import { recordWorkspaceVisit } from './recent-tools.js';
 
 /** Warm cache of parsed pinned files — module-level so it survives the
  *  palette opening/closing within a session (only cleared on reload).
@@ -2052,7 +2053,10 @@ class QuickCardSearchUI {
     if (result.source === 'tool') {
       const href = result.toolHref;
       this.close();
-      if (href) window.location.assign(href);
+      if (href) {
+        recordWorkspaceVisit(href);
+        window.location.assign(href);
+      }
       return;
     }
     // Everything else (quickcard / dropzone / fileobject) inserts a slice.

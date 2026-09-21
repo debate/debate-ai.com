@@ -174,7 +174,7 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
   // Merges the signed-in visitor's own reminder opt-in/spent freezes down
   // from their account on mount, then refreshes the roster if that merge
   // actually changed anything locally.
-  const { pushLocalState: pushQuestStreakSync } = useQuestStreakSync(signedInContributorId, refresh)
+  const { pushFreezeDayKey, pushLapseReminderEnabled } = useQuestStreakSync(signedInContributorId, refresh)
 
   /**
    * Live-update the roster when another browser tab logs a daily mission
@@ -209,13 +209,13 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
     }
     setFreezeError(null)
     refresh()
-    if (id === signedInContributorId) pushQuestStreakSync()
+    if (id === signedInContributorId) pushFreezeDayKey(gapDayKey)
   }
 
   const handleToggleReminder = (id: string, enabled: boolean) => {
     setStreakLapseReminderEnabled(id, enabled)
     refresh()
-    if (id === signedInContributorId) pushQuestStreakSync()
+    if (id === signedInContributorId) pushLapseReminderEnabled(enabled)
   }
 
   const trigger = (

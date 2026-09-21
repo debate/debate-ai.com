@@ -13,7 +13,14 @@
  */
 
 import type { JudgeDecisionAiResult, JudgeDecisionSideNames } from "debate-round/src/round/judge-decision-ai";
-import { combineJudgePanelDecisions, type JudgePanelCombinedDecision } from "debate-round/src/round/judge-decision-panel";
+import {
+  buildJudgePanelRubricAgreement,
+  combineJudgePanelDecisions,
+  type JudgePanelCombinedDecision,
+  type JudgePanelParadigmDecision,
+  type JudgePanelRubricAgreement,
+} from "debate-round/src/round/judge-decision-panel";
+import { getJudgeParadigmByName } from "debate-speech-writer/src/judge/judge-paradigms";
 
 export type JudgeDecisionRecord = {
   /** Generated once when the decision is first requested; the record's stable cross-device identity. */
@@ -179,7 +186,23 @@ export type JudgeDecisionRoundGroup = {
 /** One entry in a round's rendered decision history: either a lone decision, or a multi-judge panel run's decisions plus their combined verdict. */
 export type JudgeDecisionHistoryItem =
   | { kind: "single"; decision: JudgeDecisionRecord }
-  | { kind: "panel"; batchId: string; decisions: JudgeDecisionRecord[]; combined: JudgePanelCombinedDecision };
+  | {
+      kind: "panel";
+      batchId: string;
+      decisions: JudgeDecisionRecord[];
+      combined: JudgePanelCombinedDecision;
+      /**
+       * Rubric-based agreement breakdown (`judge-decision-panel.ts`'s
+       * `buildJudgePanelRubricAgreement`), reusing each resolvable
+       * paradigm's own `buildJudgeDecisionRubric`. `null` when fewer than 2
+       * of the batch's decisions resolve back to a known built-in paradigm
+       * by name (e.g. a paradigm renamed since the decision was recorded) —
+       * this should not happen for a panel run made through the current
+       * UI, which only offers built-in paradigms, but is handled rather
+       * than assumed.
+       */
+      rubricAgreement: JudgePanelRubricAgreement | null;
+    };
 
 /**
  * Regroups a round's newest-first `decisions` list so every 2+ decisions
@@ -211,6 +234,13 @@ export function buildJudgeDecisionHistoryItems(decisions: readonly JudgeDecision
     if (batch && batch.length >= 2) {
       if (consumedBatchIds.has(decision.batchId!)) continue;
       consumedBatchIds.add(decision.batchId!);
+
+      const resolvedParadigms: JudgePanelParadigmDecision[] = [];
+      for (const record of batch) {
+        const paradigm = getJudgeParadigmByName(record.paradigmName);
+        if (paradigm) resolvedParadigms.push({ paradigm, result: record.result });
+      }
+
       items.push({
         kind: "panel",
         batchId: decision.batchId!,
@@ -218,6 +248,7 @@ export function buildJudgeDecisionHistoryItems(decisions: readonly JudgeDecision
         combined: combineJudgePanelDecisions(
           batch.map((record) => ({ paradigmName: record.paradigmName, result: record.result })),
         ),
+        rubricAgreement: resolvedParadigms.length >= 2 ? buildJudgePanelRubricAgreement(resolvedParadigms) : null,
       });
     } else {
       items.push({ kind: "single", decision });

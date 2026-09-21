@@ -43,6 +43,7 @@ import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
+import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
@@ -153,7 +154,7 @@ export function DebateFlowPage() {
     setFlows(newFlows)
   }
 
-  const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow)
+  const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow, rounds)
 
   const splitHandlers = useSplitModeHandlers(flows, selected, updateFlow)
 
@@ -267,6 +268,9 @@ export function DebateFlowPage() {
   /** Currently selected flow, or null if none is selected. */
   const currentFlow = flows[selected] || null
 
+  /** Round the currently open flow belongs to, if any. */
+  const currentRound = currentFlow?.roundId ? rounds.find((r) => r.id === currentFlow.roundId) : undefined
+
   /** Markdown content of the currently open speech document. */
   const speechContent = currentFlow?.speechDocs?.[state.selectedSpeech] || ""
 
@@ -301,6 +305,9 @@ export function DebateFlowPage() {
   const { hasRecording: selectedSpeechHasRecording, deleteRecording: deleteSelectedSpeechRecording } =
     useSpeechRecordingStatus(selectedSpeech)
 
+  /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
+  const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
+
   /** Reset the selected speech's timer to its default length. */
   const handleResetSpeechTime = () => {
     const entry = timerState.getSpeechTimerState(selectedSpeech)
@@ -331,9 +338,7 @@ export function DebateFlowPage() {
 
       let title = `${timeStr} ${label}`
 
-      const round = currentFlow?.roundId
-        ? rounds.find((r) => r.id === currentFlow.roundId)
-        : undefined
+      const round = currentRound
 
       if (round) {
         const parts: string[] = []
@@ -507,6 +512,7 @@ export function DebateFlowPage() {
         hasRecording={selectedSpeechHasRecording}
         onDeleteRecording={deleteSelectedSpeechRecording}
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
+        participantEmails={selectedSpeechShareEmails}
       />
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">

@@ -18,7 +18,7 @@
  */
 
 import { useCallback, useRef } from "react"
-import { fetchUserSettings, saveUserSettings, type FullUserSettingsPayload } from "debate-round"
+import { fetchUserSettings, saveNewsLikedOp, saveNewsReadOp, type FullUserSettingsPayload } from "debate-round"
 import type { NewsStreamSyncAdapter, NewsSyncPayload } from "debate-community"
 
 // `FullUserSettingsPayload` (in `debate-round`) no longer carries the News
@@ -47,20 +47,18 @@ export function useNewsStreamSync(): NewsStreamSyncAdapter {
     }
   }, [])
 
-  const pushRead = useCallback((allReadIds: string[]) => {
+  const pushRead = useCallback((id: string) => {
     if (!remoteAvailable.current) return
-    const patch: Partial<SettingsWithNewsSync> = { newsRead: allReadIds }
-    saveUserSettings(patch).catch(() => {
+    saveNewsReadOp({ recordNewsRead: id }).catch(() => {
       // Best-effort — the read/like already applied locally in the panel,
       // matching useFavoriteTools's/UserSettingsPanel's "local apply is
       // never blocked by a sync failure" convention.
     })
   }, [])
 
-  const pushLiked = useCallback((allLikedIds: string[]) => {
+  const pushLiked = useCallback((id: string, liked: boolean) => {
     if (!remoteAvailable.current) return
-    const patch: Partial<SettingsWithNewsSync> = { newsLiked: allLikedIds }
-    saveUserSettings(patch).catch(() => {})
+    saveNewsLikedOp(liked ? { addNewsLiked: id } : { removeNewsLiked: id }).catch(() => {})
   }, [])
 
   return { hydrate, pushRead, pushLiked }
