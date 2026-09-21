@@ -330,7 +330,10 @@ database.
   stacks fell behind *before* this wiring existed, `POST
   /api/admin/videos/recompute-stacks` (admin-gated) backfills them in one
   call — safe to re-run, since a row already carrying its correct placement
-  produces no write.
+  produces no write. A **Recompute stacks** button next to "Resync video view
+  counts" on `/admin` calls it directly, mirroring that button's own
+  "checked N, updated M" summary line
+  (`lib/videos/format-recompute-stacks-result.ts`).
 - Search is `LIKE`-based token matching (every token must appear in title,
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now
