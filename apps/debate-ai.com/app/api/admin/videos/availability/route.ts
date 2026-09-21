@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import { listUnavailableVideos, markVideoAvailable } from "@/lib/videos/resync-view-counts";
 
 /**
@@ -28,9 +29,9 @@ export async function GET(req: NextRequest) {
     const db = await getDBFromContext();
     return NextResponse.json({ videos: await listUnavailableVideos(db, limit) });
   } catch (error) {
-    console.error("Failed to list unavailable videos:", error);
+    console.error("Failed to list unavailable videos:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to load unavailable videos", details: (error as Error).message },
+      { error: "Failed to load unavailable videos", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -66,9 +67,9 @@ export async function POST(req: NextRequest) {
     await markVideoAvailable(db, videoId);
     return NextResponse.json({ ok: true, videoId });
   } catch (error) {
-    console.error("Failed to clear video availability flag:", error);
+    console.error("Failed to clear video availability flag:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to update video", details: (error as Error).message },
+      { error: "Failed to update video", details: describeError(error) },
       { status: 500 },
     );
   }
