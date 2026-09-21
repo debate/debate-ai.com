@@ -10,13 +10,13 @@
  * outcome and result into columns so the round list can be queried.
  *
  * Gamification is persisted on the `user_settings` row's `practiceVsAiScore`/
- * `practiceVsAiBadges` columns (see schema.ts's comment on those). There is
- * no persisted transcript beyond the debate row itself: `saveTranscript`
- * stays unset, since `createDebate`/`appendMessage`/`setOutcome` already keep
- * the full history in `practiceVsAiDebates.data` and a second copy would just
- * be a redundant write. There is also no real streak yet —
- * `getGamificationProfile` always reports `currentStreak: 0` — see the
- * schema comment for why.
+ * `practiceVsAiBadges` columns, plus `practiceVsAiLastPlayedDayKey`/
+ * `practiceVsAiCurrentStreak` for the day-over-day streak (see schema.ts's
+ * comments on those and `debate-practice-vs-ai`'s `advanceDailyStreak`).
+ * There is no persisted transcript beyond the debate row itself:
+ * `saveTranscript` stays unset, since `createDebate`/`appendMessage`/
+ * `setOutcome` already keep the full history in `practiceVsAiDebates.data`
+ * and a second copy would just be a redundant write.
  */
 
 import { and, desc, eq } from "drizzle-orm"
@@ -26,7 +26,13 @@ import type {
   DebateVsBotRecord,
   GamificationProfile,
 } from "debate-practice-vs-ai"
-import { computeGamificationAward, resolveResultStatus } from "debate-practice-vs-ai"
+import {
+  advanceDailyStreak,
+  computeGamificationAward,
+  currentDisplayStreak,
+  resolveResultStatus,
+  utcDayKey,
+} from "debate-practice-vs-ai"
 import { getDBFromContext } from "@/lib/database/context"
 import { practiceVsAiDebates, userSettings } from "@/lib/database/schema"
 
@@ -184,16 +190,19 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
     async getGamificationProfile(): Promise<GamificationProfile> {
       const db = await getDBFromContext()
       const [row] = await db
-        .select({ score: userSettings.practiceVsAiScore, badges: userSettings.practiceVsAiBadges })
+        .select({
+          score: userSettings.practiceVsAiScore,
+          badges: userSettings.practiceVsAiBadges,
+          lastPlayedDayKey: userSettings.practiceVsAiLastPlayedDayKey,
+          streak: userSettings.practiceVsAiCurrentStreak,
+        })
         .from(userSettings)
         .where(eq(userSettings.userId, userId))
         .limit(1)
       return {
         score: row?.score ?? 0,
         badges: parseBadges(row?.badges),
-        // No dated activity log to derive a real streak from yet — see the
-        // schema comment on `practiceVsAiScore`/`practiceVsAiBadges`.
-        currentStreak: 0,
+        currentStreak: currentDisplayStreak(row?.lastPlayedDayKey, utcDayKey(Date.now()), row?.streak ?? 0),
       }
     },
 
@@ -206,30 +215,45 @@ export function createPracticeVsAiStore(userId: string): DebateStore {
       // clobbering the first (the same lost-update shape already fixed for
       // the various `saved_*`/settings list fields).
       const [existing] = await db
-        .select({ score: userSettings.practiceVsAiScore, badges: userSettings.practiceVsAiBadges })
+        .select({
+          score: userSettings.practiceVsAiScore,
+          badges: userSettings.practiceVsAiBadges,
+          lastPlayedDayKey: userSettings.practiceVsAiLastPlayedDayKey,
+          streak: userSettings.practiceVsAiCurrentStreak,
+        })
         .from(userSettings)
         .where(eq(userSettings.userId, userId))
         .limit(1)
+      const now = new Date()
+      const today = utcDayKey(now.getTime())
+      const currentStreak = advanceDailyStreak(existing?.lastPlayedDayKey, today, existing?.streak ?? 0)
       const profile: GamificationProfile = {
         score: existing?.score ?? 0,
         badges: parseBadges(existing?.badges),
-        currentStreak: 0,
+        currentStreak,
       }
       const award = computeGamificationAward(profile, context.result)
       const badges = JSON.stringify([...new Set([...profile.badges, ...award.badgesAwarded])])
-      const now = new Date()
       await db
         .insert(userSettings)
         .values({
           userId,
           practiceVsAiScore: award.newScore,
           practiceVsAiBadges: badges,
+          practiceVsAiLastPlayedDayKey: today,
+          practiceVsAiCurrentStreak: currentStreak,
           createdAt: now,
           updatedAt: now,
         })
         .onConflictDoUpdate({
           target: userSettings.userId,
-          set: { practiceVsAiScore: award.newScore, practiceVsAiBadges: badges, updatedAt: now },
+          set: {
+            practiceVsAiScore: award.newScore,
+            practiceVsAiBadges: badges,
+            practiceVsAiLastPlayedDayKey: today,
+            practiceVsAiCurrentStreak: currentStreak,
+            updatedAt: now,
+          },
         })
       return award
     },

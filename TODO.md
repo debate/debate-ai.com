@@ -17,6 +17,66 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔥 Practice vs AI's `Streak5` badge is reachable: a real day-over-day
+  streak, persisted in `user_settings` and linked to the account.**
+  `packages/debate-help-docs/content/docs/features/practice-vs-ai.mdx`'s
+  Known gaps said gamification's score and badges were persisted
+  (`user_settings.practiceVsAiScore`/`practiceVsAiBadges`) but
+  `getGamificationProfile` always reported `currentStreak: 0`, since a real
+  streak needs a dated activity log this table didn't have — making the
+  `Streak5` badge (`packages/debate-round-practice-ai/src/backend/gamification.ts`'s
+  `computeGamificationAward`, which already checked
+  `profile.currentStreak >= 5`) permanently unreachable. Confirmed the Go
+  `arguehub` original this package ports had the same bug —
+  `debatevsbot_controller.go` read `user.CurrentStreak` in its own badge
+  check but never incremented it anywhere — so this wasn't a regression the
+  port introduced, just a gap neither side had closed.
+
+  `user_settings` gained two nullable columns,
+  `practiceVsAiLastPlayedDayKey` (UTC `YYYY-MM-DD`) and
+  `practiceVsAiCurrentStreak` (`apps/debate-ai.com/drizzle/0048_practice_vs_ai_streak.sql`,
+  hand-written to match the repo's existing single-column-add migration
+  style rather than `drizzle-kit generate`, whose journal has been stale
+  since long before this run and would have bundled in every untracked
+  schema change back to migration 0035 as one file). Three new pure
+  functions in `debate-practice-vs-ai`'s `gamification.ts` —
+  `utcDayKey`, `advanceDailyStreak` (a second round the same day leaves the
+  streak unchanged, the calendar day right after extends it by one,
+  anything else restarts it at 1) and `currentDisplayStreak` (reports the
+  streak as lapsed/0 once a day is missed, without needing a write to reset
+  the stored value) — do the actual date math.
+  `apps/debate-ai.com/lib/practice-vs-ai/store.ts`'s `applyGamificationAward`
+  now re-reads the two new columns in the same query as the existing
+  score/badges re-read (preserving its existing lost-update-race fix — see
+  the account's current row at write time, not a possibly-stale earlier
+  fetch) and advances the streak before computing the award, so reaching
+  five consecutive days awards `Streak5` on that fifth day's round;
+  `getGamificationProfile` reports the same columns via
+  `currentDisplayStreak` for a caller that just wants to display the
+  current state without recording a round. No frontend change was needed —
+  `JudgmentPopup.tsx` already renders any badge in `badgesAwarded`,
+  `Streak5` included, with its "5-Day Streak" label; it was only ever
+  unreachable because the backend never produced it.
+
+  Vitest-covered: `packages/debate-round-practice-ai/test/gamification.test.ts`
+  (new — `advanceDailyStreak`'s same-day/next-day/missed-day/month-boundary
+  cases, `currentDisplayStreak`'s lapsed-vs-holding cases, `utcDayKey`'s
+  formatting) and `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`
+  (updated the two existing single-round assertions from
+  `currentStreak: 0` to the now-correct `currentStreak: 1`, and added four
+  new cases against a real in-memory SQLite database: five simulated
+  consecutive days actually earns `Streak5`, a second round the same day
+  doesn't advance the streak, a missed day restarts it at 1, and a lapsed
+  streak reads as 0 without a write).
+
+  Ran the full verification gate: `bunx turbo run typecheck` (17/17
+  packages green), `bun run test` (496 files / 9289 tests, all passing,
+  repo-wide), and `bun run build:web` (production build succeeded). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable. Docs updated: both
+  `features/practice-vs-ai.mdx` and `internals/practice-vs-ai.mdx`'s Known
+  gaps and Tests sections.
+
 - **📊 `/videos/statistics` ("Topic & Video Statistics") actually renders
   statistics, and the whole repo's `bun run typecheck` builds again.**
   `packages/debate-videos/src/panels/statistics/StatisticsPage.tsx` existed

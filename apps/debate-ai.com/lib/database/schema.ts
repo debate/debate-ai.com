@@ -311,13 +311,19 @@ export const userSettings = sqliteTable("user_settings", {
   // `getGamificationProfile`/`applyGamificationAward`, not through the
   // generic `/api/settings` PUT — these are server-computed round results,
   // not a user preference. Null/zero means "no round scored yet", same
-  // semantics as every other nullable column here. There is deliberately no
-  // persisted streak counter yet: a real day-over-day streak needs a dated
-  // activity log this table doesn't have, so `getGamificationProfile`
-  // reports `currentStreak: 0` and the `Streak5` badge is unreachable until
-  // that follow-up lands.
+  // semantics as every other nullable column here.
   practiceVsAiScore: integer("practice_vs_ai_score"),
   practiceVsAiBadges: text("practice_vs_ai_badges"),
+  // The UTC calendar day ("YYYY-MM-DD") of the most recent scored round and
+  // the day-over-day streak as of that round, the dated activity log the
+  // comment above used to say this table didn't have. Advanced by
+  // `advanceDailyStreak` (gamification.ts) in `applyGamificationAward`: a
+  // second round the same day doesn't move it, the day after extends it,
+  // anything else (first round, or a missed day) restarts it at 1. Null
+  // means "never played", same semantics as every other nullable column
+  // here.
+  practiceVsAiLastPlayedDayKey: text("practice_vs_ai_last_played_day_key"),
+  practiceVsAiCurrentStreak: integer("practice_vs_ai_current_streak"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
