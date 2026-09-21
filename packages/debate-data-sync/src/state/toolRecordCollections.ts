@@ -226,6 +226,19 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/debate",
     section: "Flowing and writing",
   },
+  {
+    key: "docsChatTabs",
+    storageKey: "qwksearch-open-chat-tabs",
+    idField: "id",
+    // Which REASON Docs chat conversations are open as tabs, kept by
+    // `apps/debate-ai.com/components/qwksearch/useChatTabs.ts`. The
+    // conversations themselves are owned by the third-party `research-agent-ui`
+    // package's own backend and fetched by id, so this record is the tab
+    // layout — which chats to reopen and their titles — not the chat content.
+    label: "Debate Docs Chat Tabs",
+    href: "/doc",
+    section: "Flowing and writing",
+  },
   // — Coaching —
   {
     key: "coachConversation",
