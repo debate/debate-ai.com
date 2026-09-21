@@ -41,13 +41,12 @@ interface WatchPageLinkProps {
 }
 
 export function WatchPageLink({
-  videoId,
   title,
   video,
   className,
   iconClassName,
 }: WatchPageLinkProps) {
-  const href = video ? videoRouteHref(video) : videoWatchHref(title, videoId)
+  const href = video ? videoRouteHref(video) : videoWatchHref(title)
 
   return (
     <Tooltip>

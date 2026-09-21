@@ -221,7 +221,7 @@ describe("VideoWatchPage playback handoff", () => {
       store().setActiveVideo("dQw4w9WgXcQ", "Round 4")
     })
 
-    expect(push).toHaveBeenCalledWith(videoWatchHref("Round 4", "dQw4w9WgXcQ"))
+    expect(push).toHaveBeenCalledWith(videoWatchHref("Round 4"))
 
     unmount()
   })

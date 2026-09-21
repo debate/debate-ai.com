@@ -1,11 +1,9 @@
 /**
- * @fileoverview Watch-page slugs: `/videos/watch/<title-slug>-<videoId>`.
+ * @fileoverview Watch-page slugs: `/videos/watch/<slug>`.
  *
- * The round trip is the part worth pinning. The title half of a slug is
- * decoration — a video that gets retitled, or shared with an older title,
- * must still resolve — so the id is read back positionally from the end.
- * YouTube ids contain `-` and `_` often enough that the obvious
- * `split("-").pop()` truncates a real share of the library.
+ * The slug is purely the slugified title — no video id is appended.
+ * The round trip is the part worth pinning: slugify, then match on
+ * the slug, gives back a consistent key for the same title.
  */
 
 import { describe, expect, it } from "vitest";
@@ -40,41 +38,31 @@ describe("slugifyVideoTitle", () => {
 });
 
 describe("videoWatchSlug / videoWatchHref", () => {
-  it("appends the video id to the title slug", () => {
-    expect(videoWatchSlug("NDT Finals", "OXdffJy8HIs")).toBe("ndt-finals-OXdffJy8HIs");
-    expect(videoWatchHref("NDT Finals", "OXdffJy8HIs")).toBe(
-      "/videos/watch/ndt-finals-OXdffJy8HIs",
-    );
+  it("returns the slugified title without a video id", () => {
+    expect(videoWatchSlug("NDT Finals")).toBe("ndt-finals");
+    expect(videoWatchHref("NDT Finals")).toBe("/videos/watch/ndt-finals");
   });
 
-  it("falls back to the bare id when the title slugifies to nothing", () => {
-    expect(videoWatchSlug("???", "OXdffJy8HIs")).toBe("OXdffJy8HIs");
+  it("is empty for a title that slugifies to nothing", () => {
+    expect(videoWatchSlug("???")).toBe("");
   });
 });
 
 describe("parseVideoWatchSlug", () => {
-  it("round-trips every id, dashes and underscores included", () => {
-    for (const id of ["OXdffJy8HIs", "-abc123XYZ_", "a_b-c_d-e_f", "dQw4w9WgXcQ"]) {
-      expect(parseVideoWatchSlug(videoWatchSlug("2022 NDT Finals", id))).toBe(id);
-    }
+  it("returns the slug as-is", () => {
+    expect(parseVideoWatchSlug("ndt-finals")).toBe("ndt-finals");
+    expect(parseVideoWatchSlug("2022-ndt-finals-dartmouth-vs-michigan")).toBe(
+      "2022-ndt-finals-dartmouth-vs-michigan",
+    );
   });
 
-  it("ignores the title, so a retitled video keeps its old links", () => {
-    expect(parseVideoWatchSlug("some-completely-different-title-OXdffJy8HIs")).toBe("OXdffJy8HIs");
+  it("handles percent-encoded slugs", () => {
+    expect(parseVideoWatchSlug("ndt%20finals")).toBe("ndt finals");
   });
 
-  it("accepts a bare id and a percent-encoded slug", () => {
-    expect(parseVideoWatchSlug("OXdffJy8HIs")).toBe("OXdffJy8HIs");
-    expect(parseVideoWatchSlug("ndt%20finals-OXdffJy8HIs")).toBe("OXdffJy8HIs");
-  });
-
-  it("rejects a slug that carries no id", () => {
+  it("returns null for empty input", () => {
     expect(parseVideoWatchSlug("")).toBeNull();
     expect(parseVideoWatchSlug(null)).toBeNull();
-    expect(parseVideoWatchSlug("ndt-finals")).toBeNull();
-    // Eleven trailing characters, but not separated from the title by a dash.
-    expect(parseVideoWatchSlug("ndtfinalsOXdffJy8HIs")).toBeNull();
-    // Eleven characters, one of them outside the id alphabet.
-    expect(parseVideoWatchSlug("ndt-finals-OXdffJy8HI!")).toBeNull();
+    expect(parseVideoWatchSlug(undefined)).toBeNull();
   });
 });

@@ -4,25 +4,21 @@ import { notFound, permanentRedirect } from "next/navigation"
 import {
   SlowSpreadButton,
   VideoWatchPage,
-  isCanonicalVideoRoute,
-  parseVideoRouteMatchup,
   videoRouteHref,
-  videoRouteParts,
   type VideoType,
 } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
-import { getRelatedVideos, getVideoById } from "@/lib/videos/video-repository"
+import { getRelatedVideos, getVideoByRouteSlug } from "@/lib/videos/video-repository"
 import { getVideoSidePanelContent } from "@/lib/videos/video-content"
 
 /**
  * One video at its canonical address:
- * `/videos/<season>/<format-tournament>/<matchup>-<videoId>`, e.g.
- * `/videos/2006/college-ndt/northwestern-vs-michigan-state-finals-dQw4w9WgXcQ`.
+ * `/videos/<season>/<format-tournament>/<matchup>`, e.g.
+ * `/videos/2006/college-ndt/northwestern-vs-michigan-state-finals`.
  *
  * The three segments are coarse-to-fine, which is what the old flat
  * `/videos/watch/<title-slug>` could never be: the season, then the format
- * and tournament, then who debated and which round. Only the trailing
- * 11-character id resolves the video — everything before it is for readers
+ * and tournament, then who debated and which round. Every segment is for readers
  * and for search engines, and is re-derived on every request so a corrected
  * team name or a re-tagged tournament redirects to the current address
  * instead of leaving two indexable URLs for one video.
@@ -36,16 +32,15 @@ import { getVideoSidePanelContent } from "@/lib/videos/video-content"
  */
 
 interface PageProps {
-  params: Promise<{ category: string; event: string; matchup: string }>
+  params: Promise< { category: string; event: string; matchup: string } >
 }
 
 /** How many videos the "Related videos" row under the player asks for. */
 const RELATED_VIDEO_COUNT = 12
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { matchup } = await params
-  const videoId = parseVideoRouteMatchup(matchup)
-  const video = videoId ? ((await getVideoById(videoId)) as VideoType | null) : null
+  const { category, event, matchup } = await params
+  const video = (await getVideoByRouteSlug(category, event, matchup)) as VideoType | null
 
   if (!video) {
     return { title: "Video not found", robots: { index: false, follow: false } }
@@ -72,21 +67,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function WatchVideoPage({ params }: PageProps) {
   const { category: season, event, matchup } = await params
 
-  const videoId = parseVideoRouteMatchup(matchup)
-  if (!videoId) notFound()
-
-  const video = (await getVideoById(videoId)) as VideoType | null
+  const video = (await getVideoByRouteSlug(season, event, matchup)) as VideoType | null
   if (!video) notFound()
 
   // One address per video: a link built before a retitle, a tournament fix or
   // a team-name correction still resolves, and is sent on to the current one.
-  if (!isCanonicalVideoRoute(videoRouteParts(video), { season, event, matchup })) {
-    permanentRedirect(videoRouteHref(video))
+  const canonical = videoRouteHref(video)
+  const requested = `/videos/${season}/${event}/${matchup}`
+  if (requested !== canonical) {
+    permanentRedirect(canonical)
   }
 
   const [related, sidePanel] = await Promise.all([
     getRelatedVideos(video, RELATED_VIDEO_COUNT) as Promise<VideoType[]>,
-    getVideoSidePanelContent(videoId),
+    getVideoSidePanelContent(video[0] as string),
   ])
 
   return (

@@ -1,21 +1,20 @@
 import type { Metadata } from "next"
 import { notFound, permanentRedirect } from "next/navigation"
-import { parseVideoWatchSlug, videoRouteHref, type VideoType } from "debate-videos"
-import { getVideoById } from "@/lib/videos/video-repository"
+import { videoRouteHref, type VideoType } from "debate-videos"
+import { getVideoBySlug } from "@/lib/videos/video-repository"
 
 /**
- * The watch page's first address, `/videos/watch/<title-slug>-<videoId>`,
+ * The watch page's address, `/videos/watch/<title-slug>`,
  * kept as a redirect to the canonical one.
  *
  * Every one of these links is somewhere out in the world — in a coach's
- * shared doc, in a Discord message, in a search index — and the id at the end
+ * shared doc, in a Discord message, in a search index — and the slug
  * still resolves the video, so none of them has to break. What they get now
  * is a permanent redirect to `/videos/<season>/<format-tournament>/<matchup>`,
  * which is where the page itself lives; see
  * `app/videos/[category]/[event]/[matchup]/page.tsx`.
  *
- * A slug carrying no id, or one naming a video the library no longer holds,
- * still 404s here rather than redirecting into another 404.
+ * A slug naming a video the library no longer holds still 404s here.
  */
 
 interface PageProps {
@@ -24,8 +23,7 @@ interface PageProps {
 
 /** Resolves the video this slug names, or `null`. */
 async function videoForSlug(slug: string): Promise<VideoType | null> {
-  const videoId = parseVideoWatchSlug(slug)
-  return videoId ? ((await getVideoById(videoId)) as VideoType | null) : null
+  return (await getVideoBySlug(slug)) as VideoType | null
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

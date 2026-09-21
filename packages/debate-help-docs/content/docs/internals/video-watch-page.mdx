@@ -4,7 +4,7 @@ title: "Video Watch Page — a page that owns the one player"
 
 # Video Watch Page — a page that owns the one player
 
-`/videos/watch/<title-slug>-<videoId>` renders one video with its
+`/videos/watch/<title-slug> renders one video with its
 transcript beside it and related videos underneath. It replaces
 `TranscriptModal`, a dialog over the grid that mounted its own YouTube
 embed and had no URL.
@@ -18,16 +18,12 @@ embed and had no URL.
 `lib/video-slug.ts` owns both directions:
 
 ```
-videoWatchSlug("2022 NDT Finals", "OXdffJy8HIs")  → "2022-ndt-finals-OXdffJy8HIs"
-parseVideoWatchSlug("anything-at-all-OXdffJy8HIs") → "OXdffJy8HIs"
+videoWatchSlug("2022 NDT Finals")  → "2022-ndt-finals"
+parseVideoWatchSlug("2022-ndt-finals") → "2022-ndt-finals"
 ```
 
-The id is read **positionally**, as the last 11 characters after a dash,
-not by splitting on `-`: YouTube ids contain `-` and `_`, so
-`slug.split("-").pop()` truncates a real share of the library. Because the
-title is never consulted, a retitled video still resolves from an old
-link; `generateMetadata` emits the freshly-built slug as `canonical` so
-the two spellings don't both get indexed.
+The slug is purely the slugified title — no video id is appended,
+so a retitled video gets a new address.
 
 `/videos/[category]` is one segment and `/videos/watch/[slug]` is two, so
 they never collide.
@@ -85,9 +81,11 @@ drift.
 
 The page is server-rendered so the title, description and social card come
 from the video rather than from a client fetch a crawler never waits for.
-`lib/videos/video-repository.ts` gained two helpers over `getVideoPage`:
+`lib/videos/video-repository.ts` gained helpers over `getVideoPage`:
 
-- `getVideoById(videoId)` — one video, via the existing `ids` filter.
+- `getVideoBySlug(slug)` — one video, by its slugified title.
+- `getVideoByRouteSlug(season, event, matchup)` — one video, by its
+  canonical route segments.
 - `getRelatedVideos(video, limit)` — passes in order of specificity: the
   same tournament (searched by its year-stripped name), then the same
   style or lecture category, then recency; each pass tops the list up.

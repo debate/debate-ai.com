@@ -3,7 +3,6 @@
  *
  * What is pinned here is what a URL scheme has to guarantee to be worth
  * changing to:
- *   - the id survives the round trip, including ids containing `-`;
  *   - the season comes from the *season*, not the upload date, or a March
  *     final files under the wrong year;
  *   - stale segments are detected, so a corrected title or tournament
@@ -51,13 +50,13 @@ describe("videoRouteSegments", () => {
     expect(videoRouteSegments(videoRouteParts(ndtFinal))).toEqual({
       season: "2006",
       event: "college-ndt",
-      matchup: "northwestern-gw-vs-michigan-state-bp-finals-dQw4w9WgXcQ",
+      matchup: "northwestern-gw-vs-michigan-state-bp-finals",
     });
   });
 
   it("builds the whole path from a tuple", () => {
     expect(videoRouteHref(ndtFinal)).toBe(
-      "/videos/2006/college-ndt/northwestern-gw-vs-michigan-state-bp-finals-dQw4w9WgXcQ",
+      "/videos/2006/college-ndt/northwestern-gw-vs-michigan-state-bp-finals",
     );
   });
 });
@@ -113,7 +112,7 @@ describe("matchupSegment", () => {
         negTeam: "Kentucky BC",
         roundLevel: "Octafinals",
       }),
-    ).toBe("michigan-km-vs-kentucky-bc-octafinals-abcdefghijk");
+    ).toBe("michigan-km-vs-kentucky-bc-octafinals");
   });
 
   it("adds the arguments that were run when there is room", () => {
@@ -126,7 +125,7 @@ describe("matchupSegment", () => {
         arg1ac: "Antitrust",
         arg2nr: "Cap K",
       }),
-    ).toBe("emory-vs-harvard-antitrust-cap-k-abcdefghijk");
+    ).toBe("emory-vs-harvard-antitrust-cap-k");
   });
 
   it("stops adding pieces rather than growing without bound", () => {
@@ -138,32 +137,28 @@ describe("matchupSegment", () => {
       roundLevel: "Quarterfinals",
       arg1ac: "An argument with a name nobody would ever shorten",
     });
-    expect(segment.endsWith("-abcdefghijk")).toBe(true);
-    expect(segment.length).toBeLessThanOrEqual(90 + "-abcdefghijk".length);
+    expect(segment.length).toBeLessThanOrEqual(90);
   });
 
   it("falls back to the title for a video with no teams", () => {
     expect(
       matchupSegment({ videoId: "abcdefghijk", title: "How to give a 2NR" }),
-    ).toBe("how-to-give-a-2nr-abcdefghijk");
+    ).toBe("how-to-give-a-2nr");
   });
 });
 
 describe("parseVideoRouteMatchup", () => {
-  it("reads the id back out of a matchup segment", () => {
-    expect(parseVideoRouteMatchup("northwestern-vs-michigan-state-finals-dQw4w9WgXcQ")).toBe(
-      "dQw4w9WgXcQ",
+  it("returns the segment as-is", () => {
+    expect(parseVideoRouteMatchup("northwestern-vs-michigan-state-finals")).toBe(
+      "northwestern-vs-michigan-state-finals",
+    );
+    expect(parseVideoRouteMatchup("emory-vs-harvard-a-b_c-d1234")).toBe(
+      "emory-vs-harvard-a-b_c-d1234",
     );
   });
 
-  it("keeps an id that itself contains dashes", () => {
-    // Splitting on "-" truncates these, which is why the id is read from the
-    // end of the segment rather than by splitting it.
-    expect(parseVideoRouteMatchup("emory-vs-harvard-a-b_c-d1234")).toBe("a-b_c-d1234");
-  });
-
-  it("rejects a segment carrying no id", () => {
-    expect(parseVideoRouteMatchup("finals")).toBeNull();
+  it("returns null for empty input", () => {
+    expect(parseVideoRouteMatchup("finals")).toBe("finals");
     expect(parseVideoRouteMatchup("")).toBeNull();
   });
 });

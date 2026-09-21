@@ -55,6 +55,7 @@ export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
 export const VIDEO_REFERENCE_LINKS: SidebarVideoLink[] = [
   { id: "dictionary", href: "/videos/dictionary", title: "Glossary of Terms" },
   { id: "rankings", href: "/videos/rankings", title: "Rankings" },
+  { id: "statistics", href: "/videos/statistics", title: "Topic & Video Statistics" },
 ];
 
 /** Every videos destination the sidebar links to, in tree order. */
