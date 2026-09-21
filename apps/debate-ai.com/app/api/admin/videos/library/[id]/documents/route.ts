@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { isVideoDocumentKind } from "debate-videos";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import {
   deleteVideoDocument,
   getVideoDocuments,
@@ -32,9 +33,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   try {
     return NextResponse.json({ documents: await getVideoDocuments(id) });
   } catch (error) {
-    console.error("Failed to list video documents:", error);
+    console.error("Failed to list video documents:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to load documents", details: (error as Error).message },
+      { error: "Failed to load documents", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -93,9 +94,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     );
     return NextResponse.json({ ok: true, document });
   } catch (error) {
-    console.error("Failed to save video document:", error);
+    console.error("Failed to save video document:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to save document", details: (error as Error).message },
+      { error: "Failed to save document", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -126,9 +127,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
     return NextResponse.json({ ok: true, kind });
   } catch (error) {
-    console.error("Failed to delete video document:", error);
+    console.error("Failed to delete video document:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to delete document", details: (error as Error).message },
+      { error: "Failed to delete document", details: describeError(error) },
       { status: 500 },
     );
   }

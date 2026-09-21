@@ -52,10 +52,15 @@ import {
   type QuestStreakSyncPayload,
 } from "debate-community"
 import {
+  DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC,
   DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
+  normalizeBrainstormSessionTimerPatch,
   normalizeResearchProgressGoalPatch,
+  parseBrainstormSessionTimer,
   parseResearchProgressGoal,
+  serializeBrainstormSessionTimer,
   serializeResearchProgressGoal,
+  type BrainstormSessionTimerSyncPayload,
   type ResearchProgressGoalSyncPayload,
 } from "debate-team-collaboration"
 import {
@@ -117,8 +122,8 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   savedArgumentCollections?,
  *   addSavedArgumentCollection?, removeSavedArgumentCollection?,
  *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
- *   researchProgressGoal?, questStreakSync?, qualificationPointsTable?,
- *   qualificationCutoff? } — validates and
+ *   researchProgressGoal?, brainstormSessionTimer?, questStreakSync?,
+ *   qualificationPointsTable?, qualificationCutoff? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
@@ -129,6 +134,10 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   `normalizeSavedArgumentCollectionsPatch`/
  *   `normalizeSavedArgumentCollectionOpPatch`/
  *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`,
+ *   `debate-team-collaboration`'s `normalizeBrainstormSessionTimerPatch`
+ *   (the Team Brainstorm Assist session timer — see
+ *   `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
+ *   Known gaps),
  *   and `debate-data-sync`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
@@ -224,6 +233,7 @@ type SettingsRow = {
   outlineFilterPresets: string | null
   savedArgumentCollections: string | null
   researchProgressGoal: string | null
+  brainstormSessionTimer: string | null
   questStreakSync: string | null
   qualificationPointsTable: string | null
   qualificationCutoff: string | null
@@ -241,6 +251,7 @@ type SettingsPayload = UserSettingsPayload & {
   outlineFilterPresets: OutlineFilterPreset[]
   savedArgumentCollections: SavedArgumentCollection[]
   researchProgressGoal: ResearchProgressGoalSyncPayload | null
+  brainstormSessionTimer: BrainstormSessionTimerSyncPayload | null
   questStreakSync: QuestStreakSyncPayload | null
   qualificationPointsTable: QualificationPointsTable | null
   qualificationCutoff: QualificationCutoffSettings | null
@@ -269,6 +280,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     researchProgressGoal: row?.researchProgressGoal
       ? parseResearchProgressGoal(row.researchProgressGoal)
       : DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC.researchProgressGoal,
+    brainstormSessionTimer: row?.brainstormSessionTimer
+      ? parseBrainstormSessionTimer(row.brainstormSessionTimer)
+      : DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC.brainstormSessionTimer,
     questStreakSync: row?.questStreakSync
       ? parseQuestStreakSync(row.questStreakSync)
       : DEFAULT_QUEST_STREAK_SYNC.questStreakSync,
@@ -318,6 +332,7 @@ export async function PUT(req: NextRequest) {
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
   const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
+  const brainstormSessionTimerResult = normalizeBrainstormSessionTimerPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
   const questStreakFreezeOpResult = normalizeQuestStreakFreezeOpPatch(body)
   const questStreakReminderOpResult = normalizeQuestStreakReminderOpPatch(body)
@@ -343,6 +358,7 @@ export async function PUT(req: NextRequest) {
     ...savedArgumentCollectionsResult.errors,
     ...savedArgumentCollectionOpResult.errors,
     ...researchProgressGoalResult.errors,
+    ...brainstormSessionTimerResult.errors,
     ...questStreakSyncResult.errors,
     ...questStreakFreezeOpResult.errors,
     ...questStreakReminderOpResult.errors,
@@ -377,6 +393,7 @@ export async function PUT(req: NextRequest) {
     savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection === undefined &&
     savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
+    brainstormSessionTimerResult.valid.brainstormSessionTimer === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
     questStreakFreezeOpResult.valid.recordStreakFreezeDayKey === undefined &&
     questStreakReminderOpResult.valid.setLapseReminderEnabled === undefined &&
@@ -391,7 +408,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -413,6 +430,7 @@ export async function PUT(req: NextRequest) {
     outlineFilterPresets?: string | null
     savedArgumentCollections?: string | null
     researchProgressGoal?: string | null
+    brainstormSessionTimer?: string | null
     questStreakSync?: string | null
     qualificationPointsTable?: string | null
     qualificationCutoff?: string | null
@@ -559,6 +577,11 @@ export async function PUT(req: NextRequest) {
   }
   if (researchProgressGoalResult.valid.researchProgressGoal !== undefined) {
     dbPatch.researchProgressGoal = serializeResearchProgressGoal(researchProgressGoalResult.valid.researchProgressGoal)
+  }
+  if (brainstormSessionTimerResult.valid.brainstormSessionTimer !== undefined) {
+    dbPatch.brainstormSessionTimer = serializeBrainstormSessionTimer(
+      brainstormSessionTimerResult.valid.brainstormSessionTimer,
+    )
   }
   if (questStreakFreezeOpResult.valid.recordStreakFreezeDayKey !== undefined) {
     // A single "spend a freeze on this day" op is resolved against the row's

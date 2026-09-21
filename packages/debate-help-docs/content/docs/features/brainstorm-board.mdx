@@ -38,11 +38,16 @@ state/brainstormIdeas.ts (localStorage: brainstormIdeas)
 ## Session timer
 
 An optional "Session timer" widget lets a moderator time-box a sprint: pick
-a duration (3/5/10/15 minutes), Start, Pause/resume, or Reset.
+a duration (3/5/10/15 minutes), Start, Pause/resume, or Reset. It's
+`localStorage`-backed per browser (so a countdown started in one tab is
+visible, live, in any other open tab of the same browser via a `storage`
+listener) and, for a real signed-in visitor, also account-synced through
+`/api/settings`'s `brainstormSessionTimer` field via
+`hooks/useBrainstormSessionTimerSync.ts` — so the same countdown follows
+them to another device, not just another tab.
 
 ## Known gaps
 
 - No reviewer/moderator identity check gates the merge or "Send to Argument
   Library" actions.
 - "Contributor ID" is still free-form text, not a login.
-- The session timer is `localStorage`-only, not account-synced.

@@ -304,6 +304,16 @@ export const userSettings = sqliteTable("user_settings", {
   // `saved_tournament_results` table below, one row per result.
   qualificationPointsTable: text("qualification_points_table"),
   qualificationCutoff: text("qualification_cutoff"),
+  // JSON-serialized `BrainstormSessionTimerState` (see
+  // packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts
+  // and packages/debate-help-docs/content/docs/features/brainstorm-board.mdx's
+  // "The session timer is localStorage-only, not account-synced" Known gap).
+  // A whole-value replace on every start/pause/reset/duration change, like
+  // `researchProgressGoal` above, rather than op-based — a session timer has
+  // at most one moderator driving it at a time, so the two-tabs-race the
+  // op-based fields exist for doesn't apply here. Null/absent means "no
+  // synced timer yet", same semantics as every other nullable column here.
+  brainstormSessionTimer: text("brainstorm_session_timer"),
   // Practice vs AI's gamification score and JSON-serialized array of earned
   // badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts
   // and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx).
