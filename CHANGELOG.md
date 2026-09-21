@@ -1,6 +1,101 @@
 
 ### Completed
 
+- **📇 Sync CardMirror's Learn review log to the account, and give it its
+  first user-facing surface.** Another repeat of the standing
+  autonomous-routine prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all
+  linked to `user.id`, and every tool already reachable from the Tools
+  page, the command palette and the feature catalog. Audited the specific
+  follow-ups earlier entries below had flagged as still open (CardMirror's
+  personal-dictionary view/remove UI, its Learn flashcards/decks sync, the
+  `qwksearch` file-sources credential-sync gap) and found most already
+  closed by runs between when they were flagged and now — this changelog's
+  own ordering isn't strictly chronological across the parallel automated
+  runs that write to it, so a flagged follow-up can already be stale by
+  the time a later entry cites it. The one still-open, one-PR-sized gap:
+  of Learn's 8 sub-collections (`packages/debate-editor/src/editor/learn-store.ts`),
+  cards and custom decks already synced to the account
+  (`learn-cards-sync.ts`, `learn-decks-sync.ts`); the review log
+  (`ReviewLogEntry[]` — `grade()`'s append-only grading history) neither
+  synced nor had any UI reading it anywhere, not even the "Manage
+  flashcards" overlay.
+
+  Gave it its own bespoke sync, mirroring the cards/decks split (all 8
+  sub-collections share one localStorage blob, so the generic
+  `TOOL_RECORD_COLLECTIONS` mechanism would clobber the other 7 on every
+  write) but simpler than either: a review-log entry is immutable once
+  logged, so there's no optimistic-concurrency conflict to resolve, only
+  add/remove. Added `reviewLogEntryId` (`` `${cardId}:${at}` `` — `at` is
+  already a millisecond-precision ISO timestamp, so this needed no new id
+  field or call-site reshaping), `isValidReviewLogEntry`, `listLog()`, and
+  `adoptLogEntry()` (append-if-absent; deliberately never touches
+  `schedules` — sync is purely informational history, not a replay of
+  another device's grading) to `learn-store.ts`; `learn-review-log-client.ts`
+  + `learn-review-log-sync.ts` (`LearnReviewLogSync`, mirroring
+  `LearnCardsSync`'s init-merge-then-mirror shape); `saved_learn_review_log`
+  (migration `0050`, keyed `(user_id, client_id)` same as
+  `saved_learn_cards`/`saved_learn_decks`) and `/api/learn-review-log`
+  (`GET` + `[entryId]` `PUT`/`DELETE`, account-only). Wired
+  `learnReviewLogSync.init()` into `editor/index.ts` alongside the other
+  two.
+
+  Then closed the actual UI gap: `learn-review-log-ui.ts`'s
+  `buildReviewLogSection` (an injectable-`store`/`sync` pure builder,
+  mirroring `user-dictionary-ui.ts`'s testability split from its own
+  overlay chrome) lists every logged review newest-first with the card's
+  current front text, its grade, and when it happened, plus one coarse
+  "Synced to your account" / "Not synced" line — not a per-entry badge;
+  this sync has no per-record conflict state worth surfacing. Its
+  `openReviewLogHistory` wraps that in its own small `.pmd-route-overlay`
+  (stacks above the Manage overlay, z-index 1400 vs. 1090), opened from a
+  new "History" button in `learn-manage-ui.ts`'s bar — a two-line,
+  mechanical addition to that large untested vanilla-DOM file, keeping
+  every actually-interesting bit (the list rendering, the sync-status
+  line, the live re-render) in the tested module instead.
+
+  Vitest-covered: `learn-store.test.ts` (`listLog`/`adoptLogEntry`/
+  `isValidReviewLogEntry`/`reviewLogEntryId` — dedupe-by-id, never mints a
+  schedule on adoption, validator rejection cases), `learn-review-log-client.test.ts`
+  (mirroring `learn-cards-client.test.ts`), `learn-review-log-sync.test.ts`
+  (init merge, ongoing mirror, delete-on-card-removal, signed-out no-op —
+  mirroring `learn-cards-sync.test.ts` minus the conflict-handling cases,
+  which don't apply here) and `learn-review-log-ui.test.ts` (empty state,
+  card lookup incl. a deleted-card placeholder, newest-first sort, live
+  re-render, sync-status transitions, reusing an already-in-flight
+  `init()`).
+
+  Ran the full verification gate: `bun install`, `debate-editor`'s own
+  `bun run test` (42 files, 889 tests — 39 new across the 4 new/changed
+  files) and `bun run typecheck`, `apps/debate-ai.com`'s `bun run typecheck`,
+  the root `bun run test` (503 files, 9394 tests passing), `bun run typecheck`
+  (17/17 packages green, `debate-help-docs`'s MDX build included — the new
+  `learn-review-log-cloud-sync.mdx` page parses clean), and `bun run build`
+  (production build; `/api/learn-review-log` and `/api/learn-review-log/:entryId`
+  both present in the route manifest). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** Learn still has 5 unsynced
+  sub-collections (schedules — deliberately local-only by design, not a
+  gap; anchors, AI threads, notes, doc registry). Anchors/AI
+  threads/notes are keyed by `(cardId, docId)` or `(threadId, docId)`
+  rather than one string id, and the doc registry is keyed by `docId`
+  with no natural per-user-visible list yet — each would need its own
+  small design pass (a composite-key id scheme, at minimum) before
+  mirroring this same bespoke-sync pattern, not just a repeat of this PR's
+  shape. The `qwksearch` file-sources credential-sync gap
+  (`apps/debate-ai.com/components/qwksearch/lib/file-sources.ts`, plain
+  `localStorage` for SSH/S3/R2/B2/Google Docs/Turso credentials) remains
+  open and still needs a maintainer security/product decision (encrypt
+  server-side vs. strip credential fields vs. stay local-only by design)
+  before implementation — confirmed unchanged this run.
+
 - **🔗 Give the Debate Flow History tab a per-entry "synced to your account"
   indicator.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link

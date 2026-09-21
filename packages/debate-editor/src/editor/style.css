@@ -12576,6 +12576,92 @@ textarea.pmd-text-prompt-input {
   border-color: var(--pmd-c-error);
 }
 
+/* ---- Review history overlay (learn-review-log-ui) ----
+ * Opened from the "History" button in the Manage flashcards overlay's bar;
+ * a `.pmd-route-overlay`/`.pmd-route-dialog` above it (z=1400 vs. 1090),
+ * see that family's shared comment. */
+.pmd-review-log-dialog {
+  width: min(560px, 94vw);
+  max-height: 80vh;
+}
+.pmd-review-log-close {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: var(--pmd-c-text-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+}
+.pmd-review-log-close:hover { color: var(--pmd-c-text); }
+.pmd-review-log-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+.pmd-review-log-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+.pmd-review-log-sync-status {
+  font-size: 0.75rem;
+  color: var(--pmd-c-text-muted);
+}
+.pmd-review-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  overflow-y: auto;
+  max-height: 60vh;
+}
+.pmd-review-log-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--pmd-c-text-muted);
+  font-size: 0.9rem;
+}
+.pmd-review-log-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 5px;
+}
+.pmd-review-log-card {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pmd-review-log-grade {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid var(--pmd-c-border-soft);
+}
+.pmd-review-log-grade--remembered {
+  color: var(--pmd-c-accent);
+  border-color: var(--pmd-c-accent);
+}
+.pmd-review-log-grade--forgot {
+  color: var(--pmd-c-warning);
+  border-color: var(--pmd-c-warning);
+}
+.pmd-review-log-date {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: var(--pmd-c-text-muted);
+  white-space: nowrap;
+}
+
 /* ---- Multi-pane: typography parity ----
  *
  * The single-doc editor scopes typography-flag rules to `#editor.X`.

@@ -650,9 +650,9 @@ export type SavedLearnCardRow = typeof savedLearnCards.$inferSelect;
 // one-row-per-deck, upsert-by-caller-id shape as `savedLearnCards` above:
 // `clientId` holds the deck's own `deckId`, and `GET /api/learn-decks`
 // returns every synced deck in full for `learn-decks-sync.ts`'s
-// merge-on-init. Schedules/anchors/AI threads/notes/review log/doc
-// registry remain local-only, same reasoning as `savedLearnCards`'s
-// comment.
+// merge-on-init. Schedules/anchors/AI threads/notes/doc registry remain
+// local-only, same reasoning as `savedLearnCards`'s comment; the review
+// log gets its own table below (`savedLearnReviewLog`).
 export const savedLearnDecks = sqliteTable(
   "saved_learn_decks",
   {
@@ -676,6 +676,45 @@ export const savedLearnDecks = sqliteTable(
 );
 
 export type SavedLearnDeckRow = typeof savedLearnDecks.$inferSelect;
+
+// Account-linked Learn review-log sync — the next of the 8 sub-collections
+// in `learn-store.ts`'s shared blob after cards and decks: the grading
+// history (`ReviewLogEntry`: `cardId`/`at`/`grade`/`intervalBefore`/
+// `intervalAfter`) `grade()` appends to on every review. An entry has no
+// id of its own — `clientId` holds `reviewLogEntryId(entry)`
+// (`cardId:at`; `at` is a millisecond-precision ISO timestamp, already
+// unique per card) rather than reshaping the type. Same one-row-per-entry,
+// upsert-by-caller-id shape as `savedLearnCards`/`savedLearnDecks`:
+// `GET /api/learn-review-log` returns every synced entry in full for
+// `learn-review-log-sync.ts`'s merge-on-init. Purely informational — an
+// adopted entry is never replayed into `schedules`, which stays local-only
+// and per-device.
+export const savedLearnReviewLog = sqliteTable(
+  "saved_learn_review_log",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_learn_review_log_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_learn_review_log_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+  }),
+);
+
+export type SavedLearnReviewLogRow = typeof savedLearnReviewLog.$inferSelect;
 
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel

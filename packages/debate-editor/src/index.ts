@@ -101,6 +101,16 @@ export type { CardDef } from './editor/learn-store.js';
 export { isValidLearnDeckRecord, MAX_SAVED_LEARN_DECK_BYTES } from './editor/learn-store.js';
 export type { CustomDeck } from './editor/learn-store.js';
 
+// Learn review-log account-sync validation, shared by the store itself and
+// by `apps/debate-ai.com`'s `/api/learn-review-log` routes (see
+// `learn-review-log-sync.ts`'s module doc).
+export {
+  isValidReviewLogEntry,
+  MAX_SAVED_REVIEW_LOG_ENTRY_BYTES,
+  reviewLogEntryId,
+} from './editor/learn-store.js';
+export type { ReviewLogEntry } from './editor/learn-store.js';
+
 // Per-deck add-card/remove-card/rename ops, resolved server-side against a
 // deck's current stored state — the fix for the "two devices edit the same
 // deck at once" lost-update race a whole-deck `PUT` is exposed to (see

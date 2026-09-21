@@ -7,9 +7,11 @@
  * fresh (no due date pressure) on whichever device adopts it, which is
  * already how `learnStore.upsertCard` treats a card with no schedule, and
  * already how the manage GUI's own JSON export/import round-trips a card
- * with `schedule: null` (§ its module doc). No new sync infrastructure or
- * schema for the other 7 sub-collections — see TODO.md's standing
- * follow-up note for why those remain local-only.
+ * with `schedule: null` (§ its module doc). Decks (`learn-decks-sync.ts`)
+ * and the review log (`learn-review-log-sync.ts`) each get their own
+ * bespoke sync the same way; no new sync infrastructure for the remaining
+ * 5 sub-collections (schedule, anchor, AI thread, note, doc registry) —
+ * see those modules' own doc comments for why those stay local-only.
  *
  * `LearnStore` stays host-agnostic (no network/account knowledge) — this
  * class sits beside it, web-only (Electron's Learn store stays local-only

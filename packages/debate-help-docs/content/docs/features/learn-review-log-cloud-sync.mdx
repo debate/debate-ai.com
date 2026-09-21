@@ -1,0 +1,70 @@
+---
+title: "Learn Review Log Cloud Sync"
+---
+
+# Learn Review Log Cloud Sync
+
+Syncs CardMirror's Learn review log (`cardId`/`at`/`grade`/
+`intervalBefore`/`intervalAfter` — the grading history `grade()` appends
+to on every review) to a signed-in user's account, the same way
+[Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync)
+syncs a card's own content and
+[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync) syncs
+custom decks — the Learn store
+(`packages/debate-editor/src/editor/learn-store.ts`) was device-local
+only, and before this the review log had no user-facing surface at all,
+not even in the "Manage flashcards" overlay.
+
+- **Package:** `debate-editor` (`learnReviewLogSync`, `LearnReviewLogSync`,
+  `learn-review-log-client`, `learn-review-log-ui`), `apps/debate-ai.com`
+  (`/api/learn-review-log`, `saved_learn_review_log` D1 table)
+
+## What it does
+
+On boot, once the local Learn store has loaded, `learnReviewLogSync.init()`
+merges once against the account: any entry synced from another device but
+missing locally is adopted (via `LearnStore#adoptLogEntry`), and any entry
+that exists only on this device is best-effort pushed up — neither side
+ever overwrites the other, it only fills gaps. After the merge, every
+later graded review mirrors itself to the account the same way, including
+an entry's removal when its card is deleted or a file's cards are pruned
+via "forget this file" (both prune the local log too). Signed out, or
+under the Electron desktop build, the review log keeps working exactly as
+before, purely on-device.
+
+A review-log entry has no id field of its own — `reviewLogEntryId(entry)`
+(`` `${cardId}:${at}` ``) doubles as its synced record's key, since `at` is
+a millisecond-precision ISO timestamp already unique per card. Unlike
+[Learn Flashcards Cloud Sync](/docs/features/learn-cards-cloud-sync),
+there's no optimistic-concurrency conflict to handle: an entry's content
+for a given id never changes (`grade()` only ever appends a new entry,
+never edits an existing one), so `PUT /api/learn-review-log/[entryId]` is
+a plain idempotent upsert.
+
+Adopting a remote entry is purely informational — it never replays into
+`schedules`, which stays local-only and per-device exactly as the other
+two Learn syncs already leave it. Restoring review history on a new
+device is not meant to change that device's own due dates or intervals.
+
+The "Manage flashcards" overlay's new **History** button
+(`learn-review-log-ui.ts`'s `openReviewLogHistory`) lists every logged
+review, newest first, with the card's current front text, the grade, and
+when it happened, plus a coarse "Synced to your account" / "Not synced"
+status line (not a per-entry badge — this sync has no per-record conflict
+state worth surfacing).
+
+## What's intentionally excluded
+
+The remaining Learn sub-collections (schedules, anchors, AI threads,
+notes, doc registry) stay local-only for the same reason
+`learn-cards-cloud-sync.mdx` documents: they live in one shared blob per
+device, not one row per record, so they don't fit this sync's per-record
+shape.
+
+## Known gaps
+
+- An entry adopted from another device can reference a card that hasn't
+  reached this device yet (the same soft-reference gap
+  [Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync) already
+  accepts for a deck's `cardIds`) — the History list shows
+  "(deleted card)" for it rather than the card's front text.

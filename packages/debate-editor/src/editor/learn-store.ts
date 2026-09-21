@@ -133,6 +133,42 @@ export interface ReviewLogEntry {
   intervalAfter: number;
 }
 
+/** Byte cap for one review-log entry's account-synced JSON, mirroring
+ *  `MAX_SAVED_LEARN_CARD_BYTES`'s per-record cap. */
+export const MAX_SAVED_REVIEW_LOG_ENTRY_BYTES = 200_000;
+
+/**
+ * A review-log entry has no id field of its own — `at` (the grade's ISO
+ * timestamp, millisecond-precision from every real caller) is already
+ * unique per card, so `(cardId, at)` doubles as the synced record's stable
+ * id without reshaping `ReviewLogEntry` or its ~10 existing call sites.
+ * Shared by `learn-review-log-client.ts` (to build the URL) and
+ * `/api/learn-review-log/[entryId]` (to check the URL's id matches the
+ * posted entry) so both sides agree on the same scheme.
+ */
+export function reviewLogEntryId(entry: Pick<ReviewLogEntry, "cardId" | "at">): string {
+  return `${entry.cardId}:${entry.at}`;
+}
+
+/**
+ * Structural guard for an untrusted value claiming to be a `ReviewLogEntry`
+ * — doubles as the `/api/learn-review-log` account-sync routes' request-body
+ * validator, mirroring `isValidLearnDeckRecord`'s convention.
+ */
+export function isValidReviewLogEntry(e: unknown): e is ReviewLogEntry {
+  if (!e || typeof e !== "object") return false;
+  const l = e as Record<string, unknown>;
+  return (
+    typeof l.cardId === "string" &&
+    l.cardId.length > 0 &&
+    typeof l.at === "string" &&
+    l.at.length > 0 &&
+    (l.grade === "remembered" || l.grade === "forgot") &&
+    typeof l.intervalBefore === "number" &&
+    typeof l.intervalAfter === "number"
+  );
+}
+
 export interface CustomDeck {
   deckId: string;
   name: string;
@@ -264,6 +300,11 @@ export class LearnStore {
   }
   listDocs(): DocRegistryEntry[] {
     return [...this.docs.values()];
+  }
+  /** Every review-log entry (grading history) — for the manage GUI's
+   *  review-history section and the account-sync merge. */
+  listLog(): ReviewLogEntry[] {
+    return [...this.log];
   }
   /** Every card (content only) — for the manage GUI. */
   listCards(): CardDef[] {
@@ -480,6 +521,20 @@ export class LearnStore {
     this.log.push({ cardId, at: now, grade: g, intervalBefore: cur.intervalDays, intervalAfter: entry.intervalDays });
     this.changed();
     return retryInSession;
+  }
+
+  /** Adopts a review-log entry synced from another device — appends it if
+   *  this store doesn't already hold an entry for the same card at the
+   *  same timestamp (see `reviewLogEntryId`). The account-sync merge's
+   *  adoption path, mirroring `upsertDeck`, but never touches the
+   *  schedule: review-log sync is purely informational history, not a
+   *  replay of another device's grading — this device's own due dates,
+   *  intervals, and lapses stay exactly as they were. */
+  adoptLogEntry(entry: ReviewLogEntry): void {
+    const exists = this.log.some((l) => l.cardId === entry.cardId && l.at === entry.at);
+    if (exists) return;
+    this.log.push(entry);
+    this.changed();
   }
 
   suspend(cardId: string): void {
