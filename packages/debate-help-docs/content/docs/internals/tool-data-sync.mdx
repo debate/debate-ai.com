@@ -107,16 +107,17 @@ assessments (`aiCardAssessments`), both by `cardId`.
 
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
 (`prepRoomChecklist`), notes (`sprintNotes`) and whiteboard
-(`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`), Daily Quests
-(`dailyQuestTemplates`) and their quest-competition teams (`questTeams`), and
-award nominations (`contributorAwardNominations`), all by `id`; frozen Daily
-Best Card winners (`dailyBestCardAnnouncements`) and Top Contributor Award
-standings (`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
-(`routedTaskQueues`) by `topicId` and its pending verification queue
-(`pendingTaskVerifications`) by a derived `id`; contributor flows
-(`roundContributorFlows`) and availability (`contributorAvailability`) by
-`contributorId`; completed research-task history (`completedResearchTasks`)
-by `id`.
+(`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`) and their
+recorded win events (`challengeWinEvents`, by a derived `id` — see below),
+Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
+(`questTeams`), and award nominations (`contributorAwardNominations`), all by
+`id`; frozen Daily Best Card winners (`dailyBestCardAnnouncements`) and Top
+Contributor Award standings (`contributorAwardAnnouncements`), both by
+`dayKey`; the Task Inbox (`routedTaskQueues`) by `topicId` and its pending
+verification queue (`pendingTaskVerifications`) by a derived `id`; contributor
+flows (`roundContributorFlows`) and availability (`contributorAvailability`)
+by `contributorId`; completed research-task history
+(`completedResearchTasks`) by `id`.
 
 Practice Drills (`saved_drill_sets`), Word-Count Speeches
 (`saved_word_count_rounds`), Round Pairings (`saved_round_pairings`),

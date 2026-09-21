@@ -20,6 +20,64 @@ _No task currently in progress._
 
 ### Completed
 
+- **🏆 Group Challenge win events never synced to the account — the same
+  "per-browser localStorage, not account-synced" gap every other Team
+  section store on `/cards/progress-tracking`/`/cards/leaderboard` already
+  closed.** `state/challengeWinEvents.ts`'s `ChallengeWinEvent`
+  (`{ contributorId, occurredAt }`) had no per-record id — `contributorId`
+  repeats across every win a squad member records toward a `win_target`
+  `groupChallenges` challenge, so it couldn't join
+  `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist the way
+  `roundContributorFlows`/`contributorAvailability` (both `contributorId`-keyed)
+  and `completedResearchTasks` (fixed the same way previously) already did. A
+  win recorded on one device was invisible on another even though the
+  `groupChallenges` roster it scores against already synced.
+
+  Gave `ChallengeWinEvent` an optional `id` field (`lib/group-challenges.ts`)
+  and `recordChallengeWinEvent` (`state/challengeWinEvents.ts`) now stamps
+  every new event with a generated
+  `challenge-win-event-${Date.now()}-${random}` id, mirroring
+  `state/researchProgress.ts#generateCompletedTaskId`'s convention exactly.
+  Left `id` optional rather than required on the shared pure type, since
+  `lib/group-challenges.ts`'s matching/scoring functions only ever read
+  `contributorId`/`occurredAt` and dozens of test object literals across
+  `group-challenges.test.ts` build `ChallengeWinEvent`s directly without one —
+  a pre-existing persisted event with no id simply stays un-synced until it's
+  next touched, the same tolerance `completedResearchTasks` already
+  documents. Added the `challengeWinEvents` catalog entry (`idField: "id"`,
+  section "Team", href `/cards/leaderboard` — matching its `groupChallenges`
+  sibling).
+
+  New tests: `challengeWinEvents.test.ts` (the stamped id shape, and that two
+  events for the same contributor at the identical timestamp still get
+  distinct ids rather than colliding); `tool-record-catalog.test.ts` (the new
+  `EXPECTED_ID_FIELDS` entry and a pinning test for the catalog entry
+  itself). Confirmed no other test asserts an exact `ChallengeWinEvent` shape
+  that the new field would break, other than the two in
+  `challengeWinEvents.test.ts` itself, which were updated to check the id's
+  presence/uniqueness rather than its exact value.
+
+  While in the area, fixed a second, unrelated stale doc comment found during
+  the same investigation: `state/researchProgressGoals.ts`'s module comment
+  still said "Deliberately local-only, not account-synced... a future run can
+  add account sync" — false since `hooks/useResearchProgressGoalSync.ts` and
+  `lib/research-progress-goal-sync.ts` already sync it through `/api/settings`'
+  `researchProgressGoal` field (confirmed wired end to end: `schema.ts`'s
+  `research_progress_goal` column, the `/api/settings` route's read/write, and
+  `ResearchProgressPanel.tsx` calling the hook). Updated the comment to
+  describe the sync that already exists, rather than one still to be added.
+
+  Ran the verification gate: `bun install`; the affected/new test files
+  directly (101/101); the wider `debate-data-sync`, `debate-team-collaboration`,
+  `debate-contributor-progress` suites plus `debate-videos`' catalog
+  cross-check alongside them (2024/2024); `bun run typecheck` (17/17
+  packages); `bun run test` (508 files, 9450 tests, repo-wide, all passing);
+  and `bun run build:web` (production build succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`
+  (Team section's "Which tools sync" list) and
+  `packages/debate-help-docs/content/docs/features/group-challenges.mdx`
+  (noted both its localStorage stores now sync to the account).
+
 - **🔘 No admin UI button called the `/api/admin/videos/recompute-stacks`
   backfill endpoint.** The previous slice below added
   `POST /api/admin/videos/recompute-stacks` (admin-gated, re-derives stacked

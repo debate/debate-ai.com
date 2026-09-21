@@ -26,6 +26,14 @@
  * panel no longer needs a caller-supplied contribution/win-event list to
  * show real standings.
  *
+ * `recordChallengeWinEvent` stamps every new event with a generated `id` (a
+ * plain `contributorId`/`occurredAt` pair isn't unique — the same squad
+ * member can record two wins in the same millisecond), which is what lets
+ * this store join `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist
+ * (`challengeWinEvents`, `idField: "id"`) — mirroring
+ * `state/researchProgress.ts#generateCompletedTaskId`'s
+ * `${prefix}-${Date.now()}-${random}` convention.
+ *
  * @module state/challengeWinEvents
  */
 
@@ -37,6 +45,10 @@ import { listContributions } from "debate-research-evidence/src/state/contributi
 import { listGroupChallenges } from "./groupChallenges";
 
 const STORAGE_KEY = "challengeWinEvents";
+
+function generateChallengeWinEventId(): string {
+  return `challenge-win-event-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 function readAll(): ChallengeWinEvent[] {
   if (typeof localStorage === "undefined") return [];
@@ -62,7 +74,7 @@ export function listChallengeWinEvents(): ChallengeWinEvent[] {
 
 /** Records a squad member's win, appending it to the persisted event list. */
 export function recordChallengeWinEvent(contributorId: string, occurredAt: number): ChallengeWinEvent {
-  const event: ChallengeWinEvent = { contributorId, occurredAt };
+  const event: ChallengeWinEvent = { id: generateChallengeWinEventId(), contributorId, occurredAt };
   writeAll([...readAll(), event]);
   return event;
 }
