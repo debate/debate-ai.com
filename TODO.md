@@ -55,8 +55,8 @@ _No task currently in progress._
   passing); and `bun run build:web` (production build succeeded). No source
   behavior of `useChatTabs.ts` changed — only the catalog and docs.
 
-  **Follow-up, deliberately not done here:** the same `/doc` workspace's file
-  browser (`apps/debate-ai.com/components/qwksearch/lib/file-sources.ts`,
+  ~~**Follow-up, deliberately not done here:** the same `/doc` workspace's
+  file browser (`apps/debate-ai.com/components/qwksearch/lib/file-sources.ts`,
   `localStorage` key `REASON-file-sources`) has the identical array-of-records
   shape and is also missing from the catalog, but its records can carry
   plaintext SSH passwords, S3/R2/B2 secret keys and Google OAuth refresh
@@ -66,7 +66,8 @@ _No task currently in progress._
   adding a plain allowlist entry would put unencrypted storage credentials
   into the shared `saved_tool_records` table. Closing this one needs a
   redaction or encryption pass first (see `editorPreferences`' own precedent
-  of deliberately never syncing credentials), not a one-line catalog entry.
+  of deliberately never syncing credentials), not a one-line catalog entry.~~
+  **Done:** see the entry below.
 
 - **📝 `Flow Annotations`' "no cloud sync" Known gap was stale — the sync
   already shipped.** `features/flow-annotations.mdx` said "No
@@ -100,6 +101,75 @@ _No task currently in progress._
   files, 9394 tests, repo-wide, all passing); and `bun run build:web`
   (production build succeeded). Docs updated:
   `packages/debate-help-docs/content/docs/features/flow-annotations.mdx`.
+
+- **🔒 The `/doc` file browser's configured storage backends never synced to
+  the account — closing the file-sources follow-up above, with the
+  redaction it needed.** `file-sources.ts`'s `REASON-file-sources` store
+  (which SSH/S3/R2/B2/Google Docs/Turso sources a user has connected) has the
+  catalog's required shape, but a source's `credentials` can hold a plaintext
+  SSH password or private key, an S3/R2/B2 secret access key, or a Google
+  OAuth refresh token — and `/api/tool-records/[collection]` stores whatever
+  JSON a collection hands it verbatim, with no redaction of its own. A plain
+  allowlist entry, the way every other collection joins, would have put those
+  secrets into `saved_tool_records` unencrypted.
+
+  Gave `ToolRecordCollection` one more, optional field: `redact`, a pure
+  `(record) => record` a collection can define to strip fields that must
+  never leave this browser. Wired it into all three push sites —
+  `mirrorToolRecordSave`/`mirrorToolRecordsSave` (the immediate mirror),
+  `hydrateToolRecords`' first-sign-in push of local-only records, and
+  `flushToolRecordCollection`'s auto-sync watcher — never into what a tool
+  reads back out of its own `localStorage`. Added
+  `packages/debate-data-sync/src/state/redact-file-source.ts`'s
+  `redactFileSource`: an **allowlist** per `FileSourceType` (host/port/
+  username for SSH, region/bucket for S3, …), not a blocklist of
+  secret-looking names, so a credential field added to `fileSource-types.ts`
+  later defaults to held back rather than defaulting to synced.
+
+  Redacting on the way up only works if the merge doesn't then read the
+  account's now-missing field as the account clearing it — the bug a naive
+  version of this would have shipped, since `mergeToolRecords` replaces a
+  local record wholesale with the account's copy for any id both sides hold.
+  Gave it `restoreRedactedFields`: for a `redact`-carrying collection, fills
+  back whatever the local copy has that the remote copy doesn't (recursing
+  into `credentials` itself), so a password saved on one device survives that
+  device's own next reconcile instead of being wiped out by its own redacted
+  upload. Added the `fileSources` entry (`idField: "id"`, `href: "/doc"`,
+  section "Flowing and writing", alongside the already-synced
+  `docsChatTabs`).
+
+  New tests: `redact-file-source.test.ts` (what `redactFileSource` keeps and
+  drops per source type, and that it leaves anything not shaped like a File
+  Sources record alone); `toolRecordCollections.test.ts` (the redact/restore
+  round trip through `mergeToolRecords`, both with a synthetic redact-carrying
+  collection and with the real `fileSources` one, plus that a non-redacted
+  collection is unaffected); `tool-record-mirror.test.ts` and
+  `tool-record-auto-sync.test.ts` (each push site sends the redacted payload,
+  not the raw record, including that the watcher's *diff* still runs against
+  raw local JSON so a secret-only edit still counts as a change even though
+  its redacted payload is identical to what already landed);
+  `tool-record-catalog.test.ts` (the new `EXPECTED_ID_FIELDS` entry and a
+  pinning test that `fileSources.redact` is actually a function that redacts).
+  `debate-videos/test/tool-record-sync-catalog.test.ts`'s existing loop
+  already covers `/doc` being a real sidebar destination, so nothing there
+  needed changing.
+
+  Ran the verification gate: `bun install`; the five affected/new test files
+  directly (113/113); the rest of `debate-data-sync`'s suite plus
+  `debate-videos`' catalog cross-check (652/652); `bun run typecheck` (17/17
+  packages); `bun run test` (504 files, 9417 tests, repo-wide, all passing);
+  and `bun run build:web` (production build succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx` (new
+  "Redacted fields" section, and the `fileSources` entry in "Which tools
+  sync").
+
+  **Follow-up, deliberately not done here:** `redactFileSource` still leaves
+  a Google Docs source's `email` and `folderIds` synced, and an SSH source's
+  `host`/`port`/`username` — connection metadata, not secrets by themselves,
+  but enough to identify *who* a user has connected to without their consent
+  if the account were ever compromised. Nothing today reads that as a gap
+  (every other collection syncs comparably identifying data, e.g. Opponent
+  Team Profiles), so this is a note for a future privacy pass, not a blocker.
 
 # Ideas for New Contributors
 

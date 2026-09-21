@@ -37,6 +37,7 @@ import {
 } from "../src/state/toolRecordCollections";
 
 const favorites = findToolRecordCollection("debateVideosFavorites") as ToolRecordCollection;
+const fileSources = findToolRecordCollection("fileSources") as ToolRecordCollection;
 
 interface Call {
   url: string;
@@ -102,6 +103,40 @@ describe("tool-record auto-sync", () => {
     });
     expect(calls[0]?.body).toEqual({
       records: [{ videoId: "abc", savedAt: "2026-01-01T00:00:00.000Z" }],
+    });
+  });
+
+  it("pushes a redacted copy for a collection that defines redact, not the raw local record", async () => {
+    markToolRecordsSynced(fileSources.key);
+    writeLocalToolRecords(fileSources, [
+      { id: "ssh-1", type: "ssh", credentials: { host: "example.com", password: "hunter2" } },
+    ]);
+
+    const result = await flushToolRecordCollection(fileSources.key);
+
+    expect(result).toMatchObject({ pushed: 1, deleted: 0 });
+    expect(calls[0]?.body).toEqual({
+      records: [{ id: "ssh-1", type: "ssh", credentials: { host: "example.com" } }],
+    });
+  });
+
+  it("still diffs a redacted collection against its raw local JSON, so a secret-only edit counts as a change", async () => {
+    writeLocalToolRecords(fileSources, [
+      { id: "ssh-1", type: "ssh", credentials: { host: "example.com", password: "old" } },
+    ]);
+    markToolRecordsSynced(fileSources.key);
+    writeLocalToolRecords(fileSources, [
+      { id: "ssh-1", type: "ssh", credentials: { host: "example.com", password: "new" } },
+    ]);
+
+    const result = await flushToolRecordCollection(fileSources.key);
+
+    // The redacted payload is byte-identical to what already landed (the
+    // password never left this browser either time), but the watcher must
+    // not mistake that for nothing having changed and skip the tick.
+    expect(result).toMatchObject({ pushed: 1, deleted: 0 });
+    expect(calls[0]?.body).toEqual({
+      records: [{ id: "ssh-1", type: "ssh", credentials: { host: "example.com" } }],
     });
   });
 

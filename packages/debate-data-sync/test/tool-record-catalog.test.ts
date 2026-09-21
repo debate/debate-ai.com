@@ -51,6 +51,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   spellcheckDictionary: "id",
   flowHistory: "id",
   docsChatTabs: "id",
+  fileSources: "id",
   coachConversation: "id",
   coachingPrograms: "id",
   coachingSessionHistory: "id",
@@ -264,6 +265,28 @@ describe("the synced collection catalog", () => {
       idField: "id",
       href: "/doc",
     });
+  });
+
+  it("syncs the Debate Docs workspace's configured file sources, with credentials redacted", () => {
+    // `file-sources.ts`'s `REASON-file-sources` has the same shape, but its
+    // records can carry an SSH password, an S3/R2/B2 secret key or a Google
+    // OAuth refresh token — the one collection whose `redact` must actually
+    // hold something back, not just be present. `redact-file-source.test.ts`
+    // pins what `redactFileSource` itself strips per source type.
+    const collection = findToolRecordCollection("fileSources");
+    expect(collection).toMatchObject({
+      storageKey: "REASON-file-sources",
+      idField: "id",
+      href: "/doc",
+    });
+    expect(typeof collection?.redact).toBe("function");
+    expect(
+      collection?.redact?.({
+        id: "ssh-1",
+        type: "ssh",
+        credentials: { host: "example.com", password: "hunter2" },
+      }),
+    ).toEqual({ id: "ssh-1", type: "ssh", credentials: { host: "example.com" } });
   });
 
   it("syncs the video library's favourites, hidden list and reports", () => {

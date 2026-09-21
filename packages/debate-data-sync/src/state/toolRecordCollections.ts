@@ -44,6 +44,8 @@
  * @module state/toolRecordCollections
  */
 
+import { redactFileSource } from "./redact-file-source";
+
 /**
  * The groupings `/settings` → Account → **Tool data** renders as section
  * headers, matching how `content/docs/internals/tool-data-sync.mdx` already
@@ -89,6 +91,22 @@ export interface ToolRecordCollection {
   href: string;
   /** Which {@link TOOL_RECORD_SECTIONS} group the sync-status UI lists this under. */
   section: ToolRecordSection;
+  /**
+   * Strips fields from a record that must never leave this browser — a saved
+   * password, private key or OAuth token — before it is sent to the account.
+   * Applied at every push site (the immediate mirror, the auto-sync watcher,
+   * and the first-sign-in push of local-only records) and never to what a
+   * tool reads back out of its own `localStorage`, so the field stays usable
+   * locally on the device that saved it.
+   *
+   * Absent for every collection except `fileSources`: the catalog is data,
+   * not code, specifically so a tool can join it without this package
+   * importing that tool's package — this is the one narrow exception, for
+   * the one collection whose records can carry plaintext storage credentials
+   * (see `redact-file-source.ts`). A collection without this problem has no
+   * reason to define one.
+   */
+  redact?: (record: unknown) => unknown;
 }
 
 /**
@@ -238,6 +256,19 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     label: "Debate Docs Chat Tabs",
     href: "/doc",
     section: "Flowing and writing",
+  },
+  {
+    key: "fileSources",
+    storageKey: "REASON-file-sources",
+    idField: "id",
+    // Which storage backends (SSH, S3, R2, B2, Google Docs, Turso) the `/doc`
+    // file browser is configured to reach — `file-sources.ts`'s `AnyFileSource`
+    // list. `redact` holds back every field that would let another device
+    // connect as this user; see `redact-file-source.ts`.
+    label: "File Sources",
+    href: "/doc",
+    section: "Flowing and writing",
+    redact: redactFileSource,
   },
   // — Coaching —
   {
@@ -622,6 +653,48 @@ export function isSyncableToolRecord(
 }
 
 /**
+ * Fills back into `remote` whatever field `local` has that `remote` doesn't,
+ * recursing into any nested plain object both sides carry.
+ *
+ * The account only ever holds what a collection's `redact` let through, so
+ * for a `redact`-carrying collection the account's copy of a record is
+ * missing, by construction, exactly the fields this browser must not have
+ * uploaded — the local `password` a redacted `credentials` object dropped,
+ * say. Adopting the account's copy wholesale, as a collection without
+ * `redact` does, would then read as the *account* revoking a credential this
+ * browser never sent it in the first place, erasing it from the device that
+ * is the only place it still exists. Restoring by "present locally, absent
+ * remotely" needs no knowledge of which fields a given `redact` strips: it
+ * holds for any function that only ever omits keys, never renames or nulls
+ * them.
+ *
+ * A field both sides carry still takes the account's value — a rename made
+ * on another device reaches this one, same as any other field the merge
+ * treats as shared truth. Only what the account was never told about is
+ * preserved.
+ *
+ * @param local - This browser's copy of the record (or nested object).
+ * @param remote - The account's copy.
+ */
+function restoreRedactedFields(local: unknown, remote: unknown): unknown {
+  if (
+    typeof local !== "object" ||
+    local === null ||
+    Array.isArray(local) ||
+    typeof remote !== "object" ||
+    remote === null ||
+    Array.isArray(remote)
+  ) {
+    return remote;
+  }
+  const merged: Record<string, unknown> = { ...(remote as Record<string, unknown>) };
+  for (const [field, value] of Object.entries(local as Record<string, unknown>)) {
+    merged[field] = field in merged ? restoreRedactedFields(value, merged[field]) : value;
+  }
+  return merged;
+}
+
+/**
  * Merges the account's records into this browser's, by id.
  *
  * Records are create/replace/delete — never edited field-by-field from two
@@ -632,6 +705,12 @@ export function isSyncableToolRecord(
  * this browser signed in, or saved offline, isn't dropped on the floor. The
  * caller pushes those local-only records up; {@link toolRecordsMissingRemotely}
  * is which ones they are.
+ *
+ * For a collection with `redact` (see `ToolRecordCollection.redact`), "the
+ * account is the shared truth" only holds for the fields the account was
+ * ever shown — {@link restoreRedactedFields} fills back whatever this
+ * browser's copy has that the account's doesn't, rather than letting an
+ * always-redacted remote field read as the account clearing it.
  *
  * Local order is preserved for records that stay, and adopted remote records
  * are appended in the order the account returned them.
@@ -664,7 +743,13 @@ export function mergeToolRecords(
     }
     if (seen.has(id)) continue;
     seen.add(id);
-    merged.push(remoteById.get(id) ?? record);
+    if (!remoteById.has(id)) {
+      merged.push(record);
+    } else if (collection.redact) {
+      merged.push(restoreRedactedFields(record, remoteById.get(id)));
+    } else {
+      merged.push(remoteById.get(id));
+    }
   }
   for (const [id, record] of remoteById) {
     if (!seen.has(id)) merged.push(record);
