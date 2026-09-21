@@ -28,41 +28,7 @@ import {
 import { LoginDialog } from "./LoginDialog"
 import { useSession } from "@/lib/hooks/useSession"
 import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
-
-/**
- * How long to wait before prompting the same feature again, in ms.
- *
- * Favouriting is a rapid, repeated action — a debater working through a
- * results page favourites a dozen rounds in a row — and a dialog on every one
- * of those clicks is not a helpful offer, it is a tool that has stopped
- * working. One prompt per feature per session-ish window is the offer; after
- * that the guest has been told, and their saves go on working locally.
- */
-const PROMPT_COOLDOWN_MS = 30 * 60 * 1000
-
-/** Remembers which features have already prompted, across reloads in this tab. */
-const DISMISSED_KEY = "signInPromptsShownAt"
-
-function readShown(): Record<string, number> {
-  if (typeof sessionStorage === "undefined") return {}
-  try {
-    const raw = sessionStorage.getItem(DISMISSED_KEY)
-    const parsed: unknown = raw ? JSON.parse(raw) : {}
-    return typeof parsed === "object" && parsed !== null ? (parsed as Record<string, number>) : {}
-  } catch {
-    return {}
-  }
-}
-
-function markShown(feature: string, at: number): void {
-  if (typeof sessionStorage === "undefined") return
-  try {
-    sessionStorage.setItem(DISMISSED_KEY, JSON.stringify({ ...readShown(), [feature]: at }))
-  } catch {
-    // A browser refusing session storage prompts once per page load instead of
-    // once per window — chattier, never wrong.
-  }
-}
+import { markSignInPromptShown, wasSignInPromptShownRecently } from "@/lib/sign-in-prompt-cooldown"
 
 export function SignInPromptProvider() {
   const { isAuthenticated } = useSession()
@@ -86,11 +52,9 @@ export function SignInPromptProvider() {
       // only whether the app actually renders the dialog for it.
       if (isSignInPromptOptedOut()) return
 
-      const now = Date.now()
-      const shownAt = readShown()[raised.feature]
-      if (typeof shownAt === "number" && now - shownAt < PROMPT_COOLDOWN_MS) return
+      if (wasSignInPromptShownRecently(raised.feature)) return
 
-      markShown(raised.feature, now)
+      markSignInPromptShown(raised.feature)
       setPrompt(raised)
     })
   }, [])
