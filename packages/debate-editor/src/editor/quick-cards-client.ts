@@ -10,7 +10,11 @@
  * `401`, letting the store fall back to local-only persistence. The write
  * calls throw on failure since the card is already saved locally either
  * way — a failed cloud sync is reported but never blocks or rolls back the
- * local change.
+ * local change. `saveQuickCardToAccount` resolves `{ conflict: true }`
+ * instead of throwing on a `409` — the account already has a newer edit of
+ * this card from another device (see `quick-cards-store.ts#hasQuickCardSaveConflict`)
+ * — so the store can adopt that newer version instead of treating it as a
+ * plain failure.
  *
  * @module editor/quick-cards-client
  */
@@ -38,19 +42,32 @@ export async function listSavedQuickCards(
   return (await res.json()) as QuickCard[];
 }
 
-/** Saves (upserts, keyed by `card.id`) a quick card to the current user's account. Throws on failure, `401` included. */
+/** Result of a `saveQuickCardToAccount` call: either it saved, or the account already had a newer edit of this card (see `hasQuickCardSaveConflict`). */
+export type SaveQuickCardResult = { conflict: false } | { conflict: true; current: QuickCard };
+
+/**
+ * Saves (upserts, keyed by `card.id`) a quick card to the current user's
+ * account. Resolves `{ conflict: true, current }` instead of overwriting
+ * when the account already has a newer edit of this card (a `409`); throws
+ * on any other failure, `401` included.
+ */
 export async function saveQuickCardToAccount(
   card: QuickCard,
   endpoint = '/api/quick-cards',
-): Promise<void> {
+): Promise<SaveQuickCardResult> {
   const res = await fetch(`${endpoint}/${encodeURIComponent(card.id)}`, {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ card }),
   });
+  if (res.status === 409) {
+    const payload = (await res.json()) as { current: QuickCard };
+    return { conflict: true, current: payload.current };
+  }
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, 'Failed to sync this quick card to your account.'));
   }
+  return { conflict: false };
 }
 
 /** Deletes a synced quick card from the current user's account. Throws on failure, `401` included. */

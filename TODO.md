@@ -17,6 +17,47 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗂️ Quick Cards cloud sync gets real optimistic concurrency instead of
+  last-network-arrival-wins.**
+  `features/quick-cards-cloud-save.mdx`'s Known gaps said "No optimistic-
+  concurrency handling — editing the same card from two signed-in devices
+  at once has the last write win," meaning whichever device's background
+  `PUT /api/quick-cards/[cardId]` happened to *reach the server last* won,
+  even if its edit was chronologically older — a genuine silent-data-loss
+  race, not a documented tradeoff.
+
+  Followed `state/savedFlows.ts#hasFlowSaveConflict`'s precedent but
+  simplified for quick cards' shape: since `QuickCardsStore` pushes every
+  mutation automatically in the background (no explicit "save" action with
+  a "last loaded version" for the caller to track, unlike Flow's
+  `FlowHistoryDialog`), the new
+  `packages/debate-editor/src/editor/quick-cards-store.ts#hasQuickCardSaveConflict`
+  compares each side's own `updatedAt` (already carried on every
+  `QuickCard`) directly — no new request field needed. `PUT
+  /api/quick-cards/[cardId]`
+  (`apps/debate-ai.com/app/api/quick-cards/[cardId]/route.ts`) now reads the
+  existing row before upserting and returns 409 + the current card instead
+  of overwriting when the saved version is newer. `quick-cards-client.ts#saveQuickCardToAccount`
+  now resolves `{ conflict: true, current }` instead of just succeeding/
+  throwing, and `QuickCardsStore` gained a private `pushToAccount` wrapper
+  (used by `mergeRemote`, `upsert`, and `importMany`'s push paths) that
+  adopts the account's newer version into the local library on a conflict
+  instead of leaving the two out of sync.
+
+  Vitest-covered: `packages/debate-editor/test/quick-cards-store.test.ts`
+  (`hasQuickCardSaveConflict` cases, plus two `QuickCardsStore`-level tests
+  proving a losing local edit is replaced by the account's newer version
+  rather than clobbering it, both on `upsert` and during the `init()`
+  merge) and `test/quick-cards-client.test.ts` (`saveQuickCardToAccount`'s
+  new conflict-result branch). `bun run typecheck`, `bun run test` (9328
+  tests), and `bun run build` all pass.
+
+  Follow-up: `features/learn-cards-cloud-sync.mdx`'s Known gaps documents
+  the identical last-write-wins gap for Learn Cards' content sync
+  (`/api/learn-cards/[cardId]`) — its own doc says it mirrors quick-cards'
+  design, so the same fix shape applies there directly. Not folded into
+  this PR to keep the diff small and reviewable; left as a follow-up.
+
 - **🧠 Team Brainstorm Assist's session timer follows a signed-in visitor
   across devices, not just across browser tabs.**
   `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
@@ -2397,6 +2438,17 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
+
+- `features/learn-cards-cloud-sync.mdx`'s Known gaps: the same
+  last-write-wins race just fixed for Quick Cards (see this file's
+  "Completed" entry above) also applies to Learn Cards' content sync
+  (`apps/debate-ai.com/app/api/learn-cards/[cardId]/route.ts` — a blind
+  upsert with no version check). The doc's own text says Learn Cards
+  mirrors Quick Cards' design, so the fix is the same shape: add
+  `hasQuickCardSaveConflict`-equivalent comparison of the incoming vs.
+  saved `LearnCard.updatedAt`, a 409 response, and a client-side adopt-the-
+  newer-version step in `learn-cards-sync.ts`. Not picked up in the same PR
+  to keep that change small and reviewable.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
