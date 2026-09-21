@@ -42,8 +42,13 @@ gone:
 
 - the Debate style / Font size / Font family / Colour theme / Light-dark
   pickers (`debate-round`'s `UserSettingsPanel`) — the dock's gear-icon menu
-  still carries the colour theme and light/dark rows; debate style and the
-  font pickers have no other surface
+  still carries the colour theme and light/dark rows. Debate style, font
+  size and font family are back at their own page, `/settings/preferences`
+  (still `UserSettingsPanel`, unchanged), reachable from a new "Debate
+  Preferences" row in the same gear-icon menu
+  (`components/layout/CategoryDock.tsx`) — this is a different page from
+  `/settings` above, since these three drive the flow editor rather than
+  the card editor
 - **Favorite tools** — a tool is still starred from `/tools`, which is also
   where a renamed or removed tool now gets pruned from the saved list
 - **Tool data** — see
@@ -113,8 +118,11 @@ succession would otherwise race the same way favorites used to.
 has the same last-write-wins property: the editor's settings open in two
 tabs, changed in both, end at whichever debounce landed second. Every other
 field (`debateStyle`, `colorTheme`, etc.) is a plain whole-value replace with
-no such protection — and now that this page no longer writes them, mostly
-nothing does.
+no such protection — `debateStyle`/`fontSize`/`colorTheme`/`themeMode` are
+written from `/settings/preferences` and the dock's Theme submenu, both of
+which apply and (when signed in) sync a single field at a time rather than a
+whole form Save, so this mostly shows up as "two tabs pick a different
+Debate style within the same second."
 
 `wordLimitPresets` (`debate-round`'s `WordLimitPresetsPanel`, rendered from
 `/word-count` rather than from this page — see "What it no longer shows"
