@@ -3,7 +3,7 @@ import {
   getInitials,
   mergeElo,
   normalizeTeamName,
-  swapTrailingInitials,
+  trailingInitialsVariants,
 } from "../src/rankings/merge-elo";
 import type { LeaderboardEntry } from "../src/rankings/sync-rankings-debatedrills";
 
@@ -33,14 +33,32 @@ describe("getInitials", () => {
   });
 });
 
-describe("swapTrailingInitials", () => {
-  it("swaps a two-letter suffix", () => {
-    expect(swapTrailingInitials("strake jesuit ms")).toBe("strake jesuit sm");
+describe("trailingInitialsVariants", () => {
+  it("returns the single swap of a two-letter suffix", () => {
+    expect(trailingInitialsVariants("strake jesuit ms")).toEqual([
+      "strake jesuit sm",
+    ]);
   });
 
-  it("returns null when there is no two-letter suffix", () => {
-    expect(swapTrailingInitials("strake jesuit")).toBeNull();
-    expect(swapTrailingInitials("ms")).toBeNull();
+  it("returns all five other orderings of a three-letter suffix", () => {
+    const variants = trailingInitialsVariants("strake jesuit mjs");
+
+    expect(variants).toHaveLength(5);
+    expect(new Set(variants)).toEqual(
+      new Set([
+        "strake jesuit msj",
+        "strake jesuit jms",
+        "strake jesuit jsm",
+        "strake jesuit smj",
+        "strake jesuit sjm",
+      ]),
+    );
+  });
+
+  it("returns an empty array when there is no 2-or-3-letter suffix", () => {
+    expect(trailingInitialsVariants("strake jesuit")).toEqual([]);
+    expect(trailingInitialsVariants("ms")).toEqual([]);
+    expect(trailingInitialsVariants("strake jesuit mjqs")).toEqual([]);
   });
 });
 
@@ -68,6 +86,16 @@ describe("mergeElo", () => {
     const merged = mergeElo(
       [toc({ teamName: "Strake Jesuit MS" })],
       [{ rank: 7, teamName: "Strake Jesuit SM", debateElo: 1650, eloRank: 7 }],
+      "VPF",
+    );
+
+    expect(merged[0].debateElo).toBe(1650);
+  });
+
+  it("matches a three-initial PF partnership listed in a different order", () => {
+    const merged = mergeElo(
+      [toc({ teamName: "Strake Jesuit MJS" })],
+      [{ rank: 7, teamName: "Strake Jesuit SMJ", debateElo: 1650, eloRank: 7 }],
       "VPF",
     );
 
