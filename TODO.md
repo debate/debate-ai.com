@@ -17,6 +17,40 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔎 Topic & Video Statistics gets a per-style filter on the topics grid.**
+  `features/video-topic-statistics.mdx`'s Known gaps said "No per-style
+  filter on the topics grid — search matches across every style's text at
+  once, there's no 'Policy only' toggle" — confirmed real:
+  `DebateTopicsExplorer` (`packages/debate-videos/src/components/topic-explorer/DebateTopicsExplorer.tsx`)
+  always searched and rendered every style (Policy/College/LD/PF) together,
+  with no way to narrow to one.
+
+  Added an "All / Policy / College / LD / PF" filter row (same
+  `Button`-toggle pattern `NewsStreamPanel`'s category filter already uses:
+  `variant="default"` when active, `"outline"` otherwise, `aria-pressed`)
+  above the existing search box. New exported `matchesStyleFilter(entry,
+  styleFilter)` drops a year with no resolution for the selected style
+  instead of showing an empty card; `entryMatches` gained an optional
+  `styles` parameter (defaults to every style, so a bare search still
+  searches everything) so the search box only matches the selected style's
+  text once a filter is active. Each card's style rows now render
+  `visibleStyles` (just the selected style, or all four for "All") instead
+  of the hardcoded list. "All" restores the exact previous behavior.
+
+  Vitest-covered: `packages/debate-videos/test/debate-topics-explorer.test.tsx`
+  — `matchesStyleFilter`'s "all" vs. a real style (including a year missing
+  that style's resolution), `entryMatches`'s new `styles`-scoping parameter,
+  the filter row's default render (all five buttons, only "All" pressed),
+  and the pre-existing badge-count assertion updated for the filter row's
+  own "Policy" button. Ran the full verification gate: `bun install`; the
+  focused test file (11/11); `debate-videos`' own `bunx tsc --noEmit`
+  (clean); `bun run typecheck` (`bunx turbo run typecheck`, 17/17 packages
+  green); `bun run test` (499 files, 9348 tests, repo-wide, all passing);
+  and `bun run build:web` (production build succeeded, `/videos/statistics`
+  in the route list). Docs updated:
+  `packages/debate-help-docs/content/docs/features/video-topic-statistics.mdx`'s
+  Known gaps.
+
 - **🃏 Learn Cards cloud sync gets the same optimistic concurrency Quick
   Cards just got.** `features/learn-cards-cloud-sync.mdx`'s Known gaps said
   "editing the same card's content from two signed-in devices at once has
