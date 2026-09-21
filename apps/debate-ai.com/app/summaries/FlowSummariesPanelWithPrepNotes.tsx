@@ -11,6 +11,11 @@
  * `../coaching-programs/CoachingProgramRosterAnalyticsWithDrills.tsx`'s own
  * cross-package split.
  *
+ * Also prefills the form's "Your name" field from this app's real signed-in
+ * session, via `deriveContributorIdFromSessionIdentity` — mirroring
+ * `../../components/research/PrepRoomWithIdentity.tsx`'s identical
+ * `signedInContributorId` convention.
+ *
  * @module app/summaries/FlowSummariesPanelWithPrepNotes
  */
 
@@ -18,10 +23,16 @@
 
 import { FlowSummariesPanel } from "debate-practice-rounds"
 import { addRoundPrepNote } from "debate-team-collaboration/src/state/prepNotes"
+import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
+import { useSession } from "@/lib/hooks/useSession"
 
 export function FlowSummariesPanelWithPrepNotes() {
+  const { user } = useSession()
+  const signedInContributorId = deriveContributorIdFromSessionIdentity(user)
+
   return (
     <FlowSummariesPanel
+      signedInContributorId={signedInContributorId || undefined}
       onSendToPrepNotes={(input) => {
         addRoundPrepNote(input)
       }}

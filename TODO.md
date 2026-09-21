@@ -17,6 +17,60 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔑 Prep Notes and "Send to Prep Notes" prefill the real signed-in
+  identity instead of a blank free-form field.**
+  `prep-notes.mdx`'s Known gaps named the note-creation popover's "Author
+  ID" a free-form typed field with no link to a real identity — the same
+  gap 13 sibling panels (`PrepRoomPanel`, `DailyBestCardPanel`,
+  `ReviewQueuePanel`, etc.) already closed via an optional
+  `signedInContributorId` prop prefilling the field from
+  `deriveContributorIdFromSessionIdentity(user)`, but `PrepNotesPanel`
+  (whose own file header says it mirrors `DailyBestCardPanel`) and
+  `FlowSummariesPanel`'s "Send to Prep Notes" form never got it.
+
+  `packages/debate-team-collaboration/src/panels/PrepNotesPanel.tsx` now
+  takes `signedInContributorId?: string` and a `replyDraftFor(noteId)`
+  helper prefills a reply draft's `authorId` from it, mirroring
+  `DailyBestCardPanel`'s `commentDraftFor` lazy-default pattern — never
+  overwrites a draft a visitor already started editing.
+  `packages/debate-practice-drills/src/panels/FlowSummariesPanel.tsx` now
+  takes the same prop and prefills `sendAuthorId` via a
+  `hasEditedSendAuthorId` guard, mirroring `PrepRoomPanel`'s identical
+  `hasEditedMyId` convention (still editable; resets to the signed-in id
+  rather than blank after a send, since the form can send several rounds
+  in one sitting). New
+  `apps/debate-ai.com/components/research/PrepNotesWithIdentity.tsx`
+  mirrors `PrepRoomWithIdentity.tsx`, wired into `CoachHub.tsx`'s Prep
+  Notes tab and `app/prep-notes/page.tsx` in place of the bare
+  `PrepNotesPanel`; `app/summaries/FlowSummariesPanelWithPrepNotes.tsx`
+  now derives and passes the same id to `FlowSummariesPanel`.
+
+  Vitest-covered: `packages/debate-team-collaboration/test/PrepNotesPanel.test.tsx`
+  (new) and `packages/debate-practice-drills/test/FlowSummariesPanel.test.tsx`
+  (new) — both cover the prefill from a signed-in id, a blank field
+  without one, never clobbering a visitor's own edit, and posting/sending
+  under the prefilled id without retyping it. `debate-practice-drills` had
+  no jsdom component-test harness yet, so this also adds its
+  `test/helpers/mount.tsx`, mirroring
+  `debate-team-collaboration/test/helpers/mount.tsx`'s `mount`/`click`/
+  `type` API exactly.
+
+  Ran the full verification gate: `bun install`; both touched packages'
+  own `bunx vitest run` (48 files/848 tests in `debate-team-collaboration`,
+  50 files/719 tests in `debate-practice-drills`) and `bunx tsc --noEmit`
+  (clean in both); the app's own `bun run typecheck` (its raw `tsc
+  --noEmit` hits a pre-existing, unrelated `write-language`/`@ai-sdk`
+  provider-version type error confirmed present on this branch before this
+  change too — the app's real typecheck script uses
+  `tsconfig.typecheck.json`, which is clean); `bunx turbo run typecheck`
+  (17/17 packages green); `bun run test` (493 files, 9263 tests passing,
+  repo-wide); and `bun run build:web` (production build succeeded). No
+  `lint`/`format:check` script exists in this repo, so that step was
+  skipped as not applicable. Docs updated: `prep-notes.mdx`'s Known gaps
+  entry (closed, struck through) and its Replies "UI" bullet,
+  `flow-summaries.mdx`'s "Sending a summary to Prep Notes" section, and
+  the user-facing `features/prep-notes.mdx` Known gaps note.
+
 - **🧭 Editor Workspace menu now records a "Recent" tools visit.**
   `command-palette.mdx`'s Known gaps named the editor's own Workspace menu
   (and its palette's `t`-prefix results) as the last unclosed gap in

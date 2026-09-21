@@ -242,6 +242,12 @@ be crammed into the note's own text.
   "Your name" / "Reply" form, mirroring `DailyBestCardPanel`'s
   `CommentThread` component. The "Replies (N)" toggle sits alongside the
   note's other actions; the thread itself is collapsed until toggled open.
+  `PrepNotesPanel` also takes an optional `signedInContributorId` prop
+  (mirroring `DailyBestCardPanel`'s identical convention) that prefills a
+  reply draft's "Your name" field — `apps/debate-ai.com/components/research/PrepNotesWithIdentity.tsx`
+  resolves it from the real signed-in session via
+  `deriveContributorIdFromSessionIdentity`. A starting value only; typing
+  over it is always respected.
 - **Cascade delete:** `state/prepNotes.ts`'s `deletePrepNote` now also
   calls `deleteRepliesForNote(id)`, so a deleted note doesn't leave its
   thread behind as orphaned replies no UI can reach.
@@ -367,10 +373,16 @@ action and its `apps/debate-ai.com` app-layer wiring).
   before giving up, and `DebateFlowPage` shows a dismissible
   `buildBoxJumpFailedMessage()` banner above the flow grid once it does
   (see "Jump to argument" above).
-- The new note-creation popover's "Author ID" is a free-form typed field,
+- ~~The new note-creation popover's "Author ID" is a free-form typed field,
   not an authenticated identity — there's no auth system in this repo, so
   anyone can type any author id (same gap as `review-queue.md`'s reviewer
-  id).
+  id).~~ Closed: `PrepNotesPanel` and `FlowSummariesPanel` (the "Send to
+  Prep Notes" form) both take an optional `signedInContributorId` prop —
+  the same convention `PrepRoomPanel`/`DailyBestCardPanel` already use —
+  and `PrepNotesWithIdentity.tsx`/`FlowSummariesPanelWithPrepNotes.tsx`
+  prefill it from the real signed-in session via
+  `deriveContributorIdFromSessionIdentity`. Still a prefill, not a login:
+  the field stays free-form and typing over it is always respected.
 - Notifications are in-app only (no email/push/browser notification) and
   cover prep-note assignment only — no other event in this repo creates
   one yet.
