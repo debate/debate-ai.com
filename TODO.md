@@ -20,6 +20,54 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔄 The Debate Docs workspace's open chat tabs stayed per-browser.**
+  `apps/debate-ai.com/components/qwksearch/useChatTabs.ts` keeps
+  `qwksearch-open-chat-tabs` — which chat conversations are open as tabs in
+  `/doc`'s sidebar, and their titles — in a plain `localStorage` array of
+  `{ id, title, hasMessages? }` records. That's exactly the shape
+  `TOOL_RECORD_COLLECTIONS` requires (a JSON array under one key, each record
+  keyed by a stable string field), but the store had never been added to the
+  catalog, so a tab layout built up on one device was invisible after signing
+  in on another — the same "per-browser localStorage, not account-synced" gap
+  `tool-data-sync.mdx` documents for a dozen other tools. (The chat
+  conversation *content* itself is unaffected — it's owned by the
+  third-party `research-agent-ui` package's own backend and fetched by id;
+  only the tab list and titles were missing a home.)
+
+  Added one entry (`docsChatTabs`) to
+  `packages/debate-data-sync/src/state/toolRecordCollections.ts`'s
+  `TOOL_RECORD_COLLECTIONS` allowlist — the sync's whole design point is that
+  this is enough: `state/tool-record-auto-sync.ts`'s watcher observes any
+  catalog entry and pushes/pulls its changes with no edit to `useChatTabs.ts`
+  itself. Updated `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+  "Which tools sync" table to list it, and added a pinning test to
+  `packages/debate-data-sync/test/tool-record-catalog.test.ts` (its
+  `EXPECTED_ID_FIELDS` map, and a dedicated `it` asserting the new entry's
+  `storageKey`/`idField`/`href`) — the existing
+  `packages/debate-videos/test/tool-record-sync-catalog.test.ts` already
+  covers that every collection's `href` resolves to a real sidebar link
+  (`/doc` does), so nothing there needed changing.
+
+  Ran the verification gate: `bun install`; the two affected test files
+  directly (38/38); `packages/debate-videos/test/tool-record-sync-catalog.test.ts`
+  plus the rest of `debate-data-sync`'s suite (630/630); `bun run typecheck`
+  (17/17 packages); `bun run test` (503 files, 9395 tests, repo-wide, all
+  passing); and `bun run build:web` (production build succeeded). No source
+  behavior of `useChatTabs.ts` changed — only the catalog and docs.
+
+  **Follow-up, deliberately not done here:** the same `/doc` workspace's file
+  browser (`apps/debate-ai.com/components/qwksearch/lib/file-sources.ts`,
+  `localStorage` key `REASON-file-sources`) has the identical array-of-records
+  shape and is also missing from the catalog, but its records can carry
+  plaintext SSH passwords, S3/R2/B2 secret keys and Google OAuth refresh
+  tokens (`fileSource-types.ts`'s `FileSource.credentials`). The generic
+  `/api/tool-records/[collection]` route only checks for a usable id and
+  stores whatever JSON it's handed verbatim — no field-level redaction — so
+  adding a plain allowlist entry would put unencrypted storage credentials
+  into the shared `saved_tool_records` table. Closing this one needs a
+  redaction or encryption pass first (see `editorPreferences`' own precedent
+  of deliberately never syncing credentials), not a one-line catalog entry.
+
 - **📝 `Flow Annotations`' "no cloud sync" Known gap was stale — the sync
   already shipped.** `features/flow-annotations.mdx` said "No
   collaborative/live sync — annotations are local `localStorage` only."

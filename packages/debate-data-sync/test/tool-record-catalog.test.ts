@@ -50,6 +50,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowAnnotations: "id",
   spellcheckDictionary: "id",
   flowHistory: "id",
+  docsChatTabs: "id",
   coachConversation: "id",
   coachingPrograms: "id",
   coachingSessionHistory: "id",
@@ -248,6 +249,20 @@ describe("the synced collection catalog", () => {
       storageKey: "flow-history",
       idField: "id",
       href: "/debate",
+    });
+  });
+
+  it("syncs the Debate Docs workspace's open chat tabs now that they carry a stable id", () => {
+    // `apps/debate-ai.com/components/qwksearch/useChatTabs.ts`'s `ChatTab`
+    // (`{ id, title, hasMessages? }`) has the same shape this catalog requires
+    // but had never been added, so a chat tab layout built up on one device
+    // was invisible on another. The chat conversation content itself stays
+    // with the third-party `research-agent-ui` package's own backend — only
+    // the open-tab list and titles sync here.
+    expect(findToolRecordCollection("docsChatTabs")).toMatchObject({
+      storageKey: "qwksearch-open-chat-tabs",
+      idField: "id",
+      href: "/doc",
     });
   });
 
