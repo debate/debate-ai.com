@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "../../lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
+import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
@@ -55,6 +56,9 @@ export function AdminDashboard() {
   const [isPurgingReuseLog, setIsPurgingReuseLog] = useState(false);
   const [reuseLogPurgeResult, setReuseLogPurgeResult] = useState<string | null>(null);
   const [reuseLogPurgeError, setReuseLogPurgeError] = useState<string | null>(null);
+  const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
+  const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
+  const [recomputeStacksError, setRecomputeStacksError] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -260,6 +264,21 @@ export function AdminDashboard() {
     }
   };
 
+  const handleRecomputeStacks = async () => {
+    setIsRecomputingStacks(true);
+    setRecomputeStacksError(null);
+    try {
+      const res = await fetch("/api/admin/videos/recompute-stacks", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.details || data?.error || "Recompute failed");
+      setRecomputeStacksResult(formatRecomputeStacksResult(data));
+    } catch (error) {
+      setRecomputeStacksError((error as Error).message);
+    } finally {
+      setIsRecomputingStacks(false);
+    }
+  };
+
   const handlePublishAll = async () => {
     setIsPublishingAll(true);
     setPublishAllError(null);
@@ -348,6 +367,30 @@ export function AdminDashboard() {
             )}
           </div>
           {viewResyncError && <p className="text-destructive text-sm">{viewResyncError}</p>}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Recompute video stacks</CardTitle>
+          <CardDescription>
+            Re-derives stacked-playlist placement (which videos are grouped as a round and
+            its analysis) for every video in the library. Every publish already keeps this
+            current on its own; use this to backfill rounds published before that wiring
+            existed, or after a manual database edit. Safe to re-run — a video already
+            carrying its correct placement is left alone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <Button onClick={handleRecomputeStacks} disabled={isRecomputingStacks} variant="outline">
+              {isRecomputingStacks ? "Recomputing…" : "Recompute stacks"}
+            </Button>
+            {recomputeStacksResult && (
+              <span className="text-muted-foreground text-sm">{recomputeStacksResult}</span>
+            )}
+          </div>
+          {recomputeStacksError && <p className="text-destructive text-sm">{recomputeStacksError}</p>}
         </CardContent>
       </Card>
 

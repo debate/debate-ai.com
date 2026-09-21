@@ -20,6 +20,39 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔘 No admin UI button called the `/api/admin/videos/recompute-stacks`
+  backfill endpoint.** The previous slice below added
+  `POST /api/admin/videos/recompute-stacks` (admin-gated, re-derives stacked
+  playlists for every row) but left it curl/SDK-only, mirroring
+  `/api/admin/videos/seed`'s own missing button — its own "Follow-up,
+  deliberately not done here" note named this as "a reasonable small
+  follow-up if an admin actually needs the historical backfill".
+
+  Added a **Recompute stacks** card to `AdminDashboard.tsx` (`/admin`),
+  next to "Resync video view counts" — same shape as that button and
+  "Purge old entries now": a button, a loading state, an inline result
+  summary, and an error line. Pulled the two-way "nothing moved" / "N of M
+  updated" message into its own pure
+  `apps/debate-ai.com/lib/videos/format-recompute-stacks-result.ts` rather
+  than building it inline, since `AdminDashboard.tsx` has no rendering tests
+  of its own (this repo does not use `@testing-library/react` anywhere — no
+  component here does), so a pure formatter is what makes the new behavior
+  actually testable with Vitest.
+
+  New test: `lib/videos/__tests__/format-recompute-stacks-result.test.ts`
+  (no-changes phrasing, partial-update phrasing, every-row-updated, an empty
+  table, and thousands-separator formatting for a large library). The
+  underlying `recomputeVideoStacks` and the route's admin-gating were already
+  covered by the prior slice's tests; nothing about either changed here.
+
+  Ran the verification gate: `bun install`; the new test file plus the
+  existing `recompute-video-stacks.test.ts` directly (9/9); `bun run
+  typecheck` (17/17 packages); `bun run test` (508 files, 9448 tests,
+  repo-wide, all passing); and `bun run build:web` (production build
+  succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/video-library.mdx`
+  (Known gaps, noting the button).
+
 - **🎞️ Stacked playlists never formed for any video published outside the
   JSON-asset seed — and a re-seed couldn't fix it either.**
   `debate-data-sync/src/videos/video-stacks.ts`'s `assignVideoStacks` only
