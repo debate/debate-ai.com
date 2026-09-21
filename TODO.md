@@ -17,6 +17,77 @@ _No task currently in progress._
 
 ### Completed
 
+- **⚙️ Debate style, font size and font family regain a settings surface at
+  `/settings/preferences`.** `user-settings.mdx`'s "What it no longer shows"
+  named a real regression: when `/settings` became the CardMirror editor's
+  settings page, the app's own `debateStyle`/`fontSize`/`fontFamily`
+  preferences — still fully validated, stored (`user_settings` D1 table) and
+  consumed throughout the flow editor (`useTimerState`, `SpeechHeaderBar`,
+  `CreateRoundDialog`, `useFlowEffects`'s font-size read, and `fontFamily`'s
+  app-wide inline style) — lost their only editing surface. The dock's
+  gear-icon menu kept its Colour theme/Light-dark rows but never had rows
+  for these three, and `debate-round`'s `UserSettingsPanel` (a complete,
+  already-working form for exactly this) had quietly become dead code: still
+  exported from the package's barrel, but not imported anywhere in the app.
+
+  New `apps/debate-ai.com/app/settings/preferences/page.tsx` mounts the
+  existing `UserSettingsPanel` unchanged (same back-link layout as
+  `/settings/page.tsx`), and `components/layout/CategoryDock.tsx`'s
+  `SettingsMenu` gets a new "Debate Preferences" row next to "Settings",
+  pushing to that route. No changes were needed to `/api/settings`, the D1
+  schema, or any of `debate-round`'s `state/userSettings.ts` /
+  `state/fontSettings.ts` / `round/user-settings-client.ts` — all of that
+  infrastructure was already correct and just needed something to call it
+  again. `apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
+  adds the new static route to `ROUTES_WITHOUT_A_CATALOG_ENTRY` (config, not
+  a tool — same reasoning already recorded there for `/settings` and
+  `/settings/editor-panel`).
+
+  Vitest-covered: `packages/debate-round/test/UserSettingsPanel.test.tsx`
+  (new, jsdom + `react-dom/client` + `act`, mirroring
+  `FlowEditLogPanel.test.tsx`'s pattern for a panel that loads over `fetch`
+  inside a mount effect) — renders every field (Debate style, Font size,
+  Font family, Color theme, Light/dark mode) and the "isn't saved to your
+  account" font-family hint; the signed-out vs. signed-in status line; and,
+  the regression this closes, that a signed-in account's already-stored
+  `debateStyle`/`fontSize` is applied back into the local store
+  (`readLocalUserSettings()`) on mount — exactly the "preference the account
+  already had, now invisible" gap. A fourth case pins that a failed account
+  load never blocks the form. Radix `Select`'s displayed value isn't
+  asserted (it only reflects an item that's mounted inside an opened
+  dropdown), so assertions stick to always-rendered labels/status text.
+
+  Ran the full verification gate: `bun install`; `debate-round`'s own
+  `bunx vitest run` (64 files/1284 tests, including the 4 new ones) and
+  `bunx tsc --noEmit` (clean); the app's own `bun run typecheck` (clean,
+  using `tsconfig.typecheck.json` as usual); `bunx turbo run typecheck`
+  (fails only on `debate-videos`, a pre-existing `TS2307` for three missing
+  `src/panels/statistics/StatisticsPage.tsx` imports — confirmed present
+  before this change too, via `git stash`, and untouched by this PR's
+  files); `bun run test` (493/495 files, 9268/9270 tests — the 2 remaining
+  failures are `debate-videos`' `sidebar-video-links.test.tsx` and
+  `tool-nav-tree-icons.test.tsx`, both confirmed pre-existing and unrelated
+  the same way, tracing back to that same missing-file gap); and
+  `bun run build:web` (production build succeeded; `/settings/preferences`
+  appears in the route list). Docs updated:
+  `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+  "What it no longer shows" and "Known gaps" sections.
+
+  **Follow-up (not picked up this run):** the `debate-videos` package has a
+  pre-existing, unrelated typecheck/test failure — `StatisticsPage.tsx`
+  imports three modules (`hooks/useYouTubeStats`,
+  `components/youtube-stats-modal/YouTubeStatsCharts`,
+  `components/topic-explorer/DebateTopicsExplorer`) that don't exist in the
+  tree (`DebateTopicsExplorer.tsx` isn't present at all; the other two
+  paths/exports don't resolve either), breaking `debate-videos`'
+  `tsc --noEmit`, `bunx turbo run typecheck`, and two of its own Vitest
+  files (`sidebar-video-links.test.tsx`'s "Topic & Video Statistics" link
+  and `tool-nav-tree-icons.test.tsx`'s glyph-count canary, both counting a
+  row this broken import removes from the sidebar). Needs someone who knows
+  which commit those three modules were meant to land in (or whether
+  `StatisticsPage.tsx`'s import should be reverted) — out of scope for a
+  settings-page fix.
+
 - **🔑 Prep Notes and "Send to Prep Notes" prefill the real signed-in
   identity instead of a blank free-form field.**
   `prep-notes.mdx`'s Known gaps named the note-creation popover's "Author
@@ -2230,6 +2301,24 @@ _No task currently in progress._
 
 ## Follow-ups
 
+- **`debate-videos` has a pre-existing, unrelated broken build**, found
+  while running this run's verification gate for the `/settings/preferences`
+  fix (see this file's "Completed" entry above): `src/panels/statistics/
+  StatisticsPage.tsx` imports `../hooks/useYouTubeStats`,
+  `../components/youtube-stats-modal/YouTubeStatsCharts` and
+  `../components/topic-explorer/DebateTopicsExplorer`, none of which resolve
+  (`DebateTopicsExplorer.tsx` doesn't exist in the tree at all). Breaks that
+  package's own `tsc --noEmit`, `bunx turbo run typecheck` app-wide (blocks
+  `debate-ai-web`'s typecheck task in the turbo pipeline specifically, even
+  though the app's own scoped `bun run typecheck` — a different tsconfig —
+  stays clean), and two of its Vitest files
+  (`test/sidebar-video-links.test.tsx`, `test/tool-nav-tree-icons.test.tsx`).
+  Confirmed present on `master`/this branch before this run's changes via
+  `git stash`. Not picked up this run — it needs whoever was mid-flight on
+  the YouTube/topic statistics page to either finish landing those three
+  modules or revert `StatisticsPage.tsx`'s import of them, which is a
+  product/scope call this routine shouldn't guess at.
+
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
   "Completed" entry above):
@@ -2377,4 +2466,4 @@ bun run typecheck
 
 ---
 
-*Last updated: 2026-09-20*
+*Last updated: 2026-09-21*
