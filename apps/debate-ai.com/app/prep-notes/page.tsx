@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
-import { PrepNotesPanel } from "debate-team-collaboration"
+import { PrepNotesWithIdentity } from "@/components/research/PrepNotesWithIdentity"
 import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function PrepNotesPage() {
     <ToolPage>
       <ToolPageHeader href="/prep-notes" backHref="/debate" backLabel="round workspace" guide="training-tools" />
       <Suspense>
-        <PrepNotesPanel />
+        <PrepNotesWithIdentity />
       </Suspense>
     </ToolPage>
   )
