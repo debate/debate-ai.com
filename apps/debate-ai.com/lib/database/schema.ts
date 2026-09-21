@@ -1115,9 +1115,11 @@ export const videos = sqliteTable(
     // Stacked playlists: `stack_key` is the id of the group's primary video
     // (a round, say) and is shared by every member, `stack_position` orders
     // them within it. Both are derived from the links the descriptions carry
-    // — see `debate-data-sync/src/videos/video-stacks.ts` — and are written
-    // by the seed, so a database seeded before they existed simply has null
-    // keys and no stacks until it is re-seeded.
+    // — see `debate-data-sync/src/videos/video-stacks.ts` — and are kept
+    // current by `lib/videos/recompute-video-stacks.ts`, which the JSON seed
+    // and every round-publish path (both run over the whole table, since a
+    // round and its analysis can be added weeks apart by different
+    // pipelines) call after writing.
     stackKey: text("stack_key"),
     stackPosition: integer("stack_position").notNull().default(0),
     searchText: text("search_text").notNull().default(""),

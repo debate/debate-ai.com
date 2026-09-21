@@ -4,6 +4,7 @@ import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
+import { recomputeVideoStacks } from "@/lib/videos/recompute-video-stacks";
 
 /** Adds every staged round to the public video grid. Video IDs are primary
  * keys, so this is safe to run repeatedly and cannot create duplicates. */
@@ -28,5 +29,11 @@ export async function POST() {
     await db.insert(videos).values(values).onConflictDoUpdate({ target: videos.videoId, set: values });
     published++;
   }
+  // This endpoint builds its own row values instead of going through
+  // `publishRoundVideos` (see that function's docstring), so it needs its
+  // own call to re-derive stacking — a newly published round otherwise
+  // never links up with an analysis already in the table. See
+  // `recompute-video-stacks.ts`'s fileoverview.
+  if (published > 0) await recomputeVideoStacks(db);
   return NextResponse.json({ published, message: `${published} round videos are available in the grid.` });
 }

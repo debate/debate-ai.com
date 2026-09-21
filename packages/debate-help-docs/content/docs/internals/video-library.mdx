@@ -314,8 +314,23 @@ database.
   video that names its round in the title but does not link it is not paired
   with it, and there is no curated override list — the fix is an edit to the
   YouTube description.
-- `stack_key`/`stack_position` are written by the seed, so an existing
-  database shows no stacks until it is re-seeded.
+- ~~`stack_key`/`stack_position` are written by the seed, so an existing
+  database shows no stacks until it is re-seeded.~~ **Fixed:** that
+  understated the gap — a round published through the live YouTube pipeline
+  (`publish-round-video.ts#publishRoundVideos`, behind the admin
+  "Publish"/"Publish all" actions, and the legacy single-round `POST
+  /api/admin/youtube/videos/publish` endpoint) was never part of the JSON
+  assets to begin with, so a full re-seed never reached it either — it stayed
+  unstacked forever, not just until the next seed. `lib/videos/recompute-video-stacks.ts`
+  re-derives every row's placement over the *whole* table (a round and its
+  analysis are commonly published weeks apart, by different pipelines, so
+  the link can only be found by looking at everything at once) and rewrites
+  only what changed; both publish paths call it after writing, so every
+  future publish keeps stacking current on its own. For a database whose
+  stacks fell behind *before* this wiring existed, `POST
+  /api/admin/videos/recompute-stacks` (admin-gated) backfills them in one
+  call — safe to re-run, since a row already carrying its correct placement
+  produces no write.
 - Search is `LIKE`-based token matching (every token must appear in title,
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now

@@ -20,6 +20,69 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎞️ Stacked playlists never formed for any video published outside the
+  JSON-asset seed — and a re-seed couldn't fix it either.**
+  `debate-data-sync/src/videos/video-stacks.ts`'s `assignVideoStacks` only
+  ever ran over rows built fresh from the bundled JSON assets
+  (`video-rows.ts#buildVideoRows`, driving `seed-videos-to-db.ts`'s full
+  seed). A round published through the live YouTube pipeline
+  (`publish-round-video.ts#publishRoundVideos`, behind the admin
+  "Publish"/"Publish all" actions, and the legacy single-round `POST
+  /api/admin/youtube/videos/publish` endpoint the SDK/OpenAPI spec also
+  expose) was inserted with no `stack_key`/`stack_position` at all, and
+  running a full JSON re-seed never touched it either, since it was never
+  part of the JSON assets to begin with — confirmed against
+  `content/docs/internals/video-library.mdx`'s own Known gap, which
+  understated this as "no stacks until re-seeded" when a re-seed in fact
+  never reached these rows at all.
+
+  Generalized `buildVideoStacks`/`assignVideoStacks` to be generic over a new
+  `VideoStackRow` (the six fields stacking actually reads/writes) instead of
+  requiring a full `VideoRow`, so a bare SQL projection off the `videos`
+  table can be stacked directly. Added
+  `debate-data-sync/src/videos/video-stack-sql.ts`'s
+  `buildVideoStackUpdateStatements` (a `CASE`/`IN` batched `UPDATE` builder,
+  mirroring `view-count-sql.ts`'s shape exactly) and
+  `apps/debate-ai.com/lib/videos/recompute-video-stacks.ts`'s
+  `recomputeVideoStacks(db)`, which re-derives every row's placement over the
+  *whole* table (a round and its analysis are commonly published weeks apart
+  by different pipelines, so the link can only be found by looking at
+  everything at once) and rewrites only what changed. Wired it into both
+  publish paths (`publishRoundVideos` and the legacy single-round route) so
+  every future publish keeps stacking current on its own, and added
+  `POST /api/admin/videos/recompute-stacks` (admin-gated, mirroring
+  `/api/admin/videos/seed`'s shape) so a database whose stacks already fell
+  behind can be backfilled in one call — safe to re-run, since an
+  already-correct row produces no write.
+
+  New tests: `video-stack-sql.test.ts` (the statement builder: both `CASE`
+  columns, a `NULL` key, escaping, dedup-keeps-last, row/byte batching);
+  `recompute-video-stacks.test.ts` (against a real in-memory SQLite
+  `videos` table: links two previously-unstacked rows, links a row to a
+  partner added in a later run, no-ops when nothing moved, clears a stack
+  once its partner is deleted); a new `publishRoundVideos stacking` suite in
+  `publish-round-video.test.ts` (publishing a round links it to an
+  already-stored analysis video; nothing runs when nothing was actually
+  published). `video-stacks.test.ts`'s existing suite needed no changes —
+  the generic signature is satisfied by the same `VideoRow[]` it already
+  passed.
+
+  Ran the verification gate: `bun install`; the affected/new test files
+  directly (28/28); the wider video-library suite alongside them (47/47);
+  `bun run typecheck` (17/17 packages); `bun run test` (506 files, 9431
+  tests, repo-wide, all passing); and `bun run build:web` (production build
+  succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/video-library.mdx`
+  (Known gaps) and a schema comment in `apps/debate-ai.com/lib/database/schema.ts`.
+
+  **Follow-up, deliberately not done here:** no admin UI button calls the new
+  `/api/admin/videos/recompute-stacks` endpoint — mirroring
+  `/api/admin/videos/seed`, which also has no button in `AdminDashboard.tsx`
+  and is only ever called directly (curl, the SDK, or the CLI script). A
+  "Recompute stacks" button alongside "Publish all" would be a reasonable
+  small follow-up if an admin actually needs the historical backfill rather
+  than relying on the now-automatic per-publish recompute.
+
 - **🔄 The Debate Docs workspace's open chat tabs stayed per-browser.**
   `apps/debate-ai.com/components/qwksearch/useChatTabs.ts` keeps
   `qwksearch-open-chat-tabs` — which chat conversations are open as tabs in
