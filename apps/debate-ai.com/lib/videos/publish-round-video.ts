@@ -12,6 +12,7 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
 import { videos, type VideoTableInsert, type YoutubeRoundVideo } from "@/lib/database/schema";
+import { recomputeVideoStacks } from "./recompute-video-stacks";
 
 /** Converts one queued round video into a `videos` table insert row. */
 export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
@@ -64,6 +65,14 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  * `video-seed-sql.ts#buildVideoSeedStatements` already guards for the
  * JSON-seed path, applied here to the resync/publish path.
  *
+ * Newly published rows carry no stack placement of their own — the resync
+ * queue's rows are never run through `assignVideoStacks` — so once every row
+ * is written, {@link recomputeVideoStacks} re-derives stacking for the whole
+ * table. This is what lets a round published today link up with an analysis
+ * published (or resynced) weeks earlier, and vice versa; see that module's
+ * fileoverview for why a per-batch computation cannot find that link on its
+ * own.
+ *
  * @param db - Drizzle handle bound to D1 (or local SQLite in development).
  * @param rows - Queued round videos to publish.
  * @returns Number of rows actually upserted — excludes any left untouched
@@ -96,5 +105,8 @@ export async function publishRoundVideos(db: any, rows: YoutubeRoundVideo[]): Pr
       });
     published++;
   }
+
+  if (published > 0) await recomputeVideoStacks(db);
+
   return published;
 }
