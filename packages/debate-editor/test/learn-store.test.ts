@@ -12,6 +12,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   LearnStore,
+  hasLearnCardSaveConflict,
   isValidLearnCardRecord,
   isValidLearnDeckRecord,
   type CardDef,
@@ -24,11 +25,18 @@ import { addDays, newSchedule } from "../src/editor/learn-scheduler";
 const TODAY = "2026-03-14";
 const NOW = "2026-03-14T12:00:00.000Z";
 
+/** A fixed `updatedAt` (rather than the store's own `Date.now()` stamp) so
+ *  `toEqual(card(...))` assertions stay deterministic — `upsertCard` only
+ *  stamps `Date.now()` when a caller omits `updatedAt`, so passing it here
+ *  is preserved as-is. */
+const CARD_UPDATED_AT = new Date(NOW).getTime();
+
 const card = (id: string, over: Partial<CardDef> = {}): CardDef => ({
   id,
   type: "qa",
   front: "What warms?",
   back: "Carbon",
+  updatedAt: CARD_UPDATED_AT,
   ...over,
 });
 
@@ -733,6 +741,16 @@ describe("exportCards and importCards", () => {
     expect(store.importCards([], TODAY)).toBe(0);
     expect(persisted).toHaveLength(0);
   });
+
+  it("stamps an imported card's updatedAt to the moment of import", () => {
+    const { store } = makeStore();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-06-01T00:00:00.000Z"));
+    store.importCards([{ type: "qa", front: "F", back: "B", schedule: null, anchors: [] }], TODAY);
+    const [imported] = store.listCards();
+    expect(imported!.updatedAt).toBe(new Date("2026-06-01T00:00:00.000Z").getTime());
+    vi.useRealTimers();
+  });
 });
 
 describe("isValidLearnCardRecord", () => {
@@ -763,5 +781,59 @@ describe("isValidLearnCardRecord", () => {
   it("rejects a non-string front or back", () => {
     expect(isValidLearnCardRecord({ ...card("c1"), front: 1 })).toBe(false);
     expect(isValidLearnCardRecord({ ...card("c1"), back: null })).toBe(false);
+  });
+
+  it("accepts a card with no updatedAt — the pre-optimistic-concurrency shape", () => {
+    const { updatedAt, ...legacy } = card("c1");
+    expect(isValidLearnCardRecord(legacy)).toBe(true);
+  });
+
+  it("rejects a non-number updatedAt", () => {
+    expect(isValidLearnCardRecord({ ...card("c1"), updatedAt: "now" })).toBe(false);
+  });
+});
+
+describe("hasLearnCardSaveConflict", () => {
+  it("does not conflict when the incoming card is newer", () => {
+    const current = card("c1", { updatedAt: 1000 });
+    const incoming = card("c1", { updatedAt: 2000 });
+    expect(hasLearnCardSaveConflict(current, incoming)).toBe(false);
+  });
+
+  it("does not conflict when both sides have the same updatedAt", () => {
+    const current = card("c1", { updatedAt: 1000 });
+    const incoming = card("c1", { updatedAt: 1000 });
+    expect(hasLearnCardSaveConflict(current, incoming)).toBe(false);
+  });
+
+  it("conflicts when the currently-saved card is newer than the incoming one", () => {
+    const current = card("c1", { updatedAt: 2000 });
+    const incoming = card("c1", { updatedAt: 1000 });
+    expect(hasLearnCardSaveConflict(current, incoming)).toBe(true);
+  });
+
+  it("treats a side with no updatedAt as arbitrarily old rather than blocking the sync", () => {
+    const { updatedAt, ...legacyCurrent } = card("c1", { updatedAt: 2000 });
+    expect(hasLearnCardSaveConflict(legacyCurrent, card("c1", { updatedAt: 1 }))).toBe(false);
+    const { updatedAt: _u, ...legacyIncoming } = card("c1");
+    expect(hasLearnCardSaveConflict(card("c1", { updatedAt: 2000 }), legacyIncoming)).toBe(true);
+  });
+});
+
+describe("upsertCard updatedAt stamping", () => {
+  it("preserves an explicit updatedAt instead of overwriting it with now", () => {
+    const { store } = makeStore();
+    store.upsertCard(card("c1", { updatedAt: 42 }), TODAY);
+    expect(store.getCard("c1")!.updatedAt).toBe(42);
+  });
+
+  it("stamps the current time when the caller omits updatedAt", () => {
+    const { store } = makeStore();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
+    const { updatedAt, ...withoutTimestamp } = card("c1");
+    store.upsertCard(withoutTimestamp as CardDef, TODAY);
+    expect(store.getCard("c1")!.updatedAt).toBe(new Date("2026-05-01T00:00:00.000Z").getTime());
+    vi.useRealTimers();
   });
 });

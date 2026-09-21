@@ -17,6 +17,58 @@ _No task currently in progress._
 
 ### Completed
 
+- **🃏 Learn Cards cloud sync gets the same optimistic concurrency Quick
+  Cards just got.** `features/learn-cards-cloud-sync.mdx`'s Known gaps said
+  "editing the same card's content from two signed-in devices at once has
+  the last write win" — the exact race just fixed for Quick Cards
+  (`PUT /api/quick-cards/[cardId]` was a blind upsert; a stale device's
+  delayed sync could clobber a newer edit from another device if its
+  request happened to arrive last). Flagged as this file's own standing
+  follow-up the same run that fix shipped, since the doc's own text says
+  Learn Cards mirrors Quick Cards' design.
+
+  `CardDef` (`packages/debate-editor/src/editor/learn-store.ts`) never had
+  an `updatedAt` field at all, unlike `QuickCard` — the one real
+  adaptation this fix needed beyond copying the shape. Added it as
+  *optional*, stamped by `upsertCard`/`importCards` themselves rather than
+  by any of the five call sites that build a `CardDef` literal
+  (`learn-manage-ui.ts` ×2, `comments-ui.ts` ×2, `index.ts`), preserving an
+  explicit `updatedAt` when one is already present (adopting a remote
+  card's own genuine edit time during a merge) and stamping `Date.now()`
+  only when the caller omits it (every real local edit). `isValidLearnCardRecord`
+  now accepts a missing `updatedAt` (a card persisted before this field
+  existed) alongside a numeric one, and the new
+  `hasLearnCardSaveConflict(current, incoming)` treats a missing value as 0
+  — arbitrarily old — on either side, so a legacy record never blocks a
+  sync; it just degrades to the exact previous last-write-wins behavior
+  until both sides carry a real timestamp.
+
+  `PUT /api/learn-cards/[cardId]`
+  (`apps/debate-ai.com/app/api/learn-cards/[cardId]/route.ts`) now reads the
+  existing row before upserting and returns 409 + the current card on a
+  conflict, mirroring `/api/quick-cards/[cardId]`'s shape exactly.
+  `saveLearnCardToAccount` (`learn-cards-client.ts`) resolves
+  `{ conflict: true, current }` instead of just succeeding/throwing, and
+  `LearnCardsSync` (`learn-cards-sync.ts`) gained a private `pushToAccount`
+  wrapper (used by both `init()`'s local-only push and
+  `handleStoreChange`'s per-edit push) that adopts the account's newer
+  version via `store.upsertCard` on a conflict — baselining the sync
+  snapshot *before* adopting so the resulting store notification (which
+  re-enters `handleStoreChange` synchronously) doesn't immediately push the
+  just-adopted card straight back.
+
+  Vitest-covered: `packages/debate-editor/test/learn-store.test.ts`
+  (`hasLearnCardSaveConflict` cases including the missing-`updatedAt`
+  fallback, `isValidLearnCardRecord`'s now-optional field, and that
+  `upsertCard`/`importCards` stamp `Date.now()` only when the caller
+  omits `updatedAt`), `test/learn-cards-client.test.ts`
+  (`saveLearnCardToAccount`'s new conflict-result branch) and
+  `test/learn-cards-sync.test.ts` (two `LearnCardsSync`-level tests proving
+  a losing local edit is replaced by the account's newer version instead of
+  clobbering it, both on a live edit and during the `init()` merge — the
+  same two shapes `quick-cards-store.test.ts` covers). `bun run typecheck`,
+  `bun run test` (9344 tests), and `bun run build` all pass.
+
 - **🗂️ Quick Cards cloud sync gets real optimistic concurrency instead of
   last-network-arrival-wins.**
   `features/quick-cards-cloud-save.mdx`'s Known gaps said "No optimistic-
@@ -2514,17 +2566,6 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
-
-- `features/learn-cards-cloud-sync.mdx`'s Known gaps: the same
-  last-write-wins race just fixed for Quick Cards (see this file's
-  "Completed" entry above) also applies to Learn Cards' content sync
-  (`apps/debate-ai.com/app/api/learn-cards/[cardId]/route.ts` — a blind
-  upsert with no version check). The doc's own text says Learn Cards
-  mirrors Quick Cards' design, so the fix is the same shape: add
-  `hasQuickCardSaveConflict`-equivalent comparison of the incoming vs.
-  saved `LearnCard.updatedAt`, a 409 response, and a client-side adopt-the-
-  newer-version step in `learn-cards-sync.ts`. Not picked up in the same PR
-  to keep that change small and reviewable.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's

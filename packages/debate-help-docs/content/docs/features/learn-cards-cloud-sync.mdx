@@ -42,7 +42,23 @@ registry) live in one shared blob per device (not one row per record), so
 they don't fit this sync's per-record shape; syncing them would need a
 bespoke schema of their own.
 
+Every per-record push carries optimistic concurrency: `PUT
+/api/learn-cards/[cardId]` compares the incoming card's own `updatedAt`
+against whatever's already saved for that id, and rejects (409) instead of
+overwriting when the saved version is newer — an edit made on another
+device that hasn't reached this browser yet. On that rejection, this
+browser adopts the newer version into its own `LearnStore` instead of
+losing it, the same "never overwrite, only reconcile" rule `init()`'s merge
+already follows — mirroring
+[Quick Cards Cloud Save](/docs/features/quick-cards-cloud-save)'s own fix
+for the identical race. `CardDef` didn't carry an `updatedAt` field before
+this: it's now stamped by `upsertCard`/`importCards` themselves (not by
+callers), and stays optional on the type so a card written before this
+field existed — locally, or already synced to the account — still
+round-trips; a side with no `updatedAt` is treated as arbitrarily old
+rather than blocking the sync, which is exactly the previous
+last-write-wins behavior until both sides have a real timestamp.
+
 ## Known gaps
 
-No optimistic-concurrency handling — editing the same card's content from
-two signed-in devices at once has the last write win.
+None open.
