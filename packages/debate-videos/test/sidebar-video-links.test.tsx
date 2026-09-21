@@ -61,6 +61,13 @@ function hrefsIn(html: string): string[] {
   return [...html.matchAll(/<a[^>]*\shref="([^"]*)"/g)].map(([, href]) => href);
 }
 
+/** A title as React's own static-markup renderer would escape it into HTML
+ *  text — `&` becomes `&amp;` ("Topic & Video Statistics"), so a raw
+ *  `html.toContain(link.title)` check would never find it. */
+function htmlEscaped(title: string): string {
+  return title.replace(/&/g, "&amp;");
+}
+
 describe("SIDEBAR_VIDEO_LINKS", () => {
   it("is the concatenation of the tree's four groups", () => {
     expect(SIDEBAR_VIDEO_LINKS).toEqual([
@@ -102,7 +109,7 @@ describe("the surfaces that render them", () => {
     for (const link of SIDEBAR_VIDEO_LINKS) {
       if (referenceHrefs.has(link.href)) continue;
       expect(hrefs).toContain(link.href);
-      expect(html).toContain(link.title);
+      expect(html).toContain(htmlEscaped(link.title));
     }
   });
 
@@ -114,13 +121,13 @@ describe("the surfaces that render them", () => {
     expect(hrefs).toHaveLength(SIDEBAR_VIDEO_LINKS.length);
     for (const link of SIDEBAR_VIDEO_LINKS) {
       expect(hrefs).toContain(link.href);
-      expect(html).toContain(link.title);
+      expect(html).toContain(htmlEscaped(link.title));
     }
   });
 
-  it("keeps the glossary and rankings pair in both", () => {
-    // The pair that went missing: at the end of the tool tree's Practice
-    // section in the sidebar, and a tile on mobile.
+  it("keeps the glossary, rankings and statistics trio in both", () => {
+    // The pair that used to go missing, now a trio: at the end of the tool
+    // tree's Practice section in the sidebar, and a tile on mobile.
     const practice = hrefsIn(
       renderToStaticMarkup(<ToolNavTree sectionIds={[PRACTICE_SECTION_ID]} />),
     );
