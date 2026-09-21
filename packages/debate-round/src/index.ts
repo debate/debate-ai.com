@@ -20,6 +20,7 @@ export * from "./state/savedStrategyRecommendations";
 export * from "./round/strategy-recommendations-client";
 export * from "./hooks/useStrategyRecommendations";
 export * from "./state/cloudLibrary";
+export * from "./state/cloudLibraryClient";
 export * from "./state/bulkRoundSave";
 export * from "./round/flow-tool-links";
 export * from "./round/round-invite-client";
