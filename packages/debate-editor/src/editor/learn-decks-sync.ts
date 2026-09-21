@@ -4,9 +4,10 @@
  * content: one of Learn's 8 sub-collections gets its own bespoke sync
  * rather than the generic `TOOL_RECORD_COLLECTIONS` mechanism, because all
  * 8 live in one shared `pmd-learn-store` blob and the generic mechanism
- * would overwrite the other 7 on every write. No new sync infrastructure
- * for the remaining 6 sub-collections (schedules, anchors, AI threads,
- * notes, review log, doc registry) — see TODO.md's standing follow-up note
+ * would overwrite the other 7 on every write. The review log
+ * (`learn-review-log-sync.ts`) gets the same treatment; no new sync
+ * infrastructure for the remaining 5 sub-collections (schedules, anchors,
+ * AI threads, notes, doc registry) — see those modules' own doc comments
  * for why those stay local-only.
  *
  * A deck's `cardIds` reference cards synced separately by

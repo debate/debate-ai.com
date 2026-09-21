@@ -14,6 +14,7 @@ import { learnStore, localToday } from './learn-store-host.js';
 import { learnCardsSync } from './learn-cards-sync.js';
 import { openCardEditor } from './learn-create-ui.js';
 import { openLearnSession } from './learn-session-ui.js';
+import { openReviewLogHistory } from './learn-review-log-ui.js';
 import { isDue } from './learn-scheduler.js';
 import type { CardState } from './learn-scheduler.js';
 import type { CardDef, ExportedCard } from './learn-store.js';
@@ -195,13 +196,19 @@ export function openLearnManage(): void {
   reviewAll.addEventListener('click', () =>
     openLearnSession({ kind: 'all' }, { title: 'Review — all', onShowInContext: cleanup }),
   );
+  const history = document.createElement('button');
+  history.type = 'button';
+  history.className = 'pmd-learn-manage-new';
+  history.textContent = 'History';
+  history.title = 'See every past review, synced across your signed-in devices';
+  history.addEventListener('click', openReviewLogHistory);
   const close = document.createElement('button');
   close.type = 'button';
   close.className = 'pmd-learn-manage-close';
   close.setAttribute('aria-label', 'Close');
   close.textContent = '✕';
   close.addEventListener('click', cleanup);
-  bar.append(title, count, syncStatus, newCard, importBtn, exportBtn, reviewAll, close);
+  bar.append(title, count, syncStatus, newCard, importBtn, exportBtn, reviewAll, history, close);
 
   const toolbar = document.createElement('div');
   toolbar.className = 'pmd-learn-manage-toolbar';

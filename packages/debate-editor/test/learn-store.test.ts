@@ -15,10 +15,13 @@ import {
   hasLearnCardSaveConflict,
   isValidLearnCardRecord,
   isValidLearnDeckRecord,
+  isValidReviewLogEntry,
+  reviewLogEntryId,
   type CardDef,
   type CustomDeck,
   type Note,
   type AiThread,
+  type ReviewLogEntry,
 } from "../src/editor/learn-store";
 import { addDays, newSchedule } from "../src/editor/learn-scheduler";
 
@@ -234,6 +237,53 @@ describe("grade", () => {
     const { store, persisted } = makeStore();
     expect(store.grade("gone", "remembered", TODAY, NOW)).toBe(false);
     expect(persisted).toHaveLength(0);
+  });
+});
+
+describe("listLog / adoptLogEntry", () => {
+  const entry = (over: Partial<ReviewLogEntry> = {}): ReviewLogEntry => ({
+    cardId: "c1",
+    at: NOW,
+    grade: "remembered",
+    intervalBefore: 0,
+    intervalAfter: 1,
+    ...over,
+  });
+
+  it("lists every logged review", () => {
+    const { store } = makeStore();
+    store.upsertCard(card("c1"), TODAY);
+    store.grade("c1", "remembered", TODAY, NOW);
+    expect(store.listLog()).toEqual([
+      { cardId: "c1", at: NOW, grade: "remembered", intervalBefore: 0, intervalAfter: expect.any(Number) },
+    ]);
+  });
+
+  it("adopts a remote entry missing locally", () => {
+    const { store, persisted } = makeStore();
+    store.adoptLogEntry(entry());
+    expect(store.listLog()).toEqual([entry()]);
+    expect(persisted).toHaveLength(1); // persists like any other mutation
+  });
+
+  it("does not duplicate an entry already present for the same card+timestamp", () => {
+    const { store, persisted } = makeStore();
+    store.upsertCard(card("c1"), TODAY);
+    store.grade("c1", "remembered", TODAY, NOW);
+    persisted.length = 0;
+
+    store.adoptLogEntry({ ...store.listLog()[0]! });
+
+    expect(store.listLog()).toHaveLength(1);
+    expect(persisted).toHaveLength(0); // no-op — never re-persists
+  });
+
+  it("never touches the schedule when adopting", () => {
+    const { store } = makeStore();
+    // No card/schedule exists locally at all — adopting a synced entry for
+    // it must not mint one; the schedule sync boundary stays local-only.
+    store.adoptLogEntry(entry());
+    expect(store.getSchedule("c1")).toBeUndefined();
   });
 });
 
@@ -500,6 +550,61 @@ describe("isValidLearnDeckRecord", () => {
 
   it("rejects a non-string createdAt", () => {
     expect(isValidLearnDeckRecord({ ...deck("d1"), createdAt: 123 })).toBe(false);
+  });
+});
+
+describe("reviewLogEntryId", () => {
+  it("combines cardId and at", () => {
+    expect(reviewLogEntryId({ cardId: "c1", at: NOW })).toBe(`c1:${NOW}`);
+  });
+
+  it("is distinct for two entries logged for the same card at different times", () => {
+    expect(reviewLogEntryId({ cardId: "c1", at: NOW })).not.toBe(
+      reviewLogEntryId({ cardId: "c1", at: "2026-03-15T00:00:00.000Z" }),
+    );
+  });
+});
+
+describe("isValidReviewLogEntry", () => {
+  const entry = (over: Partial<ReviewLogEntry> = {}): ReviewLogEntry => ({
+    cardId: "c1",
+    at: NOW,
+    grade: "remembered",
+    intervalBefore: 0,
+    intervalAfter: 1,
+    ...over,
+  });
+
+  it("accepts a well-formed ReviewLogEntry", () => {
+    expect(isValidReviewLogEntry(entry())).toBe(true);
+    expect(isValidReviewLogEntry(entry({ grade: "forgot" }))).toBe(true);
+  });
+
+  it("rejects a non-object", () => {
+    expect(isValidReviewLogEntry(null)).toBe(false);
+    expect(isValidReviewLogEntry("entry")).toBe(false);
+    expect(isValidReviewLogEntry(undefined)).toBe(false);
+  });
+
+  it("rejects a missing or non-string cardId", () => {
+    const { cardId, ...rest } = entry();
+    expect(isValidReviewLogEntry(rest)).toBe(false);
+    expect(isValidReviewLogEntry({ ...entry(), cardId: 1 })).toBe(false);
+    expect(isValidReviewLogEntry({ ...entry(), cardId: "" })).toBe(false);
+  });
+
+  it("rejects a missing or non-string at", () => {
+    expect(isValidReviewLogEntry({ ...entry(), at: 123 })).toBe(false);
+    expect(isValidReviewLogEntry({ ...entry(), at: "" })).toBe(false);
+  });
+
+  it("rejects a grade that isn't 'remembered' or 'forgot'", () => {
+    expect(isValidReviewLogEntry({ ...entry(), grade: "maybe" })).toBe(false);
+  });
+
+  it("rejects non-number intervalBefore/intervalAfter", () => {
+    expect(isValidReviewLogEntry({ ...entry(), intervalBefore: "0" })).toBe(false);
+    expect(isValidReviewLogEntry({ ...entry(), intervalAfter: "1" })).toBe(false);
   });
 });
 
