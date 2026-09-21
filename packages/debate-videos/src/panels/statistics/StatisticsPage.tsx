@@ -1,22 +1,28 @@
 /**
- * @fileoverview The Topic & Video Statistics page — combines the debate topics
- * explorer with the YouTube channel statistics charts, replacing the
- * previously-modal-only stats display.
+ * @fileoverview The Topic & Video Statistics page (`/videos/statistics`) —
+ * combines the debate topics explorer with the YouTube channel statistics
+ * charts, replacing the previously-modal-only stats display.
  * @module panels/statistics/StatisticsPage
  */
 
 "use client";
 
-import React, { useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft, BarChart3, TrendingUp, Users } from "lucide-react";
-import { useYouTubeStats } from "../hooks/useYouTubeStats";
-import { YouTubeStatsCharts } from "../components/youtube-stats-modal/YouTubeStatsCharts";
-import { DebateTopicsExplorer } from "../components/topic-explorer/DebateTopicsExplorer";
+import { ArrowLeft } from "lucide-react";
+import { YouTubeStatsCharts } from "../../components/youtube-stats-modal/YouTubeStatsCharts";
+import { DebateTopicsExplorer } from "../../components/topic-explorer/DebateTopicsExplorer";
+import type { DebateTopicYear } from "../../lib/debate-topics";
 
-export function StatisticsPage() {
-  const youtubeStats = useYouTubeStats();
+export interface StatisticsPageProps {
+  /** Every season's resolutions, from `LecturesPage`'s own `/api/videos/meta`
+   *  fetch — passed down rather than fetched again here. */
+  topics: DebateTopicYear[] | undefined;
+  /** `/api/youtube-stats` response, or `null` while loading/unavailable —
+   *  see {@link useYouTubeStats}. Also passed down from `LecturesPage`. */
+  youtubeStats: unknown | null;
+}
 
+export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
       <div>
@@ -33,13 +39,16 @@ export function StatisticsPage() {
           </div>
         </div>
 
-        <DebateTopicsExplorer />
+        <DebateTopicsExplorer topics={topics} />
 
-        {youtubeStats && (
+        {youtubeStats ? (
           <div className="mt-10">
-            <YouTubeStatsCharts stats={youtubeStats} />
+            {/* `useYouTubeStats`'s shape is only known to the modal/charts
+                pair today (see YouTubeStatsCharts.tsx) — cast at this one
+                boundary rather than duplicating that interface here. */}
+            <YouTubeStatsCharts stats={youtubeStats as Parameters<typeof YouTubeStatsCharts>[0]["stats"]} />
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

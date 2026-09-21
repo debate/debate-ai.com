@@ -49,6 +49,8 @@ async function freshDb() {
       brainstorm_session_timer TEXT,
       practice_vs_ai_score INTEGER,
       practice_vs_ai_badges TEXT,
+      practice_vs_ai_last_played_day_key TEXT,
+      practice_vs_ai_current_streak INTEGER,
       created_at INTEGER NOT NULL DEFAULT (unixepoch()),
       updated_at INTEGER NOT NULL DEFAULT (unixepoch())
     )
@@ -96,7 +98,7 @@ describe("createPracticeVsAiStore gamification", () => {
     expect(award).toEqual({ points: 50, action: "debate_win", badgesAwarded: ["FirstWin", "Novice"], newScore: 50 })
 
     const profile = await store.getGamificationProfile!("user-1")
-    expect(profile).toEqual({ score: 50, badges: ["FirstWin", "Novice"], currentStreak: 0 })
+    expect(profile).toEqual({ score: 50, badges: ["FirstWin", "Novice"], currentStreak: 1 })
   })
 
   it("accumulates score and badges across rounds instead of overwriting them", async () => {
@@ -154,6 +156,79 @@ describe("createPracticeVsAiStore gamification", () => {
     // both awards land instead of Round B's clobbering Round A's.
     const profile = await store.getGamificationProfile!("user-1")
     expect(profile?.score).toBe(60)
+  })
+
+  it("extends the streak one day at a time and awards Streak5 on the fifth consecutive day", async () => {
+    vi.useFakeTimers()
+    const store = createPracticeVsAiStore("user-1")
+    const day = (n: number) => new Date(Date.UTC(2026, 0, n, 12, 0, 0))
+
+    for (let n = 1; n <= 4; n++) {
+      vi.setSystemTime(day(n))
+      const award = await store.applyGamificationAward!("user-1", {
+        debateType: "user_vs_bot",
+        topic: "Topic",
+        result: "loss",
+      })
+      expect(award.badgesAwarded).not.toContain("Streak5")
+    }
+
+    vi.setSystemTime(day(5))
+    const fifthDayAward = await store.applyGamificationAward!("user-1", {
+      debateType: "user_vs_bot",
+      topic: "Topic",
+      result: "loss",
+    })
+    expect(fifthDayAward.badgesAwarded).toContain("Streak5")
+
+    vi.setSystemTime(day(5))
+    const profile = await store.getGamificationProfile!("user-1")
+    expect(profile?.currentStreak).toBe(5)
+    vi.useRealTimers()
+  })
+
+  it("does not advance the streak for a second round the same day", async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 1, 9, 0, 0)))
+    const store = createPracticeVsAiStore("user-1")
+    await store.applyGamificationAward!("user-1", { debateType: "user_vs_bot", topic: "Topic", result: "loss" })
+
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 1, 21, 0, 0)))
+    await store.applyGamificationAward!("user-1", { debateType: "user_vs_bot", topic: "Topic", result: "loss" })
+
+    const profile = await store.getGamificationProfile!("user-1")
+    expect(profile?.currentStreak).toBe(1)
+    vi.useRealTimers()
+  })
+
+  it("resets the streak to 1 after a missed day", async () => {
+    vi.useFakeTimers()
+    const store = createPracticeVsAiStore("user-1")
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 1, 12, 0, 0)))
+    await store.applyGamificationAward!("user-1", { debateType: "user_vs_bot", topic: "Topic", result: "loss" })
+
+    // Skips Jan 2 entirely — the streak should restart rather than extend.
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 3, 12, 0, 0)))
+    await store.applyGamificationAward!("user-1", { debateType: "user_vs_bot", topic: "Topic", result: "loss" })
+
+    const profile = await store.getGamificationProfile!("user-1")
+    expect(profile?.currentStreak).toBe(1)
+    vi.useRealTimers()
+  })
+
+  it("reports the streak as lapsed (0) once a day has passed with no new round, without resetting the stored value", async () => {
+    vi.useFakeTimers()
+    const store = createPracticeVsAiStore("user-1")
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 1, 12, 0, 0)))
+    await store.applyGamificationAward!("user-1", { debateType: "user_vs_bot", topic: "Topic", result: "loss" })
+
+    // Two days later, with no round played in between: the streak reads as
+    // broken, but a round played "today" would still resume from scratch
+    // rather than from some in-between stale value.
+    vi.setSystemTime(new Date(Date.UTC(2026, 0, 3, 12, 0, 0)))
+    const profile = await store.getGamificationProfile!("user-1")
+    expect(profile?.currentStreak).toBe(0)
+    vi.useRealTimers()
   })
 })
 

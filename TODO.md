@@ -2452,22 +2452,4 @@ bun install
 
 # Run dev server
 bun run dev
-
-# Run tests
-bun run test
-
-# Typecheck
-bun run typecheck
 ```
-
-## Resources
-
-- [Documentation site](packages/debate-help-docs) — `docs/features/*` and
-  `docs/internals/*` cover almost every shipped feature and its known gaps
-- [Architecture overview](.claude/architecture/overview.md)
-- [Web app architecture](.claude/architecture/web-app.md)
-- [Conventions](.claude/architecture/conventions.md)
-
----
-
-*Last updated: 2026-09-20*
