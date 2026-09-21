@@ -588,28 +588,28 @@ button {
      Per-style document colors (analytic, undertag) live on `#editor`,
      not here, because they're settings-driven (per-user display config). */
 
-  /* Surface */
-  --pmd-c-bg: #fff;                    /* page / panel / button bg */
-  --pmd-c-bg-soft: #f7f7f8;            /* row bg one shade off white */
-  --pmd-c-surface-soft: #fafafa;       /* nav header bg */
-  --pmd-c-surface: #f3f3f3;            /* ribbon, status bar, nav scrolled-bg */
-  --pmd-c-surface-alt: #ececec;        /* editor viewport bg, code bg, divider */
-  --pmd-c-overlay: rgba(0, 0, 0, 0.4); /* modal scrim */
-  --pmd-c-scroll-shadow: rgba(0, 0, 0, 0.16); /* "more this way" edge fade */
+  /* Surface - mapped to shadcn variables for theme compatibility */
+  --pmd-c-bg: var(--background);                    /* page / panel / button bg */
+  --pmd-c-bg-soft: var(--secondary);                /* row bg one shade off white */
+  --pmd-c-surface-soft: var(--secondary);           /* nav header bg */
+  --pmd-c-surface: var(--muted);                    /* ribbon, status bar, nav scrolled-bg */
+  --pmd-c-surface-alt: var(--secondary);            /* editor viewport bg, code bg, divider */
+  --pmd-c-overlay: rgba(0, 0, 0, 0.4);              /* modal scrim */
+  --pmd-c-scroll-shadow: rgba(0, 0, 0, 0.16);       /* "more this way" edge fade */
 
   /* Borders & dividers */
-  --pmd-c-border: #c8c8c8;             /* button borders */
-  --pmd-c-border-soft: #d0d0d0;        /* chrome borders (ribbon, nav) */
-  --pmd-c-divider: #e0e0e0;            /* subtle horizontal divider */
-  --pmd-c-divider-faint: #ececec;      /* near-invisible row divider */
+  --pmd-c-border: var(--border);                    /* button borders */
+  --pmd-c-border-soft: var(--border);               /* chrome borders (ribbon, nav) */
+  --pmd-c-divider: var(--border);                   /* subtle horizontal divider */
+  --pmd-c-divider-faint: var(--border);             /* near-invisible row divider */
 
   /* Text */
-  --pmd-c-text: #222;                  /* body text */
-  --pmd-c-text-strong: #000;           /* maximum-contrast text (rare) */
-  --pmd-c-text-secondary: #555;        /* mid-strength UI text */
-  --pmd-c-text-muted: #666;            /* dimmer secondary */
-  --pmd-c-text-faint: #888;            /* faint annotations */
-  --pmd-c-text-on-accent: #fff;        /* text on a filled accent surface */
+  --pmd-c-text: var(--foreground);                  /* body text */
+  --pmd-c-text-strong: var(--foreground);           /* maximum-contrast text (rare) */
+  --pmd-c-text-secondary: var(--muted-foreground);  /* mid-strength UI text */
+  --pmd-c-text-muted: var(--muted-foreground);      /* dimmer secondary */
+  --pmd-c-text-faint: var(--muted-foreground);      /* faint annotations */
+  --pmd-c-text-on-accent: var(--primary-foreground); /* text on a filled accent surface */
   /* Card numbering glyphs. Defaults to muted text (theme-aware via the var),
      but is its OWN token so it's user-overridable — see CUSTOMIZABLE_COLOR_TOKENS
      ('pmd-c-card-number') and the Card numbering settings color control. */
@@ -835,36 +835,34 @@ button {
      ProseMirror editor itself. */
   color-scheme: dark;
 
-  /* Surface */
-  --pmd-c-bg: #1a1a1a;
-  --pmd-c-bg-soft: #222;
-  --pmd-c-surface-soft: #1f1f1f;
-  --pmd-c-surface: #262626;
-  --pmd-c-surface-alt: #2f2f2f;
+  /* Surface - mapped to shadcn variables for theme compatibility */
+  --pmd-c-bg: var(--background);
+  --pmd-c-bg-soft: var(--secondary);
+  --pmd-c-surface-soft: var(--secondary);
+  --pmd-c-surface: var(--muted);
+  --pmd-c-surface-alt: var(--secondary);
   --pmd-c-overlay: rgba(0, 0, 0, 0.55);
   --pmd-c-scroll-shadow: rgba(0, 0, 0, 0.5);
 
-  /* Borders & dividers — slightly lighter than surface so they
-     register as edges against the dark backgrounds. */
-  --pmd-c-border: #4a4a4a;
-  --pmd-c-border-soft: #3a3a3a;
-  --pmd-c-divider: #303030;
-  --pmd-c-divider-faint: #292929;
+  /* Borders & dividers */
+  --pmd-c-border: var(--border);
+  --pmd-c-border-soft: var(--border);
+  --pmd-c-divider: var(--border);
+  --pmd-c-divider-faint: var(--border);
 
-  /* Text — pulled off pure white for readability (pure white on
-     pure dark causes halation on LCDs). */
-  --pmd-c-text: #e6e6e6;
-  --pmd-c-text-strong: #fff;
-  --pmd-c-text-secondary: #b8b8b8;
-  --pmd-c-text-muted: #9a9a9a;
-  --pmd-c-text-faint: #7a7a7a;
-  --pmd-c-text-on-accent: #fff;
+  /* Text */
+  --pmd-c-text: var(--foreground);
+  --pmd-c-text-strong: var(--foreground);
+  --pmd-c-text-secondary: var(--muted-foreground);
+  --pmd-c-text-muted: var(--muted-foreground);
+  --pmd-c-text-faint: var(--muted-foreground);
+  --pmd-c-text-on-accent: var(--primary-foreground);
 
   /* Hover / press — solid surfaces lift toward lighter grays;
      button-* overlays flip to translucent WHITE so they brighten
      rather than darken any underlying colored button. */
-  --pmd-c-hover: #333;
-  --pmd-c-hover-strong: #404040;
+  --pmd-c-hover: var(--accent);
+  --pmd-c-hover-strong: var(--accent);
   --pmd-c-button-hover: rgba(255, 255, 255, 0.08);
   --pmd-c-button-press: rgba(255, 255, 255, 0.15);
   --pmd-c-button-press-border: rgba(255, 255, 255, 0.3);
@@ -1137,29 +1135,30 @@ button {
      win. */
   background: var(--pmd-c-bg);
 
-  --pmd-c-bg: #fff;
-  --pmd-c-bg-soft: #f7f7f8;
-  --pmd-c-surface-soft: #fafafa;
-  --pmd-c-surface: #f3f3f3;
-  --pmd-c-surface-alt: #ececec;
-  --pmd-c-text: #222;
-  --pmd-c-text-strong: #000;
-  --pmd-c-text-secondary: #555;
-  --pmd-c-text-muted: #666;
-  --pmd-c-text-faint: #888;
-  --pmd-c-border: #c8c8c8;
-  --pmd-c-border-soft: #d0d0d0;
-  --pmd-c-divider: #e0e0e0;
-  --pmd-c-divider-faint: #ececec;
-  --pmd-c-hover: #ebebeb;
-  --pmd-c-hover-strong: #e0e0e0;
-  --pmd-c-card-hover: #c0c0c0;
-  --pmd-c-emphasis-box: #333;
+  /* Use shadcn light-mode variables (default :root values) */
+  --pmd-c-bg: var(--background);
+  --pmd-c-bg-soft: var(--secondary);
+  --pmd-c-surface-soft: var(--secondary);
+  --pmd-c-surface: var(--muted);
+  --pmd-c-surface-alt: var(--secondary);
+  --pmd-c-text: var(--foreground);
+  --pmd-c-text-strong: var(--foreground);
+  --pmd-c-text-secondary: var(--muted-foreground);
+  --pmd-c-text-muted: var(--muted-foreground);
+  --pmd-c-text-faint: var(--muted-foreground);
+  --pmd-c-border: var(--border);
+  --pmd-c-border-soft: var(--border);
+  --pmd-c-divider: var(--border);
+  --pmd-c-divider-faint: var(--border);
+  --pmd-c-hover: var(--accent);
+  --pmd-c-hover-strong: var(--accent);
+  --pmd-c-card-hover: var(--border);
+  --pmd-c-emphasis-box: var(--foreground);
   --pmd-c-transclusion: #2f8a8a;        /* rail renders inside the paper-white doc → light value */
   --pmd-c-transclusion-soft: #e5f2f2;
   --pmd-c-highlight-default: #ffff66;
-  --pmd-c-image-placeholder-bg: #f0f0f0;
-  --pmd-c-image-placeholder-border: #999;
+  --pmd-c-image-placeholder-bg: var(--secondary);
+  --pmd-c-image-placeholder-border: var(--border);
   /* Re-assert the user's document colors inside the editor. The dark
      chrome above lightened `--pmd-color-*` to the built-in blue/green
      for readability on dark surfaces (nav pane etc.); but with
@@ -1171,9 +1170,9 @@ button {
      above. */
   --pmd-color-analytic: var(--pmd-user-color-analytic, #1F3864);
   --pmd-color-undertag: var(--pmd-user-color-undertag, #385623);
-  --pmd-c-table-border: #888;
-  --pmd-c-table-header-bg: #f0f0f0;
-  --pmd-c-table-resize-handle: #adf;
+  --pmd-c-table-border: var(--border);
+  --pmd-c-table-header-bg: var(--secondary);
+  --pmd-c-table-resize-handle: var(--primary);
   --pmd-c-table-selected-cell: rgba(200, 200, 255, 0.4);
   /* The sky-blue hyperlink color lives at :root[data-theme="dark"]
      so it covers the document when apply-to-doc is ON. With it OFF
