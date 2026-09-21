@@ -17,6 +17,62 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧠 Team Brainstorm Assist's session timer follows a signed-in visitor
+  across devices, not just across browser tabs.**
+  `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
+  Known gaps said "The session timer is `localStorage`-only, not
+  account-synced" — true even though the panel's sibling store
+  (`brainstormIdeas`) was already wired into the account-sync allowlist;
+  the timer was a genuine, undocumented-as-deliberate gap, not one of
+  `internals/tool-data-sync.mdx`'s "what deliberately does not sync"
+  single-object stores.
+
+  `user_settings` gained one nullable column, `brainstormSessionTimer`
+  (`apps/debate-ai.com/drizzle/0049_brainstorm_session_timer.sql`, hand-written
+  to match the repo's existing single-column-add migration style — see the
+  `Streak5` entry below for why `drizzle-kit generate` isn't used here).
+  New `packages/debate-team-collaboration/src/lib/brainstorm-session-timer-sync.ts`
+  (validate/normalize/serialize/parse, mirroring
+  `research-progress-goal-sync.ts`'s "single nullable value, whole-value
+  replace on every write" shape — a session timer has one moderator driving
+  it at a time, so the op-based lost-update fix several other `/api/settings`
+  fields use doesn't apply) and
+  `lib/brainstorm-session-timer-sync-client.ts` (the `fetch` calls) pair with
+  a new `hooks/useBrainstormSessionTimerSync.ts`, which wraps
+  `state/brainstormSessionTimer.ts`'s existing local persistence: local-first
+  (works fully signed out), best-effort merges the account's synced timer in
+  on mount, and pushes every start/pause/reset/duration change back to the
+  account when the visitor is signed in.
+  `state/brainstormSessionTimer.ts` gained one new export,
+  `applySyncedSessionTimer`, to adopt a server-provided state directly
+  without running it through a local transition. `BrainstormBoardPanel.tsx`
+  now sources its `timer` from the new hook (keyed off the same
+  `signedInContributorId` prop it already used to prefill the idea form's
+  Contributor ID) instead of calling the local persistence functions
+  directly. `/api/settings` gained the `brainstormSessionTimer` field
+  end-to-end (GET default, PUT validate + persist, docstring).
+
+  Vitest-covered: new
+  `packages/debate-team-collaboration/test/brainstorm-session-timer-sync.test.ts`
+  (validation/normalize/serialize/parse, mirroring
+  `research-progress-goal-sync.test.ts`'s cases),
+  `test/brainstorm-session-timer-sync-client.test.ts` (fetch/save against a
+  mocked `fetch`, mirroring `argument-library-collections-client.test.ts`),
+  and three new cases in `test/brainstormSessionTimer.test.ts` covering
+  `applySyncedSessionTimer` (adopts a valid synced state, overwrites
+  whatever was stored locally, ignores a malformed state). Also updated
+  `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`'s
+  hand-written `user_settings` `CREATE TABLE` to include the new column,
+  which the new migration's column addition broke (a hand-created schema in
+  that test, not the real migration path).
+
+  Ran the full verification gate: `bunx turbo run typecheck` (17/17
+  packages green), `bun run test` (498 files / 9322 tests, all passing,
+  repo-wide), and `bun run build:web` (production build succeeded). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable. Doc updated:
+  `features/brainstorm-board.mdx`'s Session timer section and Known gaps.
+
 - **🔥 Practice vs AI's `Streak5` badge is reachable: a real day-over-day
   streak, persisted in `user_settings` and linked to the account.**
   `packages/debate-help-docs/content/docs/features/practice-vs-ai.mdx`'s

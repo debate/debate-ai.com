@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  applySyncedSessionTimer,
   loadBrainstormSessionTimer,
   pauseSessionTimer,
   resetSessionTimer,
@@ -93,5 +94,34 @@ describe("setSessionTimerDuration", () => {
     startSessionTimer(now);
     setSessionTimerDuration(600);
     expect(loadBrainstormSessionTimer().durationSeconds).toBe(DEFAULT_BRAINSTORM_SESSION_TIMER_SECONDS);
+  });
+});
+
+describe("applySyncedSessionTimer", () => {
+  it("persists a server-provided state as-is, no local transition applied", () => {
+    const synced = { durationSeconds: 600, status: "paused" as const, endsAt: null, remainingSecondsWhenPaused: 200 };
+    const applied = applySyncedSessionTimer(synced);
+
+    expect(applied).toEqual(synced);
+    expect(loadBrainstormSessionTimer()).toEqual(synced);
+  });
+
+  it("overwrites whatever was already stored locally", () => {
+    startSessionTimer(1_700_000_000_000);
+    const synced = { durationSeconds: 900, status: "idle" as const, endsAt: null, remainingSecondsWhenPaused: null };
+
+    applySyncedSessionTimer(synced);
+
+    expect(loadBrainstormSessionTimer()).toEqual(synced);
+  });
+
+  it("ignores a malformed state and leaves the current local state untouched", () => {
+    const started = startSessionTimer(1_700_000_000_000);
+    const malformed = { durationSeconds: 600, status: "stopped", endsAt: null, remainingSecondsWhenPaused: null };
+
+    const result = applySyncedSessionTimer(malformed as never);
+
+    expect(result).toEqual(started);
+    expect(loadBrainstormSessionTimer()).toEqual(started);
   });
 });
