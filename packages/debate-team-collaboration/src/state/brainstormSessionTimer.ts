@@ -15,6 +15,13 @@
  * "now" unless a caller supplies one, e.g. for tests), persists the result,
  * and returns it — no timer-transition logic is duplicated here.
  *
+ * `applySyncedSessionTimer` is the one exception: it writes a
+ * server-provided state directly rather than applying a local transition,
+ * for `hooks/useBrainstormSessionTimerSync.ts` to adopt a signed-in
+ * visitor's synced timer (from another device) on mount. See
+ * `lib/brainstorm-session-timer-sync.ts` for the account-sync validation
+ * this pairs with.
+ *
  * @module state/brainstormSessionTimer
  */
 
@@ -86,4 +93,16 @@ export function setSessionTimerDuration(durationSeconds: number): BrainstormSess
   const next = setBrainstormSessionTimerDuration(readState(), durationSeconds);
   writeState(next);
   return next;
+}
+
+/**
+ * Adopts a server-provided timer state as-is (no local transition applied),
+ * for syncing a signed-in visitor's timer down from their account onto this
+ * browser. A malformed state is ignored and the current local state is
+ * returned unchanged, so a bad sync response can't corrupt what's stored.
+ */
+export function applySyncedSessionTimer(state: BrainstormSessionTimerState): BrainstormSessionTimerState {
+  if (!isValidState(state)) return readState();
+  writeState(state);
+  return state;
 }
