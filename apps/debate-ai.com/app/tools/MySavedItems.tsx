@@ -14,6 +14,17 @@
  * (`debate-round`) now own the merge/sort/label/relative-time logic so all
  * three kinds are covered, unit-tested there since this file has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list).
+ *
+ * Previously also fetched all three endpoints itself via a bare
+ * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
+ * and `/api/rounds` both 401 with an `{ error }` body when the server can't
+ * resolve a session even though the client still thinks it's signed in (a
+ * stale session, or a transient auth-backend error) — that shape isn't an
+ * array, so `buildRecentCloudItems` threw, the effect rejected with nobody
+ * to catch it, and `items` stayed `null` forever, silently indistinguishable
+ * from "no saved items". `fetchRecentCloudItems` (`debate-round`) now owns
+ * that network orchestration and degrades any one failing source to "no
+ * items of that kind" instead.
  */
 
 import { useEffect, useState } from "react"
@@ -21,12 +32,7 @@ import Link from "next/link"
 import { FileText, Flag, ListTree } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "@/lib/hooks/useSession"
-import {
-  buildRecentCloudItems,
-  formatRelativeCloudTime,
-  type CloudLibraryItem,
-  type CloudLibraryItemKind,
-} from "debate-round"
+import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
 
 const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   document: FileText,
@@ -40,14 +46,13 @@ export function MySavedItems() {
 
   useEffect(() => {
     if (!isAuthenticated) return
-    void (async () => {
-      const [documents, flows, rounds] = await Promise.all([
-        fetch("/api/doc/documents").then((r) => r.json()),
-        fetch("/api/flows").then((r) => r.json()),
-        fetch("/api/rounds").then((r) => r.json()),
-      ])
-      setItems(buildRecentCloudItems({ documents, flows, rounds }))
-    })()
+    let cancelled = false
+    void fetchRecentCloudItems().then((result) => {
+      if (!cancelled) setItems(result)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [isAuthenticated])
 
   if (!isAuthenticated || !items || items.length === 0) return null
