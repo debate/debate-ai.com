@@ -20,6 +20,56 @@ _No task currently in progress._
 
 ### Completed
 
+- **🌱 `POST`/`GET /api/admin/videos/seed` had no UI caller — the exact same
+  "backend capability, no admin button" gap the previous slice below closed
+  for its sibling `recompute-stacks` endpoint, and which that slice's own
+  "Follow-up, deliberately not done here" note explicitly named as still
+  open.** `apps/debate-ai.com/app/api/admin/videos/seed/route.ts`'s `POST`
+  (admin-gated, upsert-safe re-seed from the bundled JSON assets) and `GET`
+  (row count, last-seeded timestamp, and whether `/api/videos` is serving
+  from SQL or the JSON fallback — its own doc comment says this exists "so
+  the admin page can tell whether to seed") had real SDK wrappers
+  (`getVideoSeedStatus`/`seedVideos` in `debate-api-client/src/sdk.ts`) and a
+  CLI script (`apps/debate-ai.com/scripts/seed-videos.ts`), but
+  `AdminDashboard.tsx` — the only admin page — had no card for it, so seeding
+  a fresh or YouTube-synced-but-unseeded database required curl, the SDK, or
+  wrangler credentials.
+
+  Added a **Seed videos** card to `AdminDashboard.tsx` (`/admin`), between
+  "Resync video view counts" and "Recompute video stacks" — the three cards
+  that act on the `videos` table. Same shape as those buttons: a button, a
+  loading state, and an inline status line, plus (new here, since this
+  endpoint's `GET` returns state the others don't) an initial status fetched
+  on mount so the card shows whether the table is seeded at all before the
+  button is ever pressed. Pulled both the status line and the post-run result
+  line into pure `apps/debate-ai.com/lib/videos/format-seed-videos-result.ts`
+  functions (`formatSeedVideosStatus`, `formatSeedVideosResult`), mirroring
+  `format-recompute-stacks-result.ts`'s reasoning: `AdminDashboard.tsx` has no
+  rendering tests of its own (this repo does not use
+  `@testing-library/react`), so a pure formatter is what makes the new text
+  actually testable. The status formatter renders `lastSeededAt` as a
+  UTC `YYYY-MM-DD` day rather than `toLocaleDateString()`, so the test
+  assertions don't depend on the reader's timezone or locale.
+
+  New test file
+  `apps/debate-ai.com/lib/videos/__tests__/format-seed-videos-result.test.ts`
+  (9 tests): the unseeded-table message; a seeded table serving from SQL;
+  rows present but still serving from JSON (the `GET` handler's own read-error
+  fallback shape); missing/unparseable `lastSeededAt` falling back to
+  "unknown" despite nonzero rows; the run-result line's counts and duration;
+  singular vs. plural "statement"; and thousands-separator formatting.
+  `seedVideosIntoDb`'s own behavior and the route's admin-gating were
+  unchanged — no existing test needed updating.
+
+  Ran the verification gate: `bun install`; the new test file directly (9/9);
+  `bun run typecheck` (17/17 packages); `bun run test` (510 files, 9471
+  tests, repo-wide, all passing); and `bun run build:web` (production build
+  succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/video-library.mdx`
+  ("Seeding the table" section now describes the button and where its status
+  text comes from, replacing the previous wording that implied a UI entry
+  point already existed when none did).
+
 - **🗂️ Learn custom decks (CardMirror's flashcard grouping) had zero UI
   anywhere — `createDeck`/`renameDeck`/`deleteDeck`/`setDeckMembership`
   had no caller outside tests, ever, in this package's history.**
