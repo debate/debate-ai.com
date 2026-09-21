@@ -10,6 +10,7 @@
 import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 import { Input } from "../../ui/primitives/input";
+import { Button } from "../../ui/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/primitives/card";
 import { Badge } from "../../ui/primitives/badge";
 import { DEBATE_STYLE_LABELS, type DebateStyle } from "../../types/videos";
@@ -24,13 +25,28 @@ export interface DebateTopicsExplorerProps {
   topics: DebateTopicYear[] | undefined;
 }
 
+/** The style filter's own value type: every real `DebateStyle`, plus "all". */
+export type StyleFilter = DebateStyle | "all";
+
 /** True when any style's resolution text for `entry` contains `term`
- *  (already lowercased), or `entry.year` itself does. Exported for its own
- *  unit test, since a search box's filtering can't be driven through
+ *  (already lowercased), or `entry.year` itself does. `styles` narrows which
+ *  styles' text counts as a match — defaults to every explorer style, so a
+ *  bare search box still searches everything. Exported for its own unit
+ *  test, since a search box's filtering can't be driven through
  *  `renderToStaticMarkup`. */
-export function entryMatches(entry: DebateTopicYear, term: string): boolean {
+export function entryMatches(entry: DebateTopicYear, term: string, styles: DebateStyle[] = EXPLORER_STYLES): boolean {
   if (String(entry.year).toLowerCase().includes(term)) return true;
-  return EXPLORER_STYLES.some((style) => (getStyleTopicText(entry, style) ?? "").toLowerCase().includes(term));
+  return styles.some((style) => (getStyleTopicText(entry, style) ?? "").toLowerCase().includes(term));
+}
+
+/** True when `entry` should survive `styleFilter` — always true for "all",
+ *  otherwise only when the entry actually has a resolution for that style
+ *  (a year with no Policy topic drops out of "Policy" instead of showing an
+ *  empty card). Exported for its own unit test, same reason as
+ *  {@link entryMatches}. */
+export function matchesStyleFilter(entry: DebateTopicYear, styleFilter: StyleFilter): boolean {
+  if (styleFilter === "all") return true;
+  return !!getStyleTopicText(entry, styleFilter);
 }
 
 /**
@@ -41,17 +57,23 @@ export function entryMatches(entry: DebateTopicYear, term: string): boolean {
  */
 export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
   const [search, setSearch] = useState("");
+  const [styleFilter, setStyleFilter] = useState<StyleFilter>("all");
 
   const sortedYears = useMemo(
     () => [...(topics ?? [])].sort((a, b) => Number(b.year) - Number(a.year)),
     [topics],
   );
 
+  const visibleStyles = styleFilter === "all" ? EXPLORER_STYLES : [styleFilter];
+
   const filteredYears = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) return sortedYears;
-    return sortedYears.filter((entry) => entryMatches(entry, term));
-  }, [sortedYears, search]);
+    return sortedYears.filter((entry) => {
+      if (!matchesStyleFilter(entry, styleFilter)) return false;
+      if (!term) return true;
+      return entryMatches(entry, term, visibleStyles);
+    });
+  }, [sortedYears, search, styleFilter, visibleStyles]);
 
   return (
     <div>
@@ -79,11 +101,35 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
         </div>
       </div>
 
+      <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by style">
+        <Button
+          type="button"
+          size="sm"
+          variant={styleFilter === "all" ? "default" : "outline"}
+          aria-pressed={styleFilter === "all"}
+          onClick={() => setStyleFilter("all")}
+        >
+          All
+        </Button>
+        {EXPLORER_STYLES.map((style) => (
+          <Button
+            key={style}
+            type="button"
+            size="sm"
+            variant={styleFilter === style ? "default" : "outline"}
+            aria-pressed={styleFilter === style}
+            onClick={() => setStyleFilter(style)}
+          >
+            {DEBATE_STYLE_LABELS[style]}
+          </Button>
+        ))}
+      </div>
+
       {topics === undefined ? (
         <p className="text-sm text-muted-foreground">Loading topics…</p>
       ) : filteredYears.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          {sortedYears.length === 0 ? "No debate topics are available yet." : "No topics match your search."}
+          {sortedYears.length === 0 ? "No debate topics are available yet." : "No topics match your search or filter."}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -93,7 +139,7 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
                 <CardTitle className="text-base">{entry.year}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {EXPLORER_STYLES.map((style) => {
+                {visibleStyles.map((style) => {
                   const text = getStyleTopicText(entry, style);
                   if (!text) return null;
                   return (

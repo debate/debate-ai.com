@@ -10,7 +10,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { DebateTopicsExplorer, entryMatches } from "../src/components/topic-explorer/DebateTopicsExplorer";
+import { DebateTopicsExplorer, entryMatches, matchesStyleFilter } from "../src/components/topic-explorer/DebateTopicsExplorer";
 import type { DebateTopicYear } from "../src/lib/debate-topics";
 
 const TOPICS: DebateTopicYear[] = [
@@ -53,8 +53,9 @@ describe("DebateTopicsExplorer", () => {
     expect(html).toContain("Climate change policy");
     // 2024 has no LD/PF/College resolution — its card carries Policy only.
     // (Both years share the "Policy" badge text, so this only pins the
-    // count, not which year it belongs to.)
-    expect(html.match(/>Policy</g)?.length).toBe(2);
+    // count, not which year it belongs to.) One more ">Policy<" comes from
+    // the style filter row's own "Policy" button, hence 3 rather than 2.
+    expect(html.match(/>Policy</g)?.length).toBe(3);
   });
 
   it("reports a genuinely empty catalog", () => {
@@ -66,6 +67,14 @@ describe("DebateTopicsExplorer", () => {
     const html = render({ topics: undefined });
     expect(html).toContain("Loading topics…");
     expect(html).not.toContain("No debate topics are available yet.");
+  });
+
+  it("renders an All/Policy/College (NDT)/LD/PF style filter row with All active by default", () => {
+    const html = render();
+    expect(html).toContain(">All<");
+    expect(html).toContain(">College<");
+    // "All" is the only pressed toggle on first render.
+    expect(html.match(/aria-pressed="true"/g)?.length).toBe(1);
   });
 });
 
@@ -88,5 +97,32 @@ describe("entryMatches", () => {
 
   it("does not match unrelated text", () => {
     expect(entryMatches(entry, "kritik")).toBe(false);
+  });
+
+  it("scopes matching to the given styles when a style list is passed", () => {
+    // Policy-only (style 1): the LD/PF text on the same entry no longer matches.
+    expect(entryMatches(entry, "civil disobedience", [1])).toBe(false);
+    expect(entryMatches(entry, "water infrastructure", [1])).toBe(true);
+    // The year itself still matches regardless of which styles are scoped in.
+    expect(entryMatches(entry, "2023", [1])).toBe(true);
+  });
+});
+
+describe("matchesStyleFilter", () => {
+  const [entryWithEverything, policyOnlyEntry] = TOPICS as [DebateTopicYear, DebateTopicYear];
+
+  it("always matches when the filter is \"all\"", () => {
+    expect(matchesStyleFilter(entryWithEverything, "all")).toBe(true);
+    expect(matchesStyleFilter(policyOnlyEntry, "all")).toBe(true);
+  });
+
+  it("matches a real style only when the entry has a resolution for it", () => {
+    expect(matchesStyleFilter(entryWithEverything, 1)).toBe(true); // Policy
+    expect(matchesStyleFilter(entryWithEverything, 3)).toBe(true); // LD
+    // 2024 (`policyOnlyEntry`) has no LD/PF/College resolution recorded.
+    expect(matchesStyleFilter(policyOnlyEntry, 1)).toBe(true); // Policy
+    expect(matchesStyleFilter(policyOnlyEntry, 3)).toBe(false); // LD
+    expect(matchesStyleFilter(policyOnlyEntry, 2)).toBe(false); // PF
+    expect(matchesStyleFilter(policyOnlyEntry, 4)).toBe(false); // College
   });
 });
