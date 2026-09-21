@@ -17,6 +17,82 @@ _No task currently in progress._
 
 ### Completed
 
+- **🧠 Team Brainstorm Assist's session timer now account-syncs across
+  devices.** `brainstorm-board.mdx`'s Known gaps named the "Session timer"
+  widget as `localStorage`-only, unlike every other tool's per-user state in
+  this app — it had fallen through both existing sync mechanisms
+  (`tool-record-sync`'s per-record list sync explicitly excludes
+  single-object stores like this one; `/api/settings`'s picker-style fields
+  are where a single value like this belongs, but nothing wired it up yet).
+
+  New `packages/debate-team-collaboration/src/lib/brainstorm-session-timer-sync.ts`
+  validates/serializes the full `BrainstormSessionTimerState` shape
+  (including its status-dependent field invariants — `endsAt` only while
+  `"running"`, `remainingSecondsWhenPaused` only while `"paused"`) and
+  `-sync-client.ts` talks to `/api/settings`, both mirroring
+  `research-progress-goal-sync(-client).ts`'s split exactly. New
+  `hooks/useBrainstormSessionTimerSync.ts` wraps the existing local
+  (`state/brainstormSessionTimer.ts`) store: local-first, fetches the
+  account's saved timer on mount, and pushes every start/pause/reset/
+  duration-change back to the account when signed in — a remote value is
+  only adopted while the local timer is `"idle"`, reusing
+  `setBrainstormSessionTimerDuration`'s own "no-op unless idle" rule so a
+  stale fetch can never stomp a countdown already running or paused in this
+  browser. `BrainstormBoardPanel.tsx` now calls this hook instead of the
+  local store's functions directly, gated on the same `signedInContributorId`
+  prop it already used for the idea-form prefill — no new app-layer wiring
+  needed. `apps/debate-ai.com/lib/database/schema.ts` gained a nullable
+  `brainstorm_session_timer` column (migration
+  `drizzle/0048_brainstorm_session_timer_sync.sql`) and
+  `app/api/settings/route.ts` gained the matching GET/PUT field, following
+  the `researchProgressGoal`/`qualificationCutoff` whole-value-replace
+  precedent (no op-based conflict resolution needed for a single
+  low-frequency-write widget).
+
+  Vitest-covered: `packages/debate-team-collaboration/test/brainstorm-session-timer-sync.test.ts`
+  (new — validation of every field and status-dependent invariant,
+  normalize/serialize/parse round-trips) and
+  `test/brainstorm-session-timer-sync-client.test.ts` (new — the `fetch`
+  wrapper's GET/PUT shape, signed-out `401` handling, error propagation,
+  mirroring `debate-round/test/flow-sync-client.test.ts`'s mocking style);
+  `test/BrainstormBoardPanel.timer-sync.test.tsx` (new — no `fetch` at all
+  when signed out, adopts a remote idle timer, never overwrites a timer
+  already running locally, pushes a started timer's state to the account);
+  and `test/brainstormSessionTimer.test.ts` gained coverage for the new
+  `adoptBrainstormSessionTimer` raw-write helper.
+
+  Ran the full verification gate: `bun install`; the four new/updated test
+  files (57 tests) plus `packages/debate-team-collaboration`'s own `bunx
+  vitest run` (892 tests) and `bunx tsc --noEmit` (clean); `bun run test`
+  (496 files, 9305 tests, repo-wide — 2 pre-existing failures in
+  `debate-videos` confirmed present before this change too, both unrelated
+  to `user_settings`/brainstorm: `sidebar-video-links.test.tsx` and
+  `tool-nav-tree-icons.test.tsx`); `bunx turbo run typecheck` (16/17
+  packages green — `debate-videos` has a pre-existing broken import in
+  `StatisticsPage.tsx`, confirmed present at this branch's `HEAD` before
+  this change, unrelated to this slice); the app's own `bun run typecheck`
+  (its real `tsconfig.typecheck.json`-based script, clean); and `bun run
+  build:web` (production build succeeded). A pre-existing in-memory
+  `user_settings` test fixture
+  (`apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`) needed
+  its manually-duplicated column list updated to match the new schema
+  column — that file's own comment already documents this requirement for
+  every column. No `lint`/`format:check` script exists in this repo, so
+  that step was skipped as not applicable. Docs updated:
+  `brainstorm-board.mdx`'s Known gaps entry (closed) and its "Session
+  timer" section.
+
+  Follow-up (not picked up this run — a pre-existing, unrelated gap
+  confirmed while running the full verification gate): `debate-videos`'s
+  `src/panels/statistics/StatisticsPage.tsx` imports three modules by
+  relative paths one directory level too shallow
+  (`../hooks/useYouTubeStats`, `../components/...`) and
+  `DebateTopicsExplorer.tsx` doesn't exist anywhere in the package, breaking
+  that package's own `typecheck` and two of its Vitest files
+  (`sidebar-video-links.test.tsx`, `tool-nav-tree-icons.test.tsx`) — needs a
+  human decision on whether to restore the missing component or drop the
+  statistics page, so it's out of scope for a mechanical fix.
+
 - **🔑 Prep Notes and "Send to Prep Notes" prefill the real signed-in
   identity instead of a blank free-form field.**
   `prep-notes.mdx`'s Known gaps named the note-creation popover's "Author
@@ -2229,6 +2305,23 @@ _No task currently in progress._
   fixed) and Tests list.
 
 ## Follow-ups
+
+- `debate-videos`'s `src/panels/statistics/StatisticsPage.tsx` (found while
+  running the full verification gate for the brainstorm-session-timer
+  account-sync slice — see this file's "Completed" entry above) imports
+  `useYouTubeStats`, `YouTubeStatsCharts`, and `DebateTopicsExplorer` via
+  relative paths one directory level too shallow for its own location
+  (`src/panels/statistics/`), and `DebateTopicsExplorer.tsx` doesn't exist
+  anywhere in the package at all — breaking that package's `typecheck` and
+  two Vitest files (`sidebar-video-links.test.tsx`,
+  `tool-nav-tree-icons.test.tsx`) that were confirmed still failing
+  identically on this branch's `HEAD` before that slice's changes. Not
+  picked up as part of that slice (unrelated package, no `user_settings`/
+  brainstorm connection) and not mechanically fixable without a human call:
+  it's unclear whether the right fix is restoring/writing the missing
+  `DebateTopicsExplorer` component or removing the statistics page's
+  reference to it, and the two-line import-path fix alone would still leave
+  the page broken at runtime with a component that never existed.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
