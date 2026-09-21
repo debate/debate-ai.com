@@ -4,14 +4,17 @@
  * @fileoverview Account sync for a signed-in visitor's own quest-streak
  * preferences — the "account-syncing reminder opt-ins/streak freezes across
  * devices" follow-up named under the "🎮 Gamified Quests" bullet in
- * TODO.md. Wraps `state/streakLapseReminders.ts`/`state/streakFreezes.ts`'s
+ * TODO.md, plus that same follow-up's own gap: the mission-result history
+ * `freezeDayKeys` is itself derived from never synced either. Wraps
+ * `state/streakLapseReminders.ts`/`state/streakFreezes.ts`/`state/dailyMissionResults.ts`'s
  * existing local (per-contributor-id, localStorage) stores: local-first
  * (works fully signed out, mirroring every other synced field's hook in
  * this repo), then best-effort merges in the account's synced copy on mount
- * (via `mergeRemoteStreakFreezeDayKeys`/`mergeRemoteStreakLapseReminderEnabled`'s
- * additive-only merge) and pushes each local change back to the account
- * one op at a time via the `/api/settings` `recordStreakFreezeDayKey`/
- * `setLapseReminderEnabled` ops, mirroring `useResearchProgressGoalSync.ts`'s
+ * (via `mergeRemoteStreakFreezeDayKeys`/`mergeRemoteStreakLapseReminderEnabled`/
+ * `mergeRemoteMissionResultDays`'s additive-only merge) and pushes each
+ * local change back to the account one op at a time via the `/api/settings`
+ * `recordStreakFreezeDayKey`/`setLapseReminderEnabled`/
+ * `recordMissionResultDay` ops, mirroring `useResearchProgressGoalSync.ts`'s
  * split.
  *
  * Unlike that hook, there is no single "current value" to hold in state
@@ -30,7 +33,14 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fetchQuestStreakSync, saveLapseReminderEnabledOp, saveStreakFreezeDayKeyOp } from "../lib/quest-streak-sync-client";
+import type { DailyMissionResult } from "../lib/gamified-quests";
+import {
+  fetchQuestStreakSync,
+  saveLapseReminderEnabledOp,
+  saveMissionResultDayOp,
+  saveStreakFreezeDayKeyOp,
+} from "../lib/quest-streak-sync-client";
+import { mergeRemoteMissionResultDays } from "../state/dailyMissionResults";
 import { mergeRemoteStreakFreezeDayKeys } from "../state/streakFreezes";
 import { mergeRemoteStreakLapseReminderEnabled } from "../state/streakLapseReminders";
 
@@ -54,6 +64,15 @@ export interface UseQuestStreakSyncResult {
    * same contributor.
    */
   pushLapseReminderEnabled: (enabled: boolean) => void;
+  /**
+   * Pushes a single just-recorded mission-result day to the account,
+   * resolved server-side against the account's current stored
+   * `missionResultDays` and upserted by `dayKey`. Best-effort and a no-op
+   * when signed out or the initial account fetch hasn't resolved yet — call
+   * this right after `state/dailyMissionResults.ts#computeAndSavePersistedDailyMissionResult`
+   * succeeds for this same contributor.
+   */
+  pushMissionResultDay: (entry: DailyMissionResult) => void;
 }
 
 /**
@@ -92,7 +111,11 @@ export function useQuestStreakSync(contributorId: string | undefined, onMerged?:
           contributorId,
           remote.questStreakSync.lapseReminderEnabled,
         );
-        if (freezeChanged || reminderChanged) onMergedRef.current?.();
+        const missionResultChanged = mergeRemoteMissionResultDays(
+          contributorId,
+          remote.questStreakSync.missionResultDays ?? [],
+        );
+        if (freezeChanged || reminderChanged || missionResultChanged) onMergedRef.current?.();
       })
       .catch(() => {
         // Signed in but the load failed (network/server error) — keep
@@ -127,5 +150,15 @@ export function useQuestStreakSync(contributorId: string | undefined, onMerged?:
     [contributorId],
   );
 
-  return { loaded, pushFreezeDayKey, pushLapseReminderEnabled };
+  const pushMissionResultDay = useCallback(
+    (entry: DailyMissionResult) => {
+      if (!contributorId || !remoteAvailableRef.current) return;
+      saveMissionResultDayOp(entry).catch(() => {
+        // Best-effort — the local change above already succeeded.
+      });
+    },
+    [contributorId],
+  );
+
+  return { loaded, pushFreezeDayKey, pushLapseReminderEnabled, pushMissionResultDay };
 }

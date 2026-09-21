@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   applyQuestStreakFreezeOp,
+  applyQuestStreakMissionResultOp,
   applyQuestStreakReminderOp,
   DEFAULT_QUEST_STREAK_SYNC,
   isValidQuestStreakSyncPayload,
   MAX_QUEST_STREAK_FREEZE_DAY_KEYS,
+  MAX_QUEST_STREAK_MISSION_RESULT_DAYS,
   normalizeQuestStreakFreezeOpPatch,
+  normalizeQuestStreakMissionResultOpPatch,
   normalizeQuestStreakReminderOpPatch,
   normalizeQuestStreakSyncPatch,
   parseQuestStreakSync,
@@ -78,6 +81,79 @@ describe("isValidQuestStreakSyncPayload", () => {
     expect(isValidQuestStreakSyncPayload("payload")).toBe(false);
     expect(isValidQuestStreakSyncPayload([{ lapseReminderEnabled: true, freezeDayKeys: [] }])).toBe(false);
   });
+
+  it("accepts a payload with no missionResultDays field at all (the pre-existing shape)", () => {
+    expect(isValidQuestStreakSyncPayload({ lapseReminderEnabled: true, freezeDayKeys: [] })).toBe(true);
+  });
+
+  it("accepts a payload with missionResultDays", () => {
+    expect(
+      isValidQuestStreakSyncPayload({
+        lapseReminderEnabled: true,
+        freezeDayKeys: [],
+        missionResultDays: [
+          { dayKey: "2026-08-09", isComplete: true },
+          { dayKey: "2026-08-10", isComplete: false },
+        ],
+      }),
+    ).toBe(true);
+  });
+
+  it("accepts exactly the maximum number of missionResultDays entries", () => {
+    const missionResultDays = Array.from(
+      { length: MAX_QUEST_STREAK_MISSION_RESULT_DAYS },
+      (_, i) => ({ dayKey: `2026-01-${String((i % 28) + 1).padStart(2, "0")}`, isComplete: i % 2 === 0 }),
+    );
+    expect(isValidQuestStreakSyncPayload({ lapseReminderEnabled: false, freezeDayKeys: [], missionResultDays })).toBe(
+      true,
+    );
+  });
+
+  it("rejects more than the maximum number of missionResultDays entries", () => {
+    const missionResultDays = Array.from(
+      { length: MAX_QUEST_STREAK_MISSION_RESULT_DAYS + 1 },
+      (_, i) => ({ dayKey: `2026-01-${String((i % 28) + 1).padStart(2, "0")}`, isComplete: true }),
+    );
+    expect(isValidQuestStreakSyncPayload({ lapseReminderEnabled: false, freezeDayKeys: [], missionResultDays })).toBe(
+      false,
+    );
+  });
+
+  it("rejects a missionResultDays entry with a malformed day key", () => {
+    expect(
+      isValidQuestStreakSyncPayload({
+        lapseReminderEnabled: false,
+        freezeDayKeys: [],
+        missionResultDays: [{ dayKey: "not-a-day", isComplete: true }],
+      }),
+    ).toBe(false);
+  });
+
+  it("rejects a missionResultDays entry with a non-boolean isComplete", () => {
+    expect(
+      isValidQuestStreakSyncPayload({
+        lapseReminderEnabled: false,
+        freezeDayKeys: [],
+        missionResultDays: [{ dayKey: "2026-08-09", isComplete: "yes" }],
+      }),
+    ).toBe(false);
+  });
+
+  it("rejects a missionResultDays entry with an extra field", () => {
+    expect(
+      isValidQuestStreakSyncPayload({
+        lapseReminderEnabled: false,
+        freezeDayKeys: [],
+        missionResultDays: [{ dayKey: "2026-08-09", isComplete: true, contributorId: "smuggled" }],
+      }),
+    ).toBe(false);
+  });
+
+  it("rejects missionResultDays that isn't an array", () => {
+    expect(
+      isValidQuestStreakSyncPayload({ lapseReminderEnabled: false, freezeDayKeys: [], missionResultDays: "nope" }),
+    ).toBe(false);
+  });
 });
 
 describe("normalizeQuestStreakSyncPatch", () => {
@@ -132,6 +208,20 @@ describe("serializeQuestStreakSync / parseQuestStreakSync", () => {
 
   it("parses a stored value that fails validation back to null", () => {
     expect(parseQuestStreakSync(JSON.stringify({ lapseReminderEnabled: "nope", freezeDayKeys: [] }))).toBeNull();
+  });
+
+  it("round-trips a payload carrying missionResultDays", () => {
+    const payload = {
+      lapseReminderEnabled: false,
+      freezeDayKeys: ["2026-08-09"],
+      missionResultDays: [{ dayKey: "2026-08-09", isComplete: true }],
+    };
+    expect(parseQuestStreakSync(serializeQuestStreakSync(payload))).toEqual(payload);
+  });
+
+  it("parses a pre-existing stored value with no missionResultDays field back unchanged", () => {
+    const stored = JSON.stringify({ lapseReminderEnabled: true, freezeDayKeys: ["2026-08-09"] });
+    expect(parseQuestStreakSync(stored)).toEqual({ lapseReminderEnabled: true, freezeDayKeys: ["2026-08-09"] });
   });
 });
 
@@ -254,5 +344,140 @@ describe("applyQuestStreakReminderOp", () => {
       setLapseReminderEnabled: true,
     });
     expect(afterDeviceBToggles.freezeDayKeys).toEqual(["2026-09-15"]);
+  });
+});
+
+describe("normalizeQuestStreakMissionResultOpPatch", () => {
+  it("accepts a valid recordMissionResultDay op", () => {
+    expect(
+      normalizeQuestStreakMissionResultOpPatch({ recordMissionResultDay: { dayKey: "2026-08-09", isComplete: true } }),
+    ).toEqual({
+      valid: { recordMissionResultDay: { dayKey: "2026-08-09", isComplete: true } },
+      errors: [],
+    });
+  });
+
+  it("returns no valid op and no errors when the field is absent", () => {
+    expect(normalizeQuestStreakMissionResultOpPatch({ debateStyle: 1 })).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("rejects a malformed day key", () => {
+    const result = normalizeQuestStreakMissionResultOpPatch({
+      recordMissionResultDay: { dayKey: "not-a-day", isComplete: true },
+    });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a non-boolean isComplete", () => {
+    const result = normalizeQuestStreakMissionResultOpPatch({
+      recordMissionResultDay: { dayKey: "2026-08-09", isComplete: "yes" },
+    });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a non-object recordMissionResultDay value", () => {
+    const result = normalizeQuestStreakMissionResultOpPatch({ recordMissionResultDay: "2026-08-09" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a non-object request body", () => {
+    const result = normalizeQuestStreakMissionResultOpPatch("not an object");
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+});
+
+describe("applyQuestStreakMissionResultOp", () => {
+  it("appends a new day to an existing payload", () => {
+    const current = { lapseReminderEnabled: true, freezeDayKeys: [], missionResultDays: [{ dayKey: "2026-08-09", isComplete: true }] };
+    expect(
+      applyQuestStreakMissionResultOp(current, { recordMissionResultDay: { dayKey: "2026-08-10", isComplete: false } }),
+    ).toEqual({
+      lapseReminderEnabled: true,
+      freezeDayKeys: [],
+      missionResultDays: [
+        { dayKey: "2026-08-09", isComplete: true },
+        { dayKey: "2026-08-10", isComplete: false },
+      ],
+    });
+  });
+
+  it("builds a fresh payload (opted-out default) when nothing is stored yet", () => {
+    expect(
+      applyQuestStreakMissionResultOp(null, { recordMissionResultDay: { dayKey: "2026-08-09", isComplete: true } }),
+    ).toEqual({
+      lapseReminderEnabled: false,
+      freezeDayKeys: [],
+      missionResultDays: [{ dayKey: "2026-08-09", isComplete: true }],
+    });
+  });
+
+  it("upserts an existing day's isComplete rather than duplicating it", () => {
+    const current = {
+      lapseReminderEnabled: false,
+      freezeDayKeys: [],
+      missionResultDays: [{ dayKey: "2026-08-09", isComplete: false }],
+    };
+    expect(
+      applyQuestStreakMissionResultOp(current, { recordMissionResultDay: { dayKey: "2026-08-09", isComplete: true } }),
+    ).toEqual({
+      lapseReminderEnabled: false,
+      freezeDayKeys: [],
+      missionResultDays: [{ dayKey: "2026-08-09", isComplete: true }],
+    });
+  });
+
+  it("leaves lapseReminderEnabled and freezeDayKeys untouched", () => {
+    const current = { lapseReminderEnabled: true, freezeDayKeys: ["2026-08-01"], missionResultDays: [] };
+    const result = applyQuestStreakMissionResultOp(current, {
+      recordMissionResultDay: { dayKey: "2026-08-09", isComplete: true },
+    });
+    expect(result.lapseReminderEnabled).toBe(true);
+    expect(result.freezeDayKeys).toEqual(["2026-08-01"]);
+  });
+
+  it("returns the same reference when the day is already recorded with the same isComplete value", () => {
+    const current = {
+      lapseReminderEnabled: false,
+      freezeDayKeys: [],
+      missionResultDays: [{ dayKey: "2026-08-09", isComplete: true }],
+    };
+    expect(
+      applyQuestStreakMissionResultOp(current, { recordMissionResultDay: { dayKey: "2026-08-09", isComplete: true } }),
+    ).toBe(current);
+  });
+
+  it("returns the same reference for an invalid day key", () => {
+    const current = { lapseReminderEnabled: false, freezeDayKeys: [], missionResultDays: [] };
+    expect(
+      applyQuestStreakMissionResultOp(current, { recordMissionResultDay: { dayKey: "not-a-day", isComplete: true } }),
+    ).toBe(current);
+  });
+
+  it("silently drops a new day once missionResultDays is at MAX_QUEST_STREAK_MISSION_RESULT_DAYS", () => {
+    const missionResultDays = Array.from(
+      { length: MAX_QUEST_STREAK_MISSION_RESULT_DAYS },
+      (_, i) => ({ dayKey: `2026-01-${String((i % 28) + 1).padStart(2, "0")}`, isComplete: true }),
+    );
+    const current = { lapseReminderEnabled: false, freezeDayKeys: [], missionResultDays };
+    expect(
+      applyQuestStreakMissionResultOp(current, { recordMissionResultDay: { dayKey: "2027-01-01", isComplete: true } }),
+    ).toBe(current);
+  });
+
+  it("still upserts an already-recorded day's isComplete even once at capacity", () => {
+    const missionResultDays = Array.from(
+      { length: MAX_QUEST_STREAK_MISSION_RESULT_DAYS },
+      (_, i) => ({ dayKey: `2026-01-${String((i % 28) + 1).padStart(2, "0")}`, isComplete: false }),
+    );
+    const current = { lapseReminderEnabled: false, freezeDayKeys: [], missionResultDays };
+    const result = applyQuestStreakMissionResultOp(current, {
+      recordMissionResultDay: { dayKey: missionResultDays[0].dayKey, isComplete: true },
+    });
+    expect(result.missionResultDays).toHaveLength(MAX_QUEST_STREAK_MISSION_RESULT_DAYS);
+    expect(result.missionResultDays?.[0]).toEqual({ dayKey: missionResultDays[0].dayKey, isComplete: true });
   });
 });

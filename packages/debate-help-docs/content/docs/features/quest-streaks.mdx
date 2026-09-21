@@ -14,9 +14,9 @@ plus an on-demand action to compute today's mission result.
 
 Current/longest streak, badges, a **streak freeze** ("grace day") action
 for a missed day (up to 2 per rolling 30 days), and an opt-in
-streak-lapse reminder banner. The signed-in visitor's own streak freezes and
-reminder opt-in follow them to another device; see
-[Quest Streaks](../internals/quest-streaks.mdx) for how.
+streak-lapse reminder banner. The signed-in visitor's own streak freezes,
+reminder opt-in, and daily-mission-result history follow them to another
+device; see [Quest Streaks](../internals/quest-streaks.mdx) for how.
 
 ## Data flow
 
@@ -27,7 +27,7 @@ state/streakLapseReminders.ts (localStorage: streakLapseReminders)
   → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
   → panels/QuestStreaksPanel.tsx
   → hooks/useQuestStreakSync.ts — syncs the signed-in visitor's own freezes/
-      opt-in to their account (see the internals doc)
+      opt-in/mission-result history to their account (see the internals doc)
   → apps/debate-ai.com/app/cards/streaks/page.tsx
 ```
 
@@ -35,8 +35,8 @@ state/streakLapseReminders.ts (localStorage: streakLapseReminders)
 
 The trigger is a manual button click, not a scheduled job — nothing wires
 mission-result computation to the repo's cron trigger (see the internals
-doc), so it doesn't run on its own. Streak freezes
-and the reminder opt-in sync to the signed-in visitor's own account across
-devices, but every other contributor's row in the roster stays
+doc), so it doesn't run on its own. Streak freezes, the reminder opt-in, and
+the mission-result history sync to the signed-in visitor's own account
+across devices, but every other contributor's row in the roster stays
 localStorage-only, since there's no contributor-identity system to sync
 anyone else's row to.

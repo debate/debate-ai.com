@@ -9,6 +9,7 @@ import {
   getDailyMissionResult,
   listDailyMissionResults,
   listDailyMissionResultsForContributor,
+  mergeRemoteMissionResultDays,
   saveDailyMissionResult,
   type DailyMissionResultRecord,
 } from "../src/state/dailyMissionResults";
@@ -122,6 +123,62 @@ describe("deleteDailyMissionResult", () => {
     saveDailyMissionResult(BOB_DAY1);
     deleteDailyMissionResult("alice", "2026-08-15");
     expect(listDailyMissionResults()).toEqual([BOB_DAY1]);
+  });
+});
+
+describe("mergeRemoteMissionResultDays", () => {
+  it("adds remote days not already present locally and reports a change", () => {
+    const changed = mergeRemoteMissionResultDays("alice", [
+      { dayKey: "2026-08-09", isComplete: true },
+      { dayKey: "2026-08-15", isComplete: false },
+    ]);
+    expect(changed).toBe(true);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([
+      { contributorId: "alice", dayKey: "2026-08-09", isComplete: true },
+      { contributorId: "alice", dayKey: "2026-08-15", isComplete: false },
+    ]);
+  });
+
+  it("is a no-op reporting no change when every remote day is already local", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    const changed = mergeRemoteMissionResultDays("alice", [{ dayKey: ALICE_DAY1.dayKey, isComplete: true }]);
+    expect(changed).toBe(false);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([ALICE_DAY1]);
+  });
+
+  it("never overwrites a locally-recorded day even when the remote isComplete differs", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    mergeRemoteMissionResultDays("alice", [{ dayKey: "2026-08-09", isComplete: false }]);
+    expect(getDailyMissionResult("alice", "2026-08-09")).toEqual({
+      contributorId: "alice",
+      dayKey: "2026-08-09",
+      isComplete: true,
+    });
+  });
+
+  it("only adds the days not already present locally, without duplicating overlapping ones", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    const changed = mergeRemoteMissionResultDays("alice", [
+      { dayKey: ALICE_DAY1.dayKey, isComplete: ALICE_DAY1.isComplete },
+      { dayKey: "2026-08-20", isComplete: true },
+    ]);
+    expect(changed).toBe(true);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([
+      ALICE_DAY1,
+      { contributorId: "alice", dayKey: "2026-08-20", isComplete: true },
+    ]);
+  });
+
+  it("doesn't touch another contributor's stored days", () => {
+    saveDailyMissionResult(BOB_DAY1);
+    mergeRemoteMissionResultDays("alice", [{ dayKey: "2026-08-09", isComplete: true }]);
+    expect(listDailyMissionResultsForContributor("bob")).toEqual([BOB_DAY1]);
+  });
+
+  it("is a no-op for an empty remote list", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    expect(mergeRemoteMissionResultDays("alice", [])).toBe(false);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([ALICE_DAY1]);
   });
 });
 

@@ -7,8 +7,8 @@ title: "Quest Streaks"
 A roster of every contributor's daily-quest streak and milestone badges, a
 manual "Run today's mission check" trigger, a **streak freeze** ("grace day")
 action for a missed day, and an opt-in streak-lapse reminder banner — with the
-signed-in visitor's own freeze usage and reminder opt-in synced to their
-account.
+signed-in visitor's own freeze usage, reminder opt-in, and daily-mission-result
+history synced to their account.
 
 - **Route:** `/cards/streaks`
 - **Nav:** the Tools page's Community group
@@ -53,6 +53,7 @@ notification.
 
 ```
 state/dailyMissionResults.ts    (localStorage: dailyMissionResults)
+  → mergeRemoteMissionResultDays
 state/streakFreezes.ts          (localStorage: streakFreezes)
   → applyPersistedStreakFreeze / mergeRemoteStreakFreezeDayKeys
   → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
@@ -65,10 +66,16 @@ apps/debate-ai.com/app/cards/streaks/page.tsx — mounts the panel as a route
 
 Account sync (signed-in visitor's own row only):
 lib/quest-streak-sync.ts        (pure — no fetch, no localStorage)
-  → QuestStreakSyncPayload          { lapseReminderEnabled, freezeDayKeys }
-  → isValidQuestStreakSyncPayload   exactly these two keys, freezeDayKeys
+  → QuestStreakSyncPayload          { lapseReminderEnabled, freezeDayKeys,
+                                       missionResultDays? }
+  → isValidQuestStreakSyncPayload   exactly these three keys; freezeDayKeys
                                        capped at MAX_QUEST_STREAK_FREEZE_DAY_KEYS
-                                       (366) YYYY-MM-DD strings
+                                       (366) YYYY-MM-DD strings;
+                                       missionResultDays optional (absent on
+                                       any payload saved before this field
+                                       existed), capped at
+                                       MAX_QUEST_STREAK_MISSION_RESULT_DAYS
+                                       (366) { dayKey, isComplete } entries
   → normalizeQuestStreakSyncPatch   validates an untrusted PUT body's
                                        `questStreakSync` field (null clears it)
   → normalizeQuestStreakFreezeOpPatch / applyQuestStreakFreezeOp
@@ -78,6 +85,13 @@ lib/quest-streak-sync.ts        (pure — no fetch, no localStorage)
   → normalizeQuestStreakReminderOpPatch / applyQuestStreakReminderOp
                                      validates/applies a single
                                        `setLapseReminderEnabled` op the same way
+  → normalizeQuestStreakMissionResultOpPatch / applyQuestStreakMissionResultOp
+                                     validates/applies a single
+                                       `recordMissionResultDay` op — upserted
+                                       by dayKey rather than only appended,
+                                       since a day's result can flip from
+                                       incomplete to complete later the same
+                                       day
   → serializeQuestStreakSync / parseQuestStreakSync
                                      the user_settings.quest_streak_sync
                                        column, JSON-stringified
@@ -86,6 +100,7 @@ lib/quest-streak-sync-client.ts (fetch only)
   → fetchQuestStreakSync            GET /api/settings (null on 401)
   → saveStreakFreezeDayKeyOp        PUT /api/settings { recordStreakFreezeDayKey }
   → saveLapseReminderEnabledOp      PUT /api/settings { setLapseReminderEnabled }
+  → saveMissionResultDayOp          PUT /api/settings { recordMissionResultDay }
   → saveQuestStreakSync             PUT /api/settings { questStreakSync } — the
                                        whole-value replace, kept for a caller
                                        that genuinely needs one; no code path
@@ -93,14 +108,18 @@ lib/quest-streak-sync-client.ts (fetch only)
 
 hooks/useQuestStreakSync.ts     (the glue QuestStreaksPanel calls)
   → on mount: fetches the account's payload, merges its freezeDayKeys/
-      lapseReminderEnabled into the local stores via mergeRemoteStreakFreezeDayKeys/
-      mergeRemoteStreakLapseReminderEnabled, calls the caller's onMerged()
-      if anything actually changed
+      lapseReminderEnabled/missionResultDays into the local stores via
+      mergeRemoteStreakFreezeDayKeys/mergeRemoteStreakLapseReminderEnabled/
+      mergeRemoteMissionResultDays, calls the caller's onMerged() if
+      anything actually changed
   → pushFreezeDayKey(dayKey)        called by QuestStreaksPanel right after a
       freeze is spent for the signed-in visitor's own row
   → pushLapseReminderEnabled(enabled)
                                      called by QuestStreaksPanel right after
       the signed-in visitor's own reminder opt-in is toggled
+  → pushMissionResultDay({ dayKey, isComplete })
+                                     called by QuestStreaksPanel right after
+      the signed-in visitor's own mission result is recorded
 
 apps/debate-ai.com
   → app/api/settings/route.ts       GET/PUT — one user_settings row per
@@ -119,25 +138,31 @@ have no way to know whose account to write to for anyone but the one real
 session in the room.
 
 Unlike [Tool Data Sync](tool-data-sync.md)'s `saved_tool_records` table, this
-sync does not go through `TOOL_RECORD_COLLECTIONS`: neither store fits that
-allowlist's required shape (a JSON array of objects each carrying one stable
-string id field).
+sync does not go through `TOOL_RECORD_COLLECTIONS`: none of the three stores
+fit that allowlist's required shape (a JSON array of objects each carrying
+one stable string id field).
 
 - `streakFreezes` records are naturally keyed by the *pair*
   `(contributorId, dayKey)`, not a single field.
 - `streakLapseReminders` isn't an array of records at all — it's a bare
   `string[]` of opted-in contributor ids.
+- `dailyMissionResults` is keyed by the same `(contributorId, dayKey)` pair
+  as `streakFreezes`, for the same reason.
 
-So this sync instead bundles both preferences into one JSON value —
-`QuestStreakSyncPayload`, `{ lapseReminderEnabled, freezeDayKeys }` — on the
-`quest_streak_sync` column of the same `user_settings` row every other
-per-user setting (theme, favorite tools, Research Progress's goal,
-Standings' point-weight table) already uses, mirroring
-`research-progress-goal-sync.ts`'s split exactly: a framework-free
-validation/serialization module (`lib/quest-streak-sync.ts`), a fetch-only
-client (`lib/quest-streak-sync-client.ts`), and a React hook
+So this sync instead bundles all three preferences into one JSON value —
+`QuestStreakSyncPayload`, `{ lapseReminderEnabled, freezeDayKeys,
+missionResultDays? }` — on the `quest_streak_sync` column of the same
+`user_settings` row every other per-user setting (theme, favorite tools,
+Research Progress's goal, Standings' point-weight table) already uses,
+mirroring `research-progress-goal-sync.ts`'s split exactly: a
+framework-free validation/serialization module (`lib/quest-streak-sync.ts`),
+a fetch-only client (`lib/quest-streak-sync-client.ts`), and a React hook
 (`hooks/useQuestStreakSync.ts`) that wires the two together against the
-existing local stores.
+existing local stores. `missionResultDays` is optional rather than
+required, mirroring `state/challengeWinEvents.ts`'s "leave a new field on a
+synced payload optional" convention, so a `quest_streak_sync` row saved
+before this field existed still parses and validates without it, instead of
+the whole row reading back as `null`.
 
 **The merge is additive-only, never a whole-value replace.**
 `mergeRemoteStreakFreezeDayKeys` adds only the remote dayKeys this device
@@ -150,15 +175,20 @@ that justified it yet). `mergeRemoteStreakLapseReminderEnabled` only ever
 turns the local opt-in **on** when the remote says `true`; a remote `false`
 means "not yet synced from elsewhere," not "explicitly disabled" (there is no
 way to distinguish those from a single boolean), so it is never used to turn
-a locally-enabled reminder back off.
+a locally-enabled reminder back off. `mergeRemoteMissionResultDays` adds only
+the remote days this device doesn't already have a local record for — a day
+already recorded locally is left alone rather than overwritten by the
+remote copy, since the remote value could itself be stale relative to a
+local recompute that hasn't synced up yet.
 
-**Local write always wins, sync is best-effort.** `applyPersistedStreakFreeze`
-and `setStreakLapseReminderEnabled` write to `localStorage` synchronously and
-return before any network call. `QuestStreaksPanel`'s `handleUseFreeze`/
-`handleToggleReminder` call `pushFreezeDayKey`/`pushLapseReminderEnabled`
+**Local write always wins, sync is best-effort.** `applyPersistedStreakFreeze`,
+`setStreakLapseReminderEnabled`, and `computeAndSavePersistedDailyMissionResult`
+write to `localStorage` synchronously and return before any network call.
+`QuestStreaksPanel`'s `handleUseFreeze`/`handleToggleReminder`/`handleRunCheck`
+call `pushFreezeDayKey`/`pushLapseReminderEnabled`/`pushMissionResultDay`
 afterward, only when the row being changed is the signed-in visitor's own
 (`id === signedInContributorId`) — every other row's change never reaches the
-network, since there's no account to sync it to. Both pushes are a no-op
+network, since there's no account to sync it to. All three pushes are a no-op
 until the mount-time fetch has resolved (`remoteAvailableRef`), so a push
 can't race ahead of the merge and re-upload a value the merge hasn't
 reconciled yet; each swallows its own rejection, matching every other synced
@@ -205,18 +235,30 @@ mount (the account merge above), not live.
   the opt-in toggle's no-duplicate-write behavior and
   `mergeRemoteStreakLapseReminderEnabled`'s "only ever turns on, never off"
   rule.
+- `packages/debate-contributor-progress/test/dailyMissionResults.test.ts` —
+  `mergeRemoteMissionResultDays`'s additive-only merge (adds only new days,
+  never overwrites an already-recorded local day even when the remote
+  `isComplete` differs, reports whether anything actually changed, and
+  leaves other contributors' history untouched).
 - `packages/debate-contributor-progress/test/quest-streak-sync.test.ts` —
   `isValidQuestStreakSyncPayload`'s full validation surface (the day-key
-  format, the `MAX_QUEST_STREAK_FREEZE_DAY_KEYS` cap, rejecting an
-  unrecognized field such as a smuggled `contributorId`),
+  format, the `MAX_QUEST_STREAK_FREEZE_DAY_KEYS`/`MAX_QUEST_STREAK_MISSION_RESULT_DAYS`
+  caps, a payload with no `missionResultDays` field still validating,
+  rejecting an unrecognized field such as a smuggled `contributorId`),
   `normalizeQuestStreakSyncPatch`'s PUT-body handling, the serialize/parse
   round-trip (corrupt or invalid-shape JSON degrades to `null` rather than
-  throwing), and `normalizeQuestStreakFreezeOpPatch`/`applyQuestStreakFreezeOp`/
-  `normalizeQuestStreakReminderOpPatch`/`applyQuestStreakReminderOp` (append,
-  dedupe, at-capacity drop, an empty-payload default, two-concurrent-freezes
-  resolving onto the same starting payload without dropping either, and an
-  explicit "a reminder toggle on one device never reverts a freeze another
-  device just spent" case demonstrating the exact race this closes).
+  throwing, and a pre-existing stored value with no `missionResultDays`
+  parses back unchanged), and
+  `normalizeQuestStreakFreezeOpPatch`/`applyQuestStreakFreezeOp`/
+  `normalizeQuestStreakReminderOpPatch`/`applyQuestStreakReminderOp`/
+  `normalizeQuestStreakMissionResultOpPatch`/`applyQuestStreakMissionResultOp`
+  (append, dedupe, at-capacity drop, an empty-payload default,
+  two-concurrent-freezes resolving onto the same starting payload without
+  dropping either, an explicit "a reminder toggle on one device never
+  reverts a freeze another device just spent" case demonstrating the exact
+  race this closes, and the mission-result op's upsert-by-dayKey behavior
+  including that an already-recorded day's `isComplete` can still update
+  even once the list is at capacity).
 - `useQuestStreakSync` and its wiring in `QuestStreaksPanel` are intentionally
   untested, matching this repo's existing convention for account-synced,
   `localStorage`-backed hooks and their UI (e.g. `tool-data-sync.md`'s

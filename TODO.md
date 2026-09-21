@@ -20,6 +20,83 @@ _No task currently in progress._
 
 ### Completed
 
+- **🎮 The signed-in visitor's own daily-mission-result history never
+  synced to their account — only its *derived* streak-freeze/reminder
+  metadata did.** `state/dailyMissionResults.ts`'s `dailyMissionResults`
+  localStorage store (real, live UI: `DailyQuestsPanel.tsx`/`QuestStreaksPanel.tsx`'s
+  "Run today's mission check" action) is the source history
+  `streakFreezes`/`streakLapseReminders` are themselves derived from, and
+  those two already synced via `lib/quest-streak-sync.ts`'s
+  `QuestStreakSyncPayload` onto `user_settings.quest_streak_sync` — but the
+  history itself was never included. A contributor who recorded a mission
+  result on one device, then opened the roster on a second device before
+  ever spending a freeze or toggling the reminder there, saw an empty
+  streak, since `buildQuestStreakRosterWithFreezes` reads the local
+  `dailyMissionResults` store directly and nothing populated it.
+  `dailyMissionResults`/`streakFreezes` don't fit `TOOL_RECORD_COLLECTIONS`'s
+  required shape (both are keyed by the pair `(contributorId, dayKey)`, not
+  a single stable id field) — the same reason `quest-streak-sync.ts` exists
+  as a bespoke sync in the first place, confirmed against
+  `internals/quest-streaks.mdx`'s own explanation for `streakFreezes`/
+  `streakLapseReminders`.
+
+  Added an optional `missionResultDays` field to `QuestStreakSyncPayload`
+  (optional rather than required, mirroring `state/challengeWinEvents.ts`'s
+  "leave a new field on a synced payload optional" precedent, so a
+  `quest_streak_sync` row saved before this field existed still parses
+  rather than reading back as `null`). Added
+  `normalizeQuestStreakMissionResultOpPatch`/`applyQuestStreakMissionResultOp`
+  (a `recordMissionResultDay` op, mirroring `applyQuestStreakFreezeOp`'s
+  lost-update fix) — **upserted by `dayKey`** rather than only ever
+  appended, since a day's mission result can flip from incomplete to
+  complete later the same day and `saveDailyMissionResult` already upserts
+  locally for exactly that reason. Added
+  `state/dailyMissionResults.ts#mergeRemoteMissionResultDays` (additive-only:
+  adds a remote day only when this device has no local record for it yet,
+  never overwriting an already-recorded local day, mirroring
+  `mergeRemoteStreakFreezeDayKeys`'s "union, never remove or overwrite"
+  convention). Wired a `saveMissionResultDayOp` client call and a
+  `pushMissionResultDay` hook method into `useQuestStreakSync.ts` (merged on
+  mount alongside the other two fields) and `/api/settings/route.ts` (a
+  third read-then-write op branch, same shape as the freeze/reminder ops).
+  `QuestStreaksPanel.tsx`'s "Run today's mission check" action now calls
+  `pushMissionResultDay` right after saving locally, when the row being run
+  is the signed-in visitor's own — `DailyQuestsPanel.tsx`'s own call to the
+  same underlying function is unchanged, since that panel's
+  `signedInContributorId` is documented as a prefill only, not a login, and
+  was never wired to the sync hook.
+
+  New tests: `quest-streak-sync.test.ts` (the `missionResultDays` validation
+  surface including the cap and a payload with the field entirely absent
+  still validating; the serialize/parse round-trip including a pre-existing
+  stored value with no `missionResultDays` parsing back unchanged; and the
+  new op's normalize/apply — append, upsert-by-dayKey, an at-capacity drop
+  for a genuinely new day that still allows updating an already-recorded
+  day, and the "leaves the other two fields untouched" case);
+  `dailyMissionResults.test.ts` (`mergeRemoteMissionResultDays`'s
+  additive-only merge, including that it never overwrites a local day even
+  when the remote `isComplete` differs, and that it doesn't touch another
+  contributor's history).
+
+  Ran the verification gate: `bun install`; the two affected test files
+  directly (101/101); the rest of `debate-contributor-progress`'s suite
+  alongside them (511/511); `bun run typecheck` (17/17 packages); `bun run
+  test` (509 files, 9492 tests, repo-wide, all passing); and `bun run
+  build:web` (production build succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/quest-streaks.mdx`
+  (Data flow, Account sync detail, Tests) and
+  `packages/debate-help-docs/content/docs/features/quest-streaks.mdx`.
+
+  **Follow-up, deliberately not done here:** `DailyQuestsPanel.tsx` still
+  never pushes to the account sync at all — its "Your streak" mission-check
+  action saves locally only, even for the signed-in visitor, since that
+  panel never wires up `useQuestStreakSync`. Its own doc comment already
+  documents `signedInContributorId` there as "a prefill, not a login," so
+  extending it to actually sync would be a deliberate scope decision (does
+  every quest-related panel's mission-check button sync, or only
+  `QuestStreaksPanel`'s, which already owns the full sync feature?) better
+  made as its own follow-up than folded into this one.
+
 - **🗂️ Learn custom decks (CardMirror's flashcard grouping) had zero UI
   anywhere — `createDeck`/`renameDeck`/`deleteDeck`/`setDeckMembership`
   had no caller outside tests, ever, in this package's history.**

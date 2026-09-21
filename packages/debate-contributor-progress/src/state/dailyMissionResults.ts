@@ -39,6 +39,12 @@
  * call that renders the whole roster" convention, so a panel doesn't need to
  * already know every contributor id.
  *
+ * `mergeRemoteMissionResultDays` closes the "the signed-in visitor's own
+ * mission-result history never synced to their account" gap in `lib/quest-streak-sync.ts`'s
+ * `missionResultDays` field: only this store's derived `streakFreezes`/
+ * `streakLapseReminders` metadata synced before, not the underlying history
+ * they're derived from. Additive-only, mirroring `streakFreezes.ts#mergeRemoteStreakFreezeDayKeys`.
+ *
  * @module state/dailyMissionResults
  */
 
@@ -115,6 +121,29 @@ export function saveDailyMissionResult(record: DailyMissionResultRecord): void {
 /** Deletes a contributor's persisted mission result for a day; a no-op if it isn't stored. */
 export function deleteDailyMissionResult(contributorId: string, dayKey: string): void {
   writeAll(readAll().filter((record) => !matches(record, contributorId, dayKey)));
+}
+
+/**
+ * Merges a contributor's remotely-synced mission-result days into the local
+ * store, adding only the days not already present locally — mirrors
+ * `streakFreezes.ts#mergeRemoteStreakFreezeDayKeys`'s "union, never remove
+ * or overwrite" convention. A day already recorded locally (e.g. this device
+ * computed it moments ago) is left as-is rather than replaced by the remote
+ * copy, since the remote value could itself be stale relative to a local
+ * recompute that hasn't synced up yet. Returns whether anything was
+ * actually added.
+ */
+export function mergeRemoteMissionResultDays(contributorId: string, remoteDays: DailyMissionResult[]): boolean {
+  const existingDayKeys = new Set(
+    listDailyMissionResultsForContributor(contributorId).map((record) => record.dayKey),
+  );
+  const newRecords: DailyMissionResultRecord[] = remoteDays
+    .filter((day) => !existingDayKeys.has(day.dayKey))
+    .map((day) => ({ contributorId, dayKey: day.dayKey, isComplete: day.isComplete }));
+  if (newRecords.length === 0) return false;
+
+  writeAll([...readAll(), ...newRecords]);
+  return true;
 }
 
 /**
