@@ -277,7 +277,11 @@ export async function flushToolRecordCollection(
   try {
     for (let from = 0; from < changed.length; from += MAX_TOOL_RECORDS_PER_PUSH) {
       const batch = changed.slice(from, from + MAX_TOOL_RECORDS_PER_PUSH);
-      await saveToolRecordsToAccount(collectionKey, batch);
+      // The diff above stays keyed off the raw local JSON — a secret-only
+      // edit must still count as a change — but what actually goes out is
+      // redacted, for the one collection that defines it.
+      const payload = collection.redact ? batch.map(collection.redact) : batch;
+      await saveToolRecordsToAccount(collectionKey, payload);
       for (const record of batch) {
         const id = toolRecordId(collection, record);
         if (id !== null) landed.set(id, current.get(id) ?? "");
