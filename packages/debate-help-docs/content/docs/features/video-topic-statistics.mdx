@@ -49,5 +49,11 @@ this page makes no request the rest of `/videos` wasn't already making.
 
 ## Known gaps
 
-No per-style filter on the topics grid — search matches across every style's
-text at once, there's no "Policy only" toggle.
+~~No per-style filter on the topics grid — search matches across every
+style's text at once, there's no "Policy only" toggle.~~ **Fixed:**
+`DebateTopicsExplorer` has an "All / Policy / College / LD / PF" filter
+row above the search box (labels match the same `DEBATE_STYLE_LABELS` the
+per-year badges already use — College here is the NDT resolution). Picking a style hides any year with no resolution
+for that style, restricts the search box to that style's text (plus the year
+itself), and shows only that style's badge on each remaining card — "Policy
+only" now works exactly as named. "All" restores the previous behavior.
