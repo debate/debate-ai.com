@@ -17,6 +17,47 @@ _No task currently in progress._
 
 ### Completed
 
+- **🗂️ Quick Cards cloud sync gets real optimistic concurrency instead of
+  last-network-arrival-wins.**
+  `features/quick-cards-cloud-save.mdx`'s Known gaps said "No optimistic-
+  concurrency handling — editing the same card from two signed-in devices
+  at once has the last write win," meaning whichever device's background
+  `PUT /api/quick-cards/[cardId]` happened to *reach the server last* won,
+  even if its edit was chronologically older — a genuine silent-data-loss
+  race, not a documented tradeoff.
+
+  Followed `state/savedFlows.ts#hasFlowSaveConflict`'s precedent but
+  simplified for quick cards' shape: since `QuickCardsStore` pushes every
+  mutation automatically in the background (no explicit "save" action with
+  a "last loaded version" for the caller to track, unlike Flow's
+  `FlowHistoryDialog`), the new
+  `packages/debate-editor/src/editor/quick-cards-store.ts#hasQuickCardSaveConflict`
+  compares each side's own `updatedAt` (already carried on every
+  `QuickCard`) directly — no new request field needed. `PUT
+  /api/quick-cards/[cardId]`
+  (`apps/debate-ai.com/app/api/quick-cards/[cardId]/route.ts`) now reads the
+  existing row before upserting and returns 409 + the current card instead
+  of overwriting when the saved version is newer. `quick-cards-client.ts#saveQuickCardToAccount`
+  now resolves `{ conflict: true, current }` instead of just succeeding/
+  throwing, and `QuickCardsStore` gained a private `pushToAccount` wrapper
+  (used by `mergeRemote`, `upsert`, and `importMany`'s push paths) that
+  adopts the account's newer version into the local library on a conflict
+  instead of leaving the two out of sync.
+
+  Vitest-covered: `packages/debate-editor/test/quick-cards-store.test.ts`
+  (`hasQuickCardSaveConflict` cases, plus two `QuickCardsStore`-level tests
+  proving a losing local edit is replaced by the account's newer version
+  rather than clobbering it, both on `upsert` and during the `init()`
+  merge) and `test/quick-cards-client.test.ts` (`saveQuickCardToAccount`'s
+  new conflict-result branch). `bun run typecheck`, `bun run test` (9328
+  tests), and `bun run build` all pass.
+
+  Follow-up: `features/learn-cards-cloud-sync.mdx`'s Known gaps documents
+  the identical last-write-wins gap for Learn Cards' content sync
+  (`/api/learn-cards/[cardId]`) — its own doc says it mirrors quick-cards'
+  design, so the same fix shape applies there directly. Not folded into
+  this PR to keep the diff small and reviewable; left as a follow-up.
+
 - **⚙️ Debate style, font size and font family regain a settings surface at
   `/settings/preferences`.** `user-settings.mdx`'s "What it no longer shows"
   named a real regression: when `/settings` became the CardMirror editor's
@@ -86,7 +127,180 @@ _No task currently in progress._
   row this broken import removes from the sidebar). Needs someone who knows
   which commit those three modules were meant to land in (or whether
   `StatisticsPage.tsx`'s import should be reverted) — out of scope for a
-  settings-page fix.
+  settings-page fix. **Correction, next run:** this was already fixed before
+  this branch's merge with `master` landed — see this file's "Topic & Video
+  Statistics" Completed entry below, which created `DebateTopicsExplorer.tsx`
+  and repaired the same imports. This PR's branch was cut before that fix
+  merged, so its own verification gate (run against a stale base) reported it
+  as still broken; `bunx turbo run typecheck` is clean on the merged history.
+
+- **🧠 Team Brainstorm Assist's session timer follows a signed-in visitor
+  across devices, not just across browser tabs.**
+  `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
+  Known gaps said "The session timer is `localStorage`-only, not
+  account-synced" — true even though the panel's sibling store
+  (`brainstormIdeas`) was already wired into the account-sync allowlist;
+  the timer was a genuine, undocumented-as-deliberate gap, not one of
+  `internals/tool-data-sync.mdx`'s "what deliberately does not sync"
+  single-object stores.
+
+  `user_settings` gained one nullable column, `brainstormSessionTimer`
+  (`apps/debate-ai.com/drizzle/0049_brainstorm_session_timer.sql`, hand-written
+  to match the repo's existing single-column-add migration style — see the
+  `Streak5` entry below for why `drizzle-kit generate` isn't used here).
+  New `packages/debate-team-collaboration/src/lib/brainstorm-session-timer-sync.ts`
+  (validate/normalize/serialize/parse, mirroring
+  `research-progress-goal-sync.ts`'s "single nullable value, whole-value
+  replace on every write" shape — a session timer has one moderator driving
+  it at a time, so the op-based lost-update fix several other `/api/settings`
+  fields use doesn't apply) and
+  `lib/brainstorm-session-timer-sync-client.ts` (the `fetch` calls) pair with
+  a new `hooks/useBrainstormSessionTimerSync.ts`, which wraps
+  `state/brainstormSessionTimer.ts`'s existing local persistence: local-first
+  (works fully signed out), best-effort merges the account's synced timer in
+  on mount, and pushes every start/pause/reset/duration change back to the
+  account when the visitor is signed in.
+  `state/brainstormSessionTimer.ts` gained one new export,
+  `applySyncedSessionTimer`, to adopt a server-provided state directly
+  without running it through a local transition. `BrainstormBoardPanel.tsx`
+  now sources its `timer` from the new hook (keyed off the same
+  `signedInContributorId` prop it already used to prefill the idea form's
+  Contributor ID) instead of calling the local persistence functions
+  directly. `/api/settings` gained the `brainstormSessionTimer` field
+  end-to-end (GET default, PUT validate + persist, docstring).
+
+  Vitest-covered: new
+  `packages/debate-team-collaboration/test/brainstorm-session-timer-sync.test.ts`
+  (validation/normalize/serialize/parse, mirroring
+  `research-progress-goal-sync.test.ts`'s cases),
+  `test/brainstorm-session-timer-sync-client.test.ts` (fetch/save against a
+  mocked `fetch`, mirroring `argument-library-collections-client.test.ts`),
+  and three new cases in `test/brainstormSessionTimer.test.ts` covering
+  `applySyncedSessionTimer` (adopts a valid synced state, overwrites
+  whatever was stored locally, ignores a malformed state). Also updated
+  `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`'s
+  hand-written `user_settings` `CREATE TABLE` to include the new column,
+  which the new migration's column addition broke (a hand-created schema in
+  that test, not the real migration path).
+
+  Ran the full verification gate: `bunx turbo run typecheck` (17/17
+  packages green), `bun run test` (498 files / 9322 tests, all passing,
+  repo-wide), and `bun run build:web` (production build succeeded). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable. Doc updated:
+  `features/brainstorm-board.mdx`'s Session timer section and Known gaps.
+
+- **🔥 Practice vs AI's `Streak5` badge is reachable: a real day-over-day
+  streak, persisted in `user_settings` and linked to the account.**
+  `packages/debate-help-docs/content/docs/features/practice-vs-ai.mdx`'s
+  Known gaps said gamification's score and badges were persisted
+  (`user_settings.practiceVsAiScore`/`practiceVsAiBadges`) but
+  `getGamificationProfile` always reported `currentStreak: 0`, since a real
+  streak needs a dated activity log this table didn't have — making the
+  `Streak5` badge (`packages/debate-round-practice-ai/src/backend/gamification.ts`'s
+  `computeGamificationAward`, which already checked
+  `profile.currentStreak >= 5`) permanently unreachable. Confirmed the Go
+  `arguehub` original this package ports had the same bug —
+  `debatevsbot_controller.go` read `user.CurrentStreak` in its own badge
+  check but never incremented it anywhere — so this wasn't a regression the
+  port introduced, just a gap neither side had closed.
+
+  `user_settings` gained two nullable columns,
+  `practiceVsAiLastPlayedDayKey` (UTC `YYYY-MM-DD`) and
+  `practiceVsAiCurrentStreak` (`apps/debate-ai.com/drizzle/0048_practice_vs_ai_streak.sql`,
+  hand-written to match the repo's existing single-column-add migration
+  style rather than `drizzle-kit generate`, whose journal has been stale
+  since long before this run and would have bundled in every untracked
+  schema change back to migration 0035 as one file). Three new pure
+  functions in `debate-practice-vs-ai`'s `gamification.ts` —
+  `utcDayKey`, `advanceDailyStreak` (a second round the same day leaves the
+  streak unchanged, the calendar day right after extends it by one,
+  anything else restarts it at 1) and `currentDisplayStreak` (reports the
+  streak as lapsed/0 once a day is missed, without needing a write to reset
+  the stored value) — do the actual date math.
+  `apps/debate-ai.com/lib/practice-vs-ai/store.ts`'s `applyGamificationAward`
+  now re-reads the two new columns in the same query as the existing
+  score/badges re-read (preserving its existing lost-update-race fix — see
+  the account's current row at write time, not a possibly-stale earlier
+  fetch) and advances the streak before computing the award, so reaching
+  five consecutive days awards `Streak5` on that fifth day's round;
+  `getGamificationProfile` reports the same columns via
+  `currentDisplayStreak` for a caller that just wants to display the
+  current state without recording a round. No frontend change was needed —
+  `JudgmentPopup.tsx` already renders any badge in `badgesAwarded`,
+  `Streak5` included, with its "5-Day Streak" label; it was only ever
+  unreachable because the backend never produced it.
+
+  Vitest-covered: `packages/debate-round-practice-ai/test/gamification.test.ts`
+  (new — `advanceDailyStreak`'s same-day/next-day/missed-day/month-boundary
+  cases, `currentDisplayStreak`'s lapsed-vs-holding cases, `utcDayKey`'s
+  formatting) and `apps/debate-ai.com/lib/practice-vs-ai/__tests__/store.test.ts`
+  (updated the two existing single-round assertions from
+  `currentStreak: 0` to the now-correct `currentStreak: 1`, and added four
+  new cases against a real in-memory SQLite database: five simulated
+  consecutive days actually earns `Streak5`, a second round the same day
+  doesn't advance the streak, a missed day restarts it at 1, and a lapsed
+  streak reads as 0 without a write).
+
+  Ran the full verification gate: `bunx turbo run typecheck` (17/17
+  packages green), `bun run test` (496 files / 9289 tests, all passing,
+  repo-wide), and `bun run build:web` (production build succeeded). No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable. Docs updated: both
+  `features/practice-vs-ai.mdx` and `internals/practice-vs-ai.mdx`'s Known
+  gaps and Tests sections.
+
+- **📊 `/videos/statistics` ("Topic & Video Statistics") actually renders
+  statistics, and the whole repo's `bun run typecheck` builds again.**
+  `packages/debate-videos/src/panels/statistics/StatisticsPage.tsx` existed
+  (from an interrupted prior automated run, commit `e4af716`) but broke the
+  whole `debate-videos` package's typecheck: its relative imports were one
+  directory level too shallow (`../hooks/useYouTubeStats` instead of
+  `../../hooks/...`, same for the two `../components/...` imports), and it
+  imported a `DebateTopicsExplorer` component that was never created. The
+  page was also never wired up — `"statistics"` was already a real
+  `CategoryType`, `lectureRouteConfig.ts`'s `SLUG_MAP` already routed
+  `/videos/statistics` and `/videos/stats` to it, and the sidebar tree +
+  mobile quick-link tiles already linked to it (`sidebar-video-links.ts`'s
+  `VIDEO_REFERENCE_LINKS`) — but `LecturesPage.tsx`'s branch-rendering
+  `if`-chain had no `"statistics"` case, so every one of those links silently
+  fell through to the plain video grid instead.
+
+  Fixed all of it as one slice: `LecturesPage.tsx` now has a `"statistics"`
+  branch (mirroring its existing `"leaderboard"`/`"dictionary"` branches),
+  passing down the `topics` (`useVideoMeta`) and `youtubeStats`
+  (`useYouTubeStats`) it already fetches rather than having `StatisticsPage`
+  fetch either again. New
+  `packages/debate-videos/src/components/topic-explorer/DebateTopicsExplorer.tsx`
+  is a real component — every season's Policy/College/LD/PF resolutions,
+  newest year first, filterable by year or topic text — built on the
+  `lib/debate-topics.ts` formatters `VideoCardActions`/the leaderboard
+  banner already use, so it needed no new data source.
+
+  The same interrupted commit had left two *other* loose threads that this
+  also closes, both pre-existing `bun test` failures on `master` unrelated
+  to anything above except sharing the same root cause: `ToolNavTree.tsx`'s
+  `REFERENCE_ICONS` lookup (glossary/rankings glyphs) never got a
+  `statistics` entry, so that sidebar row rendered with no icon at all
+  (`test/tool-nav-tree-icons.test.tsx`); and
+  `test/sidebar-video-links.test.tsx`'s quick-link-tile title check did a
+  raw `html.toContain(link.title)`, which can never match
+  `"Topic & Video Statistics"` once React HTML-escapes its `&` to `&amp;` —
+  fixed with an `htmlEscaped()` helper rather than by avoiding `&` in the
+  title.
+
+  Vitest-covered: new `packages/debate-videos/test/debate-topics-explorer.test.tsx`
+  (sort order, per-style badge lines, a style with nothing that year is
+  skipped, empty-vs-still-loading states, and `entryMatches`' search
+  predicate) and `test/statistics-page.test.tsx` (topics always render;
+  the YouTube charts section only when `youtubeStats` has actually
+  resolved). New doc:
+  `packages/debate-help-docs/content/docs/features/video-topic-statistics.mdx`.
+
+  Verification: `bun run typecheck` (all 17 packages, was previously failing
+  on `debate-videos`), `bun run test` (496 files / 9275 tests, all passing),
+  `bun run coverage`, and `bun run build:web` (production build succeeds;
+  `/videos/[category]` covers `/videos/statistics`) all pass clean.
 
 - **🔑 Prep Notes and "Send to Prep Notes" prefill the real signed-in
   identity instead of a blank free-form field.**
@@ -2301,23 +2515,16 @@ _No task currently in progress._
 
 ## Follow-ups
 
-- **`debate-videos` has a pre-existing, unrelated broken build**, found
-  while running this run's verification gate for the `/settings/preferences`
-  fix (see this file's "Completed" entry above): `src/panels/statistics/
-  StatisticsPage.tsx` imports `../hooks/useYouTubeStats`,
-  `../components/youtube-stats-modal/YouTubeStatsCharts` and
-  `../components/topic-explorer/DebateTopicsExplorer`, none of which resolve
-  (`DebateTopicsExplorer.tsx` doesn't exist in the tree at all). Breaks that
-  package's own `tsc --noEmit`, `bunx turbo run typecheck` app-wide (blocks
-  `debate-ai-web`'s typecheck task in the turbo pipeline specifically, even
-  though the app's own scoped `bun run typecheck` — a different tsconfig —
-  stays clean), and two of its Vitest files
-  (`test/sidebar-video-links.test.tsx`, `test/tool-nav-tree-icons.test.tsx`).
-  Confirmed present on `master`/this branch before this run's changes via
-  `git stash`. Not picked up this run — it needs whoever was mid-flight on
-  the YouTube/topic statistics page to either finish landing those three
-  modules or revert `StatisticsPage.tsx`'s import of them, which is a
-  product/scope call this routine shouldn't guess at.
+- `features/learn-cards-cloud-sync.mdx`'s Known gaps: the same
+  last-write-wins race just fixed for Quick Cards (see this file's
+  "Completed" entry above) also applies to Learn Cards' content sync
+  (`apps/debate-ai.com/app/api/learn-cards/[cardId]/route.ts` — a blind
+  upsert with no version check). The doc's own text says Learn Cards
+  mirrors Quick Cards' design, so the fix is the same shape: add
+  `hasQuickCardSaveConflict`-equivalent comparison of the incoming vs.
+  saved `LearnCard.updatedAt`, a 409 response, and a client-side adopt-the-
+  newer-version step in `learn-cards-sync.ts`. Not picked up in the same PR
+  to keep that change small and reviewable.
 
 - Two candidates considered and not picked this run, found while searching
   for the saved-Argument-Library-collections race (see this file's
