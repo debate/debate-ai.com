@@ -88,6 +88,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   dailyMissionResults: "id",
   questTeams: "id",
   contributorAwardNominations: "id",
+  unlockCelebrations: "id",
   dailyBestCardAnnouncements: "dayKey",
   contributorAwardAnnouncements: "dayKey",
   debateVideosFavorites: "videoId",
@@ -320,6 +321,19 @@ describe("the synced collection catalog", () => {
     // the plain allowlist instead of needing a bespoke sync of its own.
     expect(findToolRecordCollection("dailyMissionResults")).toMatchObject({
       storageKey: "dailyMissionResults",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs Progress Unlocks' last-seen-badges celebration baseline now that it's array-shaped", () => {
+    // `state/unlockCelebrations.ts`'s baseline was a plain
+    // `Record<contributorId, string[]>` map — no per-record id, the same
+    // shape problem every other collection here started with — until it was
+    // reshaped into an array of `{ id, badges }` records keyed by the
+    // contributor's id.
+    expect(findToolRecordCollection("unlockCelebrations")).toMatchObject({
+      storageKey: "unlockCelebrationSeenBadges",
       idField: "id",
       href: "/cards/leaderboard",
     });
