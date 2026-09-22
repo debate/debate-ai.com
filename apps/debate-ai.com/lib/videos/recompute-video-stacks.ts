@@ -28,6 +28,7 @@ import {
   buildVideoStackUpdateStatements,
   type VideoStackUpdate,
 } from "debate-data-sync/src/videos/video-stack-sql";
+import { chunkStatements } from "@/lib/database/query-budget";
 import { videos } from "@/lib/database/schema";
 
 /** Outcome of one stack-recompute run. */
@@ -82,9 +83,12 @@ export async function recomputeVideoStacks(db: any): Promise<RecomputeVideoStack
     }
   }
 
-  for (const statement of buildVideoStackUpdateStatements(updates)) {
-    await db.run(sql.raw(statement));
-  }
+  // Batched, not awaited one by one: this runs after every publish, and an
+  // awaited statement spends one of the Worker invocation's 1,000 D1 queries
+  // — a first recompute over a library that has never been stacked rewrites
+  // most of the table. See `lib/database/query-budget.ts`.
+  const writes = buildVideoStackUpdateStatements(updates).map((statement) => db.run(sql.raw(statement)));
+  for (const batch of chunkStatements(writes)) await db.batch(batch);
 
   return { rows: rows.length, updated: updates.length, durationMs: Date.now() - startedAt };
 }

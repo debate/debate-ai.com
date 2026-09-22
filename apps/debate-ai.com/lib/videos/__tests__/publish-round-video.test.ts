@@ -22,6 +22,10 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import {
+  DEFAULT_STATEMENTS_PER_BATCH,
+  D1_MAX_QUERIES_PER_INVOCATION,
+} from "../../database/query-budget";
 import * as schema from "../../database/schema";
 import { videos, youtubeRoundVideos, type YoutubeRoundVideo } from "../../database/schema";
 import { publishRoundVideos, roundVideoToVideoRow } from "../publish-round-video";
@@ -53,14 +57,18 @@ async function freshDb() {
 }
 
 /**
- * A drizzle handle that also records how many parameters each statement
- * binds. Local SQLite happily binds tens of thousands, so D1's ceiling of
- * 100 per statement can only be pinned by counting what the driver was
- * actually handed.
+ * A drizzle handle that also records how many parameters each statement binds
+ * and how many round trips the driver actually made. Local SQLite happily
+ * binds tens of thousands and counts no queries at all, so D1's two ceilings —
+ * 100 bound parameters per statement, 1,000 queries per Worker invocation —
+ * can only be pinned by counting what the driver was handed. A `batch()` is
+ * one round trip however many statements it carries, which is exactly what
+ * makes it the way under the second ceiling.
  */
 async function recordingDb() {
   const client = await freshClient();
   const boundParamCounts: number[] = [];
+  let roundTrips = 0;
   const count = (statement: unknown) => {
     const args = (statement as { args?: unknown })?.args;
     boundParamCounts.push(Array.isArray(args) ? args.length : Object.keys(args ?? {}).length);
@@ -71,19 +79,25 @@ async function recordingDb() {
       if (property === "execute" && typeof value === "function") {
         return (statement: unknown, ...rest: unknown[]) => {
           count(statement);
+          roundTrips++;
           return (value as Function).call(target, statement, ...rest);
         };
       }
       if (property === "batch" && typeof value === "function") {
         return (statements: unknown[], ...rest: unknown[]) => {
           for (const statement of statements) count(statement);
+          roundTrips++;
           return (value as Function).call(target, statements, ...rest);
         };
       }
       return typeof value === "function" ? value.bind(target) : value;
     },
   });
-  return { db: drizzle(recorded as typeof client, { schema }), boundParamCounts };
+  return {
+    db: drizzle(recorded as typeof client, { schema }),
+    boundParamCounts,
+    trips: () => roundTrips,
+  };
 }
 
 function roundRow(id: string, extra: Partial<YoutubeRoundVideo> = {}): YoutubeRoundVideo {
@@ -205,6 +219,26 @@ describe("publishRoundVideos over a large queue (D1 bound-parameter ceiling)", (
     expect(published).toBe(250);
     expect(boundParamCounts.length).toBeGreaterThan(0);
     expect(Math.max(...boundParamCounts)).toBeLessThanOrEqual(100);
+  });
+
+  it("spends a handful of D1 queries on the whole queue, not one per round", async () => {
+    // The production failure behind this test: every statement was awaited on
+    // its own, so a publish cost one D1 query per queued round plus the reads
+    // around it. D1 allows a Worker invocation 1,000 queries (50 on the Free
+    // plan), so a queue long enough — which is what "Publish all" is for —
+    // crossed the ceiling mid-publish and 500'd at the driver, leaving the
+    // rounds it had already written behind. Local SQLite counts no queries at
+    // all, so only the round trips the driver was actually asked for show it.
+    const { db, trips } = await recordingDb();
+    const queue = Array.from({ length: 1200 }, (_, index) => roundRow(`round${index}`));
+
+    const published = await publishRoundVideos(db, queue);
+
+    expect(published).toBe(1200);
+    expect(trips()).toBeLessThan(D1_MAX_QUERIES_PER_INVOCATION);
+    // A batch per hundred statements for the lookups and the upserts, plus the
+    // stack recompute's own read and writes — nothing that grows one-per-row.
+    expect(trips()).toBeLessThanOrEqual(2 * Math.ceil(1200 / DEFAULT_STATEMENTS_PER_BATCH) + 20);
   });
 
   it("still skips the admin-edited rounds spread across the chunk boundary", async () => {
