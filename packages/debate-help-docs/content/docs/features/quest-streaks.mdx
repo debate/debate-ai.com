@@ -14,14 +14,17 @@ plus an on-demand action to compute today's mission result.
 
 Current/longest streak, badges, a **streak freeze** ("grace day") action
 for a missed day (up to 2 per rolling 30 days), and an opt-in
-streak-lapse reminder banner. The signed-in visitor's own streak freezes,
-reminder opt-in, and daily-mission-result history follow them to another
-device; see [Quest Streaks](../internals/quest-streaks.mdx) for how.
+streak-lapse reminder banner. The mission-result history the streak/badge
+state is computed from follows the signed-in visitor to another device for
+every contributor's row this browser knows about, and the signed-in
+visitor's own streak freezes and reminder opt-in follow them too; see
+[Quest Streaks](../internals/quest-streaks.mdx) for how.
 
 ## Data flow
 
 ```
 state/dailyMissionResults.ts (localStorage: dailyMissionResults)
+  → synced via the account's saved tool records (see the internals doc)
 state/streakFreezes.ts (localStorage: streakFreezes)
 state/streakLapseReminders.ts (localStorage: streakLapseReminders)
   → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
@@ -35,8 +38,10 @@ state/streakLapseReminders.ts (localStorage: streakLapseReminders)
 
 The trigger is a manual button click, not a scheduled job — nothing wires
 mission-result computation to the repo's cron trigger (see the internals
-doc), so it doesn't run on its own. Streak freezes, the reminder opt-in, and
-the mission-result history sync to the signed-in visitor's own account
-across devices, but every other contributor's row in the roster stays
-localStorage-only, since there's no contributor-identity system to sync
-anyone else's row to.
+doc), so it doesn't run on its own. Every contributor's mission-result
+history this browser has locally computed or received syncs to the
+signed-in visitor's account, but a row for a contributor no signed-in
+device has ever computed a result for locally can't appear from nowhere —
+there's no contributor-identity system to fetch one on demand. Streak
+freezes and the reminder opt-in only ever sync for the signed-in visitor's
+own row, never any other contributor's, for the same reason.

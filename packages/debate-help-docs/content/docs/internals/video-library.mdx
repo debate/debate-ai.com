@@ -208,11 +208,15 @@ bun run db:seed:videos                  # JSON → drizzle/seed/videos-seed.sql,
 bun run db:seed:videos:d1               # same file, applied to Cloudflare D1
 ```
 
-Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated,
-alongside the YouTube resync on `/admin`). The Worker already bundles the JSON
-assets, so it seeds from its own copy — no credentials and no data transfer.
-`GET` on the same route reports the row count and whether the feed is being
-served from SQL or the JSON fallback.
+Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated). The
+Worker already bundles the JSON assets, so it seeds from its own copy — no
+credentials and no data transfer. `GET` on the same route reports the row
+count and whether the feed is being served from SQL or the JSON fallback. A
+**Seed videos** card on `/admin`, next to "Recompute video stacks", calls
+both: the row/serving-source status renders next to the button
+(`lib/videos/format-seed-videos-result.ts#formatSeedVideosStatus`), and a run's
+own counts and duration replace it once it finishes
+(`formatSeedVideosResult`).
 
 Both paths build their statements with `buildVideoSeedStatements`, so they
 load identical data. The seed is idempotent: rows are upserted by video id and

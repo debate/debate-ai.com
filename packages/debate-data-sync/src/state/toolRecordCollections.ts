@@ -539,6 +539,21 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "dailyMissionResults",
+    storageKey: "dailyMissionResults",
+    idField: "id",
+    // The day-by-day mission-result history `/cards/streaks`' quest-streak
+    // roster is computed from — `state/dailyMissionResults.ts`'s
+    // `saveDailyMissionResult` now stamps a deterministic
+    // `${contributorId}::${dayKey}` id onto every record. `/cards/streaks`
+    // isn't itself a registered sidebar destination (see
+    // `tool-record-sync-catalog.test.ts`), so this points at `/cards/leaderboard`
+    // like its `dailyQuestTemplates`/`groupChallenges` siblings.
+    label: "Quest Streak History",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
     key: "questTeams",
     storageKey: "questTeams",
     idField: "id",
@@ -551,6 +566,24 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "contributorAwardNominations",
     idField: "id",
     label: "Contributor Award Nominations",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
+    key: "unlockCelebrations",
+    storageKey: "unlockCelebrationSeenBadges",
+    idField: "id",
+    // Each contributor's "last-seen badges" celebration baseline —
+    // `debate-contributor-progress/src/state/unlockCelebrations.ts`'s
+    // `UnlockCelebrationSeenBadgesRecord`, keyed by the contributor's id.
+    // Without this, a contributor who has already been shown a badge's
+    // celebration toast on one device sees it celebrated again as "new" on a
+    // second device, since the baseline it's diffed against never followed
+    // them. `/cards/progress` (Progress Unlocks) isn't itself a registered
+    // sidebar destination (see `tool-record-sync-catalog.test.ts`), so this
+    // points at `/cards/leaderboard` like its `dailyQuestTemplates`/
+    // `dailyMissionResults` siblings.
+    label: "Progress Unlocks",
     href: "/cards/leaderboard",
     section: "Team",
   },

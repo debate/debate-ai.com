@@ -20,82 +20,204 @@ _No task currently in progress._
 
 ### Completed
 
-- **🎮 The signed-in visitor's own daily-mission-result history never
-  synced to their account — only its *derived* streak-freeze/reminder
-  metadata did.** `state/dailyMissionResults.ts`'s `dailyMissionResults`
-  localStorage store (real, live UI: `DailyQuestsPanel.tsx`/`QuestStreaksPanel.tsx`'s
-  "Run today's mission check" action) is the source history
-  `streakFreezes`/`streakLapseReminders` are themselves derived from, and
-  those two already synced via `lib/quest-streak-sync.ts`'s
-  `QuestStreakSyncPayload` onto `user_settings.quest_streak_sync` — but the
-  history itself was never included. A contributor who recorded a mission
-  result on one device, then opened the roster on a second device before
-  ever spending a freeze or toggling the reminder there, saw an empty
-  streak, since `buildQuestStreakRosterWithFreezes` reads the local
-  `dailyMissionResults` store directly and nothing populated it.
-  `dailyMissionResults`/`streakFreezes` don't fit `TOOL_RECORD_COLLECTIONS`'s
-  required shape (both are keyed by the pair `(contributorId, dayKey)`, not
-  a single stable id field) — the same reason `quest-streak-sync.ts` exists
-  as a bespoke sync in the first place, confirmed against
-  `internals/quest-streaks.mdx`'s own explanation for `streakFreezes`/
-  `streakLapseReminders`.
+- **🔓 Progress Unlocks' "last-seen badges" celebration baseline never
+  synced to the account — the last remaining `localStorage`-backed,
+  per-record-id-keyed store not yet in `debate-data-sync`'s
+  `TOOL_RECORD_COLLECTIONS` allowlist.**
+  `packages/debate-contributor-progress/src/state/unlockCelebrations.ts`
+  persists, per contributor, the badge list `ProgressUnlocksPanel.tsx`'s
+  unlock-celebration toast was last shown for — the baseline
+  `recordAndGetNewlyEarnedBadges` diffs a contributor's current badges
+  against to decide what's "newly earned." It was stored as a plain
+  `Record<contributorId, string[]>` map rather than the JSON array of
+  id-keyed records every `TOOL_RECORD_COLLECTIONS` entry requires, so it
+  couldn't join the catalog the way `coachingSessions`/`dailyMissionResults`
+  did before it — a badge already celebrated on one device was celebrated
+  again as "new" on a second one, since the "already seen" baseline never
+  left the browser that recorded it. Unlike those two precedents (which only
+  needed a derived id stamped onto an already-array-shaped record), this
+  store needed an actual shape change: from a map to an array.
 
-  Added an optional `missionResultDays` field to `QuestStreakSyncPayload`
-  (optional rather than required, mirroring `state/challengeWinEvents.ts`'s
-  "leave a new field on a synced payload optional" precedent, so a
-  `quest_streak_sync` row saved before this field existed still parses
-  rather than reading back as `null`). Added
-  `normalizeQuestStreakMissionResultOpPatch`/`applyQuestStreakMissionResultOp`
-  (a `recordMissionResultDay` op, mirroring `applyQuestStreakFreezeOp`'s
-  lost-update fix) — **upserted by `dayKey`** rather than only ever
-  appended, since a day's mission result can flip from incomplete to
-  complete later the same day and `saveDailyMissionResult` already upserts
-  locally for exactly that reason. Added
-  `state/dailyMissionResults.ts#mergeRemoteMissionResultDays` (additive-only:
-  adds a remote day only when this device has no local record for it yet,
-  never overwriting an already-recorded local day, mirroring
-  `mergeRemoteStreakFreezeDayKeys`'s "union, never remove or overwrite"
-  convention). Wired a `saveMissionResultDayOp` client call and a
-  `pushMissionResultDay` hook method into `useQuestStreakSync.ts` (merged on
-  mount alongside the other two fields) and `/api/settings/route.ts` (a
-  third read-then-write op branch, same shape as the freeze/reminder ops).
-  `QuestStreaksPanel.tsx`'s "Run today's mission check" action now calls
-  `pushMissionResultDay` right after saving locally, when the row being run
-  is the signed-in visitor's own — `DailyQuestsPanel.tsx`'s own call to the
-  same underlying function is unchanged, since that panel's
-  `signedInContributorId` is documented as a prefill only, not a login, and
-  was never wired to the sync hook.
+  Reshaped `unlockCelebrations.ts` to persist
+  `{ id: contributorId, badges: string[] }[]` (exported as
+  `UnlockCelebrationSeenBadgesRecord`), with `readAll()` also accepting the
+  legacy `Record<contributorId, string[]>` shape on read (one record per key
+  whose value is a string array) so a baseline recorded before this shipped
+  isn't dropped — the next `markBadgesSeen`/`clearAllSeenBadges` call
+  rewrites it in the new array shape. The public API
+  (`getSeenBadges`/`markBadgesSeen`/`recordAndGetNewlyEarnedBadges`/
+  `clearAllSeenBadges`) is unchanged, so `ProgressUnlocksPanel.tsx` (the only
+  caller) needed no changes. Added the `unlockCelebrations` entry to
+  `TOOL_RECORD_COLLECTIONS` (`storageKey: "unlockCelebrationSeenBadges"`,
+  `idField: "id"`, section "Team"). `/cards/progress` (Progress Unlocks)
+  isn't itself a registered sidebar destination
+  (`tool-record-sync-catalog.test.ts` only accepts hrefs the sidebar links
+  to), so — mirroring `dailyQuestTemplates`/`dailyMissionResults`' own
+  precedent — the entry's `href` points at `/cards/leaderboard` instead.
 
-  New tests: `quest-streak-sync.test.ts` (the `missionResultDays` validation
-  surface including the cap and a payload with the field entirely absent
-  still validating; the serialize/parse round-trip including a pre-existing
-  stored value with no `missionResultDays` parsing back unchanged; and the
-  new op's normalize/apply — append, upsert-by-dayKey, an at-capacity drop
-  for a genuinely new day that still allows updating an already-recorded
-  day, and the "leaves the other two fields untouched" case);
-  `dailyMissionResults.test.ts` (`mergeRemoteMissionResultDays`'s
-  additive-only merge, including that it never overwrites a local day even
-  when the remote `isComplete` differs, and that it doesn't touch another
-  contributor's history).
+  New tests in `unlockCelebrations.test.ts`: the array-shaped persisted
+  form, reading back a pre-existing legacy map, rewriting a legacy map into
+  the array shape on the next write, and a corrupt legacy entry (a
+  non-array value under a key) degrading to "no baseline" for that
+  contributor rather than throwing. `tool-record-catalog.test.ts` got the
+  new `EXPECTED_ID_FIELDS` entry and a pinning test for the catalog entry
+  itself, mirroring `dailyMissionResults`' own.
 
-  Ran the verification gate: `bun install`; the two affected test files
-  directly (101/101); the rest of `debate-contributor-progress`'s suite
-  alongside them (511/511); `bun run typecheck` (17/17 packages); `bun run
-  test` (509 files, 9492 tests, repo-wide, all passing); and `bun run
-  build:web` (production build succeeded). Docs updated:
+  Ran the verification gate: `bun install`; the three directly affected
+  test files (61/61); the wider `debate-contributor-progress`/
+  `debate-data-sync` suites plus `debate-videos`' catalog cross-check
+  alongside them (1150/1150); `bun run typecheck` (17/17 packages); `bun run
+  test` (510 files, 9479 tests, repo-wide, all passing); and `bun run
+  build:web` (production build succeeded, dist/client generated 815 files).
+  Docs updated:
+  `packages/debate-help-docs/content/docs/features/progress-unlocks.mdx`
+  (new "syncs to the account" note in Data flow) and
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`
+  ("Which tools sync"'s Team paragraph, and a new struck-through entry in
+  "What deliberately does not sync").
+
+  **Follow-up, deliberately not done here:** with this slice, every
+  `localStorage`-backed, single-string-id-keyed tool store found in an
+  exhaustive repo sweep is now either in `TOOL_RECORD_COLLECTIONS` or has
+  its own dedicated `saved_*` table/route — there is no further "orphaned
+  store" of this specific shape left to find. The account-sync system's
+  other Known gaps (still per-user not per-team; the merge is a once-per-tab
+  poll with no push channel; a `mirrorToolRecord*`-uninstrumented store's
+  change reaches the account at the watcher's next tick rather than
+  immediately) remain open, as does the standing prompt's broader "create
+  user settings and link user db SQL with the ability to save flows/docs/
+  debates in SQL" framing — flows, rounds, tournament results, drill sets,
+  and word-count rounds already have their own dedicated SQL-backed cloud
+  save; a next slice in that vein would need a genuinely new gap, not
+  another `TOOL_RECORD_COLLECTIONS` entry.
+
+- **🔥 A contributor's Quest Streaks mission-result history never synced to
+  the account — even though the panel's own doc already promised the
+  signed-in visitor's streak state "follows them to another device."**
+  `packages/debate-contributor-progress/src/state/dailyMissionResults.ts`'s
+  `DailyMissionResultRecord` (`{ contributorId, dayKey, isComplete }`) is the
+  actual day-by-day history `/cards/streaks`' current/longest streak and
+  milestone badges are computed from — but it was keyed only by the pair
+  `(contributorId, dayKey)`, with no single id field, so it couldn't join
+  `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist. `quest-streaks.mdx`
+  (internals) only ever synced the signed-in visitor's much smaller
+  `streakFreezes`/`streakLapseReminders` preferences through a bespoke
+  `quest_streak_sync` column on `user_settings` — its own "Account sync, in
+  detail" section explained *why* those two stores needed a bespoke sync
+  (composite key; a bare `string[]`) but never even mentioned
+  `dailyMissionResults` in that reasoning, because the actual history was
+  simply never wired to sync at all. A contributor's real streak/badge state
+  didn't follow them to a second device even though their freeze usage and
+  reminder opt-in already did — exactly the same `(roundId, sideKey)`-keyed,
+  no-id shape problem `coachingSessions` had, fixed the same way previously.
+
+  `saveDailyMissionResult` now stamps every record with a derived
+  `${contributorId}::${dayKey}` id (mirroring `coachingSessions`' own
+  `saveCoachingSession` fix exactly: always overwrite whatever `id` the
+  caller passed, never trust it), and returns the saved, id-stamped record
+  instead of `void` so `computeAndSavePersistedDailyMissionResult` can hand
+  its caller the same value that was actually persisted. Added the
+  `dailyMissionResults` entry to `TOOL_RECORD_COLLECTIONS` (`idField: "id"`,
+  section "Team", `href: "/cards/leaderboard"` — `/cards/streaks` itself
+  isn't a registered sidebar destination, matching how its
+  `dailyQuestTemplates`/`groupChallenges` siblings already point at the
+  Leaderboard link instead). No other wiring was needed: the sync's whole
+  design point is that any catalog entry is enough for
+  `state/tool-record-auto-sync.ts`'s watcher to pick up.
+
+  New tests in `dailyMissionResults.test.ts`: the id-stamping behavior
+  itself (derived from `contributorId`/`dayKey`, ignoring any id a caller
+  passes in) and that `saveDailyMissionResult`/`computeAndSavePersistedDailyMissionResult`
+  return the id-stamped record; updated every existing exact-shape `toEqual`
+  assertion in that file to include the now-always-present `id`.
+  `tool-record-catalog.test.ts` got the new `EXPECTED_ID_FIELDS` entry and a
+  pinning test for the catalog entry itself, mirroring `challengeWinEvents`'
+  own. `packages/debate-videos/test/tool-record-sync-catalog.test.ts`'s
+  existing loop already covers `/cards/leaderboard` being a real sidebar
+  destination, so nothing there needed changing.
+
+  Ran the verification gate: `bun install`; the two directly affected test
+  files (54/54); the wider `debate-contributor-progress`/`debate-data-sync`
+  suites plus `debate-videos`' catalog cross-check alongside them
+  (1145/1145); `bun run typecheck` (17/17 packages); `bun run test` (510
+  files, 9474 tests, repo-wide, all passing); and `bun run build:web`
+  (production build succeeded, `/cards/streaks` listed in the route
+  manifest). Docs updated:
   `packages/debate-help-docs/content/docs/internals/quest-streaks.mdx`
-  (Data flow, Account sync detail, Tests) and
-  `packages/debate-help-docs/content/docs/features/quest-streaks.mdx`.
+  (Data flow, "Account sync, in detail" split into the two separate syncs,
+  and Known gaps), `packages/debate-help-docs/content/docs/features/quest-streaks.mdx`
+  (Data flow and Known gaps), and
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`
+  ("Which tools sync" and the "What deliberately does not sync" struck-through
+  entry, mirroring `coachingSessions`' own).
 
-  **Follow-up, deliberately not done here:** `DailyQuestsPanel.tsx` still
-  never pushes to the account sync at all — its "Your streak" mission-check
-  action saves locally only, even for the signed-in visitor, since that
-  panel never wires up `useQuestStreakSync`. Its own doc comment already
-  documents `signedInContributorId` there as "a prefill, not a login," so
-  extending it to actually sync would be a deliberate scope decision (does
-  every quest-related panel's mission-check button sync, or only
-  `QuestStreaksPanel`'s, which already owns the full sync feature?) better
-  made as its own follow-up than folded into this one.
+  **Follow-up, deliberately not done here:** the new sync sends this
+  browser's *entire* locally-known `dailyMissionResults` history — every
+  contributor's row this device has ever computed or received, not just the
+  signed-in visitor's own — mirroring how `groupChallenges`/`dailyQuestTemplates`
+  already sync their whole shared squad state. A row for a contributor no
+  signed-in device has ever locally computed a mission result for still
+  can't appear from nowhere; closing that would need a real
+  contributor-identity system, which is a much larger change than this
+  slice.
+
+- **⏱️ Word limit presets (`debate-round`'s `WordLimitPresetsPanel`) were orphaned — the account-linked settings-page field with no replacement UI, explicitly named as still open by both `user-settings.mdx`'s "What it no longer shows" and the panel's own header comment ("Nothing in `debate-ai.com` mounts this now").** The backend was fully live: `/api/settings`'s `PUT` handler already supported race-safe `addWordLimitPreset`/`updateWordLimitPreset`/`removeWordLimitPreset` ops (400 on a duplicate name or an invalid limit), `useWordLimitPresets` was already reading/writing that endpoint and both consumers (`/word-count`'s form and the live in-round word-limit meter) already resolved a speech's limit through it — but the one component that lets a user actually add, edit, or remove a preset, `packages/debate-round/src/panels/WordLimitPresetsPanel.tsx`, was fully built, exported, and tested, yet rendered nowhere in the app. `/word-count`'s own panel even showed a "manage them in Settings" hint that linked to `/settings`, which had already been repurposed as the CardMirror editor's settings page and no longer had anywhere to put it — a dead link.
+
+  Mounted `WordLimitPresetsPanel` on `apps/debate-ai.com/app/word-count/page.tsx`, in a collapsible "Manage word limit presets" `<details>` section below the existing `WordCountRoundsPanel` — the same `<details>`-as-secondary-editor pattern `debate-videos`' `StandingsPanel` already uses for its "Qualification points table" section, and the page the panel's own doc comment and `word-count-rounds.mdx` already expected it to land on. Fixed `WordCountRoundsPanel.tsx`'s stale "manage them in Settings" hint to point at the new section on the same page instead of the dead `/settings` link, and removed the now-unused `next/link` import.
+
+  No new logic was introduced — `WordLimitPresetsPanel` and `useWordLimitPresets` were already fully covered by `packages/debate-round/test/wordLimitPresets.test.ts` and `useWordLimitPresets.test.ts` (this repo has no `@testing-library/react`, so page composition itself isn't rendering-tested, matching the convention every other page-mount-only slice in this history has followed). Docs updated: `packages/debate-help-docs/content/docs/features/word-count-rounds.mdx` (presets are now managed on this page, not `/settings`) and `user-settings.mdx`'s "What it no longer shows" bullet (now says where the presets are edited instead of "nothing edits them").
+
+  Ran the verification gate: `bun install`; the two directly affected test files plus the full `wordLimitPresets`/`wordCountRounds` filter (115/115); `bun run typecheck` (17/17 packages); `bun run test` (510 files, 9471 tests, repo-wide, all passing); and `bun run build:web` (production build succeeded, `/word-count` listed in the route manifest).
+
+- **🌱 `POST`/`GET /api/admin/videos/seed` had no UI caller — the exact same
+  "backend capability, no admin button" gap the previous slice below closed
+  for its sibling `recompute-stacks` endpoint, and which that slice's own
+  "Follow-up, deliberately not done here" note explicitly named as still
+  open.** `apps/debate-ai.com/app/api/admin/videos/seed/route.ts`'s `POST`
+  (admin-gated, upsert-safe re-seed from the bundled JSON assets) and `GET`
+  (row count, last-seeded timestamp, and whether `/api/videos` is serving
+  from SQL or the JSON fallback — its own doc comment says this exists "so
+  the admin page can tell whether to seed") had real SDK wrappers
+  (`getVideoSeedStatus`/`seedVideos` in `debate-api-client/src/sdk.ts`) and a
+  CLI script (`apps/debate-ai.com/scripts/seed-videos.ts`), but
+  `AdminDashboard.tsx` — the only admin page — had no card for it, so seeding
+  a fresh or YouTube-synced-but-unseeded database required curl, the SDK, or
+  wrangler credentials.
+
+  Added a **Seed videos** card to `AdminDashboard.tsx` (`/admin`), between
+  "Resync video view counts" and "Recompute video stacks" — the three cards
+  that act on the `videos` table. Same shape as those buttons: a button, a
+  loading state, and an inline status line, plus (new here, since this
+  endpoint's `GET` returns state the others don't) an initial status fetched
+  on mount so the card shows whether the table is seeded at all before the
+  button is ever pressed. Pulled both the status line and the post-run result
+  line into pure `apps/debate-ai.com/lib/videos/format-seed-videos-result.ts`
+  functions (`formatSeedVideosStatus`, `formatSeedVideosResult`), mirroring
+  `format-recompute-stacks-result.ts`'s reasoning: `AdminDashboard.tsx` has no
+  rendering tests of its own (this repo does not use
+  `@testing-library/react`), so a pure formatter is what makes the new text
+  actually testable. The status formatter renders `lastSeededAt` as a
+  UTC `YYYY-MM-DD` day rather than `toLocaleDateString()`, so the test
+  assertions don't depend on the reader's timezone or locale.
+
+  New test file
+  `apps/debate-ai.com/lib/videos/__tests__/format-seed-videos-result.test.ts`
+  (9 tests): the unseeded-table message; a seeded table serving from SQL;
+  rows present but still serving from JSON (the `GET` handler's own read-error
+  fallback shape); missing/unparseable `lastSeededAt` falling back to
+  "unknown" despite nonzero rows; the run-result line's counts and duration;
+  singular vs. plural "statement"; and thousands-separator formatting.
+  `seedVideosIntoDb`'s own behavior and the route's admin-gating were
+  unchanged — no existing test needed updating.
+
+  Ran the verification gate: `bun install`; the new test file directly (9/9);
+  `bun run typecheck` (17/17 packages); `bun run test` (510 files, 9471
+  tests, repo-wide, all passing); and `bun run build:web` (production build
+  succeeded). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/video-library.mdx`
+  ("Seeding the table" section now describes the button and where its status
+  text comes from, replacing the previous wording that implied a UI entry
+  point already existed when none did).
 
 - **🗂️ Learn custom decks (CardMirror's flashcard grouping) had zero UI
   anywhere — `createDeck`/`renameDeck`/`deleteDeck`/`setDeckMembership`

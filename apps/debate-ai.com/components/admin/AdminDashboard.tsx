@@ -19,6 +19,11 @@ import {
 } from "../../lib/ui/primitives/select";
 import { REUSE_CHECK_LOG_RETENTION_DAYS } from "debate-research-evidence";
 import { formatRecomputeStacksResult } from "../../lib/videos/format-recompute-stacks-result";
+import {
+  formatSeedVideosResult,
+  formatSeedVideosStatus,
+  type SeedVideosStatus,
+} from "../../lib/videos/format-seed-videos-result";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
@@ -59,6 +64,10 @@ export function AdminDashboard() {
   const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
   const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
   const [recomputeStacksError, setRecomputeStacksError] = useState<string | null>(null);
+  const [seedStatus, setSeedStatus] = useState<SeedVideosStatus | null>(null);
+  const [isSeedingVideos, setIsSeedingVideos] = useState(false);
+  const [seedVideosResult, setSeedVideosResult] = useState<string | null>(null);
+  const [seedVideosError, setSeedVideosError] = useState<string | null>(null);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -123,6 +132,20 @@ export function AdminDashboard() {
   useEffect(() => {
     loadViewCountStatus();
   }, [loadViewCountStatus]);
+
+  const loadSeedStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/videos/seed");
+      if (!res.ok) return;
+      setSeedStatus(await res.json());
+    } catch {
+      // The card still works without the status; it only informs the label.
+    }
+  }, []);
+
+  useEffect(() => {
+    loadSeedStatus();
+  }, [loadSeedStatus]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -279,6 +302,22 @@ export function AdminDashboard() {
     }
   };
 
+  const handleSeedVideos = async () => {
+    setIsSeedingVideos(true);
+    setSeedVideosError(null);
+    try {
+      const res = await fetch("/api/admin/videos/seed", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.details || data?.error || "Seed failed");
+      setSeedVideosResult(formatSeedVideosResult(data));
+      await loadSeedStatus();
+    } catch (error) {
+      setSeedVideosError((error as Error).message);
+    } finally {
+      setIsSeedingVideos(false);
+    }
+  };
+
   const handlePublishAll = async () => {
     setIsPublishingAll(true);
     setPublishAllError(null);
@@ -367,6 +406,36 @@ export function AdminDashboard() {
             )}
           </div>
           {viewResyncError && <p className="text-destructive text-sm">{viewResyncError}</p>}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Seed videos</CardTitle>
+          <CardDescription>
+            Loads the bundled video JSON assets into the <code>videos</code> table that{" "}
+            <code>/api/videos</code> pages over. Safe to re-run — rows are upserted by video id
+            and rows the assets no longer carry are pruned. Until this has been run at least
+            once, the public feed still works, served from the JSON assets in memory instead of
+            SQL.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <Button onClick={handleSeedVideos} disabled={isSeedingVideos} variant="outline">
+              {isSeedingVideos ? "Seeding…" : "Seed videos"}
+            </Button>
+            {seedVideosResult ? (
+              <span className="text-muted-foreground text-sm">{seedVideosResult}</span>
+            ) : (
+              seedStatus && (
+                <span className="text-muted-foreground text-sm">
+                  {formatSeedVideosStatus(seedStatus)}
+                </span>
+              )
+            )}
+          </div>
+          {seedVideosError && <p className="text-destructive text-sm">{seedVideosError}</p>}
         </CardContent>
       </Card>
 

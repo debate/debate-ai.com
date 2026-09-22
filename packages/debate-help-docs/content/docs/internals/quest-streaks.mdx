@@ -53,7 +53,8 @@ notification.
 
 ```
 state/dailyMissionResults.ts    (localStorage: dailyMissionResults)
-  → mergeRemoteMissionResultDays
+  → saveDailyMissionResult stamps id `${contributorId}::${dayKey}`
+  → synced via debate-data-sync's TOOL_RECORD_COLLECTIONS (`dailyMissionResults`)
 state/streakFreezes.ts          (localStorage: streakFreezes)
   → applyPersistedStreakFreeze / mergeRemoteStreakFreezeDayKeys
   → buildQuestStreakRosterWithFreezes(todayUtcDayKey())
@@ -61,10 +62,10 @@ state/streakLapseReminders.ts   (localStorage: streakLapseReminders)
   → setStreakLapseReminderEnabled / mergeRemoteStreakLapseReminderEnabled
   → getPersistedStreakLapseReminderInfo
 panels/QuestStreaksPanel.tsx
-  → useQuestStreakSync(signedInContributorId, refresh) — the account sync below
+  → useQuestStreakSync(signedInContributorId, refresh) — the freeze/reminder account sync below
 apps/debate-ai.com/app/cards/streaks/page.tsx — mounts the panel as a route
 
-Account sync (signed-in visitor's own row only):
+Freeze/reminder account sync (signed-in visitor's own row only):
 lib/quest-streak-sync.ts        (pure — no fetch, no localStorage)
   → QuestStreakSyncPayload          { lapseReminderEnabled, freezeDayKeys,
                                        missionResultDays? }
@@ -129,18 +130,27 @@ apps/debate-ai.com
 
 ## Account sync, in detail
 
-Only the **signed-in visitor's own row** syncs — every other contributor's
-row in the roster is local-only, same as before this sync existed. That
-matches every other per-contributor localStorage store in this package
-(`dailyMissionResults`, the roster itself): there is no contributor identity
-system, only a free-text contributor id, so "sync this contributor" would
-have no way to know whose account to write to for anyone but the one real
-session in the room.
+Two separate syncs cover this panel, for two different reasons.
 
-Unlike [Tool Data Sync](tool-data-sync.md)'s `saved_tool_records` table, this
-sync does not go through `TOOL_RECORD_COLLECTIONS`: none of the three stores
-fit that allowlist's required shape (a JSON array of objects each carrying
-one stable string id field).
+**The day-by-day mission-result history** (`state/dailyMissionResults.ts`,
+`localStorage` key `dailyMissionResults`) — the actual per-contributor,
+per-day record the streak/badge roster is computed from — syncs through
+[Tool Data Sync](tool-data-sync.md)'s ordinary `TOOL_RECORD_COLLECTIONS`
+allowlist (`dailyMissionResults`, `idField: "id"`), the same as any other
+tool-record store. It didn't always: `DailyMissionResultRecord` used to be
+keyed by the pair `(contributorId, dayKey)` alone, with no single id field,
+so it couldn't join that allowlist — the same shape problem
+`coachingSessions` had. `saveDailyMissionResult` now stamps a deterministic
+`${contributorId}::${dayKey}` id onto every record (mirroring
+`coachingSessions`' own fix), so a contributor's mission-result history —
+and the streak/badge state derived from it — now follows them to a second
+device, same as every other synced tool.
+
+**The signed-in visitor's own `streakFreezes`/`streakLapseReminders`
+preferences** are the one part of this panel that still doesn't go through
+that allowlist — neither store fits its required shape (a JSON array of
+objects each carrying one stable string id field), and both are genuinely
+account-wide preferences rather than per-record history:
 
 - `streakFreezes` records are naturally keyed by the *pair*
   `(contributorId, dayKey)`, not a single field.
@@ -149,14 +159,22 @@ one stable string id field).
 - `dailyMissionResults` is keyed by the same `(contributorId, dayKey)` pair
   as `streakFreezes`, for the same reason.
 
-So this sync instead bundles all three preferences into one JSON value —
-`QuestStreakSyncPayload`, `{ lapseReminderEnabled, freezeDayKeys,
-missionResultDays? }` — on the `quest_streak_sync` column of the same
-`user_settings` row every other per-user setting (theme, favorite tools,
-Research Progress's goal, Standings' point-weight table) already uses,
-mirroring `research-progress-goal-sync.ts`'s split exactly: a
-framework-free validation/serialization module (`lib/quest-streak-sync.ts`),
-a fetch-only client (`lib/quest-streak-sync-client.ts`), and a React hook
+Only the **signed-in visitor's own row's** freeze/reminder preferences sync
+this second way — every other contributor's freeze/reminder state in the
+roster is local-only, same as before either sync existed. That matches the
+same "no contributor identity system, only a free-text contributor id"
+limit `dailyMissionResults`' own sync above is subject to too: there is no
+way to know whose account to write a *different* contributor's row to
+beyond the one real session in the room.
+
+So this second sync instead bundles both preferences into one JSON value —
+`QuestStreakSyncPayload`, `{ lapseReminderEnabled, freezeDayKeys }` — on the
+`quest_streak_sync` column of the same `user_settings` row every other
+per-user setting (theme, favorite tools, Research Progress's goal,
+Standings' point-weight table) already uses, mirroring
+`research-progress-goal-sync.ts`'s split exactly: a framework-free
+validation/serialization module (`lib/quest-streak-sync.ts`), a fetch-only
+client (`lib/quest-streak-sync-client.ts`), and a React hook
 (`hooks/useQuestStreakSync.ts`) that wires the two together against the
 existing local stores. `missionResultDays` is optional rather than
 required, mirroring `state/challengeWinEvents.ts`'s "leave a new field on a
@@ -266,16 +284,24 @@ mount (the account merge above), not live.
 
 ## Known gaps
 
-- Only the signed-in visitor's own row syncs to an account. Every other
-  contributor's row in the roster stays per-browser `localStorage`, the same
-  "per-browser, not a shared team resource" gap
+- Only the signed-in visitor's own **freeze/reminder preferences** sync to
+  an account (via the bespoke `quest_streak_sync` column above) — every
+  other contributor's freeze usage and reminder opt-in stays per-browser
+  `localStorage`, the same "per-browser, not a shared team resource" gap
   [Tool Data Sync](tool-data-sync.md) notes for Judge Profiles and Opponent
-  Team Profiles — there is no contributor-identity system in this repo to
-  sync anyone else's row to.
+  Team Profiles, since there is no contributor-identity system in this repo
+  to sync anyone else's preferences to. The **mission-result history**
+  itself is different: it syncs through the ordinary `TOOL_RECORD_COLLECTIONS`
+  allowlist like any other Team collection, so every contributor's row this
+  browser has locally computed or received follows the signed-in user to
+  their other devices — not scoped to the visitor's own contributor id. It
+  still can't produce a row for a contributor no signed-in device has ever
+  computed a mission result for locally.
 - The account merge runs once, on mount, and on a manual freeze/reminder
   change; there is no push channel, so a freeze spent or a reminder toggled
   on another device shows up on this device's next page load rather than
-  live.
+  live. The mission-result sync above follows the same "next reload, not
+  live" rule every `TOOL_RECORD_COLLECTIONS` store does.
 - The trigger for a day's mission result is a manual button click, not a
   scheduled job. The repo does now have one cron trigger
   (`apps/debate-ai.com/wrangler.jsonc`'s `triggers.crons`, handled by
