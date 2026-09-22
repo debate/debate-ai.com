@@ -52,12 +52,13 @@
  * `lib/session-identity.ts`'s `deriveContributorIdFromSessionIdentity`
  * against a real signed-in session) highlights that contributor's own row
  * with a "You" badge, mirroring `ResearchProgressPanel.tsx`'s convention,
- * and syncs *that one contributor's* reminder opt-in and spent streak
- * freezes to their account across devices via
+ * and syncs *that one contributor's* reminder opt-in, spent streak freezes,
+ * and daily-mission-result history to their account across devices via
  * `hooks/useQuestStreakSync.ts` — the "account-syncing reminder
  * opt-ins/streak freezes across devices" follow-up named under the "🎮
- * Gamified Quests" bullet in TODO.md. Every other row in this roster stays
- * local-only, same as before.
+ * Gamified Quests" bullet in TODO.md, plus closing that follow-up's own
+ * gap of the mission-result history itself never syncing. Every other row
+ * in this roster stays local-only, same as before.
  *
  * @module panels/QuestStreaksPanel
  */
@@ -174,7 +175,10 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
   // Merges the signed-in visitor's own reminder opt-in/spent freezes down
   // from their account on mount, then refreshes the roster if that merge
   // actually changed anything locally.
-  const { pushFreezeDayKey, pushLapseReminderEnabled } = useQuestStreakSync(signedInContributorId, refresh)
+  const { pushFreezeDayKey, pushLapseReminderEnabled, pushMissionResultDay } = useQuestStreakSync(
+    signedInContributorId,
+    refresh,
+  )
 
   /**
    * Live-update the roster when another browser tab logs a daily mission
@@ -196,9 +200,12 @@ export function QuestStreaksPanel({ signedInContributorId }: QuestStreaksPanelPr
       setError("Contributor id is required.")
       return
     }
-    computeAndSavePersistedDailyMissionResult(id, listQuestTemplates(), Date.now())
+    const record = computeAndSavePersistedDailyMissionResult(id, listQuestTemplates(), Date.now())
     setError(null)
     refresh()
+    if (id === signedInContributorId) {
+      pushMissionResultDay({ dayKey: record.dayKey, isComplete: record.isComplete })
+    }
   }
 
   const handleUseFreeze = (id: string, gapDayKey: string) => {

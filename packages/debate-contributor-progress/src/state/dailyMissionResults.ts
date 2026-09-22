@@ -159,6 +159,29 @@ export function deleteDailyMissionResult(contributorId: string, dayKey: string):
 }
 
 /**
+ * Merges a contributor's remotely-synced mission-result days into the local
+ * store, adding only the days not already present locally — mirrors
+ * `streakFreezes.ts#mergeRemoteStreakFreezeDayKeys`'s "union, never remove
+ * or overwrite" convention. A day already recorded locally (e.g. this device
+ * computed it moments ago) is left as-is rather than replaced by the remote
+ * copy, since the remote value could itself be stale relative to a local
+ * recompute that hasn't synced up yet. Returns whether anything was
+ * actually added.
+ */
+export function mergeRemoteMissionResultDays(contributorId: string, remoteDays: DailyMissionResult[]): boolean {
+  const existingDayKeys = new Set(
+    listDailyMissionResultsForContributor(contributorId).map((record) => record.dayKey),
+  );
+  const newRecords: DailyMissionResultRecord[] = remoteDays
+    .filter((day) => !existingDayKeys.has(day.dayKey))
+    .map((day) => ({ contributorId, dayKey: day.dayKey, isComplete: day.isComplete }));
+  if (newRecords.length === 0) return false;
+
+  writeAll([...readAll(), ...newRecords]);
+  return true;
+}
+
+/**
  * Builds a contributor's full streak status and earned badges directly from
  * their persisted mission-result history, reusing `buildContributorQuestStreak`
  * directly rather than requiring the caller to pass in a history list.
