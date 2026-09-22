@@ -3,15 +3,17 @@
  * guest sign-in prompt (`components/layout/SignInPromptProvider.tsx`).
  *
  * The provider already rate-limits a single feature's prompt to once per
- * 30 minutes, but that cooldown lives in `sessionStorage` — a guest who
- * declines and then opens a new tab (or the same tab a day later) is asked
- * again. This is the explicit, permanent opt-out for a guest who has made up
- * their mind: "these tools save to this browser only" is fine with them, and
- * they don't want to be asked again. It closes the "no 'don't ask me again'
- * that persists" Known gap recorded in
+ * 30 minutes (`lib/sign-in-prompt-cooldown.ts`), but that cooldown always
+ * expires on its own after 30 minutes. This is the explicit, permanent
+ * opt-out for a guest who has made up their mind: "these tools save to this
+ * browser only" is fine with them, and they don't want to be asked again,
+ * ever. It closes the "no 'don't ask me again' that persists" Known gap
+ * recorded in
  * `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`.
  *
- * Kept separate from `debate-data-sync/src/state/sign-in-prompt.ts`: that
+ * Kept separate from `lib/sign-in-prompt-cooldown.ts`: that module is the
+ * passive rate limit applied whether or not a guest has made this explicit
+ * choice, and from `debate-data-sync/src/state/sign-in-prompt.ts`: that
  * module is the framework-free bus a tool raises a prompt on, and it has no
  * opinion on whether the app should actually show one — the cooldown and this
  * opt-out are both display policy the provider applies, not the bus.

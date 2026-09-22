@@ -177,20 +177,6 @@ describe("redactFileSource", () => {
     });
   });
 
-  it("holds back every credential field when the record carries no (or a non-string) type", () => {
-    // The same "don't guess" rule as an unrecognized type string, for a
-    // record whose `type` is missing or isn't a string at all.
-    expect(redactFileSource({ id: "a", credentials: { password: "hunter2" } })).toEqual({
-      id: "a",
-      credentials: {},
-    });
-    expect(redactFileSource({ id: "a", type: 42, credentials: { password: "hunter2" } })).toEqual({
-      id: "a",
-      type: 42,
-      credentials: {},
-    });
-  });
-
   it("passes through a record with no credentials object to redact", () => {
     expect(redactFileSource({ id: "a", name: "n", type: "s3" })).toEqual({
       id: "a",

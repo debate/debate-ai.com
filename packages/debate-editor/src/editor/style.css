@@ -12662,6 +12662,152 @@ textarea.pmd-text-prompt-input {
   white-space: nowrap;
 }
 
+/* ---- Decks overlay (learn-deck-manage-ui) ----
+ * Opened from the "Decks" button in the Manage flashcards overlay's bar;
+ * a `.pmd-route-overlay`/`.pmd-route-dialog` above it, mirroring the
+ * Review history overlay above. */
+.pmd-deck-manage-dialog {
+  width: min(560px, 94vw);
+  max-height: 80vh;
+}
+.pmd-deck-manage-close {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: var(--pmd-c-text-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+}
+.pmd-deck-manage-close:hover { color: var(--pmd-c-text); }
+.pmd-deck-manage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 0;
+}
+.pmd-deck-manage-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.pmd-deck-manage-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+.pmd-deck-manage-sync-status {
+  font-size: 0.75rem;
+  color: var(--pmd-c-text-muted);
+}
+.pmd-deck-manage-new {
+  margin-left: auto;
+  background: transparent;
+  color: var(--pmd-c-text);
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 6px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+.pmd-deck-manage-new:hover { background: var(--pmd-c-hover); }
+.pmd-deck-manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  overflow-y: auto;
+  max-height: 65vh;
+}
+.pmd-deck-manage-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--pmd-c-text-muted);
+  font-size: 0.9rem;
+}
+.pmd-deck-manage-row {
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 6px;
+  padding: 0.4rem 0.5rem;
+}
+.pmd-deck-manage-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pmd-deck-manage-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pmd-deck-manage-count {
+  flex: 0 0 auto;
+  font-size: 0.75rem;
+  color: var(--pmd-c-text-muted);
+  white-space: nowrap;
+}
+.pmd-deck-manage-action {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--pmd-c-text-muted);
+  font-family: inherit;
+  flex: 0 0 auto;
+}
+.pmd-deck-manage-action:hover {
+  background: var(--pmd-c-surface);
+  border-color: var(--pmd-c-border-soft);
+  color: var(--pmd-c-text);
+}
+.pmd-deck-manage-delete.is-armed {
+  color: var(--pmd-c-text-on-accent);
+  background: var(--pmd-c-error);
+  border-color: var(--pmd-c-error);
+}
+.pmd-deck-manage-cards {
+  margin-top: 0.4rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--pmd-c-border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.pmd-deck-manage-cards-empty {
+  font-size: 0.8rem;
+  color: var(--pmd-c-text-muted);
+  margin: 0;
+}
+.pmd-deck-manage-card-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pmd-deck-manage-card-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pmd-deck-manage-add-select {
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.4rem;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 5px;
+  background: var(--pmd-c-bg);
+  color: var(--pmd-c-text);
+}
+
 /* ---- Multi-pane: typography parity ----
  *
  * The single-doc editor scopes typography-flag rules to `#editor.X`.

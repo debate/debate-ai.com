@@ -83,9 +83,12 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   contributorAvailability: "contributorId",
   completedResearchTasks: "id",
   groupChallenges: "id",
+  challengeWinEvents: "id",
   dailyQuestTemplates: "id",
+  dailyMissionResults: "id",
   questTeams: "id",
   contributorAwardNominations: "id",
+  unlockCelebrations: "id",
   dailyBestCardAnnouncements: "dayKey",
   contributorAwardAnnouncements: "dayKey",
   debateVideosFavorites: "videoId",
@@ -287,6 +290,53 @@ describe("the synced collection catalog", () => {
         credentials: { host: "example.com", password: "hunter2" },
       }),
     ).toEqual({ id: "ssh-1", type: "ssh", credentials: { host: "example.com" } });
+  });
+
+  it("syncs group-challenge win events now that they carry a stable id", () => {
+    // `state/challengeWinEvents.ts`'s `ChallengeWinEvent` (`{ contributorId,
+    // occurredAt }`) had no per-record id — `contributorId` repeats across
+    // every win a squad member records, so it couldn't key this catalog the
+    // way `roundContributorFlows`/`contributorAvailability` do.
+    // `recordChallengeWinEvent` now stamps a generated `id` on every new
+    // event (mirroring `completedResearchTasks`' own fix), so the win-event
+    // log a `win_target` `groupChallenges` challenge scores against syncs
+    // alongside the challenge roster itself.
+    expect(findToolRecordCollection("challengeWinEvents")).toMatchObject({
+      storageKey: "challengeWinEvents",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs a contributor's daily-mission-result history now that it carries a stable id", () => {
+    // `state/dailyMissionResults.ts`'s `DailyMissionResultRecord` was keyed
+    // by the pair `(contributorId, dayKey)` alone — the same shape problem
+    // `coachingSessions` had — so `/cards/streaks`' quest-streak roster,
+    // built entirely from this history, never followed a contributor to a
+    // second device even though the account already synced their
+    // `streakFreezes`/`streakLapseReminders` preferences via the bespoke
+    // `quest_streak_sync` column. `saveDailyMissionResult` now stamps a
+    // deterministic `${contributorId}::${dayKey}` id on every record
+    // (mirroring `coachingSessions`' own composite-key fix), so this joins
+    // the plain allowlist instead of needing a bespoke sync of its own.
+    expect(findToolRecordCollection("dailyMissionResults")).toMatchObject({
+      storageKey: "dailyMissionResults",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs Progress Unlocks' last-seen-badges celebration baseline now that it's array-shaped", () => {
+    // `state/unlockCelebrations.ts`'s baseline was a plain
+    // `Record<contributorId, string[]>` map — no per-record id, the same
+    // shape problem every other collection here started with — until it was
+    // reshaped into an array of `{ id, badges }` records keyed by the
+    // contributor's id.
+    expect(findToolRecordCollection("unlockCelebrations")).toMatchObject({
+      storageKey: "unlockCelebrationSeenBadges",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
   });
 
   it("syncs the video library's favourites, hidden list and reports", () => {

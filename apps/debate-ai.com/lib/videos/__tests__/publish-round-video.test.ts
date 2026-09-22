@@ -151,6 +151,42 @@ describe("publishRoundVideos", () => {
   });
 });
 
+describe("publishRoundVideos stacking", () => {
+  it("links a newly published round to an analysis video already in the table", async () => {
+    // Closes the "no stacks until re-seeded" gap for the live pipeline: an
+    // analysis video published earlier (through whichever path) sits in the
+    // table unstacked until a round it links to is published.
+    const db = await freshDb();
+    await db.insert(videos).values({
+      videoId: "analysisvid1",
+      source: "lecture",
+      publishedAt: "2024-09-05",
+      publishedMs: Date.parse("2024-09-05"),
+      description: "Full Debate: https://www.youtube.com/watch?v=roundvideo1",
+    } as any);
+
+    await publishRoundVideos(db, [roundRow("roundvideo1", { publishedAt: "2024-09-01" })]);
+
+    const [round] = await db.select().from(videos).where(eq(videos.videoId, "roundvideo1"));
+    const [analysis] = await db.select().from(videos).where(eq(videos.videoId, "analysisvid1"));
+    expect(round?.stackKey).toBe("roundvideo1");
+    expect(analysis?.stackKey).toBe("roundvideo1");
+    expect(analysis?.stackPosition).toBe(1);
+  });
+
+  it("does not touch stacking when nothing was actually published", async () => {
+    const db = await freshDb();
+    await publishRoundVideos(db, [roundRow("a")]);
+    await db.update(videos).set({ adminEdited: true }).where(eq(videos.videoId, "a"));
+
+    // Every row in this batch is admin-edited, so nothing is published — and
+    // recompute should not even run (there is nothing new to link).
+    const published = await publishRoundVideos(db, [roundRow("a", { title: "Should not land" })]);
+
+    expect(published).toBe(0);
+  });
+});
+
 describe("roundVideoToVideoRow", () => {
   it("derives a lowercased search_text from the round's title, channel and description", () => {
     const row = roundVideoToVideoRow(roundRow("a", { title: "Big Debate", channel: "Channel X" }));
