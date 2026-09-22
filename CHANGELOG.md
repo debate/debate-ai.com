@@ -1,6 +1,52 @@
 
 ### Completed
 
+- **🧩 Make the extension's Options page the app's own UI, as a package.**
+  The debate-ai.com frontend was reachable only by loading the Next.js app, so
+  everything else that wanted it — the browser extension, the native wrapper —
+  either reimplemented a slice or embedded the site in an iframe. The
+  extension's popup had its own hand-written copy of one API call
+  (`src/reuse/api.ts`'s `fetch` against `/api/evidence-reuse-check`) and no way
+  to show anything else, and its Options page was a settings form and nothing
+  more.
+
+  Added `packages/debate-ai-webui`: the app's UI as one mountable
+  `<DebateWebUI>` — the video archive (`listVideos`), card search
+  (`searchCards`), the reuse check over any pasted URL (`checkEvidenceReuse`),
+  season standings (`getLeaderboard`) and the catalog of every surface in the
+  app (`debate-feature-catalog`, no network). It has no Next.js, no router and
+  no session: the shell keeps the selected screen in state, builds one client
+  from a configured `origin`, and opens in-app routes through a host callback.
+  **Every request goes through `debate-api-client`** — `src/api.ts` is the only
+  module that talks to a server, and nothing in `screens/` imports `fetch` — so
+  an embedded UI gets the same grab-url caching, retries, rate limiting and
+  dedupe the web app does. Styling is one plain-CSS stylesheet scoped under
+  `.dai-root` rather than Tailwind, because each host has its own design
+  system. Card bodies are deliberately *not* rendered — they are third-party
+  HTML with `<mark>`/`<u>` in them and the hosts are privileged pages — so the
+  screen shows the summary and citation and hands the full card to the web app.
+
+  `apps/debate-web-ext`'s Options page is the first host: it mounts the shell
+  pointed at the deployment the **API base URL** setting already named, and
+  appends its own settings (timer defaults, toolbar action, window size,
+  skip-check whitelist, auto-check) as the last screen in the nav via the new
+  `extraScreens` prop, repointing every screen the moment that setting is
+  saved. Sharing a workspace package meant the extension had to join the
+  workspace — a `file:` dependency cannot resolve a package's own `workspace:*`
+  deps — so `apps/debate-web-ext` is now a root workspace entry with no
+  lockfile of its own, its `postinstall` moved into the scripts that need it,
+  and a `typecheck` script the root CI now runs. It stays on React 18 against
+  the monorepo's 19, which bun's isolated `node_modules` would otherwise
+  resolve twice, so `wxt.config.ts` dedupes `react`/`react-dom` for the bundle
+  and `tsconfig.json`'s `paths` does it for types.
+
+  Vitest-covered: `packages/debate-ai-webui/test/` (30 tests) over the API
+  base/origin normalization, the `/videos` positional-tuple decoding, the
+  shell's nav and host-screen composition, and the catalog screen's markup.
+  `bun run typecheck` passes across all 21 tasks — including the extension,
+  for the first time — and the extension builds clean with a single React copy
+  in the bundle.
+
 - **🔐 Fix the guest sign-in prompt's 30-minute cooldown resetting on a new
   tab.** Another repeat of the standing autonomous-routine prompt ("integrate
   all the tools into the UI... create user settings and link user db SQL with

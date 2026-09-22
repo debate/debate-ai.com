@@ -20,6 +20,15 @@ plus `cn`-composed classes, variants over one-off props, `asChild` for
 composition — and keep them domain-free: a primitive that knows what a "card"
 or a "round" is belongs in the package that owns the concept.
 
+## debate-ai-webui
+
+The debate-ai.com frontend UI as a standalone React package — the video archive, card
+search, the card reuse check over any URL, season standings, and the catalog of every
+tool in the app — with no Next.js, no router and no session of its own, so it mounts
+anywhere React runs. It reaches the server only through `debate-api-client`, and ships
+one scoped stylesheet rather than depending on the host's design system.
+`apps/debate-web-ext`'s Options page is its first host.
+
 ## debate-api-client
 
 Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated from

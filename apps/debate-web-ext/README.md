@@ -1,6 +1,6 @@
 # Debate AI — browser extension
 
-One extension with two tools for a debater's browser:
+One extension with three tools for a debater's browser:
 
 1. **Round timer** — Constructive / Rebuttal / Cross-x plus per-side prep
    clocks, a round timeline you can export as a PNG, and a resumable session.
@@ -10,6 +10,11 @@ One extension with two tools for a debater's browser:
    server-backed shared reuse index (`/api/evidence-reuse-check`, see
    [`../../docs/features/evidence-library.md`](../../docs/features/evidence-library.md#on-page-card-reuse-check)),
    not just what's saved in one browser's own `localStorage`.
+3. **The app itself, on the Options page** — the video archive, card search,
+   the reuse check over *any* URL you can paste, season standings and the
+   catalog of every tool in the app, from
+   [`debate-ai-webui`](../../packages/debate-ai-webui). The extension's own
+   settings are the last screen in its nav.
 
 Both used to be separate extensions — `apps/debate-timer-progress-ext` (WXT +
 React) and a plain-HTML/JS `apps/debate-web-ext`. They are now a single
@@ -24,21 +29,41 @@ check was ported to TypeScript and both halves share `storage` and settings.
   (format `Select`, `Tabs`, `Button`, `Tooltip`), the popup and the Options
   page. The circular clock face, the Digital-7 font, the depleting SVG ring,
   per-speech colors and the ripple are ported CSS, not shadcn.
+- **`debate-ai-webui`** — the app's own UI, mounted by the Options page. It
+  brings its own scoped stylesheet (`.dai-root`, no Tailwind) and talks to the
+  API through `debate-api-client`, so nothing in this extension hand-writes a
+  request to reach it.
 
 ## Develop
 
-This app is **outside the workspace globs** — a root `bun install` does not
-install it, so install here explicitly.
+This app is a **workspace member** (it joined when the Options page started
+mounting `debate-ai-webui`), so install from the repo root — there is no
+lockfile here any more.
 
 ```bash
+bun install          # at the repo root
 cd apps/debate-web-ext
-bun install         # runs `wxt prepare`
-bun run dev         # launches Chrome with the extension + HMR
-bun run dev:firefox # the same, in Firefox
-bun run compile     # tsc --noEmit
-bun run build       # production build -> .output/chrome-mv3
-bun run zip         # -> .output/debate-web-ext-<version>-chrome.zip
+bun run dev          # launches Chrome with the extension + HMR
+bun run dev:firefox  # the same, in Firefox
+bun run typecheck    # wxt prepare && tsc --noEmit (also run by the root CI)
+bun run build        # production build -> .output/chrome-mv3
+bun run zip          # -> .output/debate-web-ext-<version>-chrome.zip
 ```
+
+`wxt prepare` runs as part of `typecheck` and of `dev`/`build` rather than as a
+`postinstall`, so a root install never has to run this app's scripts. Two
+things follow from being in the workspace, both handled in config:
+
+- **React is pinned here.** The rest of the monorepo is on React 19 and this
+  app is on 18, and bun's isolated `node_modules` will happily give a shared
+  package its own resolution of `react`. `wxt.config.ts` dedupes `react` /
+  `react-dom` for the bundle and `tsconfig.json`'s `paths` does the same for
+  types; without either, the shell's hooks run against a second React
+  ("invalid hook call") and every lucide icon becomes "not a valid JSX element
+  type".
+- **`debate-api-client` is a built package.** Run `bun run build` at the repo
+  root (or `turbo build`, which orders it for you) before building this
+  extension from a clean checkout.
 
 `wxt dev` launches a browser with the extension already loaded, so there is no
 "load unpacked" step while developing. To load a built extension by hand:
@@ -89,7 +114,7 @@ secret in this repository; nothing here automates them.
 | --- | --- | --- |
 | `popup.html` | `entrypoints/popup` | Toolbar dropdown: the reuse check for the active tab + an **Open round timer** button. |
 | `timer.html` | `entrypoints/timer` | The timer + timeline, opened as its own `popup`-type window. |
-| `options.html` | `entrypoints/options` | Every setting for both halves, in one page. |
+| `options.html` | `entrypoints/options` | `debate-ai-webui`'s app UI, with every setting for the other two halves as its last screen. |
 
 `popup.html` doubles as a standalone check window: right-click any page →
 **Check this page for existing cards** opens it in its own window with a
@@ -111,6 +136,16 @@ since it is about the tab you're looking at.
 
 Open them from the gear in either page, or `chrome://extensions` → Details →
 Extension options.
+
+The page opens on the app's UI — Videos, Cards, Reuse check, Rankings, All
+tools — pointed at whatever **API base URL** is set below; saving a different
+one repoints every screen without a reload. What the browser will actually let
+those screens reach is still `host_permissions`, so a deployment other than
+production or `localhost:3000` needs `wxt.config.ts` updated and the extension
+reloaded, exactly as the reuse check always has.
+
+The extension's own settings are the **Extension** screen at the end of that
+nav:
 
 **Round timer**
 
@@ -145,7 +180,8 @@ entrypoints/
   background.ts          MV3 service worker: toolbar mode, context menu, timer window
   popup/                 reuse check for the active tab + "Open round timer"
   timer/                 Tabs (Timer | Timeline) + format Select
-  options/               one settings page for both halves
+  options/               App.tsx mounts debate-ai-webui; SettingsPanel.tsx is the
+                         extension's own settings, appended as one of its screens
 src/
   settings/settings.ts   shared storage.sync settings + defaults
   reuse/api.ts           GET /api/evidence-reuse-check + skip-domain matching
@@ -194,9 +230,11 @@ public/
 
 ## Known gaps
 
-- No automated tests (no test runner is wired up for this extension, which
-  isn't part of the repo's `bun`/`turbo` workspaces) — verified by loading the
-  built `.output/chrome-mv3` unpacked.
+- No automated tests of its own — verified by loading the built
+  `.output/chrome-mv3` unpacked. Joining the workspace did get the root CI to
+  type-check this app (`bun run typecheck` at the root now includes it), and
+  the UI the Options page mounts is covered by
+  `packages/debate-ai-webui/test/`, but nothing here runs the extension.
 - Registering a newly-cut card into the shared index
   (`POST /api/evidence-reuse-check`) still only happens from the web app's
   Evidence Library submission form, not from this extension — the extension is

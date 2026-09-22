@@ -3,6 +3,15 @@ import { defineConfig } from 'wxt';
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  // `debate-ai-webui` is a workspace package with React as a peer dependency,
+  // so bun's isolated node_modules gives it its own resolution of `react` —
+  // the monorepo's React 19, next to this extension's React 18. Two React
+  // copies in one bundle means the shell's hooks run against a different
+  // dispatcher than the page's ("invalid hook call"), so every `react` and
+  // `react-dom` specifier is resolved once, from this app's own dependency.
+  vite: () => ({
+    resolve: { dedupe: ['react', 'react-dom'] },
+  }),
   // `wxt dev` launches a browser via chrome-launcher, which only auto-detects
   // "Google Chrome" / "Chromium". This machine only has Chrome Beta installed,
   // so point the dev runner at it explicitly.
