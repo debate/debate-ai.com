@@ -11,6 +11,7 @@
 
 import { and, eq, inArray } from "drizzle-orm";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
+import { chunkBoundParams } from "@/lib/database/bound-params";
 import { videos, type VideoTableInsert, type YoutubeRoundVideo } from "@/lib/database/schema";
 import { recomputeVideoStacks } from "./recompute-video-stacks";
 
@@ -48,7 +49,9 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  *
  * Rows are written one at a time (matching the resync's own upsert loop)
  * rather than batched, since D1 caps bound parameters per statement and a
- * `videos` row already uses most of that budget.
+ * `videos` row already uses most of that budget. The same cap is why the
+ * admin-edited lookup below reads in chunks instead of one `IN (...)` over
+ * the whole batch; see `lib/database/bound-params.ts`.
  *
  * The weekly/manual resync (`lib/youtube/resync-rounds.ts`) re-walks every
  * subscribed channel's uploads since a fixed `2023-05-01` floor on every
@@ -80,17 +83,18 @@ export function roundVideoToVideoRow(row: YoutubeRoundVideo): VideoTableInsert {
  */
 export async function publishRoundVideos(db: any, rows: YoutubeRoundVideo[]): Promise<number> {
   const ids = rows.map((row) => row.id);
-  const adminEditedIds: Set<string> =
-    ids.length === 0
-      ? new Set()
-      : new Set(
-          (
-            await db
-              .select({ videoId: videos.videoId })
-              .from(videos)
-              .where(and(inArray(videos.videoId, ids), eq(videos.adminEdited, true)))
-          ).map((row: { videoId: string }) => row.videoId),
-        );
+  // One statement per 99 ids: `videoId IN (...)` binds a parameter per id and
+  // the `admin_edited` comparison binds the hundredth, and D1 rejects the
+  // statement outright past that. "Publish all" over a queue holding more
+  // than 99 rounds used to fail right here, before a single row was written.
+  const adminEditedIds = new Set<string>();
+  for (const idChunk of chunkBoundParams(ids, 1)) {
+    const alreadyEdited = await db
+      .select({ videoId: videos.videoId })
+      .from(videos)
+      .where(and(inArray(videos.videoId, idChunk), eq(videos.adminEdited, true)));
+    for (const row of alreadyEdited as { videoId: string }[]) adminEditedIds.add(row.videoId);
+  }
 
   let published = 0;
   for (const row of rows) {

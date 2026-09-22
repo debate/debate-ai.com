@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
 import { getAdminAccess } from "@/lib/auth/admin";
+import { chunkBoundParams } from "@/lib/database/bound-params";
 import { getDBFromContext } from "@/lib/database/context";
 import { youtubeRoundVideos, type YoutubeRoundVideo } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
@@ -37,12 +38,13 @@ export async function POST(req: NextRequest) {
   }
 
   const published = await publishRoundVideos(db, rows);
-  await db.delete(youtubeRoundVideos).where(
-    inArray(
-      youtubeRoundVideos.id,
-      rows.map((row: YoutubeRoundVideo) => row.id),
-    ),
-  );
+  // Cleared in chunks for the same reason the publish reads in chunks: the
+  // `id IN (...)` list binds one D1 parameter per queued round, and the whole
+  // point of this endpoint is a queue too long to name in one statement.
+  const queuedIds: string[] = rows.map((row: YoutubeRoundVideo) => row.id);
+  for (const idChunk of chunkBoundParams<string>(queuedIds)) {
+    await db.delete(youtubeRoundVideos).where(inArray(youtubeRoundVideos.id, idChunk));
+  }
 
   return NextResponse.json({ ok: true, published });
 }
