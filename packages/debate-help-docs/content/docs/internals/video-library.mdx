@@ -288,6 +288,19 @@ Two behaviours are worth knowing before changing this:
   the JSON asset's stale value — the seed-side counterpart to the exclusion
   row above. The flag is never cleared; there is no "go back to asset-driven"
   action.
+- **"Publish all" costs a fixed handful of queries, not one per round.**
+  D1 allows a Worker invocation 1,000 queries (50 on the Workers Free plan),
+  and a statement awaited on its own spends one of them. `publishRoundVideos`
+  used to await every upsert individually, so publishing a queue of 1,200
+  rounds asked for 1,214 queries and the request died at the driver partway
+  through, having already written most of the rows. The statements are the
+  same — a `videos` row uses most of D1's 100-parameter budget on its own, so
+  each round still needs its own — but they are sent through `db.batch()` in
+  runs of a hundred (`lib/database/query-budget.ts`), which is one query per
+  batch and one transaction per batch: the same 1,200 rounds now cost 14
+  queries, and a failure rolls its batch back instead of leaving the queue
+  half-published. The admin-edited lookup, the queue clear and the stack
+  recompute's writes go out the same way.
 - **A published, admin-edited round also survives a re-publish.**
   `resyncYouTubeRounds` re-walks every subscribed channel's uploads since a
   fixed floor date on *every* run, with no check against `videos` — only an
