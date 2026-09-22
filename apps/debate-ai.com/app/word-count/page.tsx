@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import { WordCountRoundsPanel } from "debate-practice-rounds"
+import { WordLimitPresetsPanel } from "debate-round"
 import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
@@ -15,6 +16,12 @@ export default function WordCountPage() {
       <Suspense>
         <WordCountRoundsPanel />
       </Suspense>
+      <details className="rounded-lg border border-border">
+        <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-foreground sm:px-6">
+          Manage word limit presets
+        </summary>
+        <WordLimitPresetsPanel />
+      </details>
     </ToolPage>
   )
 }
