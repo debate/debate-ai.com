@@ -36,7 +36,7 @@ const MIGRATIONS = [
   "0047_video_admin_edited.sql", // videos.admin_edited
 ];
 
-async function freshDb() {
+async function freshClient() {
   const client = createClient({ url: ":memory:" });
   for (const migration of MIGRATIONS) {
     const contents = readFileSync(path.join(drizzleDir, migration), "utf8");
@@ -45,7 +45,45 @@ async function freshDb() {
       if (trimmed) await client.execute(trimmed);
     }
   }
-  return drizzle(client, { schema });
+  return client;
+}
+
+async function freshDb() {
+  return drizzle(await freshClient(), { schema });
+}
+
+/**
+ * A drizzle handle that also records how many parameters each statement
+ * binds. Local SQLite happily binds tens of thousands, so D1's ceiling of
+ * 100 per statement can only be pinned by counting what the driver was
+ * actually handed.
+ */
+async function recordingDb() {
+  const client = await freshClient();
+  const boundParamCounts: number[] = [];
+  const count = (statement: unknown) => {
+    const args = (statement as { args?: unknown })?.args;
+    boundParamCounts.push(Array.isArray(args) ? args.length : Object.keys(args ?? {}).length);
+  };
+  const recorded = new Proxy(client, {
+    get(target, property, receiver) {
+      const value = Reflect.get(target, property, receiver);
+      if (property === "execute" && typeof value === "function") {
+        return (statement: unknown, ...rest: unknown[]) => {
+          count(statement);
+          return (value as Function).call(target, statement, ...rest);
+        };
+      }
+      if (property === "batch" && typeof value === "function") {
+        return (statements: unknown[], ...rest: unknown[]) => {
+          for (const statement of statements) count(statement);
+          return (value as Function).call(target, statements, ...rest);
+        };
+      }
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  });
+  return { db: drizzle(recorded as typeof client, { schema }), boundParamCounts };
 }
 
 function roundRow(id: string, extra: Partial<YoutubeRoundVideo> = {}): YoutubeRoundVideo {
@@ -148,6 +186,50 @@ describe("publishRoundVideos", () => {
     const [b] = await db.select().from(videos).where(eq(videos.videoId, "b"));
     expect(a?.title).toBe("Kept");
     expect(b?.title).toBe("Brand new round");
+  });
+});
+
+describe("publishRoundVideos over a large queue (D1 bound-parameter ceiling)", () => {
+  it("keeps every statement inside D1's 100-parameter limit", async () => {
+    // The production failure behind this test: "Publish all" over a queue of
+    // more than 99 rounds built one `videoId IN (...)` over the whole batch
+    // for the admin-edited lookup. D1 rejects a statement past 100 bound
+    // parameters, so the request 500'd inside the D1 client before a single
+    // row was written — and never reproduced locally, where SQLite's own
+    // limit is in the tens of thousands.
+    const { db, boundParamCounts } = await recordingDb();
+    const queue = Array.from({ length: 250 }, (_, index) => roundRow(`round${index}`));
+
+    const published = await publishRoundVideos(db, queue);
+
+    expect(published).toBe(250);
+    expect(boundParamCounts.length).toBeGreaterThan(0);
+    expect(Math.max(...boundParamCounts)).toBeLessThanOrEqual(100);
+  });
+
+  it("still skips the admin-edited rounds spread across the chunk boundary", async () => {
+    // Chunking must not lose a hit: the lookup now runs as several
+    // statements, and a round whose id lands in the second one is just as
+    // admin-edited as one in the first.
+    const db = await freshDb();
+    const queue = Array.from({ length: 250 }, (_, index) => roundRow(`round${index}`));
+    await publishRoundVideos(db, queue);
+    for (const id of ["round0", "round98", "round99", "round100", "round198", "round249"]) {
+      await db.update(videos).set({ adminEdited: true, title: `Kept ${id}` }).where(eq(videos.videoId, id));
+    }
+
+    const published = await publishRoundVideos(
+      db,
+      queue.map((row) => ({ ...row, title: "Resynced title" })),
+    );
+
+    expect(published).toBe(250 - 6);
+    for (const id of ["round0", "round98", "round99", "round100", "round198", "round249"]) {
+      const [row] = await db.select().from(videos).where(eq(videos.videoId, id));
+      expect(row?.title).toBe(`Kept ${id}`);
+    }
+    const [untouched] = await db.select().from(videos).where(eq(videos.videoId, "round101"));
+    expect(untouched?.title).toBe("Resynced title");
   });
 });
 
