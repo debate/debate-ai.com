@@ -113,8 +113,10 @@ Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
 (`questTeams`), Quest Streaks' day-by-day mission-result history
 (`dailyMissionResults`, by a derived `${contributorId}::${dayKey}` id — see
 below; [Quest Streaks](quest-streaks.mdx) covers the separate,
-signed-in-visitor-only sync for its freeze/reminder preferences), and award
-nominations (`contributorAwardNominations`), all by
+signed-in-visitor-only sync for its freeze/reminder preferences), award
+nominations (`contributorAwardNominations`), and [Progress Unlocks](../features/progress-unlocks.mdx)'
+celebration-toast "last-seen badges" baseline (`unlockCelebrations`, by the
+contributor's id), all by
 `id`; frozen Daily Best Card winners (`dailyBestCardAnnouncements`) and Top
 Contributor Award standings (`contributorAwardAnnouncements`), both by
 `dayKey`; the Task Inbox (`routedTaskQueues`) by `topicId` and its pending
@@ -166,6 +168,14 @@ these stay local on purpose —
   `coachingSessions` had.~~ **Fixed:** `saveDailyMissionResult` now stamps
   every record with a derived `${contributorId}::${dayKey}` id, so a
   contributor's streak/badge history follows them to another device.
+- ~~`unlockCelebrations`, [Progress Unlocks](../features/progress-unlocks.mdx)'
+  per-contributor "last-seen badges" celebration-toast baseline, kept as a
+  plain `Record<contributorId, string[]>` map rather than an array of
+  records — no per-record id to key a row by, the same shape gap every
+  collection here started with.~~ **Fixed:** the store now persists an array
+  of `{ id, badges }` records (`id` the contributor's id, migrating any
+  pre-existing legacy map on read), so a badge already celebrated on one
+  device isn't celebrated again as "new" on a second one.
 
 ### Redacted fields
 

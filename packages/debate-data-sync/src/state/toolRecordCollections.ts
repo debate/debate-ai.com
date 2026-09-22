@@ -570,6 +570,24 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "unlockCelebrations",
+    storageKey: "unlockCelebrationSeenBadges",
+    idField: "id",
+    // Each contributor's "last-seen badges" celebration baseline —
+    // `debate-contributor-progress/src/state/unlockCelebrations.ts`'s
+    // `UnlockCelebrationSeenBadgesRecord`, keyed by the contributor's id.
+    // Without this, a contributor who has already been shown a badge's
+    // celebration toast on one device sees it celebrated again as "new" on a
+    // second device, since the baseline it's diffed against never followed
+    // them. `/cards/progress` (Progress Unlocks) isn't itself a registered
+    // sidebar destination (see `tool-record-sync-catalog.test.ts`), so this
+    // points at `/cards/leaderboard` like its `dailyQuestTemplates`/
+    // `dailyMissionResults` siblings.
+    label: "Progress Unlocks",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
     key: "dailyBestCardAnnouncements",
     storageKey: "dailyBestCardAnnouncements",
     idField: "dayKey",

@@ -20,6 +20,77 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔓 Progress Unlocks' "last-seen badges" celebration baseline never
+  synced to the account — the last remaining `localStorage`-backed,
+  per-record-id-keyed store not yet in `debate-data-sync`'s
+  `TOOL_RECORD_COLLECTIONS` allowlist.**
+  `packages/debate-contributor-progress/src/state/unlockCelebrations.ts`
+  persists, per contributor, the badge list `ProgressUnlocksPanel.tsx`'s
+  unlock-celebration toast was last shown for — the baseline
+  `recordAndGetNewlyEarnedBadges` diffs a contributor's current badges
+  against to decide what's "newly earned." It was stored as a plain
+  `Record<contributorId, string[]>` map rather than the JSON array of
+  id-keyed records every `TOOL_RECORD_COLLECTIONS` entry requires, so it
+  couldn't join the catalog the way `coachingSessions`/`dailyMissionResults`
+  did before it — a badge already celebrated on one device was celebrated
+  again as "new" on a second one, since the "already seen" baseline never
+  left the browser that recorded it. Unlike those two precedents (which only
+  needed a derived id stamped onto an already-array-shaped record), this
+  store needed an actual shape change: from a map to an array.
+
+  Reshaped `unlockCelebrations.ts` to persist
+  `{ id: contributorId, badges: string[] }[]` (exported as
+  `UnlockCelebrationSeenBadgesRecord`), with `readAll()` also accepting the
+  legacy `Record<contributorId, string[]>` shape on read (one record per key
+  whose value is a string array) so a baseline recorded before this shipped
+  isn't dropped — the next `markBadgesSeen`/`clearAllSeenBadges` call
+  rewrites it in the new array shape. The public API
+  (`getSeenBadges`/`markBadgesSeen`/`recordAndGetNewlyEarnedBadges`/
+  `clearAllSeenBadges`) is unchanged, so `ProgressUnlocksPanel.tsx` (the only
+  caller) needed no changes. Added the `unlockCelebrations` entry to
+  `TOOL_RECORD_COLLECTIONS` (`storageKey: "unlockCelebrationSeenBadges"`,
+  `idField: "id"`, section "Team"). `/cards/progress` (Progress Unlocks)
+  isn't itself a registered sidebar destination
+  (`tool-record-sync-catalog.test.ts` only accepts hrefs the sidebar links
+  to), so — mirroring `dailyQuestTemplates`/`dailyMissionResults`' own
+  precedent — the entry's `href` points at `/cards/leaderboard` instead.
+
+  New tests in `unlockCelebrations.test.ts`: the array-shaped persisted
+  form, reading back a pre-existing legacy map, rewriting a legacy map into
+  the array shape on the next write, and a corrupt legacy entry (a
+  non-array value under a key) degrading to "no baseline" for that
+  contributor rather than throwing. `tool-record-catalog.test.ts` got the
+  new `EXPECTED_ID_FIELDS` entry and a pinning test for the catalog entry
+  itself, mirroring `dailyMissionResults`' own.
+
+  Ran the verification gate: `bun install`; the three directly affected
+  test files (61/61); the wider `debate-contributor-progress`/
+  `debate-data-sync` suites plus `debate-videos`' catalog cross-check
+  alongside them (1150/1150); `bun run typecheck` (17/17 packages); `bun run
+  test` (510 files, 9479 tests, repo-wide, all passing); and `bun run
+  build:web` (production build succeeded, dist/client generated 815 files).
+  Docs updated:
+  `packages/debate-help-docs/content/docs/features/progress-unlocks.mdx`
+  (new "syncs to the account" note in Data flow) and
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`
+  ("Which tools sync"'s Team paragraph, and a new struck-through entry in
+  "What deliberately does not sync").
+
+  **Follow-up, deliberately not done here:** with this slice, every
+  `localStorage`-backed, single-string-id-keyed tool store found in an
+  exhaustive repo sweep is now either in `TOOL_RECORD_COLLECTIONS` or has
+  its own dedicated `saved_*` table/route — there is no further "orphaned
+  store" of this specific shape left to find. The account-sync system's
+  other Known gaps (still per-user not per-team; the merge is a once-per-tab
+  poll with no push channel; a `mirrorToolRecord*`-uninstrumented store's
+  change reaches the account at the watcher's next tick rather than
+  immediately) remain open, as does the standing prompt's broader "create
+  user settings and link user db SQL with the ability to save flows/docs/
+  debates in SQL" framing — flows, rounds, tournament results, drill sets,
+  and word-count rounds already have their own dedicated SQL-backed cloud
+  save; a next slice in that vein would need a genuinely new gap, not
+  another `TOOL_RECORD_COLLECTIONS` entry.
+
 - **🔥 A contributor's Quest Streaks mission-result history never synced to
   the account — even though the panel's own doc already promised the
   signed-in visitor's streak state "follows them to another device."**
