@@ -20,6 +20,76 @@ _No task currently in progress._
 
 ### Completed
 
+- **🔥 A contributor's Quest Streaks mission-result history never synced to
+  the account — even though the panel's own doc already promised the
+  signed-in visitor's streak state "follows them to another device."**
+  `packages/debate-contributor-progress/src/state/dailyMissionResults.ts`'s
+  `DailyMissionResultRecord` (`{ contributorId, dayKey, isComplete }`) is the
+  actual day-by-day history `/cards/streaks`' current/longest streak and
+  milestone badges are computed from — but it was keyed only by the pair
+  `(contributorId, dayKey)`, with no single id field, so it couldn't join
+  `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist. `quest-streaks.mdx`
+  (internals) only ever synced the signed-in visitor's much smaller
+  `streakFreezes`/`streakLapseReminders` preferences through a bespoke
+  `quest_streak_sync` column on `user_settings` — its own "Account sync, in
+  detail" section explained *why* those two stores needed a bespoke sync
+  (composite key; a bare `string[]`) but never even mentioned
+  `dailyMissionResults` in that reasoning, because the actual history was
+  simply never wired to sync at all. A contributor's real streak/badge state
+  didn't follow them to a second device even though their freeze usage and
+  reminder opt-in already did — exactly the same `(roundId, sideKey)`-keyed,
+  no-id shape problem `coachingSessions` had, fixed the same way previously.
+
+  `saveDailyMissionResult` now stamps every record with a derived
+  `${contributorId}::${dayKey}` id (mirroring `coachingSessions`' own
+  `saveCoachingSession` fix exactly: always overwrite whatever `id` the
+  caller passed, never trust it), and returns the saved, id-stamped record
+  instead of `void` so `computeAndSavePersistedDailyMissionResult` can hand
+  its caller the same value that was actually persisted. Added the
+  `dailyMissionResults` entry to `TOOL_RECORD_COLLECTIONS` (`idField: "id"`,
+  section "Team", `href: "/cards/leaderboard"` — `/cards/streaks` itself
+  isn't a registered sidebar destination, matching how its
+  `dailyQuestTemplates`/`groupChallenges` siblings already point at the
+  Leaderboard link instead). No other wiring was needed: the sync's whole
+  design point is that any catalog entry is enough for
+  `state/tool-record-auto-sync.ts`'s watcher to pick up.
+
+  New tests in `dailyMissionResults.test.ts`: the id-stamping behavior
+  itself (derived from `contributorId`/`dayKey`, ignoring any id a caller
+  passes in) and that `saveDailyMissionResult`/`computeAndSavePersistedDailyMissionResult`
+  return the id-stamped record; updated every existing exact-shape `toEqual`
+  assertion in that file to include the now-always-present `id`.
+  `tool-record-catalog.test.ts` got the new `EXPECTED_ID_FIELDS` entry and a
+  pinning test for the catalog entry itself, mirroring `challengeWinEvents`'
+  own. `packages/debate-videos/test/tool-record-sync-catalog.test.ts`'s
+  existing loop already covers `/cards/leaderboard` being a real sidebar
+  destination, so nothing there needed changing.
+
+  Ran the verification gate: `bun install`; the two directly affected test
+  files (54/54); the wider `debate-contributor-progress`/`debate-data-sync`
+  suites plus `debate-videos`' catalog cross-check alongside them
+  (1145/1145); `bun run typecheck` (17/17 packages); `bun run test` (510
+  files, 9474 tests, repo-wide, all passing); and `bun run build:web`
+  (production build succeeded, `/cards/streaks` listed in the route
+  manifest). Docs updated:
+  `packages/debate-help-docs/content/docs/internals/quest-streaks.mdx`
+  (Data flow, "Account sync, in detail" split into the two separate syncs,
+  and Known gaps), `packages/debate-help-docs/content/docs/features/quest-streaks.mdx`
+  (Data flow and Known gaps), and
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`
+  ("Which tools sync" and the "What deliberately does not sync" struck-through
+  entry, mirroring `coachingSessions`' own).
+
+  **Follow-up, deliberately not done here:** the new sync sends this
+  browser's *entire* locally-known `dailyMissionResults` history — every
+  contributor's row this device has ever computed or received, not just the
+  signed-in visitor's own — mirroring how `groupChallenges`/`dailyQuestTemplates`
+  already sync their whole shared squad state. A row for a contributor no
+  signed-in device has ever locally computed a mission result for still
+  can't appear from nowhere; closing that would need a real
+  contributor-identity system, which is a much larger change than this
+  slice.
+
 - **⏱️ Word limit presets (`debate-round`'s `WordLimitPresetsPanel`) were orphaned — the account-linked settings-page field with no replacement UI, explicitly named as still open by both `user-settings.mdx`'s "What it no longer shows" and the panel's own header comment ("Nothing in `debate-ai.com` mounts this now").** The backend was fully live: `/api/settings`'s `PUT` handler already supported race-safe `addWordLimitPreset`/`updateWordLimitPreset`/`removeWordLimitPreset` ops (400 on a duplicate name or an invalid limit), `useWordLimitPresets` was already reading/writing that endpoint and both consumers (`/word-count`'s form and the live in-round word-limit meter) already resolved a speech's limit through it — but the one component that lets a user actually add, edit, or remove a preset, `packages/debate-round/src/panels/WordLimitPresetsPanel.tsx`, was fully built, exported, and tested, yet rendered nowhere in the app. `/word-count`'s own panel even showed a "manage them in Settings" hint that linked to `/settings`, which had already been repurposed as the CardMirror editor's settings page and no longer had anywhere to put it — a dead link.
 
   Mounted `WordLimitPresetsPanel` on `apps/debate-ai.com/app/word-count/page.tsx`, in a collapsible "Manage word limit presets" `<details>` section below the existing `WordCountRoundsPanel` — the same `<details>`-as-secondary-editor pattern `debate-videos`' `StandingsPanel` already uses for its "Qualification points table" section, and the page the panel's own doc comment and `word-count-rounds.mdx` already expected it to land on. Fixed `WordCountRoundsPanel.tsx`'s stale "manage them in Settings" hint to point at the new section on the same page instead of the dead `/settings` link, and removed the now-unused `next/link` import.

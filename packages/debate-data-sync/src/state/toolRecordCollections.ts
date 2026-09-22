@@ -539,6 +539,21 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "dailyMissionResults",
+    storageKey: "dailyMissionResults",
+    idField: "id",
+    // The day-by-day mission-result history `/cards/streaks`' quest-streak
+    // roster is computed from — `state/dailyMissionResults.ts`'s
+    // `saveDailyMissionResult` now stamps a deterministic
+    // `${contributorId}::${dayKey}` id onto every record. `/cards/streaks`
+    // isn't itself a registered sidebar destination (see
+    // `tool-record-sync-catalog.test.ts`), so this points at `/cards/leaderboard`
+    // like its `dailyQuestTemplates`/`groupChallenges` siblings.
+    label: "Quest Streak History",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
     key: "questTeams",
     storageKey: "questTeams",
     idField: "id",
