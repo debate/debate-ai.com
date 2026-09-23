@@ -6,10 +6,10 @@
  */
 import { existsSync } from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
-import { applySqlFile, createSqliteD1 } from "./helpers/sqlite-d1";
+import { applySqlFile, createSqliteD1, pkgPath } from "./helpers/sqlite-d1";
 import { createTournamentsHandler } from "../src/api/handler";
 
-const SEED = ".upstream-seed.sql";
+const SEED = pkgPath(".upstream-seed.sql");
 
 describe.skipIf(!existsSync(SEED))("vendored routes on upstream sample data", () => {
   const d1 = createSqliteD1();
@@ -21,7 +21,7 @@ describe.skipIf(!existsSync(SEED))("vendored routes on upstream sample data", ()
   let paths: string[] = [];
 
   beforeAll(() => {
-    applySqlFile(d1, "migrations/0001_tabroom_schema.sql");
+    applySqlFile(d1, pkgPath("migrations/0001_tabroom_schema.sql"));
     applySqlFile(d1, SEED);
     const [round] = rows(
       "select round.id, round.name, event.abbr, event.tourn from round join event on event.id = round.event join tourn on tourn.id = event.tourn where round.published = 1 and tourn.hidden = 0 limit 1",

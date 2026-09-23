@@ -3,6 +3,10 @@
  * upstream routes can be exercised against a real SQLite engine in tests.
  */
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+/** A path under the package root, whatever directory Vitest runs from. */
+export const pkgPath = (rel: string) => resolve(import.meta.dirname, "../..", rel);
 import { DatabaseSync } from "node:sqlite";
 import type { D1DatabaseLike, D1PreparedStatementLike, D1Result } from "../../src/db/d1-types";
 

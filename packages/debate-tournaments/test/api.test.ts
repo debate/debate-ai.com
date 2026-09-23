@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { applySqlFile, createSqliteD1 } from "./helpers/sqlite-d1";
+import { applySqlFile, createSqliteD1, pkgPath } from "./helpers/sqlite-d1";
 import { createTournamentsHandler, routedPath } from "../src/api/handler";
 
 const d1 = createSqliteD1();
 
 beforeAll(() => {
-  applySqlFile(d1, "migrations/0001_tabroom_schema.sql");
-  applySqlFile(d1, "test/fixtures/tournament.sql");
+  applySqlFile(d1, pkgPath("migrations/0001_tabroom_schema.sql"));
+  applySqlFile(d1, pkgPath("test/fixtures/tournament.sql"));
 });
 
 const handler = createTournamentsHandler({
