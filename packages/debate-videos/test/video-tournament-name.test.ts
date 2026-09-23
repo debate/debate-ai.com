@@ -1,6 +1,7 @@
 /**
- * @fileoverview `cleanTournamentName` (`VideoListRows.tsx`) is a second,
- * independent cleanup pass on the Tournament column's label — distinct from
+ * @fileoverview `cleanTournamentName` (`video-tree.ts`) is a second,
+ * independent cleanup pass on a tournament's name — the label its group row
+ * carries in the list layout's tree — distinct from
  * `stripTournamentYear` (`debate-data-sync/src/videos/video-rows.ts`), which
  * only drops a *leading* year before a tuple ever becomes a `VideoRow`. This
  * file feeds it values as they actually arrive here: already passed through
@@ -8,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { cleanTournamentName } from "../src/components/video-grid/VideoListRows";
+import { cleanTournamentName } from "../src/components/video-grid/video-tree";
 
 describe("cleanTournamentName", () => {
   it("returns undefined for empty input", () => {
