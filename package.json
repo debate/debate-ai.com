@@ -6,7 +6,7 @@
   "workspaces": [
     "packages/*",
     "apps/debate-ai.com",
-    "apps/debate-web-ext"
+    "apps/debate-browser-ext"
   ],
   "scripts": {
     "dev": "turbo dev",

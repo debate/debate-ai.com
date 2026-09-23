@@ -39,6 +39,26 @@
 			"0 8 * * 1"
 		]
 	},
+	// Webcam-room signalling (worker/debate-room.ts): one hibernating Durable
+	// Object per room relays WebRTC offers/answers/ICE; media never touches it.
+	// Like `vars`, `durable_objects` is not inherited by named environments,
+	// so env.production repeats it.
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "DEBATE_ROOMS",
+				"class_name": "DebateRoomSignal"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1-debate-rooms",
+			"new_sqlite_classes": [
+				"DebateRoomSignal"
+			]
+		}
+	],
 	"env": {
 		"production": {
 			"vars": {
@@ -52,6 +72,22 @@
 					"0 8 * * 1"
 				]
 			},
+			"durable_objects": {
+				"bindings": [
+					{
+						"name": "DEBATE_ROOMS",
+						"class_name": "DebateRoomSignal"
+					}
+				]
+			},
+			"migrations": [
+				{
+					"tag": "v1-debate-rooms",
+					"new_sqlite_classes": [
+						"DebateRoomSignal"
+					]
+				}
+			],
 			"d1_databases": [
 				{
 					"binding": "debate_db",

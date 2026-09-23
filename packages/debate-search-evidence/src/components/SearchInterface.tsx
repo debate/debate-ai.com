@@ -40,7 +40,9 @@ export function SearchInterface() {
   /** Mobile overlay visibility flags. */
   const [showSearchSidebar, setShowSearchSidebar] = useState(false)
   const [showAiSidebar, setShowAiSidebar] = useState(false)
-  const [isAiCollapsed, setIsAiCollapsed] = useState(true)
+  // The AI Analysis panel starts open on desktop: selecting a card fills it
+  // with that card's saved find-flaws-and-extensions analysis.
+  const [isAiCollapsed, setIsAiCollapsed] = useState(false)
 
   /**
    * Wraps {@link search.selectResult} to also close the mobile search overlay,

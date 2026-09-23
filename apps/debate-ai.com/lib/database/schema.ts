@@ -1808,3 +1808,33 @@ export const stripeSubscriptions = sqliteTable(
 );
 
 export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;
+
+// Card AI analyses — the evidence search's "AI Analysis" sidebar
+// (packages/debate-search-evidence, `useAiAnalysis`). One row per card text
+// and prompt, both identified by SHA-256 hex digests computed client- and
+// server-side alike (`card-ai-analysis.ts` in that package), so the first
+// visitor to open a card generates its find-flaws-and-extensions analysis and
+// every later visitor reads the saved one instead of calling the model again.
+export const cardAiAnalyses = sqliteTable(
+  "card_ai_analyses",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    /** SHA-256 of the normalized card text sent to the model. */
+    cardHash: text("card_hash").notNull(),
+    /** SHA-256 of the normalized prompt. */
+    promptHash: text("prompt_hash").notNull(),
+    /** The card's tag line, kept for the admin/debugging view only. */
+    cardTag: text("card_tag"),
+    result: text("result").notNull(),
+    model: text("model"),
+    userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    cardPromptIdx: uniqueIndex("idx_card_ai_analyses_card_prompt").on(table.cardHash, table.promptHash),
+  }),
+);
+
+export type CardAiAnalysisRow = typeof cardAiAnalyses.$inferSelect;
