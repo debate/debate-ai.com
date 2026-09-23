@@ -685,6 +685,7 @@ export function VideoWatchPage({
                 onHideVideo={viewActions.hideVideo}
                 onUnhideVideo={viewActions.unhideVideo}
                 hiddenVideos={viewState.hiddenVideos}
+                grouped={false}
                 defaultSort={{ column: "date", direction: "desc" }}
               />
               <WatchQueuePanel className="lg:sticky lg:top-6" />
