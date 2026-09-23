@@ -9,9 +9,20 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  AI_PROVIDERS,
+  BYO_KEY_PROVIDERS,
+  type AiProviderId,
+  getProvider,
+} from '@/src/ai/providers';
+import { getApiKeys, saveApiKeys, type ApiKeys } from '@/src/ai/keys';
+import { useAccount } from '@/src/auth/useAccount';
+import {
   DEFAULT_API_BASE,
   DEFAULT_SETTINGS,
+  DEFAULT_SUMMARIZE_PROMPT,
+  MAX_FOLLOWUP_QUESTIONS,
   MAX_TIMER_WINDOW,
+  MIN_FOLLOWUP_QUESTIONS,
   MIN_TIMER_WINDOW,
   getSettings,
   saveSettings,
@@ -22,12 +33,18 @@ import { DEBATE_TYPES } from '@/src/timer/constants';
 import { getDebateType, setDebateType } from '@/src/timer/storage';
 
 /**
- * The single Options page for the merged extension: the round timer's defaults
- * and the on-page card reuse check's configuration, which used to live in two
- * separate extensions (and, for the reuse check, in its own options.html).
+ * The single Options page for the merged extension: the account the article
+ * panel reads and asks with, that panel's AI provider and keys, the round
+ * timer's defaults, and the on-page card reuse check's configuration — which
+ * used to live in two separate extensions (and, for the reuse check, in its
+ * own options.html).
  */
 export default function App() {
+  const account = useAccount();
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  // Kept apart from `settings` because keys live in storage.local, not the
+  // storage.sync everything else uses — see src/ai/keys.ts for why.
+  const [apiKeys, setApiKeys] = useState<ApiKeys>({});
   const [debateType, setDebateTypeState] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -35,9 +52,14 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const [stored, dt] = await Promise.all([getSettings(), getDebateType()]);
+      const [stored, keys, dt] = await Promise.all([
+        getSettings(),
+        getApiKeys(),
+        getDebateType(),
+      ]);
       if (cancelled) return;
       setSettings(stored);
+      setApiKeys(keys);
       setDebateTypeState(dt);
       setLoaded(true);
     })();
@@ -51,8 +73,14 @@ export default function App() {
     setSaved(false);
   }
 
+  function updateKey(provider: string, value: string) {
+    setApiKeys((prev) => ({ ...prev, [provider]: value }));
+    setSaved(false);
+  }
+
   async function onSave() {
     await saveSettings(settings);
+    await saveApiKeys(apiKeys);
     // The format lives in storage.local alongside the timer's own session
     // state, and switching it clears any resumable session — same as picking a
     // different format in the timer window.
@@ -61,15 +89,177 @@ export default function App() {
     window.setTimeout(() => setSaved(false), 2000);
   }
 
+  const selectedProvider = getProvider(settings.aiProvider);
+
   if (!loaded) return null;
 
   return (
     <div className="options">
       <h1 className="text-xl font-semibold">Debate AI — Settings</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        One extension, two tools: a debate-round timer that opens in its own
-        window, and the on-page card reuse check in the toolbar popup.
+        One extension, three tools: an AI article panel that turns any page into
+        reading mode, a debate-round timer that opens in its own window, and the
+        on-page card reuse check in the toolbar popup.
       </p>
+
+      <section className="mt-8">
+        <h2 className="text-base font-semibold">Your Debate AI account</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Signing in lets the article panel answer questions without you
+          supplying a model key — the deployment holds the key and this browser
+          holds the session. Sign-in happens on debate-ai.com in an ordinary
+          tab, never inside the extension, and the session is kept alive in the
+          background so you stay signed in.
+        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          {account.user ? (
+            <>
+              <span className="text-sm">
+                Signed in as{' '}
+                <span className="font-medium">
+                  {account.user.name || account.user.email}
+                </span>
+              </span>
+              <Button
+                variant="outline"
+                disabled={account.isLoading}
+                onClick={() => void account.signOut()}
+              >
+                Sign out
+              </Button>
+            </>
+          ) : (
+            <Button disabled={account.isLoading} onClick={() => void account.signIn()}>
+              {account.isLoading ? 'Opening sign-in…' : 'Sign in with Google'}
+            </Button>
+          )}
+        </div>
+        {account.error && (
+          <p className="mt-2 text-xs text-destructive">{account.error}</p>
+        )}
+      </section>
+
+      <section className="mt-8">
+        <h2 className="text-base font-semibold">Article panel AI</h2>
+
+        <div className="mt-4">
+          <label className="text-sm font-medium" htmlFor="ai-provider">
+            Answers come from
+          </label>
+          <Select
+            value={settings.aiProvider}
+            onValueChange={(v) => update('aiProvider', v as AiProviderId)}
+          >
+            <SelectTrigger id="ai-provider" className="mt-1 w-[280px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {AI_PROVIDERS.map((provider) => (
+                <SelectItem key={provider.id} value={provider.id}>
+                  {provider.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {settings.aiProvider === 'account'
+              ? 'Uses the deployment\u2019s own model key. Requires being signed in above.'
+              : 'Called directly from this browser with your key below. Usage is billed to your own account with that provider.'}
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <label className="text-sm font-medium" htmlFor="ai-model">
+            Model
+          </label>
+          <input
+            id="ai-model"
+            className="mt-1 w-full rounded-md border border-input bg-background px-2 py-1.5 font-mono text-sm disabled:opacity-60"
+            placeholder={selectedProvider.defaultModel || 'Chosen by the server'}
+            disabled={settings.aiProvider === 'account'}
+            value={settings.aiModel}
+            onChange={(e) => update('aiModel', e.target.value)}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            {settings.aiProvider === 'account'
+              ? 'The deployment picks the model for account-backed answers.'
+              : `Leave blank for ${selectedProvider.defaultModel}.`}
+          </p>
+        </div>
+
+        <div className="mt-6">
+          <span className="text-sm font-medium">Your API keys</span>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Stored in this browser only (<code>storage.local</code>, not the
+            synced settings), sent to that provider and to nothing else. Clear a
+            field and save to delete a key.
+          </p>
+          <div className="mt-3 space-y-4">
+            {BYO_KEY_PROVIDERS.map((provider) => (
+              <div key={provider.id}>
+                <label className="text-sm font-medium" htmlFor={`key-${provider.id}`}>
+                  {provider.label.replace(' (my key)', '')}
+                </label>
+                <input
+                  id={`key-${provider.id}`}
+                  type="password"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="mt-1 w-full rounded-md border border-input bg-background px-2 py-1.5 font-mono text-sm"
+                  placeholder={provider.keyPlaceholder}
+                  value={apiKeys[provider.id as keyof ApiKeys] ?? ''}
+                  onChange={(e) => updateKey(provider.id, e.target.value)}
+                />
+                {provider.keyUrl && (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    <a
+                      className="underline underline-offset-2"
+                      href={provider.keyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Get a key
+                    </a>
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <label className="text-sm font-medium" htmlFor="summarize-prompt">
+            Default question
+          </label>
+          <input
+            id="summarize-prompt"
+            className="mt-1 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+            placeholder={DEFAULT_SUMMARIZE_PROMPT}
+            value={settings.summarizePrompt}
+            onChange={(e) => update('summarizePrompt', e.target.value)}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            What the panel's prompt box starts with, and the first suggestion it
+            offers for any article.
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <label className="text-sm font-medium" htmlFor="max-followups">
+            Follow-up questions to suggest
+          </label>
+          <input
+            id="max-followups"
+            type="number"
+            min={MIN_FOLLOWUP_QUESTIONS}
+            max={MAX_FOLLOWUP_QUESTIONS}
+            className="mt-1 w-24 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+            value={settings.maxFollowupQuestions}
+            onChange={(e) => update('maxFollowupQuestions', Number(e.target.value))}
+          />
+        </div>
+      </section>
 
       <section className="mt-8">
         <h2 className="text-base font-semibold">Round timer</h2>
@@ -115,12 +305,14 @@ export default function App() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="popup">The card reuse-check popup</SelectItem>
+              <SelectItem value="reader">The article panel</SelectItem>
               <SelectItem value="timer">The timer window</SelectItem>
             </SelectContent>
           </Select>
           <p className="mt-1 text-xs text-muted-foreground">
-            Either way the timer opens as its own window rather than a dropdown,
-            so it keeps running while you work in the page.
+            Whichever you pick, the other two stay one right-click away, and the
+            timer always opens as its own window rather than a dropdown so it
+            keeps running while you work in the page.
           </p>
         </div>
 
@@ -170,11 +362,13 @@ export default function App() {
             onChange={(e) => update('apiBase', e.target.value)}
           />
           <p className="mt-1 text-xs text-muted-foreground">
-            The debate-ai.com deployment the reuse check runs against. Only the
-            production domain and <code>localhost:3000</code> are pre-authorized
-            in the extension's manifest — pointing this at another host shows a
+            The debate-ai.com deployment the reuse check, sign-in and
+            account-backed AI answers all run against. Only the production
+            domain and <code>localhost:3000</code> are pre-authorized in the
+            extension's manifest — pointing this at another host shows a
             permissions error until the manifest adds it and the extension is
-            reloaded.
+            reloaded. Changing it signs you out here, since a session belongs to
+            the deployment that issued it.
           </p>
         </div>
 

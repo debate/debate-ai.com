@@ -7,7 +7,7 @@
  * sign-in is accepted at all.
  */
 
-import { APP_ORIGIN } from "../config/site";
+import { APP_ORIGIN, EXTENSION_ORIGIN } from "../config/site";
 
 /**
  * Every host that serves this app.
@@ -42,8 +42,22 @@ export const DEFAULT_ALLOWED_HOSTS = [
  * Origin patterns accepted in addition to the ones implied by the hosts above.
  * Kept for anything that is an origin rather than a host — including whatever
  * `BETTER_AUTH_TRUSTED_ORIGINS` supplies.
+ *
+ * The extension's own origin is listed because the browser extension
+ * (apps/debate-web-ext) signs in by spending a one-time token against
+ * `POST /api/auth/one-time-token/verify` from its background worker, and
+ * better-auth rejects any state-changing request whose `Origin` is not
+ * trusted. It is the one exact extension id rather than
+ * `chrome-extension://*`, which would trust every extension the visitor has
+ * installed. A Firefox build's `moz-extension://` origin is a fresh UUID per
+ * *install*, so there is no id to pin; that origin has to be supplied through
+ * `BETTER_AUTH_TRUSTED_ORIGINS` (see the extension README).
  */
-export const DEFAULT_TRUSTED_ORIGINS = [APP_ORIGIN, "http://localhost:3000"];
+export const DEFAULT_TRUSTED_ORIGINS = [
+  APP_ORIGIN,
+  "http://localhost:3000",
+  EXTENSION_ORIGIN,
+];
 
 /** Split a comma-separated env value into trimmed, non-empty entries. */
 export function parseList(raw: string | undefined | null): string[] {

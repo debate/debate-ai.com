@@ -110,6 +110,7 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
 const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/",
   "/admin",
+  "/auth/extension-complete",
   "/auth/native-callback",
   "/auth/native-complete",
   "/features",

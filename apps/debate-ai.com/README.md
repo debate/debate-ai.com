@@ -95,7 +95,7 @@ Secrets survive either way.
 | `AUTH_LINKEDIN_ID` / `AUTH_LINKEDIN_SECRET` | "Sign in with LinkedIn". | [linkedin.com/developers](https://www.linkedin.com/developers/) → your app → Auth. |
 | `RESEND_API_KEY` (alias `AUTH_RESEND_KEY`) | Verification email and round invitations. | [resend.com/api-keys](https://resend.com/api-keys) |
 | `BETTER_AUTH_ALLOWED_HOSTS` | Extra comma-separated hosts this app is served from. See [`lib/auth/hosts.ts`](./lib/auth/hosts.ts). | Your own preview or custom-domain hosts. |
-| `BETTER_AUTH_TRUSTED_ORIGINS` | Extra origins allowed to make authenticated requests. | The same. |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | Extra origins allowed to make authenticated requests. | The same — plus the `moz-extension://<uuid>` origin of a Firefox build of [the browser extension](../debate-web-ext/README.md#signing-in-and-staying-signed-in), which is a fresh UUID per install and so cannot be pinned in code the way the Chrome build's id is. |
 | `ADMIN_EMAILS` | Restricts `/admin` to the comma-separated addresses listed. **Leaving it unset leaves `/admin` open to every signed-in user** — set it before you deploy. | Your own addresses. |
 
 ### Model providers

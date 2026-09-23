@@ -1,4 +1,4 @@
-import { Settings2, Timer } from 'lucide-react';
+import { BookOpen, Settings2, Timer } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
 
@@ -9,6 +9,7 @@ import {
   parseSkipDomains,
   type ReuseMatch,
 } from '@/src/reuse/api';
+import { openReaderPanel, supportsReaderPanel } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
 
@@ -30,12 +31,21 @@ const STATUS_CLASSES: Record<StatusKind, string> = {
 
 /**
  * The toolbar popup: the on-page card reuse check for the tab you're on, plus
- * the entry point to the round timer. The timer itself deliberately does not
- * render here — it opens in its own window (src/timer/window.ts) so it keeps
- * running while the debater clicks back into the page.
+ * the entry points to the article panel and the round timer. Neither of those
+ * renders here — the timer opens in its own window (src/timer/window.ts) so it
+ * keeps running while the debater clicks back into the page, and the article
+ * panel opens as the browser's side panel (src/reader/panel.ts) so the article
+ * stays open while they click around the page it came from.
+ *
+ * The panel is opened from here rather than by messaging the background
+ * worker: both Chrome and Firefox will only open a panel while handling a user
+ * action, and this click is one.
  */
 export default function App() {
   const [pageUrl, setPageUrl] = useState('');
+  // Resolved on mount rather than in the click handler: opening the panel has
+  // to be the first thing that handler does (see src/reader/panel.ts).
+  const [windowId, setWindowId] = useState<number | undefined>(undefined);
   const [status, setStatus] = useState<Status>({ kind: 'loading', text: 'Checking…' });
   const [matches, setMatches] = useState<ReuseMatch[]>([]);
 
@@ -71,12 +81,11 @@ export default function App() {
       // window and is told which URL to check; as the toolbar dropdown it reads
       // the active tab itself.
       const requested = new URLSearchParams(window.location.search).get('url');
-      const url =
-        requested ??
-        (await browser.tabs.query({ active: true, currentWindow: true }))[0]?.url ??
-        '';
+      const activeTab = (await browser.tabs.query({ active: true, currentWindow: true }))[0];
+      const url = requested ?? activeTab?.url ?? '';
       if (cancelled) return;
       setPageUrl(url);
+      setWindowId(activeTab?.windowId);
 
       if (!url || !/^https?:\/\//.test(url)) {
         setStatus({ kind: 'error', text: 'Open a web page to check it for existing cards.' });
@@ -104,6 +113,7 @@ export default function App() {
   }, [check]);
 
   const canRecheck = /^https?:\/\//.test(pageUrl) && status.kind !== 'loading';
+  const canRead = /^https?:\/\//.test(pageUrl) && supportsReaderPanel();
 
   return (
     <div className="p-3 text-foreground">
@@ -120,7 +130,20 @@ export default function App() {
         </Button>
       </div>
 
+      {canRead && (
+        <Button
+          className="mb-2 w-full"
+          onClick={() => {
+            void openReaderPanel(windowId).then(() => window.close());
+          }}
+        >
+          <BookOpen className="mr-2 h-4 w-4" />
+          Read this page
+        </Button>
+      )}
+
       <Button
+        variant={canRead ? 'outline' : 'default'}
         className="mb-3 w-full"
         onClick={async () => {
           await requestTimerWindow();

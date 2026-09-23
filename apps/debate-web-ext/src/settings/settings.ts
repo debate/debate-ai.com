@@ -10,8 +10,10 @@
  */
 import { browser } from 'wxt/browser';
 
+import { isAiProviderId, type AiProviderId } from '@/src/ai/providers';
+
 /** What clicking the toolbar icon does. */
-export type ToolbarAction = 'popup' | 'timer';
+export type ToolbarAction = 'popup' | 'timer' | 'reader';
 
 export interface Settings {
   /** debate-ai.com deployment the reuse check runs against. */
@@ -25,12 +27,31 @@ export interface Settings {
   timerWindowHeight: number;
   /** Run the reuse check as soon as the popup opens, vs. on an explicit click. */
   autoCheck: boolean;
+
+  /**
+   * Where the article panel's Ask/Suggest answers come from — the reader's
+   * debate-ai.com account, or one of the providers they hold a key for. The
+   * keys themselves are deliberately not here: see src/ai/keys.ts.
+   */
+  aiProvider: AiProviderId;
+  /** Model id to use with `aiProvider`; blank means that provider's default. */
+  aiModel: string;
+  /** How many follow-up questions "Suggest" asks for. */
+  maxFollowupQuestions: number;
+  /** The prompt the article panel starts with, and what "Summarize" sends. */
+  summarizePrompt: string;
 }
 
 export const DEFAULT_API_BASE = 'https://debate-ai.com';
 
 /** Roomy enough for the 340px clock face plus the tab bar and format select. */
 export const DEFAULT_TIMER_WINDOW = { width: 420, height: 560 } as const;
+
+/** The prompt the article panel opens with, as the ported panel had it. */
+export const DEFAULT_SUMMARIZE_PROMPT = 'Summarize in bullet points and bold topics';
+
+export const MIN_FOLLOWUP_QUESTIONS = 1;
+export const MAX_FOLLOWUP_QUESTIONS = 8;
 
 export const DEFAULT_SETTINGS: Settings = {
   apiBase: DEFAULT_API_BASE,
@@ -39,6 +60,10 @@ export const DEFAULT_SETTINGS: Settings = {
   timerWindowWidth: DEFAULT_TIMER_WINDOW.width,
   timerWindowHeight: DEFAULT_TIMER_WINDOW.height,
   autoCheck: true,
+  aiProvider: 'account',
+  aiModel: '',
+  maxFollowupQuestions: 4,
+  summarizePrompt: DEFAULT_SUMMARIZE_PROMPT,
 };
 
 /** Chrome refuses windows smaller than this; keep the options page in range. */
@@ -65,7 +90,10 @@ export async function getSettings(): Promise<Settings> {
   return {
     apiBase,
     skipDomains: typeof stored.skipDomains === 'string' ? stored.skipDomains : '',
-    toolbarAction: stored.toolbarAction === 'timer' ? 'timer' : 'popup',
+    toolbarAction:
+      stored.toolbarAction === 'timer' || stored.toolbarAction === 'reader'
+        ? stored.toolbarAction
+        : 'popup',
     timerWindowWidth: clamp(
       stored.timerWindowWidth,
       DEFAULT_TIMER_WINDOW.width,
@@ -79,6 +107,18 @@ export async function getSettings(): Promise<Settings> {
       MAX_TIMER_WINDOW.height
     ),
     autoCheck: stored.autoCheck !== false,
+    aiProvider: isAiProviderId(stored.aiProvider) ? stored.aiProvider : 'account',
+    aiModel: typeof stored.aiModel === 'string' ? stored.aiModel.trim() : '',
+    maxFollowupQuestions: clamp(
+      stored.maxFollowupQuestions,
+      DEFAULT_SETTINGS.maxFollowupQuestions,
+      MIN_FOLLOWUP_QUESTIONS,
+      MAX_FOLLOWUP_QUESTIONS,
+    ),
+    summarizePrompt:
+      typeof stored.summarizePrompt === 'string' && stored.summarizePrompt.trim()
+        ? stored.summarizePrompt
+        : DEFAULT_SUMMARIZE_PROMPT,
   };
 }
 
@@ -86,5 +126,6 @@ export async function getSettings(): Promise<Settings> {
 export async function saveSettings(patch: Partial<Settings>): Promise<void> {
   const next: Partial<Settings> = { ...patch };
   if (typeof next.apiBase === 'string') next.apiBase = next.apiBase.trim();
+  if (typeof next.aiModel === 'string') next.aiModel = next.aiModel.trim();
   await browser.storage.sync.set(next as Record<string, unknown>);
 }

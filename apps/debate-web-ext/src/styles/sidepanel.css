@@ -1,0 +1,161 @@
+/* The article panel's shell and its reading typography.
+ *
+ * The typography is written out rather than pulled from @tailwindcss/typography
+ * (which this extension does not ship) and matches what research-agent-ui's
+ * article viewer renders: generous line height, a serif body for long-form
+ * reading, and headings that keep their rhythm as the reader zooms. Sizes are
+ * in `em` so the whole article scales from one `font-size` on its container.
+ */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* The reading-mode article body. */
+.article-prose {
+  font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+  line-height: 1.9;
+  word-break: break-word;
+}
+
+.article-prose p,
+.article-prose ul,
+.article-prose ol,
+.article-prose blockquote,
+.article-prose pre,
+.article-prose table {
+  margin: 1.1em 0;
+}
+
+.article-prose h1,
+.article-prose h2,
+.article-prose h3,
+.article-prose h4,
+.article-prose h5,
+.article-prose h6 {
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin: 1.6em 0 0.6em;
+}
+
+.article-prose h1 { font-size: 1.5em; }
+.article-prose h2 { font-size: 1.3em; }
+.article-prose h3 { font-size: 1.15em; }
+
+.article-prose ul,
+.article-prose ol {
+  padding-left: 1.4em;
+}
+
+.article-prose ul { list-style: disc; }
+.article-prose ol { list-style: decimal; }
+.article-prose li { margin: 0.35em 0; }
+
+.article-prose a {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.article-prose blockquote {
+  border-left: 2px solid hsl(var(--border));
+  padding-left: 1em;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.8;
+}
+
+.article-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.4em 0;
+}
+
+.article-prose figure { margin: 1.4em 0; }
+
+.article-prose figcaption {
+  font-size: 0.8em;
+  color: hsl(var(--muted-foreground));
+  margin-top: 0.5em;
+}
+
+.article-prose pre {
+  background: hsl(var(--muted));
+  border-radius: 0.5rem;
+  padding: 0.75em;
+  overflow-x: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+  line-height: 1.6;
+}
+
+.article-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+}
+
+.article-prose table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+}
+
+.article-prose th,
+.article-prose td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.4em 0.6em;
+  text-align: left;
+}
+
+.article-prose hr {
+  border: 0;
+  border-top: 1px solid hsl(var(--border));
+  margin: 2em 0;
+}
+
+/* Highlight mode: the browser's own selection highlight, made unmissable, so
+ * a debater can mark the passage they are about to cut without any editor. */
+.article-prose.is-highlighting ::selection {
+  background: #fde68a;
+  color: #111827;
+}
+
+/* An AI answer. Sans-serif and tighter than the article, so the two never read
+ * as the same voice. */
+.answer-prose > *:first-child { margin-top: 0; }
+.answer-prose > *:last-child { margin-bottom: 0; }
+
+.answer-prose p,
+.answer-prose ul {
+  margin: 0.6em 0;
+}
+
+.answer-prose ul {
+  padding-left: 1.2em;
+  list-style: disc;
+}
+
+.answer-prose li { margin: 0.25em 0; }
+
+.answer-prose h2,
+.answer-prose h3,
+.answer-prose h4,
+.answer-prose h5,
+.answer-prose h6 {
+  font-weight: 600;
+  font-size: 1em;
+  margin: 0.9em 0 0.3em;
+}
+
+.answer-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: hsl(var(--background));
+  border-radius: 0.25rem;
+  padding: 0.1em 0.3em;
+  font-size: 0.9em;
+}

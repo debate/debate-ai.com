@@ -6,6 +6,7 @@ import {
   hostOf,
   parseList,
 } from "../hosts";
+import { EXTENSION_ORIGIN } from "../../config/site";
 
 describe("parseList", () => {
   it("splits a comma-separated value and drops the empties", () => {
@@ -83,6 +84,17 @@ describe("buildTrustedOrigins", () => {
     const origins = buildTrustedOrigins();
     expect(origins).toContain("https://debate-ai.com");
     expect(origins).toContain("http://localhost:3000");
+  });
+
+  it("trusts the browser extension, by its exact id and not a wildcard", () => {
+    const origins = buildTrustedOrigins();
+    // Without this the extension's sign-in handoff — a POST to
+    // /api/auth/one-time-token/verify from chrome-extension://<id> — is
+    // rejected by better-auth's origin check before it reaches the endpoint.
+    expect(origins).toContain(EXTENSION_ORIGIN);
+    // A wildcard here would trust every extension the visitor has installed.
+    expect(origins).not.toContain("chrome-extension://*");
+    expect(origins.some((origin) => origin.includes("*"))).toBe(false);
   });
 
   it("merges the configured base URL and the env-supplied extras", () => {
