@@ -27,3 +27,26 @@ export const NEXT_PUBLIC_GOOGLE_CLIENT_ID =
 // /auth/native-complete can hand a browser-established session back to the
 // wrapper's webview. Keep these two values in sync.
 export const NATIVE_DEEP_LINK_SCHEME = "debateai";
+
+// Chrome Web Store extension id of apps/debate-web-ext. It is derived from the
+// public `key` pinned in that extension's manifest (apps/debate-web-ext/wxt.config.ts),
+// so it is stable across rebuilds and across the stores — which is what lets
+// the origin be allowlisted here rather than trusting `chrome-extension://*`,
+// i.e. every extension the visitor has installed. Keep the two in sync.
+export const EXTENSION_ID = "noecbaibfhbmpapofcdkgchfifmoinfj";
+
+/** The extension's own origin, as the browser sends it on its requests. */
+export const EXTENSION_ORIGIN = `chrome-extension://${EXTENSION_ID}`;
+
+/**
+ * Where /login sends the extension's sign-in tab once the provider returns —
+ * see app/auth/extension-complete, and apps/debate-web-ext/src/auth/session.ts
+ * for the other half of the handoff.
+ */
+export const EXTENSION_CALLBACK_PATH = "/auth/extension-complete";
+
+/**
+ * Fragment key `/auth/extension-complete` parks the one-time token under, and
+ * which the extension watches its own sign-in tab's URL for.
+ */
+export const EXTENSION_TOKEN_HASH_KEY = "debate_ai_ext_token";

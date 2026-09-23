@@ -1,5 +1,22 @@
 import { defineConfig } from 'wxt';
 
+/**
+ * The AI provider APIs the article panel calls directly when the reader has
+ * pasted their own key (src/ai/providers.ts). An extension page may call these
+ * without a CORS preflight only if their origins are granted here.
+ *
+ * They are listed rather than requested at runtime so that what the extension
+ * can reach is visible in one place, in the manifest, to anyone reviewing it.
+ * Nothing is sent to any of them unless the reader has both chosen that
+ * provider and stored a key for it.
+ */
+const AI_PROVIDER_HOSTS = [
+  'https://openrouter.ai/*',
+  'https://api.openai.com/*',
+  'https://api.anthropic.com/*',
+  'https://generativelanguage.googleapis.com/*',
+];
+
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
@@ -21,23 +38,49 @@ export default defineConfig({
         '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta',
     },
   },
-  manifest: {
-    name: 'Debate AI — Timer & Card Reuse Check',
+  manifest: ({ browser }) => ({
+    name: 'Debate AI — Reader, Timer & Card Reuse Check',
     description:
-      'Critical times call for critical thinking! Debate-AI.com extension: a debate round timer with round timeline and card reuse check.',
+      'Critical times call for critical thinking! Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
     // Kept from the original timer manifest so the extension ID (and therefore
     // the user's existing chrome.storage data) stays stable across both the
-    // WXT migration and the merge with the card-reuse extension.
+    // WXT migration and the merge with the card-reuse extension. debate-ai.com
+    // also derives the extension's origin from this key in order to trust it
+    // for sign-in — see its lib/config/site.ts EXTENSION_ID.
     key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjrcSiPHdMYVhqXi8/Dhktfs6019hLifp6cQm9hs3VToy+5tb3QcHwpX1H+Pc/Jf9G12oO6a3N2FE7Yz3RGI/eOpLhnmftWLpGK6k09cULjSWYjWi1RhijhZ4BkmNkU1A2wgECHs0fnnTBnZovMffFcLnkmtuatCetfGXmhwZzbqfAQwGrLtdtt2g09s7VCPv9YCJlzswx74CoLmAjGSRdHf/ZIX8QqsUQR4ATor/KcKn60sNLV/Ef395OtdN3VkD0IkB6pbtqpG7UxMYmGixapYeKRQMPS4IUlrc5RchoYKA1VUGQkMwsTI10159vBre70+MKrE9EJ2lYguHgKrYEwIDAQAB',
-    // `storage` for the timer's session/timeline and the shared settings;
-    // `activeTab` for the popup's reuse check reading the current page's URL;
-    // `contextMenus` for the right-click "Check this page for existing cards".
-    permissions: ['storage', 'activeTab', 'contextMenus'],
-    // The deployments the reuse check may call (see the Options page).
-    host_permissions: ['https://debate-ai.com/*', 'http://localhost:3000/*'],
+    permissions: [
+      // The timer's session/timeline and the shared settings.
+      'storage',
+      // The popup's reuse check reading the current page's URL, and — the
+      // reason it is enough for the article panel too — permission to read
+      // the page the reader just opened the panel on. `activeTab` is granted
+      // per user action, which is why the panel needs no access to every site.
+      'activeTab',
+      // Reading that page's HTML out of the tab (src/reader/snapshot.ts).
+      // MV3 only: the Firefox build is MV2, where the same job is done by
+      // `tabs.executeScript` under `activeTab` and there is no such permission.
+      ...(browser === 'firefox' ? [] : ['scripting']),
+      // Right-click → "Read this page" / "Check this page for existing cards".
+      'contextMenus',
+      // Pinging debate-ai.com with the stored session so a signed-in reader
+      // stays signed in (src/auth/session.ts).
+      'alarms',
+      // Chrome's side panel, where the article panel lives. Firefox uses
+      // `sidebar_action`, which WXT derives from the sidepanel entrypoint and
+      // which needs no permission entry.
+      ...(browser === 'firefox' ? [] : ['sidePanel']),
+    ],
+    // The deployments the reuse check, sign-in and account-backed AI may call
+    // (see the Options page), plus the model providers above.
+    host_permissions: [
+      'https://debate-ai.com/*',
+      'http://localhost:3000/*',
+      ...AI_PROVIDER_HOSTS,
+    ],
     // `action.default_popup` (and its title, from the popup's <title>) come
     // from entrypoints/popup; the background worker swaps the popup out when
-    // the toolbar icon is configured to open the timer window instead.
+    // the toolbar icon is configured to open the timer window or the article
+    // panel instead.
     icons: {
       16: '/icon/16.png',
       32: '/icon/32.png',
@@ -45,5 +88,5 @@ export default defineConfig({
       96: '/icon/96.png',
       128: '/icon/128.png',
     },
-  },
+  }),
 });
