@@ -52,7 +52,8 @@ const identifiableRound: VideoType = [
 ];
 
 /** A round with tournament data on the feed but none of its own: it is listed
- *  as a plain row at the end of its season and still shows its own title. */
+ *  as a plain row among its season's tournaments, by date, and still shows
+ *  its own title. */
 const bareRound: VideoType = [
   "vid-bare",
   "Untagged Round",
@@ -151,7 +152,6 @@ describe("the round list's columns", () => {
       "Neg",
       "Date",
       "Views",
-      "Actions",
     ]);
   });
 
@@ -167,24 +167,53 @@ describe("the round list's columns", () => {
 });
 
 describe("the round list's tree", () => {
-  it("heads its rows with the season, the tournament and the round", () => {
+  it("heads its rows with the season and the tournament, not the round level", () => {
     const html = renderList([identifiableRound]);
     // Season 2025 is the 24-25 season; the tournament keeps its short name.
     expect(html).toContain("24-25");
     expect(html).toContain("Harvard");
-    expect(html).toContain("Finals");
-    expect(html).toContain("Harvard Finals");
+    // The level rides on the row's badge rather than heading a group.
+    expect(html).not.toContain('aria-label="Collapse round Finals"');
+    expect(html).toContain(">Finals</span>");
   });
 
-  it("lists a round with no tournament at the end of its season rather than dropping it", () => {
+  it("leaves the title off a round whose tournament, level and teams are recorded", () => {
+    const html = renderList([identifiableRound]);
+    expect(html).not.toContain(">Harvard Finals</div>");
+  });
+
+  it("keeps the title on a round missing any of them", () => {
+    const html = renderList([identifiableRound, bareRound]);
+    expect(html).toContain(">Untagged Round</div>");
+  });
+
+  it("puts the row's actions in the round cell, under its details", () => {
+    const html = renderList([identifiableRound]);
+    const rows = [...html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)].map(([, row]) => row);
+    const row = rows.find((candidate) => candidate.includes("Team Aff")) as string;
+    const firstCell = row.slice(0, row.indexOf("</td>"));
+    expect(firstCell).toContain('aria-label="Star to add to My Favorites"');
+    expect(firstCell.indexOf("Harvard")).toBeLessThan(firstCell.indexOf("Star to add"));
+  });
+
+  it("sizes the table to its columns rather than the page", () => {
+    const html = renderList([identifiableRound]);
+    expect(html).toMatch(/<table[^>]*style="width:\d+px"/);
+  });
+
+  it("slots a round with no tournament among the tournaments by date", () => {
     // Alongside an identifiable round: a feed of nothing but untagged rounds
     // carries no tournament and no teams at all, which is how the table tells
     // a lecture listing apart from an archive of rounds.
-    const html = renderList([bareRound, identifiableRound]);
+    const later = [...bareRound] as VideoType;
+    later[0] = "vid-later";
+    later[1] = "Later Round";
+    later[2] = "2025-03-01";
+    const html = renderList([later, bareRound, identifiableRound]);
     expect(html).not.toContain("Unsorted");
-    expect(html).toContain("Untagged Round");
-    // After the season's tournaments, not above them.
-    expect(html.indexOf("Untagged Round")).toBeGreaterThan(html.indexOf("Harvard Finals"));
+    // January's round, then Harvard in February, then March's round.
+    expect(html.indexOf("Untagged Round")).toBeLessThan(html.indexOf("Team Aff"));
+    expect(html.indexOf("Later Round")).toBeGreaterThan(html.indexOf("Team Aff"));
   });
 
   it("makes each team name a search for that team", () => {
@@ -210,7 +239,7 @@ describe("the round list's tree", () => {
 
   it("opens every level, so no video is hidden until a group is collapsed", () => {
     const html = renderList([identifiableRound, bareRound]);
-    expect(html).toContain("Harvard Finals");
+    expect(html).toContain("Team Aff");
     expect(html).toContain("Untagged Round");
   });
 
@@ -218,8 +247,8 @@ describe("the round list's tree", () => {
     const html = renderList([identifiableRound]);
     expect(html).toContain('aria-label="Collapse one level"');
     expect(html).toContain('aria-label="Expand one level"');
-    // Season → tournament → round → video.
-    expect(html).toContain(">L4<");
+    // Season → tournament → video.
+    expect(html).toContain(">L3<");
   });
 });
 
@@ -249,7 +278,7 @@ describe("the lecture list's columns", () => {
   it("keeps its own set, which never had an Arguments column", () => {
     const html = renderList([lecture]);
     const columnHeaders = headers(html);
-    expect(columnHeaders).toEqual(["Library", "Date", "Views", "Actions"]);
+    expect(columnHeaders).toEqual(["Library", "Date", "Views"]);
     expect(cellCount(html, "Kritik Basics")).toBe(columnHeaders.length);
   });
 
@@ -295,7 +324,7 @@ describe("the lecture list's columns", () => {
     // Without `layout` one round in the feed flips the whole table to the
     // season → tournament → round tree; a lectures page says what it lists.
     const html = renderList([lecture, identifiableRound], "lecture");
-    expect(headers(html)).toEqual(["Library", "Date", "Views", "Actions"]);
+    expect(headers(html)).toEqual(["Library", "Date", "Views"]);
     expect(html).not.toContain("aria-expanded");
     const bodyRows = html.slice(html.indexOf("<tbody")).match(/<tr[^>]*>/g) ?? [];
     expect(bodyRows).toHaveLength(2);
