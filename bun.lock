@@ -164,7 +164,7 @@
         "wrangler": "^4.130.0",
       },
     },
-    "apps/debate-web-ext": {
+    "apps/debate-browser-ext": {
       "name": "debate-web-ext",
       "version": "6.0.0",
       "dependencies": {
@@ -2930,7 +2930,7 @@
 
     "debate-videos": ["debate-videos@workspace:packages/debate-videos"],
 
-    "debate-web-ext": ["debate-web-ext@workspace:apps/debate-web-ext"],
+    "debate-web-ext": ["debate-web-ext@workspace:apps/debate-browser-ext"],
 
     "debounce": ["debounce@1.2.1", "", {}, "sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug=="],
 
