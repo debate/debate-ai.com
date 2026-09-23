@@ -1,6 +1,6 @@
 # Codecov configuration — https://docs.codecov.com/docs/codecov-yaml
 #
-# Coverage is produced by `npm run coverage` at the repo root, which runs every
+# Coverage is produced by `bun run coverage` at the repo root, which runs every
 # `packages/*/test` suite through Vitest and writes a single merged
 # `coverage/lcov.info`.
 
@@ -34,6 +34,9 @@ flag_management:
     carryforward: true
 
 flags:
+  debate-ai-webui:
+    paths:
+      - packages/debate-ai-webui/src
   debate-api-client:
     paths:
       - packages/debate-api-client/src
@@ -49,6 +52,9 @@ flags:
   debate-editor:
     paths:
       - packages/debate-editor/src
+  debate-feature-catalog:
+    paths:
+      - packages/debate-feature-catalog/src
   debate-flow:
     paths:
       - packages/debate-flow/src
@@ -88,6 +94,9 @@ component_management:
         threshold: 2%
         informational: true
   individual_components:
+    - component_id: debate-ai-webui
+      paths:
+        - packages/debate-ai-webui/src
     - component_id: debate-api-client
       paths:
         - packages/debate-api-client/src
@@ -103,6 +112,9 @@ component_management:
     - component_id: debate-editor
       paths:
         - packages/debate-editor/src
+    - component_id: debate-feature-catalog
+      paths:
+        - packages/debate-feature-catalog/src
     - component_id: debate-flow
       paths:
         - packages/debate-flow/src
