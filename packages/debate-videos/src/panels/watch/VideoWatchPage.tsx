@@ -705,6 +705,7 @@ export function VideoWatchPage({
                 hiddenVideos={viewState.hiddenVideos}
                 grouped={false}
                 defaultSort={{ column: "date", direction: "desc" }}
+                onSearch={handleBadgeClick}
               />
               <WatchQueuePanel className="lg:sticky lg:top-6" />
             </div>

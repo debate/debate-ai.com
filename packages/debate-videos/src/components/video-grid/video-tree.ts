@@ -6,7 +6,9 @@
  * The hierarchy is the one an archive of rounds is actually navigated by:
  * season → tournament → round level (Finals, Semifinals, … then prelims),
  * with the videos as the leaves. Lectures carry none of those three fields,
- * so they group season → channel → category instead.
+ * so they group season → channel → category instead. A round missing its
+ * tournament or its round level stops one level short and is listed as a
+ * plain row at the end of its season (or tournament), after the groups.
  *
  * Grouping runs on the *slot* (see `video-stacks.ts`), not on the video: a
  * stacked playlist sits in one leaf under the round its first member belongs
@@ -160,19 +162,25 @@ export function videoGroupPath(video: VideoType, mode: VideoTreeMode): GroupStep
     return steps;
   }
 
+  // A round missing a field stops its path at the level above it, so it is
+  // listed as a plain row at the end of that group — after its season's
+  // tournaments, or after its tournament's rounds — rather than buried under
+  // a nest of `Unsorted` placeholders.
   const tournament = cleanTournamentName(video[7]);
+  if (!tournament) return steps;
   steps.push({
     kind: "tournament",
-    label: tournament ?? UNGROUPED_LABEL,
-    sortValue: tournament?.toLowerCase() ?? "",
-    trailing: !tournament,
+    label: tournament,
+    sortValue: tournament.toLowerCase(),
   });
 
-  const level = parseRoundLevel(video[8]).level;
+  const rawLevel = video[8]?.trim();
+  if (!rawLevel) return steps;
+  const level = parseRoundLevel(rawLevel).level;
   const unparsed = level === "UNKNOWN";
   steps.push({
     kind: "round",
-    label: unparsed ? video[8]?.trim() || UNGROUPED_LABEL : formatRoundLevel(level),
+    label: unparsed ? rawLevel : formatRoundLevel(level),
     // Negated so the bracket reads down from Finals to the prelims, which is
     // the order the rounds are watched in rather than debated in.
     sortValue: unparsed ? 0 : -getRoundSortKey(level),

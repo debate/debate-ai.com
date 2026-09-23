@@ -51,8 +51,8 @@ const identifiableRound: VideoType = [
   2025,
 ];
 
-/** A round with tournament data on the feed but none of its own: it files
- *  under the `Unsorted` tournament and still shows its own title. */
+/** A round with tournament data on the feed but none of its own: it is listed
+ *  as a plain row at the end of its season and still shows its own title. */
 const bareRound: VideoType = [
   "vid-bare",
   "Untagged Round",
@@ -176,13 +176,36 @@ describe("the round list's tree", () => {
     expect(html).toContain("Harvard Finals");
   });
 
-  it("files a round with no tournament under Unsorted rather than dropping it", () => {
+  it("lists a round with no tournament at the end of its season rather than dropping it", () => {
     // Alongside an identifiable round: a feed of nothing but untagged rounds
     // carries no tournament and no teams at all, which is how the table tells
     // a lecture listing apart from an archive of rounds.
-    const html = renderList([identifiableRound, bareRound]);
-    expect(html).toContain("Unsorted");
+    const html = renderList([bareRound, identifiableRound]);
+    expect(html).not.toContain("Unsorted");
     expect(html).toContain("Untagged Round");
+    // After the season's tournaments, not above them.
+    expect(html.indexOf("Untagged Round")).toBeGreaterThan(html.indexOf("Harvard Finals"));
+  });
+
+  it("makes each team name a search for that team", () => {
+    const html = renderToStaticMarkup(
+      createElement(VideoListRows, {
+        videos: [identifiableRound],
+        videoContainerRef: { current: null },
+        favorites: new Set<string>(),
+        onToggleFavorite: () => {},
+        onHideVideo: () => {},
+        onUnhideVideo: () => {},
+        hiddenVideos: new Set<string>(),
+        onSearch: () => {},
+      }),
+    );
+    expect(html).toContain('title="Search for Team Aff"');
+    expect(html).toContain('title="Search for Team Neg"');
+  });
+
+  it("leaves team names as plain text without a search handler", () => {
+    expect(renderList([identifiableRound])).not.toContain("Search for Team Aff");
   });
 
   it("opens every level, so no video is hidden until a group is collapsed", () => {

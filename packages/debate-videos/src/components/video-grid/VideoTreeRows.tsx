@@ -53,6 +53,8 @@ export interface VideoTreeRowContext {
   onToggleFavorite: (videoId: string) => void
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
+  /** Searches the library for a clicked team name. */
+  onSearch?: (text: string) => void
 }
 
 function GroupRows({
@@ -179,6 +181,7 @@ export function VideoTreeRows({
       onToggleFavorite={context.onToggleFavorite}
       onHideVideo={context.onHideVideo}
       onUnhideVideo={context.onUnhideVideo}
+      onSearch={context.onSearch}
     />
   )
 }

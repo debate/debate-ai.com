@@ -80,11 +80,41 @@ function RowThumbnail({
   )
 }
 
-/** An Aff or Neg cell: the team, and under it the argument it ran if known. */
-function TeamCell({ team, argument }: { team?: string | null; argument?: string | null }) {
+/**
+ * An Aff or Neg cell: the team, and under it the argument it ran if known.
+ * With `onSearch`, the team name is a button that searches the library for
+ * that team instead of playing the row.
+ */
+function TeamCell({
+  team,
+  argument,
+  onSearch,
+}: {
+  team?: string | null
+  argument?: string | null
+  onSearch?: (text: string) => void
+}) {
   return (
     <td className="px-3 py-3 align-top text-sm">
-      <div className="truncate">{team || <span className="text-muted-foreground">—</span>}</div>
+      <div className="truncate">
+        {!team ? (
+          <span className="text-muted-foreground">—</span>
+        ) : onSearch ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              onSearch(team)
+            }}
+            title={`Search for ${team}`}
+            className="max-w-full truncate text-left hover:text-primary hover:underline"
+          >
+            {team}
+          </button>
+        ) : (
+          team
+        )}
+      </div>
       {argument && (
         <div className="mt-0.5 line-clamp-2 text-xs leading-tight text-muted-foreground" title={argument}>
           {argument}
@@ -108,6 +138,7 @@ export function VideoListRow({
   onToggleFavorite,
   onHideVideo,
   onUnhideVideo,
+  onSearch,
 }: {
   video: VideoType
   /** Tree depth, for the row's indent. */
@@ -126,6 +157,8 @@ export function VideoListRow({
   onToggleFavorite: (videoId: string) => void
   onHideVideo: (videoId: string) => void
   onUnhideVideo: (videoId: string) => void
+  /** Searches the library for a team when its name is clicked. */
+  onSearch?: (text: string) => void
 }) {
   const [
     videoId,
@@ -238,8 +271,8 @@ export function VideoListRow({
 
         {isRoundMode && (
           <>
-            <TeamCell team={affTeam} argument={arg1AC} />
-            <TeamCell team={negTeam} argument={arg2NR} />
+            <TeamCell team={affTeam} argument={arg1AC} onSearch={onSearch} />
+            <TeamCell team={negTeam} argument={arg2NR} onSearch={onSearch} />
           </>
         )}
 

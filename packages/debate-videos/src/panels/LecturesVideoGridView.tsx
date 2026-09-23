@@ -452,6 +452,7 @@ export function LecturesVideoGridView({
                         stacks={stacks}
                         stacksEnabled={stackedPlaylists}
                         showThumbnails={showThumbnails}
+                        onSearch={onSearchChange}
                       />
                     ) : (
                       <VideoGrid
@@ -493,6 +494,7 @@ export function LecturesVideoGridView({
                         stacks={stacks}
                         stacksEnabled={stackedPlaylists}
                         showThumbnails={showThumbnails}
+                        onSearch={onSearchChange}
                       />
                     ) : (
                       <VideoGrid
@@ -530,6 +532,7 @@ export function LecturesVideoGridView({
                 stacks={stacks}
                 stacksEnabled={stackedPlaylists}
                 showThumbnails={showThumbnails}
+                onSearch={onSearchChange}
               />
             ) : (
               <VideoGrid

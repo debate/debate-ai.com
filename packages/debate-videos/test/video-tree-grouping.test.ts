@@ -4,8 +4,10 @@
  * The hierarchy is the point: season → tournament → round for an archive of
  * rounds, season → channel → category for lectures, newest season first and
  * the bracket reading down from Finals. Videos missing the field a level
- * groups by have to land somewhere visible rather than vanish, which is what
- * the `Unsorted` and `Legacy` groups are for.
+ * groups by have to land somewhere visible rather than vanish: a round with
+ * no tournament is a plain row at the end of its season, one with no round
+ * level a plain row at the end of its tournament, and an undated one sits
+ * in the `Legacy` season.
  */
 
 import { describe, it, expect } from "vitest";
@@ -159,14 +161,33 @@ describe("the order of the tree", () => {
     expect(labels(groupAt(tree, "24-25").children)).toEqual(["Greenhill", "Harvard", "Shirley"]);
   });
 
-  it("sends the placeholder groups to the end of their level", () => {
+  it("sends the Legacy season to the end of the seasons", () => {
     const tree = treeOf([
-      round("a", { tournament: null }),
       round("b", { tournament: "Harvard 2025" }),
       round("c", { season: 0, date: "" }),
     ]);
     expect(labels(tree)).toEqual(["24-25", "Legacy"]);
-    expect(labels(groupAt(tree, "24-25").children)).toEqual(["Harvard", "Unsorted"]);
+  });
+
+  it("lists a round with no tournament at the end of its season", () => {
+    const tree = treeOf([
+      round("a", { tournament: null }),
+      round("b", { tournament: "Harvard 2025" }),
+    ]);
+    const children = groupAt(tree, "24-25").children;
+    expect(children.map((node) => node.type)).toEqual(["group", "video"]);
+    expect(labels(children)[0]).toBe("Harvard");
+    expect(countVideoTreeLeaves(tree)).toBe(2);
+  });
+
+  it("lists a round with a tournament but no round level at the end of that tournament", () => {
+    const tree = treeOf([
+      round("a", { level: null }),
+      round("b"),
+    ]);
+    const children = groupAt(tree, "24-25", "Harvard").children;
+    expect(children.map((node) => node.type)).toEqual(["group", "video"]);
+    expect(labels(children)[0]).toBe("Finals");
   });
 });
 

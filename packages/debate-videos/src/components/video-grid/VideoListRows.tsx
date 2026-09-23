@@ -80,6 +80,9 @@ interface VideoListRowsProps {
    * newest first instead.
    */
   defaultSort?: { column: ColumnKey; direction: SortDirection }
+  /** Searches the library for a team when its name is clicked in the Aff or
+   *  Neg column; without it the names are plain text. */
+  onSearch?: (text: string) => void
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views"
@@ -215,6 +218,7 @@ export function VideoListRows({
   layout,
   grouped = true,
   defaultSort,
+  onSearch,
 }: VideoListRowsProps) {
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
   // neg data that lectures rarely populate, so that presence tells the two
@@ -305,6 +309,7 @@ export function VideoListRows({
     onToggleFavorite,
     onHideVideo,
     onUnhideVideo,
+    onSearch,
   }
 
   return (
