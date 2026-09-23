@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { publishedMsForDate, seasonYearForDate } from "debate-data-sync/src/videos/video-rows";
@@ -9,8 +9,8 @@ import { recomputeVideoStacks } from "@/lib/videos/recompute-video-stacks";
 /** Adds every staged round to the public video grid. Video IDs are primary
  * keys, so this is safe to run repeatedly and cannot create duplicates. */
 export async function POST() {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const db = await getDBFromContext();
   const rounds = await db.select().from(youtubeRoundVideos);

@@ -8,6 +8,7 @@ import {
   type VideoType,
 } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
+import { VideoStaffControls } from "@/components/videos/VideoStaffControls"
 import { getRelatedVideos, getVideoByRouteSegments } from "@/lib/videos/video-repository"
 import { getVideoSidePanelContent } from "@/lib/videos/video-content"
 
@@ -97,7 +98,13 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
           note: link.note,
         }))}
         dockSlot={<CategoryDock embedded />}
-        extraControls={<SlowSpreadButton size="md" />}
+        extraControls={
+          <>
+            <SlowSpreadButton size="md" />
+            {/* Renders nothing unless the viewer is an admin or moderator. */}
+            <VideoStaffControls videoId={video[0] as string} />
+          </>
+        }
       />
     </Suspense>
   )

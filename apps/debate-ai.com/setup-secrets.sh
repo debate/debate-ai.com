@@ -17,7 +17,7 @@ echo "  - NEXT_PUBLIC_BASE_URL (your production URL, e.g., https://debate-ai.com
 echo "  - BETTER_AUTH_ALLOWED_HOSTS (optional - extra hosts this app is served from,"
 echo "      comma-separated; see docs/auth-domains.md)"
 echo "  - YOUTUBE_API_KEY (required for /admin YouTube resync)"
-echo "  - ADMIN_EMAILS (optional - comma-separated allowlist for /admin; open to everyone if unset)"
+echo "  - ADMIN_EMAILS or ADMIN_EMAIL (comma-separated allowlist for /admin; nobody is admin if unset)"
 echo "  - CARD_IMPORT_TOKEN (optional - bearer token for the debate-cards-upload CLI; without it, card imports need an admin session)"
 echo "  - YOUTUBE_PROXY_URL (optional - fetch-through proxy template for transcripts, e.g. https://proxy.example.com/fetch?key=K&url={url}; see docs/youtube-transcript-proxy.md)"
 echo "  - TURNSTILE_SECRET_KEY (optional - Cloudflare Turnstile secret; pair with a TURNSTILE_SITE_KEY variable to gate first page loads, see internals/turnstile-bot-gate)"

@@ -1,12 +1,41 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
+import { eq } from "drizzle-orm";
 import { getDBFromContext } from "@/lib/database/context";
+import { videos } from "@/lib/database/schema";
 import { describeError } from "@/lib/database/errors";
 import {
   deleteLibraryVideo,
   updateLibraryVideo,
   type LibraryVideoPatch,
 } from "@/lib/videos/admin-library";
+
+/**
+ * Reads one published video's row, for the watch page's "Edit video" dialog.
+ */
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = await params;
+
+  try {
+    const db = await getDBFromContext();
+    const [video] = await db.select().from(videos).where(eq(videos.videoId, id)).limit(1);
+    if (!video) {
+      return NextResponse.json({ error: "Video not found" }, { status: 404 });
+    }
+    return NextResponse.json({ video });
+  } catch (error) {
+    console.error("Failed to read library video:", describeError(error), error);
+    return NextResponse.json(
+      { error: "Failed to read video", details: describeError(error) },
+      { status: 500 },
+    );
+  }
+}
 
 /**
  * Edits one published video's metadata.
@@ -16,8 +45,8 @@ import {
  * the result (see `lib/videos/admin-library.ts`).
  */
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -55,8 +84,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
  * later YouTube resync does not re-publish it.
  */
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent, email } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

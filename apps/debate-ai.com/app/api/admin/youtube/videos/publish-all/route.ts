@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { chunkBoundParams } from "@/lib/database/bound-params";
 import { getDBFromContext } from "@/lib/database/context";
 import { chunkStatements } from "@/lib/database/query-budget";
@@ -14,8 +14,8 @@ import { publishRoundVideos } from "@/lib/videos/publish-round-video";
  * counterpart to the per-video publish action.
  */
 export async function POST(req: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

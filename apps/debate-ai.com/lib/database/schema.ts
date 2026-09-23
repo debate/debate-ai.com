@@ -1755,3 +1755,21 @@ export const savedToolRecords = sqliteTable(
 );
 
 export type SavedToolRecordRow = typeof savedToolRecords.$inferSelect;
+
+// Staff roles granted from the admin panel. Admins themselves come from the
+// ADMIN_EMAIL / ADMIN_EMAILS env allowlist (see `lib/auth/admin.ts`); this
+// table only holds the moderators an admin invited — people who can edit the
+// video library, video reports and the round-video queue but not accounts,
+// sync jobs or uploads. Keyed by email rather than `user.id` so a moderator
+// can be invited before they have ever signed in.
+export const staffRoles = sqliteTable("staff_roles", {
+  email: text("email").primaryKey(),
+  /** Currently always `moderator`. */
+  role: text("role").notNull().default("moderator"),
+  invitedBy: text("invited_by"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type StaffRoleRow = typeof staffRoles.$inferSelect;
