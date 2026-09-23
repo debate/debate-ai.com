@@ -14,7 +14,7 @@ import { Button } from "../../ui/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/primitives/card";
 import { Badge } from "../../ui/primitives/badge";
 import { DEBATE_STYLE_LABELS, type DebateStyle } from "../../types/videos";
-import { getStyleTopicText, topicDisplayLines, type DebateTopicYear } from "../../lib/debate-topics";
+import { getStyleTopicItems, getStyleTopicText, type DebateTopicYear } from "../../lib/debate-topics";
 
 /** Display order: Policy, College (NDT), LD, PF. */
 const EXPLORER_STYLES: DebateStyle[] = [1, 4, 3, 2];
@@ -28,7 +28,7 @@ export interface DebateTopicsExplorerProps {
 /** The style filter's own value type: every real `DebateStyle`, plus "all". */
 export type StyleFilter = DebateStyle | "all";
 
-/** True when any style's resolution text for `entry` contains `term`
+/** True when any style's resolution title or text for `entry` contains `term`
  *  (already lowercased), or `entry.year` itself does. `styles` narrows which
  *  styles' text counts as a match — defaults to every explorer style, so a
  *  bare search box still searches everything. Exported for its own unit
@@ -36,7 +36,11 @@ export type StyleFilter = DebateStyle | "all";
  *  `renderToStaticMarkup`. */
 export function entryMatches(entry: DebateTopicYear, term: string, styles: DebateStyle[] = EXPLORER_STYLES): boolean {
   if (String(entry.year).toLowerCase().includes(term)) return true;
-  return styles.some((style) => (getStyleTopicText(entry, style) ?? "").toLowerCase().includes(term));
+  return styles.some((style) =>
+    getStyleTopicItems(entry, style).some((item) =>
+      [item.title, item.text].some((s) => (s ?? "").toLowerCase().includes(term)),
+    ),
+  );
 }
 
 /** True when `entry` should survive `styleFilter` — always true for "all",
@@ -140,16 +144,28 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
               </CardHeader>
               <CardContent className="space-y-2">
                 {visibleStyles.map((style) => {
-                  const text = getStyleTopicText(entry, style);
-                  if (!text) return null;
+                  const items = getStyleTopicItems(entry, style);
+                  if (items.length === 0) return null;
                   return (
                     <div key={style} className="flex items-start gap-2 text-sm">
                       <Badge variant="outline" className="mt-0.5 shrink-0">
                         {DEBATE_STYLE_LABELS[style]}
                       </Badge>
-                      <span className="whitespace-pre-line text-muted-foreground">
-                        {topicDisplayLines(text)}
-                      </span>
+                      <ul className="min-w-0 space-y-1">
+                        {items.map((item, i) => (
+                          <li key={i} className="whitespace-pre-line text-muted-foreground">
+                            {item.title && (
+                              <span className="font-medium text-foreground">
+                                {item.emoji && <span aria-hidden="true">{item.emoji} </span>}
+                                {item.title}
+                                {": "}
+                              </span>
+                            )}
+                            {item.month && <span>{item.month}: </span>}
+                            {item.text}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   );
                 })}

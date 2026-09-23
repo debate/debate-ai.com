@@ -20,7 +20,7 @@ const TOPICS: DebateTopicYear[] = [
     policy_topic: "The United States federal government should substantially increase its investment in water infrastructure.",
     ndt_topic_name: "Water",
     ndt_topic: "Resolved: water infrastructure.",
-    ld_topics: [{ start_month: "Sep/Oct", topic: "Resolved: civil disobedience is justified." }],
+    ld_topics: [{ start_month: "Sep/Oct", topic_name: "Civil Disobedience", emoji: "✊", topic: "Resolved: civil disobedience is justified." }],
     pf_topics: [{ start_month: "Sep", topic: "Climate change policy." }],
   },
   {
@@ -58,6 +58,13 @@ describe("DebateTopicsExplorer", () => {
     expect(html.match(/>Policy</g)?.length).toBe(3);
   });
 
+  it("shows each topic's icon and short title before its resolution", () => {
+    const html = render();
+    expect(html).toContain("✊");
+    expect(html).toContain("Civil Disobedience");
+    expect(html.indexOf("Civil Disobedience")).toBeLessThan(html.indexOf("civil disobedience is justified"));
+  });
+
   it("reports a genuinely empty catalog", () => {
     const html = render({ topics: [] });
     expect(html).toContain("No debate topics are available yet.");
@@ -93,6 +100,10 @@ describe("entryMatches", () => {
     expect(entryMatches(entry, "water infrastructure")).toBe(true);
     expect(entryMatches(entry, "civil disobedience")).toBe(true);
     expect(entryMatches(entry, "climate change")).toBe(true);
+  });
+
+  it("matches on a topic's short title", () => {
+    expect(entryMatches({ year: 2020, ld_topics: [{ topic_name: "Predictive Policing", topic: "It is unjust." }] }, "predictive")).toBe(true);
   });
 
   it("does not match unrelated text", () => {
