@@ -34,9 +34,10 @@
  * ## Switching videos navigates
  *
  * Anything on this page that changes the store's active video — clicking a
- * related row, playing something from the queue panel, skipping to the next
- * queued video — navigates to that video's watch page rather than silently
- * swapping the embed, so the URL always names what is playing.
+ * related row, stepping through the related videos with ← / →, playing
+ * something from the queue panel, skipping to the next queued video —
+ * navigates to that video's watch page rather than silently swapping the
+ * embed, so the URL always names what is playing.
  * @module panels/watch/VideoWatchPage
  */
 
@@ -53,6 +54,7 @@ import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
 import { VideoListRows } from "../../components/video-grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
+import { RelatedVideoNav } from "../../components/watch/RelatedVideoNav"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
@@ -597,6 +599,22 @@ export function VideoWatchPage({
                 </div>
               )}
             </div>
+
+            {related.length > 0 && (
+              <RelatedVideoNav
+                current={video}
+                related={related}
+                onSelect={(next) =>
+                  setActiveVideo(next[0], next[1], {
+                    style: typeof next[6] === "number" ? next[6] : undefined,
+                    tournament: next[7],
+                    year: new Date(next[2]).getFullYear(),
+                    affTeam: next[9],
+                    negTeam: next[10],
+                  })
+                }
+              />
+            )}
 
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{title}</h1>

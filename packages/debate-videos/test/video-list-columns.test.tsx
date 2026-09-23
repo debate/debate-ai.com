@@ -242,8 +242,21 @@ describe("the lecture list's columns", () => {
     expect(headerRow).not.toContain("hidden");
   });
 
-  it("gives the video row its thumbnail", () => {
-    expect(renderList([lecture])).toContain("https://img.youtube.com/vi/vid-lecture/mqdefault.jpg");
+  it("gives the video row its thumbnail, at every width", () => {
+    const html = renderList([lecture]);
+    expect(html).toContain("https://img.youtube.com/vi/vid-lecture/mqdefault.jpg");
+    // The thumbnail used to be `hidden … sm:block`, which left a phone
+    // picking videos out of a column of titles.
+    const thumbnail = /<span class="([^"]*aspect-video[^"]*)"/.exec(html);
+    expect(thumbnail?.[1]).toBeDefined();
+    // The utility itself, not `overflow-hidden`.
+    expect(thumbnail?.[1]?.split(" ")).not.toContain("hidden");
+  });
+
+  it("carries the video's own blurb under the title", () => {
+    const described: VideoType = [...lecture] as VideoType;
+    described[5] = "Why the perm is not a test of competition.";
+    expect(renderList([described])).toContain("Why the perm is not a test of competition.");
   });
 
   it("lists lectures flat, with no group rows or collapse control", () => {

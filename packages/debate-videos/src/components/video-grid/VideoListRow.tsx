@@ -47,7 +47,10 @@ function RowThumbnail({
   return (
     <span
       className={cn(
-        "relative hidden h-[3.375rem] w-24 shrink-0 overflow-hidden rounded border border-border bg-muted sm:block",
+        // 160×90 at full width, the native size of YouTube's `mqdefault`, and
+        // a step down on a phone rather than gone: a row without its
+        // thumbnail is the hardest kind to pick a video out of.
+        "relative block aspect-video w-28 shrink-0 overflow-hidden rounded border border-border bg-muted sm:w-40",
         isPlaying && "border-primary",
       )}
     >
@@ -80,7 +83,7 @@ function RowThumbnail({
 /** An Aff or Neg cell: the team, and under it the argument it ran if known. */
 function TeamCell({ team, argument }: { team?: string | null; argument?: string | null }) {
   return (
-    <td className="px-3 py-2 align-middle text-sm">
+    <td className="px-3 py-3 align-top text-sm">
       <div className="truncate">{team || <span className="text-muted-foreground">—</span>}</div>
       {argument && (
         <div className="mt-0.5 line-clamp-2 text-xs leading-tight text-muted-foreground" title={argument}>
@@ -130,7 +133,7 @@ export function VideoListRow({
     date,
     channel,
     viewCount,
-    _description,
+    description,
     style,
     tournament,
     roundLevel,
@@ -173,8 +176,8 @@ export function VideoListRow({
           isHidden && "opacity-50",
         )}
       >
-        <td className="py-2 pr-3 align-middle" style={treeIndentStyle(depth)}>
-          <div className="flex items-center gap-2.5">
+        <td className="py-3 pr-3 align-top" style={treeIndentStyle(depth)}>
+          <div className="flex items-start gap-3">
             {/* Stands in for a group row's chevron, so titles line up under
                 the round they belong to rather than under its arrow. Lectures
                 are listed flat, with no group rows to line up under. */}
@@ -183,7 +186,9 @@ export function VideoListRow({
               <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
             )}
             <div className="min-w-0 flex-1">
-              <div className="truncate text-sm font-medium text-foreground">{title}</div>
+              <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
+                {title}
+              </div>
               <div className="mt-0.5 flex items-center gap-1.5 overflow-hidden text-xs text-muted-foreground">
                 {isRoundMode ? (
                   <>
@@ -219,6 +224,14 @@ export function VideoListRow({
                   </>
                 )}
               </div>
+              {/* What the cards have always carried and the rows did not: the
+                  uploader's own blurb, clamped to two lines. It is often the
+                  only place a lecture says what it actually covers. */}
+              {description && (
+                <p className="mt-1 line-clamp-2 text-xs leading-snug text-muted-foreground/90">
+                  {description}
+                </p>
+              )}
             </div>
           </div>
         </td>
@@ -230,14 +243,14 @@ export function VideoListRow({
           </>
         )}
 
-        <td className="px-3 py-2 align-middle text-sm text-muted-foreground whitespace-nowrap">
+        <td className="px-3 py-3 align-top text-sm text-muted-foreground whitespace-nowrap">
           {formatVideoDate(date, "full", "—")}
         </td>
-        <td className="px-3 py-2 align-middle text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
+        <td className="px-3 py-3 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
           {viewCount.toLocaleString()}
         </td>
 
-        <td className="px-3 py-2 align-middle">
+        <td className="px-3 py-3 align-top">
           <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
             {stackVideos.length > 1 && (
               <StackNav

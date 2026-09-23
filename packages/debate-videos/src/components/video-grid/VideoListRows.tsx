@@ -94,7 +94,9 @@ interface ColumnDef {
 }
 
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
-  tree: 380,
+  // Wide enough for the 160px thumbnail, the indent of a video sitting three
+  // levels deep, and two lines of title beside them.
+  tree: 460,
   aff: 150,
   neg: 150,
   date: 110,
