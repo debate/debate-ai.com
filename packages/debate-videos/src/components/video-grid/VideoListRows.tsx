@@ -1,40 +1,45 @@
 /**
- * @fileoverview Dense row/table layout for the video results — same data as
- * {@link VideoGrid}'s cards, but as a header + one row per video with no
- * thumbnails, for scanning many videos' details at once. Columns are
- * drag-resizable and click-sortable.
+ * @fileoverview Dense row/table layout for the video results — the same data
+ * as {@link VideoGrid}'s cards. An archive of rounds is grouped into a
+ * collapsible tree of rows; lectures are one flat row per video.
  *
- * Rows are laid out one per *slot*, not one per video: a stacked playlist
- * (a round and the round-analysis video made from it) occupies the single row
- * its first member would have, and the `<` / `>` control at the head of the
- * Actions cell swaps which member that row is showing. The grouping rule
- * lives in `video-stacks.ts`, shared with the card grid.
+ * The round hierarchy is season → tournament → round; `video-tree.ts` builds
+ * it and `VideoTreeRows` draws it. Lectures skip the tree: each row already
+ * names its channel and category on its second tier, so grouping by them
+ * only added clicks between the reader and the videos. A group row opens and closes on click, and the
+ * `L1 … Ln` control in the first header moves every group at once — `L1`
+ * leaves only the seasons standing, the top level shows every video.
  *
- * The 1AC/2NR argument labels are not one of those columns: two wrapped
- * lines of prose per row in a table built for scanning, and the widest
- * thing in it, for the one field nothing here sorts or filters on. They
- * still ride on the cards (`VideoCardThumbnail`) and in the round's own
- * page, which is where a matchup is read rather than scanned.
+ * What is left of the flat table is still here: the columns are
+ * drag-resizable and click-sortable, and a sort orders the videos *within*
+ * their round rather than tearing the tree apart (see `sortVideoTreeLeaves`).
+ *
+ * Rows are one per *slot*, not one per video: a stacked playlist (a round and
+ * the round-analysis video made from it) occupies a single row, and the
+ * `<` / `>` control at the head of the Actions cell swaps which member that
+ * row is showing. The grouping rule lives in `video-stacks.ts`, shared with
+ * the card grid.
  */
 
 "use client"
 
-import React, { useMemo, useState } from "react"
-import { Star, ExternalLink, EyeOff, Eye, ListVideo, ChevronUp, ChevronDown } from "lucide-react"
+import React, { useCallback, useMemo, useState } from "react"
+import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/primitives/tooltip"
-import { useVideoPlayerStore } from "../../state/videoPlayerStore"
-import { STYLE_COLORS, DEBATE_STYLE_LABELS, getRoundBadgeColor, formatVideoDate } from "../video-card/videoCardUtils"
-import { TopPickBadge } from "../video-card/TopPickBadge"
-import { WatchProgressBadge } from "../video-card/WatchProgressBadge"
-import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
-import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
-import { WatchPageLink } from "../watch/WatchPageLink"
+import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { useResizableColumns } from "./useResizableColumns"
-import { StackNav, stackMemberLabel } from "../video-card/StackNav"
-import { buildVideoSlots, type VideoStackMap } from "./video-stacks"
+import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
+import {
+  buildVideoTree,
+  countVideoTreeLeaves,
+  sortVideoTreeLeaves,
+  videoTreeDepth,
+  type VideoTreeNode,
+} from "./video-tree"
+import { VideoTreeRows, type VideoTreeRowContext } from "./VideoTreeRows"
 import type { VideoType } from "../../types/videos"
-import { formatSeasonLabel } from "debate-data-sync/src/videos/video-rows"
+
+export { cleanTournamentName } from "./video-tree"
 
 interface VideoListRowsProps {
   videos: VideoType[]
@@ -49,52 +54,21 @@ interface VideoListRowsProps {
   stacks?: VideoStackMap | null
   /** Whether stacking is on; `false` gives every video its own row. */
   stacksEnabled?: boolean
+  /** Draws the thumbnail strip at the head of each video row. */
+  showThumbnails?: boolean
+  /** Tree level the table opens at; the deepest level (every video shown)
+   *  when omitted. */
+  defaultCollapseDepth?: number
+  /**
+   * Which layout to draw: `"round"` for the season → tournament → round tree,
+   * `"lecture"` for flat rows. Omit to infer it from the videos, which a
+   * single stray round in a lecture feed tips over into the tree — so a page
+   * that knows what it is listing should say.
+   */
+  layout?: "round" | "lecture"
 }
 
-function formatDate(date: string): string {
-  return formatVideoDate(date, "full", "—")
-}
-
-function getStyleLabel(video: VideoType): string {
-  const style = video[6]
-  if (typeof style === "number") return DEBATE_STYLE_LABELS[style] ?? ""
-  return typeof style === "string" ? style : ""
-}
-
-export function cleanTournamentName(tournament: string | null | undefined): string | undefined {
-  if (!tournament) return undefined
-
-  const cleaned = tournament
-    .replace(/\bTournament of Champions\b/gi, "TOC")
-    .replace(/\bNational Debate Tournament\b/gi, "NDT")
-    .replace(/\b(?:19|20)\d{2}\b/g, "")
-    .replace(/\b(TOC|Nats)\d{2}\b/gi, "$1")
-    .replace(/[\s,\-–]+(?:\d{2}|\d{2}'?)\s*$/g, "")
-    .replace(/\bR\d{1,3}\b/gi, "")
-    .replace(/\bround\s+robin\b/gi, "")
-    .replace(/\b(?:round|rd|rounds)\s*(?:\d{1,3}|double|doubles|triple|triples|octos?|octas?|octafinals?|quarters?|quarterfinals?|semis?|semifinals?|finals?|runoffs?|prelims?|eliminations?)\b/gi, "")
-    .replace(/\b(?:round|rd|rounds)\b/gi, "")
-    .replace(/\b(?:finals?|semis?|semifinals?|quarters?|quarterfinals?|octos?|octas?|octafinals?|runoffs?|doubles?|triples?|prelims?|eliminations?)\b/gi, "")
-    .replace(/\b(?:debate\s+)?(?:tournament|championships?|nationals?|nats|invitational|open)\b/gi, "")
-    .replace(/\s+debate\b/gi, "")
-    .replace(/\s+/g, " ")
-    .replace(/^[\s,\-–|]+|[\s,\-–|]+$/g, "")
-    .trim()
-
-  return cleaned || undefined
-}
-
-type ColumnKey =
-  | "tournament"
-  | "level"
-  | "aff"
-  | "neg"
-  | "channel"
-  | "season"
-  | "title"
-  | "category"
-  | "date"
-  | "views"
+type ColumnKey = "tree" | "aff" | "neg" | "date" | "views"
 
 interface ColumnDef {
   key: ColumnKey
@@ -106,14 +80,9 @@ interface ColumnDef {
 }
 
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
-  tournament: 150,
-  level: 100,
+  tree: 380,
   aff: 150,
   neg: 150,
-  channel: 160,
-  season: 90,
-  title: 260,
-  category: 140,
   date: 110,
   views: 90,
 }
@@ -125,34 +94,28 @@ const VIEWS_COLUMN: ColumnDef = {
   headerClassName: "text-right",
   sortValue: (v) => v[4] ?? 0,
 }
-const SEASON_COLUMN: ColumnDef = {
-  key: "season",
-  label: "Season",
-  headerClassName: "hidden sm:table-cell",
-  sortValue: (v) => v[17] ?? 0,
-}
 
+/**
+ * Round columns. Tournament, Level and Season are not among them: they head
+ * the groups the rows sit in, and repeating them in every row is what the
+ * tree is here to stop.
+ */
 const ROUND_COLUMNS: ColumnDef[] = [
-  { key: "tournament", label: "Tournament", headerClassName: "hidden sm:table-cell", sortValue: (v) => v[7]?.toLowerCase() ?? "" },
-  { key: "level", label: "Level", headerClassName: "hidden sm:table-cell", sortValue: (v) => v[8]?.toLowerCase() ?? "" },
+  { key: "tree", label: "Round", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
   { key: "aff", label: "Aff", sortValue: (v) => v[9]?.toLowerCase() ?? "" },
   { key: "neg", label: "Neg", sortValue: (v) => v[10]?.toLowerCase() ?? "" },
-  SEASON_COLUMN,
   DATE_COLUMN,
   VIEWS_COLUMN,
 ]
 
 /**
- * Lecture columns. Channel and Category are *not* hidden at narrow widths the
- * way Season is: who taught a lecture and what it is about are the two things
- * a lecture listing is scanned by, and a phone dropping them left rows that
- * read as a bare list of titles. The table scrolls horizontally instead.
+ * Lecture columns. Channel and Category ride on the row's second tier rather
+ * than taking a column each.
  */
 const LECTURE_COLUMNS: ColumnDef[] = [
-  { key: "channel", label: "Channel", sortValue: (v) => v[3]?.toLowerCase() ?? "" },
-  SEASON_COLUMN,
-  { key: "title", label: "Title", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
-  { key: "category", label: "Category", sortValue: (v) => getStyleLabel(v).toLowerCase() },
+  { key: "tree", label: "Library", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
+  DATE_COLUMN,
+  VIEWS_COLUMN,
 ]
 
 type SortDirection = "asc" | "desc"
@@ -177,292 +140,46 @@ function ColumnResizeHandle({ onResizeStart }: { onResizeStart: (clientX: number
   )
 }
 
-function VideoRow({
-  video,
-  index,
-  stackVideos,
-  stackIndex,
-  onStackSelect,
-  isFavorite,
-  isHidden,
-  isTopPick,
-  isRoundMode,
-  onToggleFavorite,
-  onHideVideo,
-  onUnhideVideo,
+/** The `- Ln +` stepper that opens and closes every group at once. */
+function CollapseLevelControl({
+  level,
+  maxLevel,
+  onChange,
 }: {
-  video: VideoType
-  index: number
-  /** The stack this row stands for; one entry for a standalone video. */
-  stackVideos: VideoType[]
-  /** Index of {@link video} within `stackVideos`. */
-  stackIndex: number
-  /** Flips the row to another member of the stack. */
-  onStackSelect: (index: number) => void
-  isFavorite: boolean
-  isHidden: boolean
-  isTopPick: boolean
-  isRoundMode: boolean
-  onToggleFavorite: (videoId: string) => void
-  onHideVideo: (videoId: string) => void
-  onUnhideVideo: (videoId: string) => void
+  level: number
+  maxLevel: number
+  onChange: (level: number) => void
 }) {
-  const [
-    videoId,
-    title,
-    date,
-    channel,
-    viewCount,
-    _description,
-    style,
-    tournament,
-    roundLevel,
-    affTeam,
-    negTeam,
-    _affWin,
-    _judgeDecision,
-    _arg1AC,
-    _arg2NR,
-    _isTopPickFlag,
-    _speechDocsUrl,
-    seasonYear,
-  ] = video
-  const [showHideConfirm, setShowHideConfirm] = useState(false)
-
-  // Per-field selectors rather than the whole store — see `VideoCard` for
-  // why: a list holds one of these rows per loaded video, and subscribing
-  // each to the store object re-rendered all of them on any player change.
-  const isPlaying = useVideoPlayerStore((state) => state.activeVideoId === videoId)
-  const isInQueue = useVideoPlayerStore((state) =>
-    state.queue.some((item) => item.videoId === videoId),
-  )
-  const setActiveVideo = useVideoPlayerStore((state) => state.setActiveVideo)
-  const addToQueue = useVideoPlayerStore((state) => state.addToQueue)
-  const watched = useWatchHistoryEntry(videoId)
-
-  const styleNumber = typeof style === "number" ? style : undefined
-  const styleLabel = styleNumber
-    ? DEBATE_STYLE_LABELS[styleNumber]
-    : typeof style === "string"
-      ? style
-      : undefined
-  const year = new Date(date).getFullYear()
-  const cleanTournament = cleanTournamentName(tournament)
-  const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
-
-  // Without a Title column, Tournament and the Aff/Neg matchup are what
-  // actually identify a round — Level alone doesn't. When
-  // neither is available (no tournament, or no team on either side), the
-  // row has nothing to scan, so show the video title across the full width
-  // instead of a row of dashes.
-  const roundRowIdentifiable = Boolean(cleanTournament) && Boolean(affTeam || negTeam)
-
   return (
-    <>
-      <tr
-        onClick={() =>
-          !isPlaying &&
-          setActiveVideo(videoId, title, { style: styleNumber, tournament, year, affTeam, negTeam })
-        }
+    <span className="ml-auto inline-flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        aria-label="Collapse one level"
+        disabled={level <= 1}
+        onClick={() => onChange(Math.max(1, level - 1))}
         className={cn(
-          "cursor-pointer border-b border-border last:border-0 transition-colors hover:bg-accent/50",
-          index % 2 === 1 && "bg-muted/30",
-          isPlaying && "bg-primary/10 hover:bg-primary/10",
-          isHidden && "opacity-50",
+          "flex h-5 w-5 items-center justify-center rounded border border-border text-xs leading-none",
+          level <= 1 ? "cursor-not-allowed opacity-40" : "hover:border-primary hover:text-primary",
         )}
       >
-        {isRoundMode ? (
-          roundRowIdentifiable ? (
-            <>
-              <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground truncate">
-                {cleanTournament || "—"}
-              </td>
-              <td className="px-3 py-2 align-top hidden sm:table-cell whitespace-nowrap">
-                {roundLevel ? (
-                  <span
-                    className={cn(
-                      "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium border",
-                      getRoundBadgeColor(roundLevel),
-                    )}
-                  >
-                    {roundLevel}
-                  </span>
-                ) : (
-                  <span className="text-xs text-muted-foreground">—</span>
-                )}
-              </td>
-              <td className="px-3 py-2 align-top text-sm truncate">
-                {affTeam || <span className="text-muted-foreground">—</span>}
-              </td>
-              <td className="px-3 py-2 align-top text-sm truncate">
-                {negTeam || <span className="text-muted-foreground">—</span>}
-              </td>
-            </>
-          ) : (
-            <td colSpan={4} className="px-3 py-2 align-top text-sm text-foreground truncate">
-              {title}
-            </td>
-          )
-        ) : (
-          <td className="px-3 py-2 align-top text-sm text-muted-foreground truncate">
-            {channel || "—"}
-          </td>
+        −
+      </button>
+      <span className="w-6 text-center text-[11px] font-semibold tabular-nums text-primary">
+        L{level}
+      </span>
+      <button
+        type="button"
+        aria-label="Expand one level"
+        disabled={level >= maxLevel}
+        onClick={() => onChange(Math.min(maxLevel, level + 1))}
+        className={cn(
+          "flex h-5 w-5 items-center justify-center rounded border border-border text-xs leading-none",
+          level >= maxLevel ? "cursor-not-allowed opacity-40" : "hover:border-primary hover:text-primary",
         )}
-        <td className="px-3 py-2 align-top hidden sm:table-cell text-sm text-muted-foreground whitespace-nowrap">
-          {typeof seasonYear === "number" && seasonYear > 0 ? formatSeasonLabel(seasonYear) : "—"}
-        </td>
-        {isRoundMode ? (
-          <>
-            <td className="px-3 py-2 align-top text-sm text-muted-foreground whitespace-nowrap">
-              {formatDate(date)}
-            </td>
-            <td className="px-3 py-2 align-top text-sm text-muted-foreground text-right tabular-nums whitespace-nowrap">
-              {viewCount.toLocaleString()}
-            </td>
-          </>
-        ) : (
-          <>
-            <td className="px-3 py-2 align-top text-sm text-foreground truncate">{title}</td>
-            <td className="px-3 py-2 align-top whitespace-nowrap">
-              {styleLabel ? (
-                <span
-                  className={cn(
-                    "inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium",
-                    styleNumber && STYLE_COLORS[styleNumber] ? STYLE_COLORS[styleNumber] : "bg-muted text-muted-foreground",
-                  )}
-                >
-                  {styleLabel}
-                </span>
-              ) : (
-                <span className="text-xs text-muted-foreground">—</span>
-              )}
-            </td>
-          </>
-        )}
-        <td className="px-3 py-2 align-top">
-          <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-            {stackVideos.length > 1 && (
-              <StackNav
-                index={stackIndex}
-                count={stackVideos.length}
-                label={stackMemberLabel(video)}
-                onSelect={onStackSelect}
-                variant="inline"
-                className="mr-1"
-              />
-            )}
-
-            {/* Every row carries it, watched or not: the point of the marker
-                is that you can hover any row and learn where you got to —
-                "Not watched" included. */}
-            <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
-
-            {isTopPick && (
-              <TopPickBadge
-                videoId={videoId}
-                affTeam={affTeam}
-                negTeam={negTeam}
-                title={title}
-                tournament={tournament}
-                year={date ? new Date(date).getFullYear() : undefined}
-                roundLevel={roundLevel}
-                size="sm"
-              />
-            )}
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>Watch on YouTube</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => onToggleFavorite(videoId)}
-                  className={cn(
-                    "p-1 rounded transition-colors",
-                    isFavorite
-                      ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                  aria-label={isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
-                >
-                  <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>{isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => {
-                    if (!isInQueue) addToQueue(videoId, title, { style: styleNumber, tournament, year, affTeam, negTeam })
-                  }}
-                  disabled={isInQueue}
-                  className={cn(
-                    "p-1 rounded transition-colors",
-                    isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground",
-                  )}
-                  aria-label={isInQueue ? "In queue" : "Add to queue"}
-                >
-                  <ListVideo className="h-3.5 w-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
-            </Tooltip>
-
-            <WatchPageLink
-              videoId={videoId}
-              title={title}
-              video={video}
-              className="p-1"
-              iconClassName="h-3.5 w-3.5"
-            />
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                {isHidden ? (
-                  <button
-                    onClick={() => onUnhideVideo(videoId)}
-                    className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Unhide video"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setShowHideConfirm(true)}
-                    className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
-                    aria-label="Hide video"
-                  >
-                    <EyeOff className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </TooltipTrigger>
-              <TooltipContent>{isHidden ? "Unhide video" : "Hide video"}</TooltipContent>
-            </Tooltip>
-          </div>
-        </td>
-      </tr>
-
-      <HideConfirmDialog
-        open={showHideConfirm}
-        onOpenChange={setShowHideConfirm}
-        onConfirm={() => onHideVideo(videoId)}
-        videoId={videoId}
-        title={title}
-      />
-    </>
+      >
+        +
+      </button>
+    </span>
   )
 }
 
@@ -477,13 +194,16 @@ export function VideoListRows({
   topPicks,
   stacks,
   stacksEnabled = true,
+  showThumbnails = true,
+  defaultCollapseDepth,
+  layout,
 }: VideoListRowsProps) {
-  // Round (debate) videos carry tournament/aff/neg data that lectures never
-  // populate, so that presence alone tells the two layouts apart — no need
-  // for the caller to say which page it's rendering.
+  // Without an explicit `layout`, round (debate) videos carry tournament/aff/
+  // neg data that lectures rarely populate, so that presence tells the two
+  // layouts apart.
   const isRoundMode = useMemo(
-    () => videos.some((video) => video[7] || video[9] || video[10]),
-    [videos],
+    () => (layout ? layout === "round" : videos.some((video) => video[7] || video[9] || video[10])),
+    [videos, layout],
   )
 
   const columns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
@@ -512,35 +232,61 @@ export function VideoListRows({
     [videos, stacks, stacksEnabled],
   )
 
-  /** One rendered row: the slot, and the member of it on screen. */
-  const rows = useMemo(
+  // Lectures are listed flat — one row per slot, in feed order.
+  const tree = useMemo<VideoTreeNode[]>(
     () =>
-      slots.map((slot) => {
-        const selected = stackSelection[slot.key] ?? slot.initialIndex
-        const stackIndex = Math.min(Math.max(selected, 0), slot.videos.length - 1)
-        return { slot, stackIndex, video: slot.videos[stackIndex] }
-      }),
-    [slots, stackSelection],
+      isRoundMode
+        ? buildVideoTree(slots, "round")
+        : slots.map((slot) => ({ type: "video", key: slot.key, slot })),
+    [slots, isRoundMode],
+  )
+
+  /** The member of a slot on screen — what a sort reads, and what a row shows. */
+  const selectedVideo = useCallback(
+    (slot: VideoSlot): VideoType => {
+      const selected = stackSelection[slot.key] ?? slot.initialIndex
+      return slot.videos[Math.min(Math.max(selected, 0), slot.videos.length - 1)]
+    },
+    [stackSelection],
   )
 
   // Sorting runs on the video each row is showing, not on the stack's primary:
   // a row flipped to the analysis sorts by the analysis' own date and views,
   // which is what the row has on screen.
-  const sortedRows = useMemo(() => {
+  const sortedTree = useMemo(() => {
     const column = columns.find((c) => c.key === sortColumn)
-    if (!column?.sortValue) return rows
+    if (!column?.sortValue) return tree
     const { sortValue } = column
-    const withKeys = rows.map((row, index) => ({ row, index, value: sortValue(row.video) }))
-    withKeys.sort((a, b) => {
+    return sortVideoTreeLeaves(tree, (a, b) => {
+      const valueA = sortValue(selectedVideo(a))
+      const valueB = sortValue(selectedVideo(b))
       const cmp =
-        typeof a.value === "number" && typeof b.value === "number"
-          ? a.value - b.value
-          : String(a.value).localeCompare(String(b.value))
-      return cmp !== 0 ? cmp : a.index - b.index
+        typeof valueA === "number" && typeof valueB === "number"
+          ? valueA - valueB
+          : String(valueA).localeCompare(String(valueB))
+      return sortDirection === "asc" ? cmp : -cmp
     })
-    const ordered = withKeys.map((entry) => entry.row)
-    return sortDirection === "asc" ? ordered : ordered.reverse()
-  }, [rows, columns, sortColumn, sortDirection])
+  }, [tree, columns, sortColumn, sortDirection, selectedVideo])
+
+  // `null` means "however deep the tree goes", so a page that loads more
+  // videos — and so grows a level — stays open rather than closing itself.
+  const [collapseDepth, setCollapseDepth] = useState<number | null>(defaultCollapseDepth ?? null)
+  const maxCollapseDepth = useMemo(() => videoTreeDepth(tree), [tree])
+  const effectiveCollapseDepth = Math.min(collapseDepth ?? maxCollapseDepth, maxCollapseDepth)
+
+  const context: VideoTreeRowContext = {
+    isRoundMode,
+    showThumbnails,
+    favorites,
+    hiddenVideos,
+    topPicks,
+    stackSelection,
+    onStackSelect: (slotKey, index) =>
+      setStackSelection((current) => ({ ...current, [slotKey]: index })),
+    onToggleFavorite,
+    onHideVideo,
+    onUnhideVideo,
+  }
 
   return (
     <TooltipProvider>
@@ -554,26 +300,35 @@ export function VideoListRows({
                   style={{ width: widths[column.key], minWidth: widths[column.key] }}
                   className={cn("relative px-3 py-2 select-none", column.headerClassName)}
                 >
-                  {column.sortValue ? (
-                    <button
-                      type="button"
-                      onClick={() => handleSort(column)}
-                      className={cn(
-                        "flex items-center gap-1 hover:text-foreground",
-                        column.headerClassName?.includes("text-right") && "ml-auto",
-                      )}
-                    >
-                      {column.label}
-                      {sortColumn === column.key &&
-                        (sortDirection === "asc" ? (
-                          <ChevronUp className="h-3 w-3 shrink-0" />
-                        ) : (
-                          <ChevronDown className="h-3 w-3 shrink-0" />
-                        ))}
-                    </button>
-                  ) : (
-                    column.label
-                  )}
+                  <span className="flex items-center gap-1">
+                    {column.sortValue ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSort(column)}
+                        className={cn(
+                          "flex items-center gap-1 hover:text-foreground",
+                          column.headerClassName?.includes("text-right") && "ml-auto",
+                        )}
+                      >
+                        {column.label}
+                        {sortColumn === column.key &&
+                          (sortDirection === "asc" ? (
+                            <ChevronUp className="h-3 w-3 shrink-0" />
+                          ) : (
+                            <ChevronDown className="h-3 w-3 shrink-0" />
+                          ))}
+                      </button>
+                    ) : (
+                      column.label
+                    )}
+                    {column.key === "tree" && maxCollapseDepth > 1 && (
+                      <CollapseLevelControl
+                        level={effectiveCollapseDepth}
+                        maxLevel={maxCollapseDepth}
+                        onChange={setCollapseDepth}
+                      />
+                    )}
+                  </span>
                   <ColumnResizeHandle onResizeStart={(clientX) => startResize(column.key, clientX)} />
                 </th>
               ))}
@@ -581,25 +336,26 @@ export function VideoListRows({
             </tr>
           </thead>
           <tbody>
-            {sortedRows.map(({ slot, stackIndex, video }, index) => (
-              <VideoRow
-                key={slot.key}
-                video={video}
-                index={index}
-                stackVideos={slot.videos}
-                stackIndex={stackIndex}
-                onStackSelect={(next) =>
-                  setStackSelection((current) => ({ ...current, [slot.key]: next }))
-                }
-                isFavorite={favorites.has(video[0])}
-                isHidden={hiddenVideos.has(video[0])}
-                isTopPick={topPicks?.has(video[0]) || false}
-                isRoundMode={isRoundMode}
-                onToggleFavorite={onToggleFavorite}
-                onHideVideo={onHideVideo}
-                onUnhideVideo={onUnhideVideo}
-              />
-            ))}
+            {countVideoTreeLeaves(sortedTree) > 0 ? (
+              sortedTree.map((node) => (
+                <VideoTreeRows
+                  key={`${effectiveCollapseDepth}-${node.key}`}
+                  node={node}
+                  depth={0}
+                  collapseDepth={effectiveCollapseDepth}
+                  context={context}
+                />
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length + 1}
+                  className="px-3 py-8 text-center text-sm text-muted-foreground"
+                >
+                  No videos to show
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
