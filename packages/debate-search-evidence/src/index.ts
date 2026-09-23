@@ -93,3 +93,13 @@ export {
   type CardUploadCliOptions,
   type CardUploadCliParse,
 } from "./lib/parquet-upload-cli-options";
+export {
+  FIND_FLAWS_AND_EXTENSIONS_PROMPT,
+  MAX_ANALYSIS_CONTENT_CHARS,
+  buildCardAnalysisContent,
+  htmlToPlainText,
+  normalizeForHash,
+  requestCardAiAnalysis,
+  sha256Hex,
+  type CardAiAnalysisResponse,
+} from "./lib/card-ai-analysis";

@@ -141,6 +141,14 @@ assist, group challenges, research-progress tracking, sprint notes, and (moved f
 Speech and prep timers for live rounds, with per-format speech times built in. Also
 includes an in-round speech recorder with mic selection, live waveform, and playback.
 
+## debate-tournaments
+
+Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
+to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
+mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
+`/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
+upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+
 ## debate-videos
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
