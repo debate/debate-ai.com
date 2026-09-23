@@ -96,7 +96,7 @@ Secrets survive either way.
 | `RESEND_API_KEY` (alias `AUTH_RESEND_KEY`) | Verification email and round invitations. | [resend.com/api-keys](https://resend.com/api-keys) |
 | `BETTER_AUTH_ALLOWED_HOSTS` | Extra comma-separated hosts this app is served from. See [`lib/auth/hosts.ts`](./lib/auth/hosts.ts). | Your own preview or custom-domain hosts. |
 | `BETTER_AUTH_TRUSTED_ORIGINS` | Extra origins allowed to make authenticated requests. | The same — plus the `moz-extension://<uuid>` origin of a Firefox build of [the browser extension](../debate-web-ext/README.md#signing-in-and-staying-signed-in), which is a fresh UUID per install and so cannot be pinned in code the way the Chrome build's id is. |
-| `ADMIN_EMAIL` / `ADMIN_EMAILS` | The admin allowlist — one address or a comma-separated list; both are read and merged. Only these accounts get full `/admin` access, and they can invite **moderators** there, who can edit videos and debate rounds (including via the "Edit video" button on watch pages) but nothing else. **Leaving both unset means nobody can open `/admin`.** | Your own addresses. |
+| `ADMIN_EMAIL` / `ADMIN_EMAILS` | The admin allowlist — one address or a comma-separated list; both are read and merged. Only these accounts get full `/admin` access, and they can invite **moderators** there, who can edit videos and debate rounds (including via the "Edit video" button on watch pages) but nothing else. **Leaving both unset means nobody can open `/admin`.** `ADMIN_EMAIL` is hardcoded in [`wrangler.jsonc`](./wrangler.jsonc) `vars` (overriding any dashboard value); add more admins via `ADMIN_EMAILS`. | Your own addresses. |
 
 ### Model providers
 

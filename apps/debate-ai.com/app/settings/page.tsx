@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6">
-      <div className="mb-4 max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="mb-4 max-w-5xl mx-auto px-4 sm:px-6">
         <Link
           href="/debate"
           className="inline-flex items-center gap-1.5 h-9 px-3 rounded-md border border-border bg-background hover:bg-accent text-sm font-medium text-foreground transition-colors"

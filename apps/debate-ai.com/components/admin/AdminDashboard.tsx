@@ -24,6 +24,7 @@ import {
   formatSeedVideosStatus,
   type SeedVideosStatus,
 } from "../../lib/videos/format-seed-videos-result";
+import { CaselistSyncPanel } from "./CaselistSyncPanel";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { ModeratorsPanel } from "./ModeratorsPanel";
 import { TopicStarterUpload } from "./TopicStarterUpload";
@@ -503,6 +504,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
           <TopicStarterUpload />
 
           <DebateCardParquetUpload />
+
+          <CaselistSyncPanel />
         </>
       )}
 

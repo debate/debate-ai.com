@@ -10,9 +10,16 @@
 		"nodejs_compat"
 	],
 	// Without keep_vars, every `wrangler deploy` deletes plaintext Variables
-	// entered in the CF dashboard (API keys, BETTER_AUTH_SECRET, …) because
-	// this config defines no `vars`. Secrets survive either way.
+	// entered in the CF dashboard (API keys, BETTER_AUTH_SECRET, …) that are
+	// not listed in `vars` below. Secrets survive either way.
 	"keep_vars": true,
+	// The hardcoded admin. Kept to ADMIN_EMAIL so extra admins can still be
+	// added via ADMIN_EMAILS in the dashboard — lib/auth/admin.ts merges both.
+	// `vars` are not inherited by named environments, so env.production
+	// repeats it.
+	"vars": {
+		"ADMIN_EMAIL": "grokthiscontact@gmail.com"
+	},
 	// Ship source maps with the Worker so runtime exceptions in Workers Logs
 	// resolve to real files/lines instead of minified bundle offsets. Source
 	// maps are stored separately and do not count against the Worker size limit.
@@ -34,6 +41,9 @@
 	},
 	"env": {
 		"production": {
+			"vars": {
+				"ADMIN_EMAIL": "grokthiscontact@gmail.com"
+			},
 			"images": {
 				"binding": "IMAGES"
 			},

@@ -1773,3 +1773,38 @@ export const staffRoles = sqliteTable("staff_roles", {
 });
 
 export type StaffRoleRow = typeof staffRoles.$inferSelect;
+
+// Stripe subscriptions, written only by the `/api/stripe/webhook` handler (see
+// `lib/stripe/`). Keyed by the Stripe subscription id rather than `user.id`
+// because Stripe does not order its events: `customer.subscription.created`
+// can land before the `checkout.session.completed` that carries our user id
+// (`client_reference_id`), so a row may briefly exist with `user_id` null
+// until the checkout event links it.
+export const stripeSubscriptions = sqliteTable(
+  "stripe_subscriptions",
+  {
+    subscriptionId: text("subscription_id").primaryKey(),
+    userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
+    customerId: text("customer_id"),
+    email: text("email"),
+    priceId: text("price_id"),
+    /** A `PlanId` from `lib/stripe/plans.ts`, or `unknown` for an unlisted price. */
+    plan: text("plan"),
+    /** Stripe's subscription status — `active`, `trialing`, `past_due`, `canceled`, … */
+    status: text("status"),
+    currentPeriodEnd: integer("current_period_end", { mode: "timestamp" }),
+    cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdx: index("idx_stripe_subscriptions_user").on(table.userId),
+    customerIdx: index("idx_stripe_subscriptions_customer").on(table.customerId),
+  }),
+);
+
+export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;

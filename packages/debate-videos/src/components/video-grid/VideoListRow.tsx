@@ -2,12 +2,14 @@
  * @fileoverview One video row of the list layout — the leaf of the tree the
  * rows are grouped into (see `video-tree.ts`).
  *
- * The row is two tiers next to a thumbnail: the title on top, and under it
- * the details that identify the video when its groups are scrolled off or
- * collapsed away — the round level and tournament for a round, the channel
- * and category for a lecture. It stands for a *slot*, so a stacked playlist
- * occupies one row and the `<` / `>` control at the head of the Actions cell
- * swaps which member the row is showing.
+ * The row is stacked tiers next to a thumbnail: the title on top (left off
+ * for a round whose tournament, level and teams are all recorded — those say
+ * everything it would), the details that identify the video when its groups
+ * are scrolled off or collapsed away — the round level and tournament for a
+ * round, the channel and category for a lecture — and under them the row's
+ * action icons. It stands for a *slot*, so a stacked playlist occupies one
+ * row and the `<` / `>` control at the head of the actions swaps which
+ * member the row is showing.
  *
  * The 1AC/2NR argument labels, when recorded, sit in small type under the
  * team that ran them in the Aff and Neg cells — the same pairing the cards
@@ -195,6 +197,13 @@ export function VideoListRow({
   const year = new Date(date).getFullYear()
   const cleanTournament = cleanTournamentName(tournament)
   const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`
+  // A round whose tournament, level and both teams are recorded is fully
+  // described by its badge, tournament and team cells; the uploader's title
+  // only repeats them, so it is left off. Anything less and the title is the
+  // one place the missing pieces show.
+  const hasCoreRoundInfo = Boolean(
+    isRoundMode && cleanTournament && roundLevel?.trim() && affTeam?.trim() && negTeam?.trim(),
+  )
 
   return (
     <>
@@ -219,10 +228,12 @@ export function VideoListRow({
               <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
             )}
             <div className="min-w-0 flex-1">
-              <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
-                {title}
-              </div>
-              <div className="mt-0.5 flex items-center gap-1.5 overflow-hidden text-xs text-muted-foreground">
+              {!hasCoreRoundInfo && (
+                <div className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
+                  {title}
+                </div>
+              )}
+              <div className={cn("flex", !hasCoreRoundInfo && "mt-0.5", "items-center gap-1.5 overflow-hidden text-xs text-muted-foreground")}>
                 {isRoundMode ? (
                   <>
                     {roundLevel && (
@@ -257,6 +268,124 @@ export function VideoListRow({
                   </>
                 )}
               </div>
+              {/* The row's controls sit under the title and details rather than
+                  in a column of their own, so they never crowd the Date and
+                  Views cells and the table stays narrow. */}
+              <div
+                className="mt-1.5 flex flex-wrap items-center gap-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {stackVideos.length > 1 && (
+                  <StackNav
+                    index={stackIndex}
+                    count={stackVideos.length}
+                    label={stackMemberLabel(video)}
+                    onSelect={onStackSelect}
+                    variant="inline"
+                    className="mr-1"
+                  />
+                )}
+
+                {/* Every row carries it, watched or not: the point of the marker
+                    is that you can hover any row and learn where you got to —
+                    "Not watched" included. */}
+                <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
+
+                {isTopPick && (
+                  <TopPickBadge
+                    videoId={videoId}
+                    affTeam={affTeam}
+                    negTeam={negTeam}
+                    title={title}
+                    tournament={tournament}
+                    year={date ? new Date(date).getFullYear() : undefined}
+                    roundLevel={roundLevel}
+                    size="sm"
+                  />
+                )}
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Watch on YouTube</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => onToggleFavorite(videoId)}
+                      className={cn(
+                        "p-1 rounded transition-colors",
+                        isFavorite
+                          ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                      aria-label={isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
+                    >
+                      <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>{isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}</TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => {
+                        if (!isInQueue) addToQueue(videoId, title, { style: styleNumber, tournament, year, affTeam, negTeam })
+                      }}
+                      disabled={isInQueue}
+                      className={cn(
+                        "p-1 rounded transition-colors",
+                        isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground",
+                      )}
+                      aria-label={isInQueue ? "In queue" : "Add to queue"}
+                    >
+                      <ListVideo className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
+                </Tooltip>
+
+                <WatchPageLink
+                  videoId={videoId}
+                  title={title}
+                  video={video}
+                  className="p-1"
+                  iconClassName="h-3.5 w-3.5"
+                />
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {isHidden ? (
+                      <button
+                        onClick={() => onUnhideVideo(videoId)}
+                        className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label="Unhide video"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setShowHideConfirm(true)}
+                        className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                        aria-label="Hide video"
+                      >
+                        <EyeOff className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </TooltipTrigger>
+                  <TooltipContent>{isHidden ? "Unhide video" : "Hide video"}</TooltipContent>
+                </Tooltip>
+              </div>
               {/* What the cards have always carried and the rows did not: the
                   uploader's own blurb, clamped to two lines. It is often the
                   only place a lecture says what it actually covers. */}
@@ -283,120 +412,6 @@ export function VideoListRow({
           {viewCount.toLocaleString()}
         </td>
 
-        <td className="px-3 py-3 align-top">
-          <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-            {stackVideos.length > 1 && (
-              <StackNav
-                index={stackIndex}
-                count={stackVideos.length}
-                label={stackMemberLabel(video)}
-                onSelect={onStackSelect}
-                variant="inline"
-                className="mr-1"
-              />
-            )}
-
-            {/* Every row carries it, watched or not: the point of the marker
-                is that you can hover any row and learn where you got to —
-                "Not watched" included. */}
-            <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
-
-            {isTopPick && (
-              <TopPickBadge
-                videoId={videoId}
-                affTeam={affTeam}
-                negTeam={negTeam}
-                title={title}
-                tournament={tournament}
-                year={date ? new Date(date).getFullYear() : undefined}
-                roundLevel={roundLevel}
-                size="sm"
-              />
-            )}
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <a
-                  href={youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </TooltipTrigger>
-              <TooltipContent>Watch on YouTube</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => onToggleFavorite(videoId)}
-                  className={cn(
-                    "p-1 rounded transition-colors",
-                    isFavorite
-                      ? "text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
-                  aria-label={isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}
-                >
-                  <Star className={cn("h-3.5 w-3.5", isFavorite && "fill-current")} />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>{isFavorite ? "Remove from My Favorites" : "Star to add to My Favorites"}</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => {
-                    if (!isInQueue) addToQueue(videoId, title, { style: styleNumber, tournament, year, affTeam, negTeam })
-                  }}
-                  disabled={isInQueue}
-                  className={cn(
-                    "p-1 rounded transition-colors",
-                    isInQueue ? "text-muted-foreground/50 cursor-not-allowed" : "text-muted-foreground hover:text-foreground",
-                  )}
-                  aria-label={isInQueue ? "In queue" : "Add to queue"}
-                >
-                  <ListVideo className="h-3.5 w-3.5" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>{isInQueue ? "In queue" : "Add to queue"}</TooltipContent>
-            </Tooltip>
-
-            <WatchPageLink
-              videoId={videoId}
-              title={title}
-              video={video}
-              className="p-1"
-              iconClassName="h-3.5 w-3.5"
-            />
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                {isHidden ? (
-                  <button
-                    onClick={() => onUnhideVideo(videoId)}
-                    className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Unhide video"
-                  >
-                    <Eye className="h-3.5 w-3.5" />
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setShowHideConfirm(true)}
-                    className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
-                    aria-label="Hide video"
-                  >
-                    <EyeOff className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </TooltipTrigger>
-              <TooltipContent>{isHidden ? "Unhide video" : "Hide video"}</TooltipContent>
-            </Tooltip>
-          </div>
-        </td>
       </tr>
 
       <HideConfirmDialog
