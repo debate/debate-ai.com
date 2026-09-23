@@ -4,11 +4,16 @@
  * row is either a folder you open or a leaf you act on.
  *
  * The hierarchy is the one an archive of rounds is actually navigated by:
- * season → tournament → round level (Finals, Semifinals, … then prelims),
- * with the videos as the leaves. Lectures carry none of those three fields,
- * so they group season → channel → category instead. A round missing its
- * tournament or its round level stops one level short and is listed as a
- * plain row at the end of its season (or tournament), after the groups.
+ * season → tournament, with the videos as the leaves. Round levels are not a
+ * group of their own: inside a tournament the rounds are ordered Finals,
+ * Semifinals, … then prelims, and the level rides on each row's badge.
+ * Lectures carry none of those fields, so they group season → channel →
+ * category instead.
+ *
+ * Within a season, tournaments are listed in the order they happened, and a
+ * round missing its tournament is a plain row slotted in between them by its
+ * date — after the tournament that came before it, not at the end of the
+ * season.
  *
  * Grouping runs on the *slot* (see `video-stacks.ts`), not on the video: a
  * stacked playlist sits in one leaf under the round its first member belongs
@@ -64,6 +69,9 @@ export interface VideoTreeGroup {
   viewCount: number;
   /** Newest publication date below this group, for the Date column. */
   latestDate: string | null;
+  /** Oldest publication date below this group — when a tournament started,
+   *  which is what places it among its season's other tournaments. */
+  earliestDate: string | null;
   /** Sort position among its siblings; see {@link compareTreeNodes}. */
   sortValue: number | string;
   /** Placeholder groups (`Unsorted`, `Legacy`) sort after their siblings. */
@@ -162,10 +170,9 @@ export function videoGroupPath(video: VideoType, mode: VideoTreeMode): GroupStep
     return steps;
   }
 
-  // A round missing a field stops its path at the level above it, so it is
-  // listed as a plain row at the end of that group — after its season's
-  // tournaments, or after its tournament's rounds — rather than buried under
-  // a nest of `Unsorted` placeholders.
+  // A round missing its tournament stops at the season, where it is placed
+  // among the tournaments by date rather than buried under an `Unsorted`
+  // placeholder.
   const tournament = cleanTournamentName(video[7]);
   if (!tournament) return steps;
   steps.push({
@@ -174,25 +181,52 @@ export function videoGroupPath(video: VideoType, mode: VideoTreeMode): GroupStep
     sortValue: tournament.toLowerCase(),
   });
 
-  const rawLevel = video[8]?.trim();
-  if (!rawLevel) return steps;
-  const level = parseRoundLevel(rawLevel).level;
-  const unparsed = level === "UNKNOWN";
-  steps.push({
-    kind: "round",
-    label: unparsed ? rawLevel : formatRoundLevel(level),
-    // Negated so the bracket reads down from Finals to the prelims, which is
-    // the order the rounds are watched in rather than debated in.
-    sortValue: unparsed ? 0 : -getRoundSortKey(level),
-    trailing: unparsed,
-  });
-
   return steps;
+}
+
+/**
+ * Where a round sits within its tournament: Finals first, then down the
+ * bracket to the prelims, with an unrecognized or missing level last.
+ *
+ * @param video - Video tuple.
+ * @returns A number to sort ascending by.
+ */
+export function roundLevelOrder(video: VideoType): number {
+  const rawLevel = video[8]?.trim();
+  if (!rawLevel) return Number.MAX_SAFE_INTEGER;
+  const level = parseRoundLevel(rawLevel).level;
+  if (level === "UNKNOWN") return Number.MAX_SAFE_INTEGER - 1;
+  // Negated so the bracket reads down from Finals to the prelims, which is
+  // the order the rounds are watched in rather than debated in.
+  return -getRoundSortKey(level);
+}
+
+/** The round level a row's badge shows, normalized when it parses. */
+export function roundLevelLabel(video: VideoType): string {
+  const rawLevel = video[8]?.trim() ?? "";
+  if (!rawLevel) return "";
+  const level = parseRoundLevel(rawLevel).level;
+  return level === "UNKNOWN" ? rawLevel : formatRoundLevel(level);
 }
 
 /** Total views across a slot — a stack counts all of its members. */
 function slotViews(slot: VideoSlot): number {
   return slot.videos.reduce((total, video) => total + (video[4] ?? 0), 0);
+}
+
+/** Milliseconds since the epoch, or `null` for a missing or unparseable date. */
+function dateTime(value: string | null | undefined): number | null {
+  if (!value) return null;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) ? time : null;
+}
+
+/** The earlier of two dates, either of which may be missing or unparseable. */
+function earlierDate(current: string | null, candidate: string | null | undefined): string | null {
+  const candidateTime = dateTime(candidate);
+  if (candidateTime === null) return current;
+  const currentTime = dateTime(current);
+  return currentTime === null || candidateTime < currentTime ? (candidate as string) : current;
 }
 
 /** The later of two dates, either of which may be missing or unparseable. */
@@ -255,6 +289,7 @@ export function buildVideoTree(slots: VideoSlot[], mode: VideoTreeMode): VideoTr
           videoCount: 0,
           viewCount: 0,
           latestDate: null,
+          earliestDate: null,
           sortValue: step.sortValue,
           trailing: step.trailing ?? false,
         };
@@ -264,21 +299,73 @@ export function buildVideoTree(slots: VideoSlot[], mode: VideoTreeMode): VideoTr
       group.videoCount += slot.videos.length;
       group.viewCount += views;
       group.latestDate = laterDate(group.latestDate, video[2]);
+      group.earliestDate = earlierDate(group.earliestDate, video[2]);
       siblings = group.children;
     }
 
     siblings.push({ type: "video", key: slot.key, slot });
   }
 
-  sortTree(roots);
+  sortTree(roots, null);
   return roots;
 }
 
+/** The video a leaf is filed by — the member the feed returned. */
+function leafVideo(leaf: VideoTreeLeaf): VideoType | undefined {
+  return leaf.slot.videos[leaf.slot.initialIndex] ?? leaf.slot.videos[0];
+}
+
+/**
+ * Orders a season's children chronologically: each tournament by the date it
+ * started, each loose round by its own date, a tournament ahead of a round on
+ * the same day. Undated nodes go last, in feed order.
+ *
+ * @param a - First sibling.
+ * @param b - Second sibling.
+ * @returns Negative, zero or positive, as `Array.prototype.sort` expects.
+ */
+export function compareChronologically(a: VideoTreeNode, b: VideoTreeNode): number {
+  const when = (node: VideoTreeNode) =>
+    dateTime(node.type === "group" ? node.earliestDate : leafVideo(node)?.[2]);
+  const left = when(a);
+  const right = when(b);
+  if (left === null || right === null) {
+    if (left !== right) return left === null ? 1 : -1;
+  } else if (left !== right) {
+    return left - right;
+  }
+  if (a.type !== b.type) return a.type === "group" ? -1 : 1;
+  return a.type === "group" && b.type === "group" ? compareTreeNodes(a, b) : 0;
+}
+
+/**
+ * Orders a tournament's rounds Finals first, down the bracket.
+ *
+ * @param a - First sibling.
+ * @param b - Second sibling.
+ * @returns Negative, zero or positive, as `Array.prototype.sort` expects.
+ */
+function compareRoundLevels(a: VideoTreeNode, b: VideoTreeNode): number {
+  if (a.type !== "video" || b.type !== "video") return compareTreeNodes(a, b);
+  const left = leafVideo(a);
+  const right = leafVideo(b);
+  return (left ? roundLevelOrder(left) : 0) - (right ? roundLevelOrder(right) : 0);
+}
+
 /** Sorts a level and every level below it, in place. */
-function sortTree(nodes: VideoTreeNode[]): void {
-  nodes.sort(compareTreeNodes);
+function sortTree(nodes: VideoTreeNode[], parent: VideoTreeGroup | null): void {
+  const hasTournaments = nodes.some((node) => node.type === "group" && node.kind === "tournament");
+  const hasLooseRounds =
+    parent?.kind === "season" && nodes.some((node) => node.type === "video");
+  if (parent?.kind === "season" && (hasTournaments || hasLooseRounds)) {
+    nodes.sort(compareChronologically);
+  } else if (parent?.kind === "tournament") {
+    nodes.sort(compareRoundLevels);
+  } else {
+    nodes.sort(compareTreeNodes);
+  }
   for (const node of nodes) {
-    if (node.type === "group") sortTree(node.children);
+    if (node.type === "group") sortTree(node.children, node);
   }
 }
 
