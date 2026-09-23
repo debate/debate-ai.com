@@ -32,6 +32,7 @@ import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
   BarChart3,
   Dumbbell,
+  FileText,
   LayoutGrid,
   Library,
   Radar,
@@ -213,13 +214,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 </div>
               ))}
             </dl>
-          </Reveal>
-
-          {/* The same sentence the page used to lead with. Now a footnote to
-              the counted-up totals above, which say it faster. */}
-          <Reveal delay={320}>
-            <p className="sr-only">{summaryText}</p>
-          </Reveal>
+</Reveal>
         </div>
       </section>
 
@@ -310,21 +305,18 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                               <p className="mt-1.5 flex-1 text-xs leading-relaxed text-muted-foreground">
                                 {entry.description}
                               </p>
-                              <div className="relative mt-3 flex items-center justify-between gap-2">
-                                <code className="text-[11px] text-muted-foreground">
-                                  {entry.href}
-                                </code>
-                                {docUrl ? (
-                                  <a
-                                    href={docUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="da-accent-text text-[11px] underline underline-offset-2 opacity-80 transition-opacity hover:opacity-100"
-                                  >
-                                    Docs
-                                  </a>
-                                ) : null}
-                              </div>
+                              {docUrl ? (
+                                <a
+                                  href={docUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="mt-3 flex items-center gap-1.5 text-[11px] text-muted-foreground transition-colors hover:text-[var(--da-card-accent,var(--da-accent))]"
+                                  aria-label={`Read docs for ${entry.title}`}
+                                >
+                                  <FileText className="size-3.5" />
+                                  <span>Documentation</span>
+                                </a>
+                              ) : null}
                             </div>
                           </SpotlightCard>
                         </Reveal>
