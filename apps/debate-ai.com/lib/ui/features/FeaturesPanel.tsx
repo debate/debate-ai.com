@@ -295,6 +295,28 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                         >
                           <SpotlightCard className="h-full" hueShift={hueShifts.get(entry.id)}>
                             <div className="group/feature flex h-full flex-col p-5">
+                              <div className="mb-2 flex items-center gap-2">
+                                <span className="da-chip text-[10px] font-medium text-muted-foreground">
+                                  {section.label}
+                                </span>
+                                {entry.tags && entry.tags.length > 0 && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {entry.tags.slice(0, 3).map((tag) => (
+                                      <span
+                                        key={tag}
+                                        className="da-chip text-[9px] font-medium text-muted-foreground/70 border-border/50"
+                                      >
+                                        {tag}
+                                      </span>
+                                    ))}
+                                    {entry.tags.length > 3 && (
+                                      <span className="da-chip text-[9px] font-medium text-muted-foreground/70 border-border/50">
+                                        +{entry.tags.length - 3}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                               <a
                                 href={entry.href}
                                 className="text-sm font-semibold text-foreground transition-colors group-hover/feature:text-[var(--da-card-accent,var(--da-accent))]"

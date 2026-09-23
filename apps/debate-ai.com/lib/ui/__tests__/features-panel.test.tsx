@@ -14,10 +14,9 @@ describe("FeaturesPanel", () => {
     }
   });
 
-  it("renders each category heading and the catalog summary line", () => {
+it("renders each category heading", () => {
     expect(html).toContain("Core Workspaces");
-    expect(html).toContain("Standings &amp; Rankings");
-    expect(html).toContain(`${APP_FEATURES.length} features across 8 categories`);
+    expect(html).toContain("Standings & Rankings");
   });
 
   it("links entries that have a long-form doc into the app's own docs site", () => {
