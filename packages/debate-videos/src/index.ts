@@ -120,10 +120,9 @@ export {
 export {
   VIDEO_RELATION_KINDS,
   VIDEO_RELATION_LABELS,
-  WatchAnalysisPanel,
-  type LinkedVideo,
   type VideoRelationKind,
-} from "./components/watch/WatchAnalysisPanel";
+} from "./lib/video-relations";
+export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
 export { WatchSidePanel } from "./components/watch/WatchSidePanel";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
