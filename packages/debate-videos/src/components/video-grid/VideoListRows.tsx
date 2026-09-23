@@ -66,6 +66,20 @@ interface VideoListRowsProps {
    * that knows what it is listing should say.
    */
   layout?: "round" | "lecture"
+  /**
+   * `false` lists every video as its own row, tree or no tree — what the
+   * related videos under the player want: round columns, since a related
+   * round still has an Aff and a Neg, but nothing to group a handful of
+   * videos by.
+   */
+  grouped?: boolean
+  /**
+   * Column the table opens sorted by. Without it the rows keep the feed's
+   * own order, which is what the library's listings want — the feed is
+   * already ranked. A short, unranked list passes `date`/`desc` to open
+   * newest first instead.
+   */
+  defaultSort?: { column: ColumnKey; direction: SortDirection }
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views"
@@ -197,6 +211,8 @@ export function VideoListRows({
   showThumbnails = true,
   defaultCollapseDepth,
   layout,
+  grouped = true,
+  defaultSort,
 }: VideoListRowsProps) {
   // Without an explicit `layout`, round (debate) videos carry tournament/aff/
   // neg data that lectures rarely populate, so that presence tells the two
@@ -209,8 +225,8 @@ export function VideoListRows({
   const columns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
 
-  const [sortColumn, setSortColumn] = useState<ColumnKey | null>(null)
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
+  const [sortColumn, setSortColumn] = useState<ColumnKey | null>(defaultSort?.column ?? null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(defaultSort?.direction ?? "asc")
 
   const handleSort = (column: ColumnDef) => {
     if (!column.sortValue) return
@@ -232,13 +248,14 @@ export function VideoListRows({
     [videos, stacks, stacksEnabled],
   )
 
-  // Lectures are listed flat — one row per slot, in feed order.
+  // Lectures, and any listing that asked not to be grouped, are listed flat
+  // — one row per slot, in feed order.
   const tree = useMemo<VideoTreeNode[]>(
     () =>
-      isRoundMode
+      isRoundMode && grouped
         ? buildVideoTree(slots, "round")
         : slots.map((slot) => ({ type: "video", key: slot.key, slot })),
-    [slots, isRoundMode],
+    [slots, isRoundMode, grouped],
   )
 
   /** The member of a slot on screen — what a sort reads, and what a row shows. */
