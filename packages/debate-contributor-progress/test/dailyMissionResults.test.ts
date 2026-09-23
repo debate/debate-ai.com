@@ -160,8 +160,8 @@ describe("mergeRemoteMissionResultDays", () => {
     ]);
     expect(changed).toBe(true);
     expect(listDailyMissionResultsForContributor("alice")).toEqual([
-      { contributorId: "alice", dayKey: "2026-08-09", isComplete: true },
-      { contributorId: "alice", dayKey: "2026-08-15", isComplete: false },
+      { id: "alice::2026-08-09", contributorId: "alice", dayKey: "2026-08-09", isComplete: true },
+      { id: "alice::2026-08-15", contributorId: "alice", dayKey: "2026-08-15", isComplete: false },
     ]);
   });
 
@@ -176,6 +176,7 @@ describe("mergeRemoteMissionResultDays", () => {
     saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
     mergeRemoteMissionResultDays("alice", [{ dayKey: "2026-08-09", isComplete: false }]);
     expect(getDailyMissionResult("alice", "2026-08-09")).toEqual({
+      id: "alice::2026-08-09",
       contributorId: "alice",
       dayKey: "2026-08-09",
       isComplete: true,
@@ -191,7 +192,7 @@ describe("mergeRemoteMissionResultDays", () => {
     expect(changed).toBe(true);
     expect(listDailyMissionResultsForContributor("alice")).toEqual([
       ALICE_DAY1,
-      { contributorId: "alice", dayKey: "2026-08-20", isComplete: true },
+      { id: "alice::2026-08-20", contributorId: "alice", dayKey: "2026-08-20", isComplete: true },
     ]);
   });
 

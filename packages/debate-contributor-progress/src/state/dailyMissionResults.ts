@@ -165,8 +165,9 @@ export function deleteDailyMissionResult(contributorId: string, dayKey: string):
  * or overwrite" convention. A day already recorded locally (e.g. this device
  * computed it moments ago) is left as-is rather than replaced by the remote
  * copy, since the remote value could itself be stale relative to a local
- * recompute that hasn't synced up yet. Returns whether anything was
- * actually added.
+ * recompute that hasn't synced up yet. Added records are stamped with the
+ * same `${contributorId}::${dayKey}` id `saveDailyMissionResult` uses, so
+ * they stay syncable. Returns whether anything was actually added.
  */
 export function mergeRemoteMissionResultDays(contributorId: string, remoteDays: DailyMissionResult[]): boolean {
   const existingDayKeys = new Set(
@@ -174,7 +175,12 @@ export function mergeRemoteMissionResultDays(contributorId: string, remoteDays: 
   );
   const newRecords: DailyMissionResultRecord[] = remoteDays
     .filter((day) => !existingDayKeys.has(day.dayKey))
-    .map((day) => ({ contributorId, dayKey: day.dayKey, isComplete: day.isComplete }));
+    .map((day) => ({
+      id: dailyMissionResultId(contributorId, day.dayKey),
+      contributorId,
+      dayKey: day.dayKey,
+      isComplete: day.isComplete,
+    }));
   if (newRecords.length === 0) return false;
 
   writeAll([...readAll(), ...newRecords]);
