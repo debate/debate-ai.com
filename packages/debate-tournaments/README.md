@@ -34,6 +34,23 @@ import { TournamentsApp } from "debate-tournaments"
 <TournamentsApp segments={slug} basePath="/tournaments" apiBase="/api/tabroom" Link={Link} />
 ```
 
+## Demo data
+
+`seed/demo.sql` fills D1 with dummy tournaments: one running now with
+published LD/PF pairings and results, two upcoming invites, and a hidden one.
+Dates are relative to load time, and every id is ≥ 90000 with `INSERT OR
+REPLACE`, so re-running it refreshes the data without colliding with real
+rows. From `apps/debate-ai.com`:
+
+```bash
+bun run db:seed:tournaments      # migrate + seed the local D1
+bun run db:seed:tournaments:d1   # migrate + seed the remote D1
+```
+
+Signing in with better-auth as `demo.judge@debate-ai.com` maps onto demo
+Tabroom person 90001. `test/demo-seed.test.ts` checks every UI endpoint
+against this seed.
+
 ## Taking upstream changes
 
 Upstream stays the source of truth; this package only *adds* modifications on

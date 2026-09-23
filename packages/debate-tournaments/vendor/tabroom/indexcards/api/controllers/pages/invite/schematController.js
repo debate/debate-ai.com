@@ -117,7 +117,7 @@ export async function getSchematic (req,res) {
 		return parsedRound;
 	});
 
-	if (!rounds) {
+	if (!rounds?.length) {
 		return NotFound(req, res,
 			`Round ${req.params.roundName} of ${req.params.eventAbbr} either does not exist or is not yet published.`
 		);

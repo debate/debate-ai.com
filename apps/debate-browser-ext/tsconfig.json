@@ -13,7 +13,10 @@
       // app's own copy — the one the bundle actually ships.
       "react": ["./node_modules/@types/react"],
       "react-dom": ["./node_modules/@types/react-dom"],
-      "react-dom/*": ["./node_modules/@types/react-dom/*"]
+      "react-dom/*": ["./node_modules/@types/react-dom/*"],
+      // The type-level half of `wxt.config.ts`'s `debate-api-client` alias:
+      // typed from its source, since its `dist/` exists only after its build.
+      "debate-api-client": ["../../packages/debate-api-client/src/index.ts"]
     }
   }
 }

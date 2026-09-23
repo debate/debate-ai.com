@@ -859,6 +859,58 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /evidence-reuse-check/annotate:
+    post:
+      operationId: annotateEvidenceReuseCard
+      summary: LLM flaws and author-quality annotation for a matched corpus card
+      description: >-
+        Takes the `card.cardId` of a reuse-check match. A saved annotation is
+        returned to anyone; generating one that does not exist yet requires a
+        session (cookie or bearer token). Each card is generated once and shared.
+      tags: [Evidence Reuse]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cardId: { type: integer }
+              required: [cardId]
+      responses:
+        "200":
+          description: The card's annotation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cardId: { type: integer }
+                  annotation:
+                    $ref: "#/components/schemas/CardReuseAnnotation"
+                  cached:
+                    type: boolean
+                    description: True when served from the saved annotation rather than a new model call.
+                required: [cardId, annotation, cached]
+        "400":
+          description: Missing or invalid cardId.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Not annotated yet, and no session to generate it.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: No card with that id.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
   /flow-sync:
     get:
       operationId: pullFlowEdits
@@ -2350,7 +2402,64 @@ components:
           type: string
         topic:
           type: string
+        card:
+          $ref: "#/components/schemas/ReuseCardDetails"
+        annotation:
+          $ref: "#/components/schemas/CardReuseAnnotation"
       required: [id, sourceUrl]
+
+    ReuseCardDetails:
+      type: object
+      description: >-
+        Returned on reuse-check matches registered from the Parquet card corpus
+        (ids `card:<id>`) — the stored card parsed by debate-card-parser.
+      properties:
+        cardId: { type: integer }
+        tag: { type: string }
+        cite: { type: string }
+        fullcite: { type: string }
+        author: { type: string, nullable: true }
+        year:
+          description: Publication year, "ND" for no date, or null when unparsed.
+          oneOf:
+            - { type: integer }
+            - { type: string, enum: [ND] }
+          nullable: true
+        quotes:
+          type: array
+          description: Highlighted runs, in card order.
+          items: { type: string }
+        caselist: { type: string }
+        event: { type: string }
+        level: { type: string }
+        side: { type: string }
+        duplicateCount: { type: integer }
+      required: [cardId, tag, cite, fullcite, author, year, quotes, caselist, event, level, side, duplicateCount]
+
+    CardReuseAnnotation:
+      type: object
+      properties:
+        claim: { type: string }
+        supportScore:
+          type: integer
+          description: 0-10, how well the highlighted text supports the tag.
+        authorQuality:
+          type: object
+          properties:
+            rating: { type: string, enum: [strong, adequate, weak, unknown] }
+            qualifications: { type: string }
+            concerns: { type: string }
+          required: [rating, qualifications, concerns]
+        flaws:
+          type: array
+          items:
+            type: object
+            properties:
+              flaw: { type: string }
+              severity: { type: string, enum: [high, medium, low] }
+              explanation: { type: string }
+            required: [flaw, severity, explanation]
+      required: [claim, supportScore, authorQuality, flaws]
 
     FlowEdit:
       type: object

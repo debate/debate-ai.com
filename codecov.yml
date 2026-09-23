@@ -79,6 +79,9 @@ flags:
   debate-timer:
     paths:
       - packages/debate-timer/src
+  debate-tournaments:
+    paths:
+      - packages/debate-tournaments/src
   debate-videos:
     paths:
       - packages/debate-videos/src
@@ -139,6 +142,9 @@ component_management:
     - component_id: debate-timer
       paths:
         - packages/debate-timer/src
+    - component_id: debate-tournaments
+      paths:
+        - packages/debate-tournaments/src
     - component_id: debate-videos
       paths:
         - packages/debate-videos/src

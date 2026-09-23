@@ -12,13 +12,16 @@
  * @module lib/admin/debate-card-import
  */
 
-import { sql } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 import {
+  buildParquetCardReuseEntry,
   normalizeDebateCardRows,
+  parquetCardReuseId,
   type DebateCardRecord,
   type DebateCardRowFailure,
+  type ParquetCardReuseEntry,
 } from "debate-research-evidence";
-import { debateCardImports, debateCards } from "@/lib/database/schema";
+import { debateCardImports, debateCards, evidenceReuseIndex } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
 import { getAdminAccess } from "@/lib/auth/admin";
 
@@ -35,6 +38,15 @@ const CARD_INSERT_COLUMNS = 20;
  */
 export const CARD_ROWS_PER_STATEMENT = Math.floor(100 / CARD_INSERT_COLUMNS);
 
+/** Columns written per `evidence_reuse_index` row ({@link ParquetCardReuseEntry}). */
+const REUSE_INSERT_COLUMNS = 7;
+
+/** Reuse-index rows per INSERT, under the same 100-parameter ceiling. */
+export const REUSE_ROWS_PER_STATEMENT = Math.floor(100 / REUSE_INSERT_COLUMNS);
+
+/** Ids per `DELETE … WHERE id IN (…)`, under the same ceiling. */
+const REUSE_IDS_PER_DELETE = 90;
+
 /** Cards accepted in one request, mirroring the client's batch size ceiling. */
 export const MAX_CARDS_PER_REQUEST = 1_000;
 
@@ -43,6 +55,8 @@ export interface CardBatchWriteResult {
   imported: number;
   skipped: number;
   failures: DebateCardRowFailure[];
+  /** Cards whose citation named a source URL, now in the reuse index. */
+  reuseIndexed: number;
 }
 
 /**
@@ -184,7 +198,7 @@ export async function writeDebateCardBatch(
 ): Promise<CardBatchWriteResult> {
   const { cards, failures } = normalizeDebateCardRows(rawCards);
   if (cards.length === 0) {
-    return { imported: 0, skipped: failures.length, failures };
+    return { imported: 0, skipped: failures.length, failures, reuseIndexed: 0 };
   }
 
   // A batch that names the same id twice makes SQLite reject the whole
@@ -206,6 +220,8 @@ export async function writeDebateCardBatch(
         .onConflictDoUpdate({ target: debateCards.id, set }),
     );
   }
+  const reuse = buildReuseIndexStatements(db, unique);
+  statements.push(...reuse.statements);
 
   // The parameter ceiling turns one posted batch into ~50 statements, and
   // awaiting them one at a time is ~50 D1 round trips inside a single
@@ -218,7 +234,60 @@ export async function writeDebateCardBatch(
     for (const statement of statements) await statement;
   }
 
-  return { imported: unique.length, skipped: failures.length, failures };
+  return { imported: unique.length, skipped: failures.length, failures, reuseIndexed: reuse.indexed };
+}
+
+/**
+ * Builds the statements that keep the on-page reuse check in step with the
+ * cards being written.
+ *
+ * Each card goes through `debate-card-parser` for the URL its citation names;
+ * one that has a URL is upserted into `evidence_reuse_index` as `card:<id>`,
+ * and one that no longer has a URL (a re-import that corrected its cite) has
+ * any earlier entry removed, so a page never reads as cut by a card that was
+ * not cut from it.
+ *
+ * @param db - Drizzle database handle.
+ * @param cards - The cards being written, one per id.
+ * @returns The statements to run alongside the card upserts, and how many
+ *   cards were indexed.
+ */
+export function buildReuseIndexStatements(
+  db: any,
+  cards: readonly Pick<DebateCardRecord, "id" | "tag" | "cite" | "fullcite" | "caselistDisplayName">[],
+): { statements: unknown[]; indexed: number } {
+  const entries: ParquetCardReuseEntry[] = [];
+  const unindexedIds: string[] = [];
+  for (const card of cards) {
+    const entry = buildParquetCardReuseEntry(card);
+    if (entry) entries.push(entry);
+    else unindexedIds.push(parquetCardReuseId(card.id));
+  }
+
+  const reuseSet = {
+    sourceUrl: sql.raw("excluded.source_url"),
+    normalizedUrl: sql.raw("excluded.normalized_url"),
+    cite: sql.raw("excluded.cite"),
+    argBlock: sql.raw("excluded.arg_block"),
+    topic: sql.raw("excluded.topic"),
+  };
+  const statements: unknown[] = [];
+  for (let start = 0; start < entries.length; start += REUSE_ROWS_PER_STATEMENT) {
+    statements.push(
+      db
+        .insert(evidenceReuseIndex)
+        .values(entries.slice(start, start + REUSE_ROWS_PER_STATEMENT))
+        .onConflictDoUpdate({ target: evidenceReuseIndex.id, set: reuseSet }),
+    );
+  }
+  for (let start = 0; start < unindexedIds.length; start += REUSE_IDS_PER_DELETE) {
+    statements.push(
+      db
+        .delete(evidenceReuseIndex)
+        .where(inArray(evidenceReuseIndex.id, unindexedIds.slice(start, start + REUSE_IDS_PER_DELETE))),
+    );
+  }
+  return { statements, indexed: entries.length };
 }
 
 /**

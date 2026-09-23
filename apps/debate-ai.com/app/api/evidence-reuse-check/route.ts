@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
+import {
+  buildReuseCardDetails,
+  parseParquetCardReuseId,
+  type CardReuseAnnotation,
+  type ReuseCardDetails,
+} from "debate-research-evidence"
 import { getDBFromContext } from "@/lib/database/context"
-import { evidenceReuseIndex, reuseCheckLog } from "@/lib/database/schema"
+import { debateCards, evidenceReuseIndex, reuseCheckLog } from "@/lib/database/schema"
+import { annotationCardHash, readSavedAnnotations } from "@/lib/evidence-reuse-check/card-annotation"
 
 /**
  * Server-backed reuse index for the "On Page Card Reuse Search" idea (see
@@ -15,7 +22,12 @@ import { evidenceReuseIndex, reuseCheckLog } from "@/lib/database/schema"
  * `app/api/flow-sync/route.ts`'s D1-backed API-route conventions.
  *
  * GET  ?url=<string>&source=<"web"|"extension">   — whether `url` has
- *   already been cut, plus matches. Every call also appends a row to
+ *   already been cut, plus matches. A match registered from the Parquet card
+ *   corpus (`card:<id>`, see `debate-research-evidence`'s
+ *   `parquet-card-reuse.ts`) also carries `card` — the card parsed by
+ *   `debate-card-parser` for its author, year and highlighted quotes — and
+ *   `annotation`, its saved LLM flaws/author-quality annotation when one
+ *   exists (`POST /api/evidence-reuse-check/annotate` makes one). Every call also appends a row to
  *   `reuseCheckLog` (idea #7's "team dashboard of pages flagged as
  *   already-cut" follow-up — see `GET /api/evidence-reuse-check/dashboard`),
  *   best-effort: a logging failure never fails the caller's actual check.
@@ -43,6 +55,8 @@ type ReuseMatch = {
   cite: string
   argBlock: string
   topic: string
+  card?: ReuseCardDetails
+  annotation?: CardReuseAnnotation
 }
 
 function toReuseMatch(row: typeof evidenceReuseIndex.$inferSelect): ReuseMatch {
@@ -79,6 +93,7 @@ export async function GET(req: NextRequest) {
 
   const matches = rows.map(toReuseMatch)
   const alreadyCut = matches.length > 0
+  await attachCorpusCards(db, matches)
 
   // Best-effort: the reuse dashboard is a nice-to-have view over this log,
   // so a logging failure must never fail the caller's actual reuse check.
@@ -96,6 +111,68 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ url, alreadyCut, matches })
+}
+
+type CorpusCardRow = Pick<
+  typeof debateCards.$inferSelect,
+  | "id"
+  | "tag"
+  | "cite"
+  | "fullcite"
+  | "markup"
+  | "spoken"
+  | "fulltext"
+  | "caselistDisplayName"
+  | "event"
+  | "level"
+  | "side"
+  | "duplicateCount"
+>
+
+/**
+ * Fills in `card` and `annotation` on the matches that came from the card
+ * corpus. Best-effort like the log below: the answer to "has this been cut"
+ * is already known, and a failure here must not turn it into an error.
+ */
+async function attachCorpusCards(db: Awaited<ReturnType<typeof getDBFromContext>>, matches: ReuseMatch[]) {
+  const byCardId = new Map<number, ReuseMatch>()
+  for (const match of matches) {
+    const cardId = parseParquetCardReuseId(match.id)
+    if (cardId !== null) byCardId.set(cardId, match)
+  }
+  if (byCardId.size === 0) return
+
+  try {
+    const cards: CorpusCardRow[] = await db
+      .select({
+        id: debateCards.id,
+        tag: debateCards.tag,
+        cite: debateCards.cite,
+        fullcite: debateCards.fullcite,
+        markup: debateCards.markup,
+        spoken: debateCards.spoken,
+        fulltext: debateCards.fulltext,
+        caselistDisplayName: debateCards.caselistDisplayName,
+        event: debateCards.event,
+        level: debateCards.level,
+        side: debateCards.side,
+        duplicateCount: debateCards.duplicateCount,
+      })
+      .from(debateCards)
+      .where(inArray(debateCards.id, [...byCardId.keys()]))
+
+    const hashes = await Promise.all(cards.map((card) => annotationCardHash(card)))
+    const saved = await readSavedAnnotations(db, hashes)
+    cards.forEach((card, index) => {
+      const match = byCardId.get(card.id)
+      if (!match) return
+      match.card = buildReuseCardDetails(card)
+      const annotation = saved.get(hashes[index])
+      if (annotation) match.annotation = annotation
+    })
+  } catch (error) {
+    console.error("evidence-reuse-check: failed to attach corpus cards", error)
+  }
 }
 
 export async function POST(req: NextRequest) {

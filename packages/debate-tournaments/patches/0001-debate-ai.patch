@@ -1,3 +1,16 @@
+diff --git a/indexcards/api/controllers/pages/invite/schematController.js b/indexcards/api/controllers/pages/invite/schematController.js
+index fb0efa99..aa39c7fd 100644
+--- a/indexcards/api/controllers/pages/invite/schematController.js
++++ b/indexcards/api/controllers/pages/invite/schematController.js
+@@ -117,7 +117,7 @@ export async function getSchematic (req,res) {
+ 		return parsedRound;
+ 	});
+ 
+-	if (!rounds) {
++	if (!rounds?.length) {
+ 		return NotFound(req, res,
+ 			`Round ${req.params.roundName} of ${req.params.eventAbbr} either does not exist or is not yet published.`
+ 		);
 diff --git a/indexcards/api/controllers/rest/pageController.ts b/indexcards/api/controllers/rest/pageController.ts
 index 6c8c7bc6..99f1427c 100644
 --- a/indexcards/api/controllers/rest/pageController.ts

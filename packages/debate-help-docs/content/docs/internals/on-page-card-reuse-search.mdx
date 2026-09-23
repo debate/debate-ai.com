@@ -1,0 +1,133 @@
+---
+title: "On-Page Card Reuse Search"
+---
+
+# On-Page Card Reuse Search
+
+"Has this page already been cut?" — answered from one D1 table, fed by two
+sources, and enriched for corpus cards with a parsed citation and a cached LLM
+annotation.
+
+- **Routes:** `GET`/`POST /api/evidence-reuse-check`,
+  `POST /api/evidence-reuse-check/annotate`,
+  `GET /api/evidence-reuse-check/dashboard`,
+  `POST /api/admin/debate-cards/reuse-index` (backfill)
+- **Packages:** `debate-card-parser` (``src/extractors/card-record.ts``),
+  `debate-research-evidence` (``src/lib/parquet-card-reuse.ts``,
+  ``src/lib/card-reuse-annotation.ts``, ``src/lib/shared-evidence-library.ts``)
+- **App:** ``lib/admin/debate-card-import.ts``,
+  ``lib/evidence-reuse-check/card-annotation.ts``
+- **Extension:** ``apps/debate-browser-ext/src/reuse/api.ts``,
+  ``entrypoints/popup/App.tsx``, ``src/components/ReuseMatchCard.tsx``
+- **User docs:** [On-Page Card Reuse Search](../features/on-page-card-reuse-search.mdx)
+
+## The index
+
+`evidence_reuse_index` holds one row per "this URL has been cut" fact, keyed
+by a caller-assigned `id`, with `normalized_url` indexed for the lookup.
+`normalizeSourceUrl` lowercases and drops the scheme, a leading `www.`, the
+query/fragment and trailing slashes. The route keeps its own copy of that
+function, so the two must stay identical.
+
+Two writers:
+
+1. **Library entries.** `POST /api/evidence-reuse-check` registers one card's
+   `sourceUrl` under whatever id the caller assigns.
+2. **The Parquet card corpus.** Every batch `writeDebateCardBatch` writes to
+   `debate_cards` also goes through `buildReuseIndexStatements`. Each card's
+   `cite`/`fullcite` is parsed by `debate-card-parser`'s `parseCardRecord`.
+   A card whose citation names a URL is upserted as ``card:<id>``
+   (`argBlock` = the tag, `topic` = the caselist). A card that no longer
+   names one has its old ``card:<id>`` row deleted, so a re-import that fixes
+   a cite never leaves a stale match. These statements run in the same
+   `db.batch` as the card upserts, so a batch lands whole or not at all.
+   Inserts are capped at 14 rows per statement (7 columns under D1's
+   100-parameter ceiling).
+
+Cards imported before corpus indexing existed are backfilled by
+`POST /api/admin/debate-cards/reuse-index` with body
+``{ afterId, limit }``. It reads only the cite columns in id order, applies the
+same statements, and returns ``{ processed, indexed, nextAfterId, done }``.
+Call it in a loop, feeding `nextAfterId` back in, until `done`. It uses the
+same auth as the importer: an admin session, or `CARD_IMPORT_TOKEN` as a
+bearer token.
+
+## URL extraction
+
+`extractSourceUrl` strips tags, decodes entities, and takes the first
+`http(s)://` or bare `www.` URL in the citation. A bare `www.` URL gets
+`https://` added. Trailing punctuation is removed with `cleanUrl`, the same
+cleanup `htmlToCards` applies. The URL comes from `fullcite` first and falls
+back to `cite`.
+
+## The lookup
+
+`GET /api/evidence-reuse-check?url=&source=` returns up to 20 matches and
+appends a row to `reuse_check_log`. That log feeds the team dashboard, and a
+weekly cron purges rows older than 180 days. For each match whose id parses
+as ``card:<id>``, `attachCorpusCards` loads the `debate_cards` row and adds:
+
+- `card` — `buildReuseCardDetails`: tag, cite, full cite, parsed `author` and
+  `year`, up to 6 highlighted `quotes` (each `<mark>` run; falls back to
+  `spoken` when the markup has none), caselist, event, level, side, and
+  `duplicateCount`.
+- `annotation` — the saved LLM annotation, when one exists.
+
+This enrichment is best-effort: a failure is logged, and the "already cut"
+answer still returns.
+
+## The annotation
+
+`POST /api/evidence-reuse-check/annotate` takes ``{ cardId }``, never card
+text, so the model only ever sees cards that are in the library.
+
+- The content sent is `buildCardReuseAnnotationContent`: tag, full
+  citation, the highlighted text, then the full card text, capped at
+  `MAX_ANALYSIS_CONTENT_CHARS` (20,000).
+- The model is `claude-opus-5` at effort `medium`, held to
+  `CARD_REUSE_ANNOTATION_SCHEMA` through `output_config.format`. The request
+  sends `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`), so a
+  classifier-declined request is re-run on the recommended model. The stored
+  `model` column records which model actually answered.
+- A `refusal` or `max_tokens` stop, or an answer that fails
+  `parseCardReuseAnnotation`, returns an error and saves nothing.
+- Results are cached in `card_ai_analyses` beside the evidence search's
+  analyses. The key is the SHA-256 of the content plus the SHA-256 of
+  `CARD_REUSE_ANNOTATION_VERSION` and the prompt. **Bump the version whenever
+  the prompt or schema changes shape**, so old answers regenerate instead of
+  being served in the old shape.
+- A saved annotation is served to anyone. Generating a new one requires a
+  session: the extension sends its bearer token, and a signed-out caller gets
+  a 401 with a sign-in message.
+
+Shape: `claim`, `supportScore` (0–10, clamped), `authorQuality` (`rating` is
+one of `strong`, `adequate`, `weak` or `unknown`, plus `qualifications` and
+`concerns`), and `flaws` (each with `flaw`, `severity` of high, medium or low,
+and `explanation`).
+
+## The extension
+
+The popup calls the lookup for the active tab. It renders each match with
+`ReuseMatchCard`: the tag, an author/year/caselist line, the first 3 quotes,
+and the annotation or a **Find flaws & rate author** button. When the reader
+is signed in, the first 3 unannotated corpus matches are annotated
+automatically (`AUTO_ANNOTATE_LIMIT`). A page cut dozens of times must not
+start dozens of model calls on its own.
+
+The extension builds standalone with `bun run build` in its directory.
+`wxt.config.ts` aliases `debate-api-client` to its TypeScript source, and
+`tsconfig.json` has the matching path, because that package's `dist/` only
+exists after its own build.
+
+## Known gaps
+
+- Cards whose citation has no URL, or only a DOI or a publication name, are
+  never indexed. They cannot be matched to a page.
+- Matching is exact on the normalized URL. The same article at a different
+  path (AMP pages, syndicated copies, `/amp`, print views) does not match.
+- The backfill is a manual loop against the admin route. No cron runs it.
+- The web app's "Check this page" box (`ReuseCheckScreen` in
+  `debate-ai-webui`) does not show `card` or `annotation` yet. Only the
+  extension popup renders them.
+- Annotation cost is bounded only by the session requirement and the
+  once-per-card cache. There is no per-user rate limit.

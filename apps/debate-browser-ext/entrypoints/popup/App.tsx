@@ -3,7 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { browser } from 'wxt/browser';
 
 import { Button } from '@/components/ui/button';
+import { isSignedIn } from '@/src/auth/session';
+import { ReuseMatchCard, type AnnotationState } from '@/src/components/ReuseMatchCard';
 import {
+  annotateReuseCard,
   checkPageForExistingCards,
   isUrlDomainSkipped,
   parseSkipDomains,
@@ -12,6 +15,14 @@ import {
 import { openReaderPanel, supportsReaderPanel } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
+
+/**
+ * Corpus matches annotated automatically when the popup opens on a signed-in
+ * reader. Each is generated once server-side and then shared, but a page cut
+ * dozens of times should not start dozens of model calls on its own — the
+ * rest wait for a click.
+ */
+const AUTO_ANNOTATE_LIMIT = 3;
 
 type StatusKind = 'idle' | 'loading' | 'safe' | 'cut' | 'skip' | 'error';
 
@@ -48,15 +59,37 @@ export default function App() {
   const [windowId, setWindowId] = useState<number | undefined>(undefined);
   const [status, setStatus] = useState<Status>({ kind: 'loading', text: 'Checking…' });
   const [matches, setMatches] = useState<ReuseMatch[]>([]);
+  const [annotations, setAnnotations] = useState<Record<number, AnnotationState>>({});
+
+  const annotate = useCallback(async (cardId: number) => {
+    setAnnotations((prev) => ({ ...prev, [cardId]: { loading: true } }));
+    try {
+      const settings = await getSettings();
+      const annotation = await annotateReuseCard(cardId, settings.apiBase);
+      setAnnotations((prev) => ({ ...prev, [cardId]: { annotation } }));
+    } catch (err) {
+      setAnnotations((prev) => ({
+        ...prev,
+        [cardId]: { error: err instanceof Error ? err.message : 'Annotation failed.' },
+      }));
+    }
+  }, []);
 
   const check = useCallback(async (url: string) => {
     setMatches([]);
+    setAnnotations({});
     setStatus({ kind: 'loading', text: 'Checking…' });
     try {
       const settings = await getSettings();
       const result = await checkPageForExistingCards(url, settings.apiBase);
       if (result.alreadyCut) {
         setMatches(result.matches);
+        if (await isSignedIn()) {
+          result.matches
+            .filter((match) => match.card && !match.annotation)
+            .slice(0, AUTO_ANNOTATE_LIMIT)
+            .forEach((match) => void annotate(match.card!.cardId));
+        }
         setStatus({
           kind: 'cut',
           text: `Already cut: ${result.matches.length} existing ${
@@ -72,7 +105,7 @@ export default function App() {
         text: err instanceof Error ? err.message : 'Reuse check failed.',
       });
     }
-  }, []);
+  }, [annotate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -168,15 +201,12 @@ export default function App() {
       {matches.length > 0 && (
         <ul className="mt-2 space-y-1.5">
           {matches.map((match, i) => (
-            <li
-              key={`${match.cite ?? ''}-${i}`}
-              className="rounded-md border border-dashed border-border p-2 text-xs"
-            >
-              <div className="font-semibold">{match.argBlock || '(untitled)'}</div>
-              <div className="text-muted-foreground">
-                {[match.cite, match.topic].filter(Boolean).join(' — ')}
-              </div>
-            </li>
+            <ReuseMatchCard
+              key={match.id ?? `${match.cite ?? ''}-${i}`}
+              match={match}
+              state={match.card ? annotations[match.card.cardId] : undefined}
+              onAnnotate={match.card ? () => void annotate(match.card!.cardId) : undefined}
+            />
           ))}
         </ul>
       )}

@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'wxt';
 
 /**
@@ -26,8 +27,20 @@ export default defineConfig({
   // copies in one bundle means the shell's hooks run against a different
   // dispatcher than the page's ("invalid hook call"), so every `react` and
   // `react-dom` specifier is resolved once, from this app's own dependency.
+  //
+  // `debate-api-client` (reached through `debate-ai-webui`) publishes compiled
+  // `dist/` output that only exists after that package's own build, so a plain
+  // `bun run build` here failed with "Failed to resolve entry for package".
+  // Bundling its TypeScript source instead makes this build self-contained.
   vite: () => ({
-    resolve: { dedupe: ['react', 'react-dom'] },
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+      alias: {
+        'debate-api-client': fileURLToPath(
+          new URL('../../packages/debate-api-client/src/index.ts', import.meta.url)
+        ),
+      },
+    },
   }),
   // `wxt dev` launches a browser via chrome-launcher, which only auto-detects
   // "Google Chrome" / "Chromium". This machine only has Chrome Beta installed,

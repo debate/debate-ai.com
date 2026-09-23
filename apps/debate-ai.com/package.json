@@ -22,6 +22,8 @@
     "db:migrate:d1": "bun run scripts/migrate-d1.ts",
     "db:seed:videos": "bun run scripts/seed-videos.ts",
     "db:seed:videos:d1": "bun run scripts/seed-videos.ts --sql-only && wrangler d1 execute debate-ai-db --remote --file=drizzle/seed/videos-seed.sql",
+    "db:seed:tournaments": "bun run scripts/migrate-d1.ts --local && wrangler d1 execute debate-ai-db --local --file=../../packages/debate-tournaments/seed/demo.sql",
+    "db:seed:tournaments:d1": "bun run scripts/migrate-d1.ts && wrangler d1 execute debate-ai-db --remote --file=../../packages/debate-tournaments/seed/demo.sql",
     "db:studio": "drizzle-kit studio",
     "favicon": "bun create favicon public/favicon-512.png public/ --overwrite",
     "typecheck": "tsc --noEmit -p tsconfig.typecheck.json",

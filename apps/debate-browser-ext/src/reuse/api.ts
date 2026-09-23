@@ -8,13 +8,57 @@
  * pre-merge extension's plain-JS `api.js` when the card-reuse extension and
  * the round timer became one extension; the storage keys are unchanged.
  */
+import { authorizedFetch, isSignedIn } from '@/src/auth/session';
 import { getSettings } from '@/src/settings/settings';
+
+/**
+ * A matched card from the Parquet card corpus, parsed server-side by
+ * debate-card-parser. Mirrors `ReuseCardDetails` in
+ * packages/debate-search-evidence/src/lib/parquet-card-reuse.ts.
+ */
+export interface ReuseCardDetails {
+  cardId: number;
+  tag: string;
+  cite: string;
+  fullcite: string;
+  author: string | null;
+  year: number | 'ND' | null;
+  /** Highlighted runs, in card order. */
+  quotes: string[];
+  caselist: string;
+  event: string;
+  level: string;
+  side: string;
+  duplicateCount: number;
+}
+
+/**
+ * The LLM's read of a matched card. Mirrors `CardReuseAnnotation` in
+ * packages/debate-search-evidence/src/lib/card-reuse-annotation.ts.
+ */
+export interface CardAnnotation {
+  claim: string;
+  /** 0-10: how well the highlighted text supports the tag. */
+  supportScore: number;
+  authorQuality: {
+    rating: 'strong' | 'adequate' | 'weak' | 'unknown';
+    qualifications: string;
+    concerns: string;
+  };
+  flaws: Array<{ flaw: string; severity: 'high' | 'medium' | 'low'; explanation: string }>;
+}
 
 /** One already-cut card the shared index knows about for this page. */
 export interface ReuseMatch {
+  id?: string;
+  sourceUrl?: string;
   argBlock?: string;
   cite?: string;
   topic?: string;
+  /** Present when the match came from the card corpus. */
+  card?: ReuseCardDetails;
+  /** Present when that card has already been annotated. */
+  annotation?: CardAnnotation;
 }
 
 export interface ReuseCheckResult {
@@ -82,4 +126,31 @@ export async function checkPageForExistingCards(
     alreadyCut: Boolean(payload.alreadyCut),
     matches: Array.isArray(payload.matches) ? payload.matches : [],
   };
+}
+
+/**
+ * The flaws/author-quality annotation for a corpus card, via
+ * POST `${apiBase}/api/evidence-reuse-check/annotate`. A saved annotation is
+ * served to anyone; generating a new one needs a session, so a signed-in
+ * reader's bearer token is sent when there is one, and the server's "sign in"
+ * message is what a signed-out reader sees for a card nobody has annotated.
+ */
+export async function annotateReuseCard(cardId: number, apiBase: string): Promise<CardAnnotation> {
+  const path = '/api/evidence-reuse-check/annotate';
+  const init: RequestInit = {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ cardId }),
+  };
+  const res = (await isSignedIn())
+    ? await authorizedFetch(path, init)
+    : await fetch(`${apiBase.replace(/\/$/, '')}${path}`, init);
+  const payload = (await res.json().catch(() => ({}))) as {
+    annotation?: CardAnnotation;
+    error?: string;
+  };
+  if (!res.ok || !payload.annotation) {
+    throw new Error(payload.error || `Annotation request failed (${res.status}).`);
+  }
+  return payload.annotation;
 }

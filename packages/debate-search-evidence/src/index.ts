@@ -15,6 +15,7 @@ export {
   buildReuseCheckDashboard,
   buildReuseCheckDashboardSummaryText,
   getReuseCheckLogPurgeCutoff,
+  normalizeSourceUrl,
   REUSE_CHECK_LOG_RETENTION_DAYS,
   type FlaggedPageReuseSummary,
   type ReuseCheckLogRecord,
@@ -103,3 +104,24 @@ export {
   sha256Hex,
   type CardAiAnalysisResponse,
 } from "./lib/card-ai-analysis";
+export {
+  MAX_REUSE_CARD_QUOTES,
+  PARQUET_CARD_REUSE_ID_PREFIX,
+  buildParquetCardReuseEntry,
+  buildReuseCardDetails,
+  parquetCardReuseId,
+  parseParquetCardReuseId,
+  type ParquetCardReuseEntry,
+  type ParquetCardReuseInput,
+  type ReuseCardDetails,
+} from "./lib/parquet-card-reuse";
+export {
+  CARD_REUSE_ANNOTATION_PROMPT,
+  CARD_REUSE_ANNOTATION_SCHEMA,
+  CARD_REUSE_ANNOTATION_VERSION,
+  buildCardReuseAnnotationContent,
+  parseCardReuseAnnotation,
+  type AuthorQualityRating,
+  type CardFlawSeverity,
+  type CardReuseAnnotation,
+} from "./lib/card-reuse-annotation";
