@@ -16,7 +16,7 @@ localStorage.
 
 ## What it shows
 
-The editor's whole tab set — **General**, **Files**, **Appearance**,
+The editor's whole category set, listed in a searchable sidebar — **General**, **Files**, **Appearance**,
 **Accessibility**, **Editing**, **Keyboard**, **Comments & AI**,
 **Collaboration** — built by `debate-editor`'s own
 `buildEmbeddedSettingsPanel`, so each tab is the same rows the editor's
@@ -69,7 +69,7 @@ here any more.
 ```
 debate-editor/settings.ts (the store, SETTING_METADATA, SECRET_SETTING_KEYS)
 debate-editor/settings-ui.ts (buildEmbeddedSettingsPanel)
-app/settings/editor-panel/page.tsx (iframe document: tabs, hydrate, debounced push)
+app/settings/editor-panel/page.tsx (iframe document: category sidebar, hydrate, debounced push)
   → GET/PUT /api/settings { editorPreferences }
 lib/editor-preferences.ts (EDITOR_SETTINGS_TABS, EDITOR_PREFERENCE_KEYS, validation)
 components/settings/CardMirrorSettingsPanel.tsx (the iframe wrapper, self-sizing)

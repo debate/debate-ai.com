@@ -32,8 +32,20 @@
  * stay authoritative either way.
  */
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import type { ComponentType } from "react"
 import { useSearchParams } from "next/navigation"
+import {
+  Accessibility,
+  FolderOpen,
+  Keyboard,
+  MessageSquareText,
+  Palette,
+  PenLine,
+  Search,
+  Settings,
+  Users,
+} from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // this route's own chunk — never loaded by the host app's main bundle.
 import "debate-editor/styles.css"
@@ -43,6 +55,39 @@ import { EDITOR_PREFERENCE_KEYS, EDITOR_SETTINGS_TABS } from "@/lib/editor-prefe
 // The tabs and their order come from `lib/editor-preferences.ts`, so the set
 // of categories shown here and the set mirrored to the account cannot drift.
 const CATEGORIES = EDITOR_SETTINGS_TABS
+
+// Sidebar icon and header subtitle per category, in the style of the
+// research workspace's settings (components/qwksearch/Settings).
+const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>; description: string }> = {
+  general: { icon: Settings, description: "Startup, language and general editor behavior." },
+  files: { icon: FolderOpen, description: "Opening, saving, autosave and file handling." },
+  appearance: { icon: Palette, description: "Colors, fonts, sizing and layout." },
+  accessibility: { icon: Accessibility, description: "Contrast, motion and readability overrides." },
+  editing: { icon: PenLine, description: "Typing, formatting and card cutting." },
+  shortcuts: { icon: Keyboard, description: "View and customize keyboard shortcuts." },
+  "comments-ai": { icon: MessageSquareText, description: "Comments, AI providers and assistance." },
+  pairing: { icon: Users, description: "Real-time collaboration and sharing." },
+}
+
+// `dai-` rather than the editor's `pmd-` prefix: its stylesheet already
+// styles `.pmd-settings-sidebar` for its own modal.
+const SIDEBAR_CSS = `
+.dai-settings-shell { display: flex; gap: 24px; align-items: flex-start; }
+.dai-settings-sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 0; }
+.dai-settings-main { flex: 1; min-width: 0; }
+.dai-settings-nav-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 7px 10px;
+  border: none; border-radius: 8px; background: none; color: inherit; font: inherit; font-size: 14px;
+  text-align: left; cursor: pointer; opacity: 0.75; transition: background 150ms, opacity 150ms; }
+.dai-settings-nav-item:hover { background: rgba(127, 127, 127, 0.12); opacity: 1; }
+.dai-settings-nav-item[aria-selected="true"] { background: rgba(127, 127, 127, 0.18); opacity: 1; font-weight: 600; }
+.dai-settings-search { width: 100%; box-sizing: border-box; padding: 7px 10px 7px 32px; border: none;
+  border-radius: 8px; background: rgba(127, 127, 127, 0.12); color: inherit; font: inherit; font-size: 14px; outline: none; }
+.dai-settings-search:focus { box-shadow: 0 0 0 1px rgba(127, 127, 127, 0.4); }
+@media (max-width: 640px) {
+  .dai-settings-shell { flex-direction: column; gap: 12px; }
+  .dai-settings-sidebar { width: 100%; position: static; }
+}
+`
 
 function isSettingsCategory(value: string | null): value is SettingsCategory {
   return CATEGORIES.some((category) => category.id === value)
@@ -56,6 +101,7 @@ function EditorSettingsPanelPage() {
   const [active, setActive] = useState<SettingsCategory>(initialCategory as SettingsCategory)
   const [ready, setReady] = useState(false)
   const [signedIn, setSignedIn] = useState(false)
+  const [query, setQuery] = useState("")
   const containerRef = useRef<HTMLDivElement | null>(null)
   const moduleRef = useRef<typeof import("debate-editor/settings-ui") | null>(null)
   const settingsRef = useRef<typeof import("debate-editor/settings") | null>(null)
@@ -191,44 +237,78 @@ function EditorSettingsPanelPage() {
     return () => observer.disconnect()
   }, [active, ready])
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return CATEGORIES
+    return CATEGORIES.filter(
+      ({ id, label }) =>
+        label.toLowerCase().includes(q) || CATEGORY_DETAILS[id]?.description.toLowerCase().includes(q),
+    )
+  }, [query])
+  const activeCategory = CATEGORIES.find((category) => category.id === active)
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", padding: "4px 0 16px" }}>
-      <div
-        role="tablist"
-        aria-label="Editor settings categories"
-        // Wraps: this is the editor's whole tab set now, which is more than
-        // fits one row on a phone.
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 4,
-          marginBottom: 12,
-          borderBottom: "1px solid var(--pmd-border, #ddd)",
-        }}
-      >
-        {CATEGORIES.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={active === id}
-            onClick={() => setActive(id)}
+    <div style={{ fontFamily: "system-ui, sans-serif", padding: "12px 16px 16px" }}>
+      <style>{SIDEBAR_CSS}</style>
+      <div className="dai-settings-shell">
+        <div className="dai-settings-sidebar" role="navigation" aria-label="Editor settings">
+          <div style={{ position: "relative", marginBottom: 10 }}>
+            <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", opacity: 0.5, display: "flex" }}>
+              <Search size={15} />
+            </span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search settings"
+              aria-label="Search settings"
+              className="dai-settings-search"
+            />
+          </div>
+          <div
+            role="tablist"
+            aria-label="Editor settings categories"
+            aria-orientation="vertical"
+            style={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            {filtered.length === 0 && (
+              <p style={{ fontSize: 13, opacity: 0.6, padding: "6px 10px", margin: 0 }}>
+                No settings match &ldquo;{query.trim()}&rdquo;.
+              </p>
+            )}
+            {filtered.map(({ id, label }) => {
+              const Icon = CATEGORY_DETAILS[id]?.icon ?? Settings
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active === id}
+                  onClick={() => setActive(id)}
+                  className="dai-settings-nav-item"
+                >
+                  <Icon size={17} />
+                  <span>{label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        <div className="dai-settings-main">
+          <div
             style={{
-              padding: "8px 14px",
-              fontSize: 14,
-              fontWeight: active === id ? 600 : 400,
-              background: "none",
-              border: "none",
-              borderBottom: active === id ? "2px solid currentColor" : "2px solid transparent",
-              cursor: "pointer",
+              paddingBottom: 12,
+              marginBottom: 12,
+              borderBottom: "1px solid var(--pmd-border, rgba(127, 127, 127, 0.25))",
             }}
           >
-            {label}
-          </button>
-        ))}
+            <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{activeCategory?.label}</h3>
+            <p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.6 }}>{CATEGORY_DETAILS[active]?.description}</p>
+          </div>
+          {!ready && <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>}
+          <div ref={containerRef} />
+        </div>
       </div>
-      {!ready && <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>}
-      <div ref={containerRef} />
     </div>
   )
 }
