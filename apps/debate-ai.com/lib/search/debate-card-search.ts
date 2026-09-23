@@ -14,7 +14,7 @@
  * @module lib/search/debate-card-search
  */
 
-import { type SQL, and, or, sql } from "drizzle-orm";
+import { type SQL, and, asc, desc, or, sql } from "drizzle-orm";
 import type { SQLiteColumn } from "drizzle-orm/sqlite-core";
 import { debateCards } from "@/lib/database/schema";
 
@@ -242,7 +242,9 @@ export function mapDebateCardToSearchResult(card: any): any {
     summary: card.summary || card.spoken || fulltext.substring(0, 200) || "",
     cite_short: citeShort,
     cite: card.cite || card.fullcite || "",
-    readCount: 0,
+    // The dump's `duplicateCount` is how many rounds the card was read in
+    // across the corpus, which is exactly what "read N×" and "Most read" mean.
+    readCount: Number(card.duplicateCount) || 0,
     highlightLength,
     textLength: card.textLength || 0,
     word_count: wordCount,
@@ -257,6 +259,24 @@ export function mapDebateCardToSearchResult(card: any): any {
     round: "",
     event: card.event || "CX",
   };
+}
+
+/**
+ * Database ordering for sorts that must rank the whole corpus.
+ *
+ * The route caps a search at a fixed number of rows, so sorting only in
+ * memory would rank whichever rows happened to come back first. "Most read"
+ * orders by `duplicate_count` in SQL so the top of the list really is the
+ * most-read cards.
+ *
+ * @param sortBy - Sort expression such as `"readCount:desc"`.
+ * @returns ORDER BY terms, empty when the database order should stand.
+ */
+export function buildCardSearchOrderBy(sortBy: string): SQL[] {
+  const [field, order] = sortBy.split(":");
+  if (field !== "readCount") return [];
+  const direction = order === "asc" ? asc : desc;
+  return [direction(debateCards.duplicateCount), asc(debateCards.id)];
 }
 
 /**

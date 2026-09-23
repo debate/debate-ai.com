@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "@/lib/database/schema";
 import { debateCards } from "@/lib/database/schema";
 import {
+  buildCardSearchOrderBy,
   buildCardSearchWhere,
   escapeLikePattern,
   mapDebateCardToSearchResult,
@@ -214,9 +215,35 @@ describe("mapDebateCardToSearchResult", () => {
     expect(result.html).toContain("<mark>deterrence</mark>");
   });
 
+  it("uses the dump's duplicateCount as the rounds-read count", () => {
+    expect(mapDebateCardToSearchResult(card({ duplicateCount: 42 })).readCount).toBe(42);
+    expect(mapDebateCardToSearchResult(card({ duplicateCount: 0 })).readCount).toBe(0);
+  });
+
   it("falls back to the tag when a card has no outline path", () => {
     const result = mapDebateCardToSearchResult(card({ pocket: "", hat: "", block: "" }));
     expect(result.argBlock).toBe("Nuclear deterrence solves existential threats");
+  });
+});
+
+describe("buildCardSearchOrderBy", () => {
+  it("ranks the whole corpus by duplicateCount for Most read", async () => {
+    const db = await freshDb();
+    await db.insert(debateCards).values([
+      card({ id: 1, duplicateCount: 3 }),
+      card({ id: 2, duplicateCount: 50 }),
+      card({ id: 3, duplicateCount: 7 }),
+    ]);
+    const rows = await db
+      .select()
+      .from(debateCards)
+      .orderBy(...buildCardSearchOrderBy("readCount:desc"))
+      .limit(2);
+    expect(rows.map((row) => row.id)).toEqual([2, 3]);
+  });
+
+  it("leaves other sorts to the database order", () => {
+    expect(buildCardSearchOrderBy("_text_match:desc")).toEqual([]);
   });
 });
 

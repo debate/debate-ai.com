@@ -14,6 +14,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
 import {
+  buildCardSearchOrderBy,
   buildCardSearchWhere,
   mapDebateCardToSearchResult,
   readSearchScope,
@@ -39,7 +40,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const db = await getDBFromContext();
-    const cards = await db.select().from(debateCards).where(where).limit(SEARCH_LIMIT);
+    const cards = await db
+      .select()
+      .from(debateCards)
+      .where(where)
+      .orderBy(...buildCardSearchOrderBy(sortBy))
+      .limit(SEARCH_LIMIT);
     const results = sortSearchResults(cards.map(mapDebateCardToSearchResult), sortBy);
 
     return NextResponse.json({ results, total: results.length });
