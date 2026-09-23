@@ -59,6 +59,9 @@ export interface CaselistDocument extends CaselistEntryInfo {
   cards?: Card[];
   /** The parser's file-level metadata, alongside `cards`. */
   metadata?: ParseMetadata;
+  /** The full outline — headings and cards in document order — alongside
+   *  `cards`, so a consumer can file each card under its pocket/hat/block. */
+  outline?: OutlineNode[];
 }
 
 /** One document in an archive that could not be converted. */
@@ -196,6 +199,7 @@ export async function loadCaselistArchive(
         const parsed = htmlToCards(html, info.fileName);
         document.cards = parsed.outline.filter(isCardNode);
         document.metadata = parsed.metadata;
+        document.outline = parsed.outline;
       }
     } catch (error) {
       // One unreadable document is data, not an outage: record why and keep
