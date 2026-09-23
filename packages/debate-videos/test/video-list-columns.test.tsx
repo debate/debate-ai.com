@@ -3,9 +3,8 @@
  * layout for videos.
  *
  * Three things worth a guard here. The obvious one: the round table has no
- * Arguments column — the 1AC/2NR labels are prose, the widest thing in a
- * table meant for scanning, and nothing sorts or filters on them, so they
- * live on the cards instead.
+ * Arguments column — the 1AC/2NR labels ride under the team that ran them in
+ * the Aff and Neg cells instead.
  *
  * The one that actually breaks silently: the header is rendered from a
  * column list and the cells from hand-written `<td>`s, so dropping a column
@@ -13,9 +12,9 @@
  * heading without throwing. These count them against each other, across the
  * video rows and the group rows, whose empty matchup cells are a `colSpan`.
  *
- * And the tree itself: the rows are grouped season → tournament → round, so
- * a round's season and tournament are headings above it rather than columns
- * beside it. A regression there reads as a flat table again.
+ * And the tree itself: round rows are grouped season → tournament → round,
+ * so a round's season and tournament are headings above it rather than
+ * columns beside it. Lectures, by contrast, are listed flat.
  */
 
 import { describe, it, expect, vi } from "vitest";
@@ -130,13 +129,18 @@ describe("tournament names in round rows", () => {
 
 describe("the round list's columns", () => {
   it("carries no Arguments column", () => {
+    expect(headers(renderList([identifiableRound]))).not.toContain("Arguments");
+  });
+
+  it("shows each side's argument under its team name", () => {
     const html = renderList([identifiableRound]);
-    expect(headers(html)).not.toContain("Arguments");
-    // Nor the argument labels themselves, anywhere in the table.
-    expect(html).not.toContain("Warming Advantage");
-    expect(html).not.toContain("Cap K");
-    expect(html).not.toContain("1AC:");
-    expect(html).not.toContain("2NR:");
+    const cells = [...html.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map(([, cell]) => cell);
+    const aff = cells.find((cell) => cell.includes("Team Aff"));
+    const neg = cells.find((cell) => cell.includes("Team Neg"));
+    expect(aff).toContain("Warming Advantage");
+    expect(aff!.indexOf("Team Aff")).toBeLessThan(aff!.indexOf("Warming Advantage"));
+    expect(neg).toContain("Cap K");
+    expect(neg!.indexOf("Team Neg")).toBeLessThan(neg!.indexOf("Cap K"));
   });
 
   it("heads the columns it does render, in order", () => {
@@ -239,5 +243,14 @@ describe("the lecture list's columns", () => {
 
   it("gives the video row its thumbnail", () => {
     expect(renderList([lecture])).toContain("https://img.youtube.com/vi/vid-lecture/mqdefault.jpg");
+  });
+
+  it("lists lectures flat, with no group rows or collapse control", () => {
+    const html = renderList([lecture]);
+    expect(html).not.toContain("aria-expanded");
+    expect(html).not.toContain('aria-label="Collapse one level"');
+    // One header row and one video row — no season/channel/category rows.
+    const bodyRows = html.slice(html.indexOf("<tbody")).match(/<tr[^>]*>/g) ?? [];
+    expect(bodyRows).toHaveLength(1);
   });
 });

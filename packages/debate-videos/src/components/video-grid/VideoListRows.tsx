@@ -1,11 +1,12 @@
 /**
  * @fileoverview Dense row/table layout for the video results — the same data
- * as {@link VideoGrid}'s cards, grouped into a collapsible tree of rows
- * rather than one flat row per video.
+ * as {@link VideoGrid}'s cards. An archive of rounds is grouped into a
+ * collapsible tree of rows; lectures are one flat row per video.
  *
- * The hierarchy is season → tournament → round for an archive of rounds, and
- * season → channel → category for lectures; `video-tree.ts` builds it and
- * `VideoTreeRows` draws it. A group row opens and closes on click, and the
+ * The round hierarchy is season → tournament → round; `video-tree.ts` builds
+ * it and `VideoTreeRows` draws it. Lectures skip the tree: each row already
+ * names its channel and category on its second tier, so grouping by them
+ * only added clicks between the reader and the videos. A group row opens and closes on click, and the
  * `L1 … Ln` control in the first header moves every group at once — `L1`
  * leaves only the seasons standing, the top level shows every video.
  *
@@ -28,7 +29,13 @@ import { cn } from "../../ui/lib/utils"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { useResizableColumns } from "./useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
-import { buildVideoTree, countVideoTreeLeaves, sortVideoTreeLeaves, videoTreeDepth } from "./video-tree"
+import {
+  buildVideoTree,
+  countVideoTreeLeaves,
+  sortVideoTreeLeaves,
+  videoTreeDepth,
+  type VideoTreeNode,
+} from "./video-tree"
 import { VideoTreeRows, type VideoTreeRowContext } from "./VideoTreeRows"
 import type { VideoType } from "../../types/videos"
 
@@ -95,9 +102,8 @@ const ROUND_COLUMNS: ColumnDef[] = [
 ]
 
 /**
- * Lecture columns. Channel and Category head the groups instead of taking a
- * column each, and ride on the row's second tier for a video read out of its
- * group — sorted, or with the tree collapsed around it.
+ * Lecture columns. Channel and Category ride on the row's second tier rather
+ * than taking a column each.
  */
 const LECTURE_COLUMNS: ColumnDef[] = [
   { key: "tree", label: "Library", sortValue: (v) => v[1]?.toLowerCase() ?? "" },
@@ -218,8 +224,12 @@ export function VideoListRows({
     [videos, stacks, stacksEnabled],
   )
 
-  const tree = useMemo(
-    () => buildVideoTree(slots, isRoundMode ? "round" : "lecture"),
+  // Lectures are listed flat — one row per slot, in feed order.
+  const tree = useMemo<VideoTreeNode[]>(
+    () =>
+      isRoundMode
+        ? buildVideoTree(slots, "round")
+        : slots.map((slot) => ({ type: "video", key: slot.key, slot })),
     [slots, isRoundMode],
   )
 

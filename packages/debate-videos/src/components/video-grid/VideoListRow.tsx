@@ -9,10 +9,9 @@
  * occupies one row and the `<` / `>` control at the head of the Actions cell
  * swaps which member the row is showing.
  *
- * The 1AC/2NR argument labels are deliberately absent: two wrapped lines of
- * prose in a table built for scanning, for the one field nothing here sorts
- * or filters on. They ride on the cards (`VideoCardThumbnail`) and on the
- * round's own page, which is where a matchup is read rather than scanned.
+ * The 1AC/2NR argument labels, when recorded, sit in small type under the
+ * team that ran them in the Aff and Neg cells — the same pairing the cards
+ * (`VideoCardThumbnail`) draw.
  */
 
 "use client"
@@ -78,6 +77,20 @@ function RowThumbnail({
   )
 }
 
+/** An Aff or Neg cell: the team, and under it the argument it ran if known. */
+function TeamCell({ team, argument }: { team?: string | null; argument?: string | null }) {
+  return (
+    <td className="px-3 py-2 align-middle text-sm">
+      <div className="truncate">{team || <span className="text-muted-foreground">—</span>}</div>
+      {argument && (
+        <div className="mt-0.5 line-clamp-2 text-xs leading-tight text-muted-foreground" title={argument}>
+          {argument}
+        </div>
+      )}
+    </td>
+  )
+}
+
 export function VideoListRow({
   video,
   depth,
@@ -123,6 +136,10 @@ export function VideoListRow({
     roundLevel,
     affTeam,
     negTeam,
+    _affWin,
+    _judgeDecision,
+    arg1AC,
+    arg2NR,
   ] = video
   const [showHideConfirm, setShowHideConfirm] = useState(false)
 
@@ -159,8 +176,9 @@ export function VideoListRow({
         <td className="py-2 pr-3 align-middle" style={treeIndentStyle(depth)}>
           <div className="flex items-center gap-2.5">
             {/* Stands in for a group row's chevron, so titles line up under
-                the round they belong to rather than under its arrow. */}
-            <span className="w-4 shrink-0" aria-hidden="true" />
+                the round they belong to rather than under its arrow. Lectures
+                are listed flat, with no group rows to line up under. */}
+            {isRoundMode && <span className="w-4 shrink-0" aria-hidden="true" />}
             {showThumbnails && (
               <RowThumbnail videoId={videoId} title={title} isPlaying={isPlaying} />
             )}
@@ -207,12 +225,8 @@ export function VideoListRow({
 
         {isRoundMode && (
           <>
-            <td className="px-3 py-2 align-middle text-sm truncate">
-              {affTeam || <span className="text-muted-foreground">—</span>}
-            </td>
-            <td className="px-3 py-2 align-middle text-sm truncate">
-              {negTeam || <span className="text-muted-foreground">—</span>}
-            </td>
+            <TeamCell team={affTeam} argument={arg1AC} />
+            <TeamCell team={negTeam} argument={arg2NR} />
           </>
         )}
 
