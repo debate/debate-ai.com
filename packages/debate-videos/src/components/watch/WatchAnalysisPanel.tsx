@@ -20,18 +20,7 @@ import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { videoRouteHref } from "../../lib/video-route"
 import { formatVideoDate } from "../video-card/videoCardUtils"
 import type { VideoType } from "../../types/videos"
-
-/** Relations an editor can state between two videos. */
-export const VIDEO_RELATION_KINDS = ["analysis", "related", "rematch"] as const
-
-export type VideoRelationKind = (typeof VIDEO_RELATION_KINDS)[number]
-
-/** How each relation reads in the list. */
-export const VIDEO_RELATION_LABELS: Record<VideoRelationKind, string> = {
-  analysis: "Analysis",
-  related: "Related",
-  rematch: "Rematch",
-}
+import type { VideoRelationKind } from "../../lib/video-relations"
 
 /** One linked video, as the watch page receives it. */
 export interface LinkedVideo {

@@ -69,22 +69,30 @@ export async function GET(request: Request) {
     const unavailable = error instanceof TranscriptUnavailableError;
     // YouTube rate-limits server IPs with a bot check; that is a transient
     // upstream problem rather than "this video has no captions", so it gets a
-    // 503 and a short cache window instead of a sticky 404.
+    // short cache window instead of a sticky one.
     const rateLimited = unavailable && /not a bot|LOGIN_REQUIRED/i.test(error.message);
 
-    if (!unavailable) {
-      console.error(`Failed to fetch transcript for ${videoId}:`, error);
+    // Some videos simply have no transcript, and YouTube's bot check comes and
+    // goes. Neither is a server fault, so answer 200 with an empty transcript
+    // and a reason instead of a 4xx/5xx the worker logs flag as errors.
+    if (unavailable) {
+      console.warn(
+        `Transcript unavailable for ${videoId} (${rateLimited ? "rate limited" : "no captions"})`,
+      );
+    } else {
+      console.warn(`Transcript unavailable for ${videoId} (fetch failed):`, error);
     }
 
     return NextResponse.json(
       {
-        error: rateLimited
+        videoId,
+        snippets: [],
+        unavailable: rateLimited
           ? "YouTube is temporarily blocking transcript requests. Try again shortly."
           : "No transcript available for this video",
       },
       {
-        status: rateLimited ? 503 : 404,
-        headers: { "Cache-Control": rateLimited ? "no-store" : "public, max-age=3600" },
+        headers: { "Cache-Control": rateLimited || !unavailable ? "no-store" : "public, max-age=3600" },
       },
     );
   }
