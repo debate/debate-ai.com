@@ -1,6 +1,7 @@
 /**
  * @fileoverview The watch page — one video at its own URL, with its
- * transcript beside it and related videos underneath.
+ * transcript beside it, and the related videos and the play queue
+ * underneath.
  *
  * `/videos/watch/<title-slug>-<videoId>`. This is what the transcript dialog
  * over the grid used to be: the same player, the same synced transcript and
@@ -33,9 +34,9 @@
  * ## Switching videos navigates
  *
  * Anything on this page that changes the store's active video — clicking a
- * related card, skipping to the next queued video — navigates to that
- * video's watch page rather than silently swapping the embed, so the URL
- * always names what is playing.
+ * related row, playing something from the queue panel, skipping to the next
+ * queued video — navigates to that video's watch page rather than silently
+ * swapping the embed, so the URL always names what is playing.
  * @module panels/watch/VideoWatchPage
  */
 
@@ -50,7 +51,8 @@ import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
-import { VideoGrid } from "../../components/video-grid/VideoGrid"
+import { VideoListRows } from "../../components/video-grid/VideoListRows"
+import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
@@ -78,7 +80,7 @@ import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
-import type { TopicType, VideoType } from "../../types/videos"
+import type { VideoType } from "../../types/videos"
 
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
@@ -95,8 +97,6 @@ export interface VideoWatchPageProps {
   documents?: VideoDocument[]
   /** Videos an editor tied to this one; they fill the "Analysis" tab. */
   links?: LinkedVideo[]
-  /** Season topics, for the related cards' "T" tooltip button. */
-  topics?: TopicType[]
   /** App-owned navigation dock, rendered at the top of the sidebar. */
   dockSlot?: React.ReactNode
   /** App-specific toolbar buttons — see `SlowSpreadButton`. */
@@ -108,7 +108,6 @@ export function VideoWatchPage({
   related = [],
   documents = [],
   links = [],
-  topics,
   dockSlot,
   extraControls,
 }: VideoWatchPageProps) {
@@ -270,7 +269,7 @@ export function VideoWatchPage({
     }
   }, [videoId, title, videoMeta, setActiveVideo, setTheaterVideoId])
 
-  // Switching the active video is a navigation here: a related card, or the
+  // Switching the active video is a navigation here: a related row, or the
   // queue advancing, changes the URL rather than the embed behind it.
   useEffect(() => {
     // Read through to the store rather than trusting this render's snapshot:
@@ -278,7 +277,7 @@ export function VideoWatchPage({
     // would bounce the page straight back to the previous video.
     const store = useVideoPlayerStore.getState()
     if (!store.activeVideoId || store.activeVideoId === videoId) return
-    // A related card is the usual way this fires, and those rows carry the
+    // A related row is the usual way this fires, and those rows carry the
     // season, tournament and teams the canonical address is built from — so
     // that case navigates straight to it. The queue can also hold a video
     // this page has never seen, and the store keeps only an id and a title;
@@ -668,18 +667,28 @@ export function VideoWatchPage({
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Related videos
             </h2>
-            <VideoGrid
-              videos={related}
-              showThumbnails
-              topics={topics}
-              videoContainerRef={viewState.videoContainerRef}
-              favorites={viewState.favorites}
-              onToggleFavorite={viewActions.toggleFavorite}
-              onBadgeClick={handleBadgeClick}
-              onHideVideo={viewActions.hideVideo}
-              onUnhideVideo={viewActions.unhideVideo}
-              hiddenVideos={viewState.hiddenVideos}
-            />
+            {/* Rows rather than the card grid: a related list is a handful of
+                videos to pick the next one from, and rows put their dates and
+                view counts in one sortable column each — the grid's cards
+                spread the same fields across a wall of thumbnails. Opening
+                sorted newest-first, since nothing ranks this list otherwise;
+                the Date header flips it, and the other columns re-sort it.
+                The queue rides alongside: this is the page where videos get
+                lined up, and the floating player that normally shows "Up
+                next" is stood down while it is open. */}
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+              <VideoListRows
+                videos={related}
+                videoContainerRef={viewState.videoContainerRef}
+                favorites={viewState.favorites}
+                onToggleFavorite={viewActions.toggleFavorite}
+                onHideVideo={viewActions.hideVideo}
+                onUnhideVideo={viewActions.unhideVideo}
+                hiddenVideos={viewState.hiddenVideos}
+                defaultSort={{ column: "date", direction: "desc" }}
+              />
+              <WatchQueuePanel className="lg:sticky lg:top-6" />
+            </div>
           </section>
         )}
       </div>

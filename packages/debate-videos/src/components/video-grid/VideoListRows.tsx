@@ -49,6 +49,13 @@ interface VideoListRowsProps {
   stacks?: VideoStackMap | null
   /** Whether stacking is on; `false` gives every video its own row. */
   stacksEnabled?: boolean
+  /**
+   * Column the table opens sorted by. Without it the rows keep the feed's
+   * own order, which is what the library's listings want — the feed is
+   * already ranked. A short, unranked list (the related videos under the
+   * player) passes `date`/`desc` to open newest first instead.
+   */
+  defaultSort?: { column: ColumnKey; direction: SortDirection }
 }
 
 function formatDate(date: string): string {
@@ -477,6 +484,7 @@ export function VideoListRows({
   topPicks,
   stacks,
   stacksEnabled = true,
+  defaultSort,
 }: VideoListRowsProps) {
   // Round (debate) videos carry tournament/aff/neg data that lectures never
   // populate, so that presence alone tells the two layouts apart — no need
@@ -489,8 +497,8 @@ export function VideoListRows({
   const columns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS
   const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
 
-  const [sortColumn, setSortColumn] = useState<ColumnKey | null>(null)
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
+  const [sortColumn, setSortColumn] = useState<ColumnKey | null>(defaultSort?.column ?? null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(defaultSort?.direction ?? "asc")
 
   const handleSort = (column: ColumnDef) => {
     if (!column.sortValue) return
