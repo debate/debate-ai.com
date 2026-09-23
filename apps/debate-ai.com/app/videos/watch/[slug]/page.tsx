@@ -4,15 +4,16 @@ import { videoRouteHref, type VideoType } from "debate-videos"
 import { getVideoBySlug } from "@/lib/videos/video-repository"
 
 /**
- * The watch page's address, `/videos/watch/<title-slug>`,
- * kept as a redirect to the canonical one.
+ * The watch page's old address, `/videos/watch/<title-slug>` or
+ * `/videos/watch/<title-slug>-<videoId>`, kept as a redirect to the canonical one.
  *
  * Every one of these links is somewhere out in the world — in a coach's
  * shared doc, in a Discord message, in a search index — and the slug
  * still resolves the video, so none of them has to break. What they get now
- * is a permanent redirect to `/videos/<season>/<format-tournament>/<matchup>`,
- * which is where the page itself lives; see
- * `app/videos/[category]/[event]/[matchup]/page.tsx`.
+ * is a permanent redirect to the canonical address —
+ * `/videos/<season>/<tournament>/<round>/<teams>` for a round,
+ * `/videos/<season>/<event>/<matchup>` otherwise — which is where the page
+ * itself lives; see `app/videos/_watch/video-route-page.tsx`.
  *
  * A slug naming a video the library no longer holds still 404s here.
  */

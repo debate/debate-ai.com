@@ -1,5 +1,6 @@
 /**
- * @fileoverview The canonical video address, `/videos/<season>/<event>/<matchup>`.
+ * @fileoverview The canonical video address: `/videos/<season>/<tournament>/<round>/<teams>`
+ * for a tagged round, `/videos/<season>/<event>/<matchup>` for anything else.
  *
  * What is pinned here is what a URL scheme has to guarantee to be worth
  * changing to:
@@ -14,9 +15,12 @@ import { describe, expect, it } from "vitest";
 import {
   eventSegment,
   isCanonicalVideoRoute,
+  legacyVideoRouteHref,
   matchupSegment,
+  parseRoundTitle,
   parseVideoRouteMatchup,
   seasonSegment,
+  teamsSegment,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,
@@ -46,18 +50,153 @@ const ndtFinal: VideoType = [
 ];
 
 describe("videoRouteSegments", () => {
-  it("files a round under its season, format-tournament and matchup", () => {
+  it("files a round under its season, tournament, round and teams", () => {
     expect(videoRouteSegments(videoRouteParts(ndtFinal))).toEqual({
       season: "2006",
-      event: "college-ndt",
-      matchup: "northwestern-gw-vs-michigan-state-bp-finals",
+      event: "ndt",
+      matchup: "finals",
+      teams: "northwestern-gw-vs-michigan-state-bp",
     });
   });
 
   it("builds the whole path from a tuple", () => {
-    expect(videoRouteHref(ndtFinal)).toBe(
+    expect(videoRouteHref(ndtFinal)).toBe("/videos/2006/ndt/finals/northwestern-gw-vs-michigan-state-bp");
+  });
+
+  it("falls back to the format for a round with no tournament", () => {
+    expect(
+      videoRouteHref({
+        videoId: "abcdefghijk",
+        title: "t",
+        seasonYear: 2022,
+        style: 4,
+        roundLevel: "Semifinals",
+        affTeam: "Dartmouth SV",
+      }),
+    ).toBe("/videos/2022/college/semifinals/dartmouth-sv");
+  });
+
+  it("keeps three segments for a video with no round or no teams", () => {
+    expect(
+      videoRouteHref({
+        videoId: "abcdefghijk",
+        title: "How to give a 2NR",
+        seasonYear: 2019,
+        style: "Kritik / Critical Theory",
+      }),
+    ).toBe("/videos/2019/kritik-critical-theory/how-to-give-a-2nr");
+    expect(
+      videoRouteHref({
+        videoId: "abcdefghijk",
+        title: "t",
+        seasonYear: 2022,
+        style: 4,
+        tournament: "NDT",
+        affTeam: "Dartmouth SV",
+        negTeam: "Michigan PR",
+      }),
+    ).toBe("/videos/2022/college-ndt/dartmouth-sv-vs-michigan-pr");
+  });
+});
+
+describe("parseRoundTitle", () => {
+  it("reads year, tournament, round and teams out of a title", () => {
+    expect(
+      parseRoundTitle(
+        "2022 NDT Finals - Dartmouth SV vs Michigan PR  - Round Analysis Infographic for Classrooms",
+      ),
+    ).toEqual({
+      season: "2022",
+      tournament: "NDT",
+      round: "Finals",
+      affTeam: "Dartmouth SV",
+      negTeam: "Michigan PR",
+    });
+  });
+
+  it("handles bracketed years, pipes and side labels", () => {
+    expect(parseRoundTitle("[2026] Tournament of Champions Round 6 - Lynbrook BZ vs Peninsula SU [1/2]")).toMatchObject({
+      tournament: "Tournament of Champions",
+      round: "Round 6",
+      affTeam: "Lynbrook BZ",
+      negTeam: "Peninsula SU",
+    });
+    expect(
+      parseRoundTitle(
+        "Round Analysis | Glenbrooks 2016 Quarters Ardrey Kell KM (Aff) vs Mission KM | Public Forum Debate",
+      ),
+    ).toMatchObject({ season: "2016", tournament: "Glenbrooks", affTeam: "Ardrey Kell KM", negTeam: "Mission KM" });
+    expect(
+      parseRoundTitle("2015 Tournament of Champions LD Quarters Sacred Heart AT vs. University DB Round Analysis"),
+    ).toMatchObject({ negTeam: "University DB" });
+  });
+
+  it("leaves a lecture alone", () => {
+    expect(parseRoundTitle("DDI 2020 - Cap K vs Critical Affs - Garrett")).toBeNull();
+    expect(parseRoundTitle("Non-Framework Strategies vs K Affs")).toBeNull();
+    expect(parseRoundTitle("2019 November December Practice Round Pranav (Aff) vs Elijah (Neg)")).toBeNull();
+  });
+});
+
+describe("videoRouteHref for untagged videos", () => {
+  it("gives a lecture whose title is a round the round's shape, marked with its category", () => {
+    expect(
+      videoRouteHref({
+        videoId: "Afl7_hl-H0c",
+        title: "2022 NDT Finals - Dartmouth SV vs Michigan PR  - Round Analysis Infographic for Classrooms",
+        seasonYear: 2027,
+        style: "Round Analysis",
+      }),
+    ).toBe("/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis");
+  });
+
+  it("gives each part of a round uploaded in pieces its own address", () => {
+    const part = (n: number) =>
+      videoRouteHref({
+        videoId: "abcdefghijk",
+        title: `2025 Shirley - Finals - Emory GS vs Kansas LS - Part ${n}`,
+        seasonYear: 2025,
+        style: 4,
+        tournament: "Shirley",
+        roundLevel: "Finals",
+        affTeam: "Emory GS",
+        negTeam: "Kansas LS",
+      });
+    expect(part(1)).toBe("/videos/2025/shirley/finals/emory-gs-vs-kansas-ls-part-1");
+    expect(part(2)).toBe("/videos/2025/shirley/finals/emory-gs-vs-kansas-ls-part-2");
+  });
+
+  it("drops a year trailing the tournament name", () => {
+    expect(
+      videoRouteHref({
+        videoId: "abcdefghijk",
+        title: "t",
+        seasonYear: 2026,
+        style: 4,
+        tournament: "NDT 2026",
+        roundLevel: "Octafinals",
+        affTeam: "Michigan State GL",
+        negTeam: "Dartmouth CG",
+      }),
+    ).toBe("/videos/2026/ndt/octafinals/michigan-state-gl-vs-dartmouth-cg");
+  });
+});
+
+describe("legacyVideoRouteHref", () => {
+  it("rebuilds the three-segment path a round had before", () => {
+    expect(legacyVideoRouteHref(ndtFinal)).toBe(
       "/videos/2006/college-ndt/northwestern-gw-vs-michigan-state-bp-finals",
     );
+  });
+});
+
+describe("teamsSegment", () => {
+  it("names both teams, or the one recorded", () => {
+    expect(teamsSegment({ videoId: "x", title: "t", affTeam: "Dartmouth SV", negTeam: "Michigan PR" })).toBe(
+      "dartmouth-sv-vs-michigan-pr",
+    );
+    expect(teamsSegment({ videoId: "x", title: "t", negTeam: "Michigan PR" })).toBe("michigan-pr");
+    expect(teamsSegment({ videoId: "x", title: "t" })).toBe("");
   });
 });
 
@@ -181,5 +320,6 @@ describe("isCanonicalVideoRoute", () => {
     // The tournament was re-tagged, so the old link has to be sent onward.
     expect(isCanonicalVideoRoute(parts, { ...canonical, event: "college-ceda" })).toBe(false);
     expect(isCanonicalVideoRoute(parts, { ...canonical, season: "2007" })).toBe(false);
+    expect(isCanonicalVideoRoute(parts, { ...canonical, teams: undefined })).toBe(false);
   });
 });

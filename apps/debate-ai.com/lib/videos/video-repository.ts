@@ -21,6 +21,7 @@ import {
 } from "debate-data-sync/src/videos/video-rows";
 import {
   clampPageSize,
+  MAX_VIDEO_PAGE_SIZE,
   computeLectureCategories,
   computeVideoFacets,
   computeVideoSuggestions,
@@ -42,7 +43,12 @@ import {
   type VideoIndexResponse,
 } from "debate-data-sync/src/videos/video-index";
 import { getVideoRowsFromJson } from "./video-json-source";
-import { slugifyVideoTitle } from "debate-videos";
+import {
+  legacyVideoRouteHref,
+  slugifyVideoTitle,
+  videoRouteHref,
+  type VideoType,
+} from "debate-videos";
 
 /** Which backend answered a request — surfaced for debugging. */
 export type VideoBackend = "sql" | "json";
@@ -599,91 +605,120 @@ export async function getVideoById(videoId: string): Promise<VideoTuple | null> 
   return page.videos[0] ?? null;
 }
 
+/** A YouTube video id: 11 characters of `[A-Za-z0-9_-]`. */
+const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
+
 /**
- * Fetches a single video by its watch-page slug.
+ * Fetches a single video by its old watch-page slug, `/videos/watch/<slug>`.
  *
- * The slug is the slugified title (`slugifyVideoTitle`), so this searches
- * the library and verifies the match by rebuilding the slug from each
- * candidate's title — exact match on first hit.
+ * Two generations of that slug are out in the world: `<title-slug>-<videoId>`
+ * (the id appended), and the bare `<title-slug>`. The id, when present, is
+ * the exact key. Otherwise the slug's longest words are searched for — the
+ * library's search text holds the title, and the title's words are all in
+ * the slug — and a candidate matches when its title slugifies to the slug.
  *
  * @param slug - The watch-page slug from the URL.
- * @returns The video in UI tuple form, or `null` when no video's title
- *   slugifies to the given slug.
+ * @returns The video in UI tuple form, or `null` when nothing matches.
  */
 export async function getVideoBySlug(slug: string): Promise<VideoTuple | null> {
-  const page = await getVideoPage({ source: "all", q: slug, limit: 50, offset: 0 });
-  return page.videos.find((v) => slugifyVideoTitle(v[1] as string) === slug) ?? null;
+  const clean = slug.trim().replace(/\/+$/, "");
+  if (!clean) return null;
+
+  // The id is the last 11 characters, after the dash that joined it on. An
+  // id may itself hold dashes, so it cannot be found by splitting on them.
+  const idCandidate = clean.slice(-11);
+  if (clean.length > 12 && clean[clean.length - 12] === "-" && YOUTUBE_ID.test(idCandidate)) {
+    const byId = await getVideoById(idCandidate);
+    if (byId) return byId;
+  }
+  if (YOUTUBE_ID.test(clean)) {
+    const byId = await getVideoById(clean);
+    if (byId) return byId;
+  }
+
+  const target = clean.toLowerCase();
+  const words = target.split("-").filter(Boolean);
+  // Longer words first narrow the search the most; a handful is plenty.
+  const query = [...new Set(words)].sort((a, b) => b.length - a.length).slice(0, 6).join(" ");
+  const page = await getVideoPage({ source: "all", q: query, limit: MAX_VIDEO_PAGE_SIZE, offset: 0 });
+  return (
+    page.videos.find((v) => {
+      const titleSlug = slugifyVideoTitle(v[1] as string);
+      // The id-carrying slug clipped the title, so its title part is a prefix.
+      return titleSlug === target || (titleSlug.length > 0 && target.startsWith(`${titleSlug}-`));
+    }) ?? null
+  );
 }
+
+/** Most pages of one season a route lookup reads before giving up. */
+const MAX_ROUTE_LOOKUP_PAGES = 50;
 
 /**
- * Fetches a single video by its canonical route segments.
+ * Fetches a single video by the segments of its path under `/videos`.
  *
- * Uses the segments as a search query, then verifies the match by
- * rebuilding the canonical path from each candidate — exact match
- * on first hit.
+ * Accepts the canonical path — `<season>/<tournament>/<round>/<teams>` for a
+ * round, `<season>/<event>/<matchup>` otherwise — and the older three-segment
+ * round path, so the caller can redirect a stale one. The segments are slugs,
+ * which the library's search text does not hold, so candidates are read by
+ * season and each one's path is rebuilt and compared; failing that, by the
+ * words of the last segment (a round whose path came from its title), and
+ * last by the whole library.
  *
- * @param season - The season segment, e.g. `"2006"`.
- * @param event - The event segment, e.g. `"college-ndt"`.
- * @param matchup - The matchup segment (without video id).
- * @returns The video in UI tuple form, or `null` when no video's
- *   canonical path matches all three segments.
+ * @param segments - The path segments after `/videos`, in order.
+ * @returns The video in UI tuple form, or `null` when no video's current or
+ *   legacy path matches.
  */
-export async function getVideoByRouteSlug(
-  season: string,
-  event: string,
-  matchup: string,
-): Promise<VideoTuple | null> {
-  const query = `${season} ${event} ${matchup}`;
-  const page = await getVideoPage({ source: "all", q: query, limit: 50, offset: 0 });
-  const target = `/videos/${season}/${event}/${matchup}`;
-  return page.videos.find((v) => videoRouteHrefInternal(v) === target) ?? null;
+export async function getVideoByRouteSegments(segments: string[]): Promise<VideoTuple | null> {
+  const clean = segments.map((segment) => decodeSegment(segment).toLowerCase()).filter(Boolean);
+  if (clean.length < 3 || clean.length > 4) return null;
+  const target = `/videos/${clean.join("/")}`;
+  // A video whose current path this is wins over one whose old path it was.
+  const matches = (videos: VideoTuple[]) =>
+    videos.find((v) => videoRouteHref(v as unknown as VideoType) === target) ??
+    videos.find((v) => legacyVideoRouteHref(v as unknown as VideoType) === target);
+
+  const [season] = clean;
+  // A season segment is a year, or `archive` for a video with no usable date,
+  // which a season filter cannot express.
+  const year = /^\d{4}$/.test(season) ? season : null;
+
+  /** Reads pages of one filter until a match or the end. */
+  const scan = async (params: { year?: string | null; q?: string | null }) => {
+    for (let pageIndex = 0; pageIndex < MAX_ROUTE_LOOKUP_PAGES; pageIndex++) {
+      const page = await getVideoPage({
+        source: "all",
+        ...params,
+        limit: MAX_VIDEO_PAGE_SIZE,
+        offset: pageIndex * MAX_VIDEO_PAGE_SIZE,
+      });
+      const found = matches(page.videos);
+      if (found) return found;
+      if (!page.hasMore) break;
+    }
+    return null;
+  };
+
+  if (year) {
+    const found = await scan({ year });
+    if (found) return found;
+  }
+
+  // A round whose path was read from its title carries the title's year,
+  // which need not be the season it is stored under. Its team names are in
+  // the title, though, and so in the search text; the whole library is the
+  // last resort, for a suffix word the title does not hold.
+  const words = clean[clean.length - 1].split("-").filter((word) => word && word !== "vs");
+  const query = [...new Set(words)].sort((a, b) => b.length - a.length).slice(0, 4).join(" ");
+  return (query ? await scan({ q: query }) : null) ?? (await scan({}));
 }
 
-/** Rebuilds the canonical path from a video tuple without the debate-videos package. */
-function videoRouteHrefInternal(video: VideoTuple): string {
-  const parts = {
-    videoId: video[0] as string,
-    title: video[1] as string,
-    date: video[2] as string | undefined,
-    style: video[6],
-    tournament: video[7] as string | null | undefined,
-    roundLevel: video[8] as string | null | undefined,
-    affTeam: video[9] as string | null | undefined,
-    negTeam: video[10] as string | null | undefined,
-    arg1ac: video[13] as string | null | undefined,
-    arg2nr: video[14] as string | null | undefined,
-    seasonYear: video[17] as number | null | undefined,
-  };
-  const season = parts.seasonYear && Number.isFinite(parts.seasonYear) && parts.seasonYear > 1900
-    ? String(Math.trunc(parts.seasonYear))
-    : (() => {
-        const year = parts.date ? new Date(parts.date).getUTCFullYear() : Number.NaN;
-        return Number.isFinite(year) && year > 1900 ? String(year) : "archive";
-      })();
-  const styleSlug = typeof parts.style === "number" ? { 1: "policy", 2: "pf", 3: "ld", 4: "college" }[parts.style as number] : undefined;
-  const categorySlug = typeof parts.style === "string" ? slugifyVideoTitle(parts.style) : "";
-  const tournamentSlug = parts.tournament ? slugifyVideoTitle(parts.tournament.replace(/^\s*(19|20)\d{2}\s+/, "").trim()) : "";
-  const event = styleSlug && tournamentSlug ? `${styleSlug}-${tournamentSlug}` : tournamentSlug || styleSlug || categorySlug || "library";
-  const pieces: string[] = [];
-  let length = 0;
-  const add = (value: string | null | undefined) => {
-    const slug = slugifyVideoTitle(value ?? "");
-    if (!slug) return;
-    const cost = slug.length + (pieces.length > 0 ? 1 : 0);
-    if (length + cost > 90) return;
-    pieces.push(slug);
-    length += cost;
-  };
-  if (parts.affTeam && parts.negTeam) {
-    add(`${parts.affTeam} vs ${parts.negTeam}`);
-  } else {
-    add(parts.affTeam ?? parts.negTeam);
+/** URL-decodes one path segment, leaving a malformed escape as it came. */
+function decodeSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment).trim();
+  } catch {
+    return segment.trim();
   }
-  add(parts.roundLevel);
-  add(parts.arg1ac);
-  add(parts.arg2nr);
-  const described = pieces.join("-") || slugifyVideoTitle(parts.title) || "video";
-  return `/videos/${season}/${event}/${described}`;
 }
 
 /**

@@ -90,14 +90,18 @@ export {
   UNSORTED_EVENT_SEGMENT,
   eventSegment,
   isCanonicalVideoRoute,
+  legacyVideoRouteHref,
   matchupSegment,
+  parseRoundTitle,
   parseVideoRouteMatchup,
   seasonSegment,
+  teamsSegment,
   videoRouteHref,
   videoRouteParts,
   videoRouteSegments,
   type VideoRouteParts,
   type VideoRouteSegments,
+  type TitleRound,
 } from "./lib/video-route";
 export {
   VIDEO_DOCUMENT_KINDS,
