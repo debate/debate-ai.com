@@ -74,10 +74,11 @@ const bareRound: VideoType = [
   2025,
 ];
 
-function renderList(videos: VideoType[]): string {
+function renderList(videos: VideoType[], layout?: "round" | "lecture"): string {
   return renderToStaticMarkup(
     createElement(VideoListRows, {
       videos,
+      layout,
       videoContainerRef: { current: null },
       favorites: new Set<string>(),
       onToggleFavorite: () => {},
@@ -252,5 +253,15 @@ describe("the lecture list's columns", () => {
     // One header row and one video row — no season/channel/category rows.
     const bodyRows = html.slice(html.indexOf("<tbody")).match(/<tr[^>]*>/g) ?? [];
     expect(bodyRows).toHaveLength(1);
+  });
+
+  it("stays flat on a lecture page even when a video carries round data", () => {
+    // Without `layout` one round in the feed flips the whole table to the
+    // season → tournament → round tree; a lectures page says what it lists.
+    const html = renderList([lecture, identifiableRound], "lecture");
+    expect(headers(html)).toEqual(["Library", "Date", "Views", "Actions"]);
+    expect(html).not.toContain("aria-expanded");
+    const bodyRows = html.slice(html.indexOf("<tbody")).match(/<tr[^>]*>/g) ?? [];
+    expect(bodyRows).toHaveLength(2);
   });
 });

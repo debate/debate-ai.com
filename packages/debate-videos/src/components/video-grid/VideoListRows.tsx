@@ -59,6 +59,13 @@ interface VideoListRowsProps {
   /** Tree level the table opens at; the deepest level (every video shown)
    *  when omitted. */
   defaultCollapseDepth?: number
+  /**
+   * Which layout to draw: `"round"` for the season → tournament → round tree,
+   * `"lecture"` for flat rows. Omit to infer it from the videos, which a
+   * single stray round in a lecture feed tips over into the tree — so a page
+   * that knows what it is listing should say.
+   */
+  layout?: "round" | "lecture"
 }
 
 type ColumnKey = "tree" | "aff" | "neg" | "date" | "views"
@@ -189,13 +196,14 @@ export function VideoListRows({
   stacksEnabled = true,
   showThumbnails = true,
   defaultCollapseDepth,
+  layout,
 }: VideoListRowsProps) {
-  // Round (debate) videos carry tournament/aff/neg data that lectures never
-  // populate, so that presence alone tells the two layouts apart — no need
-  // for the caller to say which page it's rendering.
+  // Without an explicit `layout`, round (debate) videos carry tournament/aff/
+  // neg data that lectures rarely populate, so that presence tells the two
+  // layouts apart.
   const isRoundMode = useMemo(
-    () => videos.some((video) => video[7] || video[9] || video[10]),
-    [videos],
+    () => (layout ? layout === "round" : videos.some((video) => video[7] || video[9] || video[10])),
+    [videos, layout],
   )
 
   const columns = isRoundMode ? ROUND_COLUMNS : LECTURE_COLUMNS

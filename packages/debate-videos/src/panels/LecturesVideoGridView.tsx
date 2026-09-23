@@ -441,6 +441,7 @@ export function LecturesVideoGridView({
                     {viewMode === "list" ? (
                       <VideoListRows
                         videos={favoriteLectures}
+                        layout="lecture"
                         videoContainerRef={videoContainerRef}
                         favorites={favorites}
                         onToggleFavorite={onToggleFavorite}
@@ -481,6 +482,7 @@ export function LecturesVideoGridView({
                     {viewMode === "list" ? (
                       <VideoListRows
                         videos={favoriteRounds}
+                        layout="round"
                         videoContainerRef={videoContainerRef}
                         favorites={favorites}
                         onToggleFavorite={onToggleFavorite}
@@ -517,6 +519,7 @@ export function LecturesVideoGridView({
             ) : viewMode === "list" ? (
               <VideoListRows
                 videos={currentVideos}
+                layout={browsingLectures ? "lecture" : selectedStyle ? "round" : undefined}
                 videoContainerRef={videoContainerRef}
                 favorites={favorites}
                 onToggleFavorite={onToggleFavorite}
