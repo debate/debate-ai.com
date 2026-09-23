@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 
 export const metadata: Metadata = {
@@ -7,9 +7,9 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminPage() {
-  const { isAdmin, email } = await getAdminAccess();
+  const { canEditContent, isAdmin, email } = await getStaffAccess();
 
-  if (!isAdmin) {
+  if (!canEditContent) {
     return (
       <main className="mx-auto flex max-w-lg flex-col items-center gap-2 px-4 py-24 text-center">
         <h1 className="text-2xl font-semibold">Admin</h1>
@@ -22,5 +22,5 @@ export default async function AdminPage() {
     );
   }
 
-  return <AdminDashboard />;
+  return <AdminDashboard isAdmin={isAdmin} />;
 }

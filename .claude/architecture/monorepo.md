@@ -3,18 +3,35 @@
 ## Workspaces
 
 ```json
-"workspaces": ["packages/*", "apps/debate-ai.com"]
+"workspaces": ["packages/*", "apps/debate-ai.com", "apps/debate-web-ext"]
 ```
 
-Read that second entry again: **`apps/*` is not globbed.** Only the web app is a
-workspace. `apps/debate-native-wrapper` and `apps/debate-web-ext` are outside —
-a root `bun install` does not install them, turbo does not fan out into them,
-and the root test run never reaches them. They have their own CI
-(`native-wrapper-ci.yml`, `native-wrapper-release.yml`) and are installed and
-built from inside their own directories.
+Read that again: **`apps/*` is not globbed.** The apps are listed one by one,
+and `apps/debate-native-wrapper` is not among them — a root `bun install` does
+not install it, turbo does not fan out into it, and the root test run never
+reaches it. It has its own CI (`native-wrapper-ci.yml`,
+`native-wrapper-release.yml`) and is installed and built from inside its own
+directory.
 
-If you change one of them, say so explicitly in the PR: nothing at the root will
-catch a break.
+If you change it, say so explicitly in the PR: nothing at the root will catch
+a break.
+
+`apps/debate-web-ext` joined the workspace when its Options page started
+mounting `debate-ai-webui` — sharing a workspace package is the whole reason,
+since a `file:` dependency cannot resolve that package's own `workspace:*`
+deps. Two consequences worth knowing before touching it:
+
+- It is pinned to **React 18** while everything else is on 19, and bun's
+  isolated `node_modules` gives a shared package its own resolution of `react`.
+  The extension dedupes `react`/`react-dom` in `wxt.config.ts` (for the bundle)
+  and in `tsconfig.json`'s `paths` (for types). Remove either and you get
+  "invalid hook call" at runtime and "not a valid JSX element type" on every
+  lucide icon at build time.
+- It has no `postinstall`. `wxt prepare` runs from its `typecheck`/`dev`/
+  `build` scripts instead, so a root install never runs this app's scripts.
+
+The root `typecheck` does now reach it, which is one less thing nothing at the
+root catches.
 
 ## Root `dependencies`
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
+import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, SlidersHorizontal, Sun, Swords, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -198,6 +198,15 @@ function SettingsMenu({
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
+      </DropdownMenuItem>
+      {/* Debate style / font size / font family — the app's own account-linked
+          preferences, distinct from the CardMirror editor settings above.
+          `/settings` used to be this app's account form for these too, before
+          it became the editor's settings page; this row is their only
+          remaining surface (`app/settings/preferences/page.tsx`). */}
+      <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings/preferences") }}>
+        <SlidersHorizontal className="mr-2 h-4 w-4" />
+        Debate Preferences
       </DropdownMenuItem>
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); themeState.toggleLightDark() }}>
         {themeState.isDark ? <Moon className="mr-2 h-4 w-4" /> : <Sun className="mr-2 h-4 w-4" />}

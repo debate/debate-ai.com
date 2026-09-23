@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import { listLibraryVideos } from "@/lib/videos/admin-library";
 
 /**
@@ -13,8 +14,8 @@ import { listLibraryVideos } from "@/lib/videos/admin-library";
  * Query parameters: `q`, `style`, `source`, `sort`, `dir`, `page`, `limit`.
  */
 export async function GET(req: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -34,9 +35,9 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(page);
   } catch (error) {
-    console.error("Failed to list library videos:", error);
+    console.error("Failed to list library videos:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to load videos", details: (error as Error).message },
+      { error: "Failed to load videos", details: describeError(error) },
       { status: 500 },
     );
   }

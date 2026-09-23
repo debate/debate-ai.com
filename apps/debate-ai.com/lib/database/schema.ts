@@ -304,6 +304,16 @@ export const userSettings = sqliteTable("user_settings", {
   // `saved_tournament_results` table below, one row per result.
   qualificationPointsTable: text("qualification_points_table"),
   qualificationCutoff: text("qualification_cutoff"),
+  // JSON-serialized `BrainstormSessionTimerState` (see
+  // packages/debate-team-collaboration/src/lib/brainstorm-session-timer.ts
+  // and packages/debate-help-docs/content/docs/features/brainstorm-board.mdx's
+  // "The session timer is localStorage-only, not account-synced" Known gap).
+  // A whole-value replace on every start/pause/reset/duration change, like
+  // `researchProgressGoal` above, rather than op-based — a session timer has
+  // at most one moderator driving it at a time, so the two-tabs-race the
+  // op-based fields exist for doesn't apply here. Null/absent means "no
+  // synced timer yet", same semantics as every other nullable column here.
+  brainstormSessionTimer: text("brainstorm_session_timer"),
   // Practice vs AI's gamification score and JSON-serialized array of earned
   // badge ids (see packages/debate-round-practice-ai/src/backend/gamification.ts
   // and packages/debate-help-docs/content/docs/internals/practice-vs-ai.mdx).
@@ -311,13 +321,19 @@ export const userSettings = sqliteTable("user_settings", {
   // `getGamificationProfile`/`applyGamificationAward`, not through the
   // generic `/api/settings` PUT — these are server-computed round results,
   // not a user preference. Null/zero means "no round scored yet", same
-  // semantics as every other nullable column here. There is deliberately no
-  // persisted streak counter yet: a real day-over-day streak needs a dated
-  // activity log this table doesn't have, so `getGamificationProfile`
-  // reports `currentStreak: 0` and the `Streak5` badge is unreachable until
-  // that follow-up lands.
+  // semantics as every other nullable column here.
   practiceVsAiScore: integer("practice_vs_ai_score"),
   practiceVsAiBadges: text("practice_vs_ai_badges"),
+  // The UTC calendar day ("YYYY-MM-DD") of the most recent scored round and
+  // the day-over-day streak as of that round, the dated activity log the
+  // comment above used to say this table didn't have. Advanced by
+  // `advanceDailyStreak` (gamification.ts) in `applyGamificationAward`: a
+  // second round the same day doesn't move it, the day after extends it,
+  // anything else (first round, or a missed day) restarts it at 1. Null
+  // means "never played", same semantics as every other nullable column
+  // here.
+  practiceVsAiLastPlayedDayKey: text("practice_vs_ai_last_played_day_key"),
+  practiceVsAiCurrentStreak: integer("practice_vs_ai_current_streak"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
@@ -634,9 +650,9 @@ export type SavedLearnCardRow = typeof savedLearnCards.$inferSelect;
 // one-row-per-deck, upsert-by-caller-id shape as `savedLearnCards` above:
 // `clientId` holds the deck's own `deckId`, and `GET /api/learn-decks`
 // returns every synced deck in full for `learn-decks-sync.ts`'s
-// merge-on-init. Schedules/anchors/AI threads/notes/review log/doc
-// registry remain local-only, same reasoning as `savedLearnCards`'s
-// comment.
+// merge-on-init. Schedules/anchors/AI threads/notes/doc registry remain
+// local-only, same reasoning as `savedLearnCards`'s comment; the review
+// log gets its own table below (`savedLearnReviewLog`).
 export const savedLearnDecks = sqliteTable(
   "saved_learn_decks",
   {
@@ -660,6 +676,45 @@ export const savedLearnDecks = sqliteTable(
 );
 
 export type SavedLearnDeckRow = typeof savedLearnDecks.$inferSelect;
+
+// Account-linked Learn review-log sync — the next of the 8 sub-collections
+// in `learn-store.ts`'s shared blob after cards and decks: the grading
+// history (`ReviewLogEntry`: `cardId`/`at`/`grade`/`intervalBefore`/
+// `intervalAfter`) `grade()` appends to on every review. An entry has no
+// id of its own — `clientId` holds `reviewLogEntryId(entry)`
+// (`cardId:at`; `at` is a millisecond-precision ISO timestamp, already
+// unique per card) rather than reshaping the type. Same one-row-per-entry,
+// upsert-by-caller-id shape as `savedLearnCards`/`savedLearnDecks`:
+// `GET /api/learn-review-log` returns every synced entry in full for
+// `learn-review-log-sync.ts`'s merge-on-init. Purely informational — an
+// adopted entry is never replayed into `schedules`, which stays local-only
+// and per-device.
+export const savedLearnReviewLog = sqliteTable(
+  "saved_learn_review_log",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    clientId: text("client_id").notNull(),
+    data: text("data").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_saved_learn_review_log_user_id").on(table.userId),
+    userClientIdx: uniqueIndex("idx_saved_learn_review_log_user_client").on(
+      table.userId,
+      table.clientId,
+    ),
+  }),
+);
+
+export type SavedLearnReviewLogRow = typeof savedLearnReviewLog.$inferSelect;
 
 // Account-linked counsel-panel-assessment-history sync — TODO.md idea #4
 // ("AI Response-Outcome Charts"), "a timeline of past AI counsel-panel
@@ -1060,9 +1115,11 @@ export const videos = sqliteTable(
     // Stacked playlists: `stack_key` is the id of the group's primary video
     // (a round, say) and is shared by every member, `stack_position` orders
     // them within it. Both are derived from the links the descriptions carry
-    // — see `debate-data-sync/src/videos/video-stacks.ts` — and are written
-    // by the seed, so a database seeded before they existed simply has null
-    // keys and no stacks until it is re-seeded.
+    // — see `debate-data-sync/src/videos/video-stacks.ts` — and are kept
+    // current by `lib/videos/recompute-video-stacks.ts`, which the JSON seed
+    // and every round-publish path (both run over the whole table, since a
+    // round and its analysis can be added weeks apart by different
+    // pipelines) call after writing.
     stackKey: text("stack_key"),
     stackPosition: integer("stack_position").notNull().default(0),
     searchText: text("search_text").notNull().default(""),
@@ -1698,3 +1755,56 @@ export const savedToolRecords = sqliteTable(
 );
 
 export type SavedToolRecordRow = typeof savedToolRecords.$inferSelect;
+
+// Staff roles granted from the admin panel. Admins themselves come from the
+// ADMIN_EMAIL / ADMIN_EMAILS env allowlist (see `lib/auth/admin.ts`); this
+// table only holds the moderators an admin invited — people who can edit the
+// video library, video reports and the round-video queue but not accounts,
+// sync jobs or uploads. Keyed by email rather than `user.id` so a moderator
+// can be invited before they have ever signed in.
+export const staffRoles = sqliteTable("staff_roles", {
+  email: text("email").primaryKey(),
+  /** Currently always `moderator`. */
+  role: text("role").notNull().default("moderator"),
+  invitedBy: text("invited_by"),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`(unixepoch())`),
+});
+
+export type StaffRoleRow = typeof staffRoles.$inferSelect;
+
+// Stripe subscriptions, written only by the `/api/stripe/webhook` handler (see
+// `lib/stripe/`). Keyed by the Stripe subscription id rather than `user.id`
+// because Stripe does not order its events: `customer.subscription.created`
+// can land before the `checkout.session.completed` that carries our user id
+// (`client_reference_id`), so a row may briefly exist with `user_id` null
+// until the checkout event links it.
+export const stripeSubscriptions = sqliteTable(
+  "stripe_subscriptions",
+  {
+    subscriptionId: text("subscription_id").primaryKey(),
+    userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
+    customerId: text("customer_id"),
+    email: text("email"),
+    priceId: text("price_id"),
+    /** A `PlanId` from `lib/stripe/plans.ts`, or `unknown` for an unlisted price. */
+    plan: text("plan"),
+    /** Stripe's subscription status — `active`, `trialing`, `past_due`, `canceled`, … */
+    status: text("status"),
+    currentPeriodEnd: integer("current_period_end", { mode: "timestamp" }),
+    cancelAtPeriodEnd: integer("cancel_at_period_end", { mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdx: index("idx_stripe_subscriptions_user").on(table.userId),
+    customerIdx: index("idx_stripe_subscriptions_customer").on(table.customerId),
+  }),
+);
+
+export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;

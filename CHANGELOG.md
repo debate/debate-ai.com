@@ -1,6 +1,213 @@
 
 ### Completed
 
+- **🧩 Make the extension's Options page the app's own UI, as a package.**
+  The debate-ai.com frontend was reachable only by loading the Next.js app, so
+  everything else that wanted it — the browser extension, the native wrapper —
+  either reimplemented a slice or embedded the site in an iframe. The
+  extension's popup had its own hand-written copy of one API call
+  (`src/reuse/api.ts`'s `fetch` against `/api/evidence-reuse-check`) and no way
+  to show anything else, and its Options page was a settings form and nothing
+  more.
+
+  Added `packages/debate-ai-webui`: the app's UI as one mountable
+  `<DebateWebUI>` — the video archive (`listVideos`), card search
+  (`searchCards`), the reuse check over any pasted URL (`checkEvidenceReuse`),
+  season standings (`getLeaderboard`) and the catalog of every surface in the
+  app (`debate-feature-catalog`, no network). It has no Next.js, no router and
+  no session: the shell keeps the selected screen in state, builds one client
+  from a configured `origin`, and opens in-app routes through a host callback.
+  **Every request goes through `debate-api-client`** — `src/api.ts` is the only
+  module that talks to a server, and nothing in `screens/` imports `fetch` — so
+  an embedded UI gets the same grab-url caching, retries, rate limiting and
+  dedupe the web app does. Styling is one plain-CSS stylesheet scoped under
+  `.dai-root` rather than Tailwind, because each host has its own design
+  system. Card bodies are deliberately *not* rendered — they are third-party
+  HTML with `<mark>`/`<u>` in them and the hosts are privileged pages — so the
+  screen shows the summary and citation and hands the full card to the web app.
+
+  `apps/debate-web-ext`'s Options page is the first host: it mounts the shell
+  pointed at the deployment the **API base URL** setting already named, and
+  appends its own settings (timer defaults, toolbar action, window size,
+  skip-check whitelist, auto-check) as the last screen in the nav via the new
+  `extraScreens` prop, repointing every screen the moment that setting is
+  saved. Sharing a workspace package meant the extension had to join the
+  workspace — a `file:` dependency cannot resolve a package's own `workspace:*`
+  deps — so `apps/debate-web-ext` is now a root workspace entry with no
+  lockfile of its own, its `postinstall` moved into the scripts that need it,
+  and a `typecheck` script the root CI now runs. It stays on React 18 against
+  the monorepo's 19, which bun's isolated `node_modules` would otherwise
+  resolve twice, so `wxt.config.ts` dedupes `react`/`react-dom` for the bundle
+  and `tsconfig.json`'s `paths` does it for types.
+
+  Vitest-covered: `packages/debate-ai-webui/test/` (30 tests) over the API
+  base/origin normalization, the `/videos` positional-tuple decoding, the
+  shell's nav and host-screen composition, and the catalog screen's markup.
+  `bun run typecheck` passes across all 21 tasks — including the extension,
+  for the first time — and the extension builds clean with a single React copy
+  in the bundle.
+
+- **🔐 Fix the guest sign-in prompt's 30-minute cooldown resetting on a new
+  tab.** Another repeat of the standing autonomous-routine prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all linked
+  to `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. Went looking for a still-open,
+  one-PR-sized gap in the tool/account-linking system these entries keep
+  auditing rather than re-auditing the whole thing from scratch, and found
+  one explicitly flagged but never actually fixed:
+  `packages/debate-help-docs/content/docs/internals/tool-data-sync.mdx`'s
+  Known gaps said the guest sign-in prompt's 30-minute per-feature cooldown
+  "lives in `sessionStorage`, so a user who dismisses a prompt without
+  opting out entirely is asked again about that feature in a new tab" — and
+  `components/layout/SignInPromptProvider.tsx` still read and wrote
+  `sessionStorage` directly, unchanged. `lib/sign-in-prompt-preference.ts`
+  (the separate, permanent "don't ask me again" opt-out next to it) even
+  already carried a doc comment describing this exact fix as still to do.
+
+  Extracted the cooldown's read/mark logic out of the provider into its own
+  `apps/debate-ai.com/lib/sign-in-prompt-cooldown.ts`
+  (`wasSignInPromptShownRecently` / `markSignInPromptShown` /
+  `PROMPT_COOLDOWN_MS`), mirroring `sign-in-prompt-preference.ts`'s shape —
+  same guard rails (no-op and never throws with no `localStorage`, swallows
+  a write failure) — and switched its backing store from `sessionStorage` to
+  `localStorage`, which a browser shares across tabs. The 30-minute window
+  itself is unchanged; only the "which tab remembers it" scope moved, same
+  as the opt-out it now sits next to. `SignInPromptProvider.tsx` dropped its
+  own inline `PROMPT_COOLDOWN_MS`/`DISMISSED_KEY`/`readShown`/`markShown` in
+  favour of the two new functions — no behavior change to the dialog itself,
+  the opt-out check, or the "still saves locally either way" guarantee the
+  rest of that flow already had.
+
+  Vitest-covered: `apps/debate-ai.com/lib/__tests__/sign-in-prompt-cooldown.test.ts`
+  (12 cases) — unshown defaults to false, true immediately after marking and
+  up to (not including) the cooldown boundary, false once the window has
+  fully elapsed, a value written for one feature is visible to a fresh call
+  for that same feature with no in-memory state carried over (standing in
+  for "a second tab", since `localStorage` in a unit test is only ever one
+  object anyway), each feature tracked independently without clobbering
+  another's cooldown, re-marking a feature restarts its window, and the same
+  never-throws-with-no/refusing-`localStorage` guarantees
+  `sign-in-prompt-preference.test.ts` already pins for its sibling module.
+  Updated `tool-data-sync.mdx`'s Known gaps entry to a struck-through
+  **Fixed** note (matching this doc's own convention for closed gaps),
+  its "Telling a guest" section's description of the cooldown, and
+  `sign-in-prompt-preference.ts`'s doc comment, which had described the
+  `sessionStorage` version as the current state rather than as the thing it
+  was proposing to fix.
+
+  Ran the full verification gate: `bun install`, the root `bun run test`
+  (504 files, 9406 tests passing, 12 new), `bun run typecheck` (17/17
+  packages green, `debate-help-docs`'s MDX build included), and `bun run
+  build` (production build; `apps/debate-ai.com` built clean, service worker
+  generated). No `lint`/`format:check` script exists anywhere in this repo,
+  so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the two other Known gaps this same doc
+  section still lists — sync running once per tab with no live push channel,
+  and per-user rather than per-team sharing for judge profiles / prep notes —
+  are each a small design decision or a sync-layer change, not a
+  drop-in fix like this one, and neither was touched.
+
+- **📇 Sync CardMirror's Learn review log to the account, and give it its
+  first user-facing surface.** Another repeat of the standing
+  autonomous-routine prompt ("integrate all the tools into the UI...
+  create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all
+  linked to `user.id`, and every tool already reachable from the Tools
+  page, the command palette and the feature catalog. Audited the specific
+  follow-ups earlier entries below had flagged as still open (CardMirror's
+  personal-dictionary view/remove UI, its Learn flashcards/decks sync, the
+  `qwksearch` file-sources credential-sync gap) and found most already
+  closed by runs between when they were flagged and now — this changelog's
+  own ordering isn't strictly chronological across the parallel automated
+  runs that write to it, so a flagged follow-up can already be stale by
+  the time a later entry cites it. The one still-open, one-PR-sized gap:
+  of Learn's 8 sub-collections (`packages/debate-editor/src/editor/learn-store.ts`),
+  cards and custom decks already synced to the account
+  (`learn-cards-sync.ts`, `learn-decks-sync.ts`); the review log
+  (`ReviewLogEntry[]` — `grade()`'s append-only grading history) neither
+  synced nor had any UI reading it anywhere, not even the "Manage
+  flashcards" overlay.
+
+  Gave it its own bespoke sync, mirroring the cards/decks split (all 8
+  sub-collections share one localStorage blob, so the generic
+  `TOOL_RECORD_COLLECTIONS` mechanism would clobber the other 7 on every
+  write) but simpler than either: a review-log entry is immutable once
+  logged, so there's no optimistic-concurrency conflict to resolve, only
+  add/remove. Added `reviewLogEntryId` (`` `${cardId}:${at}` `` — `at` is
+  already a millisecond-precision ISO timestamp, so this needed no new id
+  field or call-site reshaping), `isValidReviewLogEntry`, `listLog()`, and
+  `adoptLogEntry()` (append-if-absent; deliberately never touches
+  `schedules` — sync is purely informational history, not a replay of
+  another device's grading) to `learn-store.ts`; `learn-review-log-client.ts`
+  + `learn-review-log-sync.ts` (`LearnReviewLogSync`, mirroring
+  `LearnCardsSync`'s init-merge-then-mirror shape); `saved_learn_review_log`
+  (migration `0050`, keyed `(user_id, client_id)` same as
+  `saved_learn_cards`/`saved_learn_decks`) and `/api/learn-review-log`
+  (`GET` + `[entryId]` `PUT`/`DELETE`, account-only). Wired
+  `learnReviewLogSync.init()` into `editor/index.ts` alongside the other
+  two.
+
+  Then closed the actual UI gap: `learn-review-log-ui.ts`'s
+  `buildReviewLogSection` (an injectable-`store`/`sync` pure builder,
+  mirroring `user-dictionary-ui.ts`'s testability split from its own
+  overlay chrome) lists every logged review newest-first with the card's
+  current front text, its grade, and when it happened, plus one coarse
+  "Synced to your account" / "Not synced" line — not a per-entry badge;
+  this sync has no per-record conflict state worth surfacing. Its
+  `openReviewLogHistory` wraps that in its own small `.pmd-route-overlay`
+  (stacks above the Manage overlay, z-index 1400 vs. 1090), opened from a
+  new "History" button in `learn-manage-ui.ts`'s bar — a two-line,
+  mechanical addition to that large untested vanilla-DOM file, keeping
+  every actually-interesting bit (the list rendering, the sync-status
+  line, the live re-render) in the tested module instead.
+
+  Vitest-covered: `learn-store.test.ts` (`listLog`/`adoptLogEntry`/
+  `isValidReviewLogEntry`/`reviewLogEntryId` — dedupe-by-id, never mints a
+  schedule on adoption, validator rejection cases), `learn-review-log-client.test.ts`
+  (mirroring `learn-cards-client.test.ts`), `learn-review-log-sync.test.ts`
+  (init merge, ongoing mirror, delete-on-card-removal, signed-out no-op —
+  mirroring `learn-cards-sync.test.ts` minus the conflict-handling cases,
+  which don't apply here) and `learn-review-log-ui.test.ts` (empty state,
+  card lookup incl. a deleted-card placeholder, newest-first sort, live
+  re-render, sync-status transitions, reusing an already-in-flight
+  `init()`).
+
+  Ran the full verification gate: `bun install`, `debate-editor`'s own
+  `bun run test` (42 files, 889 tests — 39 new across the 4 new/changed
+  files) and `bun run typecheck`, `apps/debate-ai.com`'s `bun run typecheck`,
+  the root `bun run test` (503 files, 9394 tests passing), `bun run typecheck`
+  (17/17 packages green, `debate-help-docs`'s MDX build included — the new
+  `learn-review-log-cloud-sync.mdx` page parses clean), and `bun run build`
+  (production build; `/api/learn-review-log` and `/api/learn-review-log/:entryId`
+  both present in the route manifest). No `lint`/`format:check` script
+  exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** Learn still has 5 unsynced
+  sub-collections (schedules — deliberately local-only by design, not a
+  gap; anchors, AI threads, notes, doc registry). Anchors/AI
+  threads/notes are keyed by `(cardId, docId)` or `(threadId, docId)`
+  rather than one string id, and the doc registry is keyed by `docId`
+  with no natural per-user-visible list yet — each would need its own
+  small design pass (a composite-key id scheme, at minimum) before
+  mirroring this same bespoke-sync pattern, not just a repeat of this PR's
+  shape. The `qwksearch` file-sources credential-sync gap
+  (`apps/debate-ai.com/components/qwksearch/lib/file-sources.ts`, plain
+  `localStorage` for SSH/S3/R2/B2/Google Docs/Turso credentials) remains
+  open and still needs a maintainer security/product decision (encrypt
+  server-side vs. strip credential fields vs. stay local-only by design)
+  before implementation — confirmed unchanged this run.
+
 - **🔗 Give the Debate Flow History tab a per-entry "synced to your account"
   indicator.** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link

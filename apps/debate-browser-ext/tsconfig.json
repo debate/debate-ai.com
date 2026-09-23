@@ -1,0 +1,19 @@
+{
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./*"],
+      // The type-level half of `wxt.config.ts`'s `resolve.dedupe`: this app is
+      // a workspace member pinned to React 18 while the rest of the monorepo
+      // is on 19, and bun's isolated node_modules lets a dependency
+      // (`lucide-react`, `debate-ai-webui`) resolve @types/react 19 from the
+      // store. Two React type versions in one program makes every icon "not a
+      // valid JSX element type", so every `react` specifier is typed from this
+      // app's own copy — the one the bundle actually ships.
+      "react": ["./node_modules/@types/react"],
+      "react-dom": ["./node_modules/@types/react-dom"],
+      "react-dom/*": ["./node_modules/@types/react-dom/*"]
+    }
+  }
+}

@@ -790,7 +790,6 @@ export const APP_FILE_LIST = [
   '/favicon-192.png',
   '/favicon-512.png',
   '/favicon.ico',
-  '/loading.mp4',
   '/practice-vs-ai/casual_casey.jpg',
   '/practice-vs-ai/darthvader.jpg',
   '/practice-vs-ai/dumbledore.avif',

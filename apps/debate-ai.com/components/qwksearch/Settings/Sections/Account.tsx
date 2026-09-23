@@ -161,6 +161,61 @@ const SectionTitle = ({ title, subtitle }: { title: string; subtitle?: string })
 const inputClass =
   'w-full rounded-lg border border-black/20 dark:border-dark-200 bg-white dark:bg-dark-primary px-3 py-2 lg:px-4 lg:py-3 !text-xs lg:!text-[13px] text-black/80 dark:text-white/80 placeholder:text-black/40 dark:placeholder:text-white/40 focus-visible:outline-none focus-visible:border-black/40 dark:focus-visible:border-dark-300 transition-colors disabled:cursor-not-allowed disabled:opacity-60';
 
+interface SubscriptionInfo {
+  subscription: {
+    plan: string | null;
+    status: string | null;
+    currentPeriodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+  } | null;
+  plans: { id: string; name: string; amount: number; checkoutUrl: string }[];
+}
+
+/** Current Stripe plan and the Payment Links to upgrade (see /api/stripe/subscription). */
+const SubscriptionSection = () => {
+  const [info, setInfo] = useState<SubscriptionInfo | null>(null);
+
+  useEffect(() => {
+    fetch('/api/stripe/subscription')
+      .then((res) => (res.ok ? res.json() : null))
+      .then(setInfo)
+      .catch(() => setInfo(null));
+  }, []);
+
+  if (!info) return null;
+  const current = info.subscription;
+  const currentPlan = info.plans.find((plan) => plan.id === current?.plan);
+  const renews = current?.currentPeriodEnd ? new Date(current.currentPeriodEnd).toLocaleDateString() : null;
+
+  return (
+    <SectionCard>
+      <SectionTitle
+        title="Subscription"
+        subtitle={
+          current
+            ? `${currentPlan?.name ?? 'Paid plan'} · ${current.status}${renews ? ` · ${current.cancelAtPeriodEnd ? 'ends' : 'renews'} ${renews}` : ''}`
+            : 'You are on the free plan.'
+        }
+      />
+      <div className="flex flex-wrap gap-2">
+        {info.plans
+          .filter((plan) => plan.id !== current?.plan)
+          .map((plan) => (
+            <a
+              key={plan.id}
+              href={plan.checkoutUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-lg bg-[#24A0ED] hover:bg-[#1a8fd1] text-white text-xs font-medium transition-colors"
+            >
+              {plan.name} — ${(plan.amount / 100).toFixed(2)}/month
+            </a>
+          ))}
+      </div>
+    </SectionCard>
+  );
+};
+
 const SaveButton = ({ onClick, loading, disabled }: { onClick: () => void; loading: boolean; disabled?: boolean }) => (
   <button
     onClick={onClick}
@@ -546,6 +601,8 @@ export default function Account() {
         </p>
         <SaveButton onClick={handleSaveName} loading={nameSaving} />
       </SectionCard>
+
+      {isAuthenticated && <SubscriptionSection />}
 
       {/* Theme */}
       {themeMounted && (

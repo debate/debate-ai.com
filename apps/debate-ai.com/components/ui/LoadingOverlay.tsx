@@ -14,17 +14,18 @@
  * keeps the login/callback routes — which already render their own loader —
  * from stacking a second one on top.
  *
- * What sits in the middle is {@link LoadingVideo}: a looping clip that opens
- * on a random frame, so repeated transitions don't replay the same seconds.
- * It falls back to the orb until it can play, and permanently if it can't, so
- * the centre of the screen is never empty. The small inline loaders in panels
- * and sidebars keep using {@link AnimatedLoader} directly — a video belongs to
- * the full-screen moment, not to a spinner in the corner of a settings pane.
+ * What sits in the middle is {@link LoadingAnimation}: one of the seventeen
+ * SVG loaders in `grab-url/animations`, drawn at random per transition so
+ * repeated loads don't replay the same loop. It is inline markup out of the
+ * client bundle, so there is nothing to fetch and no empty centre to cover
+ * while it arrives. The small inline loaders in panels and sidebars keep
+ * using {@link AnimatedLoader} directly — the full-screen moment gets the
+ * large clip, not the spinner in the corner of a settings pane.
  */
 
 import { useEffect, useState, type ReactNode } from "react"
 import { cn } from "@/lib/ui/lib/utils"
-import { LoadingVideo } from "@/components/ui/LoadingVideo"
+import { LoadingAnimation } from "@/components/ui/LoadingAnimation"
 
 interface LoadingOverlayProps {
   /** When true the overlay is visible; when false it fades out. */
@@ -82,7 +83,7 @@ export function LoadingOverlay({
       {/* No role/aria-live here: the overlay root above is already the live
           region announcing this, and nesting a second one double-announces. */}
       <div className="flex flex-col items-center justify-center gap-4 text-center">
-        <LoadingVideo />
+        <LoadingAnimation />
         {typeof label === "string" && label && (
           <p className="max-w-xs text-sm font-medium text-muted-foreground">{label}</p>
         )}

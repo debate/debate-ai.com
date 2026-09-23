@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { youtubeRoundVideos } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
@@ -11,8 +11,8 @@ import { publishRoundVideos } from "@/lib/videos/publish-round-video";
  * a single video for the admin page's per-row "Publish" action.
  */
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -32,8 +32,8 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
 
 /** Removes one video from the resync queue without publishing it. */
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

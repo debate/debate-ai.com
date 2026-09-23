@@ -1,24 +1,28 @@
 "use client"
 
 /**
- * @fileoverview "Word limit presets" section on `/settings` — TODO.md idea
- * #2 ("Word-Count-Only Speech Format"), "a per-style word-limit preset
- * manager (add/edit/remove custom limits instead of only the built-in
- * registry)" follow-up. Lets a user add, edit, and remove custom
- * `speechName → wordLimit` overrides (`hooks/useWordLimitPresets.ts`), which
- * both the standalone `/word-count` form (`WordCountRoundsPanel`) and the
- * live in-round meter (`useWordCountSpeechMode`) already check ahead of
- * `debate-timer`'s single hardcoded "Public Forum (Word Count)" style.
+ * @fileoverview "Word limit presets" manager — TODO.md idea #2 ("Word-Count-
+ * Only Speech Format"), "a per-style word-limit preset manager (add/edit/
+ * remove custom limits instead of only the built-in registry)" follow-up.
+ * Lets a user add, edit, and remove custom `speechName → wordLimit`
+ * overrides (`hooks/useWordLimitPresets.ts`), which both the standalone
+ * `/word-count` form (`WordCountRoundsPanel`) and the live in-round meter
+ * (`useWordCountSpeechMode`) already check ahead of `debate-timer`'s single
+ * hardcoded "Public Forum (Word Count)" style.
  *
- * An "own dedicated settings-page section, backed by its own account-synced
- * hook" rather than a field folded into `UserSettingsPanel`'s form, which
- * already excludes list-type fields (`favoriteTools`, `newsRead`/`newsLiked`)
- * for the same reason.
+ * An "own dedicated section, backed by its own account-synced hook" rather
+ * than a field folded into `UserSettingsPanel`'s form, which already
+ * excludes list-type fields (`favoriteTools`, `newsRead`/`newsLiked`) for
+ * the same reason.
  *
- * Nothing in `debate-ai.com` mounts this now: `/settings` is the card
- * editor's settings page (see that app's `app/settings/page.tsx`), and the
- * section this panel rendered went with the rest of the account form. The
- * presets it manages are still read by both consumers above.
+ * Mounted in a collapsible "Manage word limit presets" `<details>` section
+ * on `apps/debate-ai.com/app/word-count/page.tsx`, below `WordCountRoundsPanel`
+ * — the presets it manages are also read by both consumers named above. It
+ * used to render on `/settings`, but that page was refactored into the
+ * CardMirror editor's settings page (see that app's `app/settings/page.tsx`)
+ * without leaving this section a replacement home; see
+ * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * "What it no longer shows".
  *
  * @module panels/WordLimitPresetsPanel
  */

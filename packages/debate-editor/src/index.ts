@@ -78,13 +78,21 @@ export type { SpeechSendLogEntry } from './editor/speech-send-log.js';
 // Quick Cards — account-sync validation, shared by the store itself and by
 // `apps/debate-ai.com`'s `/api/quick-cards` routes (see
 // `quick-cards-store.ts`'s "Account sync" module-doc section).
-export { isValidQuickCardRecord, MAX_SAVED_QUICK_CARD_BYTES } from './editor/quick-cards-store.js';
+export {
+  hasQuickCardSaveConflict,
+  isValidQuickCardRecord,
+  MAX_SAVED_QUICK_CARD_BYTES,
+} from './editor/quick-cards-store.js';
 export type { QuickCard } from './editor/quick-cards-store.js';
 
 // Learn flashcard-content account-sync validation, shared by the store
 // itself and by `apps/debate-ai.com`'s `/api/learn-cards` routes (see
 // `learn-cards-sync.ts`'s module doc).
-export { isValidLearnCardRecord, MAX_SAVED_LEARN_CARD_BYTES } from './editor/learn-store.js';
+export {
+  hasLearnCardSaveConflict,
+  isValidLearnCardRecord,
+  MAX_SAVED_LEARN_CARD_BYTES,
+} from './editor/learn-store.js';
 export type { CardDef } from './editor/learn-store.js';
 
 // Learn custom-deck account-sync validation, shared by the store itself and
@@ -92,6 +100,16 @@ export type { CardDef } from './editor/learn-store.js';
 // `learn-decks-sync.ts`'s module doc).
 export { isValidLearnDeckRecord, MAX_SAVED_LEARN_DECK_BYTES } from './editor/learn-store.js';
 export type { CustomDeck } from './editor/learn-store.js';
+
+// Learn review-log account-sync validation, shared by the store itself and
+// by `apps/debate-ai.com`'s `/api/learn-review-log` routes (see
+// `learn-review-log-sync.ts`'s module doc).
+export {
+  isValidReviewLogEntry,
+  MAX_SAVED_REVIEW_LOG_ENTRY_BYTES,
+  reviewLogEntryId,
+} from './editor/learn-store.js';
+export type { ReviewLogEntry } from './editor/learn-store.js';
 
 // Per-deck add-card/remove-card/rename ops, resolved server-side against a
 // deck's current stored state — the fix for the "two devices edit the same

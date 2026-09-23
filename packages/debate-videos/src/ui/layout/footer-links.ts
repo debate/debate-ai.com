@@ -67,7 +67,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
   { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale, group: "debate" },
   { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book, group: "debate" },
-  { url: "https://discord.gg/5PFjqgtkK", text: "Support", icon: MessageCircle, group: "site" },
+  { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
   { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity, group: "site" },
   { url: "/legal/privacy", text: "Privacy", icon: Shield, group: "site" },
   { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText, group: "site" },

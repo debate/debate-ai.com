@@ -23,6 +23,14 @@ export interface CardDef {
   type: 'qa' | 'cloze';
   front: string;
   back: string;
+  /**
+   * Epoch ms of the last content edit — stamped by `upsertCard`/`importCards`,
+   * never set by a caller directly (every existing call site builds a
+   * `CardDef` literal without it). Optional so a card persisted before this
+   * field existed still satisfies the type; treated as 0 (arbitrarily old)
+   * wherever it's compared, e.g. `hasLearnCardSaveConflict`.
+   */
+  updatedAt?: number;
 }
 
 /** Byte cap for one card's account-synced JSON (`learn-cards-client.ts`
@@ -34,7 +42,8 @@ export const MAX_SAVED_LEARN_CARD_BYTES = 200_000;
  * Structural guard for an untrusted value claiming to be a `CardDef` —
  * doubles as the `/api/learn-cards` account-sync routes' request-body
  * validator, mirroring `quick-cards-store.ts#isValidQuickCardRecord`'s
- * convention.
+ * convention. `updatedAt` is optional (see the field's own doc), so a value
+ * missing it is still valid; one that has it must be a number.
  */
 export function isValidLearnCardRecord(e: unknown): e is CardDef {
   if (!e || typeof e !== 'object') return false;
@@ -43,8 +52,22 @@ export function isValidLearnCardRecord(e: unknown): e is CardDef {
     typeof c.id === 'string' &&
     (c.type === 'qa' || c.type === 'cloze') &&
     typeof c.front === 'string' &&
-    typeof c.back === 'string'
+    typeof c.back === 'string' &&
+    (c.updatedAt === undefined || typeof c.updatedAt === 'number')
   );
+}
+
+/**
+ * Optimistic-concurrency check for `PUT /api/learn-cards/[cardId]`, mirroring
+ * `quick-cards-store.ts#hasQuickCardSaveConflict`: is an incoming background
+ * sync about to clobber a genuinely newer edit made from another signed-in
+ * device? A side with no `updatedAt` (a card written before this field
+ * existed) is treated as 0 — arbitrarily old — so it never blocks a sync and
+ * only degrades to the pre-existing last-write-wins behavior until both sides
+ * have a real timestamp.
+ */
+export function hasLearnCardSaveConflict(current: CardDef, incoming: CardDef): boolean {
+  return (current.updatedAt ?? 0) > (incoming.updatedAt ?? 0);
 }
 
 export interface CardAnchor {
@@ -108,6 +131,42 @@ export interface ReviewLogEntry {
   grade: Grade;
   intervalBefore: number;
   intervalAfter: number;
+}
+
+/** Byte cap for one review-log entry's account-synced JSON, mirroring
+ *  `MAX_SAVED_LEARN_CARD_BYTES`'s per-record cap. */
+export const MAX_SAVED_REVIEW_LOG_ENTRY_BYTES = 200_000;
+
+/**
+ * A review-log entry has no id field of its own — `at` (the grade's ISO
+ * timestamp, millisecond-precision from every real caller) is already
+ * unique per card, so `(cardId, at)` doubles as the synced record's stable
+ * id without reshaping `ReviewLogEntry` or its ~10 existing call sites.
+ * Shared by `learn-review-log-client.ts` (to build the URL) and
+ * `/api/learn-review-log/[entryId]` (to check the URL's id matches the
+ * posted entry) so both sides agree on the same scheme.
+ */
+export function reviewLogEntryId(entry: Pick<ReviewLogEntry, "cardId" | "at">): string {
+  return `${entry.cardId}:${entry.at}`;
+}
+
+/**
+ * Structural guard for an untrusted value claiming to be a `ReviewLogEntry`
+ * — doubles as the `/api/learn-review-log` account-sync routes' request-body
+ * validator, mirroring `isValidLearnDeckRecord`'s convention.
+ */
+export function isValidReviewLogEntry(e: unknown): e is ReviewLogEntry {
+  if (!e || typeof e !== "object") return false;
+  const l = e as Record<string, unknown>;
+  return (
+    typeof l.cardId === "string" &&
+    l.cardId.length > 0 &&
+    typeof l.at === "string" &&
+    l.at.length > 0 &&
+    (l.grade === "remembered" || l.grade === "forgot") &&
+    typeof l.intervalBefore === "number" &&
+    typeof l.intervalAfter === "number"
+  );
 }
 
 export interface CustomDeck {
@@ -242,6 +301,11 @@ export class LearnStore {
   listDocs(): DocRegistryEntry[] {
     return [...this.docs.values()];
   }
+  /** Every review-log entry (grading history) — for the manage GUI's
+   *  review-history section and the account-sync merge. */
+  listLog(): ReviewLogEntry[] {
+    return [...this.log];
+  }
   /** Every card (content only) — for the manage GUI. */
   listCards(): CardDef[] {
     return [...this.cards.values()];
@@ -326,9 +390,12 @@ export class LearnStore {
   }
 
   // ── mutations ─────────────────────────────────────────────────────
-  /** Create or replace a card's content; ensure a schedule exists. */
+  /** Create or replace a card's content; ensure a schedule exists. Stamps
+   *  `updatedAt` to now unless the caller already supplied one (e.g. adopting
+   *  a remote card during the account merge, which preserves that device's
+   *  genuine edit time instead of overwriting it with the moment of adoption). */
   upsertCard(card: CardDef, today: string): void {
-    this.cards.set(card.id, card);
+    this.cards.set(card.id, { ...card, updatedAt: card.updatedAt ?? Date.now() });
     if (!this.schedules.has(card.id)) this.schedules.set(card.id, newSchedule(card.id, today));
     this.changed();
   }
@@ -341,7 +408,7 @@ export class LearnStore {
     let added = 0;
     for (const e of entries) {
       const id = crypto.randomUUID();
-      this.cards.set(id, { id, type: e.type, front: e.front, back: e.back });
+      this.cards.set(id, { id, type: e.type, front: e.front, back: e.back, updatedAt: Date.now() });
       this.schedules.set(id, e.schedule ? { ...e.schedule, cardId: id } : newSchedule(id, today));
       for (const a of e.anchors) this.anchors.push({ cardId: id, docId: a.docId, anchor: a.anchor });
       added += 1;
@@ -454,6 +521,20 @@ export class LearnStore {
     this.log.push({ cardId, at: now, grade: g, intervalBefore: cur.intervalDays, intervalAfter: entry.intervalDays });
     this.changed();
     return retryInSession;
+  }
+
+  /** Adopts a review-log entry synced from another device — appends it if
+   *  this store doesn't already hold an entry for the same card at the
+   *  same timestamp (see `reviewLogEntryId`). The account-sync merge's
+   *  adoption path, mirroring `upsertDeck`, but never touches the
+   *  schedule: review-log sync is purely informational history, not a
+   *  replay of another device's grading — this device's own due dates,
+   *  intervals, and lapses stay exactly as they were. */
+  adoptLogEntry(entry: ReviewLogEntry): void {
+    const exists = this.log.some((l) => l.cardId === entry.cardId && l.at === entry.at);
+    if (exists) return;
+    this.log.push(entry);
+    this.changed();
   }
 
   suspend(cardId: string): void {

@@ -78,19 +78,30 @@ describe("listChallengeWinEvents", () => {
 });
 
 describe("recordChallengeWinEvent", () => {
-  it("appends a win event and returns it", () => {
+  it("appends a win event and returns it, stamped with a generated id", () => {
     const event = recordChallengeWinEvent("carol", 150);
-    expect(event).toEqual({ contributorId: "carol", occurredAt: 150 });
-    expect(listChallengeWinEvents()).toEqual([{ contributorId: "carol", occurredAt: 150 }]);
+    expect(event).toEqual({ id: expect.any(String), contributorId: "carol", occurredAt: 150 });
+    expect(event.id).not.toBe("");
+    expect(listChallengeWinEvents()).toEqual([event]);
   });
 
   it("accumulates multiple win events without overwriting earlier ones", () => {
     recordChallengeWinEvent("carol", 150);
     recordChallengeWinEvent("dave", 160);
     expect(listChallengeWinEvents()).toEqual([
-      { contributorId: "carol", occurredAt: 150 },
-      { contributorId: "dave", occurredAt: 160 },
+      expect.objectContaining({ contributorId: "carol", occurredAt: 150 }),
+      expect.objectContaining({ contributorId: "dave", occurredAt: 160 }),
     ]);
+  });
+
+  it("gives every recorded event a unique id, even for the same contributor and timestamp", () => {
+    // A plain `contributorId`/`occurredAt` pair isn't unique — the same
+    // squad member can record two wins in the same millisecond — so the
+    // generated id, not the pair itself, is what the account sync keys by.
+    const first = recordChallengeWinEvent("carol", 150);
+    const second = recordChallengeWinEvent("carol", 150);
+    expect(first.id).not.toBe(second.id);
+    expect(listChallengeWinEvents()).toHaveLength(2);
   });
 });
 

@@ -30,19 +30,36 @@ keeps working exactly as before, purely on-device.
 ## What's intentionally excluded
 
 Only a card's portable content syncs — its review **schedule** (due date,
-interval, lapses), file **anchors**, AI **threads**, private **notes**,
-and the review **log** all stay local-only. A card adopted on a new
-device starts with no schedule pressure, the same way the manage GUI's
-own JSON export/import already treats a card whose carried schedule is
-absent — restoring a card is not meant to restore a specific device's
-review history. **Custom decks** sync separately — see
-[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync). The
-remaining sub-collections (anchors, AI threads, notes, review log, doc
-registry) live in one shared blob per device (not one row per record), so
-they don't fit this sync's per-record shape; syncing them would need a
-bespoke schema of their own.
+interval, lapses), file **anchors**, AI **threads**, and private **notes**
+all stay local-only. A card adopted on a new device starts with no
+schedule pressure, the same way the manage GUI's own JSON export/import
+already treats a card whose carried schedule is absent — restoring a card
+is not meant to restore a specific device's review history. **Custom
+decks** and the **review log** each sync separately — see
+[Learn Decks Cloud Sync](/docs/features/learn-decks-cloud-sync) and
+[Learn Review Log Cloud Sync](/docs/features/learn-review-log-cloud-sync).
+The remaining sub-collections (anchors, AI threads, notes, doc registry)
+live in one shared blob per device (not one row per record), so they
+don't fit this sync's per-record shape; syncing them would need a bespoke
+schema of their own.
+
+Every per-record push carries optimistic concurrency: `PUT
+/api/learn-cards/[cardId]` compares the incoming card's own `updatedAt`
+against whatever's already saved for that id, and rejects (409) instead of
+overwriting when the saved version is newer — an edit made on another
+device that hasn't reached this browser yet. On that rejection, this
+browser adopts the newer version into its own `LearnStore` instead of
+losing it, the same "never overwrite, only reconcile" rule `init()`'s merge
+already follows — mirroring
+[Quick Cards Cloud Save](/docs/features/quick-cards-cloud-save)'s own fix
+for the identical race. `CardDef` didn't carry an `updatedAt` field before
+this: it's now stamped by `upsertCard`/`importCards` themselves (not by
+callers), and stays optional on the type so a card written before this
+field existed — locally, or already synced to the account — still
+round-trips; a side with no `updatedAt` is treated as arbitrarily old
+rather than blocking the sync, which is exactly the previous
+last-write-wins behavior until both sides have a real timestamp.
 
 ## Known gaps
 
-No optimistic-concurrency handling — editing the same card's content from
-two signed-in devices at once has the last write win.
+None open.

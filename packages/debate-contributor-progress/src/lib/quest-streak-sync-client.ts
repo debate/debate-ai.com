@@ -13,6 +13,7 @@
  * @module lib/quest-streak-sync-client
  */
 
+import type { DailyMissionResult } from "./gamified-quests";
 import type { QuestStreakSyncPayload } from "./quest-streak-sync";
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
@@ -101,6 +102,25 @@ export async function saveLapseReminderEnabledOp(enabled: boolean, endpoint = "/
     method: "PUT",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ setLapseReminderEnabled: enabled }),
+  });
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, "Failed to save account settings."));
+  }
+}
+
+/**
+ * Records a single day's mission result to the account, resolved
+ * server-side against the account's *currently stored* `missionResultDays`
+ * rather than this browser's own (possibly stale) copy, and upserted by
+ * `dayKey` — the same lost-update fix `saveStreakFreezeDayKeyOp` applies for
+ * spent freezes. See `quest-streak-sync.ts#applyQuestStreakMissionResultOp`'s
+ * docstring.
+ */
+export async function saveMissionResultDayOp(entry: DailyMissionResult, endpoint = "/api/settings"): Promise<void> {
+  const res = await fetch(endpoint, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ recordMissionResultDay: entry }),
   });
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, "Failed to save account settings."));

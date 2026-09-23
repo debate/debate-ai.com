@@ -102,13 +102,15 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * tool catalogs: the homepage and admin panel, an auth-flow step, a legal
  * page, `/login` (already documented on `/tools`'s consistency checks above
  * as "a step on the way to a feature rather than a feature"), the editor's
- * own settings pages (same reasoning as `/login` — configuration, not a
+ * own settings pages plus the app's debate-style/font-size/font-family
+ * preferences page (same reasoning as `/login` — configuration, not a
  * tool), and `/features` itself. (`/tools` needs no entry here — it's
  * already covered by `WORKSPACE_LINKS`'s own trailing "All Tools" link.)
  */
 const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/",
   "/admin",
+  "/auth/extension-complete",
   "/auth/native-callback",
   "/auth/native-complete",
   "/features",
@@ -116,6 +118,7 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/login",
   "/settings",
   "/settings/editor-panel",
+  "/settings/preferences",
 ])
 
 describe("tool catalog route coverage", () => {

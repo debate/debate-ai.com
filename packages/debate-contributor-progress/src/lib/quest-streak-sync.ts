@@ -16,14 +16,34 @@
  * preferences into one JSON value rather than two columns, since they're
  * always synced together for the same contributor.
  *
+ * `missionResultDays` closes a gap in that same follow-up:
+ * `state/dailyMissionResults.ts`'s per-day mission-result history — the
+ * source `freezeDayKeys` and the streak/badge roster are themselves derived
+ * from — never synced at all, only its derived freeze/reminder metadata did.
+ * A contributor's completed-mission history was invisible on a second
+ * device even once their freezes and reminder opt-in had already caught up.
+ * It's optional (`?`) rather than required, matching
+ * `state/challengeWinEvents.ts`'s "leave a new field on a synced payload
+ * optional" convention: a `questStreakSync` row saved before this field
+ * existed still parses and validates without it.
+ *
  * @module lib/quest-streak-sync
  */
+
+import type { DailyMissionResult } from "./gamified-quests";
 
 /** The synced subset of a contributor's quest-streak preferences. */
 export type QuestStreakSyncPayload = {
   lapseReminderEnabled: boolean;
   /** UTC calendar days (`YYYY-MM-DD`) this contributor has already spent a streak freeze on. */
   freezeDayKeys: string[];
+  /**
+   * This contributor's persisted daily-mission-result history
+   * (`state/dailyMissionResults.ts`), synced to the account. Optional and
+   * absent on any payload saved before this field existed, or before this
+   * contributor has ever recorded a mission result while signed in.
+   */
+  missionResultDays?: DailyMissionResult[];
 };
 
 export type QuestStreakSyncPatch = {
@@ -38,6 +58,8 @@ export const DEFAULT_QUEST_STREAK_SYNC: QuestStreakSyncPatch = {
 
 /** A year's worth of freeze dayKeys is already far more than `MAX_STREAK_FREEZES_PER_WINDOW` could ever produce — generous but bounded against a malicious client. */
 export const MAX_QUEST_STREAK_FREEZE_DAY_KEYS = 366;
+/** Same generosity/bound as {@link MAX_QUEST_STREAK_FREEZE_DAY_KEYS} — a year's worth of daily mission results is already more than any real streak history needs. */
+export const MAX_QUEST_STREAK_MISSION_RESULT_DAYS = 366;
 const DAY_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function isValidDayKey(value: unknown): value is string {
@@ -48,7 +70,21 @@ function isValidFreezeDayKeys(value: unknown): value is string[] {
   return Array.isArray(value) && value.length <= MAX_QUEST_STREAK_FREEZE_DAY_KEYS && value.every(isValidDayKey);
 }
 
-const ALLOWED_QUEST_STREAK_SYNC_KEYS = new Set(["lapseReminderEnabled", "freezeDayKeys"]);
+function isValidMissionResultDay(value: unknown): value is DailyMissionResult {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  const entry = value as Record<string, unknown>;
+  return (
+    Object.keys(entry).length === 2 && isValidDayKey(entry.dayKey) && typeof entry.isComplete === "boolean"
+  );
+}
+
+function isValidMissionResultDays(value: unknown): value is DailyMissionResult[] {
+  return (
+    Array.isArray(value) && value.length <= MAX_QUEST_STREAK_MISSION_RESULT_DAYS && value.every(isValidMissionResultDay)
+  );
+}
+
+const ALLOWED_QUEST_STREAK_SYNC_KEYS = new Set(["lapseReminderEnabled", "freezeDayKeys", "missionResultDays"]);
 
 export function isValidQuestStreakSyncPayload(value: unknown): value is QuestStreakSyncPayload {
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
@@ -56,6 +92,7 @@ export function isValidQuestStreakSyncPayload(value: unknown): value is QuestStr
   if (!Object.keys(payload).every((key) => ALLOWED_QUEST_STREAK_SYNC_KEYS.has(key))) return false;
   if (typeof payload.lapseReminderEnabled !== "boolean") return false;
   if (!isValidFreezeDayKeys(payload.freezeDayKeys)) return false;
+  if ("missionResultDays" in payload && !isValidMissionResultDays(payload.missionResultDays)) return false;
   return true;
 }
 
@@ -214,6 +251,78 @@ export function applyQuestStreakReminderOp(
 ): QuestStreakSyncPayload {
   const base: QuestStreakSyncPayload = current ?? { lapseReminderEnabled: false, freezeDayKeys: [] };
   return { ...base, lapseReminderEnabled: op.setLapseReminderEnabled };
+}
+
+/**
+ * A single "record this day's mission result" operation, applied
+ * server-side against the caller's *currently stored* `questStreakSync`
+ * payload — the same lost-update fix {@link applyQuestStreakFreezeOp}/
+ * {@link applyQuestStreakReminderOp} already apply to the other two synced
+ * fields. Unlike the freeze op, this **upserts by `dayKey`** rather than
+ * only ever appending: a day's mission result can flip from incomplete to
+ * complete later the same day (e.g. a late-arriving contribution), and
+ * `state/dailyMissionResults.ts#saveDailyMissionResult` already upserts
+ * locally for exactly that reason — the synced copy needs to be able to
+ * follow the same correction.
+ */
+export type QuestStreakMissionResultOp = { recordMissionResultDay: DailyMissionResult };
+
+export type QuestStreakMissionResultOpPatchResult = {
+  /** Only the op, if present in `input` *and* valid. */
+  valid: Partial<QuestStreakMissionResultOp>;
+  /** One message per rejected or malformed field. */
+  errors: string[];
+};
+
+/**
+ * Validates an untrusted (e.g. parsed request-body JSON)
+ * `{ recordMissionResultDay: { dayKey, isComplete } }` patch.
+ */
+export function normalizeQuestStreakMissionResultOpPatch(input: unknown): QuestStreakMissionResultOpPatchResult {
+  if (typeof input !== "object" || input === null || Array.isArray(input)) {
+    return { valid: {}, errors: ["Request body must be a JSON object."] };
+  }
+
+  const record = input as Record<string, unknown>;
+  if (!("recordMissionResultDay" in record)) return { valid: {}, errors: [] };
+
+  return isValidMissionResultDay(record.recordMissionResultDay)
+    ? { valid: { recordMissionResultDay: record.recordMissionResultDay }, errors: [] }
+    : {
+        valid: {},
+        errors: ['"recordMissionResultDay" must be a { dayKey: YYYY-MM-DD, isComplete: boolean } object.'],
+      };
+}
+
+/**
+ * Applies one validated `recordMissionResultDay` op to a currently stored
+ * `questStreakSync` payload: upserts the day into `missionResultDays` by
+ * `dayKey`, capped at {@link MAX_QUEST_STREAK_MISSION_RESULT_DAYS} for a new
+ * day, leaving `lapseReminderEnabled`/`freezeDayKeys` at their current
+ * stored values untouched. Pure and idempotent — returns the same `current`
+ * reference (or an equivalent freshly-built default) when the day is already
+ * recorded with the same `isComplete` value or the list is already at
+ * capacity for a genuinely new day, mirroring
+ * {@link applyQuestStreakFreezeOp}.
+ */
+export function applyQuestStreakMissionResultOp(
+  current: QuestStreakSyncPayload | null,
+  op: QuestStreakMissionResultOp,
+): QuestStreakSyncPayload {
+  const base: QuestStreakSyncPayload = current ?? { lapseReminderEnabled: false, freezeDayKeys: [] };
+  if (!isValidMissionResultDay(op.recordMissionResultDay)) return base;
+
+  const existing = base.missionResultDays ?? [];
+  const index = existing.findIndex((entry) => entry.dayKey === op.recordMissionResultDay.dayKey);
+  if (index !== -1 && existing[index].isComplete === op.recordMissionResultDay.isComplete) return base;
+  if (index === -1 && existing.length >= MAX_QUEST_STREAK_MISSION_RESULT_DAYS) return base;
+
+  const missionResultDays =
+    index === -1
+      ? [...existing, op.recordMissionResultDay]
+      : existing.map((entry, i) => (i === index ? op.recordMissionResultDay : entry));
+
+  return { ...base, missionResultDays };
 }
 
 /** Serializes a payload for the `quest_streak_sync` D1 column: `null` clears it, matching every other nullable column here. */

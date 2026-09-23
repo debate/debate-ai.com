@@ -1,9 +1,14 @@
 /**
- * @fileoverview The canonical address of a video: `/videos/<season>/<event>/<matchup>`.
+ * @fileoverview The canonical address of a video.
  *
- * The three segments are coarse-to-fine, which is what the old flat
- * `/videos/watch/<title-slug>` could never be: the season, then the format
- * and tournament, then who debated and which round. Every segment is for
+ * A tagged debate round lives at
+ * `/videos/<season>/<tournament>/<round>/<aff-vs-neg>`, e.g.
+ * `/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr`. Everything else — a
+ * lecture, or a round nobody has tagged with a round and a team yet — lives at
+ * `/videos/<season>/<event>/<matchup>`.
+ *
+ * The segments are coarse-to-fine, which is what the old flat
+ * `/videos/watch/<title-slug>` could never be. Every segment is for
  * readers and for search engines, and is re-derived on every request so a
  * corrected team name or a re-tagged tournament redirects to the
  * current address instead of leaving two indexable URLs for one video.
@@ -55,14 +60,22 @@ export interface VideoRouteParts {
   arg2nr?: string | null;
 }
 
-/** The three path segments under `/videos`. */
+/** The path segments under `/videos`. */
 export interface VideoRouteSegments {
   /** Season, e.g. `"2006"`, or {@link ARCHIVE_SEASON_SEGMENT}. */
   season: string;
-  /** Format and tournament, e.g. `"college-ndt"` or `"pf-toc"`. */
+  /**
+   * The tournament for a round (`"ndt"`), else format and tournament or a
+   * lecture category (`"college-ndt"`, `"kritik-critical-theory"`).
+   */
   event: string;
-  /** Who debated, which round, and the video id. */
+  /**
+   * The round (`"finals"`) when {@link VideoRouteSegments.teams} is set;
+   * otherwise who debated, which round and what was run, or the title.
+   */
   matchup: string;
+  /** Who debated (`"dartmouth-sv-vs-michigan-pr"`), for a tagged round only. */
+  teams?: string;
 }
 
 /** Reads the fields this module needs out of a {@link VideoType} tuple. */
@@ -160,25 +173,185 @@ export function matchupSegment(parts: VideoRouteParts): string {
   return pieces.join("-") || slugifyVideoTitle(parts.title) || "video";
 }
 
-/** Builds all three segments of a video's canonical path. */
+/**
+ * The teams segment of a round: `aff-vs-neg`, or the one team recorded.
+ *
+ * @returns The slug, or `""` when no team is recorded.
+ */
+export function teamsSegment(parts: VideoRouteParts): string {
+  if (parts.affTeam && parts.negTeam) {
+    return slugifyVideoTitle(`${parts.affTeam} vs ${parts.negTeam}`);
+  }
+  return slugifyVideoTitle(parts.affTeam ?? parts.negTeam ?? "");
+}
+
+/** Drops a trailing event year too, so `"NDT 2026"` slugs as `"ndt"`. */
+function withoutAnyTournamentYear(tournament: string): string {
+  return withoutTournamentYear(tournament)
+    .replace(/\s+(19|20)\d{2}(?=\s|$)/g, "")
+    .trim();
+}
+
+/** A round as read from a video's title, for a video nobody has tagged. */
+export interface TitleRound {
+  season: string;
+  tournament: string;
+  round: string;
+  affTeam: string;
+  negTeam: string;
+}
+
+/**
+ * Round names a title can carry: elimination rounds by any of their usual
+ * spellings, and numbered prelims (`Round 3`, `Rd 3`, `R3`). A bare `Round`
+ * with no number is not one — "Round Analysis" is a lecture series.
+ */
+const TITLE_ROUND =
+  /\b(?:(?:double|triple)[- ]?oct(?:a|o)(?:final)?s|oct(?:a|o)(?:final)?s|quarter(?:final)?s|semi(?:final)?s|finals?|doubles|triples|runoffs|round\s*\d{1,2}|rd\.?\s*\d{1,2}|r\d{1,2})\b/i;
+
+/** What separates the parts of a title: a spaced dash, a pipe, a colon. */
+const TITLE_SEPARATOR = /\s[-–—]\s|\s*[|│]\s*|:\s/;
+
+/** Strips side labels and trim noise from a team name read out of a title. */
+function cleanTitleTeam(team: string): string {
+  return team
+    .replace(/\((?:aff|neg)\)/gi, "")
+    .replace(/^\s*(?:aff|neg)\s+/i, "")
+    .replace(/[\s.,]+$/, "")
+    .trim();
+}
+
+/**
+ * Reads a round out of a title like
+ * `"2022 NDT Finals - Dartmouth SV vs Michigan PR - Round Analysis"`.
+ *
+ * Only a title that names a year, a tournament, a round and two teams counts,
+ * so a lecture titled `"DDI 2020 - Cap K vs Critical Affs"` is left alone.
+ *
+ * @returns The round, or `null` when the title does not read as one.
+ */
+export function parseRoundTitle(title: string | null | undefined): TitleRound | null {
+  if (!title) return null;
+  const year = title.match(/\b(19|20)\d{2}\b/)?.[0];
+  const roundMatch = title.match(TITLE_ROUND);
+  if (!year || !roundMatch || roundMatch.index === undefined) return null;
+
+  const before = title.slice(0, roundMatch.index);
+  const after = title.slice(roundMatch.index + roundMatch[0].length);
+  const vs = after.match(/\s+vs\.?\s+/i);
+  if (!vs || vs.index === undefined) return null;
+
+  // The tournament is the last part of the title before the round, with any
+  // year and brackets taken out; the teams sit either side of the "vs".
+  const tournament = withoutAnyTournamentYear(
+    (before.split(TITLE_SEPARATOR).filter((part) => part.trim()).pop() ?? "")
+      .replace(/[[\]()]/g, " ")
+      .replace(/\b(19|20)\d{2}\b/g, " ")
+      .replace(/\s+/g, " "),
+  );
+  const affTeam = cleanTitleTeam(after.slice(0, vs.index).split(TITLE_SEPARATOR).pop() ?? "");
+  const negTeam = cleanTitleTeam(
+    after
+      .slice(vs.index + vs[0].length)
+      .split(TITLE_SEPARATOR)[0]
+      .split(/[[(]|\s+(?:round analysis|part|pt)\b/i)[0],
+  );
+  if (!tournament || !affTeam || !negTeam) return null;
+
+  return { season: year, tournament, round: roundMatch[0], affTeam, negTeam };
+}
+
+/**
+ * The part number of a round uploaded in pieces — `"Part 2"`, `"Pt 2"`,
+ * `"[2/2]"` — so each piece gets its own address.
+ */
+function titlePart(title: string | null | undefined): string | null {
+  const match = (title ?? "").match(/\b(?:part|pt)\.?\s*(\d{1,2})\b|\[(\d{1,2})\s*\/\s*\d{1,2}\]/i);
+  return match ? (match[1] ?? match[2]) : null;
+}
+
+/** Appends suffixes to a teams slug, keeping each one only when non-empty. */
+function withSuffixes(teams: string, ...suffixes: (string | null | undefined)[]): string {
+  return [teams, ...suffixes.map((suffix) => slugifyVideoTitle(suffix ?? ""))]
+    .filter(Boolean)
+    .join("-");
+}
+
+/**
+ * Builds the segments of a video's canonical path.
+ *
+ * A round with a recorded round level and at least one team gets the
+ * four-segment `<season>/<tournament>/<round>/<teams>` form; the tournament
+ * falls back to the format when none is recorded. A video without those tags
+ * whose title reads as a round (see {@link parseRoundTitle}) gets the same
+ * form from its title. Anything else gets `<season>/<event>/<matchup>`.
+ *
+ * The teams segment carries a `part-N` suffix for a round uploaded in pieces,
+ * and a lecture read as a round carries its category (`round-analysis`), so
+ * neither takes the address of the round video itself.
+ */
 export function videoRouteSegments(parts: VideoRouteParts): VideoRouteSegments {
-  return {
-    season: seasonSegment(parts),
-    event: eventSegment(parts),
-    matchup: matchupSegment(parts),
-  };
+  const round = slugifyVideoTitle(parts.roundLevel ?? "");
+  const teams = teamsSegment(parts);
+
+  if (round && teams) {
+    const tournament = parts.tournament
+      ? slugifyVideoTitle(withoutAnyTournamentYear(parts.tournament))
+      : "";
+    return {
+      season: seasonSegment(parts),
+      event: tournament || eventSegment(parts),
+      matchup: round,
+      teams: withSuffixes(teams, titlePart(parts.title) && `part ${titlePart(parts.title)}`),
+    };
+  }
+
+  const fromTitle = parseRoundTitle(parts.title);
+  if (fromTitle) {
+    return {
+      season: fromTitle.season,
+      event: slugifyVideoTitle(fromTitle.tournament),
+      matchup: slugifyVideoTitle(fromTitle.round),
+      teams: withSuffixes(
+        teamsSegment({ ...parts, affTeam: fromTitle.affTeam, negTeam: fromTitle.negTeam }),
+        typeof parts.style === "string" ? parts.style : null,
+        titlePart(parts.title) && `part ${titlePart(parts.title)}`,
+      ),
+    };
+  }
+
+  return { season: seasonSegment(parts), event: eventSegment(parts), matchup: matchupSegment(parts) };
+}
+
+/** Joins route segments into a `/videos/...` path. */
+function hrefFromSegments({ season, event, matchup, teams }: VideoRouteSegments): string {
+  return teams
+    ? `/videos/${season}/${event}/${matchup}/${teams}`
+    : `/videos/${season}/${event}/${matchup}`;
 }
 
 /**
  * Builds a video's canonical path.
  *
  * @param video - The video, as a tuple or as named parts.
- * @returns e.g. `/videos/2006/college-ndt/northwestern-vs-michigan-state-finals`.
+ * @returns e.g. `/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr`, or
+ *   `/videos/2019/kritik-critical-theory/how-to-give-a-2nr` for a lecture.
  */
 export function videoRouteHref(video: VideoType | VideoRouteParts): string {
   const parts = Array.isArray(video) ? videoRouteParts(video) : video;
-  const { season, event, matchup } = videoRouteSegments(parts);
-  return `/videos/${season}/${event}/${matchup}`;
+  return hrefFromSegments(videoRouteSegments(parts));
+}
+
+/**
+ * The three-segment path a round had before rounds moved to
+ * `<season>/<tournament>/<round>/<teams>`, e.g.
+ * `/videos/2006/college-ndt/northwestern-gw-vs-michigan-state-bp-finals`.
+ *
+ * Kept so links shared under that scheme still resolve and redirect.
+ */
+export function legacyVideoRouteHref(video: VideoType | VideoRouteParts): string {
+  const parts = Array.isArray(video) ? videoRouteParts(video) : video;
+  return `/videos/${seasonSegment(parts)}/${eventSegment(parts)}/${matchupSegment(parts)}`;
 }
 
 /**
@@ -212,6 +385,7 @@ export function isCanonicalVideoRoute(
   return (
     same(requested.season, canonical.season) &&
     same(requested.event, canonical.event) &&
-    same(requested.matchup, canonical.matchup)
+    same(requested.matchup, canonical.matchup) &&
+    same(requested.teams, canonical.teams ?? "")
   );
 }

@@ -50,6 +50,8 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   flowAnnotations: "id",
   spellcheckDictionary: "id",
   flowHistory: "id",
+  docsChatTabs: "id",
+  fileSources: "id",
   coachConversation: "id",
   coachingPrograms: "id",
   coachingSessionHistory: "id",
@@ -81,9 +83,12 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   contributorAvailability: "contributorId",
   completedResearchTasks: "id",
   groupChallenges: "id",
+  challengeWinEvents: "id",
   dailyQuestTemplates: "id",
+  dailyMissionResults: "id",
   questTeams: "id",
   contributorAwardNominations: "id",
+  unlockCelebrations: "id",
   dailyBestCardAnnouncements: "dayKey",
   contributorAwardAnnouncements: "dayKey",
   debateVideosFavorites: "videoId",
@@ -248,6 +253,89 @@ describe("the synced collection catalog", () => {
       storageKey: "flow-history",
       idField: "id",
       href: "/debate",
+    });
+  });
+
+  it("syncs the Debate Docs workspace's open chat tabs now that they carry a stable id", () => {
+    // `apps/debate-ai.com/components/qwksearch/useChatTabs.ts`'s `ChatTab`
+    // (`{ id, title, hasMessages? }`) has the same shape this catalog requires
+    // but had never been added, so a chat tab layout built up on one device
+    // was invisible on another. The chat conversation content itself stays
+    // with the third-party `research-agent-ui` package's own backend — only
+    // the open-tab list and titles sync here.
+    expect(findToolRecordCollection("docsChatTabs")).toMatchObject({
+      storageKey: "qwksearch-open-chat-tabs",
+      idField: "id",
+      href: "/doc",
+    });
+  });
+
+  it("syncs the Debate Docs workspace's configured file sources, with credentials redacted", () => {
+    // `file-sources.ts`'s `REASON-file-sources` has the same shape, but its
+    // records can carry an SSH password, an S3/R2/B2 secret key or a Google
+    // OAuth refresh token — the one collection whose `redact` must actually
+    // hold something back, not just be present. `redact-file-source.test.ts`
+    // pins what `redactFileSource` itself strips per source type.
+    const collection = findToolRecordCollection("fileSources");
+    expect(collection).toMatchObject({
+      storageKey: "REASON-file-sources",
+      idField: "id",
+      href: "/doc",
+    });
+    expect(typeof collection?.redact).toBe("function");
+    expect(
+      collection?.redact?.({
+        id: "ssh-1",
+        type: "ssh",
+        credentials: { host: "example.com", password: "hunter2" },
+      }),
+    ).toEqual({ id: "ssh-1", type: "ssh", credentials: { host: "example.com" } });
+  });
+
+  it("syncs group-challenge win events now that they carry a stable id", () => {
+    // `state/challengeWinEvents.ts`'s `ChallengeWinEvent` (`{ contributorId,
+    // occurredAt }`) had no per-record id — `contributorId` repeats across
+    // every win a squad member records, so it couldn't key this catalog the
+    // way `roundContributorFlows`/`contributorAvailability` do.
+    // `recordChallengeWinEvent` now stamps a generated `id` on every new
+    // event (mirroring `completedResearchTasks`' own fix), so the win-event
+    // log a `win_target` `groupChallenges` challenge scores against syncs
+    // alongside the challenge roster itself.
+    expect(findToolRecordCollection("challengeWinEvents")).toMatchObject({
+      storageKey: "challengeWinEvents",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs a contributor's daily-mission-result history now that it carries a stable id", () => {
+    // `state/dailyMissionResults.ts`'s `DailyMissionResultRecord` was keyed
+    // by the pair `(contributorId, dayKey)` alone — the same shape problem
+    // `coachingSessions` had — so `/cards/streaks`' quest-streak roster,
+    // built entirely from this history, never followed a contributor to a
+    // second device even though the account already synced their
+    // `streakFreezes`/`streakLapseReminders` preferences via the bespoke
+    // `quest_streak_sync` column. `saveDailyMissionResult` now stamps a
+    // deterministic `${contributorId}::${dayKey}` id on every record
+    // (mirroring `coachingSessions`' own composite-key fix), so this joins
+    // the plain allowlist instead of needing a bespoke sync of its own.
+    expect(findToolRecordCollection("dailyMissionResults")).toMatchObject({
+      storageKey: "dailyMissionResults",
+      idField: "id",
+      href: "/cards/leaderboard",
+    });
+  });
+
+  it("syncs Progress Unlocks' last-seen-badges celebration baseline now that it's array-shaped", () => {
+    // `state/unlockCelebrations.ts`'s baseline was a plain
+    // `Record<contributorId, string[]>` map — no per-record id, the same
+    // shape problem every other collection here started with — until it was
+    // reshaped into an array of `{ id, badges }` records keyed by the
+    // contributor's id.
+    expect(findToolRecordCollection("unlockCelebrations")).toMatchObject({
+      storageKey: "unlockCelebrationSeenBadges",
+      idField: "id",
+      href: "/cards/leaderboard",
     });
   });
 

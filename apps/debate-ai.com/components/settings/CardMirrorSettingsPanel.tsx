@@ -47,7 +47,7 @@ export function CardMirrorSettingsPanel() {
   }, [onMessage])
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 pb-6">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6">
       <div className="flex items-center gap-1.5 mb-1">
         <Settings2 className="h-4 w-4 text-foreground" />
         <h2 className="text-base font-semibold">Editor settings</h2>

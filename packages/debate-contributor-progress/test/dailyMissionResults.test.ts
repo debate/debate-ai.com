@@ -9,6 +9,7 @@ import {
   getDailyMissionResult,
   listDailyMissionResults,
   listDailyMissionResultsForContributor,
+  mergeRemoteMissionResultDays,
   saveDailyMissionResult,
   type DailyMissionResultRecord,
 } from "../src/state/dailyMissionResults";
@@ -33,9 +34,24 @@ class MemoryStorage {
   }
 }
 
-const ALICE_DAY1: DailyMissionResultRecord = { contributorId: "alice", dayKey: "2026-08-15", isComplete: true };
-const ALICE_DAY2: DailyMissionResultRecord = { contributorId: "alice", dayKey: "2026-08-16", isComplete: true };
-const BOB_DAY1: DailyMissionResultRecord = { contributorId: "bob", dayKey: "2026-08-15", isComplete: false };
+const ALICE_DAY1: DailyMissionResultRecord = {
+  id: "alice::2026-08-15",
+  contributorId: "alice",
+  dayKey: "2026-08-15",
+  isComplete: true,
+};
+const ALICE_DAY2: DailyMissionResultRecord = {
+  id: "alice::2026-08-16",
+  contributorId: "alice",
+  dayKey: "2026-08-16",
+  isComplete: true,
+};
+const BOB_DAY1: DailyMissionResultRecord = {
+  id: "bob::2026-08-15",
+  contributorId: "bob",
+  dayKey: "2026-08-15",
+  isComplete: false,
+};
 
 beforeEach(() => {
   (globalThis as unknown as { localStorage: MemoryStorage }).localStorage = new MemoryStorage();
@@ -92,6 +108,17 @@ describe("getDailyMissionResult", () => {
 });
 
 describe("saveDailyMissionResult", () => {
+  it("stamps id as `${contributorId}::${dayKey}`, ignoring any id the caller passed in", () => {
+    const saved = saveDailyMissionResult({ ...ALICE_DAY1, id: "some-other-id" });
+    expect(saved.id).toBe("alice::2026-08-15");
+    expect(getDailyMissionResult("alice", "2026-08-15")?.id).toBe("alice::2026-08-15");
+  });
+
+  it("returns the saved, id-stamped record", () => {
+    const saved = saveDailyMissionResult({ contributorId: "carol", dayKey: "2026-08-20", isComplete: true });
+    expect(saved).toEqual({ id: "carol::2026-08-20", contributorId: "carol", dayKey: "2026-08-20", isComplete: true });
+  });
+
   it("upserts — saving an existing contributorId+dayKey pair overwrites rather than duplicating it", () => {
     saveDailyMissionResult(ALICE_DAY1);
     const recomputed: DailyMissionResultRecord = { ...ALICE_DAY1, isComplete: false };
@@ -122,6 +149,63 @@ describe("deleteDailyMissionResult", () => {
     saveDailyMissionResult(BOB_DAY1);
     deleteDailyMissionResult("alice", "2026-08-15");
     expect(listDailyMissionResults()).toEqual([BOB_DAY1]);
+  });
+});
+
+describe("mergeRemoteMissionResultDays", () => {
+  it("adds remote days not already present locally and reports a change", () => {
+    const changed = mergeRemoteMissionResultDays("alice", [
+      { dayKey: "2026-08-09", isComplete: true },
+      { dayKey: "2026-08-15", isComplete: false },
+    ]);
+    expect(changed).toBe(true);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([
+      { id: "alice::2026-08-09", contributorId: "alice", dayKey: "2026-08-09", isComplete: true },
+      { id: "alice::2026-08-15", contributorId: "alice", dayKey: "2026-08-15", isComplete: false },
+    ]);
+  });
+
+  it("is a no-op reporting no change when every remote day is already local", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    const changed = mergeRemoteMissionResultDays("alice", [{ dayKey: ALICE_DAY1.dayKey, isComplete: true }]);
+    expect(changed).toBe(false);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([ALICE_DAY1]);
+  });
+
+  it("never overwrites a locally-recorded day even when the remote isComplete differs", () => {
+    saveDailyMissionResult({ contributorId: "alice", dayKey: "2026-08-09", isComplete: true });
+    mergeRemoteMissionResultDays("alice", [{ dayKey: "2026-08-09", isComplete: false }]);
+    expect(getDailyMissionResult("alice", "2026-08-09")).toEqual({
+      id: "alice::2026-08-09",
+      contributorId: "alice",
+      dayKey: "2026-08-09",
+      isComplete: true,
+    });
+  });
+
+  it("only adds the days not already present locally, without duplicating overlapping ones", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    const changed = mergeRemoteMissionResultDays("alice", [
+      { dayKey: ALICE_DAY1.dayKey, isComplete: ALICE_DAY1.isComplete },
+      { dayKey: "2026-08-20", isComplete: true },
+    ]);
+    expect(changed).toBe(true);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([
+      ALICE_DAY1,
+      { id: "alice::2026-08-20", contributorId: "alice", dayKey: "2026-08-20", isComplete: true },
+    ]);
+  });
+
+  it("doesn't touch another contributor's stored days", () => {
+    saveDailyMissionResult(BOB_DAY1);
+    mergeRemoteMissionResultDays("alice", [{ dayKey: "2026-08-09", isComplete: true }]);
+    expect(listDailyMissionResultsForContributor("bob")).toEqual([BOB_DAY1]);
+  });
+
+  it("is a no-op for an empty remote list", () => {
+    saveDailyMissionResult(ALICE_DAY1);
+    expect(mergeRemoteMissionResultDays("alice", [])).toBe(false);
+    expect(listDailyMissionResultsForContributor("alice")).toEqual([ALICE_DAY1]);
   });
 });
 
@@ -210,7 +294,12 @@ describe("computeAndSavePersistedDailyMissionResult", () => {
 
     const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
 
-    expect(record).toEqual({ contributorId: "alice", dayKey: "2026-08-16", isComplete: true });
+    expect(record).toEqual({
+      id: "alice::2026-08-16",
+      contributorId: "alice",
+      dayKey: "2026-08-16",
+      isComplete: true,
+    });
     expect(getDailyMissionResult("alice", "2026-08-16")).toEqual(record);
   });
 
@@ -219,7 +308,12 @@ describe("computeAndSavePersistedDailyMissionResult", () => {
 
     const record = computeAndSavePersistedDailyMissionResult("alice", QUESTS, NOW);
 
-    expect(record).toEqual({ contributorId: "alice", dayKey: "2026-08-16", isComplete: false });
+    expect(record).toEqual({
+      id: "alice::2026-08-16",
+      contributorId: "alice",
+      dayKey: "2026-08-16",
+      isComplete: false,
+    });
   });
 
   it("excludes contributions without a submittedAt timestamp rather than throwing", () => {
@@ -268,7 +362,12 @@ describe("computeAndSavePersistedDailyMissionResult", () => {
 
   it("returns an incomplete result for a contributor with no persisted contributions", () => {
     const record = computeAndSavePersistedDailyMissionResult("missing", QUESTS, NOW);
-    expect(record).toEqual({ contributorId: "missing", dayKey: "2026-08-16", isComplete: false });
+    expect(record).toEqual({
+      id: "missing::2026-08-16",
+      contributorId: "missing",
+      dayKey: "2026-08-16",
+      isComplete: false,
+    });
   });
 });
 

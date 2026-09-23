@@ -76,13 +76,28 @@ describe('saveQuickCardToAccount', () => {
     const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
     vi.stubGlobal('fetch', fetchMock);
 
-    await saveQuickCardToAccount(CARD);
+    const result = await saveQuickCardToAccount(CARD);
 
     expect(fetchMock).toHaveBeenCalledWith('/api/quick-cards/card-1', {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ card: CARD }),
     });
+    expect(result).toEqual({ conflict: false });
+  });
+
+  it('resolves a conflict result on a 409, with the account\'s current (newer) card', async () => {
+    const newer = { ...CARD, updatedAt: CARD.updatedAt + 1000 };
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 409,
+      json: async () => ({ current: newer }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await saveQuickCardToAccount(CARD);
+
+    expect(result).toEqual({ conflict: true, current: newer });
   });
 
   it('URL-encodes the id', async () => {

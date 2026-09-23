@@ -29,7 +29,7 @@ owning package before editing anything under `app/`. The map is in the
 | AI prompts for speeches and flows | `/summaries`, `/strategy`, `/outline` | `debate-speech-writer` |
 | Documentation | `/docs` | `debate-help-docs` |
 | Accounts | `/login`, `/settings` | better-auth |
-| Admin | `/admin` | gated on `ADMIN_EMAILS` |
+| Admin | `/admin` | gated on `ADMIN_EMAIL` / `ADMIN_EMAILS`; invited moderators see the video sections |
 
 ## Stack
 
@@ -95,8 +95,8 @@ Secrets survive either way.
 | `AUTH_LINKEDIN_ID` / `AUTH_LINKEDIN_SECRET` | "Sign in with LinkedIn". | [linkedin.com/developers](https://www.linkedin.com/developers/) → your app → Auth. |
 | `RESEND_API_KEY` (alias `AUTH_RESEND_KEY`) | Verification email and round invitations. | [resend.com/api-keys](https://resend.com/api-keys) |
 | `BETTER_AUTH_ALLOWED_HOSTS` | Extra comma-separated hosts this app is served from. See [`lib/auth/hosts.ts`](./lib/auth/hosts.ts). | Your own preview or custom-domain hosts. |
-| `BETTER_AUTH_TRUSTED_ORIGINS` | Extra origins allowed to make authenticated requests. | The same. |
-| `ADMIN_EMAILS` | Restricts `/admin` to the comma-separated addresses listed. **Leaving it unset leaves `/admin` open to every signed-in user** — set it before you deploy. | Your own addresses. |
+| `BETTER_AUTH_TRUSTED_ORIGINS` | Extra origins allowed to make authenticated requests. | The same — plus the `moz-extension://<uuid>` origin of a Firefox build of [the browser extension](../debate-web-ext/README.md#signing-in-and-staying-signed-in), which is a fresh UUID per install and so cannot be pinned in code the way the Chrome build's id is. |
+| `ADMIN_EMAIL` / `ADMIN_EMAILS` | The admin allowlist — one address or a comma-separated list; both are read and merged. Only these accounts get full `/admin` access, and they can invite **moderators** there, who can edit videos and debate rounds (including via the "Edit video" button on watch pages) but nothing else. **Leaving both unset means nobody can open `/admin`.** `ADMIN_EMAIL` is hardcoded in [`wrangler.jsonc`](./wrangler.jsonc) `vars` (overriding any dashboard value); add more admins via `ADMIN_EMAILS`. | Your own addresses. |
 
 ### Model providers
 
@@ -166,8 +166,8 @@ bun run db:seed:videos:d1                  # optional: seed the video library
 
 Then the secrets. [`setup-secrets.sh`](./setup-secrets.sh) prints the list; set
 each with `bunx wrangler secret put <NAME>`. At minimum, set
-`BETTER_AUTH_SECRET` and `ADMIN_EMAILS` — the first has an insecure fallback,
-and the second leaves `/admin` open to every signed-in user when unset.
+`BETTER_AUTH_SECRET` and `ADMIN_EMAILS` (or `ADMIN_EMAIL`) — the first has an
+insecure fallback, and without the second nobody can open `/admin`.
 
 Ship it:
 

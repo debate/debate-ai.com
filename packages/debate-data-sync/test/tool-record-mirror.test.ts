@@ -177,6 +177,43 @@ describe("mirror gating", () => {
   });
 });
 
+describe("a collection's redact, applied at every push site", () => {
+  it("mirrorToolRecordSave sends the redacted record, not the local one", async () => {
+    const calls = stubFetch([{ status: 200 }]);
+    setToolRecordSyncEnabled(true);
+
+    mirrorToolRecordSave("fileSources", {
+      id: "ssh-1",
+      type: "ssh",
+      credentials: { host: "example.com", password: "hunter2" },
+    });
+    await settle();
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.body).toEqual({
+      record: { id: "ssh-1", type: "ssh", credentials: { host: "example.com" } },
+    });
+  });
+
+  it("mirrorToolRecordsSave redacts every record in the batch", async () => {
+    const calls = stubFetch([{ status: 200 }]);
+    setToolRecordSyncEnabled(true);
+
+    mirrorToolRecordsSave("fileSources", [
+      { id: "ssh-1", type: "ssh", credentials: { host: "a.example.com", password: "hunter2" } },
+      { id: "ssh-2", type: "ssh", credentials: { host: "b.example.com", password: "hunter3" } },
+    ]);
+    await settle();
+
+    expect(calls[0]!.body).toEqual({
+      records: [
+        { id: "ssh-1", type: "ssh", credentials: { host: "a.example.com" } },
+        { id: "ssh-2", type: "ssh", credentials: { host: "b.example.com" } },
+      ],
+    });
+  });
+});
+
 describe("mirror failure handling", () => {
   it("swallows a failure instead of rejecting into the calling store", async () => {
     stubFetch([{ status: 500, body: { error: "boom" } }]);
@@ -320,5 +357,25 @@ describe("hydrateToolRecords", () => {
 
     expect(result.synced).toBe(false);
     expect(calls).toEqual([]);
+  });
+
+  it("redacts local-only records before the first-sign-in push, for a collection that defines it", async () => {
+    const fileSources = findToolRecordCollection("fileSources") as ToolRecordCollection;
+    writeLocalToolRecords(fileSources, [
+      { id: "ssh-1", type: "ssh", credentials: { host: "example.com", password: "hunter2" } },
+    ]);
+    const calls = stubFetch([{ status: 200, body: [] }, { status: 200 }]);
+    setToolRecordSyncEnabled(true);
+
+    const result = await hydrateToolRecords("fileSources");
+
+    expect(result.pushed).toBe(1);
+    expect(calls[1]!.body).toEqual({
+      records: [{ id: "ssh-1", type: "ssh", credentials: { host: "example.com" } }],
+    });
+    // The local store keeps the password the push held back.
+    expect(readLocalToolRecords(fileSources)).toEqual([
+      { id: "ssh-1", type: "ssh", credentials: { host: "example.com", password: "hunter2" } },
+    ]);
   });
 });

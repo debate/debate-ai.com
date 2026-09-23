@@ -208,11 +208,15 @@ bun run db:seed:videos                  # JSON → drizzle/seed/videos-seed.sql,
 bun run db:seed:videos:d1               # same file, applied to Cloudflare D1
 ```
 
-Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated,
-alongside the YouTube resync on `/admin`). The Worker already bundles the JSON
-assets, so it seeds from its own copy — no credentials and no data transfer.
-`GET` on the same route reports the row count and whether the feed is being
-served from SQL or the JSON fallback.
+Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated). The
+Worker already bundles the JSON assets, so it seeds from its own copy — no
+credentials and no data transfer. `GET` on the same route reports the row
+count and whether the feed is being served from SQL or the JSON fallback. A
+**Seed videos** card on `/admin`, next to "Recompute video stacks", calls
+both: the row/serving-source status renders next to the button
+(`lib/videos/format-seed-videos-result.ts#formatSeedVideosStatus`), and a run's
+own counts and duration replace it once it finishes
+(`formatSeedVideosResult`).
 
 Both paths build their statements with `buildVideoSeedStatements`, so they
 load identical data. The seed is idempotent: rows are upserted by video id and
@@ -284,6 +288,19 @@ Two behaviours are worth knowing before changing this:
   the JSON asset's stale value — the seed-side counterpart to the exclusion
   row above. The flag is never cleared; there is no "go back to asset-driven"
   action.
+- **"Publish all" costs a fixed handful of queries, not one per round.**
+  D1 allows a Worker invocation 1,000 queries (50 on the Workers Free plan),
+  and a statement awaited on its own spends one of them. `publishRoundVideos`
+  used to await every upsert individually, so publishing a queue of 1,200
+  rounds asked for 1,214 queries and the request died at the driver partway
+  through, having already written most of the rows. The statements are the
+  same — a `videos` row uses most of D1's 100-parameter budget on its own, so
+  each round still needs its own — but they are sent through `db.batch()` in
+  runs of a hundred (`lib/database/query-budget.ts`), which is one query per
+  batch and one transaction per batch: the same 1,200 rounds now cost 14
+  queries, and a failure rolls its batch back instead of leaving the queue
+  half-published. The admin-edited lookup, the queue clear and the stack
+  recompute's writes go out the same way.
 - **A published, admin-edited round also survives a re-publish.**
   `resyncYouTubeRounds` re-walks every subscribed channel's uploads since a
   fixed floor date on *every* run, with no check against `videos` — only an
@@ -314,8 +331,26 @@ database.
   video that names its round in the title but does not link it is not paired
   with it, and there is no curated override list — the fix is an edit to the
   YouTube description.
-- `stack_key`/`stack_position` are written by the seed, so an existing
-  database shows no stacks until it is re-seeded.
+- ~~`stack_key`/`stack_position` are written by the seed, so an existing
+  database shows no stacks until it is re-seeded.~~ **Fixed:** that
+  understated the gap — a round published through the live YouTube pipeline
+  (`publish-round-video.ts#publishRoundVideos`, behind the admin
+  "Publish"/"Publish all" actions, and the legacy single-round `POST
+  /api/admin/youtube/videos/publish` endpoint) was never part of the JSON
+  assets to begin with, so a full re-seed never reached it either — it stayed
+  unstacked forever, not just until the next seed. `lib/videos/recompute-video-stacks.ts`
+  re-derives every row's placement over the *whole* table (a round and its
+  analysis are commonly published weeks apart, by different pipelines, so
+  the link can only be found by looking at everything at once) and rewrites
+  only what changed; both publish paths call it after writing, so every
+  future publish keeps stacking current on its own. For a database whose
+  stacks fell behind *before* this wiring existed, `POST
+  /api/admin/videos/recompute-stacks` (admin-gated) backfills them in one
+  call — safe to re-run, since a row already carrying its correct placement
+  produces no write. A **Recompute stacks** button next to "Resync video view
+  counts" on `/admin` calls it directly, mirroring that button's own
+  "checked N, updated M" summary line
+  (`lib/videos/format-recompute-stacks-result.ts`).
 - Search is `LIKE`-based token matching (every token must appear in title,
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now
