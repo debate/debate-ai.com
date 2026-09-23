@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isVideoDocumentKind } from "debate-videos";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
 import {
@@ -23,8 +23,8 @@ const MAX_BODY_LENGTH = 400_000;
 
 /** Lists every document stored for this video. */
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -49,8 +49,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
  * can never disagree with what is stored.
  */
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent, email } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -104,8 +104,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 /** Removes one document — `?kind=transcript`. */
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

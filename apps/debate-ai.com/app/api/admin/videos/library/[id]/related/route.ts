@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { VIDEO_RELATION_KINDS } from "debate-videos";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
 import {
@@ -30,8 +30,8 @@ function isRelation(value: unknown): value is (typeof VIDEO_RELATION_KINDS)[numb
 
 /** Lists this video's links, including any whose target has since been removed. */
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -51,8 +51,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 
 /** Links another video to this one. */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent, email } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -91,8 +91,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
 /** Reorders this video's links to the sequence of ids in the body. */
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -127,8 +127,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
 /** Removes one link — `?relatedVideoId=…&relation=analysis`. */
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

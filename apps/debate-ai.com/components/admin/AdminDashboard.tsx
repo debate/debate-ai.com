@@ -25,6 +25,7 @@ import {
   type SeedVideosStatus,
 } from "../../lib/videos/format-seed-videos-result";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
+import { ModeratorsPanel } from "./ModeratorsPanel";
 import { TopicStarterUpload } from "./TopicStarterUpload";
 import { UsersTable } from "./UsersTable";
 import { VideoLibraryTable } from "./VideoLibraryTable";
@@ -41,7 +42,12 @@ interface Overview { stats: { users: number; sessions: number; files: number; pu
 const STYLE_NAMES: Record<number, string> = { 1: "Policy", 2: "PF", 3: "LD", 4: "College" };
 const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", label: "Policy" }, { value: "2", label: "PF" }, { value: "3", label: "LD" }, { value: "4", label: "College" }];
 
-export function AdminDashboard() {
+/**
+ * The admin page. Admins (ADMIN_EMAIL / ADMIN_EMAILS) see everything;
+ * moderators see only the content sections — the video library, video
+ * reports and the round-video queue.
+ */
+export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [videos, setVideos] = useState<YoutubeRoundVideo[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [style, setStyle] = useState("all");
@@ -111,13 +117,14 @@ export function AdminDashboard() {
   }, [style, loadFirstPage]);
 
   useEffect(() => {
+    if (!isAdmin) return;
     fetch("/api/admin/youtube/resync")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.runs?.[0]) setLastRun(data.runs[0]);
       })
       .catch(() => {});
-  }, []);
+  }, [isAdmin]);
 
   const loadViewCountStatus = useCallback(async () => {
     try {
@@ -130,8 +137,8 @@ export function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    loadViewCountStatus();
-  }, [loadViewCountStatus]);
+    if (isAdmin) loadViewCountStatus();
+  }, [isAdmin, loadViewCountStatus]);
 
   const loadSeedStatus = useCallback(async () => {
     try {
@@ -144,8 +151,8 @@ export function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    loadSeedStatus();
-  }, [loadSeedStatus]);
+    if (isAdmin) loadSeedStatus();
+  }, [isAdmin, loadSeedStatus]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -340,154 +347,164 @@ export function AdminDashboard() {
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10">
       <div>
-        <h1 className="text-2xl font-semibold">Admin</h1>
-        <p className="text-muted-foreground text-sm">Accounts, usage, the published video library and YouTube round video sync</p>
+        <h1 className="text-2xl font-semibold">{isAdmin ? "Admin" : "Moderation"}</h1>
+        <p className="text-muted-foreground text-sm">
+          {isAdmin
+            ? "Accounts, moderators, usage, the published video library and YouTube round video sync"
+            : "Edit the published video library, review video reports and publish queued debate rounds"}
+        </p>
       </div>
 
-      <UsersTable />
+      {isAdmin && (
+        <>
+          <UsersTable />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Resync YouTube rounds</CardTitle>
-          <CardDescription>
-            Refetches every subscribed channel from YouTube, re-classifies rounds, and
-            upserts them into the database. Runs automatically every Monday at 08:00 UTC;
-            this button is for when you do not want to wait.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <Button onClick={handleResync} disabled={isResyncing}>
-              {isResyncing ? "Resyncing…" : "Resync videos"}
-            </Button>
-            {lastRun && (
-              <span className="text-muted-foreground text-sm">
-                Last run{lastRun.triggeredBy === CRON_TRIGGERED_BY ? " (scheduled)" : ""}:{" "}
-                {lastRun.status === "error" ? "failed" : "success"}
-                {lastRun.status !== "error" &&
-                  ` — ${lastRun.videosUpserted} rounds from ${lastRun.channelsSynced} channels`}
-              </span>
-            )}
-          </div>
-          {resyncError && <p className="text-destructive text-sm">{resyncError}</p>}
-          {lastRun?.status === "error" && lastRun.error && (
-            <p className="text-destructive text-sm">{lastRun.error}</p>
-          )}
-        </CardContent>
-      </Card>
+          <ModeratorsPanel />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Resync video view counts</CardTitle>
-          <CardDescription>
-            Refetches the watch count of every stored video from YouTube — both published
-            videos and the queue below — and writes back the ones that moved. Counts are
-            captured once, at ingest, so they only fall behind; the video library sorts on
-            them. Runs automatically on the same weekly schedule as the round scan above.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <Button onClick={handleResyncViewCounts} disabled={isResyncingViews} variant="outline">
-              {isResyncingViews ? "Resyncing view counts…" : "Resync view counts"}
-            </Button>
-            {viewResyncResult ? (
-              <span className="text-muted-foreground text-sm">{viewResyncResult}</span>
-            ) : (
-              viewCountStatus && (
-                <span className="text-muted-foreground text-sm">
-                  Up to{" "}
-                  {(
-                    viewCountStatus.publishedVideos + viewCountStatus.queuedVideos
-                  ).toLocaleString()}{" "}
-                  videos to check
-                </span>
-              )
-            )}
-          </div>
-          {viewResyncError && <p className="text-destructive text-sm">{viewResyncError}</p>}
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Resync YouTube rounds</CardTitle>
+              <CardDescription>
+                Refetches every subscribed channel from YouTube, re-classifies rounds, and
+                upserts them into the database. Runs automatically every Monday at 08:00 UTC;
+                this button is for when you do not want to wait.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button onClick={handleResync} disabled={isResyncing}>
+                  {isResyncing ? "Resyncing…" : "Resync videos"}
+                </Button>
+                {lastRun && (
+                  <span className="text-muted-foreground text-sm">
+                    Last run{lastRun.triggeredBy === CRON_TRIGGERED_BY ? " (scheduled)" : ""}:{" "}
+                    {lastRun.status === "error" ? "failed" : "success"}
+                    {lastRun.status !== "error" &&
+                      ` — ${lastRun.videosUpserted} rounds from ${lastRun.channelsSynced} channels`}
+                  </span>
+                )}
+              </div>
+              {resyncError && <p className="text-destructive text-sm">{resyncError}</p>}
+              {lastRun?.status === "error" && lastRun.error && (
+                <p className="text-destructive text-sm">{lastRun.error}</p>
+              )}
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Seed videos</CardTitle>
-          <CardDescription>
-            Loads the bundled video JSON assets into the <code>videos</code> table that{" "}
-            <code>/api/videos</code> pages over. Safe to re-run — rows are upserted by video id
-            and rows the assets no longer carry are pruned. Until this has been run at least
-            once, the public feed still works, served from the JSON assets in memory instead of
-            SQL.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <Button onClick={handleSeedVideos} disabled={isSeedingVideos} variant="outline">
-              {isSeedingVideos ? "Seeding…" : "Seed videos"}
-            </Button>
-            {seedVideosResult ? (
-              <span className="text-muted-foreground text-sm">{seedVideosResult}</span>
-            ) : (
-              seedStatus && (
-                <span className="text-muted-foreground text-sm">
-                  {formatSeedVideosStatus(seedStatus)}
-                </span>
-              )
-            )}
-          </div>
-          {seedVideosError && <p className="text-destructive text-sm">{seedVideosError}</p>}
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Resync video view counts</CardTitle>
+              <CardDescription>
+                Refetches the watch count of every stored video from YouTube — both published
+                videos and the queue below — and writes back the ones that moved. Counts are
+                captured once, at ingest, so they only fall behind; the video library sorts on
+                them. Runs automatically on the same weekly schedule as the round scan above.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button onClick={handleResyncViewCounts} disabled={isResyncingViews} variant="outline">
+                  {isResyncingViews ? "Resyncing view counts…" : "Resync view counts"}
+                </Button>
+                {viewResyncResult ? (
+                  <span className="text-muted-foreground text-sm">{viewResyncResult}</span>
+                ) : (
+                  viewCountStatus && (
+                    <span className="text-muted-foreground text-sm">
+                      Up to{" "}
+                      {(
+                        viewCountStatus.publishedVideos + viewCountStatus.queuedVideos
+                      ).toLocaleString()}{" "}
+                      videos to check
+                    </span>
+                  )
+                )}
+              </div>
+              {viewResyncError && <p className="text-destructive text-sm">{viewResyncError}</p>}
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Recompute video stacks</CardTitle>
-          <CardDescription>
-            Re-derives stacked-playlist placement (which videos are grouped as a round and
-            its analysis) for every video in the library. Every publish already keeps this
-            current on its own; use this to backfill rounds published before that wiring
-            existed, or after a manual database edit. Safe to re-run — a video already
-            carrying its correct placement is left alone.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <Button onClick={handleRecomputeStacks} disabled={isRecomputingStacks} variant="outline">
-              {isRecomputingStacks ? "Recomputing…" : "Recompute stacks"}
-            </Button>
-            {recomputeStacksResult && (
-              <span className="text-muted-foreground text-sm">{recomputeStacksResult}</span>
-            )}
-          </div>
-          {recomputeStacksError && <p className="text-destructive text-sm">{recomputeStacksError}</p>}
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Seed videos</CardTitle>
+              <CardDescription>
+                Loads the bundled video JSON assets into the <code>videos</code> table that{" "}
+                <code>/api/videos</code> pages over. Safe to re-run — rows are upserted by video id
+                and rows the assets no longer carry are pruned. Until this has been run at least
+                once, the public feed still works, served from the JSON assets in memory instead of
+                SQL.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button onClick={handleSeedVideos} disabled={isSeedingVideos} variant="outline">
+                  {isSeedingVideos ? "Seeding…" : "Seed videos"}
+                </Button>
+                {seedVideosResult ? (
+                  <span className="text-muted-foreground text-sm">{seedVideosResult}</span>
+                ) : (
+                  seedStatus && (
+                    <span className="text-muted-foreground text-sm">
+                      {formatSeedVideosStatus(seedStatus)}
+                    </span>
+                  )
+                )}
+              </div>
+              {seedVideosError && <p className="text-destructive text-sm">{seedVideosError}</p>}
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Reuse-check log retention</CardTitle>
-          <CardDescription>
-            Purges reuse-check log rows older than {REUSE_CHECK_LOG_RETENTION_DAYS} days. Runs
-            automatically every week; use this to apply it right away instead of waiting for the
-            next run.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <Button onClick={handlePurgeReuseCheckLog} disabled={isPurgingReuseLog} variant="outline">
-              {isPurgingReuseLog ? "Purging…" : "Purge old entries now"}
-            </Button>
-            {reuseLogPurgeResult && (
-              <span className="text-muted-foreground text-sm">{reuseLogPurgeResult}</span>
-            )}
-          </div>
-          {reuseLogPurgeError && <p className="text-destructive text-sm">{reuseLogPurgeError}</p>}
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Recompute video stacks</CardTitle>
+              <CardDescription>
+                Re-derives stacked-playlist placement (which videos are grouped as a round and
+                its analysis) for every video in the library. Every publish already keeps this
+                current on its own; use this to backfill rounds published before that wiring
+                existed, or after a manual database edit. Safe to re-run — a video already
+                carrying its correct placement is left alone.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button onClick={handleRecomputeStacks} disabled={isRecomputingStacks} variant="outline">
+                  {isRecomputingStacks ? "Recomputing…" : "Recompute stacks"}
+                </Button>
+                {recomputeStacksResult && (
+                  <span className="text-muted-foreground text-sm">{recomputeStacksResult}</span>
+                )}
+              </div>
+              {recomputeStacksError && <p className="text-destructive text-sm">{recomputeStacksError}</p>}
+            </CardContent>
+          </Card>
 
-      <TopicStarterUpload />
+          <Card>
+            <CardHeader>
+              <CardTitle>Reuse-check log retention</CardTitle>
+              <CardDescription>
+                Purges reuse-check log rows older than {REUSE_CHECK_LOG_RETENTION_DAYS} days. Runs
+                automatically every week; use this to apply it right away instead of waiting for the
+                next run.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button onClick={handlePurgeReuseCheckLog} disabled={isPurgingReuseLog} variant="outline">
+                  {isPurgingReuseLog ? "Purging…" : "Purge old entries now"}
+                </Button>
+                {reuseLogPurgeResult && (
+                  <span className="text-muted-foreground text-sm">{reuseLogPurgeResult}</span>
+                )}
+              </div>
+              {reuseLogPurgeError && <p className="text-destructive text-sm">{reuseLogPurgeError}</p>}
+            </CardContent>
+          </Card>
 
-      <DebateCardParquetUpload />
+          <TopicStarterUpload />
+
+          <DebateCardParquetUpload />
+        </>
+      )}
 
       <VideoLibraryTable />
 

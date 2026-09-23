@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { and, desc, eq, type SQL } from "drizzle-orm";
 import { isLectureCategory } from "debate-data-sync/src/youtube/parsers/lecture-classifier";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { getDBFromContext } from "@/lib/database/context";
 import { videoIssues } from "@/lib/database/schema";
@@ -115,12 +115,12 @@ export async function POST(request: NextRequest) {
  * Lists reports for the admin page — `?status=open` by default, `?videoId=`
  * to see one video's history.
  *
- * Admin-only: reports carry the reporter's email, and reading someone else's
+ * Admins and moderators only: reports carry the reporter's email, and reading someone else's
  * complaint about a video is not a public capability.
  */
 export async function GET(request: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -156,8 +156,8 @@ export async function GET(request: NextRequest) {
 
 /** Resolves a report: `{ id, status: "applied" | "dismissed" | "open" }`. */
 export async function PATCH(request: NextRequest) {
-  const { isAdmin, email } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent, email } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

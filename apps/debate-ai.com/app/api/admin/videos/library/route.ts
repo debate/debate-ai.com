@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
 import { listLibraryVideos } from "@/lib/videos/admin-library";
@@ -14,8 +14,8 @@ import { listLibraryVideos } from "@/lib/videos/admin-library";
  * Query parameters: `q`, `style`, `source`, `sort`, `dir`, `page`, `limit`.
  */
 export async function GET(req: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
