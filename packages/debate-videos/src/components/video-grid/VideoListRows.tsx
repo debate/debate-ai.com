@@ -3,7 +3,8 @@
  * as {@link VideoGrid}'s cards. An archive of rounds is grouped into a
  * collapsible tree of rows; lectures are one flat row per video.
  *
- * The round hierarchy is season → tournament → round; `video-tree.ts` builds
+ * The round hierarchy is season → tournament, Finals first within each
+ * tournament and untagged rounds slotted in by date; `video-tree.ts` builds
  * it and `VideoTreeRows` draws it. Lectures skip the tree: each row already
  * names its channel and category on its second tier, so grouping by them
  * only added clicks between the reader and the videos. A group row opens and closes on click, and the
@@ -16,7 +17,7 @@
  *
  * Rows are one per *slot*, not one per video: a stacked playlist (a round and
  * the round-analysis video made from it) occupies a single row, and the
- * `<` / `>` control at the head of the Actions cell swaps which member that
+ * `<` / `>` control at the head of the row's actions swaps which member that
  * row is showing. The grouping rule lives in `video-stacks.ts`, shared with
  * the card grid.
  */
@@ -60,7 +61,7 @@ interface VideoListRowsProps {
    *  when omitted. */
   defaultCollapseDepth?: number
   /**
-   * Which layout to draw: `"round"` for the season → tournament → round tree,
+   * Which layout to draw: `"round"` for the season → tournament tree,
    * `"lecture"` for flat rows. Omit to infer it from the videos, which a
    * single stray round in a lecture feed tips over into the tree — so a page
    * that knows what it is listing should say.
@@ -99,7 +100,7 @@ interface ColumnDef {
 const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   // Wide enough for the 160px thumbnail, the indent of a video sitting three
   // levels deep, and two lines of title beside them.
-  tree: 460,
+  tree: 400,
   aff: 150,
   neg: 150,
   date: 110,
@@ -315,7 +316,13 @@ export function VideoListRows({
   return (
     <TooltipProvider>
       <div ref={videoContainerRef} className="w-full overflow-x-auto rounded-md border border-border">
-        <table className="w-full table-fixed border-collapse text-sm">
+        {/* Sized to its columns rather than stretched across the page, so a
+            wide screen does not pull a row's date and views far from its
+            title. */}
+        <table
+          className="table-fixed border-collapse text-sm"
+          style={{ width: columns.reduce((total, column) => total + widths[column.key], 0) }}
+        >
           <thead>
             <tr className="border-b border-border bg-muted/50 text-left text-xs font-medium text-muted-foreground">
               {columns.map((column) => (
@@ -356,7 +363,6 @@ export function VideoListRows({
                   <ColumnResizeHandle onResizeStart={(clientX) => startResize(column.key, clientX)} />
                 </th>
               ))}
-              <th className="px-3 py-2 text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -373,7 +379,7 @@ export function VideoListRows({
             ) : (
               <tr>
                 <td
-                  colSpan={columns.length + 1}
+                  colSpan={columns.length}
                   className="px-3 py-8 text-center text-sm text-muted-foreground"
                 >
                   No videos to show

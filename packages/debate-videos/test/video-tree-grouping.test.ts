@@ -1,13 +1,14 @@
 /**
  * @fileoverview The grouping rule behind the list layout's collapsible rows.
  *
- * The hierarchy is the point: season → tournament → round for an archive of
- * rounds, season → channel → category for lectures, newest season first and
- * the bracket reading down from Finals. Videos missing the field a level
- * groups by have to land somewhere visible rather than vanish: a round with
- * no tournament is a plain row at the end of its season, one with no round
- * level a plain row at the end of its tournament, and an undated one sits
- * in the `Legacy` season.
+ * The hierarchy is the point: season → tournament for an archive of rounds,
+ * season → channel → category for lectures, newest season first. Inside a
+ * tournament the rounds read down from Finals with no round-level groups of
+ * their own. Videos missing the field a level groups by have to land
+ * somewhere visible rather than vanish: a round with no tournament is a plain
+ * row slotted among its season's tournaments by date, one with no round level
+ * sits after the tournament's bracket, and an undated one sits in the
+ * `Legacy` season.
  */
 
 import { describe, it, expect } from "vitest";
@@ -16,6 +17,8 @@ import { buildVideoSlots } from "../src/components/video-grid/video-stacks";
 import {
   buildVideoTree,
   countVideoTreeLeaves,
+  roundLevelLabel,
+  roundLevelOrder,
   sortVideoTreeLeaves,
   videoGroupPath,
   videoTreeDepth,
@@ -77,7 +80,7 @@ function lecture(
 
 /** Labels of a level of the tree, in the order it renders. */
 function labels(nodes: VideoTreeNode[]): string[] {
-  return nodes.map((node) => (node.type === "group" ? node.label : node.slot.key));
+  return nodes.map((node) => (node.type === "group" ? node.label : node.slot.videos[0][0]));
 }
 
 /** The group at `path`, or a failed expectation naming what was there. */
@@ -99,11 +102,10 @@ function treeOf(videos: VideoType[], mode: "round" | "lecture" = "round"): Video
 }
 
 describe("the path a video takes through the tree", () => {
-  it("files a round under its season, tournament and round level", () => {
+  it("files a round under its season and tournament, with no round-level group", () => {
     expect(videoGroupPath(round("a"), "round").map((step) => step.label)).toEqual([
       "24-25",
       "Harvard",
-      "Finals",
     ]);
   });
 
@@ -115,13 +117,12 @@ describe("the path a video takes through the tree", () => {
     ]);
   });
 
-  it("normalizes the round level, so Octas and Octofinals are one group", () => {
-    const tree = treeOf([
-      round("a", { level: "Octas" }),
-      round("b", { level: "octofinals" }),
-    ]);
-    expect(labels(groupAt(tree, "24-25", "Harvard").children)).toEqual(["Octofinals"]);
-    expect(countVideoTreeLeaves(tree)).toBe(2);
+  it("normalizes the round level, so Octas and Octofinals read the same", () => {
+    expect(roundLevelLabel(round("a", { level: "Octas" }))).toBe("Octofinals");
+    expect(roundLevelLabel(round("b", { level: "octofinals" }))).toBe("Octofinals");
+    expect(roundLevelOrder(round("a", { level: "Octas" }))).toBe(
+      roundLevelOrder(round("b", { level: "octofinals" })),
+    );
   });
 });
 
@@ -143,22 +144,19 @@ describe("the order of the tree", () => {
       round("d", { level: "Quarterfinals" }),
       round("e", { level: "Round 1" }),
     ]);
-    expect(labels(groupAt(tree, "24-25", "Harvard").children)).toEqual([
-      "Finals",
-      "Semifinals",
-      "Quarterfinals",
-      "Round 3",
-      "Round 1",
-    ]);
+    // Videos directly under the tournament, Finals on top.
+    expect(labels(groupAt(tree, "24-25", "Harvard").children)).toEqual(["c", "b", "d", "a", "e"]);
   });
 
-  it("sorts tournaments by name", () => {
+  it("sorts tournaments in the order they happened", () => {
     const tree = treeOf([
-      round("a", { tournament: "Shirley 2025" }),
-      round("b", { tournament: "Greenhill 2025" }),
-      round("c", { tournament: "Harvard 2025" }),
+      round("a", { tournament: "Shirley 2025", date: "2025-03-01" }),
+      round("b", { tournament: "Greenhill 2025", date: "2024-09-20" }),
+      round("c", { tournament: "Harvard 2025", date: "2025-02-14" }),
+      round("d", { tournament: "Greenhill 2025", date: "2024-09-22" }),
     ]);
     expect(labels(groupAt(tree, "24-25").children)).toEqual(["Greenhill", "Harvard", "Shirley"]);
+    expect(groupAt(tree, "24-25", "Greenhill").earliestDate).toBe("2024-09-20");
   });
 
   it("sends the Legacy season to the end of the seasons", () => {
@@ -169,25 +167,31 @@ describe("the order of the tree", () => {
     expect(labels(tree)).toEqual(["24-25", "Legacy"]);
   });
 
-  it("lists a round with no tournament at the end of its season", () => {
+  it("slots a round with no tournament between the tournaments by date", () => {
     const tree = treeOf([
-      round("a", { tournament: null }),
-      round("b", { tournament: "Harvard 2025" }),
+      round("late", { tournament: null, date: "2025-03-10" }),
+      round("shirley", { tournament: "Shirley 2025", date: "2025-03-01" }),
+      round("mid", { tournament: null, date: "2025-02-20" }),
+      round("harvard", { tournament: "Harvard 2025", date: "2025-02-14" }),
+      round("sameDay", { tournament: null, date: "2025-02-14" }),
     ]);
-    const children = groupAt(tree, "24-25").children;
-    expect(children.map((node) => node.type)).toEqual(["group", "video"]);
-    expect(labels(children)[0]).toBe("Harvard");
-    expect(countVideoTreeLeaves(tree)).toBe(2);
+    expect(labels(groupAt(tree, "24-25").children)).toEqual([
+      "Harvard",
+      "sameDay",
+      "mid",
+      "Shirley",
+      "late",
+    ]);
+    expect(countVideoTreeLeaves(tree)).toBe(5);
   });
 
-  it("lists a round with a tournament but no round level at the end of that tournament", () => {
+  it("lists a round with a tournament but no round level after that tournament's bracket", () => {
     const tree = treeOf([
       round("a", { level: null }),
-      round("b"),
+      round("b", { level: "Semis" }),
+      round("c", { level: "Mystery" }),
     ]);
-    const children = groupAt(tree, "24-25", "Harvard").children;
-    expect(children.map((node) => node.type)).toEqual(["group", "video"]);
-    expect(labels(children)[0]).toBe("Finals");
+    expect(labels(groupAt(tree, "24-25", "Harvard").children)).toEqual(["b", "c", "a"]);
   });
 });
 
@@ -200,7 +204,7 @@ describe("what a group row reports", () => {
     const season = groupAt(tree, "24-25");
     expect(season.videoCount).toBe(2);
     expect(season.viewCount).toBe(350);
-    expect(groupAt(tree, "24-25", "Harvard", "Finals").videoCount).toBe(1);
+    expect(groupAt(tree, "24-25", "Harvard").videoCount).toBe(2);
   });
 
   it("carries the newest date below it", () => {
@@ -230,15 +234,15 @@ describe("what a group row reports", () => {
 
 describe("the tree's depth and its leaves", () => {
   it("counts the group levels plus the videos", () => {
-    expect(videoTreeDepth(treeOf([round("a")]))).toBe(4);
+    expect(videoTreeDepth(treeOf([round("a")]))).toBe(3);
     expect(videoTreeDepth([])).toBe(1);
   });
 
-  it("sorts the videos inside their round, leaving the hierarchy alone", () => {
+  it("sorts the videos inside their tournament, leaving the hierarchy alone", () => {
     const tree = treeOf([
       round("a", { title: "Zeta", views: 10 }),
       round("b", { title: "Alpha", views: 20 }),
-      round("c", { title: "Mid", views: 30, tournament: "Greenhill 2025" }),
+      round("c", { title: "Mid", views: 30, tournament: "Greenhill 2025", date: "2024-10-01" }),
     ]);
     const sorted = sortVideoTreeLeaves(tree, (a, b) =>
       String(a.videos[0][1]).localeCompare(String(b.videos[0][1])),
@@ -246,7 +250,7 @@ describe("the tree's depth and its leaves", () => {
     // Tournaments stay in their own order …
     expect(labels(groupAt(sorted, "24-25").children)).toEqual(["Greenhill", "Harvard"]);
     // … while Harvard's two rounds swap into title order.
-    const harvardFinals = groupAt(sorted, "24-25", "Harvard", "Finals").children;
+    const harvardFinals = groupAt(sorted, "24-25", "Harvard").children;
     expect(
       harvardFinals.map((node) => (node.type === "video" ? node.slot.videos[0][1] : node.label)),
     ).toEqual(["Alpha", "Zeta"]);

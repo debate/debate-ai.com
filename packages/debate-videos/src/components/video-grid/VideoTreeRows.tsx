@@ -123,7 +123,6 @@ function GroupRows({
         <td className="px-3 py-2 align-middle text-xs text-muted-foreground text-right tabular-nums whitespace-nowrap">
           {group.viewCount.toLocaleString()}
         </td>
-        <td className="px-3 py-2" />
       </tr>
 
       {isOpen &&
