@@ -16,6 +16,12 @@ import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reu
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import { handleCanonicalHostRedirect } from "../lib/redirects";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
+import { getAuth } from "../lib/auth";
+import { normalizeRoomId } from "debate-round/src/webcam/room-protocol";
+import { handleRoomSocket } from "./debate-room";
+
+// Durable Object classes must be exported from the Worker's main module.
+export { DebateRoomSignal } from "./debate-room";
 
 interface Env extends TurnstileEnv {
   ASSETS: Fetcher;
@@ -27,6 +33,8 @@ interface Env extends TurnstileEnv {
     };
   };
   debate_db: D1Database;
+  // Webcam-room signalling (worker/debate-room.ts), bound in wrangler.jsonc.
+  DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",
   // "unconstrained" or "off". Settable as a plain Variable in the dashboard.
   D1_SESSION_MODE?: string;
@@ -94,6 +102,22 @@ export default {
     return runWithD1Session(request, env.D1_SESSION_MODE, () =>
       runWithContext(env, async () => {
         const url = new URL(request.url);
+
+        // Webcam rooms: `/api/rooms/:roomId/ws` upgrades go to the room's
+        // Durable Object, for signed-in users only. It relays WebRTC setup;
+        // media flows browser-to-browser.
+        const roomSocket = await handleRoomSocket(
+          request,
+          env.DEBATE_ROOMS,
+          async (req) => {
+            const auth = await getAuth();
+            const session = await auth.api.getSession({ headers: req.headers });
+            if (!session) return null;
+            return session.user.name || session.user.email?.split("@")[0] || "Debater";
+          },
+          normalizeRoomId,
+        );
+        if (roomSocket) return roomSocket;
 
         // Image optimization via Cloudflare Images binding.
         if (url.pathname === "/_vinext/image") {

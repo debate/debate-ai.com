@@ -25,3 +25,6 @@ export * from "./state/bulkRoundSave";
 export * from "./round/flow-tool-links";
 export * from "./round/round-invite-client";
 export { searchUsers, type UserSearchResult } from "./cache/client-cache";
+export { WebcamRoomPanel } from "./webcam/WebcamRoomPanel";
+export { useWebcamRoom, type RemoteParticipant, type WebcamRoomStatus } from "./webcam/useWebcamRoom";
+export * from "./webcam/room-protocol";
