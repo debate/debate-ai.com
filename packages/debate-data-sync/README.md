@@ -57,6 +57,7 @@ Run from the repo root:
 | `npm run youtube-stats` | Recalculate aggregate view stats and write `data/metadata/youtube-stats.json`. |
 | `npm run youtube-update-views` | Refresh view counts for previously synced videos in batches. |
 | `bun run sync-caselist` | Refresh the openCaselist bulk-archive manifest for every caselist. Add `--ingest` to download and unpack what is new. |
+| `bun run download-caselist` | Pick openCaselist ZIPs to save locally — `A` the season dump, `W` every weekly archive, `R` a date range, or one week by number/date — and download them with `grab-url`. Non-interactive: `--select=a\|w\|r\|<n>\|<YYYY-MM-DD>`, `--from`/`--to`, `--caselist`, `--out`, `--html-file`, `--dry-run`. |
 
 Set `YOUTUBE_API_KEY` in the environment before running any of the YouTube scripts.
 The caselist sync needs no credentials — the archives are public.

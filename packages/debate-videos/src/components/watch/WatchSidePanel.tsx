@@ -14,13 +14,18 @@
  *
  * Tabs a video has nothing for are not rendered, so a lecture with neither
  * documents nor linked analysis gets exactly the caption panel it had before
- * and no empty chrome around it.
+ * and no empty chrome around it. A video with even one document does get the
+ * strip, though — a lone Summary still reads as a named tab.
+ *
+ * Every tab scrolls inside the column's fixed height (set by the watch
+ * page), and one shared "Auto-scroll" checkbox, remembered per browser,
+ * decides whether captions and timed speeches follow playback.
  * @module components/watch/WatchSidePanel
  */
 
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
@@ -41,6 +46,17 @@ interface WatchSidePanelProps {
   links?: LinkedVideo[]
   currentTime: number
   onSeek: (seconds: number) => void
+}
+
+/** Where the reader's auto-scroll choice is remembered. */
+export const AUTO_SCROLL_STORAGE_KEY = "debate-videos:watch-auto-scroll"
+
+function readAutoScroll(): boolean {
+  try {
+    return window.localStorage.getItem(AUTO_SCROLL_STORAGE_KEY) !== "off"
+  } catch {
+    return true
+  }
 }
 
 /** One tab in the strip. */
@@ -85,6 +101,20 @@ export function WatchSidePanel({
   }, [hasCaptions, sentences.length, ordered, links.length])
 
   const [activeId, setActiveId] = useState<string | null>(null)
+  // Starts on, then picks up the stored choice after mount so the server
+  // render and the first client render agree.
+  const [autoScroll, setAutoScrollState] = useState(true)
+  useEffect(() => {
+    setAutoScrollState(readAutoScroll())
+  }, [])
+  const setAutoScroll = useCallback((value: boolean) => {
+    setAutoScrollState(value)
+    try {
+      window.localStorage.setItem(AUTO_SCROLL_STORAGE_KEY, value ? "on" : "off")
+    } catch {
+      // Storage blocked — the choice still holds for this page.
+    }
+  }, [])
 
   // Keep the selection on a tab that still exists: captions arrive after the
   // first paint (and can fail outright), and moving between two watch pages
@@ -105,7 +135,7 @@ export function WatchSidePanel({
 
   return (
     <aside className="flex flex-col min-h-0 flex-1 rounded-lg border border-border bg-card/40 overflow-hidden">
-      {tabs.length > 1 && (
+      {(tabs.length > 1 || ordered.length > 0) && (
         <div role="tablist" aria-label="Beside this video" className="flex shrink-0 border-b border-border">
           {tabs.map((tab) => {
             const isActive = tab.id === active
@@ -141,10 +171,20 @@ export function WatchSidePanel({
           currentTime={currentTime}
           onSeek={onSeek}
           embedded
+          autoScroll={autoScroll}
+          onAutoScrollChange={setAutoScroll}
         />
       )}
 
-      {activeDocument && <WatchDocumentPanel document={activeDocument} onSeek={onSeek} />}
+      {activeDocument && (
+        <WatchDocumentPanel
+          document={activeDocument}
+          onSeek={onSeek}
+          currentTime={currentTime}
+          autoScroll={autoScroll}
+          onAutoScrollChange={setAutoScroll}
+        />
+      )}
 
       {active === "analysis" && <WatchAnalysisPanel links={links} />}
     </aside>

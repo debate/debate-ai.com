@@ -7,6 +7,7 @@
   "license": "rights.institute/prosper",
   "scripts": {
     "coverage": "vitest run --coverage",
+    "download-caselist": "bun run src/caselist/caselist-download-cli.ts",
     "extract-transcripts": "bun run src/youtube/extract-transcripts.ts",
     "grab-caselist": "bun run src/caselist/caselist-grab-cli.ts",
     "sync-caselist": "bun run src/caselist/caselist-sync-cli.ts",
