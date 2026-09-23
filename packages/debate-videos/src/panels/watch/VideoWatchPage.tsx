@@ -666,8 +666,11 @@ export function VideoWatchPage({
             </div>
           </div>
 
+          {/* A set height, so every tab scrolls inside the column instead of
+              stretching the page: shorter under the player on a phone, as
+              tall as the screen allows (up to 720px) beside it. */}
           {isTranscriptOpen && hasSidePanel && (
-            <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] flex flex-col min-h-0">
+            <div className="h-[480px] lg:sticky lg:top-6 lg:h-[min(720px,calc(100vh-3rem))] flex flex-col min-h-0">
               <WatchSidePanel
                 sentences={sentences}
                 captionsLoading={transcriptLoading}

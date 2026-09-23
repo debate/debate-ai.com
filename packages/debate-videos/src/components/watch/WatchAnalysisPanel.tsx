@@ -44,7 +44,7 @@ export function WatchAnalysisPanel({ links }: WatchAnalysisPanelProps) {
         <span className="text-[10px] tabular-nums text-muted-foreground">{links.length}</span>
       </div>
 
-      <ScrollArea className="flex-1 min-h-0 h-[320px] lg:h-auto">
+      <ScrollArea className="flex-1 min-h-0">
         <ul className="divide-y divide-border">
           {links.map(({ video, relation, note }) => {
             const [videoId, title, date, channel, viewCount] = video
