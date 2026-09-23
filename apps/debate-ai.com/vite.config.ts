@@ -124,6 +124,7 @@ export default defineConfig({
       "debate-flow-ebb",
       "debate-round",
       "debate-timer",
+      "debate-tournaments",
       "debate-videos",
     ],
   },

@@ -37,6 +37,7 @@
 @source "../../../packages/debate-speech-writer/src";
 @source "../../../packages/debate-team-collaboration/src";
 @source "../../../packages/debate-timer/src";
+@source "../../../packages/debate-tournaments/src";
 @source "../../../packages/debate-videos/src";
 
 /* The embedded qwksearch workspace (/doc) is built from npm/workspace
