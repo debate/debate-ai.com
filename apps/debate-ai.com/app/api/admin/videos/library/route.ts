@@ -11,7 +11,8 @@ import { listLibraryVideos } from "@/lib/videos/admin-library";
  * rounds still waiting to be published. This one reads the public `videos`
  * table, so an admin can find and fix a video that already went live.
  *
- * Query parameters: `q`, `style`, `source`, `sort`, `dir`, `page`, `limit`.
+ * Query parameters: `q`, `style`, `source`, `transcript` (`with` / `without`),
+ * `sort`, `dir`, `page`, `limit`.
  */
 export async function GET(req: NextRequest) {
   const { canEditContent } = await getStaffAccess();
@@ -28,6 +29,7 @@ export async function GET(req: NextRequest) {
       q: searchParams.get("q"),
       style: searchParams.get("style") && Number.isFinite(styleParam) ? styleParam : null,
       source: searchParams.get("source"),
+      transcript: searchParams.get("transcript"),
       sort: searchParams.get("sort"),
       dir: searchParams.get("dir") === "asc" ? "asc" : "desc",
       page: Number(searchParams.get("page")) || 1,

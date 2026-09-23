@@ -106,6 +106,7 @@ export {
 export {
   VIDEO_DOCUMENT_KINDS,
   VIDEO_DOCUMENT_LABELS,
+  captionsToTranscriptMarkdown,
   countWords,
   formatTimecode,
   isVideoDocumentKind,
@@ -113,10 +114,12 @@ export {
   parseDocumentSections,
   parseTimecode,
   toParagraphs,
+  type CaptionCue,
   type DocumentSection,
   type VideoDocument,
   type VideoDocumentKind,
 } from "./lib/video-documents";
+export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,
   VIDEO_RELATION_LABELS,

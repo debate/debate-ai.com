@@ -14,6 +14,7 @@
 
 import { describe, expect, it } from "vitest";
 import {
+  captionsToTranscriptMarkdown,
   countWords,
   formatTimecode,
   isVideoDocumentKind,
@@ -157,5 +158,38 @@ describe("isVideoDocumentKind", () => {
     expect(isVideoDocumentKind("analysis")).toBe(true);
     expect(isVideoDocumentKind("notes")).toBe(false);
     expect(isVideoDocumentKind(null)).toBe(false);
+  });
+});
+
+describe("captionsToTranscriptMarkdown", () => {
+  it("returns nothing for a video with no captions", () => {
+    expect(captionsToTranscriptMarkdown([])).toBe("");
+    expect(captionsToTranscriptMarkdown([{ text: "  ", start: 0, duration: 1 }])).toBe("");
+  });
+
+  it("starts a new timed section at a long silence, which is usually a new speech", () => {
+    const markdown = captionsToTranscriptMarkdown([
+      { text: "Thank you judge.", start: 0, duration: 2 },
+      { text: "The plan solves.", start: 2, duration: 2 },
+      // Prep time: a minute of nothing, then the next speaker.
+      { text: "Cross apply the turn.", start: 75, duration: 3 },
+    ]);
+
+    const sections = parseDocumentSections(markdown);
+    expect(sections.map((section) => [section.heading, section.startSeconds])).toEqual([
+      ["Part 1", 0],
+      ["Part 2", 75],
+    ]);
+    expect(sections[0].body).toBe("Thank you judge. The plan solves.");
+  });
+
+  it("splits a long unbroken stretch so the draft is still navigable", () => {
+    const cues = Array.from({ length: 70 }, (_, i) => ({
+      text: `Sentence ${i}.`,
+      start: i * 10,
+      duration: 9,
+    }));
+    const sections = parseDocumentSections(captionsToTranscriptMarkdown(cues));
+    expect(sections.map((section) => section.startSeconds)).toEqual([0, 600]);
   });
 });
