@@ -1876,6 +1876,43 @@
           "topic": "The United States should eliminate the President’s authority to deploy military forces abroad without Congressional approval."
         }
       ]
+    },
+    {
+      "year": 2027,
+      "ndt_topic_name": "TBD",
+      "ndt_topic_emoji": "❓",
+      "ndt_topic": "TBD",
+      "policy_topic_name": "TBD",
+      "policy_topic_emoji": "❓",
+      "policy_topic": "TBD",
+      "ld_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Outer Space Colonization",
+          "emoji": "🚀",
+          "topic": "Resolved: Outer space colonization is a moral imperative."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "De-Extinction",
+          "emoji": "🧬",
+          "topic": "Resolved: De-extinction is unethical."
+        }
+      ],
+      "pf_topics": [
+        {
+          "start_month": "September",
+          "topic_name": "Hyperscale Data Centers",
+          "emoji": "💾",
+          "topic": "Resolved: The United States federal government should enact a moratorium on hyperscale data center construction."
+        },
+        {
+          "start_month": "November",
+          "topic_name": "NATO TPNW",
+          "emoji": "🕊️",
+          "topic": "Resolved: European members of the North Atlantic Treaty Organization should ratify the Treaty on the Prohibition of Nuclear Weapons."
+        }
+      ]
     }
   ]
 }
