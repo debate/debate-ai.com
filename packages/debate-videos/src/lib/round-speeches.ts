@@ -118,7 +118,7 @@ export function identifySpeech(heading: string): SpeechIdentity {
       const nextNum = num === "1" ? "2" : "1";
       label = `${nextNum}${side}X`;
     }
-    return { base: label.toUpperCase(), label, side: "cx", isSpeech: true, target };
+    return { base: "CX", label, side: "cx", isSpeech: true, target };
   }
 
   // Not a speech — an overview, the decision, the judge's RFD. Split on the
@@ -201,7 +201,7 @@ export function buildRoundSpeeches(documents: VideoDocument[]): RoundSpeech[] {
   for (const speech of speeches) labelCounts.set(speech.label, (labelCounts.get(speech.label) ?? 0) + 1);
   for (const speech of speeches) {
     const target = targets.get(speech.key);
-    if (target) speech.label = `${speech.label} · ${target}`;
+    if (target && speech.side !== "cx") speech.label = `${speech.label} · ${target}`;
     else if ((labelCounts.get(speech.label) ?? 0) > 1) speech.label = `${speech.label} ${speech.key.split("#")[1]}`;
   }
 

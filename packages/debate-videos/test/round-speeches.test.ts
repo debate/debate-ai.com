@@ -58,9 +58,9 @@ describe("identifySpeech", () => {
   });
 
   it("names the speech a cross-ex questions", () => {
-    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "CX", side: "cx", target: "1AC" });
+    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "2AX", side: "cx", target: "1AC" });
     expect(identifySpeech("Cross-Examination of the First Negative Constructive")).toMatchObject({
-      base: "CX",
+      base: "2NX",
       target: "1NC",
     });
   });
@@ -92,8 +92,8 @@ describe("buildRoundSpeeches", () => {
   it("matches repeated cross-exes by order and labels them by their target", () => {
     const cxs = speeches.filter((speech) => speech.side === "cx");
     expect(cxs.map((speech) => [speech.label, speech.startSeconds, speech.parts.summary])).toEqual([
-      ["CX · 1AC", 360, "Pins the mechanism."],
-      ["CX · 1NC", 960, "Status of the advocacies."],
+      ["2AX", 360, "Pins the mechanism."],
+      ["2NX", 960, "Status of the advocacies."],
     ]);
   });
 
@@ -101,9 +101,9 @@ describe("buildRoundSpeeches", () => {
     expect(speeches.map((speech) => speech.label)).toEqual([
       "Overview",
       "1AC",
-      "CX · 1AC",
+      "2AX",
       "1NC",
-      "CX · 1NC",
+      "2NX",
       "1AR",
       "2NR",
       "Decision",
@@ -123,7 +123,7 @@ describe("playingSpeechIndex", () => {
   it("finds the latest timed speech that has started, skipping untimed ones", () => {
     const at = (seconds: number) => speeches[playingSpeechIndex(speeches, seconds)]?.label;
     expect(at(10)).toBe("1AC");
-    expect(at(17 * 60)).toBe("CX · 1NC");
+    expect(at(17 * 60)).toBe("2NX");
     expect(at(99 * 60)).toBe("1AR");
   });
 });
