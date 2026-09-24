@@ -34,12 +34,22 @@ import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
  */
 const TOOLS_WITHOUT_TOOL_PAGE_HEADER = new Set(["/reason-editor", "/doc", "/tools/mobile-setup"])
 
-const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
-const APP_DIR = join(APP_ROOT, "app")
+const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..")
+const ROUTES_DIR = join(PACKAGE_ROOT, "src", "routes")
+const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-ai.com", "app")
+
+/**
+ * The app's `page.tsx` for `href` — or, when that page only re-exports a
+ * `debate-ai-webui/routes/…` module, as most do, that module's source.
+ */
+function pageSource(href: string): string {
+  const source = readFileSync(join(APP_DIR, ...href.split("/").filter(Boolean), "page.tsx"), "utf8")
+  const reexport = source.match(/from\s+["']debate-ai-webui\/routes\/([^"']+)["']/)
+  return reexport ? readFileSync(join(ROUTES_DIR, `${reexport[1]}.tsx`), "utf8") : source
+}
 
 function importsToolPageHeader(href: string): boolean {
-  const source = readFileSync(join(APP_DIR, ...href.split("/").filter(Boolean), "page.tsx"), "utf8")
-  return /\bToolPageHeader\b/.test(source)
+  return /\bToolPageHeader\b/.test(pageSource(href))
 }
 
 describe("ToolPageHeader coverage", () => {

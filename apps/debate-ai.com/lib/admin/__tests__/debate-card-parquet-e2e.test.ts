@@ -28,14 +28,22 @@ import {
   writeDebateCardBatch,
 } from "../debate-card-import";
 
-const migrationPath = path.join(import.meta.dirname, "../../../drizzle/0035_debate_cards.sql");
+const drizzleDir = path.join(import.meta.dirname, "../../../drizzle");
+
+/** The card tables, plus the reuse index every card batch also writes to. */
+const migrationPaths = [
+  path.join(drizzleDir, "0004_certain_microchip.sql"),
+  path.join(drizzleDir, "0035_debate_cards.sql"),
+];
 
 /** A fresh in-memory database with the card tables migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
-    const sql = statement.trim();
-    if (sql) await client.execute(sql);
+  for (const migrationPath of migrationPaths) {
+    for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
+      const sql = statement.trim();
+      if (sql) await client.execute(sql);
+    }
   }
   return drizzle(client);
 }

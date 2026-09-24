@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import "debate-ai-webui/app.css"
+import "debate-ai-webui/styles/app.css"
 import { ThemeProvider } from "debate-ai-webui/components/theme-provider"
 import { AppShell } from "debate-ai-webui/components/layout/AppShell"
 import { LoadingProvider } from "debate-ai-webui/components/layout/LoadingProvider"

@@ -14,9 +14,10 @@ describe("FeaturesPanel", () => {
     }
   });
 
-it("renders each category heading", () => {
+  it("renders each category heading", () => {
     expect(html).toContain("Core Workspaces");
-    expect(html).toContain("Standings & Rankings");
+    // Server rendering escapes the ampersand.
+    expect(html).toContain("Standings &amp; Rankings");
   });
 
   it("links entries that have a long-form doc into the app's own docs site", () => {
