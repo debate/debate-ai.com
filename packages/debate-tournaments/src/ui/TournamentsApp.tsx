@@ -102,7 +102,7 @@ function TournamentShell({
       <Loaded state={state}>
         {(invite) => (
           <>
-            <TournamentNav tournId={tournId} active={tab} name={invite.name} />
+            <TournamentNav tournId={tournId} active={tab} name={invite.name} webname={invite.webname} />
             {children(invite)}
           </>
         )}

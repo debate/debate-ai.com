@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Space colonization round — speech viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --background:#ffffff; --foreground:#18181b; --muted:#f4f4f5; --muted-fg:#71717a;
+  --border:#e4e4e7; --card:#ffffff; --ring:#a1a1aa;
+  --aff:#2f5d9e; --aff-soft:#e6eef9; --neg:#8e3b46; --neg-soft:#f7e8ea; --cx:#6b6f76; --cx-soft:#eeeef0;
+  --radius:10px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --background:#09090b; --foreground:#fafafa; --muted:#1c1c1f; --muted-fg:#a1a1aa;
+    --border:#27272a; --card:#0f0f11; --ring:#52525b;
+    --aff:#7ea6e0; --aff-soft:#16233a; --neg:#e08a95; --neg-soft:#34181c; --cx:#a1a1aa; --cx-soft:#222226;
+  }
+}
+:root[data-theme="dark"]{
+  --background:#09090b; --foreground:#fafafa; --muted:#1c1c1f; --muted-fg:#a1a1aa;
+  --border:#27272a; --card:#0f0f11; --ring:#52525b;
+  --aff:#7ea6e0; --aff-soft:#16233a; --neg:#e08a95; --neg-soft:#34181c; --cx:#a1a1aa; --cx-soft:#222226;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--background);color:var(--foreground);font-family:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 20px 48px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:20px}
+h1{font-size:1.5rem;line-height:1.2;font-weight:600;letter-spacing:-0.02em;margin:0}
+.sub{color:var(--muted-fg);margin:4px 0 0;max-width:62ch}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}
+@media (min-width:1000px){.layout{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}.player{position:sticky;top:calc(16px + env(safe-area-inset-top,0px))}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:8px;border:1px solid var(--border);background:var(--background);cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--muted)}
+.btn.primary{background:var(--foreground);color:var(--background);border-color:var(--foreground)}
+.btn.primary:hover{opacity:.9}
+.btn.ghost{border-color:transparent}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn svg{width:15px;height:15px}
+
+/* player */
+.player{display:flex;flex-direction:column;gap:12px}
+.screen{position:relative;aspect-ratio:16/9;background:#000;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.screen video{width:100%;height:100%;display:block;background:#000}
+.empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;background:var(--muted);color:var(--muted-fg)}
+.empty p{margin:0;max-width:40ch;font-size:14px}
+.empty strong{color:var(--foreground);font-weight:600}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none;margin-left:auto}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.track{width:34px;height:20px;border-radius:999px;background:var(--border);position:relative;transition:background .15s}
+.track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--background);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.switch input:checked + .track{background:var(--foreground)}
+.switch input:checked + .track::after{transform:translateX(14px)}
+.switch input:focus-visible + .track{outline:2px solid var(--ring);outline-offset:2px}
+
+/* timeline — the one bold element */
+.timeline{position:relative;height:44px;display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--muted)}
+.seg{position:relative;height:100%;border:0;border-right:1px solid var(--background);padding:0 6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;min-width:0;overflow:hidden}
+.seg:last-child{border-right:0}
+.seg span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.seg.aff{background:var(--aff-soft);color:var(--aff)}
+.seg.neg{background:var(--neg-soft);color:var(--neg)}
+.seg.cx{background:var(--cx-soft);color:var(--cx)}
+.seg.active.aff{background:var(--aff);color:var(--background)}
+.seg.active.neg{background:var(--neg);color:var(--background)}
+.seg.active.cx{background:var(--cx);color:var(--background)}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--foreground);pointer-events:none;transition:left .25s linear}
+.tl-note{font-size:12px;color:var(--muted-fg);margin:0}
+
+/* shadcn-style tabs */
+.tabs-list{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:10px;background:var(--muted);color:var(--muted-fg);max-width:100%;overflow-x:auto;scrollbar-width:none}
+.tabs-list::-webkit-scrollbar{display:none}
+.tabs-list.full{display:flex;width:100%}
+.tab{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:30px;padding:0 10px;border-radius:7px;border:1px solid transparent;background:transparent;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;color:inherit;transition:color .15s,background .15s}
+.tab:hover{color:var(--foreground)}
+.tab[aria-selected="true"]{background:var(--background);color:var(--foreground);border-color:var(--border);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.aff{background:var(--aff)} .dot.neg{background:var(--neg)} .dot.cx{background:var(--cx)}
+.live{width:6px;height:6px;border-radius:50%;background:#e5484d;display:none}
+.tab.is-live .live{display:inline-block;animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.tab.is-live .live{animation:none}.playhead{transition:none}}
+
+.panel{margin-top:16px}
+.panel[hidden]{display:none}
+.speech-head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.speech-head h2{margin:0;font-size:1.35rem;line-height:1.25;font-weight:600;letter-spacing:-0.015em}
+.speech-head .who{margin:4px 0 0;color:var(--muted-fg);font-size:14px}
+.speech-head .road{margin:6px 0 0;font-size:13px;color:var(--muted-fg)}
+.timecard{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.timefield{display:flex;align-items:center;height:34px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.timefield label{padding:0 8px;font-size:12px;color:var(--muted-fg);border-right:1px solid var(--border);height:100%;display:flex;align-items:center;background:var(--muted)}
+.timefield input{width:84px;border:0;background:transparent;padding:0 8px;height:100%;font-variant-numeric:tabular-nums}
+.timefield input:focus{outline:none}
+.timefield:focus-within{outline:2px solid var(--ring);outline-offset:1px}
+.inner{margin-top:16px}
+.inner-panel{padding-top:16px}
+.inner-panel[hidden]{display:none}
+ul.summary{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+ul.summary li{position:relative;padding-left:18px;max-width:72ch}
+ul.summary li::before{content:"";position:absolute;left:2px;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--muted-fg)}
+.outline-sec{padding:14px 0;border-top:1px solid var(--border)}
+.outline-sec:first-child{border-top:0;padding-top:0}
+.outline-sec h3{margin:0 0 8px;font-size:15px;font-weight:600}
+.outline-sec dl{margin:0;display:grid;gap:8px}
+.outline-sec dt{font-weight:600;font-size:14px;display:inline}
+.outline-sec dd{margin:0;display:inline;color:var(--foreground)}
+.outline-sec .row{max-width:72ch}
+.outline-empty{color:var(--muted-fg);font-size:14px}
+.transcript{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;font-size:16.5px;line-height:1.7}
+.transcript p{margin:0 0 1em;max-width:68ch}
+.notice{font-size:13px;color:var(--muted-fg);margin:0 0 12px;max-width:68ch}
+footer{margin-top:40px;color:var(--muted-fg);font-size:13px;max-width:72ch}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--foreground);color:var(--background);padding:10px 14px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:10}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+dialog{border:1px solid var(--border);border-radius:12px;background:var(--background);color:var(--foreground);padding:20px;width:min(520px,calc(100% - 32px))}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog h3{margin:0 0 6px;font-size:16px}
+dialog p{margin:0 0 12px;color:var(--muted-fg);font-size:13px}
+dialog textarea{width:100%;min-height:180px;border:1px solid var(--border);border-radius:8px;background:var(--muted);padding:10px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--foreground)}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+
+/* alternatives lab */
+.lab-intro{margin:0 0 14px;color:var(--muted-fg);font-size:14px;max-width:68ch}
+.lab-form{display:grid;gap:12px;padding:14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+.lab-form label.fl{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
+.lab-form textarea{width:100%;min-height:64px;resize:vertical;border:1px solid var(--border);border-radius:8px;background:var(--background);padding:8px 10px;font-size:14px;line-height:1.45}
+.lab-form textarea:focus{outline:2px solid var(--ring);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--border);background:var(--background);font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--foreground);color:var(--background);border-color:var(--foreground)}
+.chip-help{font-size:12px;color:var(--muted-fg);margin:6px 0 0}
+.lab-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.status{font-size:13px;color:var(--muted-fg)}
+.status.err{color:var(--neg)}
+.alts{display:grid;gap:12px;margin-top:16px}
+.alt{border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:var(--card)}
+.alt.chosen{border-color:var(--foreground)}
+.alt.baseline{border-style:dashed}
+.alt h4{margin:0;font-size:15px;font-weight:600}
+.alt .approach{margin:6px 0 10px;font-size:14px;max-width:70ch}
+.alt ul{margin:0 0 10px;padding-left:18px;font-size:14px}
+.alt ul li{margin:3px 0;max-width:68ch}
+.alt .meta{display:grid;gap:4px;font-size:13px;color:var(--muted-fg);margin-bottom:12px}
+.alt .meta b{color:var(--foreground);font-weight:600}
+.sim{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;display:grid;gap:14px}
+.sim h5{margin:0 0 6px;font-size:13px;font-weight:600}
+.reply{border-left:3px solid var(--border);padding:2px 0 2px 12px;font-size:14px}
+.reply p{margin:0 0 6px;max-width:68ch}
+.reply ul{margin:0;padding-left:18px}
+.tally{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tally-bar{flex:1 1 180px;height:10px;border-radius:999px;overflow:hidden;display:flex;background:var(--muted)}
+.tally-bar .a{background:var(--aff)} .tally-bar .n{background:var(--neg)}
+.tally strong{font-size:15px}
+.ballots{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.ballot{border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;background:var(--background)}
+.ballot .top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ballot .jt{font-weight:600}
+.vote{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px}
+.vote.AFF{background:var(--aff-soft);color:var(--aff)} .vote.NEG{background:var(--neg-soft);color:var(--neg)}
+.conf{height:4px;border-radius:999px;background:var(--muted);margin:4px 0 8px;overflow:hidden}
+.conf i{display:block;height:100%;background:var(--muted-fg)}
+.ballot p{margin:0 0 6px}
+.ballot .dec{color:var(--muted-fg)}
+
+/* ruling trees */
+.rt{margin-top:22px;padding-top:18px;border-top:1px solid var(--border)}
+.rt h4{margin:0;font-size:16px;font-weight:600}
+.rt .lead{margin:4px 0 12px;color:var(--muted-fg);font-size:14px;max-width:68ch}
+.rt-grid{display:grid;gap:16px;margin-top:14px}
+@media (min-width:1300px){.rt-grid{grid-template-columns:minmax(0,1fr)}}
+.judge-card{border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--card)}
+.judge-card .row1{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sliders{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.sl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:4px}
+.sl output{font-variant-numeric:tabular-nums;color:var(--muted-fg);font-weight:500}
+.sl input[type=range]{width:100%;accent-color:var(--foreground)}
+.sl .ends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted-fg)}
+.sl.changed label span::after{content:" (edited)";font-weight:400;color:var(--muted-fg)}
+.matrix-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)}
+table.matrix{border-collapse:collapse;width:100%;font-size:13px;min-width:560px}
+.matrix th,.matrix td{padding:8px 10px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+.matrix th{font-weight:600;background:var(--muted);font-size:12.5px}
+.matrix th.sel{box-shadow:inset 0 -2px 0 var(--foreground)}
+.matrix th button{all:unset;cursor:pointer}
+.matrix th button:focus-visible{outline:2px solid var(--ring)}
+.matrix td.name,.matrix th.name{text-align:left;white-space:normal;min-width:170px}
+.matrix tr:last-child td{border-bottom:0}
+.matrix td.cell{cursor:pointer;font-variant-numeric:tabular-nums;position:relative}
+.matrix td.cell.on{outline:2px solid var(--foreground);outline-offset:-2px}
+.matrix td.cell small{display:block;font-size:11px;opacity:.75}
+.matrix td.cell.best{font-weight:700}
+.matrix td.maj{font-weight:700;font-variant-numeric:tabular-nums}
+.rank{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--muted);font-size:12px;font-weight:700;margin-right:8px}
+.rank.r1{background:var(--foreground);color:var(--background)}
+.tree-card{border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--card)}
+.tree-card .hd{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:12px}
+.tree-card .hd strong{font-size:15px}
+.tree-card .odds{font-size:13px;color:var(--muted-fg)}
+.tnode{position:relative}
+.tq{border:1px solid var(--border);border-radius:8px;padding:10px 12px;background:var(--background);max-width:560px}
+.tq p{margin:0 0 6px;font-size:14px;font-weight:500}
+.ybar{height:6px;border-radius:999px;background:var(--muted);overflow:hidden;margin-bottom:6px}
+.ybar span{display:block;height:100%;background:var(--foreground);transition:width .2s}
+@media (prefers-reduced-motion:reduce){.ybar span{transition:none}}
+.tmeta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted-fg)}
+.drv{border:1px solid var(--border);border-radius:999px;padding:1px 8px}
+.tkids{margin-left:18px;padding-left:16px;border-left:2px solid var(--border);display:grid;gap:10px;margin-top:10px}
+.tbranch{position:relative}
+.tbranch::before{content:"";position:absolute;left:-16px;top:14px;width:12px;border-top:2px solid var(--border)}
+.blabel{display:inline-block;font-size:12px;font-weight:600;margin-bottom:4px;color:var(--muted-fg)}
+.leaf{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;font-size:13px;font-weight:600}
+.leaf.AFF{background:var(--aff-soft);color:var(--aff)} .leaf.NEG{background:var(--neg-soft);color:var(--neg)}
+.leaf small{font-weight:500;opacity:.8}
+.tnode.dim>.tq{opacity:.55}
+
+.lab-off{padding:14px;border:1px dashed var(--border);border-radius:var(--radius);color:var(--muted-fg);font-size:14px}
+
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Space colonization and the public trust</h1>
+      <p class="sub">Lincoln–Douglas practice round. Load the round video and each speech tab follows along as it plays; click a tab or a timeline segment to jump there.</p>
+    </div>
+    <button class="btn ghost" id="themeBtn" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      Theme
+    </button>
+  </header>
+
+  <div class="layout">
+    <section class="player" aria-label="Video">
+      <div class="screen">
+        <video id="video" controls playsinline preload="metadata" hidden></video>
+        <div class="empty" id="empty">
+          <p><strong>No video loaded.</strong> Choose the round recording from your device. It plays locally and is never uploaded.</p>
+          <button class="btn primary" id="pickBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Choose video file
+          </button>
+        </div>
+      </div>
+      <input type="file" id="file" accept="video/*" class="sr">
+
+      <div class="timeline" id="timeline" role="group" aria-label="Speech timeline"></div>
+      <p class="tl-note" id="tlNote"></p>
+
+      <div class="toolbar">
+        <button class="btn" id="changeBtn" hidden>Change video</button>
+        <button class="btn" id="exportBtn">Copy timestamps</button>
+        <button class="btn" id="importBtn">Paste timestamps</button>
+        <label class="switch"><input type="checkbox" id="follow" checked><span class="track"></span>Follow video</label>
+      </div>
+    </section>
+
+    <section aria-label="Speeches">
+      <div class="tabs-list full" role="tablist" id="speechTabs" aria-label="Speeches"></div>
+      <div id="panels"></div>
+    </section>
+  </div>
+
+  <footer>Summaries and outlines were reconstructed from a rough auto-transcript. Timestamps you set are saved in this browser only; use Copy timestamps to share them. Simulated responses and ballots are Claude's predictions, not real results, and each run uses your Claude usage.</footer>
+</div>
+
+<dialog id="dlg">
+  <h3 id="dlgTitle">Timestamps</h3>
+  <p id="dlgText"></p>
+  <textarea id="dlgArea" spellcheck="false"></textarea>
+  <div class="dlg-actions">
+    <button class="btn" id="dlgCancel">Close</button>
+    <button class="btn primary" id="dlgOk">Apply</button>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const SPEECHES = [{"code": "1AC", "name": "First Affirmative Constructive", "speaker": "Affirmative", "roadmap": "", "side": "aff", "summary": ["Frames the \"new space race\" as private-sector settlement driven by profit: space privatization is directly correlated with labor exploitation and violence on Earth, accelerates extraction beyond the planet's carrying capacity, and breaks down the common heritage of humankind.", "Plan: create **permanent human settlements in outer space endowed to a public trust** (Babcock '19), using public trust doctrine so space remains a commons owned by all, with the government holding a duty to manage it for the general public rather than private profit.", "Advantages: space as a model for sustainable global-commons governance (deep-sea/high-seas negotiations underway now), preventing space wars, monopolies, and \"space colonialism,\" redistributing terrestrial wealth, and protecting research and space-policy education."], "outline": [{"heading": "Inherency \u2014 The Private Space Race", "items": [{"label": "Privatization now", "text": "Commercialization and privatization of space are accelerating, funded by private companies; policy is shifting toward private astronauts and lunar resource extraction."}, {"label": "Extraction logic", "text": "Billionaires (\"making the rich even richer,\" Musk) need new resources for profit even at the cost of Earth's destruction; Mars is framed as a \"continuation.\""}]}, {"heading": "Harms \u2014 Capitalism, Labor, and Limits to Growth", "items": [{"label": "Labor exploitation", "text": "Settlement projects depend on workers tolerating intolerable conditions; isolated colonies make transparency and accountability impossible, enabling surveillance and exploitation."}, {"label": "Existential capitalism", "text": "Consumer capitalism exceeds the Earth's carrying capacity and the limits to growth; breaking down the common heritage of humankind risks extinction."}]}, {"heading": "Plan \u2014 Public Trust Settlements", "items": [{"label": "Mechanism", "text": "Public trust doctrine guarantees space remains a common belonging to all; the government's duty is to safeguard it for the general public, filling gaps in outer space law that bars appropriation."}, {"label": "Incentives answer", "text": "Concedes removing private property may remove private incentives, but argues publicly funded settlement resolves terrestrial wealth concentration and serves as a tool for redistribution."}]}, {"heading": "Advantage \u2014 Global Commons Governance", "items": [{"label": "Precedent", "text": "Sustainable governance frameworks (deep-sea negotiations) are being established now and are contingent on space as a framework; space should be governed democratically as a global commons."}, {"label": "Colonialism", "text": "Space colonialism mirrors terrestrial colonialism; a regulated, egalitarian, redistributive model avoids monopolies locking out access."}]}, {"heading": "Advantage \u2014 Space War & Militarization", "items": [{"label": "War", "text": "Space privatization guarantees existential space wars and militarization; a hostile environment plus subjugation produces chaos."}]}, {"heading": "Framing \u2014 Research & Education", "items": [{"label": "Strategic essentialism", "text": "Captures the upsides of space without the bad; publicly held research improves life on Earth without exploiting a population."}, {"label": "Policy education", "text": "Imagining and learning about hypothetical space policy is valuable and helps policymakers make the right decisions."}]}], "transcript": ["The new space race is characterized by private sector space settlement. This bill project force capitalism into the stars \u2014 democratic corrosion dial versus new creating bar expiration resuscitation space, many expectation dangerous labor require construction orders depend on property fun environments. Private sector space condensation is directly correlated with labor exploitation and violence on Earth. No upsides. Broation workers edition leading off publication for companies afford projects from the expectation workers will hold intolerable condition factories. One day swe without generous venues. You see market innovation developed by public research.", "Capitalism is existential \u2014 laboratory for civil society lost because resources not performed economic system consumer capital society state consisting humanity caring capacity of the earth, reaching the limits of growth, economic destruction of not natural environment, loss increasing resources. Independently sustainable frameworks governance on Earth are being established now but are contingent on space as a framework at all. 36 funding global frame supported by mechanism reversal the ecosystem; ongoing negotiation on the BBJ is an official step highly relevant to lessons such as removed on monsties, relevant for sustainable government common space.", "Privatization by builders is reverse gold sole profit-focused survival. To do now: support private expansion of resources from the moon, change policy to love private astronauts; commercialization, privatization of space is accelerating, funded by private companies \u2014 bigger changes for destruction, occupation, resources like making the rich even richer. Future like Musk need new resources for extraction of profit even if prices destruction of Earth. What is used is Mars for continuation. Breakdown of the common heritage of humankind causes extinction.", "If you got 26 many pressing environmental problems including econ loss, pollution \u2014 spaceification closely linked to global comfort where global economy fact all of humanity and future global commons, exacerbate environmental socio-economic issues. These spaces should be conceptualized through democratic government to all global commons; globalization enable transplant connectivity problems bringing about climate change is not a common property breaking logical opinion. Democratic governance \u2014 specifically, space privatization guarantees existential space wars.", "Standard 23. The left door space in paramedic wind space policy manufacturers working fast material available space low cost launches available \u2014 we can expect developments economics support space will be a nightmare, work hostile environment, must resist submission of star to death. Thus in earth space agree militarization city industrial capacity sense possibilities which result behavior war space per space of course for every kind of human comfort, all combinations of subjugation and chaos.", "Plus the plan: the creation of permanent human settlements in outer space endowed to public trust is a moral imperative. Using public trust doctrines to enact the plan guarantees space remains common, belonging to all. Owned 19 doctor please duty on government's duty to safe research for the benefit of general public, not perfect private injustice. Space is part of human doctrine; alienation for benefit issues holding can be booked by anyone; use management tool, and outer space law bars appropriation of outer space. Problems of exclusion of private property holding out respective manual property \u2014 it removes private sector incentives to settle in the first place. 19 \u2014 or ownership supplies incentive for development, led to the question whether development is worth the cost. Post space settlement is feasible, key to resolve terrestrial wealth concentration. Margin 17 \u2014 but still space base space, it should be a tool for wealth redistribution.", "Putting blood charge on the cheap rises earth science have less big part of civilization right now. We found a hole on our earth; I'm only sending orbiters to Mars; when we do land, bases resemble scientist science like social anor tax good budget science over to shift institutions honor broadly. No national space capitalism must be based for life against property control public structures and afford the back to earth space collective benefit, more communities, public initiatives avoid the pitfalls of private abuse with all the benefits. LA 24 expression economy expedited political causing environment society preventing conflict more system nations research development of global economy provide options for innovation they could exploit anything else. Space monopolies lock out access to all. Event 26 global space economy under growing dominance as well power lock monopolies high from causing transnational dominance.", "Our method is: space colonialism is distinct from spaceiment. Egalitarian and redistributed physics for statement avoid the pitfalls in jail to assist mental logical earth frame space for space colonialism; parallel between space and over colonialism; proposed largely regulated model for beneficially managing tax global extraction benefiting the field less government towards more ethical future space. Space can be a site for good rejection. See, space was locked in and labor exploitation, surveillance, weakness or choices. Space conference that receive honor space inside isolation of a colony combined with one person make it difficult \u2014 institutions becoming increased lock transparency accountability. Private companies take over other schools' opportunities for a greater necessity that the large goal of companies is to make a proper company; want to recruit work from workers more to expectations and be the opposite.", "For strategic essentialism captures the upsides without the bad. Snow 23: space incredibly research hold possibility of knowledge to improve additional earth space; responsibility for research competition that do not harm the earth. Space possibilities foundation of left field revision, but production does not promise capitalize resources in space. Mines are ugly moral on earth but astro has no exploited population, so minor swim order to poison off scarcity. Capitalism relies on imagining and learning about hypothetical space policies \u2014 valuable revol space activity given to the public, decrease of placing awareness, the benefits on many. So the implication of space workers understanding activities are trying to make prediction about space activities in everyday life, complex to be disciplinary, important across fertilization political master policies \u2014 help policy makers to make the right decision."]}, {"code": "CX", "name": "Cross-Examination of the 1AC", "speaker": "Negative questions Affirmative", "roadmap": "", "side": "cx", "summary": ["Pins the mechanism: the public trust doesn't exist in the status quo, so the plan creates it \u2014 and presses that the Babcock card only says public trust doctrine \"fills the gaps\" in space law rather than being space colonization itself (setting up extra-T).", "Presses on \"moral imperative\": the aff won't define what makes something a moral imperative or how to weigh impacts, calling a weighing mechanism \"extra-resolutional\" \u2014 setting up the spec shell.", "Establishes that the plan doesn't pass deep-sea treaties and that taxation is claimed as \"normal means,\" though the aff can't point to a line mandating it."], "outline": [], "transcript": ["Um, okay. Um, the plan, what's it mandate? It mandates the creation of permanent settlements in outer space which are endowed to a public trust. What that looks like is that \u2014 Okay. So, you said public trust. How is the public trust created? Does it exist in the status quo? Um, no. The Babcock evidence. So the plan mandates the creation of a public trust in addition to space colonization. No \u2014 colonize space via the public trust, which is \u2014 Is a public trust a rocket ship? Is it a tool that we use to get to space? Well, it says that the mechanism by which \u2014 the Babcock evidence indicates that the mechanism by which we colonize space is specifically using this doctrine in order to make sure that all \u2014", "Do you think it says that the PTD is germane to the colonization of outer space? Um, it talks about how it can be used similar to the Moon Treaty in order to fill the gap with respect to managing celestial property. The line that says it is space colonization? Well, that's what managing celestial property \u2014 It says it fills the gaps. What do you mean? That's the line you read \u2014 says it fills the gaps. So presumably then it fills the gaps? I don't know what the question \u2014 That's fine.", "Um, what is moral? Um, I think that the 1AC has said that the plan is a good idea because it avoids things like existential risks as well as workers. Well, we have not made a claim about what is, like, the worst possible thing. I think \u2014 You said plan mandate because moral, and then did not say what is moral. Just like, what is moral? Well, we have made arguments as to why the benefits of the plan are a good idea. I think that asking us to specify a mechanism to weigh between those \u2014 Again, I'm not asking you to specify this. I'm asking you to define what a moral imperative is. How do we know if something is a moral imperative? Well, we know that the plan is a moral imperative because it avoids things like labor abuse or exploitation. Okay. How do we know that those things are bad? I mean, if you want to get up in the 1NC and say exploitation is good \u2014 obviously you could not. If the 1NC is a disadvantage with an impact, how do you determine if it's larger? Well, I think asking us to specify the mechanism by which offenses are weighed is extra-resolutional. Which makes you have to have a moral framework, and the 1AC said there was a moral imperative \u2014 is extra-resolutional? Well, we've given reasons as to why the plan is a good idea.", "Um, \"sustainable frameworks for governance on Earth are being established now.\" Can you explain? So, the argument in that piece of evidence says that right now people are coming to agreements about what the deep sea should look like, how it should be regulated. So the things we use for space get modeled on the deep sea? Um, I think that yes, that \u2014 So the plan results in passage of the deep-sea treaties? Um, not passage of the deep-sea treaties. It would probably be completely different than that. Okay, cool.", "Next, you said the plan is funded by taxation. How is this a mandate of the aff \u2014 like, relevant? Well, because the argument in the piece of evidence that we have read is that when we are doing space colonization for the collective benefit of all, the way that could look is like taxation and taking away money. Why is this the only way that it can be done? Well, it's a normal-means argument. Okay. Where does your card say it's most probable that it would be through taxation? Well, the argument \u2014 I can point to a specific line. Okay, it does not mandate taxation. Uh, I think the 1AC says that it's normal means. So it's like a mandate with a consequence."]}, {"code": "1NC", "name": "First Negative Constructive", "speaker": "Negative", "roadmap": "Five off: extra-T, spec a moral standard, disease DA, international-law CP, advantage CP \u2014 then case", "side": "neg", "summary": ["**Topicality/extra-T:** The aff may defend nothing beyond outer space colonization; funding through progressive taxation and the public trust doctrine are extra-topical planks, and a \"slippery slope\" of additions would make the topic unlimited. Paired with a **spec shell**: a moral imperative is an obligation to act in accordance with ethical standards, so the aff must specify a standard \u2014 otherwise the 1AR can shift what counts as \"bad.\"", "**Offense:** A **back-contamination disease DA** (returning spacecraft carry microbes; risk is systematically underestimated and catastrophic); an **international-law counterplan** (strictly abide by the Outer Space Treaty, which bars appropriation by occupation, and holds states liable for private actors); and an **advantage counterplan** (prohibit private space colonization plus transition to post-capitalism via universal progressive taxation).", "**Case turns & defense:** Public trust doctrine is judicial activism that floods courts with litigation and chokes biotech innovation; inequality is declining and has no democracy impact; there's no space war (uncertain weapons deter attack); and capitalism solves (innovation, natural gas, agricultural productivity)."], "outline": [{"heading": "Off 1 \u2014 Extra-Topicality", "items": [{"label": "Violation", "text": "Aff is funded by progressive taxation and adds the public trust doctrine, an additional legal step beyond the topic (current legal theory already extends private property law to space)."}, {"label": "Standards", "text": "Slippery slope \u2014 extra-topical planks explode limits and make contestation impossible; normal means doesn't mandate taxation. Voters: fairness, competing interpretations, no RVIs."}]}, {"heading": "Off 2 \u2014 Specify a Moral Standard", "items": [{"label": "Interp", "text": "The aff must have a standard and valid criteria to judge action; \"a moral imperative is an obligation to act in accordance with ethical standards.\""}, {"label": "Standards", "text": "Shiftiness (the aff can re-pick what's ethical after the 1NC) and ground (the aff claims everything from existential risk to worker exploitation). Fairness is a gateway issue; preempts reasonability and non-resolutional theory."}]}, {"heading": "Off 3 \u2014 Disease DA (Back Contamination)", "items": [{"label": "Link", "text": "Spacecraft returning from other bodies can carry microbial contaminants; states are required to take preventive measures but the risk is systematically underestimated ('21)."}, {"label": "Impact", "text": "Extremophile traits (radiation and desiccation resistance, high cell densities) make consequences catastrophic, cascading, and hard to manage."}]}, {"heading": "Off 4 \u2014 International Law CP", "items": [{"label": "Text", "text": "Strictly abide by existing international obligations."}, {"label": "Net benefit", "text": "Plan violates OST Article II (no appropriation by use or occupation); Article VI makes states liable for private entities. The OST is the best mechanism for regulating states and is under challenge now (Trump, Russia, Israel); upholding it is key to stability. If settlements lack national ties, they aren't \"colonization.\""}]}, {"heading": "Off 5 \u2014 Advantage CP", "items": [{"label": "Text", "text": "Prohibit private space colonization and transition to post-capitalism; reciprocal because the aff gets wealth taxes and the PTD."}, {"label": "Solvency", "text": "Universal progressive taxation reduces inequality ('24); cutting poverty reduces conflict, terrorism, and crime."}]}, {"heading": "Case", "items": [{"label": "PTD turn", "text": "Public trust doctrine is judicial lawmaking beyond judicial capacity (Burn '12), causing litigation backlogs in the biotech sector that stall innovation key to disease, energy, and environmental challenges ('14)."}, {"label": "Defense", "text": "Inequality is declining with no democracy impact ('24); no space conflict \u2014 uncertain effects and retaliation fears deter attacks (McDonald '18); capitalism solves via innovation, fuel switching, and agricultural productivity."}]}], "transcript": ["Affirmative may not [defend] anything beyond outer space colonization. Violation: this [aff is] funded [by] progressive taxation \u2014 that's excluded. Space for only 73 23 space permanent 73 especially because tax abroad and fund things will read blue indeed \u2014 progressive tax on the income capital as of going while this pass be on the collection of the people and corporation taxes to highly additional protect individuals, government programs, portions of tax going to see how much money ended up with. Additionally, violation: plan through PTD \u2014 current legal theory includes private property law cover space, so the PTD is an additional step that lies about the topic background. 19 \u2014 private properties deals account property drivers rejected, so man because plan mode is smooth they also don't meet. Plan asks PTD, which is extra. Competing interps preferred one position.", "The topic is a stasis for [debate], which is for the class prep; [the aff] is responsible for technical concession. So overcorrect negative; their [interp] forces generation; the negative too limits their intervening. The topic is a slippery slope to the world peace stops space wall. Plus this [interp] makes contestation impossible, which links to our above offense. Now we meet \u2014 no card. This PTD is included [in] space law \u2014 it says it could be used to fill gaps, but is obviously extra-topical. It's not a normal mandate of physical issues. We can specify implementation solves zero of our offense. They can specify agencies, agency legitimacy, specific court rulings to overturn court cases \u2014 which is what they've done \u2014 or specific regulatory laws, which solves other issues like the PTD. Not to reach the plan too late. It does not check; there are thousands of articles about additions to space colonization, different ways to fund it or different things to combat it \u2014 only the topic checks. Lit does not include their aff plus checks is not available proposal which any unifies application. Strike it \u2014 cannot be reasonably topical since it's a slippery slope. They either meet or don't; reject them. It's universal. RVIs are illogical and bad; known for being fair; and then theory use competing interps \u2014 any arbitrary, explainable.", "Next up: aff must have a standard and valid criteria to judge action. Violation: they didn't. Imperatives [are] obligations to act; with the standards, a moral imperative is an obligation to act in accordance with ethical standards. Now this is a resolutional [burden] per above; vote negative across by standards from the first argument. One, shiftiness \u2014 not having a standard lets the aff re-pick what is considered ethical. Value one back on impacts. Fairness always \u2014 it's a gateway issue \u2014 that convolution, especially because the 1AC has a variety of issues from existential risks to worker exploitation, so 1AR pivots are unpredictable. Two, ground \u2014 lack of unified standard precludes neg strategic choices, since we don't know what is considered bad. Agreement fill it's a unique benefit of LD. Good for standard debate. Reject theory \u2014 it's infinite, unpredictable, which is impossible, crowds out substance education, and exclusive interpretations are taking [the] child's [ground].", "Next: disease DA. Space-based resources must bring back \u2014 Hamilton \u2014 spacecraft from other celestial bodies can carry [back] earning contaminants, and states are governmentally required actors failing to take adequate preventive measures to reduce [the] cost. The risk is systematically underestimated ('21). Risks of back contamination [are] high, possible by carrying or fling microbes \u2014 excessive radiation, desiccation of subservient regions, high microbial cell densities. Regarding '21: ecosystem isolation [is not] acceptable or consequences are catastrophic, cascading, and effective economic release can be those important difficult management points.", "Next up: strictly abiding by existing international obligations is the moral imperative for all nations. Advance plan: outer space colonization violates Article II of the OST \u2014 outer space is not subject to appropriation by means of use or occupation, territory, or jurisdiction of a state \u2014 but in current definition of contract Article II of quality war to last; this would not \u2014 this would be the threshold of use per the treaty article. Article VI implies even private entity attempts to establish [settlement], the state that entity operates under would be liable in international law. Challenge \u2014 enforcing it is necessary for global stability and peace. [The OST] remains [the] best possible [mechanism] we've found to regulate states with different interests; land decreased by the change, the evaluation alarming news \u2014 challenges: Trump, Russia today, Israel still remains, for more countries can discuss problems. Strong every existential threat; shady '21 like to be punched by such fluctuations between separate challenges, conflicting commitment, our new war, ecological context destruction, commons cancel cooperation, doesn't creating threat require new international paradigm. Strike to the counter: if it's not permanent settlements with national ties, it's not colonization \u2014 and links to every single top argument.", "Next up: advantage counterplan. The prohibition of private space colonization is a moral imperative. Space privatization is a rule. Electing those on Earth to develop [a] transition to post-capitalist society is a moral imperative. It is reciprocal, since they get to impute things like wealth taxes or the PTD. The case: universal progressive taxation [solves] disaster inequality like law. '24 \u2014 eradicate tax build, total tax will tax up country, tax incent, tax new bottom development accounts; existential wars penies and tier one two development indicator attack and geopolitical power. This underscores importance of poverty [reduction], reducing vulnerability rates and conflict; countries act quality governance and navigate instability; poverty spending [and] income improves health and invests infrastructure, [which] makes both pander terrorism and crime extinction. It's infinite, universal. They did not get a new 1AR impact, the new 1AR framing argument; they should have been let.", "[Case.] Expanding PTD for judicial access globally, which [harms] case and other [areas] of public interest. Burn '12: PTD requires public interest in serving resource while recognizing private ground right, protecting takings to protect everyone's regulation of blind access \u2014 complex, beyond capacity, and judicial lawmaking. Now that is bad litigation as well as backlogs in the bio sector disrupting innovation, which stops existential [risk]. Rate '14: breakthroughs treat diseases and help major challenges involving energy, environment, and achievements will hinge on innovation by tech competitiveness \u2014 Chinese investing and you'll grow that 20%; the next boom will be medicine, help stop health costs in their tracks; industry will have a favor in achieving energy, water, and food security; tech [is] the only way to meet demand; vital fuel manage sector employed to advance life; innovation [is the] solution [to] global challenges. The biggest challenge is to address back maintaining equality and sufficient notices of virgin power, decisions, resource application, expense, warranty \u2014 mark the card there.", "Next, no terminal [impact] to democracy [or] inequality \u2014 it's declining. No impact \u2014 Limits '24: real higher senior store closed; the economy has grown less unequal and more popular; inequality shrank; jump in the race near marketing power; public standing party quickly \u2014 critics said phenomenal bet opposing racist for service workers via good politics. No space conflict \u2014 mutual search, McDonald '18. Weapon effects and dependencies [are unclear]; combat unfair damaging harms health, and the novel space lead ruptures, and stated aggrieved [adversaries] retaliating with highly short count would be advising \u2014 no pack. For 99% of the four billion people gone, use speech twice evolution media heads made for grim reading and teachers grow sadly and naturally for events were triggered by swings through the climates [that] cannot mount effect, but adopted across both conservation [and] innovation reducing [emissions] around the globe last century, switching [to] natural gas, engine, electricity pull 50%, rising agricultural [productivity] \u2014 mark the card."]}, {"code": "CX", "name": "Cross-Examination of the 1NC", "speaker": "Affirmative questions Negative", "roadmap": "", "side": "cx", "summary": ["Asks the status of the advocacies (answer not captured clearly; the aff later treats them as conditional).", "Gets the neg to explain no-space-war (McDonald: uncertain weapon effects and fear of unknown retaliation deter attacks) and the international-law CP (fiats that states follow existing international law, which bans the plan because the OST bars settlements; exceptions trigger the stability impact).", "Clarifies the advantage CP's net benefits (any of the DAs and the case turns) and the biotech-litigation turn (PTD signals courts are open to regulatory questions, and suits over the plan's own legitimacy swell dockets)."], "outline": [], "transcript": ["Um, all right. Good for cops? Yeah. Um, status of the \u2014 Uh, which? The advocacy, like counterplan. Uh, those are \u2014 Okay.", "Um, I want to talk about the topicality argument \u2014 or actually, no, I want to talk about the case first. You made the argument that there's no impact to space war. Can you explain? Um, yes. The McDonald evidence says weapon effectiveness and dependencies are unclear. So the risk of self-inflicted damage from an attack is \u2014 it overwhelms the incentive to cause an attack. So people never go to war in space because of these uncertainties. It also says that people are worried that if an attack is successful, then aggrieved adversaries have unknown weapons and retaliate in ways also. That makes sense.", "The international law counterplan \u2014 to clarify, what does it fiat? Um, that states follow existing international law regulations. Um, okay. I guess why does that ban the plan? Well, because the OST does not allow the creation of settlements or colonies in space. Okay. I guess, why does the OST specifically [matter to] broader international law? Well, it might not be. We [fiat] following law; exceptions to that would trigger the impact and advance the plan. Wait, why? Well, the better evidence says [the] OST is challenged and we need to recommit to it broadly \u2014 that it's the best [mechanism] for our behavior, but that negotiations or instability and challenges to it are bad. So \u2014 Yeah, sure. That makes sense.", "Um, I want to talk about the advantage counterplan. What's the net benefit? Um, any of the DAs and the turns on the case. Um, okay, that makes sense. The turns on case \u2014 biotech litigation. Can you explain the argument? Um, PTD spurs judicial activism. This is bad because it prevents biotech innovation \u2014 litigation \u2014 which is important to protect the industry. Why? The Burn evidence says that the PTD is an example of judicial activism because it is lawmaking in regulatory matters beyond what has been brought to it. Okay. Wait, but why would people bring court cases, like, as a result of the plan? Because if the court acts in an activist manner, then people interpret the court as being open to regulatory issues, which would cause swelling litigation. Uh, okay, that makes sense. It's also like, even if it doesn't bring additional cases, litigation regarding the plan itself would swell because people interpret backlash to it. So suits about whether or not a PTD is legitimate \u2014 also true. Okay, that makes sense.", "Uh \u2014 oh, what was the last card you read? Um, last card was \"capitalism solves every concern.\" It was marked at rising agricultural productivity."]}, {"code": "1AR", "name": "First Affirmative Rebuttal", "speaker": "Affirmative", "roadmap": "Order: case, topicality, spec shell, disease DA, IL CP, advantage CP", "side": "aff", "summary": ["**Case:** Extends dropped taxation/redistribution arguments and the conceded inequality impact; answers the litigation turn (courts already clogged, no internal link), innovation (anything else produces monopolies), no-space-war (doesn't assume private, extractivist, unregulated space), and capitalism-solves (dropped environmental collapse and resource wars; fossil-fuel incumbents crush renewables).", "**Theory:** On extra-T, we meet \u2014 taxation is a consequence of the plan, not a mandated plank \u2014 and PICs/advantage CPs check extra-topical benefits; on the spec shell, the counter-interp is to defend the violation because specification is infinitely regressive, the neg can read a framework in the 1NC, and CX checks.", "**Off-case:** Disease DA \u2014 no evidence of life to bring back, and microbes can't survive microgravity/radiation; IL CP \u2014 perm do both (plan plus follow international law everywhere else), public-trust space aligns with the OST, and legal systems adapt (law of the sea); advantage CP \u2014 can't solve the advantages, the prohibition plank is unpredictable with no literature, companies still exploit regulations, and conditionality is bad."], "outline": [{"heading": "Case", "items": [{"label": "Dropped offense", "text": "Taxation and redistribution arguments dropped; redistribution doesn't assume equal distribution; inequality impact conceded and erodes democratic institutions."}, {"label": "Turn answers", "text": "Litigation \u2014 no internal link, courts already clogged; innovation \u2014 the alternative is monopolies; no space war doesn't assume private space's extractivist mindset; environmental collapse and resource wars dropped; capitalism unsustainable because renewables can't compete with profitable fossil-fuel firms."}]}, {"heading": "Extra-T", "items": [{"label": "We meet", "text": "Not a mandated plank but a warranted consequence of the plan's mechanism."}, {"label": "Counter-standards", "text": "PICs are worse (no unified ground, untenable limits); extra-topical benefits are checked by PICs and advantage CPs; neg proves it has enough ground."}]}, {"heading": "Spec a Moral Standard", "items": [{"label": "Counter-interp", "text": "Defend the violation \u2014 specification regresses infinitely and trades off substantive topic debate."}, {"label": "Checks", "text": "Neg can read a frame in the 1NC; no external impact; the aff can still get non-resolutional theory."}]}, {"heading": "Disease DA / IL CP / Advantage CP", "items": [{"label": "Disease", "text": "No life/animals to bring back; microgravity and radiation are hostile to bacteria."}, {"label": "IL CP", "text": "Must be functionally and textually competitive; perm do both; public trust benefits all states, aligned with the OST's common-good principle; legal systems adapt (law of the sea); straight turn \u2014 no deep-sea regulation now, only the plan upgrades frameworks."}, {"label": "Adv CP", "text": "Can't solve space-specific advantages; prohibition plank has a different actor, no comparative literature; socialist plank fails because private companies still exist; condo forces the aff to contradict itself."}]}], "transcript": ["Tax is a dropped argument. Good \u2014 [it] redistributes. It's about past examples; it doesn't assume the aff should redistribute this equally. Equality impact conceded \u2014 takes out their other argument, which will be low; sure, we'll see that as well. Litigation \u2014 [courts are already] clogged out, [no] med[icine impact], because judicial points it all adds up and there's no internal link. Three, [their evidence is] showing legal analysis; there's no motivation. Risk \u2014 cut the card there. Also dropped the claim [that] getting innovation [through] anything else also results in monopolies, which are obviously a bad thing.", "Now the no impact to democracy \u2014 does the matter not going through? No impact [to] inequality? Yes impact \u2014 inequality erodes institutions, which is explained above. No space impact doesn't assume private space, which is uniquely bad because of extractivist mindset and no regulations. No evidence yet. No bio[div] impact \u2014 conceded; doesn't matter. We still have things like climate change, which are external to that. Also things like environmental collapse and resource wars, which they dropped from the Blabber evidence. Dropped capitalism specifically. Batting politics is space-caused privatization, explained above. Capitalism [is] unsustainable [because of] competition \u2014 the renewable development industry cannot withstand the profitable fossil fuel companies. Cut their souls. Everything was cut too early, before it had a warrant.", "Go to topicality. We meet \u2014 our argument is not that it's a mandated plank but a consequence of the plan that was warranted and caused [by the] mechanism. Go mission about the circumstance was on relative representation. One, PICs \u2014 every [aff] thinks about this; PIC under the model that's worse, because there's no unified [ground], because we can't beat the PIC; stick with the government to charge; too [much] ground; the tickets with a scope with two untenable negative private limited new limited new advantages; sci-fi nons limit check after solving \u2014 you get more arguments like space lab launches bad, trade-off. All extra-topical benefits are solved by PICing out of [them] or reading advantage counterplans. Reasonability. Opportunity cost \u2014 negative proves that we are good enough. That's fine. Now they say no we meet with this proof, but it's just a mechanism, and also [the] PIC solves all [their] ground argument.", "Now the specification shell. Counter-interp: we'll defend the violation. One, regress \u2014 [asking for] anything [is] unpredictable, trades off substantive debates about [the] topic, [makes them] impossible. Generic time prevents over-specification, which works with [an] egg; outweighs because [the] solvency starts centuries in the future with short-term pillars. Defense: [the] ground argument is wrong because you could have just read a frame counter[-interp]; our argument [that] fill-out is bad \u2014 there's no external impact, and fairness outweighs, and it doesn't matter; they can get non-resolutional theory. That's fine.", "The disease DA \u2014 [you need] money [with] respect [to] contamination. No [bacteria], no life, no animals. Trans billion years every migration versus various microgravity relation hard against bacteria faces, like super-judge practice.", "Now the law counterplan. Counterplans must be functionally [and] textually competitive; check events count without gain benefits \u2014 artificial opportunity cost [of the] plan to do due to the count[erplan] results. Or actually skip that. Perm: do the aff and also follow [international law] in all other instances. It proves that there's no net benefit or trade-off, because the counterplan [says] they follow international law in every other instance, which means that they still have to use [it]. Now do the counter[plan] means we can just turn [it] up \u2014 space here for the benefit of all countries, all the states, all countries consist of cooperative through environment with the OST, align with the principle of the common good. Now, the [net benefit] is no benefit \u2014 it's based upon common [heritage]; no way it spills over, but the per legal systems would adapt, not collapse, based on the mining in the gaps. Law of the sea, for example, emerges past arrangements, development of a law \u2014 it's not a con[tradiction]; slightly legal framer delic. There [is] also a straight turn, dropped: there's no regulations for international things like deep-sea water now, which only the plan is able to resolve by upgrading ethical frameworks and guidelines.", "The advantage counterplan can [not] solve the opposite, and [can't] call nice space machines [the] upsides, advantages, and deficit. Resources are key to better the earth and solve capitalist extractivism, and only the plan can set a good precedent for ocean governance. Due both \u2014 due to the counterplan, any combination [of] condo issue forces the 1AR to contradict [its] position to generate offense. The disad pro[ves] the advantage [counter]plan \u2014 the first plank is not able to solve it, because it still prohibits space colonization, which means also it's not about an actor in the plan, which is bad; it's unpredictable because there's no comparative literature base, and we do not come prepared to defend that. The socialist [plank] fails because they have dropped [that] the private company still exists in the world of the alternative; even if they're able to do things like taxation, they'll be able to exploit regulations, because they can't [ensure] that all people follow it equally."]}, {"code": "NR", "name": "Negative Rebuttal", "speaker": "Negative", "roadmap": "Order: T\u2013moral (spec shell) first, then case, advantage CP, disease DA, IL CP, extra-T", "side": "neg", "summary": ["**Collapses to the \"specify a moral standard\" shell** as a resolutional burden: the aff dropped the definition that a moral imperative is an obligation to act in accordance with ethical standards, and its own card says moral judgments depend on context it never supplied \u2014 so precision, which the aff dropped, outweighs everything.", "Argues the aff has no real counter-interpretation (\"defend the violation\" links to all the offense), concedes competing interpretations, and dropped **shiftiness** \u2014 letting the 1AR re-decide what's good or bad gives the aff an insurmountable 7-to-6 time skew; ground (straight turns, framework clash, K's) depends on knowing what matters.", "Line-by-line: regress is checked because the burden is tied to the resolution; aff flex is outweighed by infinite pre-round prep; CX doesn't check (the aff listed about eight impacts); solvency advocates don't clarify weighing; reasonability means arbitrary judge intervention. Kicks the rest \u2014 \"condo is good.\""], "outline": [{"heading": "Spec Shell \u2014 Resolutional Burden", "items": [{"label": "Dropped definition", "text": "\"Moral imperative = obligation to act in accordance with ethical standards\" \u2014 a precise topic interpretation; precision guides preparation and outweighs."}, {"label": "Structural disadvantage", "text": "Neg is disadvantaged by deviation from the topic, so any technical 1AR win should be discounted."}]}, {"heading": "Competing Interps / No Counter-Interp", "items": [{"label": "Conceded competing interps", "text": "No reasonability; \"defend the violation\" isn't a counter-interp and links to all offense."}, {"label": "Shiftiness dropped", "text": "1AR ad hoc reclarification gives a time skew and takes the neg out of the game."}]}, {"heading": "Line-by-Line", "items": [{"label": "Regress/aff flex", "text": "Tied to the resolution, not arbitrary; aff gets infinite prep; CX didn't check."}, {"label": "Other answers", "text": "Judge intervention against new arguments is sanctioned *away* by the aff's own interp; PICs don't need a moral framework; reading a framework in the 1NC can't stop a new 1AR one."}]}, {"heading": "Kicks", "items": [{"label": "Everything else goes", "text": "Case and off-case don't matter except condo; condo good \u2014 infinite aff prep time, neg ground is reactionary."}]}], "transcript": ["[The] final stand of the problem: the 1AR [says] \"we might specify ethics\" \u2014 that this is not our argument. [Our] argument is a resolutional interpretation of what the aff's burden is and how this implicates negative strategy. Now they have dropped a definition, which means that all their arguments about regress [go away], because this is a topical requirement. A moral imperative is an obligation to act in accordance with ethical standards. They read a card that said that moral standards are informed by context. They have not defined context in ethics. So they've agreed that this is a precise interpretation of the topic and an obligation that is imbued by the resolution. So most of their arguments go away, and now they've dropped precision outweighs from the topicality page. Precision guides preparation, which is [external] to every single other impact. They've dropped that it is how the negative [prepares for] debate, and the negative is structurally disadvantaged by deviation from the topic. So if they are technically winning another argument, you should disregard it and attribute that technical win to us being disadvantaged by lack of a precise interpretation.", "Now the other argument: they have no counter-interpretation. They have no counter-interpretation. So they cannot win this debate, because they've conceded competing interps from the 1NC. So they've dropped that competing interps are necessary \u2014 resolved; substance [crowd-out] necessary \u2014 resolved; infinite regress by reasonability. So they cannot go for any reasonability argument. They can only extend [a] counter-interpretation to defend the violation, which is infinitely bad. Affs that don't defend moral theory are popped from the gate.", "One, ground \u2014 they've dropped it. Negative strategy is predicated off the 1AC framework \u2014 [we] need that in order to justify straight turns, straight [impact turns], critiques of their philosophical frameworks. Every single generic that they identified on the other T page necessitates knowing what impacts matter. Now the other impact that they've completely dropped is shiftiness. [There's] weak impact [defense] from this, and their impact turn \u2014 the shifting standard \u2014 is honestly illogical. It is impossible for the negative to win if the 1AR can reclarify what is good and what is bad ad hoc. This gives them a seven-six time skew. They've conceded this argument from the 1NC when we explained why we need [a standard], and they've dropped all of this, which means that there's a 100% risk that the affirmative getting to change their standard in the 1AR is obviously infinitely bad. They do not have a counter-interpretation \u2014 no new 1AR standards or anything that is [a] defense of the standard. So you know that their interpretation of debate is that the 1AR can reclarify what matters with the seven-six [skew], which obviously takes the negative out of the game.", "Now we'll do the line-by-line here. One, the counter-interp defends the violation, so it links to all of our offense. Next, regress. One, we cannot ask you to specify anything arbitrarily, because we are obviously held to the resolutional standard, since it's the resolution['s] requirement. You agreed when you said that moral imperatives require contextual information, because this is an argument [for] why you have to explain what that context is ethically.", "Now the next argument was [that] vagueness is good. This is obviously wrong. Vagueness cannot be good, because their model literally deletes debate when the authors reclarify what is good, and [it] does not solve abusive process counterplans. Text and function \u2014 we agree that that is a standard which solves abusive process counterplans, per the 1AR. So this obviously deletes it \u2014 prevents [the] OSPEC [argument]. What does that even mean? The aff gets to specify things that they want, but we cannot require them to specify other things, because we're held to the resolution['s] words. So unless the resolution mandates it, we cannot mandate it. So this is wrong.", "Now, vagueness key to aff flex is obviously wrong. Dropped: aff flex is infinitely [checked], because you get infinite preparation before the debate, and [this] is way too much aff flexibility, because it's impossible to debate. Now the problem is, even if you think there's some risk of a flexibility argument, all their defense goes away when you remember that CX does not check, because we asked them during cross-examination what is bad and they said, like, eight different things \u2014 existential risks, labor rights. For one, he had no idea what mattered, which obviously skewed preparation. Next argument was that solvency advocates check. No solvency [advocate] clarifies what is worse \u2014 either the labor-rights violations, exploitation, or extinction \u2014 which means solvency advocates do not check. Normal-means evidence \u2014 obviously wrong; this has nothing to do with ethics.", "Intervention against new arguments means that you should strike the 1AR, because it's not of the framework \u2014 but also it obviously doesn't solve offense, because judges will not intervene per their counter-interpretation, which means because it's their counter-interp, it's legitimate for the affirmative to do what they did. So judges would not intervene against new arguments; it's sanctioned by their counter-interpretation, so it is therefore theoretically legit in the world of the affirmative.", "Now we'll answer some of the stuff from the other topicality page. Reasonability \u2014 we'll answer it here. The opportunity cost is not tossing out substance; consider the interpretation as lexically prior. It is impossible for the negative to engage in a debate. When is it possible for the negative [to] engage [in] debate? They have not [said what is] good or bad as [of the] 1AR [versus] the 1AC, and [the] 1AR gets to completely re[frame]. Regardless, they've dropped it: judge intervention \u2014 it's infinitely arbitrary, which kills debate, takes us out of the game, and makes decisions completely arbitrary. They have no metric to resolve judge intervention. So [the] summary of defense and substance [crowd-]out means that judge intervention is a 100% disad to using reasonability, and there's a reason why you must use competing interpretations.", "Now their card, per the counter-interpretation, about defending a mechanism because moral judgments are made through specification, explains why precision mandates [our] interpretation: because moral decision is embedded in circumstances, and results are named relative to a representation, which means it is relative to a morally compliant contextual standard, which they did not have. So precision was [won].", "Now PICs \u2014 obviously no link. You cannot PIC out of a moral framework, because the competition is derived from mandates of the plan. So this is a non-starter for this type of category. Aff ground is wrong \u2014 you can read infinite phil affirmatives, which solves aff [flex] and [specific]ation. You also can defend a method for specification; you just cannot shift that between the 1AC and the 1AR. You must specify what is [included]. So the aff knows \u2014 it's not solve offense. They all assume that there's some understanding of what the aff does and what the aff thinks is bad prior to the debate, which we have obviously won they do not do.", "Now the rest \u2014 CX checks, obviously answered above. Ground is wrong \u2014 incorrect, because reading a framework in the 1NC does not deny the aff the ability to read a new one in the 1AR, which is contextually supplied by the violation. [They] did not have a counter-interpretation that can resolve this, and when the 1AR reads [it] you have a seven-six [skew], and the 2AR [gets] to dump on every single [NR] answer, so it's unwinnable for the negative. Next, [no] impact \u2014 irrelevant; [we're] not going for the non-resolutional argument, but our argument was that non-resolutional theory is bad; but this [isn't] condo, because we said non-resolutional theory is unpredictable. This is also the reason why our offense is supercharged, because it is resolutionally sanctioned.", "Now the case \u2014 none of this really matters except condo. Per test[ing] competition, condo \u2014 we'll kick it. Condo is good: wins stand-back sanctions the first [speech]; [the aff gets] infinite prep time, so neg ground is reactionary; the [neg] has to split their prep between every different aff. I don't think it was said, but also [it's] not offense, because fear of straight turns instead [encourages] experimentation. But non-[resolutional] theory bad [applies]: conditionality is obviously not resolutional, and non-resolutional interpretations are impossible to predict.", "Look \u2014 precision outweighs, what we [said]. Draw defense to [their] position: the red card substantiates [our] interpretation; no counter-interp [to] any of our offense; that [is] about debatability, because their only counter was \"we'll defend the violation.\" So [their] interpretation of debate is [that] the 1AC [has] no ethical standard, the 1AR can say whatever they want, and they get the 1AR and 2AR to dump on the NR, which is obviously impossible to win; and their [warrant] for this was aff flexibility, which is obviously wrong \u2014 [see] the condo stuff for why aff flex is out. And our offense outweighs because there's no defense to it, and CX [doesn't] solve."]}, {"code": "2AR", "name": "Second Affirmative Rebuttal", "speaker": "Affirmative", "roadmap": "Order: the spec shell", "side": "aff", "summary": ["**Regress still applies inside the resolution:** tying specification to the topic doesn't stop it from regressing \u2014 the neg could demand the settlement mechanism, how many and which people, which planets, and, once a framework is named, whether util is \"hard\" or \"soft.\" The neg dropped that argument, and it outweighs.", "**Aff flex:** the topic is structurally neg-skewed because aff impacts sit on far-off timeframes (the only uniqueness-backed skew argument, since speech times can't change) \u2014 so err aff on theory; prep isn't \"infinite,\" it's limited and on a weekend topic with generics.", "**Defense:** the aff accesses precision through regress (a 6-minute plan text otherwise); the counter-interp is \"defend the violation\"; the neg could read a framework in the 1NC and defend it for 7 + 6 minutes, which the aff must then concede \u2014 dropped; judges can strike new 1AR arguments; and CX checked, since the aff said extinction outweighs."], "outline": [{"heading": "Regress", "items": [{"label": "Resolution doesn't cap it", "text": "Every topical detail (mechanism, people, planets, framework sub-type) can be demanded; the neg dropped this \u2014 outweighs."}]}, {"heading": "Aff Flex", "items": [{"label": "Neg-skewed topic", "text": "Aff impacts are distant and speculative; the neg's skew has no uniqueness. Err aff; prep time is finite."}]}, {"heading": "Defense to the NR", "items": [{"label": "Precision", "text": "Regress is a bigger internal link to preparation; otherwise the aff becomes a six-minute plan text."}, {"label": "Ground/framework", "text": "Neg can read a framework in the 1NC and defend it for thirteen minutes \u2014 dropped; new 1AR frameworks can be struck as new arguments, which isn't arbitrary."}, {"label": "CX checks", "text": "The aff said extinction outweighs and that it doesn't lack a framework; reclarification is checked by the neg's own framework defense."}]}], "transcript": ["[The aff doesn't] have to specify a moral imperative [beyond] the one [in the 1AC]. The fundamental problem of the shell is that they've misunderstood our regress argument [as it relates to] affirmative flexibility, because specification is infinitely regressive. The only defense that they had against that is that it's tied to the resolution, which makes it not regressive \u2014 but they've dropped an argument that you can still ask us to specify anything in the context of the resolution. Things like: you can ask us the mechanism by which we colonize space, how many people we send, what kind of people we send, which planets we get to, et cetera. All these things prove that the specification still becomes infinitely regressive and we're never actually able to engage with the 1NC in the first place \u2014 especially in the context of \"moral imperative.\" You can ask [us] to specify a framework; then you get asked to specify even more things about that framework. If we say util, they want to see if it's hard or soft, et cetera. All these arguments prove that regress is still an impact regardless of whether it's about the topic or not, which outweighs.", "Now aff flex. They've dropped that the topic is inherently negative-skewed, because aff impacts are all super far-off timeframes, which is the only impact that has uniqueness. Their impacts lack uniqueness, because you cannot change speech times or do anything like that. But we have made the argument about why the topic is necessarily skewed toward the negative, which means that you should err heavily affirmative on the shell. No \u2014 they say we have infinite prep time. Dropped: there's nothing that we can do to change that. Also, it's not infinite, because we only have limited preparation before the round. Also, it's like \u2014 [the topic] wasn't new; it's on the weekend, and not new, which means that you also have infinite prep time [on] generics, and it was whole-res. They say that it's impossible to debate the 1AR. I'm not sure what the argument was, especially because everybody can agree that the 1AR is definitely the hardest speech to debate.", "Now, I'll do defense to all of this here. They say precision, but the impact of precision is about structural disad[vantage in] preparation. So we internally link [to] it and access the bigger internal link via our regress arguments, which is explained above: because the aff does not know what [the neg will ask for] after prep, the aff will just turn into a six-minute plan text, which obviously makes the debate unfair for the affirmative. Now they say that we don't have a counter[-interp], but we said \"defend the violation,\" which logically means we don't have to specify.", "They say that their ground standard is wrong \u2014 they have dropped that the ground standard is wrong. [Extend] our argument that you could read a framework in the 1NC; that solves and is better, because it means that the affirmative must concede that framework interpretation. Now they say that [reading it] in the 1NC [doesn't stop a new 1AR one] \u2014 [but] you can tell the judge to reject new arguments, and then the judge will not be allowed to vote on those arguments. They say that judge interventions are arbitrary, but obviously it's not, because you can just say that it's a new argument, that you should strike it, because you're not supposed to have new arguments in the rebuttals.", "And cross-ex checks this argument. Their only answer to cross-ex is that we didn't specify in this round, but our argument is that because we didn't specify, you were allowed to read [a] framework in the 1NC. We [said] extinction weighs, and I explicitly said in the 1AC that we do not lack a framework. Now they say that it's shifty because we could reclarify what we defend and all negative preparation [is] based off of that. But they've dropped that you could just read a framework and then have robust defense of it, which means that you get a time advantage: if you defend that framework well for seven minutes in the 1NC and then six minutes in the NR, obviously the [time] that we have for speeches in the rebuttals is not enough to change that. And reclarification is also solved by intervention, which was explained above. Now they say that judge intervention is arbitrary \u2014 that was answered above. Um, yeah \u2014 the regress impact was mishandled in the NR, because they could ask [us] to specify it."]}];
+const STORE_KEY = 'space-round-timestamps-v1';
+const JUDGES = [
+  {id:'flow',  name:'Flow / tech judge',   desc:'Decides only on what is on the flow. Dropped arguments are true; weighs the arguments as extended.'},
+  {id:'policy',name:'Policy judge',        desc:'Weighs plan offense by magnitude, probability and timeframe. Needs theory to show real abuse.'},
+  {id:'theory',name:'Theory-first judge',  desc:'Evaluates procedurals first with competing interpretations; rewards clean shell execution.'},
+  {id:'trad',  name:'Traditional LD judge',desc:'Wants a clear value and criterion and clash on the resolution. Skeptical of plans, spreading and tricks.'},
+  {id:'k',     name:'Kritik-friendly judge',desc:'Open to critical framing, questions of capitalism and colonialism, and role-of-the-ballot arguments.'},
+  {id:'lay',   name:'Lay / parent judge',  desc:'Votes on persuasion, clarity and common sense. Jargon and speed hurt.'},
+];
+
+// ---------- helpers ----------
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+function fmt(t){ if(t==null||isNaN(t)) return ''; t=Math.floor(t); const h=Math.floor(t/3600), m=Math.floor(t%3600/60), s=t%60; return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(s).padStart(2,'0'); }
+function parse(str){ str=(str||'').trim(); if(!str) return null; const p=str.split(':').map(Number); if(p.some(isNaN)) return undefined; return p.reduce((a,v)=>a*60+v,0); }
+let toastTimer; function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),1800); }
+
+SPEECHES.forEach((s,i)=>{
+  s.id = 's'+i;
+  s.tab = s.code==='CX' ? 'CX · '+s.name.replace('Cross-Examination of the ','') : s.code;
+});
+
+// ---------- state ----------
+let starts = {};
+try { starts = JSON.parse(localStorage.getItem(STORE_KEY)||'{}') || {}; } catch(e){ starts = {}; }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(starts)); }catch(e){} }
+const video = $('#video');
+let active = 0, live = -1;
+
+// ---------- build tabs ----------
+const tabsEl = $('#speechTabs'), panelsEl = $('#panels');
+SPEECHES.forEach((s,i)=>{
+  const b = document.createElement('button');
+  b.className='tab'; b.setAttribute('role','tab'); b.id='tab-'+s.id;
+  b.setAttribute('aria-controls','panel-'+s.id);
+  b.setAttribute('aria-selected', i===0);
+  b.tabIndex = i===0?0:-1;
+  b.innerHTML = `<span class="dot ${s.side}"></span>${esc(s.tab)}<span class="live" aria-hidden="true"></span>`;
+  b.addEventListener('click',()=>{ select(i,true); seekTo(i); });
+  tabsEl.appendChild(b);
+
+  const p = document.createElement('div');
+  p.className='panel'; p.setAttribute('role','tabpanel'); p.id='panel-'+s.id; p.hidden = i!==0;
+  p.setAttribute('aria-labelledby','tab-'+s.id);
+  const outline = s.outline.length
+    ? s.outline.map(o=>`<div class="outline-sec"><h3>${inline(o.heading)}</h3><dl>${o.items.map(it=>`<div class="row"><dt>${inline(it.label)}:</dt> <dd>${inline(it.text)}</dd></div>`).join('')}</dl></div>`).join('')
+    : `<p class="outline-empty">Cross-examinations have a summary and transcript only.</p>`;
+  p.innerHTML = `
+    <div class="speech-head">
+      <div>
+        <h2>${esc(s.code==='CX'?s.name:s.code+' — '+s.name)}</h2>
+        <p class="who">${inline(s.speaker)}</p>
+        ${s.roadmap?`<p class="road">${inline(s.roadmap)}</p>`:''}
+      </div>
+      <div class="timecard">
+        <div class="timefield"><label for="t-${s.id}">Starts at</label><input id="t-${s.id}" inputmode="numeric" placeholder="h:mm:ss" data-i="${i}"></div>
+        <button class="btn" data-mark="${i}" title="Set this speech's start to the video's current time">Mark current time</button>
+      </div>
+    </div>
+    <div class="inner">
+      <div class="tabs-list" role="tablist" aria-label="${esc(s.tab)} views">
+        ${['Summary','Outline','Transcript','Alternatives'].map((v,j)=>`<button class="tab" role="tab" id="${s.id}-v${j}" aria-controls="${s.id}-p${j}" aria-selected="${j===0}" tabindex="${j===0?0:-1}">${v}</button>`).join('')}
+      </div>
+      <div class="inner-panel" role="tabpanel" id="${s.id}-p0" aria-labelledby="${s.id}-v0"><ul class="summary">${s.summary.map(b=>`<li>${inline(b)}</li>`).join('')}</ul></div>
+      <div class="inner-panel" role="tabpanel" id="${s.id}-p1" aria-labelledby="${s.id}-v1" hidden>${outline}</div>
+      <div class="inner-panel transcript" role="tabpanel" id="${s.id}-p2" aria-labelledby="${s.id}-v2" hidden><p class="notice">Captured wording from the auto-transcript, lightly cleaned. Bracketed words are inferred.</p>${s.transcript.map(t=>`<p>${inline(t)}</p>`).join('')}</div>
+      <div class="inner-panel" role="tabpanel" id="${s.id}-p3" aria-labelledby="${s.id}-v3" hidden>${labMarkup(s,i)}</div>
+    </div>`;
+  panelsEl.appendChild(p);
+  wireTablist(p.querySelector('.inner [role=tablist]'), j=>{
+    p.querySelectorAll('.inner-panel').forEach((el,k)=>el.hidden=k!==j);
+  });
+});
+
+function wireTablist(list, onSelect){
+  const tabs=[...list.querySelectorAll('[role=tab]')];
+  const pick=(j,focus)=>{ tabs.forEach((t,k)=>{ t.setAttribute('aria-selected',k===j); t.tabIndex=k===j?0:-1; }); if(focus) tabs[j].focus(); onSelect(j); };
+  tabs.forEach((t,j)=>t.addEventListener('click',()=>pick(j)));
+  list.addEventListener('keydown',e=>{
+    const cur=tabs.findIndex(t=>t.getAttribute('aria-selected')==='true');
+    let n=null;
+    if(e.key==='ArrowRight') n=(cur+1)%tabs.length;
+    if(e.key==='ArrowLeft') n=(cur-1+tabs.length)%tabs.length;
+    if(e.key==='Home') n=0; if(e.key==='End') n=tabs.length-1;
+    if(n!==null){ e.preventDefault(); tabs[n].click(); tabs[n].focus(); }
+  });
+}
+// outer keyboard nav (click handler also seeks)
+tabsEl.addEventListener('keydown',e=>{
+  let n=null;
+  if(e.key==='ArrowRight') n=(active+1)%SPEECHES.length;
+  if(e.key==='ArrowLeft') n=(active-1+SPEECHES.length)%SPEECHES.length;
+  if(e.key==='Home') n=0; if(e.key==='End') n=SPEECHES.length-1;
+  if(n!==null){ e.preventDefault(); select(n,true); seekTo(n); tabsEl.children[n].focus(); }
+});
+
+function select(i, byUser){
+  active=i;
+  [...tabsEl.children].forEach((t,k)=>{ t.setAttribute('aria-selected',k===i); t.tabIndex=k===i?0:-1; });
+  [...panelsEl.children].forEach((p,k)=>p.hidden=k!==i);
+  tabsEl.children[i].scrollIntoView({block:'nearest',inline:'nearest',behavior: byUser?'smooth':'auto'});
+  renderTimeline();
+}
+
+// ---------- timestamps ----------
+function startOf(i){ const v=starts[SPEECHES[i].id]; return typeof v==='number'?v:null; }
+function syncInputs(){ SPEECHES.forEach((s,i)=>{ const el=$('#t-'+s.id); if(document.activeElement!==el) el.value=fmt(startOf(i)); }); }
+panelsEl.addEventListener('change',e=>{
+  const el=e.target; if(!el.matches('input[data-i]')) return;
+  const i=+el.dataset.i, v=parse(el.value);
+  if(v===undefined){ toast('Use a time like 1:05:30 or 42:10'); el.value=fmt(startOf(i)); return; }
+  if(v===null) delete starts[SPEECHES[i].id]; else starts[SPEECHES[i].id]=v;
+  save(); syncInputs(); renderTimeline(); tick();
+});
+panelsEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-mark]'); if(!b) return;
+  if(!video.src){ toast('Load a video first'); return; }
+  const i=+b.dataset.mark; starts[SPEECHES[i].id]=Math.floor(video.currentTime);
+  save(); syncInputs(); renderTimeline(); tick();
+  toast(SPEECHES[i].tab+' starts at '+fmt(video.currentTime));
+});
+
+function seekTo(i){
+  const t=startOf(i);
+  if(t==null || !video.src) return;
+  video.currentTime=t;
+}
+
+// which speech is playing: latest start <= current time
+function liveIndex(t){
+  let best=-1, bestT=-1;
+  SPEECHES.forEach((s,i)=>{ const st=startOf(i); if(st!=null && st<=t && st>=bestT){ best=i; bestT=st; } });
+  return best;
+}
+
+// ---------- timeline ----------
+const tl=$('#timeline');
+function renderTimeline(){
+  const dur = video.duration && isFinite(video.duration) ? video.duration : null;
+  const set = SPEECHES.map((s,i)=>({i,t:startOf(i)})).filter(x=>x.t!=null).sort((a,b)=>a.t-b.t);
+  tl.innerHTML='';
+  if(dur && set.length){
+    // proportional: pre-roll gap, then each marked speech to the next
+    const segs=[];
+    if(set[0].t>0) segs.push({gap:true,w:set[0].t});
+    set.forEach((x,k)=>segs.push({i:x.i,w:(k+1<set.length?set[k+1].t:dur)-x.t}));
+    segs.forEach(sg=>{
+      const el=document.createElement(sg.gap?'div':'button');
+      el.className='seg'+(sg.gap?'':' '+SPEECHES[sg.i].side+(sg.i===live?' active':''));
+      el.style.flex=Math.max(sg.w,1)+' 1 0';
+      if(!sg.gap){ el.innerHTML='<span>'+esc(SPEECHES[sg.i].tab)+'</span>'; el.title=SPEECHES[sg.i].tab+' at '+fmt(startOf(sg.i)); el.addEventListener('click',()=>{ select(sg.i,true); seekTo(sg.i); }); }
+      tl.appendChild(el);
+    });
+    const ph=document.createElement('div'); ph.className='playhead'; ph.id='playhead'; tl.appendChild(ph); movePlayhead();
+    const missing=SPEECHES.length-set.length;
+    $('#tlNote').textContent = missing ? `${missing} speech${missing>1?'es':''} without a start time — open its tab and choose Mark current time.` : 'All speeches are timed. Segment widths match speech length.';
+  } else {
+    // even segments until a video with timings exists
+    SPEECHES.forEach((s,i)=>{
+      const b=document.createElement('button');
+      b.className='seg '+s.side+(i===active?' active':''); b.style.flex='1 1 0';
+      b.innerHTML='<span>'+esc(s.tab)+'</span>';
+      b.addEventListener('click',()=>{ select(i,true); seekTo(i); });
+      tl.appendChild(b);
+    });
+    $('#tlNote').textContent = !video.src
+      ? 'Load the round video, then mark where each speech starts.'
+      : 'Play to each speech and choose Mark current time in its tab to build the timeline.';
+  }
+}
+function movePlayhead(){
+  const ph=$('#playhead'); if(!ph||!video.duration) return;
+  ph.style.left=(video.currentTime/video.duration*100)+'%';
+}
+
+// ---------- sync loop ----------
+function tick(){
+  if(!video.src) return;
+  const L=liveIndex(video.currentTime);
+  if(L!==live){
+    live=L;
+    [...tabsEl.children].forEach((t,k)=>t.classList.toggle('is-live',k===L));
+    if(L>=0 && $('#follow').checked && L!==active) select(L,false);
+    else renderTimeline();
+  }
+  movePlayhead();
+}
+video.addEventListener('timeupdate',tick);
+video.addEventListener('seeked',tick);
+video.addEventListener('loadedmetadata',()=>{ renderTimeline(); tick(); });
+
+// ---------- video loading ----------
+function openPicker(){ $('#file').click(); }
+$('#pickBtn').addEventListener('click',openPicker);
+$('#changeBtn').addEventListener('click',openPicker);
+$('#file').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  if(video.src) URL.revokeObjectURL(video.src);
+  video.src=URL.createObjectURL(f);
+  video.hidden=false; $('#empty').hidden=true; $('#changeBtn').hidden=false;
+  live=-1; toast('Loaded '+f.name);
+});
+
+// ---------- import / export ----------
+const dlg=$('#dlg');
+function exportObj(){ const o={}; SPEECHES.forEach((s,i)=>{ const t=startOf(i); if(t!=null) o[s.tab]=fmt(t); }); return o; }
+$('#exportBtn').addEventListener('click',async()=>{
+  const txt=JSON.stringify(exportObj(),null,2);
+  let ok=false; try{ await navigator.clipboard.writeText(txt); ok=true; }catch(e){}
+  if(ok){ toast('Timestamps copied'); return; }
+  openDlg('Copy timestamps','Select and copy this text.',txt,false);
+});
+$('#importBtn').addEventListener('click',()=>openDlg('Paste timestamps','Paste timestamps copied from this page. Keys are the tab names, values are times like 1:05:30.',JSON.stringify(exportObj(),null,2),true));
+function openDlg(title,text,val,applyable){
+  $('#dlgTitle').textContent=title; $('#dlgText').textContent=text; $('#dlgArea').value=val;
+  $('#dlgOk').hidden=!applyable; dlg.showModal();
+}
+$('#dlgCancel').addEventListener('click',()=>dlg.close());
+$('#dlgOk').addEventListener('click',()=>{
+  let o; try{ o=JSON.parse($('#dlgArea').value); }catch(e){ toast('That text is not valid JSON'); return; }
+  let n=0;
+  SPEECHES.forEach(s=>{ if(s.tab in o){ const v=parse(String(o[s.tab])); if(v!=null&&v!==undefined){ starts[s.id]=v; n++; } } });
+  save(); syncInputs(); renderTimeline(); live=-1; tick(); dlg.close(); toast(n+' timestamps applied');
+});
+
+// ---------- theme ----------
+$('#themeBtn').addEventListener('click',()=>{
+  const r=document.documentElement;
+  const dark = r.dataset.theme ? r.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = dark?'light':'dark';
+});
+
+// keyboard: space toggles play when not typing
+document.addEventListener('keydown',e=>{
+  if(e.target.matches('input,textarea,button')||!video.src) return;
+  if(e.key===' '){ e.preventDefault(); video.paused?video.play():video.pause(); }
+});
+
+
+// ================= Alternatives lab =================
+
+const DEFAULT_JUDGES = ['flow','policy','theory','trad','lay'];
+const FACTORS = [
+  {id:'tech',      name:'Tech over truth',          lo:'Truth and intuition', hi:'Strictly the flow', desc:'How much the judge treats dropped or conceded arguments as true regardless of quality.'},
+  {id:'theory',    name:'Theory appetite',          lo:'Reluctant',           hi:'Theory first',      desc:'Willingness to vote on procedural arguments such as spec, topicality and conditionality.'},
+  {id:'kritik',    name:'Kritik openness',          lo:'Skeptical',           hi:'Receptive',         desc:'Receptiveness to critiques of capitalism, colonialism and role-of-the-ballot framing.'},
+  {id:'impact',    name:'Big-impact weighing',      lo:'Probability first',   hi:'Magnitude first',   desc:'How far extinction-level impacts outweigh likely but smaller ones.'},
+  {id:'speed',     name:'Speed and jargon tolerance',lo:'Needs it slow',      hi:'Handles anything',  desc:'Whether blippy, fast or jargon-heavy arguments get credited.'},
+  {id:'framework', name:'Value–criterion strictness',lo:'Loose',              hi:'Strict',            desc:'Insistence that the round be decided through a clear ethical standard.'},
+];
+const PRESETS = {
+  flow:  {tech:90,theory:65,kritik:55,impact:55,speed:90,framework:40},
+  policy:{tech:65,theory:35,kritik:35,impact:90,speed:70,framework:25},
+  theory:{tech:80,theory:95,kritik:45,impact:50,speed:80,framework:60},
+  trad:  {tech:35,theory:25,kritik:25,impact:40,speed:20,framework:90},
+  k:     {tech:55,theory:40,kritik:95,impact:45,speed:65,framework:50},
+  lay:   {tech:15,theory:10,kritik:30,impact:60,speed:5, framework:50},
+};
+const TRAIT_KEY='space-round-judge-traits-v1';
+let traits={};
+try{ traits=JSON.parse(localStorage.getItem(TRAIT_KEY)||'{}')||{}; }catch(e){ traits={}; }
+function traitsOf(j){ return Object.assign({}, PRESETS[j], traits[j]||{}); }
+function saveTraits(){ try{ localStorage.setItem(TRAIT_KEY, JSON.stringify(traits)); }catch(e){} }
+let sampleFn = null;             // resolved sample() or null
+const labState = {};             // per speech: {judges:Set, alts:[], results:{}}
+const LAB_KEY = 'space-round-lab-v1';
+try { Object.assign(labState, JSON.parse(localStorage.getItem(LAB_KEY)||'{}')); } catch(e){}
+function saveLab(){ try{ const o={}; for(const k in labState){ const s=labState[k]; o[k]={judges:[...s.judges], alts:s.alts, results:s.results, steer:s.steer, trees:s.trees, sel:s.sel}; } localStorage.setItem(LAB_KEY, JSON.stringify(o)); }catch(e){} }
+function st(s){ let x=labState[s.id]; if(!x) x=labState[s.id]={}; if(!(x.judges instanceof Set)) x.judges=new Set(x.judges||DEFAULT_JUDGES); x.alts=x.alts||[]; x.results=x.results||{}; return x; }
+
+function nextOpponent(i){
+  const s=SPEECHES[i];
+  if(s.code==='CX') return {label:'the debater being questioned', code:null};
+  for(let k=i+1;k<SPEECHES.length;k++){ const n=SPEECHES[k]; if(n.code!=='CX' && n.side!==s.side) return {label:n.code+' ('+n.name+')', code:n.code}; }
+  return null;
+}
+function verb(s){ return s.code==='CX' ? 'questioning lines' : (['1AC','1NC'].includes(s.code) ? 'strategies for this constructive' : 'rebuttal strategies'); }
+
+function labMarkup(s,i){
+  const opp = nextOpponent(i);
+  return `
+  <p class="lab-intro">Ask Claude for other ways this ${s.code==='CX'?'cross-examination':'speech'} could have gone, then simulate ${opp?'what '+esc(opp.label)+' would say back and ':''}how different kinds of judges would vote.</p>
+  <div class="lab-off" id="labOff-${s.id}">Checking whether Claude is available on this page…</div>
+  <div class="lab-body" id="labBody-${s.id}" hidden>
+    <div class="lab-form">
+      <div>
+        <label class="fl" for="steer-${s.id}">Steer the alternatives (optional)</label>
+        <textarea id="steer-${s.id}" placeholder="${s.side==='neg'?'e.g. Go for the disease DA instead of theory':'e.g. Answer the spec shell with a counter-interpretation instead of defending the violation'}"></textarea>
+      </div>
+      <div>
+        <span class="fl" id="jl-${s.id}" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">Judge panel</span>
+        <div class="chips" role="group" aria-labelledby="jl-${s.id}" data-judges="${i}">
+          ${JUDGES.map(j=>`<button class="chip" type="button" data-j="${j.id}" title="${esc(j.desc)}" aria-pressed="false">${esc(j.name)}</button>`).join('')}
+        </div>
+        <p class="chip-help" id="jh-${s.id}"></p>
+      </div>
+      <div class="lab-actions">
+        <button class="btn primary" data-gen="${i}">Suggest alternatives</button>
+        <button class="btn" data-base="${i}">Score it as delivered</button>
+        <button class="btn" data-stop="${i}" hidden>Stop</button>
+        <span class="status" id="status-${s.id}" role="status" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="alts" id="alts-${s.id}"></div>
+    <section class="rt" aria-labelledby="rth-${s.id}">
+      <h4 id="rth-${s.id}">Ruling trees and win odds</h4>
+      <p class="lead">Claude maps how each judge would work through the key questions for every strategy. Slide a judge's traits to see the odds and ranking change instantly, with no extra requests.</p>
+      <div class="lab-actions">
+        <button class="btn primary" data-trees="${i}">Build ruling trees</button>
+        <span class="status" id="rtstatus-${s.id}" role="status" aria-live="polite"></span>
+      </div>
+      <div id="rt-${s.id}"></div>
+    </section>
+  </div>`;
+}
+
+function contextFor(i){
+  const lines=[];
+  lines.push('ROUND: Lincoln-Douglas practice round on space colonization as a moral imperative. The affirmative plan creates permanent human settlements in outer space endowed to a public trust. Speech order: 1AC, CX, 1NC, CX, 1AR, NR, 2AR. Decision was not recorded.');
+  SPEECHES.forEach((s,k)=>{
+    lines.push(`\n## ${s.code==='CX'?s.name:s.code+' - '+s.name} (${s.speaker.replace(/\*/g,'')})${k===i?'  <== TARGET SPEECH':''}${k>i?'  [later in the real round]':''}`);
+    if(s.roadmap) lines.push('Roadmap: '+s.roadmap);
+    s.summary.forEach(b=>lines.push('- '+b.replace(/\*\*/g,'')));
+    s.outline.forEach(o=>{ lines.push('  '+o.heading+': '+o.items.map(it=>it.label+' — '+it.text).join(' | ')); });
+  });
+  const tr = SPEECHES[i].transcript.join('\n\n');
+  lines.push('\n## TARGET SPEECH TRANSCRIPT (rough auto-transcript)\n'+tr.slice(0,14000));
+  return lines.join('\n');
+}
+function judgeList(set){ return JUDGES.filter(j=>set.has(j.id)).map(j=>`- id "${j.id}": ${j.name}. ${j.desc}`).join('\n'); }
+
+function errCopy(e){
+  switch(e&&e.code){
+    case 'not_granted': return 'Claude access was declined for this page. Reload to be asked again.';
+    case 'rate_limited': case 'queue_overflow': return 'Too many requests right now. Wait a minute, then try again.';
+    case 'invalid_json': return 'The answer came back in the wrong shape. Try again.';
+    case 'prompt_too_large': return 'This speech is too long to send. Try a shorter steer.';
+    case 'refused': return 'Claude declined this request.';
+    case 'session_expired': return 'Your session expired. Reload the page.';
+    case 'cancelled': return 'Stopped.';
+    default: return 'Something went wrong ('+((e&&e.code)||'unknown')+'). Try again.';
+  }
+}
+
+let ctl=null;
+function busy(s,on,msg){
+  const body=$('#labBody-'+s.id);
+  body.querySelectorAll('[data-gen],[data-base],[data-sim],[data-trees]').forEach(b=>b.disabled=on);
+  body.querySelector('[data-stop]').hidden=!on;
+  const el=$('#status-'+s.id); el.classList.remove('err'); el.textContent=msg||'';
+}
+function fail(s,e){ const el=$('#status-'+s.id); el.textContent=errCopy(e); if(e&&e.code!=='cancelled') el.classList.add('err'); }
+
+async function generate(i){
+  const s=SPEECHES[i], x=st(s);
+  x.steer=$('#steer-'+s.id).value.trim();
+  ctl=new AbortController(); const t0=Date.now();
+  busy(s,true,'Thinking…'); const timer=setInterval(()=>{$('#status-'+s.id).textContent='Thinking… '+Math.round((Date.now()-t0)/1000)+'s';},1000);
+  const prompt = `You are an expert debate coach. Below is a debate round. Propose 3 distinct alternative ${verb(s)} the ${s.side==='cx'?'questioner':'speaker'} of the TARGET SPEECH could have used instead of what was delivered. Each must be realistic within the time limit, use only arguments available at that point in the round (no new evidence the side never read unless it is an analytic), and differ meaningfully in what it goes for.${x.steer?`\n\nThe user wants the alternatives steered this way: ${x.steer}`:''}
+
+Reply with only JSON in this shape:
+{"alternatives":[{"title":"short name, under 8 words","approach":"one or two sentences on the overall strategy","keyArguments":["3 to 5 specific lines the speaker would say, each one sentence"],"collapse":"what the speech goes for or kicks","risk":"the main vulnerability"}]}
+
+${contextFor(i)}`;
+  try{
+    const out = await sampleFn.json(prompt,{signal:ctl.signal, cache:false});
+    const alts = (out && Array.isArray(out.alternatives)) ? out.alternatives.slice(0,4) : [];
+    if(!alts.length) throw {code:'invalid_json'};
+    x.alts=alts.map(a=>({title:String(a.title||'Alternative'),approach:String(a.approach||''),keyArguments:(Array.isArray(a.keyArguments)?a.keyArguments:[]).map(String).slice(0,6),collapse:String(a.collapse||''),risk:String(a.risk||'')}));
+    x.results={}; x.trees=null; saveLab(); renderAlts(i); renderRT(i);
+    busy(s,false,'');
+  }catch(e){ busy(s,false); fail(s,e); }
+  finally{ clearInterval(timer); }
+}
+
+async function simulate(i, key){
+  const s=SPEECHES[i], x=st(s);
+  if(!x.judges.size){ toast('Pick at least one judge'); return; }
+  const opp=nextOpponent(i);
+  const alt = key==='base' ? null : x.alts[+key];
+  const version = alt
+    ? `ALTERNATIVE VERSION OF THE TARGET SPEECH (replaces what was delivered):\nTitle: ${alt.title}\nApproach: ${alt.approach}\nKey lines:\n${alt.keyArguments.map(a=>'- '+a).join('\n')}\nCollapse: ${alt.collapse}`
+    : 'Evaluate the TARGET SPEECH exactly as delivered.';
+  ctl=new AbortController(); const t0=Date.now();
+  busy(s,true,'Simulating…'); const timer=setInterval(()=>{$('#status-'+s.id).textContent='Simulating… '+Math.round((Date.now()-t0)/1000)+'s';},1000);
+  const prompt = `You are simulating how a debate round would play out. Use the round below. ${version}
+
+Step 1: ${opp?`Predict how ${opp.label} would respond to this version: their strategy and the specific lines they would say. Base it on arguments they had available.`:'This is the final speech, so there is no response; set "response" to null.'}
+Step 2: Play the rest of the round out briefly in your head, then decide the round from the perspective of each judge below. Each judge votes AFF or NEG independently with a confidence from 50 to 100, a two-sentence reason for decision in that judge's voice, and the single argument that decided it.
+
+Judges:
+${judgeList(x.judges)}
+
+Be honest: judges may disagree, and the alternative may do worse than the real speech.
+
+Reply with only JSON in this shape:
+{"response":{"speech":"${opp&&opp.code?opp.code:'answer'}","strategy":"one or two sentences","keyLines":["3 to 5 one-sentence lines"]} or null,
+ "ballots":[{"judge":"judge id","vote":"AFF" or "NEG","confidence":75,"rfd":"two sentences","decisive":"short phrase"}],
+ "summary":"two sentences on how this version changes the round compared with what was delivered"}
+
+${contextFor(i)}`;
+  try{
+    const out = await sampleFn.json(prompt,{signal:ctl.signal, cache:false});
+    const ballots=(out&&Array.isArray(out.ballots)?out.ballots:[]).filter(b=>b&&(b.vote==='AFF'||b.vote==='NEG'));
+    if(!ballots.length) throw {code:'invalid_json'};
+    x.results[key]={
+      response: out.response&&typeof out.response==='object' ? {speech:String(out.response.speech||''),strategy:String(out.response.strategy||''),keyLines:(Array.isArray(out.response.keyLines)?out.response.keyLines:[]).map(String).slice(0,6)} : null,
+      ballots: ballots.map(b=>({judge:String(b.judge),vote:b.vote,confidence:Math.max(50,Math.min(100,+b.confidence||60)),rfd:String(b.rfd||''),decisive:String(b.decisive||'')})),
+      summary:String(out.summary||'')
+    };
+    saveLab(); renderAlts(i); busy(s,false,'');
+  }catch(e){ busy(s,false); fail(s,e); }
+  finally{ clearInterval(timer); }
+}
+
+function simHTML(r){
+  if(!r) return '';
+  const a=r.ballots.filter(b=>b.vote==='AFF').length, n=r.ballots.length-a;
+  const winner = a===n ? 'Split panel' : (a>n?`AFF wins ${a}–${n}`:`NEG wins ${n}–${a}`);
+  const jname = id => (JUDGES.find(j=>j.id===id)||{name:id}).name;
+  return `<div class="sim">
+    ${r.response?`<div><h5>Predicted ${esc(r.response.speech||'response')}</h5><div class="reply"><p>${esc(r.response.strategy)}</p><ul>${r.response.keyLines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div></div>`:''}
+    <div>
+      <h5>Simulated ballots</h5>
+      <div class="tally"><strong>${winner}</strong><div class="tally-bar" aria-hidden="true"><span class="a" style="flex:${a} 1 0"></span><span class="n" style="flex:${n} 1 0"></span></div></div>
+      ${r.summary?`<p style="margin:8px 0 10px;font-size:14px;max-width:70ch">${esc(r.summary)}</p>`:''}
+      <div class="ballots">${r.ballots.map(b=>`<div class="ballot"><div class="top"><span class="jt">${esc(jname(b.judge))}</span><span class="vote ${b.vote}">${b.vote}</span></div><div class="conf" title="Confidence ${b.confidence}%"><i style="width:${b.confidence}%"></i></div><p>${esc(b.rfd)}</p><p class="dec">Decided on: ${esc(b.decisive)}</p></div>`).join('')}</div>
+    </div></div>`;
+}
+
+function renderAlts(i){
+  const s=SPEECHES[i], x=st(s), box=$('#alts-'+s.id);
+  let html='';
+  if(x.results.base) html+=`<article class="alt baseline"><h4>As delivered</h4><p class="approach">The ${esc(s.code==='CX'?'cross-examination':s.code)} as it happened in the round.</p>${simHTML(x.results.base)}</article>`;
+  html+=x.alts.map((a,k)=>`<article class="alt${x.results[k]?' chosen':''}">
+      <h4>${esc(a.title)}</h4>
+      <p class="approach">${esc(a.approach)}</p>
+      <ul>${a.keyArguments.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>
+      <div class="meta">${a.collapse?`<span><b>Goes for:</b> ${esc(a.collapse)}</span>`:''}${a.risk?`<span><b>Risk:</b> ${esc(a.risk)}</span>`:''}</div>
+      <button class="btn${x.results[k]?'':' primary'}" data-sim="${i}" data-key="${k}">${x.results[k]?'Simulate again':'Simulate outcome'}</button>
+      ${simHTML(x.results[k])}
+    </article>`).join('');
+  box.innerHTML=html;
+}
+
+function renderJudges(i){
+  const s=SPEECHES[i], x=st(s);
+  $('#labBody-'+s.id).querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',x.judges.has(c.dataset.j)));
+  const n=x.judges.size;
+  $('#jh-'+s.id).textContent = n ? `${n} judge${n>1?'s':''} on the panel${n%2===0?'. An odd panel avoids ties.':'.'}` : 'Pick at least one judge.';
+}
+
+panelsEl.addEventListener('click',e=>{
+  const g=e.target.closest('[data-gen]'); if(g){ generate(+g.dataset.gen); return; }
+  const b=e.target.closest('[data-base]'); if(b){ simulate(+b.dataset.base,'base'); return; }
+  const m=e.target.closest('[data-sim]'); if(m){ simulate(+m.dataset.sim,m.dataset.key); return; }
+  if(e.target.closest('[data-stop]')){ ctl&&ctl.abort(); return; }
+  const c=e.target.closest('.chip');
+  if(c){ const i=+c.closest('[data-judges]').dataset.judges, x=st(SPEECHES[i]);
+    x.judges.has(c.dataset.j)?x.judges.delete(c.dataset.j):x.judges.add(c.dataset.j); saveLab(); renderJudges(i); renderRT(i); }
+});
+
+
+// ================= Ruling trees =================
+const sig=z=>1/(1+Math.exp(-z)), logit=p=>Math.log(p/(1-p));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function beneficiary(s){ if(s.side!=='cx') return s.side; return /^\*?Negative questions/.test(s.speaker)?'neg':'aff'; }
+function pYes(n,v){ let z=logit(clamp(+n.base||.5,.02,.98)); FACTORS.forEach(f=>{ z+=clamp(+((n.weights||{})[f.id])||0,-2,2)*((v[f.id]??50)-50)/50; }); return sig(z); }
+function pAff(tree,id,v,d=0){ if(id==='AFF') return 1; if(id==='NEG') return 0; const n=tree.map[id]; if(!n||d>8) return .5; const p=pYes(n,v); return p*pAff(tree,n.yes,v,d+1)+(1-p)*pAff(tree,n.no,v,d+1); }
+function pWin(tree,s,v){ const a=pAff(tree,tree.root,v); return beneficiary(s)==='aff'?a:1-a; }
+function majority(ps){ let dist=[1]; ps.forEach(p=>{ const nd=new Array(dist.length+1).fill(0); dist.forEach((q,k)=>{ nd[k]+=q*(1-p); nd[k+1]+=q*p; }); dist=nd; }); const n=ps.length; let m=0; dist.forEach((q,k)=>{ if(k*2>n) m+=q; else if(k*2===n) m+=q/2; }); return m; }
+const pct=x=>Math.round(x*100)+'%';
+
+function cleanTree(t){
+  if(!t||!Array.isArray(t.nodes)||!t.nodes.length) return null;
+  const map={};
+  t.nodes.slice(0,9).forEach(n=>{ if(n&&n.id&&!['AFF','NEG'].includes(n.id)) map[String(n.id)]={id:String(n.id),question:String(n.question||''),base:clamp(+n.base||.5,.02,.98),weights:n.weights||{},yes:String(n.yes||'AFF'),no:String(n.no||'NEG')}; });
+  Object.values(map).forEach(n=>{ ['yes','no'].forEach(k=>{ if(!(n[k] in map)&&n[k]!=='AFF'&&n[k]!=='NEG') n[k]=k==='yes'?'AFF':'NEG'; }); });
+  const root=String(t.root||t.nodes[0].id);
+  return map[root]?{root,map}:null;
+}
+
+async function buildTrees(i){
+  const s=SPEECHES[i], x=st(s);
+  const strategies=[{key:'base',title:'As delivered',text:'The target speech exactly as delivered.'}]
+    .concat(x.alts.map((a,k)=>({key:String(k),title:a.title,text:`${a.approach} Key lines: ${a.keyArguments.join(' / ')} Goes for: ${a.collapse}`})));
+  ctl=new AbortController(); const t0=Date.now();
+  const stEl=$('#rtstatus-'+s.id); stEl.classList.remove('err');
+  const btn=$('#labBody-'+s.id).querySelector('[data-trees]'); btn.disabled=true;
+  const timer=setInterval(()=>{ stEl.textContent='Mapping judge decisions… '+Math.round((Date.now()-t0)/1000)+'s'; },1000);
+  stEl.textContent='Mapping judge decisions…';
+  const prompt=`You are an expert debate judge-trainer. For each strategy below, build a RULING TREE: the ordered yes/no questions a judge would resolve to decide the whole round if the TARGET SPEECH were given that way (consider what the opponent would likely say next and the rest of the round).
+
+Rules for each tree:
+- 3 to 6 decision nodes, depth at most 4. Each node's "yes" and "no" point to another node id or to a leaf "AFF" or "NEG" (the side that wins the round on that path).
+- "question" is a specific, plain-language question about this round (for example "Does the spec shell come before substance?").
+- "base" is the probability (0.02 to 0.98) that a NEUTRAL judge, with every trait at the midpoint, answers yes.
+- "weights" gives, for each trait, a number from -2 to 2: how strongly moving that trait to its maximum raises (+) or lowers (-) the chance of yes. Use 0 when a trait is irrelevant. Traits:
+${FACTORS.map(f=>`  - ${f.id}: ${f.name}. Low = ${f.lo}; high = ${f.hi}. ${f.desc}`).join('\n')}
+Be realistic and differentiated; strategies should not all get the same tree.
+
+Strategies:
+${strategies.map(t=>`- key "${t.key}": ${t.title}. ${t.text}`).join('\n')}
+
+Reply with only JSON in this shape:
+{"trees":[{"key":"base","root":"n1","nodes":[{"id":"n1","question":"...","base":0.6,"weights":{"tech":1,"theory":2,"kritik":0,"impact":0,"speed":0.5,"framework":1},"yes":"n2","no":"AFF"}]}]}
+
+${contextFor(i)}`;
+  try{
+    const out=await sampleFn.json(prompt,{signal:ctl.signal,cache:false});
+    const trees={};
+    (out&&Array.isArray(out.trees)?out.trees:[]).forEach(t=>{ const c=cleanTree(t); const key=String(t.key); const meta=strategies.find(q=>q.key===key); if(c&&meta) trees[key]={...c,title:meta.title}; });
+    if(!Object.keys(trees).length) throw {code:'invalid_json'};
+    x.trees=trees; x.sel=x.sel||{}; x.sel.key=trees[x.sel.key]?x.sel.key:Object.keys(trees)[0];
+    saveLab(); renderRT(i); stEl.textContent='';
+  }catch(e){ stEl.textContent=errCopy(e); if(e&&e.code!=='cancelled') stEl.classList.add('err'); }
+  finally{ clearInterval(timer); btn.disabled=false; }
+}
+
+function panelJudges(x){ return JUDGES.filter(j=>x.judges.has(j.id)); }
+
+function renderRT(i){
+  const s=SPEECHES[i], x=st(s), box=$('#rt-'+s.id);
+  if(!x.trees){ box.innerHTML=''; return; }
+  const judges=panelJudges(x);
+  if(!judges.length){ box.innerHTML='<p class="lab-off" style="margin-top:12px">Add at least one judge to the panel above.</p>'; return; }
+  x.sel=x.sel||{};
+  if(!judges.find(j=>j.id===x.sel.judge)) x.sel.judge=judges[0].id;
+  if(!x.trees[x.sel.key]) x.sel.key=Object.keys(x.trees)[0];
+  const side=beneficiary(s).toUpperCase();
+  box.innerHTML=`<div class="rt-grid">
+    <div class="judge-card" id="jc-${s.id}"></div>
+    <div><p class="lead" style="margin:0 0 8px">Odds that the ${side} side wins the round, by strategy and judge. Ranked by the chance of winning the whole panel. Click a cell to see that judge's tree.</p>
+      <div class="matrix-wrap" id="mx-${s.id}"></div></div>
+    <div class="tree-card" id="tc-${s.id}"></div>
+  </div>`;
+  renderJudgeCard(i); renderMatrix(i); renderTree(i);
+}
+
+function renderJudgeCard(i){
+  const s=SPEECHES[i], x=st(s), j=x.sel.judge, v=traitsOf(j), jd=JUDGES.find(q=>q.id===j);
+  const edited=!!traits[j]&&Object.keys(traits[j]).length;
+  $('#jc-'+s.id).innerHTML=`<div class="row1">
+      <div class="tabs-list" role="tablist" aria-label="Judge to adjust">${panelJudges(x).map(q=>`<button class="tab" role="tab" aria-selected="${q.id===j}" tabindex="${q.id===j?0:-1}" data-pickj="${i}" data-j="${q.id}">${esc(q.name)}</button>`).join('')}</div>
+      <button class="btn" data-reset="${i}" ${edited?'':'disabled'}>Reset to preset</button>
+    </div>
+    <div class="sliders">${FACTORS.map(f=>`<div class="sl${traits[j]&&f.id in traits[j]?' changed':''}">
+      <label for="sl-${s.id}-${f.id}"><span>${esc(f.name)}</span><output id="o-${s.id}-${f.id}">${v[f.id]}</output></label>
+      <input type="range" min="0" max="100" step="1" id="sl-${s.id}-${f.id}" value="${v[f.id]}" data-slide="${i}" data-f="${f.id}" aria-describedby="d-${s.id}-${f.id}">
+      <div class="ends" id="d-${s.id}-${f.id}"><span>${esc(f.lo)}</span><span>${esc(f.hi)}</span></div></div>`).join('')}</div>
+    <p class="chip-help">${esc(jd.desc)} Traits are shared across every speech on this page.</p>`;
+}
+
+function computeGrid(i){
+  const s=SPEECHES[i], x=st(s), judges=panelJudges(x);
+  const rows=Object.entries(x.trees).map(([key,t])=>{
+    const ps=judges.map(j=>pWin(t,s,traitsOf(j.id)));
+    return {key,title:t.title,ps,maj:majority(ps)};
+  });
+  rows.sort((a,b)=>b.maj-a.maj);
+  const colRank=judges.map((_,c)=>{ const order=rows.map((r,k)=>[r.ps[c],k]).sort((a,b)=>b[0]-a[0]); const rk={}; order.forEach(([,k],n)=>rk[k]=n+1); return rk; });
+  return {judges,rows,colRank};
+}
+
+function heat(p){ return `background:color-mix(in srgb, var(--foreground) ${Math.round(p*22)}%, transparent)`; }
+
+function renderMatrix(i){
+  const s=SPEECHES[i], x=st(s), {judges,rows,colRank}=computeGrid(i);
+  $('#mx-'+s.id).innerHTML=`<table class="matrix"><thead><tr><th class="name" scope="col">Strategy</th>
+    ${judges.map(j=>`<th scope="col" class="${j.id===x.sel.judge?'sel':''}"><button data-pickj="${i}" data-j="${j.id}">${esc(j.name.replace(' judge',''))}</button></th>`).join('')}
+    <th scope="col">Wins panel</th></tr></thead><tbody>
+    ${rows.map((r,k)=>`<tr><td class="name"><span class="rank${k===0?' r1':''}">${k+1}</span>${esc(r.title)}</td>
+      ${r.ps.map((p,c)=>`<td class="cell${colRank[c][k]===1?' best':''}${x.sel.key===r.key&&x.sel.judge===judges[c].id?' on':''}" style="${heat(p)}" data-cell="${i}" data-key="${r.key}" data-j="${judges[c].id}" tabindex="0" aria-label="${esc(r.title)}, ${esc(judges[c].name)}: ${pct(p)}, rank ${colRank[c][k]}">${pct(p)}<small>#${colRank[c][k]}</small></td>`).join('')}
+      <td class="maj">${pct(r.maj)}</td></tr>`).join('')}
+    </tbody></table>`;
+}
+
+function nodeHTML(t,id,v,reach,d){
+  if(id==='AFF'||id==='NEG') return `<div class="leaf ${id}">${id} wins <small>path reached ${pct(reach)} of the time</small></div>`;
+  const n=t.map[id]; if(!n||d>8) return '';
+  const p=pYes(n,v);
+  const drivers=FACTORS.map(f=>({f,w:+((n.weights||{})[f.id])||0})).filter(o=>Math.abs(o.w)>=.5).sort((a,b)=>Math.abs(b.w)-Math.abs(a.w)).slice(0,3);
+  return `<div class="tnode${reach<.08?' dim':''}"><div class="tq"><p>${esc(n.question)}</p>
+    <div class="ybar" aria-hidden="true"><span style="width:${p*100}%"></span></div>
+    <div class="tmeta"><span>Yes ${pct(p)}</span>${drivers.map(o=>`<span class="drv" title="${o.w>0?'A higher':'A lower'} ${esc(o.f.name.toLowerCase())} makes yes more likely">${o.w>0?'↑':'↓'} ${esc(o.f.name)}</span>`).join('')}</div></div>
+    <div class="tkids">
+      <div class="tbranch"><span class="blabel">Yes, ${pct(p)}</span>${nodeHTML(t,n.yes,v,reach*p,d+1)}</div>
+      <div class="tbranch"><span class="blabel">No, ${pct(1-p)}</span>${nodeHTML(t,n.no,v,reach*(1-p),d+1)}</div>
+    </div></div>`;
+}
+
+function renderTree(i){
+  const s=SPEECHES[i], x=st(s), t=x.trees[x.sel.key], j=JUDGES.find(q=>q.id===x.sel.judge), v=traitsOf(j.id);
+  const w=pWin(t,s,v);
+  $('#tc-'+s.id).innerHTML=`<div class="hd"><strong>${esc(t.title)} with the ${esc(j.name.toLowerCase())}</strong><span class="odds">${beneficiary(s).toUpperCase()} wins ${pct(w)} of the time</span></div>${nodeHTML(t,t.root,v,1,0)}`;
+}
+
+function refreshRT(i, onlyNumbers){
+  const s=SPEECHES[i], x=st(s); if(!x.trees) return;
+  if(onlyNumbers){ renderMatrix(i); renderTree(i); } else renderRT(i);
+}
+
+panelsEl.addEventListener('click',e=>{
+  const b=e.target.closest('[data-trees]'); if(b){ buildTrees(+b.dataset.trees); return; }
+  const pj=e.target.closest('[data-pickj]'); if(pj){ const i=+pj.dataset.pickj, x=st(SPEECHES[i]); x.sel.judge=pj.dataset.j; saveLab(); renderJudgeCard(i); renderMatrix(i); renderTree(i); return; }
+  const c=e.target.closest('[data-cell]'); if(c){ const i=+c.dataset.cell, x=st(SPEECHES[i]); x.sel={key:c.dataset.key,judge:c.dataset.j}; saveLab(); renderJudgeCard(i); renderMatrix(i); renderTree(i); return; }
+  const r=e.target.closest('[data-reset]'); if(r){ const i=+r.dataset.reset, x=st(SPEECHES[i]); delete traits[x.sel.judge]; saveTraits(); renderJudgeCard(i); renderMatrix(i); renderTree(i); }
+});
+panelsEl.addEventListener('keydown',e=>{ const c=e.target.closest('[data-cell]'); if(c&&(e.key==='Enter'||e.key===' ')){ e.preventDefault(); c.click(); } });
+panelsEl.addEventListener('input',e=>{
+  const sl=e.target.closest('[data-slide]'); if(!sl) return;
+  const i=+sl.dataset.slide, s=SPEECHES[i], x=st(s), f=sl.dataset.f, j=x.sel.judge;
+  traits[j]=traits[j]||{}; traits[j][f]=+sl.value;
+  if(traits[j][f]===PRESETS[j][f]) delete traits[j][f];
+  saveTraits();
+  $('#o-'+s.id+'-'+f).textContent=sl.value;
+  sl.closest('.sl').classList.toggle('changed', !!(traits[j]&&f in traits[j]));
+  $('#jc-'+s.id).querySelector('[data-reset]').disabled=!(traits[j]&&Object.keys(traits[j]).length);
+  refreshRT(i,true);
+});
+
+SPEECHES.forEach((s,i)=>{ const x=st(s); $('#steer-'+s.id).value=x.steer||''; renderJudges(i); renderAlts(i); renderRT(i); });
+
+(async()=>{
+  let fn=null;
+  try{ fn = window.claude && typeof window.claude.use==='function' ? await window.claude.use('sample') : null; }catch(e){ fn=null; }
+  sampleFn=fn;
+  SPEECHES.forEach(s=>{
+    $('#labOff-'+s.id).hidden=!!fn;
+    $('#labBody-'+s.id).hidden=!fn;
+    if(!fn) $('#labOff-'+s.id).textContent='Alternatives use Claude, so they only work when this page is opened in Claude. The rest of the page works anywhere.';
+  });
+})();
+
+syncInputs(); renderTimeline();
+</script>
+</body>
+</html>

@@ -81,6 +81,16 @@ function UpcomingList({
               {t.circuits && <p>{t.circuits}</p>}
               {t.events && <p className="max-w-[16rem] truncate">{t.events}</p>}
               {t.schoolCount ? <p>{t.schoolCount} schools</p> : null}
+              {t.webname && (
+                <img
+                  src={`/tournament-logos/${t.webname}.png`}
+                  alt=""
+                  className="mt-2 h-8 w-auto max-w-[120px] object-contain opacity-60"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              )}
             </div>
           </Link>
         </li>
