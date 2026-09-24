@@ -16,6 +16,7 @@ import {
   eventSegment,
   isCanonicalVideoRoute,
   legacyVideoRouteHref,
+  previousVideoRouteHref,
   matchupSegment,
   parseRoundTitle,
   parseVideoRouteMatchup,
@@ -55,12 +56,12 @@ describe("videoRouteSegments", () => {
       season: "2006",
       event: "ndt",
       matchup: "finals",
-      teams: "northwestern-gw-vs-michigan-state-bp",
+      teams: "northwestern-gw-michigan-state-bp",
     });
   });
 
   it("builds the whole path from a tuple", () => {
-    expect(videoRouteHref(ndtFinal)).toBe("/videos/2006/ndt/finals/northwestern-gw-vs-michigan-state-bp");
+    expect(videoRouteHref(ndtFinal)).toBe("/videos/2006/ndt/finals/northwestern-gw-michigan-state-bp");
   });
 
   it("falls back to the format for a round with no tournament", () => {
@@ -147,7 +148,7 @@ describe("videoRouteHref for untagged videos", () => {
         seasonYear: 2027,
         style: "Round Analysis",
       }),
-    ).toBe("/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis");
+    ).toBe("/videos/2022/ndt/finals/dartmouth-sv-michigan-pr/analysis");
   });
 
   it("gives each part of a round uploaded in pieces its own address", () => {
@@ -162,8 +163,8 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Emory GS",
         negTeam: "Kansas LS",
       });
-    expect(part(1)).toBe("/videos/2025/shirley/finals/emory-gs-vs-kansas-ls-part-1");
-    expect(part(2)).toBe("/videos/2025/shirley/finals/emory-gs-vs-kansas-ls-part-2");
+    expect(part(1)).toBe("/videos/2025/shirley/finals/emory-gs-kansas-ls/part-1");
+    expect(part(2)).toBe("/videos/2025/shirley/finals/emory-gs-kansas-ls/part-2");
   });
 
   it("drops a year trailing the tournament name", () => {
@@ -178,7 +179,7 @@ describe("videoRouteHref for untagged videos", () => {
         affTeam: "Michigan State GL",
         negTeam: "Dartmouth CG",
       }),
-    ).toBe("/videos/2026/ndt/octafinals/michigan-state-gl-vs-dartmouth-cg");
+    ).toBe("/videos/2026/ndt/octafinals/michigan-state-gl-dartmouth-cg");
   });
 });
 
@@ -190,10 +191,29 @@ describe("legacyVideoRouteHref", () => {
   });
 });
 
+describe("previousVideoRouteHref", () => {
+  it("rebuilds the four-segment path whose teams carried vs and the variant", () => {
+    expect(previousVideoRouteHref(ndtFinal)).toBe(
+      "/videos/2006/ndt/finals/northwestern-gw-vs-michigan-state-bp",
+    );
+    expect(
+      previousVideoRouteHref({
+        videoId: "Afl7_hl-H0c",
+        title: "2022 NDT Finals - Dartmouth SV vs Michigan PR  - Round Analysis Infographic for Classrooms",
+        seasonYear: 2027,
+        style: "Round Analysis",
+      }),
+    ).toBe("/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr-round-analysis");
+    expect(
+      previousVideoRouteHref({ videoId: "x", title: "How to give a 2NR", style: "Kritik" }),
+    ).toBeNull();
+  });
+});
+
 describe("teamsSegment", () => {
   it("names both teams, or the one recorded", () => {
     expect(teamsSegment({ videoId: "x", title: "t", affTeam: "Dartmouth SV", negTeam: "Michigan PR" })).toBe(
-      "dartmouth-sv-vs-michigan-pr",
+      "dartmouth-sv-michigan-pr",
     );
     expect(teamsSegment({ videoId: "x", title: "t", negTeam: "Michigan PR" })).toBe("michigan-pr");
     expect(teamsSegment({ videoId: "x", title: "t" })).toBe("");

@@ -91,6 +91,7 @@ export {
   eventSegment,
   isCanonicalVideoRoute,
   legacyVideoRouteHref,
+  previousVideoRouteHref,
   matchupSegment,
   parseRoundTitle,
   parseVideoRouteMatchup,
@@ -126,6 +127,8 @@ export {
   type VideoRelationKind,
 } from "./lib/video-relations";
 export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
+export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
+export { stackKeyOf } from "./components/video-grid/video-stacks";
 export { WatchSidePanel } from "./components/watch/WatchSidePanel";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";

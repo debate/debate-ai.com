@@ -4,20 +4,28 @@ import { notFound, permanentRedirect } from "next/navigation"
 import {
   SlowSpreadButton,
   VideoWatchPage,
+  stackKeyOf,
   videoRouteHref,
   type VideoType,
 } from "debate-videos"
 import { CategoryDock } from "@/components/layout/CategoryDock"
 import { VideoStaffControls } from "@/components/videos/VideoStaffControls"
-import { getRelatedVideos, getVideoByRouteSegments } from "@/lib/videos/video-repository"
+import {
+  getRelatedVideos,
+  getVideoByRouteSegments,
+  getVideoStacks,
+} from "@/lib/videos/video-repository"
 import { getVideoSidePanelContent } from "@/lib/videos/video-content"
 
 /**
- * One video at its canonical address, shared by the two route shapes:
+ * One video at its canonical address, shared by the three route shapes:
  *
  * - `/videos/<season>/<tournament>/<round>/<teams>` for a tagged round, e.g.
- *   `/videos/2022/ndt/finals/dartmouth-sv-vs-michigan-pr`
+ *   `/videos/2022/ndt/finals/dartmouth-sv-michigan-pr`
  *   (`app/videos/[category]/[event]/[matchup]/[teams]/page.tsx`);
+ * - `.../<teams>/<variant>` for a video made from that round — its analysis,
+ *   one part of a split upload — e.g. `.../dartmouth-sv-michigan-pr/analysis`
+ *   (`app/videos/[category]/[event]/[matchup]/[teams]/[variant]/page.tsx`);
  * - `/videos/<season>/<event>/<matchup>` for everything else, and for round
  *   links shared before rounds got their own shape
  *   (`app/videos/[category]/[event]/[matchup]/page.tsx`).
@@ -81,16 +89,20 @@ export async function VideoRoutePage({ segments }: { segments: string[] }) {
     permanentRedirect(canonical)
   }
 
-  const [related, sidePanel] = await Promise.all([
+  const stackKey = stackKeyOf(video)
+  const [related, sidePanel, stacks] = await Promise.all([
     getRelatedVideos(video, RELATED_VIDEO_COUNT) as Promise<VideoType[]>,
     getVideoSidePanelContent(video[0] as string),
+    stackKey ? getVideoStacks([stackKey]) : null,
   ])
+  const stack = stackKey ? ((stacks?.stacks[stackKey] ?? []) as VideoType[]) : []
 
   return (
     <Suspense>
       <VideoWatchPage
         video={video}
         related={related}
+        stack={stack}
         documents={sidePanel.documents}
         links={sidePanel.links.map((link) => ({
           video: link.video as VideoType,

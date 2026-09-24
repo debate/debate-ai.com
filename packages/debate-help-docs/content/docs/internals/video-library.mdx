@@ -172,6 +172,24 @@ so the grid never waits on the request. The **Stacked playlists** toggle
 (`useVideoState`, on by default) passes `enabled: false` and gives every video
 its own slot again.
 
+**On the watch page.** `app/videos/_watch/video-route-page.tsx` resolves the
+video's own stack key with `getVideoStacks([key])` and passes the members to
+`VideoWatchPage` as `stack`; `components/watch/WatchStackPlaylist.tsx` lists
+them under the player in stack order, current one marked, each labelled
+`Round` / `Analysis` / `Part N` from its address's variant segment. Stack
+members are dropped from the "Related videos" rows so they are not listed twice.
+
+**Addresses.** `lib/video-route.ts` files a round at
+`/videos/<season>/<tournament>/<round>/<aff>-<neg>` — no `vs` — and a video
+made from it (a lecture whose title reads as that round, or one part of a
+split upload) one segment below, at `…/<teams>/<variant>`: `analysis` (the
+category, less a leading `round-`), `part-2`, or both joined. The fifth
+segment is served by `app/videos/[category]/[event]/[matchup]/[teams]/[variant]/page.tsx`.
+`getVideoByRouteSegments` still matches the previous four-segment spelling
+(`…/dartmouth-sv-vs-michigan-pr-round-analysis`, rebuilt by
+`previousVideoRouteHref`) and the older three-segment one, and the page
+redirects both to the canonical path.
+
 ## What a big grid costs
 
 The grid is unbounded: every page of infinite scroll appends sixty more cards

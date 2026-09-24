@@ -55,6 +55,7 @@ import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
 import { VideoListRows } from "../../components/video-grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
 import { RelatedVideoNav } from "../../components/watch/RelatedVideoNav"
+import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
@@ -84,6 +85,9 @@ import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
 import type { VideoType } from "../../types/videos"
 
+/** Shared empty default, so an absent list keeps one identity across renders. */
+const NO_VIDEOS: VideoType[] = []
+
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
 
@@ -99,6 +103,13 @@ export interface VideoWatchPageProps {
   documents?: VideoDocument[]
   /** Videos an editor tied to this one; they fill the "Analysis" tab. */
   links?: LinkedVideo[]
+  /**
+   * Every member of the stacked playlist this video belongs to — the round
+   * and its analysis, the parts of a split upload — in stack order, this
+   * video included. Shown as a playlist under the player when it holds two
+   * or more.
+   */
+  stack?: VideoType[]
   /** App-owned navigation dock, rendered at the top of the sidebar. */
   dockSlot?: React.ReactNode
   /** App-specific toolbar buttons — see `SlowSpreadButton`. */
@@ -107,13 +118,22 @@ export interface VideoWatchPageProps {
 
 export function VideoWatchPage({
   video,
-  related = [],
+  related: relatedVideos = NO_VIDEOS,
   documents = [],
   links = [],
+  stack = NO_VIDEOS,
   dockSlot,
   extraControls,
 }: VideoWatchPageProps) {
   const router = useRouter()
+
+  // The playlist already lists its members; the related rows need not repeat them.
+  const related = useMemo(() => {
+    const inStack = new Set(stack.map((member) => member[0]))
+    return inStack.size > 1
+      ? relatedVideos.filter((candidate) => !inStack.has(candidate[0]))
+      : relatedVideos
+  }, [relatedVideos, stack])
 
   const [
     videoId,
@@ -599,6 +619,8 @@ export function VideoWatchPage({
                 </div>
               )}
             </div>
+
+            <WatchStackPlaylist current={video} stack={stack} />
 
             {related.length > 0 && (
               <RelatedVideoNav
