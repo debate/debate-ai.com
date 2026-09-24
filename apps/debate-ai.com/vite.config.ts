@@ -128,6 +128,7 @@ export default defineConfig({
       // Workspace packages ship TypeScript sources, so they always have to be
       // bundled rather than externalized to the Cloudflare runtime.
       "reason-editor",
+      "debate-ai-webui",
       "debate-card-parser",
       "debate-card-search",
       "debate-data-sync",

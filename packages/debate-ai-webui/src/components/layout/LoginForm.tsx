@@ -22,6 +22,7 @@ import { authClient } from "../../lib/auth/client"
 import { trackSignUpCompleted } from "../../lib/analytics/mixpanel"
 import { useAuthProviders } from "../../lib/hooks/useAuthProviders"
 import { isNativeWrapper, openInSystemBrowser } from "../../lib/native/tauri"
+import { getHostConfig } from "../../host/config"
 
 /** Social providers this form knows how to render, in display order. */
 const SOCIAL_PROVIDERS = ["google", "discord", "linkedin"] as const
@@ -177,6 +178,23 @@ export function LoginForm({ callbackURL = "/" }: LoginFormProps) {
   useEffect(() => {
     setIsNative(isNativeWrapper())
   }, [])
+
+  // A host on another origin (the browser extension) cannot use the site's
+  // session cookie, so it signs in through its own handoff — a tab on the
+  // website that passes the session back — rather than these controls.
+  const hostSignIn = getHostConfig().signIn
+  if (hostSignIn) {
+    return (
+      <div className="flex flex-col gap-4">
+        <p className="text-center text-sm text-muted-foreground">
+          Sign-in opens debate-ai.com in a new tab and comes back here when you&apos;re done.
+        </p>
+        <Button className="w-full" onClick={hostSignIn}>
+          Sign in
+        </Button>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (

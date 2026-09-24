@@ -1,0 +1,22 @@
+/* The Options page's stylesheet: debate-ai.com's own (Tailwind v4, the
+ * site's themes and fonts), plus the classes the extension's settings screen
+ * uses.
+ *
+ * Compiled by `bun run build:app-css` with the Tailwind v4 CLI into
+ * `public/debate-ai-app.css`, which options/index.html links as a static file.
+ * It is kept out of Vite's CSS pipeline on purpose: the rest of the extension
+ * is Tailwind v3 through PostCSS, which rejects v4's `@layer` output, and the
+ * two stylesheets define the same `--background`/`--primary` variables in
+ * different colour formats, so they can't share a page either. */
+@import "debate-ai-webui/app.css";
+
+@source "../../entrypoints/options";
+@source "../../components/ui";
+
+/* The settings form is prose-width regardless of how wide the content column
+ * gets — a 1000px-wide text field is harder to read, not easier. */
+.options-settings {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}

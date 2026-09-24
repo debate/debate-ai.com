@@ -1,7 +1,7 @@
 {
   "name": "debate-ai-webui",
   "version": "0.1.0",
-  "description": "The whole debate-ai.com frontend as a React package — the app shell, every route, and the components and tools behind them — mountable in Next.js or, through its next/* shims, in any React host such as the browser extension",
+  "description": "The whole debate-ai.com frontend as a React package \u2014 the app shell, every route, and the components and tools behind them \u2014 mountable in Next.js or, through its next/* shims, in any React host such as the browser extension",
   "private": true,
   "type": "module",
   "author": "vtempest",
@@ -10,7 +10,6 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./styles.css": "./src/styles.css",
     "./app.css": "./src/styles/app.css",
     "./next/*": "./src/next/*.tsx",
     "./*": "./src/*",
@@ -41,7 +40,6 @@
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
     "compute-cosine-similarity": "^1.1.0",
-    "debate-api-client": "workspace:*",
     "debate-community": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",

@@ -11,6 +11,7 @@ import {
 import { useAuthProviders } from "../../lib/hooks/useAuthProviders";
 import { useSession } from "../../lib/hooks/useSession";
 import { debugLog } from "../../lib/debug-log";
+import { getHostConfig } from "../../host/config";
 
 /**
  * Google One Tap prompt, mounted in the root layout so every page of the app
@@ -23,6 +24,13 @@ import { debugLog } from "../../lib/debug-log";
  * client id makes Google Identity Services fail on every page load.
  */
 export function OneTap() {
+  // Google's script can only load on the website itself: an extension page's
+  // CSP refuses it, and the host signs in its own way (`HostConfig.signIn`).
+  if (!getHostConfig().oneTap) return null;
+  return <OneTapPrompt />;
+}
+
+function OneTapPrompt() {
   const { isAuthenticated, isLoading } = useSession();
   const {
     providers,

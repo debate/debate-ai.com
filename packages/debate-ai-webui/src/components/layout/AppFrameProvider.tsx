@@ -36,6 +36,7 @@ import { usePathname } from "next/navigation"
 
 import { dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
 import { keepAlive } from "../../lib/nav/frame-pool"
+import { getHostConfig } from "../../host/config"
 
 interface AppFrameContextValue {
   /** The path currently shown in the frame, or `null` when not framing. */
@@ -71,7 +72,9 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
   const lastPathnameRef = useRef(pathname)
 
   const openInFrame = useCallback((href: string) => {
-    if (!isDockNavPath(href)) return false
+    // A host with no server behind its origin has nothing to frame; the
+    // caller falls back to an ordinary route change.
+    if (!getHostConfig().framing || !isDockNavPath(href)) return false
 
     setFramedPath(href)
     setMountedPaths((paths) => keepAlive(paths, href, href))
@@ -89,7 +92,7 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
 
   const preloadFrame = useCallback(
     (href: string) => {
-      if (!isDockNavPath(href) || typeof document === "undefined") return
+      if (!getHostConfig().framing || !isDockNavPath(href) || typeof document === "undefined") return
 
       if (framedPath) {
         setMountedPaths((paths) => keepAlive(paths, href, framedPath))

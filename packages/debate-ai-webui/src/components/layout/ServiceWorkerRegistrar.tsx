@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { debugLog } from "../../lib/debug-log";
+import { getHostConfig } from "../../host/config";
 
 /**
  * Registers the offline service worker built by `npm run build:sw`.
@@ -16,6 +17,8 @@ import { debugLog } from "../../lib/debug-log";
  */
 export function ServiceWorkerRegistrar() {
   useEffect(() => {
+    // The worker is served from the website's own root.
+    if (!getHostConfig().serviceWorker) return;
     if (!("serviceWorker" in navigator)) {
       debugLog("Service Worker not supported");
       return;
