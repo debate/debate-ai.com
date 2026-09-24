@@ -10,6 +10,17 @@ describe("translateMysqlToSqlite", () => {
     expect(translateMysqlToSqlite("CONVERT_TZ(tourn.start, '+00:00', tourn.tz)")).toBe("tourn.start");
   });
 
+  it("rewrites bare ± INTERVAL date arithmetic", () => {
+    // upstream's upcoming-tournaments scope; only NODE_ENV=test swaps it for a literal
+    expect(translateMysqlToSqlite("tourn.end > DATE(NOW() - INTERVAL 2 DAY)")).toBe(
+      "tourn.end > date(datetime(datetime('now'), '-' || (2) || ' days'))",
+    );
+    expect(translateMysqlToSqlite("ts.start + INTERVAL 1 HOUR")).toBe(
+      "datetime(ts.start, '+' || (1) || ' hours')",
+    );
+    expect(translateMysqlToSqlite("select 'a - INTERVAL 2 DAY'")).toBe("select 'a - INTERVAL 2 DAY'");
+  });
+
   it("rewrites string and aggregate functions", () => {
     expect(translateMysqlToSqlite("CONCAT(a.id, '-', b.id)")).toBe("((a.id) || ('-') || (b.id))");
     expect(translateMysqlToSqlite("GROUP_CONCAT(x.name SEPARATOR ', ')")).toBe("group_concat(x.name, ', ')");

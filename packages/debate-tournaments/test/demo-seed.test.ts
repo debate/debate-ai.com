@@ -36,7 +36,13 @@ describe("demo seed", () => {
   });
 
   it("lists the public demo tournaments as upcoming, never the hidden one", async () => {
-    const { status, body } = await get("/pages/invite/upcoming");
+    // Under NODE_ENV=test upstream swaps its `NOW() - INTERVAL 2 DAY` scope for a
+    // fixed date; run the production query, which is what D1 sees.
+    const nodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+    const { status, body } = await get("/pages/invite/upcoming").finally(() => {
+      process.env.NODE_ENV = nodeEnv;
+    });
     expect(status).toBe(200);
     const ids = body.map((t: any) => t.tournId);
     expect(ids).toEqual(expect.arrayContaining([90001, 90002, 90003]));

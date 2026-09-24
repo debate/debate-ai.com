@@ -133,6 +133,24 @@ const REWRITES: Record<string, FunctionRewrite> = {
 
 const FUNCTION_RE = new RegExp(`\\b(${Object.keys(REWRITES).join("|")})\\s*\\(`, "iy");
 
+// `x - INTERVAL 2 DAY`, where x is a column or a (rewritten) call like
+// datetime('now'): MySQL date arithmetic without DATE_SUB/DATE_ADD. String
+// literals are masked first so text inside them is never rewritten.
+const INTERVAL_ARITHMETIC_RE =
+  /((?:\b[\w.]+\([^()]*\))|(?:\b[A-Za-z_][\w.]*))\s*([+-])\s*(INTERVAL\s+\S+\s+[A-Za-z]+)\b/g;
+
+function rewriteIntervalArithmetic(sql: string): string {
+  if (!/\bINTERVAL\b/i.test(sql)) return sql;
+  const literals: string[] = [];
+  const masked = sql.replace(/'(?:[^'\\]|\\.|'')*'/g, (literal) => `\u0000${literals.push(literal) - 1}\u0000`);
+  return masked
+    .replace(INTERVAL_ARITHMETIC_RE, (match, operand: string, sign: "+" | "-", interval: string) => {
+      const mod = intervalModifier(interval, sign);
+      return mod ? `datetime(${operand}, ${mod})` : match;
+    })
+    .replace(/\u0000(\d+)\u0000/g, (_, n: string) => literals[Number(n)]);
+}
+
 /**
  * Rewrites upstream's MySQL-only SQL for SQLite. Idempotent for already-SQLite
  * SQL, and skips anything inside string literals.
@@ -168,7 +186,7 @@ export function translateMysqlToSqlite(sql: string, { doubleQuotedStrings = fals
     out += ch;
     i++;
   }
-  return out
+  return rewriteIntervalArithmetic(out)
     .replace(/\bSTRAIGHT_JOIN\b/gi, "JOIN")
     .replace(/\bSQL_CALC_FOUND_ROWS\b/gi, "")
     .replace(/\bINSERT\s+IGNORE\b/gi, "INSERT OR IGNORE");
