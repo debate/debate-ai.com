@@ -65,7 +65,22 @@ h1{font-size:1.5rem;line-height:1.2;font-weight:600;letter-spacing:-0.02em;margi
 .switch input:checked + .track::after{transform:translateX(14px)}
 .switch input:focus-visible + .track{outline:2px solid var(--ring);outline-offset:2px}
 
-/* timeline — the one bold element */
+/* watch panel — video-synced summaries + redos */
+  .watch{margin-top:14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);overflow:hidden}
+  .watch-head{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+  .watch-head h3{margin:0;font-size:1rem;font-weight:600}
+  .watch-head .who{margin:2px 0 0;color:var(--muted-fg);font-size:13px}
+  .watch-body{padding:14px 16px;display:grid;gap:14px}
+  .watch-summary ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .watch-summary li{position:relative;padding-left:18px;max-width:72ch;font-size:14px;line-height:1.55}
+  .watch-summary li::before{content:"";position:absolute;left:2px;top:.6em;width:6px;height:6px;border-radius:50%;background:var(--muted-fg)}
+  .watch-empty{color:var(--muted-fg);font-size:14px}
+  .watch-redos h4{margin:0 0 10px;font-size:14px;font-weight:600}
+  .watch-redos .lab-form{padding:10px 12px}
+  .watch-redos .lab-form .fl{font-size:12px}
+  .watch-redos .chips{display:flex;flex-wrap:wrap;gap:6px}
+
+  /* timeline — the one bold element */
 .timeline{position:relative;height:44px;display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border);background:var(--muted)}
 .seg{position:relative;height:100%;border:0;border-right:1px solid var(--background);padding:0 6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;min-width:0;overflow:hidden}
 .seg:last-child{border-right:0}
@@ -266,6 +281,43 @@ table.matrix{border-collapse:collapse;width:100%;font-size:13px;min-width:560px}
         <button class="btn" id="exportBtn">Copy timestamps</button>
         <button class="btn" id="importBtn">Paste timestamps</button>
         <label class="switch"><input type="checkbox" id="follow" checked><span class="track"></span>Follow video</label>
+      </div>
+
+      <div class="watch" id="watch" hidden>
+        <div class="watch-head">
+          <div>
+            <h3 id="watchCode">—</h3>
+            <p class="who" id="watchWho"></p>
+          </div>
+          <div class="timecard">
+            <div class="timefield"><label for="t-watch">Starts at</label><input id="t-watch" inputmode="numeric" placeholder="h:mm:ss"></div>
+            <button class="btn" id="watchMark" title="Set this speech's start to the video's current time">Mark current time</button>
+          </div>
+        </div>
+        <div class="watch-body">
+          <div class="watch-summary" id="watchSummary"></div>
+          <div class="watch-redos">
+            <h4>Redo this speech</h4>
+            <div class="lab-form" id="watchLabForm">
+              <div>
+                <label class="fl" for="watchSteer">Steer the alternatives (optional)</label>
+                <textarea id="watchSteer" placeholder="e.g. Go for the disease DA instead of theory"></textarea>
+              </div>
+              <div>
+                <span class="fl" id="watchJl" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">Judge panel</span>
+                <div class="chips" role="group" aria-labelledby="watchJl" id="watchChips"></div>
+                <p class="chip-help" id="watchJh"></p>
+              </div>
+              <div class="lab-actions">
+                <button class="btn primary" id="watchGen">Suggest alternatives</button>
+                <button class="btn" id="watchBase">Score it as delivered</button>
+                <button class="btn" id="watchStop" hidden>Stop</button>
+                <span class="status" id="watchStatus" role="status" aria-live="polite"></span>
+              </div>
+            </div>
+            <div class="alts" id="watchAlts"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -915,18 +967,80 @@ panelsEl.addEventListener('input',e=>{
 
 SPEECHES.forEach((s,i)=>{ const x=st(s); $('#steer-'+s.id).value=x.steer||''; renderJudges(i); renderAlts(i); renderRT(i); });
 
-(async()=>{
-  let fn=null;
-  try{ fn = window.claude && typeof window.claude.use==='function' ? await window.claude.use('sample') : null; }catch(e){ fn=null; }
-  sampleFn=fn;
-  SPEECHES.forEach(s=>{
-    $('#labOff-'+s.id).hidden=!!fn;
-    $('#labBody-'+s.id).hidden=!fn;
-    if(!fn) $('#labOff-'+s.id).textContent='Alternatives use Claude, so they only work when this page is opened in Claude. The rest of the page works anywhere.';
-  });
-})();
+  // ---------- watch panel (video-synced summaries + redos) ----------
+  const watchEl=$('#watch'), watchCode=$('#watchCode'), watchWho=$('#watchWho'),
+        watchSummary=$('#watchSummary'), watchSteer=$('#watchSteer'),
+        watchChips=$('#watchChips'), watchJh=$('#watchJh'), watchGen=$('#watchGen'),
+        watchBase=$('#watchBase'), watchStop=$('#watchStop'), watchStatus=$('#watchStatus'),
+        watchAlts=$('#watchAlts'), watchMark=$('#watchMark'), tWatch=$('#t-watch');
+  let watchI=0;
+  JUDGES.forEach(j=>{ const b=document.createElement('button'); b.className='chip'; b.type='button'; b.dataset.j=j.id; b.title=j.desc; b.setAttribute('aria-pressed','false'); b.textContent=j.name; b.addEventListener('click',()=>{ const x=st(SPEECHES[watchI]); x.judges.has(j.id)?x.judges.delete(j.id):x.judges.add(j.id); saveLab(); renderWatchJudges(); renderWatchAlts(); }); watchChips.appendChild(b); });
 
-syncInputs(); renderTimeline();
+  function renderWatchJudges(){
+    const x=st(SPEECHES[watchI]);
+    watchChips.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',x.judges.has(c.dataset.j)));
+    const n=x.judges.size;
+    watchJh.textContent = n ? `${n} judge${n>1?'s':''} on the panel${n%2===0?'. An odd panel avoids ties.':'.'}` : 'Pick at least one judge.';
+  }
+  function renderWatchAlts(){
+    const s=SPEECHES[watchI], x=st(s);
+    let html='';
+    if(x.results.base) html+=`<article class="alt baseline"><h4>As delivered</h4><p class="approach">The ${esc(s.code==='CX'?'cross-examination':s.code)} as it happened in the round.</p>${simHTML(x.results.base)}</article>`;
+    html+=x.alts.map((a,k)=>`<article class="alt${x.results[k]?' chosen':''}">
+        <h4>${esc(a.title)}</h4>
+        <p class="approach">${esc(a.approach)}</p>
+        <ul>${a.keyArguments.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>
+        <div class="meta">${a.collapse?`<span><b>Goes for:</b> ${esc(a.collapse)}</span>`:''}${a.risk?`<span><b>Risk:</b> ${esc(a.risk)}</span>`:''}</div>
+        <button class="btn${x.results[k]?'':' primary'}" data-wsim="${k}">${x.results[k]?'Simulate again':'Simulate outcome'}</button>
+        ${simHTML(x.results[k])}
+      </article>`).join('');
+    watchAlts.innerHTML=html;
+    watchAlts.querySelectorAll('[data-wsim]').forEach(b=>b.addEventListener('click',()=>simulate(watchI,b.dataset.wsim)));
+  }
+  function renderWatch(){
+    const s=SPEECHES[watchI], x=st(s);
+    watchCode.textContent = s.code==='CX' ? s.name : s.code+' — '+s.name;
+    watchWho.innerHTML = inline(s.speaker);
+    watchSummary.innerHTML = s.summary.length
+      ? `<ul class="summary">${s.summary.map(b=>`<li>${inline(b)}</li>`).join('')}</ul>`
+      : `<p class="watch-empty">No summary available.</p>`;
+    watchSteer.value = x.steer||'';
+    renderWatchJudges(); renderWatchAlts();
+    tWatch.value = fmt(startOf(watchI));
+  }
+  function showWatch(i){
+    watchI=i;
+    if(video.src) watchEl.hidden=false;
+    renderWatch();
+  }
+  watchMark.addEventListener('click',()=>{
+    if(!video.src){ toast('Load a video first'); return; }
+    const i=watchI; starts[SPEECHES[i].id]=Math.floor(video.currentTime);
+    save(); syncInputs(); renderTimeline(); tick();
+    tWatch.value=fmt(video.currentTime);
+    toast(SPEECHES[i].tab+' starts at '+fmt(video.currentTime));
+  });
+  tWatch.addEventListener('change',e=>{
+    const i=watchI, v=parse(e.target.value);
+    if(v===undefined){ toast('Use a time like 1:05:30 or 42:10'); e.target.value=fmt(startOf(i)); return; }
+    if(v===null) delete starts[SPEECHES[i].id]; else starts[SPEECHES[i].id]=v;
+    save(); syncInputs(); renderTimeline(); tick();
+  });
+  watchGen.addEventListener('click',()=>generate(watchI));
+  watchBase.addEventListener('click',()=>simulate(watchI,'base'));
+  watchStop.addEventListener('click',()=>{ ctl&&ctl.abort(); });
+  watchSteer.addEventListener('input',()=>{ st(SPEECHES[watchI]).steer=watchSteer.value.trim(); saveLab(); });
+
+  // keep watch panel in sync with the active speech
+  const _select=select;
+  select=function(i,byUser){ _select(i,byUser); if(video.src) showWatch(i); };
+  video.addEventListener('loadedmetadata',()=>{ if(video.src){ watchEl.hidden=false; showWatch(active); } });
+  // sync steer + judge chips when editing the per-speech panel
+  panelsEl.addEventListener('input',e=>{
+    if(e.target.id==='steer-'+SPEECHES[watchI]?.id) watchSteer.value=e.target.value;
+  });
+
+  syncInputs(); renderTimeline();
 </script>
 </body>
 </html>

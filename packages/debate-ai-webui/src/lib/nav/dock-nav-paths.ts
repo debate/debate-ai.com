@@ -17,6 +17,7 @@ export const DOCK_NAV_LABELS: Record<string, string> = {
   "/cards": "Shared",
   "/debate": "Debate",
   "/versus-ai": "Practice vs AI",
+  "/tournaments": "Tournaments",
   "/doc": "Docs",
 }
 

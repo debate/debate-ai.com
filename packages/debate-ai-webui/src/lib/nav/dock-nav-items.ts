@@ -14,6 +14,7 @@ import {
   IconFlowFlower,
   IconRead,
   IconRoundsYoutube,
+  IconTrophy,
   IconVsAi,
 } from "../ui/icons"
 
@@ -27,6 +28,7 @@ export const NAV_ITEMS: DockNavItem[] = [
   { href: "/videos", label: dockNavLabel("/videos"), icon: IconRoundsYoutube },
   { href: "/cards", label: dockNavLabel("/cards"), icon: IconCollectiveMind },
   { href: "/debate", label: dockNavLabel("/debate"), icon: IconFlowFlower },
+  { href: "/tournaments", label: dockNavLabel("/tournaments"), icon: IconTrophy },
   // Practice vs AI — a full timed round against an AI opponent, from the
   // `debate-practice-vs-ai` package.
   { href: "/versus-ai", label: dockNavLabel("/versus-ai"), icon: IconVsAi },
