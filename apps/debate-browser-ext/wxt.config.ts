@@ -1,6 +1,10 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'wxt';
 
+/** A file inside the `debate-ai-webui` package. */
+const webui = (path: string) =>
+  fileURLToPath(new URL(`../../packages/debate-ai-webui/${path}`, import.meta.url));
+
 /**
  * The AI provider APIs the article panel calls directly when the reader has
  * pasted their own key (src/ai/providers.ts). An extension page may call these
@@ -21,25 +25,43 @@ const AI_PROVIDER_HOSTS = [
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
-  // `debate-ai-webui` is a workspace package with React as a peer dependency,
-  // so bun's isolated node_modules gives it its own resolution of `react` —
-  // the monorepo's React 19, next to this extension's React 18. Two React
-  // copies in one bundle means the shell's hooks run against a different
-  // dispatcher than the page's ("invalid hook call"), so every `react` and
-  // `react-dom` specifier is resolved once, from this app's own dependency.
+  // The Options page is the whole debate-ai.com app (`debate-ai-webui`),
+  // which — like the feature packages it mounts — imports `next/link`,
+  // `next/navigation` and `next/image`. There is no Next here: those resolve
+  // to the package's shims, which route through the URL fragment instead.
   //
-  // `debate-api-client` (reached through `debate-ai-webui`) publishes compiled
-  // `dist/` output that only exists after that package's own build, so a plain
-  // `bun run build` here failed with "Failed to resolve entry for package".
-  // Bundling its TypeScript source instead makes this build self-contained.
+  // Workspace packages declare React as a peer, and bun's isolated
+  // node_modules gives each its own resolution of it; two React copies in one
+  // bundle is "invalid hook call", so `react`/`react-dom` resolve once, from
+  // this app.
   vite: () => ({
+    define: {
+      // The app reads a few `NEXT_PUBLIC_*` values that Next inlines at build
+      // time; everything else in `process.env` is simply absent here.
+      'process.env.NEXT_PUBLIC_APP_URL': JSON.stringify('https://debate-ai.com'),
+      'process.env.NEXT_PUBLIC_BASE_URL': JSON.stringify('https://debate-ai.com'),
+      'process.env': '{}',
+    },
     resolve: {
       dedupe: ['react', 'react-dom'],
-      alias: {
-        'debate-api-client': fileURLToPath(
-          new URL('../../packages/debate-api-client/src/index.ts', import.meta.url)
-        ),
-      },
+      alias: [
+        { find: /^next\/link$/, replacement: webui('src/next/link.tsx') },
+        { find: /^next\/navigation$/, replacement: webui('src/next/navigation.tsx') },
+        { find: /^next\/image$/, replacement: webui('src/next/image.tsx') },
+        // The separately-versioned card-cutter engine is never shipped; the web
+        // app resolves it to the same in-repo stub (apps/debate-ai.com/vite.config.ts).
+        {
+          find: '@cardcutter/browser',
+          replacement: fileURLToPath(
+            new URL('../../packages/debate-editor/src/editor/card-cutter-stub.ts', import.meta.url)
+          ),
+        },
+      ],
+    },
+    build: {
+      // The app is large (the research workspace alone is several MB); it is
+      // loaded from disk, route by route, so the web-sized warning says nothing.
+      chunkSizeWarningLimit: 8000,
     },
   }),
   // `wxt dev` launches a browser via chrome-launcher, which only auto-detects
