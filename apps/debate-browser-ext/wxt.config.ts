@@ -73,7 +73,7 @@ export default defineConfig({
         '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta',
     },
   },
-  manifest: ({ browser }) => ({
+  manifest: ({ browser, manifestVersion }) => ({
     name: 'Debate AI — Reader, Timer & Card Reuse Check',
     description:
       'Critical times call for critical thinking! Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
@@ -91,7 +91,8 @@ export default defineConfig({
       // the page the reader just opened the panel on. `activeTab` is granted
       // per user action, which is why the panel needs no access to every site.
       'activeTab',
-      // Reading that page's HTML out of the tab (src/reader/snapshot.ts).
+      // Reading that page's HTML out of the tab (src/reader/snapshot.ts), and
+      // putting the article panel's overlay on it (src/reader/panel.ts).
       // MV3 only: the Firefox build is MV2, where the same job is done by
       // `tabs.executeScript` under `activeTab` and there is no such permission.
       ...(browser === 'firefox' ? [] : ['scripting']),
@@ -100,11 +101,16 @@ export default defineConfig({
       // Pinging debate-ai.com with the stored session so a signed-in reader
       // stays signed in (src/auth/session.ts).
       'alarms',
-      // Chrome's side panel, where the article panel lives. Firefox uses
-      // `sidebar_action`, which WXT derives from the sidepanel entrypoint and
-      // which needs no permission entry.
-      ...(browser === 'firefox' ? [] : ['sidePanel']),
     ],
+    // The article panel is `reader.html` framed over the page the reader is
+    // on (src/reader/panel.ts), and a web page may only frame an extension
+    // page listed here. It grants no access to any site — it only lets the
+    // panel's page load inside one. Its scripts and styles are loaded by the
+    // panel itself, from the extension's own origin, so need no entry.
+    web_accessible_resources:
+      manifestVersion === 2
+        ? ['reader.html']
+        : [{ resources: ['reader.html'], matches: ['http://*/*', 'https://*/*'] }],
     // The deployments the reuse check, sign-in and account-backed AI may call
     // (see the Options page), plus the model providers above.
     host_permissions: [
