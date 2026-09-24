@@ -76,37 +76,66 @@ export async function POST(request: Request) {
     return error("Sign in to run a custom AI prompt.", 401)
   }
 
-  const apiKey = getEnv("ANTHROPIC_API_KEY")
-  if (!apiKey) return error("AI features are not configured on this server.", 503)
+  const openrouterKey = getEnv("OPENROUTER_API_KEY")
+  const anthropicKey = getEnv("ANTHROPIC_API_KEY")
+  if (!openrouterKey && !anthropicKey) return error("AI features are not configured on this server.", 503)
 
   let res: Response
   try {
-    res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": ANTHROPIC_VERSION,
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: MAX_TOKENS,
-        system: prompt,
-        messages: [{ role: "user", content: `Evidence card:\n\n${content}` }],
-      }),
-    })
+    if (openrouterKey) {
+      res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${openrouterKey}`,
+          "HTTP-Referer": "https://debate-ai.com",
+          "X-Title": "Debate AI",
+        },
+        body: JSON.stringify({
+          model: "anthropic/claude-sonnet-4.6",
+          max_tokens: MAX_TOKENS,
+          messages: [
+            { role: "system", content: prompt },
+            { role: "user", content: `Evidence card:\n\n${content}` },
+          ],
+        }),
+      })
+    } else {
+      res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": anthropicKey!,
+          "anthropic-version": ANTHROPIC_VERSION,
+        },
+        body: JSON.stringify({
+          model: ANTHROPIC_MODEL,
+          max_tokens: MAX_TOKENS,
+          system: prompt,
+          messages: [{ role: "user", content: `Evidence card:\n\n${content}` }],
+        }),
+      })
+    }
   } catch (e) {
-    return error(`Network error contacting Anthropic: ${e instanceof Error ? e.message : String(e)}`, 502)
+    return error(`Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}`, 502)
   }
-  if (!res.ok) return error(`Anthropic API returned ${res.status}.`, 502)
+  if (!res.ok) return error(`AI API returned ${res.status}.`, 502)
 
-  const json = (await res.json()) as { content?: Array<{ type?: string; text?: string }> }
-  const result = (json.content ?? [])
-    .filter((c) => c.type === "text")
-    .map((c) => c.text ?? "")
-    .join("")
-    .trim()
-  if (!result) return error("Anthropic returned an empty response.", 502)
+  const json = (await res.json()) as {
+    content?: Array<{ type?: string; text?: string }>
+    choices?: Array<{ message?: { content?: string } }>
+  }
+  let result: string
+  if (json.choices?.[0]?.message?.content) {
+    result = json.choices[0].message.content
+  } else {
+    result = (json.content ?? [])
+      .filter((c) => c.type === "text")
+      .map((c) => c.text ?? "")
+      .join("")
+  }
+  result = result.trim()
+  if (!result) return error("AI API returned an empty response.", 502)
 
   try {
     await db

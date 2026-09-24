@@ -105,44 +105,66 @@ export async function annotateCard(
   const saved = (await readSavedAnnotations(db, [cardHash])).get(cardHash);
   if (saved) return { ok: true, annotation: saved, cached: true };
 
-  const apiKey = getEnv("ANTHROPIC_API_KEY");
-  if (!apiKey) return { ok: false, error: "AI features are not configured on this server.", status: 503 };
+const openrouterKey = getEnv("OPENROUTER_API_KEY");
+  const anthropicKey = getEnv("ANTHROPIC_API_KEY");
+  if (!openrouterKey && !anthropicKey) return { ok: false, error: "AI features are not configured on the server.", status: 503 };
 
   let res: Response;
   try {
-    res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": ANTHROPIC_VERSION,
-        "anthropic-beta": ANTHROPIC_FALLBACK_BETA,
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: MAX_TOKENS,
-        fallbacks: "default",
-        system: CARD_REUSE_ANNOTATION_PROMPT,
-        output_config: {
-          effort: "medium",
-          format: { type: "json_schema", schema: CARD_REUSE_ANNOTATION_SCHEMA },
+    if (openrouterKey) {
+      res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${openrouterKey}`,
+          "HTTP-Referer": "https://debate-ai.com",
+          "X-Title": "Debate AI",
         },
-        messages: [{ role: "user", content: `Evidence card:\n\n${content}` }],
-      }),
-    });
+        body: JSON.stringify({
+          model: "anthropic/claude-opus-5",
+          max_tokens: MAX_TOKENS,
+          messages: [
+            { role: "system", content: CARD_REUSE_ANNOTATION_PROMPT },
+            { role: "user", content: `Evidence card:\n\n${content}` },
+          ],
+        }),
+      });
+    } else {
+      res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": anthropicKey!,
+          "anthropic-version": ANTHROPIC_VERSION,
+          "anthropic-beta": ANTHROPIC_FALLBACK_BETA,
+        },
+        body: JSON.stringify({
+          model: ANTHROPIC_MODEL,
+          max_tokens: MAX_TOKENS,
+          fallbacks: "default",
+          system: CARD_REUSE_ANNOTATION_PROMPT,
+          output_config: {
+            effort: "medium",
+            format: { type: "json_schema", schema: CARD_REUSE_ANNOTATION_SCHEMA },
+          },
+          messages: [{ role: "user", content: `Evidence card:\n\n${content}` }],
+        }),
+      });
+    }
   } catch (e) {
     return {
       ok: false,
-      error: `Network error contacting Anthropic: ${e instanceof Error ? e.message : String(e)}`,
+      error: `Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}`,
       status: 502,
     };
   }
-  if (!res.ok) return { ok: false, error: `Anthropic API returned ${res.status}.`, status: 502 };
+  if (!res.ok) return { ok: false, error: `AI API returned ${res.status}.`, status: 502 };
 
   const json = (await res.json()) as {
     stop_reason?: string;
     model?: string;
     content?: Array<{ type?: string; text?: string }>;
+    choices?: Array<{ message?: { content?: string } }>;
   };
   if (json.stop_reason === "refusal") {
     return { ok: false, error: "The model declined to annotate this card.", status: 422 };
@@ -150,11 +172,16 @@ export async function annotateCard(
   if (json.stop_reason === "max_tokens") {
     return { ok: false, error: "The annotation was cut off before it finished.", status: 502 };
   }
-  const text = (json.content ?? [])
-    .filter((block) => block.type === "text")
-    .map((block) => block.text ?? "")
-    .join("")
-    .trim();
+  let text: string
+  if (json.choices?.[0]?.message?.content) {
+    text = json.choices[0].message.content
+  } else {
+    text = (json.content ?? [])
+      .filter((block) => block.type === "text")
+      .map((block) => block.text ?? "")
+      .join("")
+  }
+  text = text.trim()
   const annotation = parseCardReuseAnnotation(text);
   if (!annotation) return { ok: false, error: "The model returned an unreadable annotation.", status: 502 };
 
