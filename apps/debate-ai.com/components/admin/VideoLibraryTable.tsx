@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { parseYouTubeVideoId } from "debate-videos";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
 import { Input } from "../../lib/ui/primitives/input";
@@ -30,8 +31,16 @@ import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialo
 import { VideoEditDialog, type LibraryVideo } from "./VideoEditDialog";
 
 
+/** A table row: the editable video plus what the listing says about its transcript. */
+type LibraryRow = LibraryVideo & {
+  /** Words in the typed-up transcript, or `null` when there is none. */
+  transcriptWords?: number | null;
+  /** Whether YouTube's captions are cached for it. */
+  hasCaptions?: boolean;
+};
+
 interface LibraryResponse {
-  videos: LibraryVideo[];
+  videos: LibraryRow[];
   page: number;
   limit: number;
   pageCount: number;
@@ -54,6 +63,11 @@ const SOURCE_OPTIONS = [
   { value: "lecture", label: "Lectures" },
 ];
 
+const TRANSCRIPT_OPTIONS = [
+  { value: "all", label: "Any transcript" },
+  { value: "with", label: "Has transcript" },
+  { value: "without", label: "No transcript" },
+];
 
 const PAGE_SIZE = 25;
 
@@ -74,6 +88,10 @@ export function VideoLibraryTable() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [style, setStyle] = useState("all");
   const [source, setSource] = useState("all");
+  const [transcript, setTranscript] = useState("all");
+  const [addInput, setAddInput] = useState("");
+  const [addError, setAddError] = useState<string | null>(null);
+  const [isOpeningAdd, setIsOpeningAdd] = useState(false);
   const [sort, setSort] = useState("published");
   const [dir, setDir] = useState<"asc" | "desc">("desc");
 
@@ -106,6 +124,7 @@ export function VideoLibraryTable() {
       if (debouncedSearch) params.set("q", debouncedSearch);
       if (style !== "all") params.set("style", style);
       if (source !== "all") params.set("source", source);
+      if (transcript !== "all") params.set("transcript", transcript);
       const res = await fetch(`/api/admin/videos/library?${params.toString()}`);
       const body = await res.json();
       if (!res.ok) throw new Error(body?.error || `Request failed: ${res.status}`);
@@ -115,7 +134,7 @@ export function VideoLibraryTable() {
     } finally {
       setIsLoading(false);
     }
-  }, [page, sort, dir, debouncedSearch, style, source]);
+  }, [page, sort, dir, debouncedSearch, style, source, transcript]);
 
   useEffect(() => {
     load();
@@ -132,6 +151,38 @@ export function VideoLibraryTable() {
     setPage(1);
   };
 
+  /**
+   * Opens the transcript editor for any YouTube video, pasted as a link or an
+   * id — published or not. Documents are keyed by video id alone, so one
+   * written before a round is published is waiting for it when it is.
+   */
+  const openAnyVideo = async () => {
+    const videoId = parseYouTubeVideoId(addInput);
+    if (!videoId) {
+      setAddError("That doesn't look like a YouTube link or video id.");
+      return;
+    }
+    setAddError(null);
+    setIsOpeningAdd(true);
+    try {
+      // A 404 just means the video isn't published yet — still editable.
+      const res = await fetch(`/api/admin/videos/library/${encodeURIComponent(videoId)}`);
+      const body = res.ok ? await res.json().catch(() => null) : null;
+      const video = body?.video as LibraryVideo | undefined;
+      setContentVideo({
+        videoId,
+        title: video?.title || "Not in the library yet",
+        channel: video?.channel ?? "",
+        tournament: video?.tournament ?? null,
+      });
+      setAddInput("");
+    } catch {
+      setAddError("Could not reach the server.");
+    } finally {
+      setIsOpeningAdd(false);
+    }
+  };
+
   const handleSaved = (saved: LibraryVideo) => {
     // Patch the row in place rather than refetching, so the table does not
     // jump back to the top of a long list after a one-field correction.
@@ -140,7 +191,8 @@ export function VideoLibraryTable() {
         ? {
             ...current,
             videos: current.videos.map((video) =>
-              video.videoId === saved.videoId ? saved : video,
+              // Keep the transcript flags: the edit endpoint returns the bare row.
+            video.videoId === saved.videoId ? { ...video, ...saved } : video,
             ),
           }
         : current,
@@ -194,10 +246,35 @@ export function VideoLibraryTable() {
           remove it — a removed video is also recorded so the weekly YouTube resync does not
           bring it back. “Transcripts” opens the long-form content beside the video: the
           speech-by-speech transcript, the AI summary, and the analysis videos linked to it.
+          The Transcript column shows which videos have one; paste any YouTube link below to
+          write one for a video that isn&apos;t in this list.
           The round queue further down only holds videos still waiting to be published.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <form
+          className="flex flex-wrap items-center gap-2"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void openAnyVideo();
+          }}
+        >
+          <Input
+            value={addInput}
+            onChange={(event) => {
+              setAddInput(event.target.value);
+              setAddError(null);
+            }}
+            placeholder="Paste any YouTube link or video id to add a transcript…"
+            className="max-w-md"
+            aria-label="YouTube link or video id"
+          />
+          <Button type="submit" size="sm" disabled={isOpeningAdd || !addInput.trim()}>
+            {isOpeningAdd ? "Opening…" : "Add transcript"}
+          </Button>
+          {addError && <span className="text-destructive text-sm">{addError}</span>}
+        </form>
+
         <div className="flex flex-wrap items-center gap-3">
           <Input
             value={search}
@@ -241,6 +318,24 @@ export function VideoLibraryTable() {
               ))}
             </SelectContent>
           </Select>
+          <Select
+            value={transcript}
+            onValueChange={(value) => {
+              setTranscript(value);
+              setPage(1);
+            }}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {TRANSCRIPT_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button variant="outline" size="sm" onClick={load} disabled={isLoading}>
             {isLoading ? "Loading…" : "Refresh"}
           </Button>
@@ -264,6 +359,7 @@ export function VideoLibraryTable() {
                 <th className="px-2 py-2 font-normal">{headerButton("channel", "Channel")}</th>
                 <th className="px-2 py-2 font-normal">{headerButton("published", "Published")}</th>
                 <th className="px-2 py-2 text-right font-normal">{headerButton("views", "Views")}</th>
+                <th className="px-2 py-2 font-normal">Transcript</th>
                 <th className="py-2 pl-2 text-right font-normal">Actions</th>
               </tr>
             </thead>
@@ -326,6 +422,27 @@ export function VideoLibraryTable() {
                   <td className="px-2 py-2 text-right tabular-nums">
                     {video.viewCount.toLocaleString()}
                   </td>
+                  <td className="px-2 py-2 whitespace-nowrap">
+                    {video.transcriptWords ? (
+                      <Badge
+                        variant="secondary"
+                        className="font-normal"
+                        title="A typed-up transcript is on the watch page"
+                      >
+                        {video.transcriptWords.toLocaleString()} words
+                      </Badge>
+                    ) : video.hasCaptions ? (
+                      <Badge
+                        variant="outline"
+                        className="font-normal"
+                        title="No typed-up transcript, but YouTube's captions are cached — import them from the Transcripts dialog"
+                      >
+                        captions only
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground text-xs">—</span>
+                    )}
+                  </td>
                   <td className="py-2 pl-2 text-right whitespace-nowrap">
                     <div className="flex justify-end gap-2">
                       <Button size="sm" variant="outline" onClick={() => setEditing(video)}>
@@ -361,7 +478,7 @@ export function VideoLibraryTable() {
               ))}
               {videos.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-muted-foreground py-6 text-center text-sm">
+                  <td colSpan={8} className="text-muted-foreground py-6 text-center text-sm">
                     {isLoading ? "Loading videos…" : "No published videos match this filter."}
                   </td>
                 </tr>
@@ -401,7 +518,11 @@ export function VideoLibraryTable() {
       <VideoContentDialog
         video={contentVideo}
         onOpenChange={(open) => (open ? undefined : setContentVideo(null))}
-        onSaved={setNotice}
+        onSaved={(message) => {
+          setNotice(message);
+          // Refresh the Transcript column behind the dialog.
+          void load();
+        }}
       />
 
       <Dialog

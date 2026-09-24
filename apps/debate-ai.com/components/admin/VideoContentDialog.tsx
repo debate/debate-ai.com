@@ -6,8 +6,10 @@ import {
   VIDEO_DOCUMENT_LABELS,
   VIDEO_RELATION_KINDS,
   VIDEO_RELATION_LABELS,
+  captionsToTranscriptMarkdown,
   countWords,
   parseDocumentSections,
+  type CaptionCue,
   type VideoDocument,
   type VideoDocumentKind,
 } from "debate-videos";
@@ -136,6 +138,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
   const [relations, setRelations] = useState<RelationRow[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
@@ -262,6 +265,42 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
     }
   };
 
+  /**
+   * Fills the transcript box with YouTube's own captions, as a draft in the
+   * house style for an editor to rename the speeches and save. Goes through
+   * `/api/transcript`, which serves a cached copy when YouTube is blocking.
+   */
+  const handleImportCaptions = async () => {
+    if (!videoId || !activeDocument) return;
+    if (
+      activeDocument.body.trim() &&
+      !window.confirm("Replace what's in the box with YouTube's captions?")
+    ) {
+      return;
+    }
+    setIsImporting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/transcript?videoId=${encodeURIComponent(videoId)}`);
+      const body = await readJsonResponse<{ snippets?: CaptionCue[]; unavailable?: string }>(
+        res,
+        "Could not fetch captions",
+      );
+      const markdown = captionsToTranscriptMarkdown(body.snippets ?? []);
+      if (!markdown) {
+        throw new Error(body.unavailable ?? "This video has no captions to import.");
+      }
+      patchDocument(activeDocument.kind, { body: markdown, author: "youtube" });
+      setNotice(
+        "Imported YouTube's captions. Rename the “Part” headings to the speeches, then save.",
+      );
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   const handleDeleteDocument = async () => {
     if (!videoId || !activeDocument) return;
     setIsSaving(true);
@@ -274,6 +313,7 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
       const body = await readJsonResponse<Record<string, unknown>>(res, "Delete failed");
       patchDocument(activeDocument.kind, blankDocument(videoId, activeDocument.kind));
       setNotice("Document removed.");
+      onSaved?.("Document removed.");
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -449,8 +489,20 @@ export function VideoContentDialog({ video, onOpenChange, onSaved }: VideoConten
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-baseline justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <Label htmlFor="document-body">Document</Label>
+                {activeDocument.kind === "transcript" && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="ml-auto"
+                    onClick={handleImportCaptions}
+                    disabled={isImporting || isSaving}
+                    title="Fill the box with YouTube's captions, split into timed parts"
+                  >
+                    {isImporting ? "Importing…" : "Import YouTube captions"}
+                  </Button>
+                )}
                 <span className="text-muted-foreground text-xs tabular-nums">
                   {liveWordCount.toLocaleString()} words
                   {sections.length > 0 && ` · ${sections.filter((s) => s.heading).length} speeches`}
