@@ -7,9 +7,10 @@
  * no speakers, no speech boundaries and no punctuation to speak of. So the
  * column is now a tab strip over everything a video can carry beside it:
  *
- *   0. **By speech** — for a video with an AI summary or a written
- *      analysis, the round one tab per speech (see {@link WatchRoundPanel}).
- *      It opens first when present, since it is what those documents are for.
+ *   0. **By speech** — for every round, and for any video whose AI summary
+ *      or written analysis goes speech by speech: the round one tab per
+ *      speech (see {@link WatchRoundPanel}), with the Outcomes simulator in
+ *      each. It opens first when present.
  *   1. **Captions** — the synced cues, unchanged, the default otherwise.
  *   2. **Speeches / Summary** — the long-form documents: the round typed up
  *      speech by speech, and the AI summary of it.
@@ -33,7 +34,8 @@ import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
 import { WatchRoundPanel, type SpeechFocusRequest } from "./WatchRoundPanel"
-import { buildRoundSpeeches } from "../../lib/round-speeches"
+import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
+import type { RoundContext } from "../../lib/speech-outcomes"
 import {
   orderDocuments,
   VIDEO_DOCUMENT_LABELS,
@@ -56,6 +58,16 @@ interface WatchSidePanelProps {
   /** The video, for the per-speech Outcomes view. */
   videoId?: string
   videoTitle?: string
+  /**
+   * The round's speeches, when the page has already resolved them (with
+   * marked starts and caption transcripts applied). Read from the documents
+   * otherwise.
+   */
+  speeches?: RoundSpeech[]
+  round?: RoundContext
+  roundTranscript?: string
+  onMarkStart?: (speechKey: string, seconds: number | null) => void
+  markedKeys?: ReadonlySet<string>
 }
 
 /** Where the reader's auto-scroll choice is remembered. */
@@ -87,9 +99,15 @@ export function WatchSidePanel({
   focusSpeech,
   videoId,
   videoTitle,
+  speeches: resolvedSpeeches,
+  round,
+  roundTranscript,
+  onMarkStart,
+  markedKeys,
 }: WatchSidePanelProps) {
   const ordered = useMemo(() => orderDocuments(documents), [documents])
-  const speeches = useMemo(() => buildRoundSpeeches(documents), [documents])
+  const documentSpeeches = useMemo(() => buildRoundSpeeches(documents), [documents])
+  const speeches = resolvedSpeeches ?? documentSpeeches
   const hasCaptions = sentences.length > 0 || captionsLoading
 
   const tabs = useMemo<PanelTab[]>(() => {
@@ -196,6 +214,10 @@ export function WatchSidePanel({
           focusRequest={focusSpeech}
           videoId={videoId ?? documents[0]?.videoId}
           videoTitle={videoTitle}
+          round={round}
+          roundTranscript={roundTranscript}
+          onMarkStart={onMarkStart}
+          markedKeys={markedKeys}
         />
       )}
 

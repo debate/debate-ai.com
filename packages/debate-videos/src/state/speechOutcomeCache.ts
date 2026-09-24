@@ -5,12 +5,14 @@
  * A convenience cache, not a record the user owns: it is not synced to the
  * account, is capped at {@link MAX_CACHED_RUNS} (oldest dropped first), and
  * reads as empty when storage is blocked. One run per video, speech and
- * judge lens — running again replaces it.
+ * judge panel — running again replaces it. The panel is stored as its
+ * `panelKey`, which for a lone judge is the bare judge id runs were saved
+ * under before panels existed, so those still open.
  * @module state/speechOutcomeCache
  */
 
 import { readLocalRecords, writeLocalRecords } from "./localRecordStore";
-import type { JudgeLens, SpeechOutcomeSimulation } from "../lib/speech-outcomes";
+import type { SpeechOutcomeSimulation } from "../lib/speech-outcomes";
 
 export const SPEECH_OUTCOME_CACHE_KEY = "debate-videos:speech-outcomes";
 export const MAX_CACHED_RUNS = 40;
@@ -18,7 +20,8 @@ export const MAX_CACHED_RUNS = 40;
 export interface CachedSpeechOutcome {
   videoId: string;
   speechKey: string;
-  lens: JudgeLens;
+  /** The panel's `panelKey` — `flow`, or `flow+lay+theory`. */
+  lens: string;
   simulation: SpeechOutcomeSimulation;
   /** Epoch milliseconds. */
   savedAt: number;
@@ -45,7 +48,7 @@ function readAll(): CachedSpeechOutcome[] {
 export function readCachedSpeechOutcome(
   videoId: string,
   speechKey: string,
-  lens: JudgeLens,
+  lens: string,
 ): CachedSpeechOutcome | null {
   return (
     readAll().find((run) => run.videoId === videoId && run.speechKey === speechKey && run.lens === lens) ?? null
@@ -59,7 +62,7 @@ export function writeCachedSpeechOutcome(run: CachedSpeechOutcome): void {
   writeLocalRecords(SPEECH_OUTCOME_CACHE_KEY, [run, ...rest].slice(0, MAX_CACHED_RUNS));
 }
 
-/** The speech keys of one video that have a run under any lens — marks them on the tab strip. */
+/** The speech keys of one video that have a run under any panel — marks them on the tab strip. */
 export function cachedSpeechKeys(videoId: string): Set<string> {
   return new Set(readAll().filter((run) => run.videoId === videoId).map((run) => run.speechKey));
 }

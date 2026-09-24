@@ -127,6 +127,7 @@ export {
   type RoundSpeech,
   type SpeechSide,
 } from "./lib/round-speeches";
+export { resolveRoundSpeeches, standardRoundSpeeches } from "./lib/round-formats";
 export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,

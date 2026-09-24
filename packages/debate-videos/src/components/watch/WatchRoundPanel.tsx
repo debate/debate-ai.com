@@ -1,6 +1,8 @@
 /**
  * @fileoverview The round, one tab per speech — the watch page's "By speech"
- * view for a video that has an AI summary or a written analysis.
+ * view. Every round gets it: from its AI summary or written analysis when it
+ * has one, otherwise from its transcript or its format's standard speech
+ * order (see `lib/round-formats.ts`).
  *
  * The document tabs beside it show one document at a time, top to bottom,
  * which is right for reading the whole summary and wrong for following the
@@ -20,15 +22,18 @@
  *     across speeches, falling back to the first one a speech actually has.
  *   - **Outcomes** (see {@link WatchSpeechOutcomes}) is offered on every
  *     speech, written or not: alternative responses the speaker could have
- *     given, with Claude's predicted ballot after each. A speech with a run
- *     saved in this browser gets a sparkle on its tab.
+ *     given, with a judge panel's predicted ballots after each. A speech
+ *     with a run saved in this browser gets a sparkle on its tab.
+ *   - **Mark start** sets the speech's start to the current video time, for
+ *     rounds whose documents don't time their speeches (see
+ *     `state/speechStartMarks.ts`). A marked start can be cleared again.
  * @module components/watch/WatchRoundPanel
  */
 
 "use client"
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react"
-import { Bot, Play, Sparkles } from "lucide-react"
+import { Bot, Flag, Play, Sparkles, X } from "lucide-react"
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { playingSpeechIndex, type RoundSpeech } from "../../lib/round-speeches"
 import { formatTimecode, type VideoDocument, type VideoDocumentKind } from "../../lib/video-documents"
@@ -37,6 +42,7 @@ import { AutoScrollToggle } from "./AutoScrollToggle"
 import { MARKDOWN_CLASSES } from "./WatchDocumentPanel"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 import { WatchSpeechOutcomes } from "./WatchSpeechOutcomes"
+import type { RoundContext } from "../../lib/speech-outcomes"
 import { cachedSpeechKeys } from "../../state/speechOutcomeCache"
 
 /** A document view, or the AI alternative-responses view. */
@@ -69,7 +75,20 @@ interface WatchRoundPanelProps {
   /** The video, for the Outcomes view; without it the view is not offered. */
   videoId?: string
   videoTitle?: string
+  /** What the video's metadata says about the round, for the Outcomes prompt. */
+  round?: RoundContext
+  /** The whole round's captions, for Outcomes on a speech with nothing of its own. */
+  roundTranscript?: string
+  /**
+   * Sets (or, with `null`, clears) a speech's start. Without it the panel
+   * offers no Mark start control.
+   */
+  onMarkStart?: (speechKey: string, seconds: number | null) => void
+  /** Speeches whose start the reader marked, and so can clear. */
+  markedKeys?: ReadonlySet<string>
 }
+
+const NO_KEYS: ReadonlySet<string> = new Set()
 
 export function WatchRoundPanel({
   speeches,
@@ -81,6 +100,10 @@ export function WatchRoundPanel({
   focusRequest,
   videoId,
   videoTitle,
+  round,
+  roundTranscript,
+  onMarkStart,
+  markedKeys = NO_KEYS,
 }: WatchRoundPanelProps) {
   const [activeKey, setActiveKey] = useState(speeches[0]?.key ?? "")
   const [view, setView] = useState<SpeechView>("summary")
@@ -219,6 +242,12 @@ export function WatchRoundPanel({
             <div className="min-w-0">
               <h3 className="text-sm font-semibold leading-snug">{active.heading}</h3>
               <p className="text-[11px] text-muted-foreground">{side.name}</p>
+              {onMarkStart && !isTimed && (
+                <p className="mt-0.5 text-[10px] text-muted-foreground">
+                  Play to where each speech begins and press Mark start — the timeline, the playing marker and each
+                  speech&apos;s captions follow.
+                </p>
+              )}
             </div>
             <div className="flex shrink-0 items-center gap-2">
               {isTimed && onAutoScrollChange && (
@@ -233,6 +262,28 @@ export function WatchRoundPanel({
                 >
                   <Play className="h-3 w-3" />
                   {formatTimecode(active.startSeconds)}
+                </button>
+              )}
+              {onMarkStart && markedKeys.has(active.key) && (
+                <button
+                  type="button"
+                  onClick={() => onMarkStart(active.key, null)}
+                  className="inline-flex items-center rounded-md border border-border p-0.5 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                  aria-label={`Clear ${active.label}'s start`}
+                  title="Clear this start"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+              {onMarkStart && (
+                <button
+                  type="button"
+                  onClick={() => onMarkStart(active.key, currentTime)}
+                  className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[11px] hover:bg-accent transition-colors"
+                  title={`Set ${active.label}'s start to the video's current time (${formatTimecode(currentTime)})`}
+                >
+                  <Flag className="h-3 w-3" />
+                  Mark start
                 </button>
               )}
             </div>
@@ -266,6 +317,8 @@ export function WatchRoundPanel({
             videoTitle={videoTitle}
             speeches={speeches}
             index={activeIndex}
+            round={round}
+            roundTranscript={roundTranscript}
             onSimulated={(key) => setSimulated((current) => new Set(current).add(key))}
           />
         ) : (
@@ -279,7 +332,10 @@ export function WatchRoundPanel({
                 dangerouslySetInnerHTML={{ __html: html }}
               />
             ) : (
-              <p className="text-xs italic text-muted-foreground">Nothing written for this speech yet.</p>
+              <p className="text-xs italic text-muted-foreground">
+                Nothing written for this speech yet
+                {onMarkStart && active.startSeconds === null ? " — mark where it starts and its captions show here" : ""}.
+              </p>
             )}
           </div>
         </ScrollArea>

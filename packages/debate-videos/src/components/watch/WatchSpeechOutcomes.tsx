@@ -4,17 +4,20 @@
  * gone after each alternative.
  *
  * Nothing runs until the reader asks — each run is an AI request — and the
- * last run per speech and judge lens is kept in this browser (see
+ * last run per speech and judge panel is kept in this browser (see
  * `state/speechOutcomeCache.ts`), so stepping back to a speech shows it
- * again. The view has three parts:
+ * again. Above the results the reader picks the **judge panel** — one to
+ * five kinds of judge, each voting separately — and can steer what the
+ * alternatives go for. The view has three parts:
  *
  *   - **Win-probability chart.** One row for the speech as given and one per
  *     alternative, each a single aff/neg split bar with the 50% line marked,
  *     so a ballot that flips is visible at a glance. The swing badge is
  *     measured for the side that gave the speech (see {@link speakerSwing}).
  *   - **Alternative cards.** Strategy tag, outline in speaking order, the
- *     trade-off and the predicted RFD. The one that helps the speaker most is
- *     marked, and one whose ballot flips says so.
+ *     trade-off and the predicted ballots — every judge's vote, RFD and the
+ *     argument it turned on. The one that helps the speaker most is marked,
+ *     and one whose ballot flips says so.
  *   - **Key clash** — what the decision turns on after this speech.
  *
  * Everything here is labelled as Claude's prediction. Ballots are not real
@@ -33,28 +36,40 @@ import {
   DEFAULT_JUDGE_LENS,
   JUDGE_LENSES,
   MAX_ALTERNATIVES,
+  MAX_PANEL,
   MIN_ALTERNATIVES,
   bestAlternativeIndex,
+  judgeLabel,
+  normalizePanel,
+  panelKey,
   speakerSwing,
   speechOutcomesToMarkdown,
   swingSideLabel,
   type JudgeLens,
   type PredictedBallot,
+  type RoundContext,
   type SpeechOutcomeSimulation,
 } from "../../lib/speech-outcomes"
 import { requestSpeechOutcomes } from "../../lib/speech-outcomes-client"
 import { readCachedSpeechOutcome, writeCachedSpeechOutcome } from "../../state/speechOutcomeCache"
 import { SPEECH_SIDE_STYLES } from "./speech-side-styles"
 
-/** Where the reader's judge lens is remembered. */
+/** Where the reader's judge panel is remembered. */
+export const OUTCOME_PANEL_STORAGE_KEY = "debate-videos:outcome-panel"
+/** The single judge chosen before panels existed; read once as the starting panel. */
 export const OUTCOME_LENS_STORAGE_KEY = "debate-videos:outcome-lens"
 
-function readLens(): JudgeLens {
+function readPanel(): JudgeLens[] {
   try {
-    const stored = window.localStorage.getItem(OUTCOME_LENS_STORAGE_KEY)
-    return JUDGE_LENSES.some((lens) => lens.id === stored) ? (stored as JudgeLens) : DEFAULT_JUDGE_LENS
+    const stored = window.localStorage.getItem(OUTCOME_PANEL_STORAGE_KEY)
+    if (stored) {
+      const parsed: unknown = JSON.parse(stored)
+      if (Array.isArray(parsed)) return normalizePanel(parsed.filter((id): id is string => typeof id === "string"))
+    }
+    const legacy = window.localStorage.getItem(OUTCOME_LENS_STORAGE_KEY)
+    return normalizePanel(legacy ? [legacy] : [DEFAULT_JUDGE_LENS])
   } catch {
-    return DEFAULT_JUDGE_LENS
+    return [DEFAULT_JUDGE_LENS]
   }
 }
 
@@ -64,15 +79,28 @@ interface WatchSpeechOutcomesProps {
   speeches: RoundSpeech[]
   /** Index of the speech being re-imagined. */
   index: number
+  /** What the video's metadata says about the round — format, teams, decision. */
+  round?: RoundContext
+  /** The whole round's captions, sent when the speech has nothing of its own. */
+  roundTranscript?: string
   /** Tells the tab strip a run landed, so it can mark the speech. */
   onSimulated?: (speechKey: string) => void
 }
 
 type Status = { state: "idle" } | { state: "loading" } | { state: "error"; message: string }
 
-export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSimulated }: WatchSpeechOutcomesProps) {
+export function WatchSpeechOutcomes({
+  videoId,
+  videoTitle,
+  speeches,
+  index,
+  round,
+  roundTranscript,
+  onSimulated,
+}: WatchSpeechOutcomesProps) {
   const speech = speeches[index]
-  const [lens, setLensState] = useState<JudgeLens>(DEFAULT_JUDGE_LENS)
+  const [panel, setPanelState] = useState<JudgeLens[]>([DEFAULT_JUDGE_LENS])
+  const [steer, setSteer] = useState("")
   const [count, setCount] = useState(DEFAULT_ALTERNATIVE_COUNT)
   const [simulation, setSimulation] = useState<SpeechOutcomeSimulation | null>(null)
   const [savedAt, setSavedAt] = useState<number | null>(null)
@@ -82,19 +110,28 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
   const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    setLensState(readLens())
+    setPanelState(readPanel())
   }, [])
 
-  const setLens = useCallback((value: JudgeLens) => {
-    setLensState(value)
-    try {
-      window.localStorage.setItem(OUTCOME_LENS_STORAGE_KEY, value)
-    } catch {
-      // Storage blocked — the choice still holds for this page.
-    }
+  const toggleJudge = useCallback((id: JudgeLens) => {
+    setPanelState((current) => {
+      const has = current.includes(id)
+      // The panel never empties, and stops growing at the cap.
+      if (has && current.length === 1) return current
+      if (!has && current.length >= MAX_PANEL) return current
+      const next = normalizePanel(has ? current.filter((judge) => judge !== id) : [...current, id])
+      try {
+        window.localStorage.setItem(OUTCOME_PANEL_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        // Storage blocked — the choice still holds for this page.
+      }
+      return next
+    })
   }, [])
 
-  // A different speech or lens shows its own last run, and abandons any run
+  const lens = panelKey(panel)
+
+  // A different speech or panel shows its own last run, and abandons any run
   // still in flight for the one being left.
   useEffect(() => {
     abortRef.current?.abort()
@@ -116,7 +153,7 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
     setStatus({ state: "loading" })
     try {
       const result = await requestSpeechOutcomes(
-        { videoTitle, speeches, index, lens, count },
+        { videoTitle, round, speeches, index, panel, count, steer, roundTranscript },
         { signal: controller.signal },
       )
       if (controller.signal.aborted) return
@@ -136,7 +173,7 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
   const copy = async () => {
     if (!speech || !simulation) return
     try {
-      await navigator.clipboard.writeText(speechOutcomesToMarkdown(speech, simulation, lens))
+      await navigator.clipboard.writeText(speechOutcomesToMarkdown(speech, simulation, panel))
       setCopied(true)
       window.setTimeout(() => setCopied(false), 1500)
     } catch {
@@ -148,29 +185,50 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
 
   const loading = status.state === "loading"
   const best = simulation ? bestAlternativeIndex(speech.side, simulation) : -1
-  const lensInfo = JUDGE_LENSES.find((option) => option.id === lens) ?? JUDGE_LENSES[0]
+  const panelNames = panel.map((id) => judgeLabel(id).toLowerCase())
+  const panelPhrase = panel.length === 1 ? `a ${panelNames[0]}` : `a ${panel.length}-judge panel`
   const swingFor = swingSideLabel(speech.side)
 
   return (
     <div className="flex flex-col min-h-0 flex-1">
-      <div className="shrink-0 flex flex-wrap items-center gap-1.5 border-b border-border px-3 py-2">
-        <label className="sr-only" htmlFor="outcome-lens">
-          Judge
+      <div className="shrink-0 space-y-1.5 border-b border-border px-3 py-2">
+        <div role="group" aria-labelledby="outcome-panel-label" className="flex flex-wrap items-center gap-1">
+          <span id="outcome-panel-label" className="mr-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+            Judges
+          </span>
+          {JUDGE_LENSES.map((option) => {
+            const on = panel.includes(option.id)
+            return (
+              <button
+                key={option.id}
+                type="button"
+                aria-pressed={on}
+                disabled={loading}
+                title={option.description}
+                onClick={() => toggleJudge(option.id)}
+                className={`h-6 rounded-full border px-2 text-[11px] transition-colors disabled:opacity-60 ${
+                  on
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {option.label}
+              </button>
+            )
+          })}
+        </div>
+        <label className="sr-only" htmlFor="outcome-steer">
+          Steer the alternatives
         </label>
-        <select
-          id="outcome-lens"
-          value={lens}
-          onChange={(event) => setLens(event.target.value as JudgeLens)}
+        <input
+          id="outcome-steer"
+          value={steer}
+          onChange={(event) => setSteer(event.target.value)}
           disabled={loading}
-          title={lensInfo.description}
-          className="h-6 rounded-md border border-border bg-background px-1.5 text-[11px]"
-        >
-          {JUDGE_LENSES.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+          placeholder="Steer the alternatives (optional) — e.g. go for the DA instead of theory"
+          className="h-6 w-full rounded-md border border-border bg-background px-1.5 text-[11px]"
+        />
+        <div className="flex flex-wrap items-center gap-1.5">
         <label className="sr-only" htmlFor="outcome-count">
           Alternatives
         </label>
@@ -213,6 +271,10 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
             {loading ? "Simulating…" : simulation ? "Run again" : "Simulate"}
           </button>
         </div>
+        </div>
+        {panel.length > 1 && panel.length % 2 === 0 && (
+          <p className="text-[10px] text-muted-foreground">An even panel can tie — add or drop a judge to avoid it.</p>
+        )}
       </div>
 
       <ScrollArea className="flex-1 min-h-0">
@@ -231,10 +293,16 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
               <p>
                 What else could the <span className="font-medium text-foreground">{speech.label}</span> have done?
                 Claude drafts {count} alternative {speech.side === "cx" ? "lines of questioning" : "responses"} and
-                predicts how a {lensInfo.label.toLowerCase()} would vote after each, next to the speech as it was
-                given.
+                predicts how {panelPhrase} would vote after each, next to the speech as it was given.
               </p>
-              <p className="text-[11px]">{lensInfo.description}</p>
+              <ul className="space-y-0.5 text-[11px]">
+                {panel.map((id) => (
+                  <li key={id}>
+                    <span className="font-medium text-foreground">{judgeLabel(id)}:</span>{" "}
+                    {JUDGE_LENSES.find((option) => option.id === id)?.description}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
@@ -267,6 +335,7 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
                 <p className="text-[11px] text-muted-foreground">
                   <span className="font-medium">RFD:</span> {simulation.actual.ballot.rfd}
                 </p>
+                <JudgeBallots ballot={simulation.actual.ballot} />
               </section>
 
               <ol className="space-y-1.5">
@@ -324,6 +393,7 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
                             <WinnerChip ballot={alternative.ballot} />
                             <p className="text-[11px] text-muted-foreground">{alternative.ballot.rfd}</p>
                           </div>
+                          <JudgeBallots ballot={alternative.ballot} />
                         </div>
                       )}
                     </li>
@@ -359,14 +429,56 @@ export function WatchSpeechOutcomes({ videoId, videoTitle, speeches, index, onSi
   )
 }
 
+/** The decision: the winner's chance for one judge, the vote tally for a panel. */
 function WinnerChip({ ballot }: { ballot: PredictedBallot }) {
   const chance = ballot.winner === "aff" ? ballot.affWinProbability : 100 - ballot.affWinProbability
+  const judges = ballot.judges ?? []
+  const aff = judges.filter((judge) => judge.winner === "aff").length
+  const detail =
+    judges.length > 1
+      ? `${Math.max(aff, judges.length - aff)}–${Math.min(aff, judges.length - aff)}`
+      : `${chance}%`
   return (
     <span
       className={`shrink-0 rounded px-1.5 py-px text-[10px] font-semibold tabular-nums ${SPEECH_SIDE_STYLES[ballot.winner].solid}`}
+      title={judges.length > 1 ? `Chance ${ballot.winner.toUpperCase()} takes the panel: ${chance}%` : undefined}
     >
-      {ballot.winner.toUpperCase()} {chance}%
+      {ballot.winner.toUpperCase()} {detail}
     </span>
+  )
+}
+
+/** Each judge's ballot on a panel: vote, confidence bar, RFD and what decided it. */
+function JudgeBallots({ ballot }: { ballot: PredictedBallot }) {
+  const judges = ballot.judges ?? []
+  if (judges.length < 2) return null
+  return (
+    <ul className="grid gap-1.5 sm:grid-cols-2" aria-label="Ballots by judge">
+      {judges.map((judge) => {
+        const confidence = judge.winner === "aff" ? judge.affWinProbability : 100 - judge.affWinProbability
+        return (
+          <li key={judge.judge} className="space-y-1 rounded border border-border bg-background p-1.5">
+            <div className="flex items-center justify-between gap-1">
+              <span className="truncate text-[11px] font-medium">{judgeLabel(judge.judge)}</span>
+              <span
+                className={`shrink-0 rounded px-1 py-px text-[10px] font-semibold ${SPEECH_SIDE_STYLES[judge.winner].solid}`}
+              >
+                {judge.winner.toUpperCase()}
+              </span>
+            </div>
+            <div className="h-1 overflow-hidden rounded-full bg-muted" title={`Confidence ${confidence}%`} aria-hidden>
+              <div className={`h-full ${SPEECH_SIDE_STYLES[judge.winner].dot}`} style={{ width: `${confidence}%` }} />
+            </div>
+            <p className="text-[11px] text-muted-foreground">{judge.rfd}</p>
+            {judge.decisive && (
+              <p className="text-[10px] text-muted-foreground">
+                <span className="font-medium">Decided on:</span> {judge.decisive}
+              </p>
+            )}
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 

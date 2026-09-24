@@ -8,7 +8,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { buildRoundSpeeches } from "../src/lib/round-speeches";
 import type { VideoDocument } from "../src/lib/video-documents";
 import {
+  aggregatePanel,
   bestAlternativeIndex,
+  majorityProbability,
+  normalizePanel,
+  panelKey,
   buildSpeechOutcomePrompt,
   clampAlternativeCount,
   parseSpeechOutcomeResponse,
@@ -64,9 +68,9 @@ const reply = {
 describe("buildSpeechOutcomePrompt", () => {
   it("sends the round before, the speech itself, and what followed", () => {
     const index = speeches.findIndex((speech) => speech.label === "1AR");
-    const prompt = buildSpeechOutcomePrompt({ videoTitle: "Space colonization", speeches, index, lens: "lay", count: 9 });
+    const prompt = buildSpeechOutcomePrompt({ videoTitle: "Space colonization", speeches, index, panel: ["lay"], count: 9 });
     expect(prompt).toContain("Round: Space colonization");
-    expect(prompt).toContain("Judge: Lay judge");
+    expect(prompt).toContain('judge id "lay": Lay judge');
     expect(prompt.indexOf("Spec and a disease DA.")).toBeLessThan(prompt.indexOf("## The speech to re-imagine: 1AR"));
     expect(prompt).toContain("Transcript:\nGroup the spec debate.");
     expect(prompt).toContain("3-0 neg.");
@@ -74,8 +78,34 @@ describe("buildSpeechOutcomePrompt", () => {
     expect(prompt).toContain("exactly 4 alternative responses");
   });
 
+  it("lists every panel judge, the round's facts and the steer", () => {
+    const prompt = buildSpeechOutcomePrompt({
+      speeches,
+      index: 2,
+      panel: ["lay", "flow", "theory"],
+      steer: "go for the DA",
+      round: { format: "LD", aff: "Lincoln AS", neg: "Harvard-Westlake JK", decision: "2-1 Neg" },
+    });
+    // Canonical order, whatever order they were picked in.
+    expect(prompt.indexOf('judge id "flow"')).toBeLessThan(prompt.indexOf('judge id "lay"'));
+    expect(prompt).toContain('judge id "theory": Theory-first');
+    expect(prompt).toContain("(3 per option)");
+    expect(prompt).toContain("Steer the alternatives this way: go for the DA.");
+    expect(prompt).toContain("Format: LD");
+    expect(prompt).toContain("Recorded decision: 2-1 Neg");
+  });
+
+  it("sends the whole round's captions only when the speech has nothing of its own", () => {
+    const bare = speeches.map((speech) => ({ ...speech, parts: {} }));
+    const withCaptions = buildSpeechOutcomePrompt({ speeches: bare, index: 1, panel: ["flow"], roundTranscript: "so the new space race" });
+    expect(withCaptions).toContain("auto-caption transcript of the whole round");
+    expect(withCaptions).toContain("so the new space race");
+    const written = buildSpeechOutcomePrompt({ speeches, index: 1, panel: ["flow"], roundTranscript: "so the new space race" });
+    expect(written).not.toContain("so the new space race");
+  });
+
   it("says so when the speech opens the round", () => {
-    expect(buildSpeechOutcomePrompt({ speeches, index: 0, lens: "flow" })).toContain("first speech of the round");
+    expect(buildSpeechOutcomePrompt({ speeches, index: 0, panel: ["flow"] })).toContain("first speech of the round");
   });
 
   it("clamps the alternative count", () => {
@@ -142,10 +172,64 @@ describe("swing", () => {
 
   it("exports as Markdown with the ballots and the swing", () => {
     const speech = speeches.find((candidate) => candidate.label === "1AR")!;
-    const markdown = speechOutcomesToMarkdown(speech, parsed, "flow");
+    const markdown = speechOutcomesToMarkdown(speech, parsed, ["flow"]);
     expect(markdown).toContain("## Alternative responses: 1AR");
     expect(markdown).toContain("### 1. Impact turn the DA (turn, +28 Aff)");
     expect(markdown).toContain("**Ballot:** NEG (70%) — The dropped DA outweighs.");
+  });
+});
+
+describe("judge panels", () => {
+  const ballots = (votes: Array<[string, number]>) =>
+    votes.map(([judge, aff]) => ({
+      judge,
+      winner: aff >= 50 ? "aff" : "neg",
+      affWinProbability: aff,
+      rfd: `${judge} reasons.`,
+      decisive: "the DA",
+    }));
+
+  it("normalizes a panel and keys a lone judge by its bare id", () => {
+    expect(normalizePanel(["lay", "nope", "flow", "lay"])).toEqual(["flow", "lay"]);
+    expect(normalizePanel([])).toEqual(["flow"]);
+    expect(normalizePanel(["flow", "lay", "policymaker", "critical", "theory", "traditional"])).toHaveLength(5);
+    expect(panelKey(["lay"])).toBe("lay");
+    expect(panelKey(["theory", "flow"])).toBe("flow+theory");
+  });
+
+  it("computes the chance a majority votes aff", () => {
+    expect(majorityProbability([0.5])).toBeCloseTo(0.5);
+    expect(majorityProbability([1, 1, 0])).toBeCloseTo(1);
+    expect(majorityProbability([0.8, 0.8, 0.8])).toBeCloseTo(0.896);
+  });
+
+  it("reads per-judge ballots and derives the panel decision from the votes", () => {
+    const parsed = parseSpeechOutcomeResponse(
+      JSON.stringify({
+        actual: { assessment: "x", ballots: ballots([["flow", 30], ["lay", 70], ["theory", 20]]) },
+        alternatives: [{ ...reply.alternatives[0], ballot: undefined, ballots: ballots([["flow", 80], ["Lay judge", 60], ["x", 90]]) }],
+      }),
+      4,
+      ["flow", "lay", "theory"],
+    )!;
+    expect(parsed.actual.ballot.winner).toBe("neg");
+    expect(parsed.actual.ballot.rfd).toBe("NEG on a 2–1; Lay judge dissents.");
+    expect(parsed.actual.ballot.judges?.map((judge) => judge.judge)).toEqual(["flow", "lay", "theory"]);
+    // A misnamed judge falls back to the panel seat it answered in.
+    expect(parsed.alternatives[0].ballot.judges?.map((judge) => judge.judge)).toEqual(["flow", "lay", "theory"]);
+    expect(parsed.alternatives[0].ballot.winner).toBe("aff");
+    expect(parsed.alternatives[0].ballot.rfd).toBe("AFF on a 3–0.");
+  });
+
+  it("treats a panel of one as that judge's own ballot", () => {
+    const [only] = ballots([["lay", 64]]) as Parameters<typeof aggregatePanel>[0];
+    expect(aggregatePanel([only])).toMatchObject({ winner: "aff", affWinProbability: 64, rfd: "lay reasons." });
+  });
+
+  it("breaks an even split on the judges' confidence", () => {
+    const decision = aggregatePanel(ballots([["flow", 90], ["lay", 45]]) as Parameters<typeof aggregatePanel>[0]);
+    expect(decision.winner).toBe("aff");
+    expect(decision.rfd).toContain("splits 1–1");
   });
 });
 

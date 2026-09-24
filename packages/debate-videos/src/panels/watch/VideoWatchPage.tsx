@@ -27,9 +27,12 @@
  * The right-hand column is a tab strip rather than one panel — YouTube's
  * caption cues, then the long-form documents (the round typed up speech by
  * speech, the AI summary of it), then the analysis videos an editor has tied
- * to this one. A video with an AI summary or written analysis also gets the
- * round one tab per speech there, and a speech timeline under the player
- * whose segments seek to — and open — each speech. Those arrive as props from the server rather than being
+ * to this one. Every round — and any video whose AI summary or written
+ * analysis goes speech by speech — also gets the round one tab per speech
+ * there, with a judge-panel outcome simulator in each, and a speech timeline
+ * under the player whose segments seek to — and open — each speech. A round
+ * nobody wrote up gets its format's standard speeches, which the reader
+ * times with "Mark start" (see `lib/round-formats.ts`). Those arrive as props from the server rather than being
  * fetched here: they are the reason this page is worth indexing, and a
  * crawler never waits for a client fetch.
  *
@@ -87,7 +90,15 @@ import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
-import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
+import {
+  captionText,
+  withCaptionTranscripts,
+  withSpeechStarts,
+  type RoundSpeech,
+} from "../../lib/round-speeches"
+import { resolveRoundSpeeches } from "../../lib/round-formats"
+import type { RoundContext } from "../../lib/speech-outcomes"
+import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import type { VideoType } from "../../types/videos"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -240,14 +251,48 @@ export function VideoWatchPage({
    * after the first paint, so this stays true while they load and the page
    * widens only once it is settled that there is nothing to show.
    */
+  /** The round's speeches as written up, or its format's standard order — empty for a lecture. */
+  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
+  /** Speech starts the reader marked in this browser, by speech key. */
+  const [speechMarks, setSpeechMarks] = useState<Record<string, number>>({})
+  useEffect(() => {
+    setSpeechMarks(readSpeechStarts(videoId))
+  }, [videoId])
+  const handleMarkStart = useCallback(
+    (speechKey: string, seconds: number | null) => {
+      writeSpeechStart(videoId, speechKey, seconds)
+      setSpeechMarks(readSpeechStarts(videoId))
+    },
+    [videoId],
+  )
+  const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
+  /** The round speech by speech, timed by the reader's marks, each untyped speech given its captions. */
+  const speeches = useMemo(
+    () => withCaptionTranscripts(withSpeechStarts(baseSpeeches, speechMarks), sentences),
+    [baseSpeeches, speechMarks, sentences],
+  )
+  const roundTranscript = useMemo(
+    () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
+    [baseSpeeches.length, sentences],
+  )
+  const roundContext = useMemo<RoundContext>(
+    () => ({
+      format: styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+      tournament,
+      roundLevel,
+      aff: affTeam,
+      neg: negTeam,
+      decision: judgeDecision,
+    }),
+    [styleNumber, tournament, roundLevel, affTeam, negTeam, judgeDecision],
+  )
+
   const hasSidePanel =
     hasTranscript ||
     transcriptLoading ||
+    speeches.length > 0 ||
     documents.some((document) => (document.body ?? "").trim().length > 0) ||
     links.length > 0
-
-  /** The round speech by speech — empty unless there is a summary or analysis to split. */
-  const speeches = useMemo(() => buildRoundSpeeches(documents), [documents])
 
   // Claim playback from the floating popout player for as long as this page
   // is mounted, and hand it back — with the position — on the way out.
@@ -739,6 +784,11 @@ export function VideoWatchPage({
                 focusSpeech={focusSpeech}
                 videoId={videoId}
                 videoTitle={title}
+                speeches={speeches}
+                round={roundContext}
+                roundTranscript={roundTranscript}
+                onMarkStart={handleMarkStart}
+                markedKeys={markedKeys}
               />
             </div>
           )}

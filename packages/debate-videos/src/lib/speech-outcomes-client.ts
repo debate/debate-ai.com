@@ -14,13 +14,20 @@ import {
   SPEECH_OUTCOME_SYSTEM_PROMPT,
   buildSpeechOutcomePrompt,
   clampAlternativeCount,
+  normalizePanel,
   parseSpeechOutcomeResponse,
   type SpeechOutcomeInput,
   type SpeechOutcomeSimulation,
 } from "./speech-outcomes";
 
-/** Each alternative is an outline plus a ballot; four of them fit comfortably. */
-const MAX_TOKENS = 3200;
+/**
+ * Room for the reply: each option is an outline plus one ballot per judge, so
+ * a five-judge panel over four alternatives needs about twice what a lone
+ * judge does.
+ */
+export function outcomeMaxTokens(count: number, panelSize: number): number {
+  return Math.max(3200, 1200 + (count + 1) * (320 + 200 * panelSize));
+}
 
 export interface RequestSpeechOutcomesOptions {
   endpoint?: string;
@@ -39,13 +46,14 @@ export async function requestSpeechOutcomes(
   { endpoint = "/api/reason-ai", signal }: RequestSpeechOutcomesOptions = {},
 ): Promise<SpeechOutcomeSimulation> {
   const count = clampAlternativeCount(input.count);
+  const panel = normalizePanel(input.panel);
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       system: SPEECH_OUTCOME_SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildSpeechOutcomePrompt({ ...input, count }) }],
-      maxTokens: MAX_TOKENS,
+      messages: [{ role: "user", content: buildSpeechOutcomePrompt({ ...input, count, panel }) }],
+      maxTokens: outcomeMaxTokens(count, panel.length),
       temperature: 0.7,
     }),
     signal,
@@ -62,7 +70,7 @@ export async function requestSpeechOutcomes(
   }
 
   const json = (await res.json()) as { text?: string };
-  const simulation = parseSpeechOutcomeResponse(json.text ?? "", count);
+  const simulation = parseSpeechOutcomeResponse(json.text ?? "", count, panel);
   if (!simulation) throw new Error("Claude's reply couldn't be read as a simulation. Try running it again.");
   return simulation;
 }
