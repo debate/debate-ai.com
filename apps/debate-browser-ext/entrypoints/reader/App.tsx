@@ -39,7 +39,11 @@ import ArticleActionButtons, {
 import ArticleContent from '@/src/components/article/ArticleContent';
 import ArticleFollowupQuestions from '@/src/components/article/ArticleFollowupQuestions';
 import ArticlePromptInput from '@/src/components/article/ArticlePromptInput';
-import { READER_SNAPSHOT_MESSAGE, READER_TAB_CHANGED_MESSAGE } from '@/src/reader/panel';
+import {
+  READER_SNAPSHOT_MESSAGE,
+  READER_TAB_CHANGED_MESSAGE,
+  requestReaderPanelClose,
+} from '@/src/reader/panel';
 import { checkPageForExistingCards } from '@/src/reuse/api';
 import {
   DEFAULT_SUMMARIZE_PROMPT,
@@ -61,15 +65,8 @@ interface Notice {
   text: string;
 }
 
-/** Closes the panel, whichever kind of panel this browser gave us. */
-function closePanel(): void {
-  const sidebar = (browser as unknown as { sidebarAction?: { close?: () => void } }).sidebarAction;
-  if (sidebar?.close) {
-    sidebar.close();
-    return;
-  }
-  window.close();
-}
+/** Hides the panel; the page it overlays keeps it, ready to toggle back. */
+const closePanel = requestReaderPanelClose;
 
 export default function App() {
   const account = useAccount();
@@ -198,11 +195,17 @@ export default function App() {
     void readCurrentPage();
   }, [readCurrentPage]);
 
-  // The background worker says when the reader has moved on. The panel offers
-  // to follow rather than re-extracting underneath them mid-read.
+  // The background worker says when a tab has moved to another page. Every
+  // open panel hears it, so only this panel's own tab counts. The panel offers
+  // to follow rather than re-extracting underneath the reader mid-read.
   useEffect(() => {
+    let ownTabId: number | undefined;
+    void browser.tabs.getCurrent().then((tab) => {
+      ownTabId = tab?.id;
+    });
     const onMessage = (message: unknown) => {
-      if ((message as { type?: string } | undefined)?.type === READER_TAB_CHANGED_MESSAGE) {
+      const { type, tabId } = (message as { type?: string; tabId?: number } | undefined) ?? {};
+      if (type === READER_TAB_CHANGED_MESSAGE && (ownTabId == null || tabId === ownTabId)) {
         setPageChanged(true);
       }
     };

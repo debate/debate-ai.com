@@ -12,7 +12,7 @@ import {
   parseSkipDomains,
   type ReuseMatch,
 } from '@/src/reuse/api';
-import { openReaderPanel, supportsReaderPanel } from '@/src/reader/panel';
+import { toggleReaderPanel } from '@/src/reader/panel';
 import { getSettings } from '@/src/settings/settings';
 import { requestTimerWindow } from '@/src/timer/window';
 
@@ -45,18 +45,16 @@ const STATUS_CLASSES: Record<StatusKind, string> = {
  * the entry points to the article panel and the round timer. Neither of those
  * renders here — the timer opens in its own window (src/timer/window.ts) so it
  * keeps running while the debater clicks back into the page, and the article
- * panel opens as the browser's side panel (src/reader/panel.ts) so the article
- * stays open while they click around the page it came from.
+ * panel is toggled as an overlay on the page itself (src/reader/panel.ts).
  *
- * The panel is opened from here rather than by messaging the background
- * worker: both Chrome and Firefox will only open a panel while handling a user
- * action, and this click is one.
+ * Opening this popup from the toolbar is the user action that grants
+ * `activeTab` for the tab, so the panel is put on the page from here directly.
  */
 export default function App() {
   const [pageUrl, setPageUrl] = useState('');
-  // Resolved on mount rather than in the click handler: opening the panel has
-  // to be the first thing that handler does (see src/reader/panel.ts).
-  const [windowId, setWindowId] = useState<number | undefined>(undefined);
+  // The tab the panel goes on; unset when this page runs as the standalone
+  // check window, which has no tab of its own to overlay.
+  const [tabId, setTabId] = useState<number | undefined>(undefined);
   const [status, setStatus] = useState<Status>({ kind: 'loading', text: 'Checking…' });
   const [matches, setMatches] = useState<ReuseMatch[]>([]);
   const [annotations, setAnnotations] = useState<Record<number, AnnotationState>>({});
@@ -118,7 +116,7 @@ export default function App() {
       const url = requested ?? activeTab?.url ?? '';
       if (cancelled) return;
       setPageUrl(url);
-      setWindowId(activeTab?.windowId);
+      if (!requested) setTabId(activeTab?.id);
 
       if (!url || !/^https?:\/\//.test(url)) {
         setStatus({ kind: 'error', text: 'Open a web page to check it for existing cards.' });
@@ -146,7 +144,7 @@ export default function App() {
   }, [check]);
 
   const canRecheck = /^https?:\/\//.test(pageUrl) && status.kind !== 'loading';
-  const canRead = /^https?:\/\//.test(pageUrl) && supportsReaderPanel();
+  const canRead = /^https?:\/\//.test(pageUrl) && tabId != null;
 
   return (
     <div className="p-3 text-foreground">
@@ -167,7 +165,10 @@ export default function App() {
         <Button
           className="mb-2 w-full"
           onClick={() => {
-            void openReaderPanel(windowId).then(() => window.close());
+            if (tabId == null) return;
+            void toggleReaderPanel(tabId)
+              .catch((err) => console.warn('Could not show the article panel on this page:', err))
+              .finally(() => window.close());
           }}
         >
           <BookOpen className="mr-2 h-4 w-4" />
