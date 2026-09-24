@@ -142,6 +142,41 @@ The follow behaviour reuses the side panel's remembered auto-scroll
 choice rather than adding a second toggle. Tested in
 `test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
 
+### Outcomes: alternative responses and predicted ballots
+
+`WatchRoundPanel` offers a fourth view, **Outcomes**
+(`components/watch/WatchSpeechOutcomes.tsx`), on every `RoundSpeech`
+whose `isSpeech` is true, when the panel knows the video id. It is split
+the same way as `debate-practice-rounds`' response-outcome charts:
+
+- `lib/speech-outcomes.ts` is pure. `buildSpeechOutcomePrompt` sends the
+  round before the speech (each speech's summary, else analysis, else
+  transcript, clipped to 1,400 characters), the speech itself (its
+  summary, analysis and up to 7,000 characters of transcript), and what
+  actually followed, including the decision. Sending what followed is on
+  purpose: the question is counterfactual, and the later speeches and the
+  real decision are what let the model say whether a different 1AR would
+  have mattered. `parseSpeechOutcomeResponse` accepts strict JSON or the
+  first object in a fenced reply, keeps the alternatives that parse, and
+  normalizes each ballot. The affirmative's win probability is trusted over
+  a contradicting `winner` (the chart draws the number), a fraction such as
+  0.7 is read as 70, and PF's pro/con map to aff/neg.
+- `lib/speech-outcomes-client.ts` posts to the shared `/api/reason-ai`
+  proxy. It does not add a route, and the proxy's sign-in gate applies.
+- `state/speechOutcomeCache.ts` keeps the last run per video, speech key
+  and judge lens in `localStorage`, capped at 40 runs. It is a cache, not
+  a user record, so it is deliberately not added to the account sync.
+
+`speakerSwing` measures each alternative against the speech as given, for
+the side that gave the speech (a neg speech's swing is the negation of the
+aff delta; cross-ex has no speaking side and is measured for the aff).
+`bestAlternativeIndex` marks the largest positive swing, if any.
+
+The prompt lives in this package rather than in `debate-speech-writer`.
+Moving it there would give `debate-videos` a new dependency edge for one
+prompt. Tested in `test/speech-outcomes.test.ts` and
+`test/watch-round-panel.test.tsx`.
+
 ## Known gaps
 
 - Related videos are query passes, not a relevance model.
@@ -151,6 +186,14 @@ choice rather than adding a second toggle. Tested in
   follow-along until an editor adds them.
 - Cross-examinations are matched between documents by order, so a
   summary that skips a CX misaligns every later CX.
+- Outcome ballots are one model's single guess per run; nothing samples
+  several runs or reports how much they disagree, so a 55% can move to
+  45% on **Run again**.
+- The Outcomes view sees only the documents, never the video. A round
+  whose summary skips a speech gives the model nothing for that speech
+  beyond its transcript, if there is one.
+- Saved outcome runs stay in the browser that made them; they cannot be
+  shared by link, only copied as Markdown.
 - ~~The tournament pass was a `LIKE` search across title/channel/description
   (the same free-text search the search box uses), so a tournament whose
   name appeared in an unrelated video's description pulled that video in
