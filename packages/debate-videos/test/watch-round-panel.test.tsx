@@ -11,6 +11,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { WatchSidePanel } from "../src/components/watch/WatchSidePanel";
 import type { SpeechFocusRequest } from "../src/components/watch/WatchRoundPanel";
 import type { VideoDocument } from "../src/lib/video-documents";
+import { standardRoundSpeeches } from "../src/lib/round-formats";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -176,6 +177,70 @@ describe("WatchSidePanel by speech", () => {
         simulate.click();
       });
       expect(container.querySelector('[role="alert"]')?.textContent).toContain("Sign in to use AI features.");
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("gives a round with nothing written its format's speeches, Mark start and a judge panel", async () => {
+    const onMarkStart = vi.fn();
+    const ballots = (flow: number, lay: number, theory: number) => [
+      { judge: "flow", winner: flow >= 50 ? "aff" : "neg", affWinProbability: flow, rfd: "Flow RFD.", decisive: "the DA" },
+      { judge: "lay", winner: lay >= 50 ? "aff" : "neg", affWinProbability: lay, rfd: "Lay RFD.", decisive: "clarity" },
+      { judge: "theory", winner: theory >= 50 ? "aff" : "neg", affWinProbability: theory, rfd: "Theory RFD.", decisive: "spec" },
+    ];
+    const reply = {
+      actual: { assessment: "Solid.", ballots: ballots(60, 70, 40) },
+      alternatives: [
+        { title: "Collapse", approach: "collapse", outline: ["A"], tradeoff: "B", ballots: ballots(30, 40, 20) },
+        { title: "Turn", approach: "turn", outline: ["C"], tradeoff: "D", ballots: ballots(80, 60, 55) },
+      ],
+      keyClash: ["Spec"],
+    };
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ text: JSON.stringify(reply) }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    window.localStorage.setItem("debate-videos:outcome-panel", JSON.stringify(["flow", "lay"]));
+    try {
+      act(() => {
+        root.render(
+          createElement(WatchSidePanel, {
+            sentences: [],
+            captionsLoading: false,
+            currentTime: 75,
+            onSeek: () => {},
+            videoId: "round1",
+            speeches: standardRoundSpeeches(3),
+            round: { format: "LD", decision: "2-1 Aff" },
+            roundTranscript: "the whole round in captions",
+            onMarkStart,
+          }),
+        );
+      });
+      expect(speechTabs().map((tab) => tab.textContent)).toEqual(["1AC", "CX · 1AC", "1NC", "CX · 1NC", "1AR", "NR", "2AR"]);
+
+      const mark = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Mark start")!;
+      act(() => mark.click());
+      expect(onMarkStart).toHaveBeenCalledWith("1AC#1", 75);
+
+      // Nothing written, so the speech opens straight on Outcomes; add a third judge.
+      expect(panelText()).toContain("a 2-judge panel");
+      const theory = container.querySelector('button[aria-pressed="false"][title^="A judge who resolves procedurals"]') as HTMLButtonElement;
+      act(() => theory.click());
+      expect(theory.getAttribute("aria-pressed")).toBe("true");
+
+      const simulate = Array.from(container.querySelectorAll("button")).find((button) => button.textContent === "Simulate")!;
+      await act(async () => {
+        simulate.click();
+      });
+      const body = JSON.parse((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body as string);
+      expect(body.messages[0].content).toContain('judge id "theory"');
+      expect(body.messages[0].content).toContain("Recorded decision: 2-1 Aff");
+      expect(body.messages[0].content).toContain("the whole round in captions");
+
+      expect(panelText()).toContain("AFF on a 2–1; Theory-first dissents.");
+      expect(panelText()).toContain("Decided on: clarity");
+      expect(container.querySelectorAll('[aria-label="Ballots by judge"]').length).toBeGreaterThan(0);
+      expect(JSON.parse(window.localStorage.getItem("debate-videos:outcome-panel")!)).toEqual(["flow", "lay", "theory"]);
     } finally {
       vi.unstubAllGlobals();
     }
