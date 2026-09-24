@@ -20,7 +20,10 @@ Two sections, stacked:
   style badge. A search box filters by year or by resolution text. The data
   is the same `topics` field `/api/videos/meta` already returns for the video
   cards' topic tooltips (`lib/debate-topics.ts`'s formatters), passed down
-  from `LecturesPage` rather than fetched again here.
+  from `LecturesPage` rather than fetched again here. Every resolution is a
+  link: clicking one opens the CARDS search (`/cards`) for that topic's short
+  name, filtered to that season's year and that format (Policy → CX,
+  College → NDT, LD, PF), listing every card, outline and round that matches.
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
   table and the views/videos/avg-views-over-time charts `YouTubeStatsModal`
   already drew in its dialog, extracted so they can render inline on a full
@@ -57,3 +60,11 @@ per-year badges already use — College here is the NDT resolution). Picking a s
 for that style, restricts the search box to that style's text (plus the year
 itself), and shows only that style's badge on each remaining card — "Policy
 only" now works exactly as named. "All" restores the previous behavior.
+
+The topic links search by the topic's short name (e.g. "Water"), not the
+full resolution — the cards search is a substring match, so a whole
+resolution sentence would match almost nothing. Some older LD short names
+in `debate-topics.json` are just the resolution's first two words
+("Colleges And"), so those searches are broad; the fix is better names in
+the data, not in the link.
+

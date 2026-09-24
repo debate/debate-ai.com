@@ -11,7 +11,8 @@
     "build:firefox": "wxt build -b firefox",
     "zip": "wxt zip",
     "typecheck": "wxt prepare && tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "icons": "./scripts/resize-icons.sh"
   },
   "dependencies": {
     "@radix-ui/react-select": "^2.1.2",

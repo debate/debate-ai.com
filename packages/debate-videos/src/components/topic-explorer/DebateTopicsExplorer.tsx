@@ -8,16 +8,43 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Search, X } from "lucide-react";
+import { buildCardsSearchHref } from "debate-research-evidence/src/lib/search-query";
 import { Input } from "../../ui/primitives/input";
 import { Button } from "../../ui/primitives/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/primitives/card";
 import { Badge } from "../../ui/primitives/badge";
 import { DEBATE_STYLE_LABELS, type DebateStyle } from "../../types/videos";
-import { getStyleTopicItems, getStyleTopicText, type DebateTopicYear } from "../../lib/debate-topics";
+import {
+  getStyleTopicItems,
+  getStyleTopicText,
+  type DebateTopicYear,
+  type TopicItem,
+} from "../../lib/debate-topics";
 
 /** Display order: Policy, College (NDT), LD, PF. */
 const EXPLORER_STYLES: DebateStyle[] = [1, 4, 3, 2];
+
+/** Each explorer style's value for the CARDS search's `event` filter. */
+const STYLE_SEARCH_EVENT: Record<DebateStyle, string> = {
+  1: "CX",
+  2: "PF",
+  3: "LD",
+  4: "NDT",
+};
+
+/** The `/cards` search for one resolution: its short title (or, untitled, its
+ *  full text) as the term, narrowed to that season and format. Every card,
+ *  outline and round in that slice of the corpus comes back. Exported for its
+ *  own unit test. */
+export function topicSearchHref(year: DebateTopicYear["year"], style: DebateStyle, item: TopicItem): string {
+  return buildCardsSearchHref({
+    q: item.title ?? item.text,
+    year,
+    event: STYLE_SEARCH_EVENT[style],
+  });
+}
 
 export interface DebateTopicsExplorerProps {
   /** Every season's resolutions, from `/api/videos/meta`'s `topics` field.
@@ -154,15 +181,21 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
                       <ul className="min-w-0 space-y-1">
                         {items.map((item, i) => (
                           <li key={i} className="whitespace-pre-line text-muted-foreground">
-                            {item.title && (
-                              <span className="font-medium text-foreground">
-                                {item.emoji && <span aria-hidden="true">{item.emoji} </span>}
-                                {item.title}
-                                {": "}
-                              </span>
-                            )}
-                            {item.month && <span>{item.month}: </span>}
-                            {item.text}
+                            <Link
+                              href={topicSearchHref(entry.year, style, item)}
+                              title={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
+                              className="block rounded-sm hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            >
+                              {item.title && (
+                                <span className="font-medium text-foreground">
+                                  {item.emoji && <span aria-hidden="true">{item.emoji} </span>}
+                                  {item.title}
+                                  {": "}
+                                </span>
+                              )}
+                              {item.month && <span>{item.month}: </span>}
+                              {item.text}
+                            </Link>
                           </li>
                         ))}
                       </ul>

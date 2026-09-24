@@ -1,14 +1,14 @@
-/* Timer-window styles: the Digital-7 face, the depleting ring and the
+/* Timer-window styles: the font-timer-digits face, the depleting ring and the
  * timeline plot, ported from the original extension's css/. Shared tokens and
  * the Tailwind layers live in base.css, which every page imports first. */
 
 /* ------------------------------------------------------------------ *
- *  Digital timer font (public/res/Digital-7.woff)
+ *  Digital timer font (public/res/font-timer-digits.woff)
  * ------------------------------------------------------------------ */
 
 @font-face {
   font-family: 'timer-font';
-  src: url('/res/Digital-7.woff') format('woff');
+  src: url('/res/font-timer-digits.woff') format('woff');
   font-display: swap;
 }
 

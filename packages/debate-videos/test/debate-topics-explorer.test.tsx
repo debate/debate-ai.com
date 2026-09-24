@@ -10,7 +10,7 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { DebateTopicsExplorer, entryMatches, matchesStyleFilter } from "../src/components/topic-explorer/DebateTopicsExplorer";
+import { DebateTopicsExplorer, entryMatches, matchesStyleFilter, topicSearchHref } from "../src/components/topic-explorer/DebateTopicsExplorer";
 import type { DebateTopicYear } from "../src/lib/debate-topics";
 
 const TOPICS: DebateTopicYear[] = [
@@ -135,5 +135,24 @@ describe("matchesStyleFilter", () => {
     expect(matchesStyleFilter(policyOnlyEntry, 3)).toBe(false); // LD
     expect(matchesStyleFilter(policyOnlyEntry, 2)).toBe(false); // PF
     expect(matchesStyleFilter(policyOnlyEntry, 4)).toBe(false); // College
+  });
+});
+
+describe("topicSearchHref", () => {
+  it("searches a titled topic by its title, narrowed to that season and format", () => {
+    expect(topicSearchHref(2023, 3, { title: "Civil Disobedience", text: "Resolved: civil disobedience is justified." }))
+      .toBe("/cards?q=Civil+Disobedience&year=2023&event=LD");
+    expect(topicSearchHref(2024, 1, { title: "Healthcare", text: "…" })).toBe("/cards?q=Healthcare&year=2024&event=CX");
+    expect(topicSearchHref(2023, 4, { title: "Water", text: "…" })).toBe("/cards?q=Water&year=2023&event=NDT");
+  });
+
+  it("falls back to the resolution text for an untitled topic", () => {
+    expect(topicSearchHref(2023, 2, { text: "Climate change policy." })).toBe(
+      "/cards?q=Climate+change+policy.&year=2023&event=PF",
+    );
+  });
+
+  it("renders every resolution as a link into the cards search", () => {
+    expect(render()).toContain('href="/cards?q=Healthcare&amp;year=2024&amp;event=CX"');
   });
 });
