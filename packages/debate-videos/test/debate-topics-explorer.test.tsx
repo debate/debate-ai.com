@@ -38,28 +38,50 @@ function render(props: Partial<Parameters<typeof DebateTopicsExplorer>[0]> = {})
 }
 
 describe("DebateTopicsExplorer", () => {
-  it("lists every year, newest first", () => {
+  it("lists every year on the timeline rail, newest first and selected", () => {
     const html = render();
-    expect(html.indexOf("2024")).toBeLessThan(html.indexOf("2023"));
+    expect(html.indexOf(">2024<")).toBeLessThan(html.indexOf(">2023<"));
+    expect(html).toMatch(/aria-selected="true"[^>]*><span[^>]*>2024</);
+  });
+
+  it("shows only the selected year's resolutions", () => {
+    const html = render();
+    expect(html).toContain("expand its provision of healthcare");
+    expect(html).not.toContain("water infrastructure");
+  });
+
+  it("opens on defaultYear when given", () => {
+    const html = render({ defaultYear: 2023 });
+    expect(html).toContain("water infrastructure");
+    expect(html).not.toContain("expand its provision of healthcare");
+  });
+
+  it("shows the selected year's video numbers when stats are passed", () => {
+    const html = render({
+      videoStatsByYear: [{ year: "2024", totalViews: 12_500, videoCount: 40, avgViewsPerVideo: 312 }],
+    });
+    expect(html).toContain("12.5K");
+    expect(html).toContain(">40<");
+    expect(html).toContain(">312<");
   });
 
   it("shows a badged line per style that has a resolution, and skips the rest", () => {
-    const html = render();
+    const html = render({ defaultYear: 2023 });
     expect(html).toContain("Policy");
     expect(html).toContain("water infrastructure");
     expect(html).toContain("LD");
     expect(html).toContain("civil disobedience");
     expect(html).toContain("PF");
     expect(html).toContain("Climate change policy");
-    // 2024 has no LD/PF/College resolution — its card carries Policy only.
-    // (Both years share the "Policy" badge text, so this only pins the
-    // count, not which year it belongs to.) One more ">Policy<" comes from
-    // the style filter row's own "Policy" button, hence 3 rather than 2.
-    expect(html.match(/>Policy</g)?.length).toBe(3);
+    // 2024 has no LD/PF/College resolution — its pane carries Policy only:
+    // one badge plus the style filter row's own "Policy" button.
+    const html2024 = render();
+    expect(html2024.match(/>Policy</g)?.length).toBe(2);
+    expect(html2024.match(/>LD</g)?.length).toBe(1);
   });
 
   it("shows each topic's icon and short title before its resolution", () => {
-    const html = render();
+    const html = render({ defaultYear: 2023 });
     expect(html).toContain("✊");
     expect(html).toContain("Civil Disobedience");
     expect(html.indexOf("Civil Disobedience")).toBeLessThan(html.indexOf("civil disobedience is justified"));

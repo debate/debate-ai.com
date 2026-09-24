@@ -10,7 +10,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { YouTubeStatsCharts } from "../../components/youtube-stats-modal/YouTubeStatsCharts";
-import { DebateTopicsExplorer } from "../../components/topic-explorer/DebateTopicsExplorer";
+import { DebateTopicsExplorer, type YearVideoStats } from "../../components/topic-explorer/DebateTopicsExplorer";
 import type { DebateTopicYear } from "../../lib/debate-topics";
 
 export interface StatisticsPageProps {
@@ -23,6 +23,9 @@ export interface StatisticsPageProps {
 }
 
 export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
+  // Same one-boundary cast as the charts below: the timeline only reads `byYear`.
+  const videoStatsByYear = (youtubeStats as { byYear?: YearVideoStats[] } | null)?.byYear;
+
   return (
     <div className="min-h-screen bg-background p-3 sm:p-6 flex flex-col justify-between">
       <div>
@@ -39,7 +42,7 @@ export function StatisticsPage({ topics, youtubeStats }: StatisticsPageProps) {
           </div>
         </div>
 
-        <DebateTopicsExplorer topics={topics} />
+        <DebateTopicsExplorer topics={topics} videoStatsByYear={videoStatsByYear} />
 
         {youtubeStats ? (
           <div className="mt-10">
