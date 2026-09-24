@@ -68,6 +68,10 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [isPurgingReuseLog, setIsPurgingReuseLog] = useState(false);
   const [reuseLogPurgeResult, setReuseLogPurgeResult] = useState<string | null>(null);
   const [reuseLogPurgeError, setReuseLogPurgeError] = useState<string | null>(null);
+  const [isValidatingUrls, setIsValidatingUrls] = useState(false);
+  const [urlValidationResult, setUrlValidationResult] = useState<string | null>(null);
+  const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
+  const [urlValidationProgress, setUrlValidationProgress] = useState<{ checked: number; valid: number; invalid: number; errors: number; done: boolean } | null>(null);
   const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
   const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
   const [recomputeStacksError, setRecomputeStacksError] = useState<string | null>(null);
@@ -295,6 +299,59 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     }
   };
 
+  const handleValidateUrls = async () => {
+    setIsValidatingUrls(true);
+    setUrlValidationError(null);
+    setUrlValidationResult(null);
+    setUrlValidationProgress({ checked: 0, valid: 0, invalid: 0, errors: 0, done: false });
+    try {
+      let afterId = 0;
+      let totalChecked = 0;
+      let totalValid = 0;
+      let totalInvalid = 0;
+      let totalErrors = 0;
+      let done = false;
+
+      while (!done) {
+        const res = await fetch("/api/admin/debate-cards/validate-urls", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ afterId, limit: 500, timeoutMs: 8000 }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.details || data?.error || "URL validation failed");
+
+        totalChecked += data.checked;
+        totalValid += data.valid;
+        totalInvalid += data.invalid;
+        totalErrors += data.errors;
+
+        setUrlValidationProgress({
+          checked: totalChecked,
+          valid: totalValid,
+          invalid: totalInvalid,
+          errors: totalErrors,
+          done: data.done,
+        });
+
+        afterId = data.nextAfterId;
+        done = data.done;
+
+        // Small delay to avoid overwhelming the server
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+
+      setUrlValidationResult(
+        `Checked ${totalChecked.toLocaleString()} cards with URLs: ${totalValid.toLocaleString()} valid, ${totalInvalid.toLocaleString()} invalid, ${totalErrors.toLocaleString()} errors.`,
+      );
+    } catch (error) {
+      setUrlValidationError((error as Error).message);
+    } finally {
+      setIsValidatingUrls(false);
+      setUrlValidationProgress((prev) => prev ? { ...prev, done: true } : null);
+    }
+  };
+
   const handleRecomputeStacks = async () => {
     setIsRecomputingStacks(true);
     setRecomputeStacksError(null);
@@ -498,6 +555,36 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 )}
               </div>
               {reuseLogPurgeError && <p className="text-destructive text-sm">{reuseLogPurgeError}</p>}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Validate debate card URLs</CardTitle>
+              <CardDescription>
+                Runs the debate-card parser over all existing cards to extract source URLs from
+                citations, then checks each URL with an HTTP HEAD request. Reports which URLs are
+                still accessible (2xx), which return errors (4xx/5xx), and which time out or fail.
+                Processes cards in batches of 500; a full corpus can take several minutes.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <Button onClick={handleValidateUrls} disabled={isValidatingUrls} variant="outline">
+                  {isValidatingUrls ? "Validating…" : "Validate URLs"}
+                </Button>
+                {urlValidationProgress && (
+                  <span className="text-muted-foreground text-sm">
+                    Checked {urlValidationProgress.checked.toLocaleString()} —{" "}
+                    {urlValidationProgress.valid.toLocaleString()} valid,{" "}
+                    {urlValidationProgress.invalid.toLocaleString()} invalid,{" "}
+                    {urlValidationProgress.errors.toLocaleString()} errors
+                    {urlValidationProgress.done ? " (done)" : "…"}
+                  </span>
+                )}
+              </div>
+              {urlValidationResult && <span className="text-muted-foreground text-sm">{urlValidationResult}</span>}
+              {urlValidationError && <p className="text-destructive text-sm">{urlValidationError}</p>}
             </CardContent>
           </Card>
 
