@@ -12,7 +12,7 @@
 "use client"
 
 import { CommunityResearchHubPanel } from "debate-community"
-import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
+import { useFavoriteTools } from "../../lib/hooks/useFavoriteTools"
 
 export function CommunityHubPageContent() {
   const { favorites } = useFavoriteTools()

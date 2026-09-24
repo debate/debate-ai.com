@@ -24,8 +24,8 @@
  */
 
 import { useEffect, useState, type ReactNode } from "react"
-import { cn } from "@/lib/ui/lib/utils"
-import { LoadingAnimation } from "@/components/ui/LoadingAnimation"
+import { cn } from "../../lib/ui/lib/utils"
+import { LoadingAnimation } from "./LoadingAnimation"
 
 interface LoadingOverlayProps {
   /** When true the overlay is visible; when false it fades out. */

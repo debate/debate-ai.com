@@ -9,7 +9,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { keepAlive, MAX_KEPT_FRAMES } from "../frame-pool"
+import { keepAlive, MAX_KEPT_FRAMES } from "../../../src/lib/nav/frame-pool"
 
 describe("keepAlive", () => {
   it("appends a path the pool doesn't have", () => {

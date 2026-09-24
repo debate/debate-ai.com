@@ -11,7 +11,7 @@ import {
   parseDocSlugSegment,
   slugifyDocTitle,
   titleFromDocSlug,
-} from "../doc-slug"
+} from "../../../src/lib/reason-docs/doc-slug"
 
 describe("slugifyDocTitle", () => {
   it("names a document after its title", () => {

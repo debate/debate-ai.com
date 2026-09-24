@@ -33,9 +33,9 @@
  */
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
-import { DocumentSaveQueue, type SaveQueueState } from "@/lib/reason-docs/save-queue"
-import { STORED_FORMATS } from "@/lib/cardmirror/format"
-import { isCmirContent } from "@/lib/cardmirror/content-format"
+import { DocumentSaveQueue, type SaveQueueState } from "../../lib/reason-docs/save-queue"
+import { STORED_FORMATS } from "../../lib/cardmirror/format"
+import { isCmirContent } from "../../lib/cardmirror/content-format"
 import {
   CardMirrorImportError,
   docxDownloadFilename,
@@ -44,8 +44,8 @@ import {
   htmlToStoredCmir,
   htmlToStoredCmirSync,
   storedContentToHtml,
-} from "@/lib/cardmirror/stored-cmir"
-import { topicStarterHtml } from "@/lib/topic-starters/content"
+} from "../../lib/cardmirror/stored-cmir"
+import { topicStarterHtml } from "../../lib/topic-starters/content"
 import type { ReasonDocument } from "./types"
 import type { TopicStarterItem } from "./TopicStarterTree"
 

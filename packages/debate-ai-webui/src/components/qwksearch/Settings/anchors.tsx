@@ -2,7 +2,7 @@
 
 import { Link2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { cn } from '../lib/utils';
 
 const HIGHLIGHT_CLASS = 'settings-anchor-highlight';
 const HIGHLIGHT_DURATION_MS = 2400;

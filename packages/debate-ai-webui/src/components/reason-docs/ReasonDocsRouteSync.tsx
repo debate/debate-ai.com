@@ -33,7 +33,7 @@ import {
   resolveSelection,
   selectionParamsKey,
   type ReasonDocsCatalog,
-} from "@/lib/reason-docs/route-selection"
+} from "../../lib/reason-docs/route-selection"
 import { useReasonDocs } from "./ReasonDocsProvider"
 
 export function ReasonDocsRouteSync() {

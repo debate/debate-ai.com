@@ -4,7 +4,7 @@ import {
   MCPServerConfig,
   MCPServerUISection,
   UIConfigField,
-} from '@/components/qwksearch/lib/config-types';
+} from '../../../lib/config-types';
 import MCPServerCard from './MCPServerCard';
 import OpenConnectorApps from './OpenConnectorApps';
 

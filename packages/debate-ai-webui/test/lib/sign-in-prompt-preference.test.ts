@@ -9,7 +9,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../sign-in-prompt-preference"
+import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../src/lib/sign-in-prompt-preference"
 
 /** A minimal localStorage, since these tests run in the node environment. */
 function installLocalStorage(): void {

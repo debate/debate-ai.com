@@ -7,7 +7,10 @@
  * no speakers, no speech boundaries and no punctuation to speak of. So the
  * column is now a tab strip over everything a video can carry beside it:
  *
- *   1. **Captions** — the synced cues, unchanged, still the default.
+ *   0. **By speech** — for a video with an AI summary or a written
+ *      analysis, the round one tab per speech (see {@link WatchRoundPanel}).
+ *      It opens first when present, since it is what those documents are for.
+ *   1. **Captions** — the synced cues, unchanged, the default otherwise.
  *   2. **Speeches / Summary** — the long-form documents: the round typed up
  *      speech by speech, and the AI summary of it.
  *   3. **Analysis** — the videos an editor has tied to this one.
@@ -29,6 +32,8 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
+import { WatchRoundPanel, type SpeechFocusRequest } from "./WatchRoundPanel"
+import { buildRoundSpeeches } from "../../lib/round-speeches"
 import {
   orderDocuments,
   VIDEO_DOCUMENT_LABELS,
@@ -46,6 +51,11 @@ interface WatchSidePanelProps {
   links?: LinkedVideo[]
   currentTime: number
   onSeek: (seconds: number) => void
+  /** A speech the timeline under the player asked to show; opens "By speech". */
+  focusSpeech?: SpeechFocusRequest | null
+  /** The video, for the per-speech Outcomes view. */
+  videoId?: string
+  videoTitle?: string
 }
 
 /** Where the reader's auto-scroll choice is remembered. */
@@ -74,12 +84,19 @@ export function WatchSidePanel({
   links = [],
   currentTime,
   onSeek,
+  focusSpeech,
+  videoId,
+  videoTitle,
 }: WatchSidePanelProps) {
   const ordered = useMemo(() => orderDocuments(documents), [documents])
+  const speeches = useMemo(() => buildRoundSpeeches(documents), [documents])
   const hasCaptions = sentences.length > 0 || captionsLoading
 
   const tabs = useMemo<PanelTab[]>(() => {
     const list: PanelTab[] = []
+    if (speeches.length > 0) {
+      list.push({ id: "round", label: "By speech", hint: `${speeches.filter((speech) => speech.isSpeech).length} speeches` })
+    }
     if (hasCaptions) {
       list.push({
         id: "captions",
@@ -98,7 +115,7 @@ export function WatchSidePanel({
       list.push({ id: "analysis", label: "Analysis", hint: `${links.length} video${links.length === 1 ? "" : "s"}` })
     }
     return list
-  }, [hasCaptions, sentences.length, ordered, links.length])
+  }, [speeches.length, hasCaptions, sentences.length, ordered, links.length])
 
   const [activeId, setActiveId] = useState<string | null>(null)
   // Starts on, then picks up the stored choice after mount so the server
@@ -125,6 +142,10 @@ export function WatchSidePanel({
       return tabs[0]?.id ?? null
     })
   }, [tabs])
+
+  useEffect(() => {
+    if (focusSpeech) setActiveId("round")
+  }, [focusSpeech])
 
   if (tabs.length === 0) return null
 
@@ -162,6 +183,20 @@ export function WatchSidePanel({
             )
           })}
         </div>
+      )}
+
+      {active === "round" && (
+        <WatchRoundPanel
+          speeches={speeches}
+          documents={ordered}
+          currentTime={currentTime}
+          onSeek={onSeek}
+          autoScroll={autoScroll}
+          onAutoScrollChange={setAutoScroll}
+          focusRequest={focusSpeech}
+          videoId={videoId ?? documents[0]?.videoId}
+          videoTitle={videoTitle}
+        />
       )}
 
       {active === "captions" && (

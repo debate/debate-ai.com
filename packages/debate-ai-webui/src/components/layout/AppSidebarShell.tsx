@@ -4,10 +4,10 @@ import type React from "react"
 import { usePathname } from "next/navigation"
 import { RESEARCH_SECTION_ID, ToolNavTree, ToolSidebarFooter } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
-import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
-import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
-import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
-import { showsReasonDocsPanels, showsResearchOnlySidebar } from "@/lib/reason-docs/sidebar-routes"
+import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
+import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
+import { isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
+import { showsReasonDocsPanels, showsResearchOnlySidebar } from "../../lib/reason-docs/sidebar-routes"
 
 /** The one tool section the `/cards` and `/reason-editor` sidebars keep.
  *  Module-level so the array identity is stable across renders of the tree

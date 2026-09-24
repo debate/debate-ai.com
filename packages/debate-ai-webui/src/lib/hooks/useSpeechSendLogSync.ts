@@ -36,7 +36,7 @@ import {
   deleteSavedSpeechSendLogEntryFromAccount,
   listSavedSpeechSendLog,
   saveSpeechSendLogEntryToAccount,
-} from "@/lib/speech-send-log-client"
+} from "../speech-send-log-client"
 
 // Module-level (not per-hook-instance) so multiple mounts share one account
 // fetch, one "is this browser signed in" flag, and one record of which

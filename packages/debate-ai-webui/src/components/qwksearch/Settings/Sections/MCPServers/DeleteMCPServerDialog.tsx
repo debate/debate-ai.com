@@ -2,9 +2,9 @@ import { Loader2, Trash2 } from 'lucide-react';
 import grab from 'grab-url';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { MCPServerConfig } from '@/components/qwksearch/lib/config-types';
+import { MCPServerConfig } from '../../../lib/config-types';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogTitle } from '@/components/qwksearch/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../../../ui/dialog';
 
 const DeleteMCPServer = ({
   mcpServer,

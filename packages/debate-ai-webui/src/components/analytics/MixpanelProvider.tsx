@@ -2,8 +2,8 @@
 
 import { useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { initMixpanel, trackPageView, identifyUser } from "@/lib/analytics/mixpanel"
-import { useSession } from "@/lib/hooks/useSession"
+import { initMixpanel, trackPageView, identifyUser } from "../../lib/analytics/mixpanel"
+import { useSession } from "../../lib/hooks/useSession"
 
 export function MixpanelProvider() {
   const pathname = usePathname()

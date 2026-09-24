@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatRecomputeStacksResult } from "../format-recompute-stacks-result";
+import { formatRecomputeStacksResult } from "../../../src/lib/videos/format-recompute-stacks-result";
 
 describe("formatRecomputeStacksResult", () => {
   it("reports no changes when nothing moved", () => {

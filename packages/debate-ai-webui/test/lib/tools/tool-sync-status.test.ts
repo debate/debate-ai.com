@@ -8,7 +8,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { summarizeToolSyncFailures } from "../tool-sync-status"
+import { summarizeToolSyncFailures } from "../../../src/lib/tools/tool-sync-status"
 import type { ToolRecordHydrationResult } from "debate-data-sync/src/state/tool-record-mirror"
 
 function result(overrides: Partial<ToolRecordHydrationResult>): ToolRecordHydrationResult {

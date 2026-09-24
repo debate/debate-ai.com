@@ -1,5 +1,5 @@
-import { UIConfigField, ConfigModelProvider } from '@/components/qwksearch/lib/config-types';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { UIConfigField, ConfigModelProvider } from '../../../lib/config-types';
+import { cn } from '../../../lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Plug2, Plus, Pencil, Trash2, X } from 'lucide-react';
 import { deleteProviderModel } from 'qwksearch-api-client';

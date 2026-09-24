@@ -30,14 +30,14 @@
 
 import { Suspense, useEffect, useMemo } from "react"
 import { Loader2 } from "lucide-react"
-import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
+import { AnimatedLoader } from "../ui/AnimatedLoader"
 import { EditorWithToolbar } from "debate-editor"
-import { topicStarterHtml } from "@/lib/topic-starters/content"
-import { cn } from "@/lib/ui/lib/utils"
-import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
-import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
-import { ReasonDocsRouteSync } from "@/components/reason-docs/ReasonDocsRouteSync"
-import { SharedCardOpener } from "@/components/reason-editor/ShareWithContacts"
+import { topicStarterHtml } from "../../lib/topic-starters/content"
+import { cn } from "../../lib/ui/lib/utils"
+import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
+import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
+import { ReasonDocsRouteSync } from "../reason-docs/ReasonDocsRouteSync"
+import { SharedCardOpener } from "./ShareWithContacts"
 
 export function ReasonEditorScreen() {
   const {

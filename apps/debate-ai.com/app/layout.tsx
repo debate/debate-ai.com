@@ -1,9 +1,9 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { AppShell } from "@/components/layout/AppShell"
-import { LoadingProvider } from "@/components/layout/LoadingProvider"
+import "debate-ai-webui/app.css"
+import { ThemeProvider } from "debate-ai-webui/components/theme-provider"
+import { AppShell } from "debate-ai-webui/components/layout/AppShell"
+import { LoadingProvider } from "debate-ai-webui/components/layout/LoadingProvider"
 
 export const metadata: Metadata = {
   title: "Debate AI",

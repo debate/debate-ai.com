@@ -1,4 +1,4 @@
-import { UIConfigField, MCPServerConfig } from '@/components/qwksearch/lib/config-types';
+import { UIConfigField, MCPServerConfig } from '../../../lib/config-types';
 import { AlertCircle, Server } from 'lucide-react';
 import grab from 'grab-url';
 import { useState } from 'react';

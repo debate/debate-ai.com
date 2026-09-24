@@ -22,7 +22,7 @@ import {
   docPathForId,
   docSlugFromPathname,
   readStoredDocs,
-} from "@/lib/qwksearch/doc-paths"
+} from "../../lib/qwksearch/doc-paths"
 
 import "katex/dist/katex.min.css"
 import "easydrawer/styles.css"

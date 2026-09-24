@@ -5,7 +5,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { notifications, user } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
-import { APP_EMAIL, APP_NAME } from "@/lib/config/site"
+import { APP_EMAIL, APP_NAME } from "debate-ai-webui/lib/config/site"
 
 /**
  * Dispatches Create New Round invites — a user request: "this should be

@@ -18,8 +18,8 @@ import Fuse from 'fuse.js';
 import { AnchorTitle, highlightAnchor } from './anchors';
 import grab from 'grab-url';
 import { toast } from 'sonner';
-import { AnimatedLoader } from '@/components/ui/AnimatedLoader';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { AnimatedLoader } from '../../ui/AnimatedLoader';
+import { cn } from '../lib/utils';
 import Models from './Sections/Models/Section';
 import MCPServers from './Sections/MCPServers/Section';
 import SearchSection from './Sections/Search';
@@ -30,7 +30,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/qwksearch/ui/select';
+} from '../ui/select';
 import Storage from './Sections/Storage';
 import RewritePrompts from './Sections/RewritePrompts';
 import FileSources from './Sections/FileSources';

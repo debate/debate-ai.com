@@ -54,7 +54,7 @@ interface WatchDocumentPanelProps {
  * Typography for rendered markdown. The app has no typography plugin, so the
  * handful of elements a summary uses are styled here, sized to the panel.
  */
-const MARKDOWN_CLASSES = [
+export const MARKDOWN_CLASSES = [
   "text-sm leading-relaxed text-muted-foreground break-words",
   "[&_p]:my-1.5 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0",
   "[&_ul]:my-1.5 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-1.5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:my-0.5",

@@ -11,6 +11,9 @@
       ],
       "write-language/*": [
         "./node_modules/write-language/dist/*.d.ts"
+      ],
+      "debate-ai-webui/*": [
+        "../../packages/debate-ai-webui/src/*"
       ]
     }
   }

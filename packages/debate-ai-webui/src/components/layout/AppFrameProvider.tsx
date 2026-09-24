@@ -34,8 +34,8 @@ import {
 } from "react"
 import { usePathname } from "next/navigation"
 
-import { dockNavLabel, isDockNavPath, toFrameSrc } from "@/lib/nav/dock-nav-paths"
-import { keepAlive } from "@/lib/nav/frame-pool"
+import { dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
+import { keepAlive } from "../../lib/nav/frame-pool"
 
 interface AppFrameContextValue {
   /** The path currently shown in the frame, or `null` when not framing. */

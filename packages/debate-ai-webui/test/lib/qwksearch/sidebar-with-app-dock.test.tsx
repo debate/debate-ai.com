@@ -21,13 +21,13 @@ vi.mock("react-reason-editor-sidebar", () => ({
   ),
 }));
 
-vi.mock("@/components/layout/CategoryDock", () => ({
+vi.mock("../../../src/components/layout/CategoryDock", () => ({
   CategoryDock: ({ embedded }: { embedded?: boolean }) => (
     <div data-testid="app-dock">{embedded ? "embedded" : "floating"}</div>
   ),
 }));
 
-const { SidebarWithAppDock } = await import("@/components/qwksearch/SidebarWithAppDock");
+const { SidebarWithAppDock } = await import("../../../src/components/qwksearch/SidebarWithAppDock");
 
 /** The editor hands its sidebar a lot more than this; only `isMobile` matters
  *  here, and the mocked `Sidebar` above reads nothing else. */

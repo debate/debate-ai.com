@@ -19,7 +19,7 @@ import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
-import { ALL_TOOLS } from "@/app/tools/tool-groups"
+import { ALL_TOOLS } from "../../src/routes/tools/tool-groups"
 
 /**
  * `ALL_TOOLS` routes that intentionally don't use `ToolPageHeader`, each

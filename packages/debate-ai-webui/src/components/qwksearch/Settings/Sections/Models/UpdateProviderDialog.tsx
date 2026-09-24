@@ -1,12 +1,12 @@
 import { Loader2, Pencil } from 'lucide-react';
 import { updateProvider } from 'qwksearch-api-client';
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/qwksearch/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../../../ui/dialog';
 import {
   ConfigModelProvider,
   StringUIConfigField,
   UIConfigField,
-} from '@/components/qwksearch/lib/config-types';
+} from '../../../lib/config-types';
 import { toast } from 'sonner';
 
 const UpdateProvider = ({

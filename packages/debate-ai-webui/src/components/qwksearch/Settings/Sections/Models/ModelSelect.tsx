@@ -1,14 +1,14 @@
-import { ConfigModelProvider } from '@/components/qwksearch/lib/config-types';
+import { ConfigModelProvider } from '../../../lib/config-types';
 import { useChat } from 'research-agent-ui';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { ChevronDown, Cpu, Search } from 'lucide-react';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { cn } from '../../../lib/utils';
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from '@/components/qwksearch/ui/popover';
+} from '../../../ui/popover';
 
 type ModelCategory = 'all' | 'capable' | 'balanced' | 'fast' | 'specialized';
 

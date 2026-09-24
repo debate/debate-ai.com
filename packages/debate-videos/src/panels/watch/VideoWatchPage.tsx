@@ -27,7 +27,9 @@
  * The right-hand column is a tab strip rather than one panel — YouTube's
  * caption cues, then the long-form documents (the round typed up speech by
  * speech, the AI summary of it), then the analysis videos an editor has tied
- * to this one. Those arrive as props from the server rather than being
+ * to this one. A video with an AI summary or written analysis also gets the
+ * round one tab per speech there, and a speech timeline under the player
+ * whose segments seek to — and open — each speech. Those arrive as props from the server rather than being
  * fetched here: they are the reason this page is worth indexing, and a
  * crawler never waits for a client fetch.
  *
@@ -56,6 +58,8 @@ import { VideoListRows } from "../../components/video-grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
 import { RelatedVideoNav } from "../../components/watch/RelatedVideoNav"
 import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
+import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
+import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
@@ -83,6 +87,7 @@ import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
+import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
 import type { VideoType } from "../../types/videos"
 
 /** Shared empty default, so an absent list keeps one identity across renders. */
@@ -185,6 +190,10 @@ export function VideoWatchPage({
   const pendingPlaybackRate = useRef(false)
 
   const [currentTime, setCurrentTime] = useState(0)
+  /** The video's length, for the speech timeline's proportions; 0 until the embed reports it. */
+  const [duration, setDuration] = useState(0)
+  /** The last speech picked on the timeline, for the side panel to open. */
+  const [focusSpeech, setFocusSpeech] = useState<SpeechFocusRequest | null>(null)
   /**
    * Second to open the embed at, resolved from the video's saved timestamp
    * once this page has claimed playback. `null` until then: the value can
@@ -237,6 +246,9 @@ export function VideoWatchPage({
     documents.some((document) => (document.body ?? "").trim().length > 0) ||
     links.length > 0
 
+  /** The round speech by speech — empty unless there is a summary or analysis to split. */
+  const speeches = useMemo(() => buildRoundSpeeches(documents), [documents])
+
   // Claim playback from the floating popout player for as long as this page
   // is mounted, and hand it back — with the position — on the way out.
   useEffect(() => {
@@ -246,6 +258,8 @@ export function VideoWatchPage({
     currentTimeRef.current = 0
     durationRef.current = 0
     setCurrentTime(0)
+    setDuration(0)
+    setFocusSpeech(null)
     setResumeSeconds(null)
     setPlayerError(null)
 
@@ -361,7 +375,10 @@ export function VideoWatchPage({
         }
         if (data.event === "infoDelivery" && data.info?.duration != null) {
           const duration = Number(data.info.duration)
-          if (Number.isFinite(duration) && duration > 0) durationRef.current = duration
+          if (Number.isFinite(duration) && duration > 0) {
+            durationRef.current = duration
+            setDuration(duration)
+          }
         }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           currentTimeRef.current = data.info.currentTime as number
@@ -416,6 +433,16 @@ export function VideoWatchPage({
     sendYouTubeCommand("seekTo", [seconds, true])
     sendYouTubeCommand("playVideo")
   }, [])
+
+  /** A timeline segment: play from that speech and open it beside the player. */
+  const handleSpeechSelect = useCallback(
+    (speech: RoundSpeech) => {
+      if (speech.startSeconds !== null) seekTo(speech.startSeconds)
+      setIsTranscriptOpen(true)
+      setFocusSpeech((previous) => ({ key: speech.key, seq: (previous?.seq ?? 0) + 1 }))
+    },
+    [seekTo],
+  )
 
   const handlePlayPause = useCallback(() => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
@@ -620,6 +647,15 @@ export function VideoWatchPage({
               )}
             </div>
 
+            {speeches.length > 0 && (
+              <WatchSpeechTimeline
+                speeches={speeches}
+                currentTime={currentTime}
+                duration={duration}
+                onSelect={handleSpeechSelect}
+              />
+            )}
+
             <WatchStackPlaylist current={video} stack={stack} />
 
             {related.length > 0 && (
@@ -700,6 +736,9 @@ export function VideoWatchPage({
                 links={links}
                 currentTime={currentTime}
                 onSeek={seekTo}
+                focusSpeech={focusSpeech}
+                videoId={videoId}
+                videoTitle={title}
               />
             </div>
           )}

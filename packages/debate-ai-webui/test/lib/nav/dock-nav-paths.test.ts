@@ -11,7 +11,7 @@
 
 import { describe, expect, it } from "vitest"
 
-import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, isDockOwnedPath, toFrameSrc } from "../dock-nav-paths"
+import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, isDockOwnedPath, toFrameSrc } from "../../../src/lib/nav/dock-nav-paths"
 
 describe("isDockNavPath", () => {
   it("accepts every dock destination", () => {

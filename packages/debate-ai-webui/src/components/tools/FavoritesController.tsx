@@ -25,8 +25,8 @@
  */
 
 import { useEffect } from "react"
-import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
-import { ALL_TOOLS } from "@/app/tools/tool-groups"
+import { useFavoriteTools } from "../../lib/hooks/useFavoriteTools"
+import { ALL_TOOLS } from "../../routes/tools/tool-groups"
 
 const ALL_TOOL_HREFS = ALL_TOOLS.map((tool) => tool.href)
 

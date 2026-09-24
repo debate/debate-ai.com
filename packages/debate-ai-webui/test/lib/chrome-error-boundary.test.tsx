@@ -23,7 +23,7 @@
 import { renderToReadableStream } from "react-dom/server.browser"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { ChromeErrorBoundary } from "../ui/layout/chrome-error-boundary"
+import { ChromeErrorBoundary } from "../../src/lib/ui/layout/chrome-error-boundary"
 
 /** Stands in for a sidebar panel that references a name it never imported. */
 function Exploding(): React.ReactElement {

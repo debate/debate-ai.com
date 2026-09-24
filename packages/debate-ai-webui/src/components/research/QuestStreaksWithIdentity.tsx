@@ -11,7 +11,7 @@
 
 import { QuestStreaksPanel } from "debate-community"
 import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
-import { useSession } from "@/lib/hooks/useSession"
+import { useSession } from "../../lib/hooks/useSession"
 
 export function QuestStreaksWithIdentity() {
   const { user } = useSession()

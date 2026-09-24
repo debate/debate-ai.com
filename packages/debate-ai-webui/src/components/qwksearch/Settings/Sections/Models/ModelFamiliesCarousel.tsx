@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, CheckCircle2, KeyRound, Blocks } from 'lucide-react';
-import { ModelProviderUISection, ConfigModelProvider } from '@/components/qwksearch/lib/config-types';
+import { ModelProviderUISection, ConfigModelProvider } from '../../../lib/config-types';
 import AddProvider from './AddProviderDialog';
 import ConfigureKeyModal from './ConfigureKeyModal';
 import { useChat } from 'research-agent-ui';

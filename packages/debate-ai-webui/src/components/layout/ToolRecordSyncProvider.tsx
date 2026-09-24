@@ -14,7 +14,7 @@
  * @module components/layout/ToolRecordSyncProvider
  */
 
-import { useToolRecordSync } from "@/lib/hooks/useToolRecordSync"
+import { useToolRecordSync } from "../../lib/hooks/useToolRecordSync"
 
 export function ToolRecordSyncProvider() {
   useToolRecordSync()

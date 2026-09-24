@@ -25,8 +25,8 @@
 
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
-import { isDockNavPath } from "@/lib/nav/dock-nav-paths"
-import { beginLoading, finishLoading } from "@/lib/ui/loading-store"
+import { isDockNavPath } from "../nav/dock-nav-paths"
+import { beginLoading, finishLoading } from "./loading-store"
 
 /** Minimum time the orb stays up on a transition, in ms. Short hops still
  *  read as intentional loading rather than a flicker. */

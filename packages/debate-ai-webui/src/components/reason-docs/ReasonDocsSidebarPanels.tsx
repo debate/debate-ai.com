@@ -37,16 +37,16 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
-import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
-import { cn } from "@/lib/ui/lib/utils"
-import { IMPORT_ACCEPT } from "@/lib/cardmirror/stored-cmir"
+import { AnimatedLoader } from "../ui/AnimatedLoader"
+import { cn } from "../../lib/ui/lib/utils"
+import { IMPORT_ACCEPT } from "../../lib/cardmirror/stored-cmir"
 import {
   REASON_EDITOR_ROUTE,
   editorHrefForSelection,
   isEditorPathname,
   type ReasonDocsSelection,
-} from "@/lib/reason-docs/route-selection"
-import { ShareWithContacts } from "@/components/reason-editor/ShareWithContacts"
+} from "../../lib/reason-docs/route-selection"
+import { ShareWithContacts } from "../reason-editor/ShareWithContacts"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"

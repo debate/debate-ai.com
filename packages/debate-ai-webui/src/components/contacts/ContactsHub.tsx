@@ -24,7 +24,7 @@ import {
   type ContactEntry,
 } from "debate-team-collaboration"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../lib/ui/primitives/tabs"
-import { useSession } from "@/lib/hooks/useSession"
+import { useSession } from "../../lib/hooks/useSession"
 
 function ContactsHubInner() {
   const router = useRouter()

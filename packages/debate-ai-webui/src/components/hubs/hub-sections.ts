@@ -14,7 +14,7 @@
  */
 
 import type { LucideIcon } from "lucide-react"
-import type { DocsGuide } from "@/lib/docs-links"
+import type { DocsGuide } from "../../lib/docs-links"
 
 /** One panel mounted inside a hub section. */
 export interface HubPanelLink {

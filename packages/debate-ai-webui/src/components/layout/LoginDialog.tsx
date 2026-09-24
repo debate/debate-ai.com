@@ -19,8 +19,8 @@ import {
 } from "../../lib/ui/primitives/dialog"
 import { Button } from "../../lib/ui/primitives/button"
 import { LoginForm } from "./LoginForm"
-import { useSession } from "@/lib/hooks/useSession"
-import { APP_NAME } from "@/lib/config/site"
+import { useSession } from "../../lib/hooks/useSession"
+import { APP_NAME } from "../../lib/config/site"
 
 export interface LoginDialogProps {
   open: boolean

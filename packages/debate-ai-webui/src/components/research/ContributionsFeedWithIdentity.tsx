@@ -10,7 +10,7 @@
  */
 
 import { ContributionsFeedPanel, deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
-import { useSession } from "@/lib/hooks/useSession"
+import { useSession } from "../../lib/hooks/useSession"
 
 export function ContributionsFeedWithIdentity() {
   const { user } = useSession()

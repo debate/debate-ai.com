@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { cn } from "@/lib/ui/lib/utils"
+import { cn } from "../../lib/ui/lib/utils"
 
 export type OrbitalLoaderSize = "sm" | "md" | "lg"
 

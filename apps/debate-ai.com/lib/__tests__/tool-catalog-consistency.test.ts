@@ -43,7 +43,7 @@ import { dirname, join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { describe, expect, it } from "vitest"
 
-import { ALL_TOOLS } from "@/app/tools/tool-groups"
+import { ALL_TOOLS } from "debate-ai-webui/routes/tools/tool-groups"
 import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog"
 import { WORKSPACE_LINKS } from "../../../../packages/debate-editor/src/editor/workspace-links"
 

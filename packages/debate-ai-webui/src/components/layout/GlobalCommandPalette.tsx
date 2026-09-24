@@ -39,11 +39,11 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/lib/ui/primitives/command"
-import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "@/app/tools/tool-groups"
-import { useFavoriteTools } from "@/lib/hooks/useFavoriteTools"
-import { useRecentTools } from "@/lib/hooks/useRecentTools"
-import { onQuickLaunchText } from "@/lib/native/tauri"
+} from "../../lib/ui/primitives/command"
+import { TOOL_GROUPS, ALL_TOOLS, type Tool } from "../../routes/tools/tool-groups"
+import { useFavoriteTools } from "../../lib/hooks/useFavoriteTools"
+import { useRecentTools } from "../../lib/hooks/useRecentTools"
+import { onQuickLaunchText } from "../../lib/native/tauri"
 
 /** Meta destinations that aren't themselves a `/tools` catalog entry. */
 const QUICK_ACTIONS: Tool[] = [

@@ -25,7 +25,7 @@ import {
   SIDEBAR_MENU_SECTIONS,
   SITE_LINKS,
   DEBATE_LINKS,
-} from "../dock-menu-sections"
+} from "../../../src/lib/nav/dock-menu-sections"
 
 describe("SIDEBAR_MENU_SECTIONS", () => {
   it("mirrors the sidebar's sections, in tree order", () => {

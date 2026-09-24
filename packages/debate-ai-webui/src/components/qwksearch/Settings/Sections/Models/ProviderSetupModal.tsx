@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2, Plus, ExternalLink, Copy, Check } from 'lucide-react';
-import { Dialog, DialogContent, DialogTitle } from '@/components/qwksearch/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../../../ui/dialog';
 import { toast } from 'sonner';
 import { addProvider } from 'qwksearch-api-client';
-import { ConfigModelProvider, ModelProviderUISection } from '@/components/qwksearch/lib/config-types';
+import { ConfigModelProvider, ModelProviderUISection } from '../../../lib/config-types';
 import TestModelsButton from './TestModelsButton';
 import ProviderIcon from './ProviderIcon';
 import grab from 'grab-url';

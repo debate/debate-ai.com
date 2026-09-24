@@ -2,15 +2,15 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { createAppAuthClient } from "@/lib/auth/client";
+import { createAppAuthClient } from "../../lib/auth/client";
 import {
   describeOneTapMoment,
   isBenignOneTapError,
   type OneTapMoment,
-} from "@/lib/auth/one-tap";
-import { useAuthProviders } from "@/lib/hooks/useAuthProviders";
-import { useSession } from "@/lib/hooks/useSession";
-import { debugLog } from "@/lib/debug-log";
+} from "../../lib/auth/one-tap";
+import { useAuthProviders } from "../../lib/hooks/useAuthProviders";
+import { useSession } from "../../lib/hooks/useSession";
+import { debugLog } from "../../lib/debug-log";
 
 /**
  * Google One Tap prompt, mounted in the root layout so every page of the app

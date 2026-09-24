@@ -20,7 +20,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { fetchUserSettings, saveRecentToolOp, type FullUserSettingsPayload } from "debate-round"
-import { parseRecentTools, pushRecentTool } from "@/lib/recentTools"
+import { parseRecentTools, pushRecentTool } from "../recentTools"
 
 const STORAGE_KEY = "recent-tools"
 const CHANGE_EVENT = "recent-tools-changed"

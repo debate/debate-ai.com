@@ -11,7 +11,7 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { DocumentSaveQueue, type DocumentPatch } from "../save-queue"
+import { DocumentSaveQueue, type DocumentPatch } from "../../../src/lib/reason-docs/save-queue"
 
 interface Sent {
   id: number

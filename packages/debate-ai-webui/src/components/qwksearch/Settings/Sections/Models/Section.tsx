@@ -6,7 +6,7 @@ import {
   ConfigModelProvider,
   ModelProviderUISection,
   UIConfigField,
-} from '@/components/qwksearch/lib/config-types';
+} from '../../../lib/config-types';
 import ModelProvider from './ModelProvider';
 import ModelSelect from './ModelSelect';
 import ModelFamiliesCarousel from './ModelFamiliesCarousel';

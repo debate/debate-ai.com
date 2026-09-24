@@ -10,12 +10,12 @@
  * `beginLoading`, so pages that never use it pay for nothing.
  */
 
-import { LoadingOverlay } from "@/components/ui/LoadingOverlay"
+import { LoadingOverlay } from "../ui/LoadingOverlay"
 import {
   useLoadingStore,
   DEFAULT_LOADING_FADE_OUT_MS,
-} from "@/lib/ui/loading-store"
-import { useRouteLoading } from "@/lib/ui/use-route-loading"
+} from "../../lib/ui/loading-store"
+import { useRouteLoading } from "../../lib/ui/use-route-loading"
 
 export function LoadingProvider() {
   // Arms the orb on first load and on every client-side transition to a

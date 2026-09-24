@@ -111,9 +111,46 @@ needle, a whitespace-only needle, a single match, multiple matches, no
 match, a whole-text match, and a needle containing regex metacharacters
 (treated as literal text, not a pattern).
 
+## By speech
+
+`lib/round-speeches.ts`'s `buildRoundSpeeches(documents)` lines the
+transcript, summary and analysis up into one `RoundSpeech` per speech:
+each document is split on `##` only (`parseDocumentSections(body, {
+depth: 2 })`, so a summary's `### Plan` stays inside its speech), and
+each heading goes through `identifySpeech`, which reads LD/Policy codes
+(`1AC`, `2NR`), spelled-out names (`First Negative Constructive`), PF
+speeches (`Con Final Focus`), cross-ex and crossfire. The match key is
+the code plus its occurrence, so the second `CX` of the transcript is the
+second `CX` of the summary; a heading that names no speech (`Decision`)
+is matched on its lead text, and a document's untitled lead-in becomes
+an `Overview`. The transcript is read first; a speech only a later
+document has is inserted before the next already-placed speech that
+document mentions, or at the end.
+
+It returns `[]` — no tab, no timeline — unless the summary or analysis
+itself covers at least two speeches, so a one-paragraph summary beside a
+timed transcript leaves the page as it was.
+
+`VideoWatchPage` builds the list once and hands it to
+`WatchSpeechTimeline` (under the player), while `WatchSidePanel` builds
+it again from the same documents for `WatchRoundPanel`. The timeline
+talks to the panel through `focusSpeech: { key, seq }`, where `seq`
+makes a repeat click on the same speech still land. The page mirrors the
+embed's reported `duration` into state for the timeline's proportions;
+`speechTimelineSegments` falls back to equal segments until it is known.
+The follow behaviour reuses the side panel's remembered auto-scroll
+choice rather than adding a second toggle. Tested in
+`test/round-speeches.test.ts` and `test/watch-round-panel.test.tsx`.
+
 ## Known gaps
 
 - Related videos are query passes, not a relevance model.
+- A speech's start time can only come from a heading's timecode. There is
+  no way for a viewer to mark where a speech starts, so an AI summary
+  generated without timecodes gets equal timeline segments and no
+  follow-along until an editor adds them.
+- Cross-examinations are matched between documents by order, so a
+  summary that skips a CX misaligns every later CX.
 - ~~The tournament pass was a `LIKE` search across title/channel/description
   (the same free-text search the search box uses), so a tournament whose
   name appeared in an unrelated video's description pulled that video in

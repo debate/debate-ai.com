@@ -17,8 +17,8 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 
-import { dockNavRootFor, isDockOwnedPath } from "@/lib/nav/dock-nav-paths"
-import { useAppFrame } from "@/components/layout/AppFrameProvider"
+import { dockNavRootFor, isDockOwnedPath } from "../../lib/nav/dock-nav-paths"
+import { useAppFrame } from "./AppFrameProvider"
 import {
   FRAME_NAV_ACK,
   FRAME_NAV_REQUEST,
@@ -26,7 +26,7 @@ import {
   isFrameNavRequest,
   opensElsewhere,
   topNavigationTarget,
-} from "@/lib/layout/frame-navigation"
+} from "../../lib/layout/frame-navigation"
 
 /** How long a framed document waits for the shell before giving up and doing
  *  the old hard top-level load. Long enough to cover the round trip and a

@@ -10,7 +10,7 @@ import {
   docIdFromSlug,
   docPathForId,
   docSlugFromPathname,
-} from "../doc-paths"
+} from "../../../src/lib/qwksearch/doc-paths"
 
 const DOCS = [
   { id: "doc-a", title: "CP Answer to States" },

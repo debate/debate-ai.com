@@ -31,7 +31,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { FileText, Flag, ListTree } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
-import { useSession } from "@/lib/hooks/useSession"
+import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
 
 const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {

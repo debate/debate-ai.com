@@ -25,15 +25,15 @@
 import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowLeft, BookOpen, Compass, type LucideIcon } from "lucide-react"
-import { ALL_TOOLS } from "@/app/tools/tool-groups"
+import { ALL_TOOLS } from "../../routes/tools/tool-groups"
 import {
   DOCS_GUIDE_LABELS,
   DOCS_GUIDE_TITLES,
   featureDocsUrlForRoute,
   guideDocsUrl,
   type DocsGuide,
-} from "@/lib/docs-links"
-import { cn } from "@/lib/ui/lib/utils"
+} from "../../lib/docs-links"
+import { cn } from "../../lib/ui/lib/utils"
 import { FavoriteToolButton } from "./FavoriteToolButton"
 
 /** Props for {@link ToolPage}. */

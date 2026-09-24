@@ -2,8 +2,8 @@
 
 import { Sidebar, type SidebarProps } from "react-reason-editor-sidebar"
 
-import { CategoryDock } from "@/components/layout/CategoryDock"
-import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
+import { CategoryDock } from "../layout/CategoryDock"
+import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 
 /**
  * The REASON workspace's own sidebar with the app dock hosted at the top of

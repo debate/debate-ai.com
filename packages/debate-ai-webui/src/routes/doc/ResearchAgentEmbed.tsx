@@ -3,7 +3,7 @@
 // MUST stay the first import: sets the API base-URL global before
 // research-agent-ui's bundled qwksearch-api-client captures it (see
 // components/qwksearch/base-url.ts).
-import "@/components/qwksearch/base-url"
+import "../../components/qwksearch/base-url"
 
 import { lazy } from "react"
 
@@ -30,8 +30,8 @@ const Workspace = lazy(async () => {
   ;(globalThis as typeof globalThis & { Prism?: unknown }).Prism ??= Prism
 
   const [{ QwksearchProviders }, { QwksearchWorkspace }] = await Promise.all([
-    import("@/components/qwksearch/Providers"),
-    import("@/components/qwksearch/Workspace"),
+    import("../../components/qwksearch/Providers"),
+    import("../../components/qwksearch/Workspace"),
   ])
 
   return {

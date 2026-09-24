@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { asc, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { topicStarterItems } from "@/lib/database/schema"
-import { findItemByRef } from "@/lib/reason-docs/doc-path"
+import { findItemByRef } from "debate-ai-webui/lib/reason-docs/doc-path"
 
 /**
  * @fileoverview Resolves a filename URL against the public library.

@@ -43,7 +43,9 @@ export async function GET(request: Request) {
   const cache = edgeCache();
   const cacheKey = new Request(request.url, { method: "GET" });
   const cached = await cache?.match(cacheKey).catch(() => undefined);
-  if (cached) return cached;
+  // Responses from the Cache API have immutable headers; Next.js's runtime
+  // needs to write to the response headers, so re-wrap it first.
+  if (cached) return new Response(cached.body, cached);
 
   const stored = await readCachedTranscript(videoId, lang);
   if (stored) {

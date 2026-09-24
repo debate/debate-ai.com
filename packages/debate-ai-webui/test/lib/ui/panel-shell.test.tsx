@@ -13,7 +13,7 @@ import {
   SummaryText,
   toneSurfaceClass,
   toneTextClass,
-} from "../panels/panel-shell";
+} from "../../../src/lib/ui/panels/panel-shell";
 
 describe("PanelShell", () => {
   it("renders the title, description and children", () => {

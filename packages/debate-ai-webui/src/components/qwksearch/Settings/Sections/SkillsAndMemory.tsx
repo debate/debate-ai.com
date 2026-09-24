@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 import { Loader2, Brain, Zap, AlertCircle, Plus, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import { AnimatedLoader } from '@/components/ui/AnimatedLoader';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { AnimatedLoader } from '../../../ui/AnimatedLoader';
+import { cn } from '../../lib/utils';
 
 interface MemoryEntry {
   id: string;

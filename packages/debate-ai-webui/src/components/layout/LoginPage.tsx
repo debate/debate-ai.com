@@ -13,8 +13,8 @@ import { useSearchParams } from "next/navigation"
 
 import { Card, CardContent, CardHeader } from "../../lib/ui/primitives/card"
 import { LoginForm } from "./LoginForm"
-import { APP_NAME } from "@/lib/config/site"
-import { describeSignInError } from "@/lib/auth/sign-in-errors"
+import { APP_NAME } from "../../lib/config/site"
+import { describeSignInError } from "../../lib/auth/sign-in-errors"
 
 export default function LoginPage() {
   const searchParams = useSearchParams()

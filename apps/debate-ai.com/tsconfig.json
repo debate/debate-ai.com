@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "debate-ai-webui/*": [
+        "../../packages/debate-ai-webui/src/*"
       ]
     }
   },

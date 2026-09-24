@@ -7,8 +7,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import grab from 'grab-url';
 import { toast } from 'sonner';
 import { File, Link, Loader2, RefreshCw, Trash2 } from 'lucide-react';
-import { AnimatedLoader } from '@/components/ui/AnimatedLoader';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { AnimatedLoader } from '../../../ui/AnimatedLoader';
+import { cn } from '../../lib/utils';
 
 interface UploadItem {
   fileId: string;

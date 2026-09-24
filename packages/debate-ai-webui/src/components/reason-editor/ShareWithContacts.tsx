@@ -47,9 +47,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../lib/ui/primitives/dialog"
-import { useSession } from "@/lib/hooks/useSession"
-import { useReasonDocs } from "@/components/reason-docs/ReasonDocsProvider"
-import { urlWithoutParam } from "@/lib/reason-docs/route-selection"
+import { useSession } from "../../lib/hooks/useSession"
+import { useReasonDocs } from "../reason-docs/ReasonDocsProvider"
+import { urlWithoutParam } from "../../lib/reason-docs/route-selection"
 
 type Bridge = typeof import("debate-editor/collab-bridge")
 

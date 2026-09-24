@@ -2,14 +2,14 @@
 
 import { type ReactNode, useMemo, useState } from "react"
 import { ChevronDown, ChevronRight, Download, FileText, Folder, MoreHorizontal, Search } from "lucide-react"
-import { Input } from "@/lib/ui/primitives/input"
+import { Input } from "../../lib/ui/primitives/input"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/lib/ui/primitives/dropdown-menu"
-import { cn } from "@/lib/ui/lib/utils"
+} from "../../lib/ui/primitives/dropdown-menu"
+import { cn } from "../../lib/ui/lib/utils"
 
 /** A row of the public catalogue. `content` is the stored file — a base64
  *  `.cmir` for anything imported since the library switched to CardMirror's

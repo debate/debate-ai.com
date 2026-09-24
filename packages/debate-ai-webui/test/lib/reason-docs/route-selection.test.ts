@@ -10,7 +10,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import type { PathItem } from "../doc-path"
+import type { PathItem } from "../../../src/lib/reason-docs/doc-path"
 import {
   REASON_EDITOR_ROUTE,
   canonicalEditorUrl,
@@ -21,7 +21,7 @@ import {
   resolveSelection,
   selectionParamsKey,
   urlWithoutParam,
-} from "../route-selection"
+} from "../../../src/lib/reason-docs/route-selection"
 
 /** The reader's own files (12, 34) under a folder, plus a public library. */
 const DOCUMENTS: PathItem[] = [

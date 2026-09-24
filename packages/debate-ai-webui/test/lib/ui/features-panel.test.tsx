@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { FeaturesPanel } from "../features/FeaturesPanel";
-import { SpotlightCard, cardHueShift } from "../features/effects";
+import { FeaturesPanel } from "../../../src/lib/ui/features/FeaturesPanel";
+import { SpotlightCard, cardHueShift } from "../../../src/lib/ui/features/effects";
 import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog";
 
 describe("FeaturesPanel", () => {

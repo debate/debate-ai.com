@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/qwksearch/ui/button';
+import { Button } from '../../../ui/button';
 import { FlaskConical, Loader2, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 import grab from 'grab-url';
@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/qwksearch/ui/dialog';
+} from '../../../ui/dialog';
 
 interface TestModelsButtonProps {
   providerId: string;

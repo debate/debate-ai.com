@@ -20,7 +20,7 @@ import {
   EDITOR_SETTINGS_TABS,
   normalizeEditorPreferencesPatch,
   parseEditorPreferences,
-} from "../editor-preferences";
+} from "../../src/lib/editor-preferences";
 
 /** Credentials, which the page may render but never mirrors. */
 const CREDENTIAL_KEYS = [

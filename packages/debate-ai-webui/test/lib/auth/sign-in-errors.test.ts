@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { describeSignInError } from "../sign-in-errors";
+import { describeSignInError } from "../../../src/lib/auth/sign-in-errors";
 
 describe("describeSignInError", () => {
   it("says nothing when there is no error on the URL", () => {

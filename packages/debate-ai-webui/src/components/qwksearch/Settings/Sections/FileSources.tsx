@@ -27,7 +27,7 @@ import {
   B2Credentials,
   GoogleDocsCredentials,
   TursoDBCredentials,
-} from '@/components/qwksearch/lib/file-sources';
+} from '../../lib/file-sources';
 
 const SOURCE_TYPE_OPTIONS: { value: FileSourceType; label: string }[] = [
   { value: 'ssh', label: 'SSH' },

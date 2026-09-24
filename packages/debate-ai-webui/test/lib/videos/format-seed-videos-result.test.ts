@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatSeedVideosResult,
   formatSeedVideosStatus,
-} from "../format-seed-videos-result";
+} from "../../../src/lib/videos/format-seed-videos-result";
 
 describe("formatSeedVideosStatus", () => {
   it("reports an unseeded table", () => {

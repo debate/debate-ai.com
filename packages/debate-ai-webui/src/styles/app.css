@@ -17,7 +17,7 @@
 /* The files/outline sidebar ships its styles separately. */
 @import "react-reason-editor-sidebar/style.css" layer(vendor);
 @import "./themes.css";
-@import "../../../packages/debate-flow/src/styles/ebb-scope.css";
+@import "../../../debate-flow/src/styles/ebb-scope.css";
 
 /* The debate component packages are symlinked in through node_modules, which
    Tailwind's automatic source detection skips — register them explicitly so
@@ -27,26 +27,31 @@
    theirs. (`debate-card-search` used to cover the three packages it was later
    split into — `debate-search-evidence`, `debate-team-collaboration` and
    `debate-contributor-progress` — which are now listed in its place.) */
-@source "../../../packages/debate-contributor-progress/src";
-@source "../../../packages/debate-editor/src";
-@source "../../../packages/debate-flow/src";
-@source "../../../packages/debate-practice-drills/src";
-@source "../../../packages/debate-round/src";
-@source "../../../packages/debate-round-practice-ai/src";
-@source "../../../packages/debate-search-evidence/src";
-@source "../../../packages/debate-speech-writer/src";
-@source "../../../packages/debate-team-collaboration/src";
-@source "../../../packages/debate-timer/src";
-@source "../../../packages/debate-tournaments/src";
-@source "../../../packages/debate-videos/src";
+/* This package's own routes, components and shims. The stylesheet is compiled
+   from wherever the host runs Tailwind (the web app's directory under
+   `vinext`, this package's under `build:css`), and automatic detection only
+   covers that directory — so the UI it styles is registered explicitly. */
+@source "..";
+@source "../../../debate-contributor-progress/src";
+@source "../../../debate-editor/src";
+@source "../../../debate-flow/src";
+@source "../../../debate-practice-drills/src";
+@source "../../../debate-round/src";
+@source "../../../debate-round-practice-ai/src";
+@source "../../../debate-search-evidence/src";
+@source "../../../debate-speech-writer/src";
+@source "../../../debate-team-collaboration/src";
+@source "../../../debate-timer/src";
+@source "../../../debate-tournaments/src";
+@source "../../../debate-videos/src";
 
 /* The embedded qwksearch workspace (/doc) is built from npm/workspace
    packages whose Tailwind classes must be registered the same way —
    without these the chat UI and editor ship unstyled. */
-@source "../node_modules/research-agent-ui/src";
-@source "../node_modules/react-reason-editor/dist";
-@source "../node_modules/react-reason-editor-sidebar/dist";
-@source "../node_modules/shadcn-settings/dist";
+@source "../../node_modules/research-agent-ui/src";
+@source "../../node_modules/react-reason-editor/dist";
+@source "../../node_modules/react-reason-editor-sidebar/dist";
+@source "../../node_modules/shadcn-settings/dist";
 
 @custom-variant dark (:is(.dark) &);
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getStaffAccess } from "@/lib/auth/admin";
-import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import { AdminDashboard } from "debate-ai-webui/components/admin/AdminDashboard";
 
 export const metadata: Metadata = {
   title: "Admin",

@@ -2,9 +2,9 @@ import { Loader2, Trash2 } from 'lucide-react';
 import { deleteProvider } from 'qwksearch-api-client';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ConfigModelProvider } from '@/components/qwksearch/lib/config-types';
+import { ConfigModelProvider } from '../../../lib/config-types';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogTitle } from '@/components/qwksearch/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../../../ui/dialog';
 
 const DeleteProvider = ({
   modelProvider,

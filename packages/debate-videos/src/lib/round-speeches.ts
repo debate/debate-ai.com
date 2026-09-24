@@ -125,14 +125,17 @@ export function identifySpeech(heading: string): SpeechIdentity {
 /**
  * Lines a video's documents up speech by speech.
  *
- * Only a video with a summary or an analysis gets the per-speech view — a
- * bare transcript is already served by the speeches tab — and only when at
- * least two sections name a speech, so a summary written as one block of
- * prose is left to its own tab.
+ * Only a video whose summary or analysis covers at least two speeches gets
+ * the per-speech view. A bare transcript is already served by the speeches
+ * tab, and a summary written as one block of prose is left to its own tab —
+ * a timed transcript beside it is not enough, since the point of the view is
+ * the summary of each speech.
  *
  * Speeches keep document order. The transcript is read first, since it is
- * the most complete; a speech another document adds is slotted in after the
- * last speech that document shared with the ones already placed.
+ * the most complete; a speech another document adds is slotted in just
+ * before the next already-placed speech that document goes on to mention —
+ * or at the end when it mentions none, so a summary's `## 2NR` lands after
+ * a transcript's 1AR rather than before it.
  *
  * @param documents - The video's documents, in any order.
  * @returns The speeches, or an empty list when there is nothing to split.
@@ -148,19 +151,21 @@ export function buildRoundSpeeches(documents: VideoDocument[]): RoundSpeech[] {
 
   for (const document of ordered) {
     const occurrences = new Map<string, number>();
-    let cursor = -1;
-
-    for (const section of parseDocumentSections(document.body, { depth: 2 })) {
+    const sections = parseDocumentSections(document.body, { depth: 2 }).map((section) => {
       const identity: SpeechIdentity = section.heading
         ? identifySpeech(section.heading)
         : { base: "overview", label: "Overview", side: "neutral", isSpeech: false };
       const occurrence = (occurrences.get(identity.base) ?? 0) + 1;
       occurrences.set(identity.base, occurrence);
-      const key = `${identity.base}#${occurrence}`;
+      return { section, identity, key: `${identity.base}#${occurrence}` };
+    });
 
+    sections.forEach(({ section, identity, key }, position) => {
       let index = speeches.findIndex((speech) => speech.key === key);
       if (index === -1) {
-        index = cursor + 1;
+        const later = new Set(sections.slice(position + 1).map((entry) => entry.key));
+        const before = speeches.findIndex((speech) => later.has(speech.key));
+        index = before === -1 ? speeches.length : before;
         speeches.splice(index, 0, {
           key,
           label: identity.label,
@@ -171,16 +176,18 @@ export function buildRoundSpeeches(documents: VideoDocument[]): RoundSpeech[] {
           parts: {},
         });
       }
-      cursor = index;
 
       const speech = speeches[index];
       if (section.body) speech.parts[document.kind] = section.body;
       if (speech.startSeconds === null) speech.startSeconds = section.startSeconds;
       if (identity.target && !targets.has(key)) targets.set(key, identity.target);
-    }
+    });
   }
 
-  if (speeches.filter((speech) => speech.isSpeech).length < 2) return [];
+  const summarized = speeches.filter(
+    (speech) => speech.isSpeech && (speech.parts.summary || speech.parts.analysis),
+  );
+  if (summarized.length < 2) return [];
 
   // Repeated labels need telling apart: a cross-ex names the speech it
   // questions when any document said, and is numbered otherwise.

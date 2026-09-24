@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import { configureResearchAgentUI } from 'research-agent-ui';
-import { Dialog, DialogContent, DialogTitle } from '@/components/qwksearch/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '../ui/dialog';
 import SettingsContent from './SettingsContent';
 
 interface SettingsModalContextValue {

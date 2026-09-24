@@ -10,7 +10,7 @@ import {
   shouldReloadForStaleBuild,
   STALE_BUILD_RELOAD_KEY,
   STALE_BUILD_RELOAD_COOLDOWN_MS,
-} from "../stale-build-recovery";
+} from "../../../src/lib/layout/stale-build-recovery";
 
 function memoryStore(initial: Record<string, string> = {}) {
   const data = new Map(Object.entries(initial));

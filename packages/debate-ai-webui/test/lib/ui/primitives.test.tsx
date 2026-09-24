@@ -13,8 +13,8 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { Badge, badgeVariants } from "../primitives/badge";
-import { Button, buttonVariants } from "../primitives/button";
+import { Badge, badgeVariants } from "../../../src/lib/ui/primitives/badge";
+import { Button, buttonVariants } from "../../../src/lib/ui/primitives/button";
 import {
   Card,
   CardAction,
@@ -23,9 +23,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../primitives/card";
-import { Input } from "../primitives/input";
-import { Label } from "../primitives/label";
+} from "../../../src/lib/ui/primitives/card";
+import { Input } from "../../../src/lib/ui/primitives/input";
+import { Label } from "../../../src/lib/ui/primitives/label";
 
 describe("Button", () => {
   it("renders a button carrying its slot hook", () => {

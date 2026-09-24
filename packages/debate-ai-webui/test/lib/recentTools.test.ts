@@ -8,8 +8,8 @@ import {
   pushRecentTool,
   resolveRecentTools,
   serializeRecentTools,
-} from "@/lib/recentTools"
-import type { Tool } from "@/app/tools/tool-groups"
+} from "../../src/lib/recentTools"
+import type { Tool } from "../../src/routes/tools/tool-groups"
 
 function stubTool(href: string, label: string): Tool {
   return { href, label, description: "", icon: (() => null) as unknown as Tool["icon"] }

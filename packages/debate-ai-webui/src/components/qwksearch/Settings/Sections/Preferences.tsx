@@ -1,4 +1,4 @@
-import { UIConfigField } from '@/components/qwksearch/lib/config-types';
+import { UIConfigField } from '../../lib/config-types';
 import SettingsField from '../SettingsField';
 
 const Preferences = ({

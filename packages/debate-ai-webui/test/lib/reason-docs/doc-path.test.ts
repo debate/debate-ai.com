@@ -14,7 +14,7 @@ import {
   parsePathRef,
   slugifySegment,
   type PathItem,
-} from "../doc-path"
+} from "../../../src/lib/reason-docs/doc-path"
 
 /** `impacts/` holds two files; `warming-1ac` also exists at the root. */
 const TREE: PathItem[] = [

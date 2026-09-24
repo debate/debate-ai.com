@@ -27,8 +27,8 @@ import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type Reac
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { BookOpen, ExternalLink } from "lucide-react"
-import { cn, setStateInURL } from "@/lib/ui/lib/utils"
-import { DOCS_GUIDE_TITLES, guideDocsUrl } from "@/lib/docs-links"
+import { cn, setStateInURL } from "../../lib/ui/lib/utils"
+import { DOCS_GUIDE_TITLES, guideDocsUrl } from "../../lib/docs-links"
 import { resolveSectionId, type HubSection } from "./hub-sections"
 
 /** URL query parameter carrying the active section. */

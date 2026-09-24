@@ -3,7 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from '@/components/qwksearch/ui/dialog';
+} from '../../../ui/dialog';
 
 const ConfigureKeyModal = ({
   open,

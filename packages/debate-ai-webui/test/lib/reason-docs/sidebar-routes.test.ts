@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { showsReasonDocsPanels, showsResearchOnlySidebar } from "../sidebar-routes"
+import { showsReasonDocsPanels, showsResearchOnlySidebar } from "../../../src/lib/reason-docs/sidebar-routes"
 
 describe("showsReasonDocsPanels", () => {
   it("shows them on /cards, the dock destination they belong to", () => {

@@ -8,8 +8,8 @@
 
 import { describe, expect, it } from "vitest"
 import { schema, serializeNative, cmirToBase64 } from "debate-editor/engine"
-import { STORED_FORMATS, normalizeFormat } from "../format"
-import { isCmirContent } from "../content-format"
+import { STORED_FORMATS, normalizeFormat } from "../../../src/lib/cardmirror/format"
+import { isCmirContent } from "../../../src/lib/cardmirror/content-format"
 
 /** A real one-paragraph `.cmir`, base64-encoded the way a row stores it. */
 function sampleCmir(): string {

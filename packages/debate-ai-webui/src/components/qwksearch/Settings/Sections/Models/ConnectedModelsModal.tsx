@@ -1,6 +1,6 @@
 import { X, Plus } from 'lucide-react';
-import { Dialog, DialogContent } from '@/components/qwksearch/ui/dialog';
-import { ConfigModelProvider } from '@/components/qwksearch/lib/config-types';
+import { Dialog, DialogContent } from '../../../ui/dialog';
+import { ConfigModelProvider } from '../../../lib/config-types';
 import TestModelsButton from './TestModelsButton';
 
 interface ModelFamilyGroup {

@@ -25,13 +25,13 @@
  */
 
 import { useEffect, useRef, useState } from "react"
-import { cn } from "@/lib/ui/lib/utils"
+import { cn } from "../../lib/ui/lib/utils"
 import {
   pickLoadingAnimation,
   prefersReducedMotion,
   readAccentHue,
   renderLoadingAnimation,
-} from "@/lib/ui/loading-animations"
+} from "../../lib/ui/loading-animations"
 
 export type LoadingAnimationSize = "sm" | "md" | "lg"
 

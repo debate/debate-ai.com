@@ -9,7 +9,7 @@ import {
   parseAccentHue,
   pickLoadingAnimation,
   renderLoadingAnimation,
-} from "../loading-animations";
+} from "../../../src/lib/ui/loading-animations";
 
 /** The clips the overlay will not draw when it has to hold a first frame. */
 const blank = LOADING_ANIMATIONS.filter((animation) => animation.blankAtStart);

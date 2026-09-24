@@ -1,6 +1,4 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
-import { DebateFlowPage } from "debate-round"
 
 export const metadata: Metadata = {
   title: "Debate FIAT",
@@ -9,10 +7,4 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-export default function Home() {
-  return (
-    <Suspense>
-      <DebateFlowPage />
-    </Suspense>
-  )
-}
+export { default } from "debate-ai-webui/routes/debate/page"

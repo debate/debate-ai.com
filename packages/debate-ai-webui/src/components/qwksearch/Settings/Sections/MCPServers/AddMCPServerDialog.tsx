@@ -5,13 +5,13 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from '@/components/qwksearch/ui/dialog';
+} from '../../../ui/dialog';
 import {
   MCPServerConfig,
   MCPServerUISection,
   StringUIConfigField,
   UIConfigField,
-} from '@/components/qwksearch/lib/config-types';
+} from '../../../lib/config-types';
 
 import { toast } from 'sonner';
 

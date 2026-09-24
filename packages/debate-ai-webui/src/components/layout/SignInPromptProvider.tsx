@@ -26,9 +26,9 @@ import {
   type SignInPrompt,
 } from "debate-data-sync/src/state/sign-in-prompt"
 import { LoginDialog } from "./LoginDialog"
-import { useSession } from "@/lib/hooks/useSession"
-import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
-import { markSignInPromptShown, wasSignInPromptShownRecently } from "@/lib/sign-in-prompt-cooldown"
+import { useSession } from "../../lib/hooks/useSession"
+import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../lib/sign-in-prompt-preference"
+import { markSignInPromptShown, wasSignInPromptShownRecently } from "../../lib/sign-in-prompt-cooldown"
 
 export function SignInPromptProvider() {
   const { isAuthenticated } = useSession()

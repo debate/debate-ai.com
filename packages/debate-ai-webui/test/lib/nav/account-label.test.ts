@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { accountHandle, accountLabel } from "../account-label";
+import { accountHandle, accountLabel } from "../../../src/lib/nav/account-label";
 
 describe("accountHandle", () => {
   it("keeps the part before the @", () => {

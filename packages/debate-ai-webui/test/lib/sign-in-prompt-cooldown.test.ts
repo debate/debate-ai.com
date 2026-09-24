@@ -13,7 +13,7 @@ import {
   PROMPT_COOLDOWN_MS,
   markSignInPromptShown,
   wasSignInPromptShownRecently,
-} from "../sign-in-prompt-cooldown"
+} from "../../src/lib/sign-in-prompt-cooldown"
 
 /** A minimal localStorage, since these tests run in the node environment. */
 function installLocalStorage(): void {

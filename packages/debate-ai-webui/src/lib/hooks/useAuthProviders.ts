@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { debugLog } from "@/lib/debug-log";
+import { debugLog } from "../debug-log";
 
 export interface AuthProviders {
   /** Provider ids with usable credentials, e.g. `["google", "discord"]`. */

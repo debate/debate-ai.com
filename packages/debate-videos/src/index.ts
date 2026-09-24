@@ -120,6 +120,13 @@ export {
   type VideoDocument,
   type VideoDocumentKind,
 } from "./lib/video-documents";
+export {
+  buildRoundSpeeches,
+  identifySpeech,
+  playingSpeechIndex,
+  type RoundSpeech,
+  type SpeechSide,
+} from "./lib/round-speeches";
 export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,
@@ -130,6 +137,8 @@ export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAn
 export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
 export { stackKeyOf } from "./components/video-grid/video-stacks";
 export { WatchSidePanel } from "./components/watch/WatchSidePanel";
+export { WatchRoundPanel, type SpeechFocusRequest } from "./components/watch/WatchRoundPanel";
+export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";

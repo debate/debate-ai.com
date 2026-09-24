@@ -20,9 +20,9 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { AlertTriangle, RotateCw } from "lucide-react"
-import { useToolRecordSync } from "@/lib/hooks/useToolRecordSync"
-import { summarizeToolSyncFailures } from "@/lib/tools/tool-sync-status"
-import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "@/lib/sign-in-prompt-preference"
+import { useToolRecordSync } from "../../lib/hooks/useToolRecordSync"
+import { summarizeToolSyncFailures } from "../../lib/tools/tool-sync-status"
+import { isSignInPromptOptedOut, setSignInPromptOptedOut } from "../../lib/sign-in-prompt-preference"
 
 export function ToolSyncStatusPanel() {
   const { enabled, reconciled, results, resync } = useToolRecordSync()

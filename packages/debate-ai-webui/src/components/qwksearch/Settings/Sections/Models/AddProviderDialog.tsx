@@ -5,13 +5,13 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from '@/components/qwksearch/ui/dialog';
+} from '../../../ui/dialog';
 import {
   ConfigModelProvider,
   ModelProviderUISection,
   StringUIConfigField,
   UIConfigField,
-} from '@/components/qwksearch/lib/config-types';
+} from '../../../lib/config-types';
 import ConnectedModelsModal from './ConnectedModelsModal';
 
 import { toast } from 'sonner';

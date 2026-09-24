@@ -10,7 +10,7 @@
 
 import { TaskInboxPanel } from "debate-team-collaboration"
 import { deriveContributorIdFromSessionIdentity } from "debate-research-evidence"
-import { useSession } from "@/lib/hooks/useSession"
+import { useSession } from "../../lib/hooks/useSession"
 
 export function TaskInboxWithIdentity() {
   const { user } = useSession()

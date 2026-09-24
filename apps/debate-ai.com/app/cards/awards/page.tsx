@@ -1,20 +1,8 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
-import { ContributorAwardsPanel } from "debate-community"
-import { ToolPage, ToolPageHeader } from "@/components/tools/ToolPageHeader"
 
 export const metadata: Metadata = {
   title: "Top Contributor Awards",
   description: "Category winners for best evidence finder, best explainer, and more, by helpfulness score",
 }
 
-export default function CardsAwardsPage() {
-  return (
-    <ToolPage>
-      <ToolPageHeader href="/cards/awards" backHref="/cards" backLabel="shared cards" guide="research-collaboration" />
-      <Suspense>
-        <ContributorAwardsPanel />
-      </Suspense>
-    </ToolPage>
-  )
-}
+export { default } from "debate-ai-webui/routes/cards/awards/page"

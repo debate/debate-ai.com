@@ -15,7 +15,7 @@ import {
   docsPageUrl,
   featureDocsUrlForRoute,
   guideDocsUrl,
-} from "../docs-links"
+} from "../../src/lib/docs-links"
 import { APP_FEATURES, featureDocUrl } from "debate-feature-catalog/src/feature-catalog"
 
 describe("docsPageUrl", () => {

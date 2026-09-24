@@ -8,8 +8,8 @@ import {
   videoRouteHref,
   type VideoType,
 } from "debate-videos"
-import { CategoryDock } from "@/components/layout/CategoryDock"
-import { VideoStaffControls } from "@/components/videos/VideoStaffControls"
+import { CategoryDock } from "debate-ai-webui/components/layout/CategoryDock"
+import { VideoStaffControls } from "debate-ai-webui/components/videos/VideoStaffControls"
 import {
   getRelatedVideos,
   getVideoByRouteSegments,

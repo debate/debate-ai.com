@@ -6,7 +6,7 @@ import {
   hostOf,
   parseList,
 } from "../hosts";
-import { EXTENSION_ORIGIN } from "../../config/site";
+import { EXTENSION_ORIGIN } from "debate-ai-webui/lib/config/site";
 
 describe("parseList", () => {
   it("splits a comma-separated value and drops the empties", () => {

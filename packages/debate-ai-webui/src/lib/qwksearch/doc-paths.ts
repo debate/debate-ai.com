@@ -20,7 +20,7 @@
  * @module lib/qwksearch/doc-paths
  */
 
-import { type DocSlugEntry, docSlugForId, findDocIdBySlug } from "@/lib/reason-docs/doc-slug"
+import { type DocSlugEntry, docSlugForId, findDocIdBySlug } from "../reason-docs/doc-slug"
 
 /** The workspace route itself, with no document named. */
 export const QWKSEARCH_DOCS_ROUTE = "/doc"

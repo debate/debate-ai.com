@@ -13,7 +13,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
-import { Dock, DockIcon, DockItem, DockLabel, dockVariants } from "../layout/dock";
+import { Dock, DockIcon, DockItem, DockLabel, dockVariants } from "../../../src/lib/ui/layout/dock";
 
 function renderItem(props: Record<string, unknown> = {}) {
   return renderToStaticMarkup(

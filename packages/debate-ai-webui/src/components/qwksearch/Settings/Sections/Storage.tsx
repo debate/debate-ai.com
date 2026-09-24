@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import grab from 'grab-url';
 import SettingsField from '../SettingsField';
-import { cn } from '@/components/qwksearch/lib/utils';
+import { cn } from '../../lib/utils';
 
 interface StorageProps {
   fields: any;

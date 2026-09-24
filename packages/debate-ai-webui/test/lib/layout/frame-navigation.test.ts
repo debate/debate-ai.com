@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from "vitest"
 
-import { dockNavRootFor } from "../../nav/dock-nav-paths"
+import { dockNavRootFor } from "../../../src/lib/nav/dock-nav-paths"
 import {
   FRAME_NAV_ACK,
   FRAME_NAV_REQUEST,
@@ -18,7 +18,7 @@ import {
   isFrameNavRequest,
   opensElsewhere,
   topNavigationTarget,
-} from "../frame-navigation"
+} from "../../../src/lib/layout/frame-navigation"
 
 const ORIGIN = "https://debate-ai.com"
 

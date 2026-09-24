@@ -1,6 +1,6 @@
 'use client';
 
-import { UIConfigField } from '@/components/qwksearch/lib/config-types';
+import { UIConfigField } from '../lib/config-types';
 import { useEffect, useState } from 'react';
 import grab from 'grab-url';
 import {
@@ -8,11 +8,11 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from '@/components/qwksearch/ui/select';
+} from '../ui/select';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
 import { Link2, Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/qwksearch/ui/button';
+import { Button } from '../ui/button';
 import { copyAnchorLink } from './anchors';
 import {
   SettingsField as SettingsFieldRenderer,

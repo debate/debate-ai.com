@@ -4,7 +4,7 @@ import {
   ONE_TAP_CLIENT_OPTIONS,
   describeOneTapMoment,
   isBenignOneTapError,
-} from "../one-tap";
+} from "../../../src/lib/auth/one-tap";
 
 /**
  * The bug these guard against: Google One Tap failing with `InvalidStateError`

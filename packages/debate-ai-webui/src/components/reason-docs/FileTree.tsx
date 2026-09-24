@@ -29,16 +29,16 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react"
-import { cn } from "@/lib/ui/lib/utils"
-import { IMPORTABLE_EXTENSIONS, fileExtension } from "@/lib/cardmirror/stored-cmir"
+import { cn } from "../../lib/ui/lib/utils"
+import { IMPORTABLE_EXTENSIONS, fileExtension } from "../../lib/cardmirror/stored-cmir"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/lib/ui/primitives/dropdown-menu"
-import { Input } from "@/lib/ui/primitives/input"
+} from "../../lib/ui/primitives/dropdown-menu"
+import { Input } from "../../lib/ui/primitives/input"
 import type { ReasonDocument } from "./types"
 
 interface TreeNode {

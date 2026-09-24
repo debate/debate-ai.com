@@ -13,15 +13,15 @@ import { Mail } from "lucide-react"
 import { SiGoogle, SiDiscord } from "@icons-pack/react-simple-icons"
 import { FaLinkedin } from "react-icons/fa"
 import { toast } from "sonner"
-import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
+import { AnimatedLoader } from "../ui/AnimatedLoader"
 
 import { Button } from "../../lib/ui/primitives/button"
 import { Input } from "../../lib/ui/primitives/input"
 import { Label } from "../../lib/ui/primitives/label"
-import { authClient } from "@/lib/auth/client"
-import { trackSignUpCompleted } from "@/lib/analytics/mixpanel"
-import { useAuthProviders } from "@/lib/hooks/useAuthProviders"
-import { isNativeWrapper, openInSystemBrowser } from "@/lib/native/tauri"
+import { authClient } from "../../lib/auth/client"
+import { trackSignUpCompleted } from "../../lib/analytics/mixpanel"
+import { useAuthProviders } from "../../lib/hooks/useAuthProviders"
+import { isNativeWrapper, openInSystemBrowser } from "../../lib/native/tauri"
 
 /** Social providers this form knows how to render, in display order. */
 const SOCIAL_PROVIDERS = ["google", "discord", "linkedin"] as const

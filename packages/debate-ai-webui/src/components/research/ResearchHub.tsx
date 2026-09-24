@@ -49,7 +49,7 @@ import {
 } from "debate-research-evidence"
 import { ContributorAwardsPanel, QuestStreaksPanel } from "debate-community"
 import { TopicSprintPanel } from "debate-team-collaboration"
-import { useSession } from "@/lib/hooks/useSession"
+import { useSession } from "../../lib/hooks/useSession"
 import { TaskInboxWithIdentity } from "./TaskInboxWithIdentity"
 import { ContributionLeaderboardWithIdentity } from "./ContributionLeaderboardWithIdentity"
 import { ContributionsFeedWithIdentity } from "./ContributionsFeedWithIdentity"

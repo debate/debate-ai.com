@@ -19,7 +19,7 @@
  * @module lib/recentTools
  */
 import { isValidToolHref } from "debate-round"
-import type { Tool } from "@/app/tools/tool-groups"
+import type { Tool } from "../routes/tools/tool-groups"
 
 /** Short enough that the group stays a quick glance, not a second favorites list. */
 export const MAX_RECENT_TOOLS = 5

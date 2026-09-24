@@ -18,7 +18,7 @@
 
 import Link from "next/link"
 import type { ComponentProps } from "react"
-import { useRecentTools } from "@/lib/hooks/useRecentTools"
+import { useRecentTools } from "../../lib/hooks/useRecentTools"
 
 type Props = ComponentProps<typeof Link>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { debugLog } from "@/lib/debug-log";
+import { debugLog } from "../../lib/debug-log";
 
 /**
  * Registers the offline service worker built by `npm run build:sw`.

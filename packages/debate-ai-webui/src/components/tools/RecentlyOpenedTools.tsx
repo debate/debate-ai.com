@@ -14,9 +14,9 @@
  */
 
 import { Clock } from "lucide-react"
-import { useRecentTools } from "@/lib/hooks/useRecentTools"
-import { resolveRecentTools } from "@/lib/recentTools"
-import { ALL_TOOLS } from "@/app/tools/tool-groups"
+import { useRecentTools } from "../../lib/hooks/useRecentTools"
+import { resolveRecentTools } from "../../lib/recentTools"
+import { ALL_TOOLS } from "../../routes/tools/tool-groups"
 import { RecordVisitLink } from "./RecordVisitLink"
 
 export function RecentlyOpenedTools() {

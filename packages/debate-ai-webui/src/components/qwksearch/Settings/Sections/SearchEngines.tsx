@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/qwksearch/ui/button";
-import { Switch } from "@/components/qwksearch/ui/switch";
-import { Input } from "@/components/qwksearch/ui/input";
+import { Button } from "../../ui/button";
+import { Switch } from "../../ui/switch";
+import { Input } from "../../ui/input";
 import { Loader2, Play, AlertCircle, Search } from "lucide-react";
-import { AnimatedLoader } from "@/components/ui/AnimatedLoader";
+import { AnimatedLoader } from "../../../ui/AnimatedLoader";
 import grab from "grab-url";
 
 interface SearchEngine {
