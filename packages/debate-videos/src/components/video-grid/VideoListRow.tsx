@@ -31,6 +31,7 @@ import { HideConfirmDialog } from "../video-card/VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
 import { StackNav, stackMemberLabel } from "../video-card/StackNav"
 import { cleanTournamentName, videoCategoryLabel } from "./video-tree"
+import { TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoType } from "../../types/videos"
 
@@ -247,7 +248,23 @@ export function VideoListRow({
                       </span>
                     )}
                     <span className="truncate">
-                      {[cleanTournament, channel].filter(Boolean).join(" · ") || "—"}
+                      {cleanTournament === "TOC" ? (
+                        <span className="flex items-center gap-1.5">
+                          <img
+                            src={TOC_TOURNAMENT_IMAGE}
+                            alt="Tournament of Champions"
+                            className="h-4 w-auto object-contain shrink-0"
+                          />
+                          {channel && (
+                            <>
+                              <span className="text-muted-foreground">·</span>
+                              <span className="truncate">{channel}</span>
+                            </>
+                          )}
+                        </span>
+                      ) : (
+                        [cleanTournament, channel].filter(Boolean).join(" · ") || "—"
+                      )}
                     </span>
                   </>
                 ) : (

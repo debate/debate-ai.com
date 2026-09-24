@@ -26,6 +26,10 @@ export default defineConfig({
       "packages/*",
       "!packages/README.md",
       "!packages/debate-help-docs",
+      // A local, git-ignored clone of upstream Tabroom (the source for
+      // debate-tournaments' sync script); its tests need upstream's own
+      // toolchain and MariaDB. debate-tournaments tests the vendored code.
+      "!packages/debate-tournament-tabroom",
       // The web app has no test/ folder for the glob above to find, but parts
       // of apps/debate-ai.com/lib are plain Node libraries worth unit testing
       // (the D1 read-replication session wrapper, for one). Registered inline

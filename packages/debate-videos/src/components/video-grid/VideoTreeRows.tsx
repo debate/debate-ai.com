@@ -16,7 +16,7 @@
 import { useState } from "react"
 import { CalendarRange, ChevronRight, Medal, Tag, Trophy, Tv } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
-import { formatVideoDate } from "../video-card/videoCardUtils"
+import { formatVideoDate, TOC_TOURNAMENT_IMAGE } from "../video-card/videoCardUtils"
 import { VideoListRow } from "./VideoListRow"
 import { treeIndentStyle } from "./tree-indent"
 import type { VideoGroupKind, VideoTreeGroup, VideoTreeNode } from "./video-tree"
@@ -98,14 +98,22 @@ function GroupRows({
               )}
             />
             <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-            <span
-              className={cn(
-                "truncate font-semibold",
-                depth === 0 ? "text-sm text-foreground" : "text-sm text-primary",
-              )}
-            >
-              {group.label}
-            </span>
+             {group.kind === "tournament" && group.label === "TOC" ? (
+               <img
+                 src={TOC_TOURNAMENT_IMAGE}
+                 alt="Tournament of Champions"
+                 className="h-4 w-auto object-contain shrink-0"
+               />
+             ) : (
+               <span
+                 className={cn(
+                   "truncate font-semibold",
+                   depth === 0 ? "text-sm text-foreground" : "text-sm text-primary",
+                 )}
+               >
+                 {group.label}
+               </span>
+             )}
             <span className="shrink-0 rounded-full bg-background/70 px-1.5 py-0.5 text-[11px] tabular-nums text-muted-foreground">
               {group.videoCount}
             </span>
