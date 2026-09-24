@@ -111,7 +111,13 @@ export function identifySpeech(heading: string): SpeechIdentity {
       const spelledTarget = rest.match(/\b(?:first|second)\s+(?:affirmative|negative)\s+(?:constructive|rebuttal)\b/i);
       if (spelledTarget) target = identifySpeech(spelledTarget[0]).label;
     }
-    const label = crossEx ? "CX" : "Crossfire";
+    let label = crossEx ? "CX" : "Crossfire";
+    if (target) {
+      const num = target[0];
+      const side = target[1];
+      const nextNum = num === "1" ? "2" : "1";
+      label = `${nextNum}${side}X`;
+    }
     return { base: label.toUpperCase(), label, side: "cx", isSpeech: true, target };
   }
 
