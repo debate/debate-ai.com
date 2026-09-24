@@ -1,9 +1,5 @@
 import { ReasonEditorScreen } from "../../../components/reason-editor/ReasonEditorScreen"
 
-interface PageProps {
-  params: Promise<{ slug: string }>
-}
-
 /**
  * A document addressed by its own name — `/reason-editor/cp-answer-to-states`
  * rather than `/reason-editor?topic=2`.

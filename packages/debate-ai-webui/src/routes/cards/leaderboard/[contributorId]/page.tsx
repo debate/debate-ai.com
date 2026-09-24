@@ -1,17 +1,13 @@
+"use client"
+
 import Link from "next/link"
 import { Suspense } from "react"
 import { ArrowLeft } from "lucide-react"
-import { notFound } from "next/navigation"
+import { notFound, useParams } from "next/navigation"
 import { ContributorProfileWithIdentity } from "../../../../components/research/ContributorProfileWithIdentity"
 
-interface PageProps {
-  params: Promise<{
-    contributorId: string
-  }>
-}
-
 /**
- * Next has already percent-decoded the route segment, so a second decode is
+ * The router has already percent-decoded the route segment, so a second decode is
  * only for links that double-encoded it — and `decodeURIComponent` throws on
  * an escape it cannot parse, which a contributor name containing a literal
  * `%` produces. Falling back to the segment as given keeps such a name a 200
@@ -25,8 +21,8 @@ function decodeContributorId(contributorId: string): string {
   }
 }
 
-export default async function ContributorProfilePage({ params }: PageProps) {
-  const { contributorId } = await params
+export default function ContributorProfilePage() {
+  const { contributorId } = useParams<{ contributorId: string }>()
 
   if (!contributorId?.trim()) {
     notFound()

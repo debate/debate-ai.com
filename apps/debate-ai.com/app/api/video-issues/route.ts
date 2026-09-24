@@ -26,7 +26,7 @@ import { videoIssues } from "@/lib/database/schema";
 const VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
 
 /** What a report can be about. */
-const ISSUE_KINDS = ["miscategorized", "unavailable", "quality", "metadata", "other"] as const;
+const ISSUE_KINDS = ["miscategorized", "unavailable", "quality", "metadata", "transcript", "other"] as const;
 
 /** Competition levels a miscategorised round can be moved between. */
 export const ROUND_LEVELS = ["college", "high-school", "middle-school"] as const;

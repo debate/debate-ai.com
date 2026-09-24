@@ -1,9 +1,5 @@
 import { WorkspaceScreen } from "../WorkspaceScreen"
 
-interface PageProps {
-  params: Promise<{ slug: string }>
-}
-
 /**
  * A document in the research workspace, addressed by its own name —
  * `/doc/cp-answer-to-states`.

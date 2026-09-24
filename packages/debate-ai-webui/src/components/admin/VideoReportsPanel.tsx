@@ -10,6 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../../lib/ui/primitives/card";
+import { VIDEO_DOCUMENT_LABELS } from "debate-videos";
+import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
 
 /**
  * Two things the library only learns about from outside: what viewers report,
@@ -24,6 +26,11 @@ import {
  * A miscategorised report carries the correction as fields rather than prose,
  * so "Apply" writes it straight to the video instead of leaving an admin to
  * re-derive it from a sentence.
+ *
+ * "Needs transcript" reports are filed by `/api/transcript` itself, not by a
+ * viewer, when YouTube has no captions for a library video. "Add transcript"
+ * opens the same content editor the library table uses, and saving there
+ * marks the report applied.
  */
 
 /** One report, as `/api/video-issues` returns it. */
@@ -59,6 +66,7 @@ const KIND_LABELS: Record<string, string> = {
   unavailable: "Does not play",
   metadata: "Wrong metadata",
   quality: "Quality",
+  transcript: "Needs transcript",
   other: "Other",
 };
 
@@ -94,6 +102,8 @@ export function VideoReportsPanel() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  /** The report whose video is open in the content editor. */
+  const [editing, setEditing] = useState<VideoIssue | null>(null);
 
   const load = useCallback(async () => {
     setIsLoading(true);
@@ -272,7 +282,8 @@ export function VideoReportsPanel() {
 
                   {issue.issue && <p className="text-muted-foreground text-xs">{issue.issue}</p>}
                   <p className="text-muted-foreground text-xs">
-                    {issue.reportedBy ?? "anonymous"} · {formatWhen(issue.createdAt)} ·{" "}
+                    {issue.reportedBy ?? (issue.kind === "transcript" ? "automatic" : "anonymous")} ·{" "}
+                    {formatWhen(issue.createdAt)} ·{" "}
                     {issue.videoId}
                   </p>
                 </div>
@@ -285,6 +296,11 @@ export function VideoReportsPanel() {
                       onClick={() => applyCorrection(issue)}
                     >
                       Apply
+                    </Button>
+                  )}
+                  {issue.status === "open" && issue.kind === "transcript" && (
+                    <Button size="sm" disabled={busyId === issue.id} onClick={() => setEditing(issue)}>
+                      Add transcript
                     </Button>
                   )}
                   {issue.status === "open" ? (
@@ -368,6 +384,27 @@ export function VideoReportsPanel() {
           </ul>
         </section>
       </CardContent>
+
+      <VideoContentDialog
+        video={
+          editing
+            ? ({ videoId: editing.videoId, title: editing.title, channel: "", tournament: null } satisfies ContentDialogVideo)
+            : null
+        }
+        onOpenChange={(open) => {
+          if (!open) setEditing(null);
+        }}
+        onSaved={(message) => {
+          setNotice(message);
+          // Only a saved transcript answers the report; a summary saved in
+          // passing, or a document removed, does not.
+          const transcriptLabel = VIDEO_DOCUMENT_LABELS.transcript.label.toLowerCase();
+          const issue = editing;
+          if (issue?.status === "open" && message.startsWith(`Saved the ${transcriptLabel} `)) {
+            void resolve(issue, "applied");
+          }
+        }}
+      />
     </Card>
   );
 }
