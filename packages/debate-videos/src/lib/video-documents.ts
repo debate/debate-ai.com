@@ -141,9 +141,16 @@ function splitHeadingTimecode(heading: string): { heading: string; startSeconds:
  * panel then just has nothing to jump between.
  *
  * @param body - The document's markdown.
+ * @param options.depth - Deepest heading level that starts a section (default
+ *   3). Deeper headings stay in the section's body — the per-speech view
+ *   splits on `##` only, so a `### Plan` inside a speech remains part of it.
  * @returns One entry per section, in document order.
  */
-export function parseDocumentSections(body: string): DocumentSection[] {
+export function parseDocumentSections(
+  body: string,
+  options: { depth?: number } = {},
+): DocumentSection[] {
+  const headingPattern = new RegExp(`^#{1,${options.depth ?? 3}}\\s+(.*)$`);
   const text = (body ?? "").replace(/\r\n/g, "\n");
   if (!text.trim()) return [];
 
@@ -169,7 +176,7 @@ export function parseDocumentSections(body: string): DocumentSection[] {
   };
 
   for (const line of text.split("\n")) {
-    const heading = line.match(/^#{1,3}\s+(.*)$/);
+    const heading = line.match(headingPattern);
     if (heading) {
       push();
       const split = splitHeadingTimecode(heading[1]);
