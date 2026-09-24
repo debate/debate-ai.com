@@ -143,12 +143,22 @@ export function identifySpeech(heading: string): SpeechIdentity {
  * or at the end when it mentions none, so a summary's `## 2NR` lands after
  * a transcript's 1AR rather than before it.
  *
+ * With `requireSummary: false` a transcript alone is enough, as long as it
+ * names two speeches — used for a round, which gets the per-speech view
+ * either way (see `lib/round-formats.ts`).
+ *
  * @param documents - The video's documents, in any order.
  * @returns The speeches, or an empty list when there is nothing to split.
  */
-export function buildRoundSpeeches(documents: VideoDocument[]): RoundSpeech[] {
+export function buildRoundSpeeches(
+  documents: VideoDocument[],
+  { requireSummary = true }: { requireSummary?: boolean } = {},
+): RoundSpeech[] {
   const ordered = orderDocuments(documents);
-  if (!ordered.some((document) => document.kind === "summary" || document.kind === "analysis")) {
+  if (
+    requireSummary &&
+    !ordered.some((document) => document.kind === "summary" || document.kind === "analysis")
+  ) {
     return [];
   }
 
@@ -191,7 +201,8 @@ export function buildRoundSpeeches(documents: VideoDocument[]): RoundSpeech[] {
   }
 
   const summarized = speeches.filter(
-    (speech) => speech.isSpeech && (speech.parts.summary || speech.parts.analysis),
+    (speech) =>
+      speech.isSpeech && (speech.parts.summary || speech.parts.analysis || (!requireSummary && speech.parts.transcript)),
   );
   if (summarized.length < 2) return [];
 
@@ -226,4 +237,56 @@ export function playingSpeechIndex(speeches: RoundSpeech[], seconds: number): nu
     }
   });
   return found;
+}
+
+/**
+ * Overlays the start times a reader marked by hand. A mark wins over a
+ * document's timecode — the reader set it while watching this upload.
+ *
+ * @param marks - Seconds per speech key, from `state/speechStartMarks.ts`.
+ */
+export function withSpeechStarts(speeches: RoundSpeech[], marks: Record<string, number>): RoundSpeech[] {
+  if (Object.keys(marks).length === 0) return speeches;
+  return speeches.map((speech) =>
+    typeof marks[speech.key] === "number" ? { ...speech, startSeconds: marks[speech.key] } : speech,
+  );
+}
+
+/** A caption line: the shape `groupIntoSentences` produces. */
+interface CaptionLine {
+  text: string;
+  start: number;
+}
+
+/**
+ * Gives every timed speech without a written transcript the captions that
+ * play between its start and the next timed speech's start — what the
+ * Outcomes simulator reads for a round nobody typed up.
+ */
+export function withCaptionTranscripts(speeches: RoundSpeech[], captions: CaptionLine[]): RoundSpeech[] {
+  if (captions.length === 0) return speeches;
+  const starts = speeches
+    .map((speech) => speech.startSeconds)
+    .filter((start): start is number => start !== null)
+    .sort((a, b) => a - b);
+  if (starts.length === 0) return speeches;
+  return speeches.map((speech) => {
+    const start = speech.startSeconds;
+    if (start === null || speech.parts.transcript) return speech;
+    const end = starts.find((other) => other > start) ?? Infinity;
+    const text = captions
+      .filter((line) => line.start >= start && line.start < end)
+      .map((line) => line.text.trim())
+      .filter(Boolean)
+      .join(" ");
+    return text ? { ...speech, parts: { ...speech.parts, transcript: text } } : speech;
+  });
+}
+
+/** The whole round's captions as one block, for a round with no speech marked yet. */
+export function captionText(captions: CaptionLine[]): string {
+  return captions
+    .map((line) => line.text.trim())
+    .filter(Boolean)
+    .join(" ");
 }
