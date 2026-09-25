@@ -138,8 +138,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
