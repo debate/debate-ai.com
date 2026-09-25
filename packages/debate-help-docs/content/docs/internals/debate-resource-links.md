@@ -2,20 +2,18 @@
 
 ## Core Infrastructure
 
-- [Debate AI](https://debate-ai.com/) — Debaters in PF, LD & Policy can streamline AI research management, live speech sharing, round and lecture videos, and rankings .
 - [Tabroom](https://www.tabroom.com/) — The official NSDA repository for tournament registration and balloting history. Essential for tracking standings and circuit shifts.
 - [NSDA](https://www.speechanddebate.org/) Official collection of training materials, historical round videos, and official rulesets from the NSDA.
 - [NDCA Coaches Association](https://www.debatecoaches.org/) — National Debate Coaches Association hub for coaches, open evidence archives, and administrative circuit protocols.
-- [TRPC](https://www.baylor.edu/debate/trpc) — Classic desktop tabulation system developed at Baylor University for policy debate pairings.
-- [Tournman Software](https://tournman.com/) — Desktop debate pairing application used for localized policy and parliamentary tournaments.
-- [Verbatim](http://paperlessdebate.com/) — The standard Word template for paperless debate. Features high-speed formatting macros and card organization used globally.
 - [Open Caselist](https://opencaselist.com/) — The central wiki where teams disclose evidence. Essential for scouting opponent strategies and researching meta-trends.
-- [SpeechWire Manage](https://manage.speechwire.com/) — SpeechWire tournament management portal for directors and registrants.
-- [Tabroom Help Center](https://docs.tabroom.com/) — Official Tabroom registration and tournament management documentation.
-- [Calico Tab System](https://calicotab.com/) — Lightweight web tabulator optimized for rapid small-circuit middle school and novice competitions.
+- [Debate AI](https://debate-ai.com/) — Debaters in PF, LD & Policy can streamline AI research management, live speech sharing, round and lecture videos, and rankings .
+
 
 ## Debate Software & Docs
+- [Verbatim](http://paperlessdebate.com/) — The standard Word template for paperless debate. Features high-speed formatting macros and card organization used globally.
 
+- [Tournman Software](https://tournman.com/) — Desktop debate pairing application used for localized policy and parliamentary tournaments.
+- [Calico Tab System](https://calicotab.com/) — Lightweight web tabulator optimized for rapid small-circuit middle school and novice competitions.
 - [DebateDrills Resource List](https://www.debatedrills.com/external-resources) — A large curated external list of speech and debate resources, maintained by a coaching organization.
 - [SpeechDrop](https://speechdrop.net/) — Fast, secure document sharing in-round. The standard way to send a speech doc to your opponent and the judge.
 - [Tabroom Share](https://share.tabroom.com/) — Tabroom's built-in in-round document sharing, integrated with the tournament entry itself.
@@ -30,23 +28,6 @@
 - [Vermont Debate Central](https://www.uvm.edu/cas/english/lawrence-debate-union) — UVM Lawrence Debate Union homepage. College files live on the NDT/CEDA openCaselist.
 - [Stanford Forensic Institute Archives](https://snfi.stanford.edu/) — Stanford National Forensic Institute (SNFI). Camp files are released through the NDCA Open Evidence project.
 - [PrepSync](https://prepsync.net/) — AI-driven card and evidence finder. Precision search utility for high-level competitive preparation.
-- [Berkeley Debate Case Library](https://opencaselist.com/ndtceda/Berkeley) — Cal Berkeley's college policy disclosure page on openCaselist.
-- [College LD Caselist](https://opencaselist.com/nfald) — NFA-LD college disclosure wiki for single-affirmative policy-style Lincoln-Douglas files.
-- [College Policy Caselist](https://opencaselist.com/ndtceda) — NDT/CEDA college policy disclosure wiki. This is where high schoolers download college files.
-- [Cornell Debate Evidence Base](https://opencaselist.com/ndtceda/Cornell) — Cornell's college policy disclosure page on openCaselist.
-- [Dartmouth Debate Open Research](https://opencaselist.com/ndtceda/Dartmouth) — Dartmouth's college policy disclosure page. DDI camp files are released through Open Evidence.
-- [Emory Debate File Repository](https://opencaselist.com/ndtceda/Emory) — Emory's NDT/CEDA disclosure page on openCaselist — Barkley Forum college files and cites.
-- [George Mason Debate File Vault](https://opencaselist.com/ndtceda/GeorgeMason) — George Mason's college policy disclosure page on openCaselist.
-- [Harvard Debate Case Archive](https://opencaselist.com/ndtceda/Harvard) — Harvard's NDT/CEDA disclosure page on openCaselist — download college round files and cites.
-- [High School LD Caselist](https://opencaselist.com/hsld) — High school Lincoln-Douglas disclosure wiki for cites, round reports, and open-source files.
-- [High School PF Caselist](https://opencaselist.com/hspf) — Dedicated Public Forum disclosure wiki tracking team positions and citations nationally.
-- [High School Policy Caselist](https://opencaselist.com/hspolicy) — High school policy (CX) disclosure wiki — the main place to download camp and team files.
-- [Kentucky Debate File Portal](https://opencaselist.com/ndtceda/Kentucky) — University of Kentucky's college policy disclosure page on openCaselist.
-- [Michigan State Debate File Vault](https://opencaselist.com/ndtceda/MichiganState) — Michigan State's college policy disclosure page. SDI camp files are released through Open Evidence.
-- [Northwestern Debate File Archive](https://opencaselist.com/ndtceda/Northwestern) — Northwestern's college policy disclosure page on openCaselist. Camp files also go through Open Evidence.
-- [OpenEv Search Engine](https://opencaselist.com/openev) — NDCA Open Evidence — downloadable camp files from summer institutes, hosted on openCaselist.
-- [Texas Debate Research Archive](https://opencaselist.com/ndtceda/Texas) — UT Austin's college policy disclosure page on openCaselist.
-- [Weber State Debate Files](https://opencaselist.com/nfald/WeberState) — Weber State's NFA-LD disclosure page on openCaselist — college LD files and cites.
 - [Logos Debate](https://logos-debate.netlify.app/) — A modern platform providing high-quality drills, evidence sets, and prep materials for LD and PF debaters.
 - [CardCutPro](https://github.com/dhruvtpatel/CardCutPro) — Advanced card cutting and evidence organization scripts for GitHub-based research workflows.
 - [Cardr (GitHub)](https://github.com/SohamGovande/cardr) — Open-source browser extension for automated card-cutting from scholarly sites directly into Verbatim. Essential for research speed.
@@ -98,7 +79,7 @@
 - [Dallas Urban Debate Alliance](https://dallasurbandebate.org/) — Dallas-based urban debate initiative operating middle and high school debate circuits.
 - [CSDF](https://csdf-fcde.ca/) — Bilingual national organization managing interprovincial secondary debate competitions across Canada.
 
-## Elite Camps
+##  Camps
 
 - [NS Debate Camp](https://www.nsdebatecamp.com/glossary/tournament-of-champions) — Specialized training workshop with a renowned glossary for the Tournament of Champions (TOC).
 - [Lumos Debate](https://www.lumosdebate.com/) — Global debate camp and coaching initiative focused on public speaking and competitive success across all formats.
@@ -106,9 +87,6 @@
 - [Michigan Debate](https://michigandebate.com/) — The most rigorous Policy intensive workshop globally, known for its extreme research standards.
 - [Harvard Workshops](https://hdcsw.org/) — World-class summer workshops taught by Ivy League champions and national circuit coaches.
 - [Dartmouth DDI](https://www.ddidebate.org/) — The Dartmouth Debate Institute, one of the premier Policy workshops in the country.
-
-## More Camps & Institutes
-
 - [National Symposium for Debate (NSD)](https://www.nsdebatecamp.com/) — Residential and online camps in LD, PF, and Policy, running since 2006.
 - [DebateDrills Camps](https://www.debatedrills.com/) — Online and in-person LD and PF programs with a published curriculum.
 - [Summit Debate Workshops](https://summitdebate.com/) — High-level Public Forum, Congressional Debate, and Individual Events summer institute.
@@ -157,16 +135,7 @@
 - [Debate Drills YT](https://www.youtube.com/@DebateDrills) — Premier archive for technical drills and mechanics masterclasses. Essential for circuit readiness.
 - [Go Fight Win](https://www.youtube.com/channel/UC2gnLZUFVVhjTy4UL9MhvRg/featured) — Strategy hub focusing on LD mechanics, technical drilling, and round evaluation.
 - [HSR Debate](https://www.youtube.com/channel/UCUae8CTGOPAsx-SXL61BnpQ) — Video archive specializing in Policy debate theory and technical breakdown of circuit-level rounds.
-- [Kentucky Debate (YouTube)](https://www.youtube.com/@KentuckyDebate) — Recorded lectures from the Kentucky Debate Institute covering advanced policy topics.
-- [Northwestern Debate (YouTube)](https://www.youtube.com/@NorthwesternDebate) — Historical video archive of national championship debates and strategic lectures.
 - [NSDA Training](https://www.youtube.com/@nsdaspeechanddebate) — Official training and final round videos from the National Speech & Debate Association official archive.
 - [One-World Debate](https://www.youtube.com/channel/UCYPPO78Q16D9p4_bX0rR2QQ) — Technical analysis and instructional lectures on high-level argumentation and cross-ex mechanics.
 - [Proteus Academy](https://www.youtube.com/@proteusdebateacademy) — Strategy lab focused on high-level circuit trends and conceptual edges in national competition.
 - [Extemp Central](https://extempcentral.com/) — Portal for extemporaneous speaking topic questions, strategy guides, and event news.
-
-## Technical Utilities
-
-- [NCFCA Flow Sheets](https://ncfca.org/resources/flow-sheets-policy-debate-tp/) — Traditional flow sheet templates optimized for NCFCA Policy (Team Policy) and Lincoln Douglas formats.
-- [DebateKeeper (GitHub)](https://github.com/czlee/debatekeeper) — The most customizable Android timer for competitive debate, supporting custom bell signals and prep-time logic.
-- [DebTime](https://debti.me/) — A minimalist, high-visibility web timer interface for tracking speech times on any device in-round.
-- [DebateTimers.com](https://debatetimers.com/) — Professional-grade browser timers featuring multi-room synchronization and streamlined UX for tournament use.
