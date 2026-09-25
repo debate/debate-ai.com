@@ -100,28 +100,19 @@
 
 ### 📝 REASON: Research Editor for Annotated Summaries in Outline Notation
 
-`/reason-editor` and every speech-doc panel run on [`debate-editor`](./packages/debate-editor)
-— the ported-in [CardMirror](https://github.com/debate/cardmirror) ProseMirror engine, packing
+— [CardMirror](https://github.com/debate/cardmirror) ProseMirror engine, packing
 roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feature list in the
 [package README](./packages/debate-editor/README.md#cardmirror-features)):
-
-**Document & files**
 - **Structured outline**: pockets, hats, blocks, tags, cards, analytics, and undertags as first-class node types, with footnotes, tables, and live/transcluded zones
 - **Lossless `.docx` and `.cmir` round-trip**: Verbatim Word interop plus a native gzip save format, including encrypted-`.docx` decryption and damaged-file salvage
 - **Bulk conversion & compression**, automatic style cleanup on import, and a headless `cardmirror-read` CLI/MCP tool for AI-assistant access to files outside the app
-
-**Cutting & formatting**
 - **One-click structural styles**: Pocket, Hat, Block, Tag, Analytic, Undertag, plus citation/underline/emphasis marks and acronym-aware variants
 - **Highlight, shading, and font-color pickers** with standardization commands, a paintbrush mode, and highlight locking
 - **Card numbering**, multiple **condense modes**, and a full editing-utilities set (shrink/regrow, short cites, live-zone refresh, heading move/copy/delete)
-
-**Collaboration & workflow**
 - **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery — plus an account-linked **contacts list** (requests, blocking, presence) to share a live card straight to a contact's account
 - **Speech-doc targeting**: mark a doc as the live send target and send content at cursor or at end, with a persistent send history
 - **Flow integration**: send cards or headings straight to a Flow column or cell, or pull content back
 - **Dropzone card exchange**, **Quick Cards**, and a unified command-bar search across cards, commands, settings, and ~50 other site tools
-
-**AI, learning & chrome**
 - **AI tools**: ask-about-selection, AI-generated citations, translation, and AI-assisted text/formatting repair
 - **Flashcards** with spaced-repetition review, a **card cutter** panel, voice dictation, and a reading-marker mode
 - **Runtime plugin registry**, a 12-category menu bar, customizable keybindings, and per-user preferences synced to account settings
