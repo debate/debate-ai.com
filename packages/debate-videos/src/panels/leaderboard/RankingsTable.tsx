@@ -18,8 +18,8 @@ import {
   TableRow,
 } from "../../ui/primitives/table"
 import { cn } from "../../ui/lib/utils"
-import { COLUMN_TOOLTIPS } from "./leaderboardUtils"
-import type { SortKey, SortState } from "./leaderboardTypes"
+import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
+import type { Division, SortKey, SortState } from "./leaderboardTypes"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -27,7 +27,7 @@ interface Column {
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
-  render: (entry: RankingEntry) => React.ReactNode
+  render: (entry: RankingEntry, division: Division) => React.ReactNode
 }
 
 const rating = (n: number) => n.toFixed(1)
@@ -49,7 +49,15 @@ function WinRate({ value }: { value: number | null }) {
 
 const COLUMNS: Column[] = [
   { key: "rank", label: "Rank", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
-  { key: "name", label: "Name", render: (e) => <span className="font-medium text-foreground">{e.name}</span> },
+  {
+    key: "name",
+    label: "Name",
+    render: (e, division) => (
+      <span className="font-medium text-foreground" title={e.name}>
+        {displayEntryName(e.name, division)}
+      </span>
+    ),
+  },
   { key: "school", label: "School", render: (e) => e.school },
   {
     key: "adjustedRating",
@@ -79,6 +87,8 @@ const COLUMNS: Column[] = [
 interface RankingsTableProps {
   /** Pre-sorted and pre-filtered rows to render. */
   entries: RankingEntry[]
+  /** Active division; LD rows show only the debater's last name. */
+  division: Division
   /** Current sort state. */
   sort: SortState
   /** Called when the user clicks a column header. */
@@ -92,7 +102,7 @@ interface RankingsTableProps {
  *
  * @param props - See {@link RankingsTableProps}.
  */
-export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProps) {
+export function RankingsTable({ entries, division, sort, onToggleSort }: RankingsTableProps) {
   return (
     <div className="rounded-lg border bg-card shadow-sm">
       <Table className="min-w-[960px]">
@@ -151,7 +161,7 @@ export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProp
                   )}
                   title={col.key === "school" ? entry.school : undefined}
                 >
-                  {col.render(entry)}
+                  {col.render(entry, division)}
                 </TableCell>
               ))}
             </TableRow>
