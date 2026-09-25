@@ -137,6 +137,7 @@ export default defineConfig({
       "debate-round",
       "debate-timer",
       "debate-tournaments",
+      "debate-rankings",
       "debate-videos",
     ],
   },

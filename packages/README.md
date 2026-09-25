@@ -99,6 +99,14 @@ outline, flow annotations, and AI response-outcome charts. Composes `debate-roun
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
+## debate-rankings
+
+Glicko-2 rankings for HS PF, LD, Policy and college policy, cloned from
+[debate/debate-rankings](https://github.com/debate/debate-rankings). A Python pipeline
+(`src/main.py`) replays tournament results into CSVs under `output/`; a TypeScript entry
+(`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the
+`/rank` panel in `debate-videos`.
+
 ## debate-round
 
 FIAT, the live debate round workspace. Includes the ag-Grid flow spreadsheet, column
@@ -154,4 +162,4 @@ upstream and re-applies this package's patches and overlays, so upstream changes
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
 persistent YouTube player with picture-in-picture, a per-video watch page at
 `/videos/watch/<title-slug>` (player, synced transcript, related videos),
-lecture pages, and rankings leaderboards.
+lecture pages, and the rankings leaderboard (data from `debate-rankings`).

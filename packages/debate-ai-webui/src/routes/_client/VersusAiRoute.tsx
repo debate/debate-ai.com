@@ -16,7 +16,11 @@ export default function VersusAiRoute() {
     <ToolPage>
       <ToolPageHeader href="/versus-ai" backHref="/debate" backLabel="round workspace" guide="practice-tools" />
       <Suspense>
-        <DebatePracticeVsAi userId={user?.id} userDisplayName={user?.name} userAvatar={user?.image} />
+        <DebatePracticeVsAi
+          userId={user?.id ?? undefined}
+          userDisplayName={user?.name ?? undefined}
+          userAvatar={user?.image ?? undefined}
+        />
       </Suspense>
     </ToolPage>
   )

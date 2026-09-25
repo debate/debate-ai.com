@@ -16,7 +16,7 @@
 
 import type { ComponentType, ReactNode } from "react"
 
-type PageModule = { default: ComponentType }
+type PageModule = { default: ComponentType<any> }
 type LayoutModule = { default: ComponentType<{ children: ReactNode }> }
 
 export interface AppRoute {

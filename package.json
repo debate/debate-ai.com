@@ -39,6 +39,7 @@
     "react-reason-editor-sidebar": "^0.1.98"
   },
   "overrides": {
-    "@ricky0123/vad-web": "^0.0.30"
+    "@ricky0123/vad-web": "^0.0.30",
+    "@ai-sdk/provider": "^4.0.0"
   }
 }

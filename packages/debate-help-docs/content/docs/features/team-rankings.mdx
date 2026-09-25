@@ -4,31 +4,42 @@ title: "Team Rankings"
 
 # Team Rankings
 
-A division-and-season leaderboard of debate teams — TOC score, bid count,
-and Debate Elo rating side by side, for PF, LD, Policy (CX), and NDT.
+A current-season leaderboard of debate teams and debaters for PF, LD, Policy
+(CX) and college policy (NDT), rated with Glicko-2 from tournament results.
 
 - **Route:** `/rank`
-- **Package:** `debate-videos`
+- **Package:** `debate-videos` (the page), `debate-rankings` (the ratings)
 
 ## What it shows
 
-A division tab and season-year selector drive a sortable table (state,
-bids, TOC score, Debate Elo, Elo rank and derived columns), plus a champion
-banner surfacing recorded champion/topic history.
+Pick a division tab. Every column below can be sorted by clicking its
+header, and the ⓘ next to a header explains how the number is worked out.
 
-## When a ranking source is down
+| Column | Meaning |
+| --- | --- |
+| Rank | Position by adjusted rating |
+| Name / School | The team (`Last & Last`) or LD debater, and their school |
+| Adj. Rating | Rating − 2 × Deviation — what the rank is sorted on, so a team with only a few rounds can't top the list on luck |
+| Rating | The raw Glicko-2 rating |
+| Deviation | How uncertain the rating is; it shrinks as a team debates more |
+| Matches | Rated rounds played (rounds at major tournaments count twice) |
+| Aff Win / Neg Win | Share of rounds won on each side |
+| Aff Elim Win / Neg Elim Win | Share of elimination rounds won on each side; a dash means no elims on that side |
+| ID | A short stable id for the entry across tournaments |
 
-The table is built from two third-party sources — the TOC bid list (rank, bids,
-TOC score) and DebateDrills (Debate Elo) — which go down independently. If one
-of them is unreachable you still get the other: the bid list without an Elo
-column, or Elo-only rows if the bid list is the one that is out. Only when
-neither responds does the panel say the leaderboard is temporarily
-unavailable, rather than showing an empty table with no explanation.
+Above the table: the number of ranked entries, the side bias across the
+whole field (aff vs. neg win rate, in prelims and elims), and the list of
+tournaments the ratings come from, with majors marked. A filter box narrows
+the table by name or school.
+
+LD has a second tab, **Sep–Oct topic**, rated only from the tournaments on
+the September–October resolution.
+
+The season selector still changes the champion and topic banner. Ratings
+exist for the current season only, so earlier seasons show the banner alone.
 
 ## Known gaps
 
-Elo and TOC-score computation aren't documented in detail here — see
-`packages/debate-videos/src/panels/leaderboard/leaderboardUtils.ts`.
-
-Rankings are fetched live on each visit with no cache, so the page is only as
-fast and as available as the two upstream sources.
+Ratings cover only the tournaments listed above the table; a team that hasn't
+attended one of them is not ranked. The list updates when the rankings are
+recomputed, not live.

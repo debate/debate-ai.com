@@ -24,6 +24,7 @@ const nextConfig = {
     "debate-data-sync",
     "debate-editor",
     "debate-flow-ebb",
+    "debate-rankings",
     "debate-round",
     "debate-timer",
     "debate-videos",

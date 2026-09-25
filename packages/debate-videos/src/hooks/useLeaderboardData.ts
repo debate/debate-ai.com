@@ -1,6 +1,6 @@
 /**
- * @fileoverview Hook that fetches leaderboard rows and historical champion data
- * for the rankings panel. Separates data-fetching concerns from presentation.
+ * @fileoverview Hook that loads a `debate-rankings` dataset and historical
+ * champion data for the rankings panel. Separates data loading from presentation.
  * @module components/debate/DebateVideos/hooks/useLeaderboardData
  */
 
@@ -8,19 +8,18 @@
 
 import { useState, useEffect } from "react"
 import grab from "grab-url"
-import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills"
-import type { Division, DebateHistory } from "../panels/leaderboard/leaderboardTypes"
-import { hasLiveLeaderboard } from "../panels/leaderboard/leaderboardUtils"
+import { loadRankingDataset, type RankingDataset, type RankingDatasetId } from "debate-rankings"
+import type { DebateHistory } from "../panels/leaderboard/leaderboardTypes"
 
 /**
  * Return value from {@link useLeaderboardData}.
  */
 export interface LeaderboardDataResult {
-  /** Current leaderboard rows for the active division+year. */
-  data: LeaderboardEntry[]
-  /** `true` while leaderboard rows are being fetched. */
+  /** The loaded dataset (rows + field statistics), or `null` while loading / on error. */
+  dataset: RankingDataset | null
+  /** `true` while the dataset's CSVs are being loaded. */
   loading: boolean
-  /** Error message if the last fetch failed, or `null`. */
+  /** Error message if the last load failed, or `null`. */
   error: string | null
   /** Merged history data (prop or fetched). */
   debateHistory: DebateHistory | null
@@ -29,23 +28,22 @@ export interface LeaderboardDataResult {
 }
 
 /**
- * Fetches leaderboard rows for `division`+`year` and optionally fetches
+ * Loads the `debate-rankings` dataset `datasetId` and optionally fetches
  * historical champion data when the `history` prop is not provided.
  *
- * - Aborts in-flight requests when `division` or `year` change.
- * - NDT division has no leaderboard rows; returns empty data immediately.
+ * - Pass `null` for `datasetId` to skip loading rows (e.g. a past season,
+ *   which `debate-rankings` does not cover).
+ * - A stale load is discarded when `datasetId` changes before it settles.
  *
- * @param division - Active debate division (VPF, VLD, VCX, NDT).
- * @param year - Four-digit season year string (e.g. `"2026"`).
+ * @param datasetId - Dataset to load, or `null` for none.
  * @param history - Pre-loaded history data; skips the `/history` fetch when provided.
  */
 export function useLeaderboardData(
-  division: Division,
-  year: string,
+  datasetId: RankingDatasetId | null,
   history?: DebateHistory | null,
 ): LeaderboardDataResult {
-  const [data, setData] = useState<LeaderboardEntry[]>([])
-  const [loading, setLoading] = useState(true)
+  const [dataset, setDataset] = useState<RankingDataset | null>(null)
+  const [loading, setLoading] = useState(datasetId !== null)
   const [error, setError] = useState<string | null>(null)
 
   const [internalDebateHistory, setInternalDebateHistory] =
@@ -69,55 +67,34 @@ export function useLeaderboardData(
     fetchHistory()
   }, [history])
 
-  /** Fetches leaderboard rows for the current division+year combination. */
+  /** Loads the rankings CSVs for the selected dataset. */
   useEffect(() => {
-    if (!hasLiveLeaderboard(division)) {
-      setData([])
+    if (datasetId === null) {
+      setDataset(null)
+      setError(null)
       setLoading(false)
       return
     }
 
-    const controller = new AbortController()
-
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const params = new URLSearchParams({ division, year })
-        const payload = await grab(`leaderboard?${params.toString()}`, {
-          cache: false,
-        })
-        if (controller.signal.aborted) return
-
-        // grab reports a failed request on `.error` instead of rejecting, so
-        // an upstream outage never reached the catch below: the panel just
-        // rendered an empty table with no explanation. The route answers a
-        // failure with `{ error, details }`, which is not an array — treating
-        // "not an array" as empty hid it a second time.
-        const rows = payload.data
-        if (payload.error || !Array.isArray(rows)) {
-          setError(
-            (typeof payload.error === "string" && payload.error) ||
-              "Leaderboard data is temporarily unavailable",
-          )
-          setData([])
-          return
-        }
-        setData(rows)
-      } catch (err) {
-        if (controller.signal.aborted) return
-        setError(
-          err instanceof Error ? err.message : "Failed to fetch leaderboard data",
-        )
-        setData([])
-      } finally {
-        if (!controller.signal.aborted) setLoading(false)
-      }
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+    loadRankingDataset(datasetId)
+      .then((loaded) => {
+        if (!cancelled) setDataset(loaded)
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return
+        setDataset(null)
+        setError(err instanceof Error ? err.message : "Failed to load rankings")
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+    return () => {
+      cancelled = true
     }
+  }, [datasetId])
 
-    fetchData()
-    return () => controller.abort()
-  }, [year, division])
-
-  return { data, loading, error, debateHistory, championsLoading }
+  return { dataset, loading, error, debateHistory, championsLoading }
 }
