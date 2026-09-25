@@ -1,0 +1,39 @@
+{
+  "multi_team_debaters": [
+    "Tilak Datta Iyer",
+    "Sreekarthikeya Kankanala",
+    "William Li",
+    "James Moon",
+    "Kylin Wu",
+    "Jonah Kim",
+    "Jason Rong",
+    "Pranav Narra",
+    "Mason Sterling",
+    "Victor Kang",
+    "Sophia Parang",
+    "Ezra Segal"
+  ],
+  "tournaments": [
+    "loyola-rr",
+    "loyola",
+    "ukso",
+    "grapevine",
+    "greenhill-rr",
+    "greenhill"
+  ],
+  "topic_boundaries": {
+    "sepoct_end": "meadows",
+    "novdec_end": "isidore"
+  },
+  "majors": [
+    "heart-of-texas",
+    "glenbrooks",
+    "greenhill",
+    "emory",
+    "cal",
+    "harvard",
+    "harvard-westlake",
+    "ndca",
+    "toc"
+  ]
+}
