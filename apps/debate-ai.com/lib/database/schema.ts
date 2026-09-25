@@ -1008,6 +1008,41 @@ export const youtubeSyncRuns = sqliteTable(
 
 export type YoutubeSyncRun = typeof youtubeSyncRuns.$inferSelect;
 
+// The YouTube channels the weekly resync scans. Admin-managed in the
+// "YouTube channels" tab of /admin rather than living in
+// `packages/debate-data-sync/src/youtube/channel-config.ts`, so a channel can be
+// added, renamed or paused without a code change and a deploy.
+//
+// `id` is YouTube's channel id; `name` is the handle/username the resync hands
+// to the API. It is nullable and filled in on the first successful sync — the
+// admin adds a channel by name alone, and the resync resolves the id from
+// YouTube rather than trusting an admin to type it. A row with
+// `enabled = 0` is skipped by the scan but kept, so pausing a channel is
+// reversible and its history survives.
+export const youtubeChannels = sqliteTable(
+  "youtube_channels",
+  {
+    rowId: integer("id").primaryKey({ autoIncrement: true }),
+    channelId: text("channel_id"),
+    name: text("name").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    addedBy: text("added_by"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    nameIdx: uniqueIndex("idx_youtube_channels_name").on(table.name),
+    channelIdIdx: uniqueIndex("idx_youtube_channels_channel_id").on(table.channelId),
+  }),
+);
+
+export type YoutubeChannel = typeof youtubeChannels.$inferSelect;
+export type NewYoutubeChannel = typeof youtubeChannels.$inferInsert;
+
 // On Page Card Reuse Search — server-backed reuse index (see
 // packages/debate-card-search/src/lib/shared-evidence-library.ts and TODO.md
 // idea #7, follow-up (a)). A small, dedicated index of "this URL has been

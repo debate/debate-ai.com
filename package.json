@@ -5,9 +5,7 @@
   "packageManager": "bun@1.3.11",
   "workspaces": [
     "packages/*",
-    "!packages/debate-tournament-tabroom",
-    "apps/debate-ai.com",
-    "apps/debate-browser-ext"
+    "apps/debate-ai.com"
   ],
   "scripts": {
     "dev": "turbo dev",

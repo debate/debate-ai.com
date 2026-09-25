@@ -1,11 +1,11 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import {
   getChannelId,
   getVideosForChannel,
   fetchFullDescriptions,
   setYouTubeApiKey,
 } from "debate-data-sync/src/youtube/youtube-api";
-import { channels, publishedAfter } from "debate-data-sync/src/youtube/channel-config";
+import { publishedAfter } from "debate-data-sync/src/youtube/channel-config";
 import {
   parseDebateStyle,
   parseRoundLevel,
@@ -17,18 +17,23 @@ import {
 import { isRound } from "debate-data-sync/src/youtube/parsers/video-classifier";
 import { getDBFromContext } from "../database/context";
 import { describeError } from "../database/errors";
-import { youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
+import { youtubeChannels, youtubeRoundVideos, youtubeSyncRuns, youtubeVideoExclusions } from "../database/schema";
 import { getEnv } from "../env";
 
 /**
- * Refetches every subscribed YouTube channel (see channel-config.ts),
- * classifies which videos are debate rounds, and upserts them into the
- * `youtube_round_videos` SQL table so the admin page can page through
- * up-to-date results without hitting the YouTube API on every read.
+ * Refetches every subscribed YouTube channel (see `youtube_channels` in
+ * `lib/database/schema.ts` — the admin-managed list), classifies which videos
+ * are debate rounds, and upserts them into the `youtube_round_videos` SQL
+ * table so the admin page can page through up-to-date results without hitting
+ * the YouTube API on every read.
  *
  * Runs synchronously within the request, matching the existing
- * `/api/sync-videos` endpoint's behavior — there is no background job queue
- * in this app, so the caller (the admin resync button) waits for it.
+ * `/api/admin/youtube/resync` endpoint's behavior — there is no background job
+ * queue in this app, so the caller (the admin resync button) waits for it.
+ *
+ * A channel's YouTube id is resolved from its name here and written back, so
+ * the admin never has to type an id — and a renamed channel keeps working
+ * until the next scan re-resolves it.
  */
 export async function resyncYouTubeRounds(triggeredBy: string | null) {
   const apiKey = getEnv("YOUTUBE_API_KEY");
@@ -63,10 +68,25 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
     const allVideos: any[] = [];
     let channelsSynced = 0;
 
-    for (const channelName of channels) {
-      const channelId = await getChannelId(channelName);
+    // Scan every enabled channel, resolving each one's YouTube id from its
+    // name and writing it back so the next scan skips the lookup. A channel
+    // the API does not know about is skipped rather than failing the run —
+    // the channels tab is where a typo gets noticed.
+    const subscribed = await db
+      .select()
+      .from(youtubeChannels)
+      .where(eq(youtubeChannels.enabled, true));
+
+    for (const channelRow of subscribed) {
+      const channelId = await getChannelId(channelRow.name);
+      if (channelId && channelId !== channelRow.channelId) {
+        await db
+          .update(youtubeChannels)
+          .set({ channelId, updatedAt: new Date() })
+          .where(eq(youtubeChannels.id, channelRow.id));
+      }
       if (!channelId) continue;
-      const videos = await getVideosForChannel(channelId, channelName, publishedAfter);
+      const videos = await getVideosForChannel(channelId, channelRow.name, publishedAfter);
       allVideos.push(...videos);
       channelsSynced++;
     }

@@ -74,8 +74,11 @@ import { groupIntoSentences } from "../../components/transcript/transcriptUtils"
 import {
   DEBATE_STYLE_LABELS,
   STYLE_COLORS,
+  TOURNAMENT_COLORS,
+  getRoundBadgeColor,
   formatVideoDate,
 } from "../../components/video-card/videoCardUtils"
+import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useVideoMeta } from "../../hooks/useVideoFeed"
@@ -162,8 +165,10 @@ export function VideoWatchPage({
     roundLevel,
     affTeam,
     negTeam,
-    ,
+    affWin,
     judgeDecision,
+    arg1AC,
+    arg2NR,
   ] = video
 
   const styleNumber = typeof style === "number" ? style : undefined
@@ -607,13 +612,36 @@ export function VideoWatchPage({
                 {tournament && (
                   <button
                     onClick={() => handleBadgeClick(tournament.replace(/\d+/g, "").trim())}
-                    className="text-[11px] font-bold text-purple-600 dark:text-purple-400 [font-variant:small-caps] tracking-wider hover:underline"
+                    className={cn(
+                      "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                      styleNumber && TOURNAMENT_COLORS[styleNumber]
+                        ? TOURNAMENT_COLORS[styleNumber]
+                        : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                    )}
                   >
                     {tournament}
                   </button>
                 )}
-                {roundLevel && (
-                  <span className="text-[11px] text-muted-foreground">{roundLevel}</span>
+                {year && (
+                  <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                    '{String(year).slice(-2)}
+                  </span>
+                )}
+                {roundLevel && !/\d/.test(roundLevel) && (
+                  <>
+                    {(roundLevel.toLowerCase().trim() === "finals" ||
+                      roundLevel.toLowerCase().trim() === "final") && (
+                      <span className="text-base">🏆</span>
+                    )}
+                    <span
+                      className={cn(
+                        "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
+                        getRoundBadgeColor(roundLevel),
+                      )}
+                    >
+                      {roundLevel}
+                    </span>
+                  </>
                 )}
               </div>
 
@@ -724,22 +752,46 @@ export function VideoWatchPage({
               </div>
 
               {(affTeam || negTeam) && (
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex flex-wrap items-start justify-center gap-2">
                   {affTeam && (
-                    <button
-                      onClick={() => handleBadgeClick(affTeam)}
-                      className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      AFF {affTeam}
-                    </button>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <button
+                        onClick={() => handleBadgeClick(affTeam)}
+                        className={cn(
+                          "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                          affWin === true
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
+                            : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                        )}
+                      >
+                        AFF {affTeam}
+                      </button>
+                      {arg1AC && (
+                        <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
+                          {arg1AC}
+                        </span>
+                      )}
+                    </div>
                   )}
                   {negTeam && (
-                    <button
-                      onClick={() => handleBadgeClick(negTeam)}
-                      className="font-semibold text-red-600 dark:text-red-400 hover:underline"
-                    >
-                      NEG {negTeam}
-                    </button>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <button
+                        onClick={() => handleBadgeClick(negTeam)}
+                        className={cn(
+                          "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                          affWin === false
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
+                            : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                        )}
+                      >
+                        NEG {negTeam}
+                      </button>
+                      {arg2NR && (
+                        <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
+                          {arg2NR}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               )}

@@ -12,6 +12,9 @@ import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTourn
 import { TopPickBadge } from "./TopPickBadge"
 import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
+import { videoRouteHref } from "../../lib/video-route"
+import { videoWatchHref } from "../../lib/video-slug"
+import type { VideoType } from "../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on play. */
 interface VideoMeta {
@@ -60,15 +63,8 @@ interface VideoCardThumbnailProps {
   videoMeta: VideoMeta
   /** Style number used for tournament badge colour lookup. */
   styleNumber?: number
-  /**
-   * Callback invoked to start playback.
-   * Matches the signature of `useVideoPlayerStore().setActiveVideo`.
-   */
-  setActiveVideo: (
-    videoId: string,
-    title: string,
-    meta: VideoMeta,
-  ) => void
+  /** The full video tuple for building the canonical watch page URL. */
+  video?: VideoType
 }
 
 /**
@@ -104,7 +100,7 @@ export function VideoCardThumbnail({
   youtubeUrl,
   videoMeta,
   styleNumber,
-  setActiveVideo,
+  video,
 }: VideoCardThumbnailProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
   // Subscribed here rather than passed down: the grid's cards are memoised and
@@ -120,11 +116,15 @@ export function VideoCardThumbnail({
 
   if (!showThumbnails) return null
 
+  const watchHref = video ? videoRouteHref(video) : videoWatchHref(title)
+
   return (
-    <div
-      className="relative w-full aspect-video overflow-hidden bg-muted cursor-pointer"
-      onClick={() => !isPlaying && setActiveVideo(videoId, title, videoMeta)}
-    >
+    <div className="relative w-full aspect-video overflow-hidden bg-muted">
+      <a
+        href={watchHref}
+        className="absolute inset-0 z-10"
+        aria-label={`Watch "${title}" with transcript`}
+      />
       {/*
         A plain <img>, deliberately, rather than next/image with `fill`:
         `fill` only positions the image through inline styles, and the Vite
@@ -142,14 +142,18 @@ export function VideoCardThumbnail({
         decoding="async"
         onError={() => setThumbnailFailed(true)}
         ref={(node) => {
-          // A thumbnail that failed before React attached the handler — a
-          // cached 404, or markup hydrated from the server — never fires
-          // `error`, so the broken state has to be read off the element.
           if (node?.complete && node.naturalHeight === 0) setThumbnailFailed(true)
         }}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity ${
           thumbnailFailed ? "opacity-0" : "opacity-100"
         }`}
+      />
+
+      {/* Watch page link overlay - clicking the card navigates to watch page */}
+      <a
+        href={video ? videoRouteHref(video) : videoWatchHref(title)}
+        className="absolute inset-0 z-10"
+        aria-label={`Watch "${title}" with transcript`}
       />
 
       {/* Metadata overlay */}
