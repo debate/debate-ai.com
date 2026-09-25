@@ -157,7 +157,7 @@ function VideoCardComponent({
             youtubeUrl={youtubeUrl}
             videoMeta={videoMeta}
             styleNumber={styleNumber}
-            setActiveVideo={setActiveVideo}
+            video={video}
           />
 
           <VideoCardActions
