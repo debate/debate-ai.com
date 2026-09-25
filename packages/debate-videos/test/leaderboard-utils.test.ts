@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
+  displayEntryName,
   divisionDatasets,
   filterEntries,
+  lastName,
   resolveDivisionTopic,
   sortEntries,
 } from "../src/panels/leaderboard/leaderboardUtils";
@@ -139,5 +141,29 @@ describe("divisionDatasets", () => {
 
   it("is empty for an unrecognized division", () => {
     expect(divisionDatasets("BOGUS" as never)).toEqual([]);
+  });
+});
+
+describe("lastName", () => {
+  it("keeps only the surname", () => {
+    expect(lastName("Jane Smith")).toBe("Smith");
+    expect(lastName("Mary Ann van Buren")).toBe("Buren");
+    expect(lastName("John Smith Jr.")).toBe("Smith Jr.");
+    expect(lastName("Smith")).toBe("Smith");
+  });
+
+  it("shortens each name joined with &", () => {
+    expect(lastName("Jane Smith & Bo Lee")).toBe("Smith & Lee");
+  });
+});
+
+describe("displayEntryName", () => {
+  it("shows only the last name in LD", () => {
+    expect(displayEntryName("Jane Smith", "VLD")).toBe("Smith");
+  });
+
+  it("leaves team names unchanged in other divisions", () => {
+    expect(displayEntryName("Gallagher & Young", "VCX")).toBe("Gallagher & Young");
+    expect(displayEntryName("Jane Smith", "VPF")).toBe("Jane Smith");
   });
 });

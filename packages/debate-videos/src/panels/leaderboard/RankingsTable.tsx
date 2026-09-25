@@ -18,8 +18,8 @@ import {
   TableRow,
 } from "../../ui/primitives/table"
 import { cn } from "../../ui/lib/utils"
-import { COLUMN_TOOLTIPS } from "./leaderboardUtils"
-import type { SortKey, SortState } from "./leaderboardTypes"
+import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
+import type { Division, SortKey, SortState } from "./leaderboardTypes"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -27,7 +27,7 @@ interface Column {
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
-  render: (entry: RankingEntry) => React.ReactNode
+  render: (entry: RankingEntry, division: Division) => React.ReactNode
 }
 
 const rating = (n: number) => n.toFixed(1)
@@ -70,6 +70,8 @@ const COLUMNS: Column[] = [
 interface RankingsTableProps {
   /** Pre-sorted and pre-filtered rows to render. */
   entries: RankingEntry[]
+  /** Active division; LD rows show only the debater's last name. */
+  division: Division
   /** Current sort state. */
   sort: SortState
   /** Called when the user clicks a column header. */
@@ -83,7 +85,7 @@ interface RankingsTableProps {
  *
  * @param props - See {@link RankingsTableProps}.
  */
-export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProps) {
+export function RankingsTable({ entries, division, sort, onToggleSort }: RankingsTableProps) {
   return (
     <div className="rounded-lg border bg-card shadow-sm">
       <Table className="min-w-[960px] text-sm">
@@ -143,7 +145,7 @@ export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProp
                   )}
                   title={col.key === "school" ? entry.school : col.key === "name" ? entry.name : undefined}
                 >
-                  {col.render(entry)}
+                  {col.render(entry, division)}
                 </TableCell>
               ))}
             </TableRow>

@@ -233,7 +233,7 @@ return (
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} sort={sort} onToggleSort={toggleSort} />
+                  <RankingsTable entries={visibleEntries} division={division} sort={sort} onToggleSort={toggleSort} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
                     No entries match "{query}".

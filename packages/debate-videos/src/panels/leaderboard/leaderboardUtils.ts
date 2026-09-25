@@ -202,3 +202,38 @@ export function filterEntries(
     (e) => e.name.toLowerCase().includes(q) || e.school.toLowerCase().includes(q),
   );
 }
+
+/** Generational suffixes kept attached to the surname ("Smith Jr."). */
+const NAME_SUFFIXES = new Set(["jr", "jr.", "sr", "sr.", "ii", "iii", "iv", "v"]);
+
+/**
+ * Reduces a full debater name ("Jane Smith") to the surname ("Smith").
+ * Names joined with `&` are shortened one by one.
+ *
+ * @param name - Name as it appears in the rankings CSV.
+ */
+export function lastName(name: string): string {
+  return name
+    .split("&")
+    .map((part) => {
+      const words = part.trim().split(/\s+/).filter(Boolean);
+      if (words.length <= 1) return words.join("");
+      const last = words[words.length - 1];
+      if (words.length > 2 && NAME_SUFFIXES.has(last.toLowerCase())) {
+        return `${words[words.length - 2]} ${last}`;
+      }
+      return last;
+    })
+    .join(" & ");
+}
+
+/**
+ * Name shown in the rankings table: LD entries show only the debater's last
+ * name; team divisions already list surnames and are left as-is.
+ *
+ * @param name - Name as it appears in the rankings CSV.
+ * @param division - Active division.
+ */
+export function displayEntryName(name: string, division: Division): string {
+  return division === "VLD" ? lastName(name) : name;
+}
