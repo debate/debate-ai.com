@@ -1879,12 +1879,12 @@
     },
     {
       "year": 2027,
-      "ndt_topic_name": "TBD",
-      "ndt_topic_emoji": "❓",
-      "ndt_topic": "TBD",
-      "policy_topic_name": "TBD",
-      "policy_topic_emoji": "❓",
-      "policy_topic": "TBD",
+      "ndt_topic_name": "Arms Transfers",
+      "ndt_topic_emoji": "🛡️",
+      "ndt_topic": "The United States federal government should substantially reduce arms transfers from the United States to one or more of the following: the Federal Republic of Nigeria, Japan, the Kingdom of Saudi Arabia, the Republic of China (Taiwan), the Republic of the Philippines, the State of Israel, Ukraine, the United Mexican States.",
+      "policy_topic_name": "National Health Insurance",
+      "policy_topic_emoji": "🏥",
+      "policy_topic": "The United States federal government should establish national health insurance in the United States.",
       "ld_topics": [
         {
           "start_month": "September",
