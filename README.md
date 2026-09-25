@@ -177,22 +177,15 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [Opponent Team Profiles](https://debate-ai.com/opponents) — Scout teams using records, side tendencies, common cases, and frequently used arguments.
 - [Pre-Round Briefings](https://debate-ai.com/briefings) — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
 - [Scout-to-Strategy](https://debate-ai.com/strategy) — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
-
-## Standings & Coaching
-
-- [CX NDCA Standings](https://debate-ai.com/standings) — View cumulative season standings based on recorded tournament results.
 - [Team Rankings](https://debate-ai.com/rank) — Browse debate-team rankings, leaderboards, and Elo ratings.
 - [Coaching Programs](https://debate-ai.com/coaching-programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
 - [Coach Materials](https://debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
-- 
-## API & SDK
 
-- [API Reference](https://debate-ai.com/api) — Interactive Scalar docs generated from [`debate-openapi.yml`](./apps/debate-ai.com/public/debate-openapi.yml).
-- [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client)) — Typed SDK generated from the OpenAPI spec with [Hey API](https://heyapi.dev/), sending requests through [`grab-url`](https://grab.js.org) for caching, retries, rate limiting, and dedupe on every call.
 
 ## Contributing
 
-Start developing locally, develop features, open ideas in discussions, and submit a PR!
+- [API Reference](https://debate-ai.com/api) — Interactive Scalar docs generated from [`debate-openapi.yml`](./apps/debate-ai.com/public/debate-openapi.yml) with [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client))
+- Start developing locally, develop features, open ideas in discussions, and submit a PR!
 
 ```
 npx git0 debate/ai
