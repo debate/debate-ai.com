@@ -58,16 +58,14 @@ export const FOOTER_LINKS: FooterLink[] = [
   // route: following it keeps the sidebar (`/features` is one of the
   // sidebar's own destinations — see `sidebar-routes.ts`) rather than
   // reloading into a bare page.
-  { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
+  // { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
   { url: "https://github.com/debate", text: "Github", icon: Code2, group: "site" },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare, group: "debate" },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },
-  { url: "https://www.debate.land", text: "Rankings", icon: Calendar, group: "debate" },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
   { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity, group: "site" },
   { url: "/legal/privacy", text: "Privacy", icon: Shield, group: "site" },
-  { url: "https://docs.google.com/document/d/1hq7-DE6ls2ryVtOttxR4BNpRdP7xUbBr0M3SMYefek8/edit", text: "Rules", icon: FileText, group: "site" },
 ];
 
 /** The links `CategoryDock`'s "Site Links" submenu shows. */

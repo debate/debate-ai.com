@@ -305,7 +305,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: [
           "Elo-based team leaderboard",
           "Track team ratings and rankings over time",
-          "Standings tab: log or bulk-CSV-import tournament results into NDCA-style qualification standings with an editable points table",
         ],
       },
       {
