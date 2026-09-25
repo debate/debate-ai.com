@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { parseYouTubeVideoId } from "debate-videos";
 import { Button } from "../../lib/ui/primitives/button";
 import { Input } from "../../lib/ui/primitives/input";
 import { Label } from "../../lib/ui/primitives/label";
@@ -130,11 +131,89 @@ function toPatch(form: EditForm) {
   };
 }
 
+/** A blank row for the "Add video" form. */
+export function emptyLibraryVideo(): LibraryVideo {
+  return {
+    videoId: "",
+    source: "lecture",
+    title: "",
+    publishedAt: "",
+    channel: "",
+    viewCount: 0,
+    description: "",
+    style: null,
+    category: null,
+    categoryKey: null,
+    tournament: null,
+    roundLevel: null,
+    affTeam: null,
+    negTeam: null,
+    affWin: null,
+    judgeDecision: null,
+    isTopPick: false,
+    speechDocsUrl: null,
+    seasonYear: 0,
+  };
+}
+
+/** What `/api/admin/videos/library/autofill` suggests; absent keys mean "no suggestion". */
+type AutofillFields = Partial<
+  Pick<
+    LibraryVideo,
+    | "title"
+    | "channel"
+    | "publishedAt"
+    | "viewCount"
+    | "description"
+    | "style"
+    | "category"
+    | "tournament"
+    | "roundLevel"
+    | "affTeam"
+    | "negTeam"
+    | "affWin"
+    | "judgeDecision"
+    | "speechDocsUrl"
+  >
+>;
+
+/**
+ * Lays auto-fill suggestions over the form. An empty suggestion never blanks
+ * a field the admin already filled — "the model couldn't tell" is not "clear
+ * it" — except for style, where `null` is a real answer (a lecture).
+ */
+function applyAutofill(form: EditForm, fields: AutofillFields): EditForm {
+  const next = { ...form };
+  const setText = (key: keyof EditForm, value: unknown) => {
+    if (typeof value === "string" && value.trim()) (next[key] as string) = value;
+  };
+  setText("title", fields.title);
+  setText("channel", fields.channel);
+  setText("publishedAt", fields.publishedAt);
+  setText("description", fields.description);
+  setText("category", fields.category);
+  setText("tournament", fields.tournament);
+  setText("roundLevel", fields.roundLevel);
+  setText("affTeam", fields.affTeam);
+  setText("negTeam", fields.negTeam);
+  setText("judgeDecision", fields.judgeDecision);
+  setText("speechDocsUrl", fields.speechDocsUrl);
+  if (typeof fields.viewCount === "number") next.viewCount = String(fields.viewCount);
+  if (fields.style !== undefined) next.style = fields.style === null ? "none" : String(fields.style);
+  if (typeof fields.affWin === "boolean") next.affWin = String(fields.affWin);
+  return next;
+}
+
 interface VideoEditDialogProps {
   /** The video being edited; `null` closes the dialog. */
   video: LibraryVideo | null;
+  /**
+   * Adds a new video instead of editing one: the form asks for the YouTube
+   * link and saves with a POST. Pass {@link emptyLibraryVideo} as `video`.
+   */
+  isNew?: boolean;
   onClose: () => void;
-  /** Called with the saved row once the PATCH succeeds. */
+  /** Called with the saved row once the PATCH (or POST) succeeds. */
   onSaved: (video: LibraryVideo) => void;
 }
 
@@ -142,26 +221,74 @@ interface VideoEditDialogProps {
  * The metadata editor for one published video, shared by the admin library
  * table and the "Edit video" button admins and moderators see on a watch page.
  */
-export function VideoEditDialog({ video, onClose, onSaved }: VideoEditDialogProps) {
+export function VideoEditDialog({ video, isNew = false, onClose, onSaved }: VideoEditDialogProps) {
   const [form, setForm] = useState<EditForm | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [linkInput, setLinkInput] = useState("");
+  const [isFilling, setIsFilling] = useState(false);
+  const [fillNotice, setFillNotice] = useState<string | null>(null);
 
   useEffect(() => {
     setForm(video ? toForm(video) : null);
     setSaveError(null);
+    setLinkInput("");
+    setFillNotice(null);
   }, [video]);
+
+  /** The id being edited, or the one parsed from the pasted link when adding. */
+  const videoId = isNew ? parseYouTubeVideoId(linkInput) : video?.videoId ?? null;
+
+  const handleAutofill = async () => {
+    if (!form || !videoId) return;
+    setIsFilling(true);
+    setSaveError(null);
+    setFillNotice(null);
+    try {
+      const res = await fetch("/api/admin/videos/library/autofill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoId,
+          title: form.title,
+          channel: form.channel,
+          description: form.description,
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error || "Auto-fill failed");
+      setForm((current) => (current ? applyAutofill(current, body.fields ?? {}) : current));
+      const sources = [body.fromYouTube && "YouTube", body.fromAi && "AI"].filter(Boolean).join(" and ");
+      setFillNotice(
+        [`Filled from ${sources} — check the fields before saving.`, ...(body.warnings ?? [])].join(" "),
+      );
+    } catch (err) {
+      setSaveError((err as Error).message);
+    } finally {
+      setIsFilling(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!video || !form) return;
+    if (isNew && !videoId) {
+      setSaveError("Paste a YouTube link or video id first.");
+      return;
+    }
     setIsSaving(true);
     setSaveError(null);
     try {
-      const res = await fetch(`/api/admin/videos/library/${video.videoId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(toPatch(form)),
-      });
+      const res = isNew
+        ? await fetch("/api/admin/videos/library", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ videoId, ...toPatch(form) }),
+          })
+        : await fetch(`/api/admin/videos/library/${video.videoId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(toPatch(form)),
+          });
       const body = await res.json();
       if (!res.ok) throw new Error(body?.details || body?.error || "Save failed");
       onSaved(body.video);
@@ -190,14 +317,49 @@ export function VideoEditDialog({ video, onClose, onSaved }: VideoEditDialogProp
     <Dialog open={!!video} onOpenChange={(open) => (open ? undefined : onClose())}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Edit video</DialogTitle>
+          <DialogTitle>{isNew ? "Add video" : "Edit video"}</DialogTitle>
           <DialogDescription>
-            {video?.videoId} — changes apply to the public library immediately.
+            {isNew
+              ? "Paste a YouTube link, then auto-fill or type the details. The video is public as soon as you add it."
+              : `${video?.videoId} — changes apply to the public library immediately.`}
           </DialogDescription>
         </DialogHeader>
 
         {form && (
           <div className="flex flex-col gap-4">
+            {isNew && (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="video-link">YouTube link or video id</Label>
+                <Input
+                  id="video-link"
+                  value={linkInput}
+                  onChange={(event) => setLinkInput(event.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=…"
+                  autoFocus
+                />
+                {linkInput.trim() && !videoId && (
+                  <span className="text-destructive text-xs">
+                    That doesn&apos;t look like a YouTube link or video id.
+                  </span>
+                )}
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={handleAutofill}
+                disabled={!videoId || isFilling || isSaving}
+              >
+                {isFilling ? "Auto-filling…" : "✨ Auto-fill with AI"}
+              </Button>
+              <span className="text-muted-foreground text-xs">
+                Reads YouTube&apos;s title and description and fills in the style, category,
+                tournament, teams and result. Empty answers leave your fields alone.
+              </span>
+            </div>
+            {fillNotice && <p className="text-muted-foreground text-sm">{fillNotice}</p>}
             {field("title", "Title")}
             <div className="grid gap-4 sm:grid-cols-2">
               {field("channel", "Channel")}
@@ -288,8 +450,8 @@ export function VideoEditDialog({ video, onClose, onSaved }: VideoEditDialogProp
           <Button variant="outline" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving…" : "Save changes"}
+          <Button onClick={handleSave} disabled={isSaving || isFilling || (isNew && !videoId)}>
+            {isSaving ? "Saving…" : isNew ? "Add video" : "Save changes"}
           </Button>
         </DialogFooter>
       </DialogContent>

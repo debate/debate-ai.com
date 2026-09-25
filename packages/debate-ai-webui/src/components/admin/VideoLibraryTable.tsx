@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "../../lib/ui/primitives/select";
 import { VideoContentDialog, type ContentDialogVideo } from "./VideoContentDialog";
-import { VideoEditDialog, type LibraryVideo } from "./VideoEditDialog";
+import { VideoEditDialog, emptyLibraryVideo, type LibraryVideo } from "./VideoEditDialog";
 
 
 /** A table row: the editable video plus what the listing says about its transcript. */
@@ -96,6 +96,7 @@ export function VideoLibraryTable() {
   const [dir, setDir] = useState<"asc" | "desc">("desc");
 
   const [editing, setEditing] = useState<LibraryVideo | null>(null);
+  const [adding, setAdding] = useState<LibraryVideo | null>(null);
 
   const [contentVideo, setContentVideo] = useState<ContentDialogVideo | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<LibraryVideo | null>(null);
@@ -201,6 +202,12 @@ export function VideoLibraryTable() {
     setEditing(null);
   };
 
+  const handleAdded = (added: LibraryVideo) => {
+    setNotice(`Added “${added.title}” to the library.`);
+    setAdding(null);
+    void load();
+  };
+
   const handleDelete = async () => {
     if (!confirmDelete) return;
     setIsDeleting(true);
@@ -240,7 +247,12 @@ export function VideoLibraryTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Video library</CardTitle>
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle>Video library</CardTitle>
+          <Button size="sm" onClick={() => setAdding(emptyLibraryVideo())}>
+            + Add video
+          </Button>
+        </div>
         <CardDescription>
           Every video already published to the site. Search for one, correct its metadata, or
           remove it — a removed video is also recorded so the weekly YouTube resync does not
@@ -514,6 +526,12 @@ export function VideoLibraryTable() {
 
 
       <VideoEditDialog video={editing} onClose={() => setEditing(null)} onSaved={handleSaved} />
+      <VideoEditDialog
+        video={adding}
+        isNew
+        onClose={() => setAdding(null)}
+        onSaved={handleAdded}
+      />
 
       <VideoContentDialog
         video={contentVideo}

@@ -19,7 +19,7 @@ import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
 import { useTranscript } from "../transcript/useTranscript"
 import { groupIntoSentences } from "../transcript/transcriptUtils"
-import { buildEmbedUrl, describePlayerError, startListening, watchUrl } from "./youtubeEmbed"
+import { buildEmbedUrl, describePlayerError, startListening, watchUrl, embedOrigin } from "./youtubeEmbed"
 
 interface VideoPlayerProps {
   /**
@@ -66,6 +66,9 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   // Position to resume from after a reload the app causes itself (popping the
   // iframe in/out of the PiP window re-creates it, restarting playback at 0)
   const [resumeSeconds, setResumeSeconds] = useState<number | null>(null)
+  // The origin of the main page, captured before entering PiP so the embed
+  // can still identify itself after the iframe reloads in the PiP window.
+  const [pipOrigin, setPipOrigin] = useState<string | null>(null)
 
   // Time tracking refs for persisting playback position
   const playStartedAtRef = useRef<number | null>(null) // Date.now() when video last started playing
@@ -313,11 +316,18 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   /**
    * Moving the iframe into (or out of) the PiP window re-creates it, so capture
    * where playback is first and hand it back to the fresh embed as `start`.
+   * Also capture the page origin before entering PiP so the reloaded embed can
+   * still identify itself to YouTube.
    */
   const handleTogglePip = useCallback(() => {
     setResumeSeconds(getCurrentTime())
+    // Capture origin before the iframe moves to the PiP window (where origin becomes null)
+    if (!isPipActive) {
+      const origin = embedOrigin()
+      if (origin) setPipOrigin(origin)
+    }
     void togglePip()
-  }, [getCurrentTime, togglePip])
+  }, [getCurrentTime, togglePip, isPipActive])
 
   /** Re-create the embed after an error, resuming from the tracked position. */
   const handleRetry = useCallback(() => {
@@ -334,6 +344,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   const handleClose = useCallback(() => {
     // User explicitly closed — clear saved state so it doesn't auto-restore
     exitPip()
+    setPipOrigin(null)
     clearSavedPlayerState()
     clearActiveVideo()
   }, [clearActiveVideo, exitPip])
@@ -361,7 +372,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   if (!activeVideoId || theaterVideoId) return null
 
   const startSeconds = resumeSeconds ?? startTime
-  const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })
+  const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds, origin: isPipActive ? pipOrigin ?? undefined : undefined })
 
   const positionStyle: React.CSSProperties = position
     ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }

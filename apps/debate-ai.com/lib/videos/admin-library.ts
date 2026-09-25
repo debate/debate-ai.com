@@ -26,6 +26,7 @@ import {
   youtubeVideoExclusions,
   type VideoTableRow,
 } from "@/lib/database/schema";
+import { recomputeVideoStacks } from "./recompute-video-stacks";
 
 /** Default and maximum page sizes for {@link listLibraryVideos}. */
 const DEFAULT_LIMIT = 25;
@@ -368,6 +369,79 @@ export async function updateLibraryVideo(
 
   const [updated] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
   return updated ?? null;
+}
+
+/** Why {@link createLibraryVideo} declined to add a video. */
+export type CreateLibraryVideoResult =
+  | { ok: true; video: VideoTableRow }
+  | { ok: false; reason: "exists" | "missing-title" };
+
+/**
+ * Adds one video to the library by hand, from the admin "Add video" form.
+ *
+ * The row is built by running the form's patch through
+ * {@link buildLibraryUpdate} over an empty row, so a hand-added video gets
+ * exactly the same coercion and derived columns (`published_ms`,
+ * `season_year`, `search_text`) an edit would give it. `source` follows the
+ * style unless the form says otherwise — a video with no numeric style is a
+ * lecture, matching how {@link libraryConditions} splits the table.
+ *
+ * The row is marked `admin_edited`, so a later JSON seed leaves it alone,
+ * and any exclusion recorded for it is cleared: an admin adding a video they
+ * (or someone) once removed means they want it back, and leaving the
+ * exclusion would only keep the resync queue from ever seeing it again.
+ *
+ * @param db - Drizzle handle.
+ * @param videoId - The video's YouTube id.
+ * @param patch - The form's fields, in the same shape an edit sends.
+ * @returns The inserted row, or why nothing was inserted.
+ */
+export async function createLibraryVideo(
+  db: any,
+  videoId: string,
+  patch: LibraryVideoPatch,
+): Promise<CreateLibraryVideoResult> {
+  const [existing] = await db
+    .select({ videoId: videos.videoId })
+    .from(videos)
+    .where(eq(videos.videoId, videoId))
+    .limit(1);
+  if (existing) return { ok: false, reason: "exists" };
+
+  const empty = {
+    videoId,
+    source: "lecture",
+    title: "",
+    publishedAt: "",
+    channel: "",
+    description: "",
+  } as VideoTableRow;
+  const fields = buildLibraryUpdate(empty, patch);
+  if (!fields.title) return { ok: false, reason: "missing-title" };
+
+  const style = fields.style ?? null;
+  const source = Object.hasOwn(patch, "source") && fields.source
+    ? fields.source
+    : style === null ? "lecture" : "round";
+  const publishedAt = fields.publishedAt ?? "";
+
+  await db.insert(videos).values({
+    ...fields,
+    videoId,
+    source,
+    publishedAt,
+    publishedMs: publishedMsForDate(publishedAt),
+    seasonYear: seasonYearForDate(publishedAt),
+    searchText: `${fields.title} ${fields.channel ?? ""} ${fields.description ?? ""}`.toLowerCase(),
+  });
+  await db.delete(youtubeVideoExclusions).where(eq(youtubeVideoExclusions.videoId, videoId));
+
+  // A hand-added round may be the companion of an analysis already in the
+  // table (or vice versa); only a whole-table pass can find that link.
+  await recomputeVideoStacks(db);
+
+  const [created] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
+  return { ok: true, video: created };
 }
 
 /**
