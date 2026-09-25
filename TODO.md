@@ -127,3 +127,5 @@ work in this repo._
 3. **Write tests** - aim for >80% coverage on new code
 4. **Follow code style** - run linting/formatting before submitting
 5. **Update docs** - README, API docs, and in-code comments
+
+6. do order aiutoamativlly for roo and sync timer

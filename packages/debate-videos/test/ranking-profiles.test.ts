@@ -9,7 +9,7 @@ import {
   summarizeSchool,
   teamHref,
   teamVideoQuery,
-} from "../src/panels/leaderboard/profile/rankingProfiles";
+} from "../src/panels/leaderboard/profile/rankingProfileHelpers";
 
 function entry(rank: number, school: string, name: string, extra: Partial<RankingEntry> = {}): RankingEntry {
   return {

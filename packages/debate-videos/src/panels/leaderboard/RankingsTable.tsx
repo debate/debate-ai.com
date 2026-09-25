@@ -21,7 +21,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
-import { schoolHref, teamHref } from "./profile/rankingProfiles"
+import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 
 /** One table column: which field it shows and how. */
 interface Column {

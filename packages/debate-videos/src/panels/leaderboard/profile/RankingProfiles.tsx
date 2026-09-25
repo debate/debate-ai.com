@@ -28,7 +28,7 @@ import {
   teamHref,
   teamVideoQuery,
   type ProfileEntry,
-} from "./rankingProfiles"
+} from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 
 const rating = (n: number) => n.toFixed(1)
