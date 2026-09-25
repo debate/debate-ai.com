@@ -100,6 +100,16 @@ export function seasonYears(now: Date = new Date()): string[] {
 }
 
 /**
+ * Display label for a season year: `"2027"` becomes `"2026-27"`.
+ *
+ * @param year - Season year (the year the season ends in).
+ */
+export function seasonLabel(year: string | number): string {
+  const end = Number(year);
+  return `${end - 1}-${String(end % 100).padStart(2, "0")}`;
+}
+
+/**
  * Resolves the banner topic for a division/year, including the legacy
  * `ld_topic` / `pf_topic` HTML strings from older debate-topics.json.
  */

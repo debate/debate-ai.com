@@ -8,6 +8,7 @@ import {
   filterEntries,
   lastName,
   resolveDivisionTopic,
+  seasonLabel,
   seasonYears,
   sortEntries,
 } from "../src/panels/leaderboard/leaderboardUtils";
@@ -183,5 +184,11 @@ describe("currentSeasonYear", () => {
     expect(years[0]).toBe("2027");
     expect(years[1]).toBe("2026");
     expect(years[years.length - 1]).toBe("2002");
+  });
+
+  it("labels a season by its start year and two-digit end year", () => {
+    expect(seasonLabel("2027")).toBe("2026-27");
+    expect(seasonLabel(2002)).toBe("2001-02");
+    expect(seasonLabel(2000)).toBe("1999-00");
   });
 });

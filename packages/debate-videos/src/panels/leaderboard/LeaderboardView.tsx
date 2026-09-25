@@ -13,6 +13,7 @@ import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Video } from "lucide-react"
 import { StickyHeader } from "../../components/layout/StickyHeader"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
+import { seasonLabel } from "./leaderboardUtils"
 
 const DIVISION_LABELS: { value: "VPF" | "VLD" | "VCX" | "NDT"; label: string }[] = [
   { value: "VPF", label: "PF" },
@@ -81,7 +82,7 @@ export function LeaderboardView({
         <SelectContent>
           {lbYears.map((y) => (
             <SelectItem key={y} value={y} className="text-xs">
-              {Number(y) - 1}-{y}
+              {seasonLabel(y)}
             </SelectItem>
           ))}
         </SelectContent>

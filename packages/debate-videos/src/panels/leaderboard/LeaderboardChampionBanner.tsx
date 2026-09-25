@@ -6,7 +6,7 @@
 import Image from "next/image"
 import { Trophy } from "lucide-react"
 import { topicDisplayLines, type SeasonalTopic } from "../../lib/debate-topics"
-import { DIVISION_CONFIG } from "./leaderboardUtils"
+import { DIVISION_CONFIG, seasonLabel } from "./leaderboardUtils"
 import type { Division } from "./leaderboardUtils"
 
 /** Props for the {@link LeaderboardChampionBanner} component. */
@@ -115,7 +115,7 @@ export function LeaderboardChampionBanner({
       {/* Season info: label, champion, topic */}
       <div className="min-w-0 flex-1 py-4 pr-4">
         <div className="text-xs text-muted-foreground mb-1">
-          {divConfig.label} {Number(year) - 1}-{year}
+          {divConfig.label} {seasonLabel(year)}
         </div>
         {champion && (
           <div className="flex items-center gap-2 mb-2">
