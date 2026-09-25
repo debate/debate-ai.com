@@ -1,3 +1,7 @@
+---
+title: "Debate Resources"
+---
+
 # Debate Resources
 
 ## Core Infrastructure
