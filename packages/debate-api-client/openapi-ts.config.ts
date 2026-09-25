@@ -7,7 +7,7 @@ import { defineConfig } from "@hey-api/openapi-ts"
  * operation keeps grab's caching, retries, rate limiting, and dedupe.
  */
 export default defineConfig({
-  input: "../../apps/debate-ai.com/public/debate-openapi.yml",
+  input: "../../apps/debate-ai.com/app/debate-openapi.yml",
   output: "src/generated",
   plugins: ["@hey-api/typescript"],
 })

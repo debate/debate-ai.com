@@ -15,15 +15,19 @@ const files = [
   "rounds-policy.json",
 ];
 
+type VideoEntry = [string, string?] | { id: string; title?: string };
+type VideoCollection = VideoEntry[] | { data?: VideoEntry[] };
+type VideoLocation = { file: string; index: number; title?: string };
+
 // Track all seen IDs: id -> [{ file, index, entry }]
-const seen = {};
-const parsed = {};
+const seen: Record<string, VideoLocation[]> = {};
+const parsed: Record<string, VideoCollection> = {};
 
 for (const file of files) {
   const path = join(dataDir, file);
-  const json = JSON.parse(readFileSync(path, "utf8"));
+  const json = JSON.parse(readFileSync(path, "utf8")) as VideoCollection;
   parsed[file] = json;
-  const entries = json.data ?? json;
+  const entries = Array.isArray(json) ? json : json.data ?? [];
 
   entries.forEach((entry, index) => {
     const id = Array.isArray(entry) ? entry[0] : entry.id;
@@ -49,7 +53,7 @@ if (duplicates.length === 0) {
 
   if (fix) {
     // Keep the first occurrence, remove the rest
-    const toRemove = {}; // file -> Set of indices to remove
+    const toRemove: Record<string, Set<number>> = {}; // file -> Set of indices to remove
     for (const [, locs] of duplicates) {
       for (const { file, index } of locs.slice(1)) {
         if (!toRemove[file]) toRemove[file] = new Set();
@@ -59,9 +63,9 @@ if (duplicates.length === 0) {
 
     for (const [file, indices] of Object.entries(toRemove)) {
       const json = parsed[file];
-      const entries = json.data ?? json;
+      const entries = Array.isArray(json) ? json : json.data ?? [];
       const filtered = entries.filter((_, i) => !indices.has(i));
-      if (json.data) json.data = filtered;
+      if (!Array.isArray(json)) json.data = filtered;
       const path = join(dataDir, file);
       writeFileSync(path, JSON.stringify(json, null, 2) + "\n");
       console.log(`Fixed ${indices.size} duplicate(s) in ${file}`);
