@@ -21,9 +21,11 @@ import { Input } from "../../ui/primitives/input"
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
+  currentSeasonYear,
   divisionDatasets,
   filterEntries,
   resolveDivisionTopic,
+  seasonYears,
   sortEntries,
   type Division,
   type SortKey,
@@ -68,7 +70,7 @@ export function LeaderboardPanel({
   // Division / year state (controlled or internal)
   // ---------------------------------------------------------------------------
 
-  const [internalYear, setInternalYear] = useState("2026")
+  const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
   const year = controlledYear ?? internalYear
   const setYear = onControlledYearChange ?? setInternalYear
 
@@ -113,10 +115,8 @@ export function LeaderboardPanel({
   // Year list
   // ---------------------------------------------------------------------------
 
-  const currentYear = new Date().getFullYear()
-  const maxYear = Math.max(currentYear, 2026)
-  const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
-  const isCurrentYear = year === String(maxYear)
+  const years = seasonYears()
+  const isCurrentYear = year === years[0]
 
   // ---------------------------------------------------------------------------
   // Data loading (delegated to hook)

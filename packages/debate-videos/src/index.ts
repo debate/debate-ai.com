@@ -79,6 +79,7 @@ export {
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
+export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
 export type { DebateHistory, YearData } from "./panels/leaderboard/leaderboardTypes";
 export {
   formatNamedTopic,

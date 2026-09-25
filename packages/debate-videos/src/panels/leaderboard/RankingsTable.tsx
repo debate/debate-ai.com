@@ -7,6 +7,7 @@
 "use client"
 
 import type { RankingEntry } from "debate-rankings"
+import Link from "next/link"
 import { ChevronDown, ChevronUp, Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
 import {
@@ -20,6 +21,7 @@ import {
 import { cn } from "../../ui/lib/utils"
 import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
+import { schoolHref, teamHref } from "./profile/rankingProfiles"
 
 /** One table column: which field it shows and how. */
 interface Column {
@@ -49,8 +51,24 @@ function WinRate({ value }: { value: number | null }) {
 
 const COLUMNS: Column[] = [
   { key: "rank", label: "Rank", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
-  { key: "school", label: "School", render: (e) => e.school },
-  { key: "name", label: "Name", render: (e) => <span className="font-medium text-foreground">{e.name}</span> },
+  {
+    key: "school",
+    label: "School",
+    render: (e) => (
+      <Link href={schoolHref(e.school)} className="hover:text-foreground hover:underline underline-offset-4">
+        {e.school}
+      </Link>
+    ),
+  },
+  {
+    key: "name",
+    label: "Name",
+    render: (e) => (
+      <Link href={teamHref(e)} className="font-medium text-foreground hover:underline underline-offset-4">
+        {e.name}
+      </Link>
+    ),
+  },
   {
     key: "adjustedRating",
     label: "Adj. Rating",
