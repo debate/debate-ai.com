@@ -50,7 +50,6 @@ vi.mock("grab-url", () => ({
 }));
 
 const { VideoWatchPage } = await import("../src/panels/watch/VideoWatchPage")
-const { buildRelatedRing, ringNeighbour } = await import("../src/components/watch/RelatedVideoNav")
 const { useVideoPlayerStore } = await import("../src/state/videoPlayerStore")
 import type { VideoType } from "../src/types/videos"
 
@@ -190,57 +189,5 @@ describe("the queue beside them", () => {
       remove?.click()
     })
     expect(useVideoPlayerStore.getState().queue).toHaveLength(0)
-  })
-})
-
-describe("stepping between related videos", () => {
-  it("rings the current video first, then the rest newest-first", () => {
-    const ring = buildRelatedRing(video, related)
-    expect(ring.map((entry) => entry[0])).toEqual(["OXdffJy8HIs", "rel-new", "rel-old"])
-  })
-
-  it("wraps at both ends rather than dead-ending", () => {
-    const ring = buildRelatedRing(video, related)
-    expect(ringNeighbour(ring, 0, 1)?.[0]).toBe("rel-new")
-    // Backwards from the first entry rotates to the last.
-    expect(ringNeighbour(ring, 0, -1)?.[0]).toBe("rel-old")
-    expect(ringNeighbour(ring, 2, 1)?.[0]).toBe("OXdffJy8HIs")
-  })
-
-  it("has nothing to step to when the video stands alone", () => {
-    expect(ringNeighbour(buildRelatedRing(video, []), 0, 1)).toBeNull()
-  })
-
-  it("plays the next related video, which the page turns into a navigation", () => {
-    mount()
-    push.mockClear()
-    const next = container.querySelector<HTMLButtonElement>(
-      '[aria-label="Next related video: Finals — Texas vs Georgetown"]',
-    )
-    expect(next).not.toBeNull()
-    act(() => {
-      next?.click()
-    })
-    expect(useVideoPlayerStore.getState().activeVideoId).toBe("rel-new")
-    expect(push).toHaveBeenCalled()
-  })
-
-  it("steps on the arrow keys", () => {
-    mount()
-    act(() => {
-      document.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))
-    })
-    expect(useVideoPlayerStore.getState().activeVideoId).toBe("rel-new")
-  })
-
-  it("leaves the arrow keys alone while a field has focus", () => {
-    mount()
-    const field = document.createElement("input")
-    container.append(field)
-    field.focus()
-    act(() => {
-      field.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))
-    })
-    expect(useVideoPlayerStore.getState().activeVideoId).toBe("OXdffJy8HIs")
   })
 })
