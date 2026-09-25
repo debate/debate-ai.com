@@ -68,6 +68,14 @@ export {
   WatchProgressBar,
   type WatchProgressBadgeProps,
 } from "./components/video-card/WatchProgressBadge";
+export {
+  ResizableSidebarLayout,
+  SIDEBAR_DEFAULT_WIDTH,
+  SIDEBAR_MAX_WIDTH,
+  SIDEBAR_MIN_WIDTH,
+  SIDEBAR_WIDTH_KEY,
+  type ResizableSidebarLayoutProps,
+} from "./ui/layout/ResizableSidebarLayout";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";

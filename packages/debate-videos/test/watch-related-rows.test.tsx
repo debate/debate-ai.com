@@ -17,6 +17,14 @@ import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vite
 import { createElement, act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 
+// The page's sidebar is a `react-resizable-panels` group, which observes its
+// panels' sizes; jsdom has no ResizeObserver, so give it an inert one.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as unknown as typeof ResizeObserver;
+
 const push: Mock = vi.fn();
 
 vi.mock("next/navigation", () => ({

@@ -71,7 +71,8 @@ The dock has two forms, and which one a route gets is decided by
 **Sidebar-hosted (`<CategoryDock embedded />`).** On `/videos` (whose own
 `<aside>` takes it through `LecturesVideoGridView`'s `dockSlot`) and on every
 route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
-the generic sidebar), the dock sits at the top of that 300px column.
+the generic sidebar), the dock sits at the top of that column (300px wide until you
+drag it — see [Resizing the sidebar](#resizing-the-sidebar)).
 
 `/doc` hosts it in a column of its own instead. The REASON research
 workspace already renders a sidebar — the files tree and the "Open Tabs"
@@ -152,10 +153,39 @@ times as many results on a screen; the thumbnail grid is one toggle away in
 the floating search panel. Nothing persists the choice — it resets per page
 load.
 
+## Resizing the sidebar
+
+The sidebar column is `ResizableSidebarLayout`
+(`packages/debate-videos/src/ui/layout/ResizableSidebarLayout.tsx`), a
+`react-resizable-panels` group. `AppSidebarShell`, `LecturesSidebarShell` and
+`LecturesVideoGridView` all render their `<aside>` through it, so the handle,
+the limits and the saved width are shared:
+
+- The panel is sized in pixels: 300px by default, 220–640px, and
+  `groupResizeBehavior="preserve-pixel-size"` keeps it that wide when the
+  window resizes. The content panel has a 320px floor.
+- The last dragged width is stored under the `app-sidebar-width`
+  localStorage key and applied in a layout effect through the panel's
+  imperative `resize`, not through `defaultSize`, so the server render and the
+  first client render match. Nothing is saved until that restore has run.
+  Double-clicking the separator resets to `defaultSize` (library behaviour).
+- The library's group defaults to `height: 100%; overflow: hidden`, and its
+  panels scroll their own content. Both are overridden, so the page still
+  scrolls the way it did and the `<aside>` stays `sticky top-0 h-screen`.
+- Below `md` the sidebar panel and the separator are hidden with CSS
+  (`max-md:…:hidden!`), not unmounted. Crossing the breakpoint therefore never
+  remounts the page beside them, which would reload a framed destination.
+- During a drag the library sets `pointer-events: none` on the panels, so a
+  framed destination cannot swallow the pointer.
+
+Tests that mount a page with this sidebar under jsdom need a `ResizeObserver`
+stub. The group observes its panels on mount, and jsdom has no
+`ResizeObserver` (see `video-watch-page.test.tsx`).
+
 ## Staying inside the sidebar
 
 A dock sized to its own contents (`w-max`, the default `fluid: false` form)
-is wider than the 300px sidebar at the `md` breakpoint. Hosted there it
+is wider than the sidebar at its default 300px. Hosted there it
 either forced the sidebar to scroll sideways or reached over its border onto
 the page beside it — which on `/reason-editor` and `/doc` is a CardMirror
 editor.
