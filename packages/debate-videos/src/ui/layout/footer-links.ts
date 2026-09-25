@@ -25,7 +25,6 @@ import {
   MessageSquare,
   Scale,
   Shield,
-  Trophy,
   type LucideIcon,
 } from "lucide-react";
 
@@ -63,7 +62,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   { url: "https://github.com/debate", text: "Github", icon: Code2, group: "site" },
   { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare, group: "debate" },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },
-  { url: "https://www.debate.land", text: "Rankings", icon: Trophy, group: "debate" },
+  { url: "https://www.debate.land", text: "Rankings", icon: Calendar, group: "debate" },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
   { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale, group: "debate" },
   { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book, group: "debate" },
