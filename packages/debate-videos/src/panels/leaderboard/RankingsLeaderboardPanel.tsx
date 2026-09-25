@@ -1,9 +1,11 @@
 /**
  * @fileoverview Ranking and leaderboard panel for debate teams.
- * Supports VPF, VLD, VCX, and NDT divisions with historical season data.
+ * Shows the Glicko-2 rankings computed by the `debate-rankings` package for
+ * VPF, VLD, VCX and NDT (college policy), with historical champion data.
  *
- * Delegates data-fetching to {@link useLeaderboardData} and filter UI to
- * {@link LeaderboardFilterBar}, keeping this file focused on orchestration.
+ * Delegates data loading to {@link useLeaderboardData}, the grid to
+ * {@link RankingsTable} and filter UI to {@link LeaderboardFilterBar},
+ * keeping this file focused on orchestration.
  * @module components/debate/DebateVideos/panels/RankingsLeaderboardPanel
  */
 
@@ -11,12 +13,16 @@
 
 import { useState, useMemo } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
+import { Search } from "lucide-react"
+import { getRankingDatasetInfo } from "debate-rankings"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../ui/primitives/tabs"
+import { Input } from "../../ui/primitives/input"
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
-  hasLiveLeaderboard,
+  divisionDatasets,
+  filterEntries,
   resolveDivisionTopic,
   sortEntries,
   type Division,
@@ -26,7 +32,8 @@ import {
 } from "./leaderboardUtils"
 import { useLeaderboardData } from "../../hooks/useLeaderboardData"
 import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
-import { LeaderboardTable } from "./LeaderboardTable"
+import { RankingsTable } from "./RankingsTable"
+import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
 import { StandingsPanel } from "./StandingsPanel"
 
@@ -73,7 +80,13 @@ export function LeaderboardPanel({
   // Sort state
   // ---------------------------------------------------------------------------
 
-  const [sort, setSort] = useState<SortState>({ key: "eloRank", dir: "asc" })
+  const [sort, setSort] = useState<SortState>({ key: "rank", dir: "asc" })
+
+  /** Free-text school/name filter. */
+  const [query, setQuery] = useState("")
+
+  /** Which of the division's datasets is shown (LD: full season vs. Sep–Oct topic). */
+  const [datasetIndex, setDatasetIndex] = useState(0)
 
   // ---------------------------------------------------------------------------
   // Top-level tab: Elo/TOC leaderboard vs. NDCA-style qualification standings
@@ -85,18 +98,19 @@ export function LeaderboardPanel({
   /** Changes division, resets sort, and writes the new value to the URL. */
   const changeDivision = (val: Division) => {
     setDivisionRaw(val)
-    setSort(null)
+    setSort({ key: "rank", dir: "asc" })
+    setDatasetIndex(0)
     const params = new URLSearchParams(searchParams.toString())
     params.set("format", val)
     router.replace(`?${params.toString()}`, { scroll: false })
   }
 
+  /** Rank and text columns start ascending; numeric columns start highest-first. */
   const toggleSort = (key: SortKey) => {
     setSort((prev) => {
-      if (prev?.key === key) {
-        return prev.dir === "desc" ? { key, dir: "asc" } : null
-      }
-      return { key, dir: "desc" }
+      if (prev?.key === key) return { key, dir: prev.dir === "asc" ? "desc" : "asc" }
+      const ascFirst = key === "rank" || key === "name" || key === "school" || key === "hash"
+      return { key, dir: ascFirst ? "asc" : "desc" }
     })
   }
 
@@ -110,11 +124,14 @@ export function LeaderboardPanel({
   const isCurrentYear = year === String(maxYear)
 
   // ---------------------------------------------------------------------------
-  // Data fetching (delegated to hook)
+  // Data loading (delegated to hook)
   // ---------------------------------------------------------------------------
 
-  const { data, loading, error, debateHistory, championsLoading } =
-    useLeaderboardData(division, year, history)
+  const datasetIds = divisionDatasets(division)
+  const datasetId = datasetIds[Math.min(datasetIndex, datasetIds.length - 1)] ?? null
+  /** `debate-rankings` covers the current season only; older years show the banner alone. */
+  const { dataset, loading, error, debateHistory, championsLoading } =
+    useLeaderboardData(isCurrentYear ? datasetId : null, history)
 
   // ---------------------------------------------------------------------------
   // Derived display values
@@ -123,18 +140,7 @@ export function LeaderboardPanel({
   const isControlled = controlledDivision !== undefined
   const showInternalFilters = !isControlled
 
-  /** Show Elo columns only for formats where Elo data is computed. */
-  const showElo = division === "VPF" || division === "VLD"
-  /** Prior seasons only have Elo data; bids/score/state columns are current-year only. */
-  const showTocColumns = isCurrentYear
-
-  const gridCols = !showTocColumns
-    ? "grid-cols-[40px_1fr_70px] sm:grid-cols-[50px_1fr_80px]"
-    : showElo
-      ? "grid-cols-[50px_50px_1fr_32px_40px_50px_70px_60px_60px] sm:grid-cols-[70px_60px_1fr_40px_50px_70px_70px_70px_70px]"
-      : "grid-cols-[40px_1fr_32px_40px_50px] sm:grid-cols-[50px_1fr_40px_50px_70px]"
-
-  const filteredData = sortEntries(data, sort)
+  const visibleEntries = sortEntries(filterEntries(dataset?.entries ?? [], query), sort)
 
   const divConfig = DIVISION_CONFIG.find((d) => d.value === division)!
   const yearData = debateHistory?.[year]
@@ -198,58 +204,65 @@ export function LeaderboardPanel({
               />
             )}
 
-            {/* Divisions with no live per-team data source: champions-only view */}
-            {!hasLiveLeaderboard(division) ? (
-              championsLoading ? (
-                <div className="flex items-center justify-center min-h-[400px]">
-                  <div className="text-center">
-                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4" />
-                    <p className="text-muted-foreground">Loading data...</p>
-                  </div>
+            {datasetIds.length > 1 && isCurrentYear && (
+              <Tabs
+                value={String(datasetIndex)}
+                onValueChange={(v) => setDatasetIndex(Number(v))}
+                className="mb-3"
+              >
+                <TabsList className="h-8">
+                  {datasetIds.map((id, i) => (
+                    <TabsTrigger key={id} value={String(i)} className="px-3 text-xs">
+                      {getRankingDatasetInfo(id)?.scope ?? "Full season"}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            )}
+
+            {!isCurrentYear ? (
+              <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
+                Rankings are computed for the current season only. Historical
+                champion and topic data is shown above when available for the
+                selected season.
+              </div>
+            ) : loading ? (
+              <div className="flex items-center justify-center min-h-[400px]">
+                <div className="text-center">
+                  <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4" />
+                  <p className="text-muted-foreground">Loading rankings...</p>
                 </div>
-              ) : (
-                <div className="rounded-lg border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
-                  No live team leaderboard is published for {divConfig.label}.
-                  Historical champion and topic data is shown above when
-                  available for the selected season.
-                </div>
-              )
+              </div>
+            ) : error || !dataset ? (
+              <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h2 className="text-2xl font-semibold text-foreground mb-2">
+                  Error Loading Rankings
+                </h2>
+                <p className="text-muted-foreground max-w-md">
+                  {error ?? `No rankings are published for ${divConfig.label}.`}
+                </p>
+              </div>
             ) : (
               <>
-                {loading ? (
-                  <div className="flex items-center justify-center min-h-[400px]">
-                    <div className="text-center">
-                      <div className="text-4xl mb-2">⏳</div>
-                      <p className="text-muted-foreground">Loading leaderboard...</p>
-                    </div>
-                  </div>
-                ) : error ? (
-                  <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-                    <div className="text-6xl mb-4">⚠️</div>
-                    <h2 className="text-2xl font-semibold text-foreground mb-2">
-                      Error Loading Data
-                    </h2>
-                    <p className="text-muted-foreground max-w-md">{error}</p>
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-                    >
-                      Retry
-                    </button>
-                  </div>
-                ) : filteredData.length > 0 ? (
-                  /* key=division resets the table's internal expandedRow state on division change */
-                  <LeaderboardTable
-                    key={division}
-                    filteredData={filteredData}
-                    showElo={showElo}
-                    showTocColumns={showTocColumns}
-                    gridCols={gridCols}
-                    division={division}
-                    sort={sort}
-                    onToggleSort={toggleSort}
+                <RankingsFieldSummary dataset={dataset} />
+                <div className="relative mb-3 max-w-sm">
+                  <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Filter by name or school"
+                    aria-label="Filter rankings by name or school"
+                    className="h-9 pl-8"
                   />
-                ) : null}
+                </div>
+                {visibleEntries.length > 0 ? (
+                  <RankingsTable entries={visibleEntries} sort={sort} onToggleSort={toggleSort} />
+                ) : (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    No entries match “{query}”.
+                  </p>
+                )}
               </>
             )}
           </div>

@@ -33,7 +33,7 @@ check was ported to TypeScript and both halves share `storage` and settings.
 - **React 18** + TypeScript
 - **Tailwind CSS v3** + **shadcn/ui** (new-york) — the chrome around the timer
   (format `Select`, `Tabs`, `Button`, `Tooltip`), the popup and the Options
-  page. The circular clock face, the Digital-7 font, the depleting SVG ring,
+  page. The circular clock face, the font-timer-digits font, the depleting SVG ring,
   per-speech colors and the ripple are ported CSS, not shadcn.
 - **`debate-ai-webui`** — the app's own UI, mounted by the Options page. It
   brings its own scoped stylesheet (`.dai-root`, no Tailwind) and talks to the
@@ -357,7 +357,7 @@ src/
                          AI response, article body, account strip
   styles/
     base.css             Tailwind layers + shadcn tokens (every page)
-    timer.css            Digital-7 font, clock face, ring, timeline
+    timer.css            font-timer-digits font, clock face, ring, timeline
     sidepanel.css        reading typography for the article and the answers
     popup.css options.css   each page's shell
 test/                    vitest: extractor, citations, renderer, token parsing
@@ -365,7 +365,7 @@ components/ui/           shadcn primitives
 lib/utils.ts             cn()
 public/
   icon/                  16/32/48/96/128
-  res/                   Digital-7.woff, beep_final.mp3
+  res/                   font-timer-digits.woff, beep_final.mp3
 ```
 
 ## Timer behavior

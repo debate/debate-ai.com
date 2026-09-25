@@ -170,15 +170,24 @@ export function VideoSidebarTree({
           />
         ))}
 
-        <TreeItem
-          level={2}
-          href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
-          title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
-          count={counts?.favorites}
-          isActive={activeId === "favorites"}
-          icon={IconTrophy}
-        />
-      </TreeItem>
+      <TreeItem
+        level={2}
+        href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
+        title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
+        count={counts?.favorites}
+        isActive={activeId === "favorites"}
+        icon={IconTrophy}
+      />
+
+      <TreeItem
+        level={2}
+        href={SIDEBAR_VIDEO_LINKS_BY_ID.history.href}
+        title={SIDEBAR_VIDEO_LINKS_BY_ID.history.title}
+        count={counts?.history}
+        isActive={activeId === "history"}
+        icon={History}
+      />
+    </TreeItem>
 
       {lectureCategoryItems.length > 0 ? (
         <TreeItem
@@ -220,18 +229,6 @@ export function VideoSidebarTree({
           isActive={lecturesActive}
         />
       )}
-
-      {/* Watch history is its own destination rather than a filter inside the
-          lecture categories: it spans both libraries and is not a category,
-          so it sits directly under the Lectures section as a peer row. */}
-      <TreeItem
-        level={1}
-        href={historyLink.href}
-        title={historyLink.title}
-        icon={History}
-        count={counts?.history}
-        isActive={activeId === "history"}
-      />
 
       <ToolNavTree expandedSectionIds={expandedSectionIds} onToggleSection={toggleSection} />
     </nav>

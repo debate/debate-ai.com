@@ -13,6 +13,7 @@ import { useParams } from "next/navigation"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
+import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 import { FloatingVideoSearch } from "../components/video-search/FloatingVideoSearch"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
@@ -309,36 +310,40 @@ export function LecturesVideoGridView({
   const isFavoritesPage = showFavoritesOnly;
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Persistent left sidebar (md+): app dock, video categories, lecture
-          categories, footer. The search and filter controls are deliberately
-          not here — they float over the results panel instead
-          (`FloatingVideoSearch`), which is what lets this column be the same
-          column on the glossary and rankings pages, where there is nothing to
-          search. `min-w-0` keeps every child bound to it; the dock arrives in
-          `dockSlot` already sized to the column rather than to its own
-          contents, so it can't reach across the border onto the grid. */}
-      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
-        {dockSlot}
+    // Persistent left sidebar (md+): app dock, video categories, lecture
+    // categories, footer — in the shared drag-resizable column
+    // (`ResizableSidebarLayout`), so its width matches the rest of the app's.
+    // The search and filter controls are deliberately not here — they float
+    // over the results panel instead (`FloatingVideoSearch`), which is what
+    // lets this column be the same column on the glossary and rankings pages,
+    // where there is nothing to search. The dock arrives in `dockSlot` already
+    // sized to the column rather than to its own contents, so it can't reach
+    // across the border onto the grid.
+    <ResizableSidebarLayout
+      className="bg-background"
+      contentClassName="p-3 sm:p-6"
+      sidebar={
+        <>
+          {dockSlot}
 
-        {/* Videos only: the app's REASON document panels used to mount here
-            (`docsSlot`), above the tree. They belong on the routes the
-            documents are the subject of — the sidebar of the video library is
-            the video library. */}
-        <VideoSidebarTree
-          counts={quickLinkCounts}
-          lectureCategories={lectureCategories}
-          selectedCategory={selectedCategory}
-          browsingLectures={browsingLectures}
-          activeId={activeQuickLinkId}
-          lecturesExpanded={showLectureCategories}
-          onToggleLectures={onToggleLectureCategories}
-        />
+          {/* Videos only: the app's REASON document panels used to mount here
+              (`docsSlot`), above the tree. They belong on the routes the
+              documents are the subject of — the sidebar of the video library is
+              the video library. */}
+          <VideoSidebarTree
+            counts={quickLinkCounts}
+            lectureCategories={lectureCategories}
+            selectedCategory={selectedCategory}
+            browsingLectures={browsingLectures}
+            activeId={activeQuickLinkId}
+            lecturesExpanded={showLectureCategories}
+            onToggleLectures={onToggleLectureCategories}
+          />
 
-        <Footer />
-      </aside>
-
-      <div className="min-w-0 flex-1 p-3 sm:p-6">
+          <Footer />
+        </>
+      }
+    >
         {/* The one instance of the search and filter controls, on every
             breakpoint: an icon in the top-right corner of this panel that
             opens on hover, on tap and on focus. It is `sticky` with no height,
@@ -588,7 +593,6 @@ export function LecturesVideoGridView({
             )}
           </>
         )}
-      </div>
-    </div>
+    </ResizableSidebarLayout>
   )
 }

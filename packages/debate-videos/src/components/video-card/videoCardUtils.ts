@@ -20,6 +20,14 @@ export const TOURNAMENT_COLORS: Record<number, string> = {
   4: "bg-emerald-900/80 border-emerald-400/90 text-emerald-300",
 };
 
+export const TOC_TOURNAMENT_IMAGE = "https://i.imgur.com/B8IWw0m.png";
+
+export function isTOCTournament(tournament: string | undefined): boolean {
+  if (!tournament) return false;
+  const base = tournament.replace(/\s*\(.+\)/, "").trim();
+  return base === "TOC";
+}
+
 export function getRoundBadgeColor(roundLevel: string) {
   const round = roundLevel.toLowerCase().trim();
   if (

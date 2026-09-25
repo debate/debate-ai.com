@@ -68,6 +68,17 @@ describe("getVideoByRouteSegments", () => {
       "2022",
       "ndt",
       "finals",
+      "dartmouth-sv-michigan-pr",
+      "analysis",
+    ]);
+    expect(video?.[0]).toBe("Afl7_hl-H0c");
+  });
+
+  it("resolves the analysis at the four-segment path it had before", async () => {
+    const video = await getVideoByRouteSegments([
+      "2022",
+      "ndt",
+      "finals",
       "dartmouth-sv-vs-michigan-pr-round-analysis",
     ]);
     expect(video?.[0]).toBe("Afl7_hl-H0c");

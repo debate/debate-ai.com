@@ -1,5 +1,1 @@
-import LoginPage from "@/components/layout/LoginPage";
-
-export default function Page() {
-  return <LoginPage />;
-}
+export { default } from "debate-ai-webui/routes/login/page"

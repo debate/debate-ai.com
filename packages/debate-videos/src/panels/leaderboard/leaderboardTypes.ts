@@ -9,16 +9,10 @@ export type Division = "VPF" | "VLD" | "VCX" | "NDT";
 /** Set of valid division strings used for URL query-param validation. */
 export const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"]);
 
-/** Column keys available for sorting the leaderboard grid. */
-export type SortKey =
-  | "rank"
-  | "state"
-  | "bids"
-  | "tocScore"
-  | "debateElo"
-  | "eloRank"
-  | "eloToBid"
-  | "eloTimesBid";
+import type { RankingEntry } from "debate-rankings";
+
+/** Column keys available for sorting the rankings grid — every CSV field. */
+export type SortKey = keyof RankingEntry;
 
 /** Sort direction for a leaderboard column. */
 export type SortDir = "asc" | "desc";

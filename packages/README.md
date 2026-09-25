@@ -99,6 +99,14 @@ outline, flow annotations, and AI response-outcome charts. Composes `debate-roun
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
 
+## debate-rankings
+
+Glicko-2 rankings for HS PF, LD, Policy and college policy, cloned from
+[debate/debate-rankings](https://github.com/debate/debate-rankings). A Python pipeline
+(`src/main.py`) replays tournament results into CSVs under `output/`; a TypeScript entry
+(`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the
+`/rank` panel in `debate-videos`.
+
 ## debate-round
 
 FIAT, the live debate round workspace. Includes the ag-Grid flow spreadsheet, column
@@ -141,9 +149,17 @@ assist, group challenges, research-progress tracking, sprint notes, and (moved f
 Speech and prep timers for live rounds, with per-format speech times built in. Also
 includes an in-round speech recorder with mic selection, live waveform, and playback.
 
+## debate-tournaments
+
+Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
+to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
+mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
+`/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
+upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+
 ## debate-videos
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
 persistent YouTube player with picture-in-picture, a per-video watch page at
 `/videos/watch/<title-slug>` (player, synced transcript, related videos),
-lecture pages, and rankings leaderboards.
+lecture pages, and the rankings leaderboard (data from `debate-rankings`).

@@ -13,17 +13,20 @@
  * @module lib/videos/admin-library
  */
 
-import { and, asc, count, desc, eq, isNull, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, getTableColumns, isNull, not, or, sql, type SQL } from "drizzle-orm";
 import {
   publishedMsForDate,
   seasonYearForDate,
 } from "debate-data-sync/src/videos/video-rows";
 import {
+  videoDocuments,
   videos,
+  videoTranscripts,
   youtubeRoundVideos,
   youtubeVideoExclusions,
   type VideoTableRow,
 } from "@/lib/database/schema";
+import { recomputeVideoStacks } from "./recompute-video-stacks";
 
 /** Default and maximum page sizes for {@link listLibraryVideos}. */
 const DEFAULT_LIMIT = 25;
@@ -37,6 +40,11 @@ export interface LibraryQuery {
   style?: number | null;
   /** `round`, `lecture`, or anything else for no source filter. */
   source?: string | null;
+  /**
+   * `with` keeps videos that have a typed-up transcript document, `without`
+   * those that don't; anything else applies no filter.
+   */
+  transcript?: string | null;
   /** `1`-based page number. */
   page?: number;
   limit?: number;
@@ -45,9 +53,20 @@ export interface LibraryQuery {
   dir?: "asc" | "desc";
 }
 
+/**
+ * A library row plus what the admin table needs to say about its transcript,
+ * without shipping the transcript itself.
+ */
+export type LibraryVideoRow = VideoTableRow & {
+  /** Words in the typed-up transcript document, or `null` when there is none. */
+  transcriptWords: number | null;
+  /** Whether YouTube's own captions have been fetched and cached for it. */
+  hasCaptions: boolean;
+};
+
 /** One page of admin library rows. */
 export interface LibraryPage {
-  videos: VideoTableRow[];
+  videos: LibraryVideoRow[];
   page: number;
   limit: number;
   pageCount: number;
@@ -185,6 +204,29 @@ export function buildLibraryUpdate(
   return update as Partial<VideoTableRow>;
 }
 
+/**
+ * The outer row's id, table-qualified by hand: drizzle renders a column of the
+ * only table in a query without its table name, and inside these subqueries a
+ * bare `video_id` would resolve to the subquery's own column instead.
+ */
+const outerVideoId = sql.raw(`"videos"."video_id"`);
+
+/**
+ * Words in the video's transcript document. An empty document counts as no
+ * transcript: saving a blank body leaves a row behind with `word_count = 0`.
+ */
+const transcriptWordsSql = sql<number | null>`(
+  SELECT ${videoDocuments.wordCount} FROM ${videoDocuments}
+  WHERE ${videoDocuments.videoId} = ${outerVideoId}
+    AND ${videoDocuments.kind} = 'transcript'
+    AND ${videoDocuments.wordCount} > 0
+)`;
+
+/** Whether any language of YouTube captions is cached for the video. */
+const hasCaptionsSql = sql<number>`EXISTS (
+  SELECT 1 FROM ${videoTranscripts} WHERE ${videoTranscripts.videoId} = ${outerVideoId}
+)`;
+
 /** Builds the WHERE clauses shared by the listing and its total count. */
 function libraryConditions(query: LibraryQuery): SQL[] {
   const conditions: SQL[] = [];
@@ -215,6 +257,10 @@ function libraryConditions(query: LibraryQuery): SQL[] {
     conditions.push(eq(videos.source, query.source));
   }
 
+  const hasTranscript = sql`${transcriptWordsSql} IS NOT NULL`;
+  if (query.transcript === "with") conditions.push(hasTranscript);
+  else if (query.transcript === "without") conditions.push(not(hasTranscript));
+
   return conditions;
 }
 
@@ -244,7 +290,11 @@ export async function listLibraryVideos(db: any, query: LibraryQuery): Promise<L
   const direction = query.dir === "asc" ? asc : desc;
 
   const rows = await db
-    .select()
+    .select({
+      ...getTableColumns(videos),
+      transcriptWords: transcriptWordsSql,
+      hasCaptions: hasCaptionsSql,
+    })
     .from(videos)
     .where(where)
     // `video_id` breaks ties so paging stays stable when a sort column repeats.
@@ -252,7 +302,18 @@ export async function listLibraryVideos(db: any, query: LibraryQuery): Promise<L
     .limit(limit)
     .offset((page - 1) * limit);
 
-  return { videos: rows, page, limit, pageCount, total };
+  return {
+    videos: rows.map((row: LibraryVideoRow) => ({
+      ...row,
+      transcriptWords: row.transcriptWords ?? null,
+      // SQLite answers EXISTS with 0 or 1.
+      hasCaptions: Boolean(row.hasCaptions),
+    })),
+    page,
+    limit,
+    pageCount,
+    total,
+  };
 }
 
 /**
@@ -308,6 +369,79 @@ export async function updateLibraryVideo(
 
   const [updated] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
   return updated ?? null;
+}
+
+/** Why {@link createLibraryVideo} declined to add a video. */
+export type CreateLibraryVideoResult =
+  | { ok: true; video: VideoTableRow }
+  | { ok: false; reason: "exists" | "missing-title" };
+
+/**
+ * Adds one video to the library by hand, from the admin "Add video" form.
+ *
+ * The row is built by running the form's patch through
+ * {@link buildLibraryUpdate} over an empty row, so a hand-added video gets
+ * exactly the same coercion and derived columns (`published_ms`,
+ * `season_year`, `search_text`) an edit would give it. `source` follows the
+ * style unless the form says otherwise — a video with no numeric style is a
+ * lecture, matching how {@link libraryConditions} splits the table.
+ *
+ * The row is marked `admin_edited`, so a later JSON seed leaves it alone,
+ * and any exclusion recorded for it is cleared: an admin adding a video they
+ * (or someone) once removed means they want it back, and leaving the
+ * exclusion would only keep the resync queue from ever seeing it again.
+ *
+ * @param db - Drizzle handle.
+ * @param videoId - The video's YouTube id.
+ * @param patch - The form's fields, in the same shape an edit sends.
+ * @returns The inserted row, or why nothing was inserted.
+ */
+export async function createLibraryVideo(
+  db: any,
+  videoId: string,
+  patch: LibraryVideoPatch,
+): Promise<CreateLibraryVideoResult> {
+  const [existing] = await db
+    .select({ videoId: videos.videoId })
+    .from(videos)
+    .where(eq(videos.videoId, videoId))
+    .limit(1);
+  if (existing) return { ok: false, reason: "exists" };
+
+  const empty = {
+    videoId,
+    source: "lecture",
+    title: "",
+    publishedAt: "",
+    channel: "",
+    description: "",
+  } as VideoTableRow;
+  const fields = buildLibraryUpdate(empty, patch);
+  if (!fields.title) return { ok: false, reason: "missing-title" };
+
+  const style = fields.style ?? null;
+  const source = Object.hasOwn(patch, "source") && fields.source
+    ? fields.source
+    : style === null ? "lecture" : "round";
+  const publishedAt = fields.publishedAt ?? "";
+
+  await db.insert(videos).values({
+    ...fields,
+    videoId,
+    source,
+    publishedAt,
+    publishedMs: publishedMsForDate(publishedAt),
+    seasonYear: seasonYearForDate(publishedAt),
+    searchText: `${fields.title} ${fields.channel ?? ""} ${fields.description ?? ""}`.toLowerCase(),
+  });
+  await db.delete(youtubeVideoExclusions).where(eq(youtubeVideoExclusions.videoId, videoId));
+
+  // A hand-added round may be the companion of an analysis already in the
+  // table (or vice versa); only a whole-table pass can find that link.
+  await recomputeVideoStacks(db);
+
+  const [created] = await db.select().from(videos).where(eq(videos.videoId, videoId)).limit(1);
+  return { ok: true, video: created };
 }
 
 /**

@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { slugifySegment } from "@/lib/reason-docs/doc-path"
+import { slugifySegment } from "debate-ai-webui/lib/reason-docs/doc-path"
 
 /**
  * REASON editor single-document CRUD. Ported from quick search's

@@ -172,6 +172,24 @@ so the grid never waits on the request. The **Stacked playlists** toggle
 (`useVideoState`, on by default) passes `enabled: false` and gives every video
 its own slot again.
 
+**On the watch page.** `app/videos/_watch/video-route-page.tsx` resolves the
+video's own stack key with `getVideoStacks([key])` and passes the members to
+`VideoWatchPage` as `stack`; `components/watch/WatchStackPlaylist.tsx` lists
+them under the player in stack order, current one marked, each labelled
+`Round` / `Analysis` / `Part N` from its address's variant segment. Stack
+members are dropped from the "Related videos" rows so they are not listed twice.
+
+**Addresses.** `lib/video-route.ts` files a round at
+`/videos/<season>/<tournament>/<round>/<aff>-<neg>` — no `vs` — and a video
+made from it (a lecture whose title reads as that round, or one part of a
+split upload) one segment below, at `…/<teams>/<variant>`: `analysis` (the
+category, less a leading `round-`), `part-2`, or both joined. The fifth
+segment is served by `app/videos/[category]/[event]/[matchup]/[teams]/[variant]/page.tsx`.
+`getVideoByRouteSegments` still matches the previous four-segment spelling
+(`…/dartmouth-sv-vs-michigan-pr-round-analysis`, rebuilt by
+`previousVideoRouteHref`) and the older three-segment one, and the page
+redirects both to the canonical path.
+
 ## What a big grid costs
 
 The grid is unbounded: every page of infinite scroll appends sixty more cards
@@ -238,7 +256,7 @@ The **Video library** card (`components/admin/VideoLibraryTable.tsx`) is the
 other half: it pages the public `videos` table itself.
 
 ```
-GET    /api/admin/videos/library         q, style, source, sort, dir, page, limit
+GET    /api/admin/videos/library         q, style, source, transcript, sort, dir, page, limit
 PATCH  /api/admin/videos/library/[id]    partial row — only the fields sent are written
 DELETE /api/admin/videos/library/[id]    remove from the library, and exclude from resync
 ```
@@ -315,6 +333,26 @@ Two behaviours are worth knowing before changing this:
   overwrite the correction — the same guarantee `admin_edited` already gives
   `db:seed:videos` above, closed for this second writer of the table.
 
+Each listed row also carries `transcriptWords` (the word count of its
+`video_documents` transcript, `null` when there is none or it is empty) and
+`hasCaptions` (a `video_transcripts` row exists in any language), read as
+correlated subqueries so the table never ships a transcript body. The outer
+`video_id` in those subqueries is written table-qualified by hand: drizzle
+renders a single-table query's columns bare, and a bare `video_id` inside the
+subquery binds to the subquery's own table, matching every row.
+`transcript=with|without` filters on the same expression, so the count and the
+page agree.
+
+The transcript editor (`VideoContentDialog`) can seed the transcript box from
+`/api/transcript` — the same cached caption route the player uses — through
+`captionsToTranscriptMarkdown` in `debate-videos`: cues are regrouped into
+sentences, a new `## Part N (m:ss)` section starts at a 20-second silence or
+every ten minutes, and the author is set to `youtube`. Nothing is saved until
+the editor saves. Its "paste any YouTube link" box resolves the id with
+`parseYouTubeVideoId` and opens the dialog even for an unpublished video;
+`video_documents` is keyed by id alone, so the transcript is waiting when the
+video is published.
+
 Listing uses offset paging rather than the queue's `(publishedAt, id)` keyset
 cursor: this table has numbered pages and sorts on columns that are not unique
 (view count, channel), which a two-column cursor cannot express.
@@ -327,6 +365,11 @@ database.
 
 ## Known gaps
 
+- Imported captions are split on silences, not on speakers, so the "Part"
+  sections only approximate speeches until an editor renames and merges them.
+- The watch page only exists for published videos, so a transcript written
+  through the "paste any link" box for an unpublished video is not visible to
+  anyone until that video is published.
 - Stacked playlists are only as good as the descriptions: a round-analysis
   video that names its round in the title but does not link it is not paired
   with it, and there is no curated override list — the fix is an edit to the

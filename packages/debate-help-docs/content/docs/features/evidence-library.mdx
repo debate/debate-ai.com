@@ -32,6 +32,16 @@ A real inverted-index, TF-IDF-ranked search (`lib/evidence-search-index.ts`)
 replaced the original keyword-overlap scan, cached across calls and updated
 incrementally rather than rebuilt on every write.
 
+## Opening a pre-filled search
+
+`/cards` reads its starting search from the URL: `?q=` (term), `?year=`,
+`?event=` (`CX`, `PF`, `LD`, `NDT`, `NFA`) and `?school=` / `?team=` /
+`?tournament=`. Other pages build these links with `buildCardsSearchHref()`
+and `useSearchState` reads them once on mount via `readCardsSearchParams()`
+(both in `lib/search-query.ts`). The topics explorer on
+`/videos/statistics` uses this to link every resolution to its cards.
+The URL isn't kept in sync as you edit the search afterwards.
+
 ## Data flow
 
 ```

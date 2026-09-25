@@ -27,14 +27,19 @@
  * The right-hand column is a tab strip rather than one panel — YouTube's
  * caption cues, then the long-form documents (the round typed up speech by
  * speech, the AI summary of it), then the analysis videos an editor has tied
- * to this one. Those arrive as props from the server rather than being
+ * to this one. Every round — and any video whose AI summary or written
+ * analysis goes speech by speech — also gets the round one tab per speech
+ * there, with a judge-panel outcome simulator in each, and a speech timeline
+ * under the player whose segments seek to — and open — each speech. A round
+ * nobody wrote up gets its format's standard speeches, which the reader
+ * times with "Mark start" (see `lib/round-formats.ts`). Those arrive as props from the server rather than being
  * fetched here: they are the reason this page is worth indexing, and a
  * crawler never waits for a client fetch.
  *
  * ## Switching videos navigates
  *
  * Anything on this page that changes the store's active video — clicking a
- * related row, stepping through the related videos with ← / →, playing
+ * related row, picking an entry in the stacked playlist, playing
  * something from the queue panel, skipping to the next queued video —
  * navigates to that video's watch page rather than silently swapping the
  * embed, so the URL always names what is playing.
@@ -54,7 +59,9 @@ import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
 import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
 import { VideoListRows } from "../../components/video-grid/VideoListRows"
 import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
-import { RelatedVideoNav } from "../../components/watch/RelatedVideoNav"
+import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
+import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
+import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
@@ -85,7 +92,19 @@ import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
 import { videoRouteHref } from "../../lib/video-route"
 import type { VideoDocument } from "../../lib/video-documents"
+import {
+  captionText,
+  withCaptionTranscripts,
+  withSpeechStarts,
+  type RoundSpeech,
+} from "../../lib/round-speeches"
+import { resolveRoundSpeeches } from "../../lib/round-formats"
+import type { RoundContext } from "../../lib/speech-outcomes"
+import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
 import type { VideoType } from "../../types/videos"
+
+/** Shared empty default, so an absent list keeps one identity across renders. */
+const NO_VIDEOS: VideoType[] = []
 
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
@@ -102,6 +121,13 @@ export interface VideoWatchPageProps {
   documents?: VideoDocument[]
   /** Videos an editor tied to this one; they fill the "Analysis" tab. */
   links?: LinkedVideo[]
+  /**
+   * Every member of the stacked playlist this video belongs to — the round
+   * and its analysis, the parts of a split upload — in stack order, this
+   * video included. Shown as a playlist under the player when it holds two
+   * or more.
+   */
+  stack?: VideoType[]
   /** App-owned navigation dock, rendered at the top of the sidebar. */
   dockSlot?: React.ReactNode
   /** App-specific toolbar buttons — see `SlowSpreadButton`. */
@@ -110,13 +136,22 @@ export interface VideoWatchPageProps {
 
 export function VideoWatchPage({
   video,
-  related = [],
+  related: relatedVideos = NO_VIDEOS,
   documents = [],
   links = [],
+  stack = NO_VIDEOS,
   dockSlot,
   extraControls,
 }: VideoWatchPageProps) {
   const router = useRouter()
+
+  // The playlist already lists its members; the related rows need not repeat them.
+  const related = useMemo(() => {
+    const inStack = new Set(stack.map((member) => member[0]))
+    return inStack.size > 1
+      ? relatedVideos.filter((candidate) => !inStack.has(candidate[0]))
+      : relatedVideos
+  }, [relatedVideos, stack])
 
   const [
     videoId,
@@ -170,6 +205,10 @@ export function VideoWatchPage({
   const pendingPlaybackRate = useRef(false)
 
   const [currentTime, setCurrentTime] = useState(0)
+  /** The video's length, for the speech timeline's proportions; 0 until the embed reports it. */
+  const [duration, setDuration] = useState(0)
+  /** The last speech picked on the timeline, for the side panel to open. */
+  const [focusSpeech, setFocusSpeech] = useState<SpeechFocusRequest | null>(null)
   /**
    * Second to open the embed at, resolved from the video's saved timestamp
    * once this page has claimed playback. `null` until then: the value can
@@ -216,9 +255,46 @@ export function VideoWatchPage({
    * after the first paint, so this stays true while they load and the page
    * widens only once it is settled that there is nothing to show.
    */
+  /** The round's speeches as written up, or its format's standard order — empty for a lecture. */
+  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
+  /** Speech starts the reader marked in this browser, by speech key. */
+  const [speechMarks, setSpeechMarks] = useState<Record<string, number>>({})
+  useEffect(() => {
+    setSpeechMarks(readSpeechStarts(videoId))
+  }, [videoId])
+  const handleMarkStart = useCallback(
+    (speechKey: string, seconds: number | null) => {
+      writeSpeechStart(videoId, speechKey, seconds)
+      setSpeechMarks(readSpeechStarts(videoId))
+    },
+    [videoId],
+  )
+  const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
+  /** The round speech by speech, timed by the reader's marks, each untyped speech given its captions. */
+  const speeches = useMemo(
+    () => withCaptionTranscripts(withSpeechStarts(baseSpeeches, speechMarks), sentences),
+    [baseSpeeches, speechMarks, sentences],
+  )
+  const roundTranscript = useMemo(
+    () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
+    [baseSpeeches.length, sentences],
+  )
+  const roundContext = useMemo<RoundContext>(
+    () => ({
+      format: styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+      tournament,
+      roundLevel,
+      aff: affTeam,
+      neg: negTeam,
+      decision: judgeDecision,
+    }),
+    [styleNumber, tournament, roundLevel, affTeam, negTeam, judgeDecision],
+  )
+
   const hasSidePanel =
     hasTranscript ||
     transcriptLoading ||
+    speeches.length > 0 ||
     documents.some((document) => (document.body ?? "").trim().length > 0) ||
     links.length > 0
 
@@ -231,6 +307,8 @@ export function VideoWatchPage({
     currentTimeRef.current = 0
     durationRef.current = 0
     setCurrentTime(0)
+    setDuration(0)
+    setFocusSpeech(null)
     setResumeSeconds(null)
     setPlayerError(null)
 
@@ -346,7 +424,10 @@ export function VideoWatchPage({
         }
         if (data.event === "infoDelivery" && data.info?.duration != null) {
           const duration = Number(data.info.duration)
-          if (Number.isFinite(duration) && duration > 0) durationRef.current = duration
+          if (Number.isFinite(duration) && duration > 0) {
+            durationRef.current = duration
+            setDuration(duration)
+          }
         }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           currentTimeRef.current = data.info.currentTime as number
@@ -401,6 +482,16 @@ export function VideoWatchPage({
     sendYouTubeCommand("seekTo", [seconds, true])
     sendYouTubeCommand("playVideo")
   }, [])
+
+  /** A timeline segment: play from that speech and open it beside the player. */
+  const handleSpeechSelect = useCallback(
+    (speech: RoundSpeech) => {
+      if (speech.startSeconds !== null) seekTo(speech.startSeconds)
+      setIsTranscriptOpen(true)
+      setFocusSpeech((previous) => ({ key: speech.key, seq: (previous?.seq ?? 0) + 1 }))
+    },
+    [seekTo],
+  )
 
   const handlePlayPause = useCallback(() => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
@@ -628,21 +719,16 @@ export function VideoWatchPage({
               )}
             </div>
 
-            {related.length > 0 && (
-              <RelatedVideoNav
-                current={video}
-                related={related}
-                onSelect={(next) =>
-                  setActiveVideo(next[0], next[1], {
-                    style: typeof next[6] === "number" ? next[6] : undefined,
-                    tournament: next[7],
-                    year: new Date(next[2]).getFullYear(),
-                    affTeam: next[9],
-                    negTeam: next[10],
-                  })
-                }
+            {speeches.length > 0 && (
+              <WatchSpeechTimeline
+                speeches={speeches}
+                currentTime={currentTime}
+                duration={duration}
+                onSelect={handleSpeechSelect}
               />
             )}
+
+            <WatchStackPlaylist current={video} stack={stack} />
 
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{title}</h1>
@@ -730,6 +816,14 @@ export function VideoWatchPage({
                 links={links}
                 currentTime={currentTime}
                 onSeek={seekTo}
+                focusSpeech={focusSpeech}
+                videoId={videoId}
+                videoTitle={title}
+                speeches={speeches}
+                round={roundContext}
+                roundTranscript={roundTranscript}
+                onMarkStart={handleMarkStart}
+                markedKeys={markedKeys}
               />
             </div>
           )}

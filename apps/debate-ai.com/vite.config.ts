@@ -108,6 +108,17 @@ export default defineConfig({
   optimizeDeps: {
     include: ["@emotion/is-prop-valid"],
   },
+  environments: {
+    rsc: {
+      optimizeDeps: {
+        // react-reason-editor → novel → react-tweet, whose `react-server`
+        // entry does `import swr from "swr"`; swr's react-server build has no
+        // default export, so pre-bundling it for rsc fails and `vinext dev`
+        // dies before serving anything. Nothing renders tweets on the server.
+        exclude: ["react-tweet"],
+      },
+    },
+  },
   ssr: {
     external: ["@libsql/client"],
     noExternal: [
@@ -117,6 +128,7 @@ export default defineConfig({
       // Workspace packages ship TypeScript sources, so they always have to be
       // bundled rather than externalized to the Cloudflare runtime.
       "reason-editor",
+      "debate-ai-webui",
       "debate-card-parser",
       "debate-card-search",
       "debate-data-sync",
@@ -124,6 +136,8 @@ export default defineConfig({
       "debate-flow-ebb",
       "debate-round",
       "debate-timer",
+      "debate-tournaments",
+      "debate-rankings",
       "debate-videos",
     ],
   },

@@ -586,6 +586,13 @@ each invisible until something renders them again — see **Known gaps**.
   (`startToolRecordAutoSync` takes an `onFlush` callback and
   `useToolRecordSync` folds its results into the same `results` state the
   reconcile populates).
+- ~~A bulk push of more than ~50 records answered a bare 500.~~ **Fixed:**
+  `PUT /api/tool-records/[collection]` awaited one upsert per record, and each
+  spends one of D1's per-invocation queries (50 on the Workers Free plan), so a
+  long-lived store — a `docsChatTabs` list of a hundred-odd tabs — failed
+  mid-loop after several seconds. The upserts now go out through
+  `db.batch()` in `chunkStatements` runs (`lib/database/query-budget.ts`), a
+  few queries for even a full 500-record push.
 - ~~Nothing surfaces the sync any more, and two things can only be reached
   through it.~~ **Fixed:** `components/tools/ToolSyncStatusPanel.tsx`, mounted
   on `/tools`, renders `useToolRecordSync`'s `results` as a list of any

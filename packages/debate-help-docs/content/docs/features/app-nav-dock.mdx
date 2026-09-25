@@ -70,7 +70,8 @@ The dock has two forms, and which one a route gets is decided by
 **Sidebar-hosted (`<CategoryDock embedded />`).** On `/videos` (whose own
 `<aside>` takes it through `LecturesVideoGridView`'s `dockSlot`) and on every
 route the tool-nav tree links to (where `AppSidebarShell` wraps the page in
-the generic sidebar), the dock sits at the top of that 300px column.
+the generic sidebar), the dock sits at the top of that column (300px wide until you
+drag it — see [Resizing the sidebar](#resizing-the-sidebar)).
 
 `/doc` hosts it in a column of its own instead. The REASON research
 workspace already renders a sidebar — the files tree and the "Open Tabs"
@@ -132,10 +133,19 @@ column everywhere in the library.
 four times as many results per screen. The grid is one toggle away inside the
 search panel. The choice is not remembered between page loads.
 
+## Resizing the sidebar
+
+Drag the thin line on the sidebar's right edge to make the column wider or
+narrower (between 220px and 640px). The width you choose is remembered in this
+browser and applies everywhere the sidebar appears — the videos library, the
+tool pages and the research pages all share it. Double-click the line to put
+it back to its default 300px. The line also takes keyboard focus, and the arrow
+keys resize it.
+
 ## Staying inside the sidebar
 
 A dock sized to its own contents (`w-max`, the default `fluid: false` form)
-is wider than the 300px sidebar at the `md` breakpoint. Hosted there it
+is wider than the sidebar at its default 300px. Hosted there it
 either forced the sidebar to scroll sideways or reached over its border onto
 the page beside it — which on `/reason-editor` and `/doc` is a CardMirror
 editor.

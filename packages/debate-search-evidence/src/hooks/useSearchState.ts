@@ -18,6 +18,7 @@ import {
   EMPTY_FILTERS,
   SEARCH_DEBOUNCE_MS,
   buildSearchUrl,
+  readCardsSearchParams,
 } from "../lib/search-query";
 import { isTypingTarget, nextSelectionIndex } from "../lib/result-navigation";
 
@@ -50,6 +51,20 @@ export function useSearchState() {
    * stale ones. Only the newest request is allowed to set state.
    */
   const requestId = useRef(0);
+
+  /**
+   * Starts the search from the URL (`/cards?q=…&year=…&event=…`), so other
+   * pages — the topics explorer's links, for one — can open a pre-filled
+   * search. Read once on mount; the debounced fetch below picks it up before
+   * its first request fires.
+   */
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (!["q", "year", "school", "team", "tournament", "event"].some((k) => params.has(k))) return;
+    const initial = readCardsSearchParams(params);
+    setSearchTerm(initial.searchTerm);
+    setFilters(initial.filters);
+  }, []);
 
   /**
    * Select a search result by reference and index.

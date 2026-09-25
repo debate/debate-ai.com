@@ -12,7 +12,7 @@ import { describe, expect, it } from "vitest";
 import { DocxImportError } from "debate-card-parser";
 import { base64ToCmir, parseNative, schema, toDocx } from "debate-editor/engine";
 
-import { TOPIC_STARTER_FORMATS, isCmirContent } from "../format";
+import { TOPIC_STARTER_FORMATS, isCmirContent } from "debate-ai-webui/lib/topic-starters/format";
 import { docxToStoredCmir } from "../import";
 
 /** Builds one schema block; PM's `create` takes an array of children. */

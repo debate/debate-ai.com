@@ -1,7 +1,4 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
-import { DebateFlowPage } from "debate-round"
-import { notFound } from "next/navigation"
 
 interface PageProps {
   params: Promise<{
@@ -21,17 +18,4 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function DebateRoundPage({ params }: PageProps) {
-  const { tournament, teams } = await params
-
-  // Validate the slug format
-  if (!tournament || !teams) {
-    notFound()
-  }
-
-  return (
-    <Suspense>
-      <DebateFlowPage />
-    </Suspense>
-  )
-}
+export { default } from "debate-ai-webui/routes/debate/[tournament]/[teams]/page"

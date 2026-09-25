@@ -1,4 +1,9 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'wxt';
+
+/** A file inside the `debate-ai-webui` package. */
+const webui = (path: string) =>
+  fileURLToPath(new URL(`../../packages/debate-ai-webui/${path}`, import.meta.url));
 
 /**
  * The AI provider APIs the article panel calls directly when the reader has
@@ -20,14 +25,44 @@ const AI_PROVIDER_HOSTS = [
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
-  // `debate-ai-webui` is a workspace package with React as a peer dependency,
-  // so bun's isolated node_modules gives it its own resolution of `react` —
-  // the monorepo's React 19, next to this extension's React 18. Two React
-  // copies in one bundle means the shell's hooks run against a different
-  // dispatcher than the page's ("invalid hook call"), so every `react` and
-  // `react-dom` specifier is resolved once, from this app's own dependency.
+  // The Options page is the whole debate-ai.com app (`debate-ai-webui`),
+  // which — like the feature packages it mounts — imports `next/link`,
+  // `next/navigation` and `next/image`. There is no Next here: those resolve
+  // to the package's shims, which route through the URL fragment instead.
+  //
+  // Workspace packages declare React as a peer, and bun's isolated
+  // node_modules gives each its own resolution of it; two React copies in one
+  // bundle is "invalid hook call", so `react`/`react-dom` resolve once, from
+  // this app.
   vite: () => ({
-    resolve: { dedupe: ['react', 'react-dom'] },
+    define: {
+      // The app reads a few `NEXT_PUBLIC_*` values that Next inlines at build
+      // time; everything else in `process.env` is simply absent here.
+      'process.env.NEXT_PUBLIC_APP_URL': JSON.stringify('https://debate-ai.com'),
+      'process.env.NEXT_PUBLIC_BASE_URL': JSON.stringify('https://debate-ai.com'),
+      'process.env': '{}',
+    },
+    resolve: {
+      dedupe: ['react', 'react-dom'],
+      alias: [
+        { find: /^next\/link$/, replacement: webui('src/next/link.tsx') },
+        { find: /^next\/navigation$/, replacement: webui('src/next/navigation.tsx') },
+        { find: /^next\/image$/, replacement: webui('src/next/image.tsx') },
+        // The separately-versioned card-cutter engine is never shipped; the web
+        // app resolves it to the same in-repo stub (apps/debate-ai.com/vite.config.ts).
+        {
+          find: '@cardcutter/browser',
+          replacement: fileURLToPath(
+            new URL('../../packages/debate-editor/src/editor/card-cutter-stub.ts', import.meta.url)
+          ),
+        },
+      ],
+    },
+    build: {
+      // The app is large (the research workspace alone is several MB); it is
+      // loaded from disk, route by route, so the web-sized warning says nothing.
+      chunkSizeWarningLimit: 8000,
+    },
   }),
   // `wxt dev` launches a browser via chrome-launcher, which only auto-detects
   // "Google Chrome" / "Chromium". This machine only has Chrome Beta installed,
@@ -38,7 +73,7 @@ export default defineConfig({
         '/Applications/Google Chrome Beta.app/Contents/MacOS/Google Chrome Beta',
     },
   },
-  manifest: ({ browser }) => ({
+  manifest: ({ browser, manifestVersion }) => ({
     name: 'Debate AI — Reader, Timer & Card Reuse Check',
     description:
       'Critical times call for critical thinking! Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
@@ -56,7 +91,8 @@ export default defineConfig({
       // the page the reader just opened the panel on. `activeTab` is granted
       // per user action, which is why the panel needs no access to every site.
       'activeTab',
-      // Reading that page's HTML out of the tab (src/reader/snapshot.ts).
+      // Reading that page's HTML out of the tab (src/reader/snapshot.ts), and
+      // putting the article panel's overlay on it (src/reader/panel.ts).
       // MV3 only: the Firefox build is MV2, where the same job is done by
       // `tabs.executeScript` under `activeTab` and there is no such permission.
       ...(browser === 'firefox' ? [] : ['scripting']),
@@ -65,11 +101,16 @@ export default defineConfig({
       // Pinging debate-ai.com with the stored session so a signed-in reader
       // stays signed in (src/auth/session.ts).
       'alarms',
-      // Chrome's side panel, where the article panel lives. Firefox uses
-      // `sidebar_action`, which WXT derives from the sidepanel entrypoint and
-      // which needs no permission entry.
-      ...(browser === 'firefox' ? [] : ['sidePanel']),
     ],
+    // The article panel is `reader.html` framed over the page the reader is
+    // on (src/reader/panel.ts), and a web page may only frame an extension
+    // page listed here. It grants no access to any site — it only lets the
+    // panel's page load inside one. Its scripts and styles are loaded by the
+    // panel itself, from the extension's own origin, so need no entry.
+    web_accessible_resources:
+      manifestVersion === 2
+        ? ['reader.html']
+        : [{ resources: ['reader.html'], matches: ['http://*/*', 'https://*/*'] }],
     // The deployments the reuse check, sign-in and account-backed AI may call
     // (see the Options page), plus the model providers above.
     host_permissions: [

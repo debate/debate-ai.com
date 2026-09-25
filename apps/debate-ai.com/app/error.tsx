@@ -8,7 +8,7 @@
  */
 
 import { useEffect } from "react"
-import { Button } from "../lib/ui/primitives/button"
+import { Button } from "debate-ai-webui/lib/ui/primitives/button"
 
 export default function RouteError({
   error,

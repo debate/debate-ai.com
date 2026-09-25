@@ -4,6 +4,8 @@ import {
   SEARCH_DEBOUNCE_MS,
   buildSearchParams,
   buildSearchUrl,
+  buildCardsSearchHref,
+  readCardsSearchParams,
 } from "../src/lib/search-query";
 
 const base = {
@@ -105,5 +107,25 @@ describe("search constants", () => {
     expect(Object.values(EMPTY_FILTERS).every((v) => v === "" || v === false)).toBe(
       true,
     );
+  });
+});
+
+describe("buildCardsSearchHref", () => {
+  it("links to the bare search page when nothing is pre-filled", () => {
+    expect(buildCardsSearchHref({})).toBe("/cards");
+    expect(buildCardsSearchHref({ q: "  ", event: "all" })).toBe("/cards");
+  });
+
+  it("carries the term, year and format", () => {
+    expect(buildCardsSearchHref({ q: "Arctic", year: 2024, event: "CX" })).toBe(
+      "/cards?q=Arctic&year=2024&event=CX",
+    );
+  });
+
+  it("round-trips through readCardsSearchParams", () => {
+    const href = buildCardsSearchHref({ q: "Water", year: "2023", event: "NDT" });
+    const { searchTerm, filters } = readCardsSearchParams(new URL(href, "https://x").searchParams);
+    expect(searchTerm).toBe("Water");
+    expect(filters).toEqual({ ...EMPTY_FILTERS, year: "2023", event: "NDT" });
   });
 });

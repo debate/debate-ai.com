@@ -11,9 +11,9 @@ import { PageNotReadableError, capturePageSnapshot } from '@/src/reader/snapshot
 import {
   READER_SNAPSHOT_MESSAGE,
   READER_TAB_CHANGED_MESSAGE,
-  openReaderPanel,
+  toggleReaderPanel,
 } from '@/src/reader/panel';
-import { getSettings, type ToolbarAction } from '@/src/settings/settings';
+import { getSettings } from '@/src/settings/settings';
 import { OPEN_TIMER_MESSAGE, forgetTimerWindow, openTimerWindow } from '@/src/timer/window';
 
 /**
@@ -61,19 +61,8 @@ const toolbarButton = (
   }
 ).action ?? (browser as unknown as { browserAction: typeof browser.action }).browserAction;
 
-/**
- * The toolbar mode, cached so the click handler can act on it without an
- * await. Opening the article panel only works while the browser still sees the
- * click as a user action, and awaiting a settings read first loses that — see
- * src/reader/panel.ts. The cache is filled whenever the mode is applied, which
- * includes every time this worker starts, so it is populated before any click
- * can arrive; the handler still falls back to reading storage if it is not.
- */
-let cachedToolbarAction: ToolbarAction | null = null;
-
 async function applyToolbarMode(): Promise<void> {
   const { toolbarAction } = await getSettings();
-  cachedToolbarAction = toolbarAction;
   await toolbarButton.setPopup({
     popup: toolbarAction === 'popup' ? POPUP_PAGE : '',
   });
@@ -95,10 +84,28 @@ async function createContextMenus(): Promise<void> {
   });
 }
 
-/** The tab the reader is looking at, which is the one the panel reads. */
+/** The tab the reader is looking at. */
 async function getActiveTab(): Promise<{ id?: number; url?: string } | undefined> {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
   return tab;
+}
+
+/**
+ * Shows or hides the article panel over `tabId`, falling back to the timer
+ * window on pages the panel can't be put on (browser-internal pages, the web
+ * store), so the click still does something.
+ */
+async function toggleReaderOrFallBack(tabId: number | undefined): Promise<void> {
+  if (tabId == null) {
+    await openTimerWindow();
+    return;
+  }
+  try {
+    await toggleReaderPanel(tabId);
+  } catch (error) {
+    console.warn('Could not show the article panel on this page:', error);
+    await openTimerWindow();
+  }
 }
 
 /** What the article panel gets back when it asks for the current page. */
@@ -108,11 +115,16 @@ interface SnapshotResponse {
   error?: string;
 }
 
-async function handleSnapshotRequest(): Promise<SnapshotResponse> {
-  const tab = await getActiveTab();
-  if (tab?.id == null) return { ok: false, error: 'No page is open to read.' };
+/**
+ * The panel is framed into the page it reads, so the tab to read is the one the
+ * request came from; the active tab is only a fallback for `reader.html`
+ * opened on its own.
+ */
+async function handleSnapshotRequest(senderTabId: number | undefined): Promise<SnapshotResponse> {
+  const tabId = senderTabId ?? (await getActiveTab())?.id;
+  if (tabId == null) return { ok: false, error: 'No page is open to read.' };
   try {
-    return { ok: true, snapshot: await capturePageSnapshot(tab.id) };
+    return { ok: true, snapshot: await capturePageSnapshot(tabId) };
   } catch (error) {
     return {
       ok: false,
@@ -125,14 +137,17 @@ async function handleSnapshotRequest(): Promise<SnapshotResponse> {
 }
 
 /**
- * Tells an open article panel that the reader has moved to another page, so it
- * can offer to read that one. Sent, not acted on: re-extracting under the
- * reader mid-sentence would be worse than a button.
+ * Tells an open article panel that its tab has moved to another page without a
+ * full load (a single-page app changing route), so it can offer to read that
+ * one. A full load takes the overlay down with the old page. Sent, not acted
+ * on: re-extracting under the reader mid-sentence would be worse than a button.
  */
-function notifyPanelOfTabChange(): void {
-  // Nothing is listening when the panel is closed, and that rejection is not
-  // a problem worth reporting.
-  void browser.runtime.sendMessage({ type: READER_TAB_CHANGED_MESSAGE }).catch(() => {});
+function notifyPanelOfTabChange(tabId: number): void {
+  // Nothing is listening when no panel is open, and that rejection is not a
+  // problem worth reporting.
+  void browser.runtime
+    .sendMessage({ type: READER_TAB_CHANGED_MESSAGE, tabId })
+    .catch(() => {});
 }
 
 export default defineBackground(() => {
@@ -154,37 +169,24 @@ export default defineBackground(() => {
   });
 
   // Only reached when no popup is registered, i.e. the toolbar icon is set to
-  // open the timer or the article panel. The panel is opened straight from
-  // this handler, with no await in front of it, because that click is the user
-  // action the browser checks for.
+  // open the timer or to toggle the article panel over the page. The click
+  // grants `activeTab` for the tab, which is all the panel needs.
   toolbarButton.onClicked.addListener((tab) => {
-    if (cachedToolbarAction === 'reader') {
-      void openReaderPanel(tab?.windowId).then((opened) => {
-        if (!opened) return openTimerWindow();
-      });
-      return;
-    }
-    if (cachedToolbarAction === 'timer') {
-      void openTimerWindow();
-      return;
-    }
-    // The worker was started by this very click and has not read the setting
-    // yet. Opening the panel is no longer possible on this click, so fall back
-    // to the timer and let the next click do the right thing.
     void (async () => {
-      await applyToolbarMode();
-      await openTimerWindow();
+      const { toolbarAction } = await getSettings();
+      if (toolbarAction === 'reader') await toggleReaderOrFallBack(tab?.id);
+      else await openTimerWindow();
     })();
   });
 
-  browser.runtime.onMessage.addListener((message: unknown) => {
+  browser.runtime.onMessage.addListener((message: unknown, sender) => {
     const type = (message as { type?: string } | undefined)?.type;
     switch (type) {
       case OPEN_TIMER_MESSAGE:
         void openTimerWindow();
         return;
       case READER_SNAPSHOT_MESSAGE:
-        return handleSnapshotRequest();
+        return handleSnapshotRequest(sender.tab?.id);
       case SIGN_IN_MESSAGE:
         return runSignInFlow();
       case SIGN_OUT_MESSAGE:
@@ -196,7 +198,7 @@ export default defineBackground(() => {
 
   browser.contextMenus.onClicked.addListener((info, tab) => {
     if (info.menuItemId === READ_PAGE_MENU_ID) {
-      void openReaderPanel(tab?.windowId);
+      void toggleReaderOrFallBack(tab?.id);
       return;
     }
     if (info.menuItemId !== CHECK_PAGE_MENU_ID || !info.pageUrl) return;
@@ -209,9 +211,8 @@ export default defineBackground(() => {
     });
   });
 
-  browser.tabs.onActivated.addListener(() => notifyPanelOfTabChange());
-  browser.tabs.onUpdated.addListener((_tabId, change, tab) => {
-    if (change.status === 'complete' && tab.active) notifyPanelOfTabChange();
+  browser.tabs.onUpdated.addListener((tabId, change) => {
+    if (change.url) notifyPanelOfTabChange(tabId);
   });
 
   browser.windows.onRemoved.addListener((windowId) => void forgetTimerWindow(windowId));

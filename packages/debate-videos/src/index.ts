@@ -68,6 +68,14 @@ export {
   WatchProgressBar,
   type WatchProgressBadgeProps,
 } from "./components/video-card/WatchProgressBadge";
+export {
+  ResizableSidebarLayout,
+  SIDEBAR_DEFAULT_WIDTH,
+  SIDEBAR_MAX_WIDTH,
+  SIDEBAR_MIN_WIDTH,
+  SIDEBAR_WIDTH_KEY,
+  type ResizableSidebarLayoutProps,
+} from "./ui/layout/ResizableSidebarLayout";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
@@ -91,6 +99,7 @@ export {
   eventSegment,
   isCanonicalVideoRoute,
   legacyVideoRouteHref,
+  previousVideoRouteHref,
   matchupSegment,
   parseRoundTitle,
   parseVideoRouteMatchup,
@@ -106,6 +115,7 @@ export {
 export {
   VIDEO_DOCUMENT_KINDS,
   VIDEO_DOCUMENT_LABELS,
+  captionsToTranscriptMarkdown,
   countWords,
   formatTimecode,
   isVideoDocumentKind,
@@ -113,17 +123,31 @@ export {
   parseDocumentSections,
   parseTimecode,
   toParagraphs,
+  type CaptionCue,
   type DocumentSection,
   type VideoDocument,
   type VideoDocumentKind,
 } from "./lib/video-documents";
+export {
+  buildRoundSpeeches,
+  identifySpeech,
+  playingSpeechIndex,
+  type RoundSpeech,
+  type SpeechSide,
+} from "./lib/round-speeches";
+export { resolveRoundSpeeches, standardRoundSpeeches } from "./lib/round-formats";
+export { parseYouTubeVideoId } from "./lib/youtube-video-id";
 export {
   VIDEO_RELATION_KINDS,
   VIDEO_RELATION_LABELS,
   type VideoRelationKind,
 } from "./lib/video-relations";
 export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
+export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
+export { stackKeyOf } from "./components/video-grid/video-stacks";
 export { WatchSidePanel } from "./components/watch/WatchSidePanel";
+export { WatchRoundPanel, type SpeechFocusRequest } from "./components/watch/WatchRoundPanel";
+export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";

@@ -18,6 +18,8 @@
  * @module lib/video-documents
  */
 
+import { groupIntoSentences } from "../components/transcript/transcriptUtils";
+
 /** Which kinds of document a video can carry, in the order the tabs show them. */
 export const VIDEO_DOCUMENT_KINDS = ["transcript", "summary", "analysis"] as const;
 
@@ -139,9 +141,16 @@ function splitHeadingTimecode(heading: string): { heading: string; startSeconds:
  * panel then just has nothing to jump between.
  *
  * @param body - The document's markdown.
+ * @param options.depth - Deepest heading level that starts a section (default
+ *   3). Deeper headings stay in the section's body — the per-speech view
+ *   splits on `##` only, so a `### Plan` inside a speech remains part of it.
  * @returns One entry per section, in document order.
  */
-export function parseDocumentSections(body: string): DocumentSection[] {
+export function parseDocumentSections(
+  body: string,
+  options: { depth?: number } = {},
+): DocumentSection[] {
+  const headingPattern = new RegExp(`^#{1,${options.depth ?? 3}}\\s+(.*)$`);
   const text = (body ?? "").replace(/\r\n/g, "\n");
   if (!text.trim()) return [];
 
@@ -167,7 +176,7 @@ export function parseDocumentSections(body: string): DocumentSection[] {
   };
 
   for (const line of text.split("\n")) {
-    const heading = line.match(/^#{1,3}\s+(.*)$/);
+    const heading = line.match(headingPattern);
     if (heading) {
       push();
       const split = splitHeadingTimecode(heading[1]);
@@ -204,4 +213,74 @@ export function orderDocuments(documents: VideoDocument[]): VideoDocument[] {
     .sort(
       (a, b) => VIDEO_DOCUMENT_KINDS.indexOf(a.kind) - VIDEO_DOCUMENT_KINDS.indexOf(b.kind),
     );
+}
+
+/** One timed caption cue, as `/api/transcript` returns them. */
+export interface CaptionCue {
+  text: string;
+  start: number;
+  duration: number;
+}
+
+/**
+ * A silence this long between two caption cues is read as the break between
+ * speeches — prep time, the next speaker walking up — and starts a new
+ * section. Shorter pauses are just someone breathing.
+ */
+const SPEECH_GAP_SECONDS = 20;
+
+/**
+ * A section that runs this long with no such pause is split anyway, so a
+ * caption dump never lands in the editor as one heading over an hour of text.
+ */
+const MAX_SECTION_SECONDS = 600;
+
+/** Sentences per paragraph, so the imported text is not one unbroken block. */
+const SENTENCES_PER_PARAGRAPH = 5;
+
+/**
+ * Turns YouTube's caption cues into a starting draft for a transcript
+ * document, in the house style: `##` sections whose headings carry the
+ * timecode they start at, so the draft is navigable on the watch page the
+ * moment it is saved.
+ *
+ * Headings are placeholders (`Part 1 (0:00)`) — the importer cannot know
+ * which speech is which, so an editor renames them `1AC — Michigan (0:00)`.
+ * Sections break on a long silence, which in a round is usually the gap
+ * between speeches, or every ten minutes when there is none.
+ *
+ * @param cues - Caption cues in playback order.
+ * @returns Markdown, or an empty string when there are no cues.
+ */
+export function captionsToTranscriptMarkdown(cues: CaptionCue[]): string {
+  const sentences = groupIntoSentences(cues.filter((cue) => cue.text.trim().length > 0));
+  if (sentences.length === 0) return "";
+
+  const sections: { start: number; sentences: string[] }[] = [];
+  let current: { start: number; sentences: string[] } | null = null;
+  let previousEnd = 0;
+
+  for (const sentence of sentences) {
+    const gap = sentence.start - previousEnd;
+    if (
+      !current ||
+      gap >= SPEECH_GAP_SECONDS ||
+      sentence.start - current.start >= MAX_SECTION_SECONDS
+    ) {
+      current = { start: sentence.start, sentences: [] };
+      sections.push(current);
+    }
+    current.sentences.push(sentence.text);
+    previousEnd = sentence.start + sentence.duration;
+  }
+
+  return sections
+    .map((section, index) => {
+      const paragraphs: string[] = [];
+      for (let i = 0; i < section.sentences.length; i += SENTENCES_PER_PARAGRAPH) {
+        paragraphs.push(section.sentences.slice(i, i + SENTENCES_PER_PARAGRAPH).join(" "));
+      }
+      return `## Part ${index + 1} (${formatTimecode(section.start)})\n\n${paragraphs.join("\n\n")}`;
+    })
+    .join("\n\n");
 }

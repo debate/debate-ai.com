@@ -39,6 +39,71 @@ the list doesn't scroll out from under you.
 Most of the library has no captions. A video without them simply shows no
 transcript column and the player takes the full width.
 
+## By speech
+
+Every round gets a **By speech** tab beside the player, and it opens
+first. When the round has an AI summary or written analysis that goes
+speech by speech, the tabs come from it; otherwise they follow the
+standard speech order for the round's format — LD, Public Forum or
+Policy. Every speech is
+its own tab — 1AC, CX · 1AC, 1NC, and so on — coloured blue for the aff,
+red for the neg and grey for cross-ex. Inside a speech you can switch
+between its **Summary**, **Analysis** and **Transcript**, and the view you
+pick stays chosen as you move from speech to speech.
+
+- Clicking a speech's tab plays the video from where that speech starts.
+  The arrow keys move between tabs without jumping the video.
+- The speech playing now has a pulsing red dot. With **Auto-scroll** on,
+  the tab moves to each speech as it begins; it leaves you alone while
+  you read ahead, until the next speech starts.
+- A **timeline** under the video shows the round as a bar, one segment
+  per speech, as wide as that speech ran, with a playhead. Clicking a
+  segment plays that speech and opens its tab.
+
+Start times come from the documents themselves: a heading like
+`## 1AC — Michigan (2:15)` in the transcript or summary is what places
+the 1AC on the timeline. For a round without them, play to where a
+speech begins and press **Mark start** on its tab; clear a mark with
+the **×** beside it. Marked speeches get proportional timeline segments,
+follow along as the video plays, and show the captions spoken during
+them under **Transcript**. Marks are saved in this browser only. Until
+any speech has a start, the timeline shows equal segments that still
+open each speech.
+
+### Outcomes — what else the speech could have done
+
+Every speech tab also has an **Outcomes** view. Press **Simulate** and
+Claude drafts two to four alternative responses the speaker could have
+given instead — a different collapse, an impact turn, a framework
+push, or for a cross-ex a different line of questioning — and predicts
+the ballot after each one, next to its prediction for the speech as it
+was actually given.
+
+- Pick the **judges** first — one to five of: flow, lay, policymaker,
+  kritik-friendly, theory-first and traditional. Each judge on the panel
+  votes separately with their own reason for decision and the argument
+  that decided it, and the panel's decision is the vote tally (an odd
+  panel avoids ties). Your panel is remembered.
+- Optionally **steer** the alternatives — "go for the DA instead of
+  theory" — before simulating.
+- A bar chart shows the aff's chance of winning after each version, with
+  the 50% line marked. The number beside each alternative is how much it
+  helps or hurts the side that gave the speech.
+- The alternative that helps most is marked **Strongest**; one that would
+  change who wins is marked **Ballot flips**. Open a card for the outline
+  in speaking order, what it gives up, and every judge's ballot.
+- **Copy** puts the whole run on your clipboard as Markdown, ready for a
+  doc or your team chat.
+- The last run for each speech and panel is kept in this browser, and its
+  tab gets a small sparkle. **Run again** asks for a fresh set.
+
+Simulating needs you to be signed in. The alternatives and ballots are
+Claude's predictions from a rough transcript and summary, not real
+results — use them to think through options, not as a verdict. For a
+round nobody has written up, Claude works from the video's captions: the
+speech's own captions once you have marked its start, otherwise the
+whole round's captions, so marking starts gives sharper results.
+
 ## Controls
 
 The toolbar above the video is the popout player's toolbar: play/pause,

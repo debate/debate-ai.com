@@ -4,6 +4,7 @@ import { getDBFromContext } from "@/lib/database/context"
 import { savedToolRecords } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import { withRouteErrors } from "@/lib/api/route-errors"
+import { chunkStatements } from "@/lib/database/query-budget"
 import {
   findToolRecordCollection,
   isSyncableToolRecord,
@@ -126,15 +127,20 @@ export const PUT = withRouteErrors(
 
     const db = await getDBFromContext()
     const now = new Date()
-    for (const { clientId, data } of values) {
-      await db
+    // Batched rather than awaited one by one: each awaited upsert spends one
+    // of D1's per-invocation queries (50 on the Free plan), so a store of a
+    // hundred-odd records — a long-lived `docsChatTabs` list, say — failed
+    // mid-loop with a bare 500. See `lib/database/query-budget.ts`.
+    const upserts = values.map(({ clientId, data }) =>
+      db
         .insert(savedToolRecords)
         .values({ userId, collection: key, clientId, data, createdAt: now, updatedAt: now })
         .onConflictDoUpdate({
           target: [savedToolRecords.userId, savedToolRecords.collection, savedToolRecords.clientId],
           set: { data, updatedAt: now },
-        })
-    }
+        }),
+    )
+    for (const batch of chunkStatements(upserts)) await db.batch(batch)
 
     return NextResponse.json({ collection: key, saved: values.length, updatedAt: now.toISOString() })
   },

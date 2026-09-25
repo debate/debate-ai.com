@@ -43,12 +43,12 @@ export const VIDEO_FORMAT_LINKS: SidebarVideoLink[] = [
 ];
 
 /** The rest of the video library: My Favorites, the last row under "Round
- *  Videos", then Lectures — a heading of its own — and the watch history,
- *  which is a sibling row directly under it. */
+ *  Videos", then the watch history — which hangs under that same heading now,
+ *  after My Favorites — then Lectures, a heading of its own. */
 export const VIDEO_LIBRARY_LINKS: SidebarVideoLink[] = [
   { id: "favorites", href: "/videos/favorites", title: "My Favorites" },
-  { id: "lectures", href: "/videos/lectures", title: "Lectures" },
   { id: "history", href: "/videos/history", title: "Watch History" },
+  { id: "lectures", href: "/videos/lectures", title: "Lectures" },
 ];
 
 /** The pair pinned below the tree, under its own divider. */

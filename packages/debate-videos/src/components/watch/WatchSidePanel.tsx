@@ -7,7 +7,11 @@
  * no speakers, no speech boundaries and no punctuation to speak of. So the
  * column is now a tab strip over everything a video can carry beside it:
  *
- *   1. **Captions** — the synced cues, unchanged, still the default.
+ *   0. **By speech** — for every round, and for any video whose AI summary
+ *      or written analysis goes speech by speech: the round one tab per
+ *      speech (see {@link WatchRoundPanel}), with the Outcomes simulator in
+ *      each. It opens first when present.
+ *   1. **Captions** — the synced cues, unchanged, the default otherwise.
  *   2. **Speeches / Summary** — the long-form documents: the round typed up
  *      speech by speech, and the AI summary of it.
  *   3. **Analysis** — the videos an editor has tied to this one.
@@ -29,6 +33,9 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { WatchTranscriptPanel } from "./WatchTranscriptPanel"
 import { WatchDocumentPanel } from "./WatchDocumentPanel"
 import { WatchAnalysisPanel, type LinkedVideo } from "./WatchAnalysisPanel"
+import { WatchRoundPanel, type SpeechFocusRequest } from "./WatchRoundPanel"
+import { buildRoundSpeeches, type RoundSpeech } from "../../lib/round-speeches"
+import type { RoundContext } from "../../lib/speech-outcomes"
 import {
   orderDocuments,
   VIDEO_DOCUMENT_LABELS,
@@ -46,6 +53,21 @@ interface WatchSidePanelProps {
   links?: LinkedVideo[]
   currentTime: number
   onSeek: (seconds: number) => void
+  /** A speech the timeline under the player asked to show; opens "By speech". */
+  focusSpeech?: SpeechFocusRequest | null
+  /** The video, for the per-speech Outcomes view. */
+  videoId?: string
+  videoTitle?: string
+  /**
+   * The round's speeches, when the page has already resolved them (with
+   * marked starts and caption transcripts applied). Read from the documents
+   * otherwise.
+   */
+  speeches?: RoundSpeech[]
+  round?: RoundContext
+  roundTranscript?: string
+  onMarkStart?: (speechKey: string, seconds: number | null) => void
+  markedKeys?: ReadonlySet<string>
 }
 
 /** Where the reader's auto-scroll choice is remembered. */
@@ -74,12 +96,25 @@ export function WatchSidePanel({
   links = [],
   currentTime,
   onSeek,
+  focusSpeech,
+  videoId,
+  videoTitle,
+  speeches: resolvedSpeeches,
+  round,
+  roundTranscript,
+  onMarkStart,
+  markedKeys,
 }: WatchSidePanelProps) {
   const ordered = useMemo(() => orderDocuments(documents), [documents])
+  const documentSpeeches = useMemo(() => buildRoundSpeeches(documents), [documents])
+  const speeches = resolvedSpeeches ?? documentSpeeches
   const hasCaptions = sentences.length > 0 || captionsLoading
 
   const tabs = useMemo<PanelTab[]>(() => {
     const list: PanelTab[] = []
+    if (speeches.length > 0) {
+      list.push({ id: "round", label: "By speech", hint: `${speeches.filter((speech) => speech.isSpeech).length} speeches` })
+    }
     if (hasCaptions) {
       list.push({
         id: "captions",
@@ -98,7 +133,7 @@ export function WatchSidePanel({
       list.push({ id: "analysis", label: "Analysis", hint: `${links.length} video${links.length === 1 ? "" : "s"}` })
     }
     return list
-  }, [hasCaptions, sentences.length, ordered, links.length])
+  }, [speeches.length, hasCaptions, sentences.length, ordered, links.length])
 
   const [activeId, setActiveId] = useState<string | null>(null)
   // Starts on, then picks up the stored choice after mount so the server
@@ -125,6 +160,10 @@ export function WatchSidePanel({
       return tabs[0]?.id ?? null
     })
   }, [tabs])
+
+  useEffect(() => {
+    if (focusSpeech) setActiveId("round")
+  }, [focusSpeech])
 
   if (tabs.length === 0) return null
 
@@ -162,6 +201,24 @@ export function WatchSidePanel({
             )
           })}
         </div>
+      )}
+
+      {active === "round" && (
+        <WatchRoundPanel
+          speeches={speeches}
+          documents={ordered}
+          currentTime={currentTime}
+          onSeek={onSeek}
+          autoScroll={autoScroll}
+          onAutoScrollChange={setAutoScroll}
+          focusRequest={focusSpeech}
+          videoId={videoId ?? documents[0]?.videoId}
+          videoTitle={videoTitle}
+          round={round}
+          roundTranscript={roundTranscript}
+          onMarkStart={onMarkStart}
+          markedKeys={markedKeys}
+        />
       )}
 
       {active === "captions" && (

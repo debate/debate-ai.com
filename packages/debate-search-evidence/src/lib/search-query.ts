@@ -104,3 +104,51 @@ export function buildSearchParams({
 export function buildSearchUrl(input: SearchQueryInput): string {
   return `/api/search?${buildSearchParams(input).toString()}`;
 }
+
+/** Path of the CARDS search page, which reads its starting state from the URL. */
+export const CARDS_SEARCH_PATH = "/cards";
+
+/** The part of a `/cards` link other pages can pre-fill. */
+export interface CardsSearchLink {
+  /** Search term, matched against every indexed field of a card. */
+  q?: string;
+  /** Season year, e.g. `"2024"`. */
+  year?: string | number;
+  /** Debate format as the search stores it: `CX`, `PF`, `LD`, `NDT` or `NFA`. */
+  event?: string;
+}
+
+/**
+ * Builds a link into the CARDS search pre-filled with a term and filters, so
+ * another page (e.g. the topics explorer) can open "everything on this topic
+ * that season". Blank values are left out of the URL.
+ *
+ * @param link - Term and filters to open the search with.
+ * @returns A `/cards?…` href.
+ */
+export function buildCardsSearchHref({ q, year, event }: CardsSearchLink): string {
+  const params = new URLSearchParams();
+  if (q?.trim()) params.set("q", q.trim());
+  if (year != null && String(year).trim()) params.set("year", String(year).trim());
+  if (event?.trim() && event.trim() !== "all") params.set("event", event.trim());
+  const query = params.toString();
+  return query ? `${CARDS_SEARCH_PATH}?${query}` : CARDS_SEARCH_PATH;
+}
+
+/**
+ * Reads the search term and text filters a `/cards` URL was opened with — the
+ * inverse of {@link buildCardsSearchHref}.
+ *
+ * @param params - The page's query string.
+ * @returns The term and filters to start the search with; filters the URL
+ *   doesn't mention keep their {@link EMPTY_FILTERS} value.
+ */
+export function readCardsSearchParams(params: URLSearchParams): {
+  searchTerm: string;
+  filters: SearchFilters;
+} {
+  const filters: SearchFilters = { ...EMPTY_FILTERS };
+  for (const key of TEXT_FILTER_KEYS) filters[key] = params.get(key)?.trim() ?? "";
+  filters.event = params.get("event")?.trim() ?? "";
+  return { searchTerm: params.get("q")?.trim() ?? "", filters };
+}

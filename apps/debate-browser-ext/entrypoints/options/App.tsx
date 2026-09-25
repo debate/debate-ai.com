@@ -1,72 +1,48 @@
-import { useEffect, useMemo, useState } from 'react';
-import { browser } from 'wxt/browser';
-import { DebateWebUI, type WebUIScreen } from 'debate-ai-webui';
+import { useMemo } from 'react';
+import { DebateApp, type AppRoute } from 'debate-ai-webui';
+import { Settings } from 'lucide-react';
 
-import { DEFAULT_API_BASE, getSettings } from '@/src/settings/settings';
+import { setProxiedApiBase } from '@/src/app-host/api-proxy';
 
 import { SettingsPanel } from './SettingsPanel';
 
+/** Where the extension's own settings live inside the app's routes. */
+export const EXTENSION_SETTINGS_PATH = '/extension';
+
 /**
- * The Options page: debate-ai.com's own frontend UI, with the extension's
- * settings as the last screen in its nav.
+ * The Options page: the whole debate-ai.com app — the same dock, sidebar,
+ * pages and tools as the website — with the extension's settings as one more
+ * page at `#/extension`.
  *
- * The page used to be a settings form and nothing else, which left the
- * extension's two tools (the timer window and the toolbar popup's reuse check)
- * as the only debate-ai.com surfaces reachable without opening the site. The
- * app's UI is now a package — `debate-ai-webui`, which talks to the API
- * through `debate-api-client` and knows nothing about Next.js or about this
- * extension — so the Options tab can mount the real thing: the video archive,
- * card search, the reuse check over any URL, the standings, and the catalog of
- * every tool in the app.
- *
- * The API base the reuse check already used is what the UI is pointed at, so
- * the whole page follows the deployment setting rather than hard-coding
- * production — and repoints the moment that setting is saved, without a
- * reload. Note that `host_permissions` still decides what the browser will
- * actually let it reach; see the README.
+ * The UI is `debate-ai-webui`, the package the website itself mounts from its
+ * Next `app/` directory. Here it routes through the URL fragment and reaches
+ * the API through `src/app-host/api-proxy.ts`; `main.tsx` sets both up before
+ * this renders. See the package's README for what a non-Next host provides.
  */
 export default function App() {
-  const [apiBase, setApiBase] = useState(DEFAULT_API_BASE);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    void getSettings().then((stored) => {
-      if (cancelled) return;
-      setApiBase(stored.apiBase);
-      setLoaded(true);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const extraScreens: WebUIScreen[] = useMemo(
+  const extraRoutes: AppRoute[] = useMemo(
     () => [
       {
-        id: 'extension',
-        label: 'Extension',
-        description:
-          'Timer defaults, what the toolbar icon opens, and how the on-page reuse check behaves.',
-        render: () => <SettingsPanel onApiBaseSaved={setApiBase} />,
+        pattern: EXTENSION_SETTINGS_PATH,
+        load: async () => ({
+          default: () => <SettingsPanel onApiBaseSaved={setProxiedApiBase} />,
+        }),
       },
     ],
     []
   );
 
-  // Rendering the shell before the stored API base is known would build a
-  // client against the production default and then throw it away one tick
-  // later, so the first request of every screen would go to the wrong
-  // deployment for anyone who changed the setting.
-  if (!loaded) return null;
-
   return (
-    <DebateWebUI
-      origin={apiBase}
-      extraScreens={extraScreens}
-      // An extension page can't navigate itself to the web app without losing
-      // the Options tab, so in-app routes open in a tab of their own.
-      onOpenRoute={(url) => void browser.tabs.create({ url })}
-    />
+    <>
+      <DebateApp extraRoutes={extraRoutes} />
+      <a
+        href={`#${EXTENSION_SETTINGS_PATH}`}
+        className="fixed right-3 top-3 z-50 inline-flex items-center gap-1.5 rounded-full border border-border bg-background/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-sm backdrop-blur hover:bg-accent"
+        title="Timer, toolbar, reader and reuse-check settings for this extension"
+      >
+        <Settings className="h-3.5 w-3.5" />
+        Extension settings
+      </a>
+    </>
   );
 }

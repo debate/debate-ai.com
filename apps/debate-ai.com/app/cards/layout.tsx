@@ -1,4 +1,3 @@
-import type React from "react"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -6,10 +5,4 @@ export const metadata: Metadata = {
   description: "Crowdsourced Annotated Research for Debating Solutions(CARDS)",
 }
 
-export  default function SearchLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return <>{children}</>
-}
+export { default } from "debate-ai-webui/routes/cards/layout"

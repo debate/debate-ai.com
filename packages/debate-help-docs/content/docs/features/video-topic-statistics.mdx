@@ -15,12 +15,22 @@ used to live only in a modal.
 
 Two sections, stacked:
 
-- **Debate Topics by Year** (`DebateTopicsExplorer`) — every season's Policy,
-  College (NDT), LD and PF resolutions, newest year first, each behind a
-  style badge. A search box filters by year or by resolution text. The data
+- **Debate Topics by Year** (`DebateTopicsExplorer`) — a timeline
+  (`components/timeline/Timeline.tsx`, adapted from the shadcn-space
+  "timeline-02" block): a scrollable rail of every season, newest first,
+  beside an animated pane for the selected year. The pane shows that year's
+  Policy, College (NDT), LD and PF resolutions, each behind a style badge,
+  and — once `/api/youtube-stats` resolves — that year's video count, total
+  views and average views from its `byYear` rows. Click a year, use the
+  arrow / Home / End keys on the rail, or the up/down buttons beside it to
+  scroll through every season; the selection survives filtering when the
+  year is still shown. A search box filters by year or by resolution text. The data
   is the same `topics` field `/api/videos/meta` already returns for the video
   cards' topic tooltips (`lib/debate-topics.ts`'s formatters), passed down
-  from `LecturesPage` rather than fetched again here.
+  from `LecturesPage` rather than fetched again here. Every resolution is a
+  link: clicking one opens the CARDS search (`/cards`) for that topic's short
+  name, filtered to that season's year and that format (Policy → CX,
+  College → NDT, LD, PF), listing every card, outline and round that matches.
 - **YouTube Channel Statistics** (`YouTubeStatsCharts`) — the top-channels
   table and the views/videos/avg-views-over-time charts `YouTubeStatsModal`
   already drew in its dialog, extracted so they can render inline on a full
@@ -37,7 +47,8 @@ tile grid.
 ```
 panels/LecturesPage.tsx — currentCategory === "statistics" branch
   → panels/statistics/StatisticsPage.tsx
-    → components/topic-explorer/DebateTopicsExplorer.tsx   (topics prop)
+    → components/topic-explorer/DebateTopicsExplorer.tsx   (topics, youtubeStats.byYear)
+      → components/timeline/Timeline.tsx
     → components/youtube-stats-modal/YouTubeStatsCharts.tsx (youtubeStats prop)
 ```
 
@@ -55,5 +66,13 @@ style's text at once, there's no "Policy only" toggle.~~ **Fixed:**
 row above the search box (labels match the same `DEBATE_STYLE_LABELS` the
 per-year badges already use — College here is the NDT resolution). Picking a style hides any year with no resolution
 for that style, restricts the search box to that style's text (plus the year
-itself), and shows only that style's badge on each remaining card — "Policy
+itself), and shows only that style's badge in each remaining year's pane — "Policy
 only" now works exactly as named. "All" restores the previous behavior.
+
+The topic links search by the topic's short name (e.g. "Water"), not the
+full resolution — the cards search is a substring match, so a whole
+resolution sentence would match almost nothing. Some older LD short names
+in `debate-topics.json` are just the resolution's first two words
+("Colleges And"), so those searches are broad; the fix is better names in
+the data, not in the link.
+

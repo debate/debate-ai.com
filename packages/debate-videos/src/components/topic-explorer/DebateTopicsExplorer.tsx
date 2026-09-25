@@ -1,28 +1,68 @@
 /**
- * @fileoverview Browsable, searchable list of every season's debate
- * resolutions (Policy, College/NDT, LD, PF), for the Topic & Video
- * Statistics page (`/videos/statistics`).
+ * @fileoverview Browsable, searchable timeline of every season's debate
+ * resolutions (Policy, College/NDT, LD, PF) alongside that year's video
+ * numbers, for the Topic & Video Statistics page (`/videos/statistics`).
  * @module components/topic-explorer/DebateTopicsExplorer
  */
 
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Search, X } from "lucide-react";
+import { buildCardsSearchHref } from "debate-research-evidence/src/lib/search-query";
 import { Input } from "../../ui/primitives/input";
 import { Button } from "../../ui/primitives/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/primitives/card";
 import { Badge } from "../../ui/primitives/badge";
+import { Timeline, type TimelineEntry } from "../timeline/Timeline";
 import { DEBATE_STYLE_LABELS, type DebateStyle } from "../../types/videos";
-import { getStyleTopicItems, getStyleTopicText, type DebateTopicYear } from "../../lib/debate-topics";
+import {
+  getStyleTopicItems,
+  getStyleTopicText,
+  type DebateTopicYear,
+  type TopicItem,
+} from "../../lib/debate-topics";
 
 /** Display order: Policy, College (NDT), LD, PF. */
 const EXPLORER_STYLES: DebateStyle[] = [1, 4, 3, 2];
+
+/** Each explorer style's value for the CARDS search's `event` filter. */
+const STYLE_SEARCH_EVENT: Record<DebateStyle, string> = {
+  1: "CX",
+  2: "PF",
+  3: "LD",
+  4: "NDT",
+};
+
+/** The `/cards` search for one resolution: its short title (or, untitled, its
+ *  full text) as the term, narrowed to that season and format. Every card,
+ *  outline and round in that slice of the corpus comes back. Exported for its
+ *  own unit test. */
+export function topicSearchHref(year: DebateTopicYear["year"], style: DebateStyle, item: TopicItem): string {
+  return buildCardsSearchHref({
+    q: item.title ?? item.text,
+    year,
+    event: STYLE_SEARCH_EVENT[style],
+  });
+}
+
+/** One year's row of `/api/youtube-stats`'s `byYear`. */
+export interface YearVideoStats {
+  year: string;
+  totalViews: number;
+  videoCount: number;
+  avgViewsPerVideo: number;
+}
 
 export interface DebateTopicsExplorerProps {
   /** Every season's resolutions, from `/api/videos/meta`'s `topics` field.
    *  `undefined` while that request is still in flight. */
   topics: DebateTopicYear[] | undefined;
+  /** `/api/youtube-stats`'s `byYear`, when that optional fetch resolved —
+   *  shown in each year's pane. Omitted, the panes carry topics only. */
+  videoStatsByYear?: YearVideoStats[];
+  /** Year selected on first render; defaults to the newest shown. */
+  defaultYear?: DebateTopicYear["year"];
 }
 
 /** The style filter's own value type: every real `DebateStyle`, plus "all". */
@@ -53,15 +93,22 @@ export function matchesStyleFilter(entry: DebateTopicYear, styleFilter: StyleFil
   return !!getStyleTopicText(entry, styleFilter);
 }
 
+const compactNumber = new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 });
+
 /**
- * A year-by-year grid of debate resolutions, filterable by year or topic
- * text. Pure presentational component — `topics` is passed down from
+ * A timeline of debate resolutions — a rail of every year beside the
+ * selected year's topics and video numbers — filterable by year, topic text
+ * or style. Pure presentational component — `topics` is passed down from
  * {@link LecturesPage}'s own `/api/videos/meta` fetch (`useVideoMeta`) so
  * this doesn't duplicate that request.
  */
-export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
+export function DebateTopicsExplorer({ topics, videoStatsByYear, defaultYear }: DebateTopicsExplorerProps) {
   const [search, setSearch] = useState("");
   const [styleFilter, setStyleFilter] = useState<StyleFilter>("all");
+  // Held as the year, not an index, so the selection survives filtering.
+  const [activeYear, setActiveYear] = useState<string | undefined>(
+    defaultYear === undefined ? undefined : String(defaultYear),
+  );
 
   const sortedYears = useMemo(
     () => [...(topics ?? [])].sort((a, b) => Number(b.year) - Number(a.year)),
@@ -78,6 +125,83 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
       return entryMatches(entry, term, visibleStyles);
     });
   }, [sortedYears, search, styleFilter, visibleStyles]);
+
+  const statsByYear = useMemo(
+    () => new Map((videoStatsByYear ?? []).map((row) => [String(row.year), row])),
+    [videoStatsByYear],
+  );
+
+  const timelineItems: TimelineEntry[] = filteredYears.map((entry) => ({
+    key: String(entry.year),
+    label: String(entry.year),
+  }));
+  const activeIndex = Math.max(0, timelineItems.findIndex((item) => item.key === activeYear));
+
+  const renderYear = (item: TimelineEntry, index: number) => {
+    const entry = filteredYears[index]!;
+    const stats = statsByYear.get(item.key);
+    return (
+      <div className="grid w-full grid-cols-1 items-start gap-6 lg:grid-cols-11">
+        <div className="flex flex-col items-start gap-3 lg:col-span-4 xl:ps-10">
+          <Badge variant="secondary" className="h-6 rounded-full px-2 py-1 font-normal">
+            Season
+          </Badge>
+          <h3 className="text-5xl font-medium tracking-tight text-foreground lg:text-8xl">{entry.year}</h3>
+          {stats ? (
+            <dl className="grid w-full max-w-sm grid-cols-3 gap-3 pt-2">
+              {[
+                ["Videos", stats.videoCount],
+                ["Views", stats.totalViews],
+                ["Avg views", stats.avgViewsPerVideo],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-lg border border-border bg-muted/40 p-3">
+                  <dt className="text-xs text-muted-foreground">{label}</dt>
+                  <dd className="text-lg font-semibold tabular-nums text-foreground">
+                    {compactNumber.format(Number(value))}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col gap-4 lg:col-span-7">
+          {visibleStyles.map((style) => {
+            const items = getStyleTopicItems(entry, style);
+            if (items.length === 0) return null;
+            return (
+              <div key={style} className="flex items-start gap-2 text-sm">
+                <Badge variant="outline" className="mt-0.5 shrink-0">
+                  {DEBATE_STYLE_LABELS[style]}
+                </Badge>
+                <ul className="min-w-0 space-y-1">
+                  {items.map((topic, i) => (
+                    <li key={i} className="whitespace-pre-line text-muted-foreground">
+                      <Link
+                        href={topicSearchHref(entry.year, style, topic)}
+                        title={`Search ${entry.year} ${DEBATE_STYLE_LABELS[style]} cards, outlines and rounds`}
+                        className="block rounded-sm hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        {topic.title && (
+                          <span className="font-medium text-foreground">
+                            {topic.emoji && <span aria-hidden="true">{topic.emoji} </span>}
+                            {topic.title}
+                            {": "}
+                          </span>
+                        )}
+                        {topic.month && <span>{topic.month}: </span>}
+                        {topic.text}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -105,7 +229,7 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter by style">
+      <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter by style">
         <Button
           type="button"
           size="sm"
@@ -136,43 +260,13 @@ export function DebateTopicsExplorer({ topics }: DebateTopicsExplorerProps) {
           {sortedYears.length === 0 ? "No debate topics are available yet." : "No topics match your search or filter."}
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {filteredYears.map((entry) => (
-            <Card key={String(entry.year)}>
-              <CardHeader>
-                <CardTitle className="text-base">{entry.year}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {visibleStyles.map((style) => {
-                  const items = getStyleTopicItems(entry, style);
-                  if (items.length === 0) return null;
-                  return (
-                    <div key={style} className="flex items-start gap-2 text-sm">
-                      <Badge variant="outline" className="mt-0.5 shrink-0">
-                        {DEBATE_STYLE_LABELS[style]}
-                      </Badge>
-                      <ul className="min-w-0 space-y-1">
-                        {items.map((item, i) => (
-                          <li key={i} className="whitespace-pre-line text-muted-foreground">
-                            {item.title && (
-                              <span className="font-medium text-foreground">
-                                {item.emoji && <span aria-hidden="true">{item.emoji} </span>}
-                                {item.title}
-                                {": "}
-                              </span>
-                            )}
-                            {item.month && <span>{item.month}: </span>}
-                            {item.text}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Timeline
+          label="Debate seasons"
+          items={timelineItems}
+          activeIndex={activeIndex}
+          onActiveIndexChange={(i) => setActiveYear(timelineItems[i]?.key)}
+          renderContent={renderYear}
+        />
       )}
     </div>
   );

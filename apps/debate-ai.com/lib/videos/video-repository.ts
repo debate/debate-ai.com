@@ -45,6 +45,7 @@ import {
 import { getVideoRowsFromJson } from "./video-json-source";
 import {
   legacyVideoRouteHref,
+  previousVideoRouteHref,
   slugifyVideoTitle,
   videoRouteHref,
   type VideoType,
@@ -657,8 +658,10 @@ const MAX_ROUTE_LOOKUP_PAGES = 50;
  * Fetches a single video by the segments of its path under `/videos`.
  *
  * Accepts the canonical path — `<season>/<tournament>/<round>/<teams>` for a
- * round, `<season>/<event>/<matchup>` otherwise — and the older three-segment
- * round path, so the caller can redirect a stale one. The segments are slugs,
+ * round, with a fifth `<variant>` segment for its analysis or a part,
+ * `<season>/<event>/<matchup>` otherwise — and both older round paths (the
+ * three-segment one, and the four-segment one whose teams carried `vs` and
+ * the variant), so the caller can redirect a stale one. The segments are slugs,
  * which the library's search text does not hold, so candidates are read by
  * season and each one's path is rebuilt and compared; failing that, by the
  * words of the last segment (a round whose path came from its title), and
@@ -670,11 +673,12 @@ const MAX_ROUTE_LOOKUP_PAGES = 50;
  */
 export async function getVideoByRouteSegments(segments: string[]): Promise<VideoTuple | null> {
   const clean = segments.map((segment) => decodeSegment(segment).toLowerCase()).filter(Boolean);
-  if (clean.length < 3 || clean.length > 4) return null;
+  if (clean.length < 3 || clean.length > 5) return null;
   const target = `/videos/${clean.join("/")}`;
   // A video whose current path this is wins over one whose old path it was.
   const matches = (videos: VideoTuple[]) =>
     videos.find((v) => videoRouteHref(v as unknown as VideoType) === target) ??
+    videos.find((v) => previousVideoRouteHref(v as unknown as VideoType) === target) ??
     videos.find((v) => legacyVideoRouteHref(v as unknown as VideoType) === target);
 
   const [season] = clean;
@@ -707,7 +711,12 @@ export async function getVideoByRouteSegments(segments: string[]): Promise<Video
   // which need not be the season it is stored under. Its team names are in
   // the title, though, and so in the search text; the whole library is the
   // last resort, for a suffix word the title does not hold.
-  const words = clean[clean.length - 1].split("-").filter((word) => word && word !== "vs");
+  // The teams and any variant after them are the words that name the video.
+  const words = clean
+    .slice(clean.length > 3 ? 3 : -1)
+    .join("-")
+    .split("-")
+    .filter((word) => word && word !== "vs");
   const query = [...new Set(words)].sort((a, b) => b.length - a.length).slice(0, 4).join(" ");
   return (query ? await scan({ q: query }) : null) ?? (await scan({}));
 }

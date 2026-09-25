@@ -5,9 +5,9 @@
  * @module components/debate/DebateVideos/panels/leaderboardUtils
  */
 
-import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills";
+import type { RankingDatasetId, RankingEntry } from "debate-rankings";
 import type { SeasonalTopic } from "../../lib/debate-topics";
-import type { Division, SortState, YearData } from "./leaderboardTypes";
+import type { Division, SortKey, SortState, YearData } from "./leaderboardTypes";
 
 // Re-export all types and the VALID_DIVISIONS set for backward compatibility.
 export type {
@@ -37,11 +37,10 @@ export const DIVISION_CONFIG: {
   championKey: keyof YearData;
   logoSrc: string;
   /**
-   * Whether a live per-team leaderboard data source exists for this
-   * division. NDT has no TOC bid list or DebateDrills Elo dataset behind
-   * it — only the historical champion/topic data shown in the banner.
+   * `debate-rankings` datasets for this division, first one shown by default.
+   * More than one renders a scope switcher (LD's full season vs. Sep–Oct topic).
    */
-  hasLiveLeaderboard: boolean;
+  datasets: RankingDatasetId[];
 }[] = [
   {
     value: "VPF",
@@ -49,7 +48,7 @@ export const DIVISION_CONFIG: {
     topicKey: "pf_topics",
     championKey: "pf_champion",
     logoSrc: "https://i.imgur.com/92V0FBF.png",
-    hasLiveLeaderboard: true,
+    datasets: ["hspf"],
   },
   {
     value: "VLD",
@@ -57,7 +56,7 @@ export const DIVISION_CONFIG: {
     topicKey: "ld_topics",
     championKey: "ld_champion",
     logoSrc: "https://i.imgur.com/3xFjCvO.png",
-    hasLiveLeaderboard: true,
+    datasets: ["hsld", "hsld_sepoct"],
   },
   {
     value: "VCX",
@@ -66,7 +65,7 @@ export const DIVISION_CONFIG: {
     topicNameKey: "policy_topic_name",
     championKey: "policy_champion",
     logoSrc: "https://i.imgur.com/CMuiSKj.png",
-    hasLiveLeaderboard: true,
+    datasets: ["hscx"],
   },
   {
     value: "NDT",
@@ -75,7 +74,7 @@ export const DIVISION_CONFIG: {
     topicNameKey: "ndt_topic_name",
     championKey: "ndt_champion",
     logoSrc: "https://i.imgur.com/cFmTAdJ.png",
-    hasLiveLeaderboard: false,
+    datasets: ["cpd"],
   },
 ];
 
@@ -99,117 +98,108 @@ export function resolveDivisionTopic(
 }
 
 /**
- * Whether `division` has a live per-team leaderboard data source, per
- * {@link DIVISION_CONFIG}. Falls back to `false` for an unrecognized value.
+ * The `debate-rankings` datasets behind `division`, per {@link DIVISION_CONFIG}.
+ * Empty for an unrecognized value.
+ */
+export function divisionDatasets(division: Division): RankingDatasetId[] {
+  return DIVISION_CONFIG.find((d) => d.value === division)?.datasets ?? [];
+}
+
+/**
+ * Returns true if the division has a live per-team leaderboard dataset.
+ * NDT and VCX only show historical champions.
  */
 export function hasLiveLeaderboard(division: Division): boolean {
-  return (
-    DIVISION_CONFIG.find((d) => d.value === division)?.hasLiveLeaderboard ??
-    false
-  );
+  return division === "VPF" || division === "VLD";
 }
 
 /**
- * Tooltip copy describing the Debate Elo rating formula shown on the Elo
- * column header inside the leaderboard table.
+ * Header tooltips for the columns of `output/<prefix>full_rankings.csv`,
+ * describing how `debate-rankings/src/main.py` computes each one.
  */
-export const ELO_TOOLTIP = `Debate Elo rating updates a team's skill score after each round using an Elo-style formula. The change in Elo for the winner is S = K · mv · (1 - wp), where S is the points gained (the loser loses roughly S). Here K is a scaling "drift factor" based on tournament bid level, mv is the margin of victory from judge ballots, and wp is the win probability implied by the pre-round Elo difference. Upsets against higher-rated opponents and larger margins give bigger Elo gains, while expected results change Elo only slightly. Debate Elo also adds a small outround bonus: e = b/2, where b is the number of bids, awarded to each team that wins an elimination round.`;
-
-// ---------------------------------------------------------------------------
-// Utility functions
-// ---------------------------------------------------------------------------
+export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
+  rank: "Position by adjusted rating.",
+  adjustedRating:
+    "Rating − 2 × Deviation. A conservative Glicko-2 estimate that keeps entries with only a few rounds from topping the list; ranks are sorted on it.",
+  rating:
+    "Raw Glicko-2 rating (μ), updated after every round. Rounds at major tournaments are counted twice.",
+  deviation:
+    "Glicko-2 rating deviation (φ): how uncertain the rating is. It shrinks as an entry debates more rounds.",
+  matches: "Rated matches played. Rounds at major tournaments count twice.",
+  affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
+  negWinRate: "Share of rounds won on the negative (Con in PF).",
+  affElimWinRate: "Share of elimination rounds won on the affirmative.",
+  negElimWinRate: "Share of elimination rounds won on the negative.",
+  hash: "Stable id of the entry across tournaments (SHA-256 of school and debaters).",
+};
 
 /**
- * Converts a leaderboard cell value to a number for numeric comparison.
- * Returns `-Infinity` for `null`, `undefined`, the placeholder `"--"`, or `NaN`.
- *
- * @param val - Raw cell value from a {@link LeaderboardEntry} field.
+ * Tooltip text for the Elo column.
  */
-export function getNumericValue(val: unknown): number {
-  if (val === undefined || val === null || val === "--") return -Infinity;
-  const n = Number(val);
-  return isNaN(n) ? -Infinity : n;
+export const ELO_TOOLTIP =
+  "Glicko-2 rating adjusted for the debate field. Higher values indicate stronger teams. Rounds at major tournaments count twice toward the rating.";
+
+/**
+ * Checks if a value is present and not a placeholder.
+ */
+export function hasValue(value: unknown): boolean {
+  return value !== null && value !== undefined && value !== "--" && value !== "";
 }
 
 /**
- * Converts a leaderboard cell value to a lowercase string for locale comparison.
- * Returns `""` for `null` or `undefined`.
- *
- * @param val - Raw cell value.
+ * Converts a value to a number, returning 0 if not a valid number.
  */
-export function getStringValue(val: unknown): string {
-  if (val === undefined || val === null) return "";
-  return String(val).toLowerCase();
+export function getNumericValue(value: unknown): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const n = Number(value);
+    return Number.isNaN(n) ? 0 : n;
+  }
+  return 0;
 }
 
 /**
- * Returns `true` when `val` is defined, non-null, and not the empty-cell
- * placeholder `"--"`.
+ * Returns a sorted copy of `entries` according to `sort`. Text columns sort
+ * alphabetically; `null` win rates (no rounds on that side) always sort last
+ * regardless of direction.
  *
- * @param val - Raw cell value.
- */
-export function hasValue(val: unknown): boolean {
-  return val !== undefined && val !== null && val !== "--";
-}
-
-/**
- * Returns a sorted copy of `entries` according to `sort`.
- * Empty cells (`null` / `undefined` / `"--"`) always sort to the bottom
- * regardless of sort direction so that data-less rows don't crowd the top.
- *
- * @param entries - Leaderboard rows to sort.
+ * @param entries - Rankings rows to sort.
  * @param sort - Active sort state, or `null` to return entries unsorted.
  */
 export function sortEntries(
-  entries: LeaderboardEntry[],
+  entries: RankingEntry[],
   sort: SortState,
-): LeaderboardEntry[] {
+): RankingEntry[] {
   if (!sort) return entries;
   const { key, dir } = sort;
   const mul = dir === "asc" ? 1 : -1;
 
   return [...entries].sort((a, b) => {
-    if (key === "state") {
-      return (
-        mul * getStringValue(a.state).localeCompare(getStringValue(b.state))
-      );
+    const av = a[key];
+    const bv = b[key];
+    if (av === null && bv === null) return 0;
+    if (av === null) return 1;
+    if (bv === null) return -1;
+    if (typeof av === "string" || typeof bv === "string") {
+      return mul * String(av).localeCompare(String(bv));
     }
-
-    if (key === "eloToBid") {
-      const aValid = hasValue(a.eloRank) && hasValue(a.rank);
-      const bValid = hasValue(b.eloRank) && hasValue(b.rank);
-      if (!aValid && !bValid) return 0;
-      if (!aValid) return 1;
-      if (!bValid) return -1;
-      return (
-        mul *
-        (getNumericValue(a.eloRank) / getNumericValue(a.rank) -
-          getNumericValue(b.eloRank) / getNumericValue(b.rank))
-      );
-    }
-
-    if (key === "eloTimesBid") {
-      const aValid = hasValue(a.eloRank) && hasValue(a.rank);
-      const bValid = hasValue(b.eloRank) && hasValue(b.rank);
-      if (!aValid && !bValid) return 0;
-      if (!aValid) return 1;
-      if (!bValid) return -1;
-      return (
-        mul *
-        (getNumericValue(a.eloRank) * getNumericValue(a.rank) -
-          getNumericValue(b.eloRank) * getNumericValue(b.rank))
-      );
-    }
-
-    if (key === "rank" || key === "eloRank") {
-      const aOk = hasValue(a[key]);
-      const bOk = hasValue(b[key]);
-      if (!aOk && !bOk) return 0;
-      if (!aOk) return 1;
-      if (!bOk) return -1;
-      return mul * (getNumericValue(a[key]) - getNumericValue(b[key]));
-    }
-
-    return mul * (getNumericValue(a[key]) - getNumericValue(b[key]));
+    return mul * (av - bv);
   });
+}
+
+/**
+ * Case-insensitive filter on school or name.
+ *
+ * @param entries - Rankings rows.
+ * @param query - Free-text query; blank returns `entries` unchanged.
+ */
+export function filterEntries(
+  entries: RankingEntry[],
+  query: string,
+): RankingEntry[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return entries;
+  return entries.filter(
+    (e) => e.name.toLowerCase().includes(q) || e.school.toLowerCase().includes(q),
+  );
 }

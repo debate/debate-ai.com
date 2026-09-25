@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "debate-ai-webui/*": [
+        "../../packages/debate-ai-webui/src/*"
       ]
     }
   },
@@ -33,7 +36,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "../../packages/debate-ai-webui/src/types/*.d.ts"
   ],
   "exclude": [
     "node_modules",

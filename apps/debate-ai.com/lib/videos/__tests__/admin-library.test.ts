@@ -23,7 +23,9 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
 import {
+  videoDocuments,
   videos,
+  videoTranscripts,
   youtubeRoundVideos,
   youtubeVideoExclusions,
   type VideoTableInsert,
@@ -46,6 +48,7 @@ const MIGRATIONS = [
   "0003_dark_zarek.sql", // youtube_round_videos
   "0005_green_redwing.sql", // videos
   "0026_admin_youtube_management.sql", // youtube_video_exclusions
+  "0039_video_transcripts.sql", // video_transcripts (cached YouTube captions)
   "0041_video_stacks.sql", // videos.stack_key / stack_position
   "0045_video_documents_relations_issues.sql", // videos.availability, and the
   // video_documents / video_relations / video_issues tables
@@ -197,6 +200,35 @@ describe("listLibraryVideos", () => {
 
     const policy = await listLibraryVideos(db, { style: 1 });
     expect(policy.videos.map((v: any) => v.videoId)).toEqual(["a"]);
+  });
+
+  it("says which videos have a transcript, and filters on it", async () => {
+    const db = await freshDb();
+    await db.insert(videos).values([videoRow("a"), videoRow("b"), videoRow("c")]);
+    const now = new Date();
+    await db.insert(videoDocuments).values([
+      { videoId: "a", kind: "transcript", body: "## 1AC\n\nThe plan.", wordCount: 3, createdAt: now, updatedAt: now },
+      // A saved-then-emptied transcript is not a transcript.
+      { videoId: "b", kind: "transcript", body: "", wordCount: 0, createdAt: now, updatedAt: now },
+      // Nor is a summary.
+      { videoId: "c", kind: "summary", body: "Aff won.", wordCount: 2, createdAt: now, updatedAt: now },
+    ]);
+    await db.insert(videoTranscripts).values({ videoId: "c", lang: "en", snippets: "[]", fetchedAt: now });
+
+    const all = await listLibraryVideos(db, {});
+    const byId = Object.fromEntries(all.videos.map((v) => [v.videoId, v]));
+    expect(byId.a.transcriptWords).toBe(3);
+    expect(byId.b.transcriptWords).toBeNull();
+    expect(byId.c.transcriptWords).toBeNull();
+    expect(byId.a.hasCaptions).toBe(false);
+    expect(byId.c.hasCaptions).toBe(true);
+
+    const withTranscript = await listLibraryVideos(db, { transcript: "with" });
+    expect(withTranscript.videos.map((v) => v.videoId)).toEqual(["a"]);
+    expect(withTranscript.total).toBe(1);
+
+    const without = await listLibraryVideos(db, { transcript: "without" });
+    expect(without.videos.map((v) => v.videoId).sort()).toEqual(["b", "c"]);
   });
 
   it("pages with a total and clamps a page past the end", async () => {

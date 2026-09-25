@@ -8,7 +8,7 @@
 import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
-import { TOURNAMENT_COLORS, getRoundBadgeColor } from "./videoCardUtils"
+import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
 import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
 import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
@@ -175,7 +175,13 @@ export function VideoCardThumbnail({
                     size="md"
                   />
                 )}
-                {cleanTournament && (
+                {cleanTournament && isTOCTournament(cleanTournament) ? (
+                  <img
+                    src={TOC_TOURNAMENT_IMAGE}
+                    alt="Tournament of Champions"
+                    className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                  />
+                ) : cleanTournament ? (
                   <span
                     className={cn(
                       "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
@@ -186,7 +192,7 @@ export function VideoCardThumbnail({
                   >
                     {cleanTournament}
                   </span>
-                )}
+                ) : null}
                 {year && (
                   <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                     '{String(year).slice(-2)}

@@ -1,0 +1,4 @@
+[submodule "packages/debate-rankings"]
+	path = packages/debate-rankings
+	url = https://github.com/debate/debate-rankings.git
+	branch = main
