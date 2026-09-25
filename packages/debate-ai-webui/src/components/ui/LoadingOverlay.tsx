@@ -2,7 +2,8 @@
 
 /**
  * @fileoverview The full-screen loading overlay shown on the app's first load
- * and on major page transitions.
+ * and on major page transitions — but only once a load has run past
+ * `showDelayMs` (1 s by default), so quick loads never flash it.
  *
  * It renders on top of everything — the dock, the sidebar, the framed
  * destinations — so the user sees one animated loader rather than a half-
@@ -38,6 +39,11 @@ interface LoadingOverlayProps {
    */
   fadeOutMs?: number
   /**
+   * How long `active` has to stay true before the overlay appears, so fast
+   * loads finish without ever flashing it. Defaults to 1000 ms.
+   */
+  showDelayMs?: number
+  /**
    * When true the overlay never receives pointer events, so the page behind
    * it is still clickable. Use this for transitions where the next page is
    * already mounted and interactive.
@@ -49,23 +55,28 @@ export function LoadingOverlay({
   active,
   label,
   fadeOutMs = 400,
+  showDelayMs = 1000,
   passthrough = false,
 }: LoadingOverlayProps) {
   // Render the DOM node as soon as it is needed for the fade-in, but keep it
   // mounted until the fade-out completes so the exit animation plays.
-  const [mounted, setMounted] = useState(active)
-  const [visible, setVisible] = useState(active)
+  // Both start false: even an overlay that mounts already active waits out
+  // `showDelayMs` first.
+  const [mounted, setMounted] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     if (active) {
-      setMounted(true)
-      setVisible(true)
-      return
+      const timer = window.setTimeout(() => {
+        setMounted(true)
+        setVisible(true)
+      }, showDelayMs)
+      return () => window.clearTimeout(timer)
     }
     setVisible(false)
     const timer = window.setTimeout(() => setMounted(false), fadeOutMs)
     return () => window.clearTimeout(timer)
-  }, [active, fadeOutMs])
+  }, [active, fadeOutMs, showDelayMs])
 
   if (!mounted) return null
 
