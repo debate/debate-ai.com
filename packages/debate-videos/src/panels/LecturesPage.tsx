@@ -27,6 +27,7 @@ import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
 import type { Division } from "./leaderboard/leaderboardUtils"
+import { currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
@@ -118,13 +119,9 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   }, [searchParams])
 
   const [leaderboardDivision, setLeaderboardDivision] = useState<Division>(initialDivision)
-  const [leaderboardYear, setLeaderboardYear] = useState("2026")
+  const [leaderboardYear, setLeaderboardYear] = useState(() => String(currentSeasonYear()))
 
-  const leaderboardYears = useMemo(() => {
-    const currentYear = new Date().getFullYear()
-    const maxYear = Math.max(currentYear, 2026)
-    return Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
-  }, [])
+  const leaderboardYears = useMemo(() => seasonYears(), [])
 
   const handleDivisionChange = useCallback((val: Division) => {
     setLeaderboardDivision(val)

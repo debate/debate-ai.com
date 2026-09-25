@@ -79,6 +79,27 @@ export const DIVISION_CONFIG: {
 ];
 
 /**
+ * Season year (the year a season ends in) for `now`. Seasons roll over on
+ * July 1: from then on the upcoming season is current, so September 2026 is
+ * the 2026-27 season, `2027`.
+ *
+ * @param now - Date to evaluate; defaults to the current time.
+ */
+export function currentSeasonYear(now: Date = new Date()): number {
+  return now.getMonth() >= 6 ? now.getFullYear() + 1 : now.getFullYear();
+}
+
+/**
+ * Selectable season years, newest (the current season) first, back to 2002.
+ *
+ * @param now - Date to evaluate; defaults to the current time.
+ */
+export function seasonYears(now: Date = new Date()): string[] {
+  const maxYear = currentSeasonYear(now);
+  return Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i));
+}
+
+/**
  * Resolves the banner topic for a division/year, including the legacy
  * `ld_topic` / `pf_topic` HTML strings from older debate-topics.json.
  */
