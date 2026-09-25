@@ -64,8 +64,6 @@ export const FOOTER_LINKS: FooterLink[] = [
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },
   { url: "https://www.debate.land", text: "Rankings", icon: Calendar, group: "debate" },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
-  { url: "https://debaterhub.com", text: "DebaterHub", icon: Scale, group: "debate" },
-  { url: "https://debate101.org/#hub", text: "Resource Links", icon: Book, group: "debate" },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
   { url: "https://stats.uptimerobot.com/V3HfCBM9de", text: "Status", icon: Activity, group: "site" },
   { url: "/legal/privacy", text: "Privacy", icon: Shield, group: "site" },

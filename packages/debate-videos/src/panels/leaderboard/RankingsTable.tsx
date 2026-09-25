@@ -49,8 +49,8 @@ function WinRate({ value }: { value: number | null }) {
 
 const COLUMNS: Column[] = [
   { key: "rank", label: "Rank", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
-  { key: "name", label: "Name", render: (e) => <span className="font-medium text-foreground">{e.name}</span> },
   { key: "school", label: "School", render: (e) => e.school },
+  { key: "name", label: "Name", render: (e) => <span className="font-medium text-foreground">{e.name}</span> },
   {
     key: "adjustedRating",
     label: "Adj. Rating",
@@ -58,21 +58,12 @@ const COLUMNS: Column[] = [
     render: (e) => <span className="font-semibold text-foreground">{rating(e.adjustedRating)}</span>,
   },
   { key: "rating", label: "Rating", numeric: true, render: (e) => rating(e.rating) },
-  { key: "deviation", label: "Deviation", numeric: true, render: (e) => `±${rating(e.deviation)}` },
+  { key: "deviation", label: "Dev", numeric: true, render: (e) => `±${rating(e.deviation)}` },
   { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },
   { key: "negWinRate", label: "Neg Win", numeric: true, render: (e) => <WinRate value={e.negWinRate} /> },
-  { key: "affElimWinRate", label: "Aff Elim Win", numeric: true, render: (e) => <WinRate value={e.affElimWinRate} /> },
-  { key: "negElimWinRate", label: "Neg Elim Win", numeric: true, render: (e) => <WinRate value={e.negElimWinRate} /> },
-  {
-    key: "hash",
-    label: "ID",
-    render: (e) => (
-      <span className="font-mono text-xs text-muted-foreground" title={e.hash}>
-        {e.hash.slice(0, 8)}
-      </span>
-    ),
-  },
+  { key: "affElimWinRate", label: "Aff Elim", numeric: true, render: (e) => <WinRate value={e.affElimWinRate} /> },
+  { key: "negElimWinRate", label: "Neg Elim", numeric: true, render: (e) => <WinRate value={e.negElimWinRate} /> },
 ]
 
 /** Props for the {@link RankingsTable} component. */
@@ -95,7 +86,7 @@ interface RankingsTableProps {
 export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProps) {
   return (
     <div className="rounded-lg border bg-card shadow-sm">
-      <Table className="min-w-[960px]">
+      <Table className="min-w-[960px] text-sm">
         <TableHeader className="bg-muted/50">
           <TableRow>
             {COLUMNS.map((col) => {
@@ -105,7 +96,7 @@ export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProp
                 <TableHead
                   key={col.key}
                   aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : undefined}
-                  className={cn("whitespace-nowrap", col.numeric && "text-right")}
+                  className={cn("whitespace-nowrap px-2 py-1", col.numeric && "text-right")}
                 >
                   <span className={cn("inline-flex items-center gap-1", col.numeric && "flex-row-reverse")}>
                     <button
@@ -145,11 +136,12 @@ export function RankingsTable({ entries, sort, onToggleSort }: RankingsTableProp
                 <TableCell
                   key={col.key}
                   className={cn(
-                    "whitespace-nowrap text-muted-foreground",
+                    "whitespace-nowrap text-muted-foreground px-2 py-1",
                     col.numeric && "text-right tabular-nums",
-                    col.key === "school" && "max-w-[240px] truncate",
+                    col.key === "school" && "max-w-[180px] truncate",
+                    col.key === "name" && "max-w-[180px] truncate",
                   )}
-                  title={col.key === "school" ? entry.school : undefined}
+                  title={col.key === "school" ? entry.school : col.key === "name" ? entry.name : undefined}
                 >
                   {col.render(entry)}
                 </TableCell>

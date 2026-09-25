@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="A practical high-school debate guide with format summaries, research rules, evidence standards, and format-specific rules." />
+  <title>Debate Formats, Research & Rules Guide</title>
+  <style>
+    :root {
+      --bg: #07101f;
+      --surface: #101d34;
+      --surface-2: #172846;
+      --line: #2c4771;
+      --text: #f0f5ff;
+      --muted: #b5c5df;
+      --blue: #79b7ff;
+      --green: #70dfab;
+      --amber: #ffd278;
+      --red: #ff9c9c;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: radial-gradient(ellipse at top, #17386a 0, var(--bg) 46rem);
+      font: 16px/1.62 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .container { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; }
+    header { padding: 3.5rem 0 1.7rem; }
+    h1 { margin: 0; font-size: clamp(2.2rem, 6vw, 4.25rem); line-height: 1.04; letter-spacing: -.035em; }
+    .lede { max-width: 880px; margin: 1rem 0 0; color: var(--muted); font-size: 1.1rem; }
+    nav { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.5rem; }
+    nav a {
+      padding: .43rem .75rem;
+      color: var(--text);
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgb(12 25 48 / .8);
+    }
+    nav a:hover { color: var(--blue); border-color: var(--blue); }
+    section { margin: 2.5rem 0; }
+    h2 { margin: 0 0 1rem; font-size: clamp(1.65rem, 3.5vw, 2.4rem); line-height: 1.15; }
+    h3 { margin: 0 0 .45rem; font-size: 1.12rem; }
+    p { margin: .45rem 0; }
+    .notice, .callout {
+      margin: 1.35rem 0;
+      padding: 1rem 1.15rem;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--amber);
+      border-radius: 0 12px 12px 0;
+      background: rgb(24 30 38 / .86);
+      color: #f5dfad;
+    }
+    .callout { border-left-color: var(--green); color: var(--muted); background: rgb(14 29 51 / .86); }
+    .callout strong { color: var(--green); }
+    .format-grid, .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(285px, 1fr)); gap: 1rem; }
+    .card {
+      padding: 1.25rem;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(145deg, var(--surface), var(--surface-2));
+      box-shadow: 0 12px 32px rgb(0 0 0 / .16);
+    }
+    .eyebrow { margin: 0 0 .55rem; color: var(--green); font-size: .8rem; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    ul, ol { margin: .5rem 0 0; padding-left: 1.3rem; }
+    li { margin: .36rem 0; }
+    .checklist li::marker { color: var(--green); }
+    .danger li::marker { color: var(--red); }
+    .format-section {
+      padding: clamp(1.2rem, 3vw, 2rem);
+      margin: 1.2rem 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgb(16 29 52 / .96), rgb(11 21 39 / .96));
+    }
+    .format-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: .7rem; }
+    .format-title h3 { margin: 0; font-size: 1.5rem; }
+    .badge { padding: .18rem .55rem; border: 1px solid #416491; border-radius: 999px; color: #c4dcff; font-size: .8rem; }
+    .format-section .rule-grid { margin-top: 1rem; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    th, td { padding: .82rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+    th { color: var(--green); background: #0c1930; }
+    tr:last-child td { border-bottom: 0; }
+    code { color: #c9dfff; }
+    footer { padding: 2rem 0 3rem; color: var(--muted); font-size: .92rem; }
+    @media (max-width: 620px) { .container { width: min(100% - 1.25rem, 1180px); } th, td { padding: .62rem; } }
+  </style>
+</head>
+<body>
+  <header class="container">
+    <h1>Debate Formats, Research &amp; Rules Guide</h1>
+    <p class="lede">A one-page reference for the most common high-school debate formats, their key round sections, and the research, evidence, conduct, and format-specific rules students need to know.</p>
+    <nav aria-label="Guide navigation">
+      <a href="#formats">Formats</a>
+      <a href="#research">Research rules</a>
+      <a href="#evidence">Evidence rules</a>
+      <a href="#devices">Devices &amp; AI</a>
+      <a href="#format-rules">Rules by format</a>
+      <a href="#checklist">Checklist</a>
+    </nav>
+    <aside class="notice"><strong>Important:</strong> This is a practical NSDA-style guide. Tournament invitations, state associations, and local leagues may use different speech times, procedures, internet rules, or AI policies. Always follow the rules governing your specific tournament.</aside>
+  </header>
+
+  <main class="container">
+    <section id="formats">
+      <h2>Formats at a glance</h2>
+      <div class="format-grid">
+        <article class="card">
+          <p class="eyebrow">Two-person teams</p><h3>Policy Debate (CX)</h3>
+          <p class="muted">A policy-resolution event built around detailed research, comparative consequences, and technical argument interaction.</p>
+          <ul><li><strong>1AC:</strong> plan, advantages, and evidence</li><li><strong>Negative:</strong> disadvantages, counterplans, topicality, kritik, and case debate</li><li><strong>Rebuttals:</strong> collapse to decisive voting issues</li></ul>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Individual</p><h3>Lincoln-Douglas (LD)</h3>
+          <p class="muted">A value-judgment debate centered on ethics, philosophy, frameworks, and direct comparison of principles.</p>
+          <ul><li><strong>Framework:</strong> value and standard</li><li><strong>Contentions:</strong> reasons to affirm or negate</li><li><strong>Rebuttals:</strong> answer, weigh, and crystallize</li></ul>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Two-person teams</p><h3>Public Forum (PF)</h3>
+          <p class="muted">A current-events debate designed for accessible, evidence-based persuasion and clear impact comparison.</p>
+          <ul><li><strong>Constructives:</strong> introduce contentions</li><li><strong>Crossfires:</strong> direct questioning</li><li><strong>Summary / final focus:</strong> narrow and weigh the ballot story</li></ul>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Individual chamber</p><h3>Congressional Debate</h3>
+          <p class="muted">A legislative simulation where delegates debate bills and resolutions through repeated floor speeches and questions.</p>
+          <ul><li><strong>Authorship:</strong> open and explain legislation</li><li><strong>Floor speeches:</strong> affirmative and negative advocacy</li><li><strong>Procedure:</strong> questioning, motions, amendments, voting</li></ul>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Individual</p><h3>Big Questions (BQ)</h3>
+          <p class="muted">A research debate connecting science, ethics, and philosophy; clarity and source quality matter heavily.</p>
+          <ul><li><strong>Definitions:</strong> frame the question</li><li><strong>Contentions:</strong> empirical and ethical claims</li><li><strong>Weighing:</strong> compare evidence, implications, and principles</li></ul>
+        </article>
+        <article class="card">
+          <p class="eyebrow">Teams</p><h3>World Schools / Parliamentary / BP</h3>
+          <p class="muted">Motion-based formats emphasizing fast analysis, direct refutation, teamwork, and persuasive comparative argument.</p>
+          <ul><li><strong>Case:</strong> define and defend the motion</li><li><strong>POIs:</strong> brief questions in many variants</li><li><strong>Replies / whips:</strong> summarize clash and comparative reasons to win</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="research">
+      <h2>Research rules</h2>
+      <div class="rule-grid">
+        <article class="card"><h3>Use authoritative, traceable sources</h3><p>Evidence is a fact, statistic, or example attributed to a specific, identifiable, authoritative source. Unattributed claims are your own arguments—not evidence.</p></article>
+        <article class="card"><h3>Keep source context</h3><p>Save the original article, PDF, webpage, or relevant pages with surrounding text. A quote should not be separated from context that changes its meaning.</p></article>
+        <article class="card"><h3>Build complete citations</h3><p>Record author/editor, publication date, outlet, article title, URL, access date, qualifications when available, and page numbers when available.</p></article>
+        <article class="card"><h3>Test every evidence card</h3><p>Ensure the highlighted language proves the precise claim in the tag. Separate the author’s conclusion from your own inference.</p></article>
+      </div>
+      <div class="callout"><strong>Recommended workflow:</strong> Save the source → create the citation → write a precise tag → highlight only what you will read → preserve nearby context → verify the card against its tag → keep a shareable copy ready for the round.</div>
+    </section>
+
+    <section id="evidence">
+      <h2>Evidence &amp; citation rules</h2>
+      <table>
+        <thead><tr><th>Rule</th><th>What to do in practice</th></tr></thead>
+        <tbody>
+          <tr><td>Oral citation</td><td>When introducing evidence, state at minimum the primary author’s last name and the publication year. For later quotations from the same source, the author name can be sufficient.</td></tr>
+          <tr><td>Written citation</td><td>Be ready to provide the complete citation upon request, including author, date, source/outlet, title, digital access date, URL if applicable, qualifications, and page numbers if available.</td></tr>
+          <tr><td>Mark what is read</td><td>Identify evidence orally with a pause or phrase such as “mark the card,” and visibly mark the exact text read or paraphrased in the written document.</td></tr>
+          <tr><td>Paraphrasing</td><td>A paraphrase must be as accurate and citable as a direct quotation. You must be able to produce the original and identify the supporting passage.</td></tr>
+          <tr><td>Evidence exchange</td><td>Any evidence, case, or citation used in the round must be made available promptly to an opponent or judge who requests it, in a readable format.</td></tr>
+        </tbody>
+      </table>
+      <div class="rule-grid" style="margin-top: 1rem;">
+        <article class="card"><h3>Distortion</h3><p>Never add or delete words in a way that materially changes an author’s conclusion. Bracket words you add.</p></article>
+        <article class="card"><h3>Nonexistent evidence</h3><p>Never cite material you cannot produce, text missing from the source, or a paraphrase without a verifiable original.</p></article>
+        <article class="card"><h3>Clipping</h3><p>Do not skip words while representing that you read all highlighted or underlined text.</p></article>
+        <article class="card"><h3>Ellipses &amp; straw arguments</h3><p>Do not use prohibited internal ellipses, and do not attribute an author’s description of another view to the author as their own position.</p></article>
+      </div>
+      <div class="callout"><strong>Consequences:</strong> Minor citation or marking issues may cause judges to disregard or discount evidence. Serious violations—such as clipping, distortion, or nonexistent evidence—can cause a loss, zero speaker points, disqualification, or further tournament sanctions.</div>
+    </section>
+
+    <section id="devices">
+      <h2>Devices, internet &amp; AI</h2>
+      <div class="rule-grid">
+        <article class="card"><h3>Allowed uses under current NSDA-style rules</h3><p>Internet-enabled devices can generally be used to retrieve files, exchange evidence or arguments, conduct research, and communicate with a debate partner.</p></article>
+        <article class="card"><h3>No outside competitive assistance</h3><p>Do not obtain arguments, strategic advice, cross-examination questions, or other competitive help from coaches, non-competing students, or any non-participant during the round.</p></article>
+        <article class="card"><h3>You own the tech risk</h3><p>Bring your own device, power, accessories, and backup plan. Connection or equipment failures typically do not earn extra speaking or prep time.</p></article>
+        <article class="card"><h3>Generative AI</h3><p>Follow the event’s specific AI policy. Do not assume AI is permitted simply because internet research is permitted, and never use it for prohibited real-time outside help.</p></article>
+      </div>
+    </section>
+
+    <section id="format-rules">
+      <h2>Rules by format</h2>
+
+      <article class="format-section">
+        <div class="format-title"><h3>Policy Debate (CX)</h3><span class="badge">Two-person teams</span></div>
+        <p class="muted">Policy debate asks whether the affirmative plan should be adopted. It rewards clean organization, evidence comparison, and direct responses across a long speech sequence.</p>
+        <div class="rule-grid">
+          <div class="card"><h3>Key round sections</h3><ul><li>Affirmative presents a plan, advantages, and evidence in the 1AC.</li><li>Negative answers with case arguments, disadvantages, counterplans, topicality, and/or kritiks.</li><li>Cross-examination clarifies evidence and commits opponents to positions.</li><li>Rebuttals must prioritize the arguments that decide the ballot.</li></ul></div>
+          <div class="card"><h3>Evidence &amp; procedure</h3><ul><li>Evidence read must be shareable upon request.</li><li>Track arguments on the flow and answer claims in the appropriate later speeches.</li><li>Use the team’s prep time carefully; tournament timing rules control.</li><li>Do not receive outside coaching or strategic help during the round.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="format-section">
+        <div class="format-title"><h3>Lincoln-Douglas Debate (LD)</h3><span class="badge">Individual</span></div>
+        <p class="muted">LD uses a value-judgment resolution. Debaters compare ethical frameworks as well as practical outcomes and empirical claims.</p>
+        <div class="rule-grid">
+          <div class="card"><h3>Key round sections</h3><ul><li>Affirmative constructive: framework and contentions.</li><li>Negative constructive: counter-framework and offense.</li><li>Cross-examination: clarify definitions and expose contradictions.</li><li>Rebuttals: answer, weigh, and explain the decisive framework.</li></ul></div>
+          <div class="card"><h3>Core rules</h3><ul><li>The resolution requires a value judgment.</li><li>At NSDA-style competition, each contestant debates both sides across the tournament.</li><li>Standard sequence: AC 6, NCX 3, NC 7, ACX 3, AR 4, NR 6, AR 3; 4 minutes prep per debater.</li><li>Evidence and device rules follow the shared standards above.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="format-section">
+        <div class="format-title"><h3>Public Forum Debate (PF)</h3><span class="badge">Two-person teams</span></div>
+        <p class="muted">PF emphasizes an accessible case, direct questioning, and a clear explanation of why a citizen judge should vote for one side.</p>
+        <div class="rule-grid">
+          <div class="card"><h3>Key round sections</h3><ul><li>Constructives present each side’s contentions and evidence.</li><li>Crossfires permit direct questioning and clarification.</li><li>Summaries identify the important contested issues and begin weighing.</li><li>Final focus gives the concise ballot story.</li></ul></div>
+          <div class="card"><h3>Core rules</h3><ul><li>Formal plans and counterplans are not permitted; teams should advocate pro or con through reasons, though generalized practical solutions are allowed.</li><li>Oral prompting while a speaker has the floor is discouraged and may be penalized.</li><li>NSDA-style sequence: 4–4 constructives, 3 crossfire, 4–4 rebuttals, 3 crossfire, 3–3 summaries, 3 grand crossfire, 2–2 final focus; 3 minutes prep per team.</li><li>Partners may consult when they do not have the floor and during grand crossfire.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="format-section">
+        <div class="format-title"><h3>Congressional Debate</h3><span class="badge">Individual chamber</span></div>
+        <p class="muted">Congress simulates legislative deliberation. Delegates combine research, responsive speeches, questioning, procedure, and civility.</p>
+        <div class="rule-grid">
+          <div class="card"><h3>Recognition &amp; speeches</h3><ul><li>Recognition follows precedence/recency: not yet spoken, fewer speeches, then least recently spoken.</li><li>Authorship/sponsorship and the first negative receive up to 3 minutes plus 2 minutes of questions.</li><li>Later speeches are up to 3 minutes with 1 minute of questioning.</li><li>Direct questioning is used at national and district competition; recognized questioners have up to 30 seconds.</li></ul></div>
+          <div class="card"><h3>Procedure &amp; evidence</h3><ul><li>Amendments must be written, identify the relevant lines/clauses, and be germane to the legislation’s intent.</li><li>Major votes are counted; presiding-officer elections use secret ballots.</li><li>Evidence is verifiable. When challenged, provide requested evidence, citation, or original source within two speeches.</li><li>Visual aids may be allowed, but cannot require electronic retrieval devices in the chamber.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="format-section">
+        <div class="format-title"><h3>Big Questions Debate (BQ)</h3><span class="badge">Individual</span></div>
+        <p class="muted">BQ explores large questions where science, ethics, and philosophy overlap. The strongest speeches make complex research understandable and comparable.</p>
+        <div class="rule-grid">
+          <div class="card"><h3>Key round sections</h3><ul><li>Define essential terms and frame the central question.</li><li>Present empirical, ethical, and/or philosophical contentions.</li><li>Use questioning to test methodology, causation, definitions, and implications.</li><li>Weigh the strongest evidence and the most important principles or consequences.</li></ul></div>
+          <div class="card"><h3>Core rules</h3><ul><li>Use the same shared evidence, citation, availability, and device standards described above.</li><li>Clearly distinguish scientific findings from moral conclusions or policy inferences.</li><li>Be ready to explain technical claims in language the judge can evaluate.</li><li>Check the tournament invitation for the current topic, timing, and event-specific procedures.</li></ul></div>
+        </div>
+      </article>
+
+      <article class="format-section">
+        <div class="format-title"><h3>World Schools, Parliamentary &amp; British Parliamentary</h3><span class="badge">Motion-based team formats</span></div>
+        <p class="muted">These formats use different speaker orders by league, but they share a focus on short preparation, clear motion analysis, direct clash, and comparative persuasion.</p>
+        <div class="rule-grid">
+          <div class="card"><h3>Key round sections</h3><ul><li>Opening government/affirmative defines and defends the motion.</li><li>Opposition directly refutes and offers a competing account of the motion.</li><li>Later speeches extend the team case rather than merely repeat it.</li><li>Reply or whip speeches compare the central clashes and explain the winning side.</li></ul></div>
+          <div class="card"><h3>Core rules to confirm locally</h3><ul><li>Speaker times, preparation time, points of information, and new-matter limits vary by circuit.</li><li>In BP, closing teams must make a distinct, relevant extension and whips generally do not introduce new substantive material.</li><li>In World Schools and many parliamentary variants, points of information are brief questions offered during substantive speeches.</li><li>Always check the invitation for evidence, electronic-device, and source-citation expectations.</li></ul></div>
+        </div>
+      </article>
+    </section>
+
+    <section id="checklist">
+      <h2>Pre-round checklist</h2>
+      <ol class="checklist">
+        <li>Read the current invitation and confirm the event’s timing, topic, procedures, evidence rules, and AI policy.</li>
+        <li>Verify every card: correct tag, complete citation, accurate highlighting, and saved original context.</li>
+        <li>Download or locally save sources and prepare a fast, readable method for sharing evidence.</li>
+        <li>Bring charging equipment, a backup copy of files, and a backup timing plan.</li>
+        <li>Do not contact or accept in-round help from non-participants.</li>
+        <li>Ask procedural questions before the round begins whenever possible.</li>
+      </ol>
+      <div class="callout"><strong>Best habit:</strong> Treat every evidence card as if an opponent will request it immediately. If you can quickly show the complete source, exact passage, and accurate citation, you are ready to read it.</div>
+    </section>
+  </main>
+
+  <footer class="container">This guide combines debate-format summaries with research and competition rules reflected in the supplied NSDA-style tournament material. Tournament-specific rules take priority whenever they differ.</footer>
+</body>
+</html>

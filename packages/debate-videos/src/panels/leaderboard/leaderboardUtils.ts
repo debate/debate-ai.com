@@ -130,7 +130,6 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   negWinRate: "Share of rounds won on the negative (Con in PF).",
   affElimWinRate: "Share of elimination rounds won on the affirmative.",
   negElimWinRate: "Share of elimination rounds won on the negative.",
-  hash: "Stable id of the entry across tournaments (SHA-256 of school and debaters).",
 };
 
 /**

@@ -24,7 +24,9 @@ export interface YoutubeChannelRow {
   name: string;
   enabled: boolean;
   addedBy: string | null;
+  /** Epoch milliseconds. */
   createdAt: number;
+  /** Epoch milliseconds. */
   updatedAt: number;
 }
 
@@ -106,7 +108,7 @@ function toRow(row: YoutubeChannel): YoutubeChannelRow {
     name: row.name,
     enabled: Boolean(row.enabled),
     addedBy: row.addedBy,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.createdAt.getTime(),
+    updatedAt: row.updatedAt.getTime(),
   };
 }
