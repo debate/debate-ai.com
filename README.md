@@ -100,7 +100,7 @@
 
 ### 📝 REASON: Research Editor for Annotated Summaries in Outline Notation
 
-— [CardMirror](https://github.com/debate/cardmirror) ProseMirror engine, packing
+- **[CardMirror](https://github.com/debate/cardmirror)** ProseMirror engine, packing
 roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feature list in the
 [package README](./packages/debate-editor/README.md#cardmirror-features)):
 - **Structured outline**: pockets, hats, blocks, tags, cards, analytics, and undertags as first-class node types, with footnotes, tables, and live/transcluded zones
