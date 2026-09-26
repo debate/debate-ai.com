@@ -57,9 +57,17 @@ const FEATURES_EXCLUDE_FROM_TOOLS = new Set(["/tools/mobile-setup"])
 /**
  * `/features` entries that intentionally have no `/tools` counterpart — core
  * nav destinations reachable from the app dock rather than tools listed on
- * the `/tools` grid.
+ * the `/tools` grid, and the two library pages taken off the tools grid when
+ * card search gained its own "Submit card" popup (their routes stay for deep
+ * links such as the browser extension's `?checkUrl=`).
  */
-const TOOLS_EXCLUDE_FROM_FEATURES = new Set(["/videos", "/cards", "/debate"])
+const TOOLS_EXCLUDE_FROM_FEATURES = new Set([
+  "/videos",
+  "/cards",
+  "/debate",
+  "/cards/library",
+  "/cards/argument-library",
+])
 
 /**
  * `/tools` entries that intentionally have no Workspace-menu counterpart.

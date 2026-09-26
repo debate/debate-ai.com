@@ -53,15 +53,16 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
 
   it("carries no Apps section restating the dock and the feature catalog", () => {
     // The dock's own five icons sit right beside this menu, and the catalog
-    // they belonged to is one `/features` row in Site Links now — not a
+    // they belonged to is reached from the command palette now — not a
     // submenu of per-category submenus inside the Settings menu.
     expect(SIDEBAR_MENU_SECTIONS.some((section) => section.id === "apps")).toBe(false)
     expect(SIDEBAR_MENU_SECTIONS.some((section) => section.title === "Apps")).toBe(false)
   })
 
-  it("still reaches the feature catalog, through the Site Links row", () => {
-    expect(SITE_LINKS.map((link) => link.url)).toContain("/features")
-    expect(DOCK_MENU_HREFS.has("/features")).toBe(true)
+  it("leaves the feature catalog out of Site Links", () => {
+    // The footer's "Features" row was retired; the catalog is reached from
+    // the command palette's "All Features" entry instead.
+    expect(SITE_LINKS.map((link) => link.url)).not.toContain("/features")
   })
 
   it("reaches the help docs", () => {

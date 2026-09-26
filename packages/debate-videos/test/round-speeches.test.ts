@@ -58,9 +58,12 @@ describe("identifySpeech", () => {
   });
 
   it("names the speech a cross-ex questions", () => {
-    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "2AX", side: "cx", target: "1AC" });
+    // `base` stays "CX" so repeats still pair up across documents by order;
+    // the label is what names the speech it questions.
+    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "CX", label: "2AX", side: "cx", target: "1AC" });
     expect(identifySpeech("Cross-Examination of the First Negative Constructive")).toMatchObject({
-      base: "2NX",
+      base: "CX",
+      label: "2NX",
       target: "1NC",
     });
   });

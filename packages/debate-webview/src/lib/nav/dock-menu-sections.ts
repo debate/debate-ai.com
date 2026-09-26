@@ -15,9 +15,9 @@
  * dock's own five destinations as plain rows, then every surface in
  * `feature-catalog.ts` as a nested submenu per category — which made the
  * Settings menu a second, deeper copy of `/features`. The catalog is reached
- * by the `/features` row in the Site Links submenu instead (see
- * `debate-videos`' `footer-links.ts`), and the dock's five destinations are
- * the dock's five icons, sitting directly beside the menu that listed them.
+ * from the command palette's "All Features" entry instead, and the dock's
+ * five destinations are the dock's five icons, sitting directly beside the
+ * menu that listed them.
  *
  * Plain data in `lib/` rather than JSX in the component so
  * `__tests__/dock-menu-sections.test.ts` can assert the coverage directly.
