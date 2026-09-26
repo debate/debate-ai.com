@@ -29,6 +29,12 @@ import {
 const SIDEBAR_HREFS = new Set([
   ...SIDEBAR_TOOL_SECTIONS.flatMap((section) => section.tools.map((tool) => tool.href)),
   ...APP_DOCK_LINKS.map((link) => link.href),
+  // Taken out of the Practice tree on purpose, but still routed pages that
+  // show their saved work, so a synced row pointing at one is still a
+  // working link.
+  "/summaries",
+  "/outline",
+  "/annotations",
 ]);
 
 describe("synced tool collections", () => {

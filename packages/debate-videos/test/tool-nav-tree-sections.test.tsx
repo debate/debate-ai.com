@@ -98,7 +98,7 @@ describe("ToolNavTree sectionIds", () => {
       expect(html).toContain("/videos/dictionary");
       expect(html).toContain("/videos/rankings");
       // Last in the section: reference material after the tools themselves.
-      expect(html.indexOf("/annotations")).toBeLessThan(html.indexOf("/videos/dictionary"));
+      expect(html.indexOf("/prep-notes")).toBeLessThan(html.indexOf("/videos/dictionary"));
     } finally {
       pathname.current = "/cards";
     }
