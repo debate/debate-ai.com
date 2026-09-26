@@ -37,14 +37,19 @@ import AccountBar from '@/src/components/article/AccountBar';
 import ArticleAIResponse from '@/src/components/article/ArticleAIResponse';
 import ArticleActionButtons, {
   ARTICLE_TOOLBAR_SHORTCUTS,
+  READING_WIDTHS,
+  type ReadingWidth,
 } from '@/src/components/article/ArticleActionButtons';
 import ArticleContent from '@/src/components/article/ArticleContent';
 import ArticleFollowupQuestions from '@/src/components/article/ArticleFollowupQuestions';
 import ArticlePromptInput from '@/src/components/article/ArticlePromptInput';
+import { clearHighlights } from '@/src/reader/highlights';
 import {
   READER_SNAPSHOT_MESSAGE,
   READER_TAB_CHANGED_MESSAGE,
   requestReaderPanelClose,
+  requestReaderPanelLayout,
+  type ReaderLayout,
 } from '@/src/reader/panel';
 import { checkPageForExistingCards } from '@/src/reuse/api';
 import {
@@ -57,6 +62,26 @@ const MIN_FONT_SCALE = 0.5;
 const MAX_FONT_SCALE = 1.8;
 const FONT_SCALE_STEP = 0.1;
 const FONT_SCALE_KEY = 'articleFontScale';
+const LAYOUT_KEY = 'readerLayout';
+const READING_WIDTH_KEY = 'readerWidth';
+
+/** A value kept in this extension's own `localStorage`, or `fallback`. */
+function readStored<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
+  try {
+    const value = localStorage.getItem(key);
+    return allowed.includes(value as T) ? (value as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStored(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage blocked — the choice just won't be remembered.
+  }
+}
 
 /** How much of the article body is sent to a model. */
 const MAX_ARTICLE_CHARS = 15000;
@@ -98,7 +123,36 @@ export default function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
+  const [highlights, setHighlights] = useState<string[]>([]);
   const [fontScale, setFontScale] = useState(1);
+  const [layout, setLayout] = useState<ReaderLayout>(() =>
+    readStored<ReaderLayout>(LAYOUT_KEY, ['full', 'side'], 'full'),
+  );
+  const [readingWidth, setReadingWidth] = useState<ReadingWidth>(() =>
+    readStored(READING_WIDTH_KEY, Object.keys(READING_WIDTHS) as ReadingWidth[], 'medium'),
+  );
+
+  // The frame opens full-page; tell the page which layout to actually use,
+  // now and whenever the reader switches.
+  useEffect(() => {
+    requestReaderPanelLayout(layout);
+    writeStored(LAYOUT_KEY, layout);
+  }, [layout]);
+
+  useEffect(() => writeStored(READING_WIDTH_KEY, readingWidth), [readingWidth]);
+
+  const toggleLayout = () => setLayout((current) => (current === 'full' ? 'side' : 'full'));
+  const cycleReadingWidth = () =>
+    setReadingWidth((current) => {
+      const widths = Object.keys(READING_WIDTHS) as ReadingWidth[];
+      return widths[(widths.indexOf(current) + 1) % widths.length];
+    });
+
+  const clearAllHighlights = () => {
+    const body = document.getElementById('article-content');
+    if (body) clearHighlights(body);
+    setHighlights([]);
+  };
 
   // Holds the latest toolbar handlers so the global keydown listener, which is
   // registered once, always calls current closures rather than stale ones.
@@ -231,9 +285,15 @@ export default function App() {
     async (question: string) => {
       if (!article) return;
       const body = articleToPlainText(article, MAX_ARTICLE_CHARS);
-      // A reader who highlighted something before opening the panel almost
-      // always means "about this part", so it is asked alongside the question.
-      const fullQuestion = [selectionText, question].filter(Boolean).join('\n');
+      // A reader who selected something before opening the panel, or has
+      // highlighted passages in it, almost always means "about this part", so
+      // that text is asked alongside the question.
+      const focus = [selectionText, ...highlights].filter(Boolean);
+      const fullQuestion = focus.length
+        ? `Focus on these passages from the article:\n${focus
+            .map((passage) => `"${passage}"`)
+            .join('\n')}\n\n${question}`
+        : question;
 
       setIsLoadingAI(true);
       setAiError('');
@@ -258,7 +318,7 @@ export default function App() {
         setIsLoadingAI(false);
       }
     },
-    [article, chatHistory, selectionText],
+    [article, chatHistory, highlights, selectionText],
   );
 
   const generateFollowups = useCallback(async () => {
@@ -378,6 +438,10 @@ export default function App() {
     suggest: () => void generateFollowups(),
     copy: () => void copyArticle(),
     highlight: () => setIsHighlightMode((previous) => !previous),
+    layout: toggleLayout,
+    width: () => {
+      if (layout === 'full') cycleReadingWidth();
+    },
     cards: () => void checkForExistingCards(),
     save: () => void saveToAccount(),
     open: () => {
@@ -438,10 +502,16 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Full page centers everything in one column at the chosen width; the side
+  // panel is already narrow, so it just fills the frame.
+  const columnStyle: React.CSSProperties | undefined =
+    layout === 'full' ? { maxWidth: READING_WIDTHS[readingWidth].maxWidth } : undefined;
+
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex h-screen flex-col bg-background text-foreground">
-        <div className="shrink-0 space-y-2 border-b border-border bg-background/95 px-3 py-2.5">
+        <div className="shrink-0 border-b border-border bg-background/95 px-3 py-2.5">
+          <div className="mx-auto w-full space-y-2" style={columnStyle}>
           <AccountBar
             user={account.user}
             isBusy={account.isLoading}
@@ -457,6 +527,9 @@ export default function App() {
             isSaving={isSaving}
             isSignedIn={Boolean(account.user)}
             isHighlightMode={isHighlightMode}
+            highlightCount={highlights.length}
+            layout={layout}
+            readingWidth={readingWidth}
             articleUrl={article?.url}
             fontScale={fontScale}
             onAskClick={() => void askQuestion(userPrompt)}
@@ -466,15 +539,22 @@ export default function App() {
             onCheckCardsClick={() => void checkForExistingCards()}
             onSaveClick={() => void saveToAccount()}
             onHighlightToggle={() => setIsHighlightMode((previous) => !previous)}
+            onClearHighlights={clearAllHighlights}
+            onLayoutToggle={toggleLayout}
+            onReadingWidthChange={setReadingWidth}
             onZoomIn={() => persistFontScale(fontScale + FONT_SCALE_STEP)}
             onZoomOut={() => persistFontScale(fontScale - FONT_SCALE_STEP)}
             onZoomReset={() => persistFontScale(1)}
             onClose={closePanel}
           />
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-4 p-3">
+          <div
+            className={`mx-auto w-full space-y-4 ${layout === 'full' ? 'px-6 py-6' : 'p-3'}`}
+            style={columnStyle}
+          >
             {pageChanged && (
               <div className="flex items-center justify-between gap-2 rounded-md border border-primary/30 bg-accent/40 p-2 text-xs">
                 <span>You&apos;ve moved to another page.</span>
@@ -524,11 +604,26 @@ export default function App() {
 
             {article && (
               <>
-                {selectionText && (
-                  <div className="rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground">Asking about:</span>{' '}
-                    {selectionText.slice(0, 280)}
-                    {selectionText.length > 280 ? '…' : ''}
+                {(selectionText || highlights.length > 0) && (
+                  <div className="space-y-1 rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-foreground">Asking about:</span>
+                      {highlights.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={clearAllHighlights}
+                          className="underline underline-offset-2 hover:text-foreground"
+                        >
+                          Clear highlights
+                        </button>
+                      )}
+                    </div>
+                    {[selectionText, ...highlights].filter(Boolean).map((passage, index) => (
+                      <p key={index} className="border-l-2 border-yellow-300 pl-2">
+                        {passage.slice(0, 280)}
+                        {passage.length > 280 ? '…' : ''}
+                      </p>
+                    ))}
                   </div>
                 )}
 
@@ -583,6 +678,7 @@ export default function App() {
                   article={article}
                   isHighlightMode={isHighlightMode}
                   fontScale={fontScale}
+                  onHighlightsChange={setHighlights}
                 />
               </>
             )}
