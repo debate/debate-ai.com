@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   RANKING_DATASETS,
+  RATING_OFFSET,
   entryInitials,
+  offsetEntryRatings,
   findTeamRanking,
   getRankingDatasetInfo,
   parseTeamLabel,
@@ -35,5 +37,11 @@ describe("debate-rankings-adapter", () => {
     ];
     expect(findTeamRanking(rows, "Harker LL")?.rank).toBe(4);
     expect(findTeamRanking(rows, "Harker QQ")).toBeNull();
+  });
+
+  it("shows Glicko-2 ratings 500 points lower, leaving the rest of the row alone", () => {
+    expect(RATING_OFFSET).toBe(500);
+    const row = entry({ rank: 3, rating: 1900, adjustedRating: 1700, deviation: 100 });
+    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 1400, adjustedRating: 1200 });
   });
 });

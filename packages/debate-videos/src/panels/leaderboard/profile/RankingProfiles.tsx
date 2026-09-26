@@ -30,6 +30,7 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
+import { TeamRadarChart } from "./TeamRadarChart"
 
 const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>
@@ -85,7 +86,7 @@ function ProfileStatus({
   return null
 }
 
-/** Stats for one team in one division. */
+/** Stats and radar chart for one team in one division. */
 function TeamDivisionStats({ item }: { item: ProfileEntry }) {
   const { entry } = item
   return (
@@ -103,6 +104,9 @@ function TeamDivisionStats({ item }: { item: ProfileEntry }) {
           label="Elim aff / neg"
           value={`${percent(entry.affElimWinRate)} / ${percent(entry.negElimWinRate)}`}
         />
+      </div>
+      <div className="mt-2 max-w-md">
+        <TeamRadarChart item={item} />
       </div>
     </div>
   )

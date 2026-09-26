@@ -25,6 +25,7 @@ import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useCategoryDock } from "../context/category-dock-context"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
 import { LeaderboardView } from "./leaderboard/LeaderboardView"
+import type { LeaderboardTab } from "./leaderboard/leaderboardTypes"
 import { currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { VideoGridView } from "./VideoGridView"
 
@@ -70,7 +71,7 @@ export function DebateVideosPage() {
   }, [])
 
   // Lifted state for the leaderboard view
-  const [lbDivision, setLbDivision] = useState<"VPF" | "VLD" | "VCX" | "NDT">("VPF")
+  const [lbDivision, setLbDivision] = useState<LeaderboardTab>("VPF")
   const [lbYear, setLbYear] = useState(() => String(currentSeasonYear()))
   const lbYears = useMemo(() => seasonYears(), [])
 

@@ -8,6 +8,7 @@ import {
   schoolVideoQuery,
   summarizeSchool,
   teamHref,
+  teamRadarData,
   teamVideoQuery,
 } from "../src/panels/leaderboard/profile/rankingProfileHelpers";
 
@@ -74,5 +75,49 @@ describe("ranking profile links", () => {
   it("builds video searches without separators", () => {
     expect(teamVideoQuery({ name: "Falk & Sabnani" })).toBe("Falk Sabnani");
     expect(schoolVideoQuery("Harvard-Westlake")).toBe("Harvard-Westlake");
+  });
+});
+
+describe("teamRadarData", () => {
+  const item = (over: Partial<RankingEntry>, fieldSize = 11, maxMatches = 40) => ({
+    datasetId: "hspf" as const,
+    datasetLabel: "HS Public Forum",
+    fieldSize,
+    maxMatches,
+    entry: entry(1, "Alpha", "Kim & Lee", over),
+  });
+
+  it("plots win rates, rank percentile and relative matches on 0–100 spokes", () => {
+    const data = teamRadarData(
+      item({ rank: 3, matches: 30, affWinRate: 80, negWinRate: 62.5, affElimWinRate: 100, negElimWinRate: null }),
+    );
+    expect(Object.fromEntries(data.map((d) => [d.metric, d.score]))).toEqual({
+      "Aff win": 80,
+      "Neg win": 62.5,
+      "Elim neg": 0,
+      "Elim aff": 100,
+      Ranking: 80,
+      Matches: 75,
+    });
+    expect(data.find((d) => d.metric === "Elim neg")?.display).toBe("no rounds");
+    expect(data.find((d) => d.metric === "Ranking")?.display).toBe("#3 of 11");
+    expect(data.find((d) => d.metric === "Matches")?.display).toBe("30 of 40 max");
+  });
+
+  it("puts a lone entry at the edge and survives an empty field", () => {
+    const data = teamRadarData(item({ rank: 1, matches: 0 }, 1, 0));
+    expect(data.find((d) => d.metric === "Ranking")?.score).toBe(100);
+    expect(data.find((d) => d.metric === "Matches")?.score).toBe(0);
+  });
+
+  it("records each division's most-played entry on the profile row", () => {
+    const datasets = [
+      {
+        id: "hspf",
+        label: "HS Public Forum",
+        entries: [entry(1, "Alpha", "Kim & Lee", { matches: 12 }), entry(2, "Beta", "Doe", { matches: 30 })],
+      },
+    ] as unknown as RankingDataset[];
+    expect(findSchoolEntries(datasets, "alpha")[0].maxMatches).toBe(30);
   });
 });

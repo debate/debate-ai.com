@@ -45,6 +45,8 @@ export interface ProfileEntry {
   datasetLabel: string;
   /** Number of entries ranked in that dataset. */
   fieldSize: number;
+  /** Most rated matches any entry in that dataset played. */
+  maxMatches: number;
   entry: RankingEntry;
 }
 
@@ -55,12 +57,15 @@ function collect(
 ): ProfileEntry[] {
   const out: ProfileEntry[] = [];
   for (const dataset of datasets) {
+    let maxMatches: number | null = null;
     for (const entry of dataset.entries) {
       if (predicate(entry)) {
+        maxMatches ??= dataset.entries.reduce((max, e) => Math.max(max, e.matches), 0);
         out.push({
           datasetId: dataset.id,
           datasetLabel: dataset.label,
           fieldSize: dataset.entries.length,
+          maxMatches,
           entry,
         });
       }
@@ -173,4 +178,51 @@ export function teamVideoQuery(entry: Pick<RankingEntry, "name">): string {
 /** Video search for a school: its name. */
 export function schoolVideoQuery(school: string): string {
   return searchWords(school);
+}
+
+/** One spoke of a team's radar chart. */
+export interface TeamRadarPoint {
+  /** Axis label. */
+  metric: string;
+  /** Position on the spoke, 0 (center) to 100 (edge); higher is better. */
+  score: number;
+  /** The real value, as shown in the tooltip. */
+  display: string;
+}
+
+const radarPercent = (n: number | null) =>
+  n === null ? "no rounds" : `${Number.isInteger(n) ? n : n.toFixed(1)}%`;
+
+/**
+ * The six spokes of a team's radar chart, each scaled to 0–100 so they share
+ * one axis: the four win rates as-is (a side with no rounds sits at 0), rank as
+ * a field percentile (1st is 100, last is 0), and matches relative to the
+ * busiest entry in the same division.
+ *
+ * @param item - One of the team's rows, from {@link findTeamEntries}.
+ */
+export function teamRadarData(item: ProfileEntry): TeamRadarPoint[] {
+  const { entry, fieldSize, maxMatches } = item;
+  const clamp = (n: number) => Math.min(100, Math.max(0, n));
+  const rankScore = fieldSize <= 1 ? 100 : ((fieldSize - entry.rank) / (fieldSize - 1)) * 100;
+  return [
+    { metric: "Aff win", score: clamp(entry.affWinRate ?? 0), display: radarPercent(entry.affWinRate) },
+    { metric: "Neg win", score: clamp(entry.negWinRate ?? 0), display: radarPercent(entry.negWinRate) },
+    {
+      metric: "Elim neg",
+      score: clamp(entry.negElimWinRate ?? 0),
+      display: radarPercent(entry.negElimWinRate),
+    },
+    {
+      metric: "Elim aff",
+      score: clamp(entry.affElimWinRate ?? 0),
+      display: radarPercent(entry.affElimWinRate),
+    },
+    { metric: "Ranking", score: clamp(rankScore), display: `#${entry.rank} of ${fieldSize}` },
+    {
+      metric: "Matches",
+      score: clamp(maxMatches > 0 ? (entry.matches / maxMatches) * 100 : 0),
+      display: `${entry.matches} of ${maxMatches} max`,
+    },
+  ];
 }
