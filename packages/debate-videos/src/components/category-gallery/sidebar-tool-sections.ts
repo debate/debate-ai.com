@@ -1,5 +1,5 @@
 /**
- * @fileoverview The Coaching / Research / Practice tool sections rendered in
+ * @fileoverview The Research / Practice / Coaching tool sections rendered in
  * the videos sidebar underneath the "Round Videos" and "Lectures" nodes. Mirrors the entries of
  * the app's `/tools` catalog (`app/tools/tool-groups.ts`), regrouped into the
  * three headings the sidebar shows and trimmed to the label, href and icon
@@ -38,6 +38,7 @@ import {
   Scale,
   Search,
   Share2,
+  Sparkles,
   StickyNote,
   Swords,
   Timer,
@@ -121,22 +122,6 @@ export const RESEARCH_SECTION_ID = "research";
 
 export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
   {
-    id: "coaching",
-    title: "Coaching",
-    href: "/coach",
-    icon: GraduationCap,
-    tools: [
-      { href: "/coach", title: "Coach Workspace", icon: Presentation },
-      { href: "/coaching", title: "AI Coach Mode", icon: Bot },
-      { href: "/coaching-programs", title: "Coaching Programs", icon: CalendarCheck },
-      { href: "/coach-materials", title: "Coach Materials", icon: FolderOpen },
-      { href: "/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
-      { href: "/rank", title: "Team Rankings", icon: Medal },
-      { href: "/cards/leaderboard", title: "Leaderboard", icon: Trophy },
-      { href: "/cards/progress-tracking", title: "Research Progress", icon: TrendingUp },
-    ],
-  },
-  {
     id: "research",
     title: "Research",
     href: "/research",
@@ -173,6 +158,23 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/judge-decision", title: "AI Judge Decision", icon: BadgeCheck },
       { href: "/practice-opponent", title: "Opponent Persona Picker", icon: User },
       { href: "/prep-notes", title: "Prep Notes", icon: StickyNote },
+      { href: "/features", title: "All Features", icon: Sparkles },
+    ],
+  },
+  {
+    id: "coaching",
+    title: "Coaching",
+    href: "/coach",
+    icon: GraduationCap,
+    tools: [
+      { href: "/coach", title: "Coach Workspace", icon: Presentation },
+      { href: "/coaching", title: "AI Coach Mode", icon: Bot },
+      { href: "/coaching-programs", title: "Coaching Programs", icon: CalendarCheck },
+      { href: "/coach-materials", title: "Coach Materials", icon: FolderOpen },
+      { href: "/outcomes", title: "Response-Outcome Charts", icon: ChartLine },
+      { href: "/rank", title: "Team Rankings", icon: Medal },
+      { href: "/cards/leaderboard", title: "Leaderboard", icon: Trophy },
+      { href: "/cards/progress-tracking", title: "Research Progress", icon: TrendingUp },
     ],
   },
 ];
