@@ -59,9 +59,6 @@ export function Footer() {
                       {contents}
                     </Link>
                   )}
-                  {index < row.length - 1 && (
-                    <span className="text-muted-foreground/30 hidden sm:inline">•</span>
-                  )}
                 </React.Fragment>
               )
             })}

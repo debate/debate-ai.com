@@ -60,7 +60,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   // reloading into a bare page.
   // { url: "/features", text: "Features", icon: LayoutGrid, group: "site" },
   { url: "https://github.com/debate", text: "Github", icon: Code2, group: "site" },
-  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Debate Reddit", icon: MessageSquare, group: "debate" },
+  { url: "https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/", text: "Reddit", icon: MessageSquare, group: "debate" },
   { url: "https://www.tabroom.com/index/index.mhtml", text: "Tournaments", icon: Calendar, group: "debate" },
   { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
