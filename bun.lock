@@ -165,7 +165,7 @@
         "wrangler": "^4.130.0",
       },
     },
-    "packages/debate-ai-webui": {
+    "packages/debate-webview": {
       "name": "debate-webview",
       "version": "0.1.0",
       "dependencies": {
@@ -2808,7 +2808,7 @@
 
     "debate-videos": ["debate-videos@workspace:packages/debate-videos"],
 
-    "debate-webview": ["debate-webview@workspace:packages/debate-ai-webui"],
+    "debate-webview": ["debate-webview@workspace:packages/debate-webview"],
 
     "debug": ["debug@4.4.3", "", { "dependencies": { "ms": "^2.1.3" } }, "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA=="],
 
