@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Category winners for best evidence finder, best explainer, and more, by helpfulness score",
 }
 
-export { default } from "debate-ai-webui/routes/cards/awards/page"
+export { default } from "debate-webview/routes/cards/awards/page"

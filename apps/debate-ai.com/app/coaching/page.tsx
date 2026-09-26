@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Extension, refutation, collapse, and weighing prompts generated from each round's flow",
 }
 
-export { default } from "debate-ai-webui/routes/coaching/page"
+export { default } from "debate-webview/routes/coaching/page"

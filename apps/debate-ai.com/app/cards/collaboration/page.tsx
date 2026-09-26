@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Leave live prep notes on a shared topic sprint, grouped by topic",
 }
 
-export { default } from "debate-ai-webui/routes/cards/collaboration/page"
+export { default } from "debate-webview/routes/cards/collaboration/page"

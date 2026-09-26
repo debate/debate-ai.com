@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Per-side exposure and the most vulnerable arguments in each round's flow",
 }
 
-export { default } from "debate-ai-webui/routes/outcomes/page"
+export { default } from "debate-webview/routes/outcomes/page"

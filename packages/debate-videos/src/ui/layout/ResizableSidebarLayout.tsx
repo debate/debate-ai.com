@@ -5,7 +5,7 @@
  * with `react-resizable-panels`.
  *
  * Every page that carries the tool sidebar — the app shell's generic column
- * (`AppSidebarShell` in debate-ai-webui), the video grid and the videos
+ * (`AppSidebarShell` in debate-webview), the video grid and the videos
  * sidebar shell — renders it through this one component, so they share the
  * same width, the same handle and the same saved size. Crossing from `/videos`
  * to `/coach` does not change the column's shape.

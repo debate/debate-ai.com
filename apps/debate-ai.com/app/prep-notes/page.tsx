@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Live prep notes across every flow, grouped by status",
 }
 
-export { default } from "debate-ai-webui/routes/prep-notes/page"
+export { default } from "debate-webview/routes/prep-notes/page"

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "A topic's shared prep space: evidence, draft blocks, and routed research tasks",
 }
 
-export { default } from "debate-ai-webui/routes/cards/prep-room/page"
+export { default } from "debate-webview/routes/cards/prep-room/page"

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Product updates and community announcements — Daily Best Card winners and Contributor Awards, in one feed",
 }
 
-export { default } from "debate-ai-webui/routes/news/page"
+export { default } from "debate-webview/routes/news/page"

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Side-vote bias, average speaker points, and tendencies for every saved judge profile",
 }
 
-export { default } from "debate-ai-webui/routes/judges/page"
+export { default } from "debate-webview/routes/judges/page"

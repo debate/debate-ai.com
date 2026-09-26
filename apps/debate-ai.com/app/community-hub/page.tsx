@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "A searchable directory of every shared research, collaboration, and pre-round/practice space",
 }
 
-export { default } from "debate-ai-webui/routes/community-hub/page"
+export { default } from "debate-webview/routes/community-hub/page"

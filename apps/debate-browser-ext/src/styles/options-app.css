@@ -8,7 +8,7 @@
  * is Tailwind v3 through PostCSS, which rejects v4's `@layer` output, and the
  * two stylesheets define the same `--background`/`--primary` variables in
  * different colour formats, so they can't share a page either. */
-@import "debate-ai-webui/app.css";
+@import "debate-webview/app.css";
 
 @source "../../entrypoints/options";
 @source "../../components/ui";

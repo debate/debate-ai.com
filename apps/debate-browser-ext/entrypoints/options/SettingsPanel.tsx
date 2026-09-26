@@ -48,7 +48,7 @@ export interface SettingsPanelProps {
  * on-page card reuse check's configuration, which used to live in two separate
  * extensions (and, for the reuse check, in its own options.html).
  *
- * Rendered as one screen inside `debate-ai-webui`'s shell rather than as the
+ * Rendered as one screen inside `debate-webview`'s shell rather than as the
  * whole Options page: the page now opens on the web app's UI (see `App.tsx`),
  * and these settings are the last tab in its nav.
  */

@@ -5,7 +5,7 @@ import { oneTimeToken } from "better-auth/plugins/one-time-token";
 import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
-import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "debate-ai-webui/lib/config/site";
+import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "debate-webview/lib/config/site";
 import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
 import { OAUTH_STATE_COOKIE_MAX_AGE_SECONDS, SIGN_IN_ERROR_URL } from "./oauth-state";
 import { getEnv } from "../env";

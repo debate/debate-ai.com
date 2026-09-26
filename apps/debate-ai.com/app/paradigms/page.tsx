@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Pick a built-in or custom AI judge paradigm for a practice round",
 }
 
-export { default } from "debate-ai-webui/routes/paradigms/page"
+export { default } from "debate-webview/routes/paradigms/page"

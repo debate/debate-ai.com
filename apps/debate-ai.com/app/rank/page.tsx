@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Debate team rankings, leaderboard, and Elo ratings",
 }
 
-export { default } from "debate-ai-webui/routes/rank/page"
+export { default } from "debate-webview/routes/rank/page"

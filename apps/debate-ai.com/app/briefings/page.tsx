@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Opponent scouting, judge tendencies, head-to-head record, and prep notes per round",
 }
 
-export { default } from "debate-ai-webui/routes/briefings/page"
+export { default } from "debate-webview/routes/briefings/page"

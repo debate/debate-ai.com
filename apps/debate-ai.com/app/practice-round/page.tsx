@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona",
 }
 
-export { default } from "debate-ai-webui/routes/practice-round/page"
+export { default } from "debate-webview/routes/practice-round/page"

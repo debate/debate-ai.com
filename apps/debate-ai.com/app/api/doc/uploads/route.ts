@@ -1,4 +1,4 @@
-import { QWKSEARCH_ORIGIN } from "debate-ai-webui/components/qwksearch/base-url"
+import { QWKSEARCH_ORIGIN } from "debate-webview/components/qwksearch/base-url"
 
 /**
  * Pass-through to qwksearch.com's document upload endpoint.

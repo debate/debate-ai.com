@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Lectures from Educators, Archive of Rounds & Notes",
 }
 
-export { default } from "debate-ai-webui/routes/videos/page"
+export { default } from "debate-webview/routes/videos/page"

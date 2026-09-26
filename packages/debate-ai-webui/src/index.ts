@@ -1,5 +1,5 @@
 /**
- * @fileoverview Public entry point for `debate-ai-webui`.
+ * @fileoverview Public entry point for `debate-webview`.
  *
  * This package is the debate-ai.com frontend: the app shell, every page, and
  * the components and client libraries behind them. `apps/debate-ai.com` keeps
@@ -7,11 +7,11 @@
  * Next metadata — and mounts these pages from its `app/` directory.
  *
  * Hosts that aren't Next mount {@link DebateApp}, which routes through the URL
- * fragment. Deep imports (`debate-ai-webui/components/…`,
- * `debate-ai-webui/lib/…`, `debate-ai-webui/routes/…`) are how the web app
+ * fragment. Deep imports (`debate-webview/components/…`,
+ * `debate-webview/lib/…`, `debate-webview/routes/…`) are how the web app
  * reaches individual modules.
  *
- * @module debate-ai-webui
+ * @module debate-webview
  */
 
 export { DebateApp, applyStoredAppearance, type DebateAppProps } from "./host/DebateApp"

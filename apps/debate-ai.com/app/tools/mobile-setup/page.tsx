@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "Debate from just your phone: recommended gear plus a step-by-step guide to prepping, flowing, and speaking off a mobile phone with no laptop.",
 }
 
-export { default } from "debate-ai-webui/routes/tools/mobile-setup/page"
+export { default } from "debate-webview/routes/tools/mobile-setup/page"

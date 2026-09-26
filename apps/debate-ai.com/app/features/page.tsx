@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "Every Debate AI tool for PF, LD and Policy — evidence research and card cutting, flowing, speech and prep timers, judge and opponent scouting, drills and full rounds against an AI — grouped by category and searchable by name, route or keyword",
 }
 
-export { default } from "debate-ai-webui/routes/features/page"
+export { default } from "debate-webview/routes/features/page"

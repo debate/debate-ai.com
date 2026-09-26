@@ -17,7 +17,7 @@ If you change it, say so explicitly in the PR: nothing at the root will catch
 a break.
 
 `apps/debate-web-ext` joined the workspace when its Options page started
-mounting `debate-ai-webui` — sharing a workspace package is the whole reason,
+mounting `debate-webview` — sharing a workspace package is the whole reason,
 since a `file:` dependency cannot resolve that package's own `workspace:*`
 deps. Two consequences worth knowing before touching it:
 

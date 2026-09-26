@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Quick practice drills generated from each round's flow",
 }
 
-export { default } from "debate-ai-webui/routes/drills/page"
+export { default } from "debate-webview/routes/drills/page"

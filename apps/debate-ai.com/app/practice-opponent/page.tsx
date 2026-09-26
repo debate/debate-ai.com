@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Pick the AI practice-opponent style for a session",
 }
 
-export { default } from "debate-ai-webui/routes/practice-opponent/page"
+export { default } from "debate-webview/routes/practice-opponent/page"

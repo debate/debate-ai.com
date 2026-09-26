@@ -6,4 +6,4 @@ export const metadata: Metadata = {
     "Every setting for the CardMirror card editor — files, editing, appearance, accessibility, keyboard shortcuts, comments and AI, and collaboration",
 }
 
-export { default } from "debate-ai-webui/routes/settings/page"
+export { default } from "debate-webview/routes/settings/page"

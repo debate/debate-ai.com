@@ -27,7 +27,7 @@
     "@radix-ui/react-tooltip": "^1.1.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "debate-ai-webui": "workspace:*",
+    "debate-webview": "workspace:*",
     "lucide-react": "^0.454.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Debate style, font size and font family preferences for the flow editor",
 }
 
-export { default } from "debate-ai-webui/routes/settings/preferences/page"
+export { default } from "debate-webview/routes/settings/preferences/page"

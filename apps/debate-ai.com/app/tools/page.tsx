@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Every workspace, research, and practice tool in one place",
 }
 
-export { default } from "debate-ai-webui/routes/tools/page"
+export { default } from "debate-webview/routes/tools/page"

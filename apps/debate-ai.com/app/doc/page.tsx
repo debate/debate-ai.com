@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Research Editor for Annotated Summaries in Outline Notation",
 }
 
-export { default } from "debate-ai-webui/routes/doc/page"
+export { default } from "debate-webview/routes/doc/page"

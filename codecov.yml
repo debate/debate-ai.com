@@ -34,9 +34,9 @@ flag_management:
     carryforward: true
 
 flags:
-  debate-ai-webui:
+  debate-webview:
     paths:
-      - packages/debate-ai-webui/src
+      - packages/debate-webview/src
   debate-api-client:
     paths:
       - packages/debate-api-client/src
@@ -97,9 +97,9 @@ component_management:
         threshold: 2%
         informational: true
   individual_components:
-    - component_id: debate-ai-webui
+    - component_id: debate-webview
       paths:
-        - packages/debate-ai-webui/src
+        - packages/debate-webview/src
     - component_id: debate-api-client
       paths:
         - packages/debate-api-client/src

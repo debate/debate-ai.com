@@ -14,7 +14,7 @@
 type Listener = () => void
 
 const listeners = new Set<Listener>()
-const CHANGE_EVENT = "debate-ai-webui:navigate"
+const CHANGE_EVENT = "debate-webview:navigate"
 
 function notify() {
   for (const listener of listeners) listener()

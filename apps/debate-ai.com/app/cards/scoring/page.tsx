@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability",
 }
 
-export { default } from "debate-ai-webui/routes/cards/scoring/page"
+export { default } from "debate-webview/routes/cards/scoring/page"

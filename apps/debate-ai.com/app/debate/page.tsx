@@ -7,4 +7,4 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-export { default } from "debate-ai-webui/routes/debate/page"
+export { default } from "debate-webview/routes/debate/page"

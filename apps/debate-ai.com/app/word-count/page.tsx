@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Practice speeches bounded by a maximum word count instead of a time limit",
 }
 
-export { default } from "debate-ai-webui/routes/word-count/page"
+export { default } from "debate-webview/routes/word-count/page"

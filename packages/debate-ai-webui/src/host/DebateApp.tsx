@@ -10,9 +10,9 @@
  * renders: the theme provider, the loading overlay, and the `AppShell` with
  * its dock, sidebar, command palette, player and toasts.
  *
- * Hosts import the compiled stylesheet (`debate-ai-webui/dist/app.css`, from
+ * Hosts import the compiled stylesheet (`debate-webview/dist/app.css`, from
  * `bun run build:css`), alias `next/link`, `next/navigation` and `next/image`
- * to `debate-ai-webui/next/*`, and call `configureHost` before rendering.
+ * to `debate-webview/next/*`, and call `configureHost` before rendering.
  */
 
 import { useMemo } from "react"

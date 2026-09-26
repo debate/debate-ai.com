@@ -17,7 +17,7 @@ One extension with three tools for a debater's browser:
 3. **The app itself, on the Options page** — the video archive, card search,
    the reuse check over *any* URL you can paste, season standings and the
    catalog of every tool in the app, from
-   [`debate-ai-webui`](../../packages/debate-ai-webui). The extension's own
+   [`debate-webview`](../../packages/debate-webview). The extension's own
    settings are the last screen in its nav.
 
 [qwksearch-research-agent]: https://github.com/OpenSourceAGI/qwksearch-research-agent
@@ -35,7 +35,7 @@ check was ported to TypeScript and both halves share `storage` and settings.
   (format `Select`, `Tabs`, `Button`, `Tooltip`), the popup and the Options
   page. The circular clock face, the font-timer-digits font, the depleting SVG ring,
   per-speech colors and the ripple are ported CSS, not shadcn.
-- **`debate-ai-webui`** — the app's own UI, mounted by the Options page. It
+- **`debate-webview`** — the app's own UI, mounted by the Options page. It
   brings its own scoped stylesheet (`.dai-root`, no Tailwind) and talks to the
   API through `debate-api-client`, so nothing in this extension hand-writes a
   request to reach it.
@@ -43,7 +43,7 @@ check was ported to TypeScript and both halves share `storage` and settings.
 ## Develop
 
 This app is a **workspace member** (it joined when the Options page started
-mounting `debate-ai-webui`), so install from the repo root — there is no
+mounting `debate-webview`), so install from the repo root — there is no
 lockfile here any more.
 
 ```bash
@@ -131,7 +131,7 @@ secret in this repository; nothing here automates them.
 | `sidepanel.html` | `entrypoints/sidepanel` | The article panel, opened as the browser's side panel (Chrome) or sidebar (Firefox). |
 | `popup.html` | `entrypoints/popup` | Toolbar dropdown: the reuse check for the active tab + **Read this page** and **Open round timer** buttons. |
 | `timer.html` | `entrypoints/timer` | The timer + timeline, opened as its own `popup`-type window. |
-| `options.html` | `entrypoints/options` | `debate-ai-webui`'s app UI, with every setting for the other three tools as its last screen. |
+| `options.html` | `entrypoints/options` | `debate-webview`'s app UI, with every setting for the other three tools as its last screen. |
 
 `popup.html` doubles as a standalone check window: right-click any page →
 **Check this page for existing cards** opens it in its own window with a
@@ -322,7 +322,7 @@ entrypoints/
   sidepanel/             the article panel (ported ArticleExtractPanel)
   popup/                 reuse check + "Read this page" + "Open round timer"
   timer/                 Tabs (Timer | Timeline) + format Select
-  options/               App.tsx mounts debate-ai-webui; SettingsPanel.tsx is the
+  options/               App.tsx mounts debate-webview; SettingsPanel.tsx is the
                          extension's own settings, appended as one of its screens
 src/
   settings/settings.ts   shared storage.sync settings + defaults
@@ -405,7 +405,7 @@ public/
   `.output/chrome-mv3` unpacked. Joining the workspace did get the root CI to
   type-check this app (`bun run typecheck` at the root now includes it), and
   the UI the Options page mounts is covered by
-  `packages/debate-ai-webui/test/` — but the root test run does not reach
+  `packages/debate-webview/test/` — but the root test run does not reach
   `apps/`, so these tests are run by hand from this directory.
 - The article panel has only been exercised against the pages used to write the
   extractor's tests. A scoring extractor is never right on every site; a page

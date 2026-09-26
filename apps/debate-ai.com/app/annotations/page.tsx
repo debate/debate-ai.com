@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Drop timestamped flow annotations while watching a streamed or recorded round, and jump back to them",
 }
 
-export { default } from "debate-ai-webui/routes/annotations/page"
+export { default } from "debate-webview/routes/annotations/page"

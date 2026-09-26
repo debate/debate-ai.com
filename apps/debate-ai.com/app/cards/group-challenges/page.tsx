@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Create squad-scoped friendly challenges like completing a set of blocks or winning a rebuttal exercise",
 }
 
-export { default } from "debate-ai-webui/routes/cards/group-challenges/page"
+export { default } from "debate-webview/routes/cards/group-challenges/page"

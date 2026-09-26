@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Upload grounding materials for the team coach AI and preview which ones answer a question",
 }
 
-export { default } from "debate-ai-webui/routes/coach-materials/page"
+export { default } from "debate-webview/routes/coach-materials/page"

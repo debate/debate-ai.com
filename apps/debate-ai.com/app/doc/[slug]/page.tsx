@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { titleFromDocSlug } from "debate-ai-webui/lib/reason-docs/doc-slug"
+import { titleFromDocSlug } from "debate-webview/lib/reason-docs/doc-slug"
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -17,4 +17,4 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export { default } from "debate-ai-webui/routes/doc/[slug]/page"
+export { default } from "debate-webview/routes/doc/[slug]/page"

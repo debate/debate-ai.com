@@ -40,11 +40,11 @@ const APP_DIR = join(PACKAGE_ROOT, "..", "..", "apps", "debate-ai.com", "app")
 
 /**
  * The app's `page.tsx` for `href` — or, when that page only re-exports a
- * `debate-ai-webui/routes/…` module, as most do, that module's source.
+ * `debate-webview/routes/…` module, as most do, that module's source.
  */
 function pageSource(href: string): string {
   const source = readFileSync(join(APP_DIR, ...href.split("/").filter(Boolean), "page.tsx"), "utf8")
-  const reexport = source.match(/from\s+["']debate-ai-webui\/routes\/([^"']+)["']/)
+  const reexport = source.match(/from\s+["']debate-webview\/routes\/([^"']+)["']/)
   return reexport ? readFileSync(join(ROUTES_DIR, `${reexport[1]}.tsx`), "utf8") : source
 }
 

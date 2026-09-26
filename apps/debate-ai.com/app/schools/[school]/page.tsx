@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Debate school ranking stats and videos",
 }
 
-export { default } from "debate-ai-webui/routes/schools/[school]/page"
+export { default } from "debate-webview/routes/schools/[school]/page"

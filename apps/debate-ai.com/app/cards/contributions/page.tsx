@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations",
 }
 
-export { default } from "debate-ai-webui/routes/cards/contributions/page"
+export { default } from "debate-webview/routes/cards/contributions/page"

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "A history of evidence sent into your designated speech document from the Reason Editor's send-to-speech commands",
 }
 
-export { default } from "debate-ai-webui/routes/speech-documents/page"
+export { default } from "debate-webview/routes/speech-documents/page"

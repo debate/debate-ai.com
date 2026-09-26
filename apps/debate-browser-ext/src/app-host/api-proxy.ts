@@ -1,7 +1,7 @@
 /**
  * Points the web app's `/api` requests at the configured deployment.
  *
- * The app's UI (`debate-ai-webui`) is written for debate-ai.com, where
+ * The app's UI (`debate-webview`) is written for debate-ai.com, where
  * `fetch('/api/videos')` and better-auth's client (whose base URL is
  * `location.origin`) both reach the Worker on the same origin. On the Options
  * page that origin is `chrome-extension://<id>`, which has no API behind it.

@@ -31,4 +31,4 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export { default } from "debate-ai-webui/routes/cards/leaderboard/[contributorId]/page"
+export { default } from "debate-webview/routes/cards/leaderboard/[contributorId]/page"

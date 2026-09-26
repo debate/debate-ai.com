@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Crowdsourced Annotated Research for Debating Solutions(CARDS)",
 }
 
-export { default } from "debate-ai-webui/routes/cards/layout"
+export { default } from "debate-webview/routes/cards/layout"

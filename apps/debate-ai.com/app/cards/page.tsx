@@ -1,1 +1,1 @@
-export { default } from "debate-ai-webui/routes/cards/page"
+export { default } from "debate-webview/routes/cards/page"

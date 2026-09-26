@@ -3,7 +3,7 @@ import { desc, eq, isNull } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { documents } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { normalizeFormat } from "debate-ai-webui/lib/cardmirror/format"
+import { normalizeFormat } from "debate-webview/lib/cardmirror/format"
 
 /**
  * REASON editor document collection. GET lists documents for the current

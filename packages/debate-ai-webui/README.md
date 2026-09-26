@@ -1,4 +1,4 @@
-# debate-ai-webui
+# debate-webview
 
 The debate-ai.com frontend UI as a standalone React package: the video
 archive, card search, the on-page card reuse check, season standings, and the
@@ -6,8 +6,8 @@ catalog of every tool in the app — mountable anywhere React runs, and reaching
 the API only through [`debate-api-client`](../debate-api-client).
 
 ```tsx
-import { DebateWebUI } from "debate-ai-webui";
-import "debate-ai-webui/styles.css";
+import { DebateWebUI } from "debate-webview";
+import "debate-webview/styles.css";
 
 <DebateWebUI origin="https://debate-ai.com" />;
 ```

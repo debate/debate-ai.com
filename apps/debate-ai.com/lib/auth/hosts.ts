@@ -7,7 +7,7 @@
  * sign-in is accepted at all.
  */
 
-import { APP_ORIGIN, EXTENSION_ORIGIN } from "debate-ai-webui/lib/config/site";
+import { APP_ORIGIN, EXTENSION_ORIGIN } from "debate-webview/lib/config/site";
 
 /**
  * Every host that serves this app.

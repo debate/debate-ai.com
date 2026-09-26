@@ -16,7 +16,7 @@
  */
 
 import { useEffect } from "react"
-import { shouldReloadForStaleBuild } from "debate-ai-webui/lib/layout/stale-build-recovery"
+import { shouldReloadForStaleBuild } from "debate-webview/lib/layout/stale-build-recovery"
 
 export default function GlobalError({
   error,

@@ -18,4 +18,4 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export { default } from "debate-ai-webui/routes/debate/[tournament]/[teams]/page"
+export { default } from "debate-webview/routes/debate/[tournament]/[teams]/page"

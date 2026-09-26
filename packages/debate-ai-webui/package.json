@@ -1,5 +1,5 @@
 {
-  "name": "debate-ai-webui",
+  "name": "debate-webview",
   "version": "0.1.0",
   "description": "The whole debate-ai.com frontend as a React package \u2014 the app shell, every route, and the components and tools behind them \u2014 mountable in Next.js or, through its next/* shims, in any React host such as the browser extension",
   "private": true,

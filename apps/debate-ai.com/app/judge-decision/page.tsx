@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "AI-generated round decisions under a round's saved judge paradigm and flow summary",
 }
 
-export { default } from "debate-ai-webui/routes/judge-decision/page"
+export { default } from "debate-webview/routes/judge-decision/page"

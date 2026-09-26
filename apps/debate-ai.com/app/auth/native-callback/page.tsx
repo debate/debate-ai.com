@@ -1,1 +1,1 @@
-export { default } from "debate-ai-webui/routes/auth/native-callback/page"
+export { default } from "debate-webview/routes/auth/native-callback/page"

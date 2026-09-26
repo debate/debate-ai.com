@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Every contributor's unlock tier, badges, and daily-quest streak",
 }
 
-export { default } from "debate-ai-webui/routes/cards/progress/page"
+export { default } from "debate-webview/routes/cards/progress/page"

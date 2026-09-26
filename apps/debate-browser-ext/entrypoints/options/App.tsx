@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { DebateApp, type AppRoute } from 'debate-ai-webui';
+import { DebateApp, type AppRoute } from 'debate-webview';
 import { Settings } from 'lucide-react';
 
 import { setProxiedApiBase } from '@/src/app-host/api-proxy';
@@ -14,7 +14,7 @@ export const EXTENSION_SETTINGS_PATH = '/extension';
  * pages and tools as the website — with the extension's settings as one more
  * page at `#/extension`.
  *
- * The UI is `debate-ai-webui`, the package the website itself mounts from its
+ * The UI is `debate-webview`, the package the website itself mounts from its
  * Next `app/` directory. Here it routes through the URL fragment and reaches
  * the API through `src/app-host/api-proxy.ts`; `main.tsx` sets both up before
  * this renders. See the package's README for what a non-Next host provides.

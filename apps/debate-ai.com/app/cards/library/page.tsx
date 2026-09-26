@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Search cut cards and reusable analytic blocks by keyword, citation, or argument",
 }
 
-export { default } from "debate-ai-webui/routes/cards/library/page"
+export { default } from "debate-webview/routes/cards/library/page"

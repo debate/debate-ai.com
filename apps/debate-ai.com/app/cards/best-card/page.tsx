@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Today's highest-helpfulness card, plus every past day's winner",
 }
 
-export { default } from "debate-ai-webui/routes/cards/best-card/page"
+export { default } from "debate-webview/routes/cards/best-card/page"

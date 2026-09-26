@@ -10,7 +10,7 @@
   to show anything else, and its Options page was a settings form and nothing
   more.
 
-  Added `packages/debate-ai-webui`: the app's UI as one mountable
+  Added `packages/debate-webview`: the app's UI as one mountable
   `<DebateWebUI>` — the video archive (`listVideos`), card search
   (`searchCards`), the reuse check over any pasted URL (`checkEvidenceReuse`),
   season standings (`getLeaderboard`) and the catalog of every surface in the
@@ -40,7 +40,7 @@
   resolve twice, so `wxt.config.ts` dedupes `react`/`react-dom` for the bundle
   and `tsconfig.json`'s `paths` does it for types.
 
-  Vitest-covered: `packages/debate-ai-webui/test/` (30 tests) over the API
+  Vitest-covered: `packages/debate-webview/test/` (30 tests) over the API
   base/origin normalization, the `/videos` positional-tuple decoding, the
   shell's nav and host-screen composition, and the catalog screen's markup.
   `bun run typecheck` passes across all 21 tasks — including the extension,

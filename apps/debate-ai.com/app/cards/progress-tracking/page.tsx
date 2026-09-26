@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Each contributor's contribution history and per-topic task completion",
 }
 
-export { default } from "debate-ai-webui/routes/cards/progress-tracking/page"
+export { default } from "debate-webview/routes/cards/progress-tracking/page"

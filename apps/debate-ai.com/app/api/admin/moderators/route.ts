@@ -6,7 +6,7 @@ import { getDBFromContext } from "@/lib/database/context";
 import { describeError } from "@/lib/database/errors";
 import { notifications, staffRoles, user } from "@/lib/database/schema";
 import { getEnv } from "@/lib/env";
-import { APP_EMAIL, APP_NAME } from "debate-ai-webui/lib/config/site";
+import { APP_EMAIL, APP_NAME } from "debate-webview/lib/config/site";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

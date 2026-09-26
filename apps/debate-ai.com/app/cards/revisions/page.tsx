@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Contributors ranked by reward points earned improving weak cards, strengthening citations, and refreshing stale evidence",
 }
 
-export { default } from "debate-ai-webui/routes/cards/revisions/page"
+export { default } from "debate-webview/routes/cards/revisions/page"

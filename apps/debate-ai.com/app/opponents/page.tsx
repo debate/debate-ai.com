@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Records, side-record tendencies, and common arguments/cases for every saved opponent scouting profile",
 }
 
-export { default } from "debate-ai-webui/routes/opponents/page"
+export { default } from "debate-webview/routes/opponents/page"

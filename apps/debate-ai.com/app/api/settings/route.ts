@@ -81,8 +81,8 @@ import {
   parseEditorPreferences,
   serializeEditorPreferences,
   type EditorPreferencesPayload,
-} from "debate-ai-webui/lib/editor-preferences"
-import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "debate-ai-webui/lib/recentTools"
+} from "debate-webview/lib/editor-preferences"
+import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "debate-webview/lib/recentTools"
 import {
   DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
   normalizeQualificationPointsTablePatch,

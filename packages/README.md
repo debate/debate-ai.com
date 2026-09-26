@@ -1,5 +1,5 @@
 
-## debate-ai-webui
+## debate-webview
 
 The debate-ai.com frontend UI as a standalone React package — the video archive, card
 search, the card reuse check over any URL, season standings, and the catalog of every

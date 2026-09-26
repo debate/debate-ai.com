@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { browser } from 'wxt/browser';
-import { applyStoredAppearance, configureHost } from 'debate-ai-webui';
+import { applyStoredAppearance, configureHost } from 'debate-webview';
 
 import { installApiProxy } from '@/src/app-host/api-proxy';
 import { requestSignIn, type StoredSession } from '@/src/auth/session';

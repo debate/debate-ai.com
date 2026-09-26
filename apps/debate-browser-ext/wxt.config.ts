@@ -1,9 +1,9 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'wxt';
 
-/** A file inside the `debate-ai-webui` package. */
+/** A file inside the `debate-webview` package. */
 const webui = (path: string) =>
-  fileURLToPath(new URL(`../../packages/debate-ai-webui/${path}`, import.meta.url));
+  fileURLToPath(new URL(`../../packages/debate-webview/${path}`, import.meta.url));
 
 /**
  * The AI provider APIs the article panel calls directly when the reader has
@@ -25,7 +25,7 @@ const AI_PROVIDER_HOSTS = [
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
-  // The Options page is the whole debate-ai.com app (`debate-ai-webui`),
+  // The Options page is the whole debate-ai.com app (`debate-webview`),
   // which — like the feature packages it mounts — imports `next/link`,
   // `next/navigation` and `next/image`. There is no Next here: those resolve
   // to the package's shims, which route through the URL fragment instead.

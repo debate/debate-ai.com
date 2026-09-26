@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Group coaching spaces scoped to a squad roster",
 }
 
-export { default } from "debate-ai-webui/routes/coaching-programs/page"
+export { default } from "debate-webview/routes/coaching-programs/page"

@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Research tasks routed to contributors, grouped by topic",
 }
 
-export { default } from "debate-ai-webui/routes/cards/inbox/page"
+export { default } from "debate-webview/routes/cards/inbox/page"

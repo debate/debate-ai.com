@@ -5,4 +5,4 @@ export const metadata: Metadata = {
   description: "Team goals like \"find 5 solvency cards\" — today's live progress against real contributions",
 }
 
-export { default } from "debate-ai-webui/routes/cards/quests/page"
+export { default } from "debate-webview/routes/cards/quests/page"
