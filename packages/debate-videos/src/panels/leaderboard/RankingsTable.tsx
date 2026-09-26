@@ -29,10 +29,27 @@ interface Column {
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
+  /** Shrink the column to its content instead of sharing spare width. */
+  compact?: boolean
   render: (entry: RankingEntry, division: Division) => React.ReactNode
 }
 
-const rating = (n: number) => n.toFixed(1)
+/**
+ * A rating rounded to a whole number, with the leading (thousands and
+ * hundreds) digits bold and large and the last two digits smaller, so the
+ * magnitude reads at a glance: **15**43.
+ */
+function Rating({ value }: { value: number }) {
+  const text = Math.round(value).toString()
+  const head = text.length > 2 ? text.slice(0, -2) : text
+  const tail = text.length > 2 ? text.slice(-2) : ""
+  return (
+    <span className="text-foreground" aria-label={text}>
+      <span className="text-base font-bold">{head}</span>
+      {tail && <span className="text-xs font-medium text-muted-foreground">{tail}</span>}
+    </span>
+  )
+}
 
 /** A win-rate progress bar with its percentage, or a dash when no rounds were debated on that side. */
 function WinRate({ value }: { value: number | null }) {
@@ -69,7 +86,7 @@ function WinRate({ value }: { value: number | null }) {
 }
 
 const COLUMNS: Column[] = [
-  { key: "rank", label: "Rank", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
+  { key: "rank", label: "#", numeric: true, compact: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
   {
     key: "school",
     label: "School",
@@ -90,9 +107,10 @@ const COLUMNS: Column[] = [
   },
   {
     key: "adjustedRating",
-    label: "Adj. Rating",
+    label: "Rating",
     numeric: true,
-    render: (e) => <span className="font-semibold text-foreground">{rating(e.adjustedRating)}</span>,
+    compact: true,
+    render: (e) => <Rating value={e.adjustedRating} />,
   },
   { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },
@@ -133,7 +151,7 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                 <TableHead
                   key={col.key}
                   aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : undefined}
-                  className={cn("whitespace-nowrap px-2 py-1", col.numeric && "text-right")}
+                  className={cn("whitespace-nowrap px-2 py-1", col.numeric && "text-right", col.compact && "w-px")}
                 >
                   <span className={cn("inline-flex items-center gap-1", col.numeric && "flex-row-reverse")}>
                     <button
@@ -155,7 +173,7 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                     {tip && (
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Info className="h-3 w-3 cursor-help opacity-60" aria-label={`About ${col.label}`} />
+                          <Info className="h-3 w-3 cursor-help opacity-60" aria-label={`About ${col.key === "rank" ? "rank" : col.label}`} />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs text-xs font-normal">{tip}</TooltipContent>
                       </Tooltip>
@@ -175,6 +193,7 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                   className={cn(
                     "whitespace-nowrap text-muted-foreground px-2 py-1",
                     col.numeric && "text-right tabular-nums",
+                    col.compact && "w-px",
                     col.key === "school" && "max-w-[180px] truncate",
                     col.key === "name" && "max-w-[180px] truncate",
                   )}
