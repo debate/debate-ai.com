@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   RANKING_DATASETS,
+  RATING_DIVISOR,
   RATING_OFFSET,
   entryInitials,
   offsetEntryRatings,
@@ -39,9 +40,10 @@ describe("debate-rankings-adapter", () => {
     expect(findTeamRanking(rows, "Harker QQ")).toBeNull();
   });
 
-  it("shows Glicko-2 ratings 500 points lower, leaving the rest of the row alone", () => {
+  it("shows Glicko-2 ratings 500 points lower and divided by 15, leaving the rest of the row alone", () => {
     expect(RATING_OFFSET).toBe(500);
+    expect(RATING_DIVISOR).toBe(15);
     const row = entry({ rank: 3, rating: 1900, adjustedRating: 1700, deviation: 100 });
-    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 1400, adjustedRating: 1200 });
+    expect(offsetEntryRatings(row)).toEqual({ ...row, rating: 1400 / 15, adjustedRating: 1200 / 15 });
   });
 });

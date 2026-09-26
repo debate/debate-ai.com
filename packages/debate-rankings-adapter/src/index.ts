@@ -12,8 +12,8 @@
 
 export * from "./upstream";
 // Takes precedence over the star re-export's loader: the site shows ratings
-// on a scale 500 points below upstream's.
-export { RATING_OFFSET, loadRankingDataset, offsetEntryRatings } from "./rating-offset";
+// shifted and scaled from upstream's (see rating-offset.ts).
+export { RATING_DIVISOR, RATING_OFFSET, loadRankingDataset, offsetEntryRatings } from "./rating-offset";
 export {
   entryInitials,
   findTeamRanking,
