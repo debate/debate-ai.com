@@ -48,6 +48,14 @@
  * accumulate many decisions) via `GET /api/judge-decisions`, but the same
  * "sync wired, discoverability not" gap applied here too.
  *
+ * A ninth kind, AI Response-Outcome Charts' counsel-panel assessments
+ * (`/outcomes`), joined next: `saved_counsel_panel_assessments` already
+ * synced a signed-in user's `CounselPanelAssessmentRecord`s
+ * (`debate-practice-drills`, one row per generated assessment, keyed by its
+ * own `id` rather than `roundId` for the same reason as judge decisions —
+ * a round can accumulate many) via `GET /api/counsel-panel-assessments`, but
+ * the same "sync wired, discoverability not" gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -143,6 +151,28 @@ export type CloudJudgeDecisionSummary = {
   generatedAt: number;
 };
 
+/**
+ * The subset of a `CounselPanelAssessmentRecord` (`debate-practice-drills`)
+ * a caller needs to list one in the merged view — mirrors
+ * `GET /api/counsel-panel-assessments`'s row shape (full records, like
+ * {@link CloudJudgeDecisionSummary}; the counsel-panel-assessments route has
+ * no label-only summary mode either). Defined locally rather than importing
+ * `CounselPanelAssessmentRecord` itself, matching {@link CloudJudgeDecisionSummary}'s
+ * own local-type convention: `debate-round` doesn't depend on
+ * `debate-practice-drills` (nor the reverse). Unlike a judge decision, an
+ * assessment carries no separate display name (the panel's result is a
+ * clash summary plus per-argument scores, not a single title) — it's keyed
+ * and shown by its `roundId` everywhere else in the app
+ * (`VulnerabilityChartsPanel`'s history log), so this type is labeled by
+ * `roundId` like {@link CloudDrillSetSummary} rather than by a name field.
+ */
+export type CloudCounselPanelAssessmentSummary = {
+  id: string;
+  roundId: string;
+  /** Epoch milliseconds, per `CounselPanelAssessmentRecord.generatedAt` — there is no separate `updatedAt`. */
+  generatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -151,7 +181,8 @@ export type CloudLibraryItemKind =
   | "debate"
   | "speechOutcome"
   | "drillSet"
-  | "judgeDecision";
+  | "judgeDecision"
+  | "counselPanelAssessment";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -194,6 +225,7 @@ export interface BuildRecentCloudItemsInput {
   speechOutcomes?: CloudSpeechOutcomeSummary[];
   drillSets?: CloudDrillSetSummary[];
   judgeDecisions?: CloudJudgeDecisionSummary[];
+  counselPanelAssessments?: CloudCounselPanelAssessmentSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -209,6 +241,7 @@ export interface BuildRecentCloudItemsOptions {
   speechOutcomeHref?: string;
   drillSetHref?: string;
   judgeDecisionHref?: string;
+  counselPanelAssessmentHref?: string;
 }
 
 /**
@@ -233,6 +266,7 @@ export function buildRecentCloudItems(
     speechOutcomeHref = "/videos",
     drillSetHref = "/drills",
     judgeDecisionHref = "/judge-decision",
+    counselPanelAssessmentHref = "/outcomes",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -307,6 +341,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(decision.generatedAt),
     }));
 
+  const counselPanelAssessmentItems: CloudLibraryItem[] = (input.counselPanelAssessments ?? [])
+    .slice(0, perKindLimit)
+    .map((assessment) => ({
+      kind: "counselPanelAssessment",
+      key: `counselPanelAssessment-${assessment.id}`,
+      href: counselPanelAssessmentHref,
+      label: assessment.roundId.trim() || "Untitled response-outcome chart",
+      updatedAtMs: parseCloudTimestamp(assessment.generatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -316,6 +360,7 @@ export function buildRecentCloudItems(
     ...speechOutcomeItems,
     ...drillSetItems,
     ...judgeDecisionItems,
+    ...counselPanelAssessmentItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
