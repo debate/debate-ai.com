@@ -16,8 +16,8 @@ const doc = (kind: VideoDocument["kind"], body: string): VideoDocument => ({ vid
 describe("standardRoundSpeeches", () => {
   it("lays out LD with keys that match a written summary's", () => {
     const speeches = standardRoundSpeeches(3);
-    expect(speeches.map((speech) => speech.label)).toEqual(["1AC", "CX · 1AC", "1NC", "CX · 1NC", "1AR", "NR", "2AR"]);
-    expect(speeches.map((speech) => speech.key)).toEqual(["1AC#1", "CX#1", "1NC#1", "CX#2", "1AR#1", "NR#1", "2AR#1"]);
+    expect(speeches.map((speech) => speech.label)).toEqual(["1AC", "1AX", "1NC", "1NX", "1AR", "NR", "2AR"]);
+    expect(speeches.map((speech) => speech.key)).toEqual(["1AC#1", "1AX#1", "1NC#1", "1NX#1", "1AR#1", "NR#1", "2AR#1"]);
     expect(speeches.map((speech) => speech.side)).toEqual(["aff", "cx", "neg", "cx", "aff", "neg", "aff"]);
     expect(speeches.every((speech) => speech.startSeconds === null && speech.isSpeech)).toBe(true);
   });
@@ -68,7 +68,7 @@ describe("marked starts and caption transcripts", () => {
   });
 
   it("times speeches by the marks and cuts the captions between them", () => {
-    const speeches = withSpeechStarts(standardRoundSpeeches(3), { "1AC#1": 10, "CX#1": 100 });
+    const speeches = withSpeechStarts(standardRoundSpeeches(3), { "1AC#1": 10, "1AX#1": 100 });
     const captions = [
       { text: "Hello judge.", start: 2 },
       { text: "I affirm.", start: 12 },

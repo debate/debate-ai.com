@@ -58,11 +58,13 @@ describe("identifySpeech", () => {
   });
 
   it("names the speech a cross-ex questions", () => {
-    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "2AX", side: "cx", target: "1AC" });
+    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "1AX", label: "1AX", side: "cx", target: "1AC" });
+    expect(identifySpeech("CX of the 2AC")).toMatchObject({ label: "2AX", target: "2AC" });
     expect(identifySpeech("Cross-Examination of the First Negative Constructive")).toMatchObject({
-      base: "2NX",
+      base: "1NX",
       target: "1NC",
     });
+    expect(identifySpeech("2NX")).toMatchObject({ label: "2NX", side: "cx", target: "2NC" });
   });
 
   it("matches a heading that names no speech on its lead text", () => {
@@ -92,22 +94,32 @@ describe("buildRoundSpeeches", () => {
   it("matches repeated cross-exes by order and labels them by their target", () => {
     const cxs = speeches.filter((speech) => speech.side === "cx");
     expect(cxs.map((speech) => [speech.label, speech.startSeconds, speech.parts.summary])).toEqual([
-      ["2AX", 360, "Pins the mechanism."],
-      ["2NX", 960, "Status of the advocacies."],
+      ["1AX", 360, "Pins the mechanism."],
+      ["1NX", 960, "Status of the advocacies."],
     ]);
   });
 
   it("keeps round order, slotting in what only the summary has", () => {
-    expect(speeches.map((speech) => speech.label)).toEqual([
-      "Overview",
-      "1AC",
-      "2AX",
-      "1NC",
-      "2NX",
-      "1AR",
-      "2NR",
-      "Decision",
+    expect(speeches.map((speech) => speech.label)).toEqual(["1AC", "1AX", "1NC", "1NX", "1AR", "2NR", "Decision"]);
+  });
+
+  it("drops intros and overviews but keeps the judge's comments, last", () => {
+    const rounds = buildRoundSpeeches([
+      doc(
+        "summary",
+        [
+          "## Intro",
+          "Welcome.",
+          "## Judge Comments",
+          "Clean round.",
+          "## 1AC",
+          "A",
+          "## 1NC",
+          "B",
+        ].join("\n\n"),
+      ),
     ]);
+    expect(rounds.map((speech) => speech.label)).toEqual(["1AC", "1NC", "Judge Comments"]);
   });
 
   it("needs a summary or analysis that covers two speeches", () => {
@@ -123,7 +135,7 @@ describe("playingSpeechIndex", () => {
   it("finds the latest timed speech that has started, skipping untimed ones", () => {
     const at = (seconds: number) => speeches[playingSpeechIndex(speeches, seconds)]?.label;
     expect(at(10)).toBe("1AC");
-    expect(at(17 * 60)).toBe("2NX");
+    expect(at(17 * 60)).toBe("1NX");
     expect(at(99 * 60)).toBe("1AR");
   });
 });

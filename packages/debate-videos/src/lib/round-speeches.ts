@@ -11,10 +11,11 @@
  *
  * Sections are matched on the speech they name, not on their exact wording:
  * `## 1AC — Michigan (0:00)` in the transcript and `## 1AC` in the summary are
- * the same speech. Cross-examinations all read "CX", so repeats are matched by
- * the order they come in — the second CX of the transcript is the second CX of
- * the summary. A heading that names no speech (`## Decision`) is matched on its
- * own text and still gets a tab.
+ * the same speech. A cross-examination is always named by a three-letter code
+ * built from the speech it questions — the CX of the 1AC is `1AX`, of the 2NC
+ * `2NX` — and a heading that just says `## CX` questions the constructive
+ * right before it. Headings that name no speech (an overview, an intro) are
+ * dropped, except the judge's decision and comments, which go last.
  * @module lib/round-speeches
  */
 
@@ -30,9 +31,9 @@ export type SpeechSide = "aff" | "neg" | "cx" | "neutral";
 
 /** One speech of a round, with every document's take on it. */
 export interface RoundSpeech {
-  /** Stable across the documents: the speech's code plus its occurrence, e.g. `CX#2`. */
+  /** Stable across the documents: the speech's code plus its occurrence, e.g. `1NX#1`. */
   key: string;
-  /** Short tab label — `1AC`, `CX · 1NC`, `Pro Summary`, `Decision`. */
+  /** Short tab label — `1AC`, `1NX`, `Pro Summary`, `Decision`. */
   label: string;
   /** The first document's heading for it, timecode removed. */
   heading: string;
@@ -60,6 +61,10 @@ const LD_POLICY_CODE = /^([12]?[AN][CR])\b/i;
 const SPELLED_OUT = /^(first|second)\s+(affirmative|negative)\s+(constructive|rebuttal)\b/i;
 const PF_SPEECH = /^(pro|con)\s+(constructive|rebuttal|summary|final\s+focus)\b/i;
 const CROSS_EX = /^(?:cx|cross[\s-]?ex(?:amination)?)\b/i;
+/** A cross-ex already written as its code, `2AX`. */
+const CROSS_EX_CODE = /^([12]?)([AN])X\b/i;
+/** A non-speech section worth keeping: the judge's decision, RFD or comments. */
+const JUDGE_SECTION = /\b(decision|rfd|reasons?\s+for\s+decision|judges?|ballots?|verdict|feedback|comments?)\b/i;
 const GRAND_CROSSFIRE = /^grand\s+cross(?:fire)?\b/i;
 const CROSSFIRE = /^cross(?:fire)?\b/i;
 
@@ -70,6 +75,21 @@ function titleCase(text: string): string {
 /** The side an LD/Policy speech code belongs to. */
 function sideOfCode(code: string): SpeechSide {
   return /A[CR]$/.test(code) ? "aff" : "neg";
+}
+
+/**
+ * The three-letter code of the cross-ex of `target`: the CX of the 1AC is
+ * `1AX`, of the 2NC `2NX`. An unnumbered LD code (`AC`) counts as the first.
+ */
+function crossExCode(target: string): string {
+  const match = target.match(/^([12]?)([AN])[CR]$/i);
+  if (!match) return "CX";
+  return `${match[1] || "1"}${match[2].toUpperCase()}X`;
+}
+
+function crossExIdentity(target: string): SpeechIdentity {
+  const code = crossExCode(target);
+  return { base: code, label: code, side: "cx", isSpeech: true, target };
 }
 
 /**
@@ -84,6 +104,11 @@ export function identifySpeech(heading: string): SpeechIdentity {
   if (spelled) {
     const code = `${spelled[1].toLowerCase() === "first" ? 1 : 2}${spelled[2][0]}${spelled[3][0]}`.toUpperCase();
     return { base: code, label: code, side: sideOfCode(code), isSpeech: true };
+  }
+
+  const crossExCodeMatch = text.match(CROSS_EX_CODE);
+  if (crossExCodeMatch) {
+    return crossExIdentity(`${crossExCodeMatch[1] || "1"}${crossExCodeMatch[2].toUpperCase()}C`);
   }
 
   const code = text.match(LD_POLICY_CODE);
@@ -111,14 +136,10 @@ export function identifySpeech(heading: string): SpeechIdentity {
       const spelledTarget = rest.match(/\b(?:first|second)\s+(?:affirmative|negative)\s+(?:constructive|rebuttal)\b/i);
       if (spelledTarget) target = identifySpeech(spelledTarget[0]).label;
     }
-    let label = crossEx ? "CX" : "Crossfire";
-    if (target) {
-      const num = target[0];
-      const side = target[1];
-      const nextNum = num === "1" ? "2" : "1";
-      label = `${nextNum}${side}X`;
-    }
-    return { base: "CX", label, side: "cx", isSpeech: true, target };
+    if (crossEx && target) return crossExIdentity(target);
+    // A bare "CX" is resolved against the speech before it by the caller.
+    const label = crossEx ? "CX" : "Crossfire";
+    return { base: label.toUpperCase(), label, side: "cx", isSpeech: true };
   }
 
   // Not a speech — an overview, the decision, the judge's RFD. Split on the
@@ -163,14 +184,19 @@ export function buildRoundSpeeches(
   }
 
   const speeches: RoundSpeech[] = [];
-  const targets = new Map<string, string>();
 
   for (const document of ordered) {
     const occurrences = new Map<string, number>();
+    let lastConstructive: string | null = null;
     const sections = parseDocumentSections(document.body, { depth: 2 }).map((section) => {
-      const identity: SpeechIdentity = section.heading
+      let identity: SpeechIdentity = section.heading
         ? identifySpeech(section.heading)
         : { base: "overview", label: "Overview", side: "neutral", isSpeech: false };
+      // A bare "## CX" questions the constructive right before it.
+      if (identity.base === "CX" && lastConstructive) identity = crossExIdentity(lastConstructive);
+      if (identity.isSpeech && identity.side !== "cx") {
+        lastConstructive = /^[12]?[AN]C$/.test(identity.base) ? identity.base : null;
+      }
       const occurrence = (occurrences.get(identity.base) ?? 0) + 1;
       occurrences.set(identity.base, occurrence);
       return { section, identity, key: `${identity.base}#${occurrence}` };
@@ -196,7 +222,6 @@ export function buildRoundSpeeches(
       const speech = speeches[index];
       if (section.body) speech.parts[document.kind] = section.body;
       if (speech.startSeconds === null) speech.startSeconds = section.startSeconds;
-      if (identity.target && !targets.has(key)) targets.set(key, identity.target);
     });
   }
 
@@ -206,17 +231,21 @@ export function buildRoundSpeeches(
   );
   if (summarized.length < 2) return [];
 
-  // Repeated labels need telling apart: a cross-ex names the speech it
-  // questions when any document said, and is numbered otherwise.
+  // Only the speeches themselves get a tab, then the judge's decision and
+  // comments when a document has them; overviews and intros are dropped.
+  const kept = [
+    ...speeches.filter((speech) => speech.isSpeech),
+    ...speeches.filter((speech) => !speech.isSpeech && JUDGE_SECTION.test(speech.heading)),
+  ];
+
+  // Repeated labels (a second untargeted crossfire) are numbered.
   const labelCounts = new Map<string, number>();
-  for (const speech of speeches) labelCounts.set(speech.label, (labelCounts.get(speech.label) ?? 0) + 1);
-  for (const speech of speeches) {
-    const target = targets.get(speech.key);
-    if (target && speech.side !== "cx") speech.label = `${speech.label} · ${target}`;
-    else if ((labelCounts.get(speech.label) ?? 0) > 1) speech.label = `${speech.label} ${speech.key.split("#")[1]}`;
+  for (const speech of kept) labelCounts.set(speech.label, (labelCounts.get(speech.label) ?? 0) + 1);
+  for (const speech of kept) {
+    if ((labelCounts.get(speech.label) ?? 0) > 1) speech.label = `${speech.label} ${speech.key.split("#")[1]}`;
   }
 
-  return speeches;
+  return kept;
 }
 
 /**

@@ -11,7 +11,7 @@
  * each mark become that speech's transcript.
  *
  * Keys are built exactly as `buildRoundSpeeches` builds them (`1AC#1`,
- * `CX#2`), so marks and saved simulations keep lining up if a summary is
+ * `1NX#1`), so marks and saved simulations keep lining up if a summary is
  * written for the round later.
  * @module lib/round-formats
  */
@@ -28,13 +28,13 @@ interface FormatSlot {
 
 const POLICY: FormatSlot[] = [
   { code: "1AC", heading: "1AC — First Affirmative Constructive" },
-  { code: "CX", heading: "Cross-examination of the 1AC", label: "CX · 1AC" },
+  { code: "CX of the 1AC", heading: "Cross-examination of the 1AC" },
   { code: "1NC", heading: "1NC — First Negative Constructive" },
-  { code: "CX", heading: "Cross-examination of the 1NC", label: "CX · 1NC" },
+  { code: "CX of the 1NC", heading: "Cross-examination of the 1NC" },
   { code: "2AC", heading: "2AC — Second Affirmative Constructive" },
-  { code: "CX", heading: "Cross-examination of the 2AC", label: "CX · 2AC" },
+  { code: "CX of the 2AC", heading: "Cross-examination of the 2AC" },
   { code: "2NC", heading: "2NC — Second Negative Constructive" },
-  { code: "CX", heading: "Cross-examination of the 2NC", label: "CX · 2NC" },
+  { code: "CX of the 2NC", heading: "Cross-examination of the 2NC" },
   { code: "1NR", heading: "1NR — First Negative Rebuttal" },
   { code: "1AR", heading: "1AR — First Affirmative Rebuttal" },
   { code: "2NR", heading: "2NR — Second Negative Rebuttal" },
@@ -43,9 +43,9 @@ const POLICY: FormatSlot[] = [
 
 const LINCOLN_DOUGLAS: FormatSlot[] = [
   { code: "1AC", heading: "1AC — Affirmative Constructive" },
-  { code: "CX", heading: "Cross-examination of the 1AC", label: "CX · 1AC" },
+  { code: "CX of the 1AC", heading: "Cross-examination of the 1AC" },
   { code: "1NC", heading: "1NC — Negative Constructive" },
-  { code: "CX", heading: "Cross-examination of the 1NC", label: "CX · 1NC" },
+  { code: "CX of the 1NC", heading: "Cross-examination of the 1NC" },
   { code: "1AR", heading: "1AR — First Affirmative Rebuttal" },
   { code: "NR", heading: "NR — Negative Rebuttal" },
   { code: "2AR", heading: "2AR — Second Affirmative Rebuttal" },
