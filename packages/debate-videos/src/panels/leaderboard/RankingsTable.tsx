@@ -51,35 +51,33 @@ function Rating({ value }: { value: number }) {
   )
 }
 
-/** A win-rate progress bar with its percentage, or a dash when no rounds were debated on that side. */
+/** A win-rate bar with its whole-number percentage overlaid, or a dash when no rounds were debated on that side. */
 function WinRate({ value }: { value: number | null }) {
   if (value === null) return <span className="text-muted-foreground/60">—</span>
-  const pct = Math.min(100, Math.max(0, value))
+  const pct = Math.min(100, Math.max(0, Math.round(value)))
   return (
-    <span className="inline-flex items-center justify-end gap-2">
-      <span
-        role="progressbar"
-        aria-valuenow={pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        className="h-1.5 w-16 overflow-hidden rounded-full bg-muted"
-      >
-        <span
-          className={cn(
-            "block h-full rounded-full",
-            value >= 75 ? "bg-emerald-500" : value < 25 ? "bg-muted-foreground/40" : "bg-primary/70",
-          )}
-          style={{ width: `${pct}%` }}
-        />
-      </span>
+    <span
+      role="progressbar"
+      aria-valuenow={pct}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      className="relative ml-auto flex h-5 w-14 items-center justify-center overflow-hidden rounded-md bg-muted"
+    >
       <span
         className={cn(
-          "w-11 text-right",
-          value >= 75 && "text-emerald-600 dark:text-emerald-400 font-medium",
+          "absolute inset-y-0 left-0",
+          value >= 75 ? "bg-emerald-500/35" : value < 25 ? "bg-muted-foreground/20" : "bg-primary/30",
+        )}
+        style={{ width: `${pct}%` }}
+      />
+      <span
+        className={cn(
+          "relative text-xs font-medium text-foreground",
+          value >= 75 && "text-emerald-700 dark:text-emerald-300",
           value < 25 && "text-muted-foreground",
         )}
       >
-        {Number.isInteger(value) ? value : value.toFixed(1)}%
+        {pct}%
       </span>
     </span>
   )
