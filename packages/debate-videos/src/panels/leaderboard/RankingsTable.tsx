@@ -32,7 +32,7 @@ interface Column {
   render: (entry: RankingEntry, division: Division) => React.ReactNode
 }
 
-const rating = (n: number) => n.toFixed(1)
+const rating = (n: number) => n.toFixed(0)
 
 /** A win-rate percentage, or a dash when no rounds were debated on that side. */
 function WinRate({ value }: { value: number | null }) {
@@ -75,8 +75,6 @@ const COLUMNS: Column[] = [
     numeric: true,
     render: (e) => <span className="font-semibold text-foreground">{rating(e.adjustedRating)}</span>,
   },
-  { key: "rating", label: "Rating", numeric: true, render: (e) => rating(e.rating) },
-  { key: "deviation", label: "Dev", numeric: true, render: (e) => `±${rating(e.deviation)}` },
   { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
   { key: "affWinRate", label: "Aff Win", numeric: true, render: (e) => <WinRate value={e.affWinRate} /> },
   { key: "negWinRate", label: "Neg Win", numeric: true, render: (e) => <WinRate value={e.negWinRate} /> },

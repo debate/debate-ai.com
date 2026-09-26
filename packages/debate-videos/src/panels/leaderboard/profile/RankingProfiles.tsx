@@ -31,7 +31,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 
-const rating = (n: number) => n.toFixed(1)
+const rating = (n: number) => n.toFixed(0)
 const percent = (n: number | null) =>
   n === null ? "—" : `${Number.isInteger(n) ? n : n.toFixed(1)}%`
 
@@ -96,8 +96,6 @@ function TeamDivisionStats({ item }: { item: ProfileEntry }) {
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8">
         <Stat label="Rank" value={entry.rank} />
         <Stat label="Adj. rating" value={rating(entry.adjustedRating)} />
-        <Stat label="Rating" value={rating(entry.rating)} />
-        <Stat label="Deviation" value={`±${rating(entry.deviation)}`} />
         <Stat label="Matches" value={entry.matches} />
         <Stat label="Aff win" value={percent(entry.affWinRate)} />
         <Stat label="Neg win" value={percent(entry.negWinRate)} />

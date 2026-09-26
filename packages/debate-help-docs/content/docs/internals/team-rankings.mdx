@@ -48,7 +48,8 @@ maps each division to its datasets — VPF → `hspf`, VLD → `hsld` +
 `hsld_sepoct`, VCX → `hscx`, NDT → `cpd`. A division with two datasets gets a
 scope switcher. `useLeaderboardData` loads the selected dataset (and still
 fetches `/history` for the champion banner); `RankingsTable` renders one
-sortable column per CSV field, and `RankingsFieldSummary` the field
+sortable column per CSV field except the raw Rating and Deviation (only the
+Adjusted Rating is shown, rounded to a whole number), and `RankingsFieldSummary` the field
 statistics and tournament list. The table is shown for the current season
 year only, since the datasets carry no season.
 

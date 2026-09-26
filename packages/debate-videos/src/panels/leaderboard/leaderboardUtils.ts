@@ -152,10 +152,6 @@ export const COLUMN_TOOLTIPS: Partial<Record<SortKey, string>> = {
   rank: "Position by adjusted rating.",
   adjustedRating:
     "Rating − 2 × Deviation. A conservative Glicko-2 estimate that keeps entries with only a few rounds from topping the list; ranks are sorted on it.",
-  rating:
-    "Raw Glicko-2 rating (μ), updated after every round. Rounds at major tournaments are counted twice.",
-  deviation:
-    "Glicko-2 rating deviation (φ): how uncertain the rating is. It shrinks as an entry debates more rounds.",
   matches: "Rated matches played. Rounds at major tournaments count twice.",
   affWinRate: "Share of rounds won on the affirmative (Pro in PF).",
   negWinRate: "Share of rounds won on the negative (Con in PF).",
