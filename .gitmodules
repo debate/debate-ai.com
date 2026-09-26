@@ -1,0 +1,4 @@
+[submodule "debate-editor"]
+	path = debate-editor
+	url = https://github.com/debate/debate-editor.git
+	branch = main
