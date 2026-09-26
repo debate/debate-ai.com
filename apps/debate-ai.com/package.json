@@ -78,6 +78,7 @@
     "debate-api-client": "workspace:*",
     "debate-webview": "workspace:*",
     "debate-card-parser": "workspace:*",
+    "debate-comments": "workspace:*",
     "debate-community": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",

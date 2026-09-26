@@ -77,6 +77,7 @@ export function CommentSection({
   const [comments, setComments] = useState<Comment[]>([]);
   const [viewer, setViewer] = useState<CommentViewer | null>(null);
   const [loadState, setLoadState] = useState<LoadState>("loading");
+  const [truncated, setTruncated] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
@@ -97,6 +98,7 @@ export function CommentSection({
         if (cancelled) return;
         setComments(thread.comments);
         setViewer(thread.viewer);
+        setTruncated(thread.truncated);
         setLoadState("ready");
       })
       .catch((cause: unknown) => {
@@ -254,6 +256,12 @@ export function CommentSection({
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
           Loading comments…
         </div>
+      )}
+
+      {loadState === "ready" && truncated && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          This discussion is longer than one page — showing its latest comments.
+        </p>
       )}
 
       {loadState === "ready" && comments.length === 0 && (

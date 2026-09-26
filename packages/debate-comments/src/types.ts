@@ -69,8 +69,21 @@ export interface CommentViewer {
 export interface CommentThreadResponse {
   comments: Comment[];
   viewer: CommentViewer | null;
-  /** Every comment in the thread, roots and replies, deleted ones included. */
+  /**
+   * Every comment in the thread, roots and replies. Deleted ones count — they
+   * still occupy a row in the conversation, and a header that counted fewer
+   * comments than the page shows is a bug a reader can see.
+   */
   totalCount: number;
+  /**
+   * The thread was longer than the server is willing to send in one response,
+   * and `comments` holds its most recent {@link MAX_THREAD_ROWS} comments.
+   *
+   * A truncated thread is shown as one — "showing the latest N" — rather than
+   * passed off as the whole discussion, because a silently shortened thread
+   * reads as a thread that nobody replied to.
+   */
+  truncated: boolean;
 }
 
 /** The longest a comment body may be, in characters. Enforced on the server. */
