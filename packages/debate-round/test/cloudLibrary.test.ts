@@ -4,6 +4,7 @@ import {
   formatRelativeCloudTime,
   parseCloudTimestamp,
   type CloudDocumentSummary,
+  type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
 import type { SavedFlowSummary } from "../src/state/savedFlows";
 import type { SavedRoundSummary } from "../src/state/savedRounds";
@@ -41,10 +42,27 @@ describe("buildRecentCloudItems", () => {
   const rounds: SavedRoundSummary[] = [
     { clientId: 3, label: "State Quals - Round 4", updatedAt: "2026-08-29T00:00:00.000Z" },
   ];
+  const wordCountRounds: CloudWordCountRoundSummary[] = [
+    { roundId: "round-9", updatedAt: Date.parse("2026-08-31T00:00:00.000Z") },
+  ];
 
-  it("merges all three kinds and sorts newest first", () => {
-    const items = buildRecentCloudItems({ documents, flows, rounds });
-    expect(items.map((i) => i.kind)).toEqual(["flow", "round", "document"]);
+  it("merges all four kinds and sorts newest first", () => {
+    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds });
+    expect(items.map((i) => i.kind)).toEqual(["wordCountRound", "flow", "round", "document"]);
+  });
+
+  it("includes word-count rounds, keyed and labeled by roundId", () => {
+    const items = buildRecentCloudItems({ wordCountRounds });
+    expect(items).toEqual([
+      expect.objectContaining({ kind: "wordCountRound", key: "wordCountRound-round-9", label: "round-9" }),
+    ]);
+  });
+
+  it("falls back to createdAt for a word-count round with no updatedAt", () => {
+    const items = buildRecentCloudItems({
+      wordCountRounds: [{ roundId: "round-1", createdAt: Date.parse("2026-08-20T00:00:00.000Z") }],
+    });
+    expect(items[0]?.updatedAtMs).toBe(Date.parse("2026-08-20T00:00:00.000Z"));
   });
 
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
@@ -54,26 +72,32 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("defaults hrefs per kind and lets a caller override them", () => {
-    const items = buildRecentCloudItems({ documents, flows, rounds });
+    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds });
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
     expect(byKind.flow).toBe("/debate");
     expect(byKind.round).toBe("/debate");
+    expect(byKind.wordCountRound).toBe("/word-count");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
+
+    const overriddenWordCount = buildRecentCloudItems({ wordCountRounds }, { wordCountRoundHref: "/custom-wc-route" });
+    expect(overriddenWordCount[0]?.href).toBe("/custom-wc-route");
   });
 
-  it("falls back to an untitled label per kind when the title/label is blank", () => {
+  it("falls back to an untitled label per kind when the title/label/roundId is blank", () => {
     const items = buildRecentCloudItems({
       documents: [{ id: 1, title: "   ", updatedAt: "2026-08-30T00:00:00.000Z" }],
       flows: [{ clientId: 2, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
       rounds: [{ clientId: 3, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
+      wordCountRounds: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
     });
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
     expect(byKind.flow).toBe("Untitled flow");
     expect(byKind.round).toBe("Untitled round");
+    expect(byKind.wordCountRound).toBe("Untitled round");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -94,7 +118,7 @@ describe("buildRecentCloudItems", () => {
 
   it("returns an empty list for empty/omitted input", () => {
     expect(buildRecentCloudItems({})).toEqual([]);
-    expect(buildRecentCloudItems({ documents: [], flows: [], rounds: [] })).toEqual([]);
+    expect(buildRecentCloudItems({ documents: [], flows: [], rounds: [], wordCountRounds: [] })).toEqual([]);
   });
 });
 

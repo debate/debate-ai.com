@@ -11,9 +11,12 @@
  * Previously merged only documents and rounds inline, silently omitting
  * saved flows — the middle of the three data types "save flows docs and
  * debates" names. `buildRecentCloudItems`/`formatRelativeCloudTime`
- * (`debate-round`) now own the merge/sort/label/relative-time logic so all
- * three kinds are covered, unit-tested there since this file has no vitest
- * project of its own (see `vitest.config.ts`'s `projects` list).
+ * (`debate-round`) now own the merge/sort/label/relative-time logic, unit
+ * tested there since this file has no vitest project of its own (see
+ * `vitest.config.ts`'s `projects` list). Account-synced word-count rounds
+ * (`/word-count`) joined the merge alongside those three — the same
+ * SQL-backed, per-user round history as `saved_rounds`, just never
+ * surfaced here.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -29,7 +32,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { FileText, Flag, ListTree } from "lucide-react"
+import { FileText, Flag, ListTree, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -38,6 +41,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   document: FileText,
   flow: ListTree,
   round: Flag,
+  // Matches Word-Count Speeches' own icon in `app/tools/tool-groups.ts`.
+  wordCountRound: Type,
 }
 
 export function MySavedItems() {
