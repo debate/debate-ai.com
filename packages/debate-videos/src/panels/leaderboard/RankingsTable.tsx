@@ -99,9 +99,9 @@ const COLUMNS: Column[] = [
   {
     key: "name",
     label: "Name",
-    render: (e) => (
+    render: (e, division) => (
       <Link href={teamHref(e)} className="font-medium text-foreground hover:underline underline-offset-4">
-        {e.name}
+        {displayEntryName(e.name, division)}
       </Link>
     ),
   },
