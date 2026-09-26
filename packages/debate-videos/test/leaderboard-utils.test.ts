@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   DIVISION_CONFIG,
+  LEADERBOARD_TABS,
+  SCHOOL_DATASETS,
   VALID_DIVISIONS,
+  VALID_LEADERBOARD_TABS,
+  aggregateSchools,
+  filterSchools,
+  schoolRankingsFor,
+  sortSchools,
   currentSeasonYear,
   displayEntryName,
   divisionDatasets,
@@ -190,5 +197,85 @@ describe("currentSeasonYear", () => {
     expect(seasonLabel("2027")).toBe("2026-27");
     expect(seasonLabel(2002)).toBe("2001-02");
     expect(seasonLabel(2000)).toBe("1999-00");
+  });
+});
+
+describe("leaderboard tabs", () => {
+  it("lists the four divisions followed by Schools", () => {
+    expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["VPF", "VLD", "VCX", "NDT", "SCHOOLS"]);
+    expect([...VALID_LEADERBOARD_TABS].sort()).toEqual(LEADERBOARD_TABS.map((t) => t.value).sort());
+  });
+
+  it("rolls up each division's full-season dataset, not LD's Sep–Oct slice", () => {
+    expect(SCHOOL_DATASETS.map((d) => d.datasetId)).toEqual(["hspf", "hsld", "hscx", "cpd"]);
+  });
+});
+
+describe("aggregateSchools", () => {
+  const rows = aggregateSchools([
+    {
+      event: "PF",
+      entries: [
+        entry({ school: "Harvard-Westlake", name: "Kim & Lee", adjustedRating: 1800 }),
+        entry({ school: "Harvard Westlake", name: "Park & Cho", adjustedRating: 1400 }),
+        entry({ school: "Strake Jesuit", name: "Doe & Roe", adjustedRating: 1700 }),
+      ],
+    },
+    {
+      event: "LD",
+      entries: [
+        entry({ school: "Strake Jesuit", name: "Alex Smith", adjustedRating: 1750 }),
+        entry({ school: "Harvard-Westlake", name: "Sam Wu", adjustedRating: 1600 }),
+        entry({ school: "", name: "Unknown", adjustedRating: 2000 }),
+      ],
+    },
+  ]);
+
+  it("ranks schools by their best entry's rating", () => {
+    expect(rows.map((r) => [r.rank, r.school])).toEqual([
+      [1, "Harvard-Westlake"],
+      [2, "Strake Jesuit"],
+    ]);
+    expect(rows[0]).toMatchObject({ bestRating: 1800, bestEntry: "Kim & Lee", bestEvent: "PF" });
+    expect(rows[1]).toMatchObject({ bestRating: 1750, bestEntry: "Alex Smith", bestEvent: "LD" });
+  });
+
+  it("averages every entry, merging spellings of the same school", () => {
+    expect(rows[0].teams).toBe(3);
+    expect(rows[0].avgRating).toBeCloseTo((1800 + 1400 + 1600) / 3);
+    expect(rows[0].events).toEqual(["PF", "LD"]);
+    expect(rows[1].avgRating).toBe(1725);
+  });
+
+  it("breaks best-rating ties by average rating", () => {
+    const tied = aggregateSchools([
+      {
+        event: "PF",
+        entries: [
+          entry({ school: "Alpha", adjustedRating: 1500 }),
+          entry({ school: "Alpha", adjustedRating: 1100 }),
+          entry({ school: "Beta", adjustedRating: 1500 }),
+        ],
+      },
+    ]);
+    expect(tied.map((r) => r.school)).toEqual(["Beta", "Alpha"]);
+  });
+
+  it("sorts and filters the rows", () => {
+    expect(sortSchools(rows, { key: "avgRating", dir: "desc" }).map((r) => r.school)).toEqual([
+      "Strake Jesuit",
+      "Harvard-Westlake",
+    ]);
+    expect(filterSchools(rows, "smith").map((r) => r.school)).toEqual(["Strake Jesuit"]);
+    expect(filterSchools(rows, "  ")).toBe(rows);
+  });
+
+  it("limits the rollup to one division", () => {
+    const pf = { entries: [entry({ school: "Alpha", adjustedRating: 1500 })] };
+    const ld = { entries: [entry({ school: "Beta", adjustedRating: 1900 })] };
+    const datasets = { VPF: pf, VLD: ld } as unknown as Parameters<typeof schoolRankingsFor>[0];
+    expect(schoolRankingsFor(datasets, "all").map((r) => r.school)).toEqual(["Beta", "Alpha"]);
+    expect(schoolRankingsFor(datasets, "VPF").map((r) => r.school)).toEqual(["Alpha"]);
+    expect(schoolRankingsFor(datasets, "NDT")).toEqual([]);
   });
 });

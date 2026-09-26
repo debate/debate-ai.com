@@ -5,9 +5,18 @@
  * @module components/debate/DebateVideos/panels/leaderboardUtils
  */
 
-import type { RankingDatasetId, RankingEntry } from "debate-rankings-adapter";
+import { normalizeSchool } from "debate-rankings-adapter";
+import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings-adapter";
 import type { SeasonalTopic } from "../../lib/debate-topics";
-import type { Division, SortKey, SortState, YearData } from "./leaderboardTypes";
+import type {
+  Division,
+  LeaderboardTab,
+  SchoolRanking,
+  SchoolSortState,
+  SortKey,
+  SortState,
+  YearData,
+} from "./leaderboardTypes";
 
 // Re-export all types and the VALID_DIVISIONS set for backward compatibility.
 export type {
@@ -18,8 +27,12 @@ export type {
   YearData,
   DebateHistory,
   LeaderboardPanelProps,
+  LeaderboardTab,
+  SchoolRanking,
+  SchoolSortKey,
+  SchoolSortState,
 } from "./leaderboardTypes";
-export { VALID_DIVISIONS } from "./leaderboardTypes";
+export { VALID_DIVISIONS, VALID_LEADERBOARD_TABS } from "./leaderboardTypes";
 
 // ---------------------------------------------------------------------------
 // Division config
@@ -77,6 +90,30 @@ export const DIVISION_CONFIG: {
     datasets: ["cpd"],
   },
 ];
+
+/**
+ * Every tab of the rankings page, in display order: the four divisions
+ * followed by the Schools table.
+ */
+export const LEADERBOARD_TABS: { value: LeaderboardTab; label: string }[] = [
+  ...DIVISION_CONFIG.map(({ value, label }) => ({ value, label })),
+  { value: "SCHOOLS", label: "Schools" },
+];
+
+/** Short event label for each division, used in the Schools table. */
+export const DIVISION_SHORT_LABELS: Record<Division, string> = {
+  VPF: "PF",
+  VLD: "LD",
+  VCX: "Policy",
+  NDT: "NDT",
+};
+
+/**
+ * Datasets the Schools table rolls up: each division's full-season rankings
+ * (LD's Sep–Oct slice would count its debaters twice), in display order.
+ */
+export const SCHOOL_DATASETS: { division: Division; datasetId: RankingDatasetId }[] =
+  DIVISION_CONFIG.map(({ value, datasets }) => ({ division: value, datasetId: datasets[0] }));
 
 /**
  * Season year (the year a season ends in) for `now`. Seasons roll over on
@@ -263,4 +300,122 @@ export function lastName(name: string): string {
  */
 export function displayEntryName(name: string, division: Division): string {
   return division === "VLD" ? lastName(name) : name;
+}
+
+/**
+ * Rolls ranked entries up by school. Spellings that {@link normalizeSchool}
+ * treats as the same school are merged, and the table shows the spelling most
+ * entries use. Schools rank by their best entry's adjusted rating, ties broken
+ * by the average adjusted rating across all of the school's entries.
+ *
+ * @param groups - Each dataset's entries with the short event label to show for it.
+ */
+export function aggregateSchools(
+  groups: { event: string; entries: RankingEntry[] }[],
+): SchoolRanking[] {
+  type Acc = {
+    spellings: Map<string, number>;
+    best: RankingEntry;
+    bestEvent: string;
+    total: number;
+    teams: number;
+    events: string[];
+  };
+  const bySchool = new Map<string, Acc>();
+
+  for (const { event, entries } of groups) {
+    for (const entry of entries) {
+      const school = entry.school.trim();
+      const key = normalizeSchool(school);
+      if (!key) continue;
+      let acc = bySchool.get(key);
+      if (!acc) {
+        acc = { spellings: new Map(), best: entry, bestEvent: event, total: 0, teams: 0, events: [] };
+        bySchool.set(key, acc);
+      }
+      acc.spellings.set(school, (acc.spellings.get(school) ?? 0) + 1);
+      if (entry.adjustedRating > acc.best.adjustedRating) {
+        acc.best = entry;
+        acc.bestEvent = event;
+      }
+      acc.total += entry.adjustedRating;
+      acc.teams += 1;
+      if (!acc.events.includes(event)) acc.events.push(event);
+    }
+  }
+
+  const rows = [...bySchool.values()].map((acc) => {
+    const school = [...acc.spellings].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0];
+    return {
+      rank: 0,
+      school,
+      bestRating: acc.best.adjustedRating,
+      bestEntry: acc.best.name,
+      bestEvent: acc.bestEvent,
+      avgRating: acc.total / acc.teams,
+      teams: acc.teams,
+      events: acc.events,
+    };
+  });
+  rows.sort(
+    (a, b) =>
+      b.bestRating - a.bestRating || b.avgRating - a.avgRating || a.school.localeCompare(b.school),
+  );
+  rows.forEach((row, i) => {
+    row.rank = i + 1;
+  });
+  return rows;
+}
+
+/**
+ * Builds the Schools table rows from loaded datasets, limited to `scope`.
+ *
+ * @param datasets - Loaded full-season dataset per division (missing ones are skipped).
+ * @param scope - `"all"` for every division, or one division.
+ */
+export function schoolRankingsFor(
+  datasets: Partial<Record<Division, RankingDataset>>,
+  scope: "all" | Division,
+): SchoolRanking[] {
+  return aggregateSchools(
+    SCHOOL_DATASETS.filter(({ division }) => scope === "all" || scope === division).flatMap(
+      ({ division }) => {
+        const dataset = datasets[division];
+        return dataset ? [{ event: DIVISION_SHORT_LABELS[division], entries: dataset.entries }] : [];
+      },
+    ),
+  );
+}
+
+/**
+ * Returns a sorted copy of the Schools table rows.
+ *
+ * @param rows - Rows from {@link aggregateSchools}.
+ * @param sort - Active sort state.
+ */
+export function sortSchools(rows: SchoolRanking[], sort: SchoolSortState): SchoolRanking[] {
+  const { key, dir } = sort;
+  const mul = dir === "asc" ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    const av = a[key];
+    const bv = b[key];
+    if (typeof av === "string" || typeof bv === "string") {
+      return mul * String(av).localeCompare(String(bv));
+    }
+    return mul * (av - bv);
+  });
+}
+
+/**
+ * Case-insensitive filter on school name or its best entry's name.
+ *
+ * @param rows - Schools table rows.
+ * @param query - Free-text query; blank returns `rows` unchanged.
+ */
+export function filterSchools(rows: SchoolRanking[], query: string): SchoolRanking[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return rows;
+  return rows.filter(
+    (r) => r.school.toLowerCase().includes(q) || r.bestEntry.toLowerCase().includes(q),
+  );
 }
