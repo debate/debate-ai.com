@@ -61,12 +61,15 @@ describe("matchesToolSidebarHref", () => {
     expect(matchesToolSidebarHref("/cards/leaderboard/alice")).toBe(true);
     expect(matchesToolSidebarHref("/doc/some-document")).toBe(true);
     expect(matchesToolSidebarHref("/reason-editor/42")).toBe(true);
+    expect(matchesToolSidebarHref("/teams/greenhill-ab")).toBe(true);
+    expect(matchesToolSidebarHref("/schools/greenhill")).toBe(true);
+    expect(matchesToolSidebarHref("/legal/privacy")).toBe(true);
   });
 
   it("does not match a sibling route that merely shares a prefix", () => {
     expect(matchesToolSidebarHref("/docs")).toBe(false);
     expect(matchesToolSidebarHref("/cardsy")).toBe(false);
-    expect(matchesToolSidebarHref("/legal/privacy")).toBe(false);
+    expect(matchesToolSidebarHref("/teamsy")).toBe(false);
     expect(matchesToolSidebarHref("/login")).toBe(false);
     expect(matchesToolSidebarHref("/")).toBe(false);
   });
@@ -90,9 +93,10 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
   });
 
   it("falls back to the fixed dock only off the sidebar routes", () => {
-    // `/features` used to be in this list. It is a sidebar route now — see
-    // "the features catalog" below.
-    for (const route of ["/", "/login", "/legal/privacy"]) {
+    // `/features` and `/legal/privacy` used to be in this list. They are
+    // sidebar routes now — see "the features catalog" and "the terms of
+    // service page" below.
+    for (const route of ["/", "/login", "/contacts"]) {
       expect(hasEmbeddedDock(route)).toBe(false);
       expect(isGenericToolSidebarRoute(route)).toBe(false);
     }
@@ -113,6 +117,26 @@ describe("the features catalog", () => {
     // …and the dock's own floating instance stays hidden, since the sidebar
     // it is wrapped in already hosts one.
     expect(hasEmbeddedDock("/features")).toBe(true);
+  });
+});
+
+describe("team and school profile pages", () => {
+  it("are sidebar routes, so opening one from the rankings table keeps the nav", () => {
+    for (const root of ["/teams", "/schools"]) {
+      expect(TOOL_SIDEBAR_HREFS.has(root)).toBe(true);
+      expect(isGenericToolSidebarRoute(root)).toBe(true);
+      expect(hasEmbeddedDock(root)).toBe(true);
+    }
+    expect(isGenericToolSidebarRoute("/teams/greenhill-ab")).toBe(true);
+    expect(isGenericToolSidebarRoute("/schools/greenhill")).toBe(true);
+  });
+});
+
+describe("the terms of service page", () => {
+  it("is a sidebar route, so it opens inside the app rather than as a bare page", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/legal")).toBe(true);
+    expect(isGenericToolSidebarRoute("/legal/privacy")).toBe(true);
+    expect(hasEmbeddedDock("/legal/privacy")).toBe(true);
   });
 });
 

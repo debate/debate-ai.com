@@ -25,8 +25,22 @@ import {
  * full-page panel with a "Back" pill of its own, which read as leaving the
  * app — so it is wrapped in the same sidebar as everything else it links to,
  * and the sidebar is how you leave it.
+ *
+ * `/teams/<team>` and `/schools/<school>` are the profile pages opened from
+ * the Team Rankings table (`/rank`, itself a tree destination). They used to
+ * render bare, with only a "← Team Rankings" text link back — landing on one
+ * from anywhere else in the app dropped the nav entirely.
+ *
+ * `/legal` is the Terms of Service and Privacy Policy page (`/legal/privacy`
+ * today). Same reasoning: a page reachable from the footer on every other
+ * route otherwise loses the nav the moment you open it.
  */
-export const EXTRA_SIDEBAR_HREFS: readonly string[] = ["/features"];
+export const EXTRA_SIDEBAR_HREFS: readonly string[] = [
+  "/features",
+  "/teams",
+  "/schools",
+  "/legal",
+];
 
 /** Every destination the tool sidebar links to, deduplicated. */
 export const TOOL_SIDEBAR_HREFS: ReadonlySet<string> = new Set<string>([
