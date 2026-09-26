@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
-import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, Swords, UserCircle2 } from "lucide-react"
+import { Globe, LogIn, LogOut, Monitor, Moon, Palette, Pause, Play, Search, Settings as SettingsIcon, Sun, UserCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "../../lib/ui/lib/utils"
 import { Dock, DockIcon, DockItem, DockLabel } from "../../lib/ui/layout/dock"
@@ -146,23 +146,22 @@ function AccountSection({ onSignIn }: { onSignIn: () => void }) {
  */
 const SUBMENU_WIDTH = "w-[min(14rem,calc(100vw-1.5rem))]"
 
-function SettingsMenu({
-  side,
-  onSignIn,
-}: {
-  side: "bottom" | "top"
-  onSignIn: () => void
-}) {
-  const themeState = useThemeState()
+/**
+ * The site-nav menu: Command Palette plus one submenu per sidebar section
+ * (Videos, Coaching, Research, Practice). Used to live at the top of
+ * {@link SettingsMenu}, opened from the same gear icon as Settings/Theme/
+ * Links/Account — which put "where do I go" and "how do I configure this"
+ * behind one trigger. It now opens from the Practice vs AI dock icon instead
+ * ({@link PracticeVsAiTrigger}), as its own menu, so the gear is settings
+ * only and this is navigation only.
+ */
+function NavMenu({ side }: { side: "bottom" | "top" }) {
   const router = useRouter()
 
   return (
     <DropdownMenuContent
       side={side}
       align="end"
-      // Tall enough (the nav submenus above the account block) to run past a
-      // phone viewport, which would otherwise cut the account rows off with
-      // no way to reach them.
       className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
       collisionPadding={8}
       avoidCollisions
@@ -178,7 +177,7 @@ function SettingsMenu({
           the glossary/rankings pair below its tree can be reached — see
           `lib/nav/dock-menu-sections.ts`, which derives these from the same
           data the sidebar renders. The feature catalog is *not* restated
-          here: it is the `/features` row in Site Links below. */}
+          here: it is the `/features` row in the Settings menu's Site Links. */}
       {SIDEBAR_MENU_SECTIONS.map((section) => (
         <DropdownMenuSub key={section.id}>
           <DropdownMenuSubTrigger>
@@ -195,7 +194,31 @@ function SettingsMenu({
           </DropdownMenuSubContent>
         </DropdownMenuSub>
       ))}
-      <DropdownMenuSeparator />
+    </DropdownMenuContent>
+  )
+}
+
+function SettingsMenu({
+  side,
+  onSignIn,
+}: {
+  side: "bottom" | "top"
+  onSignIn: () => void
+}) {
+  const themeState = useThemeState()
+  const router = useRouter()
+
+  return (
+    <DropdownMenuContent
+      side={side}
+      align="end"
+      // Tall enough (the theme/links block above the account rows) to run
+      // past a phone viewport, which would otherwise cut them off with no
+      // way to reach them.
+      className="w-48 max-w-[calc(100vw-1rem)] max-h-[min(560px,80vh)] overflow-y-auto"
+      collisionPadding={8}
+      avoidCollisions
+    >
       <DropdownMenuItem onSelect={(e) => { e.preventDefault(); router.push("/settings") }}>
         <SettingsIcon className="mr-2 h-4 w-4" />
         Settings
@@ -260,7 +283,8 @@ function SettingsMenu({
           <Globe className="mr-2 h-4 w-4" />
           Site Links
         </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(400px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
+        <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(500px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
+          <DropdownMenuLabel>Site Links</DropdownMenuLabel>
           {/* An app route (`/features`, `/legal/privacy`) is pushed through
               the router so it opens inside the app — sidebar, dock and the
               persistent player all still there. Only an outside site or the
@@ -291,14 +315,8 @@ function SettingsMenu({
               </DropdownMenuItem>
             )
           })}
-        </DropdownMenuSubContent>
-      </DropdownMenuSub>
-      <DropdownMenuSub>
-        <DropdownMenuSubTrigger>
-          <Swords className="mr-2 h-4 w-4" />
-          Debate Links
-        </DropdownMenuSubTrigger>
-        <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(400px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel>Debate Links</DropdownMenuLabel>
           {DEBATE_LINKS.map((link) => (
             <DropdownMenuItem key={link.text} asChild>
               <a href={link.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
@@ -328,6 +346,67 @@ function SettingsMenu({
  */
 const EMBEDDED_ICON_SIZE = 34
 const EMBEDDED_MAGNIFICATION = 46
+
+/** The dock item that opens {@link NavMenu} instead of navigating. */
+const NAV_MENU_TRIGGER_HREF = "/versus-ai"
+
+/**
+ * The Practice vs AI dock item, wired to open {@link NavMenu} rather than
+ * navigate to `/versus-ai` directly — that page is still one tap away, as
+ * the first tool listed under the menu's Practice section.
+ *
+ * Carries its own `DropdownMenu` root rather than sharing the Settings
+ * gear's, so the two menus stay independent (either can be open, or opening
+ * one closes the other, exactly like any other pair of dropdowns). The cost
+ * is that this whole element — not the `DockItem` two levels down — is what
+ * `Dock` clones magnification props onto, since its root sits *inside*
+ * `Dock`'s children rather than wrapping the whole dock the way the
+ * Settings' root does (see `DockInstance`). Declaring the same four props
+ * `Dock` injects and forwarding them by hand to the real `DockItem` is what
+ * keeps this icon sizing and tracking the cursor like its siblings.
+ */
+function PracticeVsAiTrigger({
+  item,
+  side,
+  mousex,
+  magnification,
+  distance,
+  iconSize,
+}: {
+  item: DockNavRenderItem
+  side: "bottom" | "top"
+  mousex?: any
+  magnification?: number
+  distance?: number
+  iconSize?: number
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <DockItem
+          aria-label={item.label}
+          aria-current={item.active ? "page" : undefined}
+          mousex={mousex}
+          magnification={magnification}
+          distance={distance}
+          iconSize={iconSize}
+          className={cn(
+            "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
+            item.active ? "bg-primary/20 ring-2 ring-primary" : "bg-gray-200 dark:bg-neutral-800",
+          )}
+        >
+          <DockLabel>{item.label}</DockLabel>
+          <DockIcon>
+            {item.renderIcon ? item.renderIcon() : (
+              <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
+            )}
+          </DockIcon>
+        </DockItem>
+      </DropdownMenuTrigger>
+      <NavMenu side={side} />
+    </DropdownMenu>
+  )
+}
 
 /**
  * Renders a single dock instance with all items inline as direct children.
@@ -361,30 +440,34 @@ function DockInstance({
         iconSize={embedded ? EMBEDDED_ICON_SIZE : undefined}
         magnification={embedded ? EMBEDDED_MAGNIFICATION : undefined}
       >
-        {allItems.map(({ key, label, icon, active, href, onClick, onPreload, renderIcon }) => (
-          <DockItem
-            key={key}
-            href={href}
-            onClick={onClick}
-            onMouseEnter={onPreload}
-            onFocus={onPreload}
-            aria-label={label}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
-              active
-                ? "bg-primary/20 ring-2 ring-primary"
-                : "bg-gray-200 dark:bg-neutral-800",
-            )}
-          >
-            <DockLabel>{label}</DockLabel>
-            <DockIcon>
-              {renderIcon ? renderIcon() : (
-                <Image src={icon} alt={label} width={24} height={24} className="w-full h-full" unoptimized />
+        {allItems.map((item) =>
+          item.href === NAV_MENU_TRIGGER_HREF ? (
+            <PracticeVsAiTrigger key={item.key} item={item} side={side} />
+          ) : (
+            <DockItem
+              key={item.key}
+              href={item.href}
+              onClick={item.onClick}
+              onMouseEnter={item.onPreload}
+              onFocus={item.onPreload}
+              aria-label={item.label}
+              aria-current={item.active ? "page" : undefined}
+              className={cn(
+                "flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer",
+                item.active
+                  ? "bg-primary/20 ring-2 ring-primary"
+                  : "bg-gray-200 dark:bg-neutral-800",
               )}
-            </DockIcon>
-          </DockItem>
-        ))}
+            >
+              <DockLabel>{item.label}</DockLabel>
+              <DockIcon>
+                {item.renderIcon ? item.renderIcon() : (
+                  <Image src={item.icon} alt={item.label} width={24} height={24} className="w-full h-full" unoptimized />
+                )}
+              </DockIcon>
+            </DockItem>
+          ),
+        )}
         <DropdownMenuTrigger asChild>
           <DockItem aria-label="Settings" className="relative flex flex-col items-center gap-0.5 rounded-full transition-colors cursor-pointer bg-gray-200 dark:bg-neutral-800">
             <DockLabel>Settings</DockLabel>
@@ -577,7 +660,11 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
       <div data-app-chrome className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <DropdownMenu>
           <Dock direction="middle" className="h-[52px] shrink-0 !mt-0 mx-auto w-max mb-2 !gap-1 !p-1">
-            {mobileItems.map(({ key, label, icon, active, href, onClick, onPreload, isPlayingIndicator, renderIcon }) => {
+            {mobileItems.map((item) => {
+              if (item.href === NAV_MENU_TRIGGER_HREF) {
+                return <PracticeVsAiTrigger key={item.key} item={item} side="top" />
+              }
+              const { key, label, icon, active, href, onClick, onPreload, isPlayingIndicator, renderIcon } = item
               return (
                 <DockItem
                   key={key}
