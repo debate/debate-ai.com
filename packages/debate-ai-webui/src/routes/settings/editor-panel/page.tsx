@@ -3,20 +3,33 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import type { ComponentType } from "react"
 import { useSearchParams } from "next/navigation"
-import { Accessibility, FolderOpen, Keyboard, MessageSquareText, Palette, PenLine, Search, Settings, Users } from "lucide-react"
+import { Accessibility, FolderOpen, Keyboard, MessageSquareText, Palette, PenLine, Search, Settings, SlidersHorizontal, Users } from "lucide-react"
 // Static import so bundling confines this ~15k-line global stylesheet to
 // this route's own chunk — never loaded by the host app's main bundle.
 import "debate-editor/styles.css"
 import type { SettingsCategory } from "debate-editor/settings"
+import { UserSettingsPanel } from "debate-round"
 import { EDITOR_PREFERENCE_KEYS, EDITOR_SETTINGS_TABS } from "../../../lib/editor-preferences"
 
-// The tabs and their order come from `lib/editor-preferences.ts`, so the set
-// of categories shown here and the set mirrored to the account cannot drift.
-const CATEGORIES = EDITOR_SETTINGS_TABS
+// The app's own account-linked preferences (debate style, font size, font
+// family, color theme, light/dark) — rendered by `UserSettingsPanel`, which
+// syncs itself via `/api/settings`, rather than by the editor's settings UI.
+// It used to be its own page, `/settings/preferences` (now a redirect here).
+const PREFERENCES_TAB = "preferences"
+type TabId = SettingsCategory | typeof PREFERENCES_TAB
+
+// The editor tabs and their order come from `lib/editor-preferences.ts`, so
+// the set of categories shown here and the set mirrored to the account
+// cannot drift. Preferences is listed first, ahead of them.
+const CATEGORIES: readonly { id: TabId; label: string }[] = [
+  { id: PREFERENCES_TAB, label: "Preferences" },
+  ...EDITOR_SETTINGS_TABS,
+]
 
 // Sidebar icon and header subtitle per category, in the style of the
 // research workspace's settings (components/qwksearch/Settings).
 const CATEGORY_DETAILS: Record<string, { icon: ComponentType<{ size?: number }>; description: string }> = {
+  preferences: { icon: SlidersHorizontal, description: "Debate style, font, color theme and light/dark mode." },
   general: { icon: Settings, description: "Startup, language and general editor behavior." },
   files: { icon: FolderOpen, description: "Opening, saving, autosave and file handling." },
   appearance: { icon: Palette, description: "Colors, fonts, sizing and layout." },
@@ -47,7 +60,7 @@ const SIDEBAR_CSS = `
 }
 `
 
-function isSettingsCategory(value: string | null): value is SettingsCategory {
+function isTabId(value: string | null): value is TabId {
   return CATEGORIES.some((category) => category.id === value)
 }
 
@@ -55,8 +68,8 @@ const SAVE_DEBOUNCE_MS = 600
 
 function EditorSettingsPanelPage() {
   const searchParams = useSearchParams()
-  const initialCategory = isSettingsCategory(searchParams.get("category")) ? searchParams.get("category") : "general"
-  const [active, setActive] = useState<SettingsCategory>(initialCategory as SettingsCategory)
+  const requestedCategory = searchParams.get("category")
+  const [active, setActive] = useState<TabId>(isTabId(requestedCategory) ? requestedCategory : PREFERENCES_TAB)
   const [ready, setReady] = useState(false)
   const [signedIn, setSignedIn] = useState(false)
   const [query, setQuery] = useState("")
@@ -120,7 +133,7 @@ function EditorSettingsPanelPage() {
   useEffect(() => {
     const uiModule = moduleRef.current
     const host = containerRef.current
-    if (!ready || !uiModule || !host) return
+    if (!ready || !uiModule || !host || active === PREFERENCES_TAB) return
 
     const panel = uiModule.buildEmbeddedSettingsPanel(active)
     host.appendChild(panel.element)
@@ -209,7 +222,7 @@ function EditorSettingsPanelPage() {
     <div style={{ fontFamily: "system-ui, sans-serif", padding: "12px 16px 16px" }}>
       <style>{SIDEBAR_CSS}</style>
       <div className="dai-settings-shell">
-        <div className="dai-settings-sidebar" role="navigation" aria-label="Editor settings">
+        <div className="dai-settings-sidebar" role="navigation" aria-label="Settings">
           <div style={{ position: "relative", marginBottom: 10 }}>
             <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", opacity: 0.5, display: "flex" }}>
               <Search size={15} />
@@ -225,7 +238,7 @@ function EditorSettingsPanelPage() {
           </div>
           <div
             role="tablist"
-            aria-label="Editor settings categories"
+            aria-label="Settings categories"
             aria-orientation="vertical"
             style={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
@@ -263,8 +276,14 @@ function EditorSettingsPanelPage() {
             <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{activeCategory?.label}</h3>
             <p style={{ margin: "2px 0 0", fontSize: 13, opacity: 0.6 }}>{CATEGORY_DETAILS[active]?.description}</p>
           </div>
-          {!ready && <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>}
-          <div ref={containerRef} />
+          {active === PREFERENCES_TAB ? (
+            <UserSettingsPanel embedded />
+          ) : (
+            <>
+              {!ready && <p style={{ fontSize: 14, opacity: 0.7 }}>Loading…</p>}
+              <div ref={containerRef} />
+            </>
+          )}
         </div>
       </div>
     </div>

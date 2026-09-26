@@ -118,8 +118,11 @@ function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (
  *
  * Reads local/remote state on mount only (client-side), so it renders a
  * loading state during SSR/hydration rather than throwing.
+ *
+ * `embedded` drops the panel's own "Settings" heading and centered page
+ * padding, for a host that already frames it — `/settings`' Preferences tab.
  */
-export function UserSettingsPanel() {
+export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } = {}) {
   const { setTheme, theme, resolvedTheme } = useTheme()
   const [form, setForm] = useState<FormState | null>(null)
   const [remoteAvailable, setRemoteAvailable] = useState(false)
@@ -251,8 +254,8 @@ export function UserSettingsPanel() {
 
   if (!form) {
     return (
-      <div className="max-w-lg mx-auto p-4 sm:p-6">
-        <h1 className="text-xl font-semibold mb-4">Settings</h1>
+      <div className={embedded ? "max-w-lg" : "max-w-lg mx-auto p-4 sm:p-6"}>
+        {!embedded && <h1 className="text-xl font-semibold mb-4">Settings</h1>}
         <p className="text-sm text-muted-foreground">Loading…</p>
       </div>
     )
@@ -297,8 +300,8 @@ export function UserSettingsPanel() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-4 sm:p-6">
-      <h1 className="text-xl font-semibold mb-1">Settings</h1>
+    <div className={embedded ? "max-w-lg" : "max-w-lg mx-auto p-4 sm:p-6"}>
+      {!embedded && <h1 className="text-xl font-semibold mb-1">Settings</h1>}
       <p className="text-sm text-muted-foreground mb-6">
         {loading
           ? "Loading your saved settings…"

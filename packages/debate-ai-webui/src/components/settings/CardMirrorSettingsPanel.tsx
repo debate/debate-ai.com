@@ -22,15 +22,23 @@
  * are declared globally, hence the isolated iframe. The iframe self-sizes to its content via a
  * postMessage it sends on load and on resize.
  *
+ * The iframe's first tab is Preferences — the app's own debate style, font
+ * and theme form (`UserSettingsPanel`), merged in from the old
+ * `/settings/preferences` page. A `?category=` on `/settings` is forwarded
+ * to the iframe so a link can open any tab directly.
+ *
  * @module components/settings/CardMirrorSettingsPanel
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { Settings2 } from "lucide-react"
 
 export function CardMirrorSettingsPanel() {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(320)
+  const category = useSearchParams().get("category")
+  const src = category ? `/settings/editor-panel?category=${encodeURIComponent(category)}` : "/settings/editor-panel"
 
   const onMessage = useCallback((event: MessageEvent) => {
     if (event.origin !== window.location.origin) return
@@ -50,10 +58,10 @@ export function CardMirrorSettingsPanel() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6">
       <div className="flex items-center gap-1.5 mb-1">
         <Settings2 className="h-4 w-4 text-foreground" />
-        <h2 className="text-base font-semibold">Editor settings</h2>
+        <h2 className="text-base font-semibold">Settings</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Every setting for the card editor — files and autosave, editing and typography, colors, fonts and sizing,
+        Your debate preferences and theme, plus every setting for the card editor — files and autosave, editing and typography, colors, fonts and sizing,
         accessibility overrides, keyboard shortcuts, comments and AI, collaboration — plus the performance benchmark
         and this install&apos;s version info. Saved to your account when signed in; API keys and relay tokens stay in
         this browser.
@@ -61,8 +69,8 @@ export function CardMirrorSettingsPanel() {
       <div className="rounded-md border border-border bg-background overflow-hidden">
         <iframe
           ref={iframeRef}
-          src="/settings/editor-panel"
-          title="Editor settings"
+          src={src}
+          title="Settings"
           style={{ width: "100%", height, border: "none", display: "block" }}
         />
       </div>

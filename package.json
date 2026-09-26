@@ -6,7 +6,8 @@
   "workspaces": [
     "packages/*",
     "!packages/debate-tournament-tabroom",
-    "apps/debate-ai.com"
+    "apps/debate-ai.com",
+    "apps/debate-browser-ext"
   ],
   "scripts": {
     "dev": "turbo dev",
