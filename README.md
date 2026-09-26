@@ -10,7 +10,8 @@
     <a href="https://debate-ai.com/api"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API" /></a>
     <a href="https://youtu.be/XB0tzpBUEKQ"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
     <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime--Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
-    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-77k-yellow" />
+    <a href="https://codecov.io/gh/debate/debate-ai.com">
+    <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-100k-yellow" /></a>
     <br />
     <a href="https://github.com/debate/debate-ai.com/stargazers"><img src="https://img.shields.io/github/stars/debate/debate-ai.com" alt="GitHub Stars" /></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com"><img src="https://codecov.io/gh/debate/debate-ai.com/graph/badge.svg" alt="Coverage" /></a>
