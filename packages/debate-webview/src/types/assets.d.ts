@@ -34,3 +34,9 @@ declare module "*.webp" {
 
 /** `prismjs` ships JavaScript with no bundled declarations. */
 declare module "prismjs";
+
+/** Vite's `?raw` suffix inlines a file's text as a string (the OpenAPI spec served by `/debate-openapi.yml`). */
+declare module "*?raw" {
+  const content: string;
+  export default content;
+}

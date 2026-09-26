@@ -64,7 +64,7 @@ every page and is the only check that catches them.
 
 ## The API spec
 
-`apps/debate-ai.com/public/debate-openapi.yml` is the source of truth for the
+`packages/debate-api-client/debate-openapi.yml` is the source of truth for the
 API, and `packages/debate-api-client` is **generated from it** with Hey API. To
 change the client, change the route and the spec, then regenerate — never
 hand-edit the generated SDK.

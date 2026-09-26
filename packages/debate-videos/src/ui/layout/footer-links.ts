@@ -15,9 +15,7 @@
 import {
   Activity,
   Book,
-  BookMarked,
   BookOpen,
-  Calendar,
   Code2,
   FileText,
   LayoutGrid,

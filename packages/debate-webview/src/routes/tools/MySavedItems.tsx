@@ -11,9 +11,26 @@
  * Previously merged only documents and rounds inline, silently omitting
  * saved flows — the middle of the three data types "save flows docs and
  * debates" names. `buildRecentCloudItems`/`formatRelativeCloudTime`
- * (`debate-round`) now own the merge/sort/label/relative-time logic so all
- * three kinds are covered, unit-tested there since this file has no vitest
- * project of its own (see `vitest.config.ts`'s `projects` list).
+ * (`debate-round`) now own the merge/sort/label/relative-time logic, unit
+ * tested there since this file has no vitest project of its own (see
+ * `vitest.config.ts`'s `projects` list). Account-synced word-count rounds
+ * (`/word-count`) joined the merge alongside those three — the same
+ * SQL-backed, per-user round history as `saved_rounds`, just never
+ * surfaced here. Practice vs AI debates (`/versus-ai`) joined next — the
+ * third and last of the "save flows docs and debates" idea's named data
+ * types, already saved per-user in `practice_vs_ai_debates` but likewise
+ * never listed anywhere a returning user could browse it. Video
+ * speech-outcome simulation runs (`/videos`) joined after that — already
+ * synced per-user via `debate-data-sync`'s generic `saved_tool_records`
+ * mechanism once `CachedSpeechOutcome` gained a stable id, but that only
+ * wired the sync, not discoverability, so a run stayed invisible here too.
+ * Practice Drills' generated drill sets (`/drills`) joined next — already
+ * saved per-user in `saved_drill_sets`, same "sync wired, discoverability
+ * not" gap. AI Judge Decisions (`/judge-decision`) joined next — already
+ * saved per-user in `saved_judge_decisions`, the same gap again. AI
+ * Response-Outcome Charts' counsel-panel assessments (`/outcomes`) joined
+ * next — already saved per-user in `saved_counsel_panel_assessments`, the
+ * same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -29,7 +46,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { FileText, Flag, ListTree } from "lucide-react"
+import { BarChart3, Bot, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -38,6 +55,19 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   document: FileText,
   flow: ListTree,
   round: Flag,
+  // Matches Word-Count Speeches' own icon in `app/tools/tool-groups.ts`.
+  wordCountRound: Type,
+  // Matches Practice vs AI's own icon in `app/tools/tool-groups.ts`.
+  debate: Bot,
+  // No standalone /tools entry to match — an AI-generated simulation run,
+  // not itself a tool.
+  speechOutcome: Sparkles,
+  // Matches Practice Drills' own icon in `app/tools/tool-groups.ts`.
+  drillSet: Dumbbell,
+  // Matches AI Judge Decision's own icon in `app/tools/tool-groups.ts`.
+  judgeDecision: Landmark,
+  // Matches AI Response-Outcome Charts' own icon in `app/tools/tool-groups.ts`.
+  counselPanelAssessment: BarChart3,
 }
 
 export function MySavedItems() {

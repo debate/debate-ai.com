@@ -49,7 +49,7 @@ next-env.d.ts
 # Service Worker generated files
 src/sw/app-file-list.ts
 src/sw/version.ts
-public/service-worker.js
+apps/debate-ai.com/public/service-worker.js
 pnpm-lock.yaml
 open-when-ready.log
 # Generated video seed SQL (regenerate with `bun run db:seed:videos`)

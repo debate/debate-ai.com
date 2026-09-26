@@ -21,6 +21,7 @@ import { AppFrameProvider, AppFrameSurface } from "./AppFrameProvider"
 import { ReasonDocsProvider } from "../reason-docs/ReasonDocsProvider"
 import { OneTap } from "./OneTap"
 import { ToolRecordSyncProvider } from "./ToolRecordSyncProvider"
+import { DebaterActivityListener } from "./DebaterActivityListener"
 import { SignInPromptProvider } from "./SignInPromptProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
@@ -66,6 +67,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               their localStorage stores has to be switched on here too. */}
           <ChromeErrorBoundary label="ToolRecordSyncProvider">
             <ToolRecordSyncProvider />
+          </ChromeErrorBoundary>
+          {/* XP events come from tools in this document, so the level store
+              has to hear them here too. */}
+          <ChromeErrorBoundary label="DebaterActivityListener">
+            <DebaterActivityListener />
           </ChromeErrorBoundary>
           {/* And the tool that tells a guest their save is browser-only has to
               be able to open a dialog in the document the click happened in —
@@ -135,6 +141,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="ToolRecordSyncProvider">
         <ToolRecordSyncProvider />
+      </ChromeErrorBoundary>
+      <ChromeErrorBoundary label="DebaterActivityListener">
+        <DebaterActivityListener />
       </ChromeErrorBoundary>
       <ChromeErrorBoundary label="SignInPromptProvider">
         <SignInPromptProvider />

@@ -52,6 +52,22 @@ function requestSize(messages: AnthropicMessage[], system?: string): number {
   return size
 }
 
+/** An Anthropic Messages turn in OpenAI Chat Completions shape. */
+function toChatCompletionsMessage(m: AnthropicMessage) {
+  if (typeof m.content === "string") return m
+  return {
+    role: m.role,
+    content: m.content.map((block) =>
+      block.type === "text"
+        ? { type: "text", text: block.text }
+        : {
+            type: "image_url",
+            image_url: { url: `data:${block.source.media_type};base64,${block.source.data}` },
+          },
+    ),
+  }
+}
+
 export async function POST(request: Request) {
   const auth = await getAuth()
   const session = await auth.api.getSession({ headers: request.headers })
@@ -106,7 +122,13 @@ const apiKey = getEnv("ANTHROPIC_API_KEY")
     }
     if (useOpenRouter) {
       bodyJson.model = "anthropic/claude-sonnet-4.6"
-      if (body.system) bodyJson.system = body.system
+      // Chat Completions has no top-level `system` (OpenRouter silently drops
+      // it, so every caller's instructions were lost): it goes in as the
+      // first message, and Anthropic content blocks become OpenAI parts.
+      bodyJson.messages = [
+        ...(body.system ? [{ role: "system", content: body.system }] : []),
+        ...body.messages.map(toChatCompletionsMessage),
+      ]
       if (body.temperature != null) bodyJson.temperature = body.temperature
     } else {
       bodyJson.model = ANTHROPIC_MODEL

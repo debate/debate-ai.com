@@ -1,6 +1,7 @@
 import vinext from "vinext";
 import { cloudflare } from "@cloudflare/vite-plugin";
-import { defineConfig, type Rolldown } from "vite";
+import { defineConfig, type Plugin, type Rolldown } from "vite";
+import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
 
@@ -21,6 +22,70 @@ const isVendoredDashPlayerNoise = (log: Rolldown.RolldownLog) =>
   [log.id, ...(log.ids ?? []), log.message].some(
     (text) => text?.includes("react-reason-editor") && text.includes("dash.all.min"),
   );
+
+/**
+ * The site's static files (favicons, apple-touch-icon.png, site.webmanifest,
+ * …) live at the top of `app/` rather than in a `public/` folder, but Vite
+ * only serves `publicDir` verbatim — so anything in `app/` that is not a
+ * Next metadata convention (favicon.ico is; apple-touch-icon.png is not)
+ * 404'd. This serves every top-level non-source file in `app/` at the site
+ * root, exactly as if it sat in `public/`: straight off disk in dev, and
+ * emitted into the client build (`dist/client`, which Cloudflare serves as
+ * static assets) otherwise. Source files (.ts/.tsx/.js/.css/…) are never
+ * exposed — which also leaves app/service-worker.js, a stale pre-Vite build,
+ * to `build:sw`. A file of the same name in `public/` still wins.
+ */
+const APP_SOURCE_EXT = /\.(?:[cm]?[jt]sx?|mdx?|css|scss|sass|less)$/i;
+const CONTENT_TYPES: Record<string, string> = {
+  ".png": "image/png",
+  ".ico": "image/x-icon",
+  ".svg": "image/svg+xml",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+  ".webmanifest": "application/manifest+json",
+  ".json": "application/json",
+  ".txt": "text/plain",
+  ".xml": "application/xml",
+  ".yml": "text/yaml",
+  ".yaml": "text/yaml",
+};
+
+function appStaticFiles(): Plugin {
+  const dir = path.join(appDir, "app");
+  const list = () =>
+    fs
+      .readdirSync(dir, { withFileTypes: true })
+      .filter((e) => e.isFile() && !e.name.startsWith("."))
+      .map((e) => e.name)
+      .filter((name) => !APP_SOURCE_EXT.test(name));
+  let publicDir = "";
+  const inPublic = (name: string) => !!publicDir && fs.existsSync(path.join(publicDir, name));
+
+  return {
+    name: "app-static-files",
+    configResolved(config) {
+      publicDir = config.publicDir;
+    },
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        const name = decodeURIComponent((req.url ?? "").split("?")[0].replace(/^\//, ""));
+        if (!name || name.includes("/") || inPublic(name) || !list().includes(name)) return next();
+        const type = CONTENT_TYPES[path.extname(name).toLowerCase()];
+        if (type) res.setHeader("Content-Type", type);
+        fs.createReadStream(path.join(dir, name)).pipe(res);
+      });
+    },
+    generateBundle() {
+      if (this.environment?.name !== "client") return;
+      for (const name of list()) {
+        if (inPublic(name)) continue;
+        this.emitFile({ type: "asset", fileName: name, source: fs.readFileSync(path.join(dir, name)) });
+      }
+    },
+  };
+}
 
 export default defineConfig({
   define: {
@@ -59,6 +124,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    appStaticFiles(),
     vinext(),
     cloudflare({
       viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },

@@ -75,6 +75,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
     "compute-cosine-similarity": "^1.1.0",
+    "debate-api-client": "workspace:*",
     "debate-webview": "workspace:*",
     "debate-card-parser": "workspace:*",
     "debate-community": "workspace:*",

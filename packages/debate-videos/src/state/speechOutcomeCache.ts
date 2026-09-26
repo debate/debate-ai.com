@@ -2,12 +2,25 @@
  * @fileoverview Simulations already run on this browser, so reopening a
  * speech's "Outcomes" view shows the last run instead of paying for another.
  *
- * A convenience cache, not a record the user owns: it is not synced to the
- * account, is capped at {@link MAX_CACHED_RUNS} (oldest dropped first), and
- * reads as empty when storage is blocked. One run per video, speech and
- * judge panel — running again replaces it. The panel is stored as its
- * `panelKey`, which for a lone judge is the bare judge id runs were saved
- * under before panels existed, so those still open.
+ * A convenience cache, not a record the user owns: capped at
+ * {@link MAX_CACHED_RUNS} (oldest dropped first), and reads as empty when
+ * storage is blocked. One run per video, speech and judge panel — running
+ * again replaces it. The panel is stored as its `panelKey`, which for a lone
+ * judge is the bare judge id runs were saved under before panels existed, so
+ * those still open.
+ *
+ * `id` closes the "Saved outcome runs stay in the browser that made them"
+ * Known gap recorded in
+ * `packages/debate-help-docs/content/docs/internals/video-watch-page.mdx`:
+ * every other synced store keys its records by one stable string field, and
+ * this one didn't have one — it was keyed only by the `(videoId, speechKey,
+ * lens)` triple. `writeCachedSpeechOutcome` now stamps that triple into a
+ * single `id` field before caching, and `speechOutcomeRuns` is registered in
+ * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS`, so a signed-in user's
+ * cached runs follow them to another device instead of starting over —
+ * mirroring `coachingSessions`' own composite-key fix. A run cached before
+ * this field existed has none and is simply never matched by id: it stays
+ * valid and locally readable, just un-synced, until it's run again.
  * @module state/speechOutcomeCache
  */
 
@@ -18,6 +31,14 @@ export const SPEECH_OUTCOME_CACHE_KEY = "debate-videos:speech-outcomes";
 export const MAX_CACHED_RUNS = 40;
 
 export interface CachedSpeechOutcome {
+  /**
+   * Stable id this record is keyed by — `${videoId}::${speechKey}::${lens}` —
+   * what lets it join `debate-data-sync`'s account-sync allowlist (see
+   * `state/toolRecordCollections.ts`'s `speechOutcomeRuns` entry).
+   * `writeCachedSpeechOutcome` always derives and stamps this rather than
+   * trusting a caller-supplied value.
+   */
+  id: string;
   videoId: string;
   speechKey: string;
   /** The panel's `panelKey` — `flow`, or `flow+lay+theory`. */
@@ -25,6 +46,11 @@ export interface CachedSpeechOutcome {
   simulation: SpeechOutcomeSimulation;
   /** Epoch milliseconds. */
   savedAt: number;
+}
+
+/** The stable id a video+speech+lens triple's cached run is always stamped with. */
+export function speechOutcomeCacheId(videoId: string, speechKey: string, lens: string): string {
+  return `${videoId}::${speechKey}::${lens}`;
 }
 
 function isCachedRun(value: unknown): value is CachedSpeechOutcome {
@@ -55,11 +81,10 @@ export function readCachedSpeechOutcome(
   );
 }
 
-export function writeCachedSpeechOutcome(run: CachedSpeechOutcome): void {
-  const rest = readAll().filter(
-    (other) => !(other.videoId === run.videoId && other.speechKey === run.speechKey && other.lens === run.lens),
-  );
-  writeLocalRecords(SPEECH_OUTCOME_CACHE_KEY, [run, ...rest].slice(0, MAX_CACHED_RUNS));
+export function writeCachedSpeechOutcome(run: Omit<CachedSpeechOutcome, "id">): void {
+  const id = speechOutcomeCacheId(run.videoId, run.speechKey, run.lens);
+  const rest = readAll().filter((other) => other.id !== id);
+  writeLocalRecords(SPEECH_OUTCOME_CACHE_KEY, [{ ...run, id }, ...rest].slice(0, MAX_CACHED_RUNS));
 }
 
 /** The speech keys of one video that have a run under any panel — marks them on the tab strip. */
