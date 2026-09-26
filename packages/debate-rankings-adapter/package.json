@@ -1,0 +1,25 @@
+{
+  "name": "debate-rankings-adapter",
+  "version": "0.1.0",
+  "description": "Adapter over the debate-rankings git submodule (github.com/debate/debate-rankings) for the web UI: re-exports its datasets and CSV loader and adds the site's team-label lookup",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "debate-rankings": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}

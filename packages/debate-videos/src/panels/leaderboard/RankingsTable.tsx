@@ -6,7 +6,7 @@
 
 "use client"
 
-import type { RankingEntry } from "debate-rankings"
+import type { RankingEntry } from "debate-rankings-adapter"
 import Link from "next/link"
 import { ChevronDown, ChevronUp, Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"

@@ -44,6 +44,15 @@ ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-fil
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
+## debate-editor-cm (git submodule) and debate-editor-cm-adapter
+
+`debate-editor-cm` is a git submodule of upstream CardMirror,
+[debate/debate-editor](https://github.com/debate/debate-editor), kept as upstream ships it
+and outside the bun workspace (it is a Vite app with its own toolchain).
+`debate-editor-cm-adapter` is what the web UI imports: CardMirror's schema, `.docx`
+import/export and native `.cmir` format re-exported by path, plus `importDocx(file)`,
+`exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`.
+
 ## debate-feature-catalog
 
 Canonical `APP_FEATURES` catalog for the `/features` page — data plus
@@ -80,11 +89,18 @@ outline, flow annotations, and AI response-outcome charts. Composes `debate-roun
 
 ## debate-rankings
 
-Glicko-2 rankings for HS PF, LD, Policy and college policy, cloned from
-[debate/debate-rankings](https://github.com/debate/debate-rankings). A Python pipeline
+Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule of
+[debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. A Python pipeline
 (`src/main.py`) replays tournament results into CSVs under `output/`; a TypeScript entry
 (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the
-`/rank` panel in `debate-videos`.
+`/rank` panel in `debate-videos`, through `debate-rankings-adapter`.
+
+## debate-rankings-adapter
+
+What the web UI imports for rankings: everything `debate-rankings` exports, plus the
+site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
+video's team to its rankings row. Site additions live here so the submodule never diverges
+from upstream.
 
 ## debate-round
 
@@ -135,6 +151,19 @@ to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournamen
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
 `/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
 upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+
+## debate-tournaments-tabroom (git submodule) and debate-tournaments-tabroom-adapter
+
+`debate-tournaments-tabroom` is a git submodule of upstream Tabroom,
+[debate/debate-tournaments](https://github.com/debate/debate-tournaments), outside the bun
+workspace. `debate-tournaments-tabroom-adapter` re-exports its `@tabroom/types` Zod schemas
+and inferred types, with `tabroomSchemas` (every schema keyed by record name) and a
+non-throwing `parseTabroom(schema, data)`.
+
+The two adapters that reach into a submodule by path link `<submodule>/node_modules` to
+their own on `postinstall`, so the submodule's bare imports resolve under bun's isolated
+linker. Clone with `git clone --recurse-submodules`, or run
+`git submodule update --init` in an existing checkout, before `bun install`.
 
 ## debate-videos
 

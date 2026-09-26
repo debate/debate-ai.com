@@ -30,6 +30,12 @@ export default defineConfig({
       // debate-tournaments' sync script); its tests need upstream's own
       // toolchain and MariaDB. debate-tournaments tests the vendored code.
       "!packages/debate-tournament-tabroom",
+      // Git submodules of upstream CardMirror and Tabroom. Each is its own
+      // app with its own toolchain and test setup; the web UI reaches them
+      // through debate-editor-cm-adapter and debate-tournaments-tabroom-adapter,
+      // whose tests cover the parts it uses.
+      "!packages/debate-editor-cm",
+      "!packages/debate-tournaments-tabroom",
       // The web app has no test/ folder for the glob above to find, but parts
       // of apps/debate-ai.com/lib are plain Node libraries worth unit testing
       // (the D1 read-replication session wrapper, for one). Registered inline

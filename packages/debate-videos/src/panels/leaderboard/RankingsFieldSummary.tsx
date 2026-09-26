@@ -4,7 +4,7 @@
  * @module components/debate/DebateVideos/panels/RankingsFieldSummary
  */
 
-import type { RankingDataset } from "debate-rankings"
+import type { RankingDataset } from "debate-rankings-adapter"
 
 const STATS: { key: keyof NonNullable<RankingDataset["field"]>; label: string }[] = [
   { key: "affWinRate", label: "Aff win rate" },

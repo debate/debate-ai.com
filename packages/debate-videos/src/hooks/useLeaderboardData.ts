@@ -8,7 +8,7 @@
 
 import { useState, useEffect } from "react"
 import grab from "grab-url"
-import { loadRankingDataset, type RankingDataset, type RankingDatasetId } from "debate-rankings"
+import { loadRankingDataset, type RankingDataset, type RankingDatasetId } from "debate-rankings-adapter"
 import type { DebateHistory } from "../panels/leaderboard/leaderboardTypes"
 
 /**
