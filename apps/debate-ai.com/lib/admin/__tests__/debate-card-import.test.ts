@@ -18,6 +18,8 @@ import * as schema from "../../database/schema";
 import { debateCardImports, debateCards, evidenceReuseIndex } from "../../database/schema";
 import {
   CARD_ROWS_PER_STATEMENT,
+  buildSourceUrlStatements,
+  extractCardSourceUrl,
   recordCardImportBatch,
   writeDebateCardBatch,
 } from "../debate-card-import";
@@ -28,6 +30,7 @@ const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../.
 const migrationPaths = [
   path.join(drizzleDir, "0004_certain_microchip.sql"),
   path.join(drizzleDir, "0035_debate_cards.sql"),
+  path.join(drizzleDir, "0036_debate_card_source_url.sql"),
 ];
 
 /** A row shaped like the published dump, with int64 columns as BigInt. */
@@ -77,7 +80,7 @@ describe("writeDebateCardBatch", () => {
 
   it("stays inside D1's 100-parameter statement limit", () => {
     expect(CARD_ROWS_PER_STATEMENT).toBeGreaterThan(0);
-    expect(CARD_ROWS_PER_STATEMENT * 20).toBeLessThanOrEqual(100);
+    expect(CARD_ROWS_PER_STATEMENT * 21).toBeLessThanOrEqual(100);
   });
 
   it("writes a normalized dump row, converting int64 columns", async () => {
@@ -198,6 +201,52 @@ describe("writeDebateCardBatch", () => {
     );
     expect((await writeDebateCardBatch(db, cards, "cards-0000.parquet")).reuseIndexed).toBe(40);
     expect(await db.$count(evidenceReuseIndex)).toBe(40);
+  });
+});
+
+describe("extractCardSourceUrl", () => {
+  it("returns the URL the citation names", () => {
+    expect(
+      extractCardSourceUrl({ id: 1, cite: "Blum 18", fullcite: "Blum 18 https://example.com/paper", caselistDisplayName: "" }),
+    ).toBe("https://example.com/paper");
+  });
+
+  it("extracts nothing from a citation with no URL", () => {
+    expect(extractCardSourceUrl({ id: 1, cite: "Smith 23", fullcite: "Smith 23, MIT", caselistDisplayName: "" })).toBe("");
+  });
+});
+
+describe("debate_cards.source_url", () => {
+  let db: Awaited<ReturnType<typeof freshDb>>;
+
+  beforeEach(async () => {
+    db = await freshDb();
+  });
+
+  it("stores the URL the parser finds in the citation on import", async () => {
+    await writeDebateCardBatch(
+      db,
+      [dumpRow({ id: 1n, fullcite: "Blum 18 https://example.com/paper" }), dumpRow({ id: 2n })],
+      "cards-0000.parquet",
+    );
+    const rows = await db
+      .select({ id: debateCards.id, sourceUrl: debateCards.sourceUrl })
+      .from(debateCards)
+      .orderBy(debateCards.id);
+    expect(rows).toEqual([
+      { id: 1, sourceUrl: "https://example.com/paper" },
+      { id: 2, sourceUrl: "" },
+    ]);
+  });
+
+  it("backfills URLs onto existing rows across several statements", async () => {
+    const rows = Array.from({ length: 70 }, (_, index) => dumpRow({ id: BigInt(index + 1) }));
+    await writeDebateCardBatch(db, rows, "cards-0000.parquet");
+    const updates = rows.map((_, index) => ({ id: index + 1, sourceUrl: `https://example.com/${index + 1}` }));
+    for (const statement of buildSourceUrlStatements(db, updates)) await statement;
+    const stored = await db.select({ id: debateCards.id, sourceUrl: debateCards.sourceUrl }).from(debateCards);
+    expect(stored).toHaveLength(70);
+    for (const row of stored) expect(row.sourceUrl).toBe(`https://example.com/${row.id}`);
   });
 });
 
