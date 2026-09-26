@@ -87,5 +87,3 @@ CLAUDE.local.md
 # submodule: packages/debate-tournaments syncs it into .upstream/ itself.
 /packages/debate-tournament-tabroom/
 
-# Local clone of github.com/debate/debate-editor; not part of this repo
-packages/debate-editor-cmirror/
