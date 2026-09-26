@@ -27,7 +27,10 @@
  * Practice Drills' generated drill sets (`/drills`) joined next — already
  * saved per-user in `saved_drill_sets`, same "sync wired, discoverability
  * not" gap. AI Judge Decisions (`/judge-decision`) joined next — already
- * saved per-user in `saved_judge_decisions`, the same gap again.
+ * saved per-user in `saved_judge_decisions`, the same gap again. AI
+ * Response-Outcome Charts' counsel-panel assessments (`/outcomes`) joined
+ * next — already saved per-user in `saved_counsel_panel_assessments`, the
+ * same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -43,7 +46,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Bot, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -63,6 +66,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   drillSet: Dumbbell,
   // Matches AI Judge Decision's own icon in `app/tools/tool-groups.ts`.
   judgeDecision: Landmark,
+  // Matches AI Response-Outcome Charts' own icon in `app/tools/tool-groups.ts`.
+  counselPanelAssessment: BarChart3,
 }
 
 export function MySavedItems() {

@@ -3,6 +3,7 @@ import {
   buildRecentCloudItems,
   formatRelativeCloudTime,
   parseCloudTimestamp,
+  type CloudCounselPanelAssessmentSummary,
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
@@ -61,8 +62,11 @@ describe("buildRecentCloudItems", () => {
   const judgeDecisions: CloudJudgeDecisionSummary[] = [
     { id: "decision-1", paradigmName: "Flow", generatedAt: Date.parse("2026-09-02T00:00:00.000Z") },
   ];
+  const counselPanelAssessments: CloudCounselPanelAssessmentSummary[] = [
+    { id: "assessment-1", roundId: "round-9", generatedAt: Date.parse("2026-09-03T00:00:00.000Z") },
+  ];
 
-  it("merges all eight kinds and sorts newest first", () => {
+  it("merges all nine kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -73,10 +77,12 @@ describe("buildRecentCloudItems", () => {
         speechOutcomes,
         drillSets,
         judgeDecisions,
+        counselPanelAssessments,
       },
-      { limit: 8 },
+      { limit: 9 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "counselPanelAssessment",
       "judgeDecision",
       "speechOutcome",
       "wordCountRound",
@@ -155,6 +161,18 @@ describe("buildRecentCloudItems", () => {
     ]);
   });
 
+  it("includes counsel-panel assessments, keyed by id and labeled by roundId", () => {
+    const items = buildRecentCloudItems({ counselPanelAssessments });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "counselPanelAssessment",
+        key: "counselPanelAssessment-assessment-1",
+        label: "round-9",
+        updatedAtMs: Date.parse("2026-09-03T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -172,8 +190,9 @@ describe("buildRecentCloudItems", () => {
         speechOutcomes,
         drillSets,
         judgeDecisions,
+        counselPanelAssessments,
       },
-      { limit: 8 },
+      { limit: 9 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -184,6 +203,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.speechOutcome).toBe("/videos");
     expect(byKind.drillSet).toBe("/drills");
     expect(byKind.judgeDecision).toBe("/judge-decision");
+    expect(byKind.counselPanelAssessment).toBe("/outcomes");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -208,6 +228,12 @@ describe("buildRecentCloudItems", () => {
       { judgeDecisionHref: "/custom-judge-decision-route" },
     );
     expect(overriddenJudgeDecision[0]?.href).toBe("/custom-judge-decision-route");
+
+    const overriddenCounselPanelAssessment = buildRecentCloudItems(
+      { counselPanelAssessments },
+      { counselPanelAssessmentHref: "/custom-outcomes-route" },
+    );
+    expect(overriddenCounselPanelAssessment[0]?.href).toBe("/custom-outcomes-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -221,8 +247,11 @@ describe("buildRecentCloudItems", () => {
         speechOutcomes: [{ id: "outcome-1", speechKey: "  ", savedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
         drillSets: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
         judgeDecisions: [{ id: "decision-1", paradigmName: "  ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        counselPanelAssessments: [
+          { id: "assessment-1", roundId: "   ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 8 },
+      { limit: 9 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -233,6 +262,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.speechOutcome).toBe("Untitled speech outcome");
     expect(byKind.drillSet).toBe("Untitled drill set");
     expect(byKind.judgeDecision).toBe("Untitled judge decision");
+    expect(byKind.counselPanelAssessment).toBe("Untitled response-outcome chart");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -263,6 +293,7 @@ describe("buildRecentCloudItems", () => {
         speechOutcomes: [],
         drillSets: [],
         judgeDecisions: [],
+        counselPanelAssessments: [],
       }),
     ).toEqual([]);
   });
