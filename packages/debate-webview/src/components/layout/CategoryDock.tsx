@@ -535,9 +535,11 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
 
   if (embedded) {
     return (
-      // `contents` so this wrapper adds nothing to the sidebar's flex column;
-      // it exists only to carry the marker the pre-paint CSS hides on.
-      <div data-app-chrome className="contents">
+      // Sticky to the top of the sidebar's scrolling column, so the dock stays
+      // in reach while the tool tree scrolls under it. The solid background
+      // hides that tree behind the dock's translucent, blurred surface. The
+      // wrapper also carries the marker the pre-paint CSS hides on.
+      <div data-app-chrome className="sticky top-0 z-30 shrink-0 bg-background">
         <DockInstance
           dockClassName="shrink-0 min-h-[52px]"
           side="bottom"
