@@ -26,7 +26,7 @@ import { getEnv } from "@/lib/env";
 import { getAdminAccess } from "@/lib/auth/admin";
 
 /** Columns written per row, matching {@link buildCardValues}. */
-const CARD_INSERT_COLUMNS = 20;
+const CARD_INSERT_COLUMNS = 21;
 
 /**
  * Rows per INSERT statement.
@@ -133,6 +133,7 @@ const UPSERT_COLUMNS: ReadonlyArray<readonly [string, string]> = [
   ["event", "event"],
   ["level", "level"],
   ["sourceFile", "source_file"],
+  ["sourceUrl", "source_url"],
 ];
 
 /**
@@ -176,7 +177,57 @@ function buildCardValues(card: DebateCardRecord, sourceFile: string) {
     event: card.event,
     level: card.level,
     sourceFile,
+    sourceUrl: extractCardSourceUrl(card),
   };
+}
+
+/**
+ * The source URL a card's citation names, as `debate-card-parser` reads it —
+ * the value stored in `debate_cards.source_url`.
+ *
+ * @param card - The card's id and cite columns.
+ * @returns The URL, or "" when the citation names none.
+ */
+export function extractCardSourceUrl(
+  card: Pick<DebateCardRecord, "id" | "cite" | "fullcite" | "caselistDisplayName">,
+): string {
+  return buildParquetCardReuseEntry({ ...card, tag: "" })?.sourceUrl ?? "";
+}
+
+/** Cards per `UPDATE … SET source_url = CASE id …` — 3 bound values per card. */
+const SOURCE_URL_ROWS_PER_STATEMENT = 30;
+
+/**
+ * Builds the statements that write extracted source URLs back onto
+ * `debate_cards`.
+ *
+ * One `UPDATE` per card would be a D1 round trip each, so a slice of cards is
+ * folded into a single `CASE id WHEN … THEN …` update, kept under the
+ * 100-parameter ceiling.
+ *
+ * @param db - Drizzle database handle.
+ * @param updates - The cards whose stored URL should change, and the new value.
+ * @returns The statements to run.
+ */
+export function buildSourceUrlStatements(
+  db: any,
+  updates: readonly { id: number; sourceUrl: string }[],
+): unknown[] {
+  const statements: unknown[] = [];
+  for (let start = 0; start < updates.length; start += SOURCE_URL_ROWS_PER_STATEMENT) {
+    const slice = updates.slice(start, start + SOURCE_URL_ROWS_PER_STATEMENT);
+    const cases = sql.join(
+      slice.map((update) => sql`WHEN ${update.id} THEN ${update.sourceUrl}`),
+      sql` `,
+    );
+    statements.push(
+      db
+        .update(debateCards)
+        .set({ sourceUrl: sql`CASE ${debateCards.id} ${cases} ELSE ${debateCards.sourceUrl} END` })
+        .where(inArray(debateCards.id, slice.map((update) => update.id))),
+    );
+  }
+  return statements;
 }
 
 /**

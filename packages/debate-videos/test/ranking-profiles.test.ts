@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { RankingDataset, RankingEntry } from "debate-rankings";
+import type { RankingDataset, RankingEntry } from "debate-rankings-adapter";
 import {
   findSchoolEntries,
   findTeamEntries,

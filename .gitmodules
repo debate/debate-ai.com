@@ -2,6 +2,7 @@
 	path = packages/debate-editor-cm
 	url = https://github.com/debate/debate-editor.git
 	branch = main
+	ignore = untracked
 
 [submodule "debate-rankings"]
 	path = packages/debate-rankings
@@ -12,4 +13,5 @@
 	path = packages/debate-tournaments-tabroom
 	url = https://github.com/debate/debate-tournaments.git
 	branch = main
+	ignore = untracked
 

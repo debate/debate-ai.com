@@ -28,6 +28,7 @@ import React, { useCallback, useMemo, useState } from "react"
 import { ChevronUp, ChevronDown } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
+import { ColumnResizeHandle } from "./ColumnResizeHandle"
 import { useResizableColumns } from "./useResizableColumns"
 import { buildVideoSlots, type VideoSlot, type VideoStackMap } from "./video-stacks"
 import {
@@ -139,26 +140,6 @@ const LECTURE_COLUMNS: ColumnDef[] = [
 ]
 
 type SortDirection = "asc" | "desc"
-
-function ColumnResizeHandle({ onResizeStart }: { onResizeStart: (clientX: number) => void }) {
-  return (
-    <div
-      onMouseDown={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        onResizeStart(e.clientX)
-      }}
-      onTouchStart={(e) => {
-        e.stopPropagation()
-        onResizeStart(e.touches[0].clientX)
-      }}
-      onClick={(e) => e.stopPropagation()}
-      role="separator"
-      aria-orientation="vertical"
-      className="absolute right-0 top-0 z-10 h-full w-2 cursor-col-resize touch-none select-none hover:bg-primary/40 active:bg-primary/60"
-    />
-  )
-}
 
 /** The `- Ln +` stepper that opens and closes every group at once. */
 function CollapseLevelControl({

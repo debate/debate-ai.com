@@ -6,7 +6,7 @@
  * @module panels/leaderboard/profile/rankingProfileHelpers
  */
 
-import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings";
+import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings-adapter";
 
 /**
  * Lowercase, dash-separated URL segment for a school or team name. Accents are

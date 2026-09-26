@@ -6,7 +6,7 @@
 
 "use client"
 
-import type { RankingEntry } from "debate-rankings"
+import type { RankingEntry } from "debate-rankings-adapter"
 import Link from "next/link"
 import { ChevronDown, ChevronUp, Info } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/primitives/tooltip"
@@ -19,18 +19,32 @@ import {
   TableRow,
 } from "../../ui/primitives/table"
 import { cn } from "../../ui/lib/utils"
+import { ColumnResizeHandle } from "../../components/video-grid/ColumnResizeHandle"
+import { useResizableColumns } from "../../components/video-grid/useResizableColumns"
 import { COLUMN_TOOLTIPS, displayEntryName } from "./leaderboardUtils"
 import type { Division, SortKey, SortState } from "./leaderboardTypes"
 import { schoolHref, teamHref } from "./profile/rankingProfileHelpers"
 
+/** The fields shown as columns. */
+type ColumnKey = Extract<
+  SortKey,
+  | "rank"
+  | "school"
+  | "name"
+  | "adjustedRating"
+  | "matches"
+  | "affWinRate"
+  | "negWinRate"
+  | "affElimWinRate"
+  | "negElimWinRate"
+>
+
 /** One table column: which field it shows and how. */
 interface Column {
-  key: SortKey
+  key: ColumnKey
   label: string
   /** Right-align and use tabular figures. */
   numeric?: boolean
-  /** Shrink the column to its content instead of sharing spare width. */
-  compact?: boolean
   render: (entry: RankingEntry, division: Division) => React.ReactNode
 }
 
@@ -84,7 +98,7 @@ function WinRate({ value }: { value: number | null }) {
 }
 
 const COLUMNS: Column[] = [
-  { key: "rank", label: "#", numeric: true, compact: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
+  { key: "rank", label: "#", numeric: true, render: (e) => <span className="font-semibold">{e.rank}</span> },
   {
     key: "school",
     label: "School",
@@ -107,7 +121,6 @@ const COLUMNS: Column[] = [
     key: "adjustedRating",
     label: "Rating",
     numeric: true,
-    compact: true,
     render: (e) => <Rating value={e.adjustedRating} />,
   },
   { key: "matches", label: "Matches", numeric: true, render: (e) => e.matches },
@@ -116,6 +129,19 @@ const COLUMNS: Column[] = [
   { key: "affElimWinRate", label: "Aff Elim", numeric: true, render: (e) => <WinRate value={e.affElimWinRate} /> },
   { key: "negElimWinRate", label: "Neg Elim", numeric: true, render: (e) => <WinRate value={e.negElimWinRate} /> },
 ]
+
+/** Starting pixel width of each column; every column can be dragged wider or narrower. */
+const DEFAULT_COLUMN_WIDTHS: Record<ColumnKey, number> = {
+  rank: 60,
+  school: 200,
+  name: 200,
+  adjustedRating: 90,
+  matches: 90,
+  affWinRate: 100,
+  negWinRate: 100,
+  affElimWinRate: 100,
+  negElimWinRate: 100,
+}
 
 /** Props for the {@link RankingsTable} component. */
 interface RankingsTableProps {
@@ -132,14 +158,20 @@ interface RankingsTableProps {
 /**
  * Renders every field of each ranking row. Every column header sorts; headers
  * with a {@link COLUMN_TOOLTIPS} entry explain how the value is computed.
- * Wide on purpose — the table scrolls horizontally on narrow screens.
+ * Every column resizes by dragging its header's right edge; text that no
+ * longer fits is cut off with an ellipsis. Wide on purpose — the table
+ * scrolls horizontally on narrow screens.
  *
  * @param props - See {@link RankingsTableProps}.
  */
 export function RankingsTable({ entries, division, sort, onToggleSort }: RankingsTableProps) {
+  const { widths, startResize } = useResizableColumns(DEFAULT_COLUMN_WIDTHS)
   return (
     <div className="rounded-lg border bg-card shadow-sm">
-      <Table className="min-w-[960px] text-sm">
+      <Table
+        className="table-fixed text-sm"
+        style={{ width: COLUMNS.reduce((total, col) => total + widths[col.key], 0) }}
+      >
         <TableHeader className="bg-muted/50">
           <TableRow>
             {COLUMNS.map((col) => {
@@ -149,9 +181,10 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                 <TableHead
                   key={col.key}
                   aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : undefined}
-                  className={cn("whitespace-nowrap px-2 py-1", col.numeric && "text-right", col.compact && "w-px")}
+                  style={{ width: widths[col.key] }}
+                  className={cn("relative overflow-hidden whitespace-nowrap px-2 py-1", col.numeric && "text-right")}
                 >
-                  <span className={cn("inline-flex items-center gap-1", col.numeric && "flex-row-reverse")}>
+                  <span className={cn("inline-flex max-w-full items-center gap-1", col.numeric && "flex-row-reverse")}>
                     <button
                       type="button"
                       onClick={() => onToggleSort(col.key)}
@@ -177,6 +210,7 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                       </Tooltip>
                     )}
                   </span>
+                  <ColumnResizeHandle onResizeStart={(clientX) => startResize(col.key, clientX)} />
                 </TableHead>
               )
             })}
@@ -189,11 +223,8 @@ export function RankingsTable({ entries, division, sort, onToggleSort }: Ranking
                 <TableCell
                   key={col.key}
                   className={cn(
-                    "whitespace-nowrap text-muted-foreground px-2 py-1",
+                    "truncate whitespace-nowrap text-muted-foreground px-2 py-1",
                     col.numeric && "text-right tabular-nums",
-                    col.compact && "w-px",
-                    col.key === "school" && "max-w-[180px] truncate",
-                    col.key === "name" && "max-w-[180px] truncate",
                   )}
                   title={col.key === "school" ? entry.school : col.key === "name" ? entry.name : undefined}
                 >

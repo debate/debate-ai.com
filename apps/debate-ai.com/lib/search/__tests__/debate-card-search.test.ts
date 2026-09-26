@@ -17,15 +17,16 @@ import {
   sortSearchResults,
 } from "../debate-card-search";
 
-const migrationPath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../drizzle/0035_debate_cards.sql",
+const migrationPaths = ["0035_debate_cards.sql", "0054_debate_card_source_url.sql"].map((file) =>
+  path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle", file),
 );
 
 /** A fresh in-memory database with the card table migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
+  for (const statement of migrationPaths.flatMap((migrationPath) =>
+    readFileSync(migrationPath, "utf8").split("--> statement-breakpoint"),
+  )) {
     const sql = statement.trim();
     if (sql) await client.execute(sql);
   }

@@ -9,7 +9,7 @@ export type Division = "VPF" | "VLD" | "VCX" | "NDT";
 /** Set of valid division strings used for URL query-param validation. */
 export const VALID_DIVISIONS = new Set<string>(["VPF", "VLD", "VCX", "NDT"]);
 
-import type { RankingEntry } from "debate-rankings";
+import type { RankingEntry } from "debate-rankings-adapter";
 
 /** Column keys available for sorting the rankings grid — every CSV field. */
 export type SortKey = keyof RankingEntry;
