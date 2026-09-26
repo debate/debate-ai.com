@@ -49,14 +49,14 @@ interface Column {
 }
 
 /**
- * A rating rounded to a whole number, with the leading (thousands and
- * hundreds) digits bold and large and the last two digits smaller, so the
- * magnitude reads at a glance: **15**43.
+ * A rating rounded to a whole number, with the leading digits bold and
+ * large and the last digit smaller, so the magnitude reads at a glance:
+ * **154**3.
  */
 function Rating({ value }: { value: number }) {
   const text = Math.round(value).toString()
-  const head = text.length > 2 ? text.slice(0, -2) : text
-  const tail = text.length > 2 ? text.slice(-2) : ""
+  const head = text.length > 1 ? text.slice(0, -1) : text
+  const tail = text.length > 1 ? text.slice(-1) : ""
   return (
     <span className="text-foreground" aria-label={text}>
       <span className="text-base font-bold">{head}</span>
