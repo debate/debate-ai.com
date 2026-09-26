@@ -41,6 +41,13 @@
  * wired, discoverability not" gap {@link CloudSpeechOutcomeSummary} closed for
  * video speech-outcome runs.
  *
+ * An eighth kind, AI Judge Decisions (`/judge-decision`), joined next:
+ * `saved_judge_decisions` already synced a signed-in user's
+ * `JudgeDecisionRecord`s (`debate-practice-drills`, one row per generated
+ * decision, keyed by its own `id` rather than `roundId` since a round can
+ * accumulate many decisions) via `GET /api/judge-decisions`, but the same
+ * "sync wired, discoverability not" gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -120,6 +127,22 @@ export type CloudDrillSetSummary = {
   updatedAt?: number;
 };
 
+/**
+ * The subset of a `JudgeDecisionRecord` (`debate-practice-drills`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/judge-decisions`'s
+ * row shape (full records, like {@link CloudWordCountRoundSummary}; the
+ * judge-decisions route has no label-only summary mode either). Defined
+ * locally rather than importing `JudgeDecisionRecord` itself, matching
+ * {@link CloudDrillSetSummary}'s own local-type convention: `debate-round`
+ * doesn't depend on `debate-practice-drills` (nor the reverse).
+ */
+export type CloudJudgeDecisionSummary = {
+  id: string;
+  paradigmName: string;
+  /** Epoch milliseconds, per `JudgeDecisionRecord.generatedAt` — there is no separate `updatedAt`. */
+  generatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -127,7 +150,8 @@ export type CloudLibraryItemKind =
   | "wordCountRound"
   | "debate"
   | "speechOutcome"
-  | "drillSet";
+  | "drillSet"
+  | "judgeDecision";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -169,6 +193,7 @@ export interface BuildRecentCloudItemsInput {
   debates?: CloudDebateSummary[];
   speechOutcomes?: CloudSpeechOutcomeSummary[];
   drillSets?: CloudDrillSetSummary[];
+  judgeDecisions?: CloudJudgeDecisionSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -183,6 +208,7 @@ export interface BuildRecentCloudItemsOptions {
   debateHref?: string;
   speechOutcomeHref?: string;
   drillSetHref?: string;
+  judgeDecisionHref?: string;
 }
 
 /**
@@ -206,6 +232,7 @@ export function buildRecentCloudItems(
     debateHref = "/versus-ai",
     speechOutcomeHref = "/videos",
     drillSetHref = "/drills",
+    judgeDecisionHref = "/judge-decision",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -270,6 +297,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(drillSet.updatedAt ?? 0),
     }));
 
+  const judgeDecisionItems: CloudLibraryItem[] = (input.judgeDecisions ?? [])
+    .slice(0, perKindLimit)
+    .map((decision) => ({
+      kind: "judgeDecision",
+      key: `judgeDecision-${decision.id}`,
+      href: judgeDecisionHref,
+      label: decision.paradigmName.trim() ? `${decision.paradigmName.trim()} Decision` : "Untitled judge decision",
+      updatedAtMs: parseCloudTimestamp(decision.generatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -278,6 +315,7 @@ export function buildRecentCloudItems(
     ...debateItems,
     ...speechOutcomeItems,
     ...drillSetItems,
+    ...judgeDecisionItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

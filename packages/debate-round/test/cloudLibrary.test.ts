@@ -6,6 +6,7 @@ import {
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
+  type CloudJudgeDecisionSummary,
   type CloudSpeechOutcomeSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
@@ -57,8 +58,11 @@ describe("buildRecentCloudItems", () => {
   const drillSets: CloudDrillSetSummary[] = [
     { roundId: "round-9-drills", updatedAt: Date.parse("2026-08-25T00:00:00.000Z") },
   ];
+  const judgeDecisions: CloudJudgeDecisionSummary[] = [
+    { id: "decision-1", paradigmName: "Flow", generatedAt: Date.parse("2026-09-02T00:00:00.000Z") },
+  ];
 
-  it("merges all seven kinds and sorts newest first", () => {
+  it("merges all eight kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -68,10 +72,12 @@ describe("buildRecentCloudItems", () => {
         debates,
         speechOutcomes,
         drillSets,
+        judgeDecisions,
       },
-      { limit: 7 },
+      { limit: 8 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "judgeDecision",
       "speechOutcome",
       "wordCountRound",
       "flow",
@@ -137,6 +143,18 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.updatedAtMs).toBe(0);
   });
 
+  it("includes judge decisions, keyed by id and labeled by paradigm name", () => {
+    const items = buildRecentCloudItems({ judgeDecisions });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "judgeDecision",
+        key: "judgeDecision-decision-1",
+        label: "Flow Decision",
+        updatedAtMs: Date.parse("2026-09-02T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -153,8 +171,9 @@ describe("buildRecentCloudItems", () => {
         debates,
         speechOutcomes,
         drillSets,
+        judgeDecisions,
       },
-      { limit: 7 },
+      { limit: 8 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -164,6 +183,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.debate).toBe("/versus-ai");
     expect(byKind.speechOutcome).toBe("/videos");
     expect(byKind.drillSet).toBe("/drills");
+    expect(byKind.judgeDecision).toBe("/judge-decision");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -182,6 +202,12 @@ describe("buildRecentCloudItems", () => {
 
     const overriddenDrillSet = buildRecentCloudItems({ drillSets }, { drillSetHref: "/custom-drills-route" });
     expect(overriddenDrillSet[0]?.href).toBe("/custom-drills-route");
+
+    const overriddenJudgeDecision = buildRecentCloudItems(
+      { judgeDecisions },
+      { judgeDecisionHref: "/custom-judge-decision-route" },
+    );
+    expect(overriddenJudgeDecision[0]?.href).toBe("/custom-judge-decision-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -194,8 +220,9 @@ describe("buildRecentCloudItems", () => {
         debates: [{ id: "debate-1", topic: "  ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") / 1000 }],
         speechOutcomes: [{ id: "outcome-1", speechKey: "  ", savedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
         drillSets: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        judgeDecisions: [{ id: "decision-1", paradigmName: "  ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       },
-      { limit: 7 },
+      { limit: 8 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -205,6 +232,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.debate).toBe("Untitled debate");
     expect(byKind.speechOutcome).toBe("Untitled speech outcome");
     expect(byKind.drillSet).toBe("Untitled drill set");
+    expect(byKind.judgeDecision).toBe("Untitled judge decision");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -234,6 +262,7 @@ describe("buildRecentCloudItems", () => {
         debates: [],
         speechOutcomes: [],
         drillSets: [],
+        judgeDecisions: [],
       }),
     ).toEqual([]);
   });
