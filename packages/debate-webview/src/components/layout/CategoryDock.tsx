@@ -188,6 +188,7 @@ function SettingsMenu({
           <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(500px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
             {section.links.map((link) => (
               <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
+                {link.icon && <link.icon className="mr-2 h-4 w-4 shrink-0" />}
                 {link.title}
               </DropdownMenuItem>
             ))}
@@ -535,9 +536,11 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
 
   if (embedded) {
     return (
-      // `contents` so this wrapper adds nothing to the sidebar's flex column;
-      // it exists only to carry the marker the pre-paint CSS hides on.
-      <div data-app-chrome className="contents">
+      // Sticky to the top of the sidebar's scrolling column, so the dock stays
+      // in reach while the tool tree scrolls under it. The solid background
+      // hides that tree behind the dock's translucent, blurred surface. The
+      // wrapper also carries the marker the pre-paint CSS hides on.
+      <div data-app-chrome className="sticky top-0 z-30 shrink-0 bg-background">
         <DockInstance
           dockClassName="shrink-0 min-h-[52px]"
           side="bottom"

@@ -77,7 +77,7 @@ describe("ToolNavTree sectionIds", () => {
     // column would be a single collapsed heading.
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
-    expect(html).toContain("/cards/library");
+    expect(html).toContain("/cards/coverage");
     expect(html).toContain("/reason-editor");
   });
 

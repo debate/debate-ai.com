@@ -1,0 +1,17 @@
+[submodule "debate-editor"]
+	path = packages/debate-editor-cm
+	url = https://github.com/debate/debate-editor.git
+	branch = main
+	ignore = untracked
+
+[submodule "debate-rankings"]
+	path = packages/debate-rankings
+	url = https://github.com/debate/debate-rankings.git
+	branch = main
+
+[submodule "debate-tournaments"]
+	path = packages/debate-tournaments-tabroom
+	url = https://github.com/debate/debate-tournaments.git
+	branch = main
+	ignore = untracked
+

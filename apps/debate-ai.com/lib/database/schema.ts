@@ -1696,6 +1696,13 @@ export const debateCards = sqliteTable(
     level: text("level").notNull().default(""),
     /** Shard the row came from, so one file's import can be audited or replaced. */
     sourceFile: text("source_file").notNull().default(""),
+    /**
+     * Source URL `debate-card-parser` extracted from the citation, or "" when
+     * it names none. Written at import and backfilled by the admin panel's
+     * "Extract source URLs" run; the URL recheck reads it instead of
+     * re-parsing every cite.
+     */
+    sourceUrl: text("source_url").notNull().default(""),
     importedAt: integer("imported_at")
       .notNull()
       .default(sql`(unixepoch())`),
@@ -1708,6 +1715,7 @@ export const debateCards = sqliteTable(
     caselistIdx: index("idx_debate_cards_caselist").on(table.caselistDisplayName),
     bucketIdx: index("idx_debate_cards_bucket").on(table.bucketId),
     sourceFileIdx: index("idx_debate_cards_source_file").on(table.sourceFile),
+    sourceUrlIdx: index("idx_debate_cards_source_url").on(table.sourceUrl),
   }),
 );
 

@@ -58,9 +58,12 @@ describe("identifySpeech", () => {
   });
 
   it("names the speech a cross-ex questions", () => {
-    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "2AX", side: "cx", target: "1AC" });
+    // `base` stays "CX" so repeats still pair up across documents by order;
+    // the label is what names the speech it questions.
+    expect(identifySpeech("CX of the 1AC")).toMatchObject({ base: "CX", label: "2AX", side: "cx", target: "1AC" });
     expect(identifySpeech("Cross-Examination of the First Negative Constructive")).toMatchObject({
-      base: "2NX",
+      base: "CX",
+      label: "2NX",
       target: "1NC",
     });
   });
@@ -98,16 +101,24 @@ describe("buildRoundSpeeches", () => {
   });
 
   it("keeps round order, slotting in what only the summary has", () => {
-    expect(speeches.map((speech) => speech.label)).toEqual([
-      "Overview",
-      "1AC",
-      "2AX",
-      "1NC",
-      "2NX",
-      "1AR",
-      "2NR",
-      "Decision",
+    expect(speeches.map((speech) => speech.label)).toEqual(["1AC", "2AX", "1NC", "2NX", "1AR", "2NR", "Decision"]);
+  });
+
+  it("names a bare CX for the constructive right before it", () => {
+    const rounds = buildRoundSpeeches([doc("summary", "## 1AC\n\nA\n\n## CX\n\nQ\n\n## 1NC\n\nB\n\n## CX\n\nQ")]);
+    expect(rounds.map((speech) => [speech.key, speech.label])).toEqual([
+      ["1AC#1", "1AC"],
+      ["CX#1", "2AX"],
+      ["1NC#1", "1NC"],
+      ["CX#2", "2NX"],
     ]);
+  });
+
+  it("drops intros and overviews but keeps the judge's comments, last", () => {
+    const rounds = buildRoundSpeeches([
+      doc("summary", ["## Intro", "Welcome.", "## Judge Comments", "Clean round.", "## 1AC", "A", "## 1NC", "B"].join("\n\n")),
+    ]);
+    expect(rounds.map((speech) => speech.label)).toEqual(["1AC", "1NC", "Judge Comments"]);
   });
 
   it("needs a summary or analysis that covers two speeches", () => {

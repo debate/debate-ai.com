@@ -1,9 +1,11 @@
 /**
  * @fileoverview Validates URLs from debate card citations.
  *
- * Walks `debate_cards` in id order, extracts the source URL from each card's
- * citation using `debate-card-parser`, and makes an HTTP HEAD request to
- * check if the URL is still accessible. Returns paginated results so a corpus
+ * Walks `debate_cards` in id order over the rows that carry a
+ * `source_url` — the URL `debate-card-parser` extracted from the citation, at
+ * import or by the "Extract source URLs" backfill — and makes an HTTP HEAD
+ * request to check if it is still accessible. Cards with no stored URL are
+ * skipped, so run the extraction first. Returns paginated results so a corpus
  * of millions of rows can be checked incrementally.
  *
  * `POST { afterId?: number, limit?: number, timeoutMs?: number }` →
@@ -12,11 +14,10 @@
  * @module app/api/admin/debate-cards/validate-urls/route
  */
 import { NextRequest, NextResponse } from "next/server";
-import { asc, gt } from "drizzle-orm";
+import { and, asc, gt, ne } from "drizzle-orm";
 import { authorizeCardImport } from "@/lib/admin/debate-card-import";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
-import { buildParquetCardReuseEntry } from "debate-research-evidence";
 
 const DEFAULT_PAGE_ROWS = 500;
 const MAX_PAGE_ROWS = 2_000;
@@ -46,16 +47,11 @@ export async function POST(request: NextRequest) {
   const timeoutMs = Math.min(MAX_TIMEOUT_MS, Math.max(1_000, Math.trunc(Number(body.timeoutMs) || DEFAULT_TIMEOUT_MS)));
 
   const db = await getDBFromContext();
-  // Only fetch the cite columns needed to extract URLs.
+  // Only cards whose URL was already extracted into the column.
   const cards = await db
-    .select({
-      id: debateCards.id,
-      cite: debateCards.cite,
-      fullcite: debateCards.fullcite,
-      caselistDisplayName: debateCards.caselistDisplayName,
-    })
+    .select({ id: debateCards.id, sourceUrl: debateCards.sourceUrl })
     .from(debateCards)
-    .where(gt(debateCards.id, afterId))
+    .where(and(gt(debateCards.id, afterId), ne(debateCards.sourceUrl, "")))
     .orderBy(asc(debateCards.id))
     .limit(limit);
 
@@ -65,19 +61,7 @@ export async function POST(request: NextRequest) {
   let errors = 0;
 
   for (const card of cards) {
-    const entry = buildParquetCardReuseEntry({
-      id: card.id,
-      tag: "",
-      cite: card.cite,
-      fullcite: card.fullcite,
-      caselistDisplayName: card.caselistDisplayName,
-    });
-    if (!entry) {
-      // Card has no extractable URL; skip without counting.
-      continue;
-    }
-
-    const url = entry.sourceUrl;
+    const url = card.sourceUrl;
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);

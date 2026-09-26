@@ -7,7 +7,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { RANKING_DATASETS, loadRankingDataset, type RankingDataset } from "debate-rankings"
+import { RANKING_DATASETS, loadRankingDataset, type RankingDataset } from "debate-rankings-adapter"
 
 /**
  * Full-season datasets only: a scoped slice (LD's Sep–Oct topic) re-ranks the

@@ -166,7 +166,18 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
 
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <Stat label="Ranked entries" value={summary.teams} />
-            <Stat label="Best rank" value={summary.bestRank ?? "—"} />
+            {summary.divisions.map((d) => (
+              <Stat
+                key={d.datasetId}
+                label={`Best rank · ${d.datasetLabel}`}
+                value={
+                  <>
+                    {d.bestRank}
+                    <span className="text-sm font-normal text-muted-foreground"> / {d.fieldSize}</span>
+                  </>
+                }
+              />
+            ))}
             <Stat
               label="Avg. adj. rating"
               value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}

@@ -5,7 +5,7 @@
  * @module components/debate/DebateVideos/panels/leaderboardUtils
  */
 
-import type { RankingDatasetId, RankingEntry } from "debate-rankings";
+import type { RankingDatasetId, RankingEntry } from "debate-rankings-adapter";
 import type { SeasonalTopic } from "../../lib/debate-topics";
 import type { Division, SortKey, SortState, YearData } from "./leaderboardTypes";
 

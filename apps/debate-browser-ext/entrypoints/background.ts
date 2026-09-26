@@ -179,7 +179,7 @@ export default defineBackground(() => {
     })();
   });
 
-  browser.runtime.onMessage.addListener((message: unknown, sender) => {
+  browser.runtime.onMessage.addListener((message: unknown, sender: { tab?: { id?: number } }) => {
     const type = (message as { type?: string } | undefined)?.type;
     switch (type) {
       case OPEN_TIMER_MESSAGE:

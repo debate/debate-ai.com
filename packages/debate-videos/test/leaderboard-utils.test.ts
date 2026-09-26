@@ -12,7 +12,7 @@ import {
   seasonYears,
   sortEntries,
 } from "../src/panels/leaderboard/leaderboardUtils";
-import { RANKING_DATASETS, type RankingEntry } from "debate-rankings";
+import { RANKING_DATASETS, type RankingEntry } from "debate-rankings-adapter";
 
 const entry = (over: Partial<RankingEntry>): RankingEntry => ({
   rank: 1,
