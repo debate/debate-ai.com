@@ -53,6 +53,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/cards/reviews", load: () => import("./cards/reviews/page"), layout: () => import("./cards/layout") },
   { pattern: "/cards/revisions", load: () => import("./cards/revisions/page"), layout: () => import("./cards/layout") },
   { pattern: "/cards/scoring", load: () => import("./cards/scoring/page"), layout: () => import("./cards/layout") },
+  { pattern: "/cards/level", load: () => import("./cards/level/page"), layout: () => import("./cards/layout") },
   { pattern: "/cards/streaks", load: () => import("./cards/streaks/page"), layout: () => import("./cards/layout") },
   { pattern: "/coach", load: () => import("./coach/page") },
   { pattern: "/coach-materials", load: () => import("./coach-materials/page") },

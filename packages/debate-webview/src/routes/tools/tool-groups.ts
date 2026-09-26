@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass, Contact,
-  Rss, Gauge, Crosshair, Crown, Send, Smartphone,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star,
   type LucideIcon,
 } from "lucide-react"
 
@@ -144,6 +144,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/cards/progress-tracking", label: "Research Progress", icon: ListChecks,
         description: "Review each contributor's contribution history and per-topic task completion.",
         highlights: ["Contributions, task completion rate, and per-topic breakdown per row"],
+      },
+      {
+        href: "/cards/level", label: "Debater Level", icon: Star,
+        description: "Level up like a video game: earn XP for cutting cards, redoing rebuttals, and practice rounds.",
+        highlights: ["Daily challenges like \"Cut 5 cards\" and \"Redo a rebuttal\"", "Level, rank title, XP bar, and lifetime milestones"],
       },
       {
         href: "/cards/streaks", label: "Quest Streaks", icon: Flame,

@@ -563,6 +563,14 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["gamified", "badges", "streak"],
   },
   {
+    id: "debater-level",
+    title: "Debater Level",
+    description: "Earn XP and level up by completing challenges like cutting 5 cards or redoing a rebuttal",
+    href: "/cards/level",
+    category: "recognition",
+    tags: ["gamified", "xp", "levels", "challenges"],
+  },
+  {
     id: "progress-unlocks",
     title: "Progress Unlocks",
     description: "Every contributor's unlock tier, badges, and the research-task skill level each tier grants",

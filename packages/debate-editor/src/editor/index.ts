@@ -661,6 +661,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
     sourceName: activeFile().filename ?? '',
   });
   await quickCardsStore.upsert(card);
+  // Debater Level XP — the app shell's listener records it (no-op elsewhere).
+  window.dispatchEvent(new CustomEvent('debate-ai:debater-activity', { detail: { kind: 'card_cut' } }));
   showToast(`Saved quick card “${card.name}”.`);
 }
 

@@ -43,6 +43,7 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/cards/coverage', label: 'Topic Coverage Dashboard', description: 'Missing, thin, and covered arguments per topic', category: 'Community & Progress' },
   { href: '/cards/prep-room', label: 'Collaboration Prep Room', description: "A topic's evidence, draft blocks, and routed tasks", category: 'Community & Progress' },
   { href: '/cards/progress-tracking', label: 'Research Progress', description: 'Contribution history and per-topic task completion', category: 'Community & Progress' },
+  { href: '/cards/level', label: 'Debater Level', description: 'Earn XP and level up by completing practice challenges', category: 'Community & Progress' },
   { href: '/cards/streaks', label: 'Quest Streaks', description: 'Daily-quest streak and milestone badges per contributor', category: 'Community & Progress' },
   { href: '/cards/quests', label: 'Daily Quests', description: 'Team goals tracked against live contribution progress', category: 'Community & Progress' },
   { href: '/cards/brainstorm', label: 'Team Brainstorm Assist', description: 'Submit and upvote ideas for an argument block', category: 'Community & Progress' },
