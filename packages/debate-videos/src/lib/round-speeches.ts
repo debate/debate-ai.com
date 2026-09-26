@@ -73,6 +73,17 @@ function sideOfCode(code: string): SpeechSide {
 }
 
 /**
+ * A cross-ex named for the speech it questions, the way debaters say it: the
+ * 1AC is crossed in the "2AX", the 1NC in the "2NX", a 2AC in the "1AX". A
+ * target with no number ("AC") is taken as the first.
+ */
+function crossExLabel(target: string): string {
+  const [, num = "1", side] = /^([12])?([AN])/.exec(target) ?? [];
+  if (!side) return "CX";
+  return `${num === "1" ? "2" : "1"}${side}X`;
+}
+
+/**
  * Reads the speech a section heading names.
  *
  * @param heading - Heading text with the timecode already removed.
@@ -111,13 +122,7 @@ export function identifySpeech(heading: string): SpeechIdentity {
       const spelledTarget = rest.match(/\b(?:first|second)\s+(?:affirmative|negative)\s+(?:constructive|rebuttal)\b/i);
       if (spelledTarget) target = identifySpeech(spelledTarget[0]).label;
     }
-    let label = crossEx ? "CX" : "Crossfire";
-    if (target) {
-      const num = target[0];
-      const side = target[1];
-      const nextNum = num === "1" ? "2" : "1";
-      label = `${nextNum}${side}X`;
-    }
+    const label = target ? crossExLabel(target) : crossEx ? "CX" : "Crossfire";
     return { base: "CX", label, side: "cx", isSpeech: true, target };
   }
 
@@ -212,7 +217,8 @@ export function buildRoundSpeeches(
   for (const speech of speeches) labelCounts.set(speech.label, (labelCounts.get(speech.label) ?? 0) + 1);
   for (const speech of speeches) {
     const target = targets.get(speech.key);
-    if (target && speech.side !== "cx") speech.label = `${speech.label} · ${target}`;
+    if (target && speech.side === "cx") speech.label = crossExLabel(target);
+    else if (target) speech.label = `${speech.label} · ${target}`;
     else if ((labelCounts.get(speech.label) ?? 0) > 1) speech.label = `${speech.label} ${speech.key.split("#")[1]}`;
   }
 
