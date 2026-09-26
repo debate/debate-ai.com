@@ -17,6 +17,7 @@ import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 import { FloatingVideoSearch } from "../components/video-search/FloatingVideoSearch"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
+import { getSearchPhrases } from "../components/video-search/searchPhrases"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
@@ -256,6 +257,12 @@ export function LecturesVideoGridView({
   /** The watch-history listing, which is neither a category nor a filter. */
   const isHistory = currentCategory === "history"
 
+  // Dropdown phrases for the search box, a different set per category.
+  const searchPhrases = useMemo(
+    () => getSearchPhrases({ currentCategory, selectedStyle, selectedCategory }),
+    [currentCategory, selectedStyle, selectedCategory],
+  )
+
   // Always stacked: the floating panel it opens in is a narrow column, not
   // the full-width row the old sticky header gave it.
   const searchBarNode = (
@@ -280,6 +287,7 @@ export function LecturesVideoGridView({
       onToggleThumbnails={onToggleThumbnails}
       onToggleFavoritesOnly={onToggleFavoritesOnly}
       totalVideos={totalVideos}
+      suggestedPhrases={searchPhrases}
       stacked
       extraButtons={
         youtubeStats ? (
