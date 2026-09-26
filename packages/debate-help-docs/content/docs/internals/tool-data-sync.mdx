@@ -63,7 +63,9 @@ group, which is what the table below is ordered by. It was the heading
 catalog's own grouping.
 
 **Videos** (`/videos`) — `debateVideosFavorites` and `debateVideosHidden`, both
-keyed by `videoId`, and `debateVideoReports` keyed by `id`.
+keyed by `videoId`, `debateVideoReports` keyed by `id`, and the watch page's
+cached AI outcome-simulation runs (`speechOutcomeRuns`) keyed by a derived
+`${videoId}::${speechKey}::${lens}` id.
 
 **Practice** — the Practice Round Simulator (`practiceRounds`), Pre-Round
 Briefings (`preRoundBriefings`) and Debate Versus AI (`aiVersusRounds`), each
@@ -176,39 +178,6 @@ these stay local on purpose —
   of `{ id, badges }` records (`id` the contributor's id, migrating any
   pre-existing legacy map on read), so a badge already celebrated on one
   device isn't celebrated again as "new" on a second one.
-
-### Redacted fields
-
-One collection can't join with a plain catalog entry the way the rest do:
-`fileSources` (`/doc`'s file browser, `REASON-file-sources`) has the required
-shape, but its records can carry an SSH password or private key, an S3/R2/B2
-secret access key, or a Google OAuth refresh token
-(`fileSource-types.ts`'s `SSHCredentials`/`S3Credentials`/`R2Credentials`/
-`B2Credentials`/`GoogleDocsCredentials`) — and the route stores whatever JSON
-a collection hands it verbatim, with no redaction of its own. A plain entry
-would put those secrets into `saved_tool_records` unencrypted.
-
-So `ToolRecordCollection` carries one more, optional field: `redact`, a pure
-`(record) => record` applied at every push (the immediate mirror, the
-auto-sync watcher, and the first-sign-in push of local-only records) and
-never to what a tool reads back out of its own `localStorage`. `fileSources`'
-is `redact-file-source.ts`'s `redactFileSource` — an **allowlist** per source
-type (host/port/username for SSH, region/bucket for S3, …), not a blocklist of
-secret-looking names, so a credential field added to `fileSource-types.ts`
-later defaults to held back rather than defaulting to synced. A source's
-connection details follow you to another device; what would let that device
-connect as you does not, and has to be re-entered there.
-
-Redacting on the way up only works if the merge, on the way back down,
-doesn't read the account's now-missing field as the account *clearing* it —
-`mergeToolRecords`' `restoreRedactedFields` fills back whatever the local
-copy has that the remote copy doesn't, recursing into `credentials` itself,
-so the password stays on the device that saved it instead of being wiped out
-by the record's own next reconcile.
-
-Every other collection has no `redact`, and none needs one: this is a fix for
-the one collection whose shape happens to also carry a credential, not a step
-every collection has to take.
 
 ### Redacted fields
 

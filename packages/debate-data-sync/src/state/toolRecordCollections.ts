@@ -636,6 +636,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     href: "/videos",
     section: "Videos",
   },
+  {
+    key: "speechOutcomeRuns",
+    storageKey: "debate-videos:speech-outcomes",
+    idField: "id",
+    // The watch page's cached AI outcome-simulation runs
+    // (`debate-videos/src/state/speechOutcomeCache.ts`), keyed by a derived
+    // `${videoId}::${speechKey}::${lens}` id — see that module's own header
+    // comment for why it needed one before it could join this catalog.
+    label: "Speech Outcome Runs",
+    href: "/videos",
+    section: "Videos",
+  },
 ];
 
 const BY_KEY = new Map(TOOL_RECORD_COLLECTIONS.map((collection) => [collection.key, collection]));

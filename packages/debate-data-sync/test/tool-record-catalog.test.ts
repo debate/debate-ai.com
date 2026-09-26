@@ -95,6 +95,7 @@ const EXPECTED_ID_FIELDS: Record<string, string> = {
   debateVideosHidden: "videoId",
   debateVideoReports: "id",
   debateVideoWatchHistory: "videoId",
+  speechOutcomeRuns: "id",
 };
 
 describe("the synced collection catalog", () => {
@@ -351,6 +352,21 @@ describe("the synced collection catalog", () => {
     });
     expect(findToolRecordCollection("debateVideoReports")).toMatchObject({
       idField: "id",
+    });
+  });
+
+  it("syncs the watch page's cached speech-outcome runs now that they carry a stable id", () => {
+    // `debate-videos/src/state/speechOutcomeCache.ts`'s `CachedSpeechOutcome`
+    // was keyed only by the `(videoId, speechKey, lens)` triple — the same
+    // shape problem `coachingSessions` had — so a cached AI outcome
+    // simulation never followed a signed-in user to a second device; it just
+    // re-ran (and re-paid for) the same simulation there.
+    // `writeCachedSpeechOutcome` now stamps a derived
+    // `${videoId}::${speechKey}::${lens}` id on every cached run.
+    expect(findToolRecordCollection("speechOutcomeRuns")).toMatchObject({
+      storageKey: "debate-videos:speech-outcomes",
+      idField: "id",
+      href: "/videos",
     });
   });
 });

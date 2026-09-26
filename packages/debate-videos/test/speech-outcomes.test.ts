@@ -23,6 +23,7 @@ import {
   MAX_CACHED_RUNS,
   cachedSpeechKeys,
   readCachedSpeechOutcome,
+  speechOutcomeCacheId,
   writeCachedSpeechOutcome,
 } from "../src/state/speechOutcomeCache";
 
@@ -243,6 +244,25 @@ describe("speechOutcomeCache", () => {
     writeCachedSpeechOutcome({ videoId: "v", speechKey: "1NC#1", lens: "lay", simulation, savedAt: 3 });
     expect(readCachedSpeechOutcome("v", "1AR#1", "flow")?.savedAt).toBe(2);
     expect(readCachedSpeechOutcome("v", "1AR#1", "lay")).toBeNull();
+    expect(cachedSpeechKeys("v")).toEqual(new Set(["1AR#1", "1NC#1"]));
+  });
+
+  it("stamps a stable id from the video/speech/lens triple, for account sync", () => {
+    writeCachedSpeechOutcome({ videoId: "v", speechKey: "1AR#1", lens: "flow", simulation, savedAt: 1 });
+    writeCachedSpeechOutcome({ videoId: "v", speechKey: "1NC#1", lens: "lay", simulation, savedAt: 2 });
+
+    const flowRun = readCachedSpeechOutcome("v", "1AR#1", "flow");
+    const layRun = readCachedSpeechOutcome("v", "1NC#1", "lay");
+    expect(flowRun?.id).toBe(speechOutcomeCacheId("v", "1AR#1", "flow"));
+    expect(layRun?.id).toBe(speechOutcomeCacheId("v", "1NC#1", "lay"));
+    expect(flowRun?.id).not.toBe(layRun?.id);
+
+    // Re-running the same triple keeps the same id rather than duplicating it.
+    writeCachedSpeechOutcome({ videoId: "v", speechKey: "1AR#1", lens: "flow", simulation, savedAt: 3 });
+    expect(readCachedSpeechOutcome("v", "1AR#1", "flow")).toMatchObject({
+      id: speechOutcomeCacheId("v", "1AR#1", "flow"),
+      savedAt: 3,
+    });
     expect(cachedSpeechKeys("v")).toEqual(new Set(["1AR#1", "1NC#1"]));
   });
 
