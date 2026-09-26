@@ -21,22 +21,24 @@ export function Footer() {
   const midpoint = Math.ceil(FOOTER_LINKS.length / 2)
   const rows = [FOOTER_LINKS.slice(0, midpoint), FOOTER_LINKS.slice(midpoint)]
 
-  const linkClass = "hover:text-foreground transition-colors flex items-center gap-1"
+  // A small pill that lifts and tints on hover, with the icon nudging larger.
+  const linkClass =
+    "group flex items-center gap-1 rounded-md px-1 py-0.5 transition-all duration-200 ease-out hover:-translate-y-px hover:bg-muted hover:text-foreground motion-reduce:transition-none motion-reduce:hover:translate-y-0"
 
   return (
-    <footer className="w-full py-6 border-t bg-background/50 backdrop-blur-sm text-muted-foreground text-xs font-medium">
-      <div className="max-w-7xl mx-auto px-4 flex flex-col gap-y-2">
+    <footer className="w-full py-3 border-t bg-background/50 backdrop-blur-sm text-muted-foreground text-xs font-medium">
+      <div className="max-w-7xl mx-auto px-4 flex flex-col gap-y-0.5">
         {rows.map((row, rowIndex) => (
           <div
             key={rowIndex}
-            className="flex flex-wrap justify-center items-center gap-x-3 gap-y-2"
+            className="flex flex-wrap justify-center items-center gap-x-1 gap-y-0.5"
           >
             {row.map((link, index) => {
               const Icon = link.icon
               const isExternal = link.url.startsWith("http")
               const contents = (
                 <>
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110 motion-reduce:transition-none" />
                   {link.text}
                 </>
               )
