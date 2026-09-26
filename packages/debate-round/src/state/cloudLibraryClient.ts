@@ -35,6 +35,15 @@
  * route's `{ debates: [...] }` body rather than importing that package's
  * own `listDebateHistory` client.
  *
+ * Video speech-outcome runs (`/api/tool-records/speechOutcomeRuns`) join the
+ * same way, for the same reason again: `debate-videos` doesn't depend on
+ * `debate-round`. `listCloudSpeechOutcomes` below is a local raw `fetch`
+ * against the generic tool-records route, which — unlike the other four
+ * sources — returns every field a synced `CachedSpeechOutcome` record has
+ * (including its `simulation` payload), so this trims each row down to the
+ * `id`/`speechKey`/`savedAt` triple `buildRecentCloudItems` actually needs
+ * rather than shipping the whole simulation through this widget's state.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -46,6 +55,7 @@ import {
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudLibraryItem,
+  type CloudSpeechOutcomeSummary,
   type CloudWordCountRoundSummary,
 } from "./cloudLibrary";
 
@@ -105,20 +115,41 @@ async function listCloudDebates(endpoint = "/api/vsbot/history"): Promise<CloudD
 }
 
 /**
- * Fetches documents/flows/rounds/word-count-rounds/debates and merges them
- * via `buildRecentCloudItems`. Each source resolves independently and
- * degrades to "no items of that kind" on any failure — a network error, a
- * non-2xx response, or a signed-out `401` — rather than rejecting the whole
- * call, so one flaky endpoint never blanks a widget that had perfectly good
- * data from the others.
+ * Lists the current user's synced video speech-outcome simulation runs.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/tool-records/[collection]`'s own auth behavior), a non-2xx
+ * response (including the 404 an unrecognized collection key would 404
+ * with), or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudSpeechOutcomes(
+  endpoint = "/api/tool-records/speechOutcomeRuns",
+): Promise<CloudSpeechOutcomeSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSpeechOutcomeSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs
+ * and merges them via `buildRecentCloudItems`. Each source resolves
+ * independently and degrades to "no items of that kind" on any failure — a
+ * network error, a non-2xx response, or a signed-out `401` — rather than
+ * rejecting the whole call, so one flaky endpoint never blanks a widget that
+ * had perfectly good data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
-  const [documents, flows, rounds, wordCountRounds, debates] = await Promise.all([
+  const [documents, flows, rounds, wordCountRounds, debates, speechOutcomes] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
     listSavedRounds().catch(() => null),
     listCloudWordCountRounds(),
     listCloudDebates(),
+    listCloudSpeechOutcomes(),
   ]);
   return buildRecentCloudItems(
     {
@@ -127,6 +158,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       rounds: rounds ?? undefined,
       wordCountRounds: wordCountRounds ?? undefined,
       debates: debates ?? undefined,
+      speechOutcomes: speechOutcomes ?? undefined,
     },
     opts,
   );

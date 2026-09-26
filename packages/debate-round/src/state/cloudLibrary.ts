@@ -11,6 +11,15 @@
  * anywhere a returning user could browse it before `GET /api/vsbot/history`
  * was added for exactly that purpose.
  *
+ * A sixth kind, video speech-outcome simulation runs, joined next:
+ * `CachedSpeechOutcome` (`debate-videos`) gained a stable
+ * `${videoId}::${speechKey}::${lens}` id and joined `debate-data-sync`'s
+ * generic `TOOL_RECORD_COLLECTIONS` sync (as `speechOutcomeRuns`, backed by
+ * `saved_tool_records`) so a signed-in user's runs follow them to another
+ * device — but that only wired the sync, not discoverability: nothing added
+ * it to this merge, so a run a user paid to generate stayed invisible here
+ * even once it was safely in SQL and linked to their account.
+ *
  * `apps/debate-ai.com`'s `app/tools/MySavedItems.tsx` widget previously
  * merged only documents and rounds inline — flows (the middle of the three
  * originally named data types) were never fetched or shown, so a user with
@@ -72,7 +81,29 @@ export type CloudDebateSummary = {
   createdAt: number;
 };
 
-export type CloudLibraryItemKind = "document" | "flow" | "round" | "wordCountRound" | "debate";
+/**
+ * The subset of a `CachedSpeechOutcome` (`debate-videos`) a caller needs to
+ * list one in the merged view — mirrors `GET /api/tool-records/speechOutcomeRuns`'s
+ * row shape (full records, like {@link CloudWordCountRoundSummary}; the
+ * generic tool-records route has no label-only summary mode). Defined
+ * locally rather than importing `CachedSpeechOutcome` itself, matching
+ * {@link CloudDebateSummary}'s own local-type convention: `debate-round`
+ * doesn't depend on `debate-videos` (nor the reverse).
+ */
+export type CloudSpeechOutcomeSummary = {
+  id: string;
+  speechKey: string;
+  /** Epoch milliseconds, per `CachedSpeechOutcome.savedAt` — there is no separate `updatedAt`. */
+  savedAt: number;
+};
+
+export type CloudLibraryItemKind =
+  | "document"
+  | "flow"
+  | "round"
+  | "wordCountRound"
+  | "debate"
+  | "speechOutcome";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -112,6 +143,7 @@ export interface BuildRecentCloudItemsInput {
   rounds?: SavedRoundSummary[];
   wordCountRounds?: CloudWordCountRoundSummary[];
   debates?: CloudDebateSummary[];
+  speechOutcomes?: CloudSpeechOutcomeSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -124,6 +156,7 @@ export interface BuildRecentCloudItemsOptions {
   roundHref?: string;
   wordCountRoundHref?: string;
   debateHref?: string;
+  speechOutcomeHref?: string;
 }
 
 /**
@@ -145,6 +178,7 @@ export function buildRecentCloudItems(
     roundHref = "/debate",
     wordCountRoundHref = "/word-count",
     debateHref = "/versus-ai",
+    speechOutcomeHref = "/videos",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -189,7 +223,24 @@ export function buildRecentCloudItems(
     updatedAtMs: parseCloudTimestamp(debate.createdAt),
   }));
 
-  return [...documentItems, ...flowItems, ...roundItems, ...wordCountRoundItems, ...debateItems]
+  const speechOutcomeItems: CloudLibraryItem[] = (input.speechOutcomes ?? [])
+    .slice(0, perKindLimit)
+    .map((run) => ({
+      kind: "speechOutcome",
+      key: `speechOutcome-${run.id}`,
+      href: speechOutcomeHref,
+      label: run.speechKey.trim() ? `${run.speechKey.trim()} Outcome` : "Untitled speech outcome",
+      updatedAtMs: parseCloudTimestamp(run.savedAt),
+    }));
+
+  return [
+    ...documentItems,
+    ...flowItems,
+    ...roundItems,
+    ...wordCountRoundItems,
+    ...debateItems,
+    ...speechOutcomeItems,
+  ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
 }
