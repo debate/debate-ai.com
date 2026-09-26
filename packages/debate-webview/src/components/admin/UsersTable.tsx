@@ -102,6 +102,8 @@ export function UsersTable() {
   const [hideAnonymous, setHideAnonymous] = useState(false);
   const [sort, setSort] = useState<string>("joined");
   const [dir, setDir] = useState<"asc" | "desc">("desc");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -137,6 +139,31 @@ export function UsersTable() {
   useEffect(() => {
     load();
   }, [load]);
+
+  /**
+   * Deletion is permanent and takes every saved item with it, so the prompt
+   * names the account and how much it holds before anything is sent.
+   */
+  const deleteUser = async (row: UserRow) => {
+    const label = row.email || row.name || row.id;
+    const items = row.total === 1 ? "1 saved item" : `${row.total.toLocaleString()} saved items`;
+    if (!window.confirm(`Permanently delete ${label} and ${items}? This cannot be undone.`)) return;
+
+    setDeletingId(row.id);
+    setError(null);
+    setNotice(null);
+    try {
+      const res = await fetch(`/api/admin/users/${encodeURIComponent(row.id)}`, { method: "DELETE" });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.details || body?.error || `Delete failed: ${res.status}`);
+      setNotice(`Deleted ${label}.`);
+      await load();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   /** First click on a column sorts it descending; clicking it again flips. */
   const toggleSort = (key: string) => {
@@ -220,6 +247,7 @@ export function UsersTable() {
         </div>
 
         {error && <p className="text-destructive text-sm">{error}</p>}
+        {notice && <p className="text-muted-foreground text-sm">{notice}</p>}
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-3xl border-collapse text-sm">
@@ -240,6 +268,9 @@ export function UsersTable() {
                 ))}
                 <th className="py-2 pl-2 text-right font-normal">
                   {headerButton("total", "Total", "All saved items combined")}
+                </th>
+                <th className="py-2 pl-2 font-normal">
+                  <span className="sr-only">Actions</span>
                 </th>
               </tr>
             </thead>
@@ -298,12 +329,23 @@ export function UsersTable() {
                   <td className="py-2 pl-2 text-right font-medium tabular-nums">
                     <UsageCell value={row.total} />
                   </td>
+                  <td className="py-2 pl-2 text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive"
+                      onClick={() => deleteUser(row)}
+                      disabled={deletingId !== null}
+                    >
+                      {deletingId === row.id ? "Deleting…" : "Delete"}
+                    </Button>
+                  </td>
                 </tr>
               ))}
               {users.length === 0 && (
                 <tr>
                   <td
-                    colSpan={USAGE_COLUMNS.length + 5}
+                    colSpan={USAGE_COLUMNS.length + 6}
                     className="text-muted-foreground py-6 text-center text-sm"
                   >
                     {isLoading ? "Loading users…" : "No users match this filter."}
