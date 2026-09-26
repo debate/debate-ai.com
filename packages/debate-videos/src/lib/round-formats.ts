@@ -11,7 +11,7 @@
  * each mark become that speech's transcript.
  *
  * Keys are built exactly as `buildRoundSpeeches` builds them (`1AC#1`,
- * `1NX#1`), so marks and saved simulations keep lining up if a summary is
+ * `CX#2`), so marks and saved simulations keep lining up if a summary is
  * written for the round later.
  * @module lib/round-formats
  */

@@ -30,6 +30,8 @@ import {
   describeActiveProvider,
   suggestFollowups,
 } from '@/src/ai/article-ai';
+import { saveArticleToAccount } from '@/src/article/save';
+import { isSignedIn } from '@/src/auth/session';
 import { useAccount } from '@/src/auth/useAccount';
 import AccountBar from '@/src/components/article/AccountBar';
 import ArticleAIResponse from '@/src/components/article/ArticleAIResponse';
@@ -63,6 +65,8 @@ const MAX_ARTICLE_CHARS = 15000;
 interface Notice {
   tone: 'info' | 'warn';
   text: string;
+  /** An optional link shown after the text, e.g. to the saved document. */
+  link?: { href: string; label: string };
 }
 
 /** Hides the panel; the page it overlays keeps it, ready to toggle back. */
@@ -91,6 +95,7 @@ export default function App() {
   const [isLoadingFollowups, setIsLoadingFollowups] = useState(false);
 
   const [isCheckingCards, setIsCheckingCards] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isHighlightMode, setIsHighlightMode] = useState(false);
   const [fontScale, setFontScale] = useState(1);
@@ -102,7 +107,9 @@ export default function App() {
   /** Shows a note for a few seconds, replacing whatever was there. */
   const flashNotice = useCallback((next: Notice) => {
     setNotice(next);
-    window.setTimeout(() => setNotice((current) => (current === next ? null : current)), 4000);
+    // A notice with a link stays long enough to be clicked.
+    const duration = next.link ? 10000 : 4000;
+    window.setTimeout(() => setNotice((current) => (current === next ? null : current)), duration);
   }, []);
 
   // Settings decide the prompt, the provider strip and how many follow-ups to
@@ -333,6 +340,38 @@ export default function App() {
     }
   }, [article?.url, flashNotice, settings]);
 
+  /**
+   * Saves the article — with the panel's Q&A so far — to the reader's
+   * debate-ai.com account, signing them in first if they are not.
+   */
+  const saveToAccount = useCallback(async () => {
+    if (!article || isSaving) return;
+    setIsSaving(true);
+    try {
+      if (!(await isSignedIn())) {
+        flashNotice({ tone: 'info', text: 'Sign in to Debate AI to save this article…' });
+        await account.signIn();
+        if (!(await isSignedIn())) {
+          flashNotice({ tone: 'warn', text: 'Sign in to Debate AI to save articles to your account.' });
+          return;
+        }
+      }
+      const saved = await saveArticleToAccount(article, chatHistory);
+      flashNotice({
+        tone: 'info',
+        text: `Saved “${saved.title}” to your Debate AI documents.`,
+        link: { href: saved.openUrl, label: 'Open' },
+      });
+    } catch (error) {
+      flashNotice({
+        tone: 'warn',
+        text: error instanceof Error ? error.message : 'Could not save this article.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [account, article, chatHistory, flashNotice, isSaving]);
+
   // Keep the shortcut map pointing at the freshest closures every render.
   shortcutActionsRef.current = {
     ask: () => void askQuestion(userPrompt),
@@ -340,6 +379,7 @@ export default function App() {
     copy: () => void copyArticle(),
     highlight: () => setIsHighlightMode((previous) => !previous),
     cards: () => void checkForExistingCards(),
+    save: () => void saveToAccount(),
     open: () => {
       if (article?.url) window.open(article.url, '_blank', 'noopener,noreferrer');
     },
@@ -414,6 +454,8 @@ export default function App() {
             isLoadingAI={isLoadingAI}
             isLoadingFollowups={isLoadingFollowups}
             isCheckingCards={isCheckingCards}
+            isSaving={isSaving}
+            isSignedIn={Boolean(account.user)}
             isHighlightMode={isHighlightMode}
             articleUrl={article?.url}
             fontScale={fontScale}
@@ -422,6 +464,7 @@ export default function App() {
             onCopyClick={() => void copyArticle()}
             onShareClick={() => void shareArticle()}
             onCheckCardsClick={() => void checkForExistingCards()}
+            onSaveClick={() => void saveToAccount()}
             onHighlightToggle={() => setIsHighlightMode((previous) => !previous)}
             onZoomIn={() => persistFontScale(fontScale + FONT_SCALE_STEP)}
             onZoomOut={() => persistFontScale(fontScale - FONT_SCALE_STEP)}
@@ -450,6 +493,19 @@ export default function App() {
                 }`}
               >
                 {notice.text}
+                {notice.link && (
+                  <>
+                    {' '}
+                    <a
+                      href={notice.link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold underline"
+                    >
+                      {notice.link.label}
+                    </a>
+                  </>
+                )}
               </div>
             )}
 

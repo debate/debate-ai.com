@@ -11,9 +11,11 @@
  * account feature debate-ai.com does not have, this has the card-reuse check —
  * has anyone on my team already cut a card from this page? That is the
  * question a debater reading a page actually has, and the extension already
- * answers it in its popup.
+ * answers it in its popup. Save stores the article in the reader's
+ * debate-ai.com account (src/article/save.ts).
  */
 import {
+  BookmarkPlus,
   Bot,
   Clipboard,
   ExternalLink,
@@ -41,6 +43,7 @@ export const ARTICLE_TOOLBAR_SHORTCUTS = {
   copy: { alt: true, key: 'c' },
   highlight: { alt: true, key: 'h' },
   cards: { alt: true, key: 'k' },
+  save: { alt: true, key: 'd' },
   open: { alt: true, key: 'o' },
   zoomOut: { alt: true, key: '-' },
   zoomReset: { alt: true, key: '0' },
@@ -66,6 +69,9 @@ interface ArticleActionButtonsProps {
   isLoadingAI: boolean;
   isLoadingFollowups: boolean;
   isCheckingCards: boolean;
+  isSaving: boolean;
+  /** Whether the reader is signed in, which decides the Save button's label. */
+  isSignedIn: boolean;
   isHighlightMode: boolean;
   articleUrl?: string;
   fontScale?: number;
@@ -74,6 +80,7 @@ interface ArticleActionButtonsProps {
   onCopyClick: () => void;
   onShareClick: () => void;
   onCheckCardsClick: () => void;
+  onSaveClick: () => void;
   onHighlightToggle: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
@@ -111,6 +118,8 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
   isLoadingAI,
   isLoadingFollowups,
   isCheckingCards,
+  isSaving,
+  isSignedIn,
   isHighlightMode,
   articleUrl,
   fontScale = 1,
@@ -119,6 +128,7 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
   onCopyClick,
   onShareClick,
   onCheckCardsClick,
+  onSaveClick,
   onHighlightToggle,
   onZoomIn,
   onZoomOut,
@@ -195,6 +205,25 @@ const ArticleActionButtons: React.FC<ArticleActionButtonsProps> = ({
           className={iconButtonClass}
         >
           <Layers className="size-4" />
+        </Button>
+      </ToolbarTip>
+
+      <ToolbarTip
+        label={
+          isSignedIn
+            ? 'Save to your Debate AI account'
+            : 'Sign in and save to your Debate AI account'
+        }
+        action="save"
+      >
+        <Button
+          onClick={onSaveClick}
+          disabled={isSaving}
+          variant="ghost"
+          size="icon"
+          className={iconButtonClass}
+        >
+          <BookmarkPlus className="size-4" />
         </Button>
       </ToolbarTip>
 
