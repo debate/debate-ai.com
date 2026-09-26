@@ -2,17 +2,12 @@
 
 import type React from "react"
 import { usePathname } from "next/navigation"
-import { RESEARCH_SECTION_ID, ResizableSidebarLayout, ToolNavTree, ToolSidebarFooter } from "debate-videos"
+import { ResizableSidebarLayout, ToolNavTree, ToolSidebarFooter } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
-import { showsReasonDocsPanels, showsResearchOnlySidebar } from "../../lib/reason-docs/sidebar-routes"
-
-/** The one tool section the `/cards` and `/reason-editor` sidebars keep.
- *  Module-level so the array identity is stable across renders of the tree
- *  below. */
-const RESEARCH_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
+import { showsReasonDocsPanels } from "../../lib/reason-docs/sidebar-routes"
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -50,17 +45,9 @@ const RESEARCH_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * suppressed there (`hostsOwnSidebarDock`). The docs panels below are for
  * `/cards` and `/reason-editor`, which read documents out of this app's own
  * store rather than the editor's.
- *
- * Both of those go one step further and are the docs panels plus the Research
- * tool list only (`showsResearchOnlySidebar`): the Apps / Coaching / Practice
- * sections, the glossary and rankings links and the site footer are all about
- * somewhere else, and stacking them under a file tree made the column a scroll
- * rather than a place. The dock stays — it is the control you clicked "Shared"
- * in, and the way back to videos.
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const researchOnly = showsResearchOnlySidebar(pathname)
 
   if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
@@ -96,14 +83,8 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
             </ChromeErrorBoundary>
           )}
           <ChromeErrorBoundary label="ToolNavTree">
-            {researchOnly ? (
-              <ToolNavTree sectionIds={RESEARCH_SIDEBAR_SECTIONS} />
-            ) : (
-              <>
-                <ToolNavTree />
-                <ToolSidebarFooter />
-              </>
-            )}
+            <ToolNavTree />
+            <ToolSidebarFooter />
           </ChromeErrorBoundary>
         </>
       }

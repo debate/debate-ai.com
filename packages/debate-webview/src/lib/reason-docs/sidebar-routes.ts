@@ -27,15 +27,6 @@ export const CARDS_ROUTE = "/cards"
 export const REASON_DOCS_SIDEBAR_ROOTS: readonly string[] = [CARDS_ROUTE, REASON_EDITOR_ROUTE]
 
 /**
- * The route subtrees whose tool tree is narrowed to the Research section.
- *
- * The same two routes as {@link REASON_DOCS_SIDEBAR_ROOTS}, and for the same
- * reason: they are the routes whose sidebar is a document tree, and the
- * sections stacked under it are about somewhere else.
- */
-export const RESEARCH_ONLY_SIDEBAR_ROOTS: readonly string[] = [CARDS_ROUTE, REASON_EDITOR_ROUTE]
-
-/**
  * Normalizes a pathname for prefix matching: a query string, a hash and a
  * trailing slash are ignored, so the dock's own `/cards?...` and `/cards/`
  * forms resolve the same as `/cards` — the dock hops by `history.pushState`,
@@ -56,28 +47,4 @@ export function showsReasonDocsPanels(pathname: string | null | undefined): bool
   if (!pathname) return false
   const normalized = normalize(pathname)
   return REASON_DOCS_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root))
-}
-
-/**
- * True on the routes whose sidebar is *only* the document panels and the
- * Research tool list.
- *
- * Clicking Cards in the dock used to land you on a column carrying the docs
- * panels, the whole Apps/Coaching/Research/Practice tree, the glossary and
- * rankings links and the site footer — four navigations stacked on a page
- * about one of them. On these subtrees the tree is narrowed to Research (the
- * section that lists the cards pages and the editor itself) and the footer is
- * dropped; the dock stays, since it is what you clicked Cards in and what
- * takes you back to videos.
- *
- * `/reason-editor` is here for the same reason `/cards` is, not because it is
- * reached from one of the other sections: its sidebar is the file tree, and
- * Coaching and Practice under a file tree are two more navigations on a page
- * about writing. Research stays because that is the section the editor is
- * listed in and the one whose tools it is used alongside.
- */
-export function showsResearchOnlySidebar(pathname: string | null | undefined): boolean {
-  if (!pathname) return false
-  const normalized = normalize(pathname)
-  return RESEARCH_ONLY_SIDEBAR_ROOTS.some((root) => isUnder(normalized, root))
 }
