@@ -24,6 +24,9 @@
  * synced per-user via `debate-data-sync`'s generic `saved_tool_records`
  * mechanism once `CachedSpeechOutcome` gained a stable id, but that only
  * wired the sync, not discoverability, so a run stayed invisible here too.
+ * Practice Drills' generated drill sets (`/drills`) joined next — already
+ * saved per-user in `saved_drill_sets`, same "sync wired, discoverability
+ * not" gap.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -39,7 +42,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Bot, FileText, Flag, ListTree, Sparkles, Type } from "lucide-react"
+import { Bot, Dumbbell, FileText, Flag, ListTree, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -55,6 +58,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   // No standalone /tools entry to match — an AI-generated simulation run,
   // not itself a tool.
   speechOutcome: Sparkles,
+  // Matches Practice Drills' own icon in `app/tools/tool-groups.ts`.
+  drillSet: Dumbbell,
 }
 
 export function MySavedItems() {

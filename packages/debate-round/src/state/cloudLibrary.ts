@@ -33,6 +33,14 @@
  * despite being exactly the same "SQL-backed round history, discoverable
  * from the tools page" shape as `saved_rounds`.
  *
+ * A seventh kind, Practice Drills' generated drill sets (`/drills`), joined
+ * next: `saved_drill_sets` already synced a signed-in user's `DrillSetRecord`s
+ * (`debate-practice-drills`, keyed by `roundId`, same "no separate display
+ * label" shape as {@link CloudWordCountRoundSummary}) per-user across
+ * devices, but nothing surfaced that history here either — the same "sync
+ * wired, discoverability not" gap {@link CloudSpeechOutcomeSummary} closed for
+ * video speech-outcome runs.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -97,13 +105,29 @@ export type CloudSpeechOutcomeSummary = {
   savedAt: number;
 };
 
+/**
+ * The subset of a `DrillSetRecord` (`debate-practice-drills`) a caller needs
+ * to list one in the merged view — mirrors `GET /api/drill-sets`'s row shape
+ * (full records, like {@link CloudWordCountRoundSummary}; the drill-sets
+ * route has no label-only summary mode either). Defined locally rather than
+ * importing `DrillSetRecord` itself, matching {@link CloudDebateSummary}'s
+ * own local-type convention: `debate-round` doesn't depend on
+ * `debate-practice-drills` (nor the reverse).
+ */
+export type CloudDrillSetSummary = {
+  roundId: string;
+  /** Epoch milliseconds, per `DrillSetRecord.updatedAt` — optional, since a record saved before that field existed still parses. */
+  updatedAt?: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
   | "round"
   | "wordCountRound"
   | "debate"
-  | "speechOutcome";
+  | "speechOutcome"
+  | "drillSet";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -144,6 +168,7 @@ export interface BuildRecentCloudItemsInput {
   wordCountRounds?: CloudWordCountRoundSummary[];
   debates?: CloudDebateSummary[];
   speechOutcomes?: CloudSpeechOutcomeSummary[];
+  drillSets?: CloudDrillSetSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -157,6 +182,7 @@ export interface BuildRecentCloudItemsOptions {
   wordCountRoundHref?: string;
   debateHref?: string;
   speechOutcomeHref?: string;
+  drillSetHref?: string;
 }
 
 /**
@@ -179,6 +205,7 @@ export function buildRecentCloudItems(
     wordCountRoundHref = "/word-count",
     debateHref = "/versus-ai",
     speechOutcomeHref = "/videos",
+    drillSetHref = "/drills",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -233,6 +260,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(run.savedAt),
     }));
 
+  const drillSetItems: CloudLibraryItem[] = (input.drillSets ?? [])
+    .slice(0, perKindLimit)
+    .map((drillSet) => ({
+      kind: "drillSet",
+      key: `drillSet-${drillSet.roundId}`,
+      href: drillSetHref,
+      label: drillSet.roundId.trim() || "Untitled drill set",
+      updatedAtMs: parseCloudTimestamp(drillSet.updatedAt ?? 0),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -240,6 +277,7 @@ export function buildRecentCloudItems(
     ...wordCountRoundItems,
     ...debateItems,
     ...speechOutcomeItems,
+    ...drillSetItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

@@ -44,6 +44,13 @@
  * `id`/`speechKey`/`savedAt` triple `buildRecentCloudItems` actually needs
  * rather than shipping the whole simulation through this widget's state.
  *
+ * Practice Drills' generated drill sets (`/api/drill-sets`) join the same
+ * way, for the same reason as word-count rounds and Practice vs AI debates:
+ * `debate-practice-drills` doesn't depend on `debate-round` either, so
+ * `listCloudDrillSets` below is a local raw `fetch` against that route's
+ * bare `DrillSetRecord[]` body rather than importing that package's own
+ * `round/drill-sets-client.ts`.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -54,6 +61,7 @@ import {
   type BuildRecentCloudItemsOptions,
   type CloudDebateSummary,
   type CloudDocumentSummary,
+  type CloudDrillSetSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
   type CloudWordCountRoundSummary,
@@ -135,21 +143,38 @@ async function listCloudSpeechOutcomes(
 }
 
 /**
- * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs
- * and merges them via `buildRecentCloudItems`. Each source resolves
- * independently and degrades to "no items of that kind" on any failure — a
- * network error, a non-2xx response, or a signed-out `401` — rather than
- * rejecting the whole call, so one flaky endpoint never blanks a widget that
- * had perfectly good data from the others.
+ * Lists the current user's synced Practice Drills drill sets. Degrades to
+ * `null` on a signed-out `401` (matching `GET /api/drill-sets`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of
+ * that kind" convention as the other sources above.
+ */
+async function listCloudDrillSets(endpoint = "/api/drill-sets"): Promise<CloudDrillSetSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudDrillSetSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
+ * drill-sets and merges them via `buildRecentCloudItems`. Each source
+ * resolves independently and degrades to "no items of that kind" on any
+ * failure — a network error, a non-2xx response, or a signed-out `401` —
+ * rather than rejecting the whole call, so one flaky endpoint never blanks a
+ * widget that had perfectly good data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
-  const [documents, flows, rounds, wordCountRounds, debates, speechOutcomes] = await Promise.all([
+  const [documents, flows, rounds, wordCountRounds, debates, speechOutcomes, drillSets] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
     listSavedRounds().catch(() => null),
     listCloudWordCountRounds(),
     listCloudDebates(),
     listCloudSpeechOutcomes(),
+    listCloudDrillSets(),
   ]);
   return buildRecentCloudItems(
     {
@@ -159,6 +184,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       wordCountRounds: wordCountRounds ?? undefined,
       debates: debates ?? undefined,
       speechOutcomes: speechOutcomes ?? undefined,
+      drillSets: drillSets ?? undefined,
     },
     opts,
   );
