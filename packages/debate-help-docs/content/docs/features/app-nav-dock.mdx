@@ -19,6 +19,12 @@ Five destinations — Videos, Shared, Debate, Practice vs AI, Docs — plus a
 gear-icon Settings menu, each with a hover label and `Alt+1`…`Alt+5`
 shortcuts in dock order.
 
+**Practice vs AI opens a menu instead of navigating.** A plain click on that
+icon does not go to `/versus-ai` — it opens the site-nav menu described below
+(`NavMenu`, in `CategoryDock.tsx`). The page itself is still one tap away, as
+the first tool listed under that menu's Practice section, and the `Alt+4`
+shortcut still jumps straight there.
+
 **Tools are not dock icons.** The tools catalog is reached from the sidebar
 nav tree's Coaching / Research / Practice sections, and the whole feature
 catalog from the **Features** row in the Settings menu's Site Links submenu —
@@ -26,35 +32,51 @@ next to a **Docs** row for the help site. Holding the dock to five
 destinations is what lets it fit inside the sidebar column it is hosted in —
 see below.
 
-## The Settings menu is the whole nav on a phone
+## Two menus, not one
 
-The sidebar column below is `md+` only: on a phone the dock is a bottom bar
-and its Settings menu is the only navigation there is. So the menu carries a
-submenu per sidebar section — **Videos, Coaching, Research, Practice** —
-above its theme/links block, and those submenus are *derived* from the data
-the sidebar itself renders rather than restated:
+The dock carries two independent dropdowns, each with its own `DropdownMenu`
+root — opening one does not affect the other, and either can be open at once:
 
-| Menu submenu | Comes from |
-| --- | --- |
-| Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`) |
-| Coaching / Research / Practice | `SIDEBAR_TOOL_SECTIONS` |
-| Site Links / Debate Links | `FOOTER_LINKS`, split by its `group` field |
+- **The Practice vs AI icon opens the site-nav menu (`NavMenu`).** Command
+  Palette at the top, then a submenu per sidebar section — **Videos,
+  Coaching, Research, Practice** — derived from the data the sidebar itself
+  renders rather than restated:
 
-**There is no "Apps" submenu.** It used to restate the dock's own five icons
-as text and then hang the whole feature catalog underneath, one nested
-submenu per category — a second, deeper copy of `/features` hanging off the
-dock that was already showing those five icons. One **Features** row reaches
-the catalog instead, and a **Docs** row the help site; both are footer links,
-so the sidebar footer carries them too.
+  | Menu submenu | Comes from |
+  | --- | --- |
+  | Videos | `SIDEBAR_VIDEO_LINKS` (`components/category-gallery/sidebar-video-links.ts`) |
+  | Coaching / Research / Practice | `SIDEBAR_TOOL_SECTIONS` |
 
-`apps/debate-ai.com/lib/nav/dock-menu-sections.ts` does that composition, and
-`lib/nav/__tests__/dock-menu-sections.test.ts` fails if a sidebar destination
-is not in the menu. That coupling is the point: the Videos links and the
-glossary/rankings pair below the tree were in the sidebar and in no mobile
-menu at all, because the menu was a hand-kept list.
+  On a phone, where the sidebar column below is `md+` only, this menu is the
+  only way to reach those links at all.
 
-The menu scrolls (`max-h-[min(560px,80vh)]`) — with the nav submenus above
-the account block it can still run past a phone viewport.
+- **The gear icon opens `SettingsMenu`** — Settings, the light/dark toggle
+  and Theme submenu, the combined Site Links submenu (Site Links then a
+  **Debate Links** label splitting in the same submenu, from `FOOTER_LINKS`),
+  and the account block.
+
+**There is no "Apps" submenu.** The site-nav menu used to restate the dock's
+own five icons as text and then hang the whole feature catalog underneath,
+one nested submenu per category — a second, deeper copy of `/features`
+hanging off the dock that was already showing those five icons. One
+**Features** row reaches the catalog instead, and a **Docs** row the help
+site; both are footer links, so the sidebar footer carries them too.
+
+`apps/debate-ai.com/lib/nav/dock-menu-sections.ts` does the site-nav menu's
+composition, and `lib/nav/__tests__/dock-menu-sections.test.ts` fails if a
+sidebar destination is missing from it. That coupling is the point: the
+Videos links and the glossary/rankings pair below the tree were in the
+sidebar and in no mobile menu at all, because the menu was a hand-kept list.
+
+Both menus scroll (`max-h-[min(560px,80vh)]`) — `SettingsMenu`'s theme/links
+block above the account rows can still run past a phone viewport.
+
+Wiring the Practice vs AI icon to a second `DropdownMenu` root, rather than
+sharing the gear's, means it sits *inside* `Dock`'s children instead of
+wrapping the whole dock — so `Dock`'s magnification props land on the
+wrapper component instead of the `DockItem` two levels down.
+`PracticeVsAiTrigger` forwards `mousex`/`magnification`/`distance`/`iconSize`
+by hand so that icon still resizes and tracks the cursor like its siblings.
 
 `/videos` additionally prints the tree inline in its own `md:hidden` block,
 under the quick-link tiles: the tiles are the Videos section only, so
@@ -269,6 +291,23 @@ rows now highlight only while the lecture library is actually what is being
 browsed — so a round collection, the glossary and the rankings pages each
 leave them alone. `packages/debate-videos/test/sidebar-single-highlight.test.tsx`
 pins it.
+
+**Team Rankings stays highlighted on a team or school page.** `/teams/<team>`
+and `/schools/<school>` are opened from the **Team Rankings** row (`/rank`)
+rather than nested under it, so a plain path match never lit that row while
+reading a profile — `ToolNavTree`'s `isToolActive` treats both prefixes as
+still-on-Team-Rankings, the same relationship `EXTRA_SIDEBAR_HREFS` already
+uses to keep the sidebar itself mounted on those pages (see
+[Where it renders](#where-it-renders) and `sidebar-routes.ts`).
+
+## The highlighted row scrolls into view
+
+`TreeItem` scrolls its own row into view (`scrollIntoView({ block: "nearest"
+})`) whenever it becomes the highlighted one — on mount, and on navigating to
+a route that lights up a different row. `"nearest"` moves the sidebar's own
+scroll only as far as needed to bring the row on screen, and not at all if it
+is already visible, so following a link inside the currently-visible part of
+a long section (Practice runs to fifteen-plus rows) never jumps the column.
 
 ## The feature catalog opens inside the app
 
