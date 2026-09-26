@@ -1,17 +1,24 @@
 /**
  * @fileoverview Shared "recent cloud items" merge logic for the account
  * discoverability widgets that surface a signed-in user's cloud-saved data
- * across all three D1-backed stores idea #17 named ("save flows docs and
- * debates in SQL and link to users" — TODO.md's Product Feature Ideas idea
- * #17): REASON editor `documents`, `saved_flows`, and `saved_rounds`.
+ * across the D1-backed stores idea #17 named ("save flows docs and debates
+ * in SQL and link to users" — TODO.md's Product Feature Ideas idea #17):
+ * REASON editor `documents`, `saved_flows`, `saved_rounds`, and (added
+ * alongside the same idea's word-count-round history sync, TODO.md idea
+ * #2's account-sync follow-up) `saved_word_count_rounds`.
  *
  * `apps/debate-ai.com`'s `app/tools/MySavedItems.tsx` widget previously
  * merged only documents and rounds inline — flows (the middle of the three
- * named data types) were never fetched or shown, so a user with only saved
- * flows saw an empty widget despite having cloud-saved data. This module
- * extracts that merge/sort/format logic into pure, unit-tested functions so
- * a widget can include all three without duplicating the "which kind maps
- * to which route/label/timestamp-shape" logic per caller.
+ * originally named data types) were never fetched or shown, so a user with
+ * only saved flows saw an empty widget despite having cloud-saved data. This
+ * module extracts that merge/sort/format logic into pure, unit-tested
+ * functions so a widget can include every kind without duplicating the
+ * "which kind maps to which route/label/timestamp-shape" logic per caller.
+ * Word-count rounds are its own account-linked history (`/word-count`, see
+ * `packages/debate-help-docs/content/docs/features/word-count-rounds.mdx`)
+ * that was never surfaced here even after documents/flows/rounds were,
+ * despite being exactly the same "SQL-backed round history, discoverable
+ * from the tools page" shape as `saved_rounds`.
  *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
@@ -31,7 +38,21 @@ export type CloudDocumentSummary = {
   updatedAt: string | number;
 };
 
-export type CloudLibraryItemKind = "document" | "flow" | "round";
+/**
+ * The subset of a `WordCountRoundRecord` a caller needs to list one in the
+ * merged view — mirrors `GET /api/word-count-rounds`'s row shape (full
+ * records, not label-only summaries; see that route's own header comment).
+ * There is no separate display label for a word-count round — it's keyed
+ * and shown by its caller-typed `roundId` everywhere else in the app
+ * (`WordCountRoundsPanel`), so this type doesn't carry one either.
+ */
+export type CloudWordCountRoundSummary = {
+  roundId: string;
+  createdAt?: number;
+  updatedAt?: number;
+};
+
+export type CloudLibraryItemKind = "document" | "flow" | "round" | "wordCountRound";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -69,6 +90,7 @@ export interface BuildRecentCloudItemsInput {
   documents?: CloudDocumentSummary[];
   flows?: SavedFlowSummary[];
   rounds?: SavedRoundSummary[];
+  wordCountRounds?: CloudWordCountRoundSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -79,6 +101,7 @@ export interface BuildRecentCloudItemsOptions {
   documentHref?: string;
   flowHref?: string;
   roundHref?: string;
+  wordCountRoundHref?: string;
 }
 
 /**
@@ -98,6 +121,7 @@ export function buildRecentCloudItems(
     documentHref = "/reason-editor",
     flowHref = "/debate",
     roundHref = "/debate",
+    wordCountRoundHref = "/word-count",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -124,7 +148,17 @@ export function buildRecentCloudItems(
     updatedAtMs: parseCloudTimestamp(round.updatedAt),
   }));
 
-  return [...documentItems, ...flowItems, ...roundItems]
+  const wordCountRoundItems: CloudLibraryItem[] = (input.wordCountRounds ?? [])
+    .slice(0, perKindLimit)
+    .map((round) => ({
+      kind: "wordCountRound",
+      key: `wordCountRound-${round.roundId}`,
+      href: wordCountRoundHref,
+      label: round.roundId.trim() || "Untitled round",
+      updatedAtMs: parseCloudTimestamp(round.updatedAt ?? round.createdAt ?? 0),
+    }));
+
+  return [...documentItems, ...flowItems, ...roundItems, ...wordCountRoundItems]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
 }

@@ -10,7 +10,7 @@ function jsonResponse(status: number, body: unknown) {
 }
 
 describe("fetchRecentCloudItems", () => {
-  it("merges documents, flows, and rounds from their own endpoints", async () => {
+  it("merges documents, flows, rounds, and word-count rounds from their own endpoints", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -21,16 +21,19 @@ describe("fetchRecentCloudItems", () => {
       if (url === "/api/rounds") {
         return jsonResponse(200, [{ clientId: 3, label: "Round 4", updatedAt: "2026-08-29T00:00:00.000Z" }]);
       }
+      if (url === "/api/word-count-rounds") {
+        return jsonResponse(200, [{ roundId: "round-9", updatedAt: Date.parse("2026-08-31T00:00:00.000Z") }]);
+      }
       throw new Error(`unexpected url ${url}`);
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
 
     const items = await fetchRecentCloudItems();
 
-    expect(items.map((i) => i.kind)).toEqual(["flow", "round", "document"]);
+    expect(items.map((i) => i.kind)).toEqual(["wordCountRound", "flow", "round", "document"]);
   });
 
-  it("degrades a signed-out 401 on flows/rounds to no items from that kind, without throwing", async () => {
+  it("degrades a signed-out 401 on flows/rounds/word-count-rounds to no items from that kind, without throwing", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -50,6 +53,7 @@ describe("fetchRecentCloudItems", () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") throw new Error("network error");
       if (url === "/api/flows") return jsonResponse(500, { error: "Something went wrong." });
+      if (url === "/api/word-count-rounds") return jsonResponse(500, { error: "Something went wrong." });
       return jsonResponse(200, [{ clientId: 3, label: "Round 4", updatedAt: "2026-08-29T00:00:00.000Z" }]);
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);

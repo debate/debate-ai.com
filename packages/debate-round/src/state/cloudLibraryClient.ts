@@ -14,13 +14,20 @@
  * that, so the section silently rendered nothing (indistinguishable from "no
  * saved items") instead of ever recovering.
  *
- * `fetchRecentCloudItems` fetches all three sources independently and lets
- * any one of them fail (network error, non-2xx, a signed-out `401`) without
- * taking the other two down with it — mirroring `round/saved-flows-client.ts`/
+ * `fetchRecentCloudItems` fetches every source independently and lets any
+ * one of them fail (network error, non-2xx, a signed-out `401`) without
+ * taking the others down with it — mirroring `round/saved-flows-client.ts`/
  * `round/saved-rounds-client.ts`'s existing "401 means no items, not an
  * error" convention, and catching everything else instead of throwing, since
  * this widget's whole job is best-effort discoverability, not surfacing
  * sync errors the way `FlowHistoryDialog` does.
+ *
+ * Word-count rounds (`/api/word-count-rounds`) join documents/flows/rounds
+ * the same way `listCloudDocuments` does below — a local raw `fetch` rather
+ * than importing `debate-practice-drills`'s own
+ * `round/word-count-rounds-client.ts`, since that package depends on
+ * `debate-round` (per the monorepo's documented dependency edges), not the
+ * other way round; importing it here would invert that edge.
  *
  * @module state/cloudLibraryClient
  */
@@ -32,6 +39,7 @@ import {
   type BuildRecentCloudItemsOptions,
   type CloudDocumentSummary,
   type CloudLibraryItem,
+  type CloudWordCountRoundSummary,
 } from "./cloudLibrary";
 
 /**
@@ -52,24 +60,47 @@ async function listCloudDocuments(endpoint = "/api/doc/documents"): Promise<Clou
 }
 
 /**
- * Fetches documents/flows/rounds and merges them via `buildRecentCloudItems`.
- * Each source resolves independently and degrades to "no items of that
- * kind" on any failure — a network error, a non-2xx response, or a
- * signed-out `401` — rather than rejecting the whole call, so one flaky
- * endpoint never blanks a widget that had perfectly good data from the
- * other two.
+ * Lists the current user's account-synced word-count rounds. Degrades to
+ * `null` on a signed-out `401`, a non-2xx response, or a network error —
+ * same "no items of that kind" convention as `listCloudDocuments` above,
+ * rather than `round/word-count-rounds-client.ts`'s own
+ * `listSavedWordCountRounds`, which throws on a non-401 failure since its
+ * caller (`useWordCountRounds`) needs to distinguish that from "nothing
+ * synced yet".
+ */
+async function listCloudWordCountRounds(
+  endpoint = "/api/word-count-rounds",
+): Promise<CloudWordCountRoundSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudWordCountRoundSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches documents/flows/rounds/word-count-rounds and merges them via
+ * `buildRecentCloudItems`. Each source resolves independently and degrades
+ * to "no items of that kind" on any failure — a network error, a non-2xx
+ * response, or a signed-out `401` — rather than rejecting the whole call, so
+ * one flaky endpoint never blanks a widget that had perfectly good data from
+ * the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
-  const [documents, flows, rounds] = await Promise.all([
+  const [documents, flows, rounds, wordCountRounds] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
     listSavedRounds().catch(() => null),
+    listCloudWordCountRounds(),
   ]);
   return buildRecentCloudItems(
     {
       documents: documents ?? undefined,
       flows: flows ?? undefined,
       rounds: rounds ?? undefined,
+      wordCountRounds: wordCountRounds ?? undefined,
     },
     opts,
   );
