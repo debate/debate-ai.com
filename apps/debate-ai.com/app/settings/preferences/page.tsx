@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Debate Preferences",
-  description: "Debate style, font size and font family preferences for the flow editor",
+  title: "Settings",
+  description: "Redirects to the Preferences tab of Settings",
 }
 
 export { default } from "debate-webview/routes/settings/preferences/page"
