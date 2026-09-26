@@ -3,9 +3,13 @@
  * discoverability widgets that surface a signed-in user's cloud-saved data
  * across the D1-backed stores idea #17 named ("save flows docs and debates
  * in SQL and link to users" — TODO.md's Product Feature Ideas idea #17):
- * REASON editor `documents`, `saved_flows`, `saved_rounds`, and (added
- * alongside the same idea's word-count-round history sync, TODO.md idea
- * #2's account-sync follow-up) `saved_word_count_rounds`.
+ * REASON editor `documents`, `saved_flows`, `saved_rounds`, (added alongside
+ * the same idea's word-count-round history sync, TODO.md idea #2's
+ * account-sync follow-up) `saved_word_count_rounds`, and — the third and
+ * last of idea #17's three named data types, "debates" — `practice_vs_ai_debates`
+ * (Practice vs AI, `/versus-ai`), already saved per-user but never listed
+ * anywhere a returning user could browse it before `GET /api/vsbot/history`
+ * was added for exactly that purpose.
  *
  * `apps/debate-ai.com`'s `app/tools/MySavedItems.tsx` widget previously
  * merged only documents and rounds inline — flows (the middle of the three
@@ -52,7 +56,23 @@ export type CloudWordCountRoundSummary = {
   updatedAt?: number;
 };
 
-export type CloudLibraryItemKind = "document" | "flow" | "round" | "wordCountRound";
+/**
+ * The subset of a `DebateVsBotRecord` (`debate-practice-vs-ai`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/vsbot/history`'s
+ * `{ debates: [...] }` row shape. Defined locally rather than importing
+ * `DebateVsBotRecord` itself, matching {@link CloudWordCountRoundSummary}'s
+ * own local-type convention: `debate-round` doesn't depend on
+ * `debate-practice-vs-ai` (nor the reverse), so pulling in its types here
+ * would add a dependency edge this module doesn't otherwise need.
+ */
+export type CloudDebateSummary = {
+  id: string;
+  topic: string;
+  /** Unix seconds, per `DebateVsBotRecord.createdAt` — there is no separate `updatedAt`. */
+  createdAt: number;
+};
+
+export type CloudLibraryItemKind = "document" | "flow" | "round" | "wordCountRound" | "debate";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -91,6 +111,7 @@ export interface BuildRecentCloudItemsInput {
   flows?: SavedFlowSummary[];
   rounds?: SavedRoundSummary[];
   wordCountRounds?: CloudWordCountRoundSummary[];
+  debates?: CloudDebateSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -102,6 +123,7 @@ export interface BuildRecentCloudItemsOptions {
   flowHref?: string;
   roundHref?: string;
   wordCountRoundHref?: string;
+  debateHref?: string;
 }
 
 /**
@@ -122,6 +144,7 @@ export function buildRecentCloudItems(
     flowHref = "/debate",
     roundHref = "/debate",
     wordCountRoundHref = "/word-count",
+    debateHref = "/versus-ai",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -158,7 +181,15 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(round.updatedAt ?? round.createdAt ?? 0),
     }));
 
-  return [...documentItems, ...flowItems, ...roundItems, ...wordCountRoundItems]
+  const debateItems: CloudLibraryItem[] = (input.debates ?? []).slice(0, perKindLimit).map((debate) => ({
+    kind: "debate",
+    key: `debate-${debate.id}`,
+    href: debateHref,
+    label: debate.topic.trim() || "Untitled debate",
+    updatedAtMs: parseCloudTimestamp(debate.createdAt),
+  }));
+
+  return [...documentItems, ...flowItems, ...roundItems, ...wordCountRoundItems, ...debateItems]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
 }

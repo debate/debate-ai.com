@@ -29,6 +29,12 @@
  * `debate-round` (per the monorepo's documented dependency edges), not the
  * other way round; importing it here would invert that edge.
  *
+ * Practice vs AI debates (`/api/vsbot/history`) join the same way for the
+ * same reason: `debate-practice-vs-ai` doesn't depend on `debate-round`
+ * either, so `listCloudDebates` below is a local raw `fetch` against the
+ * route's `{ debates: [...] }` body rather than importing that package's
+ * own `listDebateHistory` client.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -37,6 +43,7 @@ import { listSavedRounds } from "../round/saved-rounds-client";
 import {
   buildRecentCloudItems,
   type BuildRecentCloudItemsOptions,
+  type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudLibraryItem,
   type CloudWordCountRoundSummary,
@@ -81,19 +88,37 @@ async function listCloudWordCountRounds(
 }
 
 /**
- * Fetches documents/flows/rounds/word-count-rounds and merges them via
- * `buildRecentCloudItems`. Each source resolves independently and degrades
- * to "no items of that kind" on any failure — a network error, a non-2xx
- * response, or a signed-out `401` — rather than rejecting the whole call, so
- * one flaky endpoint never blanks a widget that had perfectly good data from
- * the others.
+ * Lists the current user's Practice vs AI debate history. Degrades to `null`
+ * on a signed-out `401` (matching `GET /api/vsbot/history`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of
+ * that kind" convention as the other sources above.
+ */
+async function listCloudDebates(endpoint = "/api/vsbot/history"): Promise<CloudDebateSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    const { debates } = (await res.json()) as { debates: CloudDebateSummary[] };
+    return debates;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches documents/flows/rounds/word-count-rounds/debates and merges them
+ * via `buildRecentCloudItems`. Each source resolves independently and
+ * degrades to "no items of that kind" on any failure — a network error, a
+ * non-2xx response, or a signed-out `401` — rather than rejecting the whole
+ * call, so one flaky endpoint never blanks a widget that had perfectly good
+ * data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
-  const [documents, flows, rounds, wordCountRounds] = await Promise.all([
+  const [documents, flows, rounds, wordCountRounds, debates] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
     listSavedRounds().catch(() => null),
     listCloudWordCountRounds(),
+    listCloudDebates(),
   ]);
   return buildRecentCloudItems(
     {
@@ -101,6 +126,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       flows: flows ?? undefined,
       rounds: rounds ?? undefined,
       wordCountRounds: wordCountRounds ?? undefined,
+      debates: debates ?? undefined,
     },
     opts,
   );

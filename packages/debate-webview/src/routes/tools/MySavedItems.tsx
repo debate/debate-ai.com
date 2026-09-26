@@ -16,7 +16,10 @@
  * `vitest.config.ts`'s `projects` list). Account-synced word-count rounds
  * (`/word-count`) joined the merge alongside those three — the same
  * SQL-backed, per-user round history as `saved_rounds`, just never
- * surfaced here.
+ * surfaced here. Practice vs AI debates (`/versus-ai`) joined next — the
+ * third and last of the "save flows docs and debates" idea's named data
+ * types, already saved per-user in `practice_vs_ai_debates` but likewise
+ * never listed anywhere a returning user could browse it.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -32,7 +35,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { FileText, Flag, ListTree, Type } from "lucide-react"
+import { Bot, FileText, Flag, ListTree, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -43,6 +46,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   round: Flag,
   // Matches Word-Count Speeches' own icon in `app/tools/tool-groups.ts`.
   wordCountRound: Type,
+  // Matches Practice vs AI's own icon in `app/tools/tool-groups.ts`.
+  debate: Bot,
 }
 
 export function MySavedItems() {
