@@ -1,24 +1,3 @@
-# Packages
-
-Workspace packages used by the debate-ai.com apps. Section headings are the
-directory names; the npm package name is called out where it differs.
-
-## UI primitives live in the package that renders them
-
-There is no shared `debate-ui` package. Each package and app keeps its own
-`ui/` folder (`src/ui/` in a package, `lib/ui/` in the web app) holding *only*
-the shadcn/Radix primitives, icons, panel shells and `cn`/URL-state helpers
-that package actually imports — so a package pulls in no primitive it does not
-render, and no dependency it does not need.
-
-When a package needs a primitive it does not have yet, copy the file from a
-package that already has one into its own `ui/primitives/`, add the matching
-`@radix-ui/*` dependency to that package's `package.json`, and register the
-directory with Tailwind in `apps/debate-ai.com/app/globals.css` if it isn't
-covered already. Keep the copies in the shadcn idiom — unstyled Radix behaviour
-plus `cn`-composed classes, variants over one-off props, `asChild` for
-composition — and keep them domain-free: a primitive that knows what a "card"
-or a "round" is belongs in the package that owns the concept.
 
 ## debate-ai-webui
 
