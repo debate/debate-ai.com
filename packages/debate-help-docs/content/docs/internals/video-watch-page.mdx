@@ -235,8 +235,16 @@ prompt. Tested in `test/speech-outcomes.test.ts`,
   by speech order.
 - The panel's judges are fixed presets. The standalone speech viewer's
   per-judge trait sliders and ruling trees are not ported.
-- Saved outcome runs stay in the browser that made them; they cannot be
-  shared by link, only copied as Markdown.
+- ~~Saved outcome runs stay in the browser that made them; they cannot be
+  shared by link, only copied as Markdown.~~ Narrowed:
+  `CachedSpeechOutcome` now carries a derived
+  `${videoId}::${speechKey}::${lens}` id (`speechOutcomeCacheId`) and is
+  registered in `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` as
+  `speechOutcomeRuns` (see [Tool Data Sync](tool-data-sync.md)), so a
+  signed-in user's cached runs follow them to another device instead of
+  re-running — and re-paying for — the same simulation there. Sharing a run
+  with someone else, rather than just this account's other browsers, still
+  only works by copying it as Markdown — there is no share-by-link.
 - ~~The tournament pass was a `LIKE` search across title/channel/description
   (the same free-text search the search box uses), so a tournament whose
   name appeared in an unrelated video's description pulled that video in
