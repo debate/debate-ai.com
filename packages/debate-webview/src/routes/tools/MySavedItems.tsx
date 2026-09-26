@@ -19,7 +19,11 @@
  * surfaced here. Practice vs AI debates (`/versus-ai`) joined next — the
  * third and last of the "save flows docs and debates" idea's named data
  * types, already saved per-user in `practice_vs_ai_debates` but likewise
- * never listed anywhere a returning user could browse it.
+ * never listed anywhere a returning user could browse it. Video
+ * speech-outcome simulation runs (`/videos`) joined after that — already
+ * synced per-user via `debate-data-sync`'s generic `saved_tool_records`
+ * mechanism once `CachedSpeechOutcome` gained a stable id, but that only
+ * wired the sync, not discoverability, so a run stayed invisible here too.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -35,7 +39,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Bot, FileText, Flag, ListTree, Type } from "lucide-react"
+import { Bot, FileText, Flag, ListTree, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -48,6 +52,9 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   wordCountRound: Type,
   // Matches Practice vs AI's own icon in `app/tools/tool-groups.ts`.
   debate: Bot,
+  // No standalone /tools entry to match — an AI-generated simulation run,
+  // not itself a tool.
+  speechOutcome: Sparkles,
 }
 
 export function MySavedItems() {

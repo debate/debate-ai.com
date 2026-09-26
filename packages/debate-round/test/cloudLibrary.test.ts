@@ -5,6 +5,7 @@ import {
   parseCloudTimestamp,
   type CloudDebateSummary,
   type CloudDocumentSummary,
+  type CloudSpeechOutcomeSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
 import type { SavedFlowSummary } from "../src/state/savedFlows";
@@ -49,10 +50,20 @@ describe("buildRecentCloudItems", () => {
   const debates: CloudDebateSummary[] = [
     { id: "debate-4", topic: "Resolved: AI regulation", createdAt: Date.parse("2026-08-27T00:00:00.000Z") / 1000 },
   ];
+  const speechOutcomes: CloudSpeechOutcomeSummary[] = [
+    { id: "video-1::1AR::flow", speechKey: "1AR", savedAt: Date.parse("2026-09-01T00:00:00.000Z") },
+  ];
 
-  it("merges all five kinds and sorts newest first", () => {
-    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds, debates });
-    expect(items.map((i) => i.kind)).toEqual(["wordCountRound", "flow", "round", "document", "debate"]);
+  it("merges all six kinds and sorts newest first", () => {
+    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds, debates, speechOutcomes });
+    expect(items.map((i) => i.kind)).toEqual([
+      "speechOutcome",
+      "wordCountRound",
+      "flow",
+      "round",
+      "document",
+      "debate",
+    ]);
   });
 
   it("includes debates, keyed by id and labeled by topic", () => {
@@ -81,6 +92,18 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.updatedAtMs).toBe(Date.parse("2026-08-20T00:00:00.000Z"));
   });
 
+  it("includes speech outcome runs, keyed by id and labeled by speech key", () => {
+    const items = buildRecentCloudItems({ speechOutcomes });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "speechOutcome",
+        key: "speechOutcome-video-1::1AR::flow",
+        label: "1AR Outcome",
+        updatedAtMs: Date.parse("2026-09-01T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -88,13 +111,14 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("defaults hrefs per kind and lets a caller override them", () => {
-    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds, debates });
+    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds, debates, speechOutcomes });
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
     expect(byKind.flow).toBe("/debate");
     expect(byKind.round).toBe("/debate");
     expect(byKind.wordCountRound).toBe("/word-count");
     expect(byKind.debate).toBe("/versus-ai");
+    expect(byKind.speechOutcome).toBe("/videos");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -104,15 +128,22 @@ describe("buildRecentCloudItems", () => {
 
     const overriddenDebate = buildRecentCloudItems({ debates }, { debateHref: "/custom-debate-route" });
     expect(overriddenDebate[0]?.href).toBe("/custom-debate-route");
+
+    const overriddenSpeechOutcome = buildRecentCloudItems(
+      { speechOutcomes },
+      { speechOutcomeHref: "/custom-outcome-route" },
+    );
+    expect(overriddenSpeechOutcome[0]?.href).toBe("/custom-outcome-route");
   });
 
-  it("falls back to an untitled label per kind when the title/label/roundId/topic is blank", () => {
+  it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
     const items = buildRecentCloudItems({
       documents: [{ id: 1, title: "   ", updatedAt: "2026-08-30T00:00:00.000Z" }],
       flows: [{ clientId: 2, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
       rounds: [{ clientId: 3, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
       wordCountRounds: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       debates: [{ id: "debate-1", topic: "  ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") / 1000 }],
+      speechOutcomes: [{ id: "outcome-1", speechKey: "  ", savedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
     });
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -120,6 +151,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.round).toBe("Untitled round");
     expect(byKind.wordCountRound).toBe("Untitled round");
     expect(byKind.debate).toBe("Untitled debate");
+    expect(byKind.speechOutcome).toBe("Untitled speech outcome");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -141,7 +173,14 @@ describe("buildRecentCloudItems", () => {
   it("returns an empty list for empty/omitted input", () => {
     expect(buildRecentCloudItems({})).toEqual([]);
     expect(
-      buildRecentCloudItems({ documents: [], flows: [], rounds: [], wordCountRounds: [], debates: [] }),
+      buildRecentCloudItems({
+        documents: [],
+        flows: [],
+        rounds: [],
+        wordCountRounds: [],
+        debates: [],
+        speechOutcomes: [],
+      }),
     ).toEqual([]);
   });
 });
