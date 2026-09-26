@@ -30,7 +30,7 @@ const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../.
 const migrationPaths = [
   path.join(drizzleDir, "0004_certain_microchip.sql"),
   path.join(drizzleDir, "0035_debate_cards.sql"),
-  path.join(drizzleDir, "0036_debate_card_source_url.sql"),
+  path.join(drizzleDir, "0054_debate_card_source_url.sql"),
 ];
 
 /** A row shaped like the published dump, with int64 columns as BigInt. */
