@@ -57,8 +57,7 @@ export type FeatureCategory =
   | "round"
   | "intelligence"
   | "practice"
-  | "recognition"
-  | "standings";
+  | "recognition";
 
 /** Display order and label for each category, broadest surfaces first. */
 export const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
@@ -69,7 +68,6 @@ export const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
   intelligence: "Pre-Round Intelligence",
   practice: "Practice & Coaching",
   recognition: "Recognition & Progress",
-  standings: "Standings & Rankings",
 };
 
 /** One line under each category heading explaining what the group is for. */
@@ -80,8 +78,7 @@ export const FEATURE_CATEGORY_DESCRIPTIONS: Record<FeatureCategory, string> = {
   round: "Turn a flowed round into outlines, summaries, annotations, and exposure charts.",
   intelligence: "What you know about the opponent and judge before the round starts.",
   practice: "Practice rounds, drills, and AI coaching between tournaments.",
-  recognition: "Quests, streaks, awards, and unlocks that reward contributing research.",
-  standings: "Season results across tournaments, and community team rankings.",
+  recognition: "Quests, streaks, awards, unlocks, and standings that reward contributing research.",
 };
 
 /** One user-facing surface in the app. */
@@ -584,14 +581,12 @@ export const APP_FEATURES: FeatureEntry[] = [
     doc: "group-challenges.md",
     tags: ["standings", "wins", "roster"],
   },
-
-  // ── Standings & rankings ───────────────────────────────────────────────
   {
     id: "team-rankings",
     title: "Team Rankings",
     description: "Debate team rankings, leaderboard, and Elo ratings",
     href: "/rank",
-    category: "standings",
+    category: "recognition",
     doc: "team-rankings.md",
     tags: ["elo", "toc", "bid list", "debatedrills"],
   },

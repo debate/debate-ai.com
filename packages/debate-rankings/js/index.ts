@@ -18,6 +18,14 @@ import type { RankingDataset, RankingDatasetId, RankingDatasetInfo } from "./typ
 
 export type * from "./types";
 export { parseCsv, parseFieldStatistics, parseFullRankings } from "./parse";
+export {
+  entryInitials,
+  findTeamRanking,
+  normalizeSchool,
+  parseTeamLabel,
+  schoolMatchScore,
+  type TeamLabel,
+} from "./team-lookup";
 
 /** Tournaments in `hsld` up to and including the Sep–Oct topic boundary. */
 function sepOctTournaments(): string[] {

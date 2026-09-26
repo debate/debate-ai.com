@@ -30,7 +30,6 @@
 
 import { useEffect, useMemo, useState, type ComponentType } from "react";
 import {
-  BarChart3,
   Dumbbell,
   FileText,
   LayoutGrid,
@@ -76,7 +75,6 @@ const CATEGORY_ICONS: Record<FeatureCategory, ComponentType<{ className?: string
   intelligence: Radar,
   practice: Dumbbell,
   recognition: Trophy,
-  standings: BarChart3,
 };
 
 /** Props for {@link FeaturesPanel}. */
