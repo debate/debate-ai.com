@@ -1,9 +1,9 @@
-"use client"
-
-import Link from "next/link"
-import { TournamentsApp } from "debate-tournaments"
-
-/** Client boundary for the package UI, with the app's router-aware links. */
-export function TournamentsPage({ segments }: { segments: string[] }) {
-  return <TournamentsApp segments={segments} basePath="/tournaments" apiBase="/api/tabroom" Link={Link} />
+export function TournamentsPage() {
+  return (
+    <iframe
+      src="https://beta.tabroom.com"
+      title="Tabroom beta"
+      className="h-[calc(100dvh-70px)] w-full border-0 md:h-screen"
+    />
+  )
 }

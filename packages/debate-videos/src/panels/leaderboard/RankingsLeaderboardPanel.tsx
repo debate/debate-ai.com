@@ -16,14 +16,16 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { Search } from "lucide-react"
 import { getRankingDatasetInfo } from "debate-rankings"
 import { TooltipProvider } from "../../ui/primitives/tooltip"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../ui/primitives/tabs"
+import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Input } from "../../ui/primitives/input"
 import {
   DIVISION_CONFIG,
   VALID_DIVISIONS,
+  currentSeasonYear,
   divisionDatasets,
   filterEntries,
   resolveDivisionTopic,
+  seasonYears,
   sortEntries,
   type Division,
   type SortKey,
@@ -35,7 +37,7 @@ import { LeaderboardChampionBanner } from "./LeaderboardChampionBanner"
 import { RankingsTable } from "./RankingsTable"
 import { RankingsFieldSummary } from "./RankingsFieldSummary"
 import { LeaderboardFilterBar } from "./LeaderboardFilterBar"
-import { StandingsPanel } from "./StandingsPanel"
+
 
 /**
  * Full-page leaderboard panel.
@@ -68,7 +70,7 @@ export function LeaderboardPanel({
   // Division / year state (controlled or internal)
   // ---------------------------------------------------------------------------
 
-  const [internalYear, setInternalYear] = useState("2026")
+  const [internalYear, setInternalYear] = useState(() => String(currentSeasonYear()))
   const year = controlledYear ?? internalYear
   const setYear = onControlledYearChange ?? setInternalYear
 
@@ -88,12 +90,7 @@ export function LeaderboardPanel({
   /** Which of the division's datasets is shown (LD: full season vs. Sep–Oct topic). */
   const [datasetIndex, setDatasetIndex] = useState(0)
 
-  // ---------------------------------------------------------------------------
-  // Top-level tab: Elo/TOC leaderboard vs. NDCA-style qualification standings
-  // (idea #1's "Standings" tab rebuild — see StandingsPanel's own doc comment)
-  // ---------------------------------------------------------------------------
-
-  const [activeTab, setActiveTab] = useState<"leaderboard" | "standings">("leaderboard")
+  
 
   /** Changes division, resets sort, and writes the new value to the URL. */
   const changeDivision = (val: Division) => {
@@ -118,10 +115,8 @@ export function LeaderboardPanel({
   // Year list
   // ---------------------------------------------------------------------------
 
-  const currentYear = new Date().getFullYear()
-  const maxYear = Math.max(currentYear, 2026)
-  const years = Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
-  const isCurrentYear = year === String(maxYear)
+  const years = seasonYears()
+  const isCurrentYear = year === years[0]
 
   // ---------------------------------------------------------------------------
   // Data loading (delegated to hook)
@@ -158,28 +153,9 @@ export function LeaderboardPanel({
   // Render
   // ---------------------------------------------------------------------------
 
-  return (
+return (
     <TooltipProvider>
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Tabs
-          value={activeTab}
-          onValueChange={(value) => setActiveTab(value as "leaderboard" | "standings")}
-          className="flex-1 flex flex-col overflow-hidden"
-        >
-          <div className="border-b border-border px-4 pt-2">
-            <TabsList>
-              <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
-              <TabsTrigger value="standings">Standings</TabsTrigger>
-            </TabsList>
-          </div>
-
-          <TabsContent value="standings" className="flex-1 overflow-y-auto p-4">
-            <div className="max-w-[1600px] mx-auto">
-              <StandingsPanel />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="leaderboard" className="flex-1 flex flex-col overflow-hidden">
         {/* Filter controls — hidden when the parent supplies division/year */}
         {showInternalFilters && (
           <LeaderboardFilterBar
@@ -257,18 +233,16 @@ export function LeaderboardPanel({
                   />
                 </div>
                 {visibleEntries.length > 0 ? (
-                  <RankingsTable entries={visibleEntries} sort={sort} onToggleSort={toggleSort} />
+                  <RankingsTable entries={visibleEntries} division={division} sort={sort} onToggleSort={toggleSort} />
                 ) : (
                   <p className="py-8 text-center text-sm text-muted-foreground">
-                    No entries match “{query}”.
+                    No entries match "{query}".
                   </p>
                 )}
               </>
             )}
           </div>
         </div>
-          </TabsContent>
-        </Tabs>
       </div>
     </TooltipProvider>
   )

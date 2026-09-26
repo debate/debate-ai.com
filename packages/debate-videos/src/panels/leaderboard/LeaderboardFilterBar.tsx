@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "../../ui/primitives/select"
 import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
-import { DIVISION_CONFIG } from "./leaderboardUtils"
+import { DIVISION_CONFIG, seasonLabel } from "./leaderboardUtils"
 import type { Division } from "./leaderboardTypes"
 
 /** Props for the {@link LeaderboardFilterBar} component. */
@@ -66,7 +66,7 @@ export function LeaderboardFilterBar({
         <SelectContent>
           {years.map((y) => (
             <SelectItem key={y} value={y}>
-              {Number(y) - 1}-{y}
+              {seasonLabel(y)}
             </SelectItem>
           ))}
         </SelectContent>

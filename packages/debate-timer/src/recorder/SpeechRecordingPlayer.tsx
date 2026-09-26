@@ -30,6 +30,7 @@ import {
 } from "../ui/primitives/dropdown-menu"
 import { cn } from "../ui/lib/utils"
 import { useAudioDevices } from "./mic-selector"
+import { getUserMedia } from "./media-devices"
 import { LiveWaveform } from "./live-waveform"
 
 interface StoredRecording {
@@ -358,7 +359,7 @@ export function SpeechRecordingMenu({
                 audio: micDeviceId ? { deviceId: { exact: micDeviceId } } : true,
             }
             try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints)
+                const stream = await getUserMedia(constraints)
                 previewStreamRef.current = stream
                 setPreviewStream(stream)
             } catch {
@@ -382,7 +383,7 @@ export function SpeechRecordingMenu({
             const constraints: MediaStreamConstraints = {
                 audio: { deviceId: { exact: deviceId } },
             }
-            navigator.mediaDevices.getUserMedia(constraints)
+            getUserMedia(constraints)
                 .then((stream) => {
                     previewStreamRef.current = stream
                     setPreviewStream(stream)

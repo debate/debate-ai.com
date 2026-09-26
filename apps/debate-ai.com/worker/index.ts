@@ -104,16 +104,18 @@ export default {
         const url = new URL(request.url);
 
         // Webcam rooms: `/api/rooms/:roomId/ws` upgrades go to the room's
-        // Durable Object, for signed-in users only. It relays WebRTC setup;
-        // media flows browser-to-browser.
+        // Durable Object. Allow signed-in users and anonymous guests.
         const roomSocket = await handleRoomSocket(
           request,
           env.DEBATE_ROOMS,
           async (req) => {
             const auth = await getAuth();
             const session = await auth.api.getSession({ headers: req.headers });
-            if (!session) return null;
-            return session.user.name || session.user.email?.split("@")[0] || "Debater";
+            if (session) {
+              return session.user.name || session.user.email?.split("@")[0] || "Debater";
+            }
+            // No session: allow as "Guest" (Durable Object uses x-room-name or "Guest").
+            return "Guest";
           },
           normalizeRoomId,
         );

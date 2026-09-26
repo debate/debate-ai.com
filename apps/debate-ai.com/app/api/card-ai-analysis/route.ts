@@ -119,7 +119,13 @@ export async function POST(request: Request) {
   } catch (e) {
     return error(`Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}`, 502)
   }
-  if (!res.ok) return error(`AI API returned ${res.status}.`, 502)
+  if (!res.ok) {
+    // Log the provider's body: the status alone can't tell a bad key, exhausted
+    // credits, a rate limit, or a retired model apart in Workers Logs.
+    const detail = (await res.text().catch(() => "")).slice(0, 1000)
+    console.error(`card-ai-analysis: ${openrouterKey ? "OpenRouter" : "Anthropic"} returned ${res.status}`, detail)
+    return error(`AI API returned ${res.status}.`, 502)
+  }
 
   const json = (await res.json()) as {
     content?: Array<{ type?: string; text?: string }>

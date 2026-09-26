@@ -61,9 +61,7 @@
 	],
 	"env": {
 		"production": {
-			"vars": {
-				"ADMIN_EMAIL": "grokthiscontact@gmail.com"
-			},
+			
 			"images": {
 				"binding": "IMAGES"
 			},

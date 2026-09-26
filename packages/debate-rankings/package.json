@@ -1,0 +1,24 @@
+{
+  "name": "debate-rankings",
+  "version": "0.1.0",
+  "description": "Glicko-2 debate rankings (HS PF, LD, Policy and college policy) computed from tournament results, plus a typed TypeScript loader for the generated CSV output",
+  "private": true,
+  "type": "module",
+  "author": "vtempest",
+  "license": "rights.institute/prosper",
+  "main": "./js/index.ts",
+  "types": "./js/index.ts",
+  "exports": {
+    ".": "./js/index.ts"
+  },
+  "scripts": {
+    "rank": "python src/main.py",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.0"
+  }
+}

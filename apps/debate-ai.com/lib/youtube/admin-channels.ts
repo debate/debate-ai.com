@@ -24,8 +24,8 @@ export interface YoutubeChannelRow {
   name: string;
   enabled: boolean;
   addedBy: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: number;
+  updatedAt: number;
 }
 
 /** Query parameters accepted by {@link listAdminChannels}. */
@@ -106,7 +106,7 @@ function toRow(row: YoutubeChannel): YoutubeChannelRow {
     name: row.name,
     enabled: Boolean(row.enabled),
     addedBy: row.addedBy,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
+    createdAt: row.createdAt.getTime(),
+    updatedAt: row.updatedAt.getTime(),
   };
 }

@@ -14,6 +14,7 @@ import { LoadingOverlay } from "../ui/LoadingOverlay"
 import {
   useLoadingStore,
   DEFAULT_LOADING_FADE_OUT_MS,
+  DEFAULT_LOADING_SHOW_DELAY_MS,
 } from "../../lib/ui/loading-store"
 import { useRouteLoading } from "../../lib/ui/use-route-loading"
 
@@ -35,6 +36,7 @@ export function LoadingProvider() {
       active={isActive}
       label={label ?? undefined}
       fadeOutMs={DEFAULT_LOADING_FADE_OUT_MS}
+      showDelayMs={DEFAULT_LOADING_SHOW_DELAY_MS}
       passthrough={passthrough}
     />
   )

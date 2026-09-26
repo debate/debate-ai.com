@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import grab from "grab-url"
 import type { SpeechTimerState } from "../types"
+import { getUserMedia } from "../recorder/media-devices"
 
 interface UseSpeechRecorderOptions {
   /** Timer state — recording starts/stops in sync with this */
@@ -171,7 +172,7 @@ export function useSpeechRecorder({
       const constraints: MediaStreamConstraints = {
         audio: selectedMicDeviceId ? { deviceId: { exact: selectedMicDeviceId } } : true,
       }
-      const stream = await navigator.mediaDevices.getUserMedia(constraints)
+      const stream = await getUserMedia(constraints)
       const mr = new MediaRecorder(stream)
       mr.ondataavailable = (e) => {
         if (e.data.size > 0) {

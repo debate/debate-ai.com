@@ -100,28 +100,19 @@
 
 ### 📝 REASON: Research Editor for Annotated Summaries in Outline Notation
 
-`/reason-editor` and every speech-doc panel run on [`debate-editor`](./packages/debate-editor)
-— the ported-in [CardMirror](https://github.com/debate/cardmirror) ProseMirror engine, packing
+- **[CardMirror](https://github.com/debate/cardmirror)** ProseMirror engine, packing
 roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feature list in the
 [package README](./packages/debate-editor/README.md#cardmirror-features)):
-
-**Document & files**
 - **Structured outline**: pockets, hats, blocks, tags, cards, analytics, and undertags as first-class node types, with footnotes, tables, and live/transcluded zones
 - **Lossless `.docx` and `.cmir` round-trip**: Verbatim Word interop plus a native gzip save format, including encrypted-`.docx` decryption and damaged-file salvage
 - **Bulk conversion & compression**, automatic style cleanup on import, and a headless `cardmirror-read` CLI/MCP tool for AI-assistant access to files outside the app
-
-**Cutting & formatting**
 - **One-click structural styles**: Pocket, Hat, Block, Tag, Analytic, Undertag, plus citation/underline/emphasis marks and acronym-aware variants
 - **Highlight, shading, and font-color pickers** with standardization commands, a paintbrush mode, and highlight locking
 - **Card numbering**, multiple **condense modes**, and a full editing-utilities set (shrink/regrow, short cites, live-zone refresh, heading move/copy/delete)
-
-**Collaboration & workflow**
 - **Real-time collaboration** (CRDT-backed via Loro) with share codes, invite links, and version recovery — plus an account-linked **contacts list** (requests, blocking, presence) to share a live card straight to a contact's account
 - **Speech-doc targeting**: mark a doc as the live send target and send content at cursor or at end, with a persistent send history
 - **Flow integration**: send cards or headings straight to a Flow column or cell, or pull content back
 - **Dropzone card exchange**, **Quick Cards**, and a unified command-bar search across cards, commands, settings, and ~50 other site tools
-
-**AI, learning & chrome**
 - **AI tools**: ask-about-selection, AI-generated citations, translation, and AI-assisted text/formatting repair
 - **Flashcards** with spaced-repetition review, a **card cutter** panel, voice dictation, and a reading-marker mode
 - **Runtime plugin registry**, a 12-category menu bar, customizable keybindings, and per-user preferences synced to account settings
@@ -177,22 +168,15 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 - [Opponent Team Profiles](https://debate-ai.com/opponents) — Scout teams using records, side tendencies, common cases, and frequently used arguments.
 - [Pre-Round Briefings](https://debate-ai.com/briefings) — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
 - [Scout-to-Strategy](https://debate-ai.com/strategy) — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
-
-## Standings & Coaching
-
-- [CX NDCA Standings](https://debate-ai.com/standings) — View cumulative season standings based on recorded tournament results.
 - [Team Rankings](https://debate-ai.com/rank) — Browse debate-team rankings, leaderboards, and Elo ratings.
 - [Coaching Programs](https://debate-ai.com/coaching-programs) — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
 - [Coach Materials](https://debate-ai.com/coach-materials) — Upload or dictate grounding material for the team coach AI and preview relevant sources.
-- 
-## API & SDK
 
-- [API Reference](https://debate-ai.com/api) — Interactive Scalar docs generated from [`debate-openapi.yml`](./apps/debate-ai.com/public/debate-openapi.yml).
-- [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client)) — Typed SDK generated from the OpenAPI spec with [Hey API](https://heyapi.dev/), sending requests through [`grab-url`](https://grab.js.org) for caching, retries, rate limiting, and dedupe on every call.
 
 ## Contributing
 
-Start developing locally, develop features, open ideas in discussions, and submit a PR!
+- [API Reference](https://debate-ai.com/api) — Interactive Scalar docs generated from [`debate-openapi.yml`](./apps/debate-ai.com/public/debate-openapi.yml) with [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client))
+- Start developing locally, develop features, open ideas in discussions, and submit a PR!
 
 ```
 npx git0 debate/ai

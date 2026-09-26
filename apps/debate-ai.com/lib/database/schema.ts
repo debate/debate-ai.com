@@ -1013,10 +1013,12 @@ export type YoutubeSyncRun = typeof youtubeSyncRuns.$inferSelect;
 // `packages/debate-data-sync/src/youtube/channel-config.ts`, so a channel can be
 // added, renamed or paused without a code change and a deploy.
 //
-// `id` is the autoincrement row id; `channel_id` is YouTube's channel id,
-// resolved from `name` on the first successful sync and written back so the
-// admin never has to type one — the admin adds a channel by name alone. A row
-// with `enabled = 0` is skipped by the scan but kept, so pausing a channel is
+// `id` is the row's own key; `channelId` is YouTube's channel id and `name` is
+// the handle/username the resync hands to the API. `channelId` is nullable and
+// filled in on the first successful sync — the
+// admin adds a channel by name alone, and the resync resolves the id from
+// YouTube rather than trusting an admin to type it. A row with
+// `enabled = 0` is skipped by the scan but kept, so pausing a channel is
 // reversible and its history survives.
 export const youtubeChannels = sqliteTable(
   "youtube_channels",
