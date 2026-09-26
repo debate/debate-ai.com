@@ -12,48 +12,22 @@
  * which is also the allow-list `app/api/settings/route.ts`'s
  * `editorPreferences` field is validated against).
  *
- * Embeds `/settings/editor-panel` in a same-origin iframe rather than
- * rendering `debate-editor`'s settings UI directly in this
- * component tree — see that route's own docstring for why (its ~15k-line
- * stylesheet is meant for a page CardMirror fully owns, and would fight this
- * app's own styles document-wide if imported here). Unlike
- * ebb's flow settings — which used to sit below this panel and mounted
- * directly, ebb's design tokens being scoped under `.ebb-scope` — CardMirror's
- * are declared globally, hence the isolated iframe. The iframe self-sizes to its content via a
- * postMessage it sends on load and on resize.
+ * Renders `EditorSettingsPanel` directly in this component tree (it used
+ * to embed `/settings/editor-panel` in a same-origin iframe), so the whole
+ * panel — the editor's settings UI and its stylesheet — loads with the page.
  *
- * The iframe's first tab is Preferences — the app's own debate style, font
- * and theme form (`UserSettingsPanel`), merged in from the old
- * `/settings/preferences` page. A `?category=` on `/settings` is forwarded
- * to the iframe so a link can open any tab directly.
+ * Its first tab is Preferences — the account's plan and upgrade links, then
+ * the app's own debate style, font and theme form (`UserSettingsPanel`),
+ * merged in from the old `/settings/preferences` page. A `?category=` on
+ * `/settings` opens any tab directly.
  *
  * @module components/settings/CardMirrorSettingsPanel
  */
 
-import { useCallback, useEffect, useRef, useState } from "react"
-import { useSearchParams } from "next/navigation"
 import { Settings2 } from "lucide-react"
+import { EditorSettingsPanel } from "./EditorSettingsPanel"
 
 export function CardMirrorSettingsPanel() {
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-  const [height, setHeight] = useState(320)
-  const category = useSearchParams().get("category")
-  const src = category ? `/settings/editor-panel?category=${encodeURIComponent(category)}` : "/settings/editor-panel"
-
-  const onMessage = useCallback((event: MessageEvent) => {
-    if (event.origin !== window.location.origin) return
-    if (event.source !== iframeRef.current?.contentWindow) return
-    const data = event.data as { type?: string; height?: number } | null
-    if (data?.type === "pmd-settings-panel-height" && typeof data.height === "number") {
-      setHeight(Math.max(200, data.height))
-    }
-  }, [])
-
-  useEffect(() => {
-    window.addEventListener("message", onMessage)
-    return () => window.removeEventListener("message", onMessage)
-  }, [onMessage])
-
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-6">
       <div className="flex items-center gap-1.5 mb-1">
@@ -61,18 +35,13 @@ export function CardMirrorSettingsPanel() {
         <h2 className="text-base font-semibold">Settings</h2>
       </div>
       <p className="text-sm text-muted-foreground mb-4">
-        Your debate preferences and theme, plus every setting for the card editor — files and autosave, editing and typography, colors, fonts and sizing,
+        Your plan, debate preferences and theme, plus every setting for the card editor — files and autosave, editing and typography, colors, fonts and sizing,
         accessibility overrides, keyboard shortcuts, comments and AI, collaboration — plus the performance benchmark
         and this install&apos;s version info. Saved to your account when signed in; API keys and relay tokens stay in
         this browser.
       </p>
       <div className="rounded-md border border-border bg-background overflow-hidden">
-        <iframe
-          ref={iframeRef}
-          src={src}
-          title="Settings"
-          style={{ width: "100%", height, border: "none", display: "block" }}
-        />
+        <EditorSettingsPanel />
       </div>
     </div>
   )
