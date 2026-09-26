@@ -24,8 +24,8 @@ export interface YoutubeChannelRow {
   name: string;
   enabled: boolean;
   addedBy: string | null;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /** Query parameters accepted by {@link listAdminChannels}. */
