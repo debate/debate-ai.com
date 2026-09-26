@@ -11,7 +11,7 @@ one scoped stylesheet rather than depending on the host's design system.
 ## debate-api-client
 
 Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated from
-`apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through `grab-url`
+`packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through `grab-url`
 instead of fetch/axios, so every operation gets caching, retries, rate limiting, and
 request dedupe. Each `operationId` has a matching function that resolves to
 `{ data?, error? }` and never throws on an HTTP error.

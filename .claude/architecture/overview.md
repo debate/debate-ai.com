@@ -38,7 +38,7 @@ Everything is private except `debate-api-client`.
 | Directory | Package name | Owns |
 | --- | --- | --- |
 | `debate-webview` | *(same)* | The debate-ai.com frontend UI as a mountable React component — videos, card search, reuse check, standings, tool catalog — with no Next.js, router or session of its own. Reaches the server **only** through `debate-api-client`, and ships one scoped stylesheet so it renders inside a host with a different design system. Hosted by `apps/debate-web-ext`'s Options page. |
-| `debate-api-client` | *(same)* | **Published.** Typed SDK generated from `apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through **`grab-url`**, not fetch/axios, so every operation gets caching, retries, rate limiting and dedupe. Resolves to `{ data?, error? }` — **never throws on an HTTP error.** |
+| `debate-api-client` | *(same)* | **Published.** Typed SDK generated from `packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through **`grab-url`**, not fetch/axios, so every operation gets caching, retries, rate limiting and dedupe. Resolves to `{ data?, error? }` — **never throws on an HTTP error.** |
 | `debate-card-parser` | *(same)* | Verbatim `.docx` and HTML → structured cards with citations and highlighting |
 | `debate-contributor-progress` | `debate-community` | Leaderboard, news stream, awards, daily best card, progress unlocks, quest streaks, daily quests |
 | `debate-data-sync` | *(same)* | Bundled data assets (metadata, videos, schemas) + the sync scripts; shared record types like `OpponentTeamProfile` |

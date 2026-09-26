@@ -15,7 +15,7 @@ apps/debate-ai.com/
   drizzle/         migrations (+ drizzle/seed)
   worker/index.ts  the Workers entrypoint
   wrangler.jsonc   bindings, crons, vars
-  public/debate-openapi.yml   the spec debate-api-client is generated from
+  app/debate-openapi.yml/   serves packages/debate-api-client/debate-openapi.yml for /api
   scripts/         build-docs, migrate-d1, seed-videos, deploy-upload
   vitest.config.ts the whole repo's Vitest config (see monorepo.md)
 ```

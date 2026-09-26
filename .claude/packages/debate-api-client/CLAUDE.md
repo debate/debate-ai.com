@@ -2,7 +2,7 @@
 
 **The only published package in this repo.** A typed SDK for the
 [Debate AI API](https://debate-ai.com/api), **generated** from
-`apps/debate-ai.com/public/debate-openapi.yml` with Hey API.
+`packages/debate-api-client/debate-openapi.yml` with Hey API.
 
 ## Two things that make this package unusual
 
@@ -20,7 +20,7 @@
 One function per `operationId`, generated. To change the client:
 
 1. Change the route in `apps/debate-ai.com/app/api/…`.
-2. Update `apps/debate-ai.com/public/debate-openapi.yml`.
+2. Update `packages/debate-api-client/debate-openapi.yml`.
 3. Regenerate, and commit the result with the same change.
 
 Hand-written helpers go in a separate file, never inside the generated ones.

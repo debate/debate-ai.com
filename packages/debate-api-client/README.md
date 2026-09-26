@@ -23,7 +23,7 @@
 # debate-api-client
 
 Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated
-from [`debate-openapi.yml`](../../apps/debate-ai.com/public/debate-openapi.yml)
+from [`debate-openapi.yml`](./debate-openapi.yml)
 with [Hey API](https://heyapi.dev/) and powered by
 [`grab-url`](https://grab.js.org) instead of fetch/axios — every call gets
 grab's caching, retries, rate limiting, and request dedupe.
