@@ -51,6 +51,11 @@
  * bare `DrillSetRecord[]` body rather than importing that package's own
  * `round/drill-sets-client.ts`.
  *
+ * AI Judge Decisions (`/api/judge-decisions`) join the same way, for the
+ * same reason: `listCloudJudgeDecisions` below is a local raw `fetch`
+ * against that route's bare `JudgeDecisionRecord[]` body rather than
+ * importing `debate-practice-drills`'s own `round/judge-decisions-client.ts`.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -62,6 +67,7 @@ import {
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
+  type CloudJudgeDecisionSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
   type CloudWordCountRoundSummary,
@@ -159,23 +165,44 @@ async function listCloudDrillSets(endpoint = "/api/drill-sets"): Promise<CloudDr
 }
 
 /**
+ * Lists the current user's synced AI Judge Decisions. Degrades to `null` on
+ * a signed-out `401` (matching `GET /api/judge-decisions`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of
+ * that kind" convention as the other sources above.
+ */
+async function listCloudJudgeDecisions(
+  endpoint = "/api/judge-decisions",
+): Promise<CloudJudgeDecisionSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudJudgeDecisionSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
- * drill-sets and merges them via `buildRecentCloudItems`. Each source
- * resolves independently and degrades to "no items of that kind" on any
- * failure — a network error, a non-2xx response, or a signed-out `401` —
- * rather than rejecting the whole call, so one flaky endpoint never blanks a
- * widget that had perfectly good data from the others.
+ * drill-sets/judge-decisions and merges them via `buildRecentCloudItems`.
+ * Each source resolves independently and degrades to "no items of that
+ * kind" on any failure — a network error, a non-2xx response, or a
+ * signed-out `401` — rather than rejecting the whole call, so one flaky
+ * endpoint never blanks a widget that had perfectly good data from the
+ * others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
-  const [documents, flows, rounds, wordCountRounds, debates, speechOutcomes, drillSets] = await Promise.all([
-    listCloudDocuments(),
-    listSavedFlows().catch(() => null),
-    listSavedRounds().catch(() => null),
-    listCloudWordCountRounds(),
-    listCloudDebates(),
-    listCloudSpeechOutcomes(),
-    listCloudDrillSets(),
-  ]);
+  const [documents, flows, rounds, wordCountRounds, debates, speechOutcomes, drillSets, judgeDecisions] =
+    await Promise.all([
+      listCloudDocuments(),
+      listSavedFlows().catch(() => null),
+      listSavedRounds().catch(() => null),
+      listCloudWordCountRounds(),
+      listCloudDebates(),
+      listCloudSpeechOutcomes(),
+      listCloudDrillSets(),
+      listCloudJudgeDecisions(),
+    ]);
   return buildRecentCloudItems(
     {
       documents: documents ?? undefined,
@@ -185,6 +212,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       debates: debates ?? undefined,
       speechOutcomes: speechOutcomes ?? undefined,
       drillSets: drillSets ?? undefined,
+      judgeDecisions: judgeDecisions ?? undefined,
     },
     opts,
   );
