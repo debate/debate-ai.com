@@ -350,7 +350,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "evidenceLibraryEntries",
     idField: "id",
     label: "Evidence Library",
-    href: "/cards/library",
+    href: "/cards",
     section: "Research",
   },
   {
@@ -398,7 +398,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "trackedArguments",
     idField: "id",
     label: "Argument Library",
-    href: "/cards/argument-library",
+    href: "/cards",
     section: "Research",
   },
   {
@@ -406,7 +406,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "revisionHistory",
     idField: "id",
     label: "Card Revision History",
-    href: "/cards/library",
+    href: "/cards",
     section: "Research",
   },
   {
@@ -414,7 +414,7 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "reuseCheckHistory",
     idField: "id",
     label: "Card Reuse Checks",
-    href: "/cards/library",
+    href: "/cards",
     section: "Research",
   },
   {

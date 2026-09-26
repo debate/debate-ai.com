@@ -11,7 +11,6 @@
 
 import {
   BadgeCheck,
-  BookMarked,
   Bot,
   CalendarCheck,
   CalendarDays,
@@ -35,7 +34,6 @@ import {
   Map as MapIcon,
   Medal,
   MessageSquare,
-  MessagesSquare,
   PenLine,
   Presentation,
   Repeat,
@@ -151,8 +149,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/research", title: "Research Workspace", icon: Search },
       { href: "/cards", title: "Card Search", icon: Search },
       { href: "/community-hub", title: "Community Research Hub", icon: Users },
-      { href: "/cards/library", title: "Evidence Library", icon: BookMarked },
-      { href: "/cards/argument-library", title: "Argument Library", icon: MessagesSquare },
       { href: "/cards/coverage", title: "Topic Coverage", icon: ChartPie },
       { href: "/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
       { href: "/cards/reviews", title: "Review Queue", icon: ClipboardCheck },

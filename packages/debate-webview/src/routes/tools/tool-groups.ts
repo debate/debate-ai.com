@@ -2,7 +2,7 @@ import {
   Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
   ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
-  FolderTree, ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
+  ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass, Contact,
   Rss, Gauge, Crosshair, Crown, Send, Smartphone,
   type LucideIcon,
@@ -111,11 +111,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Tier, unlocked task skill level, streak, and badges per row", "Shows exactly how far each contributor is from the next tier"],
       },
       {
-        href: "/cards/library", label: "Evidence Library", icon: Library,
-        description: "Search shared cut cards and reusable analytic blocks by keyword, citation, or argument.",
-        highlights: ["Full-text search plus kind/topic/case-area/tag filters", "Edit and Delete per entry — edits score toward Revision Incentives"],
-      },
-      {
         href: "/cards/scoring", label: "LLM Card Scoring", icon: Gauge,
         description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability.",
         highlights: ["Deterministic five-dimension heuristic score, ranked across every submitted card", "Likely-duplicate flag checked against the real Shared Evidence Library corpus", "Optional real Anthropic-backed qualitative verdict per card"],
@@ -129,11 +124,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/cards/reviews", label: "Review Queue", icon: MessageSquareText,
         description: "Move a submitted card through peer review by commenting, requesting changes, approving, and publishing it.",
         highlights: ["Full lifecycle: draft → in review → changes requested → approved → published", "Blocking comments must be resolved before approval"],
-      },
-      {
-        href: "/cards/argument-library", label: "Argument Library", icon: FolderTree,
-        description: "Browse shared research organized into topic folders, case areas, and tag-based collections.",
-        highlights: ["Topic folders split into case-area subgroups", "Cross-cutting, tag-based collections alongside the folder view"],
       },
       {
         href: "/cards/group-challenges", label: "Group Challenges", icon: Target,

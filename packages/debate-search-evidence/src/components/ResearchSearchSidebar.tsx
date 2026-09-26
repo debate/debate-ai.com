@@ -10,6 +10,7 @@ import { Input } from "../ui/primitives/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/primitives/select"
 import { Search, X, ChevronDown, ChevronUp, Scale, ListTree, Quote } from "lucide-react"
 import { SearchResultCard } from "./SearchResultCard"
+import { SubmitEvidenceDialog } from "./SubmitEvidenceDialog"
 import { Button } from "../ui/primitives/button"
 import type { SearchResult } from "../types"
 import { MultiSelect } from "../ui/primitives/multi-select"
@@ -123,15 +124,18 @@ export function ResearchSearchSidebar({
             )}
           </div>
 
-          {/* Search input */}
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search debates, outlines, and quotes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
+          {/* Search input, with the button that opens the evidence submit popup */}
+          <div className="flex gap-2">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search debates, outlines, and quotes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <SubmitEvidenceDialog />
           </div>
 
           {/* Toggle bar: Outlines | Speeches | Quotes */}
