@@ -31,7 +31,7 @@ const FLOW_HISTORY_COLLECTION_KEY = "flowHistory"
 interface FlowHistoryListProps {
   /** The full auto-saved history, newest entry first — `useFlowStore().getFlowHistory()`'s return value. */
   history: FlowHistory[]
-  /** Restores the given entry as a new flow and closes the dialog. */
+  /** Restores the given entry as a new flow, opens it, and closes the dialog — fired by clicking anywhere on the entry. */
   onLoad: (historyId: string) => void
   /** Clears the entire local history after confirmation. */
   onClear: () => void
@@ -75,7 +75,7 @@ export function FlowHistoryList({ history, onLoad, onClear }: FlowHistoryListPro
   return (
     <div className="p-2 space-y-2">
       <div className="flex items-center justify-between gap-2 px-1 pb-1">
-        <p className="text-xs text-muted-foreground">Auto-saved as you work.</p>
+        <p className="text-xs text-muted-foreground">Auto-saved as you work. Click an entry to open it.</p>
         <Button
           size="sm"
           variant="ghost"
@@ -108,7 +108,20 @@ export function FlowHistoryList({ history, onLoad, onClear }: FlowHistoryListPro
                 {group.entries.map((entry) => {
                   const syncStatus = getToolRecordSyncStatus(FLOW_HISTORY_COLLECTION_KEY, entry)
                   return (
-                    <div key={entry.id} className="flex items-center justify-between gap-2 px-3 py-2">
+                    <div
+                      key={entry.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => onLoad(entry.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          onLoad(entry.id)
+                        }
+                      }}
+                      title={`Open ${entry.label} as it was at ${new Date(entry.timestamp).toLocaleTimeString()}`}
+                      className="flex items-center justify-between gap-2 px-3 py-2 cursor-pointer hover:bg-muted/40 focus-visible:outline-none focus-visible:bg-muted/60"
+                    >
                       <div className="flex items-center gap-2 min-w-0">
                         <FileText className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
                         <div className="min-w-0">
@@ -138,7 +151,11 @@ export function FlowHistoryList({ history, onLoad, onClear }: FlowHistoryListPro
                         variant="ghost"
                         className="h-8 w-8 p-0 flex-shrink-0"
                         title="Restore this version as a new flow"
-                        onClick={() => onLoad(entry.id)}
+                        tabIndex={-1}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onLoad(entry.id)
+                        }}
                       >
                         <Download className="h-4 w-4" />
                       </Button>

@@ -4,6 +4,10 @@
  * markdown view mode, single/split layout, the recording ellipsis menu, and
  * the "open speech document" button. Rendered once at the top of the page
  * instead of being duplicated across every speech's own header bar.
+ *
+ * The recording menu moves into the round sidebar, under the selected speech,
+ * whenever the sidebar shows that speech's timer (see `LiveRoundGroup`), so
+ * it only renders here otherwise (no round, or the mobile layout).
  * @module layout/SpeechControlsTopBar
  */
 
@@ -55,6 +59,8 @@ export interface SpeechControlsTopBarProps {
   recordingKey?: string
   /** Emails to notify via the recording menu's "Share with Opponents" — see `round/round-recording-share.ts`. */
   participantEmails?: string[]
+  /** Whether to render the recording menu here — false when the round sidebar already shows it under the speech. */
+  showRecordingMenu?: boolean
 }
 
 /**
@@ -81,6 +87,7 @@ export function SpeechControlsTopBar({
   onDeleteRecording,
   recordingKey,
   participantEmails,
+  showRecordingMenu = true,
 }: SpeechControlsTopBarProps) {
   return (
     <div className="flex items-center justify-end gap-1 w-full h-9 px-2 border-b border-border bg-[var(--background)] shrink-0">
@@ -120,21 +127,23 @@ export function SpeechControlsTopBar({
         </Tooltip>
       </TooltipProvider>
 
-      <SpeechRecordingMenu
-        speechName={speechName}
-        speechLabel={speechName}
-        micDeviceId={micDeviceId}
-        onMicDeviceChange={onMicDeviceChange}
-        recordingEnabled={recordingEnabled}
-        onRecordingEnabledChange={onRecordingEnabledChange}
-        onResetSpeechTime={onResetSpeechTime}
-        onSwitchToCrossX={onSwitchToCrossX}
-        onResetPrepTimers={onResetPrepTimers}
-        onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
-        recordingKey={recordingKey}
-        participantEmails={participantEmails}
-        inHeader={true}
-      />
+      {showRecordingMenu && (
+        <SpeechRecordingMenu
+          speechName={speechName}
+          speechLabel={speechName}
+          micDeviceId={micDeviceId}
+          onMicDeviceChange={onMicDeviceChange}
+          recordingEnabled={recordingEnabled}
+          onRecordingEnabledChange={onRecordingEnabledChange}
+          onResetSpeechTime={onResetSpeechTime}
+          onSwitchToCrossX={onSwitchToCrossX}
+          onResetPrepTimers={onResetPrepTimers}
+          onDeleteRecording={hasRecording ? onDeleteRecording : undefined}
+          recordingKey={recordingKey}
+          participantEmails={participantEmails}
+          inHeader={true}
+        />
+      )}
 
       <Button
         variant="ghost"

@@ -2,6 +2,7 @@
 
 import { create } from "zustand"
 import { History } from "./history"
+import { addFlowHistoryEntry, flowFromHistoryEntry, readFlowHistory, writeFlowHistory } from "./flowHistoryEntries"
 import type { Flow, Round } from "../types/flow"
 
 const historyMap = new Map<number, History>()
@@ -25,7 +26,8 @@ interface FlowStore {
   getHistory: (flowId: number) => History
   saveToHistory: (flow: Flow) => void
   getFlowHistory: () => FlowHistory[]
-  loadFromHistory: (historyId: string) => void
+  /** Restores a history entry as a new flow, selects it, and returns its index (null when the entry is gone). */
+  loadFromHistory: (historyId: string) => number | null
   setRounds: (rounds: Round[]) => void
   createRound: (round: Omit<Round, "id" | "timestamp">) => Round
   updateRound: (id: number, updates: Partial<Round>) => void
@@ -65,64 +67,30 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
   },
   saveToHistory: (flow: Flow) => {
     try {
-      const historyKey = "flow-history"
-      const existingHistory = localStorage.getItem(historyKey)
-      const history: FlowHistory[] = existingHistory ? JSON.parse(existingHistory) : []
-
-      const historyEntry: FlowHistory = {
-        id: `${flow.id}-${Date.now()}`,
-        flow: JSON.parse(JSON.stringify(flow)),
-        timestamp: Date.now(),
-        label: flow.content || "Untitled Flow",
-      }
-
-      history.unshift(historyEntry)
-
-      // Keep only last 20 entries (reduced from 50 to save storage)
-      const MAX_HISTORY_ENTRIES = 20
-      const trimmedHistory = history.slice(0, MAX_HISTORY_ENTRIES)
-
-      try {
-        localStorage.setItem(historyKey, JSON.stringify(trimmedHistory))
-      } catch (storageError) {
-        if (storageError instanceof DOMException && storageError.name === "QuotaExceededError") {
-          // If quota exceeded, try with even fewer entries
-          console.warn("Flow history quota exceeded, reducing to 10 entries...")
-          const reducedHistory = history.slice(0, 10)
-          try {
-            localStorage.setItem(historyKey, JSON.stringify(reducedHistory))
-          } catch (retryError) {
-            // If still failing, clear history entirely
-            console.error("Unable to save flow history, clearing all history...")
-            localStorage.removeItem(historyKey)
-          }
-        } else {
-          throw storageError
-        }
-      }
+      const history = readFlowHistory()
+      const next = addFlowHistoryEntry(history, flow)
+      if (next !== history) writeFlowHistory(next)
     } catch (error) {
       console.error("Failed to save to history:", error)
     }
   },
   getFlowHistory: () => {
     try {
-      const historyKey = "flow-history"
-      const existingHistory = localStorage.getItem(historyKey)
-      return existingHistory ? JSON.parse(existingHistory) : []
+      return readFlowHistory()
     } catch (error) {
       console.error("Failed to load history:", error)
       return []
     }
   },
   loadFromHistory: (historyId: string) => {
-    const history = get().getFlowHistory()
-    const entry = history.find((h) => h.id === historyId)
-    if (entry) {
-      const flows = get().flows
-      const newFlow = { ...entry.flow, id: Date.now(), index: flows.length }
-      set({ flows: [...flows, newFlow], selected: flows.length })
-      get().flowsChange(true)
-    }
+    const entry = get().getFlowHistory().find((h) => h.id === historyId)
+    if (!entry) return null
+    const flows = get().flows
+    // Restored as a fresh, un-archived flow and opened right away.
+    const newFlow = flowFromHistoryEntry(entry, flows.length)
+    set({ flows: [...flows, newFlow], selected: flows.length })
+    get().flowsChange(true)
+    return flows.length
   },
   setRounds: (rounds) => {
     set({ rounds })

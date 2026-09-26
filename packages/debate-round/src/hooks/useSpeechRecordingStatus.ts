@@ -10,6 +10,9 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
+import { clearSpokenTranscript } from "debate-timer/src/recorder/spoken-words-store"
+
+const RECORDING_KEY_PREFIX = "debate-recording-"
 
 function getRecordingDurationSeconds(speechName: string): number | null {
   try {
@@ -43,6 +46,8 @@ export function useSpeechRecordingStatus(speechName: string) {
 
   const deleteRecording = useCallback((key: string) => {
     localStorage.removeItem(key)
+    // The spoken-word count belongs to the recording it was transcribed from.
+    if (key.startsWith(RECORDING_KEY_PREFIX)) clearSpokenTranscript(key.slice(RECORDING_KEY_PREFIX.length))
     setHasRecording(false)
     setRecordingDurationSec(null)
     window.dispatchEvent(new CustomEvent("debate-recording-saved"))

@@ -6,9 +6,12 @@
  *
  * This is the app's only round-timer surface — the dock's Timer shortcut was
  * removed in favour of timing a round from the round it belongs to.
- * Other speeches in the round are listed by name only — the bar (and its
- * timer) only ever tracks the one speech in view, matching CardMirror, which
- * only ever has one live editable speech at a time.
+ * Other speeches in the round are listed by name with their word totals
+ * (read from the speech doc · orally spoken) — the bar (and its timer) only
+ * ever tracks the one speech in view, matching CardMirror, which only ever
+ * has one live editable speech at a time. The selected speech's recording
+ * menu (mic selector with live waveform, resets, upload/share/delete) sits
+ * on its own row under the speech here, rather than in the page topbar.
  */
 
 "use client"
@@ -19,6 +22,9 @@ import { PrepTimer } from "debate-timer/src/timers/PrepTimer"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/primitives/tooltip"
 import { cn } from "../ui/lib/utils"
 import { SpeechHeaderBar } from "./SpeechHeaderBar"
+import { SpeechWordStats } from "debate-timer/src/timers/SpeechWordStats"
+import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
+import { useFlowStore } from "../state/store"
 import type { Round } from "../types/flow"
 import type { DebateStyle, SpeechTimerState, TimerState } from "debate-timer/src/types"
 import type { SpeechTimerEntry } from "../hooks/useTimerState"
@@ -59,6 +65,23 @@ interface LiveRoundGroupProps {
   recordingEnabled?: boolean
   /** Callback when the recording-enabled flag changes. */
   onRecordingEnabledChange?: (enabled: boolean) => void
+}
+
+/** A non-selected speech's row: its name and word totals. */
+function SpeechTotalsRow({ name, secondary }: { name: string; secondary: boolean }) {
+  const { flows, selected } = useFlowStore()
+  const { stats, spoken } = useSpeechWordStats(flows[selected], name)
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-2 rounded-[var(--border-radius)] px-2 py-1 text-xs font-medium text-muted-foreground",
+        secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
+      )}
+    >
+      <span className="flex-1 truncate">{name}</span>
+      <SpeechWordStats speechName={name} stats={stats} spoken={spoken} variant="inline" />
+    </div>
+  )
 }
 
 /** The round's display title, falling back to the tournament/level pair. */
@@ -212,7 +235,8 @@ export function LiveRoundGroup({
                       canNavigateNext={canNavigateNext}
                       onNavigatePrev={onNavigatePrev}
                       onNavigateNext={onNavigateNext}
-                      showRecordingMenu={false}
+                      showRecordingMenu={true}
+                      recordingMenuPlacement="below"
                       micDeviceId={micDeviceId}
                       onMicDeviceChange={onMicDeviceChange}
                       recordingEnabled={recordingEnabled}
@@ -222,17 +246,7 @@ export function LiveRoundGroup({
                 )
               }
 
-              return (
-                <div
-                  key={speech.name}
-                  className={cn(
-                    "rounded-[var(--border-radius)] px-2 py-1 text-xs font-medium text-muted-foreground",
-                    speech.secondary ? "text-red-600/70 dark:text-red-400/70" : "text-blue-600/70 dark:text-blue-400/70",
-                  )}
-                >
-                  {speech.name}
-                </div>
-              )
+              return <SpeechTotalsRow key={speech.name} name={speech.name} secondary={speech.secondary} />
             })}
           </div>
         </div>

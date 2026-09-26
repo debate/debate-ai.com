@@ -44,6 +44,7 @@ import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { selectSidebarRound } from "../utils/sidebar-round"
 
 /**
  * Manages the entire debate flow experience with a modular, maintainable architecture:
@@ -305,6 +306,9 @@ export function DebateFlowPage() {
   const { hasRecording: selectedSpeechHasRecording, deleteRecording: deleteSelectedSpeechRecording } =
     useSpeechRecordingStatus(selectedSpeech)
 
+  /** Round the sidebar shows a timer for — when set, the recording menu lives under its speech there. */
+  const sidebarRound = selectSidebarRound(rounds, currentFlow)
+
   /** Emails the global topbar's recording menu's "Share with Opponents" notifies. */
   const selectedSpeechShareEmails = getRoundRecordingShareEmails(currentRound)
 
@@ -513,6 +517,7 @@ export function DebateFlowPage() {
         onDeleteRecording={deleteSelectedSpeechRecording}
         recordingKey={selectedSpeechHasRecording ? `debate-recording-${selectedSpeech}` : undefined}
         participantEmails={selectedSpeechShareEmails}
+        showRecordingMenu={state.isMobile || !sidebarRound}
       />
       {/* Main Layout */}
       <div className="flex-1 overflow-hidden">
@@ -600,6 +605,7 @@ export function DebateFlowPage() {
         onOpenChange={state.setHistoryDialogOpen}
         onEditRound={handleEditRound}
         onCreateRound={() => handleEditRound()}
+        onFlowOpened={() => setEbbActive(false)}
       />
 
       <RoundEditorDialog

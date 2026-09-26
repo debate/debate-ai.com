@@ -102,6 +102,12 @@ interface FlowHistoryDialogProps {
   onEditRound?: (roundId: number) => void
   /** Optional callback when user wants to create a new round */
   onCreateRound?: () => void
+  /**
+   * Called after the dialog opens a flow (a history entry, a round's flow, or
+   * a cloud-saved flow) so the page can bring the flow tabs to the front —
+   * e.g. leave the ebb Flow tab — and show it immediately.
+   */
+  onFlowOpened?: () => void
 }
 
 /**
@@ -130,7 +136,7 @@ interface FlowHistoryDialogProps {
  * />
  * ```
  */
-export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRound }: FlowHistoryDialogProps) {
+export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRound, onFlowOpened }: FlowHistoryDialogProps) {
   // Get store functions and state
   const {
     getFlowHistory,
@@ -293,6 +299,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       const newFlows = existingIndex === -1 ? [...flows, flow] : flows.map((f, i) => (i === existingIndex ? flow : f))
       setFlows(newFlows)
       setSelected(existingIndex === -1 ? newFlows.length - 1 : existingIndex)
+      onFlowOpened?.()
       onOpenChange(false)
     } catch {
       setCloudActions((prev) => ({ ...prev, [clientId]: "error" }))
@@ -610,6 +617,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
       const firstFlowIndex = newFlows.findIndex((f) => f.id === roundFlows[0].id)
       if (firstFlowIndex !== -1) {
         setSelected(firstFlowIndex)
+        onFlowOpened?.()
         onOpenChange(false)
       }
     }
@@ -617,10 +625,15 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
 
   /**
    * Restores a history entry as a new flow (passed to `FlowHistoryList` as
-   * `onLoad`) and closes the dialog.
+   * `onLoad`), opens it, and closes the dialog.
    */
   const handleLoadFlow = (historyId: string) => {
-    loadFromHistory(historyId)
+    if (loadFromHistory(historyId) == null) {
+      // The entry was trimmed since the list rendered — refresh the list.
+      setHistory(getFlowHistory())
+      return
+    }
+    onFlowOpened?.()
     onOpenChange(false)
   }
 
@@ -1082,6 +1095,7 @@ export function FlowHistoryDialog({ open, onOpenChange, onEditRound, onCreateRou
                                       const flowIndex = flows.findIndex((f) => f.id === flow.id)
                                       if (flowIndex !== -1) {
                                         setSelected(flowIndex)
+                                        onFlowOpened?.()
                                         onOpenChange(false)
                                       }
                                     }}
