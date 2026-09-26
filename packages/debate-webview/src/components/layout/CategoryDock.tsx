@@ -188,6 +188,7 @@ function SettingsMenu({
           <DropdownMenuSubContent className={cn(SUBMENU_WIDTH, "max-h-[min(500px,70vh)] overflow-y-auto")} collisionPadding={8} avoidCollisions>
             {section.links.map((link) => (
               <DropdownMenuItem key={link.href} onSelect={(e) => { e.preventDefault(); router.push(link.href) }}>
+                {link.icon && <link.icon className="mr-2 h-4 w-4 shrink-0" />}
                 {link.title}
               </DropdownMenuItem>
             ))}

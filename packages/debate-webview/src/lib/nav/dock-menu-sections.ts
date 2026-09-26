@@ -40,6 +40,8 @@ import {
 export interface DockMenuLink {
   href: string
   title: string
+  /** The row's sidebar icon, where the sidebar gives it one. */
+  icon?: LucideIcon
 }
 
 export interface DockMenuSection {
@@ -66,7 +68,7 @@ export const SIDEBAR_MENU_SECTIONS: DockMenuSection[] = [
     id: section.id,
     title: section.title,
     icon: section.icon,
-    links: section.tools.map(({ href, title }) => ({ href, title })),
+    links: section.tools.map(({ href, title, icon }) => ({ href, title, icon })),
   })),
 ]
 
