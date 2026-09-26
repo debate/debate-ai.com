@@ -31,7 +31,7 @@ import {
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
 
-const rating = (n: number) => n.toFixed(0)
+const rating = (n: number) => n.toFixed(1)
 const percent = (n: number | null) =>
   n === null ? "—" : `${Number.isInteger(n) ? n : n.toFixed(1)}%`
 
