@@ -74,6 +74,28 @@ const REFERENCE_ICONS: Record<string, TreeItemIcon> = {
   statistics: BarChart3,
 };
 
+/**
+ * Team and school profile pages (`/teams/<team>`, `/schools/<school>`) are
+ * opened from the Team Rankings table rather than nested under its own
+ * `/rank` route, so a plain `pathname === tool.href` match never lights that
+ * row up while you are reading one — the tree looked like it had lost track
+ * of where you were the moment you followed a rankings link. Both prefixes
+ * count as "still on Team Rankings" for highlighting, same as
+ * `EXTRA_SIDEBAR_HREFS` already treats them for keeping the sidebar itself
+ * mounted (`sidebar-routes.ts`).
+ */
+const TEAM_RANKINGS_HREF = "/rank";
+const TEAM_RANKINGS_PROFILE_PREFIXES = ["/teams", "/schools"];
+
+function isToolActive(href: string, pathname: string | null): boolean {
+  if (pathname == null) return false;
+  if (pathname === href) return true;
+  if (href !== TEAM_RANKINGS_HREF) return false;
+  return TEAM_RANKINGS_PROFILE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 export interface ToolNavTreeProps {
   /**
    * Whether the sections start expanded. `true` (the sidebar's own default)
@@ -173,7 +195,7 @@ export function ToolNavTree({
               href={tool.href}
               title={tool.title}
               icon={tool.icon}
-              isActive={pathname === tool.href}
+              isActive={isToolActive(tool.href, pathname)}
             />
           ))}
           {/* The glossary, rankings and statistics pages are round-day

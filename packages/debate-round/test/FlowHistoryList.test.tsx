@@ -47,6 +47,13 @@ describe("FlowHistoryList", () => {
     expect(html).not.toContain("Clear history");
   });
 
+  it("makes each whole entry a keyboard-focusable button that opens it", () => {
+    const html = renderToStaticMarkup(<FlowHistoryList history={[makeEntry()]} onLoad={noop} onClear={noop} />);
+    expect(html).toContain('role="button"');
+    expect(html).toContain('tabindex="0"');
+    expect(html).toContain("Click an entry to open it.");
+  });
+
   it("renders each entry's label under its day's group, with an entry count", () => {
     const day1 = new Date(2024, 0, 5, 9, 0, 0).getTime();
     const entries = [

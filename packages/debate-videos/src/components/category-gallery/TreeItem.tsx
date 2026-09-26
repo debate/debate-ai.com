@@ -117,6 +117,19 @@ export function TreeItem({
   const pathname = usePathname();
   const expandable = children != null && onToggleExpand != null;
 
+  // Keeps the row that lights up as "where you are" in view — landing
+  // straight on a page deep in a long section (Practice runs to fifteen-plus
+  // rows) used to leave the highlighted link scrolled off, above or below
+  // whatever the column happened to be scrolled to on mount. `"nearest"`
+  // moves the scroll container the least distance needed to bring the row
+  // on screen, and does nothing at all when it already is — so navigating
+  // inside the visible part of the tree never jumps the column around.
+  const rowRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (!isActive) return;
+    rowRef.current?.scrollIntoView({ block: "nearest" });
+  }, [isActive]);
+
   // Clicking a nav row used to look like nothing had happened: the router
   // fetches the destination before it renders any of it, and on `/videos`
   // that fetch competes with a grid of several hundred cards, so the row
@@ -179,6 +192,7 @@ export function TreeItem({
   return (
     <div>
       <div
+        ref={rowRef}
         className={cn(
           "flex items-stretch gap-0.5 rounded-md",
           isActive && "bg-primary/5 ring-1 ring-primary/40",
