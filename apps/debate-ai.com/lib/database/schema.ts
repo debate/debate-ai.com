@@ -1,4 +1,12 @@
-import { sqliteTable, text, integer, index, uniqueIndex, primaryKey } from "drizzle-orm/sqlite-core";
+import {
+  sqliteTable,
+  text,
+  integer,
+  index,
+  uniqueIndex,
+  primaryKey,
+  type AnySQLiteColumn,
+} from "drizzle-orm/sqlite-core";
 import { sql } from "drizzle-orm";
 
 export const user = sqliteTable("user", {
@@ -1882,3 +1890,96 @@ export const cardAiAnalyses = sqliteTable(
 );
 
 export type CardAiAnalysisRow = typeof cardAiAnalyses.$inferSelect;
+
+// Threaded comments, one table for every kind of thing that can be discussed —
+// a video, an uploaded file, a lecture, a card contribution. `resourceType` +
+// `resourceId` name the thing (see `lib/comments/queries.ts`), so a second
+// surface is a mount of the same `debate-comments` UI rather than a second
+// schema and a second set of routes.
+//
+// The tree is an adjacency list: `parentId` points at the comment a reply
+// answers, and is null for a top-level one. Storing the shape as a column per
+// level (the flat `parent_id` of `documents`/`topic_starter_items` above) would
+// cap replies at whatever the widest column was, and a thread that cannot grow
+// is a thread that gets abandoned halfway. A self-referencing row is one more
+// lookup per level, and reads are already served whole and cached in the page.
+//
+// `ON DELETE CASCADE` on both references is what makes deletion clean: drop
+// the account, and its comments and its likes go with them. Comments themselves
+// are never hard-deleted — `deletedAt` hides the body and leaves the replies
+// standing, so removing one post does not take a sub-conversation with it. A
+// real moderation story (`moderationStatus`, `reportCount`, an audit log) would
+// layer on top of that rather than replace it.
+export const comments = sqliteTable(
+  "comments",
+  {
+    /**
+     * A UUID minted by the API, not an autoincrement rowid. An id that counts
+     * up tells a reader how much discussion exists on a resource before they
+     * have read any of it, and it makes a comment's URL guessable by anyone
+     * who has seen one.
+     */
+    id: text("id").primaryKey(),
+    /** One of `debate-comments`' `COMMENT_RESOURCE_TYPES`; see `lib/comments/validation.ts`. */
+    resourceType: text("resource_type").notNull(),
+    /** The resource's own id — a YouTube video id here, a `debate_cards` id there. */
+    resourceId: text("resource_id").notNull(),
+    /** Null for a top-level comment; otherwise the comment this one answers. */
+    parentId: text("parent_id").references((): AnySQLiteColumn => comments.id, {
+      onDelete: "cascade",
+    }),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    /** Set when the author (or a moderator) removes the comment; see above. */
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    // A thread read: every comment on one resource, oldest first. The leading
+    // `resourceType` is what keeps a `resourceId` reused across kinds (a short
+    // slug, say) from pulling in another kind's thread.
+    resourceIdx: index("idx_comments_resource").on(
+      table.resourceType,
+      table.resourceId,
+      table.createdAt,
+    ),
+    // The per-parent read, when replies are fetched on their own.
+    parentIdx: index("idx_comments_parent").on(table.parentId, table.createdAt),
+  }),
+);
+
+export type CommentRow = typeof comments.$inferSelect;
+
+// One like per person per comment. The composite primary key *is* the
+// "already liked?" check: unlike a counter column, a duplicate insert is
+// impossible, so the toggle endpoint can never double-count a rapid second
+// click, and unlike a JSON array on `user_settings` (how the news stream's
+// `newsLiked` works) the count is a single indexed COUNT rather than a read,
+// a parse and a rewrite of every id that user has ever liked.
+export const commentLikes = sqliteTable(
+  "comment_likes",
+  {
+    commentId: text("comment_id")
+      .notNull()
+      .references(() => comments.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.commentId, table.userId] }),
+    commentIdx: index("idx_comment_likes_comment").on(table.commentId),
+  }),
+);
+
+export type CommentLikeRow = typeof commentLikes.$inferSelect;
