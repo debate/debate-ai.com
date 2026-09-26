@@ -1,7 +1,7 @@
 {
   "name": "debate-web-ext",
-  "description": "Debate-AI.com extension: the full debate-ai.com app on its Options page, plus a round timer, an article reader panel and a card reuse check.",
-  "version": "6.0.0",
+  "description": "Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.",
+  "version": "6.1.0",
   "type": "module",
   "private": true,
   "scripts": {

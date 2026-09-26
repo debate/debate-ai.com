@@ -76,7 +76,7 @@ export default defineConfig({
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Debate AI — Reader, Timer & Card Reuse Check',
     description:
-      'Critical times call for critical thinking! Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
+      'Read any page in an AI article panel, time a round, and check whether a card has already been cut from the page.',
     // Kept from the original timer manifest so the extension ID (and therefore
     // the user's existing chrome.storage data) stays stable across both the
     // WXT migration and the merge with the card-reuse extension. debate-ai.com
