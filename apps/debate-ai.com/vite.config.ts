@@ -137,7 +137,6 @@ export default defineConfig({
       "debate-round",
       "debate-timer",
       "debate-tournaments",
-      "debate-rankings",
       "debate-rankings-adapter",
       "debate-editor-cm-adapter",
       "debate-tournaments-tabroom-adapter",

@@ -8,6 +8,7 @@
     "!packages/debate-tournament-tabroom",
     "!packages/debate-tournaments-tabroom",
     "!packages/debate-editor-cm",
+    "!packages/debate-rankings",
     "apps/debate-ai.com",
     "apps/debate-browser-ext"
   ],

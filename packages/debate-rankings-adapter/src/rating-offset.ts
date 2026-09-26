@@ -6,8 +6,8 @@
  * @module debate-rankings-adapter/rating-offset
  */
 
-import { loadRankingDataset as loadUpstreamDataset } from "debate-rankings";
-import type { RankingDataset, RankingDatasetId, RankingEntry } from "debate-rankings";
+import { loadRankingDataset as loadUpstreamDataset } from "./upstream";
+import type { RankingDataset, RankingDatasetId, RankingEntry } from "./upstream";
 
 /** Points subtracted from every Glicko-2 rating before it reaches the UI. */
 export const RATING_OFFSET = 500;

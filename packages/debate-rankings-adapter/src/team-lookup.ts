@@ -10,7 +10,7 @@
  * @module debate-rankings-adapter/team-lookup
  */
 
-import type { RankingEntry } from "debate-rankings";
+import type { RankingEntry } from "./upstream";
 
 /** A video team label split into its school and its code. */
 export interface TeamLabel {

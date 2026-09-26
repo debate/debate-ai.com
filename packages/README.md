@@ -90,10 +90,11 @@ outline, flow annotations, and AI response-outcome charts. Composes `debate-roun
 ## debate-rankings
 
 Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule of
-[debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. A Python pipeline
-(`src/main.py`) replays tournament results into CSVs under `output/`; a TypeScript entry
-(`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the
-`/rank` panel in `debate-videos`, through `debate-rankings-adapter`.
+[debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
+Python toolchain (`src/main.py` replays tournament results into CSVs under `output/`), so it stays out of the
+bun workspace and is imported by path rather than by package name — see `debate-rankings-adapter`. A TypeScript
+entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/rank` panel in
+`debate-videos`, through `debate-rankings-adapter`.
 
 ## debate-rankings-adapter
 
