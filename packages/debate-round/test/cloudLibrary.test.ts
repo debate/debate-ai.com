@@ -9,6 +9,7 @@ import {
   type CloudDrillSetSummary,
   type CloudJudgeDecisionSummary,
   type CloudSpeechOutcomeSummary,
+  type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
 import type { SavedFlowSummary } from "../src/state/savedFlows";
@@ -65,8 +66,11 @@ describe("buildRecentCloudItems", () => {
   const counselPanelAssessments: CloudCounselPanelAssessmentSummary[] = [
     { id: "assessment-1", roundId: "round-9", generatedAt: Date.parse("2026-09-03T00:00:00.000Z") },
   ];
+  const strategyRecommendations: CloudStrategyRecommendationSummary[] = [
+    { id: "recommendation-1", matchupId: "matchup-9", generatedAt: Date.parse("2026-09-04T00:00:00.000Z") },
+  ];
 
-  it("merges all nine kinds and sorts newest first", () => {
+  it("merges all ten kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -78,10 +82,12 @@ describe("buildRecentCloudItems", () => {
         drillSets,
         judgeDecisions,
         counselPanelAssessments,
+        strategyRecommendations,
       },
-      { limit: 9 },
+      { limit: 10 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "strategyRecommendation",
       "counselPanelAssessment",
       "judgeDecision",
       "speechOutcome",
@@ -173,6 +179,18 @@ describe("buildRecentCloudItems", () => {
     ]);
   });
 
+  it("includes strategy recommendations, keyed by id and labeled by matchupId", () => {
+    const items = buildRecentCloudItems({ strategyRecommendations });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "strategyRecommendation",
+        key: "strategyRecommendation-recommendation-1",
+        label: "matchup-9",
+        updatedAtMs: Date.parse("2026-09-04T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -191,8 +209,9 @@ describe("buildRecentCloudItems", () => {
         drillSets,
         judgeDecisions,
         counselPanelAssessments,
+        strategyRecommendations,
       },
-      { limit: 9 },
+      { limit: 10 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -204,6 +223,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.drillSet).toBe("/drills");
     expect(byKind.judgeDecision).toBe("/judge-decision");
     expect(byKind.counselPanelAssessment).toBe("/outcomes");
+    expect(byKind.strategyRecommendation).toBe("/strategy");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -234,6 +254,12 @@ describe("buildRecentCloudItems", () => {
       { counselPanelAssessmentHref: "/custom-outcomes-route" },
     );
     expect(overriddenCounselPanelAssessment[0]?.href).toBe("/custom-outcomes-route");
+
+    const overriddenStrategyRecommendation = buildRecentCloudItems(
+      { strategyRecommendations },
+      { strategyRecommendationHref: "/custom-strategy-route" },
+    );
+    expect(overriddenStrategyRecommendation[0]?.href).toBe("/custom-strategy-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -250,8 +276,11 @@ describe("buildRecentCloudItems", () => {
         counselPanelAssessments: [
           { id: "assessment-1", roundId: "   ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        strategyRecommendations: [
+          { id: "recommendation-1", matchupId: "   ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 9 },
+      { limit: 10 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -263,6 +292,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.drillSet).toBe("Untitled drill set");
     expect(byKind.judgeDecision).toBe("Untitled judge decision");
     expect(byKind.counselPanelAssessment).toBe("Untitled response-outcome chart");
+    expect(byKind.strategyRecommendation).toBe("Untitled recommendation");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -294,6 +324,7 @@ describe("buildRecentCloudItems", () => {
         drillSets: [],
         judgeDecisions: [],
         counselPanelAssessments: [],
+        strategyRecommendations: [],
       }),
     ).toEqual([]);
   });

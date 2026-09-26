@@ -56,6 +56,14 @@
  * a round can accumulate many) via `GET /api/counsel-panel-assessments`, but
  * the same "sync wired, discoverability not" gap applied here too.
  *
+ * A tenth kind, Scout-to-Strategy's recommendation history (`/strategy`),
+ * joined next: `saved_strategy_recommendations` already synced a signed-in
+ * user's `StrategyRecommendationRecord`s (this package's own
+ * `state/strategyRecommendations.ts`, one row per built recommendation,
+ * keyed by its own `id` since a matchup can accumulate many) via
+ * `GET /api/strategy-recommendations`, but the same "sync wired,
+ * discoverability not" gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -173,6 +181,25 @@ export type CloudCounselPanelAssessmentSummary = {
   generatedAt: number;
 };
 
+/**
+ * The subset of a `StrategyRecommendationRecord` (`state/strategyRecommendations.ts`,
+ * this package) a caller needs to list one in the merged view — mirrors
+ * `GET /api/strategy-recommendations`'s row shape (full records, like
+ * {@link CloudCounselPanelAssessmentSummary}; the strategy-recommendations
+ * route has no label-only summary mode either). Unlike a judge decision, a
+ * recommendation carries no separate display name (its result is a ranked
+ * case list plus judge-adaptation notes, not a single title) — it's keyed
+ * and shown by its `matchupId` everywhere else in the app (`StrategyPanel`'s
+ * history log), so this type is labeled by `matchupId` like
+ * {@link CloudCounselPanelAssessmentSummary} rather than by a name field.
+ */
+export type CloudStrategyRecommendationSummary = {
+  id: string;
+  matchupId: string;
+  /** Epoch milliseconds, per `StrategyRecommendationRecord.generatedAt` — there is no separate `updatedAt`. */
+  generatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -182,7 +209,8 @@ export type CloudLibraryItemKind =
   | "speechOutcome"
   | "drillSet"
   | "judgeDecision"
-  | "counselPanelAssessment";
+  | "counselPanelAssessment"
+  | "strategyRecommendation";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -226,6 +254,7 @@ export interface BuildRecentCloudItemsInput {
   drillSets?: CloudDrillSetSummary[];
   judgeDecisions?: CloudJudgeDecisionSummary[];
   counselPanelAssessments?: CloudCounselPanelAssessmentSummary[];
+  strategyRecommendations?: CloudStrategyRecommendationSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -242,6 +271,7 @@ export interface BuildRecentCloudItemsOptions {
   drillSetHref?: string;
   judgeDecisionHref?: string;
   counselPanelAssessmentHref?: string;
+  strategyRecommendationHref?: string;
 }
 
 /**
@@ -267,6 +297,7 @@ export function buildRecentCloudItems(
     drillSetHref = "/drills",
     judgeDecisionHref = "/judge-decision",
     counselPanelAssessmentHref = "/outcomes",
+    strategyRecommendationHref = "/strategy",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -351,6 +382,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(assessment.generatedAt),
     }));
 
+  const strategyRecommendationItems: CloudLibraryItem[] = (input.strategyRecommendations ?? [])
+    .slice(0, perKindLimit)
+    .map((recommendation) => ({
+      kind: "strategyRecommendation",
+      key: `strategyRecommendation-${recommendation.id}`,
+      href: strategyRecommendationHref,
+      label: recommendation.matchupId.trim() || "Untitled recommendation",
+      updatedAtMs: parseCloudTimestamp(recommendation.generatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -361,6 +402,7 @@ export function buildRecentCloudItems(
     ...drillSetItems,
     ...judgeDecisionItems,
     ...counselPanelAssessmentItems,
+    ...strategyRecommendationItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
