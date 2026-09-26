@@ -5,6 +5,7 @@ import {
   parseCloudTimestamp,
   type CloudDebateSummary,
   type CloudDocumentSummary,
+  type CloudDrillSetSummary,
   type CloudSpeechOutcomeSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
@@ -53,9 +54,23 @@ describe("buildRecentCloudItems", () => {
   const speechOutcomes: CloudSpeechOutcomeSummary[] = [
     { id: "video-1::1AR::flow", speechKey: "1AR", savedAt: Date.parse("2026-09-01T00:00:00.000Z") },
   ];
+  const drillSets: CloudDrillSetSummary[] = [
+    { roundId: "round-9-drills", updatedAt: Date.parse("2026-08-25T00:00:00.000Z") },
+  ];
 
-  it("merges all six kinds and sorts newest first", () => {
-    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds, debates, speechOutcomes });
+  it("merges all seven kinds and sorts newest first", () => {
+    const items = buildRecentCloudItems(
+      {
+        documents,
+        flows,
+        rounds,
+        wordCountRounds,
+        debates,
+        speechOutcomes,
+        drillSets,
+      },
+      { limit: 7 },
+    );
     expect(items.map((i) => i.kind)).toEqual([
       "speechOutcome",
       "wordCountRound",
@@ -63,6 +78,7 @@ describe("buildRecentCloudItems", () => {
       "round",
       "document",
       "debate",
+      "drillSet",
     ]);
   });
 
@@ -104,6 +120,23 @@ describe("buildRecentCloudItems", () => {
     ]);
   });
 
+  it("includes drill sets, keyed and labeled by roundId", () => {
+    const items = buildRecentCloudItems({ drillSets });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "drillSet",
+        key: "drillSet-round-9-drills",
+        label: "round-9-drills",
+        updatedAtMs: Date.parse("2026-08-25T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a drill set with no updatedAt as timestamp 0 rather than throwing", () => {
+    const items = buildRecentCloudItems({ drillSets: [{ roundId: "round-1" }] });
+    expect(items[0]?.updatedAtMs).toBe(0);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -111,7 +144,18 @@ describe("buildRecentCloudItems", () => {
   });
 
   it("defaults hrefs per kind and lets a caller override them", () => {
-    const items = buildRecentCloudItems({ documents, flows, rounds, wordCountRounds, debates, speechOutcomes });
+    const items = buildRecentCloudItems(
+      {
+        documents,
+        flows,
+        rounds,
+        wordCountRounds,
+        debates,
+        speechOutcomes,
+        drillSets,
+      },
+      { limit: 7 },
+    );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
     expect(byKind.flow).toBe("/debate");
@@ -119,6 +163,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.wordCountRound).toBe("/word-count");
     expect(byKind.debate).toBe("/versus-ai");
     expect(byKind.speechOutcome).toBe("/videos");
+    expect(byKind.drillSet).toBe("/drills");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -134,17 +179,24 @@ describe("buildRecentCloudItems", () => {
       { speechOutcomeHref: "/custom-outcome-route" },
     );
     expect(overriddenSpeechOutcome[0]?.href).toBe("/custom-outcome-route");
+
+    const overriddenDrillSet = buildRecentCloudItems({ drillSets }, { drillSetHref: "/custom-drills-route" });
+    expect(overriddenDrillSet[0]?.href).toBe("/custom-drills-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
-    const items = buildRecentCloudItems({
-      documents: [{ id: 1, title: "   ", updatedAt: "2026-08-30T00:00:00.000Z" }],
-      flows: [{ clientId: 2, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
-      rounds: [{ clientId: 3, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
-      wordCountRounds: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
-      debates: [{ id: "debate-1", topic: "  ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") / 1000 }],
-      speechOutcomes: [{ id: "outcome-1", speechKey: "  ", savedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
-    });
+    const items = buildRecentCloudItems(
+      {
+        documents: [{ id: 1, title: "   ", updatedAt: "2026-08-30T00:00:00.000Z" }],
+        flows: [{ clientId: 2, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
+        rounds: [{ clientId: 3, label: "", updatedAt: "2026-08-30T00:00:00.000Z" }],
+        wordCountRounds: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        debates: [{ id: "debate-1", topic: "  ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") / 1000 }],
+        speechOutcomes: [{ id: "outcome-1", speechKey: "  ", savedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        drillSets: [{ roundId: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+      },
+      { limit: 7 },
+    );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
     expect(byKind.flow).toBe("Untitled flow");
@@ -152,6 +204,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.wordCountRound).toBe("Untitled round");
     expect(byKind.debate).toBe("Untitled debate");
     expect(byKind.speechOutcome).toBe("Untitled speech outcome");
+    expect(byKind.drillSet).toBe("Untitled drill set");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -180,6 +233,7 @@ describe("buildRecentCloudItems", () => {
         wordCountRounds: [],
         debates: [],
         speechOutcomes: [],
+        drillSets: [],
       }),
     ).toEqual([]);
   });
