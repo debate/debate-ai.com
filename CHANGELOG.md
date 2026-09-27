@@ -1,6 +1,111 @@
 
 ### Completed
 
+- **💬 Wire the Contributions Feed into the comment system, closing the one
+  unreachable `resourceType` the comments feature had shipped with.** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all linked
+  to `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. Rather than re-auditing that
+  system from scratch, went looking across the rest of the app for a
+  synced-but-invisible or built-but-unreachable surface, the same shape as
+  the last several fixes here. Found one in a completely different feature:
+  `packages/debate-comments/src/types.ts`'s `COMMENT_RESOURCE_TYPES` names
+  five kinds of thing a comment can hang off — `"video"`, `"file"`,
+  `"lecture"`, `"contribution"`, `"thread"` — and the API route's own doc
+  comment (`apps/debate-ai.com/app/api/comments/route.ts`) spells out the
+  same intent ("a lecture page and a card contribution all read and write
+  the same rows"). In practice only two were ever mounted anywhere:
+  `"video"` (`VideoWatchPage.tsx`) and `"thread"` (the forums feature,
+  `ForumThreadView.tsx`). `"lecture"` turned out not to be a real gap on
+  inspection — a lecture is just a `videos` row with `source: "lecture"`,
+  rendered through the same `VideoWatchPage.tsx` that already mounts
+  `resourceType="video"`. `"contribution"` was the real, clean gap:
+  `ContributionsFeedPanel.tsx` (`/cards/contributions`) renders every
+  submitted `AttributedContribution` with Like/Save/Endorse actions, but
+  had no discussion thread at all, despite the comments API already
+  accepting `resourceType=contribution` and the DB already storing rows
+  under it — reachable by URL, invisible in the UI. `"file"` has no single
+  obvious page it maps to (the closest candidate, `/api/doc/uploads`, is a
+  private pass-through to a signed-in user's own research uploads on a
+  third-party origin, not a public surface a comment thread belongs on) —
+  left as a named follow-up rather than guessing which upload surface it
+  should mean.
+
+  Mounted `debate-comments`' `<CommentSection resourceType="contribution"
+  resourceId={entry.id} />` on each feed entry, behind a per-entry
+  "Comments" / "Hide comments" toggle (`expandedCommentIds`, a `Set<string>`
+  of expanded entry ids) rather than unconditionally on every row: the feed
+  can list many contributions at once, and `CommentSection` fetches its own
+  thread on mount, so mounting one per row regardless of whether anyone
+  asked to see it would fire a request per visible entry. `entry.id` is
+  already a stable id assigned once at submission
+  (`` `${kind}-${contributorId}-${Date.now()}` ``), so it doubles as the
+  comment thread's `resourceId` with no reshaping needed. No backend or
+  schema changes: `/api/comments`, `getCommentThread`/`insertComment`, and
+  the `comments` D1 table are already fully generic over `resourceType`.
+  Added `debate-comments: "workspace:*"` to
+  `packages/debate-search-evidence/package.json`'s dependencies, mirroring
+  exactly what `debate-videos`' own `package.json` already does for the
+  same import. Hand-patched `bun.lock` with just that one added dependency
+  line rather than committing a fresh `bun install`'s full output: this
+  sandbox has no checkout of the `debate-rankings`/`debate-tournaments-tabroom`/
+  `debate-editor-cm` git submodules (see below), so a real `bun install` here
+  prunes their workspace entries from the lockfile as a side effect — a
+  680-line unrelated diff that would break the lockfile for a contributor or
+  CI environment that does have those submodules checked out.
+
+  Vitest-covered:
+  `packages/debate-search-evidence/test/ContributionsFeedPanel.comments.test.tsx`
+  (new — a discussion thread is not mounted until the entry's "Comments"
+  toggle is clicked, and clicking it mounts `<CommentSection
+  aria-label="Comments">`, then clicking "Hide comments" unmounts it again).
+  Updated `packages/debate-help-docs/content/docs/features/contributions-feed.mdx`
+  to document the new toggle.
+
+  Ran the verification gate: `bun install`; `debate-research-evidence`'s own
+  `bun run test` (49 files, 1270 tests — 2 new) and `bun run typecheck`
+  (clean); `debate-comments`'s own `bun run test` (5 files, 72 tests,
+  unaffected) and `apps/debate-ai.com`'s `bun run typecheck` (clean, aside
+  from pre-existing failures confirmed unrelated below). The unscoped root
+  `bun run typecheck`/`bun run test`/`bun run build`/`bun run build:web` all
+  still fail in this sandboxed environment, for reasons confirmed
+  pre-existing by stashing this change and re-running each failing check
+  against unmodified `master`/this branch's head: (1) the uninitialized
+  `debate-rankings`/`debate-tournaments-tabroom`/`debate-editor-cm` git
+  submodules (no credentials to clone those private repos here), which also
+  take `debate-videos`/`debate-ai-web`'s bundle build down via
+  `debate-rankings-adapter`'s `../../debate-rankings/js/index` import; (2)
+  the root `bun run build` script's own `turbo build --filter='!debate-flow'`
+  errors immediately because no workspace package is actually named
+  `debate-flow` (`packages/debate-flow/package.json`'s own `name` field is
+  `debate-flow-ebb`, a pre-existing naming mismatch, not something this
+  change touched); (3) `apps/debate-ai.com/app/api/{admin/,}url-detection*`
+  (three pre-existing Drizzle column-type errors) and
+  `apps/debate-ai.com/lib/forums/__tests__/cursor.test.ts` (two pre-existing
+  possibly-null narrowing errors); (4) `lib/__tests__/docs-links-consistency.test.ts`,
+  `debate-feature-catalog`'s `feature-catalog.test.ts`, and
+  `debate-contributor-progress`'s `ContributionLeaderboardPanel.test.tsx`
+  (a pre-existing duplicate-React-copy `useRef`-on-`null` crash when that
+  package's tests run standalone) — none in this change's own dependency
+  graph, all reproduced identically before this change was applied.
+
+  **Follow-up (not in scope here):** `"file"` remains the one
+  `COMMENT_RESOURCE_TYPES` entry with no UI surface — needs a maintainer
+  decision on which upload/file page it should mean before it's
+  implementable, the same shape as the `qwksearch` credential-sync gap
+  flagged by earlier runs. The root `bun run build` script's
+  `--filter='!debate-flow'` typo (should presumably be
+  `'!debate-flow-ebb'`, the package's real name) is a real, independent
+  break in this sandboxed environment's ability to run the unscoped build
+  at all, on top of the already-documented submodule gap — worth a
+  maintainer fix, but outside this change's own scope.
+
 - **🗂️ Give Learn's Decks manager a per-deck "synced"/"pending" badge.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
