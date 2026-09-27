@@ -85,7 +85,13 @@ export async function fetchForumThreads({
   ...options
 }: ForumFeedQuery): Promise<ForumFeedResponse> {
   const request = requester(options);
-  const size = Math.min(Math.max(1, Math.floor(limit) || DEFAULT_FEED_LIMIT), MAX_FEED_LIMIT);
+  // Clamped exactly as the server clamps it, so the two never disagree about
+  // what page two is: a limit of 0 is one thread on both sides, and a nonsense
+  // one is the default on both.
+  const requested = Math.floor(Number(limit));
+  const size = Number.isFinite(requested)
+    ? Math.min(Math.max(1, requested), MAX_FEED_LIMIT)
+    : DEFAULT_FEED_LIMIT;
   const query = new URLSearchParams({ limit: String(size) });
   if (cursor) query.set("cursor", cursor);
 
