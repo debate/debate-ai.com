@@ -1,6 +1,40 @@
 
 ### Completed
 
+- **📖 Show a tool page's full "what this does" highlights, not just its one-line description.**
+  Yet another repeat of the standing autonomous-routine prompt ("integrate
+  all the tools into the UI... create user settings and link user db SQL
+  with the ability to save flows/docs/debates in SQL and link to users...
+  add tools into where needed in the UI... develop better tool UI"), and as
+  with the last several repeats, every one of that prompt's own asks was
+  already built. This run's audit (an `Explore` agent, then confirmed by
+  hand) re-verified: the `/tools` catalog, `favoriteTools`/`recentTools`
+  op-based sync, every `userSettings` column mapped to a dedicated panel, and
+  every tool surface cross-linked and consistency-tested — nothing open
+  there. Went looking instead for a still-open, one-PR-sized gap named
+  directly in `TODO.md`: "on each one have a description of what it does in
+  the panel itself -- like a mini guide." Found it was *half* done —
+  `ToolPageHeader` (the shared header ~47 standalone tool pages render)
+  already showed the `/tools` catalog's one-line `description` on the page
+  itself, sourced from `tool-groups.ts`, but not the richer `highlights`
+  bullets ("a few concrete things this tool does") the `/tools` grid card
+  shows — seeing those still meant navigating back to the catalog.
+
+  `ToolPageHeader` now also resolves and renders a tool's `highlights` (or an
+  explicit override, or `[]` to suppress it) as a collapsed-by-default "What
+  this tool does" `<details>` disclosure, right under the description —
+  collapsed so it doesn't compete with the page's real content for a
+  returning visitor, mirroring `word-count/page.tsx`'s own `<details>`
+  convention for "Manage word limit presets". Because every one of those ~47
+  pages already renders the shared header, this lands the fuller mini-guide
+  on all of them at once, with no per-page changes.
+
+  Vitest-covered (`test/components/tools/ToolPageHeader.test.tsx`, 4 cases):
+  the disclosure renders collapsed with every catalog highlight for a tool
+  that has them, is omitted for an href absent from the catalog, an explicit
+  `highlights` override is honored, and passing `highlights={[]}` suppresses
+  it even when the catalog has some.
+
 - **🗂️ Give Learn's Decks manager a per-deck "synced"/"pending" badge.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with
