@@ -10,6 +10,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
+  type CloudSprintSessionSummary,
   type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
@@ -78,8 +79,11 @@ describe("buildRecentCloudItems", () => {
   const strategyRecommendations: CloudStrategyRecommendationSummary[] = [
     { id: "strategy-1", matchupId: "matchup-9", generatedAt: Date.parse("2026-09-04T00:00:00.000Z") },
   ];
+  const sprintSessions: CloudSprintSessionSummary[] = [
+    { id: "session-1", topic: "AI regulation", title: "Saturday research push", createdAt: Date.parse("2026-09-05T00:00:00.000Z") },
+  ];
 
-  it("merges all eleven kinds and sorts newest first", () => {
+  it("merges all twelve kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -93,10 +97,12 @@ describe("buildRecentCloudItems", () => {
         counselPanelAssessments,
         roundPairings,
         strategyRecommendations,
+        sprintSessions,
       },
-      { limit: 11 },
+      { limit: 12 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "sprintSession",
       "strategyRecommendation",
       "counselPanelAssessment",
       "judgeDecision",
@@ -238,6 +244,28 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled strategy recommendation");
   });
 
+  it("includes sprint sessions, keyed by id and labeled by title", () => {
+    const items = buildRecentCloudItems({ sprintSessions });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "sprintSession",
+        key: "sprintSession-session-1",
+        label: "Saturday research push",
+        updatedAtMs: Date.parse("2026-09-05T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("labels a sprint session by topic when its title is blank, and untitled when both are", () => {
+    const items = buildRecentCloudItems({
+      sprintSessions: [
+        { id: "s1", topic: "AI regulation", title: "  ", createdAt: Date.now() },
+        { id: "s2", topic: "  ", title: "  ", createdAt: Date.now() },
+      ],
+    });
+    expect(items.map((i) => i.label)).toEqual(["AI regulation", "Untitled sprint session"]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -258,8 +286,9 @@ describe("buildRecentCloudItems", () => {
         counselPanelAssessments,
         roundPairings,
         strategyRecommendations,
+        sprintSessions,
       },
-      { limit: 11 },
+      { limit: 12 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -273,6 +302,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.counselPanelAssessment).toBe("/outcomes");
     expect(byKind.roundPairing).toBe("/briefings");
     expect(byKind.strategyRecommendation).toBe("/strategy");
+    expect(byKind.sprintSession).toBe("/research");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -315,6 +345,12 @@ describe("buildRecentCloudItems", () => {
       { strategyRecommendationHref: "/custom-strategy-route" },
     );
     expect(overriddenStrategyRecommendation[0]?.href).toBe("/custom-strategy-route");
+
+    const overriddenSprintSession = buildRecentCloudItems(
+      { sprintSessions },
+      { sprintSessionHref: "/custom-research-route" },
+    );
+    expect(overriddenSprintSession[0]?.href).toBe("/custom-research-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -337,8 +373,11 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations: [
           { id: "strategy-1", matchupId: "   ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        sprintSessions: [
+          { id: "session-1", topic: "  ", title: "  ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 11 },
+      { limit: 12 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -352,6 +391,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.counselPanelAssessment).toBe("Untitled response-outcome chart");
     expect(byKind.roundPairing).toBe("Untitled pairing");
     expect(byKind.strategyRecommendation).toBe("Untitled strategy recommendation");
+    expect(byKind.sprintSession).toBe("Untitled sprint session");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
