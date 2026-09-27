@@ -8,6 +8,7 @@ import {
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
+  type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
   type CloudRoundPairingSummary,
@@ -94,8 +95,11 @@ describe("buildRecentCloudItems", () => {
   const customOpponentPersonas: CloudCustomOpponentPersonaSummary[] = [
     { id: "persona-1", name: "Coach Amy's K bot", updatedAt: Date.parse("2026-09-08T00:00:00.000Z") },
   ];
+  const flowAnnotations: CloudFlowAnnotationSummary[] = [
+    { id: "annotation-1", note: "Drop the theory shell here", tag: "theory", createdAt: Date.parse("2026-09-09T00:00:00.000Z") },
+  ];
 
-  it("merges all fifteen kinds and sorts newest first", () => {
+  it("merges all sixteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -113,10 +117,12 @@ describe("buildRecentCloudItems", () => {
         speechSendLogEntries,
         learnDecks,
         customOpponentPersonas,
+        flowAnnotations,
       },
-      { limit: 15 },
+      { limit: 16 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "flowAnnotation",
       "customOpponentPersona",
       "learnDeck",
       "speechSendLogEntry",
@@ -341,6 +347,28 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled persona");
   });
 
+  it("includes flow annotations, keyed by id and labeled by note", () => {
+    const items = buildRecentCloudItems({ flowAnnotations });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "flowAnnotation",
+        key: "flowAnnotation-annotation-1",
+        label: "Drop the theory shell here",
+        updatedAtMs: Date.parse("2026-09-09T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("labels a flow annotation by tag when its note is blank, and untitled when both are", () => {
+    const items = buildRecentCloudItems({
+      flowAnnotations: [
+        { id: "a1", note: "  ", tag: "turn", createdAt: Date.now() },
+        { id: "a2", note: "  ", tag: undefined, createdAt: Date.now() },
+      ],
+    });
+    expect(items.map((i) => i.label)).toEqual(["turn", "Untitled annotation"]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -365,8 +393,9 @@ describe("buildRecentCloudItems", () => {
         speechSendLogEntries,
         learnDecks,
         customOpponentPersonas,
+        flowAnnotations,
       },
-      { limit: 15 },
+      { limit: 16 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -384,6 +413,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.speechSendLogEntry).toBe("/speech-documents");
     expect(byKind.learnDeck).toBe("/reason-editor");
     expect(byKind.customOpponentPersona).toBe("/practice-round");
+    expect(byKind.flowAnnotation).toBe("/annotations");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -447,6 +477,12 @@ describe("buildRecentCloudItems", () => {
       { customOpponentPersonaHref: "/custom-practice-round-route" },
     );
     expect(overriddenCustomOpponentPersona[0]?.href).toBe("/custom-practice-round-route");
+
+    const overriddenFlowAnnotation = buildRecentCloudItems(
+      { flowAnnotations },
+      { flowAnnotationHref: "/custom-annotations-route" },
+    );
+    expect(overriddenFlowAnnotation[0]?.href).toBe("/custom-annotations-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -479,8 +515,11 @@ describe("buildRecentCloudItems", () => {
           { deckId: "deck-1", name: "   ", createdAt: "2026-08-30T00:00:00.000Z" },
         ],
         customOpponentPersonas: [{ id: "persona-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        flowAnnotations: [
+          { id: "annotation-1", note: "   ", tag: undefined, createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 15 },
+      { limit: 16 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -498,6 +537,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.speechSendLogEntry).toBe("Untitled speech send");
     expect(byKind.learnDeck).toBe("Untitled deck");
     expect(byKind.customOpponentPersona).toBe("Untitled persona");
+    expect(byKind.flowAnnotation).toBe("Untitled annotation");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -535,6 +575,7 @@ describe("buildRecentCloudItems", () => {
         speechSendLogEntries: [],
         learnDecks: [],
         customOpponentPersonas: [],
+        flowAnnotations: [],
       }),
     ).toEqual([]);
   });

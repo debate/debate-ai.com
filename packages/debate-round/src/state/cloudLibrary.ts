@@ -94,7 +94,7 @@
  * flashcards" overlay.
  *
  * A fifteenth kind, Practice Round Simulator's saved custom opponent
- * personas (`/practice-round`), joined last: `saved_custom_opponent_personas`
+ * personas (`/practice-round`), joined next: `saved_custom_opponent_personas`
  * (`apps/debate-ai.com`) already synced a signed-in user's
  * `SavedCustomOpponentPersona`s (`debate-speech-writer`'s
  * `opponent-persona-library.ts`, one row per saved persona) via
@@ -103,6 +103,16 @@
  * persona authored on one device stayed invisible from this widget on
  * another, discoverable only from inside the Practice Round Simulator's own
  * persona picker.
+ *
+ * A sixteenth kind, Flow Annotations' timestamped notes (`/annotations`),
+ * joined last: `FlowAnnotation`s (`debate-round`'s own
+ * `flow/flow-annotations.ts`, persisted by `debate-practice-drills`'
+ * `state/flowAnnotations.ts`) already synced a signed-in user's annotations
+ * via `debate-data-sync`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
+ * `flowAnnotations` collection, backed by `saved_tool_records` like
+ * {@link CloudSpeechOutcomeSummary}), but the same "sync wired,
+ * discoverability not" gap applied here too — an annotation dropped on one
+ * device stayed invisible from this widget on another.
  *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
@@ -116,6 +126,7 @@ import type { SavedFlowSummary } from "./savedFlows";
 import type { SavedRoundSummary } from "./savedRounds";
 import type { RoundPairingRecord } from "./roundPairings";
 import type { StrategyRecommendationRecord } from "./strategyRecommendations";
+import type { FlowAnnotation } from "../flow/flow-annotations";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -322,6 +333,18 @@ export type CloudCustomOpponentPersonaSummary = {
   updatedAt: number;
 };
 
+/**
+ * The subset of a `FlowAnnotation` (`debate-round`'s own
+ * `flow/flow-annotations.ts`) a caller needs to list one in the merged
+ * view — mirrors `GET /api/tool-records/flowAnnotations`'s row shape (full
+ * records, like {@link CloudSpeechOutcomeSummary}; the generic tool-records
+ * route has no label-only summary mode). Imported directly rather than
+ * defined locally like the cross-package summary types above: `FlowAnnotation`
+ * already lives in this package (`flow/flow-annotations.ts`), so there's no
+ * dependency edge to avoid.
+ */
+export type CloudFlowAnnotationSummary = Pick<FlowAnnotation, "id" | "note" | "tag" | "createdAt">;
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -337,7 +360,8 @@ export type CloudLibraryItemKind =
   | "sprintSession"
   | "speechSendLogEntry"
   | "learnDeck"
-  | "customOpponentPersona";
+  | "customOpponentPersona"
+  | "flowAnnotation";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -387,6 +411,7 @@ export interface BuildRecentCloudItemsInput {
   speechSendLogEntries?: CloudSpeechSendLogSummary[];
   learnDecks?: CloudLearnDeckSummary[];
   customOpponentPersonas?: CloudCustomOpponentPersonaSummary[];
+  flowAnnotations?: CloudFlowAnnotationSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -409,6 +434,7 @@ export interface BuildRecentCloudItemsOptions {
   speechSendLogEntryHref?: string;
   learnDeckHref?: string;
   customOpponentPersonaHref?: string;
+  flowAnnotationHref?: string;
 }
 
 /**
@@ -440,6 +466,7 @@ export function buildRecentCloudItems(
     speechSendLogEntryHref = "/speech-documents",
     learnDeckHref = "/reason-editor",
     customOpponentPersonaHref = "/practice-round",
+    flowAnnotationHref = "/annotations",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -591,6 +618,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(persona.updatedAt),
     }));
 
+  const flowAnnotationItems: CloudLibraryItem[] = (input.flowAnnotations ?? [])
+    .slice(0, perKindLimit)
+    .map((annotation) => ({
+      kind: "flowAnnotation" as const,
+      key: `flowAnnotation-${annotation.id}`,
+      href: flowAnnotationHref,
+      label: annotation.note?.trim() || annotation.tag?.trim() || "Untitled annotation",
+      updatedAtMs: parseCloudTimestamp(annotation.createdAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -607,6 +644,7 @@ export function buildRecentCloudItems(
     ...speechSendLogItems,
     ...learnDeckItems,
     ...customOpponentPersonaItems,
+    ...flowAnnotationItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

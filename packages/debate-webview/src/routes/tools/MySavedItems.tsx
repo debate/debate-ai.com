@@ -42,8 +42,10 @@
  * CardMirror Learn's custom flashcard decks (`/reason-editor`) joined next —
  * already saved per-user in `saved_learn_decks`, the same gap again.
  * Practice Round Simulator's saved custom opponent personas
- * (`/practice-round`) joined last — already saved per-user in
- * `saved_custom_opponent_personas`, the same gap again.
+ * (`/practice-round`) joined next — already saved per-user in
+ * `saved_custom_opponent_personas`, the same gap again. Flow Annotations'
+ * timestamped notes (`/annotations`) joined last — already synced per-user
+ * via the generic `saved_tool_records` mechanism, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -59,7 +61,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, ListTree, PlayCircle, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, ListTree, MapPin, PlayCircle, Send, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -99,6 +101,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   learnDeck: Layers,
   // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`.
   customOpponentPersona: PlayCircle,
+  // Matches Flow Annotations' own icon in `app/tools/tool-groups.ts`.
+  flowAnnotation: MapPin,
 }
 
 export function MySavedItems() {

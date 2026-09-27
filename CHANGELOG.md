@@ -1,6 +1,86 @@
 
 ### Completed
 
+- **📍 Surface synced Flow Annotations in "My Saved Items".** Another repeat
+  of the standing autonomous-routine prompt ("integrate all the tools into
+  the UI... create user settings and link user db SQL with the ability to
+  save flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built. The last several
+  runs closed this same "sync wired, discoverability not [from the Tools
+  page]" gap by auditing the dedicated `saved_*` D1 tables against the Tools
+  page's "My Saved Items" widget's `CloudLibraryItemKind` list; that audit
+  scope wouldn't catch a kind synced through `debate-data-sync`'s *generic*
+  `TOOL_RECORD_COLLECTIONS`/`saved_tool_records` mechanism instead of its
+  own dedicated table (only `speechOutcomeRuns` had been carried over that
+  way so far). Cross-checked the full `TOOL_RECORD_COLLECTIONS` catalog
+  against the widget instead this time, and found one more real gap:
+  `flowAnnotations` (`debate-round`'s own `FlowAnnotation` model,
+  `flow/flow-annotations.ts`, persisted by `debate-practice-drills`'
+  `state/flowAnnotations.ts`) already synced a signed-in user's timestamped
+  flow annotations via `GET /api/tool-records/flowAnnotations` — fully
+  wired and already covered by its own `tool-record-sync-wiring.test.ts`
+  suite per `flow-annotations.mdx`'s "Known gaps" — but an annotation
+  dropped on one device stayed invisible from this widget on another,
+  discoverable only from inside `/annotations`' own panel. (The other
+  remaining `TOOL_RECORD_COLLECTIONS` entries with a plausible "my saved
+  item" shape — `opponentTeamProfiles`/`judgeProfiles` — carry no
+  timestamp field of their own to sort or label a recency card by, unlike
+  every other kind this widget surfaces, so they're left for a follow-up
+  that would need a real product decision about how to label/sort a
+  timestamp-less aggregate profile rather than a small, reviewable slice.)
+
+  Added a sixteenth `CloudLibraryItemKind`, `"flowAnnotation"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudFlowAnnotationSummary` (`Pick<FlowAnnotation, "id" | "note" | "tag" |
+  "createdAt">`, imported directly rather than defined locally since
+  `FlowAnnotation` already lives in this package), a `flowAnnotationItems`
+  merge branch keyed by `id` and labeled by `note`, falling back to `tag`
+  and then "Untitled annotation" when both are blank, and
+  `listCloudFlowAnnotations` — a local raw `fetch` against
+  `/api/tool-records/flowAnnotations`, matching every other source's
+  "degrade to null on a 401/non-2xx/network error" convention rather than
+  throwing. Defaults to `/annotations`, overridable via
+  `flowAnnotationHref` like every other kind. Wired a `MapPin` icon into
+  `MySavedItems.tsx`'s `KIND_ICON` map, matching Flow Annotations' own icon
+  in `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order (now sixteen kinds), label/href defaults and overrides, the
+  note-then-tag-then-untitled fallback chain, the empty-input case, and the
+  widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install`, `debate-round`'s own
+  `bun run test` (72 files, 1388 tests — 2 new) and `bun run typecheck`
+  (clean), `debate-webview`'s own `bun run test` (41 files, 430 tests, all
+  passing) and `bun run typecheck` (clean of new errors — see below), and
+  the root `bun run test` (594 files, 10297 tests — 6 files failing, none in
+  `debate-round`/`debate-webview`, same six as every recent run of this
+  routine). Those 6 failures, and the corresponding `bun run typecheck`
+  failures in `debate-rankings-adapter` and every package that transitively
+  depends on it (including `debate-webview`'s own `bun run typecheck`), all
+  trace to the same pre-existing root cause confirmed again this run (via
+  `git stash`, reproducing the identical `debate-rankings-adapter`
+  typecheck errors on the unmodified branch): the `debate-rankings`/
+  `debate-tournaments-tabroom`/`debate-editor-cm` git submodules are not
+  checked out in this sandboxed environment (no credentials to clone those
+  private repos). `bun install` had again rewritten `bun.lock` to drop the
+  uninitialized submodule entries as a side effect of running in this
+  submodule-less sandbox; reverted that unrelated lockfile churn with
+  `git checkout -- bun.lock` before committing. No `lint`/`format:check`
+  script exists anywhere in this repo, so that step was skipped as not
+  applicable.
+
+  **Follow-up (not in scope here):** the uninitialized git submodules
+  remain the same standing environment/CI-runner gap earlier runs recorded,
+  not a code defect. `opponentTeamProfiles`/`judgeProfiles` (see above) are
+  candidates for a future "My Saved Items" slice once there's a product
+  decision on labeling a timestamp-less aggregate profile card. The
+  `qwksearch` file-sources credential-sync gap and the
+  `dailyMissionResults`/`challengeWinEvents` composite-key gap flagged by
+  earlier runs remain open for the reasons already recorded.
+
 - **🤖 Surface synced custom opponent personas in "My Saved Items".** Another
   repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability
