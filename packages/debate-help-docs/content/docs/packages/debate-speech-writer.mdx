@@ -1,0 +1,51 @@
+---
+title: "debate-speech-writer"
+---
+
+# debate-speech-writer
+
+The AI prompt library behind the FIAT speech and flow features, plus the batch
+quote-analysis helper that scores parsed cards.
+
+```ts
+import {
+  speechToFlowPrompt,       // speech document -> a new flow column
+  speechToResponsePrompt,   // opponent speech -> response options
+  judgeDecisionPrompt,      // flow -> aff-wins and neg-wins decision outlines
+  findFlawsPrompt,          // quote -> warrants, gaps and overstatements
+  textToHighlightedPrompt,  // card text -> highlight/underline spans
+  topicToResearchOutlinePrompt, // topic -> research outline of keyphrases
+} from "debate-speech-writer"
+```
+
+`analyzeQuotes()` walks an outline of parsed cards, sends each card's HTML through
+`findFlawsPrompt`, and writes the summaries, warrants, scores and flaws back onto the
+outline entries.
+
+Also exports `JudgeProfilesPanel`, `JudgeParadigmPickerPanel`, `OpponentPersonaPickerPanel`,
+and `CoachMaterialsPanel`.
+
+## Package layout
+
+Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+```
+debate-speech-writer/
+├── src/
+│   ├── analysis/     # batch LLM analysis over parsed cards
+│   ├── coach/        # team coach-material library, grounded prompt, real AI Q&A call
+│   ├── judge/        # judge-paradigm registry, judge-profile aggregation
+│   ├── opponent/     # AI practice-opponent persona registry
+│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel, OpponentPersonaPickerPanel, CoachMaterialsPanel
+│   ├── prompts/      # the prompt library
+│   ├── state/        # localStorage-backed persistence stores
+│   └── index.ts      # public entry point
+└── test/             # Vitest suites asserting the prompt contracts and state helpers
+```
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+bun run coverage    # writes ./coverage for this package alone
+```
