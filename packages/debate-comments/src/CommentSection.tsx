@@ -35,7 +35,7 @@
  * @module CommentSection
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Loader2, MessageSquare } from "lucide-react";
 
 import { CommentAvatar } from "./CommentAvatar";
@@ -81,19 +81,19 @@ export function CommentSection({
   const [error, setError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
-  // `clientOptions` is a prop, and a caller passing an object literal gives a
-  // fresh identity on every render. Depending on it directly would refetch the
-  // thread forever; a ref keeps the effect keyed on the resource alone, which
-  // is the only thing that should ever trigger a reload.
-  const clientOptionsRef = useRef(clientOptions);
-  clientOptionsRef.current = clientOptions;
-  const api = useCallback(() => clientOptionsRef.current ?? {}, []);
+  // Read out of `clientOptions` one field at a time rather than depending on the
+  // object. A caller that passes an inline literal — `<CommentSection
+  // clientOptions={{ basePath }} />` — hands a fresh object to every render, and
+  // an effect keyed on it would refetch the thread forever. The two fields are
+  // primitives, so this reloads only when the thing being talked about does.
+  const basePath = clientOptions?.basePath;
+  const fetchImpl = clientOptions?.fetchImpl;
 
   useEffect(() => {
     let cancelled = false;
 
     setLoadState("loading");
-    fetchCommentThread({ resourceType, resourceId, ...api() })
+    fetchCommentThread({ resourceType, resourceId, basePath, fetchImpl })
       .then((thread) => {
         if (cancelled) return;
         setComments(thread.comments);
@@ -113,7 +113,7 @@ export function CommentSection({
       // arrives after the move would land on the wrong video.
       cancelled = true;
     };
-  }, [resourceType, resourceId, retryToken, api]);
+  }, [resourceType, resourceId, retryToken, basePath, fetchImpl]);
 
   const total = useMemo(() => countComments(comments), [comments]);
 
@@ -124,13 +124,14 @@ export function CommentSection({
         resourceId,
         parentId,
         body,
-        ...api(),
+        basePath,
+        fetchImpl,
       });
       setComments((current) =>
         parentId ? insertReplyNode(current, parentId, created) : [created, ...current],
       );
     },
-    [resourceType, resourceId, api],
+    [resourceType, resourceId, basePath, fetchImpl],
   );
 
   const handleLike = useCallback(
@@ -151,7 +152,7 @@ export function CommentSection({
       });
 
       try {
-        const result = await toggleCommentLike(commentId, api());
+        const result = await toggleCommentLike(commentId, { basePath, fetchImpl });
         setComments((current) =>
           updateCommentNode(current, commentId, (comment) => ({
             ...comment,
@@ -164,13 +165,13 @@ export function CommentSection({
         setError(cause instanceof Error ? cause.message : "Could not update your like.");
       }
     },
-    [api],
+    [basePath, fetchImpl],
   );
 
   const handleDelete = useCallback(
     async (commentId: string) => {
       try {
-        await deleteComment(commentId, api());
+        await deleteComment(commentId, { basePath, fetchImpl });
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Could not delete your comment.");
         return;
@@ -187,7 +188,18 @@ export function CommentSection({
         })),
       );
     },
-    [clientOptions],
+    [basePath, fetchImpl],
+  );
+
+  // A row's delete action is synchronous from its point of view, so it cannot be
+  // handed `handleDelete` itself. Wrapping it once here rather than inline per
+  // row keeps every row's props referentially stable, which is what stops a
+  // delete at the bottom of a long thread from re-rendering all of it.
+  const handleDeleteRequest = useCallback(
+    (commentId: string) => {
+      void handleDelete(commentId);
+    },
+    [handleDelete],
   );
 
   return (
@@ -235,19 +247,24 @@ export function CommentSection({
         )
       )}
 
+      {/* A failed load offers a retry, because the reader has nothing to look
+          at. A failed like or delete only says so — reloading the whole thread
+          over one un-liked comment would throw away the reader's place in it. */}
       {error && (
         <p role="alert" className="mt-3 text-sm text-destructive">
           {error}{" "}
-          <button
-            type="button"
-            onClick={() => {
-              setError(null);
-              setRetryToken((token) => token + 1);
-            }}
-            className="font-medium underline"
-          >
-            Try again
-          </button>
+          {loadState === "error" && (
+            <button
+              type="button"
+              onClick={() => {
+                setError(null);
+                setRetryToken((token) => token + 1);
+              }}
+              className="font-medium underline"
+            >
+              Try again
+            </button>
+          )}
         </p>
       )}
 
@@ -281,7 +298,7 @@ export function CommentSection({
               viewerId={viewer?.id ?? null}
               onLike={handleLike}
               onReply={handlePost}
-              onDelete={(commentId) => void handleDelete(commentId)}
+              onDelete={handleDeleteRequest}
             />
           ))}
         </ul>

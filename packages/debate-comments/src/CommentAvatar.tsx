@@ -12,8 +12,8 @@
 
 import { useState } from "react";
 
-import { getInitials } from "../format";
-import { cn } from "../cn";
+import { getInitials } from "./format";
+import { cn } from "./cn";
 
 /** Deterministic tile colour, so the same person is the same colour everywhere. */
 const FALLBACK_TINTS = [

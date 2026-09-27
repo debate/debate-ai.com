@@ -28,10 +28,10 @@ import { ChevronDown, ChevronRight, Heart, MessageCircle, Trash2 } from "lucide-
 
 import { CommentAvatar } from "./CommentAvatar";
 import { CommentComposer } from "./CommentComposer";
-import { cn } from "../cn";
-import { formatAbsoluteTime, formatRelativeTime, replyToggleLabel } from "../format";
-import { countReplies } from "../tree";
-import { DELETED_COMMENT_PLACEHOLDER, MAX_REPLY_DEPTH, type Comment } from "../types";
+import { cn } from "./cn";
+import { formatAbsoluteTime, formatRelativeTime, replyToggleLabel } from "./format";
+import { countReplies } from "./tree";
+import { DELETED_COMMENT_PLACEHOLDER, MAX_REPLY_DEPTH, type Comment } from "./types";
 
 export interface CommentRowProps {
   comment: Comment;
@@ -56,8 +56,11 @@ export function CommentRow({ comment, depth, viewerId, onLike, onReply, onDelete
   const isDeleted = comment.deletedAt !== null;
   const isOwn = viewerId !== null && viewerId === comment.author.id;
   // Past the depth ceiling the reply button goes away; a reply to a reply to a
-  // reply to a reply is a new top-level comment in waiting.
-  const canReply = !isDeleted && depth < MAX_REPLY_DEPTH;
+  // reply to a reply is a new top-level comment in waiting. `depth` is
+  // zero-based and `MAX_REPLY_DEPTH` counts a top-level comment as level 1, so
+  // the deepest replyable row is the one at `MAX_REPLY_DEPTH - 2` — exactly
+  // where `resolveReplyParent` stops accepting a parent.
+  const canReply = !isDeleted && depth < MAX_REPLY_DEPTH - 1;
 
   async function handleLike() {
     if (liking || isDeleted) return;

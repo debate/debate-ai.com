@@ -8,6 +8,7 @@ import {
   parseParentId,
   parseResourceId,
   parseResourceType,
+  type CommentResourceType,
   type Parsed,
 } from "@/lib/comments/validation"
 
@@ -71,10 +72,22 @@ export const POST = withRouteErrors(
     }
 
     const { resourceType, resourceId, parentId, body } = readCreateBody(payload)
-    for (const parsed of [resourceType, resourceId, parentId, body]) {
-      if (!parsed.ok) {
-        return NextResponse.json({ error: parsed.error }, { status: 400 })
-      }
+
+    // Checked one at a time, in a fixed order, so the first thing wrong with a
+    // request is the first thing the caller is told about — a missing resource
+    // type, rather than the empty body further down the same object. Each
+    // check narrows its own value, which a loop over the results would not.
+    if (!resourceType.ok) {
+      return NextResponse.json({ error: resourceType.error }, { status: 400 })
+    }
+    if (!resourceId.ok) {
+      return NextResponse.json({ error: resourceId.error }, { status: 400 })
+    }
+    if (!parentId.ok) {
+      return NextResponse.json({ error: parentId.error }, { status: 400 })
+    }
+    if (!body.ok) {
+      return NextResponse.json({ error: body.error }, { status: 400 })
     }
 
     const db = await getDBFromContext()
@@ -106,7 +119,7 @@ export const POST = withRouteErrors(
  * rather than the empty body further down the same object.
  */
 function readCreateBody(payload: unknown): {
-  resourceType: Parsed<ReturnType<typeof parseResourceType>["value"]>;
+  resourceType: Parsed<CommentResourceType>;
   resourceId: Parsed<string>;
   parentId: Parsed<string | null>;
   body: Parsed<string>;
