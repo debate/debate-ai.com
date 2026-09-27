@@ -71,6 +71,13 @@
  * assessments, a recommendation carries no separate display name of its
  * own, so it's labeled by `matchupId`.
  *
+ * A twelfth kind, Team Collaboration Mode's scheduled Topic Sprint sessions
+ * (`/research`, `TopicSprintPanel`), joined next: `saved_sprint_sessions`
+ * (`debate-team-collaboration`) already synced a signed-in user's
+ * `SprintSession`s via `GET /api/sprint-sessions`, but the same "sync
+ * wired, discoverability not" gap applied here too — a session scheduled on
+ * one device stayed invisible from the tools page on another.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -223,6 +230,23 @@ export type CloudStrategyRecommendationSummary = Pick<
   "id" | "matchupId" | "generatedAt"
 >;
 
+/**
+ * The subset of a `SprintSession` (`debate-team-collaboration`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/sprint-sessions`'s
+ * row shape (full records, like {@link CloudDrillSetSummary}; the
+ * sprint-sessions route has no label-only summary mode either). Defined
+ * locally rather than importing `SprintSession` itself, matching
+ * {@link CloudDebateSummary}'s own local-type convention: `debate-round`
+ * doesn't depend on `debate-team-collaboration` (nor the reverse).
+ */
+export type CloudSprintSessionSummary = {
+  id: string;
+  topic: string;
+  title: string;
+  /** Epoch milliseconds, per `SprintSession.createdAt` — there is no separate `updatedAt`. */
+  createdAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -234,7 +258,8 @@ export type CloudLibraryItemKind =
   | "judgeDecision"
   | "counselPanelAssessment"
   | "roundPairing"
-  | "strategyRecommendation";
+  | "strategyRecommendation"
+  | "sprintSession";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -280,6 +305,7 @@ export interface BuildRecentCloudItemsInput {
   counselPanelAssessments?: CloudCounselPanelAssessmentSummary[];
   roundPairings?: CloudRoundPairingSummary[];
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
+  sprintSessions?: CloudSprintSessionSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -298,6 +324,7 @@ export interface BuildRecentCloudItemsOptions {
   counselPanelAssessmentHref?: string;
   roundPairingHref?: string;
   strategyRecommendationHref?: string;
+  sprintSessionHref?: string;
 }
 
 /**
@@ -325,6 +352,7 @@ export function buildRecentCloudItems(
     counselPanelAssessmentHref = "/outcomes",
     roundPairingHref = "/briefings",
     strategyRecommendationHref = "/strategy",
+    sprintSessionHref = "/research",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -436,6 +464,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(recommendation.generatedAt),
     }));
 
+  const sprintSessionItems: CloudLibraryItem[] = (input.sprintSessions ?? [])
+    .slice(0, perKindLimit)
+    .map((session) => ({
+      kind: "sprintSession" as const,
+      key: `sprintSession-${session.id}`,
+      href: sprintSessionHref,
+      label: session.title.trim() || session.topic.trim() || "Untitled sprint session",
+      updatedAtMs: parseCloudTimestamp(session.createdAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -448,6 +486,7 @@ export function buildRecentCloudItems(
     ...counselPanelAssessmentItems,
     ...roundPairingItems,
     ...strategyRecommendationItems,
+    ...sprintSessionItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

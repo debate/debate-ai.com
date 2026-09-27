@@ -82,6 +82,14 @@
  * account-sync route directly instead of that module's local-storage-first
  * read helpers.
  *
+ * Team Collaboration Mode's scheduled Topic Sprint sessions
+ * (`/api/sprint-sessions`) join next, for the same cross-package reason as
+ * word-count rounds and Practice vs AI debates: `debate-team-collaboration`
+ * doesn't depend on `debate-round` (and `debate-round` doesn't depend on it
+ * either), so `listCloudSprintSessions` below is a local raw `fetch` against
+ * that route's bare `SprintSession[]` body rather than importing that
+ * package's own `lib/sprint-sessions-client.ts`.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -98,6 +106,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
+  type CloudSprintSessionSummary,
   type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
 } from "./cloudLibrary";
@@ -250,9 +259,28 @@ async function listCloudStrategyRecommendations(
 }
 
 /**
+ * Lists the current user's synced Team Collaboration Mode sprint sessions.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/sprint-sessions`'s own auth behavior), a non-2xx response, or a
+ * network error — same "no items of that kind" convention as the other
+ * sources above.
+ */
+async function listCloudSprintSessions(
+  endpoint = "/api/sprint-sessions",
+): Promise<CloudSprintSessionSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSprintSessionSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
- * strategy-recommendations and merges them via `buildRecentCloudItems`. Each source resolves
+ * strategy-recommendations/sprint-sessions and merges them via `buildRecentCloudItems`. Each source resolves
  * independently and degrades to "no items of that kind" on any failure — a
  * network error, a non-2xx response, or a signed-out `401` — rather than
  * rejecting the whole call, so one flaky endpoint never blanks a widget that
@@ -271,6 +299,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     counselPanelAssessments,
     roundPairings,
     strategyRecommendations,
+    sprintSessions,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -283,6 +312,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudCounselPanelAssessments(),
     listSavedRoundPairings().catch(() => null),
     listCloudStrategyRecommendations(),
+    listCloudSprintSessions(),
   ]);
   return buildRecentCloudItems(
     {
@@ -297,6 +327,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       counselPanelAssessments: counselPanelAssessments ?? undefined,
       roundPairings: roundPairings ?? undefined,
       strategyRecommendations: strategyRecommendations ?? undefined,
+      sprintSessions: sprintSessions ?? undefined,
     },
     opts,
   );
