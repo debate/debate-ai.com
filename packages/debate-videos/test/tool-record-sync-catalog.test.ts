@@ -52,7 +52,7 @@ describe("synced tool collections", () => {
       "/briefings",
       "/opponents",
       "/judges",
-      "/paradigms",
+      "/judge-decision",
       "/summaries",
       "/outline",
       "/prep-notes",

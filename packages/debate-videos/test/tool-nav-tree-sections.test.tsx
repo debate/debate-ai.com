@@ -91,7 +91,7 @@ describe("ToolNavTree sectionIds", () => {
 
   it("closes Practice with the glossary and rankings links", () => {
     // They used to hang below the whole tree, in no section at all.
-    pathname.current = "/paradigms";
+    pathname.current = "/prep-notes";
     try {
       const html = render({ sectionIds: [PRACTICE_SECTION_ID] });
 
