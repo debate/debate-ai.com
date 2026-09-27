@@ -105,7 +105,7 @@
  * persona picker.
  *
  * A sixteenth kind, Flow Annotations' timestamped notes (`/annotations`),
- * joined last: `FlowAnnotation`s (`debate-round`'s own
+ * joined next: `FlowAnnotation`s (`debate-round`'s own
  * `flow/flow-annotations.ts`, persisted by `debate-practice-drills`'
  * `state/flowAnnotations.ts`) already synced a signed-in user's annotations
  * via `debate-data-sync`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
@@ -113,6 +113,16 @@
  * {@link CloudSpeechOutcomeSummary}), but the same "sync wired,
  * discoverability not" gap applied here too — an annotation dropped on one
  * device stayed invisible from this widget on another.
+ *
+ * A seventeenth kind, CardMirror's Quick Cards reusable-snippet library
+ * (`/reason-editor`, same editor-internal home as documents and learn
+ * decks), joined last: `QuickCard`s (`debate-editor`'s own
+ * `editor/quick-cards-store.ts`) already synced a signed-in user's cards via
+ * `GET /api/quick-cards` (`saved_quick_cards`, one row per card keyed by the
+ * card's own `id` like {@link CloudLearnDeckSummary}), but the same "sync
+ * wired, discoverability not [from the Tools page]" gap applied here too — a
+ * card clipped on one device stayed invisible from this widget on another,
+ * discoverable only from inside the editor's own quick-card search/manage UI.
  *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
@@ -345,6 +355,21 @@ export type CloudCustomOpponentPersonaSummary = {
  */
 export type CloudFlowAnnotationSummary = Pick<FlowAnnotation, "id" | "note" | "tag" | "createdAt">;
 
+/**
+ * The subset of a `QuickCard` (`debate-editor`) a caller needs to list one in
+ * the merged view — mirrors `GET /api/quick-cards`'s row shape (full
+ * records, like {@link CloudLearnDeckSummary}; the quick-cards route has no
+ * label-only summary mode either). Defined locally rather than importing
+ * `QuickCard` itself, matching {@link CloudLearnDeckSummary}'s own
+ * local-type convention: `debate-round` doesn't depend on `debate-editor`
+ * (nor the reverse).
+ */
+export type CloudQuickCardSummary = {
+  id: string;
+  name: string;
+  updatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -361,7 +386,8 @@ export type CloudLibraryItemKind =
   | "speechSendLogEntry"
   | "learnDeck"
   | "customOpponentPersona"
-  | "flowAnnotation";
+  | "flowAnnotation"
+  | "quickCard";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -412,6 +438,7 @@ export interface BuildRecentCloudItemsInput {
   learnDecks?: CloudLearnDeckSummary[];
   customOpponentPersonas?: CloudCustomOpponentPersonaSummary[];
   flowAnnotations?: CloudFlowAnnotationSummary[];
+  quickCards?: CloudQuickCardSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -435,6 +462,7 @@ export interface BuildRecentCloudItemsOptions {
   learnDeckHref?: string;
   customOpponentPersonaHref?: string;
   flowAnnotationHref?: string;
+  quickCardHref?: string;
 }
 
 /**
@@ -467,6 +495,7 @@ export function buildRecentCloudItems(
     learnDeckHref = "/reason-editor",
     customOpponentPersonaHref = "/practice-round",
     flowAnnotationHref = "/annotations",
+    quickCardHref = "/reason-editor",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -628,6 +657,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(annotation.createdAt),
     }));
 
+  const quickCardItems: CloudLibraryItem[] = (input.quickCards ?? [])
+    .slice(0, perKindLimit)
+    .map((card) => ({
+      kind: "quickCard" as const,
+      key: `quickCard-${card.id}`,
+      href: quickCardHref,
+      label: card.name.trim() || "Untitled quick card",
+      updatedAtMs: parseCloudTimestamp(card.updatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -645,6 +684,7 @@ export function buildRecentCloudItems(
     ...learnDeckItems,
     ...customOpponentPersonaItems,
     ...flowAnnotationItems,
+    ...quickCardItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

@@ -110,9 +110,14 @@
  * `round/custom-opponent-persona-library-client.ts`.
  *
  * Flow Annotations' timestamped notes (`/api/tool-records/flowAnnotations`)
- * join last, for the same reason as video speech-outcome runs:
+ * join next, for the same reason as video speech-outcome runs:
  * `listCloudFlowAnnotations` below is a local raw `fetch` against the
  * generic tool-records route's bare `FlowAnnotation[]` body.
+ *
+ * CardMirror's Quick Cards (`/api/quick-cards`) join last, for the same
+ * reason as learn decks: `listCloudQuickCards` below is a local raw `fetch`
+ * against that route's bare `QuickCard[]` body rather than importing
+ * `debate-editor`'s own `editor/quick-cards-client.ts`.
  *
  * @module state/cloudLibraryClient
  */
@@ -132,6 +137,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
   type CloudLibraryItem,
+  type CloudQuickCardSummary,
   type CloudSpeechOutcomeSummary,
   type CloudSpeechSendLogSummary,
   type CloudSprintSessionSummary,
@@ -378,10 +384,26 @@ async function listCloudFlowAnnotations(
 }
 
 /**
+ * Lists the current user's synced CardMirror Quick Cards. Degrades to `null`
+ * on a signed-out `401` (matching `GET /api/quick-cards`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of that
+ * kind" convention as the other sources above.
+ */
+async function listCloudQuickCards(endpoint = "/api/quick-cards"): Promise<CloudQuickCardSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudQuickCardSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
  * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks/
- * custom-opponent-personas/flow-annotations and merges them via
+ * custom-opponent-personas/flow-annotations/quick-cards and merges them via
  * `buildRecentCloudItems`. Each source resolves independently and degrades to
  * "no items of that kind" on any failure — a network error, a non-2xx
  * response, or a signed-out `401` — rather than rejecting the whole call, so
@@ -406,6 +428,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     learnDecks,
     customOpponentPersonas,
     flowAnnotations,
+    quickCards,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -423,6 +446,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudLearnDecks(),
     listCloudCustomOpponentPersonas(),
     listCloudFlowAnnotations(),
+    listCloudQuickCards(),
   ]);
   return buildRecentCloudItems(
     {
@@ -442,6 +466,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       learnDecks: learnDecks ?? undefined,
       customOpponentPersonas: customOpponentPersonas ?? undefined,
       flowAnnotations: flowAnnotations ?? undefined,
+      quickCards: quickCards ?? undefined,
     },
     opts,
   );

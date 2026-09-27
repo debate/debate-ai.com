@@ -11,6 +11,7 @@ import {
   type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
+  type CloudQuickCardSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
   type CloudSpeechSendLogSummary,
@@ -98,8 +99,11 @@ describe("buildRecentCloudItems", () => {
   const flowAnnotations: CloudFlowAnnotationSummary[] = [
     { id: "annotation-1", note: "Drop the theory shell here", tag: "theory", createdAt: Date.parse("2026-09-09T00:00:00.000Z") },
   ];
+  const quickCards: CloudQuickCardSummary[] = [
+    { id: "card-1", name: "Uniqueness overview", updatedAt: Date.parse("2026-09-10T00:00:00.000Z") },
+  ];
 
-  it("merges all sixteen kinds and sorts newest first", () => {
+  it("merges all seventeen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -118,10 +122,12 @@ describe("buildRecentCloudItems", () => {
         learnDecks,
         customOpponentPersonas,
         flowAnnotations,
+        quickCards,
       },
-      { limit: 16 },
+      { limit: 17 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "quickCard",
       "flowAnnotation",
       "customOpponentPersona",
       "learnDeck",
@@ -369,6 +375,25 @@ describe("buildRecentCloudItems", () => {
     expect(items.map((i) => i.label)).toEqual(["turn", "Untitled annotation"]);
   });
 
+  it("includes quick cards, keyed by id and labeled by name", () => {
+    const items = buildRecentCloudItems({ quickCards });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "quickCard",
+        key: "quickCard-card-1",
+        label: "Uniqueness overview",
+        updatedAtMs: Date.parse("2026-09-10T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a quick card with a blank name as untitled", () => {
+    const items = buildRecentCloudItems({
+      quickCards: [{ id: "card-2", name: "   ", updatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled quick card");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -394,8 +419,9 @@ describe("buildRecentCloudItems", () => {
         learnDecks,
         customOpponentPersonas,
         flowAnnotations,
+        quickCards,
       },
-      { limit: 16 },
+      { limit: 17 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -414,6 +440,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.learnDeck).toBe("/reason-editor");
     expect(byKind.customOpponentPersona).toBe("/practice-round");
     expect(byKind.flowAnnotation).toBe("/annotations");
+    expect(byKind.quickCard).toBe("/reason-editor");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -483,6 +510,9 @@ describe("buildRecentCloudItems", () => {
       { flowAnnotationHref: "/custom-annotations-route" },
     );
     expect(overriddenFlowAnnotation[0]?.href).toBe("/custom-annotations-route");
+
+    const overriddenQuickCard = buildRecentCloudItems({ quickCards }, { quickCardHref: "/custom-reason-editor-route" });
+    expect(overriddenQuickCard[0]?.href).toBe("/custom-reason-editor-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -518,8 +548,9 @@ describe("buildRecentCloudItems", () => {
         flowAnnotations: [
           { id: "annotation-1", note: "   ", tag: undefined, createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        quickCards: [{ id: "card-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       },
-      { limit: 16 },
+      { limit: 17 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -538,6 +569,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.learnDeck).toBe("Untitled deck");
     expect(byKind.customOpponentPersona).toBe("Untitled persona");
     expect(byKind.flowAnnotation).toBe("Untitled annotation");
+    expect(byKind.quickCard).toBe("Untitled quick card");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -576,6 +608,7 @@ describe("buildRecentCloudItems", () => {
         learnDecks: [],
         customOpponentPersonas: [],
         flowAnnotations: [],
+        quickCards: [],
       }),
     ).toEqual([]);
   });

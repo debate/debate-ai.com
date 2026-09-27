@@ -44,8 +44,11 @@
  * Practice Round Simulator's saved custom opponent personas
  * (`/practice-round`) joined next — already saved per-user in
  * `saved_custom_opponent_personas`, the same gap again. Flow Annotations'
- * timestamped notes (`/annotations`) joined last — already synced per-user
+ * timestamped notes (`/annotations`) joined next — already synced per-user
  * via the generic `saved_tool_records` mechanism, the same gap again.
+ * CardMirror's Quick Cards reusable-snippet library (`/reason-editor`)
+ * joined last — already saved per-user in `saved_quick_cards`, the same gap
+ * again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -61,7 +64,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, ListTree, MapPin, PlayCircle, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, ListTree, MapPin, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -103,6 +106,9 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   customOpponentPersona: PlayCircle,
   // Matches Flow Annotations' own icon in `app/tools/tool-groups.ts`.
   flowAnnotation: MapPin,
+  // No standalone /tools entry to match — Quick Cards are a feature of the
+  // editor's clip/search/manage UI, not a tool of its own.
+  quickCard: Scissors,
 }
 
 export function MySavedItems() {
