@@ -55,11 +55,18 @@ describe("parseThreadTitle", () => {
     );
   });
 
-  it("counts the title after trimming, not before", () => {
-    // Otherwise padding with spaces is a way around the limit: the stored title
-    // is the trimmed one, so the limit has to be checked against it.
-    const padded = `${"t".repeat(MAX_THREAD_TITLE_LENGTH)}   `;
-    expect(parseThreadTitle(padded).ok).toBe(false);
+  it("measures the title it stores, not the one it was handed", () => {
+    // Padding is not a way around the limit, because the limit is checked
+    // against the trimmed title — and the trimmed title is what is stored, so
+    // there is nothing hidden in the padding to get around it with.
+    const padded = `  ${"t".repeat(MAX_THREAD_TITLE_LENGTH)}   `;
+    expect(parseThreadTitle(padded)).toEqual({
+      ok: true,
+      value: "t".repeat(MAX_THREAD_TITLE_LENGTH),
+    });
+
+    const overLimit = `  ${"t".repeat(MAX_THREAD_TITLE_LENGTH + 1)}  `;
+    expect(parseThreadTitle(overLimit).ok).toBe(false);
   });
 });
 

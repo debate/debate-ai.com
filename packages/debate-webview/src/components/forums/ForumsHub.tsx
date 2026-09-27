@@ -58,7 +58,7 @@ export function ForumsHub() {
       })
       .catch((cause: unknown) => {
         if (cancelled) return;
-        setError(cause instanceof Error ? cause.message : "Could not load the forum.");
+        setError(cause instanceof Error ? cause.message : "Could not load the latest news.");
         setLoadState("error");
       });
 
@@ -131,7 +131,7 @@ export function ForumsHub() {
       {loadState === "loading" ? (
         <div className="flex items-center gap-2 py-8 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-          Loading the forum…
+          Loading the latest news…
         </div>
       ) : null}
 

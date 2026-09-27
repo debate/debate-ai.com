@@ -140,8 +140,8 @@ describe("the terms of service page", () => {
   });
 });
 
-describe("the forums", () => {
-  it("are a sidebar route, so opening a thread from the feed keeps the nav", () => {
+describe("Latest News", () => {
+  it("is a sidebar route, so opening a thread from the feed keeps the nav", () => {
     expect(TOOL_SIDEBAR_HREFS.has("/forums")).toBe(true);
     expect(isGenericToolSidebarRoute("/forums")).toBe(true);
     // A thread page is a detail route under an already-listed parent, matched

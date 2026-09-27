@@ -98,7 +98,7 @@ export async function fetchForumThreads({
   return request<ForumFeedResponse>(
     `?${query.toString()}`,
     undefined,
-    "Could not load the forum.",
+    "Could not load the latest news.",
   );
 }
 

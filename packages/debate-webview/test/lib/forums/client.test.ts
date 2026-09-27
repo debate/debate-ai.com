@@ -98,7 +98,7 @@ describe("fetchForumThreads", () => {
   it("falls back to its own wording when the error body is not JSON", async () => {
     const { impl } = stubFetch(null, { ok: false, status: 502, text: "not json" });
 
-    await expect(fetchForumThreads({ fetchImpl: impl })).rejects.toThrow("Could not load the forum.");
+    await expect(fetchForumThreads({ fetchImpl: impl })).rejects.toThrow("Could not load the latest news.");
   });
 });
 
