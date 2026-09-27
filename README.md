@@ -1,5 +1,6 @@
 <!-- template-git-repo:badges:start -->
 <p align="center">
+    <img src="https://i.imgur.com/mVdcP7Y.png" width="800px" />    <br />   
     <a href="https://doi.org/10.5281/zenodo.20320435"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320435.svg" alt="DOI"></a>
       <a href="https://doi.org/10.5281/zenodo.20320093"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320093.svg" alt="DOI" /></a>
   <a href="https://doi.org/10.5281/zenodo.20517983"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20517983.svg" alt="DOI"></a>
@@ -36,8 +37,6 @@
     <a href="https://debate-ai.com/"><img  height="20px" src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
     <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img  height="20px" src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
     <a href="https://www.tabroom.com/"><img height="20px" src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tournaments"></a>
-    <br />
-    <img src="https://i.imgur.com/c3mT4oo.png" width="800px" />    <br />    <br />
     <img src="https://i.imgur.com/VbJF0Bx.png" width="300">
 </p>
 
