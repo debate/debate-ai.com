@@ -1740,6 +1740,52 @@ export const debateCards = sqliteTable(
 
 export type DebateCardRow = typeof debateCards.$inferSelect;
 
+// Caselist documents — full DOCX files unpacked from openCaselist bulk archives.
+// Each document retains its school/team provenance from the archive path and its
+// converted HTML content. This enables showing "files shared by this school/team"
+// on profile pages. The id is a stable hash of the archive path so re-importing
+// the same archive upserts rather than duplicates.
+export const caselistDocuments = sqliteTable(
+  "caselist_documents",
+  {
+    id: integer("id").primaryKey(),
+    /** Stable hash of the archive path (caselist slug + entry path). */
+    pathHash: text("path_hash").notNull().unique(),
+    /** Caselist slug, e.g. `hspolicy26`. */
+    caselistSlug: text("caselist_slug").notNull(),
+    /** Caselist display label, e.g. "HS Policy 2025-26". */
+    caselistLabel: text("caselist_label").notNull(),
+    /** School folder from the archive path. */
+    school: text("school").notNull(),
+    /** Team folder under the school, nullable. */
+    team: text("team"),
+    /** Side from file name or path: "Aff" | "Neg" | null. */
+    side: text("side"),
+    /** Original file name with extension. */
+    fileName: text("file_name").notNull(),
+    /** Full archive path, e.g. `hspolicy26/Glenbrook North/Chen-Patel/1AC.docx`. */
+    archivePath: text("archive_path").notNull(),
+    /** Converted HTML content from the DOCX. */
+    html: text("html").notNull(),
+    /** Parsed cards count, when available. */
+    cardCount: integer("card_count").notNull().default(0),
+    /** ISO timestamp when this document was ingested. */
+    ingestedAt: integer("ingested_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    /** ISO timestamp of the archive this document came from. */
+    archiveDate: text("archive_date"),
+  },
+  (table) => ({
+    schoolIdx: index("idx_caselist_documents_school").on(table.school),
+    teamIdx: index("idx_caselist_documents_team").on(table.team),
+    caselistSlugIdx: index("idx_caselist_documents_caselist_slug").on(table.caselistSlug),
+    pathHashIdx: uniqueIndex("idx_caselist_documents_path_hash").on(table.pathHash),
+  }),
+);
+
+export type CaselistDocumentRow = typeof caselistDocuments.$inferSelect;
+
 // One row per Parquet shard an admin has imported, so the admin panel can show
 // what the library is made of and the operator can tell a re-import from a
 // first import. Written by the same endpoint that upserts `debate_cards`;

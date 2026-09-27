@@ -1,6 +1,8 @@
 /**
- * @fileoverview Radar chart of one team's ranking profile in one division:
- * aff and neg win rates, elim aff and neg win rates, ranking and matches.
+ * @fileoverview Radar chart rendering for ranking profiles. A single reusable
+ * chart takes the six spokes of data directly, so the team profile page passes
+ * one team's {@link teamRadarData}, and the school profile page passes the
+ * averaged {@link schoolDivisionRadarData} for each division.
  * @module panels/leaderboard/profile/TeamRadarChart
  */
 
@@ -8,7 +10,7 @@
 
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts"
 import { ChartContainer, ChartTooltip, type ChartConfig } from "../../../ui/charts/chart"
-import { teamRadarData, type ProfileEntry, type TeamRadarPoint } from "./rankingProfileHelpers"
+import { type TeamRadarPoint } from "./rankingProfileHelpers"
 
 const chartConfig = {
   score: { label: "Score", color: "var(--primary)" },
@@ -27,25 +29,31 @@ function RadarTooltip({ active, payload }: { active?: boolean; payload?: { paylo
 }
 
 /**
- * Six-spoke radar for one team in one division. Every spoke runs 0–100 with
- * better toward the edge; see {@link teamRadarData} for the scaling. The stat
- * tiles beside it carry the exact numbers.
+ * Six-spoke radar for a ranking profile. Every spoke runs 0–100 with better
+ * toward the edge; see {@link teamRadarData} for the scaling. The stat tiles
+ * beside it carry the exact numbers.
  *
- * @param props.item - The team's row in that division.
+ * @param props.data - The six spokes to render.
+ * @param props.caption - Sub-caption under the chart.
+ * @param props.ariaLabel - Accessible description of the polygon's shape.
  */
-export function TeamRadarChart({ item }: { item: ProfileEntry }) {
-  const data = teamRadarData(item)
+export function TeamRadarChart({
+  data,
+  caption,
+  ariaLabel,
+}: {
+  data: TeamRadarPoint[]
+  caption: string
+  ariaLabel: string
+}) {
   return (
     <figure className="rounded-lg border bg-card p-2">
-      <figcaption className="px-1 text-xs text-muted-foreground">
-        Profile · {item.datasetLabel} (edge = best; ranking is a field percentile, matches are
-        relative to the most-played entry)
-      </figcaption>
+      <figcaption className="px-1 text-xs text-muted-foreground">{caption}</figcaption>
       <ChartContainer
         config={chartConfig}
         className="mx-auto aspect-square h-[280px] w-full max-w-[340px]"
         role="img"
-        aria-label={`${item.entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
+        aria-label={ariaLabel}
       >
         <RadarChart data={data} outerRadius="72%">
           <PolarGrid />

@@ -22,10 +22,12 @@ import {
 import {
   findSchoolEntries,
   findTeamEntries,
+  schoolDivisionRadarData,
   schoolHref,
   schoolVideoQuery,
   summarizeSchool,
   teamHref,
+  teamRadarData,
   teamVideoQuery,
   type ProfileEntry,
 } from "./rankingProfileHelpers"
@@ -89,6 +91,7 @@ function ProfileStatus({
 /** Stats and radar chart for one team in one division. */
 function TeamDivisionStats({ item }: { item: ProfileEntry }) {
   const { entry } = item
+  const data = teamRadarData(item)
   return (
     <div className="mt-4">
       <h2 className="mb-2 text-sm font-medium text-muted-foreground">
@@ -106,7 +109,11 @@ function TeamDivisionStats({ item }: { item: ProfileEntry }) {
         />
       </div>
       <div className="mt-2 max-w-md">
-        <TeamRadarChart item={item} />
+        <TeamRadarChart
+          data={data}
+          caption={`Profile · ${item.datasetLabel} (edge = best; ranking is a field percentile, matches are relative to the most-played entry)`}
+          ariaLabel={`${entry.name} radar: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
+        />
       </div>
     </div>
   )
@@ -156,6 +163,15 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
   const entries = loading ? [] : findSchoolEntries(datasets, slug)
   const summary = summarizeSchool(entries)
 
+  const divisions = entries.reduce(
+    (groups, item) => {
+      const group = groups.get(item.datasetId) ?? { datasetLabel: item.datasetLabel, items: [] as ProfileEntry[] }
+      group.items.push(item)
+      return groups.set(item.datasetId, group)
+    },
+    new Map<string, { datasetLabel: string; items: ProfileEntry[] }>(),
+  )
+
   return (
     <ProfileFrame>
       <ProfileStatus loading={loading} error={error} found={entries.length > 0} kind="school" />
@@ -186,8 +202,27 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
               label="Avg. adj. rating"
               value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}
             />
-            <Stat label="Total matches" value={summary.totalMatches} />
+          <Stat label="Total matches" value={summary.totalMatches} />
           </div>
+
+          {Array.from(divisions.values()).map((div) => {
+            const data = schoolDivisionRadarData(div.items)
+            if (data.length === 0) return null
+            return (
+              <div key={div.datasetLabel} className="mt-4">
+                <h2 className="mb-2 text-sm font-medium text-muted-foreground">
+                  {div.datasetLabel} · {div.items.length} teams
+                </h2>
+                <div className="mt-2 max-w-md">
+                  <TeamRadarChart
+                    data={data}
+                    caption={`School average · ${div.datasetLabel} (${div.items.length} teams; edge = best; ranking is a field percentile, matches relative to the most-played entry)`}
+                    ariaLabel={`School average radar · ${div.datasetLabel}: ${data.map((d) => `${d.metric} ${d.display}`).join(", ")}`}
+                  />
+                </div>
+              </div>
+            )
+          })}
 
           <div className="mt-4 rounded-lg border bg-card shadow-sm">
             <Table className="text-sm">
