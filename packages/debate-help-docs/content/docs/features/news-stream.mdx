@@ -34,5 +34,15 @@ a full two-way sync.
 
 ## Known gaps
 
-Unliking on one device doesn't clear the like on another device until that
-device's own next toggle overwrites the account row.
+~~Unliking on one device doesn't clear the like on another device until that
+device's own next toggle overwrites the account row.~~ **Fixed:**
+`mergeRemoteViewerState` (`state/newsStream.ts`) now tracks
+`lastSyncedRemoteLiked` — this browser's own account row as of its last
+successful hydrate — alongside the local liked set. On the next hydrate (a
+page load/reload; hydrate still only runs once per mount, not live), an id
+that was part of that last-known-synced snapshot but is missing from the
+fresh fetch was confirmed liked before and confirmed unliked since, so it's
+now cleared locally too. A like this browser made but hasn't pushed yet (or
+whose push failed) was never part of a synced snapshot, so reconciliation
+leaves it untouched — it still survives a merge exactly as before. Read
+state is unaffected: there's no "unread" op, so it stays a pure union.
