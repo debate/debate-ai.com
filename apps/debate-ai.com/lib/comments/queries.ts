@@ -196,16 +196,29 @@ async function hydrateViewer(db: Db, viewerId: string | null | undefined): Promi
   return { id: row.id, name: row.name, imageUrl: row.image };
 }
 
+/** One step up the reply chain; see {@link resolveReplyParent}. */
+interface AncestorRow {
+  id: string;
+  parentId: string | null;
+  resourceType: string;
+  resourceId: string;
+  deletedAt: Date | null;
+}
+
 /**
  * Checks that a reply's parent is a live comment on the same resource, and how
  * deep the reply would land.
  *
  * Returns the resolved parent on success, or the message to answer with — which
- * covers all three ways a reply can be wrong: no such parent, a parent on a
- * different resource (see this module's header), and a parent already at the
- * depth ceiling. The walk up the tree is bounded by {@link MAX_REPLY_DEPTH}
- * plus one, so a reply that would exceed the ceiling is refused rather than
- * followed forever.
+ * covers all four ways a reply can be wrong: no such parent, a parent on a
+ * different resource (see this module's header), a parent that has been
+ * deleted, and a parent already at the depth ceiling.
+ *
+ * `depth` is the level the new reply would sit at, counting a top-level
+ * comment as level 1 — the same numbering `CommentRow` uses, one less, for
+ * its zero-based `depth` prop. Refusing on `MAX_REPLY_DEPTH` is what keeps a
+ * walk that is following `parent_id` links from being able to run forever: the
+ * chain is abandoned at the ceiling instead of followed past it.
  */
 export async function resolveReplyParent(
   db: Db,
@@ -222,17 +235,18 @@ export async function resolveReplyParent(
   // whole chain is on this resource. A parent id that names a comment on
   // another video fails on the first step.
   let cursor: string | null = parent.value;
-  let depth = 0;
+  // The level the new reply would sit at, counting a top-level comment as
+  // level 1. The walk starts at 1 and adds a level per comment it steps up
+  // through, so the last step — landing on the root — is the one that fixes
+  // the answer. That is also what bounds the walk: the check below stops at the
+  // ceiling instead of following `parent_id` past it.
+  let level = 1;
 
   while (cursor) {
-    if (depth > MAX_REPLY_DEPTH) {
-      return {
-        ok: false,
-        error: `Replies can be nested up to ${MAX_REPLY_DEPTH} levels deep. Start a new comment instead.`,
-      };
-    }
-
-    const [row] = await db
+    // Annotated rather than inferred: `cursor` is reassigned from this row's
+    // `parentId` on the next pass, so letting the compiler derive the row type
+    // from a query bound to `cursor` is a cycle it resolves to `any`.
+    const [row]: AncestorRow[] = await db
       .select({
         id: comments.id,
         parentId: comments.parentId,
@@ -254,12 +268,20 @@ export async function resolveReplyParent(
       return { ok: false, error: "The comment you are replying to was deleted." };
     }
 
-    depth += 1;
     cursor = row.parentId;
+    level += 1;
+
+    if (level > MAX_REPLY_DEPTH) {
+      return {
+        ok: false,
+        error: `Replies can be nested up to ${MAX_REPLY_DEPTH} levels deep. Start a new comment instead.`,
+      };
+    }
   }
 
-  return { ok: true, value: { parentId: parent.value, depth } };
+  return { ok: true, value: { parentId: parent.value, depth: level } };
 }
+
 /** Writes one comment and reads it back in the wire shape. */
 export async function insertComment(
   db: Db,

@@ -14,8 +14,8 @@
 
 import { useId, useState, type KeyboardEvent } from "react";
 
-import { cn } from "../cn";
-import { MAX_COMMENT_BODY_LENGTH } from "../types";
+import { cn } from "./cn";
+import { MAX_COMMENT_BODY_LENGTH } from "./types";
 
 export interface CommentComposerProps {
   placeholder: string;

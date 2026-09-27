@@ -90,13 +90,19 @@ export interface CommentThreadResponse {
 export const MAX_COMMENT_BODY_LENGTH = 5000;
 
 /**
- * How deep a reply may nest.
+ * How many levels deep a comment may sit, counting a top-level comment as
+ * level 1 — so a comment at level 8 is the deepest, and cannot be replied to.
  *
- * The UI stops *offering* a reply button past this depth, and the server
- * refuses one too — but a thread is a social object, and a tree nobody can
- * escape the bottom of reads as broken rather than as tidy. Storage is an
- * adjacency list rather than a fixed number of columns precisely so this
- * ceiling can move without a migration.
+ * Both halves read this one number: the UI stops *offering* a reply button at
+ * the ceiling, and `resolveReplyParent` refuses one, so a client that skipped
+ * the button still cannot push a thread past it. The two are not allowed to
+ * disagree, because the failure a disagreement produces is a reply that
+ * appears to work and then vanishes.
+ *
+ * A thread is a social object, and a tree nobody can escape the bottom of reads
+ * as broken rather than as tidy. Storage is an adjacency list rather than a
+ * fixed number of columns precisely so this ceiling can move without a
+ * migration.
  */
 export const MAX_REPLY_DEPTH = 8;
 
