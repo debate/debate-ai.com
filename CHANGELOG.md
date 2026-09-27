@@ -1,6 +1,85 @@
 
 ### Completed
 
+- **🤖 Surface synced custom opponent personas in "My Saved Items".** Another
+  repeat of the standing autonomous-routine prompt ("integrate all the tools
+  into the UI... create user settings and link user db SQL with the ability
+  to save flows/docs/debates in SQL and link to users... add tools into
+  where needed in the UI... develop better tool UI") — as with every recent
+  repeat, that prompt's own asks are already fully built. Audited the Tools
+  page's "My Saved Items" widget (`packages/debate-webview/src/routes/tools/MySavedItems.tsx`,
+  `debate-round`'s `buildRecentCloudItems`/`fetchRecentCloudItems`) against
+  the remaining `saved_*` D1 tables not yet in its `CloudLibraryItemKind`
+  list, and found the same "sync wired, discoverability not [from the Tools
+  page]" gap this widget has closed fourteen times before, still open for
+  one more: `saved_custom_opponent_personas` (Practice Round Simulator's
+  named, reusable custom AI opponent personas, `debate-speech-writer`'s
+  `opponent-persona-library.ts`, `GET /api/custom-opponent-personas`)
+  already followed a signed-in user across devices via
+  `useCustomOpponentPersonaLibrary`, but a persona authored on one device
+  stayed invisible from this widget on another — discoverable only from
+  inside the Practice Round Simulator's own "My persona library" picker, not
+  from the one page that already lists every other saved kind. (Ruled out
+  the other remaining un-surfaced tables — `saved_quick_cards`/
+  `saved_learn_cards`/`saved_learn_review_log`/`saved_coach_material_versions`/
+  `saved_daily_best_card_comments`/`saved_tournament_results` — as either a
+  bulk content library or history log more naturally browsed from inside its
+  own tool, or admin-entered standings data rather than a per-user "saved
+  item," matching this widget's existing selection of generated/authored
+  artifacts over raw record libraries.)
+
+  Added a fifteenth `CloudLibraryItemKind`, `"customOpponentPersona"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudCustomOpponentPersonaSummary` (`id`/`name`/`updatedAt`, trimmed from
+  `GET /api/custom-opponent-personas`'s full `SavedCustomOpponentPersona[]`
+  row shape), a `customOpponentPersonaItems` merge branch keyed by `id` and
+  labeled by `name` ("Untitled persona" when blank), and
+  `listCloudCustomOpponentPersonas` — a local raw `fetch` against
+  `/api/custom-opponent-personas`, matching every other cross-package
+  source's "degrade to null on a 401/non-2xx/network error" convention
+  rather than throwing. Defaults to `/practice-round` (where the persona
+  picker lives), overridable via `customOpponentPersonaHref` like every
+  other kind. Wired a `PlayCircle` icon into `MySavedItems.tsx`'s
+  `KIND_ICON` map, matching Practice Round Simulator's own icon in
+  `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order, label/href defaults and overrides, the blank-name fallback, and the
+  widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install`, `debate-round`'s own
+  `bun run test` (72 files, 1386 tests — 8 new) and `bun run typecheck`
+  (clean), `debate-webview`'s own `bun run test` (41 files, 430 tests, all
+  passing) and `bun run typecheck` (clean of new errors — see below), and
+  the root `bun run test` (594 files, 10296 tests — 6 files failing, none in
+  `debate-round`/`debate-webview`). The 6 failures, and the corresponding
+  `bun run typecheck` failures in `debate-rankings-adapter`/
+  `debate-editor-cm-adapter`/`debate-tournaments-tabroom-adapter` (and every
+  package that transitively depends on them, including `debate-webview`'s
+  own `bun run typecheck`), all trace to the same root cause —
+  `Cannot find module '../../debate-rankings/js/index'` and its two
+  siblings — because the `debate-rankings`/`debate-tournaments-tabroom`/
+  `debate-editor-cm` git submodules are not checked out in this sandboxed
+  environment (no credentials to clone those private repos), exactly as the
+  last several runs of this same routine documented. `bun install` had
+  rewritten `bun.lock` to drop the uninitialized `debate-flow-ebb` submodule
+  entry as a side effect of running in this submodule-less sandbox; reverted
+  that unrelated lockfile churn with `git checkout -- bun.lock` before
+  committing, since it isn't a real dependency change and would corrupt the
+  lockfile for an environment with the submodules present. No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the uninitialized `debate-rankings`/
+  `debate-tournaments-tabroom`/`debate-editor-cm` git submodules block the
+  unscoped root `bun run typecheck`/`bun run build`/`bun run test` in this
+  sandboxed environment — an environment/CI-runner gap, not a code defect,
+  and pre-existing regardless of which task a given run of this same
+  autonomous prompt picks. The `qwksearch` file-sources credential-sync gap
+  and the `dailyMissionResults`/`challengeWinEvents` composite-key gap
+  flagged by earlier runs remain open for the reasons already recorded.
+
 - **🗂️ Surface CardMirror Learn's synced flashcard decks in "My Saved
   Items".** Another repeat of the standing autonomous-routine prompt
   ("integrate all the tools into the UI... create user settings and link

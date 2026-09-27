@@ -97,10 +97,17 @@
  * bare `SpeechSendLogEntry[]` body rather than importing that package's own
  * `editor/speech-send-log.ts`.
  *
- * CardMirror Learn's custom flashcard decks (`/api/learn-decks`) join last,
+ * CardMirror Learn's custom flashcard decks (`/api/learn-decks`) join next,
  * for the same reason: `listCloudLearnDecks` below is a local raw `fetch`
  * against that route's bare `CustomDeck[]` body rather than importing
  * `debate-editor`'s own `editor/learn-decks-client.ts`.
+ *
+ * Practice Round Simulator's saved custom opponent personas
+ * (`/api/custom-opponent-personas`) join last, for the same reason:
+ * `listCloudCustomOpponentPersonas` below is a local raw `fetch` against
+ * that route's bare `SavedCustomOpponentPersona[]` body rather than
+ * importing `debate-practice-drills`'s own
+ * `round/custom-opponent-persona-library-client.ts`.
  *
  * @module state/cloudLibraryClient
  */
@@ -112,6 +119,7 @@ import {
   buildRecentCloudItems,
   type BuildRecentCloudItemsOptions,
   type CloudCounselPanelAssessmentSummary,
+  type CloudCustomOpponentPersonaSummary,
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
@@ -327,14 +335,33 @@ async function listCloudLearnDecks(endpoint = "/api/learn-decks"): Promise<Cloud
 }
 
 /**
+ * Lists the current user's synced Practice Round Simulator custom opponent
+ * personas. Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/custom-opponent-personas`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudCustomOpponentPersonas(
+  endpoint = "/api/custom-opponent-personas",
+): Promise<CloudCustomOpponentPersonaSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudCustomOpponentPersonaSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
- * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks
- * and merges them via `buildRecentCloudItems`. Each source resolves
- * independently and degrades to "no items of that kind" on any failure — a
- * network error, a non-2xx response, or a signed-out `401` — rather than
- * rejecting the whole call, so one flaky endpoint never blanks a widget that
- * had perfectly good data from the others.
+ * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks/
+ * custom-opponent-personas and merges them via `buildRecentCloudItems`. Each
+ * source resolves independently and degrades to "no items of that kind" on
+ * any failure — a network error, a non-2xx response, or a signed-out `401` —
+ * rather than rejecting the whole call, so one flaky endpoint never blanks a
+ * widget that had perfectly good data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
   const [
@@ -352,6 +379,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     sprintSessions,
     speechSendLogEntries,
     learnDecks,
+    customOpponentPersonas,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -367,6 +395,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudSprintSessions(),
     listCloudSpeechSendLog(),
     listCloudLearnDecks(),
+    listCloudCustomOpponentPersonas(),
   ]);
   return buildRecentCloudItems(
     {
@@ -384,6 +413,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       sprintSessions: sprintSessions ?? undefined,
       speechSendLogEntries: speechSendLogEntries ?? undefined,
       learnDecks: learnDecks ?? undefined,
+      customOpponentPersonas: customOpponentPersonas ?? undefined,
     },
     opts,
   );
