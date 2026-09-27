@@ -117,6 +117,33 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [isSeedingVideos, setIsSeedingVideos] = useState(false);
   const [seedVideosResult, setSeedVideosResult] = useState<string | null>(null);
   const [seedVideosError, setSeedVideosError] = useState<string | null>(null);
+  const [isLoadingUrlDetection, setIsLoadingUrlDetection] = useState(false);
+  const [urlDetectionStats, setUrlDetectionStats] = useState<{
+    totalUrls: number;
+    uniqueUsers: number;
+    totalVisits: number;
+    topUrls: Array<{ url: string; title: string | null; visitCount: number; lastVisitedAt: number }>;
+    periodDays: number;
+  } | null>(null);
+  const [urlDetectionUrls, setUrlDetectionUrls] = useState<Array<{
+    id: number;
+    userId: string;
+    url: string;
+    normalizedUrl: string;
+    title: string | null;
+    favicon: string | null;
+    visitCount: number;
+    lastVisitedAt: number;
+    createdAt: number;
+    userName: string | null;
+    userEmail: string | null;
+  }>>([]);
+  const [urlDetectionTotal, setUrlDetectionTotal] = useState(0);
+  const [urlDetectionPage, setUrlDetectionPage] = useState(0);
+  const [urlDetectionSearch, setUrlDetectionSearch] = useState("");
+  const [urlDetectionUserFilter, setUrlDetectionUserFilter] = useState("");
+  const [urlDetectionError, setUrlDetectionError] = useState<string | null>(null);
+  const [urlDetectionPeriodDays, setUrlDetectionPeriodDays] = useState(30);
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -497,6 +524,49 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       setIsPublishingAll(false);
     }
   };
+
+  const loadUrlDetectionStats = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/url-detection/stats?sinceDays=${urlDetectionPeriodDays}`);
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data = await res.json();
+      setUrlDetectionStats(data);
+    } catch (error) {
+      console.error("Failed to load URL detection stats:", error);
+    }
+  }, [urlDetectionPeriodDays]);
+
+  const loadUrlDetectionUrls = useCallback(async (page = 0) => {
+    setIsLoadingUrlDetection(true);
+    setUrlDetectionError(null);
+    try {
+      const params = new URLSearchParams({
+        limit: "50",
+        offset: String(page * 50),
+      });
+      if (urlDetectionSearch) params.set("search", urlDetectionSearch);
+      if (urlDetectionUserFilter) params.set("userId", urlDetectionUserFilter);
+      if (urlDetectionPeriodDays) params.set("sinceDays", String(urlDetectionPeriodDays));
+
+      const res = await fetch(`/api/admin/url-detection?${params.toString()}`);
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data = await res.json();
+      setUrlDetectionUrls(data.urls);
+      setUrlDetectionTotal(data.total);
+      setUrlDetectionPage(page);
+    } catch (error) {
+      setUrlDetectionError((error as Error).message);
+    } finally {
+      setIsLoadingUrlDetection(false);
+    }
+  }, [urlDetectionSearch, urlDetectionUserFilter, urlDetectionPeriodDays]);
+
+  useEffect(() => {
+    if (activeTab === "url-detection") {
+      loadUrlDetectionStats();
+      loadUrlDetectionUrls(0);
+    }
+  }, [activeTab, loadUrlDetectionStats, loadUrlDetectionUrls]);
 
   const visibleTabs = ADMIN_TABS.filter((tab) => isAdmin || !tab.adminOnly);
   const currentTab = visibleTabs.find((tab) => tab.key === activeTab) ?? visibleTabs[0];
@@ -889,6 +959,149 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   )}
                 </div>
                 {reuseLogPurgeError && <p className="text-destructive text-sm">{reuseLogPurgeError}</p>}
+              </CardContent>
+            </Card>
+          </>
+        )}
+
+        {currentTab.key === "url-detection" && (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle>URL Detection Statistics</CardTitle>
+                <CardDescription>
+                  Summary of URLs detected by the browser extension from pages users visit over the last{" "}
+                  {urlDetectionPeriodDays} days.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Select value={String(urlDetectionPeriodDays)} onValueChange={(v) => setUrlDetectionPeriodDays(Number(v))}>
+                    <SelectTrigger className="w-[160px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem key="7" value="7">Last 7 days</SelectItem>
+                      <SelectItem key="30" value="30">Last 30 days</SelectItem>
+                      <SelectItem key="90" value="90">Last 90 days</SelectItem>
+                      <SelectItem key="365" value="365">Last year</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" onClick={loadUrlDetectionStats} disabled={isLoadingUrlDetection}>
+                    {isLoadingUrlDetection ? "Loading…" : "Refresh stats"}
+                  </Button>
+                </div>
+                {urlDetectionStats && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div className="rounded-lg border p-4">
+                      <p className="text-3xl font-bold">{urlDetectionStats.totalUrls.toLocaleString()}</p>
+                      <p className="text-muted-foreground text-sm">Unique URLs</p>
+                    </div>
+                    <div className="rounded-lg border p-4">
+                      <p className="text-3xl font-bold">{urlDetectionStats.uniqueUsers.toLocaleString()}</p>
+                      <p className="text-muted-foreground text-sm">Unique Users</p>
+                    </div>
+                    <div className="rounded-lg border p-4">
+                      <p className="text-3xl font-bold">{urlDetectionStats.totalVisits.toLocaleString()}</p>
+                      <p className="text-muted-foreground text-sm">Total Visits</p>
+                    </div>
+                    <div className="rounded-lg border p-4">
+                      <p className="text-3xl font-bold">{urlDetectionStats.topUrls.length}</p>
+                      <p className="text-muted-foreground text-sm">Top URLs shown</p>
+                    </div>
+                  </div>
+                )}
+                {urlDetectionStats?.topUrls.length && (
+                  <div className="rounded-lg border p-4">
+                    <h4 className="font-medium mb-3">Most Visited URLs</h4>
+                    <ul className="space-y-2">
+                      {urlDetectionStats.topUrls.map((item, index) => (
+                        <li key={index} className="flex flex-col gap-1 text-sm">
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate hover:underline">
+                            {item.title || item.url}
+                          </a>
+                          <span className="text-muted-foreground">
+                            {item.visitCount.toLocaleString()} visits • Last: {new Date(item.lastVisitedAt).toLocaleDateString()}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Detected URLs</CardTitle>
+                <CardDescription>
+                  All URLs detected by the extension, paginated. Use search to filter by URL or title.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Input
+                    placeholder="Search URL or title…"
+                    value={urlDetectionSearch}
+                    onChange={(e) => setUrlDetectionSearch(e.target.value)}
+                    className="w-[300px]"
+                  />
+                  <Input
+                    placeholder="Filter by user ID…"
+                    value={urlDetectionUserFilter}
+                    onChange={(e) => setUrlDetectionUserFilter(e.target.value)}
+                    className="w-[200px]"
+                  />
+                  <Button variant="outline" onClick={() => loadUrlDetectionUrls(0)} disabled={isLoadingUrlDetection}>
+                    {isLoadingUrlDetection ? "Loading…" : "Search"}
+                  </Button>
+                </div>
+                {urlDetectionError && <p className="text-destructive text-sm">{urlDetectionError}</p>}
+                {isLoadingUrlDetection && urlDetectionUrls.length === 0 && (
+                  <p className="text-muted-foreground text-sm">Loading…</p>
+                )}
+                {!isLoadingUrlDetection && urlDetectionUrls.length === 0 && (
+                  <p className="text-muted-foreground text-sm">No URLs found.</p>
+                )}
+                {urlDetectionUrls.length > 0 && (
+                  <div className="rounded-lg border overflow-hidden">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted">
+                        <tr>
+                          <th className="px-3 py-2 text-left">URL</th>
+                          <th className="px-3 py-2 text-left">User</th>
+                          <th className="px-3 py-2 text-right">Visits</th>
+                          <th className="px-3 py-2 text-left">Last Visited</th>
+                          <th className="px-3 py-2 text-left">First Seen</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {urlDetectionUrls.map((item) => (
+                          <tr key={item.id} className="border-t hover:bg-accent">
+                            <td className="px-3 py-2">
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="truncate block max-w-xs hover:underline">
+                                {item.title || item.url}
+                              </a>
+                            </td>
+                            <td className="px-3 py-2">
+                              {item.userName || item.userEmail || item.userId}
+                            </td>
+                            <td className="px-3 py-2 text-right">{item.visitCount.toLocaleString()}</td>
+                            <td className="px-3 py-2">{new Date(item.lastVisitedAt).toLocaleString()}</td>
+                            <td className="px-3 py-2">{new Date(item.createdAt).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {urlDetectionTotal > (urlDetectionPage + 1) * 50 && (
+                  <div className="flex justify-center">
+                    <Button variant="outline" onClick={() => loadUrlDetectionUrls(urlDetectionPage + 1)} disabled={isLoadingUrlDetection}>
+                      Load more ({urlDetectionUrls.length} of {urlDetectionTotal.toLocaleString()})
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </>
