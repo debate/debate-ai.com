@@ -13,34 +13,28 @@
  * @module lib/forums/validation
  */
 
+import {
+  DEFAULT_FEED_LIMIT,
+  MAX_FEED_LIMIT,
+  MAX_THREAD_BODY_LENGTH,
+  MAX_THREAD_TITLE_LENGTH,
+} from "debate-webview/lib/forums/types";
 import type { Parsed } from "@/lib/comments/validation";
 
 export type { Parsed };
 
 /**
- * The longest a thread title may be, in characters.
- *
- * A title is the one line every reader of the feed sees, so it is capped well
- * below the body: long enough for a full claim plus a tag, short enough that
- * the feed stays a list of subjects rather than a wall of paragraphs.
+ * The shared limits, re-exported from the web package's wire types rather than
+ * restated: the UI needs them to cap its inputs and to label its counters, and
+ * a second copy of `140` here is a number that will one day differ from the
+ * one the composer enforces.
  */
-export const MAX_THREAD_TITLE_LENGTH = 140;
-
-/**
- * The longest an opening post may be, in characters.
- *
- * Longer than {@link MAX_COMMENT_BODY_LENGTH} (5,000) on purpose: an opening
- * post is the thing being discussed, where a comment is a turn in a discussion
- * that already has one, and the field it is typed into is a multi-line box
- * rather than a single line.
- */
-export const MAX_THREAD_BODY_LENGTH = 20_000;
-
-/** How many threads one feed read returns when the caller names no limit. */
-export const DEFAULT_FEED_LIMIT = 25;
-
-/** The most a caller may ask for in one read, whatever it asks for. */
-export const MAX_FEED_LIMIT = 50;
+export {
+  DEFAULT_FEED_LIMIT,
+  MAX_FEED_LIMIT,
+  MAX_THREAD_BODY_LENGTH,
+  MAX_THREAD_TITLE_LENGTH,
+};
 
 /** The UUIDs the API mints, checked before a cursor or id costs a query. */
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

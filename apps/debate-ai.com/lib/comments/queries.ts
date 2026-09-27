@@ -47,6 +47,7 @@ import {
 
 import type { getDBFromContext } from "@/lib/database/context";
 import { commentLikes, comments, user } from "@/lib/database/schema";
+import { touchThreadActivity } from "@/lib/forums/queries";
 import { isCommentId, type Parsed } from "./validation";
 
 type Db = Awaited<ReturnType<typeof getDBFromContext>>;
@@ -302,6 +303,16 @@ export async function insertComment(
   },
 ): Promise<Comment> {
   await db.insert(comments).values({ id, resourceType, resourceId, parentId, authorId, body });
+
+  // A forum thread sorts by when it was last posted to, so a reply has to move
+  // it to the top of the feed — which is what makes "latest" mean the newest
+  // thing that happened rather than the newest thing that was opened. It is the
+  // one write this polymorphic path makes against a table it does not own, and
+  // it is deliberately narrow: only the `thread` resource type has a row there,
+  // so a reply to a video, a file or a card contribution updates nothing.
+  if (resourceType === "thread") {
+    await touchThreadActivity(db, resourceId);
+  }
 
   const [row] = await db
     .select({

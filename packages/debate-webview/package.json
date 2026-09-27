@@ -40,6 +40,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
     "compute-cosine-similarity": "^1.1.0",
+    "debate-comments": "workspace:*",
     "debate-community": "workspace:*",
     "debate-data-sync": "workspace:*",
     "debate-editor": "workspace:*",
