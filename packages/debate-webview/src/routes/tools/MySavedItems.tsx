@@ -37,8 +37,10 @@
  * `saved_strategy_recommendations`, the same gap again. Team Collaboration
  * Mode's scheduled Topic Sprint sessions (`/research`) joined next —
  * already saved per-user in `saved_sprint_sessions`, the same gap again.
- * Speech Documents' send-log entries (`/speech-documents`) joined last —
+ * Speech Documents' send-log entries (`/speech-documents`) joined next —
  * already saved per-user in `saved_speech_send_log`, the same gap again.
+ * CardMirror Learn's custom flashcard decks (`/reason-editor`) joined last —
+ * already saved per-user in `saved_learn_decks`, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -54,7 +56,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, ListTree, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, ListTree, Send, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -88,6 +90,10 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   sprintSession: CalendarClock,
   // Matches Speech Documents' own icon in `app/tools/tool-groups.ts`.
   speechSendLogEntry: Send,
+  // No standalone /tools entry to match — CardMirror Learn's flashcard
+  // decks are a feature of the editor's "Manage flashcards" overlay, not a
+  // tool of its own.
+  learnDeck: Layers,
 }
 
 export function MySavedItems() {

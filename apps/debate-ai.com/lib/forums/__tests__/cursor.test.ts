@@ -28,7 +28,7 @@ describe("encodeCursor / decodeCursor", () => {
     // walk would either skip the second row or repeat the first.
     const first = decodeCursor(encodeCursor(1_700_000_000, UUID_A));
     const second = decodeCursor(encodeCursor(1_700_000_000, UUID_B));
-    expect(first.ok && second.ok && first.value.id).not.toBe(second.ok && second.value.id);
+    expect(first.ok && second.ok && first.value?.id).not.toBe(second.ok && second.value?.id);
   });
 
   it("is url-safe, so it survives being a query parameter", () => {

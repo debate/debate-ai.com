@@ -90,12 +90,17 @@
  * that route's bare `SprintSession[]` body rather than importing that
  * package's own `lib/sprint-sessions-client.ts`.
  *
- * Speech Documents' send-log entries (`/api/speech-send-log`) join last, for
+ * Speech Documents' send-log entries (`/api/speech-send-log`) join next, for
  * the same cross-package reason as word-count rounds/debates/sprint sessions:
  * `debate-editor` doesn't depend on `debate-round` either, so
  * `listCloudSpeechSendLog` below is a local raw `fetch` against that route's
  * bare `SpeechSendLogEntry[]` body rather than importing that package's own
  * `editor/speech-send-log.ts`.
+ *
+ * CardMirror Learn's custom flashcard decks (`/api/learn-decks`) join last,
+ * for the same reason: `listCloudLearnDecks` below is a local raw `fetch`
+ * against that route's bare `CustomDeck[]` body rather than importing
+ * `debate-editor`'s own `editor/learn-decks-client.ts`.
  *
  * @module state/cloudLibraryClient
  */
@@ -111,6 +116,7 @@ import {
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
   type CloudJudgeDecisionSummary,
+  type CloudLearnDeckSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
   type CloudSpeechSendLogSummary,
@@ -305,14 +311,30 @@ async function listCloudSpeechSendLog(
 }
 
 /**
+ * Lists the current user's synced CardMirror Learn custom flashcard decks.
+ * Degrades to `null` on a signed-out `401` (matching `GET /api/learn-decks`'s
+ * own auth behavior), a non-2xx response, or a network error — same "no
+ * items of that kind" convention as the other sources above.
+ */
+async function listCloudLearnDecks(endpoint = "/api/learn-decks"): Promise<CloudLearnDeckSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudLearnDeckSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
- * strategy-recommendations/sprint-sessions/speech-send-log-entries and merges
- * them via `buildRecentCloudItems`. Each source resolves independently and
- * degrades to "no items of that kind" on any failure — a network error, a
- * non-2xx response, or a signed-out `401` — rather than rejecting the whole
- * call, so one flaky endpoint never blanks a widget that had perfectly good
- * data from the others.
+ * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks
+ * and merges them via `buildRecentCloudItems`. Each source resolves
+ * independently and degrades to "no items of that kind" on any failure — a
+ * network error, a non-2xx response, or a signed-out `401` — rather than
+ * rejecting the whole call, so one flaky endpoint never blanks a widget that
+ * had perfectly good data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
   const [
@@ -329,6 +351,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     strategyRecommendations,
     sprintSessions,
     speechSendLogEntries,
+    learnDecks,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -343,6 +366,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudStrategyRecommendations(),
     listCloudSprintSessions(),
     listCloudSpeechSendLog(),
+    listCloudLearnDecks(),
   ]);
   return buildRecentCloudItems(
     {
@@ -359,6 +383,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       strategyRecommendations: strategyRecommendations ?? undefined,
       sprintSessions: sprintSessions ?? undefined,
       speechSendLogEntries: speechSendLogEntries ?? undefined,
+      learnDecks: learnDecks ?? undefined,
     },
     opts,
   );

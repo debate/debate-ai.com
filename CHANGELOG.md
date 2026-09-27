@@ -1,6 +1,42 @@
 
 ### Completed
 
+- **🗂️ Surface CardMirror Learn's synced flashcard decks in "My Saved
+  Items".** Another repeat of the standing autonomous-routine prompt
+  ("integrate all the tools into the UI... create user settings and link
+  user db SQL with the ability to save flows/docs/debates in SQL and link
+  to users... add tools into where needed in the UI... develop better tool
+  UI") — as with every recent repeat, that prompt's own asks are already
+  fully built. Audited the Tools page's "My Saved Items" widget
+  (`packages/debate-webview/src/routes/tools/MySavedItems.tsx`,
+  `debate-round`'s `buildRecentCloudItems`/`fetchRecentCloudItems`) against
+  the full list of `saved_*` D1 tables and found the same "sync wired,
+  discoverability not [from the Tools page]" gap this widget has closed
+  thirteen times before, still open for one more: `saved_learn_decks`
+  (CardMirror Learn's custom flashcard decks, `GET /api/learn-decks`,
+  `learn-decks-cloud-sync.mdx`) already followed a signed-in user across
+  devices, but a deck built on one device stayed invisible from this widget
+  on another — discoverable only from inside the editor's own "Manage
+  flashcards" overlay, not from the one page that already lists every other
+  saved kind.
+
+  Added a fourteenth `CloudLibraryItemKind`, `"learnDeck"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudLearnDeckSummary` (`deckId`/`name`/`createdAt`, mirroring
+  `GET /api/learn-decks`'s bare `CustomDeck[]` row shape), a
+  `learnDeckItems` merge branch keyed by `deckId` and labeled by `name`
+  ("Untitled deck" when blank), and `listCloudLearnDecks` — a local raw
+  `fetch` against `/api/learn-decks`, matching every other cross-package
+  source's "degrade to null on a 401/non-2xx/network error" convention
+  rather than throwing. Defaults to `/reason-editor` (where CardMirror, and
+  Learn inside it, is mounted), overridable via `learnDeckHref` like every
+  other kind. Wired a `Layers` icon into `MySavedItems.tsx`'s
+  `KIND_ICON` map. Extended both modules' Vitest coverage
+  (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order, label/href defaults and overrides, the blank-name fallback, and
+  the widget's existing 401/500/network-error degradation behavior.
+
 - **🗂️ Give Learn's Decks manager a per-deck "synced"/"pending" badge.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
   the tools into the UI... create user settings and link user db SQL with

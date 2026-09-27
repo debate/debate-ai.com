@@ -8,6 +8,7 @@ import {
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
   type CloudJudgeDecisionSummary,
+  type CloudLearnDeckSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
   type CloudSpeechSendLogSummary,
@@ -86,8 +87,11 @@ describe("buildRecentCloudItems", () => {
   const speechSendLogEntries: CloudSpeechSendLogSummary[] = [
     { id: "send-1", preview: "The plan reduces emissions by...", sentAt: Date.parse("2026-09-06T00:00:00.000Z") },
   ];
+  const learnDecks: CloudLearnDeckSummary[] = [
+    { deckId: "deck-1", name: "K Cards", createdAt: "2026-09-07T00:00:00.000Z" },
+  ];
 
-  it("merges all thirteen kinds and sorts newest first", () => {
+  it("merges all fourteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -103,10 +107,12 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations,
         sprintSessions,
         speechSendLogEntries,
+        learnDecks,
       },
-      { limit: 13 },
+      { limit: 14 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "learnDeck",
       "speechSendLogEntry",
       "sprintSession",
       "strategyRecommendation",
@@ -291,6 +297,25 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled speech send");
   });
 
+  it("includes learn decks, keyed by deckId and labeled by name", () => {
+    const items = buildRecentCloudItems({ learnDecks });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "learnDeck",
+        key: "learnDeck-deck-1",
+        label: "K Cards",
+        updatedAtMs: Date.parse("2026-09-07T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a learn deck with a blank name as untitled", () => {
+    const items = buildRecentCloudItems({
+      learnDecks: [{ deckId: "deck-2", name: "   ", createdAt: "2026-09-07T00:00:00.000Z" }],
+    });
+    expect(items[0]?.label).toBe("Untitled deck");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -313,8 +338,9 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations,
         sprintSessions,
         speechSendLogEntries,
+        learnDecks,
       },
-      { limit: 13 },
+      { limit: 14 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -330,6 +356,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.strategyRecommendation).toBe("/strategy");
     expect(byKind.sprintSession).toBe("/research");
     expect(byKind.speechSendLogEntry).toBe("/speech-documents");
+    expect(byKind.learnDeck).toBe("/reason-editor");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -384,6 +411,9 @@ describe("buildRecentCloudItems", () => {
       { speechSendLogEntryHref: "/custom-speech-documents-route" },
     );
     expect(overriddenSpeechSendLogEntry[0]?.href).toBe("/custom-speech-documents-route");
+
+    const overriddenLearnDeck = buildRecentCloudItems({ learnDecks }, { learnDeckHref: "/custom-reason-editor-route" });
+    expect(overriddenLearnDeck[0]?.href).toBe("/custom-reason-editor-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -412,8 +442,11 @@ describe("buildRecentCloudItems", () => {
         speechSendLogEntries: [
           { id: "send-1", preview: "   ", sentAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        learnDecks: [
+          { deckId: "deck-1", name: "   ", createdAt: "2026-08-30T00:00:00.000Z" },
+        ],
       },
-      { limit: 13 },
+      { limit: 14 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -429,6 +462,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.strategyRecommendation).toBe("Untitled strategy recommendation");
     expect(byKind.sprintSession).toBe("Untitled sprint session");
     expect(byKind.speechSendLogEntry).toBe("Untitled speech send");
+    expect(byKind.learnDeck).toBe("Untitled deck");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -464,6 +498,7 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations: [],
         sprintSessions: [],
         speechSendLogEntries: [],
+        learnDecks: [],
       }),
     ).toEqual([]);
   });
