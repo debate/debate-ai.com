@@ -38,8 +38,8 @@
  * "🤖 AI Practice Opponent" idea's "extend the Practice Round Simulator's
  * own separate persona setup to carry a difficulty too" Next item (TODO.md's
  * Research Crowdsourcing Organizer Features list) — the same
- * `opponentDifficulties` axis `OpponentPersonaPickerPanel`/`AiVersusRoundPanel`
- * already carry, saved on the same `PracticeRoundSetup` and shown as a
+ * `opponentDifficulties` axis `AiVersusRoundPanel`
+ * already carries, saved on the same `PracticeRoundSetup` and shown as a
  * second badge per round and on the "Generate AI opponent speech" prompt.
  *
  * A "Generate post-round feedback for current round" form per round reads
@@ -71,13 +71,12 @@
  * persona library" list, and "Shared by your team" list close the "🤖 AI
  * Practice Opponent" idea's "unifying the Practice Round Simulator's own
  * separate persona setup with [the custom-persona] library" Next item
- * (TODO.md's Research Crowdsourcing Organizer Features list;
- * `packages/debate-help-docs/content/docs/features/practice-opponent.mdx`'s Known gaps): this panel's own
+ * (TODO.md's Research Crowdsourcing Organizer Features list): this panel's own
  * opponent-persona picker could previously only choose a built-in persona,
  * with no custom-persona authoring and no way to reuse an entry already
- * saved to (or shared through) `OpponentPersonaPickerPanel`'s "My persona
- * library". It now reuses that same `useCustomOpponentPersonaLibrary` hook
- * and mirrors that panel's custom-persona form/library-picker UI, resolving
+ * saved to (or shared through) the shared "My persona library". It now reuses
+ * that same `useCustomOpponentPersonaLibrary` hook
+ * and mirrors its custom-persona form/library-picker UI, resolving
  * the choice via `debate-round`'s new
  * `round/practice-round-simulator.ts#resolvePracticeRoundOpponentPersonaChoice`
  * before handing it to the already-existing `buildPracticeRoundSetup`.

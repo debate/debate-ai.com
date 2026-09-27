@@ -17,7 +17,7 @@
  * the Practice Round Simulator's own separate persona setup to carry a
  * difficulty too" Next item (TODO.md's Research Crowdsourcing Organizer
  * Features list): the same `opponentDifficulties` axis
- * `OpponentPersonaPickerPanel`/`AiVersusRoundPanel` already carry, layered
+ * `AiVersusRoundPanel` already carries, layered
  * onto this setup's own persona choice via `buildOpponentPersonaPrompt`'s
  * existing `difficulty` parameter.
  *
@@ -33,8 +33,8 @@
  * [the custom-persona] library" Next item: before this, the simulator's own
  * setup form could only pick a built-in persona id — no custom-persona
  * authoring, and no way to reuse an entry already saved to "My persona
- * library" (`opponent-persona-library.ts`) the way `OpponentPersonaPickerPanel`
- * already lets a user do. This one helper resolves a form's persona choice —
+ * library" (`opponent-persona-library.ts`). This one helper resolves a form's
+ * persona choice —
  * none, a built-in id, or a freshly-typed/library-sourced custom
  * name+notes pair — into the `opponentPersona` input `buildPracticeRoundSetup`
  * already accepts, so `PracticeRoundSimulatorPanel` can offer the same

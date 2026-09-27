@@ -6,7 +6,7 @@
  * instead of per-user only" Next item in TODO.md's Research Crowdsourcing
  * Organizer Features.
  *
- * Local-first, like `useDrillSets`: `OpponentPersonaPickerPanel` keeps
+ * Local-first, like `useDrillSets`: the practice-round setup keeps
  * reading/writing `localStorage` through this hook, which stays fully
  * usable signed out. On mount, a one-time account merge (deduped across
  * instances via a module-level `remoteMergePromise`, mirroring
