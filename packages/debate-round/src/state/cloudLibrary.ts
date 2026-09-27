@@ -84,6 +84,15 @@
  * `GET /api/speech-send-log`, but the same "sync wired, discoverability not"
  * gap applied here too.
  *
+ * A fourteenth kind, CardMirror Learn's custom flashcard decks
+ * (`/reason-editor`), joined last: `saved_learn_decks` (`debate-editor`)
+ * already synced a signed-in user's `CustomDeck`s via `GET /api/learn-decks`
+ * (see `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`),
+ * but the same "sync wired, discoverability not [from the Tools page]" gap
+ * applied here too — a deck built on one device stayed invisible from this
+ * widget on another, discoverable only from inside the editor's own "Manage
+ * flashcards" overlay.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -268,6 +277,23 @@ export type CloudSpeechSendLogSummary = {
   sentAt: number;
 };
 
+/**
+ * The subset of a `CustomDeck` (`debate-editor`) a caller needs to list one
+ * in the merged view — mirrors `GET /api/learn-decks`'s row shape (full
+ * records, like {@link CloudSpeechSendLogSummary}; the learn-decks route has
+ * no label-only summary mode either). Defined locally rather than importing
+ * `CustomDeck` itself, matching {@link CloudDebateSummary}'s own local-type
+ * convention: `debate-round` doesn't depend on `debate-editor` for this
+ * purpose (see `state/cloudLibraryClient.ts`'s raw-`fetch` convention for the
+ * same reasoning).
+ */
+export type CloudLearnDeckSummary = {
+  deckId: string;
+  name: string;
+  /** ISO date string, per `CustomDeck.createdAt` — there is no separate `updatedAt`. */
+  createdAt: string;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -281,7 +307,8 @@ export type CloudLibraryItemKind =
   | "roundPairing"
   | "strategyRecommendation"
   | "sprintSession"
-  | "speechSendLogEntry";
+  | "speechSendLogEntry"
+  | "learnDeck";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -329,6 +356,7 @@ export interface BuildRecentCloudItemsInput {
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
   sprintSessions?: CloudSprintSessionSummary[];
   speechSendLogEntries?: CloudSpeechSendLogSummary[];
+  learnDecks?: CloudLearnDeckSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -349,6 +377,7 @@ export interface BuildRecentCloudItemsOptions {
   strategyRecommendationHref?: string;
   sprintSessionHref?: string;
   speechSendLogEntryHref?: string;
+  learnDeckHref?: string;
 }
 
 /**
@@ -378,6 +407,7 @@ export function buildRecentCloudItems(
     strategyRecommendationHref = "/strategy",
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
+    learnDeckHref = "/reason-editor",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -509,6 +539,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(entry.sentAt),
     }));
 
+  const learnDeckItems: CloudLibraryItem[] = (input.learnDecks ?? [])
+    .slice(0, perKindLimit)
+    .map((deck) => ({
+      kind: "learnDeck" as const,
+      key: `learnDeck-${deck.deckId}`,
+      href: learnDeckHref,
+      label: deck.name.trim() || "Untitled deck",
+      updatedAtMs: parseCloudTimestamp(deck.createdAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -523,6 +563,7 @@ export function buildRecentCloudItems(
     ...strategyRecommendationItems,
     ...sprintSessionItems,
     ...speechSendLogItems,
+    ...learnDeckItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
