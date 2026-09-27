@@ -56,6 +56,12 @@
  * a round can accumulate many) via `GET /api/counsel-panel-assessments`, but
  * the same "sync wired, discoverability not" gap applied here too.
  *
+ * A tenth kind, Pre-Round Briefings' saved round pairings (`/briefings`),
+ * joined next: `saved_round_pairings` already synced a signed-in user's
+ * `RoundPairingRecord`s (`debate-round` itself this time, one row per
+ * pairing keyed by `roundId`) via `GET /api/round-pairings`, but the same
+ * "sync wired, discoverability not" gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -66,6 +72,7 @@
 
 import type { SavedFlowSummary } from "./savedFlows";
 import type { SavedRoundSummary } from "./savedRounds";
+import type { RoundPairingRecord } from "./roundPairings";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -173,6 +180,20 @@ export type CloudCounselPanelAssessmentSummary = {
   generatedAt: number;
 };
 
+/**
+ * The subset of a `RoundPairingRecord` (`debate-round`) a caller needs to
+ * list one in the merged view — mirrors `GET /api/round-pairings`'s row
+ * shape (full records, like {@link CloudDrillSetSummary}; the round-pairings
+ * route has no label-only summary mode either). Imported directly rather
+ * than defined locally like the other in-package summary types above: this
+ * one already lives in `debate-round` itself (`state/roundPairings.ts`), so
+ * there's no cross-package dependency edge to avoid.
+ */
+export type CloudRoundPairingSummary = Pick<
+  RoundPairingRecord,
+  "roundId" | "tournamentName" | "roundLabel" | "updatedAt"
+>;
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -182,7 +203,8 @@ export type CloudLibraryItemKind =
   | "speechOutcome"
   | "drillSet"
   | "judgeDecision"
-  | "counselPanelAssessment";
+  | "counselPanelAssessment"
+  | "roundPairing";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -226,6 +248,7 @@ export interface BuildRecentCloudItemsInput {
   drillSets?: CloudDrillSetSummary[];
   judgeDecisions?: CloudJudgeDecisionSummary[];
   counselPanelAssessments?: CloudCounselPanelAssessmentSummary[];
+  roundPairings?: CloudRoundPairingSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -242,6 +265,7 @@ export interface BuildRecentCloudItemsOptions {
   drillSetHref?: string;
   judgeDecisionHref?: string;
   counselPanelAssessmentHref?: string;
+  roundPairingHref?: string;
 }
 
 /**
@@ -267,6 +291,7 @@ export function buildRecentCloudItems(
     drillSetHref = "/drills",
     judgeDecisionHref = "/judge-decision",
     counselPanelAssessmentHref = "/outcomes",
+    roundPairingHref = "/briefings",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -351,6 +376,23 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(assessment.generatedAt),
     }));
 
+  const roundPairingItems: CloudLibraryItem[] = (input.roundPairings ?? [])
+    .slice(0, perKindLimit)
+    .map((pairing) => {
+      const tournamentName = pairing.tournamentName.trim();
+      const roundLabel = pairing.roundLabel.trim();
+      const label = tournamentName && roundLabel
+        ? `${tournamentName} — ${roundLabel}`
+        : tournamentName || roundLabel || "Untitled pairing";
+      return {
+        kind: "roundPairing" as const,
+        key: `roundPairing-${pairing.roundId}`,
+        href: roundPairingHref,
+        label,
+        updatedAtMs: parseCloudTimestamp(pairing.updatedAt ?? 0),
+      };
+    });
+
   return [
     ...documentItems,
     ...flowItems,
@@ -361,6 +403,7 @@ export function buildRecentCloudItems(
     ...drillSetItems,
     ...judgeDecisionItems,
     ...counselPanelAssessmentItems,
+    ...roundPairingItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
