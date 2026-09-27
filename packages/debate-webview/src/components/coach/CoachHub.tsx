@@ -46,8 +46,6 @@ import {
   FlowAnnotationsPanel,
   FlowSummariesPanel,
   JudgeDecisionPanel,
-  JudgeParadigmPickerPanel,
-  OpponentPersonaPickerPanel,
   PracticeRoundSimulatorPanel,
   VulnerabilityChartsPanel,
   WordCountRoundsPanel,
@@ -141,15 +139,13 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     id: "practice",
     label: "Practice",
     icon: PlayCircle,
-    description: "Run practice rounds between tournaments: simulated rounds, rounds against the AI, word-count speeches, paradigms, and personas.",
+    description: "Run practice rounds between tournaments: simulated rounds, rounds against the AI, and word-count speeches.",
     guide: "practice-tools",
     panels: [
       panel("Practice Round Simulator", "/practice-round"),
       panel("Practice vs AI", "/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),
-      panel("Judge Paradigm Picker", "/paradigms"),
       panel("AI Judge Decision", "/judge-decision"),
-      panel("Opponent Persona Picker", "/practice-opponent"),
     ],
   },
 ]
@@ -322,14 +318,8 @@ export function CoachHub() {
             <HubPanelAnchor anchor={ANCHORS["Word-Count Speeches"]}>
               <WordCountRoundsPanel />
             </HubPanelAnchor>
-            <HubPanelAnchor anchor={ANCHORS["Judge Paradigm Picker"]}>
-              <JudgeParadigmPickerPanel />
-            </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["AI Judge Decision"]}>
               <JudgeDecisionPanel />
-            </HubPanelAnchor>
-            <HubPanelAnchor anchor={ANCHORS["Opponent Persona Picker"]}>
-              <OpponentPersonaPickerPanel />
             </HubPanelAnchor>
           </>
         ) : null}

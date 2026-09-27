@@ -429,15 +429,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["risk", "case choice", "adaptation", "ai panel"],
   },
   {
-    id: "judge-paradigm-picker",
-    title: "Judge Paradigm Picker",
-    description: "Pick a built-in or custom AI judge paradigm for a practice round",
-    href: "/paradigms",
-    category: "intelligence",
-    doc: "judge-paradigm-selections.md",
-    tags: ["flow", "lay", "policymaker", "kritikal", "educator"],
-  },
-  {
     id: "ai-judge-decision",
     title: "AI Judge Decision",
     description: "AI-generated round decisions under a round's saved judge paradigm and flow summary",
@@ -464,15 +455,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "practice",
     doc: "practice-vs-ai.md",
     tags: ["speeches", "bot", "persona", "judge"],
-  },
-  {
-    id: "opponent-persona-picker",
-    title: "Opponent Persona Picker",
-    description: "Pick the AI practice-opponent style for a session",
-    href: "/practice-opponent",
-    category: "practice",
-    doc: "practice-opponent.md",
-    tags: ["policy heavy", "kritik", "lay", "fast flow"],
   },
   {
     id: "ai-coach-mode",

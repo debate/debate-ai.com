@@ -1,6 +1,6 @@
 import {
   Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
-  ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
+  ClipboardList, GraduationCap, FileText, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
@@ -216,11 +216,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Template prompts per round + side, generated from the flow", "\"Get AI feedback\" expands any prompt into open-ended coaching"],
       },
       {
-        href: "/paradigms", label: "Judge Paradigm Picker", icon: Scale,
-        description: "Pick a built-in or custom AI judge paradigm for a practice round.",
-        highlights: ["Six built-ins: Flow, Lay, Policymaker, Kritikal, Educator, Truth Over Tech", "Or build a custom paradigm from a real judge's stated preferences"],
-      },
-      {
         href: "/judge-decision", label: "AI Judge Decision", icon: Landmark,
         description: "Generate an AI round decision under a round's saved judge paradigm and flow summary.",
         highlights: ["Decision reasoning grounded in the round's saved paradigm", "Reads the same flow summary the Argument Tree Outline shows"],
@@ -229,11 +224,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/summaries", label: "Speech Transcript Summaries", icon: FileText,
         description: "Get per-argument summaries derived from each round's flow, with cross-exam questions and extension ideas.",
         highlights: ["One summary per argument, straight from the flowed grid", "Cross-exam question and extension-idea suggestions included"],
-      },
-      {
-        href: "/practice-opponent", label: "Opponent Persona Picker", icon: Swords,
-        description: "Pick the AI practice-opponent style for a session.",
-        highlights: ["Four built-ins: Policy Heavy, Kritik, Lay, Fast Flow", "Or describe your own opponent's debating style as a custom persona"],
       },
       {
         href: "/word-count", label: "Word-Count Speeches", icon: Type,

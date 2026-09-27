@@ -45,7 +45,7 @@ Everything is private except `debate-api-client`.
 | `debate-editor` | *(same)* | CardMirror: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
 | `debate-flow` | `debate-flow-ebb` | `ebb`, the local-first keyboard-first flow editor. `EbbFlowEmbed` mounts it as one column of a host page. |
 | `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
-| `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, judge paradigm picker, AI judge decision, opponent personas, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
+| `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, AI judge decision, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
 | `debate-round` | *(same)* | FIAT: ag-Grid flow spreadsheet, column nav and split view, round setup dialogs, speech doc panels, export/history, flow and settings stores, plus the roster panels that render persisted practice records |
 | `debate-round-practice-ai` | `debate-practice-vs-ai` | `/versus-ai`: a Node/TS port of the Go `arguehub` vs-bot backend (13 bot personalities, prompt construction, AI judging, gamification) + the React round UI. Plain `fetch`; no Go/Mongo/Gin. |
 | `debate-search-evidence` | `debate-research-evidence` | Search bar, result list, card viewer, research and AI-analysis sidebars, the shared evidence/argument library, LLM card scoring, revision incentives, review queue, topic coverage dashboard |

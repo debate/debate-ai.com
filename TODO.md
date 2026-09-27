@@ -31,9 +31,7 @@ Daily Quests — Track team goals, such as finding solvency cards, against live 
 Practice & AI Rounds
 Practice Drills — Run flow-derived overview, frontline, cross-examination, and collapse drills.
 AI Coach Mode — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
-Judge Paradigm Picker — Select a built-in or custom AI judge paradigm for practice rounds.
 AI Judge Decision — Generate an AI decision grounded in the selected judge paradigm and flow summary.
-Opponent Persona Picker — Choose or define an AI practice opponent’s debating style.
 Word-Count Speeches — Practice speeches under a maximum word count instead of a time limit.
 Online Debate Versus AI — Debate an AI opponent in real turn order using a chosen format and side.
 Practice Round Simulator — Simulate a tournament round with a timer, AI judge paradigm, and AI opponent persona.
