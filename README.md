@@ -177,12 +177,11 @@ roughly 500 editing commands into ~30 thematic groups. Highlights (full 50+ feat
 
 ## Contributing
 
-- [API Reference](https://debate-ai.com/api) — Interactive Scalar docs generated from [`debate-openapi.yml`](./packages/debate-api-client/debate-openapi.yml) with [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client))
-- Start developing locally, develop features, open ideas in discussions, and submit a PR!
 ```
 npx git0 debate/ai
 ```
-
+- Start developing locally, develop features, open ideas in discussions, and submit a PR!
+- [API Reference](https://debate-ai.com/api) — Interactive Scalar docs generated from [`debate-openapi.yml`](./packages/debate-api-client/debate-openapi.yml) with [`debate-api-client`](./packages/debate-api-client) ([npm](https://www.npmjs.com/package/debate-api-client))
 - Open questions and larger proposals belong in
 [Discussions](https://github.com/debate/debate-ai.com/discussions); bugs and scoped work
 belong in Issues.
