@@ -56,6 +56,28 @@
  * a round can accumulate many) via `GET /api/counsel-panel-assessments`, but
  * the same "sync wired, discoverability not" gap applied here too.
  *
+ * A tenth kind, Pre-Round Briefings' saved round pairings (`/briefings`),
+ * joined next: `saved_round_pairings` already synced a signed-in user's
+ * `RoundPairingRecord`s (`debate-round` itself this time, one row per
+ * pairing keyed by `roundId`) via `GET /api/round-pairings`, but the same
+ * "sync wired, discoverability not" gap applied here too.
+ *
+ * An eleventh kind, Scout-to-Strategy's saved strategy recommendations
+ * (`/strategy`), joined next: `saved_strategy_recommendations` already
+ * synced a signed-in user's `StrategyRecommendationRecord`s (`debate-round`
+ * itself, one row per built recommendation, many rows can share a
+ * `matchupId`) via `GET /api/strategy-recommendations`, but the same "sync
+ * wired, discoverability not" gap applied here too. Like counsel-panel
+ * assessments, a recommendation carries no separate display name of its
+ * own, so it's labeled by `matchupId`.
+ *
+ * A twelfth kind, Team Collaboration Mode's scheduled Topic Sprint sessions
+ * (`/research`, `TopicSprintPanel`), joined next: `saved_sprint_sessions`
+ * (`debate-team-collaboration`) already synced a signed-in user's
+ * `SprintSession`s via `GET /api/sprint-sessions`, but the same "sync
+ * wired, discoverability not" gap applied here too — a session scheduled on
+ * one device stayed invisible from the tools page on another.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -66,6 +88,8 @@
 
 import type { SavedFlowSummary } from "./savedFlows";
 import type { SavedRoundSummary } from "./savedRounds";
+import type { RoundPairingRecord } from "./roundPairings";
+import type { StrategyRecommendationRecord } from "./strategyRecommendations";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -173,6 +197,56 @@ export type CloudCounselPanelAssessmentSummary = {
   generatedAt: number;
 };
 
+/**
+ * The subset of a `RoundPairingRecord` (`debate-round`) a caller needs to
+ * list one in the merged view — mirrors `GET /api/round-pairings`'s row
+ * shape (full records, like {@link CloudDrillSetSummary}; the round-pairings
+ * route has no label-only summary mode either). Imported directly rather
+ * than defined locally like the other in-package summary types above: this
+ * one already lives in `debate-round` itself (`state/roundPairings.ts`), so
+ * there's no cross-package dependency edge to avoid.
+ */
+export type CloudRoundPairingSummary = Pick<
+  RoundPairingRecord,
+  "roundId" | "tournamentName" | "roundLabel" | "updatedAt"
+>;
+
+/**
+ * The subset of a `StrategyRecommendationRecord` (`debate-round`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/strategy-recommendations`'s
+ * row shape (full records, like {@link CloudCounselPanelAssessmentSummary};
+ * the strategy-recommendations route has no label-only summary mode
+ * either). Imported directly rather than defined locally, matching
+ * {@link CloudRoundPairingSummary}'s own in-package convention — this type
+ * already lives in `debate-round` itself (`state/strategyRecommendations.ts`).
+ * Like a counsel-panel assessment, a recommendation carries no separate
+ * display name — it's keyed and shown by its own `id` and grouped by
+ * `matchupId` everywhere else in the app (`StrategyPanel`'s history log), so
+ * this type is labeled by `matchupId` like {@link CloudCounselPanelAssessmentSummary}
+ * rather than by a name field.
+ */
+export type CloudStrategyRecommendationSummary = Pick<
+  StrategyRecommendationRecord,
+  "id" | "matchupId" | "generatedAt"
+>;
+
+/**
+ * The subset of a `SprintSession` (`debate-team-collaboration`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/sprint-sessions`'s
+ * row shape (full records, like {@link CloudDrillSetSummary}; the
+ * sprint-sessions route has no label-only summary mode either). Defined
+ * locally rather than importing `SprintSession` itself, matching
+ * {@link CloudDebateSummary}'s own local-type convention: `debate-round`
+ * doesn't depend on `debate-team-collaboration` (nor the reverse).
+ */
+export type CloudSprintSessionSummary = {
+  id: string;
+  topic: string;
+  title: string;
+  /** Epoch milliseconds, per `SprintSession.createdAt` — there is no separate `updatedAt`. */
+  createdAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -182,7 +256,10 @@ export type CloudLibraryItemKind =
   | "speechOutcome"
   | "drillSet"
   | "judgeDecision"
-  | "counselPanelAssessment";
+  | "counselPanelAssessment"
+  | "roundPairing"
+  | "strategyRecommendation"
+  | "sprintSession";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -226,6 +303,9 @@ export interface BuildRecentCloudItemsInput {
   drillSets?: CloudDrillSetSummary[];
   judgeDecisions?: CloudJudgeDecisionSummary[];
   counselPanelAssessments?: CloudCounselPanelAssessmentSummary[];
+  roundPairings?: CloudRoundPairingSummary[];
+  strategyRecommendations?: CloudStrategyRecommendationSummary[];
+  sprintSessions?: CloudSprintSessionSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -242,6 +322,9 @@ export interface BuildRecentCloudItemsOptions {
   drillSetHref?: string;
   judgeDecisionHref?: string;
   counselPanelAssessmentHref?: string;
+  roundPairingHref?: string;
+  strategyRecommendationHref?: string;
+  sprintSessionHref?: string;
 }
 
 /**
@@ -267,6 +350,9 @@ export function buildRecentCloudItems(
     drillSetHref = "/drills",
     judgeDecisionHref = "/judge-decision",
     counselPanelAssessmentHref = "/outcomes",
+    roundPairingHref = "/briefings",
+    strategyRecommendationHref = "/strategy",
+    sprintSessionHref = "/research",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -351,6 +437,43 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(assessment.generatedAt),
     }));
 
+  const roundPairingItems: CloudLibraryItem[] = (input.roundPairings ?? [])
+    .slice(0, perKindLimit)
+    .map((pairing) => {
+      const tournamentName = pairing.tournamentName.trim();
+      const roundLabel = pairing.roundLabel.trim();
+      const label = tournamentName && roundLabel
+        ? `${tournamentName} — ${roundLabel}`
+        : tournamentName || roundLabel || "Untitled pairing";
+      return {
+        kind: "roundPairing" as const,
+        key: `roundPairing-${pairing.roundId}`,
+        href: roundPairingHref,
+        label,
+        updatedAtMs: parseCloudTimestamp(pairing.updatedAt ?? 0),
+      };
+    });
+
+  const strategyRecommendationItems: CloudLibraryItem[] = (input.strategyRecommendations ?? [])
+    .slice(0, perKindLimit)
+    .map((recommendation) => ({
+      kind: "strategyRecommendation" as const,
+      key: `strategyRecommendation-${recommendation.id}`,
+      href: strategyRecommendationHref,
+      label: recommendation.matchupId.trim() || "Untitled strategy recommendation",
+      updatedAtMs: parseCloudTimestamp(recommendation.generatedAt),
+    }));
+
+  const sprintSessionItems: CloudLibraryItem[] = (input.sprintSessions ?? [])
+    .slice(0, perKindLimit)
+    .map((session) => ({
+      kind: "sprintSession" as const,
+      key: `sprintSession-${session.id}`,
+      href: sprintSessionHref,
+      label: session.title.trim() || session.topic.trim() || "Untitled sprint session",
+      updatedAtMs: parseCloudTimestamp(session.createdAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -361,6 +484,9 @@ export function buildRecentCloudItems(
     ...drillSetItems,
     ...judgeDecisionItems,
     ...counselPanelAssessmentItems,
+    ...roundPairingItems,
+    ...strategyRecommendationItems,
+    ...sprintSessionItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

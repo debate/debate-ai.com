@@ -85,6 +85,17 @@ shape. The **review log** syncs separately — see
   surface for any of `LearnStore`'s deck mutators. It shows the same coarse
   "Synced to your account" / "Not synced — sign in to sync" line (via
   `learnDecksSync.isSynced()`) the flashcard list and Review history already
-  do; `LearnDecksSync` tracks no *per-deck* status (its pushes/deletes are
+  do. ~~`LearnDecksSync` tracks no *per-deck* status (its pushes/deletes are
   fire-and-forget), so a per-deck badge would need that state added to the
-  sync class first — a real follow-up, not done here.
+  sync class first — a real follow-up, not done here.~~ **Fixed:**
+  `LearnDecksSync` now keeps a `landed` map of each deck's last *confirmed*
+  value — advanced only once a create/op/fallback push actually resolves,
+  distinct from the `baseline` map used purely to diff the next change — and
+  exposes it as `getDeckSyncStatus(deckId)` (`"synced"` / `"pending"` /
+  `"unknown"`, mirroring `debate-data-sync`'s `getToolRecordSyncStatus`
+  shape) plus an `onStatusChange` subscription so a caller can re-render once
+  a fire-and-forget push settles, since that alone doesn't mutate the store.
+  `learn-deck-manage-ui.ts` shows each deck's status as a small "Synced" /
+  "Not yet synced" badge next to its name — the same chip language
+  `user-dictionary-ui.ts` uses for `getToolRecordSyncStatus` — omitted
+  entirely while the coarse status is `"unknown"`.

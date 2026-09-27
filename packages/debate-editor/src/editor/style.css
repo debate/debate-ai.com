@@ -12751,6 +12751,25 @@ textarea.pmd-text-prompt-input {
   color: var(--pmd-c-text-muted);
   white-space: nowrap;
 }
+/* "Synced" / "Not yet synced" — same small-chip language as
+   .pmd-dictionary-sync-badge, reused here for a deck's account-sync status. */
+.pmd-deck-manage-sync-badge {
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  border: 1px solid var(--pmd-c-border-soft);
+}
+.pmd-deck-manage-sync-badge--synced {
+  color: var(--pmd-c-accent);
+  border-color: var(--pmd-c-accent);
+}
+.pmd-deck-manage-sync-badge--pending {
+  color: var(--pmd-c-text-muted);
+  background: var(--pmd-c-surface-soft);
+}
 .pmd-deck-manage-action {
   background: transparent;
   border: 1px solid transparent;

@@ -62,11 +62,40 @@
  * against that route's bare `CounselPanelAssessmentRecord[]` body rather
  * than importing `debate-practice-drills`'s own state module.
  *
+ * Pre-Round Briefings' saved round pairings (`/api/round-pairings`) join
+ * next, but unlike the five sources above, this one imports
+ * `round/round-pairings-client.ts`'s own `listSavedRoundPairings` directly
+ * rather than a local raw `fetch` — `RoundPairingRecord` already lives in
+ * this package (`state/roundPairings.ts`), so there's no dependency edge to
+ * avoid the way there is for `debate-practice-drills`/`debate-practice-vs-ai`/
+ * `debate-videos`. It throws on a non-401 failure (matching
+ * `hooks/useRoundPairings.ts`'s own caller), so it's wrapped in `.catch(() =>
+ * null)` here to keep this module's "degrade, never reject" convention.
+ *
+ * Scout-to-Strategy's saved strategy recommendations
+ * (`/api/strategy-recommendations`) join the same way as the round-only
+ * counsel-panel/judge-decision sources above: `listCloudStrategyRecommendations`
+ * below is a local raw `fetch` against that route's bare
+ * `StrategyRecommendationRecord[]` body rather than importing this
+ * package's own `state/strategyRecommendations.ts`, matching
+ * {@link listCloudCounselPanelAssessments}'s convention of fetching the raw
+ * account-sync route directly instead of that module's local-storage-first
+ * read helpers.
+ *
+ * Team Collaboration Mode's scheduled Topic Sprint sessions
+ * (`/api/sprint-sessions`) join next, for the same cross-package reason as
+ * word-count rounds and Practice vs AI debates: `debate-team-collaboration`
+ * doesn't depend on `debate-round` (and `debate-round` doesn't depend on it
+ * either), so `listCloudSprintSessions` below is a local raw `fetch` against
+ * that route's bare `SprintSession[]` body rather than importing that
+ * package's own `lib/sprint-sessions-client.ts`.
+ *
  * @module state/cloudLibraryClient
  */
 
 import { listSavedFlows } from "../round/saved-flows-client";
 import { listSavedRounds } from "../round/saved-rounds-client";
+import { listSavedRoundPairings } from "../round/round-pairings-client";
 import {
   buildRecentCloudItems,
   type BuildRecentCloudItemsOptions,
@@ -77,6 +106,8 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
+  type CloudSprintSessionSummary,
+  type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
 } from "./cloudLibrary";
 
@@ -209,13 +240,51 @@ async function listCloudCounselPanelAssessments(
 }
 
 /**
+ * Lists the current user's synced Scout-to-Strategy strategy recommendations.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/strategy-recommendations`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudStrategyRecommendations(
+  endpoint = "/api/strategy-recommendations",
+): Promise<CloudStrategyRecommendationSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudStrategyRecommendationSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Team Collaboration Mode sprint sessions.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/sprint-sessions`'s own auth behavior), a non-2xx response, or a
+ * network error — same "no items of that kind" convention as the other
+ * sources above.
+ */
+async function listCloudSprintSessions(
+  endpoint = "/api/sprint-sessions",
+): Promise<CloudSprintSessionSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSprintSessionSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
- * drill-sets/judge-decisions/counsel-panel-assessments and merges them via
- * `buildRecentCloudItems`. Each source resolves independently and degrades
- * to "no items of that kind" on any failure — a network error, a non-2xx
- * response, or a signed-out `401` — rather than rejecting the whole call, so
- * one flaky endpoint never blanks a widget that had perfectly good data from
- * the others.
+ * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
+ * strategy-recommendations/sprint-sessions and merges them via `buildRecentCloudItems`. Each source resolves
+ * independently and degrades to "no items of that kind" on any failure — a
+ * network error, a non-2xx response, or a signed-out `401` — rather than
+ * rejecting the whole call, so one flaky endpoint never blanks a widget that
+ * had perfectly good data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
   const [
@@ -228,6 +297,9 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     drillSets,
     judgeDecisions,
     counselPanelAssessments,
+    roundPairings,
+    strategyRecommendations,
+    sprintSessions,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -238,6 +310,9 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudDrillSets(),
     listCloudJudgeDecisions(),
     listCloudCounselPanelAssessments(),
+    listSavedRoundPairings().catch(() => null),
+    listCloudStrategyRecommendations(),
+    listCloudSprintSessions(),
   ]);
   return buildRecentCloudItems(
     {
@@ -250,6 +325,9 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       drillSets: drillSets ?? undefined,
       judgeDecisions: judgeDecisions ?? undefined,
       counselPanelAssessments: counselPanelAssessments ?? undefined,
+      roundPairings: roundPairings ?? undefined,
+      strategyRecommendations: strategyRecommendations ?? undefined,
+      sprintSessions: sprintSessions ?? undefined,
     },
     opts,
   );
