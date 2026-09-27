@@ -62,6 +62,15 @@
  * pairing keyed by `roundId`) via `GET /api/round-pairings`, but the same
  * "sync wired, discoverability not" gap applied here too.
  *
+ * An eleventh kind, Scout-to-Strategy's saved strategy recommendations
+ * (`/strategy`), joined next: `saved_strategy_recommendations` already
+ * synced a signed-in user's `StrategyRecommendationRecord`s (`debate-round`
+ * itself, one row per built recommendation, many rows can share a
+ * `matchupId`) via `GET /api/strategy-recommendations`, but the same "sync
+ * wired, discoverability not" gap applied here too. Like counsel-panel
+ * assessments, a recommendation carries no separate display name of its
+ * own, so it's labeled by `matchupId`.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -73,6 +82,7 @@
 import type { SavedFlowSummary } from "./savedFlows";
 import type { SavedRoundSummary } from "./savedRounds";
 import type { RoundPairingRecord } from "./roundPairings";
+import type { StrategyRecommendationRecord } from "./strategyRecommendations";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -194,6 +204,25 @@ export type CloudRoundPairingSummary = Pick<
   "roundId" | "tournamentName" | "roundLabel" | "updatedAt"
 >;
 
+/**
+ * The subset of a `StrategyRecommendationRecord` (`debate-round`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/strategy-recommendations`'s
+ * row shape (full records, like {@link CloudCounselPanelAssessmentSummary};
+ * the strategy-recommendations route has no label-only summary mode
+ * either). Imported directly rather than defined locally, matching
+ * {@link CloudRoundPairingSummary}'s own in-package convention — this type
+ * already lives in `debate-round` itself (`state/strategyRecommendations.ts`).
+ * Like a counsel-panel assessment, a recommendation carries no separate
+ * display name — it's keyed and shown by its own `id` and grouped by
+ * `matchupId` everywhere else in the app (`StrategyPanel`'s history log), so
+ * this type is labeled by `matchupId` like {@link CloudCounselPanelAssessmentSummary}
+ * rather than by a name field.
+ */
+export type CloudStrategyRecommendationSummary = Pick<
+  StrategyRecommendationRecord,
+  "id" | "matchupId" | "generatedAt"
+>;
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -204,7 +233,8 @@ export type CloudLibraryItemKind =
   | "drillSet"
   | "judgeDecision"
   | "counselPanelAssessment"
-  | "roundPairing";
+  | "roundPairing"
+  | "strategyRecommendation";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -249,6 +279,7 @@ export interface BuildRecentCloudItemsInput {
   judgeDecisions?: CloudJudgeDecisionSummary[];
   counselPanelAssessments?: CloudCounselPanelAssessmentSummary[];
   roundPairings?: CloudRoundPairingSummary[];
+  strategyRecommendations?: CloudStrategyRecommendationSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -266,6 +297,7 @@ export interface BuildRecentCloudItemsOptions {
   judgeDecisionHref?: string;
   counselPanelAssessmentHref?: string;
   roundPairingHref?: string;
+  strategyRecommendationHref?: string;
 }
 
 /**
@@ -292,6 +324,7 @@ export function buildRecentCloudItems(
     judgeDecisionHref = "/judge-decision",
     counselPanelAssessmentHref = "/outcomes",
     roundPairingHref = "/briefings",
+    strategyRecommendationHref = "/strategy",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -393,6 +426,16 @@ export function buildRecentCloudItems(
       };
     });
 
+  const strategyRecommendationItems: CloudLibraryItem[] = (input.strategyRecommendations ?? [])
+    .slice(0, perKindLimit)
+    .map((recommendation) => ({
+      kind: "strategyRecommendation" as const,
+      key: `strategyRecommendation-${recommendation.id}`,
+      href: strategyRecommendationHref,
+      label: recommendation.matchupId.trim() || "Untitled strategy recommendation",
+      updatedAtMs: parseCloudTimestamp(recommendation.generatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -404,6 +447,7 @@ export function buildRecentCloudItems(
     ...judgeDecisionItems,
     ...counselPanelAssessmentItems,
     ...roundPairingItems,
+    ...strategyRecommendationItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
