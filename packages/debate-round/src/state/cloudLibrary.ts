@@ -84,6 +84,14 @@
  * `GET /api/speech-send-log`, but the same "sync wired, discoverability not"
  * gap applied here too.
  *
+ * A fourteenth kind, the "🤖 AI Practice Opponent" idea's saved custom
+ * opponent personas (`/practice-round`, `PracticeRoundSimulatorPanel`'s
+ * library picker), joined next: `saved_custom_opponent_personas`
+ * (`debate-speech-writer`'s `SavedCustomOpponentPersona`) already synced a
+ * signed-in user's named, reusable personas via
+ * `GET /api/custom-opponent-personas`, but the same "sync wired,
+ * discoverability not" gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -268,6 +276,23 @@ export type CloudSpeechSendLogSummary = {
   sentAt: number;
 };
 
+/**
+ * The subset of a `SavedCustomOpponentPersona` (`debate-speech-writer`) a
+ * caller needs to list one in the merged view — mirrors
+ * `GET /api/custom-opponent-personas`'s row shape (full records, like
+ * {@link CloudDrillSetSummary}; the custom-opponent-personas route has no
+ * label-only summary mode either). Defined locally rather than importing
+ * `SavedCustomOpponentPersona` itself, matching {@link CloudDebateSummary}'s
+ * own local-type convention: `debate-round` doesn't depend on
+ * `debate-speech-writer` (nor the reverse).
+ */
+export type CloudCustomOpponentPersonaSummary = {
+  id: string;
+  name: string;
+  /** Epoch milliseconds, per `SavedCustomOpponentPersona.updatedAt`. */
+  updatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -281,7 +306,8 @@ export type CloudLibraryItemKind =
   | "roundPairing"
   | "strategyRecommendation"
   | "sprintSession"
-  | "speechSendLogEntry";
+  | "speechSendLogEntry"
+  | "customOpponentPersona";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -329,6 +355,7 @@ export interface BuildRecentCloudItemsInput {
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
   sprintSessions?: CloudSprintSessionSummary[];
   speechSendLogEntries?: CloudSpeechSendLogSummary[];
+  customOpponentPersonas?: CloudCustomOpponentPersonaSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -349,6 +376,7 @@ export interface BuildRecentCloudItemsOptions {
   strategyRecommendationHref?: string;
   sprintSessionHref?: string;
   speechSendLogEntryHref?: string;
+  customOpponentPersonaHref?: string;
 }
 
 /**
@@ -378,6 +406,7 @@ export function buildRecentCloudItems(
     strategyRecommendationHref = "/strategy",
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
+    customOpponentPersonaHref = "/practice-round",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -509,6 +538,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(entry.sentAt),
     }));
 
+  const customOpponentPersonaItems: CloudLibraryItem[] = (input.customOpponentPersonas ?? [])
+    .slice(0, perKindLimit)
+    .map((persona) => ({
+      kind: "customOpponentPersona" as const,
+      key: `customOpponentPersona-${persona.id}`,
+      href: customOpponentPersonaHref,
+      label: persona.name.trim() || "Untitled custom opponent persona",
+      updatedAtMs: parseCloudTimestamp(persona.updatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -523,6 +562,7 @@ export function buildRecentCloudItems(
     ...strategyRecommendationItems,
     ...sprintSessionItems,
     ...speechSendLogItems,
+    ...customOpponentPersonaItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
