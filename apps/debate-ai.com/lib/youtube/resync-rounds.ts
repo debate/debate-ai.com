@@ -34,14 +34,14 @@ import { getEnv } from "../env";
  * A channel's YouTube id is resolved from its name here and written back, so
  * the admin never has to type an id — and a renamed channel keeps working
  * until the next scan re-resolves it.
+ *
+ * @param triggeredBy - Admin email, or the "cron" sentinel from
+ *   `weekly-sync.ts` when the weekly tick started the run.
+ * @param publishedAfterDate - Optional `YYYY-MM-DD` floor. When omitted (the
+ *   weekly cron path) the module-level default from `channel-config.ts` is
+ *   used; the admin page's date chooser passes its own value so a manual
+ *   resync can reach further back or narrow the window without a redeploy.
  */
-   * @param triggeredBy - Admin email, or the "cron" sentinel from
-   *   `weekly-sync.ts` when the weekly tick started the run.
-   * @param publishedAfterDate - Optional `YYYY-MM-DD` floor. When omitted (the
-   *   weekly cron path) the module-level default from `channel-config.ts` is
-   *   used; the admin page's date chooser passes its own value so a manual
-   *   resync can reach further back or narrow the window without a redeploy.
-   */
 export async function resyncYouTubeRounds(
   triggeredBy: string | null,
   publishedAfterDate?: string,
@@ -154,12 +154,18 @@ export async function resyncYouTubeRounds(
         judgeDecision,
       };
 
+      // On conflict (the video was already in the queue from a prior scan),
+      // only refresh `views` — a live count that genuinely drifts — and bump
+      // `updatedAt`. Every other column (title, description, and the parsed
+      // fields like aff/neg/tournament/style) is left as-is so a re-scan that
+      // re-walks the channel can never silently overwrite existing data,
+      // whether parser-derived or admin-corrected.
       await db
         .insert(youtubeRoundVideos)
         .values(values)
         .onConflictDoUpdate({
           target: youtubeRoundVideos.id,
-          set: { ...values, updatedAt: new Date() },
+          set: { views: values.views, updatedAt: new Date() },
         });
 
       videosUpserted++;

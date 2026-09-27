@@ -5,6 +5,8 @@ import { FileSearch, Film, ListVideo, RefreshCw, Upload, Users } from "lucide-re
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
+import { Input } from "../../lib/ui/primitives/input";
+import { Label } from "../../lib/ui/primitives/label";
 import {
   Card,
   CardContent,
@@ -85,6 +87,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isResyncing, setIsResyncing] = useState(false);
+  const [resyncCutoff, setResyncCutoff] = useState("");
   const [lastRun, setLastRun] = useState<SyncRun | null>(null);
   const [resyncError, setResyncError] = useState<string | null>(null);
   const [isPublishingAll, setIsPublishingAll] = useState(false);
@@ -231,7 +234,11 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
     setIsResyncing(true);
     setResyncError(null);
     try {
-      const res = await fetch("/api/admin/youtube/resync", { method: "POST" });
+      const res = await fetch("/api/admin/youtube/resync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publishedAfter: resyncCutoff || undefined }),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.details || data?.error || "Resync failed");
       // Only the fields `SyncRun` declares — the rest of the run row the API
@@ -667,12 +674,29 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                 <CardTitle>Resync YouTube rounds</CardTitle>
                 <CardDescription>
                   Refetches every subscribed channel from YouTube, re-classifies rounds, and
-                  upserts them into the database. Runs automatically every Monday at 08:00 UTC;
+                  upserts them into the database. Already-stored videos are not overridden — only
+                  their view count is refreshed. Runs automatically every Monday at 08:00 UTC;
                   this button is for when you do not want to wait.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-end gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="resync-cutoff">Cutoff date (optional)</Label>
+                    <Input
+                      id="resync-cutoff"
+                      type="date"
+                      value={resyncCutoff}
+                      onChange={(e) => setResyncCutoff(e.target.value)}
+                      className="w-[200px]"
+                      disabled={isResyncing}
+                    />
+                    <p className="text-muted-foreground text-xs">
+                      Only fetches videos published after this date. Leave empty to use the default
+                      floor (2023-05-01). Pick a later date to scan a smaller window, or an earlier
+                      date to look back further.
+                    </p>
+                  </div>
                   <Button onClick={handleResync} disabled={isResyncing}>
                     {isResyncing ? "Resyncing…" : "Resync videos"}
                   </Button>

@@ -17,7 +17,7 @@ const resyncVideoViewCounts = vi.fn();
 const getDBFromContext = vi.fn();
 
 vi.mock("../resync-rounds", () => ({
-  resyncYouTubeRounds: (triggeredBy: string | null) => resyncYouTubeRounds(triggeredBy),
+  resyncYouTubeRounds: (triggeredBy: string | null, publishedAfterDate?: string) => resyncYouTubeRounds(triggeredBy, publishedAfterDate),
 }));
 vi.mock("../../videos/resync-view-counts", () => ({
   resyncVideoViewCounts: (db: unknown) => resyncVideoViewCounts(db),
