@@ -72,6 +72,16 @@
  * `hooks/useRoundPairings.ts`'s own caller), so it's wrapped in `.catch(() =>
  * null)` here to keep this module's "degrade, never reject" convention.
  *
+ * Scout-to-Strategy's saved strategy recommendations
+ * (`/api/strategy-recommendations`) join the same way as the round-only
+ * counsel-panel/judge-decision sources above: `listCloudStrategyRecommendations`
+ * below is a local raw `fetch` against that route's bare
+ * `StrategyRecommendationRecord[]` body rather than importing this
+ * package's own `state/strategyRecommendations.ts`, matching
+ * {@link listCloudCounselPanelAssessments}'s convention of fetching the raw
+ * account-sync route directly instead of that module's local-storage-first
+ * read helpers.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -88,6 +98,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
+  type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
 } from "./cloudLibrary";
 
@@ -220,9 +231,28 @@ async function listCloudCounselPanelAssessments(
 }
 
 /**
+ * Lists the current user's synced Scout-to-Strategy strategy recommendations.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/strategy-recommendations`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudStrategyRecommendations(
+  endpoint = "/api/strategy-recommendations",
+): Promise<CloudStrategyRecommendationSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudStrategyRecommendationSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
- * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings and
- * merges them via `buildRecentCloudItems`. Each source resolves
+ * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
+ * strategy-recommendations and merges them via `buildRecentCloudItems`. Each source resolves
  * independently and degrades to "no items of that kind" on any failure — a
  * network error, a non-2xx response, or a signed-out `401` — rather than
  * rejecting the whole call, so one flaky endpoint never blanks a widget that
@@ -240,6 +270,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     judgeDecisions,
     counselPanelAssessments,
     roundPairings,
+    strategyRecommendations,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -251,6 +282,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudJudgeDecisions(),
     listCloudCounselPanelAssessments(),
     listSavedRoundPairings().catch(() => null),
+    listCloudStrategyRecommendations(),
   ]);
   return buildRecentCloudItems(
     {
@@ -264,6 +296,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       judgeDecisions: judgeDecisions ?? undefined,
       counselPanelAssessments: counselPanelAssessments ?? undefined,
       roundPairings: roundPairings ?? undefined,
+      strategyRecommendations: strategyRecommendations ?? undefined,
     },
     opts,
   );

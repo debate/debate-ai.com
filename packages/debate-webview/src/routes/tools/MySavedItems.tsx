@@ -32,7 +32,9 @@
  * next — already saved per-user in `saved_counsel_panel_assessments`, the
  * same gap again. Pre-Round Briefings' saved round pairings (`/briefings`)
  * joined next — already saved per-user in `saved_round_pairings`, the same
- * gap again.
+ * gap again. Scout-to-Strategy's saved strategy recommendations
+ * (`/strategy`) joined next — already saved per-user in
+ * `saved_strategy_recommendations`, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -48,7 +50,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, ClipboardList, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -74,6 +76,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   // pairing has no standalone /tools entry of its own, it's a feature of
   // that same panel.
   roundPairing: ClipboardList,
+  // Matches Scout-to-Strategy's own icon in `app/tools/tool-groups.ts`.
+  strategyRecommendation: Crosshair,
 }
 
 export function MySavedItems() {

@@ -10,6 +10,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
+  type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
 import type { SavedFlowSummary } from "../src/state/savedFlows";
@@ -74,8 +75,11 @@ describe("buildRecentCloudItems", () => {
       updatedAt: Date.parse("2026-08-26T00:00:00.000Z"),
     },
   ];
+  const strategyRecommendations: CloudStrategyRecommendationSummary[] = [
+    { id: "strategy-1", matchupId: "matchup-9", generatedAt: Date.parse("2026-09-04T00:00:00.000Z") },
+  ];
 
-  it("merges all ten kinds and sorts newest first", () => {
+  it("merges all eleven kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -88,10 +92,12 @@ describe("buildRecentCloudItems", () => {
         judgeDecisions,
         counselPanelAssessments,
         roundPairings,
+        strategyRecommendations,
       },
-      { limit: 10 },
+      { limit: 11 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "strategyRecommendation",
       "counselPanelAssessment",
       "judgeDecision",
       "speechOutcome",
@@ -213,6 +219,25 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.updatedAtMs).toBe(0);
   });
 
+  it("includes strategy recommendations, keyed by id and labeled by matchupId", () => {
+    const items = buildRecentCloudItems({ strategyRecommendations });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "strategyRecommendation",
+        key: "strategyRecommendation-strategy-1",
+        label: "matchup-9",
+        updatedAtMs: Date.parse("2026-09-04T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a strategy recommendation with a blank matchupId as untitled", () => {
+    const items = buildRecentCloudItems({
+      strategyRecommendations: [{ id: "strategy-2", matchupId: "   ", generatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled strategy recommendation");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -232,8 +257,9 @@ describe("buildRecentCloudItems", () => {
         judgeDecisions,
         counselPanelAssessments,
         roundPairings,
+        strategyRecommendations,
       },
-      { limit: 10 },
+      { limit: 11 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -246,6 +272,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.judgeDecision).toBe("/judge-decision");
     expect(byKind.counselPanelAssessment).toBe("/outcomes");
     expect(byKind.roundPairing).toBe("/briefings");
+    expect(byKind.strategyRecommendation).toBe("/strategy");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -282,6 +309,12 @@ describe("buildRecentCloudItems", () => {
       { roundPairingHref: "/custom-briefings-route" },
     );
     expect(overriddenRoundPairing[0]?.href).toBe("/custom-briefings-route");
+
+    const overriddenStrategyRecommendation = buildRecentCloudItems(
+      { strategyRecommendations },
+      { strategyRecommendationHref: "/custom-strategy-route" },
+    );
+    expect(overriddenStrategyRecommendation[0]?.href).toBe("/custom-strategy-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -301,8 +334,11 @@ describe("buildRecentCloudItems", () => {
         roundPairings: [
           { roundId: "r1", tournamentName: "  ", roundLabel: "  ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        strategyRecommendations: [
+          { id: "strategy-1", matchupId: "   ", generatedAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 10 },
+      { limit: 11 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -315,6 +351,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.judgeDecision).toBe("Untitled judge decision");
     expect(byKind.counselPanelAssessment).toBe("Untitled response-outcome chart");
     expect(byKind.roundPairing).toBe("Untitled pairing");
+    expect(byKind.strategyRecommendation).toBe("Untitled strategy recommendation");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -347,6 +384,7 @@ describe("buildRecentCloudItems", () => {
         judgeDecisions: [],
         counselPanelAssessments: [],
         roundPairings: [],
+        strategyRecommendations: [],
       }),
     ).toEqual([]);
   });
