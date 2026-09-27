@@ -135,7 +135,10 @@ export function ProgressUnlocksPanel({ signedInContributorId }: ProgressUnlocksP
 
   if (roster.length === 0) {
     return (
-      <PanelShell title="Progress Unlocks">
+      <PanelShell
+        title="Progress Unlocks"
+        description="Every contributor's unlock tier, badges, and streak — and how far they are from the next tier."
+      >
         <EmptyState
           title="No contributors yet."
           message="Unlock status fills in as contributors submit cards, summaries, and analytics — or complete routed research tasks, which count toward a tier on their own."
