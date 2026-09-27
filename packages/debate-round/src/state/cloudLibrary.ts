@@ -124,6 +124,16 @@
  * card clipped on one device stayed invisible from this widget on another,
  * discoverable only from inside the editor's own quick-card search/manage UI.
  *
+ * An eighteenth kind, Prep Notes' live per-argument notes (`/prep-notes`),
+ * joined next: `PrepNote`s (`debate-round`'s own
+ * `flow/strategy-sync-notes.ts`, persisted by `debate-team-collaboration`'s
+ * `state/prepNotes.ts`) already synced a signed-in user's notes via
+ * `debate-data-sync`'s generic `TOOL_RECORD_COLLECTIONS` mechanism (the
+ * `prepNotes` collection, backed by `saved_tool_records` like
+ * {@link CloudFlowAnnotationSummary}), but the same "sync wired,
+ * discoverability not" gap applied here too — a note left on one device
+ * stayed invisible from this widget on another.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -137,6 +147,7 @@ import type { SavedRoundSummary } from "./savedRounds";
 import type { RoundPairingRecord } from "./roundPairings";
 import type { StrategyRecommendationRecord } from "./strategyRecommendations";
 import type { FlowAnnotation } from "../flow/flow-annotations";
+import type { PrepNote } from "../flow/strategy-sync-notes";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -370,6 +381,18 @@ export type CloudQuickCardSummary = {
   updatedAt: number;
 };
 
+/**
+ * The subset of a `PrepNote` (`debate-round`'s own
+ * `flow/strategy-sync-notes.ts`) a caller needs to list one in the merged
+ * view — mirrors `GET /api/tool-records/prepNotes`'s row shape (full
+ * records, like {@link CloudFlowAnnotationSummary}; the generic tool-records
+ * route has no label-only summary mode). Imported directly rather than
+ * defined locally, matching {@link CloudFlowAnnotationSummary}'s own
+ * convention: `PrepNote` already lives in this package, so there's no
+ * dependency edge to avoid.
+ */
+export type CloudPrepNoteSummary = Pick<PrepNote, "id" | "text" | "updatedAt">;
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -387,7 +410,8 @@ export type CloudLibraryItemKind =
   | "learnDeck"
   | "customOpponentPersona"
   | "flowAnnotation"
-  | "quickCard";
+  | "quickCard"
+  | "prepNote";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -439,6 +463,7 @@ export interface BuildRecentCloudItemsInput {
   customOpponentPersonas?: CloudCustomOpponentPersonaSummary[];
   flowAnnotations?: CloudFlowAnnotationSummary[];
   quickCards?: CloudQuickCardSummary[];
+  prepNotes?: CloudPrepNoteSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -463,6 +488,7 @@ export interface BuildRecentCloudItemsOptions {
   customOpponentPersonaHref?: string;
   flowAnnotationHref?: string;
   quickCardHref?: string;
+  prepNoteHref?: string;
 }
 
 /**
@@ -496,6 +522,7 @@ export function buildRecentCloudItems(
     customOpponentPersonaHref = "/practice-round",
     flowAnnotationHref = "/annotations",
     quickCardHref = "/reason-editor",
+    prepNoteHref = "/prep-notes",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -667,6 +694,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(card.updatedAt),
     }));
 
+  const prepNoteItems: CloudLibraryItem[] = (input.prepNotes ?? [])
+    .slice(0, perKindLimit)
+    .map((note) => ({
+      kind: "prepNote" as const,
+      key: `prepNote-${note.id}`,
+      href: prepNoteHref,
+      label: note.text?.trim() || "Untitled prep note",
+      updatedAtMs: parseCloudTimestamp(note.updatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -685,6 +722,7 @@ export function buildRecentCloudItems(
     ...customOpponentPersonaItems,
     ...flowAnnotationItems,
     ...quickCardItems,
+    ...prepNoteItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

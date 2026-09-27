@@ -11,6 +11,7 @@ import {
   type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
+  type CloudPrepNoteSummary,
   type CloudQuickCardSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
@@ -102,8 +103,11 @@ describe("buildRecentCloudItems", () => {
   const quickCards: CloudQuickCardSummary[] = [
     { id: "card-1", name: "Uniqueness overview", updatedAt: Date.parse("2026-09-10T00:00:00.000Z") },
   ];
+  const prepNotes: CloudPrepNoteSummary[] = [
+    { id: "note-1", text: "Drop the counterplan net benefit", updatedAt: Date.parse("2026-09-11T00:00:00.000Z") },
+  ];
 
-  it("merges all seventeen kinds and sorts newest first", () => {
+  it("merges all eighteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -123,10 +127,12 @@ describe("buildRecentCloudItems", () => {
         customOpponentPersonas,
         flowAnnotations,
         quickCards,
+        prepNotes,
       },
-      { limit: 17 },
+      { limit: 18 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "prepNote",
       "quickCard",
       "flowAnnotation",
       "customOpponentPersona",
@@ -394,6 +400,25 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled quick card");
   });
 
+  it("includes prep notes, keyed by id and labeled by text", () => {
+    const items = buildRecentCloudItems({ prepNotes });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "prepNote",
+        key: "prepNote-note-1",
+        label: "Drop the counterplan net benefit",
+        updatedAtMs: Date.parse("2026-09-11T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a prep note with blank text as untitled", () => {
+    const items = buildRecentCloudItems({
+      prepNotes: [{ id: "note-2", text: "   ", updatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled prep note");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -420,8 +445,9 @@ describe("buildRecentCloudItems", () => {
         customOpponentPersonas,
         flowAnnotations,
         quickCards,
+        prepNotes,
       },
-      { limit: 17 },
+      { limit: 18 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -441,6 +467,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.customOpponentPersona).toBe("/practice-round");
     expect(byKind.flowAnnotation).toBe("/annotations");
     expect(byKind.quickCard).toBe("/reason-editor");
+    expect(byKind.prepNote).toBe("/prep-notes");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -513,6 +540,9 @@ describe("buildRecentCloudItems", () => {
 
     const overriddenQuickCard = buildRecentCloudItems({ quickCards }, { quickCardHref: "/custom-reason-editor-route" });
     expect(overriddenQuickCard[0]?.href).toBe("/custom-reason-editor-route");
+
+    const overriddenPrepNote = buildRecentCloudItems({ prepNotes }, { prepNoteHref: "/custom-prep-notes-route" });
+    expect(overriddenPrepNote[0]?.href).toBe("/custom-prep-notes-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -549,8 +579,9 @@ describe("buildRecentCloudItems", () => {
           { id: "annotation-1", note: "   ", tag: undefined, createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
         quickCards: [{ id: "card-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        prepNotes: [{ id: "note-1", text: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       },
-      { limit: 17 },
+      { limit: 18 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -570,6 +601,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.customOpponentPersona).toBe("Untitled persona");
     expect(byKind.flowAnnotation).toBe("Untitled annotation");
     expect(byKind.quickCard).toBe("Untitled quick card");
+    expect(byKind.prepNote).toBe("Untitled prep note");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -609,6 +641,7 @@ describe("buildRecentCloudItems", () => {
         customOpponentPersonas: [],
         flowAnnotations: [],
         quickCards: [],
+        prepNotes: [],
       }),
     ).toEqual([]);
   });
