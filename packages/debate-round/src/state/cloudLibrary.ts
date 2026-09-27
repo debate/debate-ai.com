@@ -78,6 +78,12 @@
  * wired, discoverability not" gap applied here too — a session scheduled on
  * one device stayed invisible from the tools page on another.
  *
+ * A thirteenth kind, Speech Documents' send-log entries (`/speech-documents`,
+ * CardMirror's "send to speech doc" history), joined next: `saved_speech_send_log`
+ * (`debate-editor`) already synced a signed-in user's `SpeechSendLogEntry`s via
+ * `GET /api/speech-send-log`, but the same "sync wired, discoverability not"
+ * gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -247,6 +253,21 @@ export type CloudSprintSessionSummary = {
   createdAt: number;
 };
 
+/**
+ * The subset of a `SpeechSendLogEntry` (`debate-editor`) a caller needs to
+ * list one in the merged view — mirrors `GET /api/speech-send-log`'s row
+ * shape (full records, like {@link CloudDrillSetSummary}; the
+ * speech-send-log route has no label-only summary mode either). Defined
+ * locally rather than importing `SpeechSendLogEntry` itself, matching
+ * {@link CloudDebateSummary}'s own local-type convention: `debate-round`
+ * doesn't depend on `debate-editor` (nor the reverse).
+ */
+export type CloudSpeechSendLogSummary = {
+  id: string;
+  preview: string;
+  sentAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -259,7 +280,8 @@ export type CloudLibraryItemKind =
   | "counselPanelAssessment"
   | "roundPairing"
   | "strategyRecommendation"
-  | "sprintSession";
+  | "sprintSession"
+  | "speechSendLogEntry";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -306,6 +328,7 @@ export interface BuildRecentCloudItemsInput {
   roundPairings?: CloudRoundPairingSummary[];
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
   sprintSessions?: CloudSprintSessionSummary[];
+  speechSendLogEntries?: CloudSpeechSendLogSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -325,6 +348,7 @@ export interface BuildRecentCloudItemsOptions {
   roundPairingHref?: string;
   strategyRecommendationHref?: string;
   sprintSessionHref?: string;
+  speechSendLogEntryHref?: string;
 }
 
 /**
@@ -353,6 +377,7 @@ export function buildRecentCloudItems(
     roundPairingHref = "/briefings",
     strategyRecommendationHref = "/strategy",
     sprintSessionHref = "/research",
+    speechSendLogEntryHref = "/speech-documents",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -474,6 +499,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(session.createdAt),
     }));
 
+  const speechSendLogItems: CloudLibraryItem[] = (input.speechSendLogEntries ?? [])
+    .slice(0, perKindLimit)
+    .map((entry) => ({
+      kind: "speechSendLogEntry" as const,
+      key: `speechSendLogEntry-${entry.id}`,
+      href: speechSendLogEntryHref,
+      label: entry.preview.trim() || "Untitled speech send",
+      updatedAtMs: parseCloudTimestamp(entry.sentAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -487,6 +522,7 @@ export function buildRecentCloudItems(
     ...roundPairingItems,
     ...strategyRecommendationItems,
     ...sprintSessionItems,
+    ...speechSendLogItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

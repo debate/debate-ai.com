@@ -90,6 +90,13 @@
  * that route's bare `SprintSession[]` body rather than importing that
  * package's own `lib/sprint-sessions-client.ts`.
  *
+ * Speech Documents' send-log entries (`/api/speech-send-log`) join last, for
+ * the same cross-package reason as word-count rounds/debates/sprint sessions:
+ * `debate-editor` doesn't depend on `debate-round` either, so
+ * `listCloudSpeechSendLog` below is a local raw `fetch` against that route's
+ * bare `SpeechSendLogEntry[]` body rather than importing that package's own
+ * `editor/speech-send-log.ts`.
+ *
  * @module state/cloudLibraryClient
  */
 
@@ -106,6 +113,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudLibraryItem,
   type CloudSpeechOutcomeSummary,
+  type CloudSpeechSendLogSummary,
   type CloudSprintSessionSummary,
   type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
@@ -278,13 +286,33 @@ async function listCloudSprintSessions(
 }
 
 /**
+ * Lists the current user's synced Speech Documents send-log entries.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/speech-send-log`'s own auth behavior), a non-2xx response, or a
+ * network error — same "no items of that kind" convention as the other
+ * sources above.
+ */
+async function listCloudSpeechSendLog(
+  endpoint = "/api/speech-send-log",
+): Promise<CloudSpeechSendLogSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSpeechSendLogSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
- * strategy-recommendations/sprint-sessions and merges them via `buildRecentCloudItems`. Each source resolves
- * independently and degrades to "no items of that kind" on any failure — a
- * network error, a non-2xx response, or a signed-out `401` — rather than
- * rejecting the whole call, so one flaky endpoint never blanks a widget that
- * had perfectly good data from the others.
+ * strategy-recommendations/sprint-sessions/speech-send-log-entries and merges
+ * them via `buildRecentCloudItems`. Each source resolves independently and
+ * degrades to "no items of that kind" on any failure — a network error, a
+ * non-2xx response, or a signed-out `401` — rather than rejecting the whole
+ * call, so one flaky endpoint never blanks a widget that had perfectly good
+ * data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
   const [
@@ -300,6 +328,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     roundPairings,
     strategyRecommendations,
     sprintSessions,
+    speechSendLogEntries,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -313,6 +342,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listSavedRoundPairings().catch(() => null),
     listCloudStrategyRecommendations(),
     listCloudSprintSessions(),
+    listCloudSpeechSendLog(),
   ]);
   return buildRecentCloudItems(
     {
@@ -328,6 +358,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       roundPairings: roundPairings ?? undefined,
       strategyRecommendations: strategyRecommendations ?? undefined,
       sprintSessions: sprintSessions ?? undefined,
+      speechSendLogEntries: speechSendLogEntries ?? undefined,
     },
     opts,
   );
