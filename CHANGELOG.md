@@ -1,6 +1,68 @@
 
 ### Completed
 
+- **📝 Surface synced Prep Notes in "My Saved Items".** Another repeat of
+  the standing autonomous-routine prompt ("integrate all the tools into the
+  UI... create user settings and link user db SQL with the ability to save
+  flows/docs/debates in SQL and link to users... add tools into where
+  needed in the UI... develop better tool UI"). As with every recent
+  repeat, a full audit found that prompt's own asks — a `user_settings` D1
+  table, dedicated `saved_flows`/`saved_rounds`/`practice_vs_ai_debates`/
+  `documents` tables, and a generic `saved_tool_records` mechanism covering
+  ~65 more tools — are already fully built. GitHub issue #785 already
+  reached and closed this same conclusion; seven other PRs opened the same
+  day independently converged on the identical "surface one more already-
+  synced kind in My Saved Items" gap, so this run cross-checked the full
+  `TOOL_RECORD_COLLECTIONS` catalog against the widget's `CloudLibraryItemKind`
+  list for a kind not already claimed by one of those parallel PRs.
+
+  Prep Notes (`debate-round`'s own `PrepNote` model,
+  `flow/strategy-sync-notes.ts`, persisted by `debate-team-collaboration`'s
+  `state/prepNotes.ts`) already synced a signed-in user's live per-argument
+  notes via `GET /api/tool-records/prepNotes` — fully wired via the generic
+  `saved_tool_records` mechanism — but a note left on one device stayed
+  invisible from this widget on another, discoverable only from inside
+  `/prep-notes`' own panel. Unlike the other remaining unsurfaced
+  `TOOL_RECORD_COLLECTIONS` entries with a plausible "my saved item" shape
+  (`opponentTeamProfiles`/`judgeProfiles`/`coachingPrograms`, none of which
+  carry a timestamp field to sort or label a recency card by), `PrepNote`
+  has both `text` (for a label) and `updatedAt` (for sorting), so it fits
+  the widget's existing shape with no product decision needed.
+
+  Added an eighteenth `CloudLibraryItemKind`, `"prepNote"`, to
+  `debate-round`'s `state/cloudLibrary.ts`/`state/cloudLibraryClient.ts`:
+  `CloudPrepNoteSummary` (`Pick<PrepNote, "id" | "text" | "updatedAt">`,
+  imported directly since `PrepNote` already lives in this package), a
+  `prepNoteItems` merge branch keyed by `id` and labeled by `text`, falling
+  back to "Untitled prep note" when blank, and `listCloudPrepNotes` — a
+  local raw `fetch` against `/api/tool-records/prepNotes`, matching every
+  other source's "degrade to null on a 401/non-2xx/network error"
+  convention rather than throwing. Defaults to `/prep-notes`, overridable
+  via `prepNoteHref` like every other kind. Wired a `NotebookPen` icon into
+  `MySavedItems.tsx`'s `KIND_ICON` map, matching Prep Notes' own icon in
+  `tool-groups.ts`.
+
+  Extended both modules' Vitest coverage (`packages/debate-round/test/cloudLibrary.test.ts`,
+  `cloudLibraryClient.test.ts`) to cover the new kind end to end: merge
+  order (now eighteen kinds), label/href defaults and overrides, the
+  blank-text-falls-back-to-untitled case, the empty-input case, and the
+  widget's existing 401/500/network-error degradation behavior.
+
+  Ran the verification gate: `bun install` (with git submodules
+  initialized), `debate-round`'s own `bunx vitest run cloudLibrary.test.ts
+  cloudLibraryClient.test.ts` (50/50 passing, 2 new) and `bun run
+  typecheck` (clean), `debate-webview`'s own `bun run typecheck` (clean),
+  the root `bun run test` (594 files, 10360 tests, 1 skipped — 0 failures,
+  2 more passing than the pre-change baseline) and root `bun run
+  typecheck` (26 packages, all clean).
+
+  Follow-ups: `opponentTeamProfiles`/`judgeProfiles`/`coachingPrograms`
+  remain unsurfaced `TOOL_RECORD_COLLECTIONS` entries with a plausible "my
+  saved item" shape but no timestamp field — still needs a product
+  decision on how to label/sort a timestamp-less aggregate profile before
+  they can follow the same small, reviewable-slice pattern this entry
+  used.
+
 - **📍 Surface synced Flow Annotations in "My Saved Items".** Another repeat
   of the standing autonomous-routine prompt ("integrate all the tools into
   the UI... create user settings and link user db SQL with the ability to
