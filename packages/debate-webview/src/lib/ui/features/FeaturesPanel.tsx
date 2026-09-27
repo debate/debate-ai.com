@@ -218,14 +218,10 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
         <Reveal delay={340}>
           <div className="mx-auto mt-12 max-w-4xl">
             <div className="rounded-2xl overflow-hidden border border-border bg-card/50 backdrop-blur-sm">
-              <video
-                src="https://i.imgur.com/u6nKf7E.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
+              <img
+                src="https://m.media-amazon.com/images/I/61jWG2JyYNL._AC_SL1500_.jpg"
+                alt="Anker Power Bank"
                 className="w-full h-auto"
-                aria-label="Reason Editor demo"
               />
             </div>
             <p className="mt-3 text-center text-sm text-muted-foreground">

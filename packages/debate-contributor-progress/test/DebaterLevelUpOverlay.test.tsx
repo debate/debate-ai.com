@@ -18,6 +18,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createElement } from "react";
+import { MotionGlobalConfig } from "framer-motion";
 
 import { DebaterLevelUpOverlay, type DebaterLevelUpOverlayProps } from "../src/panels/DebaterLevelUpOverlay";
 import { DebaterLevelPanel } from "../src/panels/DebaterLevelPanel";
@@ -25,6 +26,23 @@ import { computeLevelProgress, totalXpForLevel } from "../src/lib/debater-levels
 import { DEBATER_LEVEL_STORAGE_KEY, recordDebaterActivity } from "../src/state/debaterLevel";
 import { click, flush, mount } from "./helpers/mount";
 import type { Mounted } from "./helpers/mount";
+
+/**
+ * Skip Motion's animation timeline for this file.
+ *
+ * The cutscene mounts ~25 independently animating nodes (18 sparks, two
+ * shockwaves, the ray burst, every staggered letter). Left running under
+ * jsdom — which has no compositor, so every frame is a real style write — a
+ * single mount costs a full second of rAF work, and the fifteen mounts here
+ * were slow enough to time out the other files sharing the worker. This is
+ * framer-motion's own switch for the case (its docs call it out for tests and
+ * visual regression): values land on their animated state immediately.
+ *
+ * Nothing is lost. Every assertion here is about what the cutscene *says*,
+ * and the `prefers-reduced-motion` test below already pins that the
+ * no-motion path renders exactly the same content.
+ */
+MotionGlobalConfig.skipAnimations = true;
 
 /** XP that clears level 1 and partway into level 2. */
 const LEVEL_2_XP = totalXpForLevel(2) + 50;
@@ -211,6 +229,13 @@ describe("DebaterLevelPanel level-up wiring", () => {
     vi.useRealTimers();
   });
 
+  // Every test here mounts the whole DebaterLevelPanel — the level card, four
+  // stat tiles, twelve log-practice buttons, seven challenges and the XP log —
+  // which is the heaviest render in this package. Its sibling panel test runs
+  // into the same 5s default on a loaded machine, so these declare their own
+  // budget rather than inheriting one.
+  const TIMEOUT = 30_000;
+
   it("opens the cutscene when an activity crosses a level boundary", async () => {
     mounted = await mount(createElement(DebaterLevelPanel, {}));
     expect(mounted.container.querySelector('[role="status"]')).toBeNull();
@@ -228,7 +253,7 @@ describe("DebaterLevelPanel level-up wiring", () => {
     expect(status).not.toBeNull();
     expect(status?.getAttribute("aria-label")).toContain("level 2");
     expect(mounted.container.textContent).toContain("LEVEL UP");
-  });
+  }, TIMEOUT);
 
   it("leaves the cutscene closed for an award that does not level up", async () => {
     mounted = await mount(createElement(DebaterLevelPanel, {}));
@@ -237,7 +262,7 @@ describe("DebaterLevelPanel level-up wiring", () => {
 
     await flush(() => {});
     expect(mounted.container.querySelector('[role="status"]')).toBeNull();
-  });
+  }, TIMEOUT);
 
   it("closes the cutscene again on Continue, leaving the new level on the card", async () => {
     mounted = await mount(createElement(DebaterLevelPanel, {}));
@@ -250,7 +275,7 @@ describe("DebaterLevelPanel level-up wiring", () => {
     // total, under the bar.
     expect(mounted.container.textContent).toContain("Level 2");
     expect(mounted.container.textContent).toContain("150 XP total");
-  });
+  }, TIMEOUT);
 
   it("only reads the awarded state — the cutscene persists nothing of its own", async () => {
     mounted = await mount(createElement(DebaterLevelPanel, {}));
@@ -268,5 +293,5 @@ describe("DebaterLevelPanel level-up wiring", () => {
       "recentXp",
       "totalXp",
     ]);
-  });
+  }, TIMEOUT);
 });
