@@ -260,3 +260,86 @@ describe('buildDeckManageSection sync status', () => {
     destroy();
   });
 });
+
+describe('buildDeckManageSection per-deck sync badge', () => {
+  function syncBadge(section: HTMLElement, name: string): HTMLElement | null {
+    return deckRow(section, name).querySelector('.pmd-deck-manage-sync-badge');
+  }
+
+  it('omits the per-deck badge while signed out (only the coarse line shows)', async () => {
+    stubSignedOut();
+    const store = new LearnStore();
+    store.createDeck('Impacts', 'd1', TODAY);
+    const sync = new LearnDecksSync(store);
+    const { element, destroy } = buildDeckManageSection({ store, sync });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(syncBadge(element, 'Impacts')).toBeNull();
+    destroy();
+  });
+
+  it('shows "Synced" for a deck already confirmed at merge time', async () => {
+    stubSignedIn([{ deckId: 'd1', name: 'Impacts', cardIds: [], createdAt: TODAY }]);
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    const { element, destroy } = buildDeckManageSection({ store, sync });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(syncBadge(element, 'Impacts')?.textContent).toBe('Synced');
+    destroy();
+  });
+
+  it('shows "Not yet synced" right after creating a deck, then "Synced" once the push lands', async () => {
+    const pending: Array<() => void> = [];
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const method = init?.method ?? 'GET';
+      if (method === 'GET') return { ok: true, status: 200, json: async () => [] };
+      if (method === 'PUT') {
+        await new Promise<void>((resolve) => pending.push(resolve));
+        return { ok: true, status: 200 };
+      }
+      throw new Error(`unexpected method ${method}`);
+    }) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    const { element, destroy } = buildDeckManageSection({ store, sync });
+    await new Promise((resolve) => setTimeout(resolve, 0)); // sign-in merge resolves, no decks yet
+
+    store.createDeck('Impacts', 'd1', TODAY);
+    expect(syncBadge(element, 'Impacts')?.textContent).toBe('Not yet synced');
+
+    pending[0]!();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(syncBadge(element, 'Impacts')?.textContent).toBe('Synced');
+    destroy();
+  });
+
+  it('stops refreshing the badge once destroyed', async () => {
+    const pending: Array<() => void> = [];
+    const fetchMock = vi.fn(async (_url: string, init?: RequestInit) => {
+      const method = init?.method ?? 'GET';
+      if (method === 'GET') return { ok: true, status: 200, json: async () => [] };
+      if (method === 'PUT') {
+        await new Promise<void>((resolve) => pending.push(resolve));
+        return { ok: true, status: 200 };
+      }
+      throw new Error(`unexpected method ${method}`);
+    }) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+    const store = new LearnStore();
+    const sync = new LearnDecksSync(store);
+    const { element, destroy } = buildDeckManageSection({ store, sync });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    store.createDeck('Impacts', 'd1', TODAY);
+    expect(syncBadge(element, 'Impacts')?.textContent).toBe('Not yet synced');
+    destroy();
+
+    pending[0]!();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    // No assertion on `element` after destroy — just proving this doesn't throw
+    // once the sync-status listener has been torn down.
+    expect(sync.getDeckSyncStatus('d1')).toBe('synced');
+  });
+});
