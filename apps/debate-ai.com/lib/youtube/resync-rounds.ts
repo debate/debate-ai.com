@@ -35,7 +35,17 @@ import { getEnv } from "../env";
  * the admin never has to type an id — and a renamed channel keeps working
  * until the next scan re-resolves it.
  */
-export async function resyncYouTubeRounds(triggeredBy: string | null, publishedAfterDate?: string) {
+   * @param triggeredBy - Admin email, or the "cron" sentinel from
+   *   `weekly-sync.ts` when the weekly tick started the run.
+   * @param publishedAfterDate - Optional `YYYY-MM-DD` floor. When omitted (the
+   *   weekly cron path) the module-level default from `channel-config.ts` is
+   *   used; the admin page's date chooser passes its own value so a manual
+   *   resync can reach further back or narrow the window without a redeploy.
+   */
+export async function resyncYouTubeRounds(
+  triggeredBy: string | null,
+  publishedAfterDate?: string,
+) {
   const apiKey = getEnv("YOUTUBE_API_KEY");
   if (!apiKey) {
     throw new Error("YouTube API key not configured");
@@ -93,7 +103,7 @@ export async function resyncYouTubeRounds(triggeredBy: string | null, publishedA
           .where(eq(youtubeChannels.id, channelRow.id));
       }
       if (!channelId) continue;
-      const videos = await getVideosForChannel(channelId, channelRow.name, publishedAfter);
+      const videos = await getVideosForChannel(channelId, channelRow.name, cutoff);
       allVideos.push(...videos);
       channelsSynced++;
     }
