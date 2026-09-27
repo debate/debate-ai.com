@@ -10,6 +10,7 @@ import {
   buildOutlineFilterPresetFailureMessage,
   buildWordLimitPresetFailureMessage,
   DEFAULT_FAVORITE_TOOLS,
+  DEFAULT_MY_TEAM_PROFILE_SYNC,
   DEFAULT_OUTLINE_FILTER_PRESETS,
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
@@ -18,16 +19,20 @@ import {
   normalizeFavoriteToolsPatch,
   normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
+  normalizeMyTeamProfilePatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
   normalizeWordLimitPresetOpPatch,
   normalizeWordLimitPresetsPatch,
   parseFavoriteTools,
+  parseMyTeamProfile,
   parseOutlineFilterPresets,
   parseWordLimitPresets,
   serializeFavoriteTools,
+  serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
+  type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
@@ -126,7 +131,7 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
  *   researchProgressGoal?, brainstormSessionTimer?, questStreakSync?,
  *   recordStreakFreezeDayKey?, setLapseReminderEnabled?, recordMissionResultDay?,
- *   qualificationPointsTable?, qualificationCutoff? } — validates and
+ *   qualificationPointsTable?, qualificationCutoff?, myTeamProfile? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
@@ -144,7 +149,11 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   and `debate-data-sync`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
- *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps), the same option
+ *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps),
+ *   and `debate-round`'s `normalizeMyTeamProfilePatch` (the Create Round
+ *   dialog's "My Team" quick-fill profile — see
+ *   `packages/debate-round/src/state/myTeamProfile.ts`'s "localStorage only"
+ *   header comment), the same option
  *   lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
  *   collections", Research Progress "My research goal", and Quest Streaks
@@ -246,6 +255,7 @@ type SettingsRow = {
   questStreakSync: string | null
   qualificationPointsTable: string | null
   qualificationCutoff: string | null
+  myTeamProfile: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -264,6 +274,7 @@ type SettingsPayload = UserSettingsPayload & {
   questStreakSync: QuestStreakSyncPayload | null
   qualificationPointsTable: QualificationPointsTable | null
   qualificationCutoff: QualificationCutoffSettings | null
+  myTeamProfile: MyTeamProfileSyncPayload | null
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -301,6 +312,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     qualificationCutoff: row?.qualificationCutoff
       ? parseQualificationCutoff(row.qualificationCutoff)
       : DEFAULT_QUALIFICATION_CUTOFF_SYNC.qualificationCutoff,
+    myTeamProfile: row?.myTeamProfile ? parseMyTeamProfile(row.myTeamProfile) : DEFAULT_MY_TEAM_PROFILE_SYNC.myTeamProfile,
   }
 }
 
@@ -351,6 +363,7 @@ export async function PUT(req: NextRequest) {
   const newsLikedOpResult = normalizeNewsLikedOpPatch(body)
   const qualificationPointsTableResult = normalizeQualificationPointsTablePatch(body)
   const qualificationCutoffResult = normalizeQualificationCutoffPatch(body)
+  const myTeamProfileResult = normalizeMyTeamProfilePatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
@@ -378,6 +391,7 @@ export async function PUT(req: NextRequest) {
     ...newsLikedOpResult.errors,
     ...qualificationPointsTableResult.errors,
     ...qualificationCutoffResult.errors,
+    ...myTeamProfileResult.errors,
     ...editorPreferencesResult.errors,
   ]
 
@@ -411,6 +425,7 @@ export async function PUT(req: NextRequest) {
     questStreakMissionResultOpResult.valid.recordMissionResultDay === undefined &&
     qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
     qualificationCutoffResult.valid.qualificationCutoff === undefined &&
+    myTeamProfileResult.valid.myTeamProfile === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
     newsReadOpResult.valid.recordNewsRead === undefined &&
     newsLikedOpResult.valid.addNewsLiked === undefined &&
@@ -420,7 +435,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -446,6 +461,7 @@ export async function PUT(req: NextRequest) {
     questStreakSync?: string | null
     qualificationPointsTable?: string | null
     qualificationCutoff?: string | null
+    myTeamProfile?: string | null
   } = { ...valid }
   if (
     favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
@@ -660,6 +676,9 @@ export async function PUT(req: NextRequest) {
   }
   if (qualificationCutoffResult.valid.qualificationCutoff !== undefined) {
     dbPatch.qualificationCutoff = serializeQualificationCutoff(qualificationCutoffResult.valid.qualificationCutoff)
+  }
+  if (myTeamProfileResult.valid.myTeamProfile !== undefined) {
+    dbPatch.myTeamProfile = serializeMyTeamProfile(myTeamProfileResult.valid.myTeamProfile)
   }
   if (newsReadOpResult.valid.recordNewsRead !== undefined) {
     // A single mark-read op is resolved against the row's *current* stored
