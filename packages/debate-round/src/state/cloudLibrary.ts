@@ -85,13 +85,24 @@
  * gap applied here too.
  *
  * A fourteenth kind, CardMirror Learn's custom flashcard decks
- * (`/reason-editor`), joined last: `saved_learn_decks` (`debate-editor`)
+ * (`/reason-editor`), joined next: `saved_learn_decks` (`debate-editor`)
  * already synced a signed-in user's `CustomDeck`s via `GET /api/learn-decks`
  * (see `packages/debate-help-docs/content/docs/features/learn-decks-cloud-sync.mdx`),
  * but the same "sync wired, discoverability not [from the Tools page]" gap
  * applied here too — a deck built on one device stayed invisible from this
  * widget on another, discoverable only from inside the editor's own "Manage
  * flashcards" overlay.
+ *
+ * A fifteenth kind, Practice Round Simulator's saved custom opponent
+ * personas (`/practice-round`), joined last: `saved_custom_opponent_personas`
+ * (`apps/debate-ai.com`) already synced a signed-in user's
+ * `SavedCustomOpponentPersona`s (`debate-speech-writer`'s
+ * `opponent-persona-library.ts`, one row per saved persona) via
+ * `GET /api/custom-opponent-personas`, but the same "sync wired,
+ * discoverability not [from the Tools page]" gap applied here too — a
+ * persona authored on one device stayed invisible from this widget on
+ * another, discoverable only from inside the Practice Round Simulator's own
+ * persona picker.
  *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
@@ -294,6 +305,23 @@ export type CloudLearnDeckSummary = {
   createdAt: string;
 };
 
+/**
+ * The subset of a `SavedCustomOpponentPersona` (`debate-speech-writer`) a
+ * caller needs to list one in the merged view — mirrors
+ * `GET /api/custom-opponent-personas`'s row shape (full records, like
+ * {@link CloudLearnDeckSummary}; the custom-opponent-personas route has no
+ * label-only summary mode either). Defined locally rather than importing
+ * `SavedCustomOpponentPersona` itself, matching {@link CloudDebateSummary}'s
+ * own local-type convention: `debate-round` doesn't depend on
+ * `debate-speech-writer` (nor the reverse).
+ */
+export type CloudCustomOpponentPersonaSummary = {
+  id: string;
+  name: string;
+  /** Epoch milliseconds, per `SavedCustomOpponentPersona.updatedAt`. */
+  updatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -308,7 +336,8 @@ export type CloudLibraryItemKind =
   | "strategyRecommendation"
   | "sprintSession"
   | "speechSendLogEntry"
-  | "learnDeck";
+  | "learnDeck"
+  | "customOpponentPersona";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -357,6 +386,7 @@ export interface BuildRecentCloudItemsInput {
   sprintSessions?: CloudSprintSessionSummary[];
   speechSendLogEntries?: CloudSpeechSendLogSummary[];
   learnDecks?: CloudLearnDeckSummary[];
+  customOpponentPersonas?: CloudCustomOpponentPersonaSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -378,6 +408,7 @@ export interface BuildRecentCloudItemsOptions {
   sprintSessionHref?: string;
   speechSendLogEntryHref?: string;
   learnDeckHref?: string;
+  customOpponentPersonaHref?: string;
 }
 
 /**
@@ -408,6 +439,7 @@ export function buildRecentCloudItems(
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
     learnDeckHref = "/reason-editor",
+    customOpponentPersonaHref = "/practice-round",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -549,6 +581,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(deck.createdAt),
     }));
 
+  const customOpponentPersonaItems: CloudLibraryItem[] = (input.customOpponentPersonas ?? [])
+    .slice(0, perKindLimit)
+    .map((persona) => ({
+      kind: "customOpponentPersona" as const,
+      key: `customOpponentPersona-${persona.id}`,
+      href: customOpponentPersonaHref,
+      label: persona.name.trim() || "Untitled persona",
+      updatedAtMs: parseCloudTimestamp(persona.updatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -564,6 +606,7 @@ export function buildRecentCloudItems(
     ...sprintSessionItems,
     ...speechSendLogItems,
     ...learnDeckItems,
+    ...customOpponentPersonaItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

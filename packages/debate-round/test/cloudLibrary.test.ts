@@ -4,6 +4,7 @@ import {
   formatRelativeCloudTime,
   parseCloudTimestamp,
   type CloudCounselPanelAssessmentSummary,
+  type CloudCustomOpponentPersonaSummary,
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
@@ -90,8 +91,11 @@ describe("buildRecentCloudItems", () => {
   const learnDecks: CloudLearnDeckSummary[] = [
     { deckId: "deck-1", name: "K Cards", createdAt: "2026-09-07T00:00:00.000Z" },
   ];
+  const customOpponentPersonas: CloudCustomOpponentPersonaSummary[] = [
+    { id: "persona-1", name: "Coach Amy's K bot", updatedAt: Date.parse("2026-09-08T00:00:00.000Z") },
+  ];
 
-  it("merges all fourteen kinds and sorts newest first", () => {
+  it("merges all fifteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -108,10 +112,12 @@ describe("buildRecentCloudItems", () => {
         sprintSessions,
         speechSendLogEntries,
         learnDecks,
+        customOpponentPersonas,
       },
-      { limit: 14 },
+      { limit: 15 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "customOpponentPersona",
       "learnDeck",
       "speechSendLogEntry",
       "sprintSession",
@@ -316,6 +322,25 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled deck");
   });
 
+  it("includes custom opponent personas, keyed by id and labeled by name", () => {
+    const items = buildRecentCloudItems({ customOpponentPersonas });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "customOpponentPersona",
+        key: "customOpponentPersona-persona-1",
+        label: "Coach Amy's K bot",
+        updatedAtMs: Date.parse("2026-09-08T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a custom opponent persona with a blank name as untitled", () => {
+    const items = buildRecentCloudItems({
+      customOpponentPersonas: [{ id: "persona-2", name: "   ", updatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled persona");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -339,8 +364,9 @@ describe("buildRecentCloudItems", () => {
         sprintSessions,
         speechSendLogEntries,
         learnDecks,
+        customOpponentPersonas,
       },
-      { limit: 14 },
+      { limit: 15 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -357,6 +383,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.sprintSession).toBe("/research");
     expect(byKind.speechSendLogEntry).toBe("/speech-documents");
     expect(byKind.learnDeck).toBe("/reason-editor");
+    expect(byKind.customOpponentPersona).toBe("/practice-round");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -414,6 +441,12 @@ describe("buildRecentCloudItems", () => {
 
     const overriddenLearnDeck = buildRecentCloudItems({ learnDecks }, { learnDeckHref: "/custom-reason-editor-route" });
     expect(overriddenLearnDeck[0]?.href).toBe("/custom-reason-editor-route");
+
+    const overriddenCustomOpponentPersona = buildRecentCloudItems(
+      { customOpponentPersonas },
+      { customOpponentPersonaHref: "/custom-practice-round-route" },
+    );
+    expect(overriddenCustomOpponentPersona[0]?.href).toBe("/custom-practice-round-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -445,8 +478,9 @@ describe("buildRecentCloudItems", () => {
         learnDecks: [
           { deckId: "deck-1", name: "   ", createdAt: "2026-08-30T00:00:00.000Z" },
         ],
+        customOpponentPersonas: [{ id: "persona-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       },
-      { limit: 14 },
+      { limit: 15 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -463,6 +497,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.sprintSession).toBe("Untitled sprint session");
     expect(byKind.speechSendLogEntry).toBe("Untitled speech send");
     expect(byKind.learnDeck).toBe("Untitled deck");
+    expect(byKind.customOpponentPersona).toBe("Untitled persona");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -499,6 +534,7 @@ describe("buildRecentCloudItems", () => {
         sprintSessions: [],
         speechSendLogEntries: [],
         learnDecks: [],
+        customOpponentPersonas: [],
       }),
     ).toEqual([]);
   });
