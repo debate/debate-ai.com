@@ -1,0 +1,30 @@
+---
+title: "debate-editor"
+---
+
+# debate-editor
+
+CardMirror-based debate-card editor embedded in debate-ai.com. The package exposes the
+ProseMirror engine, Verbatim `.docx` interop helpers, and React editor shell used by the
+site's speech-doc and reason-editor surfaces.
+
+CardMirror packs roughly 500 editing commands into ~30 thematic groups, covering the
+document model, file-format interop (lossless `.docx` round-trip, native `.cmir`),
+speech-document targeting, real-time collaboration, structural/character styling, condensing,
+search, timers, comments, multi-pane workspace, AI tools, flow integration, and more.
+
+## Package layout
+
+Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+```
+debate-editor/
+├── src/              # ProseMirror/CardMirror editor engine and React shell
+└── test/             # Vitest suites for editor data-model helpers
+```
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+```
