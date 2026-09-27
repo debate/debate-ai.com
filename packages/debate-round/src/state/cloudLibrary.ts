@@ -84,6 +84,13 @@
  * `GET /api/speech-send-log`, but the same "sync wired, discoverability not"
  * gap applied here too.
  *
+ * A fourteenth kind, Team Rankings' logged/imported tournament results
+ * (`/rank`), joined last: `saved_tournament_results` already synced a
+ * signed-in user's `TournamentResultRecord`s (`debate-data-sync`, one row
+ * per logged or CSV-imported result, keyed by its own `id`) via
+ * `GET /api/tournament-results`, but the same "sync wired, discoverability
+ * not" gap applied here too.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -96,6 +103,7 @@ import type { SavedFlowSummary } from "./savedFlows";
 import type { SavedRoundSummary } from "./savedRounds";
 import type { RoundPairingRecord } from "./roundPairings";
 import type { StrategyRecommendationRecord } from "./strategyRecommendations";
+import type { TournamentResultRecord } from "debate-data-sync/src/state/tournamentResults";
 
 /** The subset of `documents` a caller needs to list one in the merged view — mirrors `GET /api/doc/documents`'s row shape. */
 export type CloudDocumentSummary = {
@@ -268,6 +276,23 @@ export type CloudSpeechSendLogSummary = {
   sentAt: number;
 };
 
+/**
+ * The subset of a `TournamentResultRecord` (`debate-data-sync`) a caller
+ * needs to list one in the merged view — mirrors `GET /api/tournament-results`'s
+ * row shape (full records, like {@link CloudDrillSetSummary}; the
+ * tournament-results route has no label-only summary mode either). Imported
+ * directly rather than defined locally, matching {@link CloudRoundPairingSummary}'s
+ * convention: `debate-round` already depends on `debate-data-sync`
+ * (`state/roundPairings.ts` imports its `DebateSide` type), so there's no
+ * new dependency edge to avoid. There is no separate sync timestamp to sort
+ * by — `GET /api/tournament-results` returns the raw stored record, not its
+ * `saved_tournament_results` row's own `createdAt` column — so this is
+ * labeled by `tournamentName` and sorted by the result's own `date`,
+ * matching {@link CloudDebateSummary}'s "labeled/sorted by the record's own
+ * field, not a DB column" convention.
+ */
+export type CloudTournamentResultSummary = Pick<TournamentResultRecord, "id" | "tournamentName" | "date">;
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -281,7 +306,8 @@ export type CloudLibraryItemKind =
   | "roundPairing"
   | "strategyRecommendation"
   | "sprintSession"
-  | "speechSendLogEntry";
+  | "speechSendLogEntry"
+  | "tournamentResult";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -329,6 +355,7 @@ export interface BuildRecentCloudItemsInput {
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
   sprintSessions?: CloudSprintSessionSummary[];
   speechSendLogEntries?: CloudSpeechSendLogSummary[];
+  tournamentResults?: CloudTournamentResultSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -349,6 +376,7 @@ export interface BuildRecentCloudItemsOptions {
   strategyRecommendationHref?: string;
   sprintSessionHref?: string;
   speechSendLogEntryHref?: string;
+  tournamentResultHref?: string;
 }
 
 /**
@@ -378,6 +406,7 @@ export function buildRecentCloudItems(
     strategyRecommendationHref = "/strategy",
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
+    tournamentResultHref = "/rank",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -509,6 +538,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(entry.sentAt),
     }));
 
+  const tournamentResultItems: CloudLibraryItem[] = (input.tournamentResults ?? [])
+    .slice(0, perKindLimit)
+    .map((result) => ({
+      kind: "tournamentResult" as const,
+      key: `tournamentResult-${result.id}`,
+      href: tournamentResultHref,
+      label: result.tournamentName.trim() || "Untitled tournament result",
+      updatedAtMs: parseCloudTimestamp(result.date),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -523,6 +562,7 @@ export function buildRecentCloudItems(
     ...strategyRecommendationItems,
     ...sprintSessionItems,
     ...speechSendLogItems,
+    ...tournamentResultItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

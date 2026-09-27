@@ -13,6 +13,7 @@ import {
   type CloudSpeechSendLogSummary,
   type CloudSprintSessionSummary,
   type CloudStrategyRecommendationSummary,
+  type CloudTournamentResultSummary,
   type CloudWordCountRoundSummary,
 } from "../src/state/cloudLibrary";
 import type { SavedFlowSummary } from "../src/state/savedFlows";
@@ -86,8 +87,11 @@ describe("buildRecentCloudItems", () => {
   const speechSendLogEntries: CloudSpeechSendLogSummary[] = [
     { id: "send-1", preview: "The plan reduces emissions by...", sentAt: Date.parse("2026-09-06T00:00:00.000Z") },
   ];
+  const tournamentResults: CloudTournamentResultSummary[] = [
+    { id: "result-1", tournamentName: "Season Opener", date: "2026-08-24" },
+  ];
 
-  it("merges all thirteen kinds and sorts newest first", () => {
+  it("merges all fourteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -103,8 +107,9 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations,
         sprintSessions,
         speechSendLogEntries,
+        tournamentResults,
       },
-      { limit: 13 },
+      { limit: 14 },
     );
     expect(items.map((i) => i.kind)).toEqual([
       "speechSendLogEntry",
@@ -120,6 +125,7 @@ describe("buildRecentCloudItems", () => {
       "debate",
       "roundPairing",
       "drillSet",
+      "tournamentResult",
     ]);
   });
 
@@ -291,6 +297,25 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled speech send");
   });
 
+  it("includes tournament results, keyed by id and labeled by tournament name", () => {
+    const items = buildRecentCloudItems({ tournamentResults });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "tournamentResult",
+        key: "tournamentResult-result-1",
+        label: "Season Opener",
+        updatedAtMs: Date.parse("2026-08-24"),
+      }),
+    ]);
+  });
+
+  it("treats a tournament result with a blank tournament name as untitled", () => {
+    const items = buildRecentCloudItems({
+      tournamentResults: [{ id: "result-2", tournamentName: "   ", date: "2026-08-24" }],
+    });
+    expect(items[0]?.label).toBe("Untitled tournament result");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -313,8 +338,9 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations,
         sprintSessions,
         speechSendLogEntries,
+        tournamentResults,
       },
-      { limit: 13 },
+      { limit: 14 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -330,6 +356,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.strategyRecommendation).toBe("/strategy");
     expect(byKind.sprintSession).toBe("/research");
     expect(byKind.speechSendLogEntry).toBe("/speech-documents");
+    expect(byKind.tournamentResult).toBe("/rank");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -384,6 +411,12 @@ describe("buildRecentCloudItems", () => {
       { speechSendLogEntryHref: "/custom-speech-documents-route" },
     );
     expect(overriddenSpeechSendLogEntry[0]?.href).toBe("/custom-speech-documents-route");
+
+    const overriddenTournamentResult = buildRecentCloudItems(
+      { tournamentResults },
+      { tournamentResultHref: "/custom-rank-route" },
+    );
+    expect(overriddenTournamentResult[0]?.href).toBe("/custom-rank-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -412,8 +445,9 @@ describe("buildRecentCloudItems", () => {
         speechSendLogEntries: [
           { id: "send-1", preview: "   ", sentAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        tournamentResults: [{ id: "result-1", tournamentName: "   ", date: "2026-08-30" }],
       },
-      { limit: 13 },
+      { limit: 14 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -429,6 +463,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.strategyRecommendation).toBe("Untitled strategy recommendation");
     expect(byKind.sprintSession).toBe("Untitled sprint session");
     expect(byKind.speechSendLogEntry).toBe("Untitled speech send");
+    expect(byKind.tournamentResult).toBe("Untitled tournament result");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -464,6 +499,7 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations: [],
         sprintSessions: [],
         speechSendLogEntries: [],
+        tournamentResults: [],
       }),
     ).toEqual([]);
   });
