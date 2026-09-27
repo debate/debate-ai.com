@@ -186,3 +186,4 @@ npx git0 debate/ai
 [Discussions](https://github.com/debate/debate-ai.com/discussions); bugs and scoped work
 belong in Issues.
 - See [LICENSE.md](./LICENSE.md); third-party packages carry their own `LICENSE` and `THIRD-PARTY-NOTICES.md`.
+- 🌟 Star this repo so it will grow and get new features!
