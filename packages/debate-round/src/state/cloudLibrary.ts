@@ -84,6 +84,13 @@
  * `GET /api/speech-send-log`, but the same "sync wired, discoverability not"
  * gap applied here too.
  *
+ * A fourteenth kind, CardMirror's Quick Cards reusable-snippet library
+ * (`/reason-editor`), joined last: `saved_quick_cards` (`debate-editor`)
+ * already synced a signed-in user's `QuickCard`s via `GET /api/quick-cards`
+ * (see `packages/debate-help-docs/content/docs/features/quick-cards-cloud-save.mdx`),
+ * but the same "sync wired, discoverability not" gap applied here too — a
+ * card saved on one device stayed invisible from the tools page on another.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -268,6 +275,23 @@ export type CloudSpeechSendLogSummary = {
   sentAt: number;
 };
 
+/**
+ * The subset of a `QuickCard` (`debate-editor`) a caller needs to list one
+ * in the merged view — mirrors `GET /api/quick-cards`'s row shape (full
+ * records, like {@link CloudDrillSetSummary}; the quick-cards route has no
+ * label-only summary mode either). Defined locally rather than importing
+ * `QuickCard` itself, matching {@link CloudDebateSummary}'s own local-type
+ * convention: `debate-round` doesn't depend on `debate-editor` (nor the
+ * reverse). Unlike most other kinds above, a `QuickCard` always carries both
+ * `createdAt` and `updatedAt` (stamped at capture time, never optional), so
+ * `updatedAt` alone is enough here.
+ */
+export type CloudQuickCardSummary = {
+  id: string;
+  name: string;
+  updatedAt: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -281,7 +305,8 @@ export type CloudLibraryItemKind =
   | "roundPairing"
   | "strategyRecommendation"
   | "sprintSession"
-  | "speechSendLogEntry";
+  | "speechSendLogEntry"
+  | "quickCard";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -329,6 +354,7 @@ export interface BuildRecentCloudItemsInput {
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
   sprintSessions?: CloudSprintSessionSummary[];
   speechSendLogEntries?: CloudSpeechSendLogSummary[];
+  quickCards?: CloudQuickCardSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -349,6 +375,7 @@ export interface BuildRecentCloudItemsOptions {
   strategyRecommendationHref?: string;
   sprintSessionHref?: string;
   speechSendLogEntryHref?: string;
+  quickCardHref?: string;
 }
 
 /**
@@ -378,6 +405,7 @@ export function buildRecentCloudItems(
     strategyRecommendationHref = "/strategy",
     sprintSessionHref = "/research",
     speechSendLogEntryHref = "/speech-documents",
+    quickCardHref = "/reason-editor",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -509,6 +537,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(entry.sentAt),
     }));
 
+  const quickCardItems: CloudLibraryItem[] = (input.quickCards ?? [])
+    .slice(0, perKindLimit)
+    .map((card) => ({
+      kind: "quickCard" as const,
+      key: `quickCard-${card.id}`,
+      href: quickCardHref,
+      label: card.name.trim() || "Untitled quick card",
+      updatedAtMs: parseCloudTimestamp(card.updatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -523,6 +561,7 @@ export function buildRecentCloudItems(
     ...strategyRecommendationItems,
     ...sprintSessionItems,
     ...speechSendLogItems,
+    ...quickCardItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);
