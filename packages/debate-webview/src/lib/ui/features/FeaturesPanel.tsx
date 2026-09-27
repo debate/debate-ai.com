@@ -214,6 +214,26 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </dl>
 </Reveal>
         </div>
+
+        <Reveal delay={340}>
+          <div className="mx-auto mt-12 max-w-4xl">
+            <div className="rounded-2xl overflow-hidden border border-border bg-card/50 backdrop-blur-sm">
+              <video
+                src="https://i.imgur.com/u6nKf7E.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto"
+                aria-label="Reason Editor demo"
+              />
+            </div>
+            <p className="mt-3 text-center text-sm text-muted-foreground">
+              Reason Editor — rich-text card editing with Verbatim-compatible shortcuts, command palette, and
+              send-to-speech-document
+            </p>
+          </div>
+        </Reveal>
       </section>
 
       {tickerRows.length > 0 ? (

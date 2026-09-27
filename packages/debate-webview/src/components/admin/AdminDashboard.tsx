@@ -455,7 +455,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         const res = await fetch("/api/admin/debate-cards/extract-urls", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ afterId, limit: 500 }),
+          body: JSON.stringify({ afterId, limit: 100 }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.details || data?.error || "URL extraction failed");
@@ -896,14 +896,32 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   <Button onClick={handleExtractUrls} disabled={isExtractingUrls} variant="outline">
                     {isExtractingUrls ? "Extracting…" : "Extract URLs"}
                   </Button>
-                  {urlExtractionProgress && (
-                    <span className="text-muted-foreground text-sm">
-                      Parsed {urlExtractionProgress.processed.toLocaleString()} cards —{" "}
-                      {urlExtractionProgress.withUrl.toLocaleString()} with a URL,{" "}
-                      {urlExtractionProgress.updated.toLocaleString()} updated
-                      {urlExtractionProgress.done ? " (done)" : "…"}
-                    </span>
-                  )}
+               {urlExtractionProgress && (
+                     <span className="text-muted-foreground text-sm">
+                       Parsed {urlExtractionProgress.processed.toLocaleString()} cards —{" "}
+                       {urlExtractionProgress.withUrl.toLocaleString()} with a URL,{" "}
+                       {urlExtractionProgress.updated.toLocaleString()} updated
+                       {urlExtractionProgress.done ? " (done)" : "…"}
+                     </span>
+                   )}
+                   {urlExtractionProgress?.demoUrls?.length > 0 && (
+                     <div className="mt-2 flex flex-col gap-1">
+                       <span className="text-muted-foreground text-xs font-medium">Sample URLs found:</span>
+                       <div className="flex flex-wrap gap-2">
+                         {urlExtractionProgress.demoUrls.map((url, index) => (
+                           <a
+                             key={index}
+                             href={url}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="text-xs text-muted-foreground hover:text-foreground hover:underline truncate max-w-full"
+                           >
+                             {url}
+                           </a>
+                         ))}
+                       </div>
+                     </div>
+                   )}
                 </div>
                 {urlExtractionError && <p className="text-destructive text-sm">{urlExtractionError}</p>}
               </CardContent>
@@ -916,7 +934,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   Rechecks the source URL stored on each card — the one extracted above — with an HTTP
                   HEAD request. Reports which URLs are still accessible (2xx), which return errors
                   (4xx/5xx), and which time out or fail. Cards with no stored URL are skipped, so run
-                  the extraction first. Processes cards in batches of 500; a full corpus can take
+                  the extraction first.                   Processes cards in batches of 100; a full corpus can take
                   several minutes.
                 </CardDescription>
               </CardHeader>

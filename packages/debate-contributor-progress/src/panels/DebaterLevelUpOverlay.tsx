@@ -176,10 +176,10 @@ export function DebaterLevelUpOverlay({
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [open, onDismiss])
 
-  // The whole timeline below is written as one `variants` block per element
-  // so the sequence is readable top to bottom. Under reduced motion every
-  // transition duration collapses to 0 (see `stagger` below) rather than each
-  // element needing its own branch.
+  // Under reduced motion `instant` collapses every duration in the timeline
+  // below to 0, so each element only has to branch on its *initial* state
+  // (`initial={false}`, which mounts it straight at its animated value). The
+  // delays ride the same value rather than needing their own guard.
   const instant = reduceMotion ? 0 : undefined
 
   return (
@@ -207,7 +207,7 @@ export function DebaterLevelUpOverlay({
           <motion.div
             ref={stageRef}
             tabIndex={-1}
-            className="relative flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-amber-500/40 bg-card p-8 text-center shadow-2xl outline-none"
+            className="relative flex w-full max-w-sm flex-col items-center gap-4 overflow-hidden rounded-2xl border border-amber-500/40 bg-card p-8 text-center shadow-2xl outline-none"
             initial={reduceMotion ? false : { scale: 0.86, y: 18, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
             exit={reduceMotion ? { opacity: 1 } : { scale: 0.94, opacity: 0 }}
@@ -215,10 +215,14 @@ export function DebaterLevelUpOverlay({
           >
             {/* The ray burst. A conic gradient rotated slowly, scaling in and
                 fading out under the badge — the "shot" the whole cutscene is
-                built around. */}
+                built around. It sits at the default stacking level and is
+                simply painted first, so it reads as behind without a negative
+                z-index (which would drop it behind the card's own background
+                and out of sight); `overflow-hidden` on the card above clips it
+                to the rounded edge. */}
             <motion.div
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70"
+              className="pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70"
               style={{
                 background:
                   "conic-gradient(from 0deg, rgba(245,158,11,0.55) 0deg 6deg, transparent 6deg 24deg, rgba(245,158,11,0.55) 24deg 30deg, transparent 30deg 48deg)",
