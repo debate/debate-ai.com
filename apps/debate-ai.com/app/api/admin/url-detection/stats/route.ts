@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const sinceDays = searchParams.get("sinceDays") ? Math.max(1, Number(searchParams.get("sinceDays"))) : 30;
 
   const db = await getDBFromContext();
-  const cutoff = Date.now() - sinceDays * 24 * 60 * 60 * 1000;
+  const cutoff = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000);
 
   const whereCondition = gt(detectedUrls.lastVisitedAt, cutoff);
 
