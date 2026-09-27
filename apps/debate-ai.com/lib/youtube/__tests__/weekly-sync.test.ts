@@ -74,7 +74,7 @@ describe("runWeeklyYouTubeSync", () => {
   it("marks the scan as cron-triggered so the run history tells it from an admin's", async () => {
     await runWeeklyYouTubeSync();
 
-    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY);
+    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY, undefined);
     // Not an email, so it can never collide with a real admin's address.
     expect(CRON_TRIGGERED_BY).not.toContain("@");
   });

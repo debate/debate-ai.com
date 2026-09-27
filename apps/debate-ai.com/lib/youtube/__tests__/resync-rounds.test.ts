@@ -157,8 +157,9 @@ describe("resyncYouTubeRounds", () => {
 
       // The re-scan returns the same video ID with different data — if the
       // upsert overwrote everything, the parsed fields below would change.
+      // Use ROUND_TITLE so the video still passes isRound() and gets upserted.
       vi.mocked(getVideosForChannel).mockResolvedValue([
-        videoEntry("vid1", "New Title", "2024-09-01", "ChannelAlpha", 250, "New description"),
+        videoEntry("vid1", ROUND_TITLE, "2024-09-01", "ChannelAlpha", 250, ROUND_DESC),
       ]);
 
       const result = await resyncYouTubeRounds("admin@test.com");
@@ -202,7 +203,7 @@ describe("resyncYouTubeRounds", () => {
       });
 
       vi.mocked(getVideosForChannel).mockImplementation(async (channelId: string) => [
-        videoEntry("shared1", "Re-parsed Title", "2024-09-01", channelId, 999, "Re-parsed desc"),
+        videoEntry("shared1", ROUND_TITLE, "2024-09-01", "SharedChannel", 999, ROUND_DESC),
       ]);
 
       await resyncYouTubeRounds("admin@test.com");
@@ -272,7 +273,7 @@ describe("resyncYouTubeRounds", () => {
         success: true,
         runId: expect.any(Number),
         channelsSynced: 2,
-        videosFetched: 1,
+        videosFetched: 2,
         videosUpserted: 1,
       });
 
@@ -282,7 +283,7 @@ describe("resyncYouTubeRounds", () => {
         .where(eq(youtubeSyncRuns.id, result.runId));
       expect(run.status).toBe("success");
       expect(run.channelsSynced).toBe(2);
-      expect(run.videosFetched).toBe(1);
+      expect(run.videosFetched).toBe(2);
       expect(run.videosUpserted).toBe(1);
     });
   });
