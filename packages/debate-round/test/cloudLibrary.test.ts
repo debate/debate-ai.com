@@ -8,6 +8,7 @@ import {
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
+  type CloudEvidenceLibraryEntrySummary,
   type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
@@ -106,8 +107,11 @@ describe("buildRecentCloudItems", () => {
   const prepNotes: CloudPrepNoteSummary[] = [
     { id: "note-1", text: "Drop the counterplan net benefit", updatedAt: Date.parse("2026-09-11T00:00:00.000Z") },
   ];
+  const evidenceLibraryEntries: CloudEvidenceLibraryEntrySummary[] = [
+    { id: "entry-1", cite: "Smith 24", argBlock: "Warming DA", createdAt: Date.parse("2026-09-12T00:00:00.000Z") },
+  ];
 
-  it("merges all eighteen kinds and sorts newest first", () => {
+  it("merges all nineteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -128,10 +132,12 @@ describe("buildRecentCloudItems", () => {
         flowAnnotations,
         quickCards,
         prepNotes,
+        evidenceLibraryEntries,
       },
-      { limit: 18 },
+      { limit: 19 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "evidenceLibraryEntry",
       "prepNote",
       "quickCard",
       "flowAnnotation",
@@ -419,6 +425,35 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled prep note");
   });
 
+  it("includes evidence library entries, keyed by id and labeled by cite", () => {
+    const items = buildRecentCloudItems({ evidenceLibraryEntries });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "evidenceLibraryEntry",
+        key: "evidenceLibraryEntry-entry-1",
+        label: "Smith 24",
+        updatedAtMs: Date.parse("2026-09-12T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("labels an evidence library entry by argBlock when cite is blank, and untitled when both are", () => {
+    const items = buildRecentCloudItems({
+      evidenceLibraryEntries: [
+        { id: "entry-2", cite: "  ", argBlock: "Warming DA", createdAt: Date.now() },
+        { id: "entry-3", cite: "  ", argBlock: "  ", createdAt: Date.now() },
+      ],
+    });
+    expect(items.map((i) => i.label)).toEqual(["Warming DA", "Untitled evidence entry"]);
+  });
+
+  it("treats an evidence library entry with no createdAt as timestamp 0 rather than throwing", () => {
+    const items = buildRecentCloudItems({
+      evidenceLibraryEntries: [{ id: "entry-4", cite: "Smith 24", argBlock: "Warming DA" }],
+    });
+    expect(items[0]?.updatedAtMs).toBe(0);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -446,8 +481,9 @@ describe("buildRecentCloudItems", () => {
         flowAnnotations,
         quickCards,
         prepNotes,
+        evidenceLibraryEntries,
       },
-      { limit: 18 },
+      { limit: 19 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -468,6 +504,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.flowAnnotation).toBe("/annotations");
     expect(byKind.quickCard).toBe("/reason-editor");
     expect(byKind.prepNote).toBe("/prep-notes");
+    expect(byKind.evidenceLibraryEntry).toBe("/cards/library");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -543,6 +580,12 @@ describe("buildRecentCloudItems", () => {
 
     const overriddenPrepNote = buildRecentCloudItems({ prepNotes }, { prepNoteHref: "/custom-prep-notes-route" });
     expect(overriddenPrepNote[0]?.href).toBe("/custom-prep-notes-route");
+
+    const overriddenEvidenceLibraryEntry = buildRecentCloudItems(
+      { evidenceLibraryEntries },
+      { evidenceLibraryEntryHref: "/custom-cards-library-route" },
+    );
+    expect(overriddenEvidenceLibraryEntry[0]?.href).toBe("/custom-cards-library-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -580,8 +623,11 @@ describe("buildRecentCloudItems", () => {
         ],
         quickCards: [{ id: "card-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
         prepNotes: [{ id: "note-1", text: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        evidenceLibraryEntries: [
+          { id: "entry-1", cite: "   ", argBlock: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 18 },
+      { limit: 19 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -602,6 +648,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.flowAnnotation).toBe("Untitled annotation");
     expect(byKind.quickCard).toBe("Untitled quick card");
     expect(byKind.prepNote).toBe("Untitled prep note");
+    expect(byKind.evidenceLibraryEntry).toBe("Untitled evidence entry");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -642,6 +689,7 @@ describe("buildRecentCloudItems", () => {
         flowAnnotations: [],
         quickCards: [],
         prepNotes: [],
+        evidenceLibraryEntries: [],
       }),
     ).toEqual([]);
   });
