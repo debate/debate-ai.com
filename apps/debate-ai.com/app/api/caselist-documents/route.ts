@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDBFromContext } from "@/lib/database/context";
 import { caselistDocuments } from "@/lib/database/schema";
 import { eq, and, ilike, desc, sql } from "drizzle-orm";
 
@@ -24,6 +24,8 @@ export async function GET(request: Request) {
   if (caselistSlug) conditions.push(eq(caselistDocuments.caselistSlug, caselistSlug));
 
   const whereClause = conditions.length === 1 ? conditions[0] : and(...conditions);
+
+  const db = await getDBFromContext();
 
   const documents = await db
     .select({
