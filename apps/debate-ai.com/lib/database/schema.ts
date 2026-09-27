@@ -1120,6 +1120,41 @@ export const reuseCheckLog = sqliteTable(
 
 export type ReuseCheckLogRow = typeof reuseCheckLog.$inferSelect;
 
+// URL Detection — stores URLs detected by the browser extension from pages
+// users visit. The extension calls POST /api/url-detection with the page URL,
+// title, and metadata. This lets admins see what content users are reading
+// and potentially turn it into evidence. One row per unique URL per user
+// (upserted on re-visit), with visit count and last visited timestamp.
+export const detectedUrls = sqliteTable(
+  "detected_urls",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    normalizedUrl: text("normalized_url").notNull(),
+    title: text("title"),
+    favicon: text("favicon"),
+    visitCount: integer("visit_count").notNull().default(1),
+    lastVisitedAt: integer("last_visited_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    userIdIdx: index("idx_detected_urls_user_id").on(table.userId),
+    normalizedUrlIdx: index("idx_detected_urls_normalized_url").on(table.normalizedUrl),
+    userUrlIdx: uniqueIndex("idx_detected_urls_user_url").on(table.userId, table.normalizedUrl),
+    lastVisitedIdx: index("idx_detected_urls_last_visited").on(table.lastVisitedAt),
+  }),
+);
+
+export type DetectedUrlRow = typeof detectedUrls.$inferSelect;
+export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
+
 // Video library — the queryable projection of the `data/videos/*.json` assets
 // (rounds-policy/pf/ld/college, debate-lectures, debate-top-picks) that the
 // YouTube sync writes. `/api/videos` pages over this table instead of shipping

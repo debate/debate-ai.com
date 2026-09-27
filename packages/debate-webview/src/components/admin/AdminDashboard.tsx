@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { FileSearch, Film, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
+import { FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -53,7 +53,7 @@ const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", labe
  * moderators see only the content sections — the video library, video
  * reports and the round-video queue.
  */
-type AdminTabKey = "users" | "library" | "queue" | "youtube" | "cards" | "imports";
+type AdminTabKey = "users" | "library" | "queue" | "youtube" | "cards" | "imports" | "url-detection";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -73,6 +73,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "queue", name: "Round queue", description: "Queued debate rounds waiting to be published", icon: ListVideo, adminOnly: false },
   { key: "youtube", name: "YouTube sync", description: "Channel scans, view counts, video seeding and stacked playlists", icon: RefreshCw, adminOnly: true },
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
+  { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
 ];
 
