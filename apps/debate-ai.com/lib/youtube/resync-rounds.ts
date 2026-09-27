@@ -35,7 +35,17 @@ import { getEnv } from "../env";
  * the admin never has to type an id — and a renamed channel keeps working
  * until the next scan re-resolves it.
  */
-export async function resyncYouTubeRounds(triggeredBy: string | null) {
+   * @param triggeredBy - Admin email, or the "cron" sentinel from
+   *   `weekly-sync.ts` when the weekly tick started the run.
+   * @param publishedAfterDate - Optional `YYYY-MM-DD` floor. When omitted (the
+   *   weekly cron path) the module-level default from `channel-config.ts` is
+   *   used; the admin page's date chooser passes its own value so a manual
+   *   resync can reach further back or narrow the window without a redeploy.
+   */
+export async function resyncYouTubeRounds(
+  triggeredBy: string | null,
+  publishedAfterDate?: string,
+) {
   const apiKey = getEnv("YOUTUBE_API_KEY");
   if (!apiKey) {
     throw new Error("YouTube API key not configured");
@@ -45,6 +55,13 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
   // arrives on the request's `env` binding — so hand it over before the
   // first request rather than letting every batch go out unauthenticated.
   setYouTubeApiKey(apiKey);
+
+  // Fall back to the module-level default floor (`publishedAfter` from
+  // channel-config.ts) when the caller — the weekly cron — did not pass an
+  // explicit cutoff. The admin page supplies one from its date chooser so a
+  // manual resync can reach further back *or* narrow the window without
+  // touching deployed code.
+  const cutoff = publishedAfterDate ?? publishedAfter;
 
   const db = await getDBFromContext();
 
@@ -86,7 +103,7 @@ export async function resyncYouTubeRounds(triggeredBy: string | null) {
           .where(eq(youtubeChannels.id, channelRow.id));
       }
       if (!channelId) continue;
-      const videos = await getVideosForChannel(channelId, channelRow.name, publishedAfter);
+      const videos = await getVideosForChannel(channelId, channelRow.name, cutoff);
       allVideos.push(...videos);
       channelsSynced++;
     }
