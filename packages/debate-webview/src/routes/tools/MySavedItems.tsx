@@ -35,8 +35,11 @@
  * gap again. Scout-to-Strategy's saved strategy recommendations
  * (`/strategy`) joined next — already saved per-user in
  * `saved_strategy_recommendations`, the same gap again. Team Collaboration
- * Mode's scheduled Topic Sprint sessions (`/research`) joined last —
+ * Mode's scheduled Topic Sprint sessions (`/research`) joined next —
  * already saved per-user in `saved_sprint_sessions`, the same gap again.
+ * The Evidence Library's saved cut cards (`/cards/library`) joined last —
+ * already synced per-user via `debate-data-sync`'s generic
+ * `saved_tool_records` mechanism, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -52,7 +55,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
+import { BarChart3, BookOpen, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, ListTree, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -84,6 +87,10 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   // is a feature of the Research Workspace's Collaboration Prep Room, not
   // a tool of its own.
   sprintSession: CalendarClock,
+  // No standalone /tools entry to match either — the Evidence Library is
+  // folded into the "Research Workspace" entry, which uses `Library` (the
+  // whole workspace); `BookOpen` distinguishes one saved card from that.
+  evidenceLibraryEntry: BookOpen,
 }
 
 export function MySavedItems() {

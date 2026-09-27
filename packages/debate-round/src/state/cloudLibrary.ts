@@ -78,6 +78,14 @@
  * wired, discoverability not" gap applied here too — a session scheduled on
  * one device stayed invisible from the tools page on another.
  *
+ * A thirteenth kind, the Evidence Library's saved cut cards (`/cards/library`),
+ * joined next: `evidenceLibraryEntries` (`debate-search-evidence`) already
+ * synced a signed-in user's `EvidenceLibraryEntry`s via `debate-data-sync`'s
+ * generic `TOOL_RECORD_COLLECTIONS` mechanism (`saved_tool_records`, the same
+ * "sync wired, discoverability not" gap {@link CloudSpeechOutcomeSummary}
+ * closed for video speech-outcome runs) — a card a user cut on one device
+ * stayed invisible from the tools page on another.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -247,6 +255,28 @@ export type CloudSprintSessionSummary = {
   createdAt: number;
 };
 
+/**
+ * The subset of an `EvidenceLibraryEntry` (`debate-search-evidence`) a caller
+ * needs to list one in the merged view — mirrors
+ * `GET /api/tool-records/evidenceLibraryEntries`'s row shape (full records,
+ * like {@link CloudSpeechOutcomeSummary}; the generic tool-records route has
+ * no label-only summary mode). Defined locally rather than importing
+ * `EvidenceLibraryEntry` itself, matching {@link CloudDebateSummary}'s own
+ * local-type convention: `debate-round` doesn't depend on
+ * `debate-search-evidence` (nor the reverse).
+ */
+export type CloudEvidenceLibraryEntrySummary = {
+  id: string;
+  cite: string;
+  argBlock: string;
+  /**
+   * Epoch milliseconds, per `EvidenceLibraryEntry.createdAt` — optional, since
+   * an entry saved before that field existed still parses (see
+   * {@link CloudDrillSetSummary}'s own optional-timestamp convention).
+   */
+  createdAt?: number;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -259,7 +289,8 @@ export type CloudLibraryItemKind =
   | "counselPanelAssessment"
   | "roundPairing"
   | "strategyRecommendation"
-  | "sprintSession";
+  | "sprintSession"
+  | "evidenceLibraryEntry";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -306,6 +337,7 @@ export interface BuildRecentCloudItemsInput {
   roundPairings?: CloudRoundPairingSummary[];
   strategyRecommendations?: CloudStrategyRecommendationSummary[];
   sprintSessions?: CloudSprintSessionSummary[];
+  evidenceLibraryEntries?: CloudEvidenceLibraryEntrySummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -325,6 +357,7 @@ export interface BuildRecentCloudItemsOptions {
   roundPairingHref?: string;
   strategyRecommendationHref?: string;
   sprintSessionHref?: string;
+  evidenceLibraryEntryHref?: string;
 }
 
 /**
@@ -353,6 +386,7 @@ export function buildRecentCloudItems(
     roundPairingHref = "/briefings",
     strategyRecommendationHref = "/strategy",
     sprintSessionHref = "/research",
+    evidenceLibraryEntryHref = "/cards/library",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -474,6 +508,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(session.createdAt),
     }));
 
+  const evidenceLibraryEntryItems: CloudLibraryItem[] = (input.evidenceLibraryEntries ?? [])
+    .slice(0, perKindLimit)
+    .map((entry) => ({
+      kind: "evidenceLibraryEntry" as const,
+      key: `evidenceLibraryEntry-${entry.id}`,
+      href: evidenceLibraryEntryHref,
+      label: entry.cite.trim() || entry.argBlock.trim() || "Untitled evidence card",
+      updatedAtMs: parseCloudTimestamp(entry.createdAt ?? 0),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -487,6 +531,7 @@ export function buildRecentCloudItems(
     ...roundPairingItems,
     ...strategyRecommendationItems,
     ...sprintSessionItems,
+    ...evidenceLibraryEntryItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

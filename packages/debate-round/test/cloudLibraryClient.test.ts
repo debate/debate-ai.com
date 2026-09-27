@@ -10,7 +10,7 @@ function jsonResponse(status: number, body: unknown) {
 }
 
 describe("fetchRecentCloudItems", () => {
-  it("merges documents, flows, rounds, word-count rounds, debates, speech outcome runs, drill sets, judge decisions, counsel-panel assessments, round pairings, strategy recommendations, and sprint sessions from their own endpoints", async () => {
+  it("merges documents, flows, rounds, word-count rounds, debates, speech outcome runs, drill sets, judge decisions, counsel-panel assessments, round pairings, strategy recommendations, sprint sessions, and evidence library entries from their own endpoints", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -72,11 +72,16 @@ describe("fetchRecentCloudItems", () => {
           },
         ]);
       }
+      if (url === "/api/tool-records/evidenceLibraryEntries") {
+        return jsonResponse(200, [
+          { id: "card-1", cite: "Smith 24", argBlock: "Warming DA", createdAt: Date.parse("2026-08-24T00:00:00.000Z") },
+        ]);
+      }
       throw new Error(`unexpected url ${url}`);
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
 
-    const items = await fetchRecentCloudItems({ limit: 12 });
+    const items = await fetchRecentCloudItems({ limit: 13 });
 
     expect(items.map((i) => i.kind)).toEqual([
       "sprintSession",
@@ -91,6 +96,7 @@ describe("fetchRecentCloudItems", () => {
       "debate",
       "roundPairing",
       "drillSet",
+      "evidenceLibraryEntry",
     ]);
   });
 
@@ -123,6 +129,7 @@ describe("fetchRecentCloudItems", () => {
       if (url === "/api/round-pairings") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/strategy-recommendations") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/sprint-sessions") return jsonResponse(500, { error: "Something went wrong." });
+      if (url === "/api/tool-records/evidenceLibraryEntries") return jsonResponse(500, { error: "Something went wrong." });
       return jsonResponse(200, [{ clientId: 3, label: "Round 4", updatedAt: "2026-08-29T00:00:00.000Z" }]);
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
