@@ -10,6 +10,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
+  type CloudSpeechSendLogSummary,
   type CloudSprintSessionSummary,
   type CloudStrategyRecommendationSummary,
   type CloudWordCountRoundSummary,
@@ -82,8 +83,11 @@ describe("buildRecentCloudItems", () => {
   const sprintSessions: CloudSprintSessionSummary[] = [
     { id: "session-1", topic: "AI regulation", title: "Saturday research push", createdAt: Date.parse("2026-09-05T00:00:00.000Z") },
   ];
+  const speechSendLogEntries: CloudSpeechSendLogSummary[] = [
+    { id: "send-1", preview: "The plan reduces emissions by...", sentAt: Date.parse("2026-09-06T00:00:00.000Z") },
+  ];
 
-  it("merges all twelve kinds and sorts newest first", () => {
+  it("merges all thirteen kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -98,10 +102,12 @@ describe("buildRecentCloudItems", () => {
         roundPairings,
         strategyRecommendations,
         sprintSessions,
+        speechSendLogEntries,
       },
-      { limit: 12 },
+      { limit: 13 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "speechSendLogEntry",
       "sprintSession",
       "strategyRecommendation",
       "counselPanelAssessment",
@@ -266,6 +272,25 @@ describe("buildRecentCloudItems", () => {
     expect(items.map((i) => i.label)).toEqual(["AI regulation", "Untitled sprint session"]);
   });
 
+  it("includes speech send-log entries, keyed by id and labeled by preview", () => {
+    const items = buildRecentCloudItems({ speechSendLogEntries });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "speechSendLogEntry",
+        key: "speechSendLogEntry-send-1",
+        label: "The plan reduces emissions by...",
+        updatedAtMs: Date.parse("2026-09-06T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a speech send-log entry with a blank preview as untitled", () => {
+    const items = buildRecentCloudItems({
+      speechSendLogEntries: [{ id: "send-2", preview: "   ", sentAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled speech send");
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -287,8 +312,9 @@ describe("buildRecentCloudItems", () => {
         roundPairings,
         strategyRecommendations,
         sprintSessions,
+        speechSendLogEntries,
       },
-      { limit: 12 },
+      { limit: 13 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -303,6 +329,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.roundPairing).toBe("/briefings");
     expect(byKind.strategyRecommendation).toBe("/strategy");
     expect(byKind.sprintSession).toBe("/research");
+    expect(byKind.speechSendLogEntry).toBe("/speech-documents");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -351,6 +378,12 @@ describe("buildRecentCloudItems", () => {
       { sprintSessionHref: "/custom-research-route" },
     );
     expect(overriddenSprintSession[0]?.href).toBe("/custom-research-route");
+
+    const overriddenSpeechSendLogEntry = buildRecentCloudItems(
+      { speechSendLogEntries },
+      { speechSendLogEntryHref: "/custom-speech-documents-route" },
+    );
+    expect(overriddenSpeechSendLogEntry[0]?.href).toBe("/custom-speech-documents-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -376,8 +409,11 @@ describe("buildRecentCloudItems", () => {
         sprintSessions: [
           { id: "session-1", topic: "  ", title: "  ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        speechSendLogEntries: [
+          { id: "send-1", preview: "   ", sentAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
       },
-      { limit: 12 },
+      { limit: 13 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -392,6 +428,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.roundPairing).toBe("Untitled pairing");
     expect(byKind.strategyRecommendation).toBe("Untitled strategy recommendation");
     expect(byKind.sprintSession).toBe("Untitled sprint session");
+    expect(byKind.speechSendLogEntry).toBe("Untitled speech send");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -425,6 +462,8 @@ describe("buildRecentCloudItems", () => {
         counselPanelAssessments: [],
         roundPairings: [],
         strategyRecommendations: [],
+        sprintSessions: [],
+        speechSendLogEntries: [],
       }),
     ).toEqual([]);
   });
