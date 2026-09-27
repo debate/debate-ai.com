@@ -71,40 +71,71 @@
   Ran the verification gate: `bun install`; `debate-research-evidence`'s own
   `bun run test` (49 files, 1270 tests — 2 new) and `bun run typecheck`
   (clean); `debate-comments`'s own `bun run test` (5 files, 72 tests,
-  unaffected) and `apps/debate-ai.com`'s `bun run typecheck` (clean, aside
-  from pre-existing failures confirmed unrelated below). The unscoped root
-  `bun run typecheck`/`bun run test`/`bun run build`/`bun run build:web` all
-  still fail in this sandboxed environment, for reasons confirmed
-  pre-existing by stashing this change and re-running each failing check
-  against unmodified `master`/this branch's head: (1) the uninitialized
-  `debate-rankings`/`debate-tournaments-tabroom`/`debate-editor-cm` git
-  submodules (no credentials to clone those private repos here), which also
-  take `debate-videos`/`debate-ai-web`'s bundle build down via
-  `debate-rankings-adapter`'s `../../debate-rankings/js/index` import; (2)
-  the root `bun run build` script's own `turbo build --filter='!debate-flow'`
-  errors immediately because no workspace package is actually named
-  `debate-flow` (`packages/debate-flow/package.json`'s own `name` field is
-  `debate-flow-ebb`, a pre-existing naming mismatch, not something this
-  change touched); (3) `apps/debate-ai.com/app/api/{admin/,}url-detection*`
-  (three pre-existing Drizzle column-type errors) and
-  `apps/debate-ai.com/lib/forums/__tests__/cursor.test.ts` (two pre-existing
-  possibly-null narrowing errors); (4) `lib/__tests__/docs-links-consistency.test.ts`,
-  `debate-feature-catalog`'s `feature-catalog.test.ts`, and
-  `debate-contributor-progress`'s `ContributionLeaderboardPanel.test.tsx`
-  (a pre-existing duplicate-React-copy `useRef`-on-`null` crash when that
-  package's tests run standalone) — none in this change's own dependency
-  graph, all reproduced identically before this change was applied.
+  unaffected). This sandbox's `debate-rankings`/`debate-tournaments-tabroom`/
+  `debate-editor-cm`/`debate-flow-ebb` git submodules started out
+  uninitialized — every prior entry in this changelog treated that as a hard
+  environment limit and skipped the unscoped root checks — but
+  `git submodule update --init` turned out to work here (no credentials
+  needed; they clone over plain HTTPS), so this run initialized all four and
+  re-ran the full gate for real: `bun run build` (all targets, including
+  `debate-ai-web`'s production build and service worker) and `bun run
+  build:web` both succeed cleanly with the submodules present — the
+  `../../debate-rankings/js/index` import and the `turbo build
+  --filter='!debate-flow'` step this changelog's other recent entries (and
+  an earlier draft of this one) described as broken are not bugs at all:
+  `packages/debate-flow-ebb` (the `debate-flow` git submodule) and
+  `packages/debate-flow` (a same-named-looking but separate tracked
+  directory, package name `debate-flow-ebb`) are two different real
+  packages the filter correctly excludes by name, invisible as such only
+  when the submodule is missing. `bun run typecheck` across all 25 packages
+  turned up exactly one failure, confirmed pre-existing and unrelated by
+  diffing this change's own commit against `origin/master`'s current tip
+  (`13058c8`) — byte-identical at the relevant lines on both:
+  `debate-videos/src/panels/leaderboard/profile/rankingProfileHelpers.ts:244`'s
+  `raw.reduce((sum, v) => sum + (v ?? 0), 0)` has TypeScript inferring the
+  accumulator as `number | null` instead of `number`, flagging `sum` as
+  possibly null. Reported on PR #974 with a proposed one-line patch
+  (`(sum: number, v) =>`) rather than pushed here, since it's in
+  `debate-videos`, entirely outside this change's own dependency graph. The
+  full root `bun run test` (with submodules) is 5 files / 7 tests failing
+  out of 595 files / 10,345 tests, all pre-existing and unrelated —
+  `apps/debate-ai.com/lib/database/__tests__/migration-sql.test.ts` (2
+  tests; `0036_grey_big_bertha.sql` replays against a partially-migrated
+  fixture DB missing a `source_url` column another migration since added),
+  `apps/debate-ai.com/lib/__tests__/docs-links-consistency.test.ts` (a
+  pre-existing set of dead internal doc links, none added by this change),
+  `debate-feature-catalog`'s `feature-catalog.test.ts` (a stale fixture
+  expectation), and `debate-videos`' `tool-record-sync-catalog.test.ts` +
+  `video-sidebar-render.test.tsx` (both about a `judgeParadigmSelections` →
+  `/paradigms` sidebar link the sidebar doesn't actually render) — none
+  touch this change's own files, and each reproduces identically on
+  `origin/master`.
+
+  **Correction to this entry:** an earlier draft (before this run
+  initialized the git submodules to check) claimed the root `bun run build`
+  script had an independent `--filter='!debate-flow'` typo needing a
+  maintainer fix. That was wrong, based on testing in a sandbox state this
+  run hadn't yet realized was fixable — struck above and replaced with the
+  verified explanation once the submodules were actually initialized and
+  the full build ran clean.
 
   **Follow-up (not in scope here):** `"file"` remains the one
   `COMMENT_RESOURCE_TYPES` entry with no UI surface — needs a maintainer
   decision on which upload/file page it should mean before it's
   implementable, the same shape as the `qwksearch` credential-sync gap
-  flagged by earlier runs. The root `bun run build` script's
-  `--filter='!debate-flow'` typo (should presumably be
-  `'!debate-flow-ebb'`, the package's real name) is a real, independent
-  break in this sandboxed environment's ability to run the unscoped build
-  at all, on top of the already-documented submodule gap — worth a
-  maintainer fix, but outside this change's own scope.
+  flagged by earlier runs. The `rankingProfileHelpers.ts` type error and the
+  5 pre-existing test failures above are each real, small, and unrelated to
+  this change; the type error was reported with a patch on PR #974 but left
+  unfixed there since it's outside that PR's own scope, and the 5 test
+  failures weren't — worth a maintainer look, but this run drew the line at
+  auditing the tool/account-linking system its own prompt asks about, not a
+  general sweep of every pre-existing failure the full suite turns up.
+  Also worth recording for future runs of this routine: the git submodules
+  this changelog's other recent entries treated as unreachable ("no
+  credentials to clone those private repos") clone fine over plain HTTPS
+  with `git submodule update --init` — a future run hitting the same
+  missing-submodule symptom should check that before assuming it's still a
+  hard limit.
 
 - **🗂️ Give Learn's Decks manager a per-deck "synced"/"pending" badge.**
   Another repeat of the standing autonomous-routine prompt ("integrate all
