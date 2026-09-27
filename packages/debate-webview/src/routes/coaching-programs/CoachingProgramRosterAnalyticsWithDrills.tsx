@@ -10,8 +10,7 @@
  * `debate-community` importing drill types back would be circular — this
  * app/page layer already depends on both, so it resolves the composition
  * instead). Split out of `page.tsx` so `page.tsx` stays a server component,
- * mirroring `CommunityHubPageContent.tsx`'s "For You" split for the same
- * reason.
+ * mirroring the same server/client split pattern used elsewhere in the app.
  *
  * Also resolves the panel's `memberDrillPracticeStatus` prop — the other
  * Known-gaps follow-up ("the roster analytics table ... doesn't yet fold in

@@ -3,8 +3,8 @@
  * user-facing surface in the app.
  *
  * The dock's Settings menu already links to most of these, but as a flat,
- * unexplained list of forty-odd items; `/research`, `/coach`, and
- * `/community-hub` each cover one slice. This panel is the whole map:
+ * unexplained list of forty-odd items; `/research` and `/coach` each tab
+ * across one package's panels. This panel is the whole map:
  * `feature-catalog.ts`'s `APP_FEATURES` grouped into categories, filtered by
  * one free-text box (which also matches each entry's route and hidden
  * search tags), with a jump-to-category row for skimming and a link to each

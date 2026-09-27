@@ -61,6 +61,16 @@ export interface CommentSectionProps {
   clientOptions?: CommentClientOptions;
   /** Replaces the default "sign in to comment" link. */
   onSignIn?: () => void;
+  /**
+   * Called after a comment is posted or removed.
+   *
+   * For a host that shows a reply count it read from somewhere else — the
+   * forums' thread header does, because the count rides on the thread read and
+   * not on the comment thread. Without this, that count is one behind until the
+   * page is reloaded; re-reading the thread is the host's business, and this
+   * only says that something changed.
+   */
+  onChanged?: () => void;
   className?: string;
 }
 
@@ -72,6 +82,7 @@ export function CommentSection({
   title = "Comments",
   clientOptions,
   onSignIn,
+  onChanged,
   className,
 }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -130,8 +141,9 @@ export function CommentSection({
       setComments((current) =>
         parentId ? insertReplyNode(current, parentId, created) : [created, ...current],
       );
+      onChanged?.();
     },
-    [resourceType, resourceId, basePath, fetchImpl],
+    [resourceType, resourceId, basePath, fetchImpl, onChanged],
   );
 
   const handleLike = useCallback(
@@ -187,8 +199,9 @@ export function CommentSection({
           likeCount: 0,
         })),
       );
+      onChanged?.();
     },
-    [basePath, fetchImpl],
+    [basePath, fetchImpl, onChanged],
   );
 
   // A row's delete action is synchronous from its point of view, so it cannot be

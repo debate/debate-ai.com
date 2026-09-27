@@ -24,7 +24,7 @@ owning package before editing anything under `app/`. The map is in the
 | A full timed round against an AI opponent | `/versus-ai`, `/practice-opponent`, `/opponents` | `debate-round-practice-ai` |
 | Speech and prep timers, the in-round recorder | `/speech-documents`, `/word-count` | `debate-timer` |
 | The video library (LEARN) | `/videos` | `debate-videos` |
-| Team prep, task inbox, prep room | `/community-hub`, `/prep-notes`, `/contacts` | `debate-team-collaboration` |
+| Team prep, task inbox, prep room | `/prep-notes`, `/contacts` | `debate-team-collaboration` |
 | Leaderboards, quests, contributor awards | `/rank`, `/outcomes` | `debate-contributor-progress` |
 | AI prompts for speeches and flows | `/summaries`, `/strategy`, `/outline` | `debate-speech-writer` |
 | Documentation | `/docs` | `debate-help-docs` |

@@ -3,10 +3,8 @@
  *
  * The app ships roughly fifty distinct surfaces, but nothing lists them all:
  * the global dock exposes four destinations plus a long, flat Settings menu;
- * `/research` and `/coach` tab across the panels of one package each;
- * `/community-hub` covers only the crowdsourcing and pre-round/practice
- * spaces named under TODO.md's "Research Crowdsourcing Organizer Features"
- * heading. None of them mention the core workspaces (card search, the flow
+ * `/research` and `/coach` tab across the panels of one package each, but
+ * none of them mention the core workspaces (card search, the flow
  * spreadsheet, the video archive, the Reason editor) or the rankings and
  * standings surfaces at all, so a new debater has no single page that
  * outlines what the app actually does.
@@ -25,8 +23,7 @@
  * same shape as `debate-data-sync`) instead of each keeping a hand-synced
  * fork — see `features-page.mdx`'s "One shared catalog" section.
  *
- * Like `debate-card-search`'s narrower community-hub directory, this module
- * is pure: it has no store of its own, because every entry links to a
+ * Like other pure catalog/directory modules in the app, this module is pure: it has no store of its own, because every entry links to a
  * surface that already persists (or doesn't need to persist) its own state.
  *
  * @module feature-catalog
@@ -175,17 +172,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "workspaces",
     tags: ["hub", "coach", "flow sync"],
   },
-  {
-    id: "community-research-hub",
-    title: "Community Research Hub",
-    description:
-      "A searchable directory of every shared research, collaboration, and pre-round/practice space",
-    href: "/community-hub",
-    category: "workspaces",
-    doc: "community-research-hub.md",
-    tags: ["directory", "index"],
-  },
-
   // ── Evidence & research ────────────────────────────────────────────────
   {
     id: "shared-evidence-library",

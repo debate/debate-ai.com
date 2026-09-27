@@ -9,7 +9,6 @@ export {
   CoachingProgramRosterAnalyticsPanel,
   type MemberDrillPracticeStatus,
 } from "./CoachingProgramRosterAnalyticsPanel";
-export { CommunityResearchHubPanel } from "./CommunityResearchHubPanel";
 export { ContributionLeaderboardPanel, TIER_VARIANT } from "./ContributionLeaderboardPanel";
 export { ContributorAwardsPanel } from "./ContributorAwardsPanel";
 export { ContributorProfilePanel } from "./ContributorProfilePanel";

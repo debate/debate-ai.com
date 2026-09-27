@@ -130,7 +130,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     tools: [
       { href: "/research", title: "Research Workspace", icon: Search },
       { href: "/cards", title: "Card Search", icon: Search },
-      { href: "/community-hub", title: "Community Research Hub", icon: Users },
       { href: "/cards/coverage", title: "Topic Coverage", icon: ChartPie },
       { href: "/cards/prep-room", title: "Collaboration Prep Room", icon: DoorOpen },
       { href: "/cards/reviews", title: "Review Queue", icon: ClipboardCheck },

@@ -3,7 +3,7 @@ import {
   ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
-  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass, Contact,
+  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
   Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star,
   type LucideIcon,
 } from "lucide-react"
@@ -59,11 +59,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/research", label: "Research Workspace", icon: Library,
         description: "Work the squad research workspace end to end, covering topic coverage, the evidence library, task routing, quests, leaderboards, and peer review.",
         highlights: ["Topic coverage dashboard", "Evidence library search", "Task routing, quests, and peer review in one place"],
-      },
-      {
-        href: "/community-hub", label: "Community Research Hub", icon: Compass,
-        description: "Search a directory of every shared research, collaboration, and pre-round or practice space across the community.",
-        highlights: ["Cross-squad directory", "Filters by topic, format, and space type"],
       },
       {
         href: "/coach", label: "Coach Workspace", icon: GraduationCap,

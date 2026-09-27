@@ -29,7 +29,7 @@ const guides = [
     title: "Research collaboration",
     description:
       "Run a squad's research sprint: topic coverage, the prep room, task routing, brainstorming, peer review, quests, and the leaderboard — the Research Workspace end to end.",
-    routes: ["/research", "/cards/prep-room", "/cards/inbox", "/community-hub"],
+    routes: ["/research", "/cards/prep-room", "/cards/inbox"],
   },
 ]
 

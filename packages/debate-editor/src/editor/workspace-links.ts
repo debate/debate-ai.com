@@ -26,7 +26,6 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/doc', label: 'Debate Docs', description: 'Annotated summaries and case outlines', category: 'Workspaces' },
   { href: '/research', label: 'Research Workspace', description: 'Topic coverage, evidence library, tasks, quests, review', category: 'Workspaces' },
   { href: '/coach', label: 'Coach Workspace', description: 'Argument tree, flow summary, drills, scouting, briefings', category: 'Workspaces' },
-  { href: '/community-hub', label: 'Community Research Hub', description: 'Every shared research and practice space', category: 'Workspaces' },
 
   // ── Community & Progress ────────────────────────────────────────────────
   { href: '/cards/leaderboard', label: 'Leaderboard', description: 'Helpfulness score, tier, badges, and quest streak', category: 'Community & Progress' },

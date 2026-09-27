@@ -148,7 +148,7 @@ export async function listForumThreads(
     limit,
     cursor,
     viewerId,
-  }: { limit: number; cursor: string | null; viewerId?: string | null },
+  }: { limit: number; cursor: ForumCursor | null; viewerId?: string | null },
 ): Promise<ForumFeedResponse> {
   // One row past the limit is how the response knows there is a next page,
   // rather than a second count query over the table.
@@ -162,15 +162,17 @@ export async function listForumThreads(
     .orderBy(desc(forumThreads.lastActivityAt), desc(forumThreads.id))
     .limit(limit + 1);
 
-  const page = rows.slice(0, limit);
+  // Annotated rather than left to the query builder's inference: the aggregate
+  // in `threadColumns` widens the row type past what this function wants to
+  // reason about, and the cast is where the shape is pinned down instead.
+  const page = rows.slice(0, limit) as FeedRow[];
   const last = page.at(-1);
   const hasMore = rows.length > limit;
 
   return {
-    threads: page.map((row) => toSummary(row as FeedRow)),
+    threads: page.map((row) => toSummary(row)),
     viewer: await hydrateViewer(db, viewerId),
-    nextCursor:
-      hasMore && last ? encodeCursor(toWireTime((last as FeedRow).lastActivityAt), last.id) : null,
+    nextCursor: hasMore && last ? encodeCursor(toWireTime(last.lastActivityAt), last.id) : null,
   };
 }
 
@@ -325,8 +327,12 @@ export function decodeCursor(raw: unknown): Parsed<ForumCursor | null> {
  * table does.
  */
 export function afterCursor(cursor: ForumCursor) {
+  // The column is a Drizzle timestamp and the cursor is Unix seconds — the same
+  // unit boundary as everywhere else in this file, converted once here rather
+  // than at each comparison.
+  const at = new Date(cursor.at * 1000);
   return or(
-    lt(forumThreads.lastActivityAt, cursor.at),
-    and(eq(forumThreads.lastActivityAt, cursor.at), lt(forumThreads.id, cursor.id)),
+    lt(forumThreads.lastActivityAt, at),
+    and(eq(forumThreads.lastActivityAt, at), lt(forumThreads.id, cursor.id)),
   );
 }
