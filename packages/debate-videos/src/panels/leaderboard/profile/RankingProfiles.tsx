@@ -32,6 +32,7 @@ import {
   type ProfileEntry,
 } from "./rankingProfileHelpers"
 import { ProfileVideos } from "./ProfileVideos"
+import { ProfileCaselistDocuments } from "./ProfileCaselistDocuments"
 import { TeamRadarChart } from "./TeamRadarChart"
 
 const rating = (n: number) => n.toFixed(1)
@@ -147,6 +148,7 @@ export function TeamProfilePage({ slug }: { slug: string }) {
             <TeamDivisionStats key={item.datasetId} item={item} />
           ))}
           <ProfileVideos query={teamVideoQuery(first)} />
+          <ProfileCaselistDocuments school={first.school} team={first.name} />
         </>
       )}
     </ProfileFrame>
@@ -202,7 +204,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
               label="Avg. adj. rating"
               value={summary.averageAdjustedRating === null ? "—" : rating(summary.averageAdjustedRating)}
             />
-          <Stat label="Total matches" value={summary.totalMatches} />
+            <Stat label="Total matches" value={summary.totalMatches} />
           </div>
 
           {Array.from(divisions.values()).map((div) => {
@@ -264,6 +266,7 @@ export function SchoolProfilePage({ slug }: { slug: string }) {
           </div>
 
           <ProfileVideos query={schoolVideoQuery(summary.school)} />
+          <ProfileCaselistDocuments school={summary.school} />
         </>
       )}
     </ProfileFrame>
