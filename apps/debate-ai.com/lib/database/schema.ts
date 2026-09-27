@@ -342,6 +342,17 @@ export const userSettings = sqliteTable("user_settings", {
   // here.
   practiceVsAiLastPlayedDayKey: text("practice_vs_ai_last_played_day_key"),
   practiceVsAiCurrentStreak: integer("practice_vs_ai_current_streak"),
+  // JSON-serialized `MyTeamProfile` (`{ school, email1, email2 }`) — the
+  // Create Round dialog's "My Team" quick-fill profile (see
+  // packages/debate-round/src/state/myTeamProfile.ts and
+  // dialogs/CreateRoundDialog/TeamSection.tsx), previously localStorage-only
+  // per that file's own header comment. A whole-value replace on every
+  // profile save, like `researchProgressGoal` above, rather than op-based —
+  // one visitor edits their own profile at a time. Null/absent means "no
+  // synced profile yet", same semantics as every other nullable column here;
+  // the local `myTeamProfile.ts` localStorage value stays the source of
+  // truth for a signed-out browser.
+  myTeamProfile: text("my_team_profile"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .default(sql`(unixepoch())`),
