@@ -110,13 +110,18 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
     [framedPath],
   )
 
-  // Any navigation we did not drive — a sidebar link, a redirect, the back
-  // button landing outside the frame's history — hands the content column
-  // back to the routed page.
+  // On mount and whenever pathname changes, frame dock destinations (/debate,
+  // /cards, /videos, etc.) so they load embedded inside same-origin iframes,
+  // while non-dock routes render as standard top-level routed pages.
   useEffect(() => {
-    if (pathname === lastPathnameRef.current) return
-    lastPathnameRef.current = pathname
-    setFramedPath((current) => (current === pathname ? current : null))
+    if (!getHostConfig().framing) return
+
+    if (isDockNavPath(pathname)) {
+      setFramedPath(pathname)
+      setMountedPaths((paths) => keepAlive(paths, pathname, pathname))
+    } else {
+      setFramedPath(null)
+    }
   }, [pathname])
 
   const value = useMemo<AppFrameContextValue>(
