@@ -16,8 +16,21 @@
  * @module types
  */
 
-/** The kinds of resource a comment can hang off. */
-export const COMMENT_RESOURCE_TYPES = ["video", "file", "lecture", "contribution"] as const;
+/**
+ * The kinds of resource a comment can hang off.
+ *
+ * `thread` is the forums: a forum discussion is a `forum_threads` row (the
+ * title and the opening post) with its replies stored here against that row's
+ * id, so a reply on a forum thread is an ordinary comment and gets the same
+ * nesting, likes and soft delete as a reply under a video.
+ */
+export const COMMENT_RESOURCE_TYPES = [
+  "video",
+  "file",
+  "lecture",
+  "contribution",
+  "thread",
+] as const;
 
 export type CommentResourceType = (typeof COMMENT_RESOURCE_TYPES)[number];
 

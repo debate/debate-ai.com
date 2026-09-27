@@ -2075,3 +2075,58 @@ export const commentLikes = sqliteTable(
 );
 
 export type CommentLikeRow = typeof commentLikes.$inferSelect;
+
+// A forum thread: the title and opening post a member writes, with the replies
+// underneath it stored as ordinary comments keyed on this row's id
+// (`resource_type = 'thread'`). Deliberately not a second comment table — a
+// forum reply is the same object as a reply under a video, so it inherits the
+// nesting, the like toggle and the soft delete above rather than growing a
+// parallel implementation that would drift from it.
+//
+// `lastActivityAt` is the feed's sort key, and it is written on every reply
+// (see `lib/forums/queries.ts#touchThreadActivity`) rather than computed as
+// `max(comments.created_at)` at read time: the forum's front page is ordered by
+// it on every request, and a column an index can carry costs one write per
+// reply to save a sort over the whole table per read. It is seeded with the
+// row's own `created_at`, so a thread nobody has replied to sorts exactly where
+// a thread created at that moment should — newest — rather than at whichever
+// end of the index a NULL lands on.
+export const forumThreads = sqliteTable(
+  "forum_threads",
+  {
+    /** A UUID minted by the API, like every other id a reader could type. */
+    id: text("id").primaryKey(),
+    /** The one line that names the thread; capped at `MAX_THREAD_TITLE_LENGTH`. */
+    title: text("title").notNull(),
+    /** The opening post. */
+    body: text("body").notNull(),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** Set when the author removes the thread; the row stays, the feed skips it. */
+    deletedAt: integer("deleted_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    /**
+     * When the thread was last posted to, which is the order the feed reads in.
+     * Seeded with the row's own creation time rather than left to the column
+     * default, so the two can never disagree about when a thread was opened.
+     */
+    lastActivityAt: integer("last_activity_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    // The feed: one page of threads, most recently posted to first, and the
+    // cursor walk that pages through it. `id` is in the index for the tie-break
+    // — two threads posted in the same second have no other order between them.
+    activityIdx: index("idx_forum_threads_activity").on(table.lastActivityAt, table.id),
+    authorIdx: index("idx_forum_threads_author").on(table.authorId, table.createdAt),
+  }),
+);
+
+export type ForumThreadRow = typeof forumThreads.$inferSelect;
