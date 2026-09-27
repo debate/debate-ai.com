@@ -1,6 +1,94 @@
 
 ### Completed
 
+- **🗂️ Give Learn's Decks manager a per-deck "synced"/"pending" badge.**
+  Another repeat of the standing autonomous-routine prompt ("integrate all
+  the tools into the UI... create user settings and link user db SQL with
+  the ability to save flows/docs/debates in SQL and link to users... add
+  tools into where needed in the UI... develop better tool UI") — as with
+  every recent repeat, that prompt's own asks are already fully built:
+  `user_settings`/`documents`/`saved_flows`/`saved_rounds`, 25+ bespoke
+  `saved_*` D1 tables, and 60+ `TOOL_RECORD_COLLECTIONS` entries all linked
+  to `user.id`, and every tool already reachable from the Tools page, the
+  command palette and the feature catalog. Went looking for a still-open,
+  one-PR-sized gap this repeat of the audit hadn't already closed, and
+  found one explicitly named as deferred by the run that built the deck
+  manager itself: `learn-decks-cloud-sync.mdx`'s Known gaps said
+  `LearnDecksSync` "tracks no *per-deck* status (its pushes/deletes are
+  fire-and-forget), so a per-deck badge would need that state added to the
+  sync class first — a real follow-up, not done here" — and
+  `learn-deck-manage-ui.ts`'s own module doc repeated the same "out of
+  scope here" note, unchanged.
+
+  Gave `LearnDecksSync` (`packages/debate-editor/src/editor/learn-decks-sync.ts`)
+  a second map alongside the existing `baseline` (which only ever tracks
+  "what did we last diff against", advancing eagerly on every store change):
+  `landed` tracks each deck's last *confirmed* value, advanced only once a
+  create push, an op, or an op's 404 fallback `PUT` actually resolves —
+  mirroring `debate-data-sync`'s `getToolRecordSyncStatus`/`snapshots`
+  pattern, which only advances a collection's snapshot once a flush lands.
+  `getDeckSyncStatus(deckId)` compares a deck's current name/`cardIds`
+  against its `landed` entry to answer `"synced"` / `"pending"` /
+  `"unknown"` (`"unknown"` while signed out or once the deck no longer
+  exists locally, matching the generic helper's own contract). Since a
+  fire-and-forget push settling doesn't itself touch the store — nothing
+  would otherwise tell a listener to re-check — `onStatusChange(listener)`
+  gives an explicit subscription, fired whenever `landed` advances.
+
+  Wired it into `learn-deck-manage-ui.ts`: each deck row now shows a small
+  "Synced" / "Not yet synced" chip next to its name (omitted entirely while
+  the coarse status is `"unknown"`, matching `FlowHistoryList`'s and
+  `user-dictionary-ui.ts`'s own precedent for the same three-state badge),
+  and `buildDeckManageSection` now subscribes to `sync.onStatusChange` in
+  addition to the store, so the chip flips the moment a push actually lands
+  rather than waiting for an unrelated store mutation to trigger the next
+  render. Added the matching `.pmd-deck-manage-sync-badge`/`--synced`/
+  `--pending` rules to `style.css`, copied from `.pmd-dictionary-sync-badge`'s
+  same "small-chip" language.
+
+  Vitest-covered: `learn-decks-sync.test.ts` (9 new cases — unknown while
+  signed out, unknown for a deck absent locally, synced for a deck present
+  on both sides at merge time, synced for a deck adopted during the merge,
+  pending immediately after a local-only deck's merge push fires and synced
+  once it lands, pending again right after a rename and synced once the op
+  lands, unknown again once a synced deck is deleted, `onStatusChange`
+  firing once a push lands, and no further notifications once unsubscribed)
+  and `learn-deck-manage-ui.test.ts` (4 new cases — the badge omitted while
+  signed out, "Synced" for a deck confirmed at merge time, "Not yet synced"
+  right after creating a deck flipping to "Synced" once the push lands, and
+  no error once destroyed mid-flight).
+
+  Ran the verification gate: `bun install`, `debate-editor`'s own
+  `bun run test` (51 files, 986 tests — 13 new) and `bun run typecheck`
+  (clean), and the root `bun run test` (582 files, 10190 tests — 6 files
+  failing, `debate-editor` unaffected). The 6 failures, and a corresponding
+  `bun run typecheck`/`bun run build` failure in `debate-rankings-adapter`/
+  `debate-editor-cm-adapter`/`debate-tournaments-tabroom-adapter` (and, for
+  `build`, everything that depends on them: `debate-videos`,
+  `debate-ai-web`, `debate-web-ext`), all trace to the same root cause —
+  `Cannot find module '../../debate-rankings/js/index'` and its two
+  siblings — because the `debate-rankings`/`debate-tournaments-tabroom`/
+  `debate-editor-cm` git submodules are not checked out in this sandboxed
+  environment (no credentials to clone those private repos). Confirmed
+  pre-existing rather than caused by this change by stashing it and
+  re-running `bun run typecheck`: the identical failures reproduce on
+  `master`. Neither `debate-editor` nor `debate-help-docs` typechecks with
+  an error of their own; `debate-ai-web`'s own typecheck likewise reports
+  no error beyond the transitive `debate-rankings-adapter` one. No
+  `lint`/`format:check` script exists anywhere in this repo, so that step
+  was skipped as not applicable.
+
+  **Follow-up (not in scope here):** the uninitialized `debate-rankings`/
+  `debate-tournaments-tabroom`/`debate-editor-cm` git submodules block the
+  unscoped root `bun run typecheck`/`bun run build`/`bun run test` in this
+  sandboxed environment — an environment/CI-runner gap, not a code defect,
+  and pre-existing regardless of which task a given run of this same
+  autonomous prompt picks. `learn-decks-cloud-sync.mdx`'s other Known gaps
+  (no optimistic-concurrency handling on a brand-new deck's own initial
+  create push racing a second rapid edit before that create lands, and the
+  soft-reference gap for a deck's `cardIds`) remain open for the reasons
+  already recorded there.
+
 - **🧩 Make the extension's Options page the app's own UI, as a package.**
   The debate-ai.com frontend was reachable only by loading the Next.js app, so
   everything else that wanted it — the browser extension, the native wrapper —
