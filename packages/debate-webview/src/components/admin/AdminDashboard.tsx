@@ -108,7 +108,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [urlValidationProgress, setUrlValidationProgress] = useState<{ checked: number; valid: number; invalid: number; errors: number; done: boolean } | null>(null);
   const [isExtractingUrls, setIsExtractingUrls] = useState(false);
   const [urlExtractionError, setUrlExtractionError] = useState<string | null>(null);
-  const [urlExtractionProgress, setUrlExtractionProgress] = useState<{ processed: number; withUrl: number; updated: number; done: boolean } | null>(null);
+  const [urlExtractionProgress, setUrlExtractionProgress] = useState<{ processed: number; withUrl: number; updated: number; demoUrls: string[]; done: boolean } | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTabKey>(isAdmin ? "users" : "library");
   const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
   const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
@@ -401,11 +401,11 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       let done = false;
 
       while (!done) {
-        const res = await fetch("/api/admin/debate-cards/validate-urls", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ afterId, limit: 500, timeoutMs: 8000 }),
-        });
+           const res = await fetch("/api/admin/debate-cards/validate-urls", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ afterId, limit: 100, timeoutMs: 8000 }),
+         });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.details || data?.error || "URL validation failed");
 

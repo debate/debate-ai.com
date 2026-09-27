@@ -11,7 +11,10 @@
  * and hands back the cursor for the next — the caller loops until `done`.
  *
  * `POST { afterId?: number, limit?: number }` →
- * `{ processed, withUrl, updated, nextAfterId, done }`.
+ * `{ processed, withUrl, updated, demoUrls, nextAfterId, done }`.
+ *
+ * `demoUrls` holds a handful of example URLs the parser found on this page,
+ * so the caller can sanity-check extraction without re-querying the table.
  *
  * @module app/api/admin/debate-cards/extract-urls/route
  */
@@ -26,8 +29,11 @@ import {
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
 
-const DEFAULT_PAGE_ROWS = 500;
+const DEFAULT_PAGE_ROWS = 100;
 const MAX_PAGE_ROWS = 2_000;
+
+/** How many example URLs are returned per page as a sanity check. */
+const DEMO_URL_COUNT = 10;
 
 export async function POST(request: NextRequest) {
   const access = await authorizeCardImport(request);
@@ -62,10 +68,14 @@ export async function POST(request: NextRequest) {
   // Only rows whose URL changed are written back, so a re-run over an
   // already-extracted corpus costs reads, not writes.
   const updates: { id: number; sourceUrl: string }[] = [];
+  const demoUrls: string[] = [];
   let withUrl = 0;
   for (const card of cards) {
     const sourceUrl = extractCardSourceUrl(card);
-    if (sourceUrl) withUrl++;
+    if (sourceUrl) {
+      withUrl++;
+      if (demoUrls.length < DEMO_URL_COUNT) demoUrls.push(sourceUrl);
+    }
     if (sourceUrl !== card.sourceUrl) updates.push({ id: card.id, sourceUrl });
   }
 
@@ -86,6 +96,7 @@ export async function POST(request: NextRequest) {
     processed: cards.length,
     withUrl,
     updated: updates.length,
+    demoUrls,
     nextAfterId: last ? last.id : afterId,
     done: cards.length < limit,
   });

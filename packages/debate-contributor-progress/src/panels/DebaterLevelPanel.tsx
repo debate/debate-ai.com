@@ -11,6 +11,10 @@
  * vs AI, marking a drill practiced). Practice that happens off-app — like
  * redoing a rebuttal out loud — is logged with the "Log practice" buttons.
  *
+ * An award that crosses a level boundary opens {@link DebaterLevelUpOverlay}
+ * — the animated level-up cutscene — over the panel until it plays out or is
+ * dismissed.
+ *
  * Refreshes on every award in this tab (`DEBATER_XP_AWARDED_EVENT`) and in
  * other tabs (the `storage` event).
  */
@@ -43,6 +47,7 @@ import {
   recordDebaterActivity,
   resetDebaterLevelState,
 } from "../state/debaterLevel"
+import { DebaterLevelUpOverlay } from "./DebaterLevelUpOverlay"
 
 function ChallengeRow({ progress }: { progress: DebaterChallengeProgress }) {
   const { challenge, current, isComplete } = progress
@@ -108,14 +113,13 @@ export function DebaterLevelPanel() {
       }
     >
       {levelUp ? (
-        <div role="status" className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
-          <span>
-            🎉 <strong>Level up!</strong> You reached level {levelUp.newLevel} — {computeLevelProgress(levelUp.state.totalXp).title}.
-          </span>
-          <Button variant="ghost" size="sm" onClick={() => setLevelUp(null)}>
-            Dismiss
-          </Button>
-        </div>
+        <DebaterLevelUpOverlay
+          open
+          previousLevel={levelUp.previousLevel}
+          progress={computeLevelProgress(levelUp.state.totalXp)}
+          xpGained={levelUp.xpGained}
+          onDismiss={() => setLevelUp(null)}
+        />
       ) : null}
 
       <div className="flex flex-col gap-3 rounded-lg border p-4">
