@@ -1,15 +1,21 @@
 <!-- template-git-repo:badges:start -->
 <p align="center">
+    <img src="https://i.imgur.com/mVdcP7Y.png" width="800px" />    <br />   
     <a href="https://doi.org/10.5281/zenodo.20320435"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320435.svg" alt="DOI"></a>
       <a href="https://doi.org/10.5281/zenodo.20320093"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20320093.svg" alt="DOI" /></a>
   <a href="https://doi.org/10.5281/zenodo.20517983"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.20517983.svg" alt="DOI"></a>
     <br />
-    <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
+     <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img  height="20px" src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
+    <a href="https://www.tabroom.com/"><img height="20px" src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tournaments"></a>
     <a href="https://debate-ai.com"><img height="20px" src="https://img.shields.io/badge/App-blueviolet?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Website" /></a>
+    <a href="https://deepwiki.com/debate/debate-ai.com"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" /></a>
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <a href="https://debate-ai.com/api"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API" /></a>
     <a href="https://youtu.be/XB0tzpBUEKQ"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
-    <a href="https://stats.uptimerobot.com/V3HfCBM9de"><img src="https://img.shields.io/badge/Uptime--Status-brightgreen?logo=uptimerobot&logoColor=white" alt="Uptime Status" /></a>
+     <a href="https://status.opensourceagi.app"><img
+    src="https://uptime.betterstack.com/status-badges/v1/monitor/2yp1i.svg"
+    alt="Production uptime"
+  ></a>
     <a href="https://codecov.io/gh/debate/debate-ai.com">
     <img src="https://img.shields.io/badge/%EB%AA%A8%20lines-100k-yellow" /></a>
     <br />
@@ -29,14 +35,9 @@
        <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/debate/debate-ai.com"><img height="24px" src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare Workers" /></a>
      <a href="https://stackblitz.com/github/debate/debate-ai.com/tree/master/packages/debate-card-parser"><img height="20px" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open in StackBlitz" /></a>
     <img src="https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=white" alt="Claude" />  <img src="https://img.shields.io/badge/Next.js-black?logo=nextdotjs&logoColor=white" alt="Next.js" />  <img src="https://img.shields.io/badge/Cloudflare-F38020?logo=cloudflareworkers&logoColor=white" alt="Cloudflare Workers" /> <img src="https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white" alt="shadcn/ui" /> 
-    <br />
-    <a href="https://debate-ai.com/"><img src="https://img.shields.io/badge/⚔️_debate--ai-blueviolet?style=for-the-badge" alt="debate-ai"></a>
-    <a href="https://www.reddit.com/r/Debate+PublicForumDebate+lincolndouglas+policydebate/"><img src="https://img.shields.io/badge/_Reddit-FF4500?style=for-the-badge&logo=reddit&logoColor=white" alt="Reddit Forum"></a>
-    <a href="https://opencaselist.com/"><img src="https://img.shields.io/badge/📚_Evidence-2ea44f?style=for-the-badge" alt="Shared Research"></a>
-    <a href="https://www.tabroom.com/"><img src="https://img.shields.io/badge/🏆_Tournaments-informational?style=for-the-badge" alt="Tabroom Tournaments"></a>
-    <a href="https://www.debate.land/"><img src="https://img.shields.io/badge/📶_Ranks-informational?style=for-the-badge" alt="Results"></a>
-    <br />
-    <img src="https://i.imgur.com/c3mT4oo.png" width="800px" />    <br />    <br />
+</p>
+ <br />
+<p align="center">
     <img src="https://i.imgur.com/VbJF0Bx.png" width="300">
 </p>
 
