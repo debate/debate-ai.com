@@ -62,11 +62,22 @@
  * against that route's bare `CounselPanelAssessmentRecord[]` body rather
  * than importing `debate-practice-drills`'s own state module.
  *
+ * Pre-Round Briefings' saved round pairings (`/api/round-pairings`) join
+ * next, but unlike the five sources above, this one imports
+ * `round/round-pairings-client.ts`'s own `listSavedRoundPairings` directly
+ * rather than a local raw `fetch` — `RoundPairingRecord` already lives in
+ * this package (`state/roundPairings.ts`), so there's no dependency edge to
+ * avoid the way there is for `debate-practice-drills`/`debate-practice-vs-ai`/
+ * `debate-videos`. It throws on a non-401 failure (matching
+ * `hooks/useRoundPairings.ts`'s own caller), so it's wrapped in `.catch(() =>
+ * null)` here to keep this module's "degrade, never reject" convention.
+ *
  * @module state/cloudLibraryClient
  */
 
 import { listSavedFlows } from "../round/saved-flows-client";
 import { listSavedRounds } from "../round/saved-rounds-client";
+import { listSavedRoundPairings } from "../round/round-pairings-client";
 import {
   buildRecentCloudItems,
   type BuildRecentCloudItemsOptions,
@@ -210,12 +221,12 @@ async function listCloudCounselPanelAssessments(
 
 /**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
- * drill-sets/judge-decisions/counsel-panel-assessments and merges them via
- * `buildRecentCloudItems`. Each source resolves independently and degrades
- * to "no items of that kind" on any failure — a network error, a non-2xx
- * response, or a signed-out `401` — rather than rejecting the whole call, so
- * one flaky endpoint never blanks a widget that had perfectly good data from
- * the others.
+ * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings and
+ * merges them via `buildRecentCloudItems`. Each source resolves
+ * independently and degrades to "no items of that kind" on any failure — a
+ * network error, a non-2xx response, or a signed-out `401` — rather than
+ * rejecting the whole call, so one flaky endpoint never blanks a widget that
+ * had perfectly good data from the others.
  */
 export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
   const [
@@ -228,6 +239,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     drillSets,
     judgeDecisions,
     counselPanelAssessments,
+    roundPairings,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -238,6 +250,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudDrillSets(),
     listCloudJudgeDecisions(),
     listCloudCounselPanelAssessments(),
+    listSavedRoundPairings().catch(() => null),
   ]);
   return buildRecentCloudItems(
     {
@@ -250,6 +263,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       drillSets: drillSets ?? undefined,
       judgeDecisions: judgeDecisions ?? undefined,
       counselPanelAssessments: counselPanelAssessments ?? undefined,
+      roundPairings: roundPairings ?? undefined,
     },
     opts,
   );
