@@ -11,13 +11,13 @@ apps/debate-ai.com/
   components/      app-local UI (shadcn; components.json)
   lib/             app libraries — including the D1 read-replication session
                    wrapper and the offline service-worker generator
-  data/            app data
   drizzle/         migrations (+ drizzle/seed)
   worker/index.ts  the Workers entrypoint
   wrangler.jsonc   bindings, crons, vars
   app/debate-openapi.yml/   serves packages/debate-api-client/debate-openapi.yml for /api
-  scripts/         build-docs, migrate-d1, seed-videos, deploy-upload
   vitest.config.ts the whole repo's Vitest config (see monorepo.md)
+.github/scripts/     build-docs, migrate-d1, seed-videos, deploy-upload —
+                     repo scripts, run from the app's package.json scripts
 ```
 
 Three TypeScript configs, and they are not interchangeable: `tsconfig.json`,
@@ -30,7 +30,7 @@ Three TypeScript configs, and they are not interchangeable: `tsconfig.json`,
 bun run build    # build:docs → vinext build → build:sw
 ```
 
-1. **`build:docs`** (`scripts/build-docs.mjs`) statically exports
+1. **`build:docs`** (`.github/scripts/build-docs.mjs`) statically exports
    `packages/debate-help-docs` and copies it into `public/docs`. See
    [documentation.md](documentation.md).
 2. **`vinext build`** — the app itself.
@@ -112,7 +112,7 @@ Drizzle + D1, with **two configs**:
 bun run db:generate        # after editing the schema
 bun run db:push
 bun run db:push:d1
-bun run db:migrate:d1      # scripts/migrate-d1.ts — runs first in `deploy`
+bun run db:migrate:d1      # .github/scripts/migrate-d1.ts — runs first in `deploy`
 bun run db:studio
 bun run db:seed:videos
 bun run db:seed:videos:d1  # emits SQL, then wrangler d1 execute --remote
@@ -137,7 +137,7 @@ every push to `master` that touches `apps/**`. It installs, builds, applies D1
 migrations and then runs `wrangler deploy` — the migration step mirrors the
 `deploy` script's, so the two paths cannot leave production on a different
 schema from each other. **A change to that workflow that drops the migration
-step silently reintroduces the drift `scripts/migrate-d1.ts` exists to prevent:**
+step silently reintroduces the drift `.github/scripts/migrate-d1.ts` exists to prevent:**
 the Worker ships, nothing goes red, and every route touching a new column
 starts answering 500 `no such column`.
 

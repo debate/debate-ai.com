@@ -17,11 +17,11 @@
  * bun run db:seed:videos --sql-only
  * bun run db:seed:videos:d1       # apply the generated file to Cloudflare D1
  * ```
- * @module scripts/seed-videos
+ * @module .github/scripts/seed-videos
  */
 
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildVideoRows, type VideoRow } from "debate-data-sync/src/videos/video-rows";
 import { buildVideoSeedStatements } from "debate-data-sync/src/videos/video-seed-sql";
@@ -32,7 +32,10 @@ import roundsCollege from "debate-data-sync/data/videos/rounds-college.json" wit
 import lectures from "debate-data-sync/data/videos/debate-lectures.json" with { type: "json" };
 import topPicks from "debate-data-sync/data/videos/debate-top-picks.json" with { type: "json" };
 
-const APP_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
+// This script lives in `.github/scripts`, not in the app whose database it
+// seeds, so the app root is named explicitly rather than derived from its own
+// folder.
+const APP_DIR = join(resolve(dirname(fileURLToPath(import.meta.url)), "..", ".."), "apps", "debate-ai.com");
 const SEED_FILE = join(APP_DIR, "drizzle", "seed", "videos-seed.sql");
 
 /** Reads the JSON assets and converts them into table rows. */

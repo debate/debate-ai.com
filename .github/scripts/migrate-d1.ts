@@ -22,11 +22,11 @@
  *     runs exactly once and a steady-state deploy is one read.
  *  2. Rewrites creates to `IF NOT EXISTS` and isolates column adds, so a
  *     database that already holds part of a file still converges (see
- *     ../lib/database/migration-sql.ts).
+ *     apps/debate-ai.com/lib/database/migration-sql.ts).
  *  3. Exits non-zero on any other error, stopping `npm run deploy` before it
  *     ships a build whose schema never landed.
  *
- * Usage: bun run scripts/migrate-d1.ts [--local] [--dry-run]
+ * Usage: bun run .github/scripts/migrate-d1.ts [--local] [--dry-run]
  */
 
 import { execFileSync } from "node:child_process";
@@ -34,14 +34,18 @@ import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "n
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BENIGN_ALTER_ERROR, planMigration } from "../lib/database/migration-sql";
+import { BENIGN_ALTER_ERROR, planMigration } from "../../apps/debate-ai.com/lib/database/migration-sql";
 
-const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+// This script lives in `.github/scripts`, not in the app whose migrations it
+// applies, so the app root is named explicitly rather than derived from its
+// own folder.
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const APP_ROOT = join(REPO_ROOT, "apps", "debate-ai.com");
 const MIGRATIONS_DIR = join(APP_ROOT, "drizzle");
 // Workspace packages that own tables in the same database ship their own
 // migrations; each is tracked under "<package>/<file>" so names never clash.
 const PACKAGE_MIGRATION_DIRS: Record<string, string> = {
-  "debate-tournaments": join(APP_ROOT, "../../packages/debate-tournaments/migrations"),
+  "debate-tournaments": join(REPO_ROOT, "packages/debate-tournaments/migrations"),
 };
 const DATABASE = process.env.D1_DATABASE_NAME || "debate-ai-db";
 const TRACKING_TABLE = "_d1_applied_migrations";

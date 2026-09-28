@@ -14,7 +14,7 @@
  * rebuilt here on every `npm run build`. Set `SKIP_DOCS_BUILD=1` to reuse an
  * existing `out/` — useful when iterating on the app with the docs unchanged.
  *
- * @module scripts/build-docs
+ * @module .github/scripts/build-docs
  */
 
 import { spawnSync } from "node:child_process";
@@ -23,8 +23,10 @@ import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const appDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const repoRoot = resolve(appDir, "..", "..");
+// This script lives in `.github/scripts`, not in the app it builds for, so
+// both roots are named explicitly instead of derived from its own folder.
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const appDir = join(repoRoot, "apps", "debate-ai.com");
 const docsDir = resolve(repoRoot, "packages/debate-help-docs");
 const exportDir = join(docsDir, "out");
 const targetDir = join(appDir, "public", "docs");

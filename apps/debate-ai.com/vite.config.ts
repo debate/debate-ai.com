@@ -205,7 +205,6 @@ export default defineConfig({
       "debate-tournaments",
       "debate-rankings-adapter",
       "debate-editor-cm-adapter",
-      "debate-tournaments-tabroom-adapter",
       "debate-videos",
     ],
   },

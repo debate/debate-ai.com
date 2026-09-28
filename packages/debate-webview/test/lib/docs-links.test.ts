@@ -1,7 +1,7 @@
 /**
  * @fileoverview Covers the URLs the app uses to reach the help docs.
  *
- * The docs are static-exported into `public/docs` by `scripts/build-docs.mjs`
+ * The docs are static-exported into `public/docs` by `.github/scripts/build-docs.mjs`
  * and served at `/docs` on the app's own origin, so these links have to be
  * same-origin paths by default — a regression back to an absolute GitHub URL
  * (or to a `/docs/docs/…` double prefix) would still render as a working link

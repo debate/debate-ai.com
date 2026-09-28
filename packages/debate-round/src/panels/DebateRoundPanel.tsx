@@ -12,7 +12,7 @@ import { EbbFlowEmbed, type EbbFlowToolAction } from "debate-flow-ebb"
 import { useFlowStore } from "../state/store"
 import { newFlow } from "../utils/flow-utils"
 import { settings } from "../state/settings"
-import type { Flow } from "../types/flow"
+import type { Flow, Round } from "../types/flow"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../ui/primitives/resizable"
 import { Sheet, SheetContent } from "../ui/primitives/sheet"
 
@@ -467,6 +467,13 @@ export function DebateFlowPage() {
   const onNavigateNext = state.isMobile || state.singlePaneMode ? splitHandlers.handleNextSingle : splitHandlers.handleNextSpeeches
 
   /**
+   * Whether the start screen replaces the flow grid. Shown whenever the page
+   * has no flow open — the first visit (nothing loaded from `flows` yet), and
+   * any later landing where every flow was deleted.
+   */
+  const showStartScreen = !ebbActive && !currentFlow
+
+  /**
    * The main content area containing the resizable flow and speech panels.
    * Rendered for both desktop and mobile layouts. When the pinned ebb Flow
    * tab is active, this area hosts ebb's own self-contained editor instead
@@ -482,6 +489,20 @@ export function DebateFlowPage() {
           onPendingActionHandled={() => setEbbPendingAction(null)}
         />
       </div>
+    </div>
+  ) : showStartScreen ? (
+    <div className="h-full p-2">
+      <DebateStartPanel
+        rounds={rounds}
+        history={recentHistory}
+        pinnedIds={pinnedIds}
+        onOpenRound={handleOpenRound}
+        onOpenHistoryEntry={handleOpenRecentFlow}
+        onTogglePin={handleTogglePin}
+        onCreateFlow={handleAddFlow}
+        onCreateRound={() => handleEditRound()}
+        onOpenHistory={handleOpenHistory}
+      />
     </div>
   ) : (
     <div className="h-full flex flex-col overflow-hidden p-2">

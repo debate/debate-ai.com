@@ -12,7 +12,7 @@
  * Everything else — bad config, a missing binding, an auth failure — fails on
  * the first attempt so a real error is not hidden behind minutes of backoff.
  *
- * Usage: node scripts/deploy-upload.mjs [extra wrangler args...]
+ * Usage: node ../../.github/scripts/deploy-upload.mjs [extra wrangler args...]
  *   DEPLOY_UPLOAD_ATTEMPTS  total attempts, default 4
  */
 import { spawn } from "node:child_process";

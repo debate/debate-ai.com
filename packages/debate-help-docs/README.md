@@ -42,7 +42,7 @@ build that app — it runs the same step).
 
 The docs are part of debate-ai.com rather than their own deployment. This app
 static-exports (`output: 'export'`) under `basePath: '/docs'`, and
-`apps/debate-ai.com/scripts/build-docs.mjs` — wired into that app's `build`
+`.github/scripts/build-docs.mjs` — wired into that app's `build`
 script — runs this package's build and copies the export into
 `apps/debate-ai.com/public/docs`. The Worker's static-asset binding serves it,
 so every page below is live at `https://debate-ai.com<route>`.

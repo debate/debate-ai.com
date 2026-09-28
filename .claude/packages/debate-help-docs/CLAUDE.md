@@ -5,7 +5,7 @@ Private. The Debate AI documentation site, on the Fumadocs starter template.
 ## It is not deployed on its own
 
 It is statically exported under `basePath: '/docs'` and copied into the web
-app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`, which runs
+app's `public/docs` by `.github/scripts/build-docs.mjs`, which runs
 as the **first stage** of the app's build. So it is served at
 [debate-ai.com/docs](https://debate-ai.com/docs), and:
 

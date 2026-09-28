@@ -16,7 +16,7 @@
  * they build it from this constant.
  *
  * Keep it in sync with `basePath` in `next.config.ts` (which imports it) and
- * with the copy target in `apps/debate-ai.com/scripts/build-docs.mjs`.
+ * with the copy target in `.github/scripts/build-docs.mjs`.
  *
  * @module lib/fumadocs/base-path
  */

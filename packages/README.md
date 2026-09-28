@@ -74,7 +74,7 @@ bridge, palette, and scoped styles here.
 Package name `debate-help-docs`. The Debate AI documentation site, built on the Fumadocs
 starter template. Publishes the product's feature pages (`content/docs/features/`), the engineering
 notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. Statically exported under `basePath: '/docs'` and
-copied into the web app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`,
+copied into the web app's `public/docs` by `.github/scripts/build-docs.mjs`,
 so it is served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed
 on its own.
 
@@ -150,21 +150,22 @@ includes an in-round speech recorder with mic selection, live waveform, and play
 Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
-`/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
-upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+(`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
+a non-throwing `parseTabroom(schema, data)`), and the D1 schema.
+`scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
+overlays, so upstream changes keep flowing in.
 
-## debate-tournaments-tabroom (git submodule) and debate-tournaments-tabroom-adapter
+## debate-tournaments-tabroom (git submodule)
 
 `debate-tournaments-tabroom` is a git submodule of upstream Tabroom,
 [debate/debate-tournaments](https://github.com/debate/debate-tournaments), outside the bun
-workspace. `debate-tournaments-tabroom-adapter` re-exports its `@tabroom/types` Zod schemas
-and inferred types, with `tabroomSchemas` (every schema keyed by record name) and a
-non-throwing `parseTabroom(schema, data)`.
+workspace. It is only the source `debate-tournaments` vendors from; nothing imports it at
+runtime. Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in
+an existing checkout, before running the sync script.
 
-The two adapters that reach into a submodule by path link `<submodule>/node_modules` to
-their own on `postinstall`, so the submodule's bare imports resolve under bun's isolated
-linker. Clone with `git clone --recurse-submodules`, or run
-`git submodule update --init` in an existing checkout, before `bun install`.
+The adapters that reach into a submodule by path link `<submodule>/node_modules` to their own
+on `postinstall`, so the submodule's bare imports resolve under bun's isolated linker.
 
 ## debate-videos
 

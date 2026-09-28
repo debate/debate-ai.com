@@ -1158,7 +1158,7 @@ export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
 // Video library — the queryable projection of the `data/videos/*.json` assets
 // (rounds-policy/pf/ld/college, debate-lectures, debate-top-picks) that the
 // YouTube sync writes. `/api/videos` pages over this table instead of shipping
-// the whole ~1.1 MB JSON blob on first paint; `scripts/seed-videos.ts` loads
+// the whole ~1.1 MB JSON blob on first paint; `.github/scripts/seed-videos.ts` loads
 // the JSON into it (local SQLite and Cloudflare D1 share this schema).
 //
 // `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College) and is

@@ -32,7 +32,7 @@
 /**
  * Where the feature docs are served from by default: same origin as the app
  * (`/docs/features/<name>`, extension stripped) — the live `/features` page's
- * own docs site (`scripts/build-docs.mjs` static-exports
+ * own docs site (`.github/scripts/build-docs.mjs` static-exports
  * `packages/debate-help-docs/content/docs/features/<name>.mdx` into
  * `public/docs`). Renderers with no docs site of their own to link into
  * (News Stream's spotlights, say) pass {@link GITHUB_DOCS_BASE_URL} to

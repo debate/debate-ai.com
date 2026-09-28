@@ -27,7 +27,6 @@ const nextConfig = {
     "debate-rankings",
     "debate-rankings-adapter",
     "debate-editor-cm-adapter",
-    "debate-tournaments-tabroom-adapter",
     "debate-round",
     "debate-timer",
     "debate-videos",

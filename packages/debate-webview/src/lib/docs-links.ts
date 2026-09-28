@@ -11,7 +11,7 @@
  * task-oriented walkthroughs of the training, practice, and research
  * collaboration tools.
  *
- * Those docs ship with the app. `scripts/build-docs.mjs` static-exports the
+ * Those docs ship with the app. `.github/scripts/build-docs.mjs` static-exports the
  * docs site into `public/docs` on every build, so the Worker serves it at
  * `/docs` on whatever origin the app is running on — which is why every link
  * below is a same-origin path by default and needs no configuration.
@@ -29,7 +29,7 @@ import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog"
 /**
  * Origin of a separately-deployed Fumadocs site, without a trailing slash.
  * Empty by default, which leaves every link same-origin — the docs are built
- * into this app's own `public/docs` (see `scripts/build-docs.mjs`).
+ * into this app's own `public/docs` (see `.github/scripts/build-docs.mjs`).
  */
 export const DOCS_SITE_URL = (process.env.NEXT_PUBLIC_DOCS_URL ?? "").replace(/\/+$/, "")
 

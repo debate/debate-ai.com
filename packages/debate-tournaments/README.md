@@ -15,7 +15,7 @@ run on **Cloudflare Workers + D1**. The package exports three things:
 In `apps/debate-ai.com` the API is mounted at `/api/tabroom/*`
 (`app/api/tabroom/[...path]/route.ts`, `lib/tournaments/handler.ts`) and the UI
 at `/tournaments/*` (`app/tournaments/[[...slug]]/page.tsx`). The schema is
-applied by `scripts/migrate-d1.ts`, which picks up this package's
+applied by `.github/scripts/migrate-d1.ts`, which picks up this package's
 `migrations/` after the app's own.
 
 ```ts

@@ -16,7 +16,7 @@
 
 `packages/debate-help-docs` is a Fumadocs site, but it is **not** deployed on its
 own. It is statically exported under `basePath: '/docs'` and copied into the web
-app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`, which runs
+app's `public/docs` by `.github/scripts/build-docs.mjs`, which runs
 as the **first stage of the app's build** (`bun run build` → `build:docs` →
 `vinext build` → `build:sw`).
 

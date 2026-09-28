@@ -22,7 +22,7 @@ const EXCLUDE_EXACT = new Set([
   ".assetsignore",
   ".DS_Store",
 ]);
-// The help docs (`scripts/build-docs.mjs` stages them at `public/docs`, so the
+// The help docs (`.github/scripts/build-docs.mjs` stages them at `public/docs`, so the
 // build emits them under `dist/client/docs`) are a separate statically-exported
 // site — some 600 files and tens of megabytes. `onInstall` precaches every path
 // in this list one by one, so including them would have every first-time
