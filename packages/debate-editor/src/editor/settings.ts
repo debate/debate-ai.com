@@ -67,8 +67,14 @@ const TRANSIENT_SETTING_KEYS = new Set<string>([
 ]);
 
 /** Secret credentials — never written to a settings export, and
- *  preserved (not overwritten) on import. */
-const SECRET_SETTING_KEYS = new Set<string>([
+ *  preserved (not overwritten) on import.
+ *
+ *  Exported because the same rule applies to any other copy of a user's
+ *  settings that leaves this browser: the web app mirrors the settings its
+ *  own `/settings` page hosts to the signed-in account, and reads this set
+ *  to keep credentials out of that mirror
+ *  (`apps/debate-ai.com/lib/editor-preferences.ts`). */
+export const SECRET_SETTING_KEYS: ReadonlySet<string> = new Set<string>([
   'anthropicApiKey',
   'openrouterApiKey',
   'googleTranslateApiKey',

@@ -33,16 +33,19 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
 [word-count rounds](word-count-rounds.md), [drill sets](drill-sets.md) and
 [standings](team-rankings.md) already had.
 
-- **Route:** none of its own. The sync runs app-wide; `/settings` → Account →
-  **Tool data** is where you can see it (and re-run it).
-- **Nav:** the dock's gear-icon menu → "Preferences".
+- **Route:** none of its own, and no UI of its own either. The sync runs
+  app-wide, in the background. `/settings` → Account → **Tool data** used to
+  list every collection's state and offer a **Sync now** button; that page is
+  the card editor's settings now (see
+  [User Settings](/docs/features/user-settings)), so the sync is unobservable
+  from inside the app — see **Known gaps**.
 - **Package:** [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
   (the catalog, the fetch client, the mirror), `apps/debate-ai.com`
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
   `lib/hooks/useToolRecordSync.ts`, `lib/sign-in-prompt-preference.ts`,
+  `lib/sign-in-prompt-cooldown.ts`,
   `components/layout/ToolRecordSyncProvider.tsx`,
-  `components/layout/SignInPromptProvider.tsx`,
-  `components/settings/ToolDataSyncSettings.tsx`). Some tool packages
+  `components/layout/SignInPromptProvider.tsx`). Some tool packages
   (`debate-round`, `debate-practice-rounds`, `debate-speech-writer`,
   `debate-team-collaboration`, `debate-videos`) additionally call the mirror
   from their own stores; most do not need to — see
@@ -55,28 +58,26 @@ One entry per `localStorage` store, from
 `TOOL_RECORD_COLLECTIONS` — the list itself is the source of truth, and it is
 long enough now that the table below groups it rather than restating every row.
 Each entry's `section` field (one of `TOOL_RECORD_SECTIONS`) names the same
-group and is what `/settings`' sync-status list renders as a heading — the
-prose below and the UI group tools identically on purpose.
+group, which is what the table below is ordered by. It was the heading
+`/settings`' sync-status list rendered, and outlives that list as the
+catalog's own grouping.
 
 **Videos** (`/videos`) — `debateVideosFavorites` and `debateVideosHidden`, both
-keyed by `videoId`, and `debateVideoReports` keyed by `id`.
+keyed by `videoId`, `debateVideoReports` keyed by `id`, and the watch page's
+cached AI outcome-simulation runs (`speechOutcomeRuns`) keyed by a derived
+`${videoId}::${speechKey}::${lens}` id.
 
 **Practice** — the Practice Round Simulator (`practiceRounds`), Pre-Round
-Briefings (`preRoundBriefings`), Practice Drills (`drillSets`), Debate Versus AI
-(`aiVersusRounds`), Word-Count Speeches (`wordCountRounds`) and Round Pairings
-(`roundPairings`), each keyed by `roundId`; your own round history
-(`ownRoundHistory`) and Scout-to-Strategy (`strategyRecommendations`) by `id`.
+Briefings (`preRoundBriefings`) and Debate Versus AI (`aiVersusRounds`), each
+keyed by `roundId`; your own round history (`ownRoundHistory`) by `id`.
 
 **Scouting and judging** — Opponent Team Profiles (`opponentTeamProfiles`, by
 `teamId`) and the scouted rounds they aggregate (`opponentRoundRecords`, by
 `id`); Judge Profiles (`judgeProfiles`, by `judgeId`) and the ballots they
 aggregate (`judgeRoundRecords`, by `id`); the Judge Paradigm Picker
-(`judgeParadigmSelections`, by `roundId`), the AI Judge Decision
-(`judgeDecisions`, by `id`), the Response-Outcome Charts
-(`counselPanelAssessments`, by `id`) and their vulnerability reports
+(`judgeParadigmSelections`, by `roundId`) and vulnerability reports
 (`vulnerabilityReports`, by `roundId`); the Opponent Persona Picker
-(`opponentPersonaSelections`, by `sessionId`) and its custom library
-(`customOpponentPersonaLibrary`, by `id`).
+(`opponentPersonaSelections`, by `sessionId`).
 
 **Flowing and writing** — Speech Summaries (`flowSummaries`), the Argument
 Tree Outline (`argumentTrees`) and its per-round filter selection
@@ -84,12 +85,17 @@ Tree Outline (`argumentTrees`) and its per-round filter selection
 replies (`prepNoteReplies`) and assignment notifications
 (`prepNoteNotifications`), Flow Annotations (`flowAnnotations`), the
 CardMirror editor's personal spellcheck dictionary
-(`spellcheckDictionary`), and the Debate Flow workspace's auto-saved
-undo/version history (`flowHistory`), by `id`.
+(`spellcheckDictionary`), the Debate Flow workspace's auto-saved
+undo/version history (`flowHistory`), and the Debate Docs workspace's open
+chat tabs (`docsChatTabs`, the tab layout and titles only — the chat content
+itself is the third-party `research-agent-ui` package's own backend), and the
+same workspace's configured storage backends (`fileSources` — which SSH, S3,
+R2, B2, Google Docs or Turso sources are set up, but not what would let
+another device connect as this one: see **Redacted fields** below), all by
+`id`.
 
 **Coaching** — AI Coach Mode's history (`coachConversation`), Coaching Programs
-(`coachingPrograms`), Coach Materials (`coachMaterials`) and their versions
-(`coachMaterialVersions`), the Coach Workspace's current coaching session
+(`coachingPrograms`), the Coach Workspace's current coaching session
 (`coachingSessions`) and its session history (`coachingSessionHistory`), and
 the Flow Edit Log (`flowEdits`), all by `id`.
 
@@ -102,19 +108,35 @@ Coverage snapshots (`topicCoverageSnapshots`), all by `id`; the Review Queue
 assessments (`aiCardAssessments`), both by `cardId`.
 
 **Team** — Team Brainstorm Assist (`brainstormIdeas`), the Prep Room checklist
-(`prepRoomChecklist`), its sprints (`sprintSessions`), notes (`sprintNotes`) and
-whiteboard (`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`),
+(`prepRoomChecklist`), notes (`sprintNotes`) and whiteboard
+(`sprintWhiteboardNotes`), Group Challenges (`groupChallenges`) and their
+recorded win events (`challengeWinEvents`, by a derived `id` — see below),
 Daily Quests (`dailyQuestTemplates`) and their quest-competition teams
-(`questTeams`), award nominations
-(`contributorAwardNominations`) and daily best-card comments
-(`dailyBestCardComments`), all by `id`; frozen Daily Best Card winners
-(`dailyBestCardAnnouncements`) and Top Contributor Award standings
-(`contributorAwardAnnouncements`), both by `dayKey`; the Task Inbox
-(`routedTaskQueues`) by `topicId` and its pending verification queue
-(`pendingTaskVerifications`) by a derived `id`; contributor flows
-(`roundContributorFlows`) and availability (`contributorAvailability`) by
-`contributorId`; completed research-task history (`completedResearchTasks`)
-by `id`.
+(`questTeams`), Quest Streaks' day-by-day mission-result history
+(`dailyMissionResults`, by a derived `${contributorId}::${dayKey}` id — see
+below; [Quest Streaks](quest-streaks.mdx) covers the separate,
+signed-in-visitor-only sync for its freeze/reminder preferences), award
+nominations (`contributorAwardNominations`), and [Progress Unlocks](../features/progress-unlocks.mdx)'
+celebration-toast "last-seen badges" baseline (`unlockCelebrations`, by the
+contributor's id), all by
+`id`; frozen Daily Best Card winners (`dailyBestCardAnnouncements`) and Top
+Contributor Award standings (`contributorAwardAnnouncements`), both by
+`dayKey`; the Task Inbox (`routedTaskQueues`) by `topicId` and its pending
+verification queue (`pendingTaskVerifications`) by a derived `id`; contributor
+flows (`roundContributorFlows`) and availability (`contributorAvailability`)
+by `contributorId`; completed research-task history
+(`completedResearchTasks`) by `id`.
+
+Practice Drills (`saved_drill_sets`), Word-Count Speeches
+(`saved_word_count_rounds`), Round Pairings (`saved_round_pairings`),
+Scout-to-Strategy (`saved_strategy_recommendations`), the AI Judge Decision
+(`saved_judge_decisions`), the Response-Outcome Charts
+(`saved_counsel_panel_assessments`), the Opponent Persona Picker's custom
+library (`saved_custom_opponent_personas`), Coach Materials and their
+versions (`saved_coach_materials` / `saved_coach_material_versions`), the Prep
+Room's sprints (`saved_sprint_sessions`) and daily best-card comments
+(`saved_daily_best_card_comments`) all sync too, but each through its own
+dedicated table and route rather than this one — see the next section.
 
 `TOOL_RECORD_COLLECTIONS` is an **allowlist**, not a convenience: the route
 rejects any collection key not in it, so the table can't be used as a
@@ -142,9 +164,63 @@ these stay local on purpose —
   **Fixed:** `saveCoachingSession` now stamps every record with a derived
   `${roundId}::${sideKey}` id, so the current session per round+side syncs
   alongside its own version history (`coachingSessionHistory`).
+- ~~`dailyMissionResults`, [Quest Streaks](quest-streaks.mdx)'s day-by-day
+  contributor mission-result history, kept only by `(contributorId, dayKey)`
+  with no single id field to key a row by — the same shape problem
+  `coachingSessions` had.~~ **Fixed:** `saveDailyMissionResult` now stamps
+  every record with a derived `${contributorId}::${dayKey}` id, so a
+  contributor's streak/badge history follows them to another device.
+- ~~`unlockCelebrations`, [Progress Unlocks](../features/progress-unlocks.mdx)'
+  per-contributor "last-seen badges" celebration-toast baseline, kept as a
+  plain `Record<contributorId, string[]>` map rather than an array of
+  records — no per-record id to key a row by, the same shape gap every
+  collection here started with.~~ **Fixed:** the store now persists an array
+  of `{ id, badges }` records (`id` the contributor's id, migrating any
+  pre-existing legacy map on read), so a badge already celebrated on one
+  device isn't celebrated again as "new" on a second one.
+
+### Redacted fields
+
+One collection can't join with a plain catalog entry the way the rest do:
+`fileSources` (`/doc`'s file browser, `REASON-file-sources`) has the required
+shape, but its records can carry an SSH password or private key, an S3/R2/B2
+secret access key, or a Google OAuth refresh token
+(`fileSource-types.ts`'s `SSHCredentials`/`S3Credentials`/`R2Credentials`/
+`B2Credentials`/`GoogleDocsCredentials`) — and the route stores whatever JSON
+a collection hands it verbatim, with no redaction of its own. A plain entry
+would put those secrets into `saved_tool_records` unencrypted.
+
+So `ToolRecordCollection` carries one more, optional field: `redact`, a pure
+`(record) => record` applied at every push (the immediate mirror, the
+auto-sync watcher, and the first-sign-in push of local-only records) and
+never to what a tool reads back out of its own `localStorage`. `fileSources`'
+is `redact-file-source.ts`'s `redactFileSource` — an **allowlist** per source
+type (host/port/username for SSH, region/bucket for S3, …), not a blocklist of
+secret-looking names, so a credential field added to `fileSource-types.ts`
+later defaults to held back rather than defaulting to synced. A source's
+connection details follow you to another device; what would let that device
+connect as you does not, and has to be re-entered there.
+
+Redacting on the way up only works if the merge, on the way back down,
+doesn't read the account's now-missing field as the account *clearing* it —
+`mergeToolRecords`' `restoreRedactedFields` fills back whatever the local
+copy has that the remote copy doesn't, recursing into `credentials` itself,
+so the password stays on the device that saved it instead of being wiped out
+by the record's own next reconcile.
+
+Every other collection has no `redact`, and none needs one: this is a fix for
+the one collection whose shape happens to also carry a credential, not a step
+every collection has to take.
 
 Tools already backed by a `saved_*` table of their own — flows, rounds,
-tournament results — keep those. This table is for the stores that had nothing.
+tournament results, drill sets, word-count rounds, round pairings,
+scout-to-strategy, AI judge decisions, response-outcome charts, custom
+opponent personas, coach materials and their versions, prep-room sprints, and
+daily best-card comments — keep those. This table is for the stores that had
+nothing. (Eleven of those once had a redundant entry here too — reconciled
+through both their own table *and* this one, with nothing ever reading the
+second copy back. Removed rather than fixed forward, since nothing pointed at
+the generic copy in the first place.)
 
 ## Local-first, by design
 
@@ -316,17 +392,22 @@ Three rules keep it an offer rather than a gate:
 - **It asks once per feature, not once per click.** Favouriting is a rapid,
   repeated action, and a dialog on every one of a dozen clicks is not a
   helpful offer — it is a tool that has stopped working. The provider keeps a
-  30-minute per-feature cooldown in `sessionStorage`. Removing something never
+  30-minute per-feature cooldown in `localStorage`
+  (`lib/sign-in-prompt-cooldown.ts`), so it survives across this browser's
+  tabs rather than resetting every time a guest opens a new one — a
+  `sessionStorage` version of the same cooldown used to reset that way; see
+  **Known gaps** for what it still doesn't cover. Removing something never
   prompts at all: un-favouriting and un-hiding are not moments to ask anyone
   to sign in.
 - **A guest can say "don't ask me again", and it sticks.** The dialog's
   secondary action calls `setSignInPromptOptedOut(true)`
   (`lib/sign-in-prompt-preference.ts`), a plain `localStorage` flag the
   provider checks before raising any prompt — unlike the cooldown above, this
-  survives new tabs and new days, on purpose. `/settings` → Account →
-  **Tool data** shows the current state to a signed-out visitor and offers a
-  button to reverse it, since the dialog that could otherwise change their
-  mind never shows again once they've opted out.
+  never expires on its own, on purpose. Nothing surfaces or reverses
+  it any more: the row that showed a signed-out visitor the current state and
+  offered a button to flip it back was on `/settings`, and the dialog that
+  could otherwise change their mind never shows again once they've opted out
+  (see **Known gaps**).
 
 ## The merge
 
@@ -371,20 +452,19 @@ records it had just adopted.
 
 ## Seeing it
 
-`/settings` → Account → **Tool data** lists every synced tool with a link to
-it, grouped under the same section headings as the table above (Videos,
-Practice, Scouting and judging, …), and says plainly which state you are in.
-A search box above the list (`lib/settings/filter-synced-tool-sections.ts`)
-filters it by tool label or section name, case-insensitively, and drops a
-section down to only its matching tools rather than hiding the whole group —
-needed now that the catalog runs past fifty tools across seven sections.
+Nothing shows it now. `/settings` → Account → **Tool data** listed every
+synced tool with a link to it, grouped under the same section headings as the
+table above, and said plainly which state you were in — "This browser" while
+signed out, "Syncing…" then "Synced" (or "Not synced" for a collection whose
+merge failed) once signed in — with a search box over the list and a **Sync
+now** button. That page is the card editor's settings now, and the list, its
+search box and the button went with it.
 
-- Signed out — "These tools save to this browser only", every row "This
-  browser", plus a row saying whether this browser will be asked to sign in
-  when it saves in a tool, with a button to flip that.
-- Signed in — rows read "Syncing…" then "Synced", or "Not synced" for a
-  collection whose merge failed, plus a **Sync now** button for the case where
-  a merge failed or another device has since saved something.
+What it reported is all still computed: `useToolRecordSync` returns the same
+per-collection `results`, and `syncToolRecords` is still what a **Sync now**
+would have called. Only the surface is gone, so a failed merge, a
+browser-only record over the size cap, and a guest's sign-in opt-out are
+each invisible until something renders them again — see **Known gaps**.
 
 ## Tests
 
@@ -419,19 +499,24 @@ needed now that the catalog runs past fifty tools across seven sections.
 - `apps/debate-ai.com/lib/__tests__/sign-in-prompt-preference.test.ts` — the
   persistent opt-out: defaults to "ask", persists across reads, clears, and
   never throws when `localStorage` is unavailable or refuses the read/write.
+- `apps/debate-ai.com/lib/__tests__/sign-in-prompt-cooldown.test.ts` — the
+  30-minute per-feature cooldown: unshown defaults to false, true immediately
+  after marking and up to the boundary, false once the window elapses, each
+  feature tracked independently, and the same never-throws guarantee as the
+  opt-out above.
+- `apps/debate-ai.com/lib/tools/__tests__/tool-sync-status.test.ts` —
+  `ToolSyncStatusPanel`'s `summarizeToolSyncFailures`: a genuine failure
+  surfaces with its tool's label and link, a signed-out-shaped
+  `synced: false` with no `error` is not mistaken for one, a stale collection
+  key is dropped, and multiple failures sort by label.
 - `packages/debate-videos/test/video-library.test.ts` — favourites, hidden
   videos and reports, with the legacy bare-id format cases: a store written in
   the old format still reads, keeps its order, de-duplicates against the new
   format, and is dated to the epoch rather than to the upgrade (which would
   reorder a season's collection).
 - `packages/debate-videos/test/tool-record-sync-catalog.test.ts` — every
-  collection's `href` is a destination the sidebar links to, so
-  `/settings`' list can't point at a 404.
-- `apps/debate-ai.com/lib/settings/__tests__/filter-synced-tool-sections.test.ts`
-  — the search box's matching logic: an empty or whitespace-only query
-  changes nothing, a label match is case-insensitive and by substring, a
-  section-name match keeps every tool under it, and a section left with no
-  match is dropped rather than rendered as an empty heading.
+  collection's `href` is a destination the sidebar links to, so a catalog
+  entry can't point at a 404.
 
 ## Known gaps
 
@@ -442,10 +527,12 @@ needed now that the catalog runs past fifty tools across seven sections.
   a team beyond "it's your own account's data" — the same gap
   [Judge Profiles](judge-profiles.md) and
   [Opponent Team Profiles](opponent-team-profiles.md) already note.
-- The merge runs once per tab (10-minute TTL) and on **Sync now**; there is no
-  push channel, so a record saved on another device mid-session shows up on
-  the next reload rather than live. The synthetic `storage` event covers other
-  tabs of the *same* browser only.
+- The merge runs once per tab (10-minute TTL), and that is now the only time
+  it runs — **Sync now** was on `/settings`' removed **Tool data** list. There
+  is no push channel either, so a record saved on another device mid-session
+  shows up on the next reload rather than live, and a reload is the only way
+  to ask for it. The synthetic `storage` event covers other tabs of the
+  *same* browser only.
 - **The watcher is a poll, so an uninstrumented store's change reaches the
   account at the next tick** (up to 15 seconds, or immediately when the tab is
   hidden or closed) rather than on the click. A store that also calls
@@ -461,19 +548,43 @@ needed now that the catalog runs past fifty tools across seven sections.
 - A record over `MAX_TOOL_RECORD_BYTES` (200 KB) never reaches the account: the
   route refuses it with a 413, and the watcher holds it back from the batch so
   it cannot take its collection's other records down with it. It still saves
-  locally, and it syncs if later edited under the cap. ~~until then it is
-  browser-only, and nothing says so outside `/settings`' row for that
-  tool~~ **Fixed:** `/settings`' row now reflects this even when the watcher
-  finds it on a background tick rather than during the tab's initial
-  reconcile — `startToolRecordAutoSync` takes an `onFlush` callback and
+  locally, and it syncs if later edited under the cap — but until then it is
+  browser-only. `ToolSyncStatusPanel` (`/tools`, see below) shows it as a
+  sync failure with the 413's own message, including when the watcher finds
+  it on a background tick rather than during the tab's initial reconcile
+  (`startToolRecordAutoSync` takes an `onFlush` callback and
   `useToolRecordSync` folds its results into the same `results` state the
-  reconcile populates, so a record that grows past the cap mid-session no
-  longer leaves that tool showing "Synced" after it has stopped being true.
-- **The 30-minute per-feature cooldown is per-browser-session, not
-  per-account.** It lives in `sessionStorage`, so a user who dismisses a
+  reconcile populates).
+- ~~A bulk push of more than ~50 records answered a bare 500.~~ **Fixed:**
+  `PUT /api/tool-records/[collection]` awaited one upsert per record, and each
+  spends one of D1's per-invocation queries (50 on the Workers Free plan), so a
+  long-lived store — a `docsChatTabs` list of a hundred-odd tabs — failed
+  mid-loop after several seconds. The upserts now go out through
+  `db.batch()` in `chunkStatements` runs (`lib/database/query-budget.ts`), a
+  few queries for even a full 500-record push.
+- ~~Nothing surfaces the sync any more, and two things can only be reached
+  through it.~~ **Fixed:** `components/tools/ToolSyncStatusPanel.tsx`, mounted
+  on `/tools`, renders `useToolRecordSync`'s `results` as a list of any
+  collection whose merge or flush failed (name, link to the tool, the error),
+  next to a **Sync now** button wired to `resync()`; and when a guest has
+  opted out of the sign-in prompt, a "Turn sign-in reminders back on" button
+  calling `setSignInPromptOptedOut(false)`. Both controls, and the state
+  behind them, already existed — this is `/settings`' old **Tool data** list
+  re-mounted at `/tools` instead, per this entry's own prior suggestion.
+- ~~The 30-minute per-feature cooldown is per-browser-session, not
+  per-account. It lives in `sessionStorage`, so a user who dismisses a
   prompt without opting out entirely is asked again about that feature in a
-  new tab. (A guest who instead picks "don't ask me again" gets the
-  persistent, cross-tab opt-out described above.)
+  new tab.~~ **Fixed:** `lib/sign-in-prompt-cooldown.ts` moved the same
+  bookkeeping to `localStorage`, which a browser shares across tabs, so the
+  cooldown now survives opening a new one — the actual bug this entry
+  described. "Per-account" was never quite the right framing: the prompt only
+  ever shows to a guest, who by definition has no account row to key a
+  cross-device cooldown against; the moment they sign in the prompt stops
+  entirely (`SignInPromptProvider`'s second effect clears it). So this is
+  cross-tab, same-browser persistence, matching the "don't ask me again"
+  opt-out it sits next to — which already worked this way. (A guest who picks
+  "don't ask me again" instead still gets that separate, non-expiring
+  opt-out described above.)
 - **Audited, stays separate:** `TOOL_RECORD_COLLECTIONS` does not derive from
   `app/tools/tool-groups.ts`'s `ALL_TOOLS`, unlike `/tools`, the favorites
   system, and the command palette. This is deliberate, not an oversight: it

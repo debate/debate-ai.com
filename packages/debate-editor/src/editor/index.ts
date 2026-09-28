@@ -80,7 +80,12 @@ import {
   anOlderMultiPaneWindowExists,
   closeSelfWithFallback,
 } from './window-coordination.js';
-import { resolveMobileLayout, detectEmbedded } from './mobile-layout.js';
+import {
+  resolveMobileLayout,
+  detectEmbedded,
+  isNarrowChrome,
+  chromeBoxWidth,
+} from './mobile-layout.js';
 import { mobilePlugin, setMobileShellActive } from './mobile-plugin.js';
 import { installCardCutterGate, cardCutterActive } from './card-cutter-gate.js';
 import { installPluginCommunityGate } from './plugin-community-gate.js';
@@ -108,6 +113,7 @@ import {
 } from './learn-store-host.js';
 import { learnCardsSync } from './learn-cards-sync.js';
 import { learnDecksSync } from './learn-decks-sync.js';
+import { learnReviewLogSync } from './learn-review-log-sync.js';
 import { buildDescriptor, resolveDescriptor, type AnchorDescriptor } from './learn-anchor.js';
 import { countSelectionImages } from './ai/explain-context.js';
 import { preciseScrollIntoView } from './precise-scroll.js';
@@ -655,6 +661,8 @@ async function runAddQuickCard(sourceView: EditorView): Promise<void> {
     sourceName: activeFile().filename ?? '',
   });
   await quickCardsStore.upsert(card);
+  // Debater Level XP — the app shell's listener records it (no-op elsewhere).
+  window.dispatchEvent(new CustomEvent('debate-ai:debater-activity', { detail: { kind: 'card_cut' } }));
   showToast(`Saved quick card “${card.name}”.`);
 }
 
@@ -2666,6 +2674,51 @@ if (navPanePullTab) {
     if (multiDocActive && multiDocShowAllNav) multiDocShowAllNav();
     else settings.set('navPaneVisible', true);
   });
+}
+/** Push the narrow-chrome decision into a body class. The desktop
+ *  chrome's left sidebars are fixed-width and `#app` insets from
+ *  both of them, which in a phone-width column pushes the document
+ *  clean off the right edge — see `isNarrowChrome` and the
+ *  "Narrow chrome" block at the end of style.css, which switches the
+ *  sidebars from displacing `#app` to overlaying it.
+ *
+ *  Unlike the shell decision (resolved once per load — rotating a
+ *  tablet must never re-mount the UI), this is re-evaluated on
+ *  resize: it toggles one class and changes nothing but layout, and
+ *  the box it measures is the EMBED's column, which a host can drag
+ *  narrow at any time (Flow's split panes). */
+function applyNarrowChrome(): void {
+  document.body.classList.toggle('pmd-narrow-chrome', isNarrowChrome(chromeBoxWidth()));
+}
+applyNarrowChrome();
+window.addEventListener('resize', applyNarrowChrome);
+{
+  // A window `resize` never fires for a split-pane drag, so watch the
+  // embed itself where one exists. Both paths call the same idempotent
+  // toggle, so an environment that fires both is fine.
+  const embedEl = document.querySelector('.dec-cardmirror-embed');
+  if (embedEl && typeof ResizeObserver === 'function') {
+    new ResizeObserver(applyNarrowChrome).observe(embedEl);
+  }
+}
+
+/** Whether THIS page load started in narrow chrome. Drives the
+ *  boot-time defaults below; the class above drives the layout. Read
+ *  once, because a default is only a default — the user re-opening
+ *  the outline pane and then rotating their phone must not have it
+ *  closed under them again. Read off the class `applyNarrowChrome`
+ *  just set rather than re-measuring, so the two can never disagree. */
+const BOOT_NARROW_CHROME = document.body.classList.contains('pmd-narrow-chrome');
+
+// Narrow chrome starts with the outline pane CLOSED. Even overlaid it
+// covers most of a phone-width column, and the document — not the
+// outline — is what someone opening a speech doc came for. The
+// pull-tab and the View menu re-open it exactly as on desktop, and
+// `navPaneVisible` is transient (see TRANSIENT_SETTING_KEYS), so this
+// never writes through to the user's saved settings or to a desktop
+// window.
+if (BOOT_NARROW_CHROME && settings.get('navPaneVisible')) {
+  settings.set('navPaneVisible', false);
 }
 applyNavPaneVisible(settings.get('navPaneVisible'));
 
@@ -9046,11 +9099,12 @@ function positionDropzone(): void {
 // Load the per-user Learn annotation store (flashcards / schedules /
 // anchors) so review counts + the comments column have it available.
 // Once loaded, best-effort merge + mirror the flashcards' CONTENT (not
-// schedule/anchors/etc.) and custom decks to the account — see
-// learn-cards-sync.ts and learn-decks-sync.ts.
+// schedule/anchors/etc.), custom decks, and the review log to the account —
+// see learn-cards-sync.ts, learn-decks-sync.ts, and learn-review-log-sync.ts.
 void loadLearnStore().then(() => {
   void learnCardsSync.init();
   void learnDecksSync.init();
+  void learnReviewLogSync.init();
 });
 
 // Drag-and-drop file opening works in both single-doc and multi-pane modes.
@@ -9664,12 +9718,25 @@ async function runStartupRecovery(): Promise<void> {
 }
 
 async function runStartupRecoveryInner(): Promise<void> {
-  // No recovery offers on mobile — the sidebar is a desktop surface
-  // (it would fight the mobile chrome), and the view-first shell is
-  // the wrong place to adjudicate drafts. Journals stay put and
-  // surface on the next desktop-layout launch.
-  if (BOOT_MOBILE) {
-    console.log('[cardmirror] mobile: skipping startup recovery (journals deferred to desktop)');
+  // No recovery offers on a small screen — the sidebar is a desktop
+  // surface (it would fight the mobile chrome), and neither the
+  // view-first shell nor a phone-width embed is the right place to
+  // adjudicate drafts. Journals stay put and surface on the next
+  // desktop-layout launch; nothing is lost by deferring.
+  //
+  // BOTH conditions are needed. `BOOT_MOBILE` is false in an embed by
+  // design (the view-first shell hardcodes viewport positioning, so it
+  // can't run inside a host's column — see mobile-layout.ts), which
+  // left the phone-width `/debate` speech-doc panel opening this
+  // sidebar over a 360px column: it parks at `left: var(--nav-width)`
+  // and pushes `#app` to `left: 580px`, i.e. the entire document off
+  // the right edge. The narrow-chrome rules in style.css keep that
+  // survivable, but the sidebar still has no business being the first
+  // thing a phone user sees.
+  if (BOOT_MOBILE || BOOT_NARROW_CHROME) {
+    console.log(
+      '[cardmirror] narrow layout: skipping startup recovery (journals deferred to a wider window)',
+    );
     return;
   }
   const host = getHost();

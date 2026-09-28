@@ -1,0 +1,305 @@
+import {
+  Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
+  ClipboardList, GraduationCap, FileText, MessageSquareText, Type,
+  ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
+  ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
+  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star,
+  type LucideIcon,
+} from "lucide-react"
+
+/**
+ * @fileoverview The `/tools` catalog — every workspace, research, and
+ * practice tool in the app, grouped under a heading. Pulled out of
+ * `app/tools/page.tsx` (which still owns the grid layout) so this data can
+ * also drive the favorite-tools UI: `lib/hooks/useFavoriteTools.ts`'s
+ * favorites strip on `/tools` and the "Favorite tools" section on
+ * `/settings` (which carried a favourites list of its own) both needed
+ * to resolve a starred `href` back to its label/icon/description, which
+ * only this module — not the account-linked `favoriteTools` list itself —
+ * knows how to do. `debate-round`'s `state/favoriteTools.ts` (the shared
+ * package used by both the `/tools` UI and the `/api/settings` route)
+ * deliberately stays unaware of this catalog: it validates a favorite's
+ * shape (an in-app path), not its membership in this specific list, so
+ * this file can be edited freely without touching the shared package.
+ *
+ * @module app/tools/tool-groups
+ */
+
+export type Tool = {
+  href: string
+  label: string
+  description: string
+  icon: LucideIcon
+  /** A few concrete things this tool does, shown under its description.
+   *  Optional — most tools stay adequately described by `description`
+   *  alone; add highlights where a one-liner undersells what's there. */
+  highlights?: string[]
+}
+
+export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
+  {
+    heading: "Workspaces",
+    tools: [
+      {
+        href: "/reason-editor", label: "Reason Editor", icon: FileText,
+        description: "Draft and organize debate cards and outlines in the native REASON document editor, saved to your own account.",
+        highlights: [
+          "Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace) above the ribbon",
+          "Ctrl/Cmd-Shift-Space opens Search Everything — cards, commands, settings, files, and now other tools, all from one bar",
+          "Verbatim/Cardmirror-compatible shortcuts: short cites, condense, emphasis, move-heading, send-to-speech-doc",
+        ],
+      },
+      {
+        href: "/doc", label: "Debate Docs", icon: BookOpen,
+        description: "Write annotated summaries and case outlines in the REASON Docs research editor.",
+        highlights: ["Nested document tree", "Outline Notation for case structure"],
+      },
+      {
+        href: "/research", label: "Research Workspace", icon: Library,
+        description: "Work the squad research workspace end to end, covering topic coverage, the evidence library, task routing, quests, leaderboards, and peer review.",
+        highlights: ["Topic coverage dashboard", "Evidence library search", "Task routing, quests, and peer review in one place"],
+      },
+      {
+        href: "/coach", label: "Coach Workspace", icon: GraduationCap,
+        description: "Coach a round from the argument tree and flow summary through coaching prompts, drills, scouting, briefings, and practice rounds.",
+        highlights: ["Argument tree + flow summary in one view", "AI coaching prompts and drills", "Opponent scouting and pre-round briefings"],
+      },
+    ],
+  },
+  {
+    heading: "Community & Progress",
+    tools: [
+      {
+        href: "/cards/leaderboard", label: "Leaderboard", icon: Trophy,
+        description: "Rank contributors by helpfulness score, tier, badges, and quest streak.",
+        highlights: ["Ranked by total helpfulness score across every contribution kind", "Tier, streak, and merged tier/streak-milestone badges per row", "Your own row highlighted with a \"You\" badge when signed in"],
+      },
+      {
+        href: "/news", label: "News Stream", icon: Rss,
+        description: "A single feed for product updates and community announcements — new features, Daily Best Card winners, and Contributor Award standings.",
+        highlights: ["Hand-picked product-update posts", "Auto-posts Daily Best Card and Contributor Award announcements", "Filter by category, like, and mark read"],
+      },
+      {
+        href: "/cards/contributions", label: "Contributions Feed", icon: ThumbsUp,
+        description: "Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations.",
+        highlights: ["Every contribution kind in one scored feed", "Like, save, and endorse signals feed the Leaderboard"],
+      },
+      {
+        href: "/cards/awards", label: "Contributor Awards", icon: Medal,
+        description: "See category winners for best evidence finder, best explainer, and more, ranked by helpfulness score.",
+        highlights: ["One card per contribution kind — evidence, summaries, highlights, annotations, arguments, refutations", "Freeze a day's standings as an official announced result"],
+      },
+      {
+        href: "/cards/best-card", label: "Daily Best Card", icon: Sparkles,
+        description: "Check today's highest-helpfulness card along with every past day's winner.",
+        highlights: ["Live leader computed from the Contributions Feed", "Announce a day's winner to freeze it against later submissions"],
+      },
+      {
+        href: "/cards/inbox", label: "Task Inbox", icon: Inbox,
+        description: "See research tasks routed to contributors, grouped by topic.",
+        highlights: ["Coverage-gap tasks routed by skill level, grouped by topic", "Mark done, then a different contributor verifies before it counts"],
+      },
+      {
+        href: "/cards/progress", label: "Progress", icon: Award,
+        description: "Track every contributor's unlock tier, badges, and daily-quest streak.",
+        highlights: ["Tier, unlocked task skill level, streak, and badges per row", "Shows exactly how far each contributor is from the next tier"],
+      },
+      {
+        href: "/cards/scoring", label: "LLM Card Scoring", icon: Gauge,
+        description: "Score cards for relevance, clarity, uniqueness, evidence quality, and usability.",
+        highlights: ["Deterministic five-dimension heuristic score, ranked across every submitted card", "Likely-duplicate flag checked against the real Shared Evidence Library corpus", "Optional real Anthropic-backed qualitative verdict per card"],
+      },
+      {
+        href: "/cards/revisions", label: "Revision Incentives", icon: History,
+        description: "See contributors ranked by reward points earned improving weak cards, strengthening citations, and refreshing stale evidence.",
+        highlights: ["Points for quality gains, citation completeness, and fresher evidence", "Weak-card improvements score double"],
+      },
+      {
+        href: "/cards/reviews", label: "Review Queue", icon: MessageSquareText,
+        description: "Move a submitted card through peer review by commenting, requesting changes, approving, and publishing it.",
+        highlights: ["Full lifecycle: draft → in review → changes requested → approved → published", "Blocking comments must be resolved before approval"],
+      },
+      {
+        href: "/cards/group-challenges", label: "Group Challenges", icon: Target,
+        description: "Create squad-scoped friendly challenges, like completing a set of blocks or winning a rebuttal exercise.",
+        highlights: ["Contribution-count or recorded-win challenge goals", "Live per-member standings with an MVP badge for the leader"],
+      },
+      {
+        href: "/cards/coverage", label: "Topic Coverage Dashboard", icon: PieChart,
+        description: "See which arguments are well-covered, which are missing, and where the team needs more work.",
+        highlights: ["Missing / thin / covered, by card count and word count", "Untracked section for submitted cards nobody added to the checklist"],
+      },
+      {
+        href: "/cards/prep-room", label: "Collaboration Prep Room", icon: Presentation,
+        description: "Share a topic's prep space, covering evidence, draft blocks, and routed research tasks.",
+        highlights: ["Keyword search scoped to just this topic's evidence and drafts", "Active-now roster of teammates currently working the topic", "Room activity timeline of dated evidence/draft-block submissions"],
+      },
+      {
+        href: "/cards/progress-tracking", label: "Research Progress", icon: ListChecks,
+        description: "Review each contributor's contribution history and per-topic task completion.",
+        highlights: ["Contributions, task completion rate, and per-topic breakdown per row"],
+      },
+      {
+        href: "/cards/level", label: "Debater Level", icon: Star,
+        description: "Level up like a video game: earn XP for cutting cards, redoing rebuttals, and practice rounds.",
+        highlights: ["Daily challenges like \"Cut 5 cards\" and \"Redo a rebuttal\"", "Level, rank title, XP bar, and lifetime milestones"],
+      },
+      {
+        href: "/cards/streaks", label: "Quest Streaks", icon: Flame,
+        description: "See every contributor's daily-quest streak and the milestone badges it has earned.",
+        highlights: ["Current and longest streak, plus 3/7/14/30-day milestone badges", "Run today's mission check on demand"],
+      },
+      {
+        href: "/cards/quests", label: "Daily Quests", icon: CheckSquare,
+        description: "Track team goals like \"find 5 solvency cards\" against today's live progress from real contributions.",
+        highlights: ["Progress tracked live against same-day contribution submissions", "Bulk-seed quests from a topic's under-covered arguments"],
+      },
+      {
+        href: "/cards/brainstorm", label: "Team Brainstorm Assist", icon: Lightbulb,
+        description: "Submit and upvote squad ideas for an argument block, grouped into boards by category.",
+        highlights: ["Boards for new arguments, impact framing, frontlines, and turns", "Near-duplicate badge, plus AI-generated idea seeding"],
+      },
+      {
+        href: "/cards/collaboration", label: "Team Collaboration Mode", icon: Users2,
+        description: "Leave live prep notes on a shared topic sprint, grouped by topic.",
+        highlights: ["Open / covered / needs-follow-up cycle per note", "Assign a note to a teammate directly from the board"],
+      },
+    ],
+  },
+  {
+    heading: "Prep & Practice",
+    tools: [
+      {
+        href: "/prep-notes", label: "Prep Notes", icon: NotebookPen,
+        description: "Keep live prep notes across every flow, grouped by status.",
+        highlights: ["Needs-follow-up notes surfaced first, then open, then covered", "Assign a note to a teammate — they get a real Notifications entry"],
+      },
+      {
+        href: "/contacts", label: "Contacts", icon: Contact,
+        description: "Your contacts list — requests, blocking, who's online, and the live cards contacts shared with you.",
+        highlights: ["Share the open Reason Editor document as a live co-editing card with a contact", "Shared cards show as available on every device you sign in on"],
+      },
+      {
+        href: "/notifications", label: "Notifications", icon: Bell,
+        description: "See assignee notifications for prep notes handed off to you as a task.",
+        highlights: ["Fires automatically the moment a Prep Note is assigned to you", "Mark individual notifications read, newest first"],
+      },
+      {
+        href: "/judges", label: "Judge Profiles", icon: Gavel,
+        description: "Check side-vote bias, average speaker points, and tendencies for every saved judge profile.",
+        highlights: ["Side-vote bias, speed tolerance, and theory receptiveness per judge", "Sorted by rounds judged — most experienced first"],
+      },
+      {
+        href: "/opponents", label: "Opponent Team Profiles", icon: Users,
+        description: "Review records, side-record tendencies, and common arguments or cases for every saved opponent scouting profile.",
+        highlights: ["Overall and Aff/Neg side record, with a \"notably stronger side\" flag", "Most commonly run argument tags and cases per team"],
+      },
+      {
+        href: "/drills", label: "Practice Drills", icon: Dumbbell,
+        description: "Run quick practice drills generated from each round's flow.",
+        highlights: ["Overview, frontline, cross-ex, and collapse-scenario prompts", "Generated straight from a round's already-flowed arguments"],
+      },
+      {
+        href: "/briefings", label: "Pre-Round Briefings", icon: ClipboardList,
+        description: "Pull opponent scouting, judge tendencies, head-to-head record, and prep notes together for a round.",
+        highlights: ["Pulls straight from saved Opponent and Judge Profiles", "One briefing per round, with free-text team prep notes attached"],
+      },
+      {
+        href: "/strategy", label: "Scout-to-Strategy", icon: Crosshair,
+        description: "Turn opponent scouting and judge tendencies into a case-choice ranking and matchup risk level.",
+        highlights: ["Reads straight from saved Opponent Team and Judge Profiles", "Ranks case options with a judge-adaptation note per option", "Also mounted in the Coach Workspace's Scouting section"],
+      },
+      {
+        href: "/coaching", label: "AI Coach Mode", icon: GraduationCap,
+        description: "Get extension, refutation, collapse, and weighing prompts generated from each round's flow.",
+        highlights: ["Template prompts per round + side, generated from the flow", "\"Get AI feedback\" expands any prompt into open-ended coaching"],
+      },
+      {
+        href: "/judge-decision", label: "AI Judge Decision", icon: Landmark,
+        description: "Generate an AI round decision under a round's saved judge paradigm and flow summary.",
+        highlights: ["Decision reasoning grounded in the round's saved paradigm", "Reads the same flow summary the Argument Tree Outline shows"],
+      },
+      {
+        href: "/summaries", label: "Speech Transcript Summaries", icon: FileText,
+        description: "Get per-argument summaries derived from each round's flow, with cross-exam questions and extension ideas.",
+        highlights: ["One summary per argument, straight from the flowed grid", "Cross-exam question and extension-idea suggestions included"],
+      },
+      {
+        href: "/word-count", label: "Word-Count Speeches", icon: Type,
+        description: "Practice speeches bounded by a maximum word count instead of a time limit.",
+        highlights: ["Live word-count badge recomputed on every keystroke", "One text area per speech in the chosen word-count format"],
+      },
+      {
+        href: "/outline", label: "Argument Tree Outline", icon: ListTree,
+        description: "Browse a filterable outline of each round's flow, grouped by heading.",
+        highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
+      },
+      {
+        href: "/versus-ai", label: "Practice vs AI", icon: Bot,
+        description: "Debate a full timed round against an AI opponent, then get a judged scorecard.",
+        highlights: ["Thirteen opponent personas across five difficulty tiers", "Timed opening, cross-examination and closing phases with an AI verdict"],
+      },
+      {
+        href: "/practice-round", label: "Practice Round Simulator", icon: PlayCircle,
+        description: "Recreate a tournament round with a timer, judge paradigm, and AI opponent persona.",
+        highlights: ["Format, side, AI judge paradigm, and AI opponent persona in one setup", "Built-in or custom paradigms and personas, same as the standalone pickers"],
+      },
+      {
+        href: "/annotations", label: "Flow Annotations", icon: MapPin,
+        description: "Drop timestamped flow annotations while watching a streamed or recorded round, and jump back to them.",
+        highlights: ["Tied to a specific flowed argument, not just a raw timestamp", "Jump straight back to the moment from the annotation later"],
+      },
+      {
+        href: "/speech-documents", label: "Speech Documents", icon: Send,
+        description: "A history of evidence sent into your designated speech document from the Reason Editor.",
+        highlights: ["Sent via Reason Editor's backtick (`) / Alt-backtick keys, after marking a pane as the speech doc from the File menu's Speech section", "Newest-first list with a per-entry Remove and a Clear history action"],
+      },
+    ],
+  },
+  {
+    heading: "Mobile Setup",
+    tools: [
+      {
+        href: "/tools/mobile-setup", label: "Laptop-less Debating", icon: Smartphone,
+        description: "Gear picks and a step-by-step guide to prepping, flowing, and speaking off just a mobile phone — no laptop.",
+        highlights: [
+          "Recommended phone mount and keyboard gear, with Amazon links",
+          "How to prep speeches, flow, and time rounds from a phone browser",
+          "Speaking-off-your-phone checklist for round day",
+        ],
+      },
+    ],
+  },
+  {
+    heading: "Coaching & Analytics",
+    tools: [
+      {
+        href: "/outcomes", label: "AI Response-Outcome Charts", icon: BarChart3,
+        description: "See per-side exposure and the most vulnerable arguments in each round's flow.",
+        highlights: ["\"What if\" picker recomputes exposure under a hypothetical extend/answer/concede", "AI counsel panel assesses likely response paths for exposed arguments"],
+      },
+      {
+        href: "/rank", label: "Team Rankings", icon: Crown,
+        description: "Debate team rankings, leaderboard, and Elo ratings.",
+        highlights: [
+          "Elo-based team leaderboard",
+          "Track team ratings and rankings over time",
+        ],
+      },
+      {
+        href: "/coaching-programs", label: "Coaching Programs", icon: School,
+        description: "Run group coaching spaces scoped to a squad roster.",
+        highlights: ["A shared topic sprint, group-challenge standings, and drills in one board", "Scoped to a named squad roster you control"],
+      },
+      {
+        href: "/coach-materials", label: "Coach Materials", icon: BookOpen,
+        description: "Upload grounding materials for the team coach AI and preview which ones answer a question.",
+        highlights: ["Upload a .docx/.txt/.md file or dictate by voice instead of pasting text", "Preview which materials a question would draw on before asking"],
+      },
+    ],
+  },
+]
+
+/** Every tool across every group, flattened — the lookup `useFavoriteTools`-consuming UI (the favorites strip on `/tools`) uses to resolve a starred `href` back to its label/icon/description. */
+export const ALL_TOOLS: Tool[] = TOOL_GROUPS.flatMap((group) => group.tools)

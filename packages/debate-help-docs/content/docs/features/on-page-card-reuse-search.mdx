@@ -4,31 +4,42 @@ title: "On-Page Card Reuse Search"
 
 # On-Page Card Reuse Search
 
-Checks whether a page has already been cut into the Shared Evidence
-Library — from a manual "Check this page" box and a browser extension —
-before a contributor spends time cutting a duplicate card.
+Checks whether a page has already been cut into a card — by your team or
+anywhere in the imported caselist card library — before you spend time cutting
+a duplicate, and tells you what the existing cards say and how good they are.
 
 - **Route:** `/cards/library` (the "Check this page" box)
 - **Package:** `debate-research-evidence`
-- **Extension:** `apps/debate-web-ext`
+- **Extension:** `apps/debate-browser-ext` (toolbar popup, right-click menu, article panel)
+- **Engineering notes:** [internals](../internals/on-page-card-reuse-search.mdx)
 
 ## What it does
 
-`checkPageForExistingCards` checks a URL against every persisted entry's
-`sourceUrl` (normalized to ignore scheme/`www.`/query/trailing slash). A
-"Recent checks" history log records the last 20 local checks.
+Open the extension's popup on any article and it checks the page's URL
+against the shared reuse index: cards your team registered, plus every card in
+the imported caselist library whose citation names that URL. It answers
+"already cut" or "safe to cut".
 
-The browser extension (`apps/debate-web-ext`, unpacked Manifest V3, no
-bundler) reads the active tab's URL and calls a shared, server-backed
-reuse index (`GET /api/evidence-reuse-check`, D1-backed), answering
-"has anyone on the team cut this" rather than just this browser's own copy.
-Every lookup logs to a `reuse_check_log` table, folded into a "Team reuse
-dashboard" section on `/cards/library`. A weekly job purges log rows older
-than 180 days.
+For each card cut from the page, the popup shows:
 
-The extension's Options page configures the API base URL and a
-skip-check domain whitelist.
+- the card's **tag**, **author and year**, the caselist it came from, and how
+  many times it was read across caselists;
+- its **highlighted quotes** — the text debaters actually read aloud;
+- an **AI annotation**: an author-quality rating (strong, adequate, weak, or
+  unknown), the author's qualifications and any bias or conflict of interest,
+  a 0–10 score for how well the highlighting supports the tag, and the flaws an
+  opponent would attack, ranked by severity.
+
+The first few cards are annotated automatically when you are signed in; the
+rest have a **Find flaws & rate author** button. Each card is annotated once and
+then shared with everyone, so a popular page loads instantly.
+
+The `/cards/library` box runs the same check on any URL you paste. The
+extension's Options page configures the API base URL and a skip-check domain
+whitelist; a "Team reuse dashboard" on `/cards/library` shows which pages get
+checked and how often they were already cut.
 
 ## Known gaps
 
 The extension is unpacked/"Load unpacked" only — no store listing exists.
+Cards whose citation has no URL cannot be matched to a page.

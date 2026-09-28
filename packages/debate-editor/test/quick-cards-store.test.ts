@@ -4,6 +4,7 @@ import {
   buildQuickCard,
   distinctTags,
   findDuplicate,
+  hasQuickCardSaveConflict,
   isValidQuickCardRecord,
   normalizeTag,
   tagSetKey,
@@ -28,7 +29,10 @@ function card(over: Partial<QuickCard> = {}): QuickCard {
 function stubFetch(opts: {
   get?: QuickCard[] | 'signed-out';
   onPut?: (id: string, body: unknown) => void;
+  /** When set, a PUT for this card id responds 409 with this card as `current` instead of succeeding. */
+  putConflicts?: Map<string, QuickCard>;
   onDelete?: (id: string) => void;
+  onClear?: () => void;
 }) {
   const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
     const method = init?.method ?? 'GET';
@@ -41,9 +45,17 @@ function stubFetch(opts: {
     if (method === 'PUT') {
       const id = decodeURIComponent(url.split('/').pop()!);
       opts.onPut?.(id, JSON.parse(String(init!.body)));
+      const conflict = opts.putConflicts?.get(id);
+      if (conflict) {
+        return { ok: false, status: 409, json: async () => ({ current: conflict }) };
+      }
       return { ok: true, status: 200 };
     }
     if (method === 'DELETE') {
+      if (url === '/api/quick-cards') {
+        opts.onClear?.();
+        return { ok: true, status: 200 };
+      }
       const id = decodeURIComponent(url.split('/').pop()!);
       opts.onDelete?.(id);
       return { ok: true, status: 200 };
@@ -84,6 +96,26 @@ describe('isValidQuickCardRecord', () => {
   it('rejects non-object values', () => {
     expect(isValidQuickCardRecord(null)).toBe(false);
     expect(isValidQuickCardRecord('card')).toBe(false);
+  });
+});
+
+describe('hasQuickCardSaveConflict', () => {
+  it('does not conflict when the incoming card is newer', () => {
+    const current = { ...card(), updatedAt: 1000 };
+    const incoming = { ...card(), updatedAt: 2000 };
+    expect(hasQuickCardSaveConflict(current, incoming)).toBe(false);
+  });
+
+  it('does not conflict when both sides have the same updatedAt', () => {
+    const current = { ...card(), updatedAt: 1000 };
+    const incoming = { ...card(), updatedAt: 1000 };
+    expect(hasQuickCardSaveConflict(current, incoming)).toBe(false);
+  });
+
+  it('conflicts when the currently-saved card is newer than the incoming one', () => {
+    const current = { ...card(), updatedAt: 2000 };
+    const incoming = { ...card(), updatedAt: 1000 };
+    expect(hasQuickCardSaveConflict(current, incoming)).toBe(true);
   });
 });
 
@@ -178,9 +210,14 @@ describe('QuickCardsStore account sync', () => {
     expect(store.list()).toEqual([]);
   });
 
-  it('deletes every card from the account on clear once signed in', async () => {
-    const deleted: string[] = [];
-    stubFetch({ get: [], onDelete: (id) => deleted.push(id) });
+  it('issues a single bulk-clear call to the account on clear once signed in', async () => {
+    const deleteCalls: string[] = [];
+    let clearCalls = 0;
+    stubFetch({
+      get: [],
+      onDelete: (id) => deleteCalls.push(id),
+      onClear: () => clearCalls++,
+    });
     const store = new QuickCardsStore();
     await store.init();
     await store.upsert(card({ id: 'a' }));
@@ -188,7 +225,8 @@ describe('QuickCardsStore account sync', () => {
 
     await store.clear();
 
-    expect(deleted.sort()).toEqual(['a', 'b']);
+    expect(clearCalls).toBe(1);
+    expect(deleteCalls).toEqual([]);
     expect(store.list()).toEqual([]);
   });
 
@@ -207,5 +245,35 @@ describe('QuickCardsStore account sync', () => {
     await expect(store.upsert(created)).resolves.toBeUndefined();
 
     expect(store.list()).toEqual([created]);
+  });
+
+  it('adopts a newer account version instead of overwriting it on an upsert conflict', async () => {
+    const stale = card({ id: 'raced', name: 'My local edit' });
+    const newerRemote = { ...card({ id: 'raced', name: 'Newer edit from another device' }), updatedAt: stale.updatedAt + 1000 };
+    stubFetch({ get: [], putConflicts: new Map([['raced', newerRemote]]) });
+
+    const store = new QuickCardsStore();
+    await store.init();
+
+    await store.upsert(stale);
+    // The local write applies immediately; the conflict resolves shortly after the fire-and-forget push.
+    expect(store.list()).toEqual([stale]);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.list()).toEqual([newerRemote]);
+  });
+
+  it('adopts a newer account version pushed during the init merge, without duplicating the card', async () => {
+    const stale = card({ id: 'raced' });
+    localStorage.setItem(LEGACY_STORAGE_KEY, JSON.stringify([stale]));
+    const newerRemote = { ...stale, updatedAt: stale.updatedAt + 1000, name: 'Server-side edit' };
+    stubFetch({ get: [], putConflicts: new Map([['raced', newerRemote]]) });
+
+    const store = new QuickCardsStore();
+    await store.init();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.list()).toEqual([newerRemote]);
   });
 });

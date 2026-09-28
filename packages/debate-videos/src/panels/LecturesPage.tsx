@@ -3,11 +3,14 @@
  *
  * Manages filter state, URL sync, and slug-based routing for the /videos and
  * /videos/[category] routes, pages videos in from `/api/videos` through
- * {@link useVideoFeed}, then delegates rendering to one of three branch views:
+ * {@link useVideoFeed}, then delegates rendering to one of four branch views:
  *
  * - {@link LeaderboardPanel} — when the active category is `"leaderboard"`
  * - {@link LecturesDictionaryView} — when the active category is `"dictionary"`
- * - {@link LecturesVideoGridView} — for all lecture/video categories
+ * - {@link StatisticsPage} — when the active category is `"statistics"`
+ * - {@link LecturesVideoGridView} — for all lecture/video categories, the
+ *   watch history (`"history"`) included: it is the same listing over an
+ *   explicit id allow-list, the way My Favorites is.
  * @module components/debate/DebateVideos/panels/LecturesPage
  */
 
@@ -18,17 +21,20 @@ import Link from "next/link"
 import { useSearchParams, useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { normalizeCategoryKey } from "debate-data-sync/src/videos/video-rows"
+import { MAX_VIDEO_PAGE_SIZE } from "debate-data-sync/src/videos/video-query"
 import type { CategoryType, DebateStyle } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
 import { LeaderboardPanel } from "./leaderboard/RankingsLeaderboardPanel"
 import { LeaderboardFilterBar } from "./leaderboard/LeaderboardFilterBar"
-import type { Division } from "./leaderboard/leaderboardUtils"
+import type { LeaderboardTab } from "./leaderboard/leaderboardUtils"
+import { VALID_LEADERBOARD_TABS, currentSeasonYear, seasonYears } from "./leaderboard/leaderboardUtils"
 import { setStateInURL } from "../ui/lib/utils"
 import { StickyHeader } from "../components/layout/StickyHeader"
 import { SLUG_MAP } from "./lectureRouteConfig"
 import { LecturesDictionaryView } from "./dictionary/LecturesDictionaryView"
 import { LecturesSidebarShell } from "./LecturesSidebarShell"
 import { LecturesVideoGridView } from "./LecturesVideoGridView"
+import { StatisticsPage } from "./statistics/StatisticsPage"
 
 // Hooks
 import { useVideoState } from "../hooks/useVideoState"
@@ -36,6 +42,7 @@ import { useVideoFeed, useVideoMeta, type VideoFeedFilters } from "../hooks/useV
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll"
 import { useYouTubeStats } from "../hooks/useYouTubeStats"
 import { useVideoPlayerStore } from "../state/videoPlayerStore"
+import { useWatchHistory } from "../hooks/useWatchHistory"
 
 /** Number of entries in the debate dictionary, shown on its quick-link card. */
 const DICTIONARY_ENTRY_COUNT = 203
@@ -82,6 +89,7 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     if (view === "dictionary") return "dictionary"
     if (view === "topPicks") return "topPicks"
     if (view === "leaderboard") return "leaderboard"
+    if (view === "statistics") return "statistics"
     return "lectures"
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -107,19 +115,15 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
   const router = useRouter()
   const initialDivision = useMemo(() => {
     const f = searchParams.get("format")
-    return f && ["VPF", "VLD", "VCX", "NDT"].includes(f) ? (f as Division) : "VPF"
+    return f && VALID_LEADERBOARD_TABS.has(f) ? (f as LeaderboardTab) : "VPF"
   }, [searchParams])
 
-  const [leaderboardDivision, setLeaderboardDivision] = useState<Division>(initialDivision)
-  const [leaderboardYear, setLeaderboardYear] = useState("2026")
+  const [leaderboardDivision, setLeaderboardDivision] = useState<LeaderboardTab>(initialDivision)
+  const [leaderboardYear, setLeaderboardYear] = useState(() => String(currentSeasonYear()))
 
-  const leaderboardYears = useMemo(() => {
-    const currentYear = new Date().getFullYear()
-    const maxYear = Math.max(currentYear, 2026)
-    return Array.from({ length: maxYear - 2001 }, (_, i) => String(maxYear - i))
-  }, [])
+  const leaderboardYears = useMemo(() => seasonYears(), [])
 
-  const handleDivisionChange = useCallback((val: Division) => {
+  const handleDivisionChange = useCallback((val: LeaderboardTab) => {
     setLeaderboardDivision(val)
     const params = new URLSearchParams(searchParams.toString())
     params.set("format", val)
@@ -208,8 +212,29 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     [state.showFavoritesOnly, state.favorites],
   )
 
+  // Watch history. The listing is the library filtered to an explicit id
+  // allow-list — the same mechanism as My Favorites — because the history
+  // itself stores only the id, position and title, not the video's channel,
+  // category or season, which the listing's columns need.
+  const watchHistory = useWatchHistory()
+
+  const isHistory = state.currentCategory === "history"
+
+  /**
+   * The videos to list, newest-watched first. An empty array still filters:
+   * a history with nothing in it must list nothing rather than everything.
+   */
+  const historyIds = useMemo<string[] | null>(() => {
+    if (!isHistory) return null
+    return [...watchHistory.values()]
+      .sort((a, b) => b.watchedAt.localeCompare(a.watchedAt))
+      .map((entry) => entry.videoId)
+  }, [isHistory, watchHistory])
+
   const isVideoCategory =
-    state.currentCategory !== "leaderboard" && state.currentCategory !== "dictionary"
+    state.currentCategory !== "leaderboard" &&
+    state.currentCategory !== "dictionary" &&
+    state.currentCategory !== "statistics"
 
   // Hidden videos are a browser-local preference; an explicit search still
   // surfaces them, as it always has, so the deny-list is only sent while not
@@ -233,8 +258,18 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
     year: state.selectedYear,
     sort: state.sortOrder,
     q: state.searchTerm,
-    ids: favoriteIds,
+    // The history spans both libraries, and is the allow-list itself rather
+    // than a narrowing of a category — which is why nothing above needs a
+    // `history` case: its slug leaves the style, category and favourites
+    // filters at their defaults.
+    ids: historyIds ?? favoriteIds,
     excludeIds,
+    // One request for the whole history, where it fits: the server answers an
+    // allow-list in the *library's* order, so a history spread over pages
+    // reads in publish order until the last page lands (the re-sort below
+    // only orders what is loaded). The store caps itself at 500 entries, so
+    // this is the whole thing for all but the heaviest viewers.
+    pageSize: isHistory ? MAX_VIDEO_PAGE_SIZE : undefined,
     withFacets: true,
     enabled: isVideoCategory,
   }
@@ -258,14 +293,23 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
         college: counts.byStyle[4] ?? 0,
         topPicks: counts.topPicks,
         favorites: state.favorites.size,
+        history: watchHistory.size,
         rankings: 4,
         statistics: counts.total,
         dictionary: DICTIONARY_ENTRY_COUNT,
       }) as Record<string, number>,
-    [counts, state.favorites],
+    [counts, state.favorites, watchHistory],
   )
 
-  const currentVideos = feed.videos
+  // The feed returns the allow-list in the library's own order; the history
+  // reads newest-watched first, which only this side knows.
+  const currentVideos = useMemo(() => {
+    if (!isHistory) return feed.videos
+    const rank = new Map(historyIds?.map((videoId, index) => [videoId, index]))
+    return [...feed.videos].sort(
+      (a, b) => (rank.get(a[0]) ?? Infinity) - (rank.get(b[0]) ?? Infinity),
+    )
+  }, [isHistory, feed.videos, historyIds])
 
   const topPicksSet = useMemo(
     () => new Set(feed.videos.filter((video) => video[15] === true).map((video) => video[0])),
@@ -422,6 +466,14 @@ export function LecturesPage({ dockSlot }: LecturesPageProps = {}) {
           dictSearchTerm={dictSearchTerm}
           onDictSearchTermChange={setDictSearchTerm}
         />
+      </LecturesSidebarShell>
+    )
+  }
+
+  if (state.currentCategory === "statistics") {
+    return (
+      <LecturesSidebarShell {...sidebarShellProps} activeId="statistics">
+        <StatisticsPage topics={meta?.topics} youtubeStats={youtubeStats} />
       </LecturesSidebarShell>
     )
   }

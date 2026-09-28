@@ -23,5 +23,7 @@ just the panel's own tab.
 ## Known gaps
 
 No optimistic-concurrency handling (not reachable in practice — an entry
-is generated once and never edited). An entry adopted during merge isn't
-re-sorted by `sentAt`.
+is generated once and never edited). Entries adopted during merge are
+re-sorted by `sentAt` (`SpeechSendLogStore.mergeRemote`), so an entry sent
+earlier from another device lands in its correct chronological position
+instead of showing as the newest.

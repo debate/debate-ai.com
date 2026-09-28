@@ -26,6 +26,26 @@ export default defineConfig({
       "packages/*",
       "!packages/README.md",
       "!packages/debate-help-docs",
+      // A local, git-ignored clone of upstream Tabroom (the source for
+      // debate-tournaments' sync script); its tests need upstream's own
+      // toolchain and MariaDB. debate-tournaments tests the vendored code.
+      "!packages/debate-tournament-tabroom",
+      // Git submodules of upstream CardMirror and Tabroom. Each is its own
+      // app with its own toolchain and test setup; the web UI reaches them
+      // through debate-editor-cm-adapter and debate-tournaments-tabroom-adapter,
+      // whose tests cover the parts it uses.
+      "!packages/debate-editor-cm",
+      "!packages/debate-tournaments-tabroom",
+      // A git submodule vendoring the upstream debate-flow repo, same shape
+      // as the two above: its own toolchain, not imported by package name
+      // anywhere in this repo (the real "debate-flow-ebb" workspace
+      // dependency `debate-round`/the web app use resolves to the
+      // `packages/debate-flow` package below, which — mid-rename — still
+      // declares its own Vitest project as "debate-flow"). Left in this
+      // glob, the submodule's unrenamed `package.json` ("debate-flow")
+      // collides with that project name and fails every `vitest run`
+      // outright at startup, monorepo-wide.
+      "!packages/debate-flow-ebb",
       // The web app has no test/ folder for the glob above to find, but parts
       // of apps/debate-ai.com/lib are plain Node libraries worth unit testing
       // (the D1 read-replication session wrapper, for one). Registered inline

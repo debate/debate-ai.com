@@ -3,7 +3,12 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedQuickCards } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidQuickCardRecord, MAX_SAVED_QUICK_CARD_BYTES } from "debate-editor/engine"
+import {
+  hasQuickCardSaveConflict,
+  isValidQuickCardRecord,
+  MAX_SAVED_QUICK_CARD_BYTES,
+  type QuickCard,
+} from "debate-editor/engine"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
@@ -14,7 +19,10 @@ import { withRouteErrors } from "@/lib/api/route-errors"
  *
  * PUT    { card: QuickCard } — validates (`isValidQuickCardRecord`) and
  *   upserts, keyed by `(userId, cardId)`; the route's `cardId` must match
- *   `card.id`.
+ *   `card.id`. Rejects with 409 (see `hasQuickCardSaveConflict`) instead of
+ *   overwriting when the currently-saved row's own `updatedAt` is already
+ *   newer than the incoming card's — an edit race between two signed-in
+ *   devices — returning the current card so the caller can adopt it.
  * DELETE — removes the synced card for this `cardId`.
  *
  * No GET here: `GET /api/quick-cards` already returns every record in
@@ -53,6 +61,26 @@ export const PUT = withRouteErrors(
     }
 
     const db = await getDBFromContext()
+
+    const [existing] = await db
+      .select({ data: savedQuickCards.data })
+      .from(savedQuickCards)
+      .where(and(eq(savedQuickCards.userId, userId), eq(savedQuickCards.clientId, cardId)))
+      .limit(1)
+
+    if (existing) {
+      const currentCard = JSON.parse(existing.data) as QuickCard
+      if (hasQuickCardSaveConflict(currentCard, card)) {
+        return NextResponse.json(
+          {
+            error: "This quick card was edited from another device since your last sync.",
+            current: currentCard,
+          },
+          { status: 409 },
+        )
+      }
+    }
+
     const now = new Date()
 
     await db

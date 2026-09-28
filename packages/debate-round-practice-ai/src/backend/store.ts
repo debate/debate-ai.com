@@ -12,6 +12,7 @@
  * @module backend/store
  */
 
+import { computeGamificationAward } from "./gamification"
 import type { GamificationAward, GamificationProfile } from "./gamification"
 import type { DebateMessage, DebateResultStatus, DebateVsBotRecord } from "./types"
 
@@ -52,14 +53,25 @@ export interface DebateStore {
   setOutcome(id: string, outcome: string): Promise<void>
   /** Store a finished round's transcript. Go: `SaveDebateTranscript`. */
   saveTranscript?(input: DebateTranscriptInput): Promise<void>
-  /** Read the user's score/badges/streak, for the award computation. */
+  /**
+   * Read the user's score/badges/streak. Not used by `applyGamificationAward`
+   * itself (which re-reads the row fresh right before writing, so two rounds
+   * finishing concurrently can't clobber each other's points) — kept as a
+   * separate capability probe and for hosts that want to display a profile.
+   */
   getGamificationProfile?(userId: string): Promise<GamificationProfile | null>
-  /** Persist a computed award. Go: the `$inc`/`$addToSet` writes. */
+  /**
+   * Compute and persist a round's award. Implementations must read the
+   * user's current score/badges immediately before writing (mirroring the
+   * Go `$inc`/`$addToSet` writes' atomicity) rather than trusting a
+   * previously-fetched `GamificationProfile`, so that two rounds finishing
+   * close together each keep their points instead of the second write
+   * silently overwriting the first.
+   */
   applyGamificationAward?(
     userId: string,
-    award: GamificationAward,
     context: { debateType: string; topic: string; result: DebateResultStatus },
-  ): Promise<void>
+  ): Promise<GamificationAward>
 }
 
 /**
@@ -105,13 +117,18 @@ export function createInMemoryDebateStore(): DebateStore {
     async getGamificationProfile(userId) {
       return profiles.get(userId) ?? { score: 0, badges: [], currentStreak: 0 }
     },
-    async applyGamificationAward(userId, award) {
+    async applyGamificationAward(userId, context) {
+      // Re-read the profile right before writing rather than trusting a
+      // caller-supplied award, so two concurrent awards for the same user
+      // each get computed against the other's write instead of racing.
       const profile = profiles.get(userId) ?? { score: 0, badges: [], currentStreak: 0 }
+      const award = computeGamificationAward(profile, context.result)
       profiles.set(userId, {
         score: award.newScore,
-        badges: [...profile.badges, ...award.badgesAwarded],
+        badges: [...new Set([...profile.badges, ...award.badgesAwarded])],
         currentStreak: profile.currentStreak,
       })
+      return award
     },
   }
 }

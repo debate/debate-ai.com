@@ -13,9 +13,11 @@ import { useParams } from "next/navigation"
 import type { CategoryType, TopicType, VideoFacets, VideoSuggestions } from "../types/videos"
 import type { LectureCategoryFacet, VideoType } from "../types/videos"
 import { Footer } from "../ui/layout/footer"
+import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 import { FloatingVideoSearch } from "../components/video-search/FloatingVideoSearch"
 import { VideoSearchBar } from "../components/video-search/VideoSearchBar"
 import { VideoSearchSuggestions } from "../components/video-search/VideoSearchSuggestions"
+import { getSearchPhrases } from "../components/video-search/searchPhrases"
 import { VideoGrid } from "../components/video-grid/VideoGrid"
 import { VideoListRows } from "../components/video-grid/VideoListRows"
 import { LectureCategoryGridGallery } from "../components/category-gallery/LectureCategoryGridGallery"
@@ -46,7 +48,7 @@ interface LecturesVideoGridViewProps {
   showFavoritesOnly: boolean
   /** Whether related videos share one card/row with `<` / `>` arrows. */
   stackedPlaylists: boolean
-  /** Active category (`"lectures"` or `"topPicks"`). */
+  /** Active category (`"lectures"`, `"topPicks"` or `"history"`). */
   currentCategory: CategoryType
   /** Total number of videos matching the current filters, across every page. */
   totalVideos: number
@@ -222,6 +224,7 @@ export function LecturesVideoGridView({
   /** Derive the active quick-link card ID from filter state and active slug. */
   const activeQuickLinkId = useMemo(() => {
     if (showFavoritesOnly) return "favorites"
+    if (currentCategory === "history") return "history"
     if (currentCategory === "topPicks") return "topPicks"
     
     // Map selected debate style to highlight the respective quick links
@@ -251,6 +254,15 @@ export function LecturesVideoGridView({
   const browsingLectures =
     currentCategory === "lectures" && !selectedStyle && !showFavoritesOnly
 
+  /** The watch-history listing, which is neither a category nor a filter. */
+  const isHistory = currentCategory === "history"
+
+  // Dropdown phrases for the search box, a different set per category.
+  const searchPhrases = useMemo(
+    () => getSearchPhrases({ currentCategory, selectedStyle, selectedCategory }),
+    [currentCategory, selectedStyle, selectedCategory],
+  )
+
   // Always stacked: the floating panel it opens in is a narrow column, not
   // the full-width row the old sticky header gave it.
   const searchBarNode = (
@@ -275,6 +287,7 @@ export function LecturesVideoGridView({
       onToggleThumbnails={onToggleThumbnails}
       onToggleFavoritesOnly={onToggleFavoritesOnly}
       totalVideos={totalVideos}
+      suggestedPhrases={searchPhrases}
       stacked
       extraButtons={
         youtubeStats ? (
@@ -291,37 +304,54 @@ export function LecturesVideoGridView({
   const showLectureGallery =
     showLectureCategories && currentCategory === "lectures" && !selectedStyle && lectureCategories.length > 0
 
+  /** Favorite round videos, for the separate tables on the favorites page. */
+  const favoriteRounds = useMemo(
+    () => currentVideos.filter((v) => typeof v[6] === "number"),
+    [currentVideos],
+  );
+  /** Favorite lectures, for the separate tables on the favorites page. */
+  const favoriteLectures = useMemo(
+    () => currentVideos.filter((v) => typeof v[6] !== "number"),
+    [currentVideos],
+  );
+
+  const isFavoritesPage = showFavoritesOnly;
+
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Persistent left sidebar (md+): app dock, video categories, lecture
-          categories, footer. The search and filter controls are deliberately
-          not here — they float over the results panel instead
-          (`FloatingVideoSearch`), which is what lets this column be the same
-          column on the glossary and rankings pages, where there is nothing to
-          search. `min-w-0` keeps every child bound to it; the dock arrives in
-          `dockSlot` already sized to the column rather than to its own
-          contents, so it can't reach across the border onto the grid. */}
-      <aside className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
-        {dockSlot}
+    // Persistent left sidebar (md+): app dock, video categories, lecture
+    // categories, footer — in the shared drag-resizable column
+    // (`ResizableSidebarLayout`), so its width matches the rest of the app's.
+    // The search and filter controls are deliberately not here — they float
+    // over the results panel instead (`FloatingVideoSearch`), which is what
+    // lets this column be the same column on the glossary and rankings pages,
+    // where there is nothing to search. The dock arrives in `dockSlot` already
+    // sized to the column rather than to its own contents, so it can't reach
+    // across the border onto the grid.
+    <ResizableSidebarLayout
+      className="bg-background"
+      contentClassName="p-3 sm:p-6"
+      sidebar={
+        <>
+          {dockSlot}
 
-        {/* Videos only: the app's REASON document panels used to mount here
-            (`docsSlot`), above the tree. They belong on the routes the
-            documents are the subject of — the sidebar of the video library is
-            the video library. */}
-        <VideoSidebarTree
-          counts={quickLinkCounts}
-          lectureCategories={lectureCategories}
-          selectedCategory={selectedCategory}
-          browsingLectures={browsingLectures}
-          activeId={activeQuickLinkId}
-          lecturesExpanded={showLectureCategories}
-          onToggleLectures={onToggleLectureCategories}
-        />
+          {/* Videos only: the app's REASON document panels used to mount here
+              (`docsSlot`), above the tree. They belong on the routes the
+              documents are the subject of — the sidebar of the video library is
+              the video library. */}
+          <VideoSidebarTree
+            counts={quickLinkCounts}
+            lectureCategories={lectureCategories}
+            selectedCategory={selectedCategory}
+            browsingLectures={browsingLectures}
+            activeId={activeQuickLinkId}
+            lecturesExpanded={showLectureCategories}
+            onToggleLectures={onToggleLectureCategories}
+          />
 
-        <Footer />
-      </aside>
-
-      <div className="min-w-0 flex-1 p-3 sm:p-6">
+          <Footer />
+        </>
+      }
+    >
         {/* The one instance of the search and filter controls, on every
             breakpoint: an icon in the top-right corner of this panel that
             opens on hover, on tap and on focus. It is `sticky` with no height,
@@ -383,7 +413,17 @@ export function LecturesVideoGridView({
           </div>
         ) : currentVideos.length === 0 ? (
           <div className="text-center py-12">
-            {showFavoritesOnly && favorites.size === 0 ? (
+            {isHistory ? (
+              <>
+                <p className="text-muted-foreground">
+                  Nothing watched yet.
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Play any video and it will show up here, with how far through
+                  it you got.
+                </p>
+              </>
+            ) : showFavoritesOnly && favorites.size === 0 ? (
               <>
                 <p className="text-muted-foreground">
                   Star videos to add them to My Favorites.
@@ -404,9 +444,97 @@ export function LecturesVideoGridView({
           </div>
         ) : (
           <>
-            {viewMode === "list" ? (
+            {isFavoritesPage ? (
+              <>
+                {favoriteLectures.length > 0 && (
+                  <>
+                    <h2 className="text-xl font-semibold px-5 pt-6 pb-2">
+                      Lectures
+                    </h2>
+                    {viewMode === "list" ? (
+                      <VideoListRows
+                        videos={favoriteLectures}
+                        layout="lecture"
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                        showThumbnails={showThumbnails}
+                        onSearch={onSearchChange}
+                      />
+                    ) : (
+                      <VideoGrid
+                        videos={favoriteLectures}
+                        showThumbnails={showThumbnails}
+                        topics={topics}
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onBadgeClick={onSearchChange}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                        showFullDate={true}
+                        showDescription={true}
+                      />
+                    )}
+                  </>
+                )}
+                {favoriteRounds.length > 0 && (
+                  <>
+                    <h2 className="text-xl font-semibold px-5 pt-6 pb-2">
+                      Rounds
+                    </h2>
+                    {viewMode === "list" ? (
+                      <VideoListRows
+                        videos={favoriteRounds}
+                        layout="round"
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                        showThumbnails={showThumbnails}
+                        onSearch={onSearchChange}
+                      />
+                    ) : (
+                      <VideoGrid
+                        videos={favoriteRounds}
+                        showThumbnails={showThumbnails}
+                        topics={topics}
+                        videoContainerRef={videoContainerRef}
+                        favorites={favorites}
+                        onToggleFavorite={onToggleFavorite}
+                        onBadgeClick={onSearchChange}
+                        onHideVideo={onHideVideo}
+                        onUnhideVideo={onUnhideVideo}
+                        hiddenVideos={hiddenVideos}
+                        topPicks={topPicks}
+                        stacks={stacks}
+                        stacksEnabled={stackedPlaylists}
+                        showFullDate={true}
+                        showDescription={true}
+                      />
+                    )}
+                  </>
+                )}
+              </>
+            ) : viewMode === "list" ? (
               <VideoListRows
                 videos={currentVideos}
+                layout={browsingLectures ? "lecture" : selectedStyle ? "round" : undefined}
                 videoContainerRef={videoContainerRef}
                 favorites={favorites}
                 onToggleFavorite={onToggleFavorite}
@@ -416,6 +544,8 @@ export function LecturesVideoGridView({
                 topPicks={topPicks}
                 stacks={stacks}
                 stacksEnabled={stackedPlaylists}
+                showThumbnails={showThumbnails}
+                onSearch={onSearchChange}
               />
             ) : (
               <VideoGrid
@@ -471,7 +601,6 @@ export function LecturesVideoGridView({
             )}
           </>
         )}
-      </div>
-    </div>
+    </ResizableSidebarLayout>
   )
 }

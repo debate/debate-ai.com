@@ -133,13 +133,23 @@ inside the debounce dropped the edits to the one you left.
   trip, and `parseHtml`'s empty-vs-lost distinction
 - `apps/debate-ai.com/lib/reason-docs/__tests__/save-queue.test.ts` — every
   way the old shared timer lost work
+- `packages/debate-editor/test/status-notices.test.ts` — the unreadable-doc
+  notice's Download button (rendered only when a payload is attached,
+  survives a coalesced repeat, Blob/anchor download fires on click)
+- `packages/debate-editor/test/singleton.test.ts` — `sanitizeForFilename`'s
+  handling of path separators and other filename-unsafe characters
 
 ## Known gaps
 
-- The singleton refuses to save a document it couldn't read, which also means
-  work typed into that pane is discarded. The notice says so; a better answer
-  would be to offer the raw stored HTML for download so the user can salvage
-  it themselves.
+- ~~The singleton refuses to save a document it couldn't read, which also
+  means work typed into that pane is discarded.~~ Closed: `markUnreadable`
+  now attaches the raw HTML that failed to parse to the notice as a
+  `download` payload, and the notice panel renders a "Download" button next
+  to Copy/Dismiss that saves it as `unreadable-<key>.html` (`<key>` run
+  through `sanitizeForFilename`, since it's a free-form document title, not
+  already filename-safe). The server's stored copy is still untouched and
+  still the one thing to trust — this only rescues whatever was in the pane
+  that would otherwise just be discarded when the user navigates away.
 - Flow's speech docs ride the same embed and so inherit every guard here, but
   their own persistence (inside the `Flow` object, via `/api/flows`) has no
   equivalent per-document queue.

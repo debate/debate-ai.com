@@ -32,6 +32,13 @@ export interface VideoQueryParams {
   year?: string | null;
   /** Free-text search over title, channel and description. */
   q?: string | null;
+  /**
+   * Restrict to rows whose `tournament` field contains this substring
+   * (case-insensitive) — a narrower match than {@link q}, which also scans
+   * the title, channel and description and so can pull in videos that merely
+   * mention the tournament rather than belonging to it.
+   */
+  tournament?: string | null;
   /** Restrict to an explicit id list — used by the favourites-only filter. */
   ids?: string[] | null;
   /**
@@ -119,6 +126,12 @@ export function filterVideoRows(rows: VideoRow[], params: VideoQueryParams): Vid
     if (idSet && !idSet.has(row.videoId)) return false;
     if (excludeSet && excludeSet.has(row.videoId)) return false;
     if (tokens.length && !tokens.every((token) => row.searchText.includes(token))) return false;
+    if (
+      params.tournament &&
+      !row.tournament?.toLowerCase().includes(params.tournament.toLowerCase())
+    ) {
+      return false;
+    }
     return true;
   });
 }

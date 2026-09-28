@@ -25,6 +25,7 @@ export {
   cleanUrl,
 } from "./extractors/citation-extractor";
 export { extractMarked, extractUnderlined } from "./extractors/text-extractor";
+export { extractSourceUrl, parseCardRecord } from "./extractors/card-record";
 export { finalizeCard, repairCards } from "./utils/card-utils";
 export { parseFileNameParts } from "./extractors/file-name-parser";
 export {
@@ -39,6 +40,8 @@ export type {
   DocxImportErrorCode,
   DocxImportFailure,
 } from "./parsers/docx-import";
+
+export type { CardRecordInput, ParsedCardRecord } from "./extractors/card-record";
 
 export type {
   Card,

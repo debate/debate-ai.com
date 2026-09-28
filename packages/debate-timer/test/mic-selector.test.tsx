@@ -70,6 +70,19 @@ async function renderHook() {
 }
 
 describe("useAudioDevices", () => {
+  it("does not throw when media devices are unavailable", async () => {
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: undefined,
+    });
+    const hook = await renderHook();
+    await flush(() => hook.current.loadDevices());
+
+    expect(hook.current.error).toMatch(/HTTPS|localhost/);
+    expect(hook.current.hasPermission).toBe(false);
+    await hook.unmount();
+  });
+
   it("starts empty, idle, and without permission", async () => {
     const hook = await renderHook();
     expect(hook.current).toMatchObject({

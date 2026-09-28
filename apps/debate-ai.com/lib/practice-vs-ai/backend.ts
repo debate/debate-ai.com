@@ -11,6 +11,7 @@ import { NextResponse } from "next/server"
 import {
   createAnthropicModelClient,
   createGeminiModelClient,
+  createOpenAiModelClient,
   createPracticeVsAiBackend,
   type DebateActor,
   type ModelClient,
@@ -21,20 +22,29 @@ import { getSession } from "@/lib/auth/session"
 import { createPracticeVsAiStore } from "./store"
 
 /**
- * Pick a text-generation provider. Anthropic first, since that is the key
- * this app already holds; Gemini second, since it is what the Go server ran.
+ * Pick a text-generation provider. OpenRouter first, since it is the key
+ * this app holds by default; Anthropic second, since it is the key this app
+ * already held before; Gemini last, since it is what the Go server ran.
  * `null` keeps the round playable — the personas answer in character with
  * their "my systems are offline" lines, exactly as the Go server behaved
  * with no key configured.
  */
 function resolveModelClient(): ModelClient | null {
+  const openrouterKey = getEnv("OPENROUTER_API_KEY")
+  if (openrouterKey)
+    return createOpenAiModelClient({
+      apiKey: openrouterKey,
+      model: "anthropic/claude-sonnet-4.6",
+      baseUrl: "https://openrouter.ai/api/v1/chat/completions",
+    })
+
   const anthropicKey = getEnv("ANTHROPIC_API_KEY")
   if (anthropicKey) return createAnthropicModelClient({ apiKey: anthropicKey })
 
   const geminiKey = getEnv("GEMINI_API_KEY")
   if (geminiKey) return createGeminiModelClient({ apiKey: geminiKey })
 
-  console.warn("[practice-vs-ai] no ANTHROPIC_API_KEY or GEMINI_API_KEY; bot replies will be canned")
+  console.warn("[practice-vs-ai] no OPENROUTER_API_KEY, ANTHROPIC_API_KEY or GEMINI_API_KEY; bot replies will be canned")
   return null
 }
 

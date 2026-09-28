@@ -3,7 +3,7 @@
  * `checkAndAwardAutomaticBadges`.
  */
 import { describe, expect, it } from "vitest"
-import { computeGamificationAward, pointsForResult } from "../src/backend/gamification"
+import { advanceDailyStreak, computeGamificationAward, currentDisplayStreak, pointsForResult, utcDayKey } from "../src/backend/gamification"
 
 const profile = (over: Partial<{ score: number; badges: string[]; currentStreak: number }> = {}) => ({
   score: 0,
@@ -53,5 +53,52 @@ describe("computeGamificationAward", () => {
 
   it("treats a negative stored score as zero, as the Go code did", () => {
     expect(computeGamificationAward(profile({ score: -20 }), "loss").newScore).toBe(10)
+  })
+})
+
+describe("utcDayKey", () => {
+  it("formats an epoch timestamp as a UTC YYYY-MM-DD key", () => {
+    expect(utcDayKey(Date.UTC(2026, 0, 5, 23, 59, 59))).toBe("2026-01-05")
+  })
+})
+
+describe("advanceDailyStreak", () => {
+  it("starts a streak at 1 for the first round ever", () => {
+    expect(advanceDailyStreak(null, "2026-01-01", 0)).toBe(1)
+    expect(advanceDailyStreak(undefined, "2026-01-01", 0)).toBe(1)
+  })
+
+  it("leaves the streak unchanged for a second round the same day", () => {
+    expect(advanceDailyStreak("2026-01-05", "2026-01-05", 3)).toBe(3)
+  })
+
+  it("extends the streak by one on the very next calendar day", () => {
+    expect(advanceDailyStreak("2026-01-05", "2026-01-06", 3)).toBe(4)
+  })
+
+  it("restarts the streak at 1 after a missed day", () => {
+    expect(advanceDailyStreak("2026-01-01", "2026-01-05", 4)).toBe(1)
+  })
+
+  it("carries a streak across a UTC month boundary", () => {
+    expect(advanceDailyStreak("2026-01-31", "2026-02-01", 2)).toBe(3)
+  })
+})
+
+describe("currentDisplayStreak", () => {
+  it("holds the stored streak while the last play was today", () => {
+    expect(currentDisplayStreak("2026-01-05", "2026-01-05", 5)).toBe(5)
+  })
+
+  it("holds the stored streak while the last play was yesterday (not yet lapsed)", () => {
+    expect(currentDisplayStreak("2026-01-04", "2026-01-05", 5)).toBe(5)
+  })
+
+  it("reports 0 once a day has been missed, without needing a write to reset it", () => {
+    expect(currentDisplayStreak("2026-01-01", "2026-01-05", 5)).toBe(0)
+  })
+
+  it("reports 0 when nothing has ever been played", () => {
+    expect(currentDisplayStreak(null, "2026-01-05", 0)).toBe(0)
   })
 })

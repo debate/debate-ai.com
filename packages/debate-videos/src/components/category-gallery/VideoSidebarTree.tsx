@@ -5,6 +5,7 @@
  *     -> College Debates / Policy / PF / LD / Greatest of All-Time /
  *        My Favorites (h2, plain links, all peers)
  *   Lectures (h1, expandable, heading-only) -> lecture categories (h2)
+ *   Watch History (h1, plain link) — a sibling row directly under Lectures
  *   Apps / Coaching / Research / Practice (h1, expandable) -> tool links
  *     — this trailing portion is `ToolNavTree`, shared with the non-video
  *       tool pages those links point to (see `ToolNavTree`'s file comment).
@@ -43,7 +44,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Clapperboard } from "lucide-react";
+import { Clapperboard, History } from "lucide-react";
 import { IconTrophy, IconLectures } from "../../ui/icons";
 import type { LectureCategoryFacet } from "../../types/videos";
 import { TreeItem } from "./TreeItem";
@@ -135,6 +136,7 @@ export function VideoSidebarTree({
   };
 
   const lecturesLink = SIDEBAR_VIDEO_LINKS_BY_ID.lectures;
+  const historyLink = SIDEBAR_VIDEO_LINKS_BY_ID.history;
   const lecturesActive = activeId === "lectures";
   // The "Lectures" heading itself only lights up via `activeId`, matching
   // "Round Videos" never highlighting either — but the category rows below it
@@ -168,15 +170,24 @@ export function VideoSidebarTree({
           />
         ))}
 
-        <TreeItem
-          level={2}
-          href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
-          title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
-          count={counts?.favorites}
-          isActive={activeId === "favorites"}
-          icon={IconTrophy}
-        />
-      </TreeItem>
+      <TreeItem
+        level={2}
+        href={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.href}
+        title={SIDEBAR_VIDEO_LINKS_BY_ID.favorites.title}
+        count={counts?.favorites}
+        isActive={activeId === "favorites"}
+        icon={IconTrophy}
+      />
+
+      <TreeItem
+        level={2}
+        href={SIDEBAR_VIDEO_LINKS_BY_ID.history.href}
+        title={SIDEBAR_VIDEO_LINKS_BY_ID.history.title}
+        count={counts?.history}
+        isActive={activeId === "history"}
+        icon={History}
+      />
+    </TreeItem>
 
       {lectureCategoryItems.length > 0 ? (
         <TreeItem

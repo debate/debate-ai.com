@@ -108,7 +108,7 @@ function isDocumentRequest(request: Request, url: URL): boolean {
 }
 
 /**
- * Speculative fetches the browser makes on its own behalf: `<link
+ * Speculative fetches the browser makes on its behalf: `<link
  * rel="prefetch">` (which vinext's router injects for in-viewport links when
  * the RSC navigator is unavailable) and Speculation Rules prerenders.
  *
@@ -122,6 +122,13 @@ function isDocumentRequest(request: Request, url: URL): boolean {
  * the console. Declining to call `respondWith` leaves prefetches to the
  * browser, where a failure is silently discarded the way it is with no
  * service worker at all.
+ *
+ * Resource `<link rel="preload">` requests are excluded here too: Chrome
+ * can assign them to a previous service worker's cache "world" when the
+ * worker updates mid-load, surfacing as "cross-world service worker
+ * resource mismatch" and a preload-not-used warning. Passing them through
+ * keeps them on the browser's native path where they always resolve
+ * correctly.
  */
 function isSpeculativeRequest(request: Request): boolean {
   // `Sec-Purpose: prefetch` (current) / `Purpose: prefetch` (legacy) are set
@@ -205,6 +212,14 @@ function networkError(request: Request, err: unknown): Response {
 
 async function onFetch(event: FetchEvent): Promise<Response> {
   const url = new URL(event.request.url);
+
+  // Never cache or short-circuit preload/prefetch requests: they must
+  // always travel the browser's native path. A preload answered by a
+  // previous service worker build becomes a cross-world orphan when
+  // the worker swaps mid-load (Chrome warns: "resource mismatch").
+  if (isSpeculativeRequest(event.request)) {
+    return fetch(event.request);
+  }
 
   // Network-first for documents, RSC payloads and API routes (fresh data when
   // online, cached copy only as an offline fallback).

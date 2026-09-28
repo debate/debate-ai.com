@@ -5,6 +5,7 @@ import {
   buildSpeechSendPreview,
   isValidSpeechSendLogEntry,
   MAX_SPEECH_SEND_LOG_ENTRIES,
+  mergeSpeechSendLogEntries,
   removeSpeechSendLogEntry,
   sanitizeSpeechSendLog,
 } from "../src/editor/speech-send-log";
@@ -82,6 +83,39 @@ describe("appendSpeechSendLogEntry", () => {
     const log = [entry("a")];
     appendSpeechSendLogEntry(log, entry("b"));
     expect(log).toEqual([entry("a")]);
+  });
+});
+
+describe("mergeSpeechSendLogEntries", () => {
+  it("positions a remote entry older than existing local entries before them, not appended after", () => {
+    const log = [entry("a", 100), entry("b", 200)];
+    const merged = mergeSpeechSendLogEntries(log, [entry("remote", 50)]);
+    expect(merged).toEqual([entry("remote", 50), entry("a", 100), entry("b", 200)]);
+  });
+
+  it("interleaves multiple new entries into overall chronological order", () => {
+    const log = [entry("a", 100), entry("c", 300)];
+    const merged = mergeSpeechSendLogEntries(log, [entry("d", 400), entry("b", 200)]);
+    expect(merged).toEqual([entry("a", 100), entry("b", 200), entry("c", 300), entry("d", 400)]);
+  });
+
+  it("evicts down to max by sentAt, keeping the chronologically newest regardless of array position", () => {
+    const log = [entry("a", 100), entry("b", 200)];
+    const merged = mergeSpeechSendLogEntries(log, [entry("old", 1)], 2);
+    expect(merged).toEqual([entry("a", 100), entry("b", 200)]);
+  });
+
+  it("does not mutate the input arrays", () => {
+    const log = [entry("a", 100)];
+    const newEntries = [entry("b", 50)];
+    mergeSpeechSendLogEntries(log, newEntries);
+    expect(log).toEqual([entry("a", 100)]);
+    expect(newEntries).toEqual([entry("b", 50)]);
+  });
+
+  it("is a no-op when there are no new entries", () => {
+    const log = [entry("a", 100), entry("b", 200)];
+    expect(mergeSpeechSendLogEntries(log, [])).toEqual(log);
   });
 });
 

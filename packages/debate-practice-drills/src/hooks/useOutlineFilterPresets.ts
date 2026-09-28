@@ -23,16 +23,27 @@
  * listener yet" Known gap, and the matching one `state/live-update.ts`'s doc
  * comment named for this hook.
  *
+ * `addPreset`/`removePreset` sync a single `addOutlineFilterPreset`/
+ * `removeOutlineFilterPreset` op (`saveOutlineFilterPresetOp`) rather than
+ * ever PUTting a whole-list `outlineFilterPresets` replace — so two
+ * tabs/devices editing presets at once both land instead of the second PUT
+ * silently dropping the first tab's change, mirroring
+ * `hooks/useWordLimitPresets.ts`'s same fix. See
+ * `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`'s docstring and
+ * `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * Known gaps.
+ *
  * @module hooks/useOutlineFilterPresets
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchUserSettings, saveUserSettings } from "debate-round/src/round/user-settings-client";
+import { fetchUserSettings, saveOutlineFilterPresetOp } from "debate-round/src/round/user-settings-client";
 import {
   isValidOutlineFilterPresetsList,
   MAX_OUTLINE_FILTER_PRESETS,
   normalizeOutlineFilterPresetName,
   type OutlineFilterPreset,
+  type OutlineFilterPresetOp,
 } from "debate-round/src/state/outlineFilterPresets";
 import type { ArgumentTreeFilter } from "debate-round/src/flow/argument-tree";
 
@@ -98,8 +109,12 @@ function ensureRemoteLoaded(): Promise<void> {
 export type UseOutlineFilterPresetsResult = {
   presets: OutlineFilterPreset[];
   loaded: boolean;
-  /** Adds a preset. Fails (returns `false`) if the name is a duplicate or the list is already at capacity. */
-  addPreset: (name: string, filter: ArgumentTreeFilter) => boolean;
+  /**
+   * Adds a preset. Fails (returns `false`) if the name is a duplicate or the
+   * list is already at capacity. `roundId`, when given, records which
+   * round's outline the preset was saved from, so it can later be jumped to.
+   */
+  addPreset: (name: string, filter: ArgumentTreeFilter, roundId?: string) => boolean;
   removePreset: (name: string) => void;
 };
 
@@ -136,36 +151,43 @@ export function useOutlineFilterPresets(): UseOutlineFilterPresetsResult {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const persist = useCallback((next: OutlineFilterPreset[]) => {
+  // Applies a change to local state/storage; `syncOp` below decides how that
+  // change reaches the account.
+  const persistLocal = useCallback((next: OutlineFilterPreset[]) => {
     setPresets(next);
     writeLocal(next);
     window.dispatchEvent(new Event(CHANGE_EVENT));
-    if (remoteAvailable) {
-      saveUserSettings({ outlineFilterPresets: next }).catch(() => {
-        // Best-effort — the change already applied locally above, matching
-        // useWordLimitPresets's "local apply is never blocked by a sync
-        // failure" convention.
-      });
-    }
+  }, []);
+
+  const syncOp = useCallback((op: OutlineFilterPresetOp) => {
+    if (!remoteAvailable) return;
+    saveOutlineFilterPresetOp(op).catch(() => {
+      // Best-effort — the change already applied locally above, matching
+      // useWordLimitPresets's "local apply is never blocked by a sync
+      // failure" convention.
+    });
   }, []);
 
   const addPreset = useCallback(
-    (name: string, filter: ArgumentTreeFilter) => {
+    (name: string, filter: ArgumentTreeFilter, roundId?: string) => {
       const normalized = normalizeOutlineFilterPresetName(name);
       if (presets.some((preset) => normalizeOutlineFilterPresetName(preset.name) === normalized)) return false;
       if (presets.length >= MAX_OUTLINE_FILTER_PRESETS) return false;
-      persist([...presets, { name: name.trim(), filter }]);
+      const trimmedName = name.trim();
+      persistLocal([...presets, { name: trimmedName, filter, ...(roundId ? { roundId } : {}) }]);
+      syncOp({ addOutlineFilterPreset: { name: trimmedName, filter, ...(roundId ? { roundId } : {}) } });
       return true;
     },
-    [presets, persist],
+    [presets, persistLocal, syncOp],
   );
 
   const removePreset = useCallback(
     (name: string) => {
       const normalized = normalizeOutlineFilterPresetName(name);
-      persist(presets.filter((preset) => normalizeOutlineFilterPresetName(preset.name) !== normalized));
+      persistLocal(presets.filter((preset) => normalizeOutlineFilterPresetName(preset.name) !== normalized));
+      syncOp({ removeOutlineFilterPreset: name });
     },
-    [presets, persist],
+    [presets, persistLocal, syncOp],
   );
 
   return { presets, loaded, addPreset, removePreset };

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq, inArray } from "drizzle-orm";
-import { getAdminAccess } from "@/lib/auth/admin";
+import { getStaffAccess } from "@/lib/auth/admin";
+import { chunkBoundParams } from "@/lib/database/bound-params";
 import { getDBFromContext } from "@/lib/database/context";
+import { chunkStatements } from "@/lib/database/query-budget";
 import { youtubeRoundVideos, type YoutubeRoundVideo } from "@/lib/database/schema";
 import { publishRoundVideos } from "@/lib/videos/publish-round-video";
 
@@ -12,8 +14,8 @@ import { publishRoundVideos } from "@/lib/videos/publish-round-video";
  * counterpart to the per-video publish action.
  */
 export async function POST(req: NextRequest) {
-  const { isAdmin } = await getAdminAccess();
-  if (!isAdmin) {
+  const { canEditContent } = await getStaffAccess();
+  if (!canEditContent) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -37,12 +39,17 @@ export async function POST(req: NextRequest) {
   }
 
   const published = await publishRoundVideos(db, rows);
-  await db.delete(youtubeRoundVideos).where(
-    inArray(
-      youtubeRoundVideos.id,
-      rows.map((row: YoutubeRoundVideo) => row.id),
-    ),
+  // Cleared in chunks for the same reason the publish reads in chunks: the
+  // `id IN (...)` list binds one D1 parameter per queued round, and the whole
+  // point of this endpoint is a queue too long to name in one statement. Those
+  // chunks then go out in batches, so clearing the queue costs a handful of
+  // D1 queries rather than one per hundred rounds — see
+  // `lib/database/query-budget.ts`.
+  const queuedIds: string[] = rows.map((row: YoutubeRoundVideo) => row.id);
+  const clears = chunkBoundParams<string>(queuedIds).map((idChunk) =>
+    db.delete(youtubeRoundVideos).where(inArray(youtubeRoundVideos.id, idChunk)),
   );
+  for (const batch of chunkStatements(clears)) await db.batch(batch);
 
   return NextResponse.json({ ok: true, published });
 }

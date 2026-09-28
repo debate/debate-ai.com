@@ -9,7 +9,7 @@
  * @module lib/videos/video-repository
  */
 
-import { and, asc, count, desc, eq, inArray, isNotNull, isNull, notInArray, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, inArray, isNotNull, isNull, notInArray, sql, type SQL } from "drizzle-orm";
 import { videos } from "@/lib/database/schema";
 import { getDBFromContext } from "@/lib/database/context";
 import {
@@ -21,6 +21,7 @@ import {
 } from "debate-data-sync/src/videos/video-rows";
 import {
   clampPageSize,
+  MAX_VIDEO_PAGE_SIZE,
   computeLectureCategories,
   computeVideoFacets,
   computeVideoSuggestions,
@@ -36,7 +37,19 @@ import {
   type VideoQueryParams,
   type VideoSuggestions,
 } from "debate-data-sync/src/videos/video-query";
+import {
+  VIDEO_INDEX_FORMAT_VERSION,
+  videoRowToIndexTuple,
+  type VideoIndexResponse,
+} from "debate-data-sync/src/videos/video-index";
 import { getVideoRowsFromJson } from "./video-json-source";
+import {
+  legacyVideoRouteHref,
+  previousVideoRouteHref,
+  slugifyVideoTitle,
+  videoRouteHref,
+  type VideoType,
+} from "debate-videos";
 
 /** Which backend answered a request — surfaced for debugging. */
 export type VideoBackend = "sql" | "json";
@@ -144,6 +157,9 @@ function buildConditions(
   if (params.lecturesOnly) conditions.push(isNull(videos.style));
   if (params.topPicksOnly) conditions.push(eq(videos.isTopPick, true));
   if (params.categoryKey) conditions.push(eq(videos.categoryKey, params.categoryKey));
+  if (params.tournament) {
+    conditions.push(sql`${videos.tournament} LIKE ${likePattern(params.tournament)} ESCAPE '\\'`);
+  }
   if (!options.skipStyle && params.style != null) {
     conditions.push(eq(videos.style, params.style));
   }
@@ -439,6 +455,82 @@ export async function getVideoMeta(): Promise<VideoMeta> {
   };
 }
 
+/**
+ * Builds the whole-library index the client caches in `localStorage`, or the
+ * slice of it that changed since the client last asked.
+ *
+ * The delta is the point of the `since` cursor: the library is thousands of
+ * rows and a megabyte of JSON, and on almost every page load the honest
+ * answer to "what changed?" is "nothing". Only the SQL backend can answer it
+ * — the JSON assets carry no per-row timestamp — so the JSON fallback returns
+ * the whole library with `partial: false`, and the client replaces its cache
+ * rather than merging a delta that was never computed.
+ *
+ * Deletions are not tracked row by row. `total` is the library's true size,
+ * so a client whose merged cache is larger (or smaller) than that knows it
+ * has drifted and refetches in full. That costs one extra request on the rare
+ * page load after a video is pulled, and saves a tombstone table.
+ *
+ * What moves `updated_at`, and so what a delta carries: the seed's upsert
+ * (which stamps every row it writes, so a re-seed makes the next delta the
+ * whole library — correct, just not minimal), a view-count resync, and the
+ * admin library's edits. The weekly availability pass deliberately does not
+ * stamp it: availability is not part of the tuple the grid renders, and
+ * stamping it would rewrite every row's timestamp once a week for a field no
+ * client reads.
+ *
+ * @param since - Epoch ms cursor from the client's last sync, or `null` for
+ *   a first, whole-library fetch.
+ * @returns See {@link VideoIndexResponse}.
+ */
+export async function getVideoIndex(since: number | null): Promise<VideoIndexResponse> {
+  // The cursor the client stores is generated here, before the read, so a row
+  // written *during* the read is picked up next time rather than skipped.
+  const syncedAt = Date.now();
+
+  const db = await tryGetDb();
+  if (db && (await isTableSeeded(db))) {
+    try {
+      const changedOnly = since !== null && Number.isFinite(since) && since > 0;
+      const [rows, totals] = await Promise.all([
+        changedOnly
+          ? db
+              .select()
+              .from(videos)
+              // `updated_at` is a second-resolution timestamp column, so the
+              // cursor is floored to whole seconds; a row written in the same
+              // second as the last sync comes back once more rather than
+              // being missed.
+              .where(gt(videos.updatedAt, new Date(Math.floor(since / 1000) * 1000)))
+          : db.select().from(videos),
+        db.select({ value: count() }).from(videos),
+      ]);
+
+      return {
+        version: VIDEO_INDEX_FORMAT_VERSION,
+        rows: (rows as VideoRow[]).map(videoRowToIndexTuple),
+        partial: changedOnly,
+        total: totals[0]?.value ?? 0,
+        syncedAt,
+        backend: "sql",
+      };
+    } catch (error) {
+      console.error("videos: SQL index query failed, falling back to JSON", error);
+      backendProbe = { ready: false, checkedAt: Date.now() };
+    }
+  }
+
+  const allRows = await getVideoRowsFromJson();
+  return {
+    version: VIDEO_INDEX_FORMAT_VERSION,
+    rows: allRows.map(videoRowToIndexTuple),
+    partial: false,
+    total: allRows.length,
+    syncedAt,
+    backend: "json",
+  };
+}
+
 /** Members of one stacked playlist, in display order. */
 export interface VideoStackPage {
   /** Stack members keyed by `stack_key`; a key with no members is omitted. */
@@ -514,6 +606,130 @@ export async function getVideoById(videoId: string): Promise<VideoTuple | null> 
   return page.videos[0] ?? null;
 }
 
+/** A YouTube video id: 11 characters of `[A-Za-z0-9_-]`. */
+const YOUTUBE_ID = /^[A-Za-z0-9_-]{11}$/;
+
+/**
+ * Fetches a single video by its old watch-page slug, `/videos/watch/<slug>`.
+ *
+ * Two generations of that slug are out in the world: `<title-slug>-<videoId>`
+ * (the id appended), and the bare `<title-slug>`. The id, when present, is
+ * the exact key. Otherwise the slug's longest words are searched for — the
+ * library's search text holds the title, and the title's words are all in
+ * the slug — and a candidate matches when its title slugifies to the slug.
+ *
+ * @param slug - The watch-page slug from the URL.
+ * @returns The video in UI tuple form, or `null` when nothing matches.
+ */
+export async function getVideoBySlug(slug: string): Promise<VideoTuple | null> {
+  const clean = slug.trim().replace(/\/+$/, "");
+  if (!clean) return null;
+
+  // The id is the last 11 characters, after the dash that joined it on. An
+  // id may itself hold dashes, so it cannot be found by splitting on them.
+  const idCandidate = clean.slice(-11);
+  if (clean.length > 12 && clean[clean.length - 12] === "-" && YOUTUBE_ID.test(idCandidate)) {
+    const byId = await getVideoById(idCandidate);
+    if (byId) return byId;
+  }
+  if (YOUTUBE_ID.test(clean)) {
+    const byId = await getVideoById(clean);
+    if (byId) return byId;
+  }
+
+  const target = clean.toLowerCase();
+  const words = target.split("-").filter(Boolean);
+  // Longer words first narrow the search the most; a handful is plenty.
+  const query = [...new Set(words)].sort((a, b) => b.length - a.length).slice(0, 6).join(" ");
+  const page = await getVideoPage({ source: "all", q: query, limit: MAX_VIDEO_PAGE_SIZE, offset: 0 });
+  return (
+    page.videos.find((v) => {
+      const titleSlug = slugifyVideoTitle(v[1] as string);
+      // The id-carrying slug clipped the title, so its title part is a prefix.
+      return titleSlug === target || (titleSlug.length > 0 && target.startsWith(`${titleSlug}-`));
+    }) ?? null
+  );
+}
+
+/** Most pages of one season a route lookup reads before giving up. */
+const MAX_ROUTE_LOOKUP_PAGES = 50;
+
+/**
+ * Fetches a single video by the segments of its path under `/videos`.
+ *
+ * Accepts the canonical path — `<season>/<tournament>/<round>/<teams>` for a
+ * round, with a fifth `<variant>` segment for its analysis or a part,
+ * `<season>/<event>/<matchup>` otherwise — and both older round paths (the
+ * three-segment one, and the four-segment one whose teams carried `vs` and
+ * the variant), so the caller can redirect a stale one. The segments are slugs,
+ * which the library's search text does not hold, so candidates are read by
+ * season and each one's path is rebuilt and compared; failing that, by the
+ * words of the last segment (a round whose path came from its title), and
+ * last by the whole library.
+ *
+ * @param segments - The path segments after `/videos`, in order.
+ * @returns The video in UI tuple form, or `null` when no video's current or
+ *   legacy path matches.
+ */
+export async function getVideoByRouteSegments(segments: string[]): Promise<VideoTuple | null> {
+  const clean = segments.map((segment) => decodeSegment(segment).toLowerCase()).filter(Boolean);
+  if (clean.length < 3 || clean.length > 5) return null;
+  const target = `/videos/${clean.join("/")}`;
+  // A video whose current path this is wins over one whose old path it was.
+  const matches = (videos: VideoTuple[]) =>
+    videos.find((v) => videoRouteHref(v as unknown as VideoType) === target) ??
+    videos.find((v) => previousVideoRouteHref(v as unknown as VideoType) === target) ??
+    videos.find((v) => legacyVideoRouteHref(v as unknown as VideoType) === target);
+
+  const [season] = clean;
+  // A season segment is a year, or `archive` for a video with no usable date,
+  // which a season filter cannot express.
+  const year = /^\d{4}$/.test(season) ? season : null;
+
+  /** Reads pages of one filter until a match or the end. */
+  const scan = async (params: { year?: string | null; q?: string | null }) => {
+    for (let pageIndex = 0; pageIndex < MAX_ROUTE_LOOKUP_PAGES; pageIndex++) {
+      const page = await getVideoPage({
+        source: "all",
+        ...params,
+        limit: MAX_VIDEO_PAGE_SIZE,
+        offset: pageIndex * MAX_VIDEO_PAGE_SIZE,
+      });
+      const found = matches(page.videos);
+      if (found) return found;
+      if (!page.hasMore) break;
+    }
+    return null;
+  };
+
+  if (year) {
+    const found = await scan({ year });
+    if (found) return found;
+  }
+
+  // A round whose path was read from its title carries the title's year,
+  // which need not be the season it is stored under. Its team names are in
+  // the title, though, and so in the search text; the whole library is the
+  // last resort, for a suffix word the title does not hold.
+  // The teams and any variant after them are the words that name the video.
+  const words = clean
+    .slice(clean.length > 3 ? 3 : -1)
+    .join("-")
+    .split("-")
+    .filter((word) => word && word !== "vs");
+  const query = [...new Set(words)].sort((a, b) => b.length - a.length).slice(0, 4).join(" ");
+  return (query ? await scan({ q: query }) : null) ?? (await scan({}));
+}
+
+/** URL-decodes one path segment, leaving a malformed escape as it came. */
+function decodeSegment(segment: string): string {
+  try {
+    return decodeURIComponent(segment).trim();
+  } catch {
+    return segment.trim();
+  }
+}
+
 /**
  * Fetches the videos shown under a video on its watch page.
  *
@@ -539,7 +755,9 @@ export async function getRelatedVideos(
   // Tournament names are prefixed with the year of the event; searching the
   // bare name keeps the rest of that bracket without excluding other years.
   const tournamentName = tournament ? stripTournamentYear(tournament) : null;
-  if (tournamentName) passes.push({ source: "all", q: tournamentName, sort: "Recency" });
+  if (tournamentName) {
+    passes.push({ source: "all", tournament: tournamentName, sort: "Recency" });
+  }
   if (typeof style === "number") passes.push({ source: "all", style, sort: "Recency" });
   if (typeof style === "string") {
     passes.push({ source: "all", categoryKey: normalizeCategoryKey(style), sort: "Recency" });

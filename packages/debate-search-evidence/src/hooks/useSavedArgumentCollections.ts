@@ -14,6 +14,14 @@
  * "Save current selection" reads `activeTags` back out and stores it here
  * under a new name.
  *
+ * Every add/remove/rename/tags-update syncs a single op
+ * (`sendSavedArgumentCollectionOp`) rather than ever PUTting a whole-list
+ * `savedArgumentCollections` replace — so two tabs/devices editing saved
+ * collections at once both land instead of the second PUT silently dropping
+ * the first tab's change. See
+ * `lib/argument-library-collections.ts#applySavedArgumentCollectionOp`'s
+ * docstring.
+ *
  * Also subscribes to the browser's `storage` event (via
  * `isSavedArgumentCollectionsLiveUpdateStorageEvent`) so a *different*
  * browser tab saving, renaming, updating, or removing a collection refreshes
@@ -27,7 +35,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchSavedArgumentCollections, saveSavedArgumentCollections } from "../lib/argument-library-collections-client";
+import { fetchSavedArgumentCollections, sendSavedArgumentCollectionOp } from "../lib/argument-library-collections-client";
 import {
   isValidSavedArgumentCollectionsList,
   normalizeSavedArgumentCollectionName,
@@ -35,6 +43,7 @@ import {
   validateSavedArgumentCollectionRename,
   validateSavedArgumentCollectionTagsUpdate,
   type SavedArgumentCollection,
+  type SavedArgumentCollectionOp,
   type SavedArgumentCollectionSaveFailure,
 } from "../lib/argument-library-collections";
 
@@ -140,12 +149,20 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const persist = useCallback((next: SavedArgumentCollection[]) => {
+  // Applies a locally-validated change to local state/storage immediately,
+  // then best-effort syncs it to the account as a single op resolved
+  // server-side against the row's *current* stored value — never a
+  // whole-list replace of `next`, which is this browser's own snapshot and
+  // may already be stale by the time the PUT lands (the race
+  // `packages/debate-help-docs/content/docs/features/argument-library-collections.mdx`'s
+  // Known gaps named). Mirrors `useFavoriteTools.ts`'s `persistLocal`/`syncOp`
+  // split.
+  const persist = useCallback((next: SavedArgumentCollection[], op: SavedArgumentCollectionOp) => {
     setCollections(next);
     writeLocal(next);
     window.dispatchEvent(new Event(CHANGE_EVENT));
     if (remoteAvailable) {
-      saveSavedArgumentCollections(next).catch(() => {
+      sendSavedArgumentCollectionOp(op).catch(() => {
         // Best-effort — the change already applied locally above, matching
         // useOutlineFilterPresets's "local apply is never blocked by a sync
         // failure" convention.
@@ -157,7 +174,8 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
     (name: string, tags: string[]) => {
       const failure = validateNewSavedArgumentCollection(collections, name, tags);
       if (failure) return failure;
-      persist([...collections, { name: name.trim(), tags }]);
+      const trimmedName = name.trim();
+      persist([...collections, { name: trimmedName, tags }], { addSavedArgumentCollection: { name: trimmedName, tags } });
       return null;
     },
     [collections, persist],
@@ -166,7 +184,10 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
   const removeCollection = useCallback(
     (name: string) => {
       const normalized = normalizeSavedArgumentCollectionName(name);
-      persist(collections.filter((collection) => normalizeSavedArgumentCollectionName(collection.name) !== normalized));
+      persist(
+        collections.filter((collection) => normalizeSavedArgumentCollectionName(collection.name) !== normalized),
+        { removeSavedArgumentCollection: name },
+      );
     },
     [collections, persist],
   );
@@ -182,6 +203,7 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
             ? { ...collection, name: newName.trim() }
             : collection,
         ),
+        { renameSavedArgumentCollection: { oldName, newName } },
       );
       return null;
     },
@@ -197,6 +219,7 @@ export function useSavedArgumentCollections(): UseSavedArgumentCollectionsResult
         collections.map((collection) =>
           normalizeSavedArgumentCollectionName(collection.name) === normalized ? { ...collection, tags } : collection,
         ),
+        { updateSavedArgumentCollectionTags: { name, tags } },
       );
       return null;
     },

@@ -244,12 +244,67 @@ panels/JudgeDecisionPanel.tsx                    — "Multi-judge panel" section
 
 Vitest-covered: `packages/debate-round/test/judge-decision-panel.test.ts`
 (`combineJudgePanelDecisions` — throws below 2 results, majority winner,
-split tie, unanimity, key-voting-issue union/de-dup). The grouping and UI
-wiring (`buildJudgeDecisionHistoryItems`, the panel's own state) follow
-this doc's existing "intentionally untested" convention for
-`localStorage`-backed hooks and their UI, though `buildJudgeDecisionHistoryItems`
-itself is a pure function a future slice could cover directly if it grows
-more edge cases.
+split tie, unanimity, key-voting-issue union/de-dup); `buildJudgeDecisionHistoryItems`
+itself now also has direct coverage in
+`packages/debate-practice-drills/test/judgeDecisions.test.ts` (see "Rubric
+agreement breakdown" below). The panel's own UI state remains
+intentionally untested, matching this doc's existing convention for
+`localStorage`-backed hooks and their UI.
+
+### Rubric agreement breakdown
+
+Closes this doc's own Known gap — the fresh next-step named once the panel
+mode above shipped: "letting a panel run reuse each paradigm's own scoring
+rubric via `buildJudgeDecisionRubric` to show a rubric-based agreement
+breakdown, not just the raw winner/`keyVotingIssues` union." The combined
+decision above answers *who won*; it says nothing about how thoroughly the
+decision actually engaged each paradigm's own priorities — a unanimous
+5-0 panel that never mentioned four of five paradigms' top criteria reads
+identically to one that engaged every criterion, under the old summary.
+
+`round/judge-decision-panel.ts`'s new `buildJudgePanelRubricAgreement`
+reuses the existing, already-Vitest-covered `buildJudgeDecisionRubric`
+(`round/judge-decision-ai.ts`) once per paradigm in the panel — no new
+scoring logic — and sums the result: each paradigm's own
+addressed/total count (`perParadigm`), plus an overall
+`totalAddressed`/`totalCriteria`/`agreementRate` across the whole panel.
+Throws below 2 entries, mirroring `combineJudgePanelDecisions`.
+
+Wiring a `JudgeDecisionRecord`'s stored `paradigmName` (a display string,
+not a `JudgeParadigmId`) back to the full `JudgeParadigm` object
+`buildJudgeDecisionRubric` needs (for its `votingPriorities`) needed a new
+`getJudgeParadigmByName` in `debate-speech-writer`'s `judge-paradigms.ts`,
+an exact-match lookup against `listJudgeParadigms()`. This only ever
+resolves a built-in paradigm — a custom paradigm's `"Custom: <judge name>"`
+label never matches — which is fine here since the multi-judge panel's
+checkboxes only ever offer the six built-ins.
+
+`state/judgeDecisions.ts`'s `buildJudgeDecisionHistoryItems` now resolves
+every batch member's paradigm by name and, when 2 or more resolve, attaches
+the breakdown as each panel `JudgeDecisionHistoryItem`'s new
+`rubricAgreement` field (`null` otherwise — defensive, not expected to
+happen through the current UI). `JudgeDecisionPanel.tsx`'s panel-run card
+shows an overall "X/Y rubric criteria addressed (Z%)" badge next to the
+existing winner/Unanimous badges, plus a "Rubric agreement" section
+listing each paradigm's own criteria with a ✓/✗ per row.
+
+```
+round/judge-decision-panel.ts (debate-round)          — buildJudgePanelRubricAgreement (pure)
+debate-speech-writer/src/judge/judge-paradigms.ts     — getJudgeParadigmByName
+state/judgeDecisions.ts                               — rubricAgreement on each panel history item
+panels/JudgeDecisionPanel.tsx                          — "Rubric agreement" section + summary badge
+```
+
+Vitest-covered: `packages/debate-speech-writer/test/judge-paradigms.test.ts`
+(`getJudgeParadigmByName` — exact match, unknown/custom names, case
+sensitivity); `packages/debate-round/test/judge-decision-panel.test.ts`
+(`buildJudgePanelRubricAgreement` — throws below 2 entries, per-paradigm
+and overall counts, zero-criteria division guard);
+`packages/debate-practice-drills/test/judgeDecisions.test.ts`
+(`buildJudgeDecisionHistoryItems` — a resolvable panel gets a non-null
+breakdown, an unresolvable paradigm name falls back to `null`, a lone
+single decision has no `rubricAgreement` at all since it isn't a panel
+item).
 
 **Known gap:** a panel run always judges every selected paradigm against
 the round's *current* saved flow summary and the side names typed into the
@@ -306,9 +361,11 @@ above in the same `live-update.test.ts` file.
   `judgeParadigmSelections` collection (see
   [Tool Data Sync](tool-data-sync.md)); a signed-out browser still keeps them
   in `localStorage` only.
-- The multi-judge panel mode above closes idea #5's remaining named
+- ~~The multi-judge panel mode above closes idea #5's remaining named
   next-step. No further follow-up is currently tracked for this idea; a
   future run should pick a fresh next-step (e.g. letting a panel run
   reuse each paradigm's own scoring rubric via `buildJudgeDecisionRubric`
   to show a rubric-based agreement breakdown, not just the raw
-  winner/keyVotingIssues union) if one becomes worth doing.
+  winner/keyVotingIssues union) if one becomes worth doing.~~ Closed: see
+  "Rubric agreement breakdown" above. No further follow-up is currently
+  tracked for idea #5.

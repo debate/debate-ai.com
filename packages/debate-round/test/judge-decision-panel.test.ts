@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { combineJudgePanelDecisions, type JudgePanelParadigmResult } from "../src/round/judge-decision-panel";
+import {
+  buildJudgePanelRubricAgreement,
+  combineJudgePanelDecisions,
+  type JudgePanelParadigmDecision,
+  type JudgePanelParadigmResult,
+} from "../src/round/judge-decision-panel";
+import type { JudgeDecisionAiResult } from "../src/round/judge-decision-ai";
 
 function resultFor(paradigmName: string, winner: "primary" | "secondary", keyVotingIssues: string[]): JudgePanelParadigmResult {
   return {
@@ -55,5 +61,80 @@ describe("combineJudgePanelDecisions", () => {
     ]);
 
     expect(combined.keyVotingIssues).toEqual(["Dropped disad", "Framework", "Net benefits"]);
+  });
+});
+
+const PARADIGM_A = {
+  id: "custom" as const,
+  name: "Paradigm A",
+  description: "Test paradigm A.",
+  votingPriorities: ["Alpha criterion", "Beta criterion"],
+  speedTolerance: "medium" as const,
+  jargonTolerance: "medium" as const,
+  instructions: "Judge under paradigm A.",
+};
+
+const PARADIGM_B = {
+  id: "custom" as const,
+  name: "Paradigm B",
+  description: "Test paradigm B.",
+  votingPriorities: ["Gamma criterion"],
+  speedTolerance: "medium" as const,
+  jargonTolerance: "medium" as const,
+  instructions: "Judge under paradigm B.",
+};
+
+function decisionResultFor(keyVotingIssues: string[], rationale: string): JudgeDecisionAiResult {
+  return { winner: "primary", keyVotingIssues, rationale };
+}
+
+describe("buildJudgePanelRubricAgreement", () => {
+  it("throws with fewer than 2 entries", () => {
+    const single: JudgePanelParadigmDecision[] = [
+      { paradigm: PARADIGM_A, result: decisionResultFor(["Something about alpha here"], "Nothing else was discussed.") },
+    ];
+    expect(() => buildJudgePanelRubricAgreement(single)).toThrow();
+    expect(() => buildJudgePanelRubricAgreement([])).toThrow();
+  });
+
+  it("builds each paradigm's own rubric and sums an overall addressed/total count", () => {
+    const agreement = buildJudgePanelRubricAgreement([
+      {
+        paradigm: PARADIGM_A,
+        result: decisionResultFor(["Something about alpha here"], "Nothing else was discussed."),
+      },
+      {
+        paradigm: PARADIGM_B,
+        result: decisionResultFor(["Gamma won it clearly"], "Nothing else mattered."),
+      },
+    ]);
+
+    expect(agreement.perParadigm).toHaveLength(2);
+
+    const [breakdownA, breakdownB] = agreement.perParadigm;
+    expect(breakdownA!.paradigmName).toBe("Paradigm A");
+    expect(breakdownA!.totalCount).toBe(2);
+    expect(breakdownA!.addressedCount).toBe(1);
+    expect(breakdownA!.rubric.map((row) => row.criterion)).toEqual(["Alpha criterion", "Beta criterion"]);
+
+    expect(breakdownB!.paradigmName).toBe("Paradigm B");
+    expect(breakdownB!.totalCount).toBe(1);
+    expect(breakdownB!.addressedCount).toBe(1);
+
+    expect(agreement.totalAddressed).toBe(2);
+    expect(agreement.totalCriteria).toBe(3);
+    expect(agreement.agreementRate).toBeCloseTo(2 / 3);
+  });
+
+  it("reports a 0 agreement rate rather than dividing by zero when no criteria exist", () => {
+    const noPriorities = { ...PARADIGM_A, votingPriorities: [] };
+    const agreement = buildJudgePanelRubricAgreement([
+      { paradigm: noPriorities, result: decisionResultFor([], "No priorities to check.") },
+      { paradigm: { ...PARADIGM_B, votingPriorities: [] }, result: decisionResultFor([], "None here either.") },
+    ]);
+
+    expect(agreement.totalCriteria).toBe(0);
+    expect(agreement.totalAddressed).toBe(0);
+    expect(agreement.agreementRate).toBe(0);
   });
 });

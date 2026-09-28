@@ -151,7 +151,7 @@ export function AiAnalysisSidebar({
   }
 
   return (
-    <div className="h-full flex flex-col p-4 space-y-4 bg-background">
+    <div className="h-full min-h-0 flex flex-col overflow-hidden p-4 space-y-4 bg-background">
       {/* Header with close button */}
       <div className="flex items-center justify-between">
         <h3 className="font-semibold">AI Analysis</h3>
@@ -214,7 +214,7 @@ export function AiAnalysisSidebar({
 
       {/* AI result display */}
       {aiResult && (
-        <div className="flex-1 overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <div className="prose prose-sm dark:prose-invert max-w-none">
             <pre className="whitespace-pre-wrap text-xs">{aiResult}</pre>
           </div>

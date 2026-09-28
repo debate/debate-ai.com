@@ -5,31 +5,52 @@ import { userSettings } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
 import {
   applyFavoriteToolOp,
+  applyOutlineFilterPresetOp,
+  applyWordLimitPresetOp,
+  buildOutlineFilterPresetFailureMessage,
+  buildWordLimitPresetFailureMessage,
   DEFAULT_FAVORITE_TOOLS,
+  DEFAULT_MY_TEAM_PROFILE_SYNC,
   DEFAULT_OUTLINE_FILTER_PRESETS,
   DEFAULT_THEME_SETTINGS,
   DEFAULT_USER_SETTINGS,
   DEFAULT_WORD_LIMIT_PRESETS,
   normalizeFavoriteToolOpPatch,
   normalizeFavoriteToolsPatch,
+  normalizeOutlineFilterPresetOpPatch,
   normalizeOutlineFilterPresetsPatch,
+  normalizeMyTeamProfilePatch,
   normalizeThemeSettingsPatch,
   normalizeUserSettingsPatch,
+  normalizeWordLimitPresetOpPatch,
   normalizeWordLimitPresetsPatch,
   parseFavoriteTools,
+  parseMyTeamProfile,
   parseOutlineFilterPresets,
   parseWordLimitPresets,
   serializeFavoriteTools,
+  serializeMyTeamProfile,
   serializeOutlineFilterPresets,
   serializeWordLimitPresets,
+  type MyTeamProfileSyncPayload,
   type OutlineFilterPreset,
   type ThemeMode,
   type UserSettingsPayload,
 } from "debate-round"
 import {
+  applyNewsLikedOp,
+  applyNewsReadOp,
+  applyQuestStreakFreezeOp,
+  applyQuestStreakMissionResultOp,
+  applyQuestStreakReminderOp,
   DEFAULT_NEWS_SYNC,
   DEFAULT_QUEST_STREAK_SYNC,
+  normalizeNewsLikedOpPatch,
+  normalizeNewsReadOpPatch,
   normalizeNewsSyncPatch,
+  normalizeQuestStreakFreezeOpPatch,
+  normalizeQuestStreakMissionResultOpPatch,
+  normalizeQuestStreakReminderOpPatch,
   normalizeQuestStreakSyncPatch,
   parseNewsIdList,
   parseQuestStreakSync,
@@ -38,14 +59,22 @@ import {
   type QuestStreakSyncPayload,
 } from "debate-community"
 import {
+  DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC,
   DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC,
+  normalizeBrainstormSessionTimerPatch,
   normalizeResearchProgressGoalPatch,
+  parseBrainstormSessionTimer,
   parseResearchProgressGoal,
+  serializeBrainstormSessionTimer,
   serializeResearchProgressGoal,
+  type BrainstormSessionTimerSyncPayload,
   type ResearchProgressGoalSyncPayload,
 } from "debate-team-collaboration"
 import {
+  applySavedArgumentCollectionOp,
+  buildSavedArgumentCollectionFailureMessage,
   DEFAULT_SAVED_ARGUMENT_COLLECTIONS,
+  normalizeSavedArgumentCollectionOpPatch,
   normalizeSavedArgumentCollectionsPatch,
   parseSavedArgumentCollections,
   serializeSavedArgumentCollections,
@@ -57,8 +86,8 @@ import {
   parseEditorPreferences,
   serializeEditorPreferences,
   type EditorPreferencesPayload,
-} from "@/lib/editor-preferences"
-import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "@/lib/recentTools"
+} from "debate-webview/lib/editor-preferences"
+import { applyRecentToolOp, normalizeRecentToolOpPatch, parseRecentTools, serializeRecentTools } from "debate-webview/lib/recentTools"
 import {
   DEFAULT_QUALIFICATION_POINTS_TABLE_SYNC,
   normalizeQualificationPointsTablePatch,
@@ -93,20 +122,38 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   value for any field with no saved row/value yet.
  * PUT  { debateStyle?, fontSize?, colorTheme?, themeMode?, favoriteTools?,
  *   addFavoriteTool?, removeFavoriteTool?, removeFavoriteTools?,
- *   recordRecentTool?, wordLimitPresets?, outlineFilterPresets?, newsRead?,
- *   newsLiked?, savedArgumentCollections?, researchProgressGoal?,
- *   questStreakSync?, qualificationPointsTable?, qualificationCutoff? } — validates and
+ *   recordRecentTool?, wordLimitPresets?, addWordLimitPreset?,
+ *   updateWordLimitPreset?, removeWordLimitPreset?, outlineFilterPresets?,
+ *   addOutlineFilterPreset?, removeOutlineFilterPreset?,
+ *   newsRead?, newsLiked?, recordNewsRead?, addNewsLiked?, removeNewsLiked?,
+ *   savedArgumentCollections?,
+ *   addSavedArgumentCollection?, removeSavedArgumentCollection?,
+ *   renameSavedArgumentCollection?, updateSavedArgumentCollectionTags?,
+ *   researchProgressGoal?, brainstormSessionTimer?, questStreakSync?,
+ *   recordStreakFreezeDayKey?, setLapseReminderEnabled?, recordMissionResultDay?,
+ *   qualificationPointsTable?, qualificationCutoff?, myTeamProfile? } — validates and
  *   upserts the given fields (validated by `debate-round`'s
  *   `normalizeUserSettingsPatch`/`normalizeThemeSettingsPatch`/
  *   `normalizeFavoriteToolsPatch`/`normalizeFavoriteToolOpPatch`/
- *   `normalizeWordLimitPresetsPatch`/`normalizeOutlineFilterPresetsPatch`,
+ *   `normalizeWordLimitPresetsPatch`/`normalizeWordLimitPresetOpPatch`/
+ *   `normalizeOutlineFilterPresetsPatch`,
  *   `debate-card-search`'s
- *   `normalizeNewsSyncPatch`/`normalizeSavedArgumentCollectionsPatch`/
+ *   `normalizeNewsSyncPatch`/`normalizeNewsReadOpPatch`/`normalizeNewsLikedOpPatch`/
+ *   `normalizeSavedArgumentCollectionsPatch`/
+ *   `normalizeSavedArgumentCollectionOpPatch`/
  *   `normalizeResearchProgressGoalPatch`/`normalizeQuestStreakSyncPatch`,
+ *   `debate-team-collaboration`'s `normalizeBrainstormSessionTimerPatch`
+ *   (the Team Brainstorm Assist session timer — see
+ *   `packages/debate-help-docs/content/docs/features/brainstorm-board.mdx`'s
+ *   Known gaps),
  *   and `debate-data-sync`'s
  *   `normalizeQualificationPointsTablePatch`/`normalizeQualificationCutoffPatch`
  *   (the Standings tab's custom point weights/cutoff — see
- *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps), the same option
+ *   `packages/debate-help-docs/content/docs/features/team-rankings.mdx`'s Known gaps),
+ *   and `debate-round`'s `normalizeMyTeamProfilePatch` (the Create Round
+ *   dialog's "My Team" quick-fill profile — see
+ *   `packages/debate-round/src/state/myTeamProfile.ts`'s "localStorage only"
+ *   header comment), the same option
  *   lists/shape the picker, favorite-star,
  *   word-limit-preset-manager, News Stream, Common Argument Library "saved
  *   collections", Research Progress "My research goal", and Quest Streaks
@@ -126,6 +173,68 @@ import type { QualificationPointsTable } from "debate-data-sync/src/rankings/ndc
  *   this app's own `lib/recentTools.ts#normalizeRecentToolOpPatch` (that
  *   field's app-specific rationale is in that file's header) and resolved
  *   against the row's current `recentTools` value the same way.
+ *   `addSavedArgumentCollection`/`removeSavedArgumentCollection`/
+ *   `renameSavedArgumentCollection`/`updateSavedArgumentCollectionTags` are
+ *   the same op-based fix for the equivalent "two tabs/devices edit saved
+ *   Argument Library collections at once" race a plain
+ *   `savedArgumentCollections` whole-list replace is exposed to — see
+ *   `argument-library-collections.ts#applySavedArgumentCollectionOp`'s
+ *   docstring and
+ *   `packages/debate-help-docs/content/docs/features/argument-library-collections.mdx`'s
+ *   Known gaps. Unlike the favorites ops, a collection op can fail a business
+ *   rule (duplicate name, at capacity, unknown collection, …), in which case
+ *   this route returns 400 with that failure's message instead of writing.
+ *   `savedArgumentCollections` itself is still accepted for a caller that
+ *   genuinely needs a whole-list replace, but `useSavedArgumentCollections.ts`
+ *   no longer sends one.
+ *   `addWordLimitPreset`/`updateWordLimitPreset`/`removeWordLimitPreset` are
+ *   the same op-based fix for the equivalent "two tabs/devices edit
+ *   word-limit presets at once" race a plain `wordLimitPresets` whole-list
+ *   replace is exposed to — see
+ *   `state/wordLimitPresets.ts#applyWordLimitPresetOp`'s docstring and
+ *   `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   Known gaps. Like the collection ops, an add/update op can fail a
+ *   business rule (duplicate name, at capacity, unknown preset), in which
+ *   case this route returns 400 with that failure's message instead of
+ *   writing. `wordLimitPresets` itself is still accepted for a caller that
+ *   genuinely needs a whole-list replace, but `useWordLimitPresets.ts` no
+ *   longer sends one.
+ *   `addOutlineFilterPreset`/`removeOutlineFilterPreset` are the same
+ *   op-based fix for the equivalent "two tabs/devices edit Outline filter
+ *   presets at once" race a plain `outlineFilterPresets` whole-list replace
+ *   is exposed to — see
+ *   `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`'s docstring
+ *   and `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ *   Known gaps. Like the word-limit-preset ops, an add op
+ *   can fail a business rule (duplicate name, at capacity, invalid filter),
+ *   in which case this route returns 400 with that failure's message
+ *   instead of writing. `outlineFilterPresets` itself is still accepted for
+ *   a caller that genuinely needs a whole-list replace, but
+ *   `useOutlineFilterPresets.ts` no longer sends one.
+ *   `recordNewsRead` is the same op-based fix, mirroring `recordRecentTool`,
+ *   for the equivalent "two tabs/devices mark different News Stream items
+ *   read at once" race a plain `newsRead` whole-list replace is exposed to —
+ *   see `news-stream-sync.ts#applyNewsReadOp`'s docstring and
+ *   `packages/debate-help-docs/content/docs/internals/news-stream.mdx`'s
+ *   Known gaps. `addNewsLiked`/`removeNewsLiked` are the same fix for
+ *   `newsLiked`, mirroring the favorite-tools add/remove ops. `newsRead`/
+ *   `newsLiked` themselves are still accepted for a caller that genuinely
+ *   needs a whole-list replace, but `useNewsStreamSync.ts` no longer sends
+ *   one.
+ *   `recordStreakFreezeDayKey`/`setLapseReminderEnabled` are the same
+ *   op-based fix for the equivalent "two tabs/devices spend a streak freeze,
+ *   or toggle the lapse reminder, at once" race a plain `questStreakSync`
+ *   whole-value replace is exposed to — see
+ *   `quest-streak-sync.ts#applyQuestStreakFreezeOp`/`applyQuestStreakReminderOp`'s
+ *   docstrings. `recordMissionResultDay` is the equivalent op for
+ *   `questStreakSync.missionResultDays` — a signed-in visitor's persisted
+ *   daily-mission-result history (`state/dailyMissionResults.ts`), upserted
+ *   server-side by `dayKey` rather than only appended, since a day's result
+ *   can flip from incomplete to complete later the same day — see
+ *   `quest-streak-sync.ts#applyQuestStreakMissionResultOp`'s docstring.
+ *   `questStreakSync` itself is still accepted for a caller that
+ *   genuinely needs a whole-value replace, but `useQuestStreakSync.ts` no
+ *   longer sends one.
  */
 
 type SettingsRow = {
@@ -142,9 +251,11 @@ type SettingsRow = {
   outlineFilterPresets: string | null
   savedArgumentCollections: string | null
   researchProgressGoal: string | null
+  brainstormSessionTimer: string | null
   questStreakSync: string | null
   qualificationPointsTable: string | null
   qualificationCutoff: string | null
+  myTeamProfile: string | null
 }
 
 type SettingsPayload = UserSettingsPayload & {
@@ -159,9 +270,11 @@ type SettingsPayload = UserSettingsPayload & {
   outlineFilterPresets: OutlineFilterPreset[]
   savedArgumentCollections: SavedArgumentCollection[]
   researchProgressGoal: ResearchProgressGoalSyncPayload | null
+  brainstormSessionTimer: BrainstormSessionTimerSyncPayload | null
   questStreakSync: QuestStreakSyncPayload | null
   qualificationPointsTable: QualificationPointsTable | null
   qualificationCutoff: QualificationCutoffSettings | null
+  myTeamProfile: MyTeamProfileSyncPayload | null
 }
 
 function toPayload(row: SettingsRow | undefined): SettingsPayload {
@@ -187,6 +300,9 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     researchProgressGoal: row?.researchProgressGoal
       ? parseResearchProgressGoal(row.researchProgressGoal)
       : DEFAULT_RESEARCH_PROGRESS_GOAL_SYNC.researchProgressGoal,
+    brainstormSessionTimer: row?.brainstormSessionTimer
+      ? parseBrainstormSessionTimer(row.brainstormSessionTimer)
+      : DEFAULT_BRAINSTORM_SESSION_TIMER_SYNC.brainstormSessionTimer,
     questStreakSync: row?.questStreakSync
       ? parseQuestStreakSync(row.questStreakSync)
       : DEFAULT_QUEST_STREAK_SYNC.questStreakSync,
@@ -196,6 +312,7 @@ function toPayload(row: SettingsRow | undefined): SettingsPayload {
     qualificationCutoff: row?.qualificationCutoff
       ? parseQualificationCutoff(row.qualificationCutoff)
       : DEFAULT_QUALIFICATION_CUTOFF_SYNC.qualificationCutoff,
+    myTeamProfile: row?.myTeamProfile ? parseMyTeamProfile(row.myTeamProfile) : DEFAULT_MY_TEAM_PROFILE_SYNC.myTeamProfile,
   }
 }
 
@@ -230,13 +347,23 @@ export async function PUT(req: NextRequest) {
   const favoriteToolOpResult = normalizeFavoriteToolOpPatch(body)
   const recentToolOpResult = normalizeRecentToolOpPatch(body)
   const wordLimitPresetsResult = normalizeWordLimitPresetsPatch(body)
+  const wordLimitPresetOpResult = normalizeWordLimitPresetOpPatch(body)
   const outlineFilterPresetsResult = normalizeOutlineFilterPresetsPatch(body)
+  const outlineFilterPresetOpResult = normalizeOutlineFilterPresetOpPatch(body)
   const savedArgumentCollectionsResult = normalizeSavedArgumentCollectionsPatch(body)
+  const savedArgumentCollectionOpResult = normalizeSavedArgumentCollectionOpPatch(body)
   const researchProgressGoalResult = normalizeResearchProgressGoalPatch(body)
+  const brainstormSessionTimerResult = normalizeBrainstormSessionTimerPatch(body)
   const questStreakSyncResult = normalizeQuestStreakSyncPatch(body)
+  const questStreakFreezeOpResult = normalizeQuestStreakFreezeOpPatch(body)
+  const questStreakReminderOpResult = normalizeQuestStreakReminderOpPatch(body)
+  const questStreakMissionResultOpResult = normalizeQuestStreakMissionResultOpPatch(body)
   const newsSyncResult = normalizeNewsSyncPatch(body)
+  const newsReadOpResult = normalizeNewsReadOpPatch(body)
+  const newsLikedOpResult = normalizeNewsLikedOpPatch(body)
   const qualificationPointsTableResult = normalizeQualificationPointsTablePatch(body)
   const qualificationCutoffResult = normalizeQualificationCutoffPatch(body)
+  const myTeamProfileResult = normalizeMyTeamProfilePatch(body)
   const editorPreferencesResult = normalizeEditorPreferencesPatch(
     (body as { editorPreferences?: unknown } | null)?.editorPreferences,
   )
@@ -248,13 +375,23 @@ export async function PUT(req: NextRequest) {
     ...favoriteToolOpResult.errors,
     ...recentToolOpResult.errors,
     ...wordLimitPresetsResult.errors,
+    ...wordLimitPresetOpResult.errors,
     ...outlineFilterPresetsResult.errors,
+    ...outlineFilterPresetOpResult.errors,
     ...savedArgumentCollectionsResult.errors,
+    ...savedArgumentCollectionOpResult.errors,
     ...researchProgressGoalResult.errors,
+    ...brainstormSessionTimerResult.errors,
     ...questStreakSyncResult.errors,
+    ...questStreakFreezeOpResult.errors,
+    ...questStreakReminderOpResult.errors,
+    ...questStreakMissionResultOpResult.errors,
     ...newsSyncResult.errors,
+    ...newsReadOpResult.errors,
+    ...newsLikedOpResult.errors,
     ...qualificationPointsTableResult.errors,
     ...qualificationCutoffResult.errors,
+    ...myTeamProfileResult.errors,
     ...editorPreferencesResult.errors,
   ]
 
@@ -269,19 +406,36 @@ export async function PUT(req: NextRequest) {
     favoriteToolOpResult.valid.removeFavoriteTools === undefined &&
     recentToolOpResult.valid.recordRecentTool === undefined &&
     wordLimitPresetsResult.valid.wordLimitPresets === undefined &&
+    wordLimitPresetOpResult.valid.addWordLimitPreset === undefined &&
+    wordLimitPresetOpResult.valid.updateWordLimitPreset === undefined &&
+    wordLimitPresetOpResult.valid.removeWordLimitPreset === undefined &&
     outlineFilterPresetsResult.valid.outlineFilterPresets === undefined &&
+    outlineFilterPresetOpResult.valid.addOutlineFilterPreset === undefined &&
+    outlineFilterPresetOpResult.valid.removeOutlineFilterPreset === undefined &&
     savedArgumentCollectionsResult.valid.savedArgumentCollections === undefined &&
+    savedArgumentCollectionOpResult.valid.addSavedArgumentCollection === undefined &&
+    savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection === undefined &&
+    savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection === undefined &&
+    savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags === undefined &&
     researchProgressGoalResult.valid.researchProgressGoal === undefined &&
+    brainstormSessionTimerResult.valid.brainstormSessionTimer === undefined &&
     questStreakSyncResult.valid.questStreakSync === undefined &&
+    questStreakFreezeOpResult.valid.recordStreakFreezeDayKey === undefined &&
+    questStreakReminderOpResult.valid.setLapseReminderEnabled === undefined &&
+    questStreakMissionResultOpResult.valid.recordMissionResultDay === undefined &&
     qualificationPointsTableResult.valid.qualificationPointsTable === undefined &&
     qualificationCutoffResult.valid.qualificationCutoff === undefined &&
+    myTeamProfileResult.valid.myTeamProfile === undefined &&
     Object.keys(newsSyncResult.valid).length === 0 &&
+    newsReadOpResult.valid.recordNewsRead === undefined &&
+    newsLikedOpResult.valid.addNewsLiked === undefined &&
+    newsLikedOpResult.valid.removeNewsLiked === undefined &&
     Object.keys(editorPreferencesResult.valid).length === 0
   ) {
     return NextResponse.json(
       {
         error:
-          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, outlineFilterPresets, savedArgumentCollections, researchProgressGoal, questStreakSync, qualificationPointsTable, qualificationCutoff, newsRead, newsLiked, or editorPreferences.",
+          "Provide at least one of debateStyle, fontSize, colorTheme, themeMode, favoriteTools, addFavoriteTool, removeFavoriteTool, removeFavoriteTools, recordRecentTool, wordLimitPresets, addWordLimitPreset, updateWordLimitPreset, removeWordLimitPreset, outlineFilterPresets, addOutlineFilterPreset, removeOutlineFilterPreset, savedArgumentCollections, addSavedArgumentCollection, removeSavedArgumentCollection, renameSavedArgumentCollection, updateSavedArgumentCollectionTags, researchProgressGoal, brainstormSessionTimer, questStreakSync, recordStreakFreezeDayKey, setLapseReminderEnabled, recordMissionResultDay, qualificationPointsTable, qualificationCutoff, myTeamProfile, newsRead, newsLiked, recordNewsRead, addNewsLiked, removeNewsLiked, or editorPreferences.",
       },
       { status: 400 },
     )
@@ -303,9 +457,11 @@ export async function PUT(req: NextRequest) {
     outlineFilterPresets?: string | null
     savedArgumentCollections?: string | null
     researchProgressGoal?: string | null
+    brainstormSessionTimer?: string | null
     questStreakSync?: string | null
     qualificationPointsTable?: string | null
     qualificationCutoff?: string | null
+    myTeamProfile?: string | null
   } = { ...valid }
   if (
     favoriteToolOpResult.valid.addFavoriteTool !== undefined ||
@@ -345,21 +501,172 @@ export async function PUT(req: NextRequest) {
       applyRecentToolOp(current, { recordRecentTool: recentToolOpResult.valid.recordRecentTool }),
     )
   }
-  if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
+  if (
+    outlineFilterPresetOpResult.valid.addOutlineFilterPreset !== undefined ||
+    outlineFilterPresetOpResult.valid.removeOutlineFilterPreset !== undefined
+  ) {
+    // An add/remove op is resolved against the row's *current* stored list
+    // rather than the caller's own copy — see this route's docstring and
+    // `state/outlineFilterPresets.ts#applyOutlineFilterPresetOp`. This
+    // closes the same lost-update race a plain `outlineFilterPresets`
+    // whole-list replace is exposed to that `wordLimitPresets`'s op-based
+    // patch above already fixed.
+    const [existing] = await db
+      .select({ outlineFilterPresets: userSettings.outlineFilterPresets })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.outlineFilterPresets
+      ? parseOutlineFilterPresets(existing.outlineFilterPresets)
+      : DEFAULT_OUTLINE_FILTER_PRESETS.outlineFilterPresets
+    const opName =
+      outlineFilterPresetOpResult.valid.addOutlineFilterPreset?.name ??
+      outlineFilterPresetOpResult.valid.removeOutlineFilterPreset ??
+      ""
+    const result = applyOutlineFilterPresetOp(current, outlineFilterPresetOpResult.valid)
+    if (result.failure) {
+      return NextResponse.json({ error: buildOutlineFilterPresetFailureMessage(result.failure, opName) }, { status: 400 })
+    }
+    dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(result.next)
+  } else if (outlineFilterPresetsResult.valid.outlineFilterPresets !== undefined) {
     dbPatch.outlineFilterPresets = serializeOutlineFilterPresets(outlineFilterPresetsResult.valid.outlineFilterPresets)
   }
-  if (savedArgumentCollectionsResult.valid.savedArgumentCollections !== undefined) {
+  if (
+    savedArgumentCollectionOpResult.valid.addSavedArgumentCollection !== undefined ||
+    savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection !== undefined ||
+    savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection !== undefined ||
+    savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags !== undefined
+  ) {
+    // An add/remove/rename/tags-update op is resolved against the row's
+    // *current* stored list rather than the caller's own copy — see this
+    // route's docstring and
+    // `argument-library-collections.ts#applySavedArgumentCollectionOp`. This
+    // closes the same lost-update race a plain `savedArgumentCollections`
+    // whole-list replace is exposed to that `favoriteTools`'s op-based patch
+    // above already fixed.
+    const [existing] = await db
+      .select({ savedArgumentCollections: userSettings.savedArgumentCollections })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.savedArgumentCollections
+      ? parseSavedArgumentCollections(existing.savedArgumentCollections)
+      : DEFAULT_SAVED_ARGUMENT_COLLECTIONS.savedArgumentCollections
+    const opName =
+      savedArgumentCollectionOpResult.valid.addSavedArgumentCollection?.name ??
+      savedArgumentCollectionOpResult.valid.removeSavedArgumentCollection ??
+      savedArgumentCollectionOpResult.valid.renameSavedArgumentCollection?.newName ??
+      savedArgumentCollectionOpResult.valid.updateSavedArgumentCollectionTags?.name ??
+      ""
+    const result = applySavedArgumentCollectionOp(current, savedArgumentCollectionOpResult.valid)
+    if (result.failure) {
+      return NextResponse.json(
+        { error: buildSavedArgumentCollectionFailureMessage(result.failure, opName) },
+        { status: 400 },
+      )
+    }
+    dbPatch.savedArgumentCollections = serializeSavedArgumentCollections(result.next)
+  } else if (savedArgumentCollectionsResult.valid.savedArgumentCollections !== undefined) {
     dbPatch.savedArgumentCollections = serializeSavedArgumentCollections(
       savedArgumentCollectionsResult.valid.savedArgumentCollections,
     )
   }
-  if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
+  if (
+    wordLimitPresetOpResult.valid.addWordLimitPreset !== undefined ||
+    wordLimitPresetOpResult.valid.updateWordLimitPreset !== undefined ||
+    wordLimitPresetOpResult.valid.removeWordLimitPreset !== undefined
+  ) {
+    // An add/update/remove op is resolved against the row's *current* stored
+    // list rather than the caller's own copy — see this route's docstring
+    // and `state/wordLimitPresets.ts#applyWordLimitPresetOp`. This closes
+    // the same lost-update race a plain `wordLimitPresets` whole-list
+    // replace is exposed to that `favoriteTools`'s op-based patch above
+    // already fixed.
+    const [existing] = await db
+      .select({ wordLimitPresets: userSettings.wordLimitPresets })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.wordLimitPresets
+      ? parseWordLimitPresets(existing.wordLimitPresets)
+      : DEFAULT_WORD_LIMIT_PRESETS.wordLimitPresets
+    const opName =
+      wordLimitPresetOpResult.valid.addWordLimitPreset?.name ??
+      wordLimitPresetOpResult.valid.updateWordLimitPreset?.name ??
+      wordLimitPresetOpResult.valid.removeWordLimitPreset ??
+      ""
+    const result = applyWordLimitPresetOp(current, wordLimitPresetOpResult.valid)
+    if (result.failure) {
+      return NextResponse.json({ error: buildWordLimitPresetFailureMessage(result.failure, opName) }, { status: 400 })
+    }
+    dbPatch.wordLimitPresets = serializeWordLimitPresets(result.next)
+  } else if (wordLimitPresetsResult.valid.wordLimitPresets !== undefined) {
     dbPatch.wordLimitPresets = serializeWordLimitPresets(wordLimitPresetsResult.valid.wordLimitPresets)
   }
   if (researchProgressGoalResult.valid.researchProgressGoal !== undefined) {
     dbPatch.researchProgressGoal = serializeResearchProgressGoal(researchProgressGoalResult.valid.researchProgressGoal)
   }
-  if (questStreakSyncResult.valid.questStreakSync !== undefined) {
+  if (brainstormSessionTimerResult.valid.brainstormSessionTimer !== undefined) {
+    dbPatch.brainstormSessionTimer = serializeBrainstormSessionTimer(
+      brainstormSessionTimerResult.valid.brainstormSessionTimer,
+    )
+  }
+  if (questStreakFreezeOpResult.valid.recordStreakFreezeDayKey !== undefined) {
+    // A single "spend a freeze on this day" op is resolved against the row's
+    // *current* stored `questStreakSync` value rather than the caller's own
+    // copy — see this route's docstring and
+    // `quest-streak-sync.ts#applyQuestStreakFreezeOp`. This closes the same
+    // lost-update race a plain `questStreakSync` whole-value replace is
+    // exposed to that `favoriteTools`'s op-based patch above already fixed.
+    const [existing] = await db
+      .select({ questStreakSync: userSettings.questStreakSync })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.questStreakSync
+      ? parseQuestStreakSync(existing.questStreakSync)
+      : DEFAULT_QUEST_STREAK_SYNC.questStreakSync
+    dbPatch.questStreakSync = serializeQuestStreakSync(
+      applyQuestStreakFreezeOp(current, {
+        recordStreakFreezeDayKey: questStreakFreezeOpResult.valid.recordStreakFreezeDayKey,
+      }),
+    )
+  } else if (questStreakReminderOpResult.valid.setLapseReminderEnabled !== undefined) {
+    // Same read-then-write shape as the freeze op above, resolved against
+    // the row's current `questStreakSync` value rather than the caller's own
+    // (possibly stale) copy, so a reminder toggle can never revert a freeze
+    // spent moments earlier on another device.
+    const [existing] = await db
+      .select({ questStreakSync: userSettings.questStreakSync })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.questStreakSync
+      ? parseQuestStreakSync(existing.questStreakSync)
+      : DEFAULT_QUEST_STREAK_SYNC.questStreakSync
+    dbPatch.questStreakSync = serializeQuestStreakSync(
+      applyQuestStreakReminderOp(current, {
+        setLapseReminderEnabled: questStreakReminderOpResult.valid.setLapseReminderEnabled,
+      }),
+    )
+  } else if (questStreakMissionResultOpResult.valid.recordMissionResultDay !== undefined) {
+    // Same read-then-write shape as the freeze/reminder ops above, resolved
+    // against the row's current `questStreakSync` value so a mission-result
+    // push never drops a freeze or reminder change made from another device.
+    const [existing] = await db
+      .select({ questStreakSync: userSettings.questStreakSync })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.questStreakSync
+      ? parseQuestStreakSync(existing.questStreakSync)
+      : DEFAULT_QUEST_STREAK_SYNC.questStreakSync
+    dbPatch.questStreakSync = serializeQuestStreakSync(
+      applyQuestStreakMissionResultOp(current, {
+        recordMissionResultDay: questStreakMissionResultOpResult.valid.recordMissionResultDay,
+      }),
+    )
+  } else if (questStreakSyncResult.valid.questStreakSync !== undefined) {
     dbPatch.questStreakSync = serializeQuestStreakSync(questStreakSyncResult.valid.questStreakSync)
   }
   if (qualificationPointsTableResult.valid.qualificationPointsTable !== undefined) {
@@ -370,10 +677,39 @@ export async function PUT(req: NextRequest) {
   if (qualificationCutoffResult.valid.qualificationCutoff !== undefined) {
     dbPatch.qualificationCutoff = serializeQualificationCutoff(qualificationCutoffResult.valid.qualificationCutoff)
   }
-  if (newsSyncResult.valid.newsRead !== undefined) {
+  if (myTeamProfileResult.valid.myTeamProfile !== undefined) {
+    dbPatch.myTeamProfile = serializeMyTeamProfile(myTeamProfileResult.valid.myTeamProfile)
+  }
+  if (newsReadOpResult.valid.recordNewsRead !== undefined) {
+    // A single mark-read op is resolved against the row's *current* stored
+    // list rather than the caller's own copy — see this route's docstring
+    // and `news-stream-sync.ts#applyNewsReadOp`. This closes the same
+    // lost-update race a plain `newsRead` whole-list replace is exposed to
+    // that `favoriteTools`'s op-based patch above already fixed.
+    const [existing] = await db
+      .select({ newsRead: userSettings.newsRead })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.newsRead ? parseNewsIdList(existing.newsRead) : DEFAULT_NEWS_SYNC.newsRead
+    dbPatch.newsRead = serializeNewsIdList(
+      applyNewsReadOp(current, { recordNewsRead: newsReadOpResult.valid.recordNewsRead }),
+    )
+  } else if (newsSyncResult.valid.newsRead !== undefined) {
     dbPatch.newsRead = serializeNewsIdList(newsSyncResult.valid.newsRead)
   }
-  if (newsSyncResult.valid.newsLiked !== undefined) {
+  if (newsLikedOpResult.valid.addNewsLiked !== undefined || newsLikedOpResult.valid.removeNewsLiked !== undefined) {
+    // Same read-then-write shape as the newsRead op above, resolved against
+    // the row's current `newsLiked` value rather than the caller's own
+    // (possibly stale) copy.
+    const [existing] = await db
+      .select({ newsLiked: userSettings.newsLiked })
+      .from(userSettings)
+      .where(eq(userSettings.userId, userId))
+      .limit(1)
+    const current = existing?.newsLiked ? parseNewsIdList(existing.newsLiked) : DEFAULT_NEWS_SYNC.newsLiked
+    dbPatch.newsLiked = serializeNewsIdList(applyNewsLikedOp(current, newsLikedOpResult.valid))
+  } else if (newsSyncResult.valid.newsLiked !== undefined) {
     dbPatch.newsLiked = serializeNewsIdList(newsSyncResult.valid.newsLiked)
   }
   // `editorPreferences` is a key→value map updated one control at a time, so

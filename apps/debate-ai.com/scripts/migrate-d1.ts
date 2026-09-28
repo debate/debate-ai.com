@@ -38,6 +38,11 @@ import { BENIGN_ALTER_ERROR, planMigration } from "../lib/database/migration-sql
 
 const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const MIGRATIONS_DIR = join(APP_ROOT, "drizzle");
+// Workspace packages that own tables in the same database ship their own
+// migrations; each is tracked under "<package>/<file>" so names never clash.
+const PACKAGE_MIGRATION_DIRS: Record<string, string> = {
+  "debate-tournaments": join(APP_ROOT, "../../packages/debate-tournaments/migrations"),
+};
 const DATABASE = process.env.D1_DATABASE_NAME || "debate-ai-db";
 const TRACKING_TABLE = "_d1_applied_migrations";
 
@@ -95,14 +100,14 @@ function readApplied(): Set<string> {
 }
 
 function applyMigration(name: string): boolean {
-  const steps = planMigration(readFileSync(join(MIGRATIONS_DIR, name), "utf8"));
+  const steps = planMigration(readFileSync(migrationPath(name), "utf8"));
 
   for (const [index, step] of steps.entries()) {
     // Batched runs go through a file; a lone column add through --command, so
     // its "duplicate column name" can be judged on its own.
     const result = step.tolerateDuplicateColumn
       ? run(step.sql)
-      : run(`${step.sql};\n`, `${index}-${name}`);
+      : run(`${step.sql};\n`, `${index}-${name.replace(/\//g, "__")}`);
     if (result.ok) continue;
     if (step.tolerateDuplicateColumn && BENIGN_ALTER_ERROR.test(result.output)) continue;
 
@@ -113,9 +118,20 @@ function applyMigration(name: string): boolean {
   return true;
 }
 
-const migrations = readdirSync(MIGRATIONS_DIR)
-  .filter((name) => name.endsWith(".sql"))
-  .sort();
+/** A tracked migration name → its file: `0001_x.sql` or `<package>/0001_x.sql`. */
+function migrationPath(name: string): string {
+  const slash = name.indexOf("/");
+  if (slash === -1) return join(MIGRATIONS_DIR, name);
+  return join(PACKAGE_MIGRATION_DIRS[name.slice(0, slash)], name.slice(slash + 1));
+}
+
+const sqlFiles = (dir: string) => readdirSync(dir).filter((name) => name.endsWith(".sql")).sort();
+
+// App migrations first, then each package's, each in file order.
+const migrations = [
+  ...sqlFiles(MIGRATIONS_DIR),
+  ...Object.entries(PACKAGE_MIGRATION_DIRS).flatMap(([pkg, dir]) => sqlFiles(dir).map((file) => `${pkg}/${file}`)),
+];
 const applied = readApplied();
 const pending = migrations.filter((name) => !applied.has(name));
 

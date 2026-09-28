@@ -13,6 +13,7 @@ import {
     useRef,
 } from "react"
 import { cn } from "../ui/lib/utils"
+import { getUserMedia } from "./media-devices"
 
 export interface LiveWaveformProps extends Omit<HTMLAttributes<HTMLDivElement>, "onError"> {
     /** Whether to actively listen to microphone input */
@@ -339,8 +340,7 @@ export const LiveWaveform = forwardRef<HTMLDivElement, LiveWaveformProps>(
             if (externalStream) {
                 void startAudio(externalStream).catch((e) => onError?.(e instanceof Error ? e : new Error(String(e))))
             } else {
-                navigator.mediaDevices
-                    .getUserMedia({ audio: true })
+                getUserMedia({ audio: true })
                     .then((s) => {
                         if (!mounted) { s.getTracks().forEach((t) => t.stop()); return }
                         void startAudio(s)

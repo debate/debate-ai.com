@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { count } from "drizzle-orm";
 import { getAdminAccess } from "@/lib/auth/admin";
 import { getDBFromContext } from "@/lib/database/context";
+import { describeError } from "@/lib/database/errors";
 import { videos, youtubeRoundVideos } from "@/lib/database/schema";
 import { resyncVideoViewCounts } from "@/lib/videos/resync-view-counts";
 
@@ -26,9 +27,9 @@ export async function POST() {
     const result = await resyncVideoViewCounts(db);
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
-    console.error("Error resyncing video view counts:", error);
+    console.error("Error resyncing video view counts:", describeError(error), error);
     return NextResponse.json(
-      { error: "Failed to resync view counts", details: (error as Error).message },
+      { error: "Failed to resync view counts", details: describeError(error) },
       { status: 500 },
     );
   }
@@ -53,7 +54,7 @@ export async function GET() {
       queuedVideos: queued?.rows ?? 0,
     });
   } catch (error) {
-    console.error("Error reading view count status:", error);
+    console.error("Error reading view count status:", describeError(error), error);
     return NextResponse.json({ publishedVideos: 0, queuedVideos: 0 });
   }
 }

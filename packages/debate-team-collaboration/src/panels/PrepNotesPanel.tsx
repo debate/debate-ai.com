@@ -28,6 +28,13 @@
  * `state/prepNoteReplies.ts`, mirroring `debate-card-search`'s
  * `DailyBestCardPanel` comment-thread UI.
  *
+ * An optional `signedInContributorId` prop (mirroring `DailyBestCardPanel`'s
+ * identical convention) prefills a reply's "Your name" field with a real
+ * signed-in visitor's derived id — a starting value only; typing over it is
+ * always respected afterward, and a signed-out visitor sees the same blank
+ * field as before. Closes `prep-notes.mdx`'s Known gaps entry noting the
+ * field was free-form with no link to a real identity.
+ *
  * @module panels/PrepNotesPanel
  */
 
@@ -164,7 +171,17 @@ function PrepNoteReplyThread({
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function PrepNotesPanel() {
+export interface PrepNotesPanelProps {
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `deriveContributorIdFromSessionIdentity`), used to prefill a reply's
+   * "Your name" field. This is a starting value only — never overwrites a
+   * visitor's own edit.
+   */
+  signedInContributorId?: string
+}
+
+export function PrepNotesPanel({ signedInContributorId }: PrepNotesPanelProps = {}) {
   const [groups, setGroups] = useState<PrepNotesPanelGroup[] | null>(null)
   const [assigneeDrafts, setAssigneeDrafts] = useState<Record<string, string>>({})
   const [expandedReplyNoteIds, setExpandedReplyNoteIds] = useState<Record<string, boolean>>({})
@@ -212,12 +229,15 @@ export function PrepNotesPanel() {
     setExpandedReplyNoteIds((prev) => ({ ...prev, [noteId]: !prev[noteId] }))
   }
 
+  const replyDraftFor = (noteId: string): ReplyDraft =>
+    replyDrafts[noteId] ?? { ...EMPTY_REPLY_DRAFT, authorId: signedInContributorId ?? "" }
+
   const handleReplyDraftChange = (noteId: string, patch: Partial<ReplyDraft>) => {
-    setReplyDrafts((prev) => ({ ...prev, [noteId]: { ...(prev[noteId] ?? EMPTY_REPLY_DRAFT), ...patch } }))
+    setReplyDrafts((prev) => ({ ...prev, [noteId]: { ...replyDraftFor(noteId), ...patch } }))
   }
 
   const handlePostReply = (noteId: string) => {
-    const draft = replyDrafts[noteId] ?? EMPTY_REPLY_DRAFT
+    const draft = replyDraftFor(noteId)
     if (!draft.text.trim()) return
     postPrepNoteReply({ noteId, authorId: draft.authorId, text: draft.text })
     setReplyDrafts((prev) => ({ ...prev, [noteId]: EMPTY_REPLY_DRAFT }))
@@ -338,7 +358,7 @@ export function PrepNotesPanel() {
                   {expandedReplyNoteIds[note.id] && (
                     <PrepNoteReplyThread
                       noteId={note.id}
-                      draft={replyDrafts[note.id] ?? EMPTY_REPLY_DRAFT}
+                      draft={replyDraftFor(note.id)}
                       onDraftChange={(patch) => handleReplyDraftChange(note.id, patch)}
                       onPost={() => handlePostReply(note.id)}
                       onDelete={handleDeleteReply}

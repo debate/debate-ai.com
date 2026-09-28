@@ -57,29 +57,6 @@ import { JudgeProfilesPanel } from "debate-speech-writer"
 <JudgeProfilesPanel />
 ```
 
-`JudgeParadigmPickerPanel` lets a user save a round's judge paradigm — a built-in one from
-`judge-paradigms.ts` or a custom one built from a real judge's notes — through
-`saveJudgeParadigmSelection`, and lists every round with a saved selection, mounted at
-`/paradigms` in the web app:
-
-```tsx
-import { JudgeParadigmPickerPanel } from "debate-speech-writer"
-
-<JudgeParadigmPickerPanel />
-```
-
-`OpponentPersonaPickerPanel` lets a user save a practice session's AI opponent persona — one
-of the four built-in personas from `opponent-personas.ts` — plus an independent difficulty
-level (Beginner/Intermediate/Advanced/Elite, from `opponentDifficulties`) — through
-`saveOpponentPersonaSelection`, and lists every session with a saved selection, mounted at
-`/practice-opponent` in the web app:
-
-```tsx
-import { OpponentPersonaPickerPanel } from "debate-speech-writer"
-
-<OpponentPersonaPickerPanel />
-```
-
 `CoachMaterialsPanel` lets a coach upload grounding materials (lecture transcripts, camp
 materials, instructional documents, practice-round recordings) through `saveCoachMaterial`,
 lists every persisted material grouped by kind, and lets a coach ask the team coach AI a
@@ -104,8 +81,7 @@ debate-speech-writer/
 │   ├── coach/        # team coach-material library, grounded prompt, real AI Q&A call
 │   ├── judge/        # judge-paradigm registry, judge-profile aggregation
 │   ├── opponent/      # AI practice-opponent persona registry
-│   ├── panels/       # JudgeProfilesPanel, JudgeParadigmPickerPanel, OpponentPersonaPickerPanel,
-│   │                 # CoachMaterialsPanel
+│   ├── panels/       # JudgeProfilesPanel, CoachMaterialsPanel
 │   ├── prompts/      # the prompt library
 │   ├── state/        # localStorage-backed persistence stores
 │   └── index.ts      # public entry point

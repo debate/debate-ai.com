@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "debate-webview/*": [
+        "../../packages/debate-webview/src/*"
       ]
     }
   },
@@ -33,7 +36,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "../../packages/debate-webview/src/types/*.d.ts"
   ],
   "exclude": [
     "node_modules",

@@ -33,9 +33,9 @@ import {
 } from "debate-speech-writer/src/opponent/opponent-personas";
 
 /**
- * Looks up the persisted `OpponentPersona` saved for `roundId` (via the
- * Opponent Persona Picker panel, under that same identifier as its
- * `sessionId`), or `null` if none is saved for it.
+ * Looks up the persisted `OpponentPersona` saved for `roundId` under that
+ * same identifier as the store's `sessionId`, or `null` if none is saved for
+ * it.
  */
 export function getOpponentPersonaForRound(roundId: string): OpponentPersona | null {
   return getOpponentPersonaSelection(roundId)?.persona ?? null;

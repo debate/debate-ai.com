@@ -1,0 +1,3 @@
+.upstream/
+.upstream-seed.sql
+coverage/

@@ -1,0 +1,557 @@
+/**
+ * @fileoverview Network orchestration for `MySavedItems`' "recent cloud
+ * items" widget (`apps/debate-ai.com/app/tools/MySavedItems.tsx`).
+ *
+ * The widget used to fetch `/api/doc/documents`, `/api/flows`, and
+ * `/api/rounds` itself with a bare `Promise.all(...).then(r => r.json())`
+ * and no error handling. `/api/flows` and `/api/rounds` both 401 with an
+ * `{ error }` body whenever `getUserId()` can't resolve a session server-side
+ * (a stale/expired session the client's own `useSession()` hasn't noticed
+ * yet, or a transient auth-backend error) — `buildRecentCloudItems` would
+ * then be called with an error object where an array was expected, throwing
+ * inside the widget's fire-and-forget async effect and becoming an unhandled
+ * promise rejection. The widget's `items` state stayed `null` forever after
+ * that, so the section silently rendered nothing (indistinguishable from "no
+ * saved items") instead of ever recovering.
+ *
+ * `fetchRecentCloudItems` fetches every source independently and lets any
+ * one of them fail (network error, non-2xx, a signed-out `401`) without
+ * taking the others down with it — mirroring `round/saved-flows-client.ts`/
+ * `round/saved-rounds-client.ts`'s existing "401 means no items, not an
+ * error" convention, and catching everything else instead of throwing, since
+ * this widget's whole job is best-effort discoverability, not surfacing
+ * sync errors the way `FlowHistoryDialog` does.
+ *
+ * Word-count rounds (`/api/word-count-rounds`) join documents/flows/rounds
+ * the same way `listCloudDocuments` does below — a local raw `fetch` rather
+ * than importing `debate-practice-drills`'s own
+ * `round/word-count-rounds-client.ts`, since that package depends on
+ * `debate-round` (per the monorepo's documented dependency edges), not the
+ * other way round; importing it here would invert that edge.
+ *
+ * Practice vs AI debates (`/api/vsbot/history`) join the same way for the
+ * same reason: `debate-practice-vs-ai` doesn't depend on `debate-round`
+ * either, so `listCloudDebates` below is a local raw `fetch` against the
+ * route's `{ debates: [...] }` body rather than importing that package's
+ * own `listDebateHistory` client.
+ *
+ * Video speech-outcome runs (`/api/tool-records/speechOutcomeRuns`) join the
+ * same way, for the same reason again: `debate-videos` doesn't depend on
+ * `debate-round`. `listCloudSpeechOutcomes` below is a local raw `fetch`
+ * against the generic tool-records route, which — unlike the other four
+ * sources — returns every field a synced `CachedSpeechOutcome` record has
+ * (including its `simulation` payload), so this trims each row down to the
+ * `id`/`speechKey`/`savedAt` triple `buildRecentCloudItems` actually needs
+ * rather than shipping the whole simulation through this widget's state.
+ *
+ * Practice Drills' generated drill sets (`/api/drill-sets`) join the same
+ * way, for the same reason as word-count rounds and Practice vs AI debates:
+ * `debate-practice-drills` doesn't depend on `debate-round` either, so
+ * `listCloudDrillSets` below is a local raw `fetch` against that route's
+ * bare `DrillSetRecord[]` body rather than importing that package's own
+ * `round/drill-sets-client.ts`.
+ *
+ * AI Judge Decisions (`/api/judge-decisions`) join the same way, for the
+ * same reason: `listCloudJudgeDecisions` below is a local raw `fetch`
+ * against that route's bare `JudgeDecisionRecord[]` body rather than
+ * importing `debate-practice-drills`'s own `round/judge-decisions-client.ts`.
+ *
+ * AI Response-Outcome Charts' counsel-panel assessments
+ * (`/api/counsel-panel-assessments`) join the same way, for the same
+ * reason: `listCloudCounselPanelAssessments` below is a local raw `fetch`
+ * against that route's bare `CounselPanelAssessmentRecord[]` body rather
+ * than importing `debate-practice-drills`'s own state module.
+ *
+ * Pre-Round Briefings' saved round pairings (`/api/round-pairings`) join
+ * next, but unlike the five sources above, this one imports
+ * `round/round-pairings-client.ts`'s own `listSavedRoundPairings` directly
+ * rather than a local raw `fetch` — `RoundPairingRecord` already lives in
+ * this package (`state/roundPairings.ts`), so there's no dependency edge to
+ * avoid the way there is for `debate-practice-drills`/`debate-practice-vs-ai`/
+ * `debate-videos`. It throws on a non-401 failure (matching
+ * `hooks/useRoundPairings.ts`'s own caller), so it's wrapped in `.catch(() =>
+ * null)` here to keep this module's "degrade, never reject" convention.
+ *
+ * Scout-to-Strategy's saved strategy recommendations
+ * (`/api/strategy-recommendations`) join the same way as the round-only
+ * counsel-panel/judge-decision sources above: `listCloudStrategyRecommendations`
+ * below is a local raw `fetch` against that route's bare
+ * `StrategyRecommendationRecord[]` body rather than importing this
+ * package's own `state/strategyRecommendations.ts`, matching
+ * {@link listCloudCounselPanelAssessments}'s convention of fetching the raw
+ * account-sync route directly instead of that module's local-storage-first
+ * read helpers.
+ *
+ * Team Collaboration Mode's scheduled Topic Sprint sessions
+ * (`/api/sprint-sessions`) join next, for the same cross-package reason as
+ * word-count rounds and Practice vs AI debates: `debate-team-collaboration`
+ * doesn't depend on `debate-round` (and `debate-round` doesn't depend on it
+ * either), so `listCloudSprintSessions` below is a local raw `fetch` against
+ * that route's bare `SprintSession[]` body rather than importing that
+ * package's own `lib/sprint-sessions-client.ts`.
+ *
+ * Speech Documents' send-log entries (`/api/speech-send-log`) join next, for
+ * the same cross-package reason as word-count rounds/debates/sprint sessions:
+ * `debate-editor` doesn't depend on `debate-round` either, so
+ * `listCloudSpeechSendLog` below is a local raw `fetch` against that route's
+ * bare `SpeechSendLogEntry[]` body rather than importing that package's own
+ * `editor/speech-send-log.ts`.
+ *
+ * CardMirror Learn's custom flashcard decks (`/api/learn-decks`) join next,
+ * for the same reason: `listCloudLearnDecks` below is a local raw `fetch`
+ * against that route's bare `CustomDeck[]` body rather than importing
+ * `debate-editor`'s own `editor/learn-decks-client.ts`.
+ *
+ * Practice Round Simulator's saved custom opponent personas
+ * (`/api/custom-opponent-personas`) join next, for the same reason:
+ * `listCloudCustomOpponentPersonas` below is a local raw `fetch` against
+ * that route's bare `SavedCustomOpponentPersona[]` body rather than
+ * importing `debate-practice-drills`'s own
+ * `round/custom-opponent-persona-library-client.ts`.
+ *
+ * Flow Annotations' timestamped notes (`/api/tool-records/flowAnnotations`)
+ * join next, for the same reason as video speech-outcome runs:
+ * `listCloudFlowAnnotations` below is a local raw `fetch` against the
+ * generic tool-records route's bare `FlowAnnotation[]` body.
+ *
+ * CardMirror's Quick Cards (`/api/quick-cards`) join next, for the same
+ * reason as learn decks: `listCloudQuickCards` below is a local raw `fetch`
+ * against that route's bare `QuickCard[]` body rather than importing
+ * `debate-editor`'s own `editor/quick-cards-client.ts`.
+ *
+ * Prep Notes (`/api/tool-records/prepNotes`) join next, for the same reason
+ * as Flow Annotations: `listCloudPrepNotes` below is a local raw `fetch`
+ * against the generic tool-records route's bare `PrepNote[]` body.
+ *
+ * Evidence Library entries (`/api/tool-records/evidenceLibraryEntries`) join
+ * next, for the same reason: `listCloudEvidenceLibraryEntries` below is a
+ * local raw `fetch` against the generic tool-records route's bare
+ * `EvidenceLibraryEntry[]` body.
+ *
+ * Practice Round Simulator's saved rounds (`/api/tool-records/practiceRounds`)
+ * join last, for the same reason as the other generic-tool-records sources
+ * above: `listCloudPracticeRounds` below is a local raw `fetch` against that
+ * route's bare `PracticeRoundRecord[]` body rather than importing this
+ * package's own `state/practiceRounds.ts` (which reads/writes the local
+ * store, not the account-sync route).
+ *
+ * @module state/cloudLibraryClient
+ */
+
+import { listSavedFlows } from "../round/saved-flows-client";
+import { listSavedRounds } from "../round/saved-rounds-client";
+import { listSavedRoundPairings } from "../round/round-pairings-client";
+import {
+  buildRecentCloudItems,
+  type BuildRecentCloudItemsOptions,
+  type CloudCounselPanelAssessmentSummary,
+  type CloudCustomOpponentPersonaSummary,
+  type CloudDebateSummary,
+  type CloudDocumentSummary,
+  type CloudDrillSetSummary,
+  type CloudEvidenceLibraryEntrySummary,
+  type CloudFlowAnnotationSummary,
+  type CloudJudgeDecisionSummary,
+  type CloudLearnDeckSummary,
+  type CloudLibraryItem,
+  type CloudPracticeRoundSummary,
+  type CloudPrepNoteSummary,
+  type CloudQuickCardSummary,
+  type CloudSpeechOutcomeSummary,
+  type CloudSpeechSendLogSummary,
+  type CloudSprintSessionSummary,
+  type CloudStrategyRecommendationSummary,
+  type CloudWordCountRoundSummary,
+} from "./cloudLibrary";
+
+/**
+ * Lists the current user's REASON editor documents. Unlike `/api/flows`/
+ * `/api/rounds`, `GET /api/doc/documents` never 401s (it falls back to
+ * anonymous rows when signed out), but it can still fail on a network error
+ * or a server error — both resolve to `null` here rather than throwing, so a
+ * caller merging it with other sources can just treat it as "no documents".
+ */
+async function listCloudDocuments(endpoint = "/api/doc/documents"): Promise<CloudDocumentSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudDocumentSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's account-synced word-count rounds. Degrades to
+ * `null` on a signed-out `401`, a non-2xx response, or a network error —
+ * same "no items of that kind" convention as `listCloudDocuments` above,
+ * rather than `round/word-count-rounds-client.ts`'s own
+ * `listSavedWordCountRounds`, which throws on a non-401 failure since its
+ * caller (`useWordCountRounds`) needs to distinguish that from "nothing
+ * synced yet".
+ */
+async function listCloudWordCountRounds(
+  endpoint = "/api/word-count-rounds",
+): Promise<CloudWordCountRoundSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudWordCountRoundSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's Practice vs AI debate history. Degrades to `null`
+ * on a signed-out `401` (matching `GET /api/vsbot/history`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of
+ * that kind" convention as the other sources above.
+ */
+async function listCloudDebates(endpoint = "/api/vsbot/history"): Promise<CloudDebateSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    const { debates } = (await res.json()) as { debates: CloudDebateSummary[] };
+    return debates;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced video speech-outcome simulation runs.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/tool-records/[collection]`'s own auth behavior), a non-2xx
+ * response (including the 404 an unrecognized collection key would 404
+ * with), or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudSpeechOutcomes(
+  endpoint = "/api/tool-records/speechOutcomeRuns",
+): Promise<CloudSpeechOutcomeSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSpeechOutcomeSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Practice Drills drill sets. Degrades to
+ * `null` on a signed-out `401` (matching `GET /api/drill-sets`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of
+ * that kind" convention as the other sources above.
+ */
+async function listCloudDrillSets(endpoint = "/api/drill-sets"): Promise<CloudDrillSetSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudDrillSetSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced AI Judge Decisions. Degrades to `null` on
+ * a signed-out `401` (matching `GET /api/judge-decisions`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of
+ * that kind" convention as the other sources above.
+ */
+async function listCloudJudgeDecisions(
+  endpoint = "/api/judge-decisions",
+): Promise<CloudJudgeDecisionSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudJudgeDecisionSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced AI Response-Outcome Charts counsel-panel
+ * assessments. Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/counsel-panel-assessments`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudCounselPanelAssessments(
+  endpoint = "/api/counsel-panel-assessments",
+): Promise<CloudCounselPanelAssessmentSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudCounselPanelAssessmentSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Scout-to-Strategy strategy recommendations.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/strategy-recommendations`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudStrategyRecommendations(
+  endpoint = "/api/strategy-recommendations",
+): Promise<CloudStrategyRecommendationSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudStrategyRecommendationSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Team Collaboration Mode sprint sessions.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/sprint-sessions`'s own auth behavior), a non-2xx response, or a
+ * network error — same "no items of that kind" convention as the other
+ * sources above.
+ */
+async function listCloudSprintSessions(
+  endpoint = "/api/sprint-sessions",
+): Promise<CloudSprintSessionSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSprintSessionSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Speech Documents send-log entries.
+ * Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/speech-send-log`'s own auth behavior), a non-2xx response, or a
+ * network error — same "no items of that kind" convention as the other
+ * sources above.
+ */
+async function listCloudSpeechSendLog(
+  endpoint = "/api/speech-send-log",
+): Promise<CloudSpeechSendLogSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudSpeechSendLogSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced CardMirror Learn custom flashcard decks.
+ * Degrades to `null` on a signed-out `401` (matching `GET /api/learn-decks`'s
+ * own auth behavior), a non-2xx response, or a network error — same "no
+ * items of that kind" convention as the other sources above.
+ */
+async function listCloudLearnDecks(endpoint = "/api/learn-decks"): Promise<CloudLearnDeckSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudLearnDeckSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Practice Round Simulator custom opponent
+ * personas. Degrades to `null` on a signed-out `401` (matching
+ * `GET /api/custom-opponent-personas`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudCustomOpponentPersonas(
+  endpoint = "/api/custom-opponent-personas",
+): Promise<CloudCustomOpponentPersonaSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudCustomOpponentPersonaSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Flow Annotations. Degrades to `null` on a
+ * signed-out `401` (matching `GET /api/tool-records/[collection]`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of that
+ * kind" convention as the other sources above.
+ */
+async function listCloudFlowAnnotations(
+  endpoint = "/api/tool-records/flowAnnotations",
+): Promise<CloudFlowAnnotationSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudFlowAnnotationSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced CardMirror Quick Cards. Degrades to `null`
+ * on a signed-out `401` (matching `GET /api/quick-cards`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of that
+ * kind" convention as the other sources above.
+ */
+async function listCloudQuickCards(endpoint = "/api/quick-cards"): Promise<CloudQuickCardSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudQuickCardSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Prep Notes. Degrades to `null` on a
+ * signed-out `401` (matching `GET /api/tool-records/[collection]`'s own auth
+ * behavior), a non-2xx response, or a network error — same "no items of that
+ * kind" convention as the other sources above.
+ */
+async function listCloudPrepNotes(
+  endpoint = "/api/tool-records/prepNotes",
+): Promise<CloudPrepNoteSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudPrepNoteSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Evidence Library entries. Degrades to
+ * `null` on a signed-out `401` (matching
+ * `GET /api/tool-records/[collection]`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudEvidenceLibraryEntries(
+  endpoint = "/api/tool-records/evidenceLibraryEntries",
+): Promise<CloudEvidenceLibraryEntrySummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudEvidenceLibraryEntrySummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Lists the current user's synced Practice Round Simulator rounds. Degrades
+ * to `null` on a signed-out `401` (matching
+ * `GET /api/tool-records/[collection]`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudPracticeRounds(
+  endpoint = "/api/tool-records/practiceRounds",
+): Promise<CloudPracticeRoundSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudPracticeRoundSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
+ * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
+ * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks/
+ * custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/
+ * practice-rounds and merges them via `buildRecentCloudItems`. Each source resolves independently and degrades to
+ * "no items of that kind" on any failure — a network error, a non-2xx
+ * response, or a signed-out `401` — rather than rejecting the whole call, so
+ * one flaky endpoint never blanks a widget that had perfectly good data from
+ * the others.
+ */
+export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions): Promise<CloudLibraryItem[]> {
+  const [
+    documents,
+    flows,
+    rounds,
+    wordCountRounds,
+    debates,
+    speechOutcomes,
+    drillSets,
+    judgeDecisions,
+    counselPanelAssessments,
+    roundPairings,
+    strategyRecommendations,
+    sprintSessions,
+    speechSendLogEntries,
+    learnDecks,
+    customOpponentPersonas,
+    flowAnnotations,
+    quickCards,
+    prepNotes,
+    evidenceLibraryEntries,
+    practiceRounds,
+  ] = await Promise.all([
+    listCloudDocuments(),
+    listSavedFlows().catch(() => null),
+    listSavedRounds().catch(() => null),
+    listCloudWordCountRounds(),
+    listCloudDebates(),
+    listCloudSpeechOutcomes(),
+    listCloudDrillSets(),
+    listCloudJudgeDecisions(),
+    listCloudCounselPanelAssessments(),
+    listSavedRoundPairings().catch(() => null),
+    listCloudStrategyRecommendations(),
+    listCloudSprintSessions(),
+    listCloudSpeechSendLog(),
+    listCloudLearnDecks(),
+    listCloudCustomOpponentPersonas(),
+    listCloudFlowAnnotations(),
+    listCloudQuickCards(),
+    listCloudPrepNotes(),
+    listCloudEvidenceLibraryEntries(),
+    listCloudPracticeRounds(),
+  ]);
+  return buildRecentCloudItems(
+    {
+      documents: documents ?? undefined,
+      flows: flows ?? undefined,
+      rounds: rounds ?? undefined,
+      wordCountRounds: wordCountRounds ?? undefined,
+      debates: debates ?? undefined,
+      speechOutcomes: speechOutcomes ?? undefined,
+      drillSets: drillSets ?? undefined,
+      judgeDecisions: judgeDecisions ?? undefined,
+      counselPanelAssessments: counselPanelAssessments ?? undefined,
+      roundPairings: roundPairings ?? undefined,
+      strategyRecommendations: strategyRecommendations ?? undefined,
+      sprintSessions: sprintSessions ?? undefined,
+      speechSendLogEntries: speechSendLogEntries ?? undefined,
+      learnDecks: learnDecks ?? undefined,
+      customOpponentPersonas: customOpponentPersonas ?? undefined,
+      flowAnnotations: flowAnnotations ?? undefined,
+      quickCards: quickCards ?? undefined,
+      prepNotes: prepNotes ?? undefined,
+      evidenceLibraryEntries: evidenceLibraryEntries ?? undefined,
+      practiceRounds: practiceRounds ?? undefined,
+    },
+    opts,
+  );
+}

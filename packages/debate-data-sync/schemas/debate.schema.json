@@ -308,6 +308,27 @@
         "data"
       ]
     },
+    "SeasonalTopic": {
+      "title": "Seasonal Topic",
+      "type": "object",
+      "properties": {
+        "start_month": {
+          "type": "string",
+          "description": "Month the topic takes effect (e.g. September, January)."
+        },
+        "topic_name": {
+          "type": "string",
+          "description": "Short label for the topic."
+        },
+        "topic": {
+          "type": "string",
+          "description": "Full resolution text."
+        }
+      },
+      "required": [
+        "topic"
+      ]
+    },
     "DebateTopics": {
       "title": "Debate Topics Schema",
       "type": "object",
@@ -327,21 +348,35 @@
                 ],
                 "description": "The academic year the topics were debated."
               },
+              "ndt_topic_name": {
+                "type": "string",
+                "description": "Short label for the college NDT topic."
+              },
               "ndt_topic": {
                 "type": "string",
                 "description": "The college National Debate Tournament (NDT) topic for the year."
+              },
+              "policy_topic_name": {
+                "type": "string",
+                "description": "Short label for the high school Policy topic."
               },
               "policy_topic": {
                 "type": "string",
                 "description": "The high school Policy debate topic for the year."
               },
-              "ld_topic": {
-                "type": "string",
-                "description": "The high school Lincoln-Douglas debate topic for the year."
+              "ld_topics": {
+                "type": "array",
+                "description": "Lincoln-Douglas topics for the year, one per release month.",
+                "items": {
+                  "$ref": "#/$defs/SeasonalTopic"
+                }
               },
-              "pf_topic": {
-                "type": "string",
-                "description": "The high school Public Forum debate topic for the year."
+              "pf_topics": {
+                "type": "array",
+                "description": "Public Forum topics for the year, one per release month.",
+                "items": {
+                  "$ref": "#/$defs/SeasonalTopic"
+                }
               }
             },
             "required": [

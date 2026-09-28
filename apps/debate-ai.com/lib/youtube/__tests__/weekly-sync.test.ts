@@ -17,7 +17,7 @@ const resyncVideoViewCounts = vi.fn();
 const getDBFromContext = vi.fn();
 
 vi.mock("../resync-rounds", () => ({
-  resyncYouTubeRounds: (triggeredBy: string | null) => resyncYouTubeRounds(triggeredBy),
+  resyncYouTubeRounds: (triggeredBy: string | null, publishedAfterDate?: string) => resyncYouTubeRounds(triggeredBy, publishedAfterDate),
 }));
 vi.mock("../../videos/resync-view-counts", () => ({
   resyncVideoViewCounts: (db: unknown) => resyncVideoViewCounts(db),
@@ -74,7 +74,7 @@ describe("runWeeklyYouTubeSync", () => {
   it("marks the scan as cron-triggered so the run history tells it from an admin's", async () => {
     await runWeeklyYouTubeSync();
 
-    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY);
+    expect(resyncYouTubeRounds).toHaveBeenCalledWith(CRON_TRIGGERED_BY, undefined);
     // Not an email, so it can never collide with a real admin's address.
     expect(CRON_TRIGGERED_BY).not.toContain("@");
   });

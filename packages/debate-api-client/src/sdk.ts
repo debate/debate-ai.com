@@ -41,6 +41,11 @@ export function analyzeContent(data: Omit<T.AnalyzeContentData, "url">, options?
   return call<T.AnalyzeContentResponse>("POST", "/analyze", data, options)
 }
 
+/** LLM flaws and author-quality annotation for a matched corpus card — POST /evidence-reuse-check/annotate */
+export function annotateEvidenceReuseCard(data: Omit<T.AnnotateEvidenceReuseCardData, "url">, options?: CallOptions) {
+  return call<T.AnnotateEvidenceReuseCardResponse>("POST", "/evidence-reuse-check/annotate", data, options)
+}
+
 /** Check whether a source URL has already been cut as a card — GET /evidence-reuse-check */
 export function checkEvidenceReuse(data: Omit<T.CheckEvidenceReuseData, "url">, options?: CallOptions) {
   return call<T.CheckEvidenceReuseResponse>("GET", "/evidence-reuse-check", data, options)

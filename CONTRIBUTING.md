@@ -6,10 +6,12 @@ Debate-AI is a Bun + Turborepo monorepo: the web app lives in `apps/debate-ai.co
 
 ## Before You Start
 
-- Read the [README](README.md), the [CLAUDE.md](CLAUDE.md) repo guide, and the docs under [`packages/debate-help-docs/content/docs`](packages/debate-help-docs/content/docs).
+- Read the [README](README.md) repo guide, and the docs under `[packages/debate-help-docs/content/docs](packages/debate-help-docs/content/docs)`.
 - Search [existing issues](https://github.com/debate/debate-ai.com/issues) and [pull requests](https://github.com/debate/debate-ai.com/pulls) to avoid duplicating work.
 - For substantial changes — new tools, schema changes, or changes to how arguments and evidence are modeled — open an issue first to discuss the problem, proposed approach, and scope.
 - Be respectful and constructive in issues, reviews, and discussions.
+
+
 
 ## Reporting Bugs
 
@@ -37,7 +39,7 @@ Avoid starting a large implementation before maintainers have had a chance to co
 
 ## Development Setup
 
-The fastest way to get the project running is [`git0`](https://www.npmjs.com/package/git0) — it downloads the repo, detects the project type, installs dependencies with Bun, and opens your editor in one step:
+The fastest way to get the project running is `[git0](https://www.npmjs.com/package/git0)` — it downloads the repo, detects the project type, installs dependencies with Bun, and opens your editor in one step:
 
 ```bash
 npx git0 debate/debate-ai.com
@@ -69,6 +71,8 @@ bun run dev:web      # just the debate-ai.com web app
 bun run dev:editor   # just the reason-editor package
 ```
 
+
+
 ## Making Changes
 
 - Keep changes focused; avoid unrelated refactors in the same pull request.
@@ -78,6 +82,8 @@ bun run dev:editor   # just the reason-editor package
 - Update documentation, examples, and types when applicable.
 - Do not commit secrets, credentials, API keys, private keys, generated build output, or unrelated `bun.lock` changes.
 - Write clear commit messages that describe the change.
+
+
 
 ## Testing
 
@@ -105,6 +111,8 @@ When opening a pull request:
 - Keep the pull request small enough to review effectively.
 - Respond to review feedback constructively and update the branch as requested.
 
+
+
 ### Pull Request Template
 
 ```md
@@ -129,13 +137,15 @@ When opening a pull request:
 - Add screenshots, migration notes, or rollout considerations if relevant.
 ```
 
+
+
 ## Documentation
 
-Documentation changes are valuable contributions. Please keep examples accurate, use clear language, and update the pages under [`docs/`](docs) when behavior or configuration changes.
+Documentation changes are valuable contributions. Please keep examples accurate, use clear language, and update the pages under `[docs/](docs)` when behavior or configuration changes.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same license as this repository (PROSPER 1.0.0, see [LICENSE.md](LICENSE.md)).
+By contributing, you agree that your contributions will be licensed under the same license as this repository (`PROSPER 1.0.0`, see [LICENSE.md](LICENSE.md)).
 
 ## Questions
 

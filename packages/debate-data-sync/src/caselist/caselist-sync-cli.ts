@@ -9,6 +9,8 @@
  * bun run sync-caselist -- --caselist=hsld26     # just one
  * bun run sync-caselist -- --ingest --limit=25   # also unpack, 25 documents in
  * bun run sync-caselist -- --caselist=hsld26 --html-file=page.html
+ * bun run sync-caselist -- --ingest --sql-output  # write SQL seed file
+ * bun run sync-caselist -- --ingest --apply-local # apply to local SQLite
  * ```
  *
  * `--html-file` is the escape hatch for the page being client-rendered: save
@@ -23,7 +25,7 @@
  */
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { caselistsForSeason } from "./caselist-config";
+import { caselistsForSeason, type Caselist } from "./caselist-config";
 import { loadCaselistArchive } from "./caselist-archive";
 import {
   type CaselistDownloadsResult,
@@ -34,9 +36,16 @@ import {
   selectPendingArchives,
 } from "./caselist-sync";
 import { listArchives } from "./downloads-page-parser";
+import {
+  buildCaselistDocumentSeedStatements,
+  caselistDocumentSeedValues,
+} from "./caselist-document-sql";
 
 /** Where the manifest is written, relative to the package root. */
 const DEFAULT_MANIFEST = "data/metadata/caselist-downloads.json";
+
+/** Where the SQL seed file is written, relative to the package root. */
+const DEFAULT_SQL_OUTPUT = "drizzle/seed/caselist-documents-seed.sql";
 
 /** One caselist's entry in the manifest file. */
 interface ManifestEntry {
@@ -76,6 +85,10 @@ interface Options {
   cards: boolean;
   probe: boolean;
   dryRun: boolean;
+  /** Write SQL seed file for caselist documents. */
+  sqlOutput?: string;
+  /** Apply SQL to local SQLite database. */
+  applyLocal: boolean;
 }
 
 /**
@@ -96,6 +109,7 @@ export function parseArgs(argv: readonly string[]): Options {
   const requested = value("--caselist");
   const limit = value("--limit");
   const htmlFile = value("--html-file");
+  const sqlOutput = value("--sql-output");
 
   return {
     slugs: requested
@@ -108,6 +122,8 @@ export function parseArgs(argv: readonly string[]): Options {
     cards: has("--cards"),
     probe: !has("--no-probe"),
     dryRun: has("--dry-run"),
+    sqlOutput: sqlOutput ?? (has("--sql-output") ? DEFAULT_SQL_OUTPUT : undefined),
+    applyLocal: has("--apply-local"),
   };
 }
 
@@ -126,6 +142,25 @@ async function readManifest(file: string): Promise<Manifest> {
 }
 
 /**
+ * Applies the statements to the local SQLite file used in development.
+ *
+ * @param statements - Statements from `buildCaselistDocumentSeedStatements`.
+ * @param appDir - The app directory (for finding the local SQLite file).
+ */
+async function applyLocally(statements: string[], appDir: string) {
+  const { createClient } = await import("@libsql/client");
+  const client = createClient({
+    url: process.env.DATABASE_URL || `file:${path.join(appDir, "data", "db.sqlite")}`,
+    authToken: process.env.DATABASE_AUTH_TOKEN,
+  });
+
+  for (const statement of statements) {
+    await client.execute(statement);
+  }
+  client.close();
+}
+
+/**
  * Runs the sync.
  *
  * @param argv - Arguments after the script name.
@@ -137,6 +172,11 @@ export async function run(argv: readonly string[] = []): Promise<Manifest> {
   const manifestFile = path.isAbsolute(options.manifestPath)
     ? options.manifestPath
     : path.join(packageRoot, options.manifestPath);
+  const sqlOutputFile = options.sqlOutput
+    ? path.isAbsolute(options.sqlOutput)
+      ? options.sqlOutput
+      : path.join(packageRoot, options.sqlOutput)
+    : undefined;
 
   const manifest = await readManifest(manifestFile);
   manifest.$schema ??= "../../schemas/caselist-downloads.schema.json";
@@ -149,6 +189,8 @@ export async function run(argv: readonly string[] = []): Promise<Manifest> {
   const html = options.htmlFile
     ? await fs.readFile(path.resolve(options.htmlFile), "utf8")
     : undefined;
+
+  const allDocumentStatements: string[] = [];
 
   for (const slug of options.slugs) {
     const result = await fetchCaselistDownloads(slug, { probe: options.probe, html });
@@ -180,6 +222,12 @@ export async function run(argv: readonly string[] = []): Promise<Manifest> {
       let documents = 0;
       let failures = 0;
       const ingested = [];
+      const caselist = caselistsForSeason().find((c) => c.slug === result.slug);
+      if (!caselist) {
+        console.log(`   ! Unknown caselist slug: ${result.slug}`);
+        continue;
+      }
+
       for (const archive of pending) {
         try {
           console.log(`   downloading ${archive.fileName}…`);
@@ -197,6 +245,21 @@ export async function run(argv: readonly string[] = []): Promise<Manifest> {
           );
           for (const failure of load.failures.slice(0, 5)) {
             console.log(`      ! ${failure.path}: ${failure.reason}`);
+          }
+
+          // Generate SQL for the documents from this archive
+          if (load.documents.length > 0 && (sqlOutputFile || options.applyLocal)) {
+            // Extract archive date from filename (e.g., "hspolicy26-all-2026-01-06.zip" -> "2026-01-06")
+            const dateMatch = archive.fileName.match(/(\d{4}-\d{2}-\d{2})/);
+            const archiveDate = dateMatch ? dateMatch[1] : undefined;
+            const seededAt = Math.floor(Date.now() / 1000);
+            const docStatements = buildCaselistDocumentSeedStatements(
+              load.documents,
+              caselist,
+              archiveDate,
+              seededAt,
+            );
+            allDocumentStatements.push(...docStatements);
           }
         } catch (error) {
           // A failed archive is skipped, not recorded as synced, so the next
@@ -229,6 +292,28 @@ export async function run(argv: readonly string[] = []): Promise<Manifest> {
   await fs.mkdir(path.dirname(manifestFile), { recursive: true });
   await fs.writeFile(manifestFile, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
   console.log(`Wrote ${manifestFile}`);
+
+  // Write SQL seed file if requested
+  if (sqlOutputFile && allDocumentStatements.length > 0) {
+    await fs.mkdir(path.dirname(sqlOutputFile), { recursive: true });
+    const sql = `${allDocumentStatements.join(";\n\n")};\n`;
+    await fs.writeFile(sqlOutputFile, sql, "utf-8");
+    console.log(
+      `caselist-documents: wrote ${allDocumentStatements.length} statements to ${sqlOutputFile} (${(sql.length / 1024 / 1024).toFixed(2)} MB)`,
+    );
+  }
+
+  // Apply to local database if requested
+  if (options.applyLocal && allDocumentStatements.length > 0) {
+    try {
+      await applyLocally(allDocumentStatements, packageRoot);
+      console.log("caselist-documents: applied to the local SQLite database");
+    } catch (error) {
+      console.error("caselist-documents: local apply failed (the SQL file is still written)", error);
+      process.exitCode = 1;
+    }
+  }
+
   return manifest;
 }
 

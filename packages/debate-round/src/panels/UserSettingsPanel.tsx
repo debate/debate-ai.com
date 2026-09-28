@@ -70,15 +70,16 @@ import {
   setLocalFontFamily,
 } from "../state/fontSettings"
 
-// `favoriteTools` has its own `FavoriteToolsSettings` UI; `wordLimitPresets`
+// `favoriteTools` is starred from the app's `/tools` page; `wordLimitPresets`
 // has its own `WordLimitPresetsPanel` UI; `outlineFilterPresets` is managed
-// from the Outline tool's own "Filter presets" row, not this form;
-// `newsRead`/`newsLiked` are synced automatically by `NewsStreamPanel`'s
-// `syncRemote` adapter, not user-editable form fields — all excluded from
-// this form the same way.
+// from the Outline tool's own "Filter presets" row; `newsRead`/`newsLiked`
+// are synced automatically by `NewsStreamPanel`'s `syncRemote` adapter;
+// `myTeamProfile` is managed from the Create Round dialog's own "My Team"
+// config panel (`dialogs/CreateRoundDialog/TeamSection.tsx`) — not
+// user-editable form fields, all excluded from this form the same way.
 type FormState = Omit<
   FullUserSettingsPayload,
-  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked"
+  "favoriteTools" | "wordLimitPresets" | "outlineFilterPresets" | "newsRead" | "newsLiked" | "myTeamProfile"
 >
 
 type SaveStatus =
@@ -118,8 +119,11 @@ function applyThemeLocally(colorTheme: string, themeMode: ThemeMode, setTheme: (
  *
  * Reads local/remote state on mount only (client-side), so it renders a
  * loading state during SSR/hydration rather than throwing.
+ *
+ * `embedded` drops the panel's own "Settings" heading and centered page
+ * padding, for a host that already frames it — `/settings`' Preferences tab.
  */
-export function UserSettingsPanel() {
+export function UserSettingsPanel({ embedded = false }: { embedded?: boolean } = {}) {
   const { setTheme, theme, resolvedTheme } = useTheme()
   const [form, setForm] = useState<FormState | null>(null)
   const [remoteAvailable, setRemoteAvailable] = useState(false)
@@ -251,8 +255,8 @@ export function UserSettingsPanel() {
 
   if (!form) {
     return (
-      <div className="max-w-lg mx-auto p-4 sm:p-6">
-        <h1 className="text-xl font-semibold mb-4">Settings</h1>
+      <div className={embedded ? "max-w-lg" : "max-w-lg mx-auto p-4 sm:p-6"}>
+        {!embedded && <h1 className="text-xl font-semibold mb-4">Settings</h1>}
         <p className="text-sm text-muted-foreground">Loading…</p>
       </div>
     )
@@ -297,8 +301,8 @@ export function UserSettingsPanel() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-4 sm:p-6">
-      <h1 className="text-xl font-semibold mb-1">Settings</h1>
+    <div className={embedded ? "max-w-lg" : "max-w-lg mx-auto p-4 sm:p-6"}>
+      {!embedded && <h1 className="text-xl font-semibold mb-1">Settings</h1>}
       <p className="text-sm text-muted-foreground mb-6">
         {loading
           ? "Loading your saved settings…"

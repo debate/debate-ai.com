@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  filterShortcutsReferenceGroups,
   formatShortcutsReferenceText,
   type ShortcutsReferenceGroup,
 } from "../src/editor/reference-export";
@@ -73,5 +74,47 @@ describe("formatShortcutsReferenceText", () => {
     const shortIdx = lines[0]!.indexOf("Short key");
     const longIdx = lines[1]!.indexOf("Long key");
     expect(shortIdx).toBe(longIdx);
+  });
+});
+
+describe("filterShortcutsReferenceGroups", () => {
+  const groups: ShortcutsReferenceGroup[] = [
+    {
+      title: "Format",
+      rows: [
+        { label: "Apply Cite style", keyText: "F8" },
+        { label: "Apply Underline style", keyText: "F9 / Ctrl+U" },
+      ],
+    },
+    {
+      title: "Card",
+      rows: [{ label: "Condense", keyText: "F3" }],
+    },
+  ];
+
+  it("returns the groups unchanged for an empty or whitespace-only query", () => {
+    expect(filterShortcutsReferenceGroups(groups, "")).toBe(groups);
+    expect(filterShortcutsReferenceGroups(groups, "   ")).toBe(groups);
+  });
+
+  it("matches case-insensitively against a row's label", () => {
+    const filtered = filterShortcutsReferenceGroups(groups, "underline");
+    expect(filtered).toEqual([
+      { title: "Format", rows: [{ label: "Apply Underline style", keyText: "F9 / Ctrl+U" }] },
+    ]);
+  });
+
+  it("matches against a row's keybinding text as well as its label", () => {
+    const filtered = filterShortcutsReferenceGroups(groups, "f3");
+    expect(filtered).toEqual([{ title: "Card", rows: [{ label: "Condense", keyText: "F3" }] }]);
+  });
+
+  it("drops a group entirely once every one of its rows is filtered out", () => {
+    const filtered = filterShortcutsReferenceGroups(groups, "condense");
+    expect(filtered.map((g) => g.title)).toEqual(["Card"]);
+  });
+
+  it("returns an empty array when nothing matches", () => {
+    expect(filterShortcutsReferenceGroups(groups, "nonexistent")).toEqual([]);
   });
 });

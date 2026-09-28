@@ -90,7 +90,7 @@ export function DesktopLayout(props: DesktopLayoutProps) {
   } = props
 
   return (
-    <div className="flex-1 hidden md:block overflow-hidden">
+    <div className="flex-1 min-h-0 hidden md:block overflow-hidden">
       <ResizablePanelGroup orientation="horizontal" className="h-full">
         {/* Left panel: search sidebar */}
         <ResizablePanel defaultSize={20} minSize={10} maxSize={50}>

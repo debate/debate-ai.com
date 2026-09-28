@@ -30,6 +30,21 @@ const dailyBestCardAnnouncements = findToolRecordCollection("dailyBestCardAnnoun
 const contributorAwardAnnouncements = findToolRecordCollection(
   "contributorAwardAnnouncements",
 ) as ToolRecordCollection;
+const fileSources = findToolRecordCollection("fileSources") as ToolRecordCollection;
+
+/** A collection with a `redact` that drops a `secret` field, for testing the merge in isolation from `fileSources`' own rules. */
+const redactedWidgets: ToolRecordCollection = {
+  key: "test-redacted-widgets",
+  storageKey: "test-redacted-widgets",
+  idField: "id",
+  label: "Test Redacted Widgets",
+  href: "/doc",
+  section: "Flowing and writing",
+  redact: (record) => {
+    const { secret: _secret, ...rest } = record as Record<string, unknown>;
+    return rest;
+  },
+};
 
 describe("TOOL_RECORD_COLLECTIONS", () => {
   it("gives every collection a unique key", () => {
@@ -93,6 +108,39 @@ describe("TOOL_RECORD_COLLECTIONS", () => {
     expect(isSyncedToolCollection("../../etc/passwd")).toBe(false);
     expect(isSyncedToolCollection("")).toBe(false);
     expect(findToolRecordCollection("not-a-tool")).toBeUndefined();
+  });
+
+  it("excludes tools that already have their own saved_* table", () => {
+    // These eleven keys were once entries here too, so their localStorage
+    // store was reconciled through *both* this generic `saved_tool_records`
+    // path (via `tool-record-auto-sync.ts`'s 15s watcher) and their own
+    // dedicated table/route/hook (drill sets → `saved_drill_sets`, word-count
+    // rounds → `saved_word_count_rounds`, and so on) — the exact "bespoke
+    // table per tool" duplication this module's own header comment says
+    // joining this catalog exists to avoid. Neither the tool's panel nor
+    // anything else ever read the generic copy back, so it was purely wasted
+    // writes and a stale, orphaned `saved_tool_records` row set. Removed in
+    // favor of each tool's dedicated table; this test keeps a "readded a
+    // dead entry" regression from slipping back in unnoticed, since nothing
+    // else would catch it (unlike a bad `idField`, a merely-redundant entry
+    // still behaves correctly on its own).
+    const alreadyHasOwnTable = [
+      "drillSets",
+      "judgeDecisions",
+      "counselPanelAssessments",
+      "coachMaterials",
+      "coachMaterialVersions",
+      "customOpponentPersonaLibrary",
+      "wordCountRounds",
+      "roundPairings",
+      "strategyRecommendations",
+      "sprintSessions",
+      "dailyBestCardComments",
+    ];
+
+    for (const key of alreadyHasOwnTable) {
+      expect(isSyncedToolCollection(key), key).toBe(false);
+    }
   });
 });
 
@@ -173,6 +221,99 @@ describe("mergeToolRecords", () => {
     const merged = mergeToolRecords(flowAnnotations, [], [{ id: "" }, { id: "a" }]);
 
     expect(merged).toEqual([{ id: "a" }]);
+  });
+
+  it("for a collection without redact, still lets the account's copy win outright", () => {
+    // The control case for the two tests below: without `redact`, a field
+    // present locally and absent remotely is the account clearing it, same as
+    // any other field — that's the "account wins per id" rule every
+    // non-redacted collection follows.
+    const merged = mergeToolRecords(
+      flowAnnotations,
+      [{ id: "a", text: "kept locally", extra: "local-only field" }],
+      [{ id: "a", text: "kept locally" }],
+    );
+
+    expect(merged).toEqual([{ id: "a", text: "kept locally" }]);
+  });
+
+  it("for a redact-carrying collection, restores a field the account was never shown", () => {
+    // The account's copy is missing `secret` by construction — `redact`
+    // dropped it before this ever reached the account — so it must not read
+    // as the account having cleared it. A rename to `label`, a field both
+    // sides carry, still takes the account's value.
+    const merged = mergeToolRecords(
+      redactedWidgets,
+      [{ id: "a", label: "old name", secret: "sh-h-h" }],
+      [{ id: "a", label: "new name" }],
+    );
+
+    expect(merged).toEqual([{ id: "a", label: "new name", secret: "sh-h-h" }]);
+  });
+
+  it("for a redact-carrying collection, restores a redacted field recursively, inside a nested object", () => {
+    const merged = mergeToolRecords(
+      redactedWidgets,
+      [{ id: "a", nested: { keep: "safe", secret: "sh-h-h" } }],
+      [{ id: "a", nested: { keep: "safe-from-account" } }],
+    );
+
+    expect(merged).toEqual([{ id: "a", nested: { keep: "safe-from-account", secret: "sh-h-h" } }]);
+  });
+
+  it("for a redact-carrying collection, an id only the account has needs nothing restored", () => {
+    const merged = mergeToolRecords(redactedWidgets, [], [{ id: "a", label: "from account" }]);
+
+    expect(merged).toEqual([{ id: "a", label: "from account" }]);
+  });
+});
+
+describe("fileSources' redact, wired into the real catalog", () => {
+  it("keeps a saved SSH password local: the account's redacted copy doesn't wipe it out on the next merge", () => {
+    const local = [
+      {
+        id: "ssh-1",
+        name: "My server",
+        type: "ssh",
+        credentials: { host: "example.com", port: 22, username: "alex", password: "hunter2" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+    // What the account actually holds: `redactFileSource` already applied,
+    // same as every push site sends.
+    const remote = [
+      {
+        id: "ssh-1",
+        name: "My server",
+        type: "ssh",
+        credentials: { host: "example.com", port: 22, username: "alex" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+
+    const merged = mergeToolRecords(fileSources, local, remote);
+
+    expect(merged).toEqual(local);
+  });
+
+  it("a source adopted on a new device carries no credentials to reconnect with", () => {
+    const remote = [
+      {
+        id: "ssh-1",
+        name: "My server",
+        type: "ssh",
+        credentials: { host: "example.com", port: 22, username: "alex" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      },
+    ];
+
+    const merged = mergeToolRecords(fileSources, [], remote);
+
+    expect(merged).toEqual(remote);
+    expect((merged[0] as { credentials: Record<string, unknown> }).credentials.password).toBeUndefined();
   });
 });
 

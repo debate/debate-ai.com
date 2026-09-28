@@ -234,7 +234,10 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   if (rows.length === 0) {
     const isFiltered = range !== "all-time" || category !== "all"
     return (
-      <PanelShell title="Contribution Leaderboard">
+      <PanelShell
+        title="Contribution Leaderboard"
+        description="Rank contributors by helpfulness score, tier, badges, and quest streak."
+      >
         <div className="flex flex-wrap gap-3">
           {rangeSelect}
           {categorySelect}
@@ -255,7 +258,10 @@ export function ContributionLeaderboardPanel({ signedInContributorId }: Contribu
   }
 
   return (
-    <PanelShell title="Contribution Leaderboard">
+    <PanelShell
+      title="Contribution Leaderboard"
+      description="Rank contributors by helpfulness score, tier, badges, and quest streak."
+    >
       <p className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
         Ranked by total
         <Tooltip delayDuration={200}>

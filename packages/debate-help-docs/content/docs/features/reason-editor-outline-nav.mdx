@@ -32,9 +32,13 @@ editor/headings.ts → collectHeadings(doc)
 editor/nav-panel.ts (NavigationPanel)
 editor/heading-breadcrumb.ts → computeBreadcrumbPath(headings, pos)
 editor/heading-breadcrumb-bar.ts (HeadingBreadcrumbBar)
+editor/multi-pane-shell.ts → one HeadingBreadcrumbBar per pane, scoped to
+                              that pane's own .pmd-pane-body scroller/view
 ```
 
 ## Known gaps
 
-The breadcrumb is single-doc only — multi-pane and multi-window don't have
-one yet.
+The breadcrumb now has one instance per multi-pane pane too
+(`multi-pane-shell.ts` mounts its own `HeadingBreadcrumbBar` scoped to that
+pane's scroller), on top of the original single-doc one. Multi-window still
+doesn't have one.

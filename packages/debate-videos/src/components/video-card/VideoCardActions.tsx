@@ -22,8 +22,12 @@ import {
   TooltipTrigger,
 } from "../../ui/primitives/tooltip"
 import { formatVideoDate } from "./videoCardUtils"
+import { topicDisplayLines } from "../../lib/debate-topics"
 import { HideConfirmDialog } from "./VideoCardDialogs"
 import { WatchPageLink } from "../watch/WatchPageLink"
+import { WatchProgressBadge } from "./WatchProgressBadge"
+import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
+import type { VideoType } from "../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on queue add. */
 interface VideoMeta {
@@ -36,6 +40,8 @@ interface VideoMeta {
 
 /** Props for the {@link VideoCardActions} component. */
 interface VideoCardActionsProps {
+  /** The whole video row, so the watch link can use the canonical address. */
+  video?: VideoType
   /** YouTube video ID. */
   videoId: string
   /** Video title (used in tooltip and dialog copy). */
@@ -94,6 +100,7 @@ interface VideoCardActionsProps {
  * @param props - See {@link VideoCardActionsProps}.
  */
 export function VideoCardActions({
+  video,
   videoId,
   title,
   youtubeUrl,
@@ -116,6 +123,11 @@ export function VideoCardActions({
   showDescription,
 }: VideoCardActionsProps) {
   const [showHideConfirm, setShowHideConfirm] = useState(false)
+  // The action row carries the marker too, so a grid with thumbnails turned
+  // off — and the dense rows below it — still say what has been watched. It
+  // is the one place the marker shows on an *unwatched* video as well: every
+  // card then has it, and hovering any card answers how far you got.
+  const watched = useWatchHistoryEntry(videoId)
 
   return (
     <>
@@ -132,6 +144,10 @@ export function VideoCardActions({
           >
             <ExternalLink className="w-4 h-4" />
           </a>
+
+          {/* Watch progress — an empty ring reading "Not watched" until it
+              has been played, so the marker is on every card in the grid */}
+          <WatchProgressBadge entry={watched} size={14} plain showUnwatched />
 
           {/* Favourite toggle */}
           <Tooltip>
@@ -187,7 +203,7 @@ export function VideoCardActions({
           </Tooltip>
 
           {/* Watch page — the video, its transcript and related videos */}
-          <WatchPageLink videoId={videoId} title={title} />
+          <WatchPageLink videoId={videoId} title={title} video={video} />
 
           {/* Topic tooltip button */}
           {yearTopic && (
@@ -206,14 +222,14 @@ export function VideoCardActions({
                   {description ? (
                     <>
                       <p className="font-semibold text-primary">
-                        {yearTopic.replace(/<br\s*\/?>/gi, "\n")}
+                        {topicDisplayLines(yearTopic)}
                       </p>
                       <p>
                         {description.split("\n").slice(2).join("\n").trim()}
                       </p>
                     </>
                   ) : (
-                    <p>{yearTopic.replace(/<br\s*\/?>/gi, "\n")}</p>
+                    <p>{topicDisplayLines(yearTopic)}</p>
                   )}
                 </div>
               </TooltipContent>

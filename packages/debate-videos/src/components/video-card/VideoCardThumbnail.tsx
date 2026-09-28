@@ -8,8 +8,13 @@
 import { useState, useEffect } from "react"
 import { Play, Volume2 } from "lucide-react"
 import { cn } from "../../ui/lib/utils"
-import { TOURNAMENT_COLORS, getRoundBadgeColor } from "./videoCardUtils"
+import { TOURNAMENT_COLORS, getRoundBadgeColor, TOC_TOURNAMENT_IMAGE, isTOCTournament } from "./videoCardUtils"
 import { TopPickBadge } from "./TopPickBadge"
+import { WatchProgressBadge, WatchProgressBar } from "./WatchProgressBadge"
+import { useWatchHistoryEntry } from "../../hooks/useWatchHistory"
+import { videoRouteHref } from "../../lib/video-route"
+import { videoWatchHref } from "../../lib/video-slug"
+import type { VideoType } from "../../types/videos"
 
 /** Shape of the video metadata forwarded to the player store on play. */
 interface VideoMeta {
@@ -58,15 +63,8 @@ interface VideoCardThumbnailProps {
   videoMeta: VideoMeta
   /** Style number used for tournament badge colour lookup. */
   styleNumber?: number
-  /**
-   * Callback invoked to start playback.
-   * Matches the signature of `useVideoPlayerStore().setActiveVideo`.
-   */
-  setActiveVideo: (
-    videoId: string,
-    title: string,
-    meta: VideoMeta,
-  ) => void
+  /** The full video tuple for building the canonical watch page URL. */
+  video?: VideoType
 }
 
 /**
@@ -102,9 +100,13 @@ export function VideoCardThumbnail({
   youtubeUrl,
   videoMeta,
   styleNumber,
-  setActiveVideo,
+  video,
 }: VideoCardThumbnailProps) {
   const [thumbnailFailed, setThumbnailFailed] = useState(false)
+  // Subscribed here rather than passed down: the grid's cards are memoised and
+  // a progress write every twenty seconds would otherwise re-render all of
+  // them. See `hooks/useWatchHistory.ts`.
+  const watched = useWatchHistoryEntry(videoId)
 
   // Grids reuse card instances as the user filters and pages, so a failure
   // recorded for one video must not stick to the next one rendered here.
@@ -114,11 +116,15 @@ export function VideoCardThumbnail({
 
   if (!showThumbnails) return null
 
+  const watchHref = video ? videoRouteHref(video) : videoWatchHref(title)
+
   return (
-    <div
-      className="relative w-full aspect-video overflow-hidden bg-muted cursor-pointer"
-      onClick={() => !isPlaying && setActiveVideo(videoId, title, videoMeta)}
-    >
+    <div className="relative w-full aspect-video overflow-hidden bg-muted">
+      <a
+        href={watchHref}
+        className="absolute inset-0 z-10"
+        aria-label={`Watch "${title}" with transcript`}
+      />
       {/*
         A plain <img>, deliberately, rather than next/image with `fill`:
         `fill` only positions the image through inline styles, and the Vite
@@ -136,14 +142,18 @@ export function VideoCardThumbnail({
         decoding="async"
         onError={() => setThumbnailFailed(true)}
         ref={(node) => {
-          // A thumbnail that failed before React attached the handler — a
-          // cached 404, or markup hydrated from the server — never fires
-          // `error`, so the broken state has to be read off the element.
           if (node?.complete && node.naturalHeight === 0) setThumbnailFailed(true)
         }}
         className={`absolute inset-0 h-full w-full object-cover transition-opacity ${
           thumbnailFailed ? "opacity-0" : "opacity-100"
         }`}
+      />
+
+      {/* Watch page link overlay - clicking the card navigates to watch page */}
+      <a
+        href={video ? videoRouteHref(video) : videoWatchHref(title)}
+        className="absolute inset-0 z-10"
+        aria-label={`Watch "${title}" with transcript`}
       />
 
       {/* Metadata overlay */}
@@ -165,7 +175,13 @@ export function VideoCardThumbnail({
                     size="md"
                   />
                 )}
-                {cleanTournament && (
+                {cleanTournament && isTOCTournament(cleanTournament) ? (
+                  <img
+                    src={TOC_TOURNAMENT_IMAGE}
+                    alt="Tournament of Champions"
+                    className="h-6 w-auto object-contain drop-shadow-lg [filter:drop-shadow(0_0_2px_rgba(0,0,0,0.7))]"
+                  />
+                ) : cleanTournament ? (
                   <span
                     className={cn(
                       "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
@@ -176,7 +192,7 @@ export function VideoCardThumbnail({
                   >
                     {cleanTournament}
                   </span>
-                )}
+                ) : null}
                 {year && (
                   <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
                     '{String(year).slice(-2)}
@@ -278,6 +294,9 @@ export function VideoCardThumbnail({
         </div>
       </div>
 
+      {/* How much of this the user has already watched */}
+      <WatchProgressBadge entry={watched} className="absolute right-1.5 top-1.5 z-10" />
+
       {/* Play state overlay */}
       {isPlaying ? (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60">
@@ -293,6 +312,8 @@ export function VideoCardThumbnail({
           </div>
         </div>
       )}
+
+      <WatchProgressBar entry={watched} />
     </div>
   )
 }

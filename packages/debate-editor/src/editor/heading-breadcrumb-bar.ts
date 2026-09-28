@@ -7,10 +7,11 @@
  * heading to jump" pattern this mirrors (`select`-then-`scrollToHeadingId`
  * from `plugin-jump.ts`).
  *
- * Single-doc only for now (mounted once against `#app`/the single-doc
- * `view`); multi-pane/multi-window each have their own `.pmd-pane-body`
- * scroller and view and are not wired up — a follow-up, not a regression,
- * since neither had a breadcrumb before this file existed.
+ * Mounted once against `#app`/the single-doc `view`, and once per pane by
+ * `multi-pane-shell.ts` (each scoped to that pane's own `.pmd-pane-body`
+ * scroller/view). Multi-window still doesn't have one wired up — a
+ * follow-up, not a regression, since it had no breadcrumb before this file
+ * existed either.
  *
  * @module editor/heading-breadcrumb-bar
  */

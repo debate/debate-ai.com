@@ -9,6 +9,7 @@ import { createPortal } from "react-dom"
 import { AlertCircle } from "lucide-react"
 import { useVideoPlayerStore, videoPlayerIframeRef, sendYouTubeCommand } from "../../state/videoPlayerStore"
 import { savePlayerState, loadPlayerState, clearSavedPlayerState } from "../../state/videoPlayerPersistence"
+import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { useDragResize } from "./useDragResize"
 import { useDocumentPictureInPicture } from "./useDocumentPictureInPicture"
 import { PlayerTitleBar } from "./PlayerTitleBar"
@@ -18,7 +19,7 @@ import { PlayerResizeHandles } from "./PlayerResizeHandles"
 import { PlayerSubtitles } from "./PlayerSubtitles"
 import { useTranscript } from "../transcript/useTranscript"
 import { groupIntoSentences } from "../transcript/transcriptUtils"
-import { buildEmbedUrl, describePlayerError, startListening, watchUrl } from "./youtubeEmbed"
+import { buildEmbedUrl, describePlayerError, startListening, watchUrl, embedOrigin } from "./youtubeEmbed"
 
 interface VideoPlayerProps {
   /**
@@ -65,10 +66,17 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   // Position to resume from after a reload the app causes itself (popping the
   // iframe in/out of the PiP window re-creates it, restarting playback at 0)
   const [resumeSeconds, setResumeSeconds] = useState<number | null>(null)
+  // The origin of the main page, captured before entering PiP so the embed
+  // can still identify itself after the iframe reloads in the PiP window.
+  const [pipOrigin, setPipOrigin] = useState<string | null>(null)
 
   // Time tracking refs for persisting playback position
   const playStartedAtRef = useRef<number | null>(null) // Date.now() when video last started playing
   const timeOffsetRef = useRef<number>(0) // accumulated seconds before last play event
+  // The video's length, as the embed reports it. Nothing in the library
+  // stores a duration, and the watch history needs one to turn a position
+  // into the percentage the grid shows.
+  const durationRef = useRef<number>(0)
 
   const { position, isDragging, isResizing, playerWidth, startDrag, startResize } = useDragResize(containerRef)
 
@@ -107,6 +115,16 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
       playbackRate: store.playbackRate,
       queue: store.queue,
       savedTime: getCurrentTime(),
+    })
+    // The same moment, in the account-synced history: the snapshot above is a
+    // 24-hour resume cursor for this browser, this is the durable record of
+    // having watched the video. `recordWatchProgress` throttles itself.
+    recordWatchProgress({
+      videoId: store.activeVideoId,
+      positionSeconds: getCurrentTime(),
+      durationSeconds: durationRef.current,
+      title: store.activeVideoTitle ?? "",
+      flush: true,
     })
   }, [getCurrentTime])
 
@@ -152,10 +170,12 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     }
   }, [activeVideoId, startTime])
 
-  // A new video starts from a clean slate: no stale error, no resume offset
+  // A new video starts from a clean slate: no stale error, no resume offset,
+  // and no length carried over from the video before it.
   useEffect(() => {
     setPlayerError(null)
     setResumeSeconds(null)
+    durationRef.current = 0
   }, [activeVideoId])
 
   // A fresh embed always starts at 1x, so re-apply the chosen rate on first play
@@ -196,6 +216,21 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
               playStartedAtRef.current = null
             }
             setIsPlaying(false)
+            // "Ended" is the only signal that says a video was watched *through*:
+            // a user who skips the last minute of an hour-long round has still
+            // finished it, and a position can never prove that on its own.
+            if (data.info === 0) {
+              const store = useVideoPlayerStore.getState()
+              if (store.activeVideoId) {
+                recordWatchProgress({
+                  videoId: store.activeVideoId,
+                  positionSeconds: durationRef.current || getCurrentTime(),
+                  durationSeconds: durationRef.current,
+                  title: store.activeVideoTitle ?? "",
+                  completed: true,
+                })
+              }
+            }
             persistState()
           }
         }
@@ -205,6 +240,10 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
           if (!Number.isNaN(code)) setPlayerError(code)
         }
         // YouTube infoDelivery includes currentTime when available — use it for accuracy
+        if (data.event === "infoDelivery" && data.info?.duration != null) {
+          const duration = Number(data.info.duration)
+          if (Number.isFinite(duration) && duration > 0) durationRef.current = duration
+        }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           const yt = data.info.currentTime as number
           // Sync our tracking with YouTube's reported time
@@ -213,6 +252,17 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
             playStartedAtRef.current = Date.now()
           }
           if (showSubtitles) setSubtitleTime(yt)
+          // Throttled inside the store to one write every twenty seconds per
+          // video, so this can safely ride the embed's own reporting rate.
+          const store = useVideoPlayerStore.getState()
+          if (store.activeVideoId) {
+            recordWatchProgress({
+              videoId: store.activeVideoId,
+              positionSeconds: yt,
+              durationSeconds: durationRef.current,
+              title: store.activeVideoTitle ?? "",
+            })
+          }
         }
       } catch {
         // ignore non-JSON messages
@@ -220,7 +270,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [setIsPlaying, persistState, showSubtitles, playbackRate])
+  }, [setIsPlaying, persistState, showSubtitles, playbackRate, getCurrentTime])
 
   // Re-send the "listening" handshake for a few seconds after every embed load.
   // `onLoad` alone is not enough: React's delegated events stop reaching the
@@ -266,11 +316,18 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   /**
    * Moving the iframe into (or out of) the PiP window re-creates it, so capture
    * where playback is first and hand it back to the fresh embed as `start`.
+   * Also capture the page origin before entering PiP so the reloaded embed can
+   * still identify itself to YouTube.
    */
   const handleTogglePip = useCallback(() => {
     setResumeSeconds(getCurrentTime())
+    // Capture origin before the iframe moves to the PiP window (where origin becomes null)
+    if (!isPipActive) {
+      const origin = embedOrigin()
+      if (origin) setPipOrigin(origin)
+    }
     void togglePip()
-  }, [getCurrentTime, togglePip])
+  }, [getCurrentTime, togglePip, isPipActive])
 
   /** Re-create the embed after an error, resuming from the tracked position. */
   const handleRetry = useCallback(() => {
@@ -287,6 +344,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   const handleClose = useCallback(() => {
     // User explicitly closed — clear saved state so it doesn't auto-restore
     exitPip()
+    setPipOrigin(null)
     clearSavedPlayerState()
     clearActiveVideo()
   }, [clearActiveVideo, exitPip])
@@ -314,7 +372,7 @@ function VideoPlayerUI({ extraControls }: VideoPlayerProps) {
   if (!activeVideoId || theaterVideoId) return null
 
   const startSeconds = resumeSeconds ?? startTime
-  const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds })
+  const iframeSrc = buildEmbedUrl(activeVideoId, { autoplay: true, controls: true, startSeconds, origin: isPipActive ? pipOrigin ?? undefined : undefined })
 
   const positionStyle: React.CSSProperties = position
     ? { left: position.x, top: position.y, bottom: "auto", right: "auto" }

@@ -86,6 +86,11 @@ interface VideoSearchBarProps {
    * viewports where the `sm:` breakpoint would otherwise switch to a row layout.
    */
   stacked?: boolean
+  /**
+   * Phrases offered in a dropdown under the input when it is clicked, chosen
+   * for the active category (see `getSearchPhrases`). Omit to disable.
+   */
+  suggestedPhrases?: string[]
 }
 
 /**
@@ -129,6 +134,7 @@ export function VideoSearchBar({
   afterSearchElement,
   extraButtons,
   stacked = false,
+  suggestedPhrases = [],
 }: VideoSearchBarProps) {
   /** Mirrors searchTerm locally so the input stays responsive while debouncing. */
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm)
@@ -147,6 +153,22 @@ export function VideoSearchBar({
     }, 2000)
     return () => clearTimeout(timer)
   }, [localSearchTerm, searchTerm, onSearchChange])
+
+  /** Whether the suggested-phrases dropdown is open. */
+  const [phrasesOpen, setPhrasesOpen] = useState(false)
+
+  // Narrow the category's phrases to what has been typed so far.
+  const typed = localSearchTerm.trim().toLowerCase()
+  const visiblePhrases = typed
+    ? suggestedPhrases.filter((p) => p.toLowerCase().includes(typed) && p.toLowerCase() !== typed)
+    : suggestedPhrases
+
+  /** Runs a suggested phrase as the search immediately, skipping the debounce. */
+  const handlePickPhrase = (phrase: string) => {
+    setLocalSearchTerm(phrase)
+    onSearchChange(phrase)
+    setPhrasesOpen(false)
+  }
 
   const handleClearSearch = () => {
     setLocalSearchTerm("")
@@ -197,8 +219,20 @@ export function VideoSearchBar({
                 placeholder="Search..."
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
-                onFocus={onSearchFocus}
-                onBlur={onSearchBlur}
+                onFocus={() => {
+                  setPhrasesOpen(true)
+                  onSearchFocus()
+                }}
+                onClick={() => setPhrasesOpen(true)}
+                onBlur={() => {
+                  setPhrasesOpen(false)
+                  onSearchBlur()
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") setPhrasesOpen(false)
+                }}
+                aria-expanded={phrasesOpen && visiblePhrases.length > 0}
+                aria-controls="video-search-phrases"
                 className="pl-9 pr-8 h-9"
               />
               {localSearchTerm && (
@@ -216,6 +250,30 @@ export function VideoSearchBar({
               )}
               {isSearchFocused && <GlowingEffect />}
             </div>
+            {phrasesOpen && visiblePhrases.length > 0 && (
+              <ul
+                id="video-search-phrases"
+                role="listbox"
+                aria-label="Suggested searches"
+                className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-md border border-border bg-popover p-1 text-sm text-popover-foreground shadow-md"
+              >
+                {visiblePhrases.map((phrase) => (
+                  <li key={phrase} role="option" aria-selected={false}>
+                    <button
+                      type="button"
+                      // mousedown keeps focus in the input, so blur does not
+                      // close the list before the click lands.
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => handlePickPhrase(phrase)}
+                      className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                      <span className="truncate">{phrase}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {afterSearchElement}

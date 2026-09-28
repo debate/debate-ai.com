@@ -21,6 +21,7 @@ const sdk = (await import("../src/sdk")) as unknown as Record<
  */
 const ENDPOINTS: [name: string, method: string, url: string][] = [
 ["analyzeContent", "POST", "/analyze"],
+    ["annotateEvidenceReuseCard", "POST", "/evidence-reuse-check/annotate"],
     ["checkEvidenceReuse", "GET", "/evidence-reuse-check"],
     ["createDocument", "POST", "/doc/documents"],
     ["deleteAllWordCountRounds", "DELETE", "/word-count-rounds"],

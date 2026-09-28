@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  clearSavedQuickCardsFromAccount,
   deleteSavedQuickCardFromAccount,
   listSavedQuickCards,
   saveQuickCardToAccount,
@@ -75,13 +76,28 @@ describe('saveQuickCardToAccount', () => {
     const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
     vi.stubGlobal('fetch', fetchMock);
 
-    await saveQuickCardToAccount(CARD);
+    const result = await saveQuickCardToAccount(CARD);
 
     expect(fetchMock).toHaveBeenCalledWith('/api/quick-cards/card-1', {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ card: CARD }),
     });
+    expect(result).toEqual({ conflict: false });
+  });
+
+  it('resolves a conflict result on a 409, with the account\'s current (newer) card', async () => {
+    const newer = { ...CARD, updatedAt: CARD.updatedAt + 1000 };
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 409,
+      json: async () => ({ current: newer }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await saveQuickCardToAccount(CARD);
+
+    expect(result).toEqual({ conflict: true, current: newer });
   });
 
   it('URL-encodes the id', async () => {
@@ -127,5 +143,27 @@ describe('deleteSavedQuickCardFromAccount', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(deleteSavedQuickCardFromAccount('card-1')).rejects.toThrow('Something broke.');
+  });
+});
+
+describe('clearSavedQuickCardsFromAccount', () => {
+  it('DELETEs the unscoped endpoint', async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    await clearSavedQuickCardsFromAccount();
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/quick-cards', { method: 'DELETE' });
+  });
+
+  it("throws the server's error message on failure", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'Something broke.' }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(clearSavedQuickCardsFromAccount()).rejects.toThrow('Something broke.');
   });
 });

@@ -31,8 +31,15 @@
  * render; `pushRead`/`pushLiked` fire best-effort (fire-and-forget, no
  * await, no error surfaced to the UI) after each local mutation, mirroring
  * `useFavoriteTools`'s "local apply is never blocked by a sync failure"
- * convention. A caller with no signed-in session (or that omits the prop
- * entirely) gets the exact prior local-only behavior.
+ * convention. Each push sends only the single id just marked read/toggled,
+ * not this browser's whole read/liked list — `useNewsStreamSync`'s
+ * `recordNewsRead`/`addNewsLiked`/`removeNewsLiked` ops resolve against the
+ * account's *current* stored list server-side, the same lost-update fix
+ * `favoriteTools`/`recentTools` already use, since two tabs marking
+ * different items read/liked close together would otherwise race a
+ * whole-list PUT (see `news-stream.mdx`'s Known gaps). A caller with no
+ * signed-in session (or that omits the prop entirely) gets the exact prior
+ * local-only behavior.
  *
  * @module panels/NewsStreamPanel
  */
@@ -49,8 +56,6 @@ import {
   buildNewsFeed,
   isNewsItemLiked,
   isNewsItemRead,
-  listLikedIds,
-  listReadIds,
   markNewsItemRead,
   mergeRemoteViewerState,
   toggleNewsItemLiked,
@@ -143,10 +148,10 @@ function NewsItemRow({
 export interface NewsStreamSyncAdapter {
   /** Resolves to the signed-in user's account-synced read/liked ids, or `null` when signed out/unavailable. Called once on mount. */
   hydrate: () => Promise<{ read: string[]; liked: string[] } | null>
-  /** Best-effort push of the full current read-id list after a new item is marked read. */
-  pushRead: (allReadIds: string[]) => void
-  /** Best-effort push of the full current liked-id list after a like is toggled. */
-  pushLiked: (allLikedIds: string[]) => void
+  /** Best-effort push of a single "mark read" op after a new item is marked read. */
+  pushRead: (id: string) => void
+  /** Best-effort push of a single like/unlike op after a like is toggled — `liked` is the item's new state. */
+  pushLiked: (id: string, liked: boolean) => void
 }
 
 /**
@@ -208,13 +213,13 @@ export function NewsStreamPanel({
     if (isNewsItemRead(id)) return
     markNewsItemRead(id)
     setViewerTick((t) => t + 1)
-    syncRemoteRef.current?.pushRead(listReadIds())
+    syncRemoteRef.current?.pushRead(id)
   }
 
   const handleToggleLike = (id: string) => {
-    toggleNewsItemLiked(id)
+    const liked = toggleNewsItemLiked(id)
     setViewerTick((t) => t + 1)
-    syncRemoteRef.current?.pushLiked(listLikedIds())
+    syncRemoteRef.current?.pushLiked(id, liked)
   }
 
   if (items === null) {

@@ -11,6 +11,7 @@ const CARD: CardDef = {
   type: 'qa',
   front: 'What warms?',
   back: 'Carbon',
+  updatedAt: 1000,
 };
 
 afterEach(() => {
@@ -69,13 +70,28 @@ describe('saveLearnCardToAccount', () => {
     const fetchMock = vi.fn(async () => ({ ok: true, status: 200 })) as unknown as typeof fetch;
     vi.stubGlobal('fetch', fetchMock);
 
-    await saveLearnCardToAccount(CARD);
+    const result = await saveLearnCardToAccount(CARD);
 
     expect(fetchMock).toHaveBeenCalledWith('/api/learn-cards/card-1', {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ card: CARD }),
     });
+    expect(result).toEqual({ conflict: false });
+  });
+
+  it("resolves a conflict result on a 409, with the account's current (newer) card", async () => {
+    const newer = { ...CARD, updatedAt: CARD.updatedAt! + 1000 };
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 409,
+      json: async () => ({ current: newer }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await saveLearnCardToAccount(CARD);
+
+    expect(result).toEqual({ conflict: true, current: newer });
   });
 
   it('URL-encodes the id', async () => {

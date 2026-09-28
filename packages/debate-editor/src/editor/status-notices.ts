@@ -30,6 +30,11 @@ export interface NoticeInput {
   key?: string;
   /** Companion toast (default true; repeats never toast). */
   toast?: boolean;
+  /** When content behind this notice can't be saved but also shouldn't be
+   *  silently lost, an offer to download it raw instead — e.g. the
+   *  unreadable-document notice attaching the HTML that failed to parse, so
+   *  the user can salvage it themselves rather than retyping it. */
+  download?: { filename: string; content: string };
 }
 
 interface Notice {
@@ -40,6 +45,7 @@ interface Notice {
   body: string;
   count: number;
   lastAt: number;
+  download: { filename: string; content: string } | null;
 }
 
 const MAX_NOTICES = 50;
@@ -59,6 +65,10 @@ export function postNotice(input: NoticeInput): void {
     existing.lastAt = Date.now();
     existing.body = input.body;
     existing.severity = input.severity;
+    // A repeat that doesn't attach fresh content keeps whatever was already
+    // offered rather than dropping it — losing the download link on the 2nd
+    // heartbeat of the same wound would be worse than a stale filename.
+    if (input.download) existing.download = input.download;
     notices = [existing, ...notices.filter((n) => n !== existing)];
     // A repeat never toasts — this is what turns the save-heal
     // heartbeat into a counter instead of a once-a-minute nag.
@@ -71,6 +81,7 @@ export function postNotice(input: NoticeInput): void {
       body: input.body,
       count: 1,
       lastAt: Date.now(),
+      download: input.download ?? null,
     });
     if (notices.length > MAX_NOTICES) notices.length = MAX_NOTICES;
     if (input.toast !== false) showToast(input.body);
@@ -159,6 +170,19 @@ function closePanel(): void {
   window.removeEventListener('keydown', onKeyDown, { capture: true });
 }
 
+/** Mirrors `ArgumentTreePanel.tsx`'s anchor+Blob download pattern. */
+function downloadNoticeContent(download: { filename: string; content: string }): void {
+  const blob = new Blob([download.content], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = download.filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 const BODY_CLAMP = 280;
 
 function renderPanel(): void {
@@ -217,6 +241,15 @@ function renderPanel(): void {
 
     const actions = document.createElement('div');
     actions.className = 'pmd-notice-actions';
+    if (n.download) {
+      const download = n.download;
+      const downloadBtn = document.createElement('button');
+      downloadBtn.type = 'button';
+      downloadBtn.className = 'pmd-settings-btn';
+      downloadBtn.textContent = 'Download';
+      downloadBtn.addEventListener('click', () => downloadNoticeContent(download));
+      actions.appendChild(downloadBtn);
+    }
     const copyBtn = document.createElement('button');
     copyBtn.type = 'button';
     copyBtn.className = 'pmd-settings-btn';

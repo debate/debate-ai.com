@@ -229,7 +229,7 @@ function entryToDraft(entry: EvidenceLibraryEntry): EntryDraft {
  * Reads localStorage on mount only (client-side), so it renders a loading
  * state during SSR/hydration rather than throwing.
  */
-export function EvidenceLibraryPanel() {
+export function EvidenceLibraryPanel({ submitOnly = false }: { submitOnly?: boolean } = {}) {
   const [hasEntries, setHasEntries] = useState<boolean | null>(null)
   const [queryText, setQueryText] = useState("")
   const [kind, setKind] = useState<EvidenceEntryKind | "all">("all")
@@ -746,6 +746,10 @@ export function EvidenceLibraryPanel() {
         )}
       </PanelSection>
 
+      {/* The submit popup on the cards search page (`SubmitEvidenceDialog`) stops
+          at the form and the page check; the rest is the library's own page. */}
+      {!submitOnly && (
+      <>
       <PanelSection
         title="Team reuse dashboard"
         description={
@@ -957,6 +961,8 @@ export function EvidenceLibraryPanel() {
             </div>
           ))}
         </div>
+      )}
+      </>
       )}
     </PanelShell>
   )

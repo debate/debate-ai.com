@@ -2,6 +2,7 @@
  * @fileoverview Utility functions and constants for video card styling and metadata
  */
 
+import { getStyleTopicText } from "../../lib/debate-topics";
 import type { TopicType } from "../../types/videos";
 import { DEBATE_STYLE_LABELS } from "../../types/videos";
 
@@ -18,6 +19,14 @@ export const TOURNAMENT_COLORS: Record<number, string> = {
   1: "bg-amber-900/80 border-amber-400/90 text-amber-300",
   4: "bg-emerald-900/80 border-emerald-400/90 text-emerald-300",
 };
+
+export const TOC_TOURNAMENT_IMAGE = "https://i.imgur.com/B8IWw0m.png";
+
+export function isTOCTournament(tournament: string | undefined): boolean {
+  if (!tournament) return false;
+  const base = tournament.replace(/\s*\(.+\)/, "").trim();
+  return base === "TOC";
+}
 
 export function getRoundBadgeColor(roundLevel: string) {
   const round = roundLevel.toLowerCase().trim();
@@ -52,12 +61,7 @@ export function getYearTopic(
 ): string | undefined {
   if (!year || !topics) return undefined;
   const topicEntry = topics.find((t) => Number(t.year) === year);
-  if (!topicEntry) return undefined;
-  if (style === 1) return topicEntry.policy_topic;
-  if (style === 2) return topicEntry.pf_topic;
-  if (style === 3) return topicEntry.ld_topic;
-  if (style === 4) return topicEntry.ndt_topic;
-  return undefined;
+  return getStyleTopicText(topicEntry, style);
 }
 
 /**

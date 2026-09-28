@@ -29,6 +29,7 @@ function row(spec: {
   source?: "round" | "lecture";
   topPick?: boolean;
   description?: string;
+  tournament?: string | null;
 }): VideoRow {
   return tupleToVideoRow(
     [
@@ -39,7 +40,7 @@ function row(spec: {
       spec.views ?? 0,
       spec.description ?? "",
       spec.style ?? spec.category ?? null,
-      null,
+      spec.tournament ?? null,
       null,
       null,
       null,
@@ -162,6 +163,40 @@ describe("filterVideoRows", () => {
 
   it("combines filters", () => {
     expect(ids({ style: 2, year: "2026", q: "octas" })).toEqual(["pf-new"]);
+  });
+
+  it("matches the tournament field case-insensitively, unlike q's free-text scan", () => {
+    const rows: VideoRow[] = [
+      row({ id: "toc-final", date: "2025-09-01", tournament: "TOC" }),
+      row({ id: "toc-semis", date: "2025-08-30", tournament: "TOC" }),
+      row({
+        id: "unrelated-mentions-toc",
+        date: "2025-08-01",
+        tournament: "Blake",
+        description: "A recap discussing last year's TOC results.",
+      }),
+    ];
+    const tournamentIds = (params: Parameters<typeof filterVideoRows>[1]) =>
+      filterVideoRows(rows, params).map((r) => r.videoId);
+
+    // The dedicated `tournament` filter only matches the tournament column.
+    expect(tournamentIds({ tournament: "TOC" })).toEqual(["toc-final", "toc-semis"]);
+    expect(tournamentIds({ tournament: "toc" })).toEqual(["toc-final", "toc-semis"]);
+
+    // The generic `q` filter, by contrast, also pulls in a video that merely
+    // mentions the tournament in its description — the false positive
+    // `tournament` exists to avoid.
+    expect(tournamentIds({ q: "toc" })).toEqual(["toc-final", "toc-semis", "unrelated-mentions-toc"]);
+  });
+
+  it("drops rows with no tournament when a tournament filter is set", () => {
+    const rows: VideoRow[] = [
+      row({ id: "with-tournament", date: "2025-09-01", tournament: "TOC" }),
+      row({ id: "without-tournament", date: "2025-09-01" }),
+    ];
+    expect(filterVideoRows(rows, { tournament: "TOC" }).map((r) => r.videoId)).toEqual([
+      "with-tournament",
+    ]);
   });
 });
 

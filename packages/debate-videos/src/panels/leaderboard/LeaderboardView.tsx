@@ -13,20 +13,22 @@ import { Tabs, TabsList, TabsTrigger } from "../../ui/primitives/tabs"
 import { Video } from "lucide-react"
 import { StickyHeader } from "../../components/layout/StickyHeader"
 import { LeaderboardPanel } from "./RankingsLeaderboardPanel"
+import { seasonLabel, type LeaderboardTab } from "./leaderboardUtils"
 
-const DIVISION_LABELS: { value: "VPF" | "VLD" | "VCX" | "NDT"; label: string }[] = [
+const DIVISION_LABELS: { value: LeaderboardTab; label: string }[] = [
   { value: "VPF", label: "PF" },
   { value: "VLD", label: "LD" },
   { value: "VCX", label: "Policy" },
   { value: "NDT", label: "NDT" },
+  { value: "SCHOOLS", label: "Schools" },
 ]
 
 /** Props for the {@link LeaderboardView} component. */
 interface LeaderboardViewProps {
   /** Currently active debate division. */
-  lbDivision: "VPF" | "VLD" | "VCX" | "NDT"
+  lbDivision: LeaderboardTab
   /** Setter for the active division. */
-  setLbDivision: (v: "VPF" | "VLD" | "VCX" | "NDT") => void
+  setLbDivision: (v: LeaderboardTab) => void
   /** Currently selected season year string (e.g. `"2026"`). */
   lbYear: string
   /** Setter for the active year. */
@@ -81,7 +83,7 @@ export function LeaderboardView({
         <SelectContent>
           {lbYears.map((y) => (
             <SelectItem key={y} value={y} className="text-xs">
-              {Number(y) - 1}-{y}
+              {seasonLabel(y)}
             </SelectItem>
           ))}
         </SelectContent>

@@ -82,3 +82,44 @@ describe("clearAllSeenBadges", () => {
     expect(getSeenBadges("alice")).toBeUndefined();
   });
 });
+
+describe("storage shape", () => {
+  it("persists as an array of { id, badges } records, keyed by the contributor's id", () => {
+    markBadgesSeen("alice", ["Rising Researcher"]);
+    markBadgesSeen("bob", ["Seasoned Contributor"]);
+
+    const raw = JSON.parse(localStorage.getItem("unlockCelebrationSeenBadges") ?? "[]");
+    expect(raw).toEqual([
+      { id: "alice", badges: ["Rising Researcher"] },
+      { id: "bob", badges: ["Seasoned Contributor"] },
+    ]);
+  });
+
+  it("reads back a pre-existing legacy Record<contributorId, string[]> baseline", () => {
+    localStorage.setItem(
+      "unlockCelebrationSeenBadges",
+      JSON.stringify({ alice: ["Rising Researcher"], bob: ["Seasoned Contributor"] }),
+    );
+
+    expect(getSeenBadges("alice")).toEqual(["Rising Researcher"]);
+    expect(getSeenBadges("bob")).toEqual(["Seasoned Contributor"]);
+  });
+
+  it("rewrites a legacy baseline into the array shape on the next write", () => {
+    localStorage.setItem("unlockCelebrationSeenBadges", JSON.stringify({ alice: ["Rising Researcher"] }));
+
+    markBadgesSeen("bob", ["Seasoned Contributor"]);
+
+    const raw = JSON.parse(localStorage.getItem("unlockCelebrationSeenBadges") ?? "[]");
+    expect(raw).toEqual([
+      { id: "alice", badges: ["Rising Researcher"] },
+      { id: "bob", badges: ["Seasoned Contributor"] },
+    ]);
+  });
+
+  it("degrades a corrupt legacy entry (non-array value) to an empty baseline for that contributor rather than throwing", () => {
+    localStorage.setItem("unlockCelebrationSeenBadges", JSON.stringify({ alice: "not-an-array" }));
+
+    expect(getSeenBadges("alice")).toBeUndefined();
+  });
+});

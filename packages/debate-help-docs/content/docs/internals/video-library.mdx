@@ -172,6 +172,24 @@ so the grid never waits on the request. The **Stacked playlists** toggle
 (`useVideoState`, on by default) passes `enabled: false` and gives every video
 its own slot again.
 
+**On the watch page.** `app/videos/_watch/video-route-page.tsx` resolves the
+video's own stack key with `getVideoStacks([key])` and passes the members to
+`VideoWatchPage` as `stack`; `components/watch/WatchStackPlaylist.tsx` lists
+them under the player in stack order, current one marked, each labelled
+`Round` / `Analysis` / `Part N` from its address's variant segment. Stack
+members are dropped from the "Related videos" rows so they are not listed twice.
+
+**Addresses.** `lib/video-route.ts` files a round at
+`/videos/<season>/<tournament>/<round>/<aff>-<neg>` — no `vs` — and a video
+made from it (a lecture whose title reads as that round, or one part of a
+split upload) one segment below, at `…/<teams>/<variant>`: `analysis` (the
+category, less a leading `round-`), `part-2`, or both joined. The fifth
+segment is served by `app/videos/[category]/[event]/[matchup]/[teams]/[variant]/page.tsx`.
+`getVideoByRouteSegments` still matches the previous four-segment spelling
+(`…/dartmouth-sv-vs-michigan-pr-round-analysis`, rebuilt by
+`previousVideoRouteHref`) and the older three-segment one, and the page
+redirects both to the canonical path.
+
 ## What a big grid costs
 
 The grid is unbounded: every page of infinite scroll appends sixty more cards
@@ -208,11 +226,15 @@ bun run db:seed:videos                  # JSON → drizzle/seed/videos-seed.sql,
 bun run db:seed:videos:d1               # same file, applied to Cloudflare D1
 ```
 
-Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated,
-alongside the YouTube resync on `/admin`). The Worker already bundles the JSON
-assets, so it seeds from its own copy — no credentials and no data transfer.
-`GET` on the same route reports the row count and whether the feed is being
-served from SQL or the JSON fallback.
+Or, from a deployment itself, `POST /api/admin/videos/seed` (admin-gated). The
+Worker already bundles the JSON assets, so it seeds from its own copy — no
+credentials and no data transfer. `GET` on the same route reports the row
+count and whether the feed is being served from SQL or the JSON fallback. A
+**Seed videos** card on `/admin`, next to "Recompute video stacks", calls
+both: the row/serving-source status renders next to the button
+(`lib/videos/format-seed-videos-result.ts#formatSeedVideosStatus`), and a run's
+own counts and duration replace it once it finishes
+(`formatSeedVideosResult`).
 
 Both paths build their statements with `buildVideoSeedStatements`, so they
 load identical data. The seed is idempotent: rows are upserted by video id and
@@ -234,7 +256,7 @@ The **Video library** card (`components/admin/VideoLibraryTable.tsx`) is the
 other half: it pages the public `videos` table itself.
 
 ```
-GET    /api/admin/videos/library         q, style, source, sort, dir, page, limit
+GET    /api/admin/videos/library         q, style, source, transcript, sort, dir, page, limit
 PATCH  /api/admin/videos/library/[id]    partial row — only the fields sent are written
 DELETE /api/admin/videos/library/[id]    remove from the library, and exclude from resync
 ```
@@ -254,29 +276,124 @@ Two behaviours are worth knowing before changing this:
   channel and description, and a corrected date re-sorts the video. Writing
   the columns directly would silently leave the video searchable only under
   its old title.
+- **`search_text` is recomputed live, not from the read that started the
+  request.** `search_text` depends on three fields (`title`/`channel`/
+  `description`), but a patch may only touch one of them. Two admins editing
+  *different* fields on the same video close together — both reading the row
+  before either writes — would each compute `search_text` from their own
+  snapshot of the field they didn't touch; `title`/`channel` themselves would
+  still land correctly (each `UPDATE` only sets the columns its own patch
+  touched), but whichever `search_text` write landed second would overwrite it
+  with a stale combination that never matched the row's actual columns until
+  a later edit happened to touch `search_text`'s inputs again.
+  `updateLibraryVideo` closes this with `withLiveSearchText`, which rewrites
+  `buildLibraryUpdate`'s computed `search_text` into a SQL expression that
+  references `videos.title`/`channel`/`description` directly for whichever
+  field the patch didn't touch, evaluated by SQLite when the `UPDATE`
+  statement actually runs rather than by JS against an earlier read — the
+  same "resolve against whatever is currently stored, not the caller's own
+  snapshot" fix this codebase already applies to `favoriteTools` and the
+  other account-settings lists (see `/api/settings`'s docstring).
 - **A removal is recorded, not just applied.** `deleteLibraryVideo` deletes
   from `videos` *and* `youtube_round_videos`, then upserts
   `youtube_video_exclusions` — the same table `resyncYouTubeRounds` reads
   before its channel loop. Without that row the next Monday sync would
   re-ingest the video and the next "Publish all" would put it back, which is
   exactly the loop the queue's own delete was given an exclusion row to avoid.
+- **An edit is recorded too.** `buildLibraryUpdate` always sets
+  `admin_edited`, so `db:seed:videos` (or the admin seed endpoint) leaves the
+  row's columns alone on its next run instead of overwriting the edit with
+  the JSON asset's stale value — the seed-side counterpart to the exclusion
+  row above. The flag is never cleared; there is no "go back to asset-driven"
+  action.
+- **"Publish all" costs a fixed handful of queries, not one per round.**
+  D1 allows a Worker invocation 1,000 queries (50 on the Workers Free plan),
+  and a statement awaited on its own spends one of them. `publishRoundVideos`
+  used to await every upsert individually, so publishing a queue of 1,200
+  rounds asked for 1,214 queries and the request died at the driver partway
+  through, having already written most of the rows. The statements are the
+  same — a `videos` row uses most of D1's 100-parameter budget on its own, so
+  each round still needs its own — but they are sent through `db.batch()` in
+  runs of a hundred (`lib/database/query-budget.ts`), which is one query per
+  batch and one transaction per batch: the same 1,200 rounds now cost 14
+  queries, and a failure rolls its batch back instead of leaving the queue
+  half-published. The admin-edited lookup, the queue clear and the stack
+  recompute's writes go out the same way.
+- **A published, admin-edited round also survives a re-publish.**
+  `resyncYouTubeRounds` re-walks every subscribed channel's uploads since a
+  fixed floor date on *every* run, with no check against `videos` — only an
+  explicit admin removal (the exclusion row above) keeps a video out of the
+  queue. So a round published (and possibly corrected here) weeks ago can
+  resurface in `youtube_round_videos` and reach `publishRoundVideos`
+  (`lib/videos/publish-round-video.ts`) again, computed fresh from the
+  unedited YouTube listing — the "Publish all" and per-row "Publish" actions
+  both go through it. `publishRoundVideos` now re-reads which of the batch's
+  ids are already published *and* `admin_edited` immediately before writing,
+  and skips those rows entirely rather than letting the recomputed round data
+  overwrite the correction — the same guarantee `admin_edited` already gives
+  `db:seed:videos` above, closed for this second writer of the table.
+
+Each listed row also carries `transcriptWords` (the word count of its
+`video_documents` transcript, `null` when there is none or it is empty) and
+`hasCaptions` (a `video_transcripts` row exists in any language), read as
+correlated subqueries so the table never ships a transcript body. The outer
+`video_id` in those subqueries is written table-qualified by hand: drizzle
+renders a single-table query's columns bare, and a bare `video_id` inside the
+subquery binds to the subquery's own table, matching every row.
+`transcript=with|without` filters on the same expression, so the count and the
+page agree.
+
+The transcript editor (`VideoContentDialog`) can seed the transcript box from
+`/api/transcript` — the same cached caption route the player uses — through
+`captionsToTranscriptMarkdown` in `debate-videos`: cues are regrouped into
+sentences, a new `## Part N (m:ss)` section starts at a 20-second silence or
+every ten minutes, and the author is set to `youtube`. Nothing is saved until
+the editor saves. Its "paste any YouTube link" box resolves the id with
+`parseYouTubeVideoId` and opens the dialog even for an unpublished video;
+`video_documents` is keyed by id alone, so the transcript is waiting when the
+video is published.
 
 Listing uses offset paging rather than the queue's `(publishedAt, id)` keyset
 cursor: this table has numbered pages and sorts on columns that are not unique
 (view count, channel), which a two-column cursor cannot express.
 
 `lib/videos/__tests__/admin-library.test.ts` covers the merge, the derived
-columns, the search/filter/sort/paging and the exclusion write against a real
-in-memory SQLite database.
+columns, the search/filter/sort/paging, the exclusion write, and two admins
+editing different fields on the same video close together leaving
+`search_text` consistent with both edits, against a real in-memory SQLite
+database.
 
 ## Known gaps
 
+- Imported captions are split on silences, not on speakers, so the "Part"
+  sections only approximate speeches until an editor renames and merges them.
+- The watch page only exists for published videos, so a transcript written
+  through the "paste any link" box for an unpublished video is not visible to
+  anyone until that video is published.
 - Stacked playlists are only as good as the descriptions: a round-analysis
   video that names its round in the title but does not link it is not paired
   with it, and there is no curated override list — the fix is an edit to the
   YouTube description.
-- `stack_key`/`stack_position` are written by the seed, so an existing
-  database shows no stacks until it is re-seeded.
+- ~~`stack_key`/`stack_position` are written by the seed, so an existing
+  database shows no stacks until it is re-seeded.~~ **Fixed:** that
+  understated the gap — a round published through the live YouTube pipeline
+  (`publish-round-video.ts#publishRoundVideos`, behind the admin
+  "Publish"/"Publish all" actions, and the legacy single-round `POST
+  /api/admin/youtube/videos/publish` endpoint) was never part of the JSON
+  assets to begin with, so a full re-seed never reached it either — it stayed
+  unstacked forever, not just until the next seed. `lib/videos/recompute-video-stacks.ts`
+  re-derives every row's placement over the *whole* table (a round and its
+  analysis are commonly published weeks apart, by different pipelines, so
+  the link can only be found by looking at everything at once) and rewrites
+  only what changed; both publish paths call it after writing, so every
+  future publish keeps stacking current on its own. For a database whose
+  stacks fell behind *before* this wiring existed, `POST
+  /api/admin/videos/recompute-stacks` (admin-gated) backfills them in one
+  call — safe to re-run, since a row already carrying its correct placement
+  produces no write. A **Recompute stacks** button next to "Resync video view
+  counts" on `/admin` calls it directly, mirroring that button's own
+  "checked N, updated M" summary line
+  (`lib/videos/format-recompute-stacks-result.ts`).
 - Search is `LIKE`-based token matching (every token must appear in title,
   channel or description). The previous client-side search used Fuse.js
   fuzzy matching, so a misspelled query that used to return near-matches now
@@ -324,12 +441,38 @@ in-memory SQLite database.
   against a live production D1 instance at the video table's real row count —
   same "unverified against production" caveat
   [openCaselist Sync](caselist-sync.md) already carries for its own API guess.
-- An admin edit to a published video is written to the `videos` table only.
+- ~~An admin edit to a published video is written to the `videos` table only.
   The committed JSON assets under `debate-data-sync/data/videos/` are still
   the seed's source of truth, so re-running `db:seed:videos` upserts the
   asset's version back over the edit. Removals survive a resync (the
   exclusion row) but not a re-seed. Persisting edits means writing them back
-  to the assets, or teaching the seed to skip rows an admin has edited.
+  to the assets, or teaching the seed to skip rows an admin has edited.~~
+  **Fixed:** a new `admin_edited` column (migration `0047_video_admin_edited.sql`,
+  default `false`) is set by `updateLibraryVideo`
+  (`lib/videos/admin-library.ts`) whenever an admin edit is applied and never
+  cleared. `buildVideoSeedStatements` guards every seeded column of the
+  `ON CONFLICT` upsert with `CASE WHEN "admin_edited" = 1 THEN "<col>" ELSE
+  excluded."<col>" END`, so a re-seed leaves an admin-edited row's columns
+  exactly as the admin left them instead of overwriting them with the JSON
+  asset's value — matching the precedent `deleteLibraryVideo`'s
+  `youtube_video_exclusions` row already set for removals. `updated_at` stays
+  unconditional so the row still reads as fresh and the trailing prune
+  doesn't mistake it for one the assets dropped.
+- ~~A round published and then corrected in the admin library could be
+  silently reverted by a later "Publish all"/per-row "Publish": the weekly
+  and manual YouTube resyncs re-walk every subscribed channel's uploads since
+  a fixed floor date with no check against the already-published `videos`
+  table, so an admin-edited round could resurface in `youtube_round_videos`
+  and reach `publishRoundVideos` again computed fresh from the unedited
+  YouTube listing, overwriting the correction.~~ **Fixed:**
+  `publishRoundVideos` (`lib/videos/publish-round-video.ts`) re-reads which
+  of the batch's ids already carry `admin_edited` immediately before writing
+  and skips those rows entirely, matching the guard `admin_edited` already
+  gives `db:seed:videos` above. `lib/videos/__tests__/publish-round-video.test.ts`
+  covers first-time publish, a plain (non-admin-edited) republish, a resync
+  that resurfaces an admin-edited round leaving its correction untouched, and
+  a mixed batch where an untouched sibling round still publishes normally —
+  against a real in-memory SQLite database.
 - Rounds are now stored twice: this table projects the committed JSON assets
   for the public feed, while `youtube_round_videos` is the admin resync's
   landing table, filled straight from the YouTube API for the admin page

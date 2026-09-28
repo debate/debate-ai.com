@@ -11,6 +11,9 @@
       ],
       "write-language/*": [
         "./node_modules/write-language/dist/*.d.ts"
+      ],
+      "debate-webview/*": [
+        "../../packages/debate-webview/src/*"
       ]
     }
   }

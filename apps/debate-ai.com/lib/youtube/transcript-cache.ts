@@ -37,7 +37,7 @@ export async function readCachedTranscript(
     // miss, so the next request refetches it rather than serving nothing.
     return Array.isArray(snippets) && snippets.length > 0 ? snippets : null;
   } catch (error) {
-    console.error(`Transcript cache read failed for ${videoId}:`, error);
+    console.warn(`Transcript cache read failed for ${videoId}:`, error);
     return null;
   }
 }
@@ -65,6 +65,6 @@ export async function writeCachedTranscript(
         set: { snippets: JSON.stringify(snippets), fetchedAt: new Date() },
       });
   } catch (error) {
-    console.error(`Transcript cache write failed for ${videoId}:`, error);
+    console.warn(`Transcript cache write failed for ${videoId}:`, error);
   }
 }

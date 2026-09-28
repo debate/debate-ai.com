@@ -1,0 +1,23 @@
+{
+  "$comment": "Pinned upstream for scripts/sync-upstream.mjs. Bump `commit` (or run the script with --latest) to take new upstream changes; the patches and overlays are re-applied on top.",
+  "repository": "https://github.com/debate/debate-tournament-tabroom.git",
+  "branch": "main",
+  "commit": "75239a31cd8523d31dc119fe994b3fec488e77f3",
+  "vendorDir": "vendor/tabroom",
+  "entries": [
+    "indexcards/api/routes/routers/v1/rest/restRouter.ts",
+    "indexcards/api/routes/routers/v1/pages/pagesRouter.js",
+    "indexcards/api/data/schema.ts",
+    "types/index.ts"
+  ],
+  "copy": ["LICENSE.md"],
+  "importRewrites": {
+    "express": "indexcards/api/_shims/express.ts",
+    "@tabroom/types": "types/index.ts"
+  },
+  "allowedExternals": ["kysely", "zod", "zod-openapi", "luxon", "sanitize-html", "router", "node:async_hooks"],
+  "schemaDump": "indexcards/tests/test.sql",
+  "migration": "migrations/0001_tabroom_schema.sql",
+  "columnsModule": "src/db/generated/columns.ts",
+  "skipTables": ["session"]
+}

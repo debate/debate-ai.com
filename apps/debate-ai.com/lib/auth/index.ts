@@ -1,11 +1,11 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oneTap, openAPI, magicLink, anonymous } from "better-auth/plugins";
+import { oneTap, openAPI, magicLink, anonymous, bearer } from "better-auth/plugins";
 import { oneTimeToken } from "better-auth/plugins/one-time-token";
 import { getDBFromContext } from "../database/context";
 import * as schema from "../database/schema";
 import { Resend } from "resend";
-import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "../config/site";
+import { APP_NAME, APP_EMAIL, APP_ORIGIN, NEXT_PUBLIC_BASE_URL } from "debate-webview/lib/config/site";
 import { buildAllowedHosts, buildTrustedOrigins } from "./hosts";
 import { OAUTH_STATE_COOKIE_MAX_AGE_SECONDS, SIGN_IN_ERROR_URL } from "./oauth-state";
 import { getEnv } from "../env";
@@ -137,6 +137,16 @@ async function buildAuth() {
       oneTap(),
       openAPI(),
       anonymous(),
+      // Lets a caller present its session as `Authorization: Bearer <token>`
+      // instead of a cookie. The browser extension (apps/debate-web-ext) has
+      // no other option: its requests to this origin are cross-site, so the
+      // `SameSite=Lax` session cookie is never attached to them, however many
+      // host permissions the extension holds. The plugin converts the header
+      // into the session cookie before the request is handled — including for
+      // `auth.api.getSession({ headers })` calls made by this app's own routes
+      // (e.g. /api/reason-ai), which is what makes those routes reachable from
+      // the extension at all.
+      bearer(),
       // Lets the native-wrapper desktop/mobile shell (packages/native-wrapper)
       // hand off a session established in the system browser (required for
       // Google OAuth, which blocks embedded webviews) to the wrapper's own

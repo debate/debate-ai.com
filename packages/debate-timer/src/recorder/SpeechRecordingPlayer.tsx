@@ -30,7 +30,9 @@ import {
 } from "../ui/primitives/dropdown-menu"
 import { cn } from "../ui/lib/utils"
 import { useAudioDevices } from "./mic-selector"
+import { getUserMedia } from "./media-devices"
 import { LiveWaveform } from "./live-waveform"
+import { clearSpokenTranscript } from "./spoken-words-store"
 
 interface StoredRecording {
     key: string
@@ -39,6 +41,19 @@ interface StoredRecording {
     recordedAt: string
     audio: string
     durationSeconds?: number
+}
+
+/**
+ * Mock network call behind "Share with Opponents", mirroring
+ * `debate-round`'s `useSpeechHandlers.ts#shareSpeech` (the equivalent mock
+ * for sharing a speech's text document) — no real email-sending backend
+ * exists for either feature yet, so this only simulates the round trip.
+ */
+export async function shareRecording(emails: string[], speechName: string, audioDataUrl: string) {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 500))
+
+    return { success: true, message: `Shared with ${emails.length} participant${emails.length === 1 ? "" : "s"}` }
 }
 
 /** Format seconds as m:ss, e.g. 312.4 → "5:12" */
@@ -196,6 +211,19 @@ interface SpeechRecordingMenuProps {
     playbackRate?: number
     /** Callback when playback rate changes */
     onPlaybackRateChange?: (rate: number) => void
+    /**
+     * Emails to notify via "Share with Opponents" — the caller's own round
+     * participants (debaters/judges/spectators), resolved outside this
+     * package since `debate-timer` doesn't know about `debate-round`'s
+     * `Round` type. Defaults to `[]` for a caller with no round context.
+     */
+    participantEmails?: string[]
+    /**
+     * Visible text beside a mic icon on the trigger (e.g. "Mic & recording")
+     * instead of the bare ellipsis — used where the menu sits on its own row
+     * under a speech in the round sidebar.
+     */
+    triggerLabel?: string
 }
 
 interface SpeechRecordingPlayerProps {
@@ -263,6 +291,8 @@ export function SpeechRecordingMenu({
     speeds = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
     playbackRate = 1,
     onPlaybackRateChange,
+    participantEmails = [],
+    triggerLabel,
 }: SpeechRecordingMenuProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const { devices, loading: loadingDevices, loadDevices } = useAudioDevices()
@@ -272,6 +302,22 @@ export function SpeechRecordingMenu({
 
     const handleUploadAudio = () => {
         fileInputRef.current?.click()
+    }
+
+    const handleShareRecording = async () => {
+        const [recording] = loadRecordings(speechName)
+        if (!recording) {
+            alert("Record this speech first, then share it with opponents.")
+            return
+        }
+
+        try {
+            const result = await shareRecording(participantEmails, speechName, recording.audio)
+            alert(result.message)
+        } catch (error) {
+            console.error("Failed to share recording:", error)
+            alert("Failed to share recording. Please try again.")
+        }
     }
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -321,7 +367,7 @@ export function SpeechRecordingMenu({
                 audio: micDeviceId ? { deviceId: { exact: micDeviceId } } : true,
             }
             try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints)
+                const stream = await getUserMedia(constraints)
                 previewStreamRef.current = stream
                 setPreviewStream(stream)
             } catch {
@@ -345,7 +391,7 @@ export function SpeechRecordingMenu({
             const constraints: MediaStreamConstraints = {
                 audio: { deviceId: { exact: deviceId } },
             }
-            navigator.mediaDevices.getUserMedia(constraints)
+            getUserMedia(constraints)
                 .then((stream) => {
                     previewStreamRef.current = stream
                     setPreviewStream(stream)
@@ -361,23 +407,36 @@ export function SpeechRecordingMenu({
         <>
             <DropdownMenu open={menuOpen} onOpenChange={handleMenuOpenChange}>
                 <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className={cn(
-                            inHeader ? "h-6 w-6 shrink-0" : "h-5 w-5 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity",
-                            buttonClassName
-                        )}
-                    >
-                        <MoreVertical className={inHeader ? "h-3.5 w-3.5" : "h-3 w-3"} />
-                    </Button>
+                    {triggerLabel ? (
+                        <Button
+                            variant="ghost"
+                            className={cn("h-6 shrink-0 gap-1 px-1.5 text-[11px] text-muted-foreground", buttonClassName)}
+                        >
+                            {recordingEnabled ? <Mic className="h-3 w-3" /> : <MicOff className="h-3 w-3" />}
+                            <span className="truncate">{triggerLabel}</span>
+                            <MoreVertical className="h-3 w-3" />
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                                inHeader ? "h-6 w-6 shrink-0" : "h-5 w-5 flex-shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity",
+                                buttonClassName
+                            )}
+                        >
+                            <MoreVertical className={inHeader ? "h-3.5 w-3.5" : "h-3 w-3"} />
+                        </Button>
+                    )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     {/* Share with Opponents & Judge - First menu item */}
-                    <DropdownMenuItem onClick={() => { /* TODO: Implement sharing */ }}>
-                        <Users className="h-4 w-4 mr-2" />
-                        Share with Opponents
-                    </DropdownMenuItem>
+                    {recordingKey && (
+                        <DropdownMenuItem onClick={() => { void handleShareRecording() }}>
+                            <Users className="h-4 w-4 mr-2" />
+                            Share with Opponents
+                        </DropdownMenuItem>
+                    )}
 
                     {/* Playback Speed submenu */}
                     {onPlaybackRateChange && (
@@ -572,6 +631,7 @@ export function SpeechRecordingPlayer({
     const handleDelete = (key: string) => {
         if (!window.confirm("Delete this recording? This cannot be undone.")) return
         localStorage.removeItem(key)
+        clearSpokenTranscript(speechName)
         setRecordings((prev) => prev.filter((r) => r.key !== key))
     }
 

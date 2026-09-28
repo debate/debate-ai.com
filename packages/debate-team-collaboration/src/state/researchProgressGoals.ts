@@ -6,11 +6,14 @@
  * are pure; this module persists one goal per contributor in localStorage,
  * mirroring `streakFreezes.ts`'s "array of records filtered by
  * `contributorId`" persistence convention (SSR/no-storage-safe, corrupt or
- * missing JSON degrades to an empty list rather than throwing). Deliberately
- * local-only, not account-synced: like `streakLapseReminders.ts`/
- * `streakFreezes.ts`, this is a lightweight per-visitor preference, not a
- * cross-tool record a coach needs to see — a future run can add account sync
- * (mirroring `wordLimitPresets.ts`'s split) if that turns out to matter.
+ * missing JSON degrades to an empty list rather than throwing). Account-synced
+ * now too: `hooks/useResearchProgressGoalSync.ts` wraps this store and mirrors
+ * the signed-in visitor's own goal to `/api/settings`' `researchProgressGoal`
+ * field (`lib/research-progress-goal-sync.ts`), mirroring
+ * `wordLimitPresets.ts`'s split rather than joining
+ * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` catalog — this store holds
+ * one goal per `contributorId`, but the synced value is scoped to the
+ * signed-in account itself, with nothing to key a catalog row by remotely.
  *
  * `getPersistedGoalProgressForContributor` composes `computeGoalProgress`
  * directly against `state/researchProgress.ts`'s

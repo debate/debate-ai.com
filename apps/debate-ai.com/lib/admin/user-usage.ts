@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, like, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, or, sql, type SQL } from "drizzle-orm";
 import type { AnySQLiteColumn, SQLiteTable } from "drizzle-orm/sqlite-core";
 import type { getDBFromContext } from "@/lib/database/context";
 import {
@@ -104,7 +104,9 @@ function buildFilter({ search, hideAnonymous }: Pick<UserUsageQuery, "search" | 
   const conditions = [];
   if (search) {
     const pattern = `%${search.replace(/[\\%_]/g, "\\$&")}%`;
-    conditions.push(or(like(user.name, pattern), like(user.email, pattern)));
+    conditions.push(
+      or(sql`${user.name} LIKE ${pattern} ESCAPE '\\'`, sql`${user.email} LIKE ${pattern} ESCAPE '\\'`),
+    );
   }
   if (hideAnonymous) conditions.push(eq(user.isAnonymous, false));
   return conditions.length ? and(...conditions) : undefined;
@@ -150,6 +152,40 @@ export async function loadUserUsagePage(db: AdminDB, options: UserUsageQuery) {
       lastActiveAt: lastActiveSeconds ? new Date(lastActiveSeconds * 1000).toISOString() : null,
     })),
     matchedUsers: matched?.value ?? 0,
+  };
+}
+
+/**
+ * Full usage profile for a single account — the same column set and correlated
+ * subqueries that `loadUserUsagePage` computes, narrowed to one user. Used by the
+ * admin user detail view.
+ */
+export async function loadUserUsage(db: AdminDB, id: string) {
+  const [row] = await db
+    .select({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      emailVerified: user.emailVerified,
+      isAnonymous: user.isAnonymous,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      lastActiveSeconds: lastActiveExpression,
+      sessions: sessionsExpression,
+      total: totalExpression,
+      ...usageExpressions,
+    })
+    .from(user)
+    .where(eq(user.id, id))
+    .limit(1);
+
+  if (!row) return null;
+
+  const { lastActiveSeconds, ...rest } = row;
+  return {
+    ...rest,
+    lastActiveAt: lastActiveSeconds ? new Date(lastActiveSeconds * 1000).toISOString() : null,
   };
 }
 

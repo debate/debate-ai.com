@@ -30,16 +30,26 @@
  * `packages/debate-help-docs/content/docs/internals/argument-tree-outline.mdx` and this hook's own
  * `state/live-update.ts` doc comment both named.
  *
+ * `addPreset`/`updatePreset`/`removePreset` sync a single
+ * `addWordLimitPreset`/`updateWordLimitPreset`/`removeWordLimitPreset` op
+ * (`saveWordLimitPresetOp`) rather than ever PUTting a whole-list
+ * `wordLimitPresets` replace — so two tabs/devices editing presets at once
+ * both land instead of the second PUT silently dropping the first tab's
+ * change. See `state/wordLimitPresets.ts#applyWordLimitPresetOp`'s
+ * docstring and `packages/debate-help-docs/content/docs/features/user-settings.mdx`'s
+ * Known gaps.
+ *
  * @module hooks/useWordLimitPresets
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { fetchUserSettings, saveUserSettings } from "../round/user-settings-client";
+import { fetchUserSettings, saveWordLimitPresetOp } from "../round/user-settings-client";
 import {
   isValidWordLimitPresetsList,
   MAX_WORD_LIMIT_PRESETS,
   normalizePresetName,
   type WordLimitPreset,
+  type WordLimitPresetOp,
 } from "../state/wordLimitPresets";
 
 const STORAGE_KEY = "word-limit-presets";
@@ -144,17 +154,21 @@ export function useWordLimitPresets(): UseWordLimitPresetsResult {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
-  const persist = useCallback((next: WordLimitPreset[]) => {
+  // Applies a change to local state/storage; `syncOp` below decides how that
+  // change reaches the account.
+  const persistLocal = useCallback((next: WordLimitPreset[]) => {
     setPresets(next);
     writeLocal(next);
     window.dispatchEvent(new Event(CHANGE_EVENT));
-    if (remoteAvailable) {
-      saveUserSettings({ wordLimitPresets: next }).catch(() => {
-        // Best-effort — the change already applied locally above, matching
-        // useFavoriteTools's/UserSettingsPanel's "local apply is never
-        // blocked by a sync failure" convention.
-      });
-    }
+  }, []);
+
+  const syncOp = useCallback((op: WordLimitPresetOp) => {
+    if (!remoteAvailable) return;
+    saveWordLimitPresetOp(op).catch(() => {
+      // Best-effort — the change already applied locally above, matching
+      // useFavoriteTools's/UserSettingsPanel's "local apply is never
+      // blocked by a sync failure" convention.
+    });
   }, []);
 
   const addPreset = useCallback(
@@ -162,31 +176,35 @@ export function useWordLimitPresets(): UseWordLimitPresetsResult {
       const normalized = normalizePresetName(name);
       if (presets.some((preset) => normalizePresetName(preset.name) === normalized)) return false;
       if (presets.length >= MAX_WORD_LIMIT_PRESETS) return false;
-      persist([...presets, { name: name.trim(), wordLimit }]);
+      const trimmedName = name.trim();
+      persistLocal([...presets, { name: trimmedName, wordLimit }]);
+      syncOp({ addWordLimitPreset: { name: trimmedName, wordLimit } });
       return true;
     },
-    [presets, persist],
+    [presets, persistLocal, syncOp],
   );
 
   const updatePreset = useCallback(
     (name: string, wordLimit: number) => {
       const normalized = normalizePresetName(name);
       if (!presets.some((preset) => normalizePresetName(preset.name) === normalized)) return;
-      persist(
+      persistLocal(
         presets.map((preset) =>
           normalizePresetName(preset.name) === normalized ? { ...preset, wordLimit } : preset,
         ),
       );
+      syncOp({ updateWordLimitPreset: { name, wordLimit } });
     },
-    [presets, persist],
+    [presets, persistLocal, syncOp],
   );
 
   const removePreset = useCallback(
     (name: string) => {
       const normalized = normalizePresetName(name);
-      persist(presets.filter((preset) => normalizePresetName(preset.name) !== normalized));
+      persistLocal(presets.filter((preset) => normalizePresetName(preset.name) !== normalized));
+      syncOp({ removeWordLimitPreset: name });
     },
-    [presets, persist],
+    [presets, persistLocal, syncOp],
   );
 
   return { presets, loaded, addPreset, updatePreset, removePreset };

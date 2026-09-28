@@ -19,10 +19,33 @@
  * The result is stored on the row (`stackKey`, `stackPosition`), so both
  * backends carry it: the SQL projection seeds the two columns, and the JSON
  * fallback recomputes them in `buildVideoRows`.
+ *
+ * Recomputing against the live `videos` table (`recompute-video-stacks.ts`,
+ * the app-side counterpart that closes the "no stacks until re-seeded" Known
+ * gap) only has a bare SQL projection to work with, not a full
+ * `VideoRow` — so {@link buildVideoStacks}/{@link assignVideoStacks} are
+ * generic over {@link VideoStackRow}, the handful of fields stacking actually
+ * reads and writes, rather than requiring every other column a `VideoRow`
+ * carries.
  * @module videos/video-stacks
  */
 
-import type { VideoRow } from "./video-rows";
+/**
+ * The fields stacking reads and writes. A `VideoRow` built from the JSON
+ * assets satisfies this, and so does a bare `{ videoId, description, source,
+ * publishedMs, stackKey, stackPosition }` projection selected straight off
+ * the `videos` SQL table — `source` is widened to `string` (rather than
+ * reusing `VideoRow`'s `"round" | "lecture"` union) because a SQL `text`
+ * column's inferred type is a plain string, not that literal union.
+ */
+export interface VideoStackRow {
+  videoId: string;
+  description: string | null;
+  source: string;
+  publishedMs: number;
+  stackKey: string | null;
+  stackPosition: number;
+}
 
 /**
  * YouTube ids found in a description. `watch?v=`, `youtu.be/` and `/embed/`
@@ -113,10 +136,10 @@ function union(parents: Map<string, string>, a: string, b: string): void {
  * last rather than to 1970, which would put a legacy row ahead of the debate
  * it comments on.
  */
-function compareMembers(a: VideoRow, b: VideoRow): number {
-  const rank = (row: VideoRow) => (row.source === "round" ? 0 : 1);
+function compareMembers<T extends VideoStackRow>(a: T, b: T): number {
+  const rank = (row: T) => (row.source === "round" ? 0 : 1);
   if (rank(a) !== rank(b)) return rank(a) - rank(b);
-  const when = (row: VideoRow) => (row.publishedMs > 0 ? row.publishedMs : Number.MAX_SAFE_INTEGER);
+  const when = (row: T) => (row.publishedMs > 0 ? row.publishedMs : Number.MAX_SAFE_INTEGER);
   if (when(a) !== when(b)) return when(a) - when(b);
   return a.videoId.localeCompare(b.videoId);
 }
@@ -130,8 +153,8 @@ function compareMembers(a: VideoRow, b: VideoRow): number {
  * @param rows - Every row in the library.
  * @returns One entry per stack, keyed by its primary member's id.
  */
-export function buildVideoStacks(rows: VideoRow[]): VideoStack[] {
-  const byId = new Map<string, VideoRow>();
+export function buildVideoStacks<T extends VideoStackRow>(rows: T[]): VideoStack[] {
+  const byId = new Map<string, T>();
   for (const row of rows) byId.set(row.videoId, row);
 
   const parents = new Map<string, string>();
@@ -143,7 +166,7 @@ export function buildVideoStacks(rows: VideoRow[]): VideoStack[] {
     for (const target of targets) union(parents, row.videoId, target);
   }
 
-  const groups = new Map<string, VideoRow[]>();
+  const groups = new Map<string, T[]>();
   for (const row of rows) {
     if (!parents.has(row.videoId)) continue;
     const root = find(parents, row.videoId);
@@ -170,7 +193,7 @@ export function buildVideoStacks(rows: VideoRow[]): VideoStack[] {
  * @param rows - Rows to annotate, in place.
  * @returns The stacks that were applied.
  */
-export function assignVideoStacks(rows: VideoRow[]): VideoStack[] {
+export function assignVideoStacks<T extends VideoStackRow>(rows: T[]): VideoStack[] {
   const stacks = buildVideoStacks(rows);
   const placement = new Map<string, { key: string; position: number }>();
   for (const stack of stacks) {

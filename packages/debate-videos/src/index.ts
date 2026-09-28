@@ -14,9 +14,79 @@ export {
   type VideoFavorite,
   type VideoReport,
 } from "./state/videoLibrary";
+export {
+  MOSTLY_WATCHED_PERCENT,
+  PARTLY_WATCHED_PERCENT,
+  VIDEO_WATCH_HISTORY_KEY,
+  WATCHED_PERCENT,
+  WATCH_STATUS_LABELS,
+  clearWatchHistory,
+  describeWatchProgress,
+  forgetWatchedVideo,
+  formatWatchClock,
+  getWatchHistoryEntry,
+  listWatchHistory,
+  recordWatchProgress,
+  subscribeToWatchHistory,
+  watchHistoryById,
+  watchPercent,
+  watchStatus,
+  type WatchHistoryEntry,
+  type WatchStatus,
+} from "./state/videoWatchHistory";
+export {
+  useWatchHistory,
+  useWatchHistoryEntry,
+  useWatchStatus,
+} from "./hooks/useWatchHistory";
+export {
+  VIDEO_INDEX_MAX_AGE_MS,
+  VIDEO_INDEX_STORAGE_KEY,
+  clearVideoIndex,
+  getVideoIndexRows,
+  getVideoIndexState,
+  hydrateVideoIndex,
+  isVideoIndexReady,
+  isVideoIndexStale,
+  queryVideoIndex,
+  queryVideoIndexMeta,
+  queryVideoIndexStacks,
+  refreshVideoIndex,
+  scheduleVideoIndexRefresh,
+  subscribeToVideoIndex,
+  type LocalVideoPage,
+  type VideoIndexState,
+} from "./state/videoIndexCache";
+export {
+  VideoIndexPrefetcher,
+  useVideoIndexPrefetch,
+  useVideoIndexReady,
+  useVideoIndexState,
+} from "./hooks/useVideoIndex";
+export {
+  WatchProgressBadge,
+  WatchProgressBar,
+  type WatchProgressBadgeProps,
+} from "./components/video-card/WatchProgressBadge";
+export {
+  ResizableSidebarLayout,
+  SIDEBAR_DEFAULT_WIDTH,
+  SIDEBAR_MAX_WIDTH,
+  SIDEBAR_MIN_WIDTH,
+  SIDEBAR_WIDTH_KEY,
+  type ResizableSidebarLayoutProps,
+} from "./ui/layout/ResizableSidebarLayout";
 export { LecturesPage } from "./panels/LecturesPage";
 export { DebateVideosPage } from "./panels/DebateVideosPanel";
 export { LeaderboardPanel } from "./panels/leaderboard/RankingsLeaderboardPanel";
+export { TeamProfilePage, SchoolProfilePage } from "./panels/leaderboard/profile/RankingProfiles";
+export type { DebateHistory, YearData } from "./panels/leaderboard/leaderboardTypes";
+export {
+  formatNamedTopic,
+  formatSeasonalTopics,
+  getStyleTopicText,
+  topicDisplayLines,
+} from "./lib/debate-topics";
 export { VideoWatchPage, type VideoWatchPageProps } from "./panels/watch/VideoWatchPage";
 export {
   parseVideoWatchSlug,
@@ -24,6 +94,61 @@ export {
   videoWatchHref,
   videoWatchSlug,
 } from "./lib/video-slug";
+export {
+  ARCHIVE_SEASON_SEGMENT,
+  UNSORTED_EVENT_SEGMENT,
+  eventSegment,
+  isCanonicalVideoRoute,
+  legacyVideoRouteHref,
+  previousVideoRouteHref,
+  matchupSegment,
+  parseRoundTitle,
+  parseVideoRouteMatchup,
+  seasonSegment,
+  teamsSegment,
+  videoRouteHref,
+  videoRouteParts,
+  videoRouteSegments,
+  type VideoRouteParts,
+  type VideoRouteSegments,
+  type TitleRound,
+} from "./lib/video-route";
+export {
+  VIDEO_DOCUMENT_KINDS,
+  VIDEO_DOCUMENT_LABELS,
+  captionsToTranscriptMarkdown,
+  countWords,
+  formatTimecode,
+  isVideoDocumentKind,
+  orderDocuments,
+  parseDocumentSections,
+  parseTimecode,
+  toParagraphs,
+  type CaptionCue,
+  type DocumentSection,
+  type VideoDocument,
+  type VideoDocumentKind,
+} from "./lib/video-documents";
+export {
+  buildRoundSpeeches,
+  identifySpeech,
+  playingSpeechIndex,
+  type RoundSpeech,
+  type SpeechSide,
+} from "./lib/round-speeches";
+export { resolveRoundSpeeches, standardRoundSpeeches } from "./lib/round-formats";
+export { parseYouTubeVideoId } from "./lib/youtube-video-id";
+export {
+  VIDEO_RELATION_KINDS,
+  VIDEO_RELATION_LABELS,
+  type VideoRelationKind,
+} from "./lib/video-relations";
+export { WatchAnalysisPanel, type LinkedVideo } from "./components/watch/WatchAnalysisPanel";
+export { WatchStackPlaylist, stackMemberLabel } from "./components/watch/WatchStackPlaylist";
+export { stackKeyOf } from "./components/video-grid/video-stacks";
+export { WatchSidePanel } from "./components/watch/WatchSidePanel";
+export { WatchRoundPanel, type SpeechFocusRequest } from "./components/watch/WatchRoundPanel";
+export { WatchSpeechTimeline } from "./components/watch/WatchSpeechTimeline";
 export { PersistentVideoPlayer } from "./components/video-player/PersistentVideoPlayer";
 export { SlowSpreadButton, SLOW_SPREAD_RATE } from "./components/video-player/SlowSpreadButton";
 export { ToolNavTree } from "./components/category-gallery/ToolNavTree";
@@ -53,8 +178,10 @@ export {
 export {
   TOOL_SIDEBAR_HREFS,
   OWN_LAYOUT_SIDEBAR_HREFS,
+  OWN_SIDEBAR_DOCK_HREFS,
   matchesToolSidebarHref,
   ownsItsLayout,
+  hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
 } from "./components/category-gallery/sidebar-routes";

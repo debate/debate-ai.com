@@ -208,7 +208,7 @@ export async function claim(
       // The stored content didn't survive parsing. Mount what we have, but
       // never report this key again: the host's copy is the only intact one
       // and an edit-shaped report would replace it with this wreckage.
-      markUnreadable(binding.key);
+      markUnreadable(binding.key, html);
     }
     if (parsed.ok) unreadableKeys.delete(binding.key);
     loadedHtmlByKey.set(binding.key, html);
@@ -237,7 +237,7 @@ export async function claim(
     // An unreadable external update over a document that is currently fine:
     // keep what's on screen rather than blanking it, and stop reporting so
     // the mounted copy can't be written back over the stored one.
-    markUnreadable(binding.key);
+    markUnreadable(binding.key, html);
     return;
   }
   // Readable content for a key that previously failed to load clears the
@@ -262,7 +262,16 @@ function reportNow(view: EditorView, key: string): void {
   currentBinding.onChange?.(html);
 }
 
-function markUnreadable(key: string): void {
+/** Collapse anything outside `[A-Za-z0-9._-]` to `-`, so a free-form `key`
+ *  (a document title, in the common case) can't inject a path separator or
+ *  other character a download filename can't safely carry. Exported only
+ *  for direct unit testing — `markUnreadable`'s boot/EditorView dependencies
+ *  make it impractical to exercise this through `claim()` in a test. */
+export function sanitizeForFilename(key: string): string {
+  return key.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'document';
+}
+
+function markUnreadable(key: string, html: string): void {
   if (unreadableKeys.has(key)) return;
   unreadableKeys.add(key);
   // A durable notice, not just a toast: this one has to outlive a glance.
@@ -275,8 +284,16 @@ function markUnreadable(key: string): void {
     body:
       "The stored copy didn't parse, so it hasn't been loaded — and nothing typed here " +
       'will be saved over it. The file on the server is untouched; reopen it, or restore ' +
-      'it from a backup, rather than retyping into this pane.',
+      'it from a backup, rather than retyping into this pane. You can also download the ' +
+      'raw stored content below and salvage it yourself.',
     key: `cardmirror-unreadable:${key}`,
+    // The server copy is untouched, but nothing in THIS pane will be saved
+    // over it — so `html`, the one copy of whatever the pane would have
+    // shown, would otherwise just be discarded when the user navigates away.
+    // `key` is `contentKey ?? title ?? "default"` (CardMirrorEditor.tsx) —
+    // free-form text, not a filename-safe id — so it's sanitized rather than
+    // interpolated raw.
+    download: { filename: `unreadable-${sanitizeForFilename(key)}.html`, content: html },
   });
 }
 

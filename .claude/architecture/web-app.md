@@ -15,7 +15,7 @@ apps/debate-ai.com/
   drizzle/         migrations (+ drizzle/seed)
   worker/index.ts  the Workers entrypoint
   wrangler.jsonc   bindings, crons, vars
-  public/debate-openapi.yml   the spec debate-api-client is generated from
+  app/debate-openapi.yml/   serves packages/debate-api-client/debate-openapi.yml for /api
   scripts/         build-docs, migrate-d1, seed-videos, deploy-upload
   vitest.config.ts the whole repo's Vitest config (see monorepo.md)
 ```
@@ -131,6 +131,15 @@ bun run deploy            # db:migrate:d1 → build → vinext deploy --skip-bui
 bun run deploy:staging    # same, --env staging
 bun run preview           # local wrangler dev against the real build
 ```
+
+The real deploy path is `.github/workflows/cloudflare-workers-deploy.yml`, on
+every push to `master` that touches `apps/**`. It installs, builds, applies D1
+migrations and then runs `wrangler deploy` — the migration step mirrors the
+`deploy` script's, so the two paths cannot leave production on a different
+schema from each other. **A change to that workflow that drops the migration
+step silently reintroduces the drift `scripts/migrate-d1.ts` exists to prevent:**
+the Worker ships, nothing goes red, and every route touching a new column
+starts answering 500 `no such column`.
 
 `setup-secrets.sh` is the helper for Worker secrets. Secrets are never committed.
 

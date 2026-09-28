@@ -1,48 +1,47 @@
 import { describe, expect, it } from "vitest";
 import {
   DIVISION_CONFIG,
+  LEADERBOARD_TABS,
+  SCHOOL_DATASETS,
   VALID_DIVISIONS,
-  getNumericValue,
-  getStringValue,
-  hasValue,
+  VALID_LEADERBOARD_TABS,
+  aggregateSchools,
+  filterSchools,
+  schoolRankingsFor,
+  sortSchools,
+  currentSeasonYear,
+  displayEntryName,
+  divisionDatasets,
+  filterEntries,
+  lastName,
+  resolveDivisionTopic,
+  seasonLabel,
+  seasonYears,
   sortEntries,
 } from "../src/panels/leaderboard/leaderboardUtils";
-import type { LeaderboardEntry } from "debate-data-sync/src/rankings/sync-rankings-debatedrills";
+import { RANKING_DATASETS, type RankingEntry } from "debate-rankings-adapter";
 
-const entry = (over: Partial<LeaderboardEntry>) =>
-  ({ teamName: "Team", rank: "--", eloRank: "--", ...over }) as LeaderboardEntry;
-
-describe("cell value helpers", () => {
-  it("maps empty cells to -Infinity so they sort last", () => {
-    expect(getNumericValue(null)).toBe(-Infinity);
-    expect(getNumericValue(undefined)).toBe(-Infinity);
-    expect(getNumericValue("--")).toBe(-Infinity);
-    expect(getNumericValue("not a number")).toBe(-Infinity);
-  });
-
-  it("coerces numeric strings", () => {
-    expect(getNumericValue("42")).toBe(42);
-    expect(getNumericValue(7)).toBe(7);
-  });
-
-  it("lowercases string cells and blanks out nullish ones", () => {
-    expect(getStringValue("Michigan")).toBe("michigan");
-    expect(getStringValue(null)).toBe("");
-    expect(getStringValue(undefined)).toBe("");
-  });
-
-  it("treats the -- placeholder as no value", () => {
-    expect(hasValue("--")).toBe(false);
-    expect(hasValue(null)).toBe(false);
-    expect(hasValue(0)).toBe(true);
-  });
+const entry = (over: Partial<RankingEntry>): RankingEntry => ({
+  rank: 1,
+  school: "School",
+  name: "Team",
+  adjustedRating: 1500,
+  deviation: 100,
+  matches: 10,
+  rating: 1700,
+  hash: "",
+  affWinRate: 50,
+  negWinRate: 50,
+  affElimWinRate: null,
+  negElimWinRate: null,
+  ...over,
 });
 
 describe("sortEntries", () => {
   const entries = [
-    entry({ teamName: "B", rank: 2, eloRank: 4 }),
-    entry({ teamName: "A", rank: 1, eloRank: 9 }),
-    entry({ teamName: "C", rank: "--", eloRank: "--" }),
+    entry({ name: "B", rank: 2, school: "Michigan", affElimWinRate: 100 }),
+    entry({ name: "A", rank: 1, school: "Emory", affElimWinRate: null }),
+    entry({ name: "C", rank: 3, school: "Berkeley", affElimWinRate: 50 }),
   ];
 
   it("returns the input untouched when no sort is active", () => {
@@ -51,33 +50,39 @@ describe("sortEntries", () => {
 
   it("does not mutate the input array", () => {
     const copy = [...entries];
-    sortEntries(entries, { key: "rank", dir: "asc" });
+    sortEntries(entries, { key: "rank", dir: "desc" });
     expect(entries).toEqual(copy);
   });
 
-  it("sorts ascending by rank with empty cells last", () => {
-    const sorted = sortEntries(entries, { key: "rank", dir: "asc" });
-    expect(sorted.map((e) => e.teamName)).toEqual(["A", "B", "C"]);
+  it("sorts numeric columns in both directions", () => {
+    expect(sortEntries(entries, { key: "rank", dir: "asc" }).map((e) => e.name)).toEqual(["A", "B", "C"]);
+    expect(sortEntries(entries, { key: "rank", dir: "desc" }).map((e) => e.name)).toEqual(["C", "B", "A"]);
   });
 
-  it("keeps empty cells last when sorting descending", () => {
-    const sorted = sortEntries(entries, { key: "rank", dir: "desc" });
-    expect(sorted[sorted.length - 1].teamName).toBe("C");
+  it("keeps null win rates last in either direction", () => {
+    expect(sortEntries(entries, { key: "affElimWinRate", dir: "desc" }).map((e) => e.name)).toEqual(["B", "C", "A"]);
+    expect(sortEntries(entries, { key: "affElimWinRate", dir: "asc" }).map((e) => e.name)).toEqual(["C", "B", "A"]);
   });
 
-  it("sorts by the derived elo-to-bid ratio", () => {
-    const sorted = sortEntries(entries, { key: "eloToBid", dir: "asc" });
-    expect(sorted.map((e) => e.teamName)).toEqual(["B", "A", "C"]);
+  it("sorts text columns alphabetically", () => {
+    expect(sortEntries(entries, { key: "school", dir: "asc" }).map((e) => e.school)).toEqual([
+      "Berkeley",
+      "Emory",
+      "Michigan",
+    ]);
+  });
+});
+
+describe("filterEntries", () => {
+  const entries = [entry({ name: "Gallagher & Young", school: "Emory" }), entry({ name: "Ma & Yang", school: "New Trier" })];
+
+  it("matches name or school case-insensitively", () => {
+    expect(filterEntries(entries, "emory").map((e) => e.name)).toEqual(["Gallagher & Young"]);
+    expect(filterEntries(entries, "YANG").map((e) => e.school)).toEqual(["New Trier"]);
   });
 
-  it("sorts state alphabetically", () => {
-    const byState = [
-      entry({ teamName: "X", state: "TX" }),
-      entry({ teamName: "Y", state: "CA" }),
-    ];
-    expect(
-      sortEntries(byState, { key: "state", dir: "asc" }).map((e) => e.teamName),
-    ).toEqual(["Y", "X"]);
+  it("returns everything for a blank query", () => {
+    expect(filterEntries(entries, "  ")).toBe(entries);
   });
 });
 
@@ -93,5 +98,184 @@ describe("division config", () => {
       expect(division.label.length, division.value).toBeGreaterThan(0);
       expect(division.logoSrc, division.value).toMatch(/^https?:\/\//);
     }
+  });
+
+  it("points LD and PF at the monthly topic lists", () => {
+    expect(DIVISION_CONFIG.find((d) => d.value === "VPF")?.topicKey).toBe("pf_topics");
+    expect(DIVISION_CONFIG.find((d) => d.value === "VLD")?.topicKey).toBe("ld_topics");
+    expect(DIVISION_CONFIG.find((d) => d.value === "VCX")?.topicNameKey).toBe(
+      "policy_topic_name",
+    );
+    expect(DIVISION_CONFIG.find((d) => d.value === "NDT")?.topicNameKey).toBe(
+      "ndt_topic_name",
+    );
+  });
+});
+
+describe("resolveDivisionTopic", () => {
+  it("returns monthly PF/LD lists", () => {
+    const pf = [
+      { start_month: "September", topic: "Sports betting" },
+      { start_month: "November", topic: "Housing" },
+    ];
+    expect(resolveDivisionTopic({ pf_topics: pf }, "VPF")).toEqual(pf);
+  });
+
+  it("falls back to the legacy HTML string", () => {
+    expect(resolveDivisionTopic({ ld_topic: "Wealth tax<br>AGI" }, "VLD")).toBe(
+      "Wealth tax<br>AGI",
+    );
+  });
+
+  it("returns the yearly Policy/NDT resolution", () => {
+    expect(
+      resolveDivisionTopic({ policy_topic: "Arctic development" }, "VCX"),
+    ).toBe("Arctic development");
+  });
+});
+
+describe("divisionDatasets", () => {
+  it("maps every division to at least one generated dataset", () => {
+    const known = new Set(RANKING_DATASETS.map((d) => d.id));
+    for (const { value } of DIVISION_CONFIG) {
+      const ids = divisionDatasets(value);
+      expect(ids.length, value).toBeGreaterThan(0);
+      for (const id of ids) expect(known.has(id), id).toBe(true);
+    }
+  });
+
+  it("offers LD's Sep–Oct slice after the full season", () => {
+    expect(divisionDatasets("VLD")).toEqual(["hsld", "hsld_sepoct"]);
+    expect(divisionDatasets("NDT")).toEqual(["cpd"]);
+  });
+
+  it("is empty for an unrecognized division", () => {
+    expect(divisionDatasets("BOGUS" as never)).toEqual([]);
+  });
+});
+
+describe("lastName", () => {
+  it("keeps only the surname", () => {
+    expect(lastName("Jane Smith")).toBe("Smith");
+    expect(lastName("Mary Ann van Buren")).toBe("Buren");
+    expect(lastName("John Smith Jr.")).toBe("Smith Jr.");
+    expect(lastName("Smith")).toBe("Smith");
+  });
+
+  it("shortens each name joined with &", () => {
+    expect(lastName("Jane Smith & Bo Lee")).toBe("Smith & Lee");
+  });
+});
+
+describe("displayEntryName", () => {
+  it("shows only the last name in LD", () => {
+    expect(displayEntryName("Jane Smith", "VLD")).toBe("Smith");
+  });
+
+  it("leaves team names unchanged in other divisions", () => {
+    expect(displayEntryName("Gallagher & Young", "VCX")).toBe("Gallagher & Young");
+    expect(displayEntryName("Jane Smith", "VPF")).toBe("Jane Smith");
+  });
+});
+
+describe("currentSeasonYear", () => {
+  it("rolls over to the next season on July 1", () => {
+    expect(currentSeasonYear(new Date(2026, 5, 30))).toBe(2026);
+    expect(currentSeasonYear(new Date(2026, 6, 1))).toBe(2027);
+    expect(currentSeasonYear(new Date(2026, 8, 25))).toBe(2027);
+    expect(currentSeasonYear(new Date(2027, 0, 15))).toBe(2027);
+  });
+
+  it("lists seasons newest first, starting at the current one", () => {
+    const years = seasonYears(new Date(2026, 8, 25));
+    expect(years[0]).toBe("2027");
+    expect(years[1]).toBe("2026");
+    expect(years[years.length - 1]).toBe("2002");
+  });
+
+  it("labels a season by its start year and two-digit end year", () => {
+    expect(seasonLabel("2027")).toBe("2026-27");
+    expect(seasonLabel(2002)).toBe("2001-02");
+    expect(seasonLabel(2000)).toBe("1999-00");
+  });
+});
+
+describe("leaderboard tabs", () => {
+  it("lists the four divisions followed by Schools", () => {
+    expect(LEADERBOARD_TABS.map((t) => t.value)).toEqual(["VPF", "VLD", "VCX", "NDT", "SCHOOLS"]);
+    expect([...VALID_LEADERBOARD_TABS].sort()).toEqual(LEADERBOARD_TABS.map((t) => t.value).sort());
+  });
+
+  it("rolls up each division's full-season dataset, not LD's Sep–Oct slice", () => {
+    expect(SCHOOL_DATASETS.map((d) => d.datasetId)).toEqual(["hspf", "hsld", "hscx", "cpd"]);
+  });
+});
+
+describe("aggregateSchools", () => {
+  const rows = aggregateSchools([
+    {
+      event: "PF",
+      entries: [
+        entry({ school: "Harvard-Westlake", name: "Kim & Lee", adjustedRating: 1800 }),
+        entry({ school: "Harvard Westlake", name: "Park & Cho", adjustedRating: 1400 }),
+        entry({ school: "Strake Jesuit", name: "Doe & Roe", adjustedRating: 1700 }),
+      ],
+    },
+    {
+      event: "LD",
+      entries: [
+        entry({ school: "Strake Jesuit", name: "Alex Smith", adjustedRating: 1750 }),
+        entry({ school: "Harvard-Westlake", name: "Sam Wu", adjustedRating: 1600 }),
+        entry({ school: "", name: "Unknown", adjustedRating: 2000 }),
+      ],
+    },
+  ]);
+
+  it("ranks schools by their best entry's rating", () => {
+    expect(rows.map((r) => [r.rank, r.school])).toEqual([
+      [1, "Harvard-Westlake"],
+      [2, "Strake Jesuit"],
+    ]);
+    expect(rows[0]).toMatchObject({ bestRating: 1800, bestEntry: "Kim & Lee", bestEvent: "PF" });
+    expect(rows[1]).toMatchObject({ bestRating: 1750, bestEntry: "Alex Smith", bestEvent: "LD" });
+  });
+
+  it("averages every entry, merging spellings of the same school", () => {
+    expect(rows[0].teams).toBe(3);
+    expect(rows[0].avgRating).toBeCloseTo((1800 + 1400 + 1600) / 3);
+    expect(rows[0].events).toEqual(["PF", "LD"]);
+    expect(rows[1].avgRating).toBe(1725);
+  });
+
+  it("breaks best-rating ties by average rating", () => {
+    const tied = aggregateSchools([
+      {
+        event: "PF",
+        entries: [
+          entry({ school: "Alpha", adjustedRating: 1500 }),
+          entry({ school: "Alpha", adjustedRating: 1100 }),
+          entry({ school: "Beta", adjustedRating: 1500 }),
+        ],
+      },
+    ]);
+    expect(tied.map((r) => r.school)).toEqual(["Beta", "Alpha"]);
+  });
+
+  it("sorts and filters the rows", () => {
+    expect(sortSchools(rows, { key: "avgRating", dir: "desc" }).map((r) => r.school)).toEqual([
+      "Strake Jesuit",
+      "Harvard-Westlake",
+    ]);
+    expect(filterSchools(rows, "smith").map((r) => r.school)).toEqual(["Strake Jesuit"]);
+    expect(filterSchools(rows, "  ")).toBe(rows);
+  });
+
+  it("limits the rollup to one division", () => {
+    const pf = { entries: [entry({ school: "Alpha", adjustedRating: 1500 })] };
+    const ld = { entries: [entry({ school: "Beta", adjustedRating: 1900 })] };
+    const datasets = { VPF: pf, VLD: ld } as unknown as Parameters<typeof schoolRankingsFor>[0];
+    expect(schoolRankingsFor(datasets, "all").map((r) => r.school)).toEqual(["Beta", "Alpha"]);
+    expect(schoolRankingsFor(datasets, "VPF").map((r) => r.school)).toEqual(["Alpha"]);
+    expect(schoolRankingsFor(datasets, "NDT")).toEqual([]);
   });
 });

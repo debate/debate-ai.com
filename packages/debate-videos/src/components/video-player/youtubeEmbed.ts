@@ -26,7 +26,7 @@ export function describePlayerError(code: number): string {
 }
 
 /** The page origin YouTube should attribute the embed to, when in a browser. */
-function embedOrigin(): string | null {
+export function embedOrigin(): string | null {
   if (typeof window === "undefined") return null
   const { origin } = window.location
   // A document PiP / sandboxed document can report "null" — unusable as an origin.
@@ -40,11 +40,13 @@ interface EmbedOptions {
   controls?: boolean
   /** Seconds to start playback from. */
   startSeconds?: number
+  /** Explicit origin to use (e.g. when iframe is in a PiP window). */
+  origin?: string
 }
 
 /** Build the embed URL for `videoId`, always enabling the JS API. */
 export function buildEmbedUrl(videoId: string, options: EmbedOptions = {}): string {
-  const { autoplay = false, controls = true, startSeconds = 0 } = options
+  const { autoplay = false, controls = true, startSeconds = 0, origin } = options
 
   const params = new URLSearchParams({
     enablejsapi: "1",
@@ -54,10 +56,10 @@ export function buildEmbedUrl(videoId: string, options: EmbedOptions = {}): stri
   if (autoplay) params.set("autoplay", "1")
   if (startSeconds > 0) params.set("start", String(Math.floor(startSeconds)))
 
-  const origin = embedOrigin()
-  if (origin) {
-    params.set("origin", origin)
-    params.set("widget_referrer", origin)
+  const effectiveOrigin = origin ?? embedOrigin()
+  if (effectiveOrigin) {
+    params.set("origin", effectiveOrigin)
+    params.set("widget_referrer", effectiveOrigin)
   }
 
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`

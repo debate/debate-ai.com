@@ -26,6 +26,7 @@ shows a clock badge; clicking it jumps to the earliest one.
 
 ```
 state/flowAnnotations.ts (localStorage: flowAnnotations)
+  → mirrorToolRecordSave() / mirrorToolRecordDelete() on every save/delete
   → buildFlowAnnotationsPanelView()
   → panels/FlowAnnotationsPanel.tsx
   → apps/debate-ai.com/app/annotations/page.tsx
@@ -33,4 +34,17 @@ state/flowAnnotations.ts (localStorage: flowAnnotations)
 
 ## Known gaps
 
-No collaborative/live sync — annotations are local `localStorage` only.
+~~No collaborative/live sync — annotations are local `localStorage` only.~~
+**Fixed:** `flowAnnotations` is one of [Tool Data Sync](../internals/tool-data-sync.mdx)'s
+catalog entries, and `saveFlowAnnotation`/`deleteFlowAnnotation`
+(`state/flowAnnotations.ts`) additionally call
+`mirrorToolRecordSave`/`mirrorToolRecordDelete` directly rather than relying
+on the generic watcher alone, so a drop or a Clear reaches the account on the
+click rather than at its next tick. Pinned by
+`test/tool-record-sync-wiring.test.ts`'s "flow annotations" suite (save+delete
+requests, still-writes-locally-on-a-500, and no request while signed out).
+
+The gaps this leaves are the same ones every synced tool-record collection
+has — still per-user rather than a shared team resource, and a record saved
+on another device shows up on next reload rather than live — see
+[Tool Data Sync](../internals/tool-data-sync.mdx)'s own Known gaps.

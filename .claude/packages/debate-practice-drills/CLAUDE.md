@@ -3,10 +3,10 @@
 **Package name:** `debate-practice-rounds` — filter on that, not the directory.
 Private. Entry `src/index.ts`, tests in `test/`.
 
-Practice and AI round tooling: AI drill generator, AI coach mode, judge paradigm
-picker, AI judge decision, opponent persona picker, word-count speeches,
-practice round simulator, speech transcript summaries, argument-tree outline,
-flow annotations, and AI response-outcome charts.
+Practice and AI round tooling: AI drill generator, AI coach mode, AI judge
+decision, word-count speeches, practice round simulator, speech transcript
+summaries, argument-tree outline, flow annotations, and AI response-outcome
+charts.
 
 ## This is the most downstream package in the repo
 

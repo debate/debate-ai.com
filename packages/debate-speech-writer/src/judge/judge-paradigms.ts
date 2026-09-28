@@ -144,6 +144,16 @@ export function listJudgeParadigms(): JudgeParadigm[] {
   return judgeParadigmIds.map((id) => judgeParadigms[id]);
 }
 
+/**
+ * Looks up a built-in paradigm by its exact display `name` (e.g. a
+ * `JudgeDecisionRecord.paradigmName`), or `null` if no built-in paradigm has
+ * that name — including a custom paradigm's `"Custom: <judge name>"` label,
+ * which never matches a built-in.
+ */
+export function getJudgeParadigmByName(name: string): JudgeParadigm | null {
+  return listJudgeParadigms().find((paradigm) => paradigm.name === name) ?? null;
+}
+
 const MAX_CUSTOM_NAME_LENGTH = 80;
 const MAX_CUSTOM_NOTES_LENGTH = 2000;
 

@@ -14,6 +14,7 @@ import {
 import { Mic, MicOff, ChevronDown } from "lucide-react"
 
 import { cn } from "../ui/lib/utils"
+import { getMediaDevices, getUserMedia } from "./media-devices"
 import { Button } from "../ui/primitives/button"
 import {
     DropdownMenu,
@@ -63,11 +64,15 @@ export function useAudioDevices(): UseAudioDevicesReturn {
         setError(null)
         try {
             // Request permission first so labels are populated
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            const stream = await getUserMedia({ audio: true })
             stream.getTracks().forEach((t) => t.stop())
             setHasPermission(true)
 
-            const all = await navigator.mediaDevices.enumerateDevices()
+            const md = getMediaDevices()
+            if (!md?.enumerateDevices) {
+                throw new Error("Microphone access is unavailable. Open the site over HTTPS (or localhost) in a supported browser.")
+            }
+            const all = await md.enumerateDevices()
             const audioInputs = all
                 .filter((d) => d.kind === "audioinput")
                 .map((d) => ({
@@ -88,8 +93,10 @@ export function useAudioDevices(): UseAudioDevicesReturn {
     // Re-enumerate when devices change (plug/unplug)
     useEffect(() => {
         const handler = () => { void loadDevices() }
-        navigator.mediaDevices.addEventListener("devicechange", handler)
-        return () => navigator.mediaDevices.removeEventListener("devicechange", handler)
+        const md = getMediaDevices()
+        if (!md?.addEventListener) return
+        md.addEventListener("devicechange", handler)
+        return () => md.removeEventListener?.("devicechange", handler)
     }, [loadDevices])
 
     return { devices, loading, error, hasPermission, loadDevices }
@@ -156,7 +163,7 @@ export function MicSelector({
         const constraints: MediaStreamConstraints = {
             audio: value ? { deviceId: { exact: value } } : true,
         }
-        navigator.mediaDevices.getUserMedia(constraints)
+        getUserMedia(constraints)
             .then((stream) => {
                 previewStreamRef.current = stream
                 setPreviewStream(stream)

@@ -232,8 +232,8 @@ describe("the sidebar's heading structure", () => {
     // mounted on arrival.
     const html = renderSidebar();
     expect(html).toContain("Coaching Programs");
-    expect(html).toContain("Evidence Library");
-    expect(html).toContain("Judge Paradigm Picker");
+    expect(html).toContain("Topic Coverage");
+    expect(html).toContain("AI Judge Decision");
     // ...alongside the Videos node's own links, which were never in doubt.
     expect(html).toContain("PF Debates");
     expect(html).toContain("My Favorites");

@@ -42,7 +42,18 @@ the same `/api/settings` row every other picker-style setting uses. Up to
 None open. A saved collection can be renamed ("Rename" next to its button)
 and have its tag list replaced with the current selection ("Update", shown
 once at least one tag is active) — both close the two gaps this page
-previously tracked. No optimistic-concurrency handling: the whole
-`savedArgumentCollections` list is a single account-settings field, so a
-rename/update/add/remove from two signed-in devices at once has the last
-write win, matching every other picker-style `/api/settings` field.
+previously tracked. The lost-update race this page used to track — a
+rename/update/add/remove from two signed-in devices at once silently
+dropping whichever PUT landed second, since the whole
+`savedArgumentCollections` list was a single account-settings field — is
+also fixed: every code path that changes a collection
+(`addCollection`/`removeCollection`/`renameCollection`/`updateCollection` in
+`useSavedArgumentCollections.ts`) now sends a single
+`addSavedArgumentCollection`/`removeSavedArgumentCollection`/
+`renameSavedArgumentCollection`/`updateSavedArgumentCollectionTags` op
+instead, resolved by `/api/settings` against the account's row as it stands
+at write time rather than a client-computed whole-list replace — mirroring
+[User Settings](/docs/features/user-settings)'s `favoriteTools` fix. A plain
+whole-list `savedArgumentCollections` replace is still accepted by the route
+for a caller that genuinely needs one, but nothing in the app sends one
+anymore.

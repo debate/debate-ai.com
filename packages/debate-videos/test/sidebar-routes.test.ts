@@ -14,6 +14,7 @@ import {
   TOOL_SIDEBAR_HREFS,
   matchesToolSidebarHref,
   ownsItsLayout,
+  hostsOwnSidebarDock,
   hasEmbeddedDock,
   isGenericToolSidebarRoute,
 } from "../src/components/category-gallery/sidebar-routes";
@@ -60,12 +61,15 @@ describe("matchesToolSidebarHref", () => {
     expect(matchesToolSidebarHref("/cards/leaderboard/alice")).toBe(true);
     expect(matchesToolSidebarHref("/doc/some-document")).toBe(true);
     expect(matchesToolSidebarHref("/reason-editor/42")).toBe(true);
+    expect(matchesToolSidebarHref("/teams/greenhill-ab")).toBe(true);
+    expect(matchesToolSidebarHref("/schools/greenhill")).toBe(true);
+    expect(matchesToolSidebarHref("/legal/privacy")).toBe(true);
   });
 
   it("does not match a sibling route that merely shares a prefix", () => {
     expect(matchesToolSidebarHref("/docs")).toBe(false);
     expect(matchesToolSidebarHref("/cardsy")).toBe(false);
-    expect(matchesToolSidebarHref("/legal/privacy")).toBe(false);
+    expect(matchesToolSidebarHref("/teamsy")).toBe(false);
     expect(matchesToolSidebarHref("/login")).toBe(false);
     expect(matchesToolSidebarHref("/")).toBe(false);
   });
@@ -81,17 +85,18 @@ describe("hasEmbeddedDock / isGenericToolSidebarRoute", () => {
     expect(isGenericToolSidebarRoute("/videos/lectures")).toBe(false);
   });
 
-  it("reports a sidebar-hosted dock on the CardMirror editor routes", () => {
-    for (const route of ["/reason-editor", "/doc", "/reason-editor/7", "/doc/x"]) {
+  it("reports a sidebar-hosted dock on the CardMirror editor route", () => {
+    for (const route of ["/reason-editor", "/reason-editor/7"]) {
       expect(hasEmbeddedDock(route)).toBe(true);
       expect(isGenericToolSidebarRoute(route)).toBe(true);
     }
   });
 
   it("falls back to the fixed dock only off the sidebar routes", () => {
-    // `/features` used to be in this list. It is a sidebar route now — see
-    // "the features catalog" below.
-    for (const route of ["/", "/login", "/legal/privacy"]) {
+    // `/features` and `/legal/privacy` used to be in this list. They are
+    // sidebar routes now — see "the features catalog" and "the terms of
+    // service page" below.
+    for (const route of ["/", "/login", "/contacts"]) {
       expect(hasEmbeddedDock(route)).toBe(false);
       expect(isGenericToolSidebarRoute(route)).toBe(false);
     }
@@ -112,6 +117,82 @@ describe("the features catalog", () => {
     // …and the dock's own floating instance stays hidden, since the sidebar
     // it is wrapped in already hosts one.
     expect(hasEmbeddedDock("/features")).toBe(true);
+  });
+});
+
+describe("team and school profile pages", () => {
+  it("are sidebar routes, so opening one from the rankings table keeps the nav", () => {
+    for (const root of ["/teams", "/schools"]) {
+      expect(TOOL_SIDEBAR_HREFS.has(root)).toBe(true);
+      expect(isGenericToolSidebarRoute(root)).toBe(true);
+      expect(hasEmbeddedDock(root)).toBe(true);
+    }
+    expect(isGenericToolSidebarRoute("/teams/greenhill-ab")).toBe(true);
+    expect(isGenericToolSidebarRoute("/schools/greenhill")).toBe(true);
+  });
+});
+
+describe("the terms of service page", () => {
+  it("is a sidebar route, so it opens inside the app rather than as a bare page", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/legal")).toBe(true);
+    expect(isGenericToolSidebarRoute("/legal/privacy")).toBe(true);
+    expect(hasEmbeddedDock("/legal/privacy")).toBe(true);
+  });
+});
+
+describe("Latest News", () => {
+  it("is a sidebar route, so opening a thread from the feed keeps the nav", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/forums")).toBe(true);
+    expect(isGenericToolSidebarRoute("/forums")).toBe(true);
+    // A thread page is a detail route under an already-listed parent, matched
+    // by prefix — the same way `/doc/<document>` and `/teams/<team>` are.
+    expect(isGenericToolSidebarRoute("/forums/3f2504e0-4f89-41d3-9a0c-0305e82c3301")).toBe(true);
+    expect(hasEmbeddedDock("/forums")).toBe(true);
+  });
+
+  it("sit directly above the Tabroom tournaments entry in the Practice section", () => {
+    // The order is the requirement, not an accident of how the list was
+    // edited: reading the section top to bottom, the community surfaces come
+    // before the external tournament tool.
+    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
+    const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
+
+    expect(hrefs.indexOf("/forums")).toBeGreaterThan(-1);
+    expect(hrefs.indexOf("/forums")).toBeLessThan(hrefs.indexOf("/tournaments"));
+  });
+});
+
+describe("the REASON research workspace", () => {
+  it("is still a sidebar destination, though no longer a Research row", () => {
+    // It lost its "Debate Docs" row in favour of the dock's own Docs button,
+    // which is the same route — so the sidebar still has to know about it.
+    expect(TOOL_SIDEBAR_HREFS.has("/doc")).toBe(true);
+    expect(matchesToolSidebarHref("/doc")).toBe(true);
+    expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);
+  });
+
+  it("hosts the dock in its own sidebar, itself and every document beneath it", () => {
+    expect(hostsOwnSidebarDock("/doc")).toBe(true);
+    expect(hostsOwnSidebarDock("/doc/cp-answer-to-states")).toBe(true);
+    // The trailing `/` in the match keeps the help docs off this list.
+    expect(hostsOwnSidebarDock("/docs")).toBe(false);
+    expect(hostsOwnSidebarDock("/reason-editor")).toBe(false);
+    expect(hostsOwnSidebarDock(null)).toBe(false);
+    // And hosting its own dock is one way of owning the layout.
+    expect(ownsItsLayout("/doc")).toBe(true);
+    expect(ownsItsLayout("/doc/cp-answer-to-states")).toBe(true);
+  });
+
+  it("is not wrapped in the generic sidebar, which stood beside its own", () => {
+    expect(isGenericToolSidebarRoute("/doc")).toBe(false);
+    expect(isGenericToolSidebarRoute("/doc/cp-answer-to-states")).toBe(false);
+  });
+
+  it("keeps the floating dock suppressed, its own sidebar carrying one", () => {
+    // This is what separates it from `/debate` below: both skip the generic
+    // sidebar, but only this one puts a dock in the column it renders itself.
+    expect(hasEmbeddedDock("/doc")).toBe(true);
+    expect(hasEmbeddedDock("/doc/cp-answer-to-states")).toBe(true);
   });
 });
 

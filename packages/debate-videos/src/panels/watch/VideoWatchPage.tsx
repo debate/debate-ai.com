@@ -1,6 +1,7 @@
 /**
  * @fileoverview The watch page — one video at its own URL, with its
- * transcript beside it and related videos underneath.
+ * transcript beside it, and the related videos and the play queue
+ * underneath.
  *
  * `/videos/watch/<title-slug>-<videoId>`. This is what the transcript dialog
  * over the grid used to be: the same player, the same synced transcript and
@@ -21,12 +22,27 @@
  * the store — so the floating player resumes mid-sentence instead of
  * restarting, which is the whole point of it being persistent.
  *
+ * ## What sits beside the player
+ *
+ * The right-hand column is a tab strip rather than one panel — YouTube's
+ * caption cues, then the long-form documents (the round typed up speech by
+ * speech, the AI summary of it), then the analysis videos an editor has tied
+ * to this one. Every round — and any video whose AI summary or written
+ * analysis goes speech by speech — also gets the round one tab per speech
+ * there, with a judge-panel outcome simulator in each, and a speech timeline
+ * under the player whose segments seek to — and open — each speech. A round
+ * nobody wrote up gets its format's standard speeches, which the reader
+ * times with "Mark start" (see `lib/round-formats.ts`). Those arrive as props from the server rather than being
+ * fetched here: they are the reason this page is worth indexing, and a
+ * crawler never waits for a client fetch.
+ *
  * ## Switching videos navigates
  *
  * Anything on this page that changes the store's active video — clicking a
- * related card, skipping to the next queued video — navigates to that
- * video's watch page rather than silently swapping the embed, so the URL
- * always names what is playing.
+ * related row, picking an entry in the stacked playlist, playing
+ * something from the queue panel, skipping to the next queued video —
+ * navigates to that video's watch page rather than silently swapping the
+ * embed, so the URL always names what is playing.
  * @module panels/watch/VideoWatchPage
  */
 
@@ -37,10 +53,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
+import { CommentSection } from "debate-comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
-import { WatchTranscriptPanel } from "../../components/watch/WatchTranscriptPanel"
-import { VideoGrid } from "../../components/video-grid/VideoGrid"
+import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
+import type { LinkedVideo } from "../../components/watch/WatchAnalysisPanel"
+import { VideoListRows } from "../../components/video-grid/VideoListRows"
+import { WatchQueuePanel } from "../../components/watch/WatchQueuePanel"
+import { WatchStackPlaylist } from "../../components/watch/WatchStackPlaylist"
+import { WatchSpeechTimeline } from "../../components/watch/WatchSpeechTimeline"
+import type { SpeechFocusRequest } from "../../components/watch/WatchRoundPanel"
 import { useDocumentPictureInPicture } from "../../components/video-player/useDocumentPictureInPicture"
 import {
   buildEmbedUrl,
@@ -53,8 +75,11 @@ import { groupIntoSentences } from "../../components/transcript/transcriptUtils"
 import {
   DEBATE_STYLE_LABELS,
   STYLE_COLORS,
+  TOURNAMENT_COLORS,
+  getRoundBadgeColor,
   formatVideoDate,
 } from "../../components/video-card/videoCardUtils"
+import { cn } from "../../ui/lib/utils"
 import { LecturesSidebarShell } from "../LecturesSidebarShell"
 import { useVideoState } from "../../hooks/useVideoState"
 import { useVideoMeta } from "../../hooks/useVideoFeed"
@@ -64,8 +89,23 @@ import {
   videoPlayerIframeRef,
 } from "../../state/videoPlayerStore"
 import { savePlayerState } from "../../state/videoPlayerPersistence"
+import { recordWatchProgress } from "../../state/videoWatchHistory"
 import { videoWatchHref } from "../../lib/video-slug"
-import type { TopicType, VideoType } from "../../types/videos"
+import { videoRouteHref } from "../../lib/video-route"
+import type { VideoDocument } from "../../lib/video-documents"
+import {
+  captionText,
+  withCaptionTranscripts,
+  withSpeechStarts,
+  type RoundSpeech,
+} from "../../lib/round-speeches"
+import { resolveRoundSpeeches } from "../../lib/round-formats"
+import type { RoundContext } from "../../lib/speech-outcomes"
+import { readSpeechStarts, writeSpeechStart } from "../../state/speechStartMarks"
+import type { VideoType } from "../../types/videos"
+
+/** Shared empty default, so an absent list keeps one identity across renders. */
+const NO_VIDEOS: VideoType[] = []
 
 /** How long the permalink control shows its "copied" tick. */
 const COPIED_FEEDBACK_MS = 1800
@@ -75,8 +115,20 @@ export interface VideoWatchPageProps {
   video: VideoType
   /** Videos shown under the player — same tournament, format or category. */
   related?: VideoType[]
-  /** Season topics, for the related cards' "T" tooltip button. */
-  topics?: TopicType[]
+  /**
+   * Long-form documents for this video — the speech-by-speech transcript, the
+   * AI summary, the written analysis. Each becomes a tab beside the player.
+   */
+  documents?: VideoDocument[]
+  /** Videos an editor tied to this one; they fill the "Analysis" tab. */
+  links?: LinkedVideo[]
+  /**
+   * Every member of the stacked playlist this video belongs to — the round
+   * and its analysis, the parts of a split upload — in stack order, this
+   * video included. Shown as a playlist under the player when it holds two
+   * or more.
+   */
+  stack?: VideoType[]
   /** App-owned navigation dock, rendered at the top of the sidebar. */
   dockSlot?: React.ReactNode
   /** App-specific toolbar buttons — see `SlowSpreadButton`. */
@@ -85,12 +137,22 @@ export interface VideoWatchPageProps {
 
 export function VideoWatchPage({
   video,
-  related = [],
-  topics,
+  related: relatedVideos = NO_VIDEOS,
+  documents = [],
+  links = [],
+  stack = NO_VIDEOS,
   dockSlot,
   extraControls,
 }: VideoWatchPageProps) {
   const router = useRouter()
+
+  // The playlist already lists its members; the related rows need not repeat them.
+  const related = useMemo(() => {
+    const inStack = new Set(stack.map((member) => member[0]))
+    return inStack.size > 1
+      ? relatedVideos.filter((candidate) => !inStack.has(candidate[0]))
+      : relatedVideos
+  }, [relatedVideos, stack])
 
   const [
     videoId,
@@ -104,8 +166,10 @@ export function VideoWatchPage({
     roundLevel,
     affTeam,
     negTeam,
-    ,
+    affWin,
     judgeDecision,
+    arg1AC,
+    arg2NR,
   ] = video
 
   const styleNumber = typeof style === "number" ? style : undefined
@@ -134,13 +198,18 @@ export function VideoWatchPage({
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const videoWrapperRef = useRef<HTMLDivElement | null>(null)
-  const stageRef = useRef<HTMLDivElement | null>(null)
   /** Latest position reported by the embed — handed back to the popout player on the way out. */
   const currentTimeRef = useRef(0)
+  /** The video's length as the embed reports it, for the watch history's percentage. */
+  const durationRef = useRef(0)
   /** The rate still needs applying to this load: a fresh embed always starts at 1x. */
   const pendingPlaybackRate = useRef(false)
 
   const [currentTime, setCurrentTime] = useState(0)
+  /** The video's length, for the speech timeline's proportions; 0 until the embed reports it. */
+  const [duration, setDuration] = useState(0)
+  /** The last speech picked on the timeline, for the side panel to open. */
+  const [focusSpeech, setFocusSpeech] = useState<SpeechFocusRequest | null>(null)
   /**
    * Second to open the embed at, resolved from the video's saved timestamp
    * once this page has claimed playback. `null` until then: the value can
@@ -182,6 +251,53 @@ export function VideoWatchPage({
   const { snippets: cues, loading: transcriptLoading } = useTranscript(videoId, true)
   const sentences = useMemo(() => (cues ? groupIntoSentences(cues) : []), [cues])
   const hasTranscript = sentences.length > 0
+  /**
+   * Whether the column beside the player has anything in it. Captions arrive
+   * after the first paint, so this stays true while they load and the page
+   * widens only once it is settled that there is nothing to show.
+   */
+  /** The round's speeches as written up, or its format's standard order — empty for a lecture. */
+  const baseSpeeches = useMemo(() => resolveRoundSpeeches(documents, style), [documents, style])
+  /** Speech starts the reader marked in this browser, by speech key. */
+  const [speechMarks, setSpeechMarks] = useState<Record<string, number>>({})
+  useEffect(() => {
+    setSpeechMarks(readSpeechStarts(videoId))
+  }, [videoId])
+  const handleMarkStart = useCallback(
+    (speechKey: string, seconds: number | null) => {
+      writeSpeechStart(videoId, speechKey, seconds)
+      setSpeechMarks(readSpeechStarts(videoId))
+    },
+    [videoId],
+  )
+  const markedKeys = useMemo(() => new Set(Object.keys(speechMarks)), [speechMarks])
+  /** The round speech by speech, timed by the reader's marks, each untyped speech given its captions. */
+  const speeches = useMemo(
+    () => withCaptionTranscripts(withSpeechStarts(baseSpeeches, speechMarks), sentences),
+    [baseSpeeches, speechMarks, sentences],
+  )
+  const roundTranscript = useMemo(
+    () => (baseSpeeches.length > 0 ? captionText(sentences) : ""),
+    [baseSpeeches.length, sentences],
+  )
+  const roundContext = useMemo<RoundContext>(
+    () => ({
+      format: styleNumber !== undefined ? DEBATE_STYLE_LABELS[styleNumber as keyof typeof DEBATE_STYLE_LABELS] : undefined,
+      tournament,
+      roundLevel,
+      aff: affTeam,
+      neg: negTeam,
+      decision: judgeDecision,
+    }),
+    [styleNumber, tournament, roundLevel, affTeam, negTeam, judgeDecision],
+  )
+
+  const hasSidePanel =
+    hasTranscript ||
+    transcriptLoading ||
+    speeches.length > 0 ||
+    documents.some((document) => (document.body ?? "").trim().length > 0) ||
+    links.length > 0
 
   // Claim playback from the floating popout player for as long as this page
   // is mounted, and hand it back — with the position — on the way out.
@@ -190,18 +306,36 @@ export function VideoWatchPage({
     // tracked about the outgoing video is cleared here rather than relying on
     // an unmount that doesn't happen.
     currentTimeRef.current = 0
+    durationRef.current = 0
     setCurrentTime(0)
+    setDuration(0)
+    setFocusSpeech(null)
     setResumeSeconds(null)
     setPlayerError(null)
 
     setActiveVideo(videoId, title, videoMeta)
     setTheaterVideoId(videoId)
     // `setActiveVideo` resolves the video's saved timestamp; read it back
-    // rather than duplicating that lookup here.
-    setStartSeconds({ videoId, seconds: useVideoPlayerStore.getState().startTime })
+    // rather than duplicating that lookup here. Seed the tracked position
+    // with it too: until the embed's first `infoDelivery` broadcast arrives,
+    // this is the only position known, and `handleTogglePip` reads this same
+    // ref with no fallback — popping into PiP in that window should reopen
+    // at the video's actual second, not a hard 0.
+    const resolvedStartSeconds = useVideoPlayerStore.getState().startTime
+    currentTimeRef.current = resolvedStartSeconds
+    setStartSeconds({ videoId, seconds: resolvedStartSeconds })
     return () => {
       const store = useVideoPlayerStore.getState()
       const seconds = currentTimeRef.current
+      // Leaving the page is the last chance to record how far this got — the
+      // next position report belongs to whatever plays next.
+      recordWatchProgress({
+        videoId,
+        positionSeconds: seconds,
+        durationSeconds: durationRef.current,
+        title,
+        flush: true,
+      })
       if (seconds > 0 && store.activeVideoId === videoId) {
         setActiveVideo(videoId, title, videoMeta, seconds)
         savePlayerState({
@@ -221,7 +355,7 @@ export function VideoWatchPage({
     }
   }, [videoId, title, videoMeta, setActiveVideo, setTheaterVideoId])
 
-  // Switching the active video is a navigation here: a related card, or the
+  // Switching the active video is a navigation here: a related row, or the
   // queue advancing, changes the URL rather than the embed behind it.
   useEffect(() => {
     // Read through to the store rather than trusting this render's snapshot:
@@ -229,8 +363,19 @@ export function VideoWatchPage({
     // would bounce the page straight back to the previous video.
     const store = useVideoPlayerStore.getState()
     if (!store.activeVideoId || store.activeVideoId === videoId) return
-    router.push(videoWatchHref(store.activeVideoTitle ?? "", store.activeVideoId))
-  }, [activeVideoId, activeVideoTitle, videoId, router])
+    // A related row is the usual way this fires, and those rows carry the
+    // season, tournament and teams the canonical address is built from — so
+    // that case navigates straight to it. The queue can also hold a video
+    // this page has never seen, and the store keeps only an id and a title;
+    // that falls back to the flat `/videos/watch/` address, which exists for
+    // exactly this and redirects to the canonical one on arrival.
+    const next = related.find((candidate) => candidate[0] === store.activeVideoId)
+    router.push(
+      next
+        ? videoRouteHref(next)
+        : videoWatchHref(store.activeVideoTitle ?? ""),
+    )
+  }, [activeVideoId, activeVideoTitle, videoId, related, router])
 
   // A fresh embed always starts at 1x, so re-apply the chosen rate on first play.
   useEffect(() => {
@@ -259,15 +404,42 @@ export function VideoWatchPage({
             }
           } else if (data.info === 2 || data.info === 0) {
             setIsPlaying(false)
+            recordWatchProgress({
+              videoId,
+              positionSeconds:
+                data.info === 0
+                  ? durationRef.current || currentTimeRef.current
+                  : currentTimeRef.current,
+              durationSeconds: durationRef.current,
+              title,
+              // Only "ended" proves the video was watched through; a pause
+              // just flushes whatever position it stopped at.
+              completed: data.info === 0,
+              flush: true,
+            })
           }
         }
         if (data.event === "infoDelivery" && data.info?.errorCode != null) {
           const code = Number(data.info.errorCode)
           if (!Number.isNaN(code)) setPlayerError(code)
         }
+        if (data.event === "infoDelivery" && data.info?.duration != null) {
+          const duration = Number(data.info.duration)
+          if (Number.isFinite(duration) && duration > 0) {
+            durationRef.current = duration
+            setDuration(duration)
+          }
+        }
         if (data.event === "infoDelivery" && data.info?.currentTime != null) {
           currentTimeRef.current = data.info.currentTime as number
           setCurrentTime(data.info.currentTime as number)
+          // Throttled in the store; see `state/videoWatchHistory.ts`.
+          recordWatchProgress({
+            videoId,
+            positionSeconds: currentTimeRef.current,
+            durationSeconds: durationRef.current,
+            title,
+          })
         }
       } catch {
         // ignore non-JSON messages
@@ -275,7 +447,7 @@ export function VideoWatchPage({
     }
     window.addEventListener("message", handleMessage)
     return () => window.removeEventListener("message", handleMessage)
-  }, [playbackRate, setIsPlaying])
+  }, [playbackRate, setIsPlaying, videoId, title])
 
   // Re-send the handshake for a few seconds after every load: YouTube ignores
   // commands and posts no events until it lands, and moving the iframe into a
@@ -312,6 +484,16 @@ export function VideoWatchPage({
     sendYouTubeCommand("playVideo")
   }, [])
 
+  /** A timeline segment: play from that speech and open it beside the player. */
+  const handleSpeechSelect = useCallback(
+    (speech: RoundSpeech) => {
+      if (speech.startSeconds !== null) seekTo(speech.startSeconds)
+      setIsTranscriptOpen(true)
+      setFocusSpeech((previous) => ({ key: speech.key, seq: (previous?.seq ?? 0) + 1 }))
+    },
+    [seekTo],
+  )
+
   const handlePlayPause = useCallback(() => {
     sendYouTubeCommand(isPlaying ? "pauseVideo" : "playVideo")
     setIsPlaying(!isPlaying)
@@ -327,7 +509,10 @@ export function VideoWatchPage({
       void document.exitFullscreen().catch(() => undefined)
       return
     }
-    void stageRef.current?.requestFullscreen?.().catch(() => undefined)
+    // Fullscreen the video wrapper alone (the same element PiP hands off
+    // from), not the whole left stage — a viewer asking for fullscreen wants
+    // the video, not the title/description column beside it.
+    void videoWrapperRef.current?.requestFullscreen?.().catch(() => undefined)
   }, [])
 
   const handleRetry = useCallback(() => {
@@ -410,7 +595,7 @@ export function VideoWatchPage({
         </div>
 
         <div className="grid grid-cols-1 gap-4 lg:gap-6 lg:grid-cols-[minmax(0,1fr)_380px] items-start">
-          <div ref={stageRef} className="min-w-0 space-y-3 bg-background">
+          <div className="min-w-0 space-y-3 bg-background">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                 {styleLabel && (
@@ -428,13 +613,36 @@ export function VideoWatchPage({
                 {tournament && (
                   <button
                     onClick={() => handleBadgeClick(tournament.replace(/\d+/g, "").trim())}
-                    className="text-[11px] font-bold text-purple-600 dark:text-purple-400 [font-variant:small-caps] tracking-wider hover:underline"
+                    className={cn(
+                      "text-sm font-bold backdrop-blur-md border px-2 py-1 rounded [font-variant:small-caps] tracking-wider shadow-lg",
+                      styleNumber && TOURNAMENT_COLORS[styleNumber]
+                        ? TOURNAMENT_COLORS[styleNumber]
+                        : "text-purple-300 bg-purple-900/80 border-purple-400/90",
+                    )}
                   >
                     {tournament}
                   </button>
                 )}
-                {roundLevel && (
-                  <span className="text-[11px] text-muted-foreground">{roundLevel}</span>
+                {year && (
+                  <span className="text-sm font-bold text-orange-300 backdrop-blur-md bg-orange-900/80 border border-orange-400/90 px-2 py-1 rounded shadow-lg">
+                    '{String(year).slice(-2)}
+                  </span>
+                )}
+                {roundLevel && !/\d/.test(roundLevel) && (
+                  <>
+                    {(roundLevel.toLowerCase().trim() === "finals" ||
+                      roundLevel.toLowerCase().trim() === "final") && (
+                      <span className="text-base">🏆</span>
+                    )}
+                    <span
+                      className={cn(
+                        "text-sm font-semibold px-2 py-1 rounded border backdrop-blur-md shadow-lg",
+                        getRoundBadgeColor(roundLevel),
+                      )}
+                    >
+                      {roundLevel}
+                    </span>
+                  </>
                 )}
               </div>
 
@@ -445,7 +653,7 @@ export function VideoWatchPage({
                 isPipActive={isPipActive}
                 isFullscreen={isFullscreen}
                 isTranscriptOpen={isTranscriptOpen}
-                hasTranscript={hasTranscript}
+                hasTranscript={hasSidePanel}
                 isFavorite={viewState.favorites.has(videoId)}
                 isInQueue={isInQueue}
                 isLinkCopied={isLinkCopied}
@@ -512,6 +720,17 @@ export function VideoWatchPage({
               )}
             </div>
 
+            {speeches.length > 0 && (
+              <WatchSpeechTimeline
+                speeches={speeches}
+                currentTime={currentTime}
+                duration={duration}
+                onSelect={handleSpeechSelect}
+              />
+            )}
+
+            <WatchStackPlaylist current={video} stack={stack} />
+
             <div className="space-y-2">
               <h1 className="text-lg sm:text-xl font-semibold leading-snug">{title}</h1>
 
@@ -534,22 +753,48 @@ export function VideoWatchPage({
               </div>
 
               {(affTeam || negTeam) && (
-                <div className="flex items-center gap-3 text-xs">
+                <div className="flex flex-wrap items-start justify-center gap-2">
                   {affTeam && (
-                    <button
-                      onClick={() => handleBadgeClick(affTeam)}
-                      className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      AFF {affTeam}
-                    </button>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <button
+                        onClick={() => handleBadgeClick(affTeam)}
+                        title={`Affirmative: ${affTeam}`}
+                        className={cn(
+                          "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                          affWin === true
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-blue-100 bg-blue-900/80"
+                            : "border border-blue-400/90 shadow-lg text-blue-300 bg-blue-900/80",
+                        )}
+                      >
+                        {affTeam}
+                      </button>
+                      {arg1AC && (
+                        <span className="text-xs font-medium text-blue-100 backdrop-blur-md bg-blue-950/90 px-2 py-0.5 rounded border border-blue-800/50 shadow-sm text-center max-w-[120px] leading-tight">
+                          {arg1AC}
+                        </span>
+                      )}
+                    </div>
                   )}
                   {negTeam && (
-                    <button
-                      onClick={() => handleBadgeClick(negTeam)}
-                      className="font-semibold text-red-600 dark:text-red-400 hover:underline"
-                    >
-                      NEG {negTeam}
-                    </button>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <button
+                        onClick={() => handleBadgeClick(negTeam)}
+                        title={`Negative: ${negTeam}`}
+                        className={cn(
+                          "text-sm font-bold backdrop-blur-md px-2 py-1 rounded",
+                          affWin === false
+                            ? "border-[3px] border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)] text-red-100 bg-red-900/80"
+                            : "border border-red-400/90 shadow-lg text-red-300 bg-red-900/80",
+                        )}
+                      >
+                        {negTeam}
+                      </button>
+                      {arg2NR && (
+                        <span className="text-xs font-medium text-red-100 backdrop-blur-md bg-red-950/90 px-2 py-0.5 rounded border border-red-800/50 shadow-sm text-center max-w-[120px] leading-tight">
+                          {arg2NR}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -560,15 +805,39 @@ export function VideoWatchPage({
                 </p>
               )}
             </div>
+
+            {/* The discussion, under the video's own metadata and above
+                everything else on the page. YouTube puts it here for a reason:
+                a viewer has just finished (or scrubbed past) the round, and
+                the questions that round raised are what they want to say
+                something about. A comment thread higher up would compete with
+                the player; below "Related videos" it would compete with the
+                next video, and nobody scrolls that far. */}
+            <div className="border-t border-border pt-5">
+              <CommentSection resourceType="video" resourceId={videoId} />
+            </div>
           </div>
 
-          {isTranscriptOpen && (hasTranscript || transcriptLoading) && (
-            <div className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] flex flex-col min-h-0">
-              <WatchTranscriptPanel
+          {/* A set height, so every tab scrolls inside the column instead of
+              stretching the page: shorter under the player on a phone, as
+              tall as the screen allows (up to 720px) beside it. */}
+          {isTranscriptOpen && hasSidePanel && (
+            <div className="h-[480px] lg:sticky lg:top-6 lg:h-[min(720px,calc(100vh-3rem))] flex flex-col min-h-0">
+              <WatchSidePanel
                 sentences={sentences}
-                loading={transcriptLoading}
+                captionsLoading={transcriptLoading}
+                documents={documents}
+                links={links}
                 currentTime={currentTime}
                 onSeek={seekTo}
+                focusSpeech={focusSpeech}
+                videoId={videoId}
+                videoTitle={title}
+                speeches={speeches}
+                round={roundContext}
+                roundTranscript={roundTranscript}
+                onMarkStart={handleMarkStart}
+                markedKeys={markedKeys}
               />
             </div>
           )}
@@ -579,18 +848,30 @@ export function VideoWatchPage({
             <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               Related videos
             </h2>
-            <VideoGrid
-              videos={related}
-              showThumbnails
-              topics={topics}
-              videoContainerRef={viewState.videoContainerRef}
-              favorites={viewState.favorites}
-              onToggleFavorite={viewActions.toggleFavorite}
-              onBadgeClick={handleBadgeClick}
-              onHideVideo={viewActions.hideVideo}
-              onUnhideVideo={viewActions.unhideVideo}
-              hiddenVideos={viewState.hiddenVideos}
-            />
+            {/* Rows rather than the card grid: a related list is a handful of
+                videos to pick the next one from, and rows put their dates and
+                view counts in one sortable column each — the grid's cards
+                spread the same fields across a wall of thumbnails. Opening
+                sorted newest-first, since nothing ranks this list otherwise;
+                the Date header flips it, and the other columns re-sort it.
+                The queue rides alongside: this is the page where videos get
+                lined up, and the floating player that normally shows "Up
+                next" is stood down while it is open. */}
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+              <VideoListRows
+                videos={related}
+                videoContainerRef={viewState.videoContainerRef}
+                favorites={viewState.favorites}
+                onToggleFavorite={viewActions.toggleFavorite}
+                onHideVideo={viewActions.hideVideo}
+                onUnhideVideo={viewActions.unhideVideo}
+                hiddenVideos={viewState.hiddenVideos}
+                grouped={false}
+                defaultSort={{ column: "date", direction: "desc" }}
+                onSearch={handleBadgeClick}
+              />
+              <WatchQueuePanel className="lg:sticky lg:top-6" />
+            </div>
           </section>
         )}
       </div>

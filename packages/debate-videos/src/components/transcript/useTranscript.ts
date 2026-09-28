@@ -19,6 +19,8 @@ interface TranscriptResponse {
   videoId?: string
   snippets?: TranscriptSnippet[]
   error?: string
+  /** Set when the video has no transcript we can serve; the reason to show. */
+  unavailable?: string
 }
 
 /**
@@ -41,6 +43,9 @@ function loadTranscript(videoId: string): Promise<TranscriptSnippet[]> {
       // grab resolves with an `error` field rather than throwing on a
       // non-2xx response, so a failure has to be checked for here.
       if (!data || data.error) throw new Error(data?.error || "Failed to load transcript")
+      // The route answers 200 when a video just has no transcript, so this
+      // is not logged as a server error; surface its reason the same way.
+      if (data.unavailable) throw new Error(data.unavailable)
       return data.snippets ?? []
     })
     .catch((error: unknown) => {

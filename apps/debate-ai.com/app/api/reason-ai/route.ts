@@ -52,6 +52,22 @@ function requestSize(messages: AnthropicMessage[], system?: string): number {
   return size
 }
 
+/** An Anthropic Messages turn in OpenAI Chat Completions shape. */
+function toChatCompletionsMessage(m: AnthropicMessage) {
+  if (typeof m.content === "string") return m
+  return {
+    role: m.role,
+    content: m.content.map((block) =>
+      block.type === "text"
+        ? { type: "text", text: block.text }
+        : {
+            type: "image_url",
+            image_url: { url: `data:${block.source.media_type};base64,${block.source.data}` },
+          },
+    ),
+  }
+}
+
 export async function POST(request: Request) {
   const auth = await getAuth()
   const session = await auth.api.getSession({ headers: request.headers })
@@ -59,10 +75,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in to use AI features." }, { status: 401 })
   }
 
-  const apiKey = getEnv("ANTHROPIC_API_KEY")
-  if (!apiKey) {
+const apiKey = getEnv("ANTHROPIC_API_KEY")
+  const openrouterKey = getEnv("OPENROUTER_API_KEY")
+  if (!apiKey && !openrouterKey) {
     return NextResponse.json(
-      { error: "AI features are not configured on this server." },
+      { error: "AI features are not configured on the server." },
       { status: 503 },
     )
   }
@@ -83,26 +100,45 @@ export async function POST(request: Request) {
 
   const maxTokens = Math.min(body.maxTokens ?? 1024, MAX_TOKENS_CAP)
 
+  const useOpenRouter = Boolean(openrouterKey)
+  const endpoint = useOpenRouter
+    ? "https://openrouter.ai/api/v1/chat/completions"
+    : "https://api.anthropic.com/v1/messages"
+  const headers: Record<string, string> = { "content-type": "application/json" }
+  if (useOpenRouter) {
+    headers.authorization = `Bearer ${openrouterKey}`
+    headers["HTTP-Referer"] = "https://debate-ai.com"
+    headers["X-Title"] = "Debate AI"
+  } else {
+    headers["x-api-key"] = apiKey!
+    headers["anthropic-version"] = ANTHROPIC_VERSION
+  }
+
   let res: Response
   try {
-    res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": ANTHROPIC_VERSION,
-      },
-      body: JSON.stringify({
-        model: ANTHROPIC_MODEL,
-        max_tokens: maxTokens,
-        ...(body.temperature != null ? { temperature: body.temperature } : {}),
-        ...(body.system ? { system: body.system } : {}),
-        messages: body.messages,
-      }),
-    })
+    const bodyJson: Record<string, unknown> = {
+      max_tokens: maxTokens,
+      messages: body.messages,
+    }
+    if (useOpenRouter) {
+      bodyJson.model = "anthropic/claude-sonnet-4.6"
+      // Chat Completions has no top-level `system` (OpenRouter silently drops
+      // it, so every caller's instructions were lost): it goes in as the
+      // first message, and Anthropic content blocks become OpenAI parts.
+      bodyJson.messages = [
+        ...(body.system ? [{ role: "system", content: body.system }] : []),
+        ...body.messages.map(toChatCompletionsMessage),
+      ]
+      if (body.temperature != null) bodyJson.temperature = body.temperature
+    } else {
+      bodyJson.model = ANTHROPIC_MODEL
+      if (body.temperature != null) bodyJson.temperature = body.temperature
+      if (body.system) bodyJson.system = body.system
+    }
+    res = await fetch(endpoint, { method: "POST", headers, body: JSON.stringify(bodyJson) })
   } catch (e) {
     return NextResponse.json(
-      { error: `Network error contacting Anthropic: ${e instanceof Error ? e.message : String(e)}` },
+      { error: `Network error contacting AI provider: ${e instanceof Error ? e.message : String(e)}` },
       { status: 502 },
     )
   }
@@ -116,21 +152,27 @@ export async function POST(request: Request) {
       // Body wasn't JSON.
     }
     return NextResponse.json(
-      { error: `Anthropic API returned ${res.status}${detail ? `: ${detail}` : ""}` },
+      { error: `AI API returned ${res.status}${detail ? `: ${detail}` : ""}` },
       { status: res.status >= 400 && res.status < 500 ? res.status : 502 },
     )
   }
 
   const json = (await res.json()) as {
     content?: Array<{ type?: string; text?: string }>
+    choices?: Array<{ message?: { content?: string } }>
     stop_reason?: string
   }
-  const text = (json.content ?? [])
-    .filter((c) => c.type === "text")
-    .map((c) => c.text ?? "")
-    .join("")
+  let text: string
+  if (json.choices?.[0]?.message?.content) {
+    text = json.choices[0].message.content
+  } else {
+    text = (json.content ?? [])
+      .filter((c) => c.type === "text")
+      .map((c) => c.text ?? "")
+      .join("")
+  }
   if (!text) {
-    return NextResponse.json({ error: "Anthropic returned an empty response." }, { status: 502 })
+    return NextResponse.json({ error: "AI API returned an empty response." }, { status: 502 })
   }
 
   return NextResponse.json({ text, stopReason: json.stop_reason })

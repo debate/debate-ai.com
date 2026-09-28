@@ -11,18 +11,15 @@ import { Quote, ChevronLeft, ChevronRight, Menu } from "lucide-react"
 import type { ViewMode } from "../types/debate-flow"
 import { ViewModeSelector } from "../controls/ViewModeSelector"
 import { Button } from "../ui/primitives/button"
-import { Badge } from "../ui/primitives/badge"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/primitives/tooltip"
 import { SpeechRecordingPlayer, SpeechRecordingMenu } from "debate-timer/src/recorder/SpeechRecordingPlayer"
+import { SpeechWordStats } from "debate-timer/src/timers/SpeechWordStats"
 import { useFlowStore } from "../state/store"
 import { SpeechTimer } from "debate-timer/src/timers/SpeechTimer"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
 import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
+import { useSpeechWordStats } from "../hooks/useSpeechWordStats"
+import { SpeechDocLinkPicker } from "../controls/SpeechDocLinkPicker"
+import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { settings } from "../state/settings"
 import { cn } from "../ui/lib/utils"
 
@@ -34,51 +31,6 @@ function getSpeakerEmail(speechName: string, round: Round): string {
   if (lower.includes("1n") || lower === "nc") return round.debaters.neg[0] ?? ""
   if (lower.includes("2n")) return round.debaters.neg[1] ?? ""
   return ""
-}
-
-/**
- * Count words that are bolded or highlighted in markdown text.
- * Matches:
- * - **bold** or __bold__
- * - ==highlight==
- * - <mark>highlight</mark>
- * - <b>bold</b> or <strong>bold</strong>
- */
-function countBoldedHighlightedWords(markdown: string): number {
-  if (!markdown) return 0
-
-  let count = 0
-
-  // Match **bold** or __bold__
-  const boldPattern = /(?:\*\*|__)(.+?)(?:\*\*|__)/g
-  let match
-  while ((match = boldPattern.exec(markdown)) !== null) {
-    const text = match[1].trim()
-    count += text.split(/\s+/).filter(w => w.length > 0).length
-  }
-
-  // Match ==highlight==
-  const highlightPattern = /==(.+?)==/g
-  while ((match = highlightPattern.exec(markdown)) !== null) {
-    const text = match[1].trim()
-    count += text.split(/\s+/).filter(w => w.length > 0).length
-  }
-
-  // Match <mark>text</mark>
-  const markPattern = /<mark>(.+?)<\/mark>/gi
-  while ((match = markPattern.exec(markdown)) !== null) {
-    const text = match[1].trim()
-    count += text.split(/\s+/).filter(w => w.length > 0).length
-  }
-
-  // Match <b>text</b> or <strong>text</strong>
-  const htmlBoldPattern = /<(?:b|strong)>(.+?)<\/(?:b|strong)>/gi
-  while ((match = htmlBoldPattern.exec(markdown)) !== null) {
-    const text = match[1].trim()
-    count += text.split(/\s+/).filter(w => w.length > 0).length
-  }
-
-  return count
 }
 
 /** A recording is "near" the speech length if it's at least 60% of the allocated time. */
@@ -120,9 +72,16 @@ export interface SpeechHeaderBarProps {
   /** When provided, renders a hamburger menu button for mobile sidebar access. */
   onMobileMenuClick?: () => void
   /** Whether to render the recording ellipsis menu (mic selector, reset, upload, delete).
-   *  Defaults to true; the global {@link SpeechControlsTopBar} renders its own copy for
-   *  the live-round speech, so that instance hides this one to avoid a duplicate. */
+   *  Defaults to true; the round sidebar shows it under the speech (see
+   *  `recordingMenuPlacement`) and the global {@link SpeechControlsTopBar} then hides its copy. */
   showRecordingMenu?: boolean
+  /**
+   * Where the recording menu (mic selector with live waveform, timer resets,
+   * upload/share/delete) renders: `"inline"` at the end of the timer row, or
+   * `"below"` on its own labeled row under the speech — how the round sidebar
+   * shows it. Only applies when `showRecordingMenu` is true.
+   */
+  recordingMenuPlacement?: "inline" | "below"
   /** Controlled selected microphone device ID, shared with an external recording menu. */
   micDeviceId?: string
   /** Callback when the microphone device changes. */
@@ -152,6 +111,7 @@ export function SpeechHeaderBar({
   onNavigateNext,
   onMobileMenuClick,
   showRecordingMenu = true,
+  recordingMenuPlacement = "inline",
   micDeviceId: controlledMicDeviceId,
   onMicDeviceChange,
   recordingEnabled: controlledRecordingEnabled,
@@ -238,28 +198,10 @@ export function SpeechHeaderBar({
   // Speech-sync reading mode — broadcasts elapsed time to QuoteView cards
   const [speechSyncEnabled, setSpeechSyncEnabled] = useState(false)
 
-  // Track bolded/highlighted word count
-  const [boldHighlightCount, setBoldHighlightCount] = useState(0)
-
-  // Update word count every 15 seconds and when speech changes
-  useEffect(() => {
-    const updateWordCount = () => {
-      if (currentFlow && speechName) {
-        const speechDoc = currentFlow.speechDocs?.[speechName] || ""
-        setBoldHighlightCount(countBoldedHighlightedWords(speechDoc))
-      } else {
-        setBoldHighlightCount(0)
-      }
-    }
-
-    // Initial update
-    updateWordCount()
-
-    // Update every 15 seconds
-    const interval = setInterval(updateWordCount, 15000)
-
-    return () => clearInterval(interval)
-  }, [currentFlow, speechName])
+  // Words read / underlined / highlighted from the speech doc (linked editor
+  // document or the flow's own), and words spoken from the recording.
+  const wordStats = useSpeechWordStats(currentFlow, speechName, { live: true })
+  const participantEmails = getRoundRecordingShareEmails(currentRound)
 
   const speakerEmail = currentRound ? getSpeakerEmail(speechName, currentRound) : ""
   const hasN = speechName.includes("N")
@@ -306,6 +248,33 @@ export function SpeechHeaderBar({
   const indicatorWidthPercent = progressActive
     ? Math.min(Math.max(progressPercent * 100, 2), 100)
     : 0
+
+  const recordingMenu = (labeled: boolean) => (
+    <SpeechRecordingMenu
+      speechName={speechName}
+      speechLabel={speechName}
+      micDeviceId={micDeviceId}
+      onMicDeviceChange={setMicDeviceId}
+      recordingEnabled={recordingEnabled}
+      onRecordingEnabledChange={setRecordingEnabled}
+      onResetSpeechTime={() => {
+        setTime(resetTime)
+        setTimerState({ name: "paused" })
+      }}
+      onSwitchToCrossX={() => {
+        const crossXTime = 3 * 60 * 1000
+        setTime(crossXTime)
+        setResetTime(crossXTime)
+        setTimerState({ name: "paused" })
+      }}
+      onResetPrepTimers={onResetPrepTimers}
+      onDeleteRecording={hasRecording ? deleteRecording : undefined}
+      recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
+      participantEmails={participantEmails}
+      triggerLabel={labeled ? "Mic & recording" : undefined}
+      inHeader={true}
+    />
+  )
 
   return (
     <div className="flex flex-col w-full h-full overflow-hidden py-1 px-2 gap-0.5">
@@ -362,23 +331,7 @@ export function SpeechHeaderBar({
           >
             {speechName}
           </span>
-          {boldHighlightCount > 0 && (
-            <TooltipProvider delayDuration={300}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge
-                    variant="secondary"
-                    className="h-4 px-1.5 text-[10px] font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-200 hover:bg-yellow-200 dark:hover:bg-yellow-900/50"
-                  >
-                    {boldHighlightCount}
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">
-                  <p>{boldHighlightCount} word{boldHighlightCount !== 1 ? 's' : ''} bolded or highlighted in speech doc</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+          <SpeechDocLinkPicker flow={currentFlow} speechName={speechName} link={wordStats.link} />
           {onNavigateNext && (
             <Button
               variant="ghost"
@@ -418,6 +371,14 @@ export function SpeechHeaderBar({
             hideInlineMenu={true}
           />
         </div>
+
+        {/* Words read from the speech doc (and spoken, once recorded) */}
+        <SpeechWordStats
+          speechName={speechName}
+          stats={wordStats.stats}
+          spoken={wordStats.spoken}
+          sourceLabel={wordStats.error ?? wordStats.sourceLabel}
+        />
 
         {/* ── Timer & Controls ── */}
         <div className="flex items-center gap-1 shrink-0">
@@ -475,34 +436,18 @@ export function SpeechHeaderBar({
 
           {/* Speech menu — ellipsis dropdown; hidden when a shared external
               menu (e.g. SpeechControlsTopBar) already covers this speech. */}
-          {showRecordingMenu && (
-            <div className="shrink-0 scale-[0.8]">
-              <SpeechRecordingMenu
-                speechName={speechName}
-                speechLabel={speechName}
-                micDeviceId={micDeviceId}
-                onMicDeviceChange={setMicDeviceId}
-                recordingEnabled={recordingEnabled}
-                onRecordingEnabledChange={setRecordingEnabled}
-                onResetSpeechTime={() => {
-                  setTime(resetTime)
-                  setTimerState({ name: "paused" })
-                }}
-                onSwitchToCrossX={() => {
-                  const crossXTime = 3 * 60 * 1000
-                  setTime(crossXTime)
-                  setResetTime(crossXTime)
-                  setTimerState({ name: "paused" })
-                }}
-                onResetPrepTimers={onResetPrepTimers}
-                onDeleteRecording={hasRecording ? deleteRecording : undefined}
-                recordingKey={hasRecording ? `debate-recording-${speechName}` : undefined}
-                inHeader={true}
-              />
-            </div>
+          {showRecordingMenu && recordingMenuPlacement === "inline" && (
+            <div className="shrink-0 scale-[0.8]">{recordingMenu(false)}</div>
           )}
         </div>
       </div>
+
+      {/* Recording menu on its own row under the speech (round sidebar) */}
+      {showRecordingMenu && recordingMenuPlacement === "below" && (
+        <div className="flex items-center gap-1 w-full min-w-0 border-t border-border/60 pt-0.5">
+          {recordingMenu(true)}
+        </div>
+      )}
     </div>
   )
 }

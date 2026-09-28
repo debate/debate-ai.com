@@ -1,0 +1,49 @@
+diff --git a/indexcards/api/controllers/pages/invite/schematController.js b/indexcards/api/controllers/pages/invite/schematController.js
+index fb0efa99..aa39c7fd 100644
+--- a/indexcards/api/controllers/pages/invite/schematController.js
++++ b/indexcards/api/controllers/pages/invite/schematController.js
+@@ -117,7 +117,7 @@ export async function getSchematic (req,res) {
+ 		return parsedRound;
+ 	});
+ 
+-	if (!rounds) {
++	if (!rounds?.length) {
+ 		return NotFound(req, res,
+ 			`Round ${req.params.roundName} of ${req.params.eventAbbr} either does not exist or is not yet published.`
+ 		);
+diff --git a/indexcards/api/controllers/rest/pageController.ts b/indexcards/api/controllers/rest/pageController.ts
+index 6c8c7bc6..99f1427c 100644
+--- a/indexcards/api/controllers/rest/pageController.ts
++++ b/indexcards/api/controllers/rest/pageController.ts
+@@ -8,7 +8,7 @@ export async function getPublicPages(req: Request, res: Response){
+ 
+ 	const pages = await webpageRepo.getWebpages(db, {
+ 		sitewide: true,
+-		slug: req.params.slug[0] ?? undefined,
++		slug: req.params.slug ?? undefined,
+ 	});
+ 
+ 	if (req.params.slug) {
+diff --git a/indexcards/api/controllers/rest/roundController.js b/indexcards/api/controllers/rest/roundController.js
+index 391ee401..d3423eef 100644
+--- a/indexcards/api/controllers/rest/roundController.js
++++ b/indexcards/api/controllers/rest/roundController.js
+@@ -76,9 +76,16 @@ export async function getPublishedRound(req,res) {
+ 		return NotFound(req, res, `No round found with ID ${req.params.roundId}`);
+ 	}
+ 
+-	if (round.tournId !== req.params.tournId) {
++	// getRound() does not select the tournament, so look it up via the event.
++	const roundEvent = await db
++		.selectFrom('event')
++		.select('event.tourn')
++		.where('event.id', '=', round.event)
++		.executeTakeFirst();
++
++	if (Number(roundEvent?.tourn) !== Number(req.params.tournId)) {
+ 		return NotFound(req, res,
+-			`No round found with ID ${req.params.roundID} belonging to tournament ${req.params.tournId}`
++			`No round found with ID ${req.params.roundId} belonging to tournament ${req.params.tournId}`
+ 		);
+ 	}
+ 

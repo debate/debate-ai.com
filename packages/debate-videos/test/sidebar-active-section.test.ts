@@ -25,18 +25,20 @@ describe("sidebarSectionForPath", () => {
 
   it("opens nothing for a dock destination no tool section lists", () => {
     // These used to open an "Apps" node that restated the dock as text. The
-    // tree no longer renders one, so nothing claims them.
-    for (const href of ["/cards", "/debate", "/tools"]) {
+    // tree no longer renders one, so nothing claims them. `/cards` is no
+    // longer one of them — see the next case. `/doc` and `/reason-editor` lost
+    // their Research rows to the dock's own icons, so they land here now too.
+    for (const href of ["/debate", "/tools", "/doc", "/reason-editor"]) {
       expect(sidebarSectionForPath(href)).toBeNull();
     }
   });
 
   it("resolves a dock destination to the tool section that lists it", () => {
-    // `/doc` is the dock's Docs button and also Research's "Debate Docs";
-    // `/versus-ai` is a dock button and Practice's "Debate Versus AI". With
-    // the Apps node gone, the section holding the link wins outright.
-    expect(sidebarSectionForPath("/doc")).toBe("research");
+    // `/versus-ai` is a dock button and Practice's "Debate Versus AI"; `/cards`
+    // is the dock's Shared button and Research's "Card Search". With the Apps
+    // node gone, the section holding the link wins outright.
     expect(sidebarSectionForPath("/versus-ai")).toBe("practice");
+    expect(sidebarSectionForPath("/cards")).toBe("research");
   });
 
   it("finds the tool section holding a tool route", () => {

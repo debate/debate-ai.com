@@ -1,29 +1,17 @@
-# Packages
 
-Workspace packages used by the debate-ai.com apps. Section headings are the
-directory names; the npm package name is called out where it differs.
+## debate-webview
 
-## UI primitives live in the package that renders them
-
-There is no shared `debate-ui` package. Each package and app keeps its own
-`ui/` folder (`src/ui/` in a package, `lib/ui/` in the web app) holding *only*
-the shadcn/Radix primitives, icons, panel shells and `cn`/URL-state helpers
-that package actually imports — so a package pulls in no primitive it does not
-render, and no dependency it does not need.
-
-When a package needs a primitive it does not have yet, copy the file from a
-package that already has one into its own `ui/primitives/`, add the matching
-`@radix-ui/*` dependency to that package's `package.json`, and register the
-directory with Tailwind in `apps/debate-ai.com/app/globals.css` if it isn't
-covered already. Keep the copies in the shadcn idiom — unstyled Radix behaviour
-plus `cn`-composed classes, variants over one-off props, `asChild` for
-composition — and keep them domain-free: a primitive that knows what a "card"
-or a "round" is belongs in the package that owns the concept.
+The debate-ai.com frontend UI as a standalone React package — the video archive, card
+search, the card reuse check over any URL, season standings, and the catalog of every
+tool in the app — with no Next.js, no router and no session of its own, so it mounts
+anywhere React runs. It reaches the server only through `debate-api-client`, and ships
+one scoped stylesheet rather than depending on the host's design system.
+`apps/debate-web-ext`'s Options page is its first host.
 
 ## debate-api-client
 
-Typed SDK for the [Debate AI API](https://debate-ai.com/api/api-docs), generated from
-`apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through `grab-url`
+Typed SDK for the [Debate AI API](https://debate-ai.com/api), generated from
+`packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through `grab-url`
 instead of fetch/axios, so every operation gets caching, retries, rate limiting, and
 request dedupe. Each `operationId` has a matching function that resolves to
 `{ data?, error? }` and never throws on an HTTP error.
@@ -55,6 +43,15 @@ The CardMirror-based debate-card editor embedded across debate-ai.com. Exposes t
 ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
+
+## debate-editor-cm (git submodule) and debate-editor-cm-adapter
+
+`debate-editor-cm` is a git submodule of upstream CardMirror,
+[debate/debate-editor](https://github.com/debate/debate-editor), kept as upstream ships it
+and outside the bun workspace (it is a Vite app with its own toolchain).
+`debate-editor-cm-adapter` is what the web UI imports: CardMirror's schema, `.docx`
+import/export and native `.cmir` format re-exported by path, plus `importDocx(file)`,
+`exportDocxBlob(doc)`, `outlineOf(doc)` and `cardsOf(doc)`.
 
 ## debate-feature-catalog
 
@@ -89,6 +86,22 @@ word-count speeches, practice round simulator, speech transcript summaries, argu
 outline, flow annotations, and AI response-outcome charts. Composes `debate-round`,
 `debate-speech-writer`, `debate-timer`, `debate-search-evidence`, and
 `debate-contributor-progress`.
+
+## debate-rankings
+
+Glicko-2 rankings for HS PF, LD, Policy and college policy — a git submodule of
+[debate/debate-rankings](https://github.com/debate/debate-rankings), kept as upstream ships it. It has its own
+Python toolchain (`src/main.py` replays tournament results into CSVs under `output/`), so it stays out of the
+bun workspace and is imported by path rather than by package name — see `debate-rankings-adapter`. A TypeScript
+entry (`js/index.ts`) exposes the dataset list and a lazy, typed loader for them. Read by the `/rank` panel in
+`debate-videos`, through `debate-rankings-adapter`.
+
+## debate-rankings-adapter
+
+What the web UI imports for rankings: everything `debate-rankings` exports, plus the
+site-only team-label lookup (`findTeamRanking("Harker LL")` and friends) that matches a round
+video's team to its rankings row. Site additions live here so the submodule never diverges
+from upstream.
 
 ## debate-round
 
@@ -132,9 +145,30 @@ assist, group challenges, research-progress tracking, sprint notes, and (moved f
 Speech and prep timers for live rounds, with per-format speech times built in. Also
 includes an in-round speech recorder with mic selection, live waveform, and playback.
 
+## debate-tournaments
+
+Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
+to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
+mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
+`/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
+upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+
+## debate-tournaments-tabroom (git submodule) and debate-tournaments-tabroom-adapter
+
+`debate-tournaments-tabroom` is a git submodule of upstream Tabroom,
+[debate/debate-tournaments](https://github.com/debate/debate-tournaments), outside the bun
+workspace. `debate-tournaments-tabroom-adapter` re-exports its `@tabroom/types` Zod schemas
+and inferred types, with `tabroomSchemas` (every schema keyed by record name) and a
+non-throwing `parseTabroom(schema, data)`.
+
+The two adapters that reach into a submodule by path link `<submodule>/node_modules` to
+their own on `postinstall`, so the submodule's bare imports resolve under bun's isolated
+linker. Clone with `git clone --recurse-submodules`, or run
+`git submodule update --init` in an existing checkout, before `bun install`.
+
 ## debate-videos
 
 LEARN, the debate video library. Covers video search and filtering, grids and cards, a
 persistent YouTube player with picture-in-picture, a per-video watch page at
-`/videos/watch/<title-slug>-<videoId>` (player, synced transcript, related videos),
-lecture pages, and rankings leaderboards.
+`/videos/watch/<title-slug>` (player, synced transcript, related videos),
+lecture pages, and the rankings leaderboard (data from `debate-rankings`).

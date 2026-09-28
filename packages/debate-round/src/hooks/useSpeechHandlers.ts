@@ -4,8 +4,8 @@
  */
 
 import { useCallback } from "react"
-import type { Flow } from "../types/flow"
-
+import type { Flow, Round } from "../types/flow"
+import { getRoundParticipantEmails } from "../round/round-participants"
 
 
 
@@ -26,6 +26,9 @@ export async function shareSpeech(emails: string[], speechName: string, content:
  * @param selected - Index of the currently selected flow within the flows array
  * @param selectedSpeech - Name of the currently selected speech document
  * @param updateFlow - Callback to apply partial updates to a flow at a given index
+ * @param rounds - Every persisted round, used to look up the currently selected
+ *   flow's own round (via its `roundId`) so "Share speech" can notify that
+ *   round's actual debaters/judges/spectators instead of nobody
  * @returns Object containing `handleUpdateSpeechDoc` and `handleShareSpeech` handlers
  */
 export function useSpeechHandlers(
@@ -33,6 +36,7 @@ export function useSpeechHandlers(
   selected: number,
   selectedSpeech: string,
   updateFlow: (index: number, updates: Partial<Flow>) => void,
+  rounds: Round[] = [],
 ) {
   /**
    * Persist new markdown content for the currently selected speech document.
@@ -74,8 +78,10 @@ export function useSpeechHandlers(
       }
 
       try {
-        // TODO: Get actual participant emails from round data
-        const participantEmails: string[] = []
+        const round = currentFlow.roundId
+          ? rounds.find((r) => r.id === currentFlow.roundId)
+          : undefined
+        const participantEmails = getRoundParticipantEmails(round)
         await shareSpeech(participantEmails, selectedSpeech, speechContent)
 
         const sharedSpeeches = {
@@ -91,7 +97,7 @@ export function useSpeechHandlers(
         alert("Failed to share speech. Please try again.")
       }
     }
-  }, [flows, selected, selectedSpeech, updateFlow])
+  }, [flows, selected, selectedSpeech, updateFlow, rounds])
 
   return {
     handleUpdateSpeechDoc,

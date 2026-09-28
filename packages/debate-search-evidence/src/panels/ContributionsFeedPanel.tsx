@@ -314,10 +314,12 @@ export function ContributionsFeedPanel({ signedInContributorId }: ContributionsF
   const visibleFeed = showFlaggedOnly ? filterFlaggedFeedEntries(feed) : feed
 
   return (
-    <PanelShell title="Contributions Feed">
+    <PanelShell
+      title="Contributions Feed"
+      description="Submit, like, save, and endorse the community's cards, summaries, highlights, and annotations."
+    >
       <p className="-mt-2 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-        Submit a contribution, then like, save, or endorse the community's cards, summaries,
-        highlights, and annotations — ranked by blended
+        Ranked by blended
         <Tooltip delayDuration={200}>
           <TooltipTrigger asChild>
             <span className="cursor-help inline-flex items-center gap-1 underline decoration-dotted">

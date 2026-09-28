@@ -13,7 +13,7 @@
  * @module backend/handlers
  */
 
-import { computeGamificationAward, type GamificationAward } from "./gamification"
+import type { GamificationAward } from "./gamification"
 import type { ModelClient } from "./model-client"
 import { generateBotResponse, judgeDebate, resolveResultStatus } from "./service"
 import type { DebateStore } from "./store"
@@ -215,15 +215,15 @@ export function createPracticeVsAiBackend(options: PracticeVsAiBackendOptions) {
 
     try {
       if (!store.getGamificationProfile || !store.applyGamificationAward) return null
-      const profile = await store.getGamificationProfile(actor.userId)
-      if (!profile) return null
-      const award = computeGamificationAward(profile, input.result)
-      await store.applyGamificationAward(actor.userId, award, {
+      // `applyGamificationAward` re-reads the profile itself immediately
+      // before writing, so the score/badge computation runs against the
+      // row's current value rather than a profile fetched earlier in this
+      // request — two rounds finishing close together each keep their points.
+      return await store.applyGamificationAward(actor.userId, {
         debateType: "user_vs_bot",
         topic: input.topic,
         result: input.result,
       })
-      return award
     } catch (error) {
       console.error("[practice-vs-ai] failed to apply gamification award:", error)
       return null

@@ -7,9 +7,11 @@
  * fresh (no due date pressure) on whichever device adopts it, which is
  * already how `learnStore.upsertCard` treats a card with no schedule, and
  * already how the manage GUI's own JSON export/import round-trips a card
- * with `schedule: null` (§ its module doc). No new sync infrastructure or
- * schema for the other 7 sub-collections — see TODO.md's standing
- * follow-up note for why those remain local-only.
+ * with `schedule: null` (§ its module doc). Decks (`learn-decks-sync.ts`)
+ * and the review log (`learn-review-log-sync.ts`) each get their own
+ * bespoke sync the same way; no new sync infrastructure for the remaining
+ * 5 sub-collections (schedule, anchor, AI thread, note, doc registry) —
+ * see those modules' own doc comments for why those stay local-only.
  *
  * `LearnStore` stays host-agnostic (no network/account knowledge) — this
  * class sits beside it, web-only (Electron's Learn store stays local-only
@@ -24,6 +26,14 @@
  *      sets-if-absent by id and only mints a schedule when none exists)
  *      and pushes any local-only card up. No-op (stays unsynced) when
  *      signed out or the request fails.
+ *
+ *      A push (here or from `handleStoreChange`, below) can hit a
+ *      stale-write conflict (`hasLearnCardSaveConflict`) when another
+ *      device already saved a newer edit of the same card: the account
+ *      rejects the write (409) instead of silently losing that newer edit,
+ *      and this browser adopts the returned newer version into its own
+ *      `LearnStore` instead of leaving the two out of sync — mirroring
+ *      `quick-cards-store.ts#pushToAccount`.
  *   2. Subscribes to the store's generic `subscribe()` (fires on *any*
  *      mutation — grading, notes, decks, ... — not just card edits) and,
  *      on each notification, diffs the current card list's content against
@@ -88,7 +98,7 @@ export class LearnCardsSync {
     const remoteIds = new Set(remote.map((c) => c.id));
     for (const card of this.store.listCards()) {
       if (!remoteIds.has(card.id)) {
-        void saveLearnCardToAccount(card).catch(() => {
+        void this.pushToAccount(card).catch(() => {
           // Best-effort — see handleStoreChange.
         });
       }
@@ -96,6 +106,23 @@ export class LearnCardsSync {
 
     for (const card of this.store.listCards()) this.baseline.set(card.id, contentKey(card));
     this.store.subscribe(() => this.handleStoreChange());
+  }
+
+  /** Pushes a card to the account; on a stale-write conflict (409 — the
+   *  account already has a newer edit of this card from another device),
+   *  adopts that newer version into the local store instead of silently
+   *  losing it. The baseline is updated *before* adopting so the resulting
+   *  `store.upsertCard` notification (which re-enters `handleStoreChange`
+   *  synchronously) sees content that already matches its baseline and
+   *  doesn't push the just-adopted card straight back. Otherwise best-effort:
+   *  a failed push (network error, any other failure) never blocks or rolls
+   *  back the local change the caller already applied. */
+  private async pushToAccount(card: CardDef): Promise<void> {
+    const result = await saveLearnCardToAccount(card);
+    if (result.conflict) {
+      this.baseline.set(result.current.id, contentKey(result.current));
+      this.store.upsertCard(result.current, this.today());
+    }
   }
 
   private handleStoreChange(): void {
@@ -106,7 +133,7 @@ export class LearnCardsSync {
       const key = contentKey(card);
       if (this.baseline.get(card.id) !== key) {
         this.baseline.set(card.id, key);
-        void saveLearnCardToAccount(card).catch(() => {
+        void this.pushToAccount(card).catch(() => {
           // Best-effort — already saved locally; this card resyncs the
           // next time it (or anything else) changes.
         });

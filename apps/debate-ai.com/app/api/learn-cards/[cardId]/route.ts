@@ -3,7 +3,12 @@ import { and, eq } from "drizzle-orm"
 import { getDBFromContext } from "@/lib/database/context"
 import { savedLearnCards } from "@/lib/database/schema"
 import { getUserId } from "@/lib/auth/session"
-import { isValidLearnCardRecord, MAX_SAVED_LEARN_CARD_BYTES } from "debate-editor/engine"
+import {
+  hasLearnCardSaveConflict,
+  isValidLearnCardRecord,
+  MAX_SAVED_LEARN_CARD_BYTES,
+  type CardDef,
+} from "debate-editor/engine"
 import { withRouteErrors } from "@/lib/api/route-errors"
 
 /**
@@ -13,7 +18,10 @@ import { withRouteErrors } from "@/lib/api/route-errors"
  *
  * PUT    { card: CardDef } — validates (`isValidLearnCardRecord`) and
  *   upserts, keyed by `(userId, cardId)`; the route's `cardId` must match
- *   `card.id`.
+ *   `card.id`. Rejects with 409 (see `hasLearnCardSaveConflict`) instead of
+ *   overwriting when the currently-saved row's own `updatedAt` is already
+ *   newer than the incoming card's — an edit race between two signed-in
+ *   devices — returning the current card so the caller can adopt it.
  * DELETE — removes the synced card for this `cardId`.
  *
  * No GET here: `GET /api/learn-cards` already returns every record in
@@ -52,6 +60,26 @@ export const PUT = withRouteErrors(
     }
 
     const db = await getDBFromContext()
+
+    const [existing] = await db
+      .select({ data: savedLearnCards.data })
+      .from(savedLearnCards)
+      .where(and(eq(savedLearnCards.userId, userId), eq(savedLearnCards.clientId, cardId)))
+      .limit(1)
+
+    if (existing) {
+      const currentCard = JSON.parse(existing.data) as CardDef
+      if (hasLearnCardSaveConflict(currentCard, card)) {
+        return NextResponse.json(
+          {
+            error: "This flashcard was edited from another device since your last sync.",
+            current: currentCard,
+          },
+          { status: 409 },
+        )
+      }
+    }
+
     const now = new Date()
 
     await db

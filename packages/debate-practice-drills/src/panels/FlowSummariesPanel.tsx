@@ -62,6 +62,13 @@
  * cross-package composition split) — the action is hidden entirely when no
  * handler is supplied.
  *
+ * An optional `signedInContributorId` prop (mirroring `PrepRoomPanel`'s
+ * identical convention) prefills that "Send to Prep Notes" form's "Your
+ * name" field with a real signed-in visitor's derived id — a starting value
+ * only; typing over it is always respected afterward. Closes
+ * `prep-notes.mdx`'s Known gaps entry noting the field was free-form with
+ * no link to a real identity.
+ *
  * @module panels/FlowSummariesPanel
  */
 
@@ -114,6 +121,14 @@ export interface FlowSummariesPanelProps {
    * directly.
    */
   onSendToPrepNotes?: (input: { roundId: string; authorId: string; text: string }) => void
+  /**
+   * A real signed-in visitor's derived contributor id (see
+   * `deriveContributorIdFromSessionIdentity`), used to prefill the "Send to
+   * Prep Notes" form's "Your name" field — mirroring `PrepRoomPanel`'s
+   * identical `signedInContributorId` convention. This is a starting value
+   * only; typing over it is always respected afterward.
+   */
+  signedInContributorId?: string
 }
 
 /**
@@ -123,7 +138,7 @@ export interface FlowSummariesPanelProps {
  * Reads localStorage on mount only (client-side), so it renders an empty
  * state during SSR/hydration rather than throwing.
  */
-export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProps = {}) {
+export function FlowSummariesPanel({ onSendToPrepNotes, signedInContributorId }: FlowSummariesPanelProps = {}) {
   const [records, setRecords] = useState<FlowSummaryRecord[] | null>(null)
   const [extractRoundId, setExtractRoundId] = useState("")
   const [extractEntries, setExtractEntries] = useState<ExtractEntryDraft[]>([{ ...EMPTY_EXTRACT_ENTRY }])
@@ -133,7 +148,14 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
   const [extractStatus, setExtractStatus] = useState<string | null>(null)
   const [sendFormOpenRoundId, setSendFormOpenRoundId] = useState<string | null>(null)
   const [sendAuthorId, setSendAuthorId] = useState("")
+  const [hasEditedSendAuthorId, setHasEditedSendAuthorId] = useState(false)
   const [sentToPrepNotesRoundIds, setSentToPrepNotesRoundIds] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (!hasEditedSendAuthorId && signedInContributorId) {
+      setSendAuthorId(signedInContributorId)
+    }
+  }, [signedInContributorId, hasEditedSendAuthorId])
 
   const dictation = useMicrophoneTranscription({
     onSegment: (segment) =>
@@ -178,7 +200,8 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
     onSendToPrepNotes({ roundId, authorId: sendAuthorId.trim(), text })
     setSentToPrepNotesRoundIds((prev) => new Set(prev).add(roundId))
     setSendFormOpenRoundId(null)
-    setSendAuthorId("")
+    setSendAuthorId(signedInContributorId ?? "")
+    setHasEditedSendAuthorId(false)
   }
 
   const updateEntrySpeech = (index: number, speech: string) =>
@@ -397,7 +420,10 @@ export function FlowSummariesPanel({ onSendToPrepNotes }: FlowSummariesPanelProp
                       <Input
                         id={`flow-summaries-send-author-${record.roundId}`}
                         value={sendAuthorId}
-                        onChange={(e) => setSendAuthorId(e.target.value)}
+                        onChange={(e) => {
+                          setSendAuthorId(e.target.value)
+                          setHasEditedSendAuthorId(true)
+                        }}
                         className="h-8 text-xs"
                       />
                     </div>

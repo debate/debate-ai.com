@@ -4,14 +4,6 @@
   "icon": "Book",
   "root": true,
   "pages": [
-    "index",
-    "---Guides---",
-    "...guides",
-    "---Features---",
-    "...features",
-    "---Packages---",
-    "...packages",
-    "---Internals---",
-    "...internals"
+    "..."
   ]
 }

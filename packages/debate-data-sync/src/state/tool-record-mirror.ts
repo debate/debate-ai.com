@@ -166,7 +166,8 @@ export function mirrorToolRecordSave(collectionKey: string, record: unknown): vo
   if (!collection) return;
   const id = toolRecordId(collection, record);
   if (id === null) return;
-  mirror(collectionKey, () => saveToolRecordToAccount(collectionKey, id, record));
+  const payload = collection.redact ? collection.redact(record) : record;
+  mirror(collectionKey, () => saveToolRecordToAccount(collectionKey, id, payload));
 }
 
 /**
@@ -196,7 +197,8 @@ export function mirrorToolRecordsSave(collectionKey: string, records: readonly u
   // import its entire sync — those rows stay local, which is where they were.
   const syncable = records.filter((record) => toolRecordId(collection, record) !== null);
   if (syncable.length === 0) return;
-  mirror(collectionKey, () => saveToolRecordsToAccount(collectionKey, syncable));
+  const payload = collection.redact ? syncable.map(collection.redact) : syncable;
+  mirror(collectionKey, () => saveToolRecordsToAccount(collectionKey, payload));
 }
 
 /**
@@ -325,7 +327,8 @@ export async function hydrateToolRecords(
   let pushed = 0;
   if (missing.length > 0) {
     try {
-      await saveToolRecordsToAccount(collectionKey, missing);
+      const payload = collection.redact ? missing.map(collection.redact) : missing;
+      await saveToolRecordsToAccount(collectionKey, payload);
       pushed = missing.length;
     } catch (error: unknown) {
       return {

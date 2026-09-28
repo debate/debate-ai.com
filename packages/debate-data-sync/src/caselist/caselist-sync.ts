@@ -16,7 +16,10 @@
  *    authoritative when it answers.
  * 2. **html** — the rendered page, for a pre-rendered response or markup
  *    captured by a browser and handed in as {@link FetchOptions.html}.
- * 3. **probe** — the bucket layout is fully determined by the slug and the
+ * 3. **crawl** — the all-years crawl from {@link ./caselist-discovery}: follow
+ *    the caselist root's linked season and downloads routes and collect any
+ *    ZIP they link, for a caselist whose downloads page moved or is missing.
+ * 4. **probe** — the bucket layout is fully determined by the slug and the
  *    date ({@link archiveUrl}), and archives are cut at midnight every Tuesday,
  *    so the candidate URLs for the last N weeks can be generated and
  *    HEAD-checked. Slower and bounded, but it does not depend on openCaselist's
@@ -41,9 +44,10 @@ import {
   parseDownloadsHtml,
   parseDownloadsPayload,
 } from "./downloads-page-parser";
+import { discoverCaselistArchives, toCaselistArchives } from "./caselist-discovery";
 
 /** Where a manifest's archives were discovered. */
-export type DownloadsSource = "api" | "html" | "probe" | "none";
+export type DownloadsSource = "api" | "html" | "crawl" | "probe" | "none";
 
 /** A manifest plus how it was obtained. */
 export interface CaselistDownloadsResult extends CaselistDownloads {
@@ -69,6 +73,10 @@ export interface FetchOptions {
   /** Skip the bucket probe. On by default only because it costs one request
    *  per week probed. */
   probe?: boolean;
+  /** Skip the all-years crawl. On by default. */
+  crawl?: boolean;
+  /** Pages the all-years crawl may visit. */
+  crawlPages?: number;
 }
 
 /** Candidate JSON endpoints, in the order they are tried. */
@@ -175,7 +183,21 @@ export async function fetchCaselistDownloads(
     notes.push(`${pageUrl} threw: ${(error as Error).message}`);
   }
 
-  // 3. Generate the URLs the bucket layout implies and see which exist.
+  // 3. Crawl the caselist root's linked seasons and downloads routes.
+  if (options.crawl !== false) {
+    const crawled = await discoverCaselistArchives(resolved, "all", {
+      maxPages: options.crawlPages ?? 6,
+      timeout,
+    });
+    const archives = toCaselistArchives(crawled.archives, resolved);
+    if (archives.length > 0) {
+      notes.push(`Found ${archives.length} archive(s) by crawling ${crawled.pages.length} page(s).`);
+      return finish(buildDownloads(resolved, archives), "crawl");
+    }
+    notes.push(`All-years crawl of ${crawled.pages.length} page(s) found no archives.`);
+  }
+
+  // 4. Generate the URLs the bucket layout implies and see which exist.
   if (options.probe !== false) {
     const probed = await probeArchives(resolved, {
       weeks: options.probeWeeks ?? 8,

@@ -33,5 +33,10 @@ panels/AccountNotificationsPanel.tsx → PATCH /api/notifications
 
 ## Known gaps
 
-Inviting doesn't sync the round itself server-side. Only round creation
-sends invites, not later edits.
+Inviting doesn't sync the round itself server-side. No follow-ups remain
+open on the "only round creation sends invites, not later edits" gap:
+editing an existing round now also invites whichever debater/judge/spectator
+emails are newly added, comparing the round's previous participant list
+against the submitted one (`useRoundEditorForm.ts#handleSubmit`'s edit-mode
+branch, via `round-invite-client.ts#computeAddedInviteEmails`). Participants
+already on the round when the edit was made aren't re-invited.

@@ -25,11 +25,11 @@ named surfaces:
 | Shell | Workspace? | Stack |
 | --- | --- | --- |
 | `apps/debate-ai.com` | **yes** | Next.js + vinext → Cloudflare Workers, D1 via Drizzle. The deployed product. See [web-app.md](web-app.md). |
-| `apps/debate-web-ext` | no | Browser extension: round timer with prep clocks |
+| `apps/debate-web-ext` | **yes** | WXT MV3 browser extension: round timer with prep clocks, the on-page card reuse check, and the app's own UI (`debate-webview`) on its Options page. React 18, deduped against the monorepo's 19. |
 | `apps/debate-native-wrapper` | no | Generic Tauri wrapper packaging the site as a native app |
 
-The two non-workspace apps have their own CI (`native-wrapper-ci.yml`,
-`native-wrapper-release.yml`) and are not installed by a root `bun install`.
+`apps/debate-native-wrapper` has its own CI (`native-wrapper-ci.yml`,
+`native-wrapper-release.yml`) and is not installed by a root `bun install`.
 
 ## Packages
 
@@ -37,14 +37,15 @@ Everything is private except `debate-api-client`.
 
 | Directory | Package name | Owns |
 | --- | --- | --- |
-| `debate-api-client` | *(same)* | **Published.** Typed SDK generated from `apps/debate-ai.com/public/debate-openapi.yml` with Hey API. Calls run through **`grab-url`**, not fetch/axios, so every operation gets caching, retries, rate limiting and dedupe. Resolves to `{ data?, error? }` — **never throws on an HTTP error.** |
+| `debate-webview` | *(same)* | The debate-ai.com frontend UI as a mountable React component — videos, card search, reuse check, standings, tool catalog — with no Next.js, router or session of its own. Reaches the server **only** through `debate-api-client`, and ships one scoped stylesheet so it renders inside a host with a different design system. Hosted by `apps/debate-web-ext`'s Options page. |
+| `debate-api-client` | *(same)* | **Published.** Typed SDK generated from `packages/debate-api-client/debate-openapi.yml` with Hey API. Calls run through **`grab-url`**, not fetch/axios, so every operation gets caching, retries, rate limiting and dedupe. Resolves to `{ data?, error? }` — **never throws on an HTTP error.** |
 | `debate-card-parser` | *(same)* | Verbatim `.docx` and HTML → structured cards with citations and highlighting |
 | `debate-contributor-progress` | `debate-community` | Leaderboard, news stream, awards, daily best card, progress unlocks, quest streaks, daily quests |
 | `debate-data-sync` | *(same)* | Bundled data assets (metadata, videos, schemas) + the sync scripts; shared record types like `OpponentTeamProfile` |
 | `debate-editor` | *(same)* | CardMirror: the ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-file decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and the React editor shell |
 | `debate-flow` | `debate-flow-ebb` | `ebb`, the local-first keyboard-first flow editor. `EbbFlowEmbed` mounts it as one column of a host page. |
 | `debate-help-docs` | *(same)* | The documentation site. See [documentation.md](documentation.md). |
-| `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, judge paradigm picker, AI judge decision, opponent personas, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
+| `debate-practice-drills` | `debate-practice-rounds` | Drill generator, AI coach, AI judge decision, practice round simulator, transcript summaries, argument-tree outline, flow annotations, response-outcome charts |
 | `debate-round` | *(same)* | FIAT: ag-Grid flow spreadsheet, column nav and split view, round setup dialogs, speech doc panels, export/history, flow and settings stores, plus the roster panels that render persisted practice records |
 | `debate-round-practice-ai` | `debate-practice-vs-ai` | `/versus-ai`: a Node/TS port of the Go `arguehub` vs-bot backend (13 bot personalities, prompt construction, AI judging, gamification) + the React round UI. Plain `fetch`; no Go/Mongo/Gin. |
 | `debate-search-evidence` | `debate-research-evidence` | Search bar, result list, card viewer, research and AI-analysis sidebars, the shared evidence/argument library, LLM card scoring, revision incentives, review queue, topic coverage dashboard |

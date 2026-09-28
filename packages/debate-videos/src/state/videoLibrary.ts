@@ -42,6 +42,7 @@ import {
   mirrorToolRecordsClear,
 } from "debate-data-sync/src/state/tool-record-mirror";
 import { requireSignIn } from "debate-data-sync/src/state/sign-in-prompt";
+import { readLocalRecords, writeLocalRecords } from "./localRecordStore";
 
 /** The `localStorage` key and sync collection for favourited videos. */
 export const VIDEO_FAVORITES_KEY = "debateVideosFavorites";
@@ -76,46 +77,6 @@ export interface VideoReport {
   date: string;
 }
 
-/** Reads and parses one store, tolerating anything a browser hands back. */
-function readRaw(key: string): unknown[] {
-  if (typeof localStorage === "undefined") return [];
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    // A store written by a different version, or half-written by a tab that
-    // died mid-`setItem`, reads as empty rather than throwing on page load.
-    return [];
-  }
-}
-
-/** Writes one store, and lets any mounted panel in this tab re-read it. */
-function writeRaw(key: string, records: readonly unknown[]): void {
-  if (typeof localStorage === "undefined") return;
-  const newValue = JSON.stringify(records);
-  try {
-    localStorage.setItem(key, newValue);
-  } catch {
-    // A full or blocked quota costs the write, not the click; the in-memory
-    // state the caller is about to set still reflects it for this session.
-    return;
-  }
-
-  // The browser fires `storage` only in *other* tabs, so a panel listening for
-  // it never hears this tab's own write. Dispatching it by hand is what the
-  // tool-record mirror does for the same reason.
-  if (typeof window === "undefined" || typeof StorageEvent === "undefined") return;
-  try {
-    window.dispatchEvent(
-      new StorageEvent("storage", { key, newValue, storageArea: localStorage }),
-    );
-  } catch {
-    // A host without a constructible StorageEvent just doesn't live-update.
-  }
-}
-
 /**
  * Reads a `{ videoId, … }` store, upgrading the legacy bare-string format.
  *
@@ -133,7 +94,7 @@ function normalizeVideoIdRecords<T extends { videoId: string }>(
   stampField: "savedAt" | "hiddenAt",
 ): T[] {
   const byId = new Map<string, T>();
-  for (const entry of readRaw(key)) {
+  for (const entry of readLocalRecords(key)) {
     // The legacy format: a bare video id. Dated to the epoch rather than to
     // now, so an upgrade doesn't reorder a collection built over a season.
     if (typeof entry === "string") {
@@ -168,7 +129,7 @@ export function listHiddenVideos(): HiddenVideo[] {
 /** Every report this browser has submitted, oldest first. */
 export function listVideoReports(): VideoReport[] {
   const reports: VideoReport[] = [];
-  for (const entry of readRaw(VIDEO_REPORTS_KEY)) {
+  for (const entry of readLocalRecords(VIDEO_REPORTS_KEY)) {
     if (typeof entry !== "object" || entry === null) continue;
     const record = entry as Record<string, unknown>;
     const videoId = typeof record.videoId === "string" ? record.videoId : "";
@@ -209,7 +170,7 @@ export function toggleVideoFavorite(videoId: string, now: () => Date = () => new
 
   if (existing >= 0) {
     const next = favorites.filter((favorite) => favorite.videoId !== videoId);
-    writeRaw(VIDEO_FAVORITES_KEY, next);
+    writeLocalRecords(VIDEO_FAVORITES_KEY, next);
     mirrorToolRecordDelete(VIDEO_FAVORITES_KEY, videoId);
     // Un-favouriting is not a moment to ask anyone to sign in — the user is
     // removing something, not building a collection worth keeping.
@@ -218,7 +179,7 @@ export function toggleVideoFavorite(videoId: string, now: () => Date = () => new
 
   const favorite: VideoFavorite = { videoId, savedAt: now().toISOString() };
   const next = [...favorites, favorite];
-  writeRaw(VIDEO_FAVORITES_KEY, next);
+  writeLocalRecords(VIDEO_FAVORITES_KEY, next);
   mirrorToolRecordSave(VIDEO_FAVORITES_KEY, favorite);
   requireSignIn(FAVORITES_PROMPT);
   return next;
@@ -237,7 +198,7 @@ export function hideVideo(videoId: string, now: () => Date = () => new Date()): 
 
   const entry: HiddenVideo = { videoId, hiddenAt: now().toISOString() };
   const next = [...hidden, entry];
-  writeRaw(VIDEO_HIDDEN_KEY, next);
+  writeLocalRecords(VIDEO_HIDDEN_KEY, next);
   mirrorToolRecordSave(VIDEO_HIDDEN_KEY, entry);
   requireSignIn({
     feature: "hidden videos",
@@ -255,7 +216,7 @@ export function hideVideo(videoId: string, now: () => Date = () => new Date()): 
  */
 export function unhideVideo(videoId: string): HiddenVideo[] {
   const next = listHiddenVideos().filter((entry) => entry.videoId !== videoId);
-  writeRaw(VIDEO_HIDDEN_KEY, next);
+  writeLocalRecords(VIDEO_HIDDEN_KEY, next);
   mirrorToolRecordDelete(VIDEO_HIDDEN_KEY, videoId);
   return next;
 }
@@ -273,13 +234,13 @@ export function saveVideoReport(
 ): VideoReport {
   const date = now().toISOString();
   const stored: VideoReport = { id: `${report.videoId}:${date}`, ...report, date };
-  writeRaw(VIDEO_REPORTS_KEY, [...listVideoReports(), stored]);
+  writeLocalRecords(VIDEO_REPORTS_KEY, [...listVideoReports(), stored]);
   mirrorToolRecordSave(VIDEO_REPORTS_KEY, stored);
   return stored;
 }
 
 /** Clears every favourite, locally and on the account. */
 export function clearVideoFavorites(): void {
-  writeRaw(VIDEO_FAVORITES_KEY, []);
+  writeLocalRecords(VIDEO_FAVORITES_KEY, []);
   mirrorToolRecordsClear(VIDEO_FAVORITES_KEY);
 }

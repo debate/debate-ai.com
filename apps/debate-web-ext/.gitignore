@@ -1,7 +1,0 @@
-node_modules
-.wxt
-.output
-stats.html
-stats-*.json
-*.log
-.DS_Store

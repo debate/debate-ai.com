@@ -19,9 +19,20 @@
  * — a dropdown of every named preset the signed-in-or-local user has saved,
  * plus a "Save current as preset…" action. Presets are global (not scoped
  * to one round), so the same saved combination can be applied to any
- * round's outline; applying one just writes that round's existing
- * `ArgumentTreeFilter` selection, identically to picking each control by
- * hand.
+ * round's outline; applying one from a round's own dropdown just writes
+ * that round's existing `ArgumentTreeFilter` selection, identically to
+ * picking each control by hand.
+ *
+ * The top-level "Saved filter presets" list (rendered once, above every
+ * round card) additionally records which round each preset was *saved*
+ * from (`OutlineFilterPreset.roundId`) and makes each preset's name
+ * clickable there: clicking one applies it to that origin round and scrolls
+ * its card into view, rather than requiring that round's card to already be
+ * the one on screen — closing this doc's "doesn't select or scroll to a
+ * particular round" Known gap. A preset saved before `roundId` existed, or
+ * whose origin round's outline was since cleared, has nothing to jump to
+ * (`state/outlineFilterPresetJump.ts#resolvePresetJumpRoundId`), so its name
+ * there stays inert; it's still fully usable from any round's own dropdown.
  *
  * A "Generate outline for current round" action reads the round workspace's
  * currently selected flow (`state/store.ts`'s `useFlowStore`, the same
@@ -91,7 +102,7 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { X } from "lucide-react"
 import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
@@ -136,6 +147,8 @@ import {
   saveArgumentTreeFilterSelection,
 } from "../state/argumentTreeFilters"
 import { useOutlineFilterPresets } from "../hooks/useOutlineFilterPresets"
+import { resolvePresetJumpRoundId } from "../state/outlineFilterPresetJump"
+import type { OutlineFilterPreset } from "debate-round/src/state/outlineFilterPresets"
 import { isArgumentTreePanelLiveUpdateStorageEvent } from "../state/live-update"
 import { useFlowStore } from "debate-round/src/state/store"
 import type { Flow } from "debate-round/src/types/flow"
@@ -206,6 +219,7 @@ export function ArgumentTreePanel() {
   } | null>(null)
   const [tagDraft, setTagDraft] = useState<ArgumentTags>({})
   const [selectedRows, setSelectedRows] = useState<Record<string, number[]>>({})
+  const roundCardRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const flows = useFlowStore((state) => state.flows)
   const selected = useFlowStore((state) => state.selected)
@@ -267,7 +281,7 @@ export function ArgumentTreePanel() {
       setPresetErrors((prev) => ({ ...prev, [roundId]: "Enter a name for this preset." }))
       return
     }
-    if (!addPreset(name, filters[roundId] ?? {})) {
+    if (!addPreset(name, filters[roundId] ?? {}, roundId)) {
       setPresetErrors((prev) => ({
         ...prev,
         [roundId]: `A preset named "${name}" already exists, or the preset limit has been reached.`,
@@ -276,6 +290,20 @@ export function ArgumentTreePanel() {
     }
     setPresetErrors((prev) => ({ ...prev, [roundId]: "" }))
     setPresetNameDrafts((prev) => ({ ...prev, [roundId]: "" }))
+  }
+
+  /**
+   * Applies a preset from the global "Saved filter presets" list: unlike a
+   * round's own dropdown (always the round already on screen), this jumps
+   * to the preset's origin round when one is still resolvable, so a preset
+   * saved from a round that isn't currently in view is still reachable.
+   * A no-op when there's nothing to jump to (see `resolvePresetJumpRoundId`).
+   */
+  const applyPresetGlobally = (preset: OutlineFilterPreset) => {
+    const targetRoundId = resolvePresetJumpRoundId(preset, (records ?? []).map((record) => record.roundId))
+    if (!targetRoundId) return
+    applyPreset(targetRoundId, preset.filter)
+    roundCardRefs.current[targetRoundId]?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
   const handleGenerate = () => {
@@ -411,19 +439,37 @@ export function ArgumentTreePanel() {
             Apply one from any round's "Filter presets" row below, or remove it here.
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
-            {presets.map((preset) => (
-              <Badge key={preset.name} variant="outline" className="gap-1 pr-1">
-                {preset.name}
-                <button
-                  type="button"
-                  aria-label={`Remove the ${preset.name} filter preset`}
-                  className="ml-1 rounded-sm hover:bg-muted"
-                  onClick={() => removePreset(preset.name)}
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            ))}
+            {presets.map((preset) => {
+              const jumpTargetRoundId = resolvePresetJumpRoundId(
+                preset,
+                (records ?? []).map((record) => record.roundId),
+              )
+              return (
+                <Badge key={preset.name} variant="outline" className="gap-1 pr-1">
+                  <button
+                    type="button"
+                    disabled={jumpTargetRoundId === null}
+                    className="disabled:cursor-default disabled:opacity-70 enabled:hover:underline enabled:underline-offset-2"
+                    title={
+                      jumpTargetRoundId !== null
+                        ? `Apply "${preset.name}" and jump to Round ${jumpTargetRoundId}`
+                        : `Apply "${preset.name}" from a round's own "Filter presets" list below.`
+                    }
+                    onClick={() => applyPresetGlobally(preset)}
+                  >
+                    {preset.name}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Remove the ${preset.name} filter preset`}
+                    className="ml-1 rounded-sm hover:bg-muted"
+                    onClick={() => removePreset(preset.name)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )
+            })}
           </div>
         </div>
       )}
@@ -454,7 +500,13 @@ export function ArgumentTreePanel() {
         )
 
         return (
-          <div key={record.roundId} className="rounded-lg border border-border p-4 space-y-3">
+          <div
+            key={record.roundId}
+            ref={(el) => {
+              roundCardRefs.current[record.roundId] = el
+            }}
+            className="rounded-lg border border-border p-4 space-y-3"
+          >
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-foreground">Round {record.roundId}</h2>
               <div className="flex items-center gap-2">

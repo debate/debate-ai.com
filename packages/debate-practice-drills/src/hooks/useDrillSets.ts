@@ -34,6 +34,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import { recordDebaterActivity } from "debate-community";
 import {
   adoptDrillSet,
   buildAndSaveDrillSet as buildAndSaveDrillSetLocal,
@@ -187,7 +188,11 @@ export function useDrillSets(): UseDrillSetsResult {
   }, []);
 
   const toggleDrillCompletion = useCallback((roundId: string, drillIndex: number) => {
+    const wasCompleted = getDrillSet(roundId)?.completedDrillIndexes?.includes(drillIndex) ?? false;
     toggleDrillCompletionLocal(roundId, drillIndex);
+    if (!wasCompleted && getDrillSet(roundId)?.completedDrillIndexes?.includes(drillIndex)) {
+      recordDebaterActivity("drill_practiced");
+    }
     setDrillSets(buildDrillSetsPanelView());
     pushToAccount(roundId);
   }, []);

@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyNewsLikedOp,
+  applyNewsReadOp,
   DEFAULT_NEWS_SYNC,
   isValidNewsIdList,
   isValidNewsItemId,
   MAX_NEWS_SYNC_ITEMS,
+  normalizeNewsLikedOpPatch,
+  normalizeNewsReadOpPatch,
   normalizeNewsSyncPatch,
   parseNewsIdList,
   serializeNewsIdList,
@@ -134,5 +138,151 @@ describe("DEFAULT_NEWS_SYNC", () => {
   it("is itself a valid payload", () => {
     expect(isValidNewsIdList(DEFAULT_NEWS_SYNC.newsRead)).toBe(true);
     expect(isValidNewsIdList(DEFAULT_NEWS_SYNC.newsLiked)).toBe(true);
+  });
+});
+
+describe("normalizeNewsReadOpPatch", () => {
+  it("accepts a valid recordNewsRead op", () => {
+    expect(normalizeNewsReadOpPatch({ recordNewsRead: "sprint-note-note-1" })).toEqual({
+      valid: { recordNewsRead: "sprint-note-note-1" },
+      errors: [],
+    });
+  });
+
+  it("returns no valid op and no errors when the field is absent", () => {
+    expect(normalizeNewsReadOpPatch({ debateStyle: 1 })).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("rejects a malformed recordNewsRead value", () => {
+    const result = normalizeNewsReadOpPatch({ recordNewsRead: "" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it.each([null, undefined, "not an object", 5, ["array"]])("rejects a non-object body %p", (body) => {
+    const result = normalizeNewsReadOpPatch(body);
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+});
+
+describe("applyNewsReadOp", () => {
+  it("appends a new id to an empty list", () => {
+    expect(applyNewsReadOp([], { recordNewsRead: "a" })).toEqual(["a"]);
+  });
+
+  it("appends a new id to a non-empty list", () => {
+    expect(applyNewsReadOp(["a", "b"], { recordNewsRead: "c" })).toEqual(["a", "b", "c"]);
+  });
+
+  it("returns the same array reference when the id is already read", () => {
+    const current = ["a", "b"];
+    expect(applyNewsReadOp(current, { recordNewsRead: "a" })).toBe(current);
+  });
+
+  it("returns the same array reference for an invalid id", () => {
+    const current = ["a"];
+    expect(applyNewsReadOp(current, { recordNewsRead: "" })).toBe(current);
+  });
+
+  it("silently drops an add once the list is at MAX_NEWS_SYNC_ITEMS", () => {
+    const current = Array.from({ length: MAX_NEWS_SYNC_ITEMS }, (_, i) => `item-${i}`);
+    expect(applyNewsReadOp(current, { recordNewsRead: "one-more" })).toBe(current);
+  });
+
+  it("two concurrent reads resolve onto the same starting list without dropping either", () => {
+    const start = ["a"];
+    const afterFirst = applyNewsReadOp(start, { recordNewsRead: "b" });
+    const afterSecond = applyNewsReadOp(start, { recordNewsRead: "c" });
+    expect(afterFirst).toEqual(["a", "b"]);
+    expect(afterSecond).toEqual(["a", "c"]);
+  });
+});
+
+describe("normalizeNewsLikedOpPatch", () => {
+  it("accepts a valid addNewsLiked op", () => {
+    expect(normalizeNewsLikedOpPatch({ addNewsLiked: "a" })).toEqual({
+      valid: { addNewsLiked: "a" },
+      errors: [],
+    });
+  });
+
+  it("accepts a valid removeNewsLiked op", () => {
+    expect(normalizeNewsLikedOpPatch({ removeNewsLiked: "a" })).toEqual({
+      valid: { removeNewsLiked: "a" },
+      errors: [],
+    });
+  });
+
+  it("returns no valid op and no errors when neither field is present", () => {
+    expect(normalizeNewsLikedOpPatch({ debateStyle: 1 })).toEqual({ valid: {}, errors: [] });
+  });
+
+  it("rejects a request providing both addNewsLiked and removeNewsLiked", () => {
+    const result = normalizeNewsLikedOpPatch({ addNewsLiked: "a", removeNewsLiked: "b" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a malformed addNewsLiked value", () => {
+    const result = normalizeNewsLikedOpPatch({ addNewsLiked: "" });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it("rejects a malformed removeNewsLiked value", () => {
+    const result = normalizeNewsLikedOpPatch({ removeNewsLiked: 5 });
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+
+  it.each([null, undefined, "not an object", 5, ["array"]])("rejects a non-object body %p", (body) => {
+    const result = normalizeNewsLikedOpPatch(body);
+    expect(result.valid).toEqual({});
+    expect(result.errors).toHaveLength(1);
+  });
+});
+
+describe("applyNewsLikedOp", () => {
+  it("adds a new liked id", () => {
+    expect(applyNewsLikedOp(["a"], { addNewsLiked: "b" })).toEqual(["a", "b"]);
+  });
+
+  it("returns the same array reference when adding an already-liked id", () => {
+    const current = ["a", "b"];
+    expect(applyNewsLikedOp(current, { addNewsLiked: "a" })).toBe(current);
+  });
+
+  it("silently drops an add once the list is at MAX_NEWS_SYNC_ITEMS", () => {
+    const current = Array.from({ length: MAX_NEWS_SYNC_ITEMS }, (_, i) => `item-${i}`);
+    expect(applyNewsLikedOp(current, { addNewsLiked: "one-more" })).toBe(current);
+  });
+
+  it("removes a liked id", () => {
+    expect(applyNewsLikedOp(["a", "b"], { removeNewsLiked: "a" })).toEqual(["b"]);
+  });
+
+  it("returns the same array reference when removing an absent id", () => {
+    const current = ["a"];
+    expect(applyNewsLikedOp(current, { removeNewsLiked: "z" })).toBe(current);
+  });
+
+  it("returns the current list unchanged for an empty op", () => {
+    const current = ["a"];
+    expect(applyNewsLikedOp(current, {})).toBe(current);
+  });
+
+  it("two concurrent likes resolve onto the same starting list without dropping either", () => {
+    const start = ["a"];
+    const afterFirst = applyNewsLikedOp(start, { addNewsLiked: "b" });
+    const afterSecond = applyNewsLikedOp(start, { addNewsLiked: "c" });
+    expect(afterFirst).toEqual(["a", "b"]);
+    expect(afterSecond).toEqual(["a", "c"]);
+  });
+
+  it("an unlike on one device is no longer dropped by a like already resolved elsewhere", () => {
+    const likedByDeviceA = applyNewsLikedOp(["a"], { addNewsLiked: "b" });
+    const unlikedByDeviceB = applyNewsLikedOp(likedByDeviceA, { removeNewsLiked: "a" });
+    expect(unlikedByDeviceB).toEqual(["b"]);
   });
 });

@@ -8,6 +8,11 @@
  * A video whose captions can't be read renders nothing here and the page
  * simply widens; that is not an error worth showing, because most of the
  * library has no captions at all.
+ *
+ * It renders either on its own — its own bordered column — or `embedded`
+ * inside {@link WatchSidePanel}'s tab strip, which already draws that border
+ * and already names the tab. The `embedded` form drops both rather than
+ * nesting a second card and a second "Transcript" heading inside the first.
  * @module components/watch/WatchTranscriptPanel
  */
 
@@ -18,6 +23,8 @@ import { Loader2, Search, X } from "lucide-react"
 import { ScrollArea } from "../../ui/primitives/scroll-area"
 import { TranscriptLine } from "../transcript/TranscriptLine"
 import type { TranscriptSnippet } from "../transcript/transcriptUtils"
+import { scrollWithin } from "../../lib/scroll-within"
+import { AutoScrollToggle } from "./AutoScrollToggle"
 
 interface WatchTranscriptPanelProps {
   /** The video's transcript, already regrouped into sentences. */
@@ -25,6 +32,12 @@ interface WatchTranscriptPanelProps {
   loading: boolean
   currentTime: number
   onSeek: (seconds: number) => void
+  /** Rendered inside the side panel's tab strip, which owns the frame. */
+  embedded?: boolean
+  /** Whether the list follows playback. On unless the reader turns it off. */
+  autoScroll?: boolean
+  /** Shows the "Auto-scroll" checkbox when given. */
+  onAutoScrollChange?: (value: boolean) => void
 }
 
 /** Formats seconds as `m:ss`, or `h:mm:ss` past an hour. */
@@ -43,6 +56,9 @@ export function WatchTranscriptPanel({
   loading,
   currentTime,
   onSeek,
+  embedded = false,
+  autoScroll = true,
+  onAutoScrollChange,
 }: WatchTranscriptPanelProps) {
   const [query, setQuery] = useState("")
   const lineRefs = useRef<Array<HTMLButtonElement | null>>([])
@@ -65,24 +81,36 @@ export function WatchTranscriptPanel({
     return idx
   }, [sentences, currentTime])
 
-  // Follow playback, but not while the reader is searching: scrolling the
-  // list out from under someone reading their own results is worse than
-  // losing the follow.
+  // Follow playback — unless the reader turned auto-scroll off, and never
+  // while they are searching: scrolling the list out from under someone
+  // reading their own results is worse than losing the follow. Only the
+  // panel scrolls, never the page around it.
   useEffect(() => {
-    if (activeIndex < 0 || needle) return
-    lineRefs.current[activeIndex]?.scrollIntoView({ block: "center", behavior: "smooth" })
-  }, [activeIndex, needle])
+    if (!autoScroll || activeIndex < 0 || needle) return
+    scrollWithin(lineRefs.current[activeIndex], "center")
+  }, [autoScroll, activeIndex, needle])
+
+  const Frame = embedded ? "div" : "aside"
 
   return (
-    <aside className="flex flex-col min-h-0 rounded-lg border border-border bg-card/40 overflow-hidden">
+    <Frame
+      className={
+        embedded
+          ? "flex flex-col min-h-0 flex-1"
+          : "flex flex-col min-h-0 rounded-lg border border-border bg-card/40 overflow-hidden"
+      }
+    >
       <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border shrink-0">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Transcript
+          {embedded ? "YouTube captions" : "Transcript"}
         </h2>
         {sentences.length > 0 && (
-          <span className="text-[10px] tabular-nums text-muted-foreground">
-            {needle ? `${visible.length}/${sentences.length}` : timecode(currentTime)}
-          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            {onAutoScrollChange && <AutoScrollToggle checked={autoScroll} onChange={onAutoScrollChange} />}
+            <span className="text-[10px] tabular-nums text-muted-foreground">
+              {needle ? `${visible.length}/${sentences.length}` : timecode(currentTime)}
+            </span>
+          </div>
         )}
       </div>
 
@@ -109,7 +137,7 @@ export function WatchTranscriptPanel({
         </div>
       )}
 
-      <ScrollArea className="flex-1 min-h-0 h-[320px] lg:h-auto">
+      <ScrollArea className={embedded ? "flex-1 min-h-0" : "flex-1 min-h-0 h-[320px] lg:h-auto"}>
         <div className="p-2 space-y-0.5">
           {loading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground p-3">
@@ -145,6 +173,6 @@ export function WatchTranscriptPanel({
           ))}
         </div>
       </ScrollArea>
-    </aside>
+    </Frame>
   )
 }

@@ -72,7 +72,6 @@ import {
   promptForText,
 } from './text-prompt.js';
 import { getInstallInfo } from './install-info.js';
-import { launchBenchmarkOverlay } from './benchmark-ui.js';
 import { resetTimer } from './timer-state.js';
 import { applyTimerProfile } from './timer-profile.js';
 import { showToast } from './toast.js';
@@ -2010,8 +2009,15 @@ function buildBenchmarkSection(closeDialog: () => void): HTMLElement {
   run.className = 'pmd-settings-backup-btn';
   run.textContent = 'Run benchmark';
   run.addEventListener('click', () => {
+    // benchmark-ui imports the engine (editor/index.ts), whose module scope
+    // needs the editor chrome in the DOM — load it lazily, and only where the
+    // editor is mounted (not the standalone /settings page).
+    if (!document.getElementById('editor')) {
+      showToast('Open a document in the editor first, then run the benchmark.');
+      return;
+    }
     closeDialog();
-    void launchBenchmarkOverlay();
+    void import('./benchmark-ui.js').then((m) => m.launchBenchmarkOverlay());
   });
   actions.appendChild(run);
   section.appendChild(actions);

@@ -17,7 +17,9 @@
  *
  * Each speech's limit is resolved through `useWordLimitPresets` (TODO.md
  * idea #2's "per-style word-limit preset manager" follow-up, managed from
- * `WordLimitPresetsPanel` on `/settings`) before falling back to the
+ * `WordLimitPresetsPanel`, mounted in a collapsible "Manage word limit
+ * presets" section on this same page,
+ * `apps/debate-ai.com/app/word-count/page.tsx`) before falling back to the
  * authored `wordCountStyles` entry, so a signed-in user's custom overrides
  * apply here the same way they do in the live in-round meter.
  *
@@ -40,7 +42,6 @@
 "use client"
 
 import { useRef, useState } from "react"
-import Link from "next/link"
 import { Badge } from "debate-round/src/ui/primitives/badge"
 import { Button } from "debate-round/src/ui/primitives/button"
 import { Input } from "debate-round/src/ui/primitives/input"
@@ -184,11 +185,8 @@ export function WordCountRoundsPanel() {
     >
       {presets.length > 0 && (
         <p className="-mt-3 text-xs text-muted-foreground">
-          {presets.length} custom word limit{presets.length === 1 ? "" : "s"} applied — manage them in{" "}
-          <Link href="/settings" className="underline underline-offset-2 hover:text-foreground">
-            Settings
-          </Link>
-          .
+          {presets.length} custom word limit{presets.length === 1 ? "" : "s"} applied — manage them in the
+          "Manage word limit presets" section below.
         </p>
       )}
       <p className="-mt-3 text-xs text-muted-foreground">

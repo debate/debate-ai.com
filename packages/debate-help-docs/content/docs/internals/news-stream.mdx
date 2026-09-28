@@ -237,31 +237,47 @@ is a best-effort layer on top rather than a replacement for it.
   so it doesn't distinguish "just shipped" from "always been here." Writing
   a real `PRODUCT_NEWS` entry for a tool remains the way to say something
   more specific than that.
-- **Fixed:** `buildAutoFeatureNews()` reads *this package's own*
-  `feature-catalog.ts` (`lib/news-stream.ts`'s import), one of three
-  hand-synced copies of `APP_FEATURES` across the repo (see
-  [`features-page.md`](features-page.md)'s "Three copies, hand-synced").
-  Contacts had been added to the app's copy — reachable from the dock, the
-  Tools page, and the Reason Editor — but never to this package's, so it had
-  no hand-written `PRODUCT_NEWS` entry *and* no auto-spotlight either,
-  making it the one tool this feed never mentioned at all. Added the missing
-  entry; the general "a future feature added to only one of the three
-  copies won't reach this feed" gap remains, since nothing checks the three
-  copies against each other.
+- No follow-ups remain open on the "auto-spotlight misses tools added only
+  to the app's copy of the catalog" gap: `buildAutoFeatureNews()`
+  (`lib/news-stream.ts`) now imports `APP_FEATURES` from the single shared
+  `debate-feature-catalog` package — the same catalog the dock, the Tools
+  page, and the Reason Editor all read — rather than a copy of its own, so a
+  tool added to the catalog is automatically reachable from this feed too.
+  See [`features-page.mdx`](features-page.mdx)'s "One shared catalog" for
+  the history of that unification.
+- `pushRead`/`pushLiked` send a single `recordNewsRead`/`addNewsLiked`/
+  `removeNewsLiked` op per mark-read/like-toggle, resolved against the
+  account's *current* stored list server-side
+  (`news-stream-sync.ts`'s `applyNewsReadOp`/`applyNewsLikedOp`) rather than
+  a client-computed whole-list replace — the same lost-update fix
+  `favoriteTools`/`recentTools` already use (see
+  [User Settings](/docs/features/user-settings)'s Known gaps). Before this,
+  every push resent the browser's *entire* current read/liked list, so two
+  tabs or devices marking different items read/liked close together could
+  silently drop each other's change, and an unrelated like/unlike toggle on
+  one device could accidentally re-add or drop an id it never touched as a
+  side effect of resending that device's whole list. A plain whole-list
+  `newsRead`/`newsLiked` replace is still accepted by the route for a
+  caller that genuinely needs one, but `useNewsStreamSync.ts` no longer
+  sends one.
 - Because the read/like account sync above is a union merge rather than a
-  full two-way sync, **unliking** an item on one device doesn't clear that
-  like on another device until that other device's own next toggle
-  overwrites the account row with its own (now-different) current list —
-  an accepted tradeoff for keeping the merge simple and never
-  destructively clobbering a browser's local state on hydration. Marking
-  something read has no equivalent "unread" action, so this asymmetry
-  doesn't apply there.
-- Every `pushRead`/`pushLiked` call resends the *entire* current id list,
-  not a diff — fine at today's feed size (bounded by `PRODUCT_NEWS` plus
-  each community source's own `MAX_COMMUNITY_ITEMS_PER_SOURCE` cap) but a
-  PUT payload that grows linearly with how much of the feed a heavy user
-  has read over time, same tradeoff `favoriteTools` already accepts at a
-  smaller scale.
+  full two-way sync, **unliking** an item on one device still doesn't clear
+  that like already merged onto another device's own local viewer state —
+  `mergeRemoteViewerState`'s hydrate-on-load only ever adds ids, never
+  removes them, an accepted tradeoff for never destructively clobbering a
+  browser's local state on hydration. The op-based fix above closes the
+  *write*-side race (the account's own stored list now always reflects
+  every like/unlike instead of whichever full-list push happened to land
+  last); this *read*-side asymmetry — a device that already merged a like
+  keeps showing it liked until its own next toggle of that same item — is a
+  separate, still-open limitation. Marking something read has no
+  equivalent "unread" action, so this asymmetry doesn't apply there.
+- The stored `newsRead`/`newsLiked` columns grow linearly with how much of
+  the feed a heavy user has read over time — an op only ever appends or
+  removes one id, but never trims the list back down on its own — fine at
+  today's feed size (bounded by `PRODUCT_NEWS` plus each community source's
+  own `MAX_COMMUNITY_ITEMS_PER_SOURCE` cap), same tradeoff `favoriteTools`
+  already accepts at a smaller scale.
 - Sprint notes and Argument Library entries are capped to the 20 most
   recent (by `createdAt`) each — `state/newsStream.ts`'s
   `MAX_COMMUNITY_ITEMS_PER_SOURCE` — so a very active topic sprint or a

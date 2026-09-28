@@ -39,6 +39,17 @@
  * call that renders the whole roster" convention, so a panel doesn't need to
  * already know every contributor id.
  *
+ * `saveDailyMissionResult` now stamps every record with a deterministic
+ * `${contributorId}::${dayKey}` id (mirroring `state/coachingSessions.ts`'s
+ * own composite-key-to-id fix), which is what lets this store join
+ * `debate-data-sync`'s `TOOL_RECORD_COLLECTIONS` allowlist
+ * (`dailyMissionResults`, `idField: "id"`) — closing the gap
+ * `quest-streaks.mdx`'s "Account sync, in detail" section named: only the
+ * signed-in visitor's `streakFreezes`/`streakLapseReminders` preferences
+ * synced through the bespoke `quest_streak_sync` column, while the actual
+ * day-by-day mission-result history those streaks are computed from never
+ * left this browser.
+ *
  * @module state/dailyMissionResults
  */
 
@@ -60,9 +71,29 @@ import { listContributionsByContributor } from "debate-research-evidence/src/sta
 /** A contributor's mission result for one UTC calendar day. */
 export type DailyMissionResultRecord = DailyMissionResult & {
   contributorId: string;
+  /**
+   * Stable id this record is keyed by — `${contributorId}::${dayKey}` — what
+   * lets it join `debate-data-sync`'s account-sync allowlist (see
+   * `state/toolRecordCollections.ts`'s `dailyMissionResults` entry).
+   * `saveDailyMissionResult` always derives and stamps this from the
+   * record's own `contributorId`/`dayKey` rather than trusting a
+   * caller-supplied value. Optional here (rather than required, the way
+   * `CoachingSessionRecord.id` is) since this type is also used by callers
+   * that only ever read `contributorId`/`dayKey`/`isComplete` and never
+   * persist the record directly — a pre-existing record saved before this
+   * field existed simply has none, and stays valid and locally readable,
+   * just un-synced, mirroring every other `TOOL_RECORD_COLLECTIONS` store's
+   * tolerance for that.
+   */
+  id?: string;
 };
 
 const STORAGE_KEY = "dailyMissionResults";
+
+/** The stable id a contributor+day pair's `DailyMissionResultRecord` is always stamped with. */
+function dailyMissionResultId(contributorId: string, dayKey: string): string {
+  return `${contributorId}::${dayKey}`;
+}
 
 function readAll(): DailyMissionResultRecord[] {
   if (typeof localStorage === "undefined") return [];
@@ -100,21 +131,60 @@ export function getDailyMissionResult(contributorId: string, dayKey: string): Da
   return readAll().find((record) => matches(record, contributorId, dayKey));
 }
 
-/** Saves a contributor's mission result for a day, overwriting any existing record for that pair. */
-export function saveDailyMissionResult(record: DailyMissionResultRecord): void {
+/**
+ * Saves a contributor's mission result for a day, overwriting any existing
+ * record for that pair. Always stamps `id` from the record's own
+ * `contributorId`/`dayKey`, ignoring whatever `id` (if any) the caller
+ * passed in. Returns the saved, id-stamped record.
+ */
+export function saveDailyMissionResult(record: DailyMissionResultRecord): DailyMissionResultRecord {
+  const withId: DailyMissionResultRecord = {
+    ...record,
+    id: dailyMissionResultId(record.contributorId, record.dayKey),
+  };
   const records = readAll();
-  const index = records.findIndex((existing) => matches(existing, record.contributorId, record.dayKey));
+  const index = records.findIndex((existing) => matches(existing, withId.contributorId, withId.dayKey));
   if (index === -1) {
-    records.push(record);
+    records.push(withId);
   } else {
-    records[index] = record;
+    records[index] = withId;
   }
   writeAll(records);
+  return withId;
 }
 
 /** Deletes a contributor's persisted mission result for a day; a no-op if it isn't stored. */
 export function deleteDailyMissionResult(contributorId: string, dayKey: string): void {
   writeAll(readAll().filter((record) => !matches(record, contributorId, dayKey)));
+}
+
+/**
+ * Merges a contributor's remotely-synced mission-result days into the local
+ * store, adding only the days not already present locally — mirrors
+ * `streakFreezes.ts#mergeRemoteStreakFreezeDayKeys`'s "union, never remove
+ * or overwrite" convention. A day already recorded locally (e.g. this device
+ * computed it moments ago) is left as-is rather than replaced by the remote
+ * copy, since the remote value could itself be stale relative to a local
+ * recompute that hasn't synced up yet. Added records are stamped with the
+ * same `${contributorId}::${dayKey}` id `saveDailyMissionResult` uses, so
+ * they stay syncable. Returns whether anything was actually added.
+ */
+export function mergeRemoteMissionResultDays(contributorId: string, remoteDays: DailyMissionResult[]): boolean {
+  const existingDayKeys = new Set(
+    listDailyMissionResultsForContributor(contributorId).map((record) => record.dayKey),
+  );
+  const newRecords: DailyMissionResultRecord[] = remoteDays
+    .filter((day) => !existingDayKeys.has(day.dayKey))
+    .map((day) => ({
+      id: dailyMissionResultId(contributorId, day.dayKey),
+      contributorId,
+      dayKey: day.dayKey,
+      isComplete: day.isComplete,
+    }));
+  if (newRecords.length === 0) return false;
+
+  writeAll([...readAll(), ...newRecords]);
+  return true;
 }
 
 /**
@@ -161,9 +231,7 @@ export function computeAndSavePersistedDailyMissionResult(
   const dayKey = getUtcDayKey(now);
   const board = buildDailyQuestBoard(quests, contributions, now);
   const result = computeDailyMissionResult(board, dayKey);
-  const record: DailyMissionResultRecord = { contributorId, ...result };
-  saveDailyMissionResult(record);
-  return record;
+  return saveDailyMissionResult({ contributorId, ...result });
 }
 
 /**

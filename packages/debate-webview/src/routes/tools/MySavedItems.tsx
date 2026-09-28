@@ -1,0 +1,170 @@
+"use client"
+
+/**
+ * Surfaces the signed-in user's cloud-saved Documents, Flows, and Rounds at
+ * the top of the Tools directory, so the SQL-backed save feature (see
+ * /settings, packages/debate-help-docs/content/docs/features/flow-cloud-save.mdx, and
+ * packages/debate-help-docs/content/docs/features/round-cloud-save.mdx) is actually discoverable from the one
+ * page that already lists every tool. Renders nothing when signed out or
+ * empty.
+ *
+ * Previously merged only documents and rounds inline, silently omitting
+ * saved flows — the middle of the three data types "save flows docs and
+ * debates" names. `buildRecentCloudItems`/`formatRelativeCloudTime`
+ * (`debate-round`) now own the merge/sort/label/relative-time logic, unit
+ * tested there since this file has no vitest project of its own (see
+ * `vitest.config.ts`'s `projects` list). Account-synced word-count rounds
+ * (`/word-count`) joined the merge alongside those three — the same
+ * SQL-backed, per-user round history as `saved_rounds`, just never
+ * surfaced here. Practice vs AI debates (`/versus-ai`) joined next — the
+ * third and last of the "save flows docs and debates" idea's named data
+ * types, already saved per-user in `practice_vs_ai_debates` but likewise
+ * never listed anywhere a returning user could browse it. Video
+ * speech-outcome simulation runs (`/videos`) joined after that — already
+ * synced per-user via `debate-data-sync`'s generic `saved_tool_records`
+ * mechanism once `CachedSpeechOutcome` gained a stable id, but that only
+ * wired the sync, not discoverability, so a run stayed invisible here too.
+ * Practice Drills' generated drill sets (`/drills`) joined next — already
+ * saved per-user in `saved_drill_sets`, same "sync wired, discoverability
+ * not" gap. AI Judge Decisions (`/judge-decision`) joined next — already
+ * saved per-user in `saved_judge_decisions`, the same gap again. AI
+ * Response-Outcome Charts' counsel-panel assessments (`/outcomes`) joined
+ * next — already saved per-user in `saved_counsel_panel_assessments`, the
+ * same gap again. Pre-Round Briefings' saved round pairings (`/briefings`)
+ * joined next — already saved per-user in `saved_round_pairings`, the same
+ * gap again. Scout-to-Strategy's saved strategy recommendations
+ * (`/strategy`) joined next — already saved per-user in
+ * `saved_strategy_recommendations`, the same gap again. Team Collaboration
+ * Mode's scheduled Topic Sprint sessions (`/research`) joined next —
+ * already saved per-user in `saved_sprint_sessions`, the same gap again.
+ * Speech Documents' send-log entries (`/speech-documents`) joined next —
+ * already saved per-user in `saved_speech_send_log`, the same gap again.
+ * CardMirror Learn's custom flashcard decks (`/reason-editor`) joined next —
+ * already saved per-user in `saved_learn_decks`, the same gap again.
+ * Practice Round Simulator's saved custom opponent personas
+ * (`/practice-round`) joined next — already saved per-user in
+ * `saved_custom_opponent_personas`, the same gap again. Flow Annotations'
+ * timestamped notes (`/annotations`) joined next — already synced per-user
+ * via the generic `saved_tool_records` mechanism, the same gap again.
+ * CardMirror's Quick Cards reusable-snippet library (`/reason-editor`)
+ * joined next — already saved per-user in `saved_quick_cards`, the same gap
+ * again. Prep Notes' live per-argument notes (`/prep-notes`) joined next —
+ * already synced per-user via the generic `saved_tool_records` mechanism,
+ * the same gap again. The Evidence Library's cut cards and reusable
+ * analytic blocks (`/cards/library`) joined next — already synced per-user
+ * (per-browser submissions only, not the shared search index) via the same
+ * generic mechanism, the same gap again. Practice Round Simulator's saved
+ * rounds (`/practice-round`) joined last — already synced per-user via the
+ * same generic `saved_tool_records` mechanism, the same gap again.
+ *
+ * Previously also fetched all three endpoints itself via a bare
+ * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
+ * and `/api/rounds` both 401 with an `{ error }` body when the server can't
+ * resolve a session even though the client still thinks it's signed in (a
+ * stale session, or a transient auth-backend error) — that shape isn't an
+ * array, so `buildRecentCloudItems` threw, the effect rejected with nobody
+ * to catch it, and `items` stayed `null` forever, silently indistinguishable
+ * from "no saved items". `fetchRecentCloudItems` (`debate-round`) now owns
+ * that network orchestration and degrades any one failing source to "no
+ * items of that kind" instead.
+ */
+
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
+import { useSession } from "../../lib/hooks/useSession"
+import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
+
+const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
+  document: FileText,
+  flow: ListTree,
+  round: Flag,
+  // Matches Word-Count Speeches' own icon in `app/tools/tool-groups.ts`.
+  wordCountRound: Type,
+  // Matches Practice vs AI's own icon in `app/tools/tool-groups.ts`.
+  debate: Bot,
+  // No standalone /tools entry to match — an AI-generated simulation run,
+  // not itself a tool.
+  speechOutcome: Sparkles,
+  // Matches Practice Drills' own icon in `app/tools/tool-groups.ts`.
+  drillSet: Dumbbell,
+  // Matches AI Judge Decision's own icon in `app/tools/tool-groups.ts`.
+  judgeDecision: Landmark,
+  // Matches AI Response-Outcome Charts' own icon in `app/tools/tool-groups.ts`.
+  counselPanelAssessment: BarChart3,
+  // Matches Pre-Round Briefings' own icon in `app/tools/tool-groups.ts` — a
+  // pairing has no standalone /tools entry of its own, it's a feature of
+  // that same panel.
+  roundPairing: ClipboardList,
+  // Matches Scout-to-Strategy's own icon in `app/tools/tool-groups.ts`.
+  strategyRecommendation: Crosshair,
+  // No standalone /tools entry to match — a scheduled Topic Sprint session
+  // is a feature of the Research Workspace's Collaboration Prep Room, not
+  // a tool of its own.
+  sprintSession: CalendarClock,
+  // Matches Speech Documents' own icon in `app/tools/tool-groups.ts`.
+  speechSendLogEntry: Send,
+  // No standalone /tools entry to match — CardMirror Learn's flashcard
+  // decks are a feature of the editor's "Manage flashcards" overlay, not a
+  // tool of its own.
+  learnDeck: Layers,
+  // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`.
+  customOpponentPersona: PlayCircle,
+  // Matches Flow Annotations' own icon in `app/tools/tool-groups.ts`.
+  flowAnnotation: MapPin,
+  // No standalone /tools entry to match — Quick Cards are a feature of the
+  // editor's clip/search/manage UI, not a tool of its own.
+  quickCard: Scissors,
+  // Matches Prep Notes' own icon in `app/tools/tool-groups.ts`.
+  prepNote: NotebookPen,
+  // No standalone /tools entry to match — the Evidence Library is the
+  // default view of the Research Workspace's `/cards` route. Matches the
+  // Research Workspace's own icon in `app/tools/tool-groups.ts`.
+  evidenceLibraryEntry: Library,
+  // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`,
+  // same as `customOpponentPersona` above — both belong to that same tool.
+  practiceRound: PlayCircle,
+}
+
+export function MySavedItems() {
+  const { isAuthenticated } = useSession()
+  const [items, setItems] = useState<CloudLibraryItem[] | null>(null)
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    let cancelled = false
+    void fetchRecentCloudItems().then((result) => {
+      if (!cancelled) setItems(result)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [isAuthenticated])
+
+  if (!isAuthenticated || !items || items.length === 0) return null
+
+  return (
+    <section className="mb-10">
+      <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-muted-foreground">My Saved Items</h2>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => {
+          const Icon = KIND_ICON[item.kind]
+          return (
+            <Link key={item.key} href={item.href} className="block">
+              <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
+                <CardHeader className="px-4">
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 shrink-0 text-foreground" />
+                    <CardTitle className="text-sm truncate">{item.label}</CardTitle>
+                  </div>
+                  <CardDescription>{formatRelativeCloudTime(item.updatedAtMs)}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          )
+        })}
+      </div>
+    </section>
+  )
+}

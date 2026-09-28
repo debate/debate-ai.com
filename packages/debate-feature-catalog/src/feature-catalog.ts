@@ -3,10 +3,8 @@
  *
  * The app ships roughly fifty distinct surfaces, but nothing lists them all:
  * the global dock exposes four destinations plus a long, flat Settings menu;
- * `/research` and `/coach` tab across the panels of one package each;
- * `/community-hub` covers only the crowdsourcing and pre-round/practice
- * spaces named under TODO.md's "Research Crowdsourcing Organizer Features"
- * heading. None of them mention the core workspaces (card search, the flow
+ * `/research` and `/coach` tab across the panels of one package each, but
+ * none of them mention the core workspaces (card search, the flow
  * spreadsheet, the video archive, the Reason editor) or the rankings and
  * standings surfaces at all, so a new debater has no single page that
  * outlines what the app actually does.
@@ -25,8 +23,7 @@
  * same shape as `debate-data-sync`) instead of each keeping a hand-synced
  * fork — see `features-page.mdx`'s "One shared catalog" section.
  *
- * Like `debate-card-search`'s narrower community-hub directory, this module
- * is pure: it has no store of its own, because every entry links to a
+ * Like other pure catalog/directory modules in the app, this module is pure: it has no store of its own, because every entry links to a
  * surface that already persists (or doesn't need to persist) its own state.
  *
  * @module feature-catalog
@@ -57,8 +54,7 @@ export type FeatureCategory =
   | "round"
   | "intelligence"
   | "practice"
-  | "recognition"
-  | "standings";
+  | "recognition";
 
 /** Display order and label for each category, broadest surfaces first. */
 export const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
@@ -69,7 +65,6 @@ export const FEATURE_CATEGORY_LABELS: Record<FeatureCategory, string> = {
   intelligence: "Pre-Round Intelligence",
   practice: "Practice & Coaching",
   recognition: "Recognition & Progress",
-  standings: "Standings & Rankings",
 };
 
 /** One line under each category heading explaining what the group is for. */
@@ -80,8 +75,7 @@ export const FEATURE_CATEGORY_DESCRIPTIONS: Record<FeatureCategory, string> = {
   round: "Turn a flowed round into outlines, summaries, annotations, and exposure charts.",
   intelligence: "What you know about the opponent and judge before the round starts.",
   practice: "Practice rounds, drills, and AI coaching between tournaments.",
-  recognition: "Quests, streaks, awards, and unlocks that reward contributing research.",
-  standings: "Season results across tournaments, and community team rankings.",
+  recognition: "Quests, streaks, awards, unlocks, and standings that reward contributing research.",
 };
 
 /** One user-facing surface in the app. */
@@ -178,17 +172,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "workspaces",
     tags: ["hub", "coach", "flow sync"],
   },
-  {
-    id: "community-research-hub",
-    title: "Community Research Hub",
-    description:
-      "A searchable directory of every shared research, collaboration, and pre-round/practice space",
-    href: "/community-hub",
-    category: "workspaces",
-    doc: "community-research-hub.md",
-    tags: ["directory", "index"],
-  },
-
   // ── Evidence & research ────────────────────────────────────────────────
   {
     id: "shared-evidence-library",
@@ -446,15 +429,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["risk", "case choice", "adaptation", "ai panel"],
   },
   {
-    id: "judge-paradigm-picker",
-    title: "Judge Paradigm Picker",
-    description: "Pick a built-in or custom AI judge paradigm for a practice round",
-    href: "/paradigms",
-    category: "intelligence",
-    doc: "judge-paradigm-selections.md",
-    tags: ["flow", "lay", "policymaker", "kritikal", "educator"],
-  },
-  {
     id: "ai-judge-decision",
     title: "AI Judge Decision",
     description: "AI-generated round decisions under a round's saved judge paradigm and flow summary",
@@ -481,15 +455,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "practice",
     doc: "practice-vs-ai.md",
     tags: ["speeches", "bot", "persona", "judge"],
-  },
-  {
-    id: "opponent-persona-picker",
-    title: "Opponent Persona Picker",
-    description: "Pick the AI practice-opponent style for a session",
-    href: "/practice-opponent",
-    category: "practice",
-    doc: "practice-opponent.md",
-    tags: ["policy heavy", "kritik", "lay", "fast flow"],
   },
   {
     id: "ai-coach-mode",
@@ -566,6 +531,14 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["gamified", "badges", "streak"],
   },
   {
+    id: "debater-level",
+    title: "Debater Level",
+    description: "Earn XP and level up by completing challenges like cutting 5 cards or redoing a rebuttal",
+    href: "/cards/level",
+    category: "recognition",
+    tags: ["gamified", "xp", "levels", "challenges"],
+  },
+  {
     id: "progress-unlocks",
     title: "Progress Unlocks",
     description: "Every contributor's unlock tier, badges, and the research-task skill level each tier grants",
@@ -584,14 +557,12 @@ export const APP_FEATURES: FeatureEntry[] = [
     doc: "group-challenges.md",
     tags: ["standings", "wins", "roster"],
   },
-
-  // ── Standings & rankings ───────────────────────────────────────────────
   {
     id: "team-rankings",
     title: "Team Rankings",
     description: "Debate team rankings, leaderboard, and Elo ratings",
     href: "/rank",
-    category: "standings",
+    category: "recognition",
     doc: "team-rankings.md",
     tags: ["elo", "toc", "bid list", "debatedrills"],
   },

@@ -119,6 +119,7 @@ export async function POST(request: NextRequest) {
       fileName,
       imported: result.imported,
       skipped: result.skipped,
+      reuseIndexed: result.reuseIndexed,
       failures: result.failures,
     });
   } catch (error) {

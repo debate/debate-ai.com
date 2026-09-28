@@ -6,7 +6,7 @@ title: "Features Page"
 
 One page that outlines every user-facing surface in the app: each feature's
 name, a one-line description, its route, and a link to its long-form doc,
-grouped into eight categories and filtered by a single search box.
+grouped into seven categories and filtered by a single search box.
 
 - **Route:** `/features`
 - **Nav:** the global dock's Settings menu → **All Features** (the first item)
@@ -21,11 +21,6 @@ Nothing in the app listed everything it does:
 - [`/research`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/components/research/ResearchHub.tsx)
   and [`/coach`](https://github.com/debate/debate-ai.com/blob/master/apps/debate-ai.com/components/coach/CoachHub.tsx) each
   tab across the panels of one package.
-- [`/community-hub`](./community-research-hub.md) covers only the spaces named
-  under TODO.md's "Research Crowdsourcing Organizer Features" heading — 17 of
-  them — and deliberately omits the core workspaces (card search, the flow
-  spreadsheet, the video archive, the Reason editor) and the standings and
-  rankings surfaces.
 
 So a debater arriving at the app had no way to learn what it does short of
 opening the Settings menu and clicking through every entry. This page is that
@@ -35,7 +30,7 @@ map.
 
 | Element | Source |
 | --- | --- |
-| Header count line | `buildFeatureCatalogSummaryText` — e.g. "50 features across 8 categories: Core Workspaces (8), …" |
+| Header count line | `buildFeatureCatalogSummaryText` — e.g. "50 features across 7 categories: Core Workspaces (8), …" |
 | Search box | `searchFeatures`, matching title, description, route, and hidden tags |
 | Jump-to-category row | One pill per non-empty section, anchored to its `id` |
 | Section heading + blurb | `FEATURE_CATEGORY_LABELS` / `FEATURE_CATEGORY_DESCRIPTIONS` |
@@ -54,8 +49,7 @@ it stays a stable "how big is this app" answer while someone types.
 | Flowing & Round Analysis | Argument tree outline, transcript summaries, flow annotations, response-outcome charts, speech documents, word-count speeches |
 | Pre-Round Intelligence | Opponent and judge profiles, briefings, scout-to-strategy, paradigm picker, AI judge decision |
 | Practice & Coaching | Practice round simulator, versus-AI rounds, opponent personas, AI coach mode, drills |
-| Recognition & Progress | Leaderboard, awards, daily best card, quests, streaks, unlocks, group challenges |
-| Standings & Rankings | Team rankings |
+| Recognition & Progress | Leaderboard, awards, daily best card, quests, streaks, unlocks, group challenges, team rankings |
 
 ## How it works
 
@@ -176,15 +170,28 @@ one turn of the wheel while keeping consecutive cards more than 80° apart.
 
 `apps/debate-ai.com/lib/__tests__/tool-catalog-consistency.test.ts`
 cross-checks this catalog's routes against `/tools`' `ALL_TOOLS` and the
-Reason Editor's `WORKSPACE_LINKS`.
+Reason Editor's `WORKSPACE_LINKS`, and separately walks every static route
+under `apps/debate-ai.com/app/` to assert each appears in at least one of
+the three.
 
 ## Known gaps
 
-- The catalog is a hand-maintained registry, so a new route has to be added
-  to it as well. Nothing fails if it isn't — the tests assert the catalog's
-  internal consistency, not that it covers every file under
-  `apps/debate-ai.com/app/`, because the app is outside the packages Vitest
-  runs over.
+- **Fixed:** the catalog is a hand-maintained registry, so a new route used
+  to have to be added to it by hand with nothing checking that it was — the
+  tests only asserted the catalog's internal consistency, not that it
+  covered every file under `apps/debate-ai.com/app/`, since the app is
+  outside the packages Vitest runs over. `tool-catalog-consistency.test.ts`
+  now also walks `apps/debate-ai.com/app/` for every static route with its
+  own `page.tsx` (skipping dynamic-segment detail routes, which don't get
+  their own catalog entry) and asserts each appears in at least one of
+  `ALL_TOOLS`/`APP_FEATURES`/`WORKSPACE_LINKS`, unless it's in that test's
+  own `ROUTES_WITHOUT_A_CATALOG_ENTRY` (the homepage, `/admin`, an
+  auth-flow step, a legal page, `/login`, or the editor's own settings
+  pages — none of which are "a tool" to list). This is a test-only
+  relative import into the app's own route tree via `node:fs`, so it adds
+  no runtime dependency; a new route added to `app/` and to none of the
+  three catalogs now fails this test instead of silently reaching none of
+  them.
 - **Fixed:** the catalog used to exist as three hand-synced copies (see "One
   shared catalog" above), and they drifted once — `/contacts` was added to
   the app's copy but never carried over to the other two, so

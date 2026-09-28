@@ -17,9 +17,9 @@ sign in on.
 - **Route:** `/contacts` (tabs: Contacts, Shared cards; `?tab=shared` lands
   on the second)
 - **Nav:** the dock's Settings menu ("Contacts", with a count of pending
-  requests); the Tools page's Prep & Practice group; the Reason Editor's
-  header ("Share with contacts") and Workspace menu (`t contacts` in
-  Ctrl/Cmd-Shift-Space's command palette)
+  requests); the Tools page's Prep & Practice group; the Reason Editor
+  sidebar's Documents row (the share glyph beside Upload) and Workspace menu
+  (`t contacts` in Ctrl/Cmd-Shift-Space's command palette)
 - **Package:** [`debate-team-collaboration`](/packages/debate-team-collaboration)
   (`lib/contacts.ts` rules, `state/contacts.ts` + `state/cardShares.ts`
   clients, `useContacts` / `useCardShares` hooks, `ContactsPanel` /
@@ -49,8 +49,13 @@ Requests and accepts write ordinary account notifications (`contact_request`,
 
 ## Sharing a card
 
-In the Reason Editor, **Share with contacts** (header, signed-in only) opens
-a picker of your contacts plus an optional note. On Share:
+In the Reason Editor, **Share with contacts** opens a picker of your contacts
+plus an optional note. It is the share glyph in the sidebar's Documents row,
+beside New file / New folder / Upload — sharing is something done to the open
+file, so it sits with that file's other actions rather than in a header strip
+of its own. Shown only when you are signed in and a document is open, and only
+on the editor route: sharing starts a live co-editing session through the
+CardMirror engine, which that page is what mounts. On Share:
 
 1. If the open document has no live session, the engine's own Start
    Collaboration Session flow runs (same confirm dialog); the 'Enable

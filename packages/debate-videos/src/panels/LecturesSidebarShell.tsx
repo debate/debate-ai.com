@@ -36,6 +36,7 @@ import { QuickLinksGrid } from "../components/category-gallery/QuickLinksGrid"
 import { ToolNavTree } from "../components/category-gallery/ToolNavTree"
 import { VideoSidebarTree } from "../components/category-gallery/VideoSidebarTree"
 import { Footer } from "../ui/layout/footer"
+import { ResizableSidebarLayout } from "../ui/layout/ResizableSidebarLayout"
 import type { LectureCategoryFacet } from "../types/videos"
 
 export interface LecturesSidebarShellProps {
@@ -63,44 +64,43 @@ export function LecturesSidebarShell({
   children,
 }: LecturesSidebarShellProps) {
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Same widths and `min-w-0` as the grid view's own `<aside>`: the dock
-          arrives already sized to this column, so it cannot reach across the
-          border onto the page beside it. */}
-      <aside
-        data-app-chrome
-        className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3"
-      >
-        {dockSlot}
+    // Same resizable column as the grid view's (`ResizableSidebarLayout`): the
+    // dock arrives already sized to it, so it cannot reach across the border
+    // onto the page beside it, and the width the user dragged to carries over.
+    <ResizableSidebarLayout
+      appChrome
+      className="bg-background"
+      sidebar={
+        <>
+          {dockSlot}
 
-        <VideoSidebarTree
-          counts={counts}
-          lectureCategories={lectureCategories}
-          selectedCategory={selectedCategory}
-          activeId={activeId}
-          lecturesExpanded={lecturesExpanded}
-          onToggleLectures={onToggleLectures}
-        />
-
-        <Footer />
-      </aside>
-
-      <div className="min-w-0 flex-1">
-        {/* Below md the `<aside>` above is gone and the app dock's fixed
-            instance stays hidden, so without this the page answers with no
-            way out of it but the browser's Back button. */}
-        <div className="md:hidden p-3">
-          <QuickLinksGrid counts={counts} activeId={activeId} />
-
-          <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
-            <ToolNavTree defaultExpanded={false} />
-          </nav>
+          <VideoSidebarTree
+            counts={counts}
+            lectureCategories={lectureCategories}
+            selectedCategory={selectedCategory}
+            activeId={activeId}
+            lecturesExpanded={lecturesExpanded}
+            onToggleLectures={onToggleLectures}
+          />
 
           <Footer />
-        </div>
+        </>
+      }
+    >
+      {/* Below md the sidebar is gone and the app dock's fixed instance stays
+          hidden, so without this the page answers with no way out of it but
+          the browser's Back button. */}
+      <div className="md:hidden p-3">
+        <QuickLinksGrid counts={counts} activeId={activeId} />
 
-        {children}
+        <nav className="mb-6 flex flex-col gap-3 text-sm" aria-label="Tools">
+          <ToolNavTree defaultExpanded={false} />
+        </nav>
+
+        <Footer />
       </div>
-    </div>
+
+      {children}
+    </ResizableSidebarLayout>
   )
 }

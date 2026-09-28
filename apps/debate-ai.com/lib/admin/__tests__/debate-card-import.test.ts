@@ -15,17 +15,23 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "../../database/schema";
-import { debateCardImports, debateCards } from "../../database/schema";
+import { debateCardImports, debateCards, evidenceReuseIndex } from "../../database/schema";
 import {
   CARD_ROWS_PER_STATEMENT,
+  buildSourceUrlStatements,
+  extractCardSourceUrl,
   recordCardImportBatch,
   writeDebateCardBatch,
 } from "../debate-card-import";
 
-const migrationPath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "../../../drizzle/0035_debate_cards.sql",
-);
+const drizzleDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "../../../drizzle");
+
+/** The card tables, plus the reuse index every card batch also writes to. */
+const migrationPaths = [
+  path.join(drizzleDir, "0004_certain_microchip.sql"),
+  path.join(drizzleDir, "0035_debate_cards.sql"),
+  path.join(drizzleDir, "0054_debate_card_source_url.sql"),
+];
 
 /** A row shaped like the published dump, with int64 columns as BigInt. */
 function dumpRow(overrides: Record<string, unknown> = {}) {
@@ -56,9 +62,11 @@ function dumpRow(overrides: Record<string, unknown> = {}) {
 /** A fresh in-memory database with the card tables migrated in. */
 async function freshDb() {
   const client = createClient({ url: ":memory:" });
-  for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
-    const sql = statement.trim();
-    if (sql) await client.execute(sql);
+  for (const migrationPath of migrationPaths) {
+    for (const statement of readFileSync(migrationPath, "utf8").split("--> statement-breakpoint")) {
+      const sql = statement.trim();
+      if (sql) await client.execute(sql);
+    }
   }
   return drizzle(client, { schema });
 }
@@ -72,7 +80,7 @@ describe("writeDebateCardBatch", () => {
 
   it("stays inside D1's 100-parameter statement limit", () => {
     expect(CARD_ROWS_PER_STATEMENT).toBeGreaterThan(0);
-    expect(CARD_ROWS_PER_STATEMENT * 20).toBeLessThanOrEqual(100);
+    expect(CARD_ROWS_PER_STATEMENT * 21).toBeLessThanOrEqual(100);
   });
 
   it("writes a normalized dump row, converting int64 columns", async () => {
@@ -139,6 +147,106 @@ describe("writeDebateCardBatch", () => {
     const result = await writeDebateCardBatch(db, [{ id: 0 }], "cards-0000.parquet");
     expect(result).toMatchObject({ imported: 0, skipped: 1 });
     expect(await db.$count(debateCards)).toBe(0);
+  });
+
+  it("registers each card's cited URL in the reuse index", async () => {
+    const withUrl = (id: bigint) =>
+      dumpRow({ id, fullcite: `Blum et al. 18 [Kenneth Blum, https://www.example.com/reward-${id}/]` });
+    const result = await writeDebateCardBatch(
+      db,
+      [withUrl(1n), withUrl(2n), dumpRow({ id: 3n })],
+      "cards-0000.parquet",
+    );
+    expect(result.reuseIndexed).toBe(2);
+    const rows = await db.select().from(evidenceReuseIndex).orderBy(evidenceReuseIndex.id);
+    expect(rows.map(({ id, normalizedUrl, cite, argBlock, topic }) => ({ id, normalizedUrl, cite, argBlock, topic }))).toEqual([
+      {
+        id: "card:1",
+        normalizedUrl: "example.com/reward-1",
+        cite: "Blum et al. 18",
+        argBlock: "Pleasure and pain are intrinsic value and disvalue.",
+        topic: "HS LD 2022-23",
+      },
+      {
+        id: "card:2",
+        normalizedUrl: "example.com/reward-2",
+        cite: "Blum et al. 18",
+        argBlock: "Pleasure and pain are intrinsic value and disvalue.",
+        topic: "HS LD 2022-23",
+      },
+    ]);
+  });
+
+  it("moves or drops a card's reuse entry when a re-import changes its cite", async () => {
+    await writeDebateCardBatch(
+      db,
+      [
+        dumpRow({ id: 1n, fullcite: "Blum 18 https://old.example.com/a" }),
+        dumpRow({ id: 2n, fullcite: "Blum 18 https://old.example.com/b" }),
+      ],
+      "cards-0000.parquet",
+    );
+    await writeDebateCardBatch(
+      db,
+      [dumpRow({ id: 1n, fullcite: "Blum 18 https://new.example.com/a" }), dumpRow({ id: 2n, fullcite: "Blum 18" })],
+      "cards-0000.parquet",
+    );
+    const rows = await db.select().from(evidenceReuseIndex);
+    expect(rows.map((row) => [row.id, row.normalizedUrl])).toEqual([["card:1", "new.example.com/a"]]);
+  });
+
+  it("keeps the reuse-index statements inside the parameter limit", async () => {
+    const cards = Array.from({ length: 40 }, (_, index) =>
+      dumpRow({ id: BigInt(index + 1), fullcite: `Blum 18 https://example.com/${index}` }),
+    );
+    expect((await writeDebateCardBatch(db, cards, "cards-0000.parquet")).reuseIndexed).toBe(40);
+    expect(await db.$count(evidenceReuseIndex)).toBe(40);
+  });
+});
+
+describe("extractCardSourceUrl", () => {
+  it("returns the URL the citation names", () => {
+    expect(
+      extractCardSourceUrl({ id: 1, cite: "Blum 18", fullcite: "Blum 18 https://example.com/paper", caselistDisplayName: "" }),
+    ).toBe("https://example.com/paper");
+  });
+
+  it("extracts nothing from a citation with no URL", () => {
+    expect(extractCardSourceUrl({ id: 1, cite: "Smith 23", fullcite: "Smith 23, MIT", caselistDisplayName: "" })).toBe("");
+  });
+});
+
+describe("debate_cards.source_url", () => {
+  let db: Awaited<ReturnType<typeof freshDb>>;
+
+  beforeEach(async () => {
+    db = await freshDb();
+  });
+
+  it("stores the URL the parser finds in the citation on import", async () => {
+    await writeDebateCardBatch(
+      db,
+      [dumpRow({ id: 1n, fullcite: "Blum 18 https://example.com/paper" }), dumpRow({ id: 2n })],
+      "cards-0000.parquet",
+    );
+    const rows = await db
+      .select({ id: debateCards.id, sourceUrl: debateCards.sourceUrl })
+      .from(debateCards)
+      .orderBy(debateCards.id);
+    expect(rows).toEqual([
+      { id: 1, sourceUrl: "https://example.com/paper" },
+      { id: 2, sourceUrl: "" },
+    ]);
+  });
+
+  it("backfills URLs onto existing rows across several statements", async () => {
+    const rows = Array.from({ length: 70 }, (_, index) => dumpRow({ id: BigInt(index + 1) }));
+    await writeDebateCardBatch(db, rows, "cards-0000.parquet");
+    const updates = rows.map((_, index) => ({ id: index + 1, sourceUrl: `https://example.com/${index + 1}` }));
+    for (const statement of buildSourceUrlStatements(db, updates)) await statement;
+    const stored = await db.select({ id: debateCards.id, sourceUrl: debateCards.sourceUrl }).from(debateCards);
+    expect(stored).toHaveLength(70);
+    for (const row of stored) expect(row.sourceUrl).toBe(`https://example.com/${row.id}`);
   });
 });
 

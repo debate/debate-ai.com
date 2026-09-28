@@ -58,9 +58,26 @@ describe("buildVideoSeedStatements", () => {
   it("upserts on conflict so a re-run updates instead of failing", () => {
     const [insert] = buildVideoSeedStatements(rows, 1, { maxRows: 50 });
     expect(insert).toContain('ON CONFLICT("video_id") DO UPDATE SET');
-    expect(insert).toContain('"title" = excluded."title"');
     expect(insert).toContain('"updated_at" = unixepoch()');
     expect(insert).not.toContain('"video_id" = excluded."video_id"');
+  });
+
+  it("guards every seeded column so an admin-edited row keeps its own values", () => {
+    const [insert] = buildVideoSeedStatements(rows, 1, { maxRows: 50 });
+    expect(insert).toContain(
+      '"title" = CASE WHEN "admin_edited" = 1 THEN "title" ELSE excluded."title" END',
+    );
+    // `admin_edited` itself is never an assignment target in the SET list —
+    // upsert leaves it untouched so a flag set by an admin edit survives a
+    // re-seed. (It appears only as the CASE condition, `"admin_edited" = 1`.)
+    const assignedColumns = [...insert.matchAll(/"(\w+)" = (?:excluded\.|CASE)/g)].map(
+      (m) => m[1],
+    );
+    expect(assignedColumns).not.toContain("admin_edited");
+    // `updated_at` must stay unconditional: an admin-edited row still needs
+    // to look fresh, or the trailing prune (below `seededAt`) deletes it.
+    expect(insert).toContain('"updated_at" = unixepoch()');
+    expect(insert).not.toMatch(/CASE WHEN "admin_edited" = 1 THEN "updated_at"/);
   });
 
   it("emits every row exactly once across the batches", () => {

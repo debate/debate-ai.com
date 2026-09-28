@@ -4,12 +4,16 @@
 
 export const publishedAfter = "2023-05-01";
 
-export const channelsToUpdate = ["jettsmith7", "artemisway-g2x"]
+export const channelsToUpdate = []
 
 export const channels = [
+  "jettsmith7", 
+  "artemisway-g2x",
+  "ajapdebate",
   "KansasDebate-wd4vf",
   "spencerandersonmcelligott",
   "Adi_Arora_PF",
+  "barkleyforumvideos3220",
   "DebateArchive2",
   "Debatedrills",
   "championbriefs1508",
@@ -38,7 +42,6 @@ export const channels = [
   "UNTDebate",
   "vintagedebatevids",
   "georgetowndebateseminar1234",
-  "barkleyforumvideos3220",
   "BillBatterman",
   "msudebate6544",
   "ProfessorGraham",

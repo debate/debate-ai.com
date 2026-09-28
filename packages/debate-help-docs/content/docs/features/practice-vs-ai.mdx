@@ -36,11 +36,22 @@ each persona answers with an in-character "my systems are offline" line.
 
 ## Known gaps
 
-Gamification's score and badges are persisted (`user_settings.practiceVsAiScore`/
+~~Gamification's score and badges are persisted (`user_settings.practiceVsAiScore`/
 `practiceVsAiBadges`) and shown on the scorecard, but there is no real streak
 yet: `getGamificationProfile` always reports `currentStreak: 0`, since a real
 day-over-day streak needs a dated activity log this table doesn't have — so
-the `Streak5` badge is currently unreachable. ~~A reload during a round
-returns to the picker.~~ **Fixed:** reloading mid-round now resumes the same
-round instead of dropping back to the picker. Only the vs-bot slice of the
-Go server is ported.
+the `Streak5` badge is currently unreachable.~~ **Fixed:** `user_settings` now
+also carries `practiceVsAiLastPlayedDayKey`/`practiceVsAiCurrentStreak`, and
+`debate-practice-vs-ai`'s `advanceDailyStreak` (`apps/debate-ai.com/lib/practice-vs-ai/store.ts`'s
+`applyGamificationAward`) advances the streak by one on the calendar day
+after the last round, leaves it unchanged for a second round the same day,
+and restarts it at 1 after a missed day — so five days running now actually
+earns `Streak5`. `getGamificationProfile` (`currentDisplayStreak`) reports the
+streak as lapsed (0) once a day has been missed, without needing a round
+played to reset the stored value first. The Go original never actually
+incremented its own `CurrentStreak` field either (see
+`debatevsbot_controller.go`), so this isn't a regression from the port — the
+bug was already there. ~~A reload during a round returns to the picker.~~
+**Fixed:** reloading mid-round now resumes the same round instead of
+dropping back to the picker. Only the vs-bot slice of the Go server is
+ported.

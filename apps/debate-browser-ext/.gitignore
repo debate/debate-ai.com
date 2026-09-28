@@ -1,0 +1,8 @@
+node_modules
+.wxt
+.output
+stats.html
+stats-*.json
+*.log
+.DS_Store
+public/debate-ai-app.css

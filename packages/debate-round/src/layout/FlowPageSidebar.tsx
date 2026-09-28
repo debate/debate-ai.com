@@ -11,6 +11,7 @@ import type { EbbFlowToolAction } from "debate-flow-ebb"
 import { EbbFlowToolsMenu } from "./EbbFlowToolsMenu"
 import { FlowToolsMenu } from "./FlowToolsMenu"
 import { LiveRoundGroup } from "./LiveRoundGroup"
+import { WebcamRoomPanel } from "../webcam/WebcamRoomPanel"
 import { OpenTabsGroup } from "./OpenTabsGroup"
 import { selectSidebarRound } from "../utils/sidebar-round"
 import type { Flow, Round } from "../types/flow"
@@ -228,6 +229,9 @@ export function FlowPageSidebar({
           onRecordingEnabledChange={onRecordingEnabledChange}
         />
       )}
+
+      {/* Webcams for the round's speeches — a small P2P video room. */}
+      {selectedRound && <WebcamRoomPanel round={selectedRound} />}
 
       <OpenTabsGroup
         flows={flows}

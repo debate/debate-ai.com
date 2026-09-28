@@ -17,6 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import grab from "grab-url";
 import type { VideoStacksResponse, VideoType } from "../types/videos";
 import { collectStackKeys, type VideoStackMap } from "../components/video-grid/video-stacks";
+import { queryVideoIndexStacks } from "../state/videoIndexCache";
 
 /** Stack keys resolved per request; matches the server's own ceiling. */
 const MAX_KEYS_PER_REQUEST = 120;
@@ -44,6 +45,15 @@ export function useVideoStacks(videos: VideoType[], enabled = true): VideoStackM
 
     const batch = pendingKey.split(",").slice(0, MAX_KEYS_PER_REQUEST);
     for (const key of batch) requestedRef.current.add(key);
+
+    // The cached library holds every row, so it can resolve a stack without a
+    // request — and without the per-request key ceiling the API has to apply.
+    const local = queryVideoIndexStacks(pendingKey.split(","));
+    if (local) {
+      for (const key of pendingKey.split(",")) requestedRef.current.add(key);
+      setStacks((previous) => ({ ...previous, ...local }));
+      return;
+    }
 
     let cancelled = false;
     void (async () => {

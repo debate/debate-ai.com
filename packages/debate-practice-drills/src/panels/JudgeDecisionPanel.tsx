@@ -6,7 +6,7 @@
  *
  * Given a round ID and side labels, resolves the round's already-persisted
  * flow summary (`state/flowSummaries.ts`) and judge-paradigm selection
- * (`debate-speech-writer`'s `state/judgeParadigmSelections.ts`) via
+ * (`state/judgeParadigmSelections.ts`) via
  * `round/judge-decision-store-wiring.ts`'s `buildJudgeDecisionInputFromStores`,
  * calls `round/judge-decision-client.ts`'s `requestJudgeDecision` for a
  * real AI verdict, and appends the result to that round's history log via
@@ -19,11 +19,8 @@
  *
  * A `?roundId=` query param (read via `next/navigation`'s `useSearchParams`)
  * pre-fills the Round ID field — the deep link
- * `debate-speech-writer`'s `buildJudgeDecisionDeepLink` builds for the
- * "Get AI judge decision →" link on each saved selection in
- * `JudgeParadigmPickerPanel.tsx`, closing the
- * `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx` Known gap that picking a
- * paradigm had no path into actually requesting a decision for it, mirroring
+ * `state/judgeParadigmSelections.ts`'s `buildJudgeDecisionDeepLink` builds for
+ * a saved paradigm's "Get AI judge decision →" link, mirroring
  * `debate-card-search`'s `EvidenceLibraryPanel`/`?checkUrl=` convention.
  *
  * @module panels/JudgeDecisionPanel
@@ -54,7 +51,7 @@ const EMPTY_FORM: FormState = { roundId: "", primarySideName: "Affirmative", sec
 
 const MISSING_SOURCE_LABEL: Record<string, string> = {
   flowSummary: "a saved flow summary (Speech Transcript Summaries)",
-  judgeParadigm: "a saved judge paradigm (Judge Paradigm Picker)",
+  judgeParadigm: "a saved judge paradigm for that round",
 }
 
 const PANEL_PARADIGMS = listJudgeParadigms()
@@ -175,7 +172,7 @@ export function JudgeDecisionPanel() {
   return (
     <PanelShell
       title="AI Judge Decision"
-      description="Get an AI-generated decision for a round, judged under its saved paradigm from the Judge Paradigm Picker and its saved flow from Speech Transcript Summaries. Every decision requested for a round is kept as history, newest first."
+      description="Get an AI-generated decision for a round, judged under its saved paradigm and its saved flow from Speech Transcript Summaries. Every decision requested for a round is kept as history, newest first."
     >
       <p className="-mt-3 text-xs text-muted-foreground">
         {synced ? "Decision history is synced to your account." : "Sign in to sync your decision history."}
@@ -275,6 +272,12 @@ export function JudgeDecisionPanel() {
                             : `${item.combined.winner === "primary" ? item.decisions[0]!.sideNames.primary : item.decisions[0]!.sideNames.secondary} wins ${item.combined.winner === "primary" ? item.combined.primaryVotes : item.combined.secondaryVotes}-${item.combined.winner === "primary" ? item.combined.secondaryVotes : item.combined.primaryVotes}`}
                         </Badge>
                         {item.combined.unanimous && <Badge variant="outline">Unanimous</Badge>}
+                        {item.rubricAgreement && (
+                          <Badge variant="outline">
+                            {item.rubricAgreement.totalAddressed}/{item.rubricAgreement.totalCriteria} rubric
+                            criteria addressed ({Math.round(item.rubricAgreement.agreementRate * 100)}%)
+                          </Badge>
+                        )}
                       </div>
                       <Button
                         size="sm"
@@ -294,6 +297,32 @@ export function JudgeDecisionPanel() {
                         ))}
                       </ul>
                     </div>
+                    {item.rubricAgreement && (
+                      <div>
+                        <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+                          Rubric agreement
+                        </h3>
+                        <div className="space-y-2">
+                          {item.rubricAgreement.perParadigm.map((breakdown) => (
+                            <div key={breakdown.paradigmName} className="text-sm">
+                              <p className="font-medium text-foreground">
+                                {breakdown.paradigmName}{" "}
+                                <span className="font-normal text-muted-foreground">
+                                  ({breakdown.addressedCount}/{breakdown.totalCount} addressed)
+                                </span>
+                              </p>
+                              <ul className="space-y-0.5 pl-5 text-muted-foreground">
+                                {breakdown.rubric.map((row, index) => (
+                                  <li key={index}>
+                                    {row.addressed ? "✓" : "✗"} {row.criterion}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>

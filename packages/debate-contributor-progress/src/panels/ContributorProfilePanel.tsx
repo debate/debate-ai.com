@@ -105,7 +105,7 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
 
   if (!profile.exists) {
     return (
-      <PanelShell title={profile.contributorId}>
+      <PanelShell title={profile.contributorId} description="Not yet ranked on the leaderboard">
         <EmptyState title="No activity yet for this contributor." />
       </PanelShell>
     )

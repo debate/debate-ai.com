@@ -20,8 +20,8 @@ const guides = [
     icon: Swords,
     title: "Practice tools",
     description:
-      "Debate between tournaments: full rounds against an AI opponent, the practice round simulator, judge paradigms, opponent personas, and word-count speeches.",
-    routes: ["/versus-ai", "/practice-round", "/paradigms", "/word-count"],
+      "Debate between tournaments: full rounds against an AI opponent, the practice round simulator, and word-count speeches.",
+    routes: ["/versus-ai", "/practice-round", "/word-count"],
   },
   {
     href: "/guides/research-collaboration",
@@ -29,7 +29,7 @@ const guides = [
     title: "Research collaboration",
     description:
       "Run a squad's research sprint: topic coverage, the prep room, task routing, brainstorming, peer review, quests, and the leaderboard — the Research Workspace end to end.",
-    routes: ["/research", "/cards/prep-room", "/cards/inbox", "/community-hub"],
+    routes: ["/research", "/cards/prep-room", "/cards/inbox"],
   },
 ]
 

@@ -39,6 +39,18 @@ export type ChallengeGoal = ContributionTargetGoal | WinTargetGoal;
 
 /** A single squad member's recorded win toward a `win_target` challenge. */
 export interface ChallengeWinEvent {
+  /**
+   * Stable id this record is keyed by — what lets it join
+   * `debate-data-sync`'s account-sync allowlist (see
+   * `state/toolRecordCollections.ts`'s `challengeWinEvents` entry).
+   * Optional here since the matching/scoring functions below only ever read
+   * `contributorId`/`occurredAt` and a caller building a `ChallengeWinEvent`
+   * for a pure computation (tests included) has no need to invent one —
+   * only `state/challengeWinEvents.ts#recordChallengeWinEvent` stamps it,
+   * mirroring `CompletedTaskRecord`'s same "a pre-existing record without one
+   * is simply never matched by id, and stays otherwise valid" tolerance.
+   */
+  id?: string;
   contributorId: string;
   /** When the win was recorded, as epoch milliseconds (UTC) — same convention as `daily-quests.ts`. */
   occurredAt: number;

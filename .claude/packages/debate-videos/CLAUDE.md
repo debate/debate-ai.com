@@ -29,13 +29,13 @@ Its toolbar is the popout player's toolbar: both compose
 `components/video-player/PlayerIconButton.tsx`, so add a control there rather
 than hand-rolling a button in one of them.
 
-## Watch-page URLs are permanent
+## Watch-page URLs are shareable
 
-`/videos/watch/<title-slug>-<videoId>` links are shared and indexed. The id is
-parsed positionally from the end of the slug (`lib/video-slug.ts`) — never
-`split("-")`, because YouTube ids contain `-` and `_`. The title half is
-decoration, so changing how titles are slugified must not stop old links
-resolving.
+`/videos/watch/<title-slug>` links are shared and indexed. The slug is
+built from the title with `slugifyVideoTitle` (`lib/video-slug.ts`) — no
+video id is appended. A video that gets retitled gets a new address;
+old links stop working by design, which is the trade-off for clean
+URLs.
 
 ## Favourites, hidden videos and reports belong to the user
 
@@ -53,6 +53,21 @@ three things a bare `localStorage.setItem` does not:
   `.claude/architecture/` and the Tool Data Sync internals note).
 - **Offers a signed-out user somewhere to keep it**, once per feature. The save
   happens either way — the prompt is an offer, never a gate.
+
+## The watch history is a listing, not a fourth filter
+
+`/videos/history` (the "Watch History" row under Lectures in the sidebar) is
+the ordinary video listing over an explicit id allow-list — the same
+mechanism My Favorites uses, because `state/videoWatchHistory.ts` stores only
+the id, position, duration and title, and the listing's columns need the
+channel, category and season the library holds. Two consequences:
+
+- **An empty allow-list still filters.** A history with nothing in it must
+  list nothing, not everything; `ids: []` is deliberate, and both the API and
+  the browser-side index treat it that way.
+- **The order is this side's.** The feed answers in the library's order, so
+  `LecturesPage` re-sorts the page newest-watched first from the history's own
+  `watchedAt` — no server sort knows about it.
 
 ## Stacked playlists are a property of the library, not of a row
 

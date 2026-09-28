@@ -11,10 +11,15 @@
  * way — a failed cloud sync is reported but never blocks or rolls back the
  * local change.
  *
+ * `applyLearnDeckOpToAccount` is the op-based alternative to
+ * `saveLearnDeckToAccount`'s whole-deck replace — see `learn-deck-op.ts`'s
+ * module doc and `learn-decks-sync.ts#pushDeckChange`.
+ *
  * @module editor/learn-decks-client
  */
 
 import type { CustomDeck } from './learn-store.js';
+import type { LearnDeckOp } from './learn-deck-op.js';
 
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
@@ -50,6 +55,35 @@ export async function saveLearnDeckToAccount(
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, 'Failed to sync this deck to your account.'));
   }
+}
+
+/**
+ * Applies a single add-card/remove-card/rename op to a synced deck,
+ * resolved server-side against the account's *current* stored deck rather
+ * than a client-computed whole-deck replace — the fix for the "two devices
+ * edit the same deck at once" lost-update race `saveLearnDeckToAccount`'s
+ * whole-deck `PUT` is exposed to.
+ *
+ * Returns `false` (rather than throwing) on a `404`: the deck hasn't
+ * reached the account yet (e.g. this device's own create push is still in
+ * flight), so the caller should fall back to a full `saveLearnDeckToAccount`
+ * push instead. Throws on any other failure.
+ */
+export async function applyLearnDeckOpToAccount(
+  deckId: string,
+  op: LearnDeckOp,
+  endpoint = '/api/learn-decks',
+): Promise<boolean> {
+  const res = await fetch(`${endpoint}/${encodeURIComponent(deckId)}`, {
+    method: 'PATCH',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(op),
+  });
+  if (res.status === 404) return false;
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, 'Failed to sync this deck change to your account.'));
+  }
+  return true;
 }
 
 /** Deletes a synced custom deck from the current user's account. Throws on failure, `401` included. */
