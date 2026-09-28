@@ -168,7 +168,7 @@ interface SubscriptionInfo {
     currentPeriodEnd: string | null;
     cancelAtPeriodEnd: boolean;
   } | null;
-  plans: { id: string; name: string; amount: number; checkoutUrl: string }[];
+  plans: { id: string; name: string; amount: number; checkoutUrl: string; features?: string[] }[];
 }
 
 /** Current Stripe plan and the Payment Links to upgrade (see /api/stripe/subscription). */
@@ -210,6 +210,20 @@ const SubscriptionSection = () => {
             >
               {plan.name} — ${(plan.amount / 100).toFixed(2)}/month
             </a>
+          ))}
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {info.plans
+          .filter((plan) => plan.features?.length)
+          .map((plan) => (
+            <div key={plan.id} className="text-xs text-black/70 dark:text-white/70">
+              <p className="font-medium text-black dark:text-white">{plan.name}</p>
+              <ul className="mt-1 list-disc pl-4 space-y-0.5">
+                {plan.features!.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
           ))}
       </div>
     </SectionCard>
