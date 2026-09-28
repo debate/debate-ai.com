@@ -10,16 +10,18 @@ file, loaded in CardMirror, in the main column."
 
 - **Routes:** `/cards` (and below it) and `/reason-editor` — the routes the
   documents are the subject of, per
-  `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
-- **Panels:** `apps/debate-ai.com/components/reason-docs/`
+  `packages/debate-webview/src/lib/reason-docs/sidebar-routes.ts`
+- **Panels:** `packages/debate-webview/src/components/reason-docs/`
   (`ReasonDocsSidebarPanels`, `FileTree`, `TopicStarterTree`,
   `OpenTabsPanel`), over `ReasonDocsProvider` in the root layout
-- **URL rules:** `apps/debate-ai.com/lib/reason-docs/route-selection.ts`,
-  over the filename paths in `apps/debate-ai.com/lib/reason-docs/doc-path.ts`
-- **Stored file format:** `apps/debate-ai.com/lib/cardmirror/` (`format.ts`,
+- **URL rules:** `packages/debate-webview/src/lib/reason-docs/route-selection.ts`,
+  over the filename paths in `packages/debate-webview/src/lib/reason-docs/doc-path.ts`
+- **Panel stack and its height split:**
+  `packages/debate-webview/src/lib/reason-docs/panel-layout.ts`
+- **Stored file format:** `packages/debate-webview/src/lib/cardmirror/` (`format.ts`,
   `content-format.ts`, `stored-cmir.ts`)
 - **Public lookup by name:** `/api/topic-starters/by-path`
-- **Where they show:** `apps/debate-ai.com/lib/reason-docs/sidebar-routes.ts`
+- **Where they show:** `packages/debate-webview/src/lib/reason-docs/sidebar-routes.ts`
 - **Editor:** `/reason-editor` (`debate-editor`'s CardMirror embed)
 
 ## Where the panels mount
@@ -47,37 +49,71 @@ In the sidebar the panels sit under the dock and above the nav tree: the
 tree is long enough (a section auto-expands to show where you are) that
 anything below it starts under the fold.
 
-## What else these sidebars carry
+## What else the `/cards` sidebar carries
 
-Nothing but the Research tool list. Clicking "Shared" in the dock used to
-land on a column holding four navigations at once — the document panels, the
-whole Apps / Coaching / Research / Practice tree, the glossary and rankings
-links, and the site footer — on a page that is about the first of them.
-`showsResearchOnlySidebar` (same module) marks the `/cards` and
-`/reason-editor` subtrees, and there `AppSidebarShell` renders the tree as
-`ToolNavTree sectionIds={[…]}`: only the named sections, no "Apps" node above
-them and no reference pair below, and no footer.
+Nothing. Clicking "Shared" in the dock otherwise lands on a column holding four
+navigations at once — the document panels, the whole Apps / Coaching / Research
+/ Practice tree, the glossary and rankings links, and the site footer — on a
+page that is about the first of them.
 
-Research is the section that lists the cards pages themselves (Evidence
-Library, Argument Library, Topic Coverage, the prep room, the review queue)
-and the editor alongside them, so it is the one kept — and because `/cards`
-matches the *Apps* node by route, `ToolNavTree` falls back to opening the
-first section it was given rather than leaving a heading with nothing under
-it. The dock stays: it is the control the reader clicked "Shared" in, and the
-way back to `/videos`.
+`showsCardsOnlySidebar` (same module) marks the `/cards` subtree, and there
+`AppSidebarShell` renders the dock and the docs panels and stops — no nav tree,
+no reference links, no footer. Dropping the tree is also what frees the
+column's height for the panels to divide (next section); narrowing it to its
+Research section, as an earlier pass did, still left a submenu of cards links
+under the file tree and still made the column something to scroll. The Research
+entries are not lost: they are in the full tree that every other tool route's
+sidebar carries, one dock hop away. The dock itself stays — it is the control
+the reader clicked "Shared" in, and the way back to `/videos`.
 
-`/reason-editor` is trimmed for the same reason `/cards` is, not because of
-where it is reached from: its sidebar is the file tree, and Coaching and
-Practice stacked under a file tree are two more navigations on a page about
-writing. Research is the section the editor is itself listed in and the one
-whose tools it is used alongside.
+`/reason-editor` keeps the full tree. It is reached *from* those other sections
+rather than being one of them, and unlike `/cards` its sidebar is not only the
+documents — the tree under the panels is how a reader leaves the editor for the
+tool they were writing for.
 
 The section is expanded by default on both routes — they are the only two it
-mounts on, and on `/cards` the sidebar is now these panels plus the Research
-tool list, so a collapsed "Documents" row would leave that column with no
-file tree in it. A reader's own collapse still wins and sticks, per-device,
-in `localStorage`. Nothing is fetched until the section is actually open, so
-collapsing it costs no document request.
+mounts on, and on `/cards` these panels are the whole sidebar, so a collapsed
+"Documents" row would leave that column empty but for the dock. A reader's own
+collapse still wins and sticks, per-device, in `localStorage`. Nothing is
+fetched until the section is actually open, so collapsing it costs no document
+request.
+
+## Dividing the column's height
+
+With nothing under them on `/cards`, the panels take the column's leftover
+height rather than a fixed slice of it — `AppSidebarShell` passes `fill`, and
+that route's `<aside>` stops scrolling as a whole (a scrolling parent has no
+height to hand a flexible child). Each panel then scrolls inside its own
+share.
+
+The shares are the reader's to set. The enabled panels are a vertical
+`react-resizable-panels` group with a draggable separator on every seam, so a
+reader with forty files can give the tree most of the column and leave Open
+Tabs a couple of rows — sizes that used to be fixed in CSS, with the lower
+panel capped at 40%. A panel cannot be dragged below 72px, which is a heading
+plus a row: less than that is a sliver that says nothing and is too thin to
+aim at to drag back.
+
+A drag is remembered per-device in `localStorage`
+(`reason-editor-sidebar-layout`), alongside the panel choice and the collapse
+state. Only a drag is stored — the group reports its computed layout on mount
+and on a constraint recompute through the same callback, and writing those
+back would overwrite a deliberate split. A layout belongs to the panel set it
+was dragged on, so switching a panel on reopens the group at the sizes saved
+for *that* set instead of squeezing the new panel into what the others left;
+a set with no saved sizes opens on the defaults, which weight Files 3 against
+2 for each of the others. The stack order, the weights, the drag floor and the
+parsing of a stored split are `lib/reason-docs/panel-layout.ts`, kept out of
+the component so they can be unit-tested without rendering a sidebar
+(`packages/debate-webview/test/lib/reason-docs/panel-layout.test.ts`); reading `localStorage`
+stays in the component, alongside the panel-choice and collapse-state reads it
+already does.
+
+Off `/cards` the box keeps its definite height (`h-[380px]`, capped against
+the viewport), because something else sits below it in a scrolling column:
+`/reason-editor`'s sidebar has the nav tree under the panels, and below `md`
+they ride as a strip above the editor. The separators work there too — they
+just divide a fixed box instead of the column.
 
 ## Opening a file
 
@@ -274,9 +310,9 @@ naming the failure rather than a blank document.
 
 ## Known gaps
 
-- The docs section starts collapsed on `/cards`, so the files are one click
-  away there rather than on screen. A reader who opens it has that choice
-  remembered per-device.
+- A dragged split is remembered per-device, so it does not follow a reader to
+  another machine — and it is keyed by panel set, so three sets of panels are
+  three separate splits to arrange.
 - `showsReasonDocsPanels` is a hard-coded route list, not something derived
   from the nav data. A new documents route has to be added to it by hand.
 - `SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare
@@ -311,7 +347,7 @@ naming the failure rather than a blank document.
   itself still exposes no export action of its own — opening the sidebar row
   menu is still the only way to export — which is unchanged and not tracked
   as a gap, since it was never a stated goal. Vitest-covered:
-  `apps/debate-ai.com/lib/cardmirror/__tests__/stored-cmir-render.test.ts`
+  `packages/debate-webview/test/lib/cardmirror/stored-cmir-render.test.ts`
   adds the `storedContentToHtml`/`topicStarterHtml` coverage this download
   path leans on (a legacy HTML row passed through untouched, a `.cmir` row
   parsed and reserialized, format-less sniffing, an absent-content row, and a
