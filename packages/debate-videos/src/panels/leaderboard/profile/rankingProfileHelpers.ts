@@ -241,7 +241,7 @@ function averagedWinRate(
   const clamp = (n: number) => Math.min(100, Math.max(0, n));
   const raw = items.map((i) => i.entry[key]);
   const allNull = raw.every((v) => v === null);
-  const avg = raw.reduce((sum: number, v) => sum + (v ?? 0), 0) / items.length;
+  const avg = raw.reduce<number>((sum, v) => sum + (v ?? 0), 0) / items.length;
   return {
     score: clamp(avg),
     display: allNull ? "no rounds" : `${Number.isInteger(avg) ? avg : avg.toFixed(1)}%`,

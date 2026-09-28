@@ -10,6 +10,14 @@
  * - a back link that names where it goes,
  * - the tool's icon, title, and one-line description (defaulting to the
  *   same copy the `/tools` catalog shows, via `app/tools/tool-groups.ts`),
+ * - a collapsed "What this tool does" disclosure listing the same
+ *   `highlights` bullets the `/tools` catalog card shows, so the fuller
+ *   mini-guide is available on the tool's own page too, not only on the
+ *   catalog you have to navigate back to (TODO.md: "on each one have a
+ *   description of what it does in the panel itself -- like a mini
+ *   guide") — collapsed by default, mirroring `word-count/page.tsx`'s own
+ *   `<details>` disclosure, so it doesn't compete with the page's actual
+ *   content for a returning visitor who already knows the tool,
  * - an eyebrow naming the guide the tool belongs to (training / practice /
  *   research collaboration),
  * - "Docs" and "Guide" links into the Fumadocs site (`lib/docs-links.ts`),
@@ -72,6 +80,8 @@ export interface ToolPageHeaderProps {
   description?: string
   /** Leading icon; defaults to the `/tools` catalog icon for `href`. */
   icon?: LucideIcon
+  /** Bullet points for the "What this tool does" disclosure; defaults to the `/tools` catalog `highlights` for `href`. Pass `[]` to omit the disclosure entirely even when the catalog has highlights. */
+  highlights?: string[]
   /** Which task guide this tool belongs to; adds the eyebrow and the "Guide" link. */
   guide?: DocsGuide
   /** Extra controls rendered next to the docs links (right side of the top row). */
@@ -92,6 +102,7 @@ export function ToolPageHeader({
   title,
   description,
   icon,
+  highlights,
   guide,
   actions,
   children,
@@ -100,6 +111,7 @@ export function ToolPageHeader({
   const Icon = icon ?? tool?.icon
   const resolvedTitle = title ?? tool?.label ?? href
   const resolvedDescription = description ?? tool?.description
+  const resolvedHighlights = highlights ?? tool?.highlights
   const docsUrl = featureDocsUrlForRoute(href)
 
   return (
@@ -156,6 +168,21 @@ export function ToolPageHeader({
           <h1 className="text-xl font-semibold leading-tight text-foreground sm:text-2xl">{resolvedTitle}</h1>
           {resolvedDescription ? (
             <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{resolvedDescription}</p>
+          ) : null}
+          {resolvedHighlights && resolvedHighlights.length > 0 ? (
+            <details className="mt-2 max-w-3xl text-xs text-muted-foreground">
+              <summary className="cursor-pointer select-none font-medium text-foreground/80 hover:text-foreground">
+                What this tool does
+              </summary>
+              <ul className="mt-1.5 flex flex-col gap-1">
+                {resolvedHighlights.map((highlight) => (
+                  <li key={highlight} className="flex gap-1.5">
+                    <span aria-hidden="true">·</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
           ) : null}
         </div>
       </div>

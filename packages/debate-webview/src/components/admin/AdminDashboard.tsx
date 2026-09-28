@@ -443,13 +443,17 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const handleExtractUrls = async () => {
     setIsExtractingUrls(true);
     setUrlExtractionError(null);
-    setUrlExtractionProgress({ processed: 0, withUrl: 0, updated: 0, done: false });
+    setUrlExtractionProgress({ processed: 0, withUrl: 0, updated: 0, demoUrls: [], done: false });
     try {
       let afterId = 0;
       let processed = 0;
       let withUrl = 0;
       let updated = 0;
       let done = false;
+      // Sample URLs accumulate across pages, capped to the same count the
+      // route returns per page — see DEMO_URL_COUNT in
+      // app/api/admin/debate-cards/extract-urls/route.ts.
+      let demoUrls: string[] = [];
 
       while (!done) {
         const res = await fetch("/api/admin/debate-cards/extract-urls", {
@@ -465,7 +469,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         updated += data.updated;
         afterId = data.nextAfterId;
         done = data.done;
-        setUrlExtractionProgress({ processed, withUrl, updated, done });
+        if (demoUrls.length < 10) demoUrls = [...demoUrls, ...data.demoUrls].slice(0, 10);
+        setUrlExtractionProgress({ processed, withUrl, updated, demoUrls, done });
       }
     } catch (error) {
       setUrlExtractionError((error as Error).message);
@@ -904,7 +909,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                        {urlExtractionProgress.done ? " (done)" : "…"}
                      </span>
                    )}
-                   {urlExtractionProgress?.demoUrls?.length > 0 && (
+                   {urlExtractionProgress && urlExtractionProgress.demoUrls.length > 0 && (
                      <div className="mt-2 flex flex-col gap-1">
                        <span className="text-muted-foreground text-xs font-medium">Sample URLs found:</span>
                        <div className="flex flex-wrap gap-2">
