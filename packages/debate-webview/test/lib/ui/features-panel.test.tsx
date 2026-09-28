@@ -4,6 +4,11 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { FeaturesPanel } from "../../../src/lib/ui/features/FeaturesPanel";
 import { SpotlightCard, cardHueShift } from "../../../src/lib/ui/features/effects";
 import { APP_FEATURES } from "debate-feature-catalog/src/feature-catalog";
+import {
+  README_BADGE_ROWS,
+  README_BANNER,
+  README_SHOWCASE,
+} from "../../../src/lib/ui/features/readme-media";
 
 describe("FeaturesPanel", () => {
   const html = renderToStaticMarkup(<FeaturesPanel />);
@@ -25,6 +30,17 @@ describe("FeaturesPanel", () => {
     // `/docs/features/…` without the source file's extension.
     expect(html).toContain("/docs/features/task-inbox");
     expect(html).not.toContain("task-inbox.md");
+  });
+
+  it("shows the root README's banner, badges and workspace screenshots", () => {
+    expect(html).toContain(`src="${README_BANNER}"`);
+    for (const badge of README_BADGE_ROWS.flat()) {
+      expect(html).toContain(`src="${badge.src.replace(/&/g, "&amp;")}"`);
+    }
+    for (const workspace of README_SHOWCASE) {
+      expect(html).toContain(`src="${workspace.image}"`);
+      expect(html).toContain(`href="${workspace.href}"`);
+    }
   });
 
   it("renders a jump-to-category nav", () => {

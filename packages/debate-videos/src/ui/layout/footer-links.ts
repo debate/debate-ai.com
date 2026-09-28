@@ -38,19 +38,19 @@ export interface FooterLink {
   /**
    * Forces a full page load for an in-app-looking URL.
    *
-   * Only `/docs` needs it: the help site is a statically exported build
-   * served out of `public/docs`, not a route the Next router knows, so
-   * pushing it client-side lands on the app's 404. Everything else on the
-   * site is a real route and is followed in place — the app keeps its
-   * sidebar and its player instead of reloading the whole document.
+   * Only `/docs` needs it: the help site renders without the app shell and
+   * with its own stylesheet, so it is entered with a full page load rather
+   * than a client-side route change. Everything else on the site is an
+   * ordinary route and is followed in place — the app keeps its sidebar and
+   * its player instead of reloading the whole document.
    */
   hardNavigate?: boolean;
 }
 
 export const FOOTER_LINKS: FooterLink[] = [
-  // `/docs` is the help site (`packages/debate-help-docs`), statically
-  // exported into the app's `public/docs` — not a Next route, so it is
-  // reached by a plain navigation like any other entry here.
+  // `/docs` is the help site (`packages/debate-help-docs`, mounted at the
+  // app's `app/docs`), reached by a plain navigation like the external
+  // entries here.
   { url: "/docs", text: "Docs", icon: BookOpen, group: "site", hardNavigate: true },
   // `/features` is the whole catalog. It is listed here because the app
   // dock's Settings menu no longer carries an "Apps" submenu spelling that

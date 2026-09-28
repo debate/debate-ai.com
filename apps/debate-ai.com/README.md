@@ -143,7 +143,7 @@ RSC fetches are never challenged.
 | Script | What it does |
 | --- | --- |
 | `dev` | `vinext dev` on port 3000. |
-| `build` | `build:docs` → `vinext build` → `build:sw`. All three stages matter. |
+| `build` | `vinext build` → `build:sw`. Both stages matter. |
 | `build:sw` | Generates and webpack-bundles the offline service worker into `dist/client`. |
 | `preview` | Builds, then `wrangler dev` — the real Worker locally. |
 | `deploy` / `deploy:staging` | Migrates D1, builds, then `vinext deploy`. |
@@ -185,9 +185,8 @@ Three things to know before a deploy surprises you:
 - **`keep_vars: true` is load-bearing.** This config defines no `vars`, so
   without it every deploy would delete the plaintext variables set in the
   dashboard.
-- **Use `bun run build`, not `vinext build` alone.** Skipping `build:docs`
-  ships a stale `/docs`, and skipping `build:sw` ships no service worker, so
-  offline mode silently stops working.
+- **Use `bun run build`, not `vinext build` alone.** Skipping `build:sw`
+  ships no service worker, so offline mode silently stops working.
 
 A weekly cron (`0 8 * * 1` — Mondays 08:00 UTC) runs the YouTube channel scan
 and view-count refresh from the `scheduled` export in

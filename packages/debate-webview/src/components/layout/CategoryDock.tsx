@@ -288,7 +288,7 @@ function SettingsMenu({
           {/* An app route (`/features`, `/legal/privacy`) is pushed through
               the router so it opens inside the app — sidebar, dock and the
               persistent player all still there. Only an outside site or the
-              statically exported `/docs` build gets a real page load; see
+              help docs at `/docs` (no app shell there) get a real page load; see
               `footer-links.ts`'s `hardNavigate`. */}
           {SITE_LINKS.map((link) => {
             const isExternal = link.url.startsWith("http")

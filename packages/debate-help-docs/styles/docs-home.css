@@ -1,5 +1,10 @@
-@import "tailwindcss";
+/* The docs landing page (/docs/welcome) only. `source(none)` for the same
+   reason as docs.css: detection would otherwise start from the web app. */
+@import "tailwindcss" source(none);
 @import "tw-animate-css";
+@source "../components/DocsHomepage";
+@source "../components/ui";
+@source "../routes/welcome-page.tsx";
 
 @custom-variant dark (&:is(.dark *));
 

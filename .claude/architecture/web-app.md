@@ -16,7 +16,7 @@ apps/debate-ai.com/
   wrangler.jsonc   bindings, crons, vars
   app/debate-openapi.yml/   serves packages/debate-api-client/debate-openapi.yml for /api
   vitest.config.ts the whole repo's Vitest config (see monorepo.md)
-.github/scripts/     build-docs, migrate-d1, seed-videos, deploy-upload —
+.github/scripts/     migrate-d1, seed-videos, deploy-upload —
                      repo scripts, run from the app's package.json scripts
 ```
 
@@ -24,22 +24,21 @@ Three TypeScript configs, and they are not interchangeable: `tsconfig.json`,
 `tsconfig.typecheck.json` (what `bun run typecheck` uses) and `tsconfig.sw.json`
 (the service worker).
 
-## The build has three stages
+## The build has two stages
 
 ```bash
-bun run build    # build:docs → vinext build → build:sw
+bun run build    # vinext build → build:sw
 ```
 
-1. **`build:docs`** (`.github/scripts/build-docs.mjs`) statically exports
-   `packages/debate-help-docs` and copies it into `public/docs`. See
-   [documentation.md](documentation.md).
-2. **`vinext build`** — the app itself.
-3. **`build:sw`** — generates the offline service worker
+1. **`vinext build`** — the app itself, including the help docs at `/docs`
+   (`app/docs` mounts `packages/debate-help-docs`, and the Vite config compiles
+   its MDX). See [documentation.md](documentation.md).
+2. **`build:sw`** — generates the offline service worker
    (`lib/offline-sw/generate.cjs`), bundles it with **webpack**
    (`webpack.config.cjs`), and copies it to `dist/client/service-worker.js`.
 
-A `vinext build` on its own produces an app with **stale docs and no service
-worker**. Use `bun run build`.
+A `vinext build` on its own produces an app with **no service worker**. Use
+`bun run build`.
 
 ### The service worker and build swaps
 

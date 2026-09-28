@@ -4,8 +4,8 @@
  */
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 import { BookOpen, Compass, ExternalLink, Swords } from 'lucide-react';
-import { docsConfig } from '@/lib/fumadocs/customize-docs';
-import { ThemeDropdown } from '@/components/fumadocs/layout/theme-dropdown';
+import { docsConfig } from '../lib/fumadocs/customize-docs';
+import { withBasePath } from '../lib/fumadocs/base-path';
 
 export const baseOptions: BaseLayoutProps = {
   nav: {
@@ -18,30 +18,30 @@ export const baseOptions: BaseLayoutProps = {
         {docsConfig.title}
       </span>
     ),
+    url: withBasePath('/'),
   },
   links: [
     {
       label: 'Guides',
       icon: <Compass />,
       text: 'Guides',
-      url: '/guides',
+      url: withBasePath('/guides'),
     },
     {
       label: 'Docs',
       icon: <BookOpen />,
       text: 'Docs',
-      url: '/',
+      url: withBasePath('/'),
     },
     {
+      // `external` makes this a plain `<a>` rather than a client-side route
+      // change: the app shell and its stylesheet are not mounted under /docs,
+      // so the app has to be entered with a real page load.
       label: 'Open the app',
       icon: <ExternalLink />,
       text: 'App',
-      url: docsConfig.appUrl ?? 'https://debate-ai.com',
+      url: docsConfig.appUrl ?? '/',
       external: true,
-    },
-    {
-      type: 'custom' as const,
-      children: <ThemeDropdown />,
     },
   ],
   githubUrl: 'https://github.com/debate/debate-ai.com',

@@ -1,12 +1,13 @@
 /**
- * @file page.tsx
- * @description Home page component for the documentation site.
+ * @file welcome-page.tsx
+ * @description Home page component for the documentation site,
+ * mounted by the web app at `app/docs/(home)/welcome/page.tsx`.
  */
-import { HeroSection } from "@/components/DocsHomepage/hero-section"
-import { FeaturesGrid } from "@/components/DocsHomepage/features-grid"
-import { ToolGuides } from "@/components/DocsHomepage/tool-guides"
-import { Footer } from "@/components/DocsHomepage/footer"
-import "./docs-home.css"
+import { HeroSection } from "../components/DocsHomepage/hero-section"
+import { FeaturesGrid } from "../components/DocsHomepage/features-grid"
+import { ToolGuides } from "../components/DocsHomepage/tool-guides"
+import { Footer } from "../components/DocsHomepage/footer"
+import "../styles/docs-home.css"
 
 export default function Home() {
   return (

@@ -78,12 +78,24 @@ export function opensElsewhere(event: {
 }
 
 /**
- * Paths that are not routes of this Next app and so cannot be handed to the
- * client router. `/docs` is the help site: a static export staged in
- * `public/docs` and served by the Worker's asset binding, which only a real
- * browser navigation reaches.
+ * Paths never handed to the client router. `/api` is not a page at all.
+ * `/docs` is the help site (`debate-help-docs`, mounted at `app/docs`): a
+ * route of this app, but one `AppShell` renders without the app's chrome and
+ * that loads its own Fumadocs stylesheet, so moving between it and the rest of
+ * the app is always a real page load — never the docs' CSS left applied to an
+ * app page, or the shell half-torn-down around a docs page.
  */
 const NON_ROUTER_PREFIXES = ["/docs", "/api"]
+
+/**
+ * Whether `pathname` is the help docs site at /docs, which `AppShell` renders
+ * bare.
+ *
+ * @param pathname - The current path, as `usePathname` reports it.
+ */
+export function isDocsPath(pathname: string | null | undefined): boolean {
+  return pathname === "/docs" || !!pathname?.startsWith("/docs/")
+}
 
 function isRouterPath(pathname: string): boolean {
   return !NON_ROUTER_PREFIXES.some(

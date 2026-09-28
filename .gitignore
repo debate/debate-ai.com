@@ -66,13 +66,8 @@ packages/debate-api-client/dist/
 # macOS Finder metadata
 .DS_Store
 
-# debate-help-docs: Next.js build output and fumadocs-mdx generated files
-packages/debate-help-docs/.next/
+# debate-help-docs: fumadocs-mdx generated collections
 packages/debate-help-docs/.source/
-packages/debate-help-docs/out/
-# …and the copy of that export the web app serves at /docs, staged by
-# `.github/scripts/build-docs.mjs` on every build.
-apps/debate-ai.com/public/docs/
 
 # WXT browser extensions: build output and generated types
 apps/*/.output/

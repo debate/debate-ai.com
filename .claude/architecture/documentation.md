@@ -12,18 +12,31 @@
 | How an agent should work in a package | That package's `CLAUDE.md` |
 | Repo-wide agent orientation | root `CLAUDE.md` + `.claude/architecture/` |
 
-## `/docs` is built into the app, not deployed separately
+## `/docs` is part of the app, not deployed separately
 
-`packages/debate-help-docs` is a Fumadocs site, but it is **not** deployed on its
-own. It is statically exported under `basePath: '/docs'` and copied into the web
-app's `public/docs` by `.github/scripts/build-docs.mjs`, which runs
-as the **first stage of the app's build** (`bun run build` → `build:docs` →
-`vinext build` → `build:sw`).
+`packages/debate-help-docs` is a Fumadocs library that the web app **mounts**,
+like every other feature package: `apps/debate-ai.com/app/docs/` holds one-line
+route files that re-export the package's `routes/` modules, so the docs are
+ordinary app routes rendered by the app's Worker. There is no separate docs
+build, no static export and no `public/docs` copy.
 
-Two consequences:
-
-- A docs change only appears after a full app build. Running `vinext build`
-  alone leaves the old export in `public/docs`.
+- **The app's Vite build compiles the MDX.** `vite.config.ts` registers
+  `helpDocsMdx()` from `debate-help-docs/vite` — fumadocs-mdx's Vite plugin,
+  pointed at the package's `source.config.ts` and writing its generated
+  collections to the package's `.source/`. `bun run dev:web` serves the docs at
+  `/docs` with hot reload; there is no standalone docs dev server.
+- **URLs carry `/docs` themselves.** There is no `basePath`: the page tree,
+  nav links, homepage links and root-relative links inside the MDX all spell
+  out `/docs/…` (`DOCS_BASE_PATH` in `lib/fumadocs/base-path.ts`). A content
+  link written as `/features/x` now points at the app's routes, not the docs.
+- **`/docs` renders without the app shell.** `AppShell` returns its children
+  bare there (`isDocsPath`), and the docs load their own Tailwind build
+  (`styles/docs.css`, imported by the docs root layout, so only on `/docs`).
+  Moving between `/docs` and the rest of the app is always a full page load —
+  `/docs` stays in `NON_ROUTER_PREFIXES` — so that stylesheet never lingers on
+  an app page.
+- **It is not behind the Turnstile gate** — `/docs` is on the exempt list in
+  `lib/turnstile/request-filter.ts`, as it was when it was static assets.
 - It publishes both docs tiers **and the package READMEs**. So a package README
   is user-facing documentation here — write it that way, and keep
   `packages/README.md` current when a package's purpose or dependencies change.
@@ -59,8 +72,8 @@ These pages were folded in from plain `.md`, where neither is an error:
   placeholders in backticks — `` `<aside>` ``, `` `{url}` ``.
 
 Since `debate-help-docs` is excluded from the Vitest projects, neither shows up
-in the test run. `cd packages/debate-help-docs && npx next build` prerenders
-every page and is the only check that catches them.
+in the test run. A web app build (`bun run build` in `apps/debate-ai.com`)
+compiles every page and is the check that catches them.
 
 ## The API spec
 

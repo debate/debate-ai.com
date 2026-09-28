@@ -1,19 +1,18 @@
 /**
- * @file route.ts
+ * @file llms-mdx-route.ts
  * @description Serves any docs page's processed Markdown, for the "Copy" and
- * "Ask AI" buttons on that page.
+ * "Ask AI" buttons on that page. Mounted by the web app at
+ * `app/docs/llms.mdx/[...slug]/route.ts`.
  *
  * The URL is the page's own slug plus `.mdx` (`features/drill-sets` →
  * `/docs/llms.mdx/features/drill-sets.mdx`); the docs root has no slug of its
- * own and is addressed as `index.mdx`. The extension is not decoration: the
- * static export writes one file per route, and a section index (`features`)
- * and the pages inside it (`features/drill-sets`) would otherwise need to be
- * a file and a directory of the same name, which fails the build outright.
- * The same reasoning makes this a required catch-all rather than an optional
- * one — an optional one also renders the empty slug, colliding `llms.mdx`
- * itself with the directory holding everything under it.
+ * own and is addressed as `index.mdx`. The extension keeps every URL
+ * file-shaped, so a section index (`features`) and the pages inside it
+ * (`features/drill-sets`) never need to be both a file and a directory when a
+ * response is cached or prerendered by path — which is also why this is a
+ * required catch-all rather than an optional one.
  */
-import { getLLMText, source } from "@/lib/fumadocs/source";
+import { getLLMText, source } from "../lib/fumadocs/source";
 import { notFound } from "next/navigation";
 
 export const revalidate = false;

@@ -1,8 +1,10 @@
 /**
- * @file route.ts
- * @description API route that generates a full text version of the documentation for LLM consumption.
+ * @file llms-full-route.ts
+ * @description API route that generates a full text version of the
+ * documentation for LLM consumption, mounted by the web app at
+ * `app/docs/llms-full.txt/route.ts`.
  */
-import { source, getLLMText } from "@/lib/fumadocs/source";
+import { source, getLLMText } from "../lib/fumadocs/source";
 
 // cached forever
 export const revalidate = false;

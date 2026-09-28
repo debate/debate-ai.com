@@ -8,8 +8,7 @@
   "license": "rights.institute/prosper",
   "scripts": {
     "dev": "vinext dev",
-    "build": "npm run build:docs && vinext build && npm run build:sw",
-    "build:docs": "node ../../.github/scripts/build-docs.mjs",
+    "build": "vinext build && npm run build:sw",
     "build:sw": "node lib/offline-sw/generate.cjs && webpack --config webpack.config.cjs && cp public/service-worker.js dist/client/service-worker.js",
     "start": "vinext start",
     "deploy": "npm run db:migrate:d1 && npm run build && vinext deploy --skip-build",
@@ -84,6 +83,7 @@
     "debate-editor": "workspace:*",
     "debate-feature-catalog": "workspace:*",
     "debate-flow-ebb": "workspace:*",
+    "debate-help-docs": "workspace:*",
     "debate-practice-rounds": "workspace:*",
     "debate-practice-vs-ai": "workspace:*",
     "debate-research-evidence": "workspace:*",

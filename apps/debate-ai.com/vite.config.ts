@@ -4,6 +4,7 @@ import { defineConfig, type Plugin, type Rolldown } from "vite";
 import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
+import { helpDocsMdx } from "debate-help-docs/vite";
 
 const appDir = path.resolve(import.meta.dirname);
 const require = createRequire(import.meta.url);
@@ -125,6 +126,9 @@ export default defineConfig({
   },
   plugins: [
     appStaticFiles(),
+    // Compiles packages/debate-help-docs/content into the modules the /docs
+    // routes (app/docs) render.
+    helpDocsMdx(),
     vinext(),
     cloudflare({
       viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
@@ -169,6 +173,10 @@ export default defineConfig({
       "prosemirror-view",
       "prosemirror-transform",
       "prosemirror-keymap",
+      // The /docs routes run Fumadocs inside this app's root layout, whose
+      // ThemeProvider comes from debate-webview's copy of next-themes. One
+      // copy means Fumadocs' theme toggle reads and writes that same context.
+      "next-themes",
     ],
   },
   optimizeDeps: {
@@ -206,6 +214,7 @@ export default defineConfig({
       "debate-rankings-adapter",
       "debate-editor-cm-adapter",
       "debate-videos",
+      "debate-help-docs",
     ],
   },
 });

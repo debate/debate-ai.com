@@ -152,6 +152,14 @@ describe("decideChallenge", () => {
     }
   });
 
+  it("never challenges the help docs", () => {
+    for (const path of ["/docs", "/docs/guides/practice-tools", "/docs/features/drill-sets"]) {
+      expect(decide(pageRequest(path)).reason, path).toBe("exempt-path");
+    }
+    // Only the /docs subtree — a route that merely starts with the letters is still gated.
+    expect(decide(pageRequest("/docsearch")).challenge).toBe(true);
+  });
+
   it("never challenges a non-document fetch", () => {
     expect(decide(pageRequest("/", { "sec-fetch-dest": "empty", "sec-fetch-mode": "cors" })).reason).toBe(
       "not-a-document",

@@ -4,11 +4,11 @@
  */
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "../ui/button"
+import { Badge } from "../ui/badge"
 import { BookOpen, Compass } from "lucide-react"
 import { Github } from "./github-icon"
-import { withBasePath } from "@/lib/fumadocs/base-path"
+import { withBasePath } from "../../lib/fumadocs/base-path"
 
 export function HeroSection() {
   return (
