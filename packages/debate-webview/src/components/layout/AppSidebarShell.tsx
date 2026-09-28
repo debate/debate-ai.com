@@ -7,7 +7,7 @@ import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "../reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "../../lib/ui/layout/chrome-error-boundary"
 import { isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
-import { showsReasonDocsPanels } from "../../lib/reason-docs/sidebar-routes"
+import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../lib/reason-docs/sidebar-routes"
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -31,6 +31,15 @@ import { showsReasonDocsPanels } from "../../lib/reason-docs/sidebar-routes"
  * this shell at all — it is the video library
  * (see `packages/debate-help-docs/content/docs/internals/reason-docs-sidebar.mdx`).
  *
+ * `/cards` is the docs panels alone (`showsCardsOnlySidebar`): no nav tree, no
+ * glossary or rankings links, no site footer. Those are all about somewhere
+ * else, and stacking them under a file tree made the column a scroll rather
+ * than a place. With nothing below them the panels take the column's own height
+ * instead of a fixed slice of it (`fill`), which is what lets the reader drag
+ * the split between the file tree and the open tabs — so the column does not
+ * scroll as a whole, each panel scrolls inside its own share. The dock stays:
+ * it is the control you clicked "Shared" in, and the way back to videos.
+ *
  * `/debate` and `/doc` are the two tree destinations this shell deliberately
  * skips (`ownsItsLayout`, in debate-videos' `sidebar-routes`), both because
  * they already fill the viewport with a sidebar of their own and wrapping
@@ -48,6 +57,7 @@ import { showsReasonDocsPanels } from "../../lib/reason-docs/sidebar-routes"
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const cardsOnly = showsCardsOnlySidebar(pathname)
 
   if (!isGenericToolSidebarRoute(pathname)) return <>{children}</>
 
@@ -61,6 +71,12 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
     // a CardMirror editor, on `/reason-editor` and `/doc`.
     <ResizableSidebarLayout
       appChrome
+      // On `/cards` the panels own the column's leftover height and scroll
+      // inside their own shares, so the column itself must not scroll: a
+      // scrolling parent has no height to hand a `flex-1` child. Same
+      // `overflow-y` utility as the `<aside>`'s own, so `cn`'s tailwind-merge
+      // drops that one rather than leaving the two to fight.
+      sidebarClassName={cardsOnly ? "overflow-y-hidden" : undefined}
       sidebar={
         <>
           {/* Each region is bounded separately. This whole `<aside>` renders
@@ -79,13 +95,18 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
               are about something else, so their sidebar is only their own nav. */}
           {showsReasonDocsPanels(pathname) && (
             <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
-              <ReasonDocsSidebarPanels className="shrink-0" />
+              <ReasonDocsSidebarPanels
+                className={cardsOnly ? "min-h-0 flex-1" : "shrink-0"}
+                fill={cardsOnly}
+              />
             </ChromeErrorBoundary>
           )}
-          <ChromeErrorBoundary label="ToolNavTree">
-            <ToolNavTree />
-            <ToolSidebarFooter />
-          </ChromeErrorBoundary>
+          {!cardsOnly && (
+            <ChromeErrorBoundary label="ToolNavTree">
+              <ToolNavTree />
+              <ToolSidebarFooter />
+            </ChromeErrorBoundary>
+          )}
         </>
       }
     >

@@ -52,7 +52,19 @@ Coach Materials — Upload or dictate grounding material for the team coach AI a
 
 
 
-on each one have a descirotion of what it does in the panel itself -- like a mninguide
+~~on each one have a descirotion of what it does in the panel itself -- like a mninguide~~
+Done: every standalone tool page already showed a one-line description via
+`ToolPageHeader` (the shared header component ~47 tool pages render), sourced
+from the same `/tools` catalog copy in `packages/debate-webview/src/routes/tools/tool-groups.ts`.
+The catalog's fuller "a few concrete things this tool does" `highlights`
+bullets, though, only ever rendered on the `/tools` grid itself — a page's
+own header dropped them, so seeing the full mini-guide meant navigating back
+to the catalog. `ToolPageHeader` now also renders those highlights, in a
+collapsed-by-default "What this tool does" `<details>` disclosure (mirroring
+`word-count/page.tsx`'s own `<details>` convention) — every page that already
+uses the shared header picks this up for free, no per-page changes needed.
+See `packages/debate-webview/src/components/tools/ToolPageHeader.tsx` and
+its test.
 
 
 # Ideas for New Contributors

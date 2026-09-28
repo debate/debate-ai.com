@@ -37,8 +37,25 @@
  * `saved_strategy_recommendations`, the same gap again. Team Collaboration
  * Mode's scheduled Topic Sprint sessions (`/research`) joined next —
  * already saved per-user in `saved_sprint_sessions`, the same gap again.
- * Speech Documents' send-log entries (`/speech-documents`) joined last —
+ * Speech Documents' send-log entries (`/speech-documents`) joined next —
  * already saved per-user in `saved_speech_send_log`, the same gap again.
+ * CardMirror Learn's custom flashcard decks (`/reason-editor`) joined next —
+ * already saved per-user in `saved_learn_decks`, the same gap again.
+ * Practice Round Simulator's saved custom opponent personas
+ * (`/practice-round`) joined next — already saved per-user in
+ * `saved_custom_opponent_personas`, the same gap again. Flow Annotations'
+ * timestamped notes (`/annotations`) joined next — already synced per-user
+ * via the generic `saved_tool_records` mechanism, the same gap again.
+ * CardMirror's Quick Cards reusable-snippet library (`/reason-editor`)
+ * joined next — already saved per-user in `saved_quick_cards`, the same gap
+ * again. Prep Notes' live per-argument notes (`/prep-notes`) joined next —
+ * already synced per-user via the generic `saved_tool_records` mechanism,
+ * the same gap again. The Evidence Library's cut cards and reusable
+ * analytic blocks (`/cards/library`) joined next — already synced per-user
+ * (per-browser submissions only, not the shared search index) via the same
+ * generic mechanism, the same gap again. Practice Round Simulator's saved
+ * rounds (`/practice-round`) joined last — already synced per-user via the
+ * same generic `saved_tool_records` mechanism, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -54,7 +71,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, ListTree, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { useSession } from "../../lib/hooks/useSession"
 import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
@@ -88,6 +105,26 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   sprintSession: CalendarClock,
   // Matches Speech Documents' own icon in `app/tools/tool-groups.ts`.
   speechSendLogEntry: Send,
+  // No standalone /tools entry to match — CardMirror Learn's flashcard
+  // decks are a feature of the editor's "Manage flashcards" overlay, not a
+  // tool of its own.
+  learnDeck: Layers,
+  // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`.
+  customOpponentPersona: PlayCircle,
+  // Matches Flow Annotations' own icon in `app/tools/tool-groups.ts`.
+  flowAnnotation: MapPin,
+  // No standalone /tools entry to match — Quick Cards are a feature of the
+  // editor's clip/search/manage UI, not a tool of its own.
+  quickCard: Scissors,
+  // Matches Prep Notes' own icon in `app/tools/tool-groups.ts`.
+  prepNote: NotebookPen,
+  // No standalone /tools entry to match — the Evidence Library is the
+  // default view of the Research Workspace's `/cards` route. Matches the
+  // Research Workspace's own icon in `app/tools/tool-groups.ts`.
+  evidenceLibraryEntry: Library,
+  // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`,
+  // same as `customOpponentPersona` above — both belong to that same tool.
+  practiceRound: PlayCircle,
 }
 
 export function MySavedItems() {
