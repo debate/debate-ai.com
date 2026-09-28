@@ -18,6 +18,52 @@ Saved Items" widget (`MySavedItems.tsx`) already acts as the de facto
 without re-checking first — see that module's own "joined next" history
 comment for the full, current list of what's already wired.
 
+Done (this run, infra): before any of the above could even be verified,
+three separate build/install blockers had to be fixed first —
+- `apps/debate-ai.com/drizzle/` was deleted from mainline a 4th time by
+  an unreviewed direct commit (`1a2cbbf`, "Delete apps/debate-ai.com/drizzle
+  directory"), undoing the prior restore in `de88ca2`. Restored again from
+  `de88ca2`, then `bun run db:generate` picked up real schema drift since
+  that restore (the team-roster/tiered-limits feature's `team_assignments`,
+  `team_students`, `usage_counters` tables) as migration
+  `0038_stiff_sue_storm.sql`. If this keeps recurring, the real fix is
+  branch protection on this path or CI enforcement, not another restore —
+  flagging as a good follow-up for whoever owns repo settings.
+- `bun.lock` had unresolved git merge-conflict markers left over from a
+  bad merge commit (`4ded2f6`), so `bun install --frozen-lockfile` failed
+  outright with a JSON parse error before anything else could run.
+  Resolved the 3 conflict blocks.
+- `apps/debate-browser-ext/wxt.config.ts`'s `next/link` / `next/navigation`
+  / `next/image` aliases still pointed at `packages/debate-ai-webui`, that
+  package's name before its rename to `debate-webview` (`3811cc9`), failing
+  `bun run build` outright for `debate-web-ext`. Fixed the alias and two
+  stale references in that app's own README.
+With all three fixed, `bun run typecheck` (25/25), `bun run test` (10620
+passed, 1 skipped), and `bun run build` all pass clean.
+
+Done (this run, `/settings`): resolved the "re-duplicate sync status or
+just link?" deferred decision below by doing a bit of both — a new
+`ToolsDataSection` (`packages/debate-webview/src/components/settings/`)
+in the Preferences tab, alongside `PlanUpgradeSection` and
+`TeamCoachingSection`, shows a compact synced/syncing/N-failed status line
+off the same `useToolRecordSync` state `/tools`' `ToolSyncStatusPanel`
+already uses, plus a link to `/tools` for the full per-tool retry list and
+"My Saved Items" browser. Deliberately does not list failing tools by
+name itself, so `/tools` stays the one place that owns that detail. Tests:
+`packages/debate-webview/test/components/settings/ToolsDataSection.test.tsx`.
+
+Still open, intentionally deferred:
+- No per-item delete/manage affordance in "My Saved Items" itself
+  (deletion, where it exists, lives inside each tool's own panel) — a
+  real gap, but a UI-design-sized one (bulk delete? per-kind? confirm
+  dialogs for ~21 different record shapes?) rather than a small slice.
+- The REASON editor's file tree (`packages/debate-editor`, upstream-synced
+  via `scripts/sync-upstream.mjs`) still has no sample-data empty state,
+  unlike Coach Materials/My Saved Items/Evidence Library/Practice Drills
+  below. Riskier than those: any change needs to land in one of the ~35
+  "ours" override files the sync script tracks, not the ~365 files copied
+  from upstream each build, or it will be silently overwritten.
+
 Done (first slice, Coach Materials): of that ~20-kind list, Coach
 Materials (`saved_coach_materials`, `/coach-materials`) was a genuine
 miss — synced to the account but never surfaced in "My Saved Items,"
