@@ -44,6 +44,13 @@ ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-fil
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
+Its engine is upstream CardMirror from the `debate-editor-cm` submodule, rebased with
+debate-ai.com's changes: `upstream.json` pins the upstream commit, `patches/debate-ai.patch`
+records every edit to an upstream file (the tabbed ribbon, the embed hooks, the settings
+sidebar, account sync), and files upstream doesn't have — the React shell with its dropdown
+`MenuBar`, the ribbon tabs, the sync clients — sit beside them in `src/`. `bun run
+sync-upstream` rebases onto a newer submodule commit.
+
 ## debate-editor-cm (git submodule) and debate-editor-cm-adapter
 
 `debate-editor-cm` is a git submodule of upstream CardMirror,

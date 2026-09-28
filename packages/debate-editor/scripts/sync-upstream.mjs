@@ -209,14 +209,22 @@ function sync(base, target) {
       if (!baseBytes) {
         // Upstream added it. A same-named file of ours would be silently
         // replaced — stop instead and let a human pick a new name for ours.
-        if (ours && !ours.equals(theirs)) conflicts.push(`${path} (upstream added a file with the same name as one of ours)`);
-        else if (!ours) (write(dest, theirs), added++);
+        if (ours && !ours.equals(theirs)) {
+          conflicts.push(`${path} (upstream added a file with the same name as one of ours)`);
+        } else if (!ours) {
+          write(dest, theirs);
+          added++;
+        }
         continue;
       }
       if (!theirs) {
         // Upstream deleted it: drop it too, unless we had changed it.
-        if (ours && !ours.equals(baseBytes)) conflicts.push(`${path} (upstream deleted it; we had changed it)`);
-        else if (ours) (rmSync(dest), removed++);
+        if (ours && !ours.equals(baseBytes)) {
+          conflicts.push(`${path} (upstream deleted it; we had changed it)`);
+        } else if (ours) {
+          rmSync(dest);
+          removed++;
+        }
         continue;
       }
       if (!ours) {

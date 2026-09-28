@@ -214,7 +214,7 @@ export const RIBBON_TABS: RibbonTab[] = [
       'toggleParagraphIntegrity',
       'pasteAsText',
       'toggleReadMode',
-      'toggleNavPane',
+      'toggleReaderView',
       'toggleCommentsVisible',
       'addCommentToSelection',
       'addNoteToSelection',
