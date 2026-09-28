@@ -1,5 +1,48 @@
 
-improve the ui's and have demo mock data samples for t4sting these out with ui's
+integrate all the tools and create user settings and link user db SQL with
+ability to save flows docs and debates in SQL and link to users. add tools
+into where needed in the ui for users and develop better tool ui
+
+Investigated before picking a slice: this codebase's tool-sync
+infrastructure is already exceptionally mature — nearly every tool in
+`packages/debate-webview/src/routes/tools/tool-groups.ts` already
+persists to the cloud, either via a dedicated table+hook or the generic
+`TOOL_RECORD_COLLECTIONS` catalog (~60 collections,
+`packages/debate-data-sync/src/state/toolRecordCollections.ts`), each
+D1 table already has a proper `userId` foreign key with cascade delete
+(see `apps/debate-ai.com/lib/database/schema.ts`), and `/tools`' "My
+Saved Items" widget (`MySavedItems.tsx`) already acts as the de facto
+"link flows/docs/debates to users, browsable in one place" surface idea
+#17 named, merging ~20 data kinds via `debate-round`'s
+`state/cloudLibrary.ts`. Do not re-build any of that sync infrastructure
+without re-checking first — see that module's own "joined next" history
+comment for the full, current list of what's already wired.
+
+Done (first slice, Coach Materials): of that ~20-kind list, Coach
+Materials (`saved_coach_materials`, `/coach-materials`) was a genuine
+miss — synced to the account but never surfaced in "My Saved Items,"
+unlike everything else. It's the 21st kind now. Unlike the other 20,
+`CoachMaterial` itself carried no `updatedAt`/`createdAt` field at all,
+so `GET /api/coach-materials` now mixes the saved row's own `updatedAt`
+(already tracked by the PUT route on every upsert) into each listed
+material — see `CloudCoachMaterialSummary` in `cloudLibrary.ts` and
+`SyncedCoachMaterial` in `debate-speech-writer`'s
+`coach-materials-client.ts`. PR: #1002.
+
+Investigated and intentionally deferred as separate, larger slices (not
+done in this PR):
+- `/settings` no longer surfaces account-level tool preferences or sync
+  status — it was deliberately gutted down to CardMirror-editor-only
+  settings (see that page's own doc comment), and `ToolSyncStatusPanel`
+  only renders on `/tools` now. Re-adding a "Tools"/"Data & Sync" section
+  to `/settings` is a reasonable follow-up, but it cuts against that
+  documented intentional redesign, so it needs an explicit product
+  decision (re-duplicate the sync status on both pages, or just link
+  `/settings` → `/tools`?) rather than a unilateral revert.
+- No per-item delete/manage affordance in "My Saved Items" itself
+  (deletion, where it exists, lives inside each tool's own panel) — a
+  real gap, but a UI-design-sized one (bulk delete? per-kind? confirm
+  dialogs for ~21 different record shapes?) rather than a small slice.
 
 Done (first slice): `/tools`' "My Saved Items" widget rendered nothing at
 all for a signed-in user with no cloud-saved data yet — indistinguishable

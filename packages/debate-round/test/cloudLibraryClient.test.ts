@@ -10,7 +10,7 @@ function jsonResponse(status: number, body: unknown) {
 }
 
 describe("fetchRecentCloudItems", () => {
-  it("merges documents, flows, rounds, word-count rounds, debates, speech outcome runs, drill sets, judge decisions, counsel-panel assessments, round pairings, strategy recommendations, sprint sessions, speech send-log entries, learn decks, custom opponent personas, flow annotations, quick cards, prep notes, evidence library entries, and practice rounds from their own endpoints", async () => {
+  it("merges documents, flows, rounds, word-count rounds, debates, speech outcome runs, drill sets, judge decisions, counsel-panel assessments, round pairings, strategy recommendations, sprint sessions, speech send-log entries, learn decks, custom opponent personas, flow annotations, quick cards, prep notes, evidence library entries, practice rounds, and coach materials from their own endpoints", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -116,13 +116,19 @@ describe("fetchRecentCloudItems", () => {
           { roundId: "round-13", createdAt: Date.parse("2026-09-13T00:00:00.000Z") },
         ]);
       }
+      if (url === "/api/coach-materials") {
+        return jsonResponse(200, [
+          { id: "material-1", title: "Camp Aff Lecture", updatedAt: "2026-09-14T00:00:00.000Z" },
+        ]);
+      }
       throw new Error(`unexpected url ${url}`);
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
 
-    const items = await fetchRecentCloudItems({ limit: 20 });
+    const items = await fetchRecentCloudItems({ limit: 21 });
 
     expect(items.map((i) => i.kind)).toEqual([
+      "coachMaterial",
       "practiceRound",
       "evidenceLibraryEntry",
       "prepNote",
@@ -146,7 +152,7 @@ describe("fetchRecentCloudItems", () => {
     ]);
   });
 
-  it("degrades a signed-out 401 on flows/rounds/word-count-rounds/debates/speech-outcome-runs/drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/strategy-recommendations/sprint-sessions/speech-send-log/learn-decks/custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/practice-rounds to no items from that kind, without throwing", async () => {
+  it("degrades a signed-out 401 on flows/rounds/word-count-rounds/debates/speech-outcome-runs/drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/strategy-recommendations/sprint-sessions/speech-send-log/learn-decks/custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/practice-rounds/coach-materials to no items from that kind, without throwing", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       if (url === "/api/doc/documents") {
         return jsonResponse(200, [{ id: 1, title: "Case Neg", updatedAt: "2026-08-28T00:00:00.000Z" }]);
@@ -183,6 +189,7 @@ describe("fetchRecentCloudItems", () => {
       if (url === "/api/tool-records/prepNotes") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/tool-records/evidenceLibraryEntries") return jsonResponse(500, { error: "Something went wrong." });
       if (url === "/api/tool-records/practiceRounds") return jsonResponse(500, { error: "Something went wrong." });
+      if (url === "/api/coach-materials") return jsonResponse(500, { error: "Something went wrong." });
       return jsonResponse(200, [{ clientId: 3, label: "Round 4", updatedAt: "2026-08-29T00:00:00.000Z" }]);
     });
     vi.stubGlobal("fetch", fetchMock as unknown as typeof fetch);
