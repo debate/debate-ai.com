@@ -236,7 +236,7 @@ The biggest month of development.
 - Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, and redesigned the **ChampionsPanel**.
 - Restructured documentation into a new `docs/` directory with project vision and feature docs.
 
-# Prototype Phase (2024–2025)
+# Prototype Phase (pre-2026 era)
 
 ## December 2025 — 6 commits
 
