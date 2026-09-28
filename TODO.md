@@ -26,6 +26,17 @@ use in `packages/debate-search-evidence/src/panels/EvidenceLibraryPanel.tsx`.
 Practice Drills history and the REASON editor's file tree remain open
 follow-ups, one PR each.
 
+Done (third slice, Practice Drills history): `/drills`' Practice Drills
+panel showed a bare "No practice drills yet." for a user with no persisted
+drill sets, with no demo of what a generated drill set looks like. It now
+shows a read-only sample drill set — one drill per kind (overview,
+frontline, cross-ex, collapse), badged "Sample" — under that message
+whenever `drillSets.length === 0` (past the loading state), never mixed
+into a real, possibly-empty result. See `getSampleDrillSets` in
+`packages/debate-practice-drills/src/state/drillSets.ts` and its use in
+`packages/debate-practice-drills/src/panels/DrillSetsPanel.tsx`. The REASON
+editor's file tree remains the last open follow-up from this ask.
+
 Known blocker (unrelated to the above): a full monorepo `bun run test` run
 currently fails ~89 tests across 22 files, all with
 `ENOENT: .../apps/debate-ai.com/drizzle/0003_dark_zarek.sql` or similar —
