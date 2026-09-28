@@ -60,6 +60,23 @@ product decision noted above and remains a follow-up. The per-item
 delete/manage gap in "My Saved Items" also remains open, unchanged from the
 note above.
 
+Done (sixth slice, per-item delete for flows & rounds in My Saved Items):
+took the smallest useful piece of the still-open "no per-item delete/manage
+affordance" gap — saved flows and rounds, whose `DELETE /api/flows/:clientId`
+and `DELETE /api/rounds/:clientId` routes already existed and were owner-scoped.
+`CloudLibraryItem` gained an optional `deletePath` (set only for those two
+kinds), `deleteCloudLibraryItem` (`debate-round`'s `cloudLibraryClient.ts`)
+issues the DELETE and never rejects, and `MySavedItems.tsx` shows a hover/focus
+trash button with a confirm dialog on real (non-sample) flow/round cards.
+Tests: `test/cloudLibraryClient.test.ts`, `test/cloudLibrary.test.ts`.
+Follow-ups still open: delete for the other ~19 kinds (each has its own
+route/record shape); the "Data & Sync" section on `/settings` (product
+decision); and repo hygiene found while verifying — `bun.lock` on master has
+committed merge-conflict markers (lines 6790–6924, from `8678d95`), so
+`bun install --frozen-lockfile` fails and CI installs can't be reproducible
+until a maintainer regenerates it. Branch:
+`agent/todo-saved-items-delete-flows-rounds`.
+
 Also confirmed still-fixed (no longer follow-ups): both previously-tracked
 test failures — `packages/debate-webview/test/host/routes.test.ts`'s missing
 `/practice-partners` route registration, and
