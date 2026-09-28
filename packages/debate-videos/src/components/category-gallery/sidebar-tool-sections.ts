@@ -31,7 +31,6 @@ import {
   Map as MapIcon,
   Medal,
   MessageSquare,
-  PenLine,
   Presentation,
   Repeat,
   Rss,
@@ -134,8 +133,6 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
       { href: "/cards/inbox", title: "Task Inbox", icon: Inbox },
       { href: "/cards/contributions", title: "Contributions Feed", icon: Rss },
       { href: "/cards/brainstorm", title: "Team Brainstorm Assist", icon: Lightbulb },
-      { href: "/reason-editor", title: "Reason Editor", icon: PenLine },
-      { href: "/doc", title: "Debate Docs", icon: FileText },
     ],
   },
   {

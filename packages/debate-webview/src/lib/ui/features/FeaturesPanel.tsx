@@ -215,21 +215,6 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 </Reveal>
         </div>
 
-        <Reveal delay={340}>
-          <div className="mx-auto mt-12 max-w-4xl">
-            <div className="rounded-2xl overflow-hidden border border-border bg-card/50 backdrop-blur-sm">
-              <img
-                src="https://m.media-amazon.com/images/I/61jWG2JyYNL._AC_SL1500_.jpg"
-                alt="Anker Power Bank"
-                className="w-full h-auto"
-              />
-            </div>
-            <p className="mt-3 text-center text-sm text-muted-foreground">
-              Reason Editor — rich-text card editing with Verbatim-compatible shortcuts, command palette, and
-              send-to-speech-document
-            </p>
-          </div>
-        </Reveal>
       </section>
 
       {tickerRows.length > 0 ? (

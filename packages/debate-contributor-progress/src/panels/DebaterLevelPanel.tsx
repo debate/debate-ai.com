@@ -49,10 +49,26 @@ import {
 } from "../state/debaterLevel"
 import { DebaterLevelUpOverlay } from "./DebaterLevelUpOverlay"
 
+const MILESTONE_BADGES: Record<string, string> = {
+  "milestone-first-card": "https://i.imgur.com/BgMCyP5.png",
+  "milestone-cards-50": "https://i.imgur.com/eJ9jtza.png",
+  "milestone-cards-250": "https://i.imgur.com/grVj3kk.png",
+  "milestone-rebuttals-10": "https://i.imgur.com/UT5V0AZ.png",
+  "milestone-speeches-25": "https://i.imgur.com/odEL3ih.png",
+  "milestone-first-win": "https://i.imgur.com/S9QAmli.png",
+  "milestone-wins-10": "https://i.imgur.com/e2dmeOA.png",
+}
+
 function ChallengeRow({ progress }: { progress: DebaterChallengeProgress }) {
   const { challenge, current, isComplete } = progress
+  const badgeUrl = MILESTONE_BADGES[challenge.id]
   return (
     <li className="flex flex-col gap-1 rounded-lg border p-3">
+      {badgeUrl && (
+        <div className="flex justify-center">
+          <img src={badgeUrl} alt={challenge.title} className="w-16 h-16 object-contain" />
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2">
         <span className="font-medium">{challenge.title}</span>
         {isComplete ? <Pill tone="positive">+{challenge.xpReward} XP earned</Pill> : <Pill tone="info">+{challenge.xpReward} XP</Pill>}

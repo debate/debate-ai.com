@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         url: sql`excluded.url`,
         title: sql`excluded.title`,
         favicon: sql`excluded.favicon`,
-        visitCount: detectedUrls.visitCount + 1,
+        visitCount: sql`${detectedUrls.visitCount} + 1`,
         lastVisitedAt: sql`(unixepoch())`,
       },
     })

@@ -34,9 +34,11 @@ interface SectionHref {
  * happens to sit at `/videos`.
  *
  * The app dock's destinations used to be listed here too, for an "Apps" node
- * the tree no longer renders. Dropping them is what lets `/doc` open the
- * Research section that actually lists it ("Debate Docs") instead of a
- * section with no links left to show.
+ * the tree no longer renders. Dropping them is what lets `/versus-ai` open the
+ * Practice section that actually lists it ("Debate Versus AI") instead of a
+ * section with no links left to show. Two more lost their rows with them:
+ * `/doc` ("Debate Docs") and `/reason-editor`, which no section lists now, so
+ * both land in the no-section case above like `/debate` does.
  */
 const SECTION_HREFS: SectionHref[] = [
   { sectionId: VIDEOS_SECTION_ID, href: "/videos" },
