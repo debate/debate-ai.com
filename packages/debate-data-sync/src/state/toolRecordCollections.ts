@@ -180,8 +180,8 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "judgeParadigmSelections",
     storageKey: "judgeParadigmSelections",
     idField: "roundId",
-    label: "Judge Paradigm Picker",
-    href: "/paradigms",
+    label: "Judge Paradigms",
+    href: "/judge-decision",
     section: "Scouting and judging",
   },
   {
@@ -332,8 +332,8 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "opponentPersonaSelections",
     storageKey: "opponentPersonaSelections",
     idField: "sessionId",
-    label: "Opponent Persona Picker",
-    href: "/practice-opponent",
+    label: "Opponent Personas",
+    href: "/versus-ai",
     section: "Scouting and judging",
   },
   {
@@ -570,6 +570,17 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     section: "Team",
   },
   {
+    key: "judgeAwards",
+    storageKey: "judgeAwards",
+    idField: "id",
+    // Judge-given awards (Most Improved, Best Speaker, …) —
+    // `debate-contributor-progress/src/state/judgeAwards.ts`. They show on the
+    // debater's `/cards/leaderboard/{id}` page, so this points there.
+    label: "Judge Awards",
+    href: "/cards/leaderboard",
+    section: "Team",
+  },
+  {
     key: "unlockCelebrations",
     storageKey: "unlockCelebrationSeenBadges",
     idField: "id",
@@ -633,6 +644,18 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     storageKey: "debateVideoWatchHistory",
     idField: "videoId",
     label: "Video Watch History",
+    href: "/videos",
+    section: "Videos",
+  },
+  {
+    key: "speechOutcomeRuns",
+    storageKey: "debate-videos:speech-outcomes",
+    idField: "id",
+    // The watch page's cached AI outcome-simulation runs
+    // (`debate-videos/src/state/speechOutcomeCache.ts`), keyed by a derived
+    // `${videoId}::${speechKey}::${lens}` id — see that module's own header
+    // comment for why it needed one before it could join this catalog.
+    label: "Speech Outcome Runs",
     href: "/videos",
     section: "Videos",
   },

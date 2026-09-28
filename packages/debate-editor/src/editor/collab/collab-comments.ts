@@ -97,6 +97,16 @@ function threadsFromMap(root: LoroMap): Thread[] {
   return threads;
 }
 
+/** Diagnostics: local mutations that could not be mirrored because the
+ *  thread container was already gone (reply's silent no-op is the
+ *  documented delete-wins case; edit-text / set-resolved landing here
+ *  means the user's own pane shows a change the room never got). */
+export const commentsSyncStats = { droppedMutations: 0 };
+function noteDropped(kind: string, threadId: string): void {
+  commentsSyncStats.droppedMutations++;
+  console.warn(`[collab-comments] ${kind} on a thread the room no longer has (${threadId}) — not mirrored`);
+}
+
 export function installCommentsSync(
   doc: LoroDoc,
   getView: () => EditorView | null,
@@ -104,6 +114,16 @@ export function installCommentsSync(
   const root = rootMap(doc);
   let disposed = false;
   let pullQueued = false;
+  // Last derived thread set this view was handed: a remote comments
+  // event that changes nothing derivable (a same-value LWW rewrite)
+  // used to rebuild every thread AND dispatch a transaction into the
+  // editor anyway (2026-09-01 review, PH-A12). Reset by every LOCAL
+  // write: the pane has moved past the last pull on its own, and if the
+  // room settles back to exactly that earlier state — this peer's
+  // "resolved" toggle lost a last-write-wins race with a partner's — the
+  // next pull must render it, or the pane keeps the losing value while
+  // every map agrees on the other (chaos rig, 2026-09-05).
+  let lastPulledSig = '';
 
   const mirror = (meta: CommentsMeta): void => {
     switch (meta.type) {
@@ -128,6 +148,8 @@ export function installCommentsSync(
         const existing = t?.get(meta.commentId);
         if (t && existing && typeof existing === 'object' && !(existing instanceof LoroMap)) {
           t.set(meta.commentId, { ...(existing as Comment), text: meta.text });
+        } else {
+          noteDropped('edit-text', meta.threadId);
         }
         break;
       }
@@ -137,6 +159,8 @@ export function installCommentsSync(
         const existing = t?.get(meta.threadId);
         if (t && existing && typeof existing === 'object' && !(existing instanceof LoroMap)) {
           t.set(meta.threadId, { ...(existing as Comment), resolved: meta.resolved });
+        } else {
+          noteDropped('set-resolved', meta.threadId);
         }
         break;
       }
@@ -155,6 +179,7 @@ export function installCommentsSync(
       default:
         return; // gc / sync-load / set-visible stay local
     }
+    lastPulledSig = '';
     doc.commit({ origin: COMMENTS_COMMIT_ORIGIN });
   };
 
@@ -163,6 +188,9 @@ export function installCommentsSync(
     const view = getView();
     if (!view || view.isDestroyed) return;
     const threads = threadsFromMap(root);
+    const sig = JSON.stringify(threads);
+    if (sig === lastPulledSig) return;
+    lastPulledSig = sig;
     view.dispatch(markSyncOrigin(syncLoadThreads(view.state, threads)));
   };
 

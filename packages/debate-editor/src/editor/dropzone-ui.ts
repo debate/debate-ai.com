@@ -4,14 +4,12 @@
  * (positioned by `positionDropzone` in index.ts — not the nav pane,
  * whose bottom edge sits in the outline's auto-scroll zone).
  *
- * The whole element morphs between two states:
- *   - Closed: small grey pill in the editor's bottom-left corner
- *     (icon + item count).
- *   - Open: the same element expands UPWARD to become a panel
- *     hosting the item list. The bottom row of the panel keeps
- *     the icon + count + clear button as the click-to-collapse
- *     bar — visually the pill "grew up" into the panel rather
- *     than a separate UI appearing.
+ * Two states, the same anatomy as the Send / Receive pills:
+ *   - Closed: small grey pill in the tray (icon + item count).
+ *   - Open: the item list is a `.pmd-pill-popup` rising from the
+ *     pill row (left-anchored on the tray, spanning it), with the
+ *     bar as the popup's tab — the popup grows out of the button.
+ *     Clear lives in the popup's footer.
  *
  *   - Drag-over (any state): blue accept-state matching the nav-
  *     pane + editor drop indicators. The bubble's surface
@@ -48,6 +46,8 @@ import { setIcon } from './icons';
 import { readModePlugin } from './read-mode-plugin.js';
 import { READ_MODE_DRAG_META } from './reading-marker.js';
 import { checkedSliceFromJSON } from '../schema/slice-check.js';
+import { openCardPreview } from './card-preview-modal.js';
+import { isAnyOverlayOpen } from './overlay-stack.js';
 
 interface DropzoneMountOptions {
   parent: HTMLElement;
@@ -55,17 +55,19 @@ interface DropzoneMountOptions {
 }
 
 export class DropzoneController {
-  /** The morphing element — small pill when closed, expanded panel
-   *  when open. Anchored to the editor's bottom-left by
-   *  `positionDropzone` (index.ts). */
+  /** The pill: the bar, plus the popup list while open. In the tray
+   *  `positionDropzone` (index.ts) anchors. */
   private root!: HTMLDivElement;
-  /** List area inside the root, only visible when open. */
+  /** The popup list (`.pmd-pill-popup`), shown while open. */
   private listEl!: HTMLUListElement;
-  /** Bottom bar (icon + count + clear). Always visible; acts as
-   *  the click target for toggling open / closed. */
+  /** The bar (icon + count). Always visible; the click target for
+   *  toggling open / closed, and the popup's tab while open. */
   private bar!: HTMLDivElement;
   private countBadge!: HTMLSpanElement;
   private clearBtn!: HTMLButtonElement;
+  /** Popup footer holding Clear; appended by renderList while there
+   *  are items (built once so the listener survives re-renders). */
+  private actionsLi!: HTMLLIElement;
   private items: DropzoneItem[] = [];
   private open = false;
   private surface: DragSurface | null = null;
@@ -85,52 +87,56 @@ export class DropzoneController {
     this.getFocusedView = opts.getFocusedView;
 
     this.root = document.createElement('div');
-    this.root.className = 'pmd-dropzone-root';
+    this.root.className = 'pmd-pill pmd-dropzone-root';
     this.root.dataset['open'] = 'false';
     this.root.setAttribute('role', 'group');
     this.root.setAttribute('aria-label', 'Dropzone shelf');
 
-    // List sits ABOVE the bar (flex column). Hidden until open.
+    // The popup list, above the pill row while open.
     this.listEl = document.createElement('ul');
-    this.listEl.className = 'pmd-dropzone-list';
+    this.listEl.className = 'pmd-dropzone-list pmd-pill-popup';
     this.root.appendChild(this.listEl);
 
-    // Bar — always visible bottom row. Clicking it toggles open.
+    // Popup footer: Clear. Lives in the popup, not the bar, so the bar
+    // stays a pill-sized tab.
+    this.actionsLi = document.createElement('li');
+    this.actionsLi.className = 'pmd-dropzone-actions';
+    this.clearBtn = document.createElement('button');
+    this.clearBtn.type = 'button';
+    this.clearBtn.className = 'pmd-dropzone-clear';
+    this.clearBtn.title = 'Remove every shelf item';
+    const clearIcon = document.createElement('span');
+    clearIcon.className = 'pmd-send-action-icon';
+    setIcon(clearIcon, 'trash');
+    this.clearBtn.appendChild(clearIcon);
+    const clearLabel = document.createElement('span');
+    clearLabel.textContent = 'Clear';
+    this.clearBtn.appendChild(clearLabel);
+    this.clearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      void dropzoneStore.clear();
+    });
+    this.actionsLi.appendChild(this.clearBtn);
+
+    // Bar — always visible. Clicking it toggles open.
     this.bar = document.createElement('div');
     this.bar.className = 'pmd-dropzone-bar';
     this.bar.setAttribute('role', 'button');
     this.bar.setAttribute('tabindex', '0');
     this.bar.title = 'Dropzone — drag content here, click to expand';
 
+    // A storage box (the icon set's `archive`): a shelf where cards are
+    // parked. Send / Receive carry the set's matching out-tray / in-tray.
     const icon = document.createElement('span');
     icon.className = 'pmd-dropzone-icon';
     icon.setAttribute('aria-hidden', 'true');
-    icon.innerHTML =
-      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/><path d="M12 14V4"/><path d="M8 8l4-4 4 4"/></svg>';
+    setIcon(icon, 'archive');
     this.bar.appendChild(icon);
 
     this.countBadge = document.createElement('span');
-    this.countBadge.className = 'pmd-dropzone-count';
+    this.countBadge.className = 'pmd-pill-badge pmd-dropzone-count';
     this.countBadge.hidden = true;
     this.bar.appendChild(this.countBadge);
-
-    // Spacer pushes the clear button to the right edge in open
-    // state. Doesn't matter in closed state (clear is hidden).
-    const spacer = document.createElement('span');
-    spacer.className = 'pmd-dropzone-bar-spacer';
-    this.bar.appendChild(spacer);
-
-    this.clearBtn = document.createElement('button');
-    this.clearBtn.type = 'button';
-    this.clearBtn.className = 'pmd-dropzone-clear';
-    this.clearBtn.textContent = 'Clear';
-    this.clearBtn.title = 'Remove every shelf item';
-    this.clearBtn.hidden = true;
-    this.clearBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      void dropzoneStore.clear();
-    });
-    this.bar.appendChild(this.clearBtn);
 
     const handleToggle = (e: Event): void => {
       e.stopPropagation();
@@ -147,9 +153,10 @@ export class DropzoneController {
     this.root.appendChild(this.bar);
     opts.parent.appendChild(this.root);
 
-    // Drag surface — the whole root acts as the target so dropping
-    // anywhere on the morphed shelf (closed pill OR open panel)
-    // counts as a shelf drop.
+    // Drag surface — the pill (its bar) and, while open, the popup list
+    // are both targets, so dropping anywhere on the shelf counts. (The
+    // popup is absolutely positioned: the root's own rect is just the
+    // bar, so the list is measured separately.)
     this.surface = {
       hitTest: (clientX, clientY) => {
         // Don't absorb our own drag-out: virtual sessions originate from
@@ -157,12 +164,11 @@ export class DropzoneController {
         // just duplicate it. Returning null makes that a no-op (and frees
         // the editor surface to win the hit instead).
         if (dragController.getSession()?.virtual) return null;
-        const rect = this.root.getBoundingClientRect();
+        const inRect = (rect: DOMRect): boolean =>
+          clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
         const inside =
-          clientX >= rect.left &&
-          clientX <= rect.right &&
-          clientY >= rect.top &&
-          clientY <= rect.bottom;
+          inRect(this.root.getBoundingClientRect()) ||
+          (this.open && inRect(this.listEl.getBoundingClientRect()));
         if (!inside) return null;
         return {
           el: this.root,
@@ -215,7 +221,6 @@ export class DropzoneController {
     this.countBadge.hidden = n === 0;
     this.countBadge.textContent = String(n);
     this.root.classList.toggle('pmd-dropzone-root-empty', n === 0);
-    this.clearBtn.hidden = !(this.open && n > 0);
   }
 
   private setOpen(open: boolean): void {
@@ -238,6 +243,7 @@ export class DropzoneController {
     for (const item of [...this.items].reverse()) {
       this.listEl.appendChild(this.renderRow(item));
     }
+    this.listEl.appendChild(this.actionsLi);
   }
 
   private renderRow(item: DropzoneItem): HTMLLIElement {
@@ -256,6 +262,9 @@ export class DropzoneController {
     label.title = item.label;
     row.appendChild(label);
 
+    // Look before you insert: a full-size read-only preview with Copy.
+    row.appendChild(previewRowButton(() => openCardPreview({ title: item.label, sliceJson: item.sliceJson })));
+
     const del = document.createElement('button');
     del.type = 'button';
     del.className = 'pmd-dropzone-row-delete';
@@ -270,7 +279,7 @@ export class DropzoneController {
 
     row.addEventListener('pointerdown', (e) => {
       if (e.button !== 0) return;
-      if ((e.target as HTMLElement).closest('.pmd-dropzone-row-delete')) return;
+      if ((e.target as HTMLElement).closest('.pmd-dropzone-row-delete, .pmd-row-preview')) return;
       this.dragOutSource = {
         startX: e.clientX,
         startY: e.clientY,
@@ -293,10 +302,13 @@ export class DropzoneController {
     if (!session) return;
     const srcView = session.view;
     for (const item of items) {
-      const raw = item.prebuilt ?? srcView.state.doc.slice(item.from, item.to);
       // Materialize any Live View before it's frozen onto the shelf — the source
-      // doc is gone by drop time, so the reference can't survive.
-      const slice = flattenSelfRefsInSlice(raw, srcView.state.doc, newHeadingId);
+      // doc is gone by drop time, so the reference can't survive. A prebuilt
+      // slice (a received card, a shelf item dragged onward) was materialized
+      // by whoever built it; flattening it against THIS doc would drop its
+      // cards, since its source is not here.
+      const slice =
+        item.prebuilt ?? flattenSelfRefsInSlice(srcView.state.doc.slice(item.from, item.to), srcView.state.doc, newHeadingId);
       const sliceJson = slice.toJSON();
       const type = item.type || inferTypeFromSlice(slice);
       const label = deriveDropzoneLabel(slice, type);
@@ -424,6 +436,9 @@ export class DropzoneController {
 
   private onDocumentPointerDown = (e: PointerEvent): void => {
     if (!this.open) return;
+    // A modal on top (the card preview opened from a row) takes the pointer:
+    // its Close button must not collapse the list the user is browsing.
+    if (isAnyOverlayOpen()) return;
     const t = e.target as Node | null;
     if (!t) return;
     if (this.root.contains(t)) return;
@@ -435,21 +450,40 @@ function newId(): string {
   return `dz-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** The row's Preview button — the compact accent-outline look of the
+ *  Receive pill's Join button. Shared by the shelf and the inbox rows;
+ *  the click never starts the row's drag-out. */
+export function previewRowButton(open: () => void): HTMLButtonElement {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pmd-row-preview';
+  btn.textContent = 'Preview';
+  btn.title = 'Look at these cards without inserting them';
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    open();
+  });
+  return btn;
+}
+
+/** The row's type chip. Every label is three letters so the chips line
+ *  up (user request 2026-09-09); the heading ones match the search
+ *  toolbar's file-object badges (`FILE_OBJECT_KIND_BADGES`). */
 export function typeBadge(type: string): { kind: string; label: string } {
   switch (type) {
-    case 'pocket': return { kind: 'pocket', label: 'POCKET' };
+    case 'pocket': return { kind: 'pocket', label: 'POC' };
     case 'hat': return { kind: 'hat', label: 'HAT' };
-    case 'block': return { kind: 'block', label: 'BLOCK' };
+    case 'block': return { kind: 'block', label: 'BLK' };
     case 'tag': return { kind: 'tag', label: 'TAG' };
-    case 'analytic': return { kind: 'analytic', label: 'ANALYTIC' };
-    case 'card': return { kind: 'card', label: 'CARD' };
-    case 'card_body': return { kind: 'card', label: 'BODY' };
-    case 'cite_paragraph': return { kind: 'cite', label: 'CITE' };
-    case 'analytic_unit': return { kind: 'analytic', label: 'ANALYTIC' };
-    case 'undertag': return { kind: 'tag', label: 'UNDERTAG' };
-    case 'paragraph': return { kind: 'text', label: 'TEXT' };
-    case 'text': return { kind: 'text', label: 'TEXT' };
-    default: return { kind: 'generic', label: 'ITEM' };
+    case 'analytic': return { kind: 'analytic', label: 'ANL' };
+    case 'card': return { kind: 'card', label: 'CRD' };
+    case 'card_body': return { kind: 'card', label: 'BDY' };
+    case 'cite_paragraph': return { kind: 'cite', label: 'CIT' };
+    case 'analytic_unit': return { kind: 'analytic', label: 'ANL' };
+    case 'undertag': return { kind: 'tag', label: 'UND' };
+    case 'paragraph': return { kind: 'text', label: 'TXT' };
+    case 'text': return { kind: 'text', label: 'TXT' };
+    default: return { kind: 'generic', label: 'ITM' };
   }
 }
 

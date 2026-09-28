@@ -1,6 +1,6 @@
 # Changelog
 
-# MVP Phase (2026)
+# AI Debate Era (MVP, 2026+)
 
 ## September 2026 — 395 commits
 
@@ -236,7 +236,7 @@ The biggest month of development.
 - Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, and redesigned the **ChampionsPanel**.
 - Restructured documentation into a new `docs/` directory with project vision and feature docs.
 
-# Prototype Phase (2024–2025)
+#  Paperless Debate Era (Prototype, 2010-2026)
 
 ## December 2025 — 6 commits
 
@@ -246,4 +246,9 @@ The biggest month of development.
 
 ## July 2024 — 2 commits
 
-Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation.
+Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation. 
+
+- [Archived Web Demo](https://web.archive.org/web/20241222141238/https://debate-ai.com/) (2024)
+- [Prototype Demo](https://web.archive.org/web/20140517065121/http://debatesynergy.com/) (2014)
+- [Office Template Demo](https://github.com/debate/debatesynergy-office-template-2010) (2010)
+

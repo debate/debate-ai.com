@@ -35,6 +35,9 @@ const SIDEBAR_HREFS = new Set([
   "/summaries",
   "/outline",
   "/annotations",
+  // The CardMirror editor, likewise: a real route with synced data of its
+  // own, reached from the dock rather than from a section row now.
+  "/reason-editor",
 ]);
 
 describe("synced tool collections", () => {
@@ -52,7 +55,7 @@ describe("synced tool collections", () => {
       "/briefings",
       "/opponents",
       "/judges",
-      "/paradigms",
+      "/judge-decision",
       "/summaries",
       "/outline",
       "/prep-notes",

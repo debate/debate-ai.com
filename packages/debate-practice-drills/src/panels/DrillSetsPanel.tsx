@@ -64,6 +64,15 @@
  * This panel reads/writes exclusively through that hook now, in place of
  * `state/drillSets.ts`'s mutating functions directly.
  *
+ * When `drillSets` is genuinely empty (past the loading state), this panel
+ * now renders `state/drillSets.ts`'s `getSampleDrillSets()` — read-only
+ * sample drill rows badged "Sample" — under the empty-state message, instead
+ * of the bare "No practice drills yet." alone. Closes the "Practice Drills
+ * history" open follow-up TODO.md named next to the REASON editor's file
+ * tree, mirroring the same sample-data treatment already applied to
+ * `MySavedItems` (`debate-round`) and the Shared Evidence Library
+ * (`debate-search-evidence`).
+ *
  * @module panels/DrillSetsPanel
  */
 
@@ -88,7 +97,12 @@ import {
   PanelSection,
   PanelShell,
 } from "debate-round/src/ui/panels/panel-shell"
-import { getDrillSetCompletionStats, getDueDrillIndexes, type DrillSetRecord } from "../state/drillSets"
+import {
+  getDrillSetCompletionStats,
+  getDueDrillIndexes,
+  getSampleDrillSets,
+  type DrillSetRecord,
+} from "../state/drillSets"
 import { buildDrillPracticeUnlockStatus, getTotalCompletedDrillCount } from "../state/drillProgressUnlocks"
 import { filterDrillsByDifficulty, type DrillDifficulty, type DrillKind } from "debate-round/src/flow/drill-generator"
 import { requestDrillScript } from "../round/drill-script-client"
@@ -259,10 +273,44 @@ export function DrillSetsPanel() {
       </div>
 
       {drillSets.length === 0 && (
-        <EmptyState
-          title="No practice drills yet."
-          message="Drills fill in once a round's flow generates a drill set."
-        />
+        <div className="space-y-2">
+          <EmptyState
+            title="No practice drills yet."
+            message="Drills fill in once a round's flow generates a drill set — here's what one looks like:"
+          />
+          {getSampleDrillSets().map((set) => (
+            <div key={set.roundId} className="rounded-lg border border-dashed border-border p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className="text-sm font-semibold text-foreground">
+                  Round {set.roundId}{" "}
+                  <span className="font-normal text-muted-foreground">({set.sideKey})</span>
+                </h2>
+                <Badge variant="outline">Sample</Badge>
+              </div>
+              <div className="space-y-2">
+                {set.drills.map((drill, index) => (
+                  <PanelRow
+                    key={index}
+                    leading={
+                      <div className="flex items-center gap-1">
+                        <Badge variant="outline" className="whitespace-nowrap">
+                          {DRILL_KIND_LABELS[drill.kind]}
+                        </Badge>
+                        <Badge
+                          variant={DIFFICULTY_BADGE_VARIANTS[drill.difficulty]}
+                          className="whitespace-nowrap"
+                        >
+                          {DIFFICULTY_FILTER_LABELS[drill.difficulty]}
+                        </Badge>
+                      </div>
+                    }
+                    title={drill.prompt}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       )}
       {drillSets.length > 0 && (
         <PanelSection

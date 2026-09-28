@@ -1,0 +1,55 @@
+---
+title: "Judge Awards"
+---
+
+# Judge Awards
+
+Five badges a debater can't earn with XP — only a judge can give them at a
+tournament. They appear on the debater's page with the judge's name under
+each badge.
+
+- **Routes:** `/cards/leaderboard/{debaterId}` (earned awards and the
+  **Give an award** form), `/cards/level` (all five awards and what they
+  recognize)
+- **Package:** `debate-community` (`packages/debate-contributor-progress`)
+
+## The awards
+
+| Award | Recognizes |
+| --- | --- |
+| Most Improved | Came back sharper every round over the course of a tournament |
+| Best Speaker | The clearest, most persuasive delivery the judge heard |
+| Best Critique Debater | Took apart the other side's assumptions, not just their arguments |
+| Best Impact Calculus | Explicit weighing — magnitude, probability, timeframe |
+| Best Research Award | Evidence deeper, fresher and better cut than anything else in the room |
+
+## The rule
+
+Each judge can give **each award once per tournament**. A judge who gives
+Best Speaker at Glenbrooks can't give Best Speaker to a second debater there,
+but can still give the other four, and can give Best Speaker again at the
+next tournament. Judge and tournament names are matched ignoring case and
+extra spaces. A judge can't give an award to themself.
+
+## Data flow
+
+```
+lib/judge-awards.ts        — award definitions, validateJudgeAward()
+state/judgeAwards.ts       — localStorage "judgeAwards", giveJudgeAward()
+  → panels/JudgeAwardsSection.tsx
+      JudgeAwardsSection   → ContributorProfilePanel (debater page)
+      JudgeAwardShowcase   → DebaterLevelPanel (/cards/level)
+```
+
+Awards sync to the signed-in user's account as the `judgeAwards` collection.
+
+## Known gaps
+
+- **No judge verification.** The judge's name is typed in by whoever fills in
+  the form; nothing checks that they judged the tournament.
+- **Per-browser, not shared.** An award lives in the browser (and account) of
+  whoever gave it. The debater sees it on their page only on that device or
+  account — a shared server-side table is needed for it to follow the debater.
+- **No XP.** The badge art shows +200 XP, but judge awards don't add to the
+  debater's level yet, for the same reason: the level lives in the debater's
+  browser, while the award lives in the judge's.

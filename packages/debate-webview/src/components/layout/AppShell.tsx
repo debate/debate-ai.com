@@ -26,6 +26,7 @@ import { SignInPromptProvider } from "./SignInPromptProvider"
 import { GlobalCommandPalette } from "./GlobalCommandPalette"
 import { ServiceWorkerRegistrar } from "./ServiceWorkerRegistrar"
 import { useIsFramedDocument } from "../../lib/layout/use-framed-document"
+import { isDocsPath } from "../../lib/layout/frame-navigation"
 import {
   FrameNavigationHost,
   useFrameNavigationHandoff,
@@ -51,6 +52,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // `FrameNavigationBridge`; a hard load is still the fallback when no shell
   // answers.
   useFrameNavigationHandoff(embedded, pathname)
+
+  // The help docs (`app/docs`, from `debate-help-docs`) bring their own
+  // navigation — Fumadocs' header, sidebar and search — and their own
+  // stylesheet, so they get none of the app's chrome. Links in and out of
+  // /docs are real page loads (see `NON_ROUTER_PREFIXES` in
+  // `frame-navigation.ts`), so this document never switches between the two.
+  if (isDocsPath(pathname)) return <>{children}</>
 
   if (embedded) {
     return (

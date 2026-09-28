@@ -11,7 +11,7 @@
  * `editor`, `app`, `nav-panel`, `open-btn`, `export-btn`, `settings-btn`,
  * `read-mode-btn`, `word-count-btn`, `word-count-text`,
  * `cursor-color-display`, `cursor-color-text`, `zoom-out-btn`, `zoom-in-btn`,
- * `zoom-reset-btn`, `zoom-pct`. Everything else below is optional (used
+ * `zoom-reset-btn`, `zoom-pct`, `file-drag-mark`. Everything else below is optional (used
  * behind `| null` guards) — kept anyway so the full feature set (quick
  * cards, comments, numbering, collab chip, etc.) works exactly as upstream
  * intends. Two web-edition promo buttons from the original markup
@@ -174,9 +174,8 @@ export const RIBBON_HTML = `
     <div id="view-ops-panel" class="ribbon-doc-ops-panel" role="group" aria-label="View tools">
       <button id="read-mode-btn" class="ribbon-doc-ops-btn" type="button"
               title="Read mode" aria-label="Read mode"><span class="pmd-icon pmd-icon-read-mode" aria-hidden="true"></span></button>
-      <button id="nav-pane-toggle-btn" class="ribbon-doc-ops-btn" type="button"
-              aria-pressed="true" title="Show / hide the navigation pane"
-              aria-label="Toggle nav pane"><span class="pmd-icon pmd-icon-nav-toggle" aria-hidden="true"></span></button>
+      <button id="reader-view-btn" class="ribbon-doc-ops-btn" type="button"
+              title="Reading view" aria-label="Reading view"><span class="pmd-icon pmd-icon-book" aria-hidden="true"></span></button>
     </div>
     <div id="comments-ops-panel" class="ribbon-doc-ops-panel ribbon-doc-ops-panel-3col" role="group" aria-label="Comments">
       <button id="comments-toggle-btn" class="ribbon-doc-ops-btn" type="button"
@@ -246,5 +245,9 @@ export const RIBBON_HTML = `
     <button id="zoom-in-btn" type="button" aria-label="Zoom in"><span class="pmd-icon pmd-icon-plus" aria-hidden="true"></span></button>
     <button id="zoom-reset-btn" type="button" aria-label="Reset zoom to 100%" title="Reset to 100%"><span class="pmd-icon pmd-icon-reset" aria-hidden="true"></span></button>
   </div>
+  <!-- CardMirror mark: drag handle for the focused document's file
+       (file-drag-mark.ts). Hidden until the desktop host wires it, so it
+       never shows in the web embed — but the engine binds it at load. -->
+  <button id="file-drag-mark" type="button" hidden aria-label="CardMirror"></button>
 </div>
 `;

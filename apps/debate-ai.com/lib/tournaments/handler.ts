@@ -4,7 +4,7 @@
  * session. Mounted at `/api/tabroom` by `app/api/tabroom/[...path]/route.ts`.
  *
  * Tabroom's tables live in the app's own D1 database (`debate_db`, migrated by
- * `scripts/migrate-d1.ts` from the package's `migrations/`), unless a separate
+ * `.github/scripts/migrate-d1.ts` from the package's `migrations/`), unless a separate
  * `tabroom_db` binding is configured, which then takes precedence. In local
  * development the libSQL file database stands in for D1.
  */

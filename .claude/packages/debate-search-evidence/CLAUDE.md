@@ -28,3 +28,13 @@ shared library's shape reaches both. Check them before renaming anything.
   counts as a contribution changes everyone's standing.
 - Card content is user-submitted and can be hostile. It is rendered widely;
   sanitize at the boundary, not at each render site.
+- **The source-article panel talks to qwksearch.com.** `CardContentViewer`
+  finds a card's source URL (`lib/card-source-url.ts`) and
+  `SourceArticlePanel` fetches its full text from qwksearch's
+  extract-webpage endpoint (`lib/source-article.ts`, always passing
+  `baseUrl` — the api-client otherwise resolves against debate-ai.com) and
+  renders it with research-agent-ui's `ArticleContent`. That import is lazy
+  and must keep setting the `Prism` and `NEXT_PUBLIC_BASE_URL` globals first,
+  for the reasons in debate-webview's `routes/doc/ResearchAgentEmbed.tsx`;
+  dropping either breaks /doc, not this screen. `ArticleContent` does not
+  sanitize the extracted `cite`, so the panel does.

@@ -38,6 +38,7 @@ import { collectHeadings, type HeadingEntry } from './headings.js';
 import { matchesAllTokens, tokenizeQuery } from './file-search.js';
 import { captureFocusForDialog } from './text-prompt.js';
 import { pushOverlay, popOverlay, isTopOverlay } from './overlay-stack.js';
+import { sectionFavoritesFor, type SectionFavorites } from './self-ref-favorites.js';
 
 interface PickerRow {
   entry: HeadingEntry;
@@ -58,7 +59,20 @@ interface PickerRow {
   collapsed: boolean;
   el: HTMLButtonElement;
   toggleEl: HTMLSpanElement;
+  /** The row's star (favorites toggle); mirrors the store. */
+  starEl: HTMLSpanElement;
 }
+
+/** One keyboard-navigable slot: a favorite row (above the filter) or an
+ *  outline row. Favorites come first in arrow order. */
+interface NavSlot {
+  el: HTMLButtonElement;
+  row: PickerRow;
+  favorite: boolean;
+}
+
+const STAR_ON = '★';
+const STAR_OFF = '☆';
 
 /** Section geometry for one entry, from the flat entry list — mirrors
  *  computeHeadingRange/extractSection semantics without any doc scans
@@ -105,10 +119,12 @@ function computeBoundaries(entries: HeadingEntry[], docSize: number): number[] {
 
 export function openSelfRefPicker(
   view: EditorView,
-  opts: { title: string; guardPos: number },
+  opts: { title: string; guardPos: number; favorites?: SectionFavorites },
   onPick: (headingId: string) => void,
 ): void {
   const doc = view.state.doc;
+  // Starred sections (per document; see self-ref-favorites.ts).
+  const favorites = opts.favorites ?? sectionFavoritesFor(view);
   // The ONE pass. Cites are collected (no skipCite) because the filter
   // matches a tag by its card's cite, like the palette's in-file dive —
   // the same O(doc) walk the nav pane already pays on every refresh.
@@ -144,6 +160,7 @@ export function openSelfRefPicker(
       collapsed: false,
       el: null as unknown as HTMLButtonElement,
       toggleEl: null as unknown as HTMLSpanElement,
+      starEl: null as unknown as HTMLSpanElement,
     });
     ancestorStack.push(rows.length - 1);
   }
@@ -166,6 +183,19 @@ export function openSelfRefPicker(
   title.className = 'pmd-route-header';
   title.textContent = opts.title;
   dialog.appendChild(title);
+
+  // Favorites: starred sections, above the filter so a frequent pick is
+  // one click with no search (hidden while there are none).
+  const favWrap = document.createElement('div');
+  favWrap.className = 'pmd-selfref-picker-favorites';
+  const favTitle = document.createElement('div');
+  favTitle.className = 'pmd-selfref-picker-favorites-title';
+  favTitle.textContent = 'Favorites';
+  favWrap.appendChild(favTitle);
+  const favList = document.createElement('div');
+  favList.className = 'pmd-selfref-picker-favorites-list';
+  favWrap.appendChild(favList);
+  dialog.appendChild(favWrap);
 
   const filter = document.createElement('input');
   filter.type = 'text';
@@ -203,16 +233,76 @@ export function openSelfRefPicker(
   };
 
   // ---- Rows (built once; collapse/filter only toggle `hidden`) ----
-  let activeIdx = -1; // index into rows; keyboard-driven highlight
-  const setActive = (idx: number): void => {
-    if (activeIdx >= 0) rows[activeIdx]?.el.classList.remove('pmd-selfref-picker-row-active');
-    activeIdx = idx;
-    if (idx >= 0) {
-      const r = rows[idx]!;
-      r.el.classList.add('pmd-selfref-picker-row-active');
+  const rowById = new Map<string, PickerRow>();
+  let favSlots: NavSlot[] = [];
+  let active: NavSlot | null = null; // keyboard-driven highlight
+  const setActive = (slot: NavSlot | null): void => {
+    active?.el.classList.remove('pmd-selfref-picker-row-active');
+    active = slot;
+    if (slot) {
+      slot.el.classList.add('pmd-selfref-picker-row-active');
       // jsdom has no scrollIntoView; real browsers always do.
-      if (typeof r.el.scrollIntoView === 'function') r.el.scrollIntoView({ block: 'nearest' });
+      if (typeof slot.el.scrollIntoView === 'function') slot.el.scrollIntoView({ block: 'nearest' });
     }
+  };
+  /** Index into `rows` of the active OUTLINE row, or -1. */
+  const activeIdxOf = (): number => (active && !active.favorite ? rows.indexOf(active.row) : -1);
+
+  const makeStar = (row: PickerRow): HTMLSpanElement => {
+    const star = document.createElement('span');
+    star.className = 'pmd-selfref-picker-star';
+    star.setAttribute('role', 'button');
+    star.tabIndex = -1;
+    star.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFavorite(row);
+    });
+    return star;
+  };
+  const paintStar = (star: HTMLSpanElement, on: boolean): void => {
+    star.textContent = on ? STAR_ON : STAR_OFF;
+    star.classList.toggle('pmd-selfref-picker-star-on', on);
+    star.setAttribute('aria-pressed', on ? 'true' : 'false');
+    star.title = on ? 'Remove from favorites' : 'Add to favorites';
+  };
+  const toggleFavorite = (row: PickerRow): void => {
+    const id = row.entry.id;
+    if (!id) return;
+    const on = !favorites.has(id);
+    favorites.set(id, on);
+    paintStar(row.starEl, on);
+    renderFavorites();
+  };
+  /** Rebuild the Favorites block from the store: starred ids whose heading
+   *  is still in the outline, in starring order; a favorite that is not
+   *  pickable right now (the cursor sits in it) shows disabled like its
+   *  outline row. */
+  const renderFavorites = (): void => {
+    if (active?.favorite) setActive(null);
+    favList.innerHTML = '';
+    favSlots = [];
+    for (const id of favorites.list()) {
+      const row = rowById.get(id);
+      if (!row) continue;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'pmd-selfref-picker-row pmd-selfref-picker-fav';
+      if (!row.pickable) {
+        btn.classList.add('pmd-selfref-picker-row-disabled');
+        btn.setAttribute('aria-disabled', 'true');
+      }
+      const label = document.createElement('span');
+      label.className = 'pmd-selfref-picker-label';
+      label.textContent = row.entry.text.trim() || '(untitled)';
+      btn.appendChild(label);
+      const star = makeStar(row);
+      paintStar(star, true);
+      btn.appendChild(star);
+      btn.addEventListener('click', () => pick(row));
+      favList.appendChild(btn);
+      favSlots.push({ el: btn, row, favorite: true });
+    }
+    favWrap.hidden = favSlots.length === 0;
   };
 
   for (let i = 0; i < rows.length; i++) {
@@ -244,11 +334,23 @@ export function openSelfRefPicker(
     label.textContent = row.entry.text.trim() || '(untitled)';
     btn.appendChild(label);
 
+    // Only a row with an id can be a favorite (the id is the identity).
+    const star = makeStar(row);
+    if (row.entry.id) {
+      paintStar(star, favorites.has(row.entry.id));
+    } else {
+      star.hidden = true;
+    }
+    btn.appendChild(star);
+
     btn.addEventListener('click', () => pick(row));
     row.el = btn;
     row.toggleEl = toggle;
+    row.starEl = star;
+    if (row.entry.id) rowById.set(row.entry.id, row);
     list.appendChild(btn);
   }
+  renderFavorites();
 
   /** Recompute every row's `hidden` from collapse state + the filter. While a
    *  filter is active, collapse is ignored (matches + ancestors all show) and
@@ -277,7 +379,7 @@ export function openSelfRefPicker(
       }
     }
     // The active row must stay visible; drop the highlight if it vanished.
-    if (activeIdx >= 0 && rows[activeIdx]!.el.hidden) setActive(-1);
+    if (active && active.el.hidden) setActive(null);
   }
   filter.addEventListener('input', refreshVisibility);
   refreshVisibility();
@@ -288,6 +390,11 @@ export function openSelfRefPicker(
     for (let i = 0; i < rows.length; i++) if (!rows[i]!.el.hidden) out.push(i);
     return out;
   };
+  /** Arrow order: favorites first, then the visible outline rows. */
+  const visibleSlots = (): NavSlot[] => [
+    ...favSlots,
+    ...visibleIndexes().map((i) => ({ el: rows[i]!.el, row: rows[i]!, favorite: false })),
+  ];
   const onKey = (e: KeyboardEvent): void => {
     if (!isTopOverlay(overlayToken)) return;
     if (e.key === 'Escape') {
@@ -297,9 +404,9 @@ export function openSelfRefPicker(
     }
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      const vis = visibleIndexes();
+      const vis = visibleSlots();
       if (vis.length === 0) return;
-      const at = vis.indexOf(activeIdx);
+      const at = active ? vis.findIndex((s) => s.el === active!.el) : -1;
       const next =
         e.key === 'ArrowDown'
           ? vis[Math.min(at + 1, vis.length - 1)]!
@@ -308,6 +415,7 @@ export function openSelfRefPicker(
       return;
     }
     if (e.key === 'ArrowRight') {
+      const activeIdx = activeIdxOf();
       if (activeIdx >= 0 && rows[activeIdx]!.hasChildren && rows[activeIdx]!.collapsed) {
         e.preventDefault();
         rows[activeIdx]!.collapsed = false;
@@ -316,6 +424,7 @@ export function openSelfRefPicker(
       return;
     }
     if (e.key === 'ArrowLeft') {
+      const activeIdx = activeIdxOf();
       if (activeIdx < 0) return;
       const row = rows[activeIdx]!;
       if (row.hasChildren && !row.collapsed) {
@@ -324,14 +433,15 @@ export function openSelfRefPicker(
         refreshVisibility();
       } else if (row.ancestors.length > 0) {
         e.preventDefault();
-        setActive(row.ancestors[row.ancestors.length - 1]!);
+        const parent = rows[row.ancestors[row.ancestors.length - 1]!]!;
+        setActive({ el: parent.el, row: parent, favorite: false });
       }
       return;
     }
     if (e.key === 'Enter') {
       e.preventDefault();
-      if (activeIdx >= 0) {
-        pick(rows[activeIdx]!);
+      if (active) {
+        pick(active.row);
         return;
       }
       const tokens = tokenizeQuery(filter.value);

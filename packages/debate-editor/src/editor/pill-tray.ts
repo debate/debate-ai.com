@@ -1,6 +1,6 @@
 /**
- * Geometry helper for the bottom-left "pill tray" — the fixed container holding
- * the dropzone and the send/receive pills (`.pmd-pill-tray`).
+ * Geometry helper for the bottom-left "pill tray" — the fixed container
+ * holding the dropzone and the send/receive pills (`.pmd-pill-tray`).
  */
 
 /** Whether `clientX` falls within the pill tray's horizontal span (padded a

@@ -6,7 +6,7 @@
  *
  * Given a round ID and side labels, resolves the round's already-persisted
  * flow summary (`state/flowSummaries.ts`) and judge-paradigm selection
- * (`debate-speech-writer`'s `state/judgeParadigmSelections.ts`) via
+ * (`state/judgeParadigmSelections.ts`) via
  * `round/judge-decision-store-wiring.ts`'s `buildJudgeDecisionInputFromStores`,
  * calls `round/judge-decision-client.ts`'s `requestJudgeDecision` for a
  * real AI verdict, and appends the result to that round's history log via
@@ -19,11 +19,8 @@
  *
  * A `?roundId=` query param (read via `next/navigation`'s `useSearchParams`)
  * pre-fills the Round ID field — the deep link
- * `debate-speech-writer`'s `buildJudgeDecisionDeepLink` builds for the
- * "Get AI judge decision →" link on each saved selection in
- * `JudgeParadigmPickerPanel.tsx`, closing the
- * `packages/debate-help-docs/content/docs/internals/judge-paradigm-selections.mdx` Known gap that picking a
- * paradigm had no path into actually requesting a decision for it, mirroring
+ * `state/judgeParadigmSelections.ts`'s `buildJudgeDecisionDeepLink` builds for
+ * a saved paradigm's "Get AI judge decision →" link, mirroring
  * `debate-card-search`'s `EvidenceLibraryPanel`/`?checkUrl=` convention.
  *
  * @module panels/JudgeDecisionPanel
@@ -54,7 +51,7 @@ const EMPTY_FORM: FormState = { roundId: "", primarySideName: "Affirmative", sec
 
 const MISSING_SOURCE_LABEL: Record<string, string> = {
   flowSummary: "a saved flow summary (Speech Transcript Summaries)",
-  judgeParadigm: "a saved judge paradigm (Judge Paradigm Picker)",
+  judgeParadigm: "a saved judge paradigm for that round",
 }
 
 const PANEL_PARADIGMS = listJudgeParadigms()
@@ -175,7 +172,7 @@ export function JudgeDecisionPanel() {
   return (
     <PanelShell
       title="AI Judge Decision"
-      description="Get an AI-generated decision for a round, judged under its saved paradigm from the Judge Paradigm Picker and its saved flow from Speech Transcript Summaries. Every decision requested for a round is kept as history, newest first."
+      description="Get an AI-generated decision for a round, judged under its saved paradigm and its saved flow from Speech Transcript Summaries. Every decision requested for a round is kept as history, newest first."
     >
       <p className="-mt-3 text-xs text-muted-foreground">
         {synced ? "Decision history is synced to your account." : "Sign in to sync your decision history."}

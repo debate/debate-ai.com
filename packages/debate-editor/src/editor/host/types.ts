@@ -19,6 +19,8 @@
  * file handles for in-place saves); they're not assumed to be pure.
  */
 
+import type { LearnOp } from '../learn-store.js';
+
 /** File-type filter for native open/save dialogs. Mirrors Electron's
  *  `dialog.FileFilter` shape so the ElectronHost can pass it
  *  through verbatim; BrowserHost uses it to build the `<input
@@ -46,6 +48,13 @@ export interface OpenedFile {
    *  a persistent reference — browsers without the File System
    *  Access API, for example. */
   handle?: unknown;
+  /** True when the file is GENUINELY zero bytes on disk (stat / File
+   *  size 0 — e.g. Explorer's "New > Microsoft Word Document" ShellNew
+   *  file, or `touch`). Such a file opens as a blank document bound to
+   *  its path, like Word does. Deliberately NOT set for a short read of
+   *  a cloud placeholder — those stat at the file's real size, and keep
+   *  the "hasn't finished downloading" error. See editor/empty-open.ts. */
+  emptyOnDisk?: boolean;
 }
 
 /** Result of a successful `Host.saveAs` — confirmation that the
@@ -95,7 +104,20 @@ export interface SaveAsOptions {
  *  serialization — lossless and cheap to (de)serialize. The doc's
  *  *intended* on-disk format and handle are tracked separately so a
  *  recovered `.docx` doc can keep targeting Word on its next save. */
+/** On-disk identity of a document's file — the changed-on-disk guard's
+ *  baseline (see apps/desktop/src/doc-writes.ts). */
+export interface DiskBase {
+  mtimeMs: number;
+  size: number;
+  contentHash?: string;
+}
+
+export type CloudProvider = 'dropbox' | 'onedrive' | 'gdrive' | 'icloud' | 'other';
+
 export interface JournalEntry {
+  /** Journal-carried baseline of the doc's file (desktop fills it on
+   *  write); passed back when the recovered doc registers its path. */
+  diskBase?: DiskBase;
   /** Stable identifier for the doc across the session — multi-doc
    *  uses its DocRecord uid; single-doc tracks one at module level.
    *  Recovery reuses the same uid so a recovered doc that crashes
@@ -196,6 +218,11 @@ export interface Host {
    *  contents or `null` if the user cancelled. */
   openFile(opts?: OpenFileOptions): Promise<OpenedFile | null>;
 
+  /** Multi-select variant of `openFile`: resolve with every picked
+   *  file, or an empty array if the user cancelled. Optional — a host
+   *  without it falls back to `openFile`. */
+  openFiles?(opts?: OpenFileOptions): Promise<OpenedFile[]>;
+
   /** Show a native save-file picker pre-filled with `suggestedName`
    *  and write `bytes` to the user's chosen location. Resolve with
    *  the saved file's final name + a handle for future in-place
@@ -267,8 +294,15 @@ export interface Host {
    *  decks — the local annotation layer). `null` when none saved yet. */
   readLearnStore(): Promise<string | null>;
 
-  /** Persist the Learn store blob (whole-blob write; caller debounces). */
-  writeLearnStore(json: string): Promise<void>;
+  /** Apply one Learn store mutation at the single OWNER of the canonical
+   *  copy (desktop: the main process; web: this tab, under a Web Lock)
+   *  and return the resulting blob. Windows never write the blob
+   *  themselves — see learn-store-host.ts. */
+  applyLearnOp(op: LearnOp): Promise<string>;
+
+  /** Follow canonical Learn store changes made through ANY window or
+   *  tab. Returns an unsubscribe. */
+  onLearnStoreChanged(handler: (json: string) => void): () => void;
 
   /** Whether journaling actually persists across sessions on this
    *  host. Set to false by hosts that can't (e.g. a hypothetical
@@ -300,6 +334,15 @@ export interface Host {
    *  user already has open in earlier windows of the same session.
    *  On hosts that don't multi-window (web), always true. */
   isFirstWindow(): Promise<boolean>;
+  /** Arrange Windows (desktop): the speech doc's window on `side`,
+   *  every other window on the other side. Null where windows cannot
+   *  be placed (the web edition). */
+  arrangeWindows(opts: { side: 'left' | 'right'; speechPct: number }): Promise<{ speechFound: boolean; arranged: number } | null>;
+  /** Synchronous — asked from `pagehide`, where nothing can be awaited:
+   *  is the app quitting, as opposed to this one window closing? Hosts
+   *  that cannot tell answer true, so a window's open set is never
+   *  thrown away by mistake. */
+  isAppQuitting(): boolean;
 }
 
 /** Payload exchanged between a spawning window and the freshly-
@@ -307,10 +350,16 @@ export interface Host {
  *  renderer to mount the doc without re-prompting via the file
  *  picker. */
 export interface SpawnWindowPayload {
+  /** Journal-carried baseline of a recovered doc being respawned. */
+  diskBase?: DiskBase;
   filename: string;
   bytes: Uint8Array;
   handle: string | null;
   format: 'cmir' | 'docx' | null;
+  /** True when the file was genuinely 0 bytes on disk — set by main's
+   *  OS-open path only; the receiving window opens it as a blank doc
+   *  (see OpenedFile.emptyOnDisk). Renderer-spawned payloads omit it. */
+  emptyOnDisk?: boolean;
   /** Pre-existing doc uid (when the doc is being moved between
    *  windows or recovered from a journal). Null for fresh docs. */
   uid: string | null;

@@ -26,7 +26,6 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/doc', label: 'Debate Docs', description: 'Annotated summaries and case outlines', category: 'Workspaces' },
   { href: '/research', label: 'Research Workspace', description: 'Topic coverage, evidence library, tasks, quests, review', category: 'Workspaces' },
   { href: '/coach', label: 'Coach Workspace', description: 'Argument tree, flow summary, drills, scouting, briefings', category: 'Workspaces' },
-  { href: '/community-hub', label: 'Community Research Hub', description: 'Every shared research and practice space', category: 'Workspaces' },
 
   // ── Community & Progress ────────────────────────────────────────────────
   { href: '/cards/leaderboard', label: 'Leaderboard', description: 'Helpfulness score, tier, badges, and quest streak', category: 'Community & Progress' },
@@ -59,12 +58,11 @@ export const WORKSPACE_LINKS: WorkspaceLink[] = [
   { href: '/briefings', label: 'Pre-Round Briefings', description: 'Opponent scouting, judge tendencies, and prep notes combined', category: 'Prep & Practice' },
   { href: '/strategy', label: 'Scout-to-Strategy', description: 'Case-choice ranking and matchup risk from scouted opponent and judge data', category: 'Prep & Practice' },
   { href: '/coaching', label: 'AI Coach Mode', description: 'Extension, refutation, collapse, and weighing prompts', category: 'Prep & Practice' },
-  { href: '/paradigms', label: 'Judge Paradigm Picker', description: 'Six built-in paradigms or a custom judge paradigm', category: 'Prep & Practice' },
   { href: '/judge-decision', label: 'AI Judge Decision', description: 'An AI round decision under a saved paradigm and flow', category: 'Prep & Practice' },
   { href: '/summaries', label: 'Speech Transcript Summaries', description: 'Per-argument summaries with cross-exam questions', category: 'Prep & Practice' },
-  { href: '/practice-opponent', label: 'Opponent Persona Picker', description: 'Four built-in personas or a custom opponent style', category: 'Prep & Practice' },
   { href: '/word-count', label: 'Word-Count Speeches', description: 'A live word-count readout instead of a timer', category: 'Prep & Practice' },
   { href: '/outline', label: 'Argument Tree Outline', description: 'Filterable, heading-grouped outline of a flow', category: 'Prep & Practice' },
+  { href: '/practice-partners', label: 'Practice Partners', description: 'Challenge other debaters, or volunteer to debate or judge', category: 'Prep & Practice' },
   { href: '/versus-ai', label: 'Online Debate Versus AI', description: 'A full practice round against an AI opponent', category: 'Prep & Practice' },
   { href: '/practice-round', label: 'Practice Round Simulator', description: 'Timer, judge paradigm, AI opponent', category: 'Prep & Practice' },
   { href: '/annotations', label: 'Flow Annotations', description: 'Timestamped notes on a streamed or recorded round', category: 'Prep & Practice' },

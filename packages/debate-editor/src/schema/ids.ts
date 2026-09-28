@@ -42,6 +42,57 @@ export function stampMissingHeadingIds(doc: PMNode): PMNode {
   return walk(doc);
 }
 
+/** Walk a doc in document order and re-mint the id of every heading
+ *  whose id was already seen — FIRST occurrence wins. Returns the
+ *  original node unchanged when every id was already unique.
+ *
+ *  Duplicate ids enter through the .docx importer: `pmd-heading-*`
+ *  bookmarks are adopted verbatim, and while Word itself enforces
+ *  bookmark uniqueness, the tools around it don't — Verbatim's OOXML
+ *  ops, LibreOffice, and Google Docs all happily duplicate a
+ *  bookmarked heading paragraph (the field case: a heading line
+ *  copied as a style template and retyped, its invisible bookmark
+ *  riding along). Every id-keyed lookup — the nav pane's [data-id]
+ *  jump, transclusion's extractSection, the docx anchor locator —
+ *  resolves first-match-in-doc-order, so first-wins here is exactly
+ *  behavior-preserving: whatever resolved before resolves to the same
+ *  node after, and the re-minted later occurrence was never uniquely
+ *  reachable by that id anyway. Runs at .docx import (both fromDocx
+ *  variants) and in the .cmir load chain, so already-infected files
+ *  heal on open. */
+export function dedupeHeadingIds(doc: PMNode): PMNode {
+  return dedupeWalk(doc, new Set<string>());
+}
+
+function dedupeWalk(node: PMNode, seen: Set<string>): PMNode {
+  if (node.isText) return node;
+  // Self BEFORE children: pre-order matches document order, which is
+  // what makes "first occurrence keeps the id" hold.
+  let attrs = node.attrs;
+  if (HEADING_TYPE_NAMES.has(node.type.name)) {
+    const id = (attrs as Record<string, unknown>)['id'];
+    if (typeof id === 'string' && id) {
+      if (seen.has(id)) attrs = { ...attrs, id: newHeadingId() };
+      else seen.add(id);
+    }
+  }
+  let inner = node.content;
+  if (!node.isLeaf) {
+    const newChildren: PMNode[] = [];
+    let changed = false;
+    node.forEach((child) => {
+      const next = dedupeWalk(child, seen);
+      if (next !== child) changed = true;
+      newChildren.push(next);
+    });
+    if (changed) {
+      inner = node.type.create(attrs, newChildren, node.marks).content;
+    }
+  }
+  if (attrs === node.attrs && inner === node.content) return node;
+  return node.type.create(attrs, inner, node.marks);
+}
+
 function walk(node: PMNode): PMNode {
   // Text is immutable + carries no attrs; skip the reconstruction
   // dance.

@@ -8,9 +8,10 @@ import { defineConfig } from 'vitest/config';
  * built extension, as the README says; a mocked `chrome.storage` would only
  * assert that the mock works.
  *
- * This app is outside the repo's workspace globs and its own config, so it
- * carries its own runner rather than appearing in the root Vitest projects
- * list. Run it with `bun run test` from this directory.
+ * The root Vitest config (`apps/debate-ai.com/vitest.config.ts`) registers
+ * this directory as a project, so the root `bun run test` / `bun run coverage`
+ * run it under this file, and its coverage reaches Codecov. `bun run test`
+ * from this directory still runs it on its own.
  */
 export default defineConfig({
   resolve: {

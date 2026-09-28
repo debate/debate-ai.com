@@ -1,10 +1,10 @@
 import {
   Trophy, Inbox, Award, Library, NotebookPen, History, Gavel, Users, Dumbbell,
-  ClipboardList, GraduationCap, Scale, FileText, Swords, MessageSquareText, Type,
+  ClipboardList, GraduationCap, FileText, MessageSquareText, Type,
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
-  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Compass, Contact,
-  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star,
+  ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake,
   type LucideIcon,
 } from "lucide-react"
 
@@ -59,11 +59,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/research", label: "Research Workspace", icon: Library,
         description: "Work the squad research workspace end to end, covering topic coverage, the evidence library, task routing, quests, leaderboards, and peer review.",
         highlights: ["Topic coverage dashboard", "Evidence library search", "Task routing, quests, and peer review in one place"],
-      },
-      {
-        href: "/community-hub", label: "Community Research Hub", icon: Compass,
-        description: "Search a directory of every shared research, collaboration, and pre-round or practice space across the community.",
-        highlights: ["Cross-squad directory", "Filters by topic, format, and space type"],
       },
       {
         href: "/coach", label: "Coach Workspace", icon: GraduationCap,
@@ -221,11 +216,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["Template prompts per round + side, generated from the flow", "\"Get AI feedback\" expands any prompt into open-ended coaching"],
       },
       {
-        href: "/paradigms", label: "Judge Paradigm Picker", icon: Scale,
-        description: "Pick a built-in or custom AI judge paradigm for a practice round.",
-        highlights: ["Six built-ins: Flow, Lay, Policymaker, Kritikal, Educator, Truth Over Tech", "Or build a custom paradigm from a real judge's stated preferences"],
-      },
-      {
         href: "/judge-decision", label: "AI Judge Decision", icon: Landmark,
         description: "Generate an AI round decision under a round's saved judge paradigm and flow summary.",
         highlights: ["Decision reasoning grounded in the round's saved paradigm", "Reads the same flow summary the Argument Tree Outline shows"],
@@ -236,11 +226,6 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         highlights: ["One summary per argument, straight from the flowed grid", "Cross-exam question and extension-idea suggestions included"],
       },
       {
-        href: "/practice-opponent", label: "Opponent Persona Picker", icon: Swords,
-        description: "Pick the AI practice-opponent style for a session.",
-        highlights: ["Four built-ins: Policy Heavy, Kritik, Lay, Fast Flow", "Or describe your own opponent's debating style as a custom persona"],
-      },
-      {
         href: "/word-count", label: "Word-Count Speeches", icon: Type,
         description: "Practice speeches bounded by a maximum word count instead of a time limit.",
         highlights: ["Live word-count badge recomputed on every keystroke", "One text area per speech in the chosen word-count format"],
@@ -249,6 +234,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/outline", label: "Argument Tree Outline", icon: ListTree,
         description: "Browse a filterable outline of each round's flow, grouped by heading.",
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
+      },
+      {
+        href: "/practice-partners", label: "Practice Partners", icon: Handshake,
+        description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
+        highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
       },
       {
         href: "/versus-ai", label: "Practice vs AI", icon: Bot,

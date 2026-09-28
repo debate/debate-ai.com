@@ -140,8 +140,32 @@ describe("the terms of service page", () => {
   });
 });
 
+describe("Latest News", () => {
+  it("is a sidebar route, so opening a thread from the feed keeps the nav", () => {
+    expect(TOOL_SIDEBAR_HREFS.has("/forums")).toBe(true);
+    expect(isGenericToolSidebarRoute("/forums")).toBe(true);
+    // A thread page is a detail route under an already-listed parent, matched
+    // by prefix — the same way `/doc/<document>` and `/teams/<team>` are.
+    expect(isGenericToolSidebarRoute("/forums/3f2504e0-4f89-41d3-9a0c-0305e82c3301")).toBe(true);
+    expect(hasEmbeddedDock("/forums")).toBe(true);
+  });
+
+  it("sit directly above the Tabroom tournaments entry in the Practice section", () => {
+    // The order is the requirement, not an accident of how the list was
+    // edited: reading the section top to bottom, the community surfaces come
+    // before the external tournament tool.
+    const practice = SIDEBAR_TOOL_SECTIONS.find((section) => section.id === "practice");
+    const hrefs = practice?.tools.map((tool) => tool.href) ?? [];
+
+    expect(hrefs.indexOf("/forums")).toBeGreaterThan(-1);
+    expect(hrefs.indexOf("/forums")).toBeLessThan(hrefs.indexOf("/tournaments"));
+  });
+});
+
 describe("the REASON research workspace", () => {
-  it("is still a tree destination, so the sidebar keeps linking to it", () => {
+  it("is still a sidebar destination, though no longer a Research row", () => {
+    // It lost its "Debate Docs" row in favour of the dock's own Docs button,
+    // which is the same route — so the sidebar still has to know about it.
     expect(TOOL_SIDEBAR_HREFS.has("/doc")).toBe(true);
     expect(matchesToolSidebarHref("/doc")).toBe(true);
     expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);

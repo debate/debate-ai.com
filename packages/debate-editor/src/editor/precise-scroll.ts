@@ -41,6 +41,7 @@
  */
 
 import type { EditorView } from 'prosemirror-view';
+import { readerViewActive, readerControllerFor } from './reader-view.js';
 
 /** Find the nearest scrolling-overflow ancestor of `el`. Returns the
  *  element if one exists, or `null` to fall back to the viewport.
@@ -100,12 +101,22 @@ export function scrollToHeadingId(
   return true;
 }
 
+/** Reading view (paginated) intercepts jumps: vertical scrolling has
+ *  no meaning there — land on the PAGE containing the target instead.
+ *  Returns true when the reader handled it. */
+function readerJump(view: EditorView, target: HTMLElement): boolean {
+  if (!readerViewActive(view)) return false;
+  readerControllerFor(view)?.goToElement(target);
+  return true;
+}
+
 export function preciseScrollIntoView(
-  _view: EditorView,
+  view: EditorView,
   target: HTMLElement,
   block: PreciseScrollBlock = 'start',
 ): void {
   if (!target.isConnected) return;
+  if (readerJump(view, target)) return;
   const myGen = ++scrollGeneration;
 
   // Optimistic initial scroll. Browser uses whatever layout it

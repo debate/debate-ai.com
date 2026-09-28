@@ -3,10 +3,8 @@
  *
  * The app ships roughly fifty distinct surfaces, but nothing lists them all:
  * the global dock exposes four destinations plus a long, flat Settings menu;
- * `/research` and `/coach` tab across the panels of one package each;
- * `/community-hub` covers only the crowdsourcing and pre-round/practice
- * spaces named under TODO.md's "Research Crowdsourcing Organizer Features"
- * heading. None of them mention the core workspaces (card search, the flow
+ * `/research` and `/coach` tab across the panels of one package each, but
+ * none of them mention the core workspaces (card search, the flow
  * spreadsheet, the video archive, the Reason editor) or the rankings and
  * standings surfaces at all, so a new debater has no single page that
  * outlines what the app actually does.
@@ -25,8 +23,7 @@
  * same shape as `debate-data-sync`) instead of each keeping a hand-synced
  * fork — see `features-page.mdx`'s "One shared catalog" section.
  *
- * Like `debate-card-search`'s narrower community-hub directory, this module
- * is pure: it has no store of its own, because every entry links to a
+ * Like other pure catalog/directory modules in the app, this module is pure: it has no store of its own, because every entry links to a
  * surface that already persists (or doesn't need to persist) its own state.
  *
  * @module feature-catalog
@@ -35,9 +32,9 @@
 /**
  * Where the feature docs are served from by default: same origin as the app
  * (`/docs/features/<name>`, extension stripped) — the live `/features` page's
- * own docs site (`scripts/build-docs.mjs` static-exports
- * `packages/debate-help-docs/content/docs/features/<name>.mdx` into
- * `public/docs`). Renderers with no docs site of their own to link into
+ * own docs site (the app mounts `debate-help-docs` at `app/docs`, which
+ * renders `packages/debate-help-docs/content/docs/features/<name>.mdx`
+ * there). Renderers with no docs site of their own to link into
  * (News Stream's spotlights, say) pass {@link GITHUB_DOCS_BASE_URL} to
  * {@link featureDocUrl} instead.
  */
@@ -175,17 +172,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "workspaces",
     tags: ["hub", "coach", "flow sync"],
   },
-  {
-    id: "community-research-hub",
-    title: "Community Research Hub",
-    description:
-      "A searchable directory of every shared research, collaboration, and pre-round/practice space",
-    href: "/community-hub",
-    category: "workspaces",
-    doc: "community-research-hub.md",
-    tags: ["directory", "index"],
-  },
-
   // ── Evidence & research ────────────────────────────────────────────────
   {
     id: "shared-evidence-library",
@@ -443,15 +429,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["risk", "case choice", "adaptation", "ai panel"],
   },
   {
-    id: "judge-paradigm-picker",
-    title: "Judge Paradigm Picker",
-    description: "Pick a built-in or custom AI judge paradigm for a practice round",
-    href: "/paradigms",
-    category: "intelligence",
-    doc: "judge-paradigm-selections.md",
-    tags: ["flow", "lay", "policymaker", "kritikal", "educator"],
-  },
-  {
     id: "ai-judge-decision",
     title: "AI Judge Decision",
     description: "AI-generated round decisions under a round's saved judge paradigm and flow summary",
@@ -471,6 +448,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["simulation", "format", "side"],
   },
   {
+    id: "practice-partners",
+    title: "Practice Partners",
+    description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
+    href: "/practice-partners",
+    category: "practice",
+    doc: "practice-partners.md",
+    tags: ["challenge", "volunteer", "judge", "matchmaking"],
+  },
+  {
     id: "practice-vs-ai",
     title: "Practice vs AI",
     description: "Debate a full timed round against an AI opponent, then get a judged scorecard",
@@ -478,15 +464,6 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "practice",
     doc: "practice-vs-ai.md",
     tags: ["speeches", "bot", "persona", "judge"],
-  },
-  {
-    id: "opponent-persona-picker",
-    title: "Opponent Persona Picker",
-    description: "Pick the AI practice-opponent style for a session",
-    href: "/practice-opponent",
-    category: "practice",
-    doc: "practice-opponent.md",
-    tags: ["policy heavy", "kritik", "lay", "fast flow"],
   },
   {
     id: "ai-coach-mode",

@@ -52,6 +52,10 @@ src/sw/version.ts
 apps/debate-ai.com/public/service-worker.js
 pnpm-lock.yaml
 open-when-ready.log
+# Local database the drizzle folder is applied to: drizzle-kit/libSQL's
+# `file:./data/db.sqlite` (drizzle.config.ts, lib/database/libsql.ts). Generated
+# locally by `bun run db:migrate:d1`; D1 is the real database.
+apps/debate-ai.com/data/
 # Generated video seed SQL (regenerate with `bun run db:seed:videos`)
 apps/debate-ai.com/drizzle/seed/
 
@@ -62,13 +66,8 @@ packages/debate-api-client/dist/
 # macOS Finder metadata
 .DS_Store
 
-# debate-help-docs: Next.js build output and fumadocs-mdx generated files
-packages/debate-help-docs/.next/
+# debate-help-docs: fumadocs-mdx generated collections
 packages/debate-help-docs/.source/
-packages/debate-help-docs/out/
-# …and the copy of that export the web app serves at /docs, staged by
-# `apps/debate-ai.com/scripts/build-docs.mjs` on every build.
-apps/debate-ai.com/public/docs/
 
 # WXT browser extensions: build output and generated types
 apps/*/.output/

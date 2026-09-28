@@ -6,7 +6,7 @@
 
 import React, { useMemo } from "react";
 import { ChevronDown, ExternalLinkIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 import {
   Popover,
   PopoverContent,

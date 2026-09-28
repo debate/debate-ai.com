@@ -44,6 +44,13 @@ ProseMirror engine, Verbatim `.docx` interop (lossless round-trip, encrypted-fil
 decryption, the native `.cmir` format, the `cardmirror-read` headless CLI/MCP server), and
 a React editor shell sized for the site's speech-doc and `/reason-editor` surfaces.
 
+Its engine is upstream CardMirror from the `debate-editor-cm` submodule, rebased with
+debate-ai.com's changes: `upstream.json` pins the upstream commit, `patches/debate-ai.patch`
+records every edit to an upstream file (the tabbed ribbon, the embed hooks, the settings
+sidebar, account sync), and files upstream doesn't have — the React shell with its dropdown
+`MenuBar`, the ribbon tabs, the sync clients — sit beside them in `src/`. `bun run
+sync-upstream` rebases onto a newer submodule commit.
+
 ## debate-editor-cm (git submodule) and debate-editor-cm-adapter
 
 `debate-editor-cm` is a git submodule of upstream CardMirror,
@@ -73,10 +80,9 @@ bridge, palette, and scoped styles here.
 
 Package name `debate-help-docs`. The Debate AI documentation site, built on the Fumadocs
 starter template. Publishes the product's feature pages (`content/docs/features/`), the engineering
-notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. Statically exported under `basePath: '/docs'` and
-copied into the web app's `public/docs` by `apps/debate-ai.com/scripts/build-docs.mjs`,
-so it is served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed
-on its own.
+notes behind them (`content/docs/internals/`) and package READMEs as a searchable docs site. The web
+app mounts its route modules at `app/docs` and compiles its MDX in the app's own Vite build, so it is
+served at [debate-ai.com/docs](https://debate-ai.com/docs) rather than deployed on its own.
 
 ## debate-practice-drills
 
@@ -122,7 +128,8 @@ plain `fetch`, no Go/Mongo/Gin, runs under Next.js or a Cloudflare Worker.
 ## debate-search-evidence
 
 Package name `debate-research-evidence`. The evidence card research interface (search bar,
-result list, card content viewer, research and AI-analysis sidebars) plus the shared
+result list, card content viewer with a source-article reader that pulls a card's full
+article through qwksearch, research and AI-analysis sidebars) plus the shared
 evidence/argument library, LLM card scoring, revision incentives, review queue, and topic
 coverage dashboard. The foundation that `debate-contributor-progress` and
 `debate-team-collaboration` split off from and still build on.
@@ -150,21 +157,22 @@ includes an in-round speech recorder with mic selection, live waveform, and play
 Upstream [Tabroom](https://github.com/debate/debate-tournament-tabroom) vendored and adapted
 to Cloudflare Workers + D1: its public API as a fetch handler (`debate-tournaments/server`,
 mounted at `/api/tabroom`), a React port of its invite/pairings/results pages (mounted at
-`/tournaments`), the route table, and the D1 schema. `scripts/sync-upstream.mjs` re-clones
-upstream and re-applies this package's patches and overlays, so upstream changes keep flowing in.
+`/tournaments`), the route table, its `@tabroom/types` Zod schemas and inferred types
+(`debate-tournaments/types`, with `tabroomSchemas` — every schema keyed by record name — and
+a non-throwing `parseTabroom(schema, data)`), and the D1 schema.
+`scripts/sync-upstream.mjs` re-clones upstream and re-applies this package's patches and
+overlays, so upstream changes keep flowing in.
 
-## debate-tournaments-tabroom (git submodule) and debate-tournaments-tabroom-adapter
+## debate-tournaments-tabroom (git submodule)
 
 `debate-tournaments-tabroom` is a git submodule of upstream Tabroom,
 [debate/debate-tournaments](https://github.com/debate/debate-tournaments), outside the bun
-workspace. `debate-tournaments-tabroom-adapter` re-exports its `@tabroom/types` Zod schemas
-and inferred types, with `tabroomSchemas` (every schema keyed by record name) and a
-non-throwing `parseTabroom(schema, data)`.
+workspace. It is only the source `debate-tournaments` vendors from; nothing imports it at
+runtime. Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in
+an existing checkout, before running the sync script.
 
-The two adapters that reach into a submodule by path link `<submodule>/node_modules` to
-their own on `postinstall`, so the submodule's bare imports resolve under bun's isolated
-linker. Clone with `git clone --recurse-submodules`, or run
-`git submodule update --init` in an existing checkout, before `bun install`.
+The adapters that reach into a submodule by path link `<submodule>/node_modules` to their own
+on `postinstall`, so the submodule's bare imports resolve under bun's isolated linker.
 
 ## debate-videos
 

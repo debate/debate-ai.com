@@ -19,6 +19,13 @@ badge, contributor, helpfulness score, likes/saves/endorsement counts, and
 Like/Save/Endorse buttons. A "Flagged for review" moderator toggle narrows
 the feed to popularity-driven outliers.
 
+A "Comments" toggle on each entry mounts `debate-comments`'
+`<CommentSection resourceType="contribution" resourceId={entry.id} />` — the
+same threaded, likeable, account-only discussion UI already used on video
+watch pages and forum threads. Collapsed by default and mounted only once
+expanded, since the feed can list many entries at once and each mount fetches
+its own thread.
+
 ## Data flow
 
 ```

@@ -78,7 +78,19 @@ describe("ToolNavTree sectionIds", () => {
     const html = render({ sectionIds: [RESEARCH_SECTION_ID] });
 
     expect(html).toContain("/cards/coverage");
-    expect(html).toContain("/reason-editor");
+    // Last row in Research: "Team Brainstorm Assist".
+    expect(html).toContain("/cards/brainstorm");
+  });
+
+  it("no longer lists the two dock destinations under Research", () => {
+    // "Reason Editor" and "Debate Docs" restated `/reason-editor` and the
+    // dock's own Docs button directly beneath the dock, which says both
+    // again as icons. The routes keep their sidebars — see
+    // `sidebar-routes`' `EXTRA_SIDEBAR_HREFS` and `APP_DOCK_LINKS`.
+    for (const html of [render({}), render({ sectionIds: [RESEARCH_SECTION_ID] })]) {
+      expect(html).not.toContain("/reason-editor");
+      expect(html).not.toContain(">Debate Docs<");
+    }
   });
 
   it("still renders every section when no sections are named", () => {
@@ -91,7 +103,7 @@ describe("ToolNavTree sectionIds", () => {
 
   it("closes Practice with the glossary and rankings links", () => {
     // They used to hang below the whole tree, in no section at all.
-    pathname.current = "/paradigms";
+    pathname.current = "/prep-notes";
     try {
       const html = render({ sectionIds: [PRACTICE_SECTION_ID] });
 

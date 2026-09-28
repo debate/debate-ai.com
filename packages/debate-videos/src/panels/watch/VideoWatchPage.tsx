@@ -53,6 +53,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, Calendar, Eye } from "lucide-react"
+import { CommentSection } from "debate-comments"
 
 import { WatchToolbar } from "../../components/watch/WatchToolbar"
 import { WatchSidePanel } from "../../components/watch/WatchSidePanel"
@@ -803,6 +804,17 @@ export function VideoWatchPage({
                   {description}
                 </p>
               )}
+            </div>
+
+            {/* The discussion, under the video's own metadata and above
+                everything else on the page. YouTube puts it here for a reason:
+                a viewer has just finished (or scrubbed past) the round, and
+                the questions that round raised are what they want to say
+                something about. A comment thread higher up would compete with
+                the player; below "Related videos" it would compete with the
+                next video, and nobody scrolls that far. */}
+            <div className="border-t border-border pt-5">
+              <CommentSection resourceType="video" resourceId={videoId} />
             </div>
           </div>
 

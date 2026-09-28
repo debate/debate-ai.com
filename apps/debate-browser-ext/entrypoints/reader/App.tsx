@@ -52,6 +52,7 @@ import {
   type ReaderLayout,
 } from '@/src/reader/panel';
 import { checkPageForExistingCards } from '@/src/reuse/api';
+import { detectPageUrl } from '@/src/url-detection/api';
 import {
   DEFAULT_SUMMARIZE_PROMPT,
   getSettings,
@@ -240,6 +241,13 @@ export default function App() {
       setAiError('');
       setFollowupQuestions([]);
       setFollowupError('');
+
+      // Report the visited URL to the server for URL detection (non-blocking)
+      if (extracted.url) {
+        const pageTitle = document.title || extracted.title;
+        const favicon = document.querySelector('link[rel="icon"]')?.getAttribute('href') || undefined;
+        detectPageUrl(extracted.url, pageTitle, favicon).catch(() => {});
+      }
     } catch (error) {
       setArticle(null);
       setExtractError(

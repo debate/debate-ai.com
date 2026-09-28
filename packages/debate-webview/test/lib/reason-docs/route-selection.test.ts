@@ -205,6 +205,29 @@ describe("selectionParamsKey", () => {
   })
 })
 
+describe("urlWithoutParam", () => {
+  const loc = (search: string, hash = "") => ({ pathname: "/reason-editor", search, hash })
+
+  it("drops the named parameter while keeping the others", () => {
+    expect(urlWithoutParam("share", loc("?doc=impacts/warming-1ac&share=abc"))).toBe(
+      "/reason-editor?doc=impacts%2Fwarming-1ac",
+    )
+  })
+
+  it("keeps the hash", () => {
+    expect(urlWithoutParam("share", loc("?share=abc", "#top"))).toBe("/reason-editor#top")
+  })
+
+  it("drops the trailing '?' once the last parameter is removed", () => {
+    expect(urlWithoutParam("share", loc("?share=abc"))).toBe("/reason-editor")
+  })
+
+  it("returns null when the parameter isn't there to drop", () => {
+    expect(urlWithoutParam("share", loc("?doc=impacts/warming-1ac"))).toBeNull()
+    expect(urlWithoutParam("share", loc(""))).toBeNull()
+  })
+})
+
 describe("canonicalEditorUrl", () => {
   const catalog = { documents: DOCUMENTS, topics: TOPICS }
   const loc = (search: string, pathname = REASON_EDITOR_ROUTE) => ({ pathname, search, hash: "" })

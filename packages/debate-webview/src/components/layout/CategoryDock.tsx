@@ -31,7 +31,7 @@ import { LoginDialog } from "./LoginDialog"
 import { authClient } from "../../lib/auth/client"
 import { resetUser } from "../../lib/analytics/mixpanel"
 import { useSession } from "../../lib/hooks/useSession"
-import { hasEmbeddedDock } from "../../lib/sidebar-routes"
+import { hasEmbeddedDock, hostsOwnSidebarDock, isGenericToolSidebarRoute } from "../../lib/sidebar-routes"
 import { SIDEBAR_MENU_SECTIONS, SITE_LINKS, DEBATE_LINKS } from "../../lib/nav/dock-menu-sections"
 import { NAV_ITEMS } from "../../lib/nav/dock-nav-items"
 import { accountLabel } from "../../lib/nav/account-label"
@@ -288,7 +288,7 @@ function SettingsMenu({
           {/* An app route (`/features`, `/legal/privacy`) is pushed through
               the router so it opens inside the app — sidebar, dock and the
               persistent player all still there. Only an outside site or the
-              statically exported `/docs` build gets a real page load; see
+              help docs at `/docs` (no app shell there) get a real page load; see
               `footer-links.ts`'s `hardNavigate`. */}
           {SITE_LINKS.map((link) => {
             const isExternal = link.url.startsWith("http")
@@ -636,13 +636,10 @@ export function CategoryDock({ embedded = false }: { embedded?: boolean } = {}) 
     )
   }
 
-  // The videos page (and, via `AppSidebarShell`, every other page the videos
-  // sidebar's tool tree links to) renders its own embedded dock at the top of
-  // its sidebar (md+), so the fixed top-left dock would otherwise show twice —
-  // but only while this document is the one rendering that page. Once it is in
-  // the app frame its sidebar dock is in the frame's document, where it takes
-  // itself down, and suppressing here as well would leave no dock at all.
-  const suppressDesktopDock = !frame?.framedPath && hasEmbeddedDock(activePath)
+  // The generic sidebar routes (and routes that host their own sidebar dock
+  // like /doc) render an embedded dock inside their sidebar (md+), so the
+  // fixed top-left floating dock stays hidden rather than showing twice.
+  const suppressDesktopDock = isGenericToolSidebarRoute(activePath) || hostsOwnSidebarDock(activePath)
 
   return (
     <>

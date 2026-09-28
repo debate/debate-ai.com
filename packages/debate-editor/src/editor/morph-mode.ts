@@ -61,6 +61,7 @@ import {
   commandLabelFor,
   type RibbonCommandId,
 } from './ribbon-commands.js';
+import { isRibbonCommandAvailable } from './ribbon-availability.js';
 import { pushOverlay, popOverlay, isTopOverlay } from './overlay-stack.js';
 
 export interface MorphModeDeps {
@@ -294,7 +295,10 @@ export function morphModePlugin(deps: MorphModeDeps): Plugin {
     for (const token of Object.keys(TOKEN_NAMES)) {
       draft[token] = { ...(bindings[token] ?? { cmd: '', advance: false }) };
     }
-    const sortedIds = [...RIBBON_COMMAND_IDS].sort((x, y) =>
+    // Offer only commands available in this context (gated experiments,
+    // platform-only commands stay out of the picker; a saved binding to one
+    // still loads — `valid` above keeps the full id set).
+    const sortedIds = RIBBON_COMMAND_IDS.filter(isRibbonCommandAvailable).sort((x, y) =>
       commandLabelFor(x).localeCompare(commandLabelFor(y)),
     );
     const pickerOptions: Array<{ value: string; label: string }> = [

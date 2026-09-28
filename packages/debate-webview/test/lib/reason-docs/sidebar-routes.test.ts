@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect } from "vitest"
-import { showsReasonDocsPanels } from "../../../src/lib/reason-docs/sidebar-routes"
+import { showsCardsOnlySidebar, showsReasonDocsPanels } from "../../../src/lib/reason-docs/sidebar-routes"
 
 describe("showsReasonDocsPanels", () => {
   it("shows them on /cards, the dock destination they belong to", () => {
@@ -54,5 +54,42 @@ describe("showsReasonDocsPanels", () => {
     expect(showsReasonDocsPanels(null)).toBe(false)
     expect(showsReasonDocsPanels(undefined)).toBe(false)
     expect(showsReasonDocsPanels("")).toBe(false)
+  })
+})
+
+describe("showsCardsOnlySidebar", () => {
+  it("trims the sidebar to the docs panels on /cards", () => {
+    expect(showsCardsOnlySidebar("/cards")).toBe(true)
+  })
+
+  it("trims it the same on a page below /cards", () => {
+    expect(showsCardsOnlySidebar("/cards/library")).toBe(true)
+    expect(showsCardsOnlySidebar("/cards/leaderboard/42")).toBe(true)
+  })
+
+  it("leaves the editor its full tree — it is reached from those sections", () => {
+    expect(showsCardsOnlySidebar("/reason-editor")).toBe(false)
+  })
+
+  it("leaves every other tool route its own nav", () => {
+    for (const path of ["/", "/coach", "/practice-round", "/videos", "/debate", "/doc"]) {
+      expect(showsCardsOnlySidebar(path)).toBe(false)
+    }
+  })
+
+  it("does not match a route that merely starts with /cards", () => {
+    expect(showsCardsOnlySidebar("/cardsomething")).toBe(false)
+  })
+
+  it("ignores a trailing slash, a query string and a hash", () => {
+    expect(showsCardsOnlySidebar("/cards/")).toBe(true)
+    expect(showsCardsOnlySidebar("/cards?tab=library")).toBe(true)
+    expect(showsCardsOnlySidebar("/cards#top")).toBe(true)
+  })
+
+  it("reads a missing pathname as the full sidebar rather than throwing", () => {
+    expect(showsCardsOnlySidebar(null)).toBe(false)
+    expect(showsCardsOnlySidebar(undefined)).toBe(false)
+    expect(showsCardsOnlySidebar("")).toBe(false)
   })
 })

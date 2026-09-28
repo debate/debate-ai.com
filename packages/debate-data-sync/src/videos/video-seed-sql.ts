@@ -2,7 +2,7 @@
  * @fileoverview Builds the SQL that loads the video JSON assets into the
  * `videos` table.
  *
- * Shared by the CLI seed script (`apps/debate-ai.com/scripts/seed-videos.ts`,
+ * Shared by the CLI seed script (`.github/scripts/seed-videos.ts`,
  * which writes a `.sql` file for `wrangler d1 execute`) and the admin seed
  * endpoint (which runs the same statements straight against the D1 binding
  * from inside the Worker). Values are escaped here, in code, so both callers

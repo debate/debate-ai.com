@@ -112,8 +112,8 @@ describe("searchFeatures", () => {
   });
 
   it("matches titles and descriptions case-insensitively", () => {
-    const matches = searchFeatures(APP_FEATURES, "JUDGE PARADIGM");
-    expect(matches.map((feature) => feature.id)).toContain("judge-paradigm-picker");
+    const matches = searchFeatures(APP_FEATURES, "JUDGE DECISION");
+    expect(matches.map((feature) => feature.id)).toContain("ai-judge-decision");
   });
 
   it("matches a route", () => {

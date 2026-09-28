@@ -6,11 +6,13 @@
  */
 import { getElectronHost } from './host/index.js';
 import { setIcon } from './icons';
+import { isLiteBuild } from './lite.js';
+import { isTopOverlay, popOverlay, pushOverlay } from './overlay-stack.js';
 import { pluginSettingsDefs, unregisterPlugin } from './plugin-registry.js';
 import { openPluginSettingsModal } from './plugin-settings-modal.js';
 import { isPluginEnabled, setPluginEnabled } from './plugins-store.js';
 import { settings } from './settings.js';
-import { confirmDialog } from './text-prompt.js';
+import { captureFocusForDialog, confirmDialog } from './text-prompt.js';
 import { showToast } from './toast.js';
 
 interface InstalledPlugin {
@@ -79,7 +81,14 @@ export function renderPluginsPanel(container: HTMLElement): void {
   installBtn.type = 'button';
   installBtn.className = 'pmd-install-info-btn';
   installBtn.textContent = 'Install';
+  const browseBtn = document.createElement('button');
+  browseBtn.type = 'button';
+  browseBtn.className = 'pmd-install-info-btn';
+  browseBtn.textContent = 'Browse…';
   installRow.append(input, installBtn);
+  // Browsing is an online act against the public directory — pointless
+  // in the no-internet Lite build, where typing a slug fails anyway.
+  if (!isLiteBuild()) installRow.append(browseBtn);
 
   // Install/update/uninstall failures surface here, next to the action,
   // not as a transient toast that scrolls away. Cleared on the next
@@ -276,6 +285,52 @@ export function renderPluginsPanel(container: HTMLElement): void {
     }
   }
 
+  /**
+   * The full install flow for one repo ref, shared by the Install
+   * button and the Browse rows. Two-phase: inspect stages the release
+   * main-side (no disk writes), then the consent dialog runs on its
+   * facts — including the ACTUAL owner/repo, which the manifest can't
+   * spoof — and only consent commits. Declining discards the staged
+   * files, so a declined REINSTALL leaves the existing working version
+   * untouched (the old install-then-ask flow deleted it). Returns true
+   * only when the plugin was actually committed.
+   */
+  async function installFromRef(ref: string): Promise<boolean> {
+    const res = (await host!.pluginInstallInspect(ref)) as
+      | { ok: true; pending: string; plugin: InstalledPlugin; ownerRepo: string }
+      | { ok: false; error: string }
+      | undefined;
+    if (!res || !res.ok) {
+      showError(`Install failed: ${res && 'error' in res ? res.error : 'unavailable'}`);
+      return false;
+    }
+    const p = res.plugin;
+    const consent = await confirmDialog(
+      `Install ${p.name} v${p.version} by ${p.author ?? 'an unknown author'} ` +
+        `from github.com/${res.ownerRepo}? ` +
+        'This plugin runs with full access to CardMirror and your documents.',
+    );
+    if (!consent) {
+      await host!.pluginInstallDiscard(res.pending);
+      return false;
+    }
+    const committed = (await host!.pluginInstallCommit(res.pending)) as
+      | { ok: true }
+      | { ok: false; error: string }
+      | undefined;
+    if (!committed?.ok) {
+      showError(
+        `Install failed: ${committed && 'error' in committed ? committed.error : 'unavailable'}`,
+      );
+      return false;
+    }
+    setPluginEnabled(p.id, true);
+    const r = await host!.pluginLoad(p.id);
+    showToast(r.ok ? `${p.name} installed and loaded.` : `${p.name} installed; loads on next launch.`);
+    guarded(refresh);
+    return true;
+  }
+
   installBtn.addEventListener('click', () => {
     guardedInline(async () => {
       const ref = input.value.trim();
@@ -283,48 +338,22 @@ export function renderPluginsPanel(container: HTMLElement): void {
       clearError();
       installBtn.disabled = true;
       try {
-        // Two-phase: inspect stages the release main-side (no disk writes),
-        // then the consent dialog runs on its facts — including the ACTUAL
-        // owner/repo, which the manifest can't spoof — and only consent
-        // commits. Declining discards the staged files, so a declined
-        // REINSTALL leaves the existing working version untouched (the old
-        // install-then-ask flow deleted it).
-        const res = (await host.pluginInstallInspect(ref)) as
-          | { ok: true; pending: string; plugin: InstalledPlugin; ownerRepo: string }
-          | { ok: false; error: string }
-          | undefined;
-        if (!res || !res.ok) {
-          showError(`Install failed: ${res && 'error' in res ? res.error : 'unavailable'}`);
-          return;
-        }
-        const p = res.plugin;
-        const consent = await confirmDialog(
-          `Install ${p.name} v${p.version} by ${p.author ?? 'an unknown author'} ` +
-            `from github.com/${res.ownerRepo}? ` +
-            'This plugin runs with full access to CardMirror and your documents.',
-        );
-        if (!consent) {
-          await host.pluginInstallDiscard(res.pending);
-          return;
-        }
-        const committed = (await host.pluginInstallCommit(res.pending)) as
-          | { ok: true }
-          | { ok: false; error: string }
-          | undefined;
-        if (!committed?.ok) {
-          showError(
-            `Install failed: ${committed && 'error' in committed ? committed.error : 'unavailable'}`,
-          );
-          return;
-        }
-        setPluginEnabled(p.id, true);
-        const r = await host.pluginLoad(p.id);
-        showToast(r.ok ? `${p.name} installed and loaded.` : `${p.name} installed; loads on next launch.`);
-        input.value = '';
-        guarded(refresh);
+        if (await installFromRef(ref)) input.value = '';
       } finally {
         installBtn.disabled = false;
       }
+    });
+  });
+
+  browseBtn.addEventListener('click', () => {
+    guardedInline(async () => {
+      clearError();
+      await openBrowseModal(installFromRef, async () => {
+        const plugins = ((await host!.pluginList()) as InstalledPlugin[]) ?? [];
+        return new Set(
+          plugins.map((p) => (p.repo ?? '').toLowerCase()).filter((r) => r.length > 0),
+        );
+      });
     });
   });
 
@@ -338,4 +367,191 @@ export function renderPluginsPanel(container: HTMLElement): void {
   });
 
   guarded(refresh);
+}
+
+// ── Browse plugins modal ────────────────────────────────────────────
+
+interface BrowseEntry {
+  repo: string;
+  name?: string;
+  description?: string;
+  author?: string;
+  version?: string;
+}
+
+/**
+ * The public plugin directory as a searchable picker. Data comes from
+ * main (`pluginBrowse`), which fetches the relay's directory and
+ * filters it through the install allowlist — so every row's Install
+ * button is one the install path will actually honor. Installing runs
+ * the SAME inspect → consent → commit flow as typing the slug; the one
+ * click saves typing, never consent.
+ */
+async function openBrowseModal(
+  installFromRef: (ref: string) => Promise<boolean>,
+  installedRepos: () => Promise<Set<string>>,
+): Promise<void> {
+  const host = getElectronHost();
+  if (!host?.pluginBrowse) return;
+
+  const restoreFocus = captureFocusForDialog();
+  const overlayToken = pushOverlay();
+  const overlay = document.createElement('div');
+  overlay.className = 'pmd-route-overlay';
+  const dialog = document.createElement('div');
+  dialog.className = 'pmd-route-dialog pmd-plugin-browse-dialog';
+
+  const header = document.createElement('div');
+  header.className = 'pmd-route-header';
+  header.textContent = 'Browse plugins';
+  dialog.appendChild(header);
+
+  const search = document.createElement('input');
+  search.type = 'text';
+  search.className = 'pmd-settings-text pmd-plugin-browse-search';
+  search.placeholder = 'Search plugins…';
+  dialog.appendChild(search);
+
+  const list = document.createElement('div');
+  list.className = 'pmd-plugin-browse-list';
+  const status = document.createElement('p');
+  status.className = 'pmd-settings-empty';
+  status.textContent = 'Loading…';
+  list.appendChild(status);
+  dialog.appendChild(list);
+
+  const buttons = document.createElement('div');
+  buttons.className = 'pmd-text-prompt-buttons';
+  const done = document.createElement('button');
+  done.type = 'button';
+  done.className = 'pmd-text-prompt-ok';
+  done.textContent = 'Close';
+  buttons.appendChild(done);
+  dialog.appendChild(buttons);
+
+  const close = (): void => {
+    overlay.remove();
+    document.removeEventListener('keydown', onKey);
+    popOverlay(overlayToken);
+    restoreFocus();
+  };
+  done.addEventListener('click', close);
+  overlay.appendChild(dialog);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) close();
+  });
+  const onKey = (e: KeyboardEvent): void => {
+    if (e.key === 'Escape' && isTopOverlay(overlayToken)) {
+      e.preventDefault();
+      close();
+    }
+  };
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(overlay);
+  search.focus();
+
+  // Fetch the directory and the installed set together; render once.
+  let entries: BrowseEntry[] = [];
+  let installed = new Set<string>();
+  try {
+    const [res, have] = await Promise.all([
+      host.pluginBrowse() as Promise<
+        { ok: true; plugins: BrowseEntry[] } | { ok: false; error: string } | undefined
+      >,
+      installedRepos(),
+    ]);
+    installed = have;
+    if (!res || !res.ok) {
+      status.textContent = res && 'error' in res ? res.error : 'The plugin directory is unavailable.';
+      return;
+    }
+    entries = res.plugins;
+  } catch {
+    status.textContent = 'Could not load the plugin directory.';
+    return;
+  }
+
+  if (entries.length === 0) {
+    status.textContent = 'No plugins are listed yet.';
+    return;
+  }
+
+  const rows: Array<{ el: HTMLElement; haystack: string }> = [];
+  list.textContent = '';
+  for (const entry of entries) {
+    const row = document.createElement('div');
+    row.className = 'pmd-plugin-browse-row';
+
+    const text = document.createElement('div');
+    text.className = 'pmd-plugin-browse-text';
+    const title = document.createElement('div');
+    title.className = 'pmd-plugin-browse-title';
+    // A repo whose manifest the relay couldn't read still lists — by
+    // its repo name, which is honest and still installable.
+    title.textContent = entry.name ?? entry.repo.split('/')[1] ?? entry.repo;
+    if (entry.version) title.textContent += ` v${entry.version}`;
+    if (entry.author) title.textContent += ` — ${entry.author}`;
+    text.appendChild(title);
+    if (entry.description) {
+      const desc = document.createElement('div');
+      desc.className = 'pmd-plugin-browse-desc';
+      desc.textContent = entry.description;
+      text.appendChild(desc);
+    }
+    const slug = document.createElement('div');
+    slug.className = 'pmd-plugin-browse-repo';
+    slug.textContent = `github.com/${entry.repo}`;
+    text.appendChild(slug);
+
+    const install = document.createElement('button');
+    install.type = 'button';
+    install.className = 'pmd-install-info-btn';
+    if (installed.has(entry.repo)) {
+      install.textContent = 'Installed';
+      install.disabled = true;
+    } else {
+      install.textContent = 'Install';
+      install.addEventListener('click', () => {
+        void (async () => {
+          install.disabled = true;
+          try {
+            if (await installFromRef(entry.repo)) {
+              install.textContent = 'Installed';
+            } else {
+              install.disabled = false;
+            }
+          } catch {
+            install.disabled = false;
+          }
+        })();
+      });
+    }
+
+    row.append(text, install);
+    list.appendChild(row);
+    rows.push({
+      el: row,
+      haystack: [entry.name, entry.description, entry.author, entry.repo]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase(),
+    });
+  }
+
+  const noMatch = document.createElement('p');
+  noMatch.className = 'pmd-settings-empty';
+  noMatch.textContent = 'No plugins match.';
+  noMatch.style.display = 'none';
+  list.appendChild(noMatch);
+
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    let shown = 0;
+    for (const r of rows) {
+      const hit = !q || r.haystack.includes(q);
+      r.el.style.display = hit ? '' : 'none';
+      if (hit) shown++;
+    }
+    noMatch.style.display = shown === 0 ? '' : 'none';
+  });
 }

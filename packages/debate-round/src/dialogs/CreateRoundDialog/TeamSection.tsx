@@ -11,6 +11,7 @@ import { Autocomplete } from "../../ui/primitives/autocomplete"
 import { debateStyles, debateStyleMap } from "debate-timer/src/formats/debate-format-times"
 import { IconAffBubble, IconNegBubble } from "../../ui/icons"
 import { getMyTeamProfile, saveMyTeamProfile, type MyTeamProfile } from "../../state/myTeamProfile"
+import { fetchUserSettings, saveUserSettings } from "../../round/user-settings-client"
 import { searchSchools } from "../../cache/client-cache"
 import { UserAutocomplete } from "./UserAutocomplete"
 
@@ -246,6 +247,35 @@ export function TeamSection({
   const [showAffConfig, setShowAffConfig] = useState(false)
   const [showNegConfig, setShowNegConfig] = useState(false)
   const [profile, setProfile] = useState<MyTeamProfile>(() => getMyTeamProfile())
+  const remoteAvailableRef = useRef(false)
+
+  // Account-linked "My Team" profile — TODO.md idea #17's "create user
+  // settings and link user db" follow-up. Local-first (the profile above
+  // already works fully signed out): on mount, best-effort pull the
+  // account's saved profile (if any) and let it win over whatever was
+  // already in this browser's localStorage, mirroring
+  // `useResearchProgressGoalSync`'s same "merge in the account's synced
+  // value on mount" shape. A failed/signed-out load just keeps the local
+  // profile, matching `UserSettingsPanel`'s same tolerance.
+  useEffect(() => {
+    let cancelled = false
+    fetchUserSettings()
+      .then((remote) => {
+        if (cancelled || remote === null) return
+        remoteAvailableRef.current = true
+        if (remote.myTeamProfile) {
+          saveMyTeamProfile(remote.myTeamProfile)
+          setProfile(remote.myTeamProfile)
+        }
+      })
+      .catch(() => {
+        // Signed in but the load failed (network/server error) — keep
+        // whatever's already local rather than blocking the dialog.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
@@ -291,6 +321,11 @@ export function TeamSection({
     setProfile(updated)
     if (affMyTeam) applyProfile(setAffSchool, setAffDebater1, setAffDebater2, true, updated)
     if (negMyTeam) applyProfile(setNegSchool, setNegDebater1, setNegDebater2, true, updated)
+    if (remoteAvailableRef.current) {
+      saveUserSettings({ myTeamProfile: updated }).catch(() => {
+        // Best-effort — the local save above already succeeded.
+      })
+    }
   }
 
   return (

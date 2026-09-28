@@ -9,13 +9,18 @@ export {
   CoachingProgramRosterAnalyticsPanel,
   type MemberDrillPracticeStatus,
 } from "./CoachingProgramRosterAnalyticsPanel";
-export { CommunityResearchHubPanel } from "./CommunityResearchHubPanel";
 export { ContributionLeaderboardPanel, TIER_VARIANT } from "./ContributionLeaderboardPanel";
 export { ContributorAwardsPanel } from "./ContributorAwardsPanel";
 export { ContributorProfilePanel } from "./ContributorProfilePanel";
 export { DailyBestCardPanel } from "./DailyBestCardPanel";
 export { DailyQuestsPanel } from "./DailyQuestsPanel";
 export { DebaterLevelPanel } from "./DebaterLevelPanel";
+export {
+  DebaterLevelUpOverlay,
+  LEVEL_UP_AUTO_DISMISS_MS,
+  type DebaterLevelUpOverlayProps,
+} from "./DebaterLevelUpOverlay";
+export { JudgeAwardsSection, JudgeAwardShowcase } from "./JudgeAwardsSection";
 export { NewsStreamPanel, type NewsStreamSyncAdapter } from "./NewsStreamPanel";
 export { ProgressUnlocksPanel } from "./ProgressUnlocksPanel";
 export { QuestStreaksPanel } from "./QuestStreaksPanel";

@@ -15,6 +15,7 @@ import {
   FRAME_NAV_ACK,
   FRAME_NAV_REQUEST,
   isFrameNavAck,
+  isDocsPath,
   isFrameNavRequest,
   opensElsewhere,
   topNavigationTarget,
@@ -100,14 +101,21 @@ describe("topNavigationTarget", () => {
   })
 
   it("leaves the help docs to a real navigation", () => {
-    // `/docs` is the statically exported help site under `public/docs`; the
-    // client router has no route for it, so handing it up would route to a
-    // 404 instead of loading the page.
+    // `/docs` is the help site, rendered without the app shell and with its
+    // own stylesheet, so crossing into it is always a full page load.
     expect(topNavigationTarget(anchor("/docs"), ORIGIN, IN_VIDEOS_FRAME, dockNavRootFor)).toBeNull()
     expect(
       topNavigationTarget(anchor("/docs/features/flowing"), ORIGIN, IN_VIDEOS_FRAME, dockNavRootFor),
     ).toBeNull()
     expect(topNavigationTarget(anchor("/api"), ORIGIN, IN_VIDEOS_FRAME, dockNavRootFor)).toBeNull()
+  })
+
+  it("recognises the help docs subtree, and nothing that merely starts with the letters", () => {
+    expect(isDocsPath("/docs")).toBe(true)
+    expect(isDocsPath("/docs/features/flowing")).toBe(true)
+    expect(isDocsPath("/docsearch")).toBe(false)
+    expect(isDocsPath("/doc")).toBe(false)
+    expect(isDocsPath(null)).toBe(false)
   })
 
   it("leaves another origin, a new tab and a download alone", () => {

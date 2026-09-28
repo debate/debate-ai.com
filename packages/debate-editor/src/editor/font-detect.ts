@@ -38,13 +38,15 @@ const BUNDLED_FONTS = new Set([
   // Metric-compatible open-source substitutes for the proprietary / system
   // fonts the picker offers but can't ship (Carlito→Calibri, Caladea→Cambria,
   // Tinos→Times New Roman / Liberation Serif, Arimo→Arial / Helvetica /
-  // Liberation Sans, Gelasio→Georgia, Comic Neue→Comic Sans MS, DejaVu Sans→
-  // Verdana / Tahoma), plus the real OSS families themselves. The @font-face
+  // Liberation Sans, Liberation Sans Narrow→Arial Narrow, Gelasio→Georgia,
+  // Comic Neue→Comic Sans MS, DejaVu Sans→Verdana / Tahoma), plus the real
+  // OSS families themselves. The @font-face
   // `local()` still prefers a user's real font. See style.css + LICENSES.md.
   'Calibri',
   'Cambria',
   'Times New Roman',
   'Arial',
+  'Arial Narrow', // ← Liberation Sans Narrow
   'Georgia',
   'Helvetica',
   'Comic Sans MS',

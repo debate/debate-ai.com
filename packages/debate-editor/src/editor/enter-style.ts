@@ -87,3 +87,11 @@ export const enterWithConfiguredStyle: Command = (state, dispatch, view) => {
   CONVERT_COMMAND[choice]()(view.state, view.dispatch.bind(view), view);
   return true;
 };
+
+/** Enter exactly as the key does it — the styled-paragraph rule first,
+ *  then the tag / heading handlers, then the base split — for callers
+ *  that are not a keymap: the voice "return" word and the dictation
+ *  "new paragraph" break. (The keymap adds the live-view bottom-edge
+ *  escape ahead of this; voice lands inside editable text only.) */
+export const enterAsKey: Command = (state, dispatch, view) =>
+  enterWithConfiguredStyle(state, dispatch, view) || baseEnter(state, dispatch, view);

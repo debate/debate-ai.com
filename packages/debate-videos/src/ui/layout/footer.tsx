@@ -8,8 +8,8 @@ import { FOOTER_LINKS } from "./footer-links"
  * The link row under the sidebar tree.
  *
  * Three kinds of destination, and the difference is the whole of this
- * component: an outside site opens in a new tab; `/docs` is a statically
- * exported build served from `public/`, so it needs a real page load
+ * component: an outside site opens in a new tab; `/docs` is the help site,
+ * which renders without the app shell, so it needs a real page load
  * (`hardNavigate`); every other row is an app route and is followed *in
  * place*, through the router. That last case used to be an `origin + url`
  * absolute href, which Next treats as an external URL — so "Features" tore
@@ -58,9 +58,6 @@ export function Footer() {
                     <Link href={link.url} prefetch={false} className={linkClass}>
                       {contents}
                     </Link>
-                  )}
-                  {index < row.length - 1 && (
-                    <span className="text-muted-foreground/30 hidden sm:inline">•</span>
                   )}
                 </React.Fragment>
               )

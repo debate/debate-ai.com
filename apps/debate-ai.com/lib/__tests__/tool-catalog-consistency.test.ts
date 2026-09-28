@@ -89,6 +89,8 @@ const APP_DIR = join(APP_ROOT, "app")
  * A dynamic segment's route (e.g. `/cards/leaderboard/[contributorId]`)
  * is a detail page under an already-covered static parent, not a distinct
  * catalog entry, so callers filter those out rather than this function.
+ * A route group (`(home)`) is a folder that is not a URL segment, so it adds
+ * nothing to the route.
  */
 function findAppPageRoutes(dir: string, routePrefix: string): string[] {
   const entries = readdirSync(dir)
@@ -97,7 +99,8 @@ function findAppPageRoutes(dir: string, routePrefix: string): string[] {
     if (entry === "api") continue
     const full = join(dir, entry)
     if (statSync(full).isDirectory()) {
-      routes.push(...findAppPageRoutes(full, `${routePrefix}/${entry}`))
+      const isRouteGroup = entry.startsWith("(") && entry.endsWith(")")
+      routes.push(...findAppPageRoutes(full, isRouteGroup ? routePrefix : `${routePrefix}/${entry}`))
     }
   }
   return routes
@@ -114,6 +117,20 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * preferences page (same reasoning as `/login` — configuration, not a
  * tool), and `/features` itself. (`/tools` needs no entry here — it's
  * already covered by `WORKSPACE_LINKS`'s own trailing "All Tools" link.)
+ *
+ * `/forums` is here for the reason `/tournaments` never needed an entry: both
+ * are destinations in the sidebar's tool tree and the dock's Settings menu
+ * rather than tools. A forum is a place members talk to each other, not
+ * something the app does for them, and listing it on the `/tools` grid — whose
+ * entries each describe a capability with a docs page behind it — would claim a
+ * feature guide that does not exist.
+ *
+ * `/rules` and `/topics` are here for the same reason: they are reference
+ * pages in the sidebar tree (the formats-and-rules guide and the resolution
+ * topic-area explorer) — reading material, not tools.
+ *
+ * `/docs/welcome` is the help docs' landing page (`debate-help-docs`) — the
+ * documentation the catalog entries link to, not a tool itself.
  */
 const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/",
@@ -121,12 +138,16 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/auth/extension-complete",
   "/auth/native-callback",
   "/auth/native-complete",
+  "/docs/welcome",
   "/features",
+  "/forums",
   "/legal/privacy",
   "/login",
+  "/rules",
   "/settings",
   "/settings/editor-panel",
   "/settings/preferences",
+  "/topics",
 ])
 
 describe("tool catalog route coverage", () => {

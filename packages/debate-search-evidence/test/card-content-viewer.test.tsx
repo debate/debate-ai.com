@@ -99,4 +99,24 @@ describe("CardContentViewer", () => {
     expect(markup).toContain("Birhane and van Dijk")
     expect(markup).not.toContain("rounded text-xs font-medium")
   })
+
+  it("offers to open the source page and pull its full article when the cite has a URL", () => {
+    const url = "https://www.foreignaffairs.com/articles/deterrence-2024"
+    const markup = render(result({ cite: `Smith, John. 2024. Example Title. Foreign Affairs. ${url}, accessed 7-12-24` }))
+
+    expect(markup).toContain(`href="${url}"`)
+    expect(markup).toContain('target="_blank"')
+    expect(markup).toContain('rel="noopener noreferrer"')
+    expect(markup).toContain("Open page")
+    expect(markup).toContain("Full article")
+    // The article panel stays closed until asked for.
+    expect(markup).not.toContain('aria-label="Source article"')
+  })
+
+  it("shows neither source button for a card with no URL", () => {
+    const markup = render(result())
+
+    expect(markup).not.toContain("Open page")
+    expect(markup).not.toContain("Full article")
+  })
 })

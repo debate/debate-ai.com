@@ -76,3 +76,23 @@ export {
   loadDebaterLevelState,
   recordDebaterActivity,
 } from "./state/debaterLevel";
+export {
+  isJudgeAwardKind,
+  JUDGE_AWARD_BY_KIND,
+  JUDGE_AWARD_KINDS,
+  JUDGE_AWARDS,
+  validateJudgeAward,
+  type JudgeAward,
+  type JudgeAwardDefinition,
+  type JudgeAwardInput,
+  type JudgeAwardKind,
+  type JudgeAwardRejection,
+} from "./lib/judge-awards";
+export {
+  deleteJudgeAward,
+  giveJudgeAward,
+  JudgeAwardError,
+  JUDGE_AWARDS_CHANGED_EVENT,
+  listAllJudgeAwards,
+  listJudgeAwardsForDebater,
+} from "./state/judgeAwards";
