@@ -32,6 +32,7 @@ import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { cn } from "../../ui/lib/utils";
 import { isComponentIcon, isImageIcon, type TreeItemIcon } from "./tree-item-icon";
+import { formatCount } from "./format-count";
 
 /**
  * The one icon treatment every row in the tree draws with: a fixed 16px box
@@ -85,6 +86,8 @@ export interface TreeItemProps {
   sectionHref?: string;
   title: string;
   count?: number;
+  /** Renders `count` unabbreviated — see `formatCount`. */
+  exactCount?: boolean;
   isActive?: boolean;
   /** An imported image (SVG/PNG) or a Lucide component. */
   icon?: TreeItemIcon;
@@ -96,17 +99,13 @@ export interface TreeItemProps {
   children?: React.ReactNode;
 }
 
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
-  return String(n);
-}
-
 export function TreeItem({
   level,
   href,
   sectionHref,
   title,
   count,
+  exactCount,
   isActive,
   icon,
   expanded,
@@ -180,7 +179,7 @@ export function TreeItem({
         {title}
       </Heading>
       {count != null && count > 0 && (
-        <span className="shrink-0 text-xs font-medium text-muted-foreground">{formatCount(count)}</span>
+        <span className="shrink-0 text-xs font-medium text-muted-foreground">{formatCount(count, { exact: exactCount })}</span>
       )}
     </>
   );

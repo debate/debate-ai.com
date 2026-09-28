@@ -37,6 +37,8 @@ import { usePathname } from "next/navigation"
 import { dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
 import { keepAlive } from "../../lib/nav/frame-pool"
 import { getHostConfig } from "../../host/config"
+import { beginLoading, finishLoading } from "../../lib/ui/loading-store"
+import { ROUTE_LOADING_TIMEOUT_MS } from "../../lib/ui/use-route-loading"
 
 interface AppFrameContextValue {
   /** The path currently shown in the frame, or `null` when not framing. */
@@ -145,6 +147,33 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
 export function AppFrameSurface({ children }: { children: ReactNode }) {
   const frame = useAppFrame()
   const mountedPaths = useContext(AppFrameSurfaceContext)
+  // Frames whose document has fired `load` — a preloaded one included, so
+  // switching to it later is instant and never arms the overlay.
+  const [loadedPaths, setLoadedPaths] = useState<ReadonlySet<string>>(() => new Set())
+  const markLoaded = useCallback((path: string) => {
+    setLoadedPaths((paths) => (paths.has(path) ? paths : new Set(paths).add(path)))
+  }, [])
+
+  // The dock's click changes `pathname` at once, which clears the router's
+  // transition, but the frame it opened may still be blank. Hold the global
+  // loading overlay for as long as the visible frame is still loading; it only
+  // shows if that runs past the overlay's show delay.
+  const waitingOnFrame = frame?.framedPath != null && !loadedPaths.has(frame.framedPath)
+  useEffect(() => {
+    if (!waitingOnFrame) return
+    beginLoading()
+    let released = false
+    const release = () => {
+      if (released) return
+      released = true
+      finishLoading()
+    }
+    const timer = window.setTimeout(release, ROUTE_LOADING_TIMEOUT_MS)
+    return () => {
+      window.clearTimeout(timer)
+      release()
+    }
+  }, [waitingOnFrame])
 
   if (!frame?.framedPath) return <>{children}</>
 
@@ -167,6 +196,7 @@ export function AppFrameSurface({ children }: { children: ReactNode }) {
           tabIndex={path === frame.framedPath ? undefined : -1}
           allow="autoplay; clipboard-read; clipboard-write; fullscreen; microphone; camera; encrypted-media"
           allowFullScreen
+          onLoad={() => markLoaded(path)}
         />
       ))}
     </div>
