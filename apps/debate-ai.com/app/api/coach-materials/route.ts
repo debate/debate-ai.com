@@ -15,11 +15,21 @@ import { withRouteErrors } from "@/lib/api/route-errors"
  * explicitly saved.
  *
  * GET — every one of the current user's synced coach materials, in full
- *   (`CoachMaterial[]`). A material's payload (a transcript or document's
- *   text) can be sizable, but still small enough that
- *   `useCoachMaterialsSync`'s merge and `CoachMaterialsPanel`'s library view
- *   can both use this one call directly without a per-material follow-up
- *   fetch.
+ *   (`CoachMaterial[]`, each with the row's own `updatedAt` mixed in — see
+ *   below). A material's payload (a transcript or document's text) can be
+ *   sizable, but still small enough that `useCoachMaterialsSync`'s merge and
+ *   `CoachMaterialsPanel`'s library view can both use this one call directly
+ *   without a per-material follow-up fetch.
+ *
+ *   `CoachMaterial` itself carries no `updatedAt`/`createdAt` of its own
+ *   (`reviewedAt` only covers a review decision, not a save) — a genuine
+ *   omission this discovered rather than a deliberate exclusion, since the
+ *   PUT route below already tracks and returns this row's own `updatedAt` on
+ *   every upsert. Mixing that same column into each listed row (as
+ *   `SyncedCoachMaterial` in `coach-materials-client.ts`) is what lets Coach
+ *   Materials join `debate-round`'s `cloudLibrary.ts` merge — see that
+ *   module's own "joined next" history — without inventing a display
+ *   timestamp `CoachMaterialsPanel` doesn't otherwise need.
  */
 
 export const GET = withRouteErrors(
@@ -32,11 +42,16 @@ export const GET = withRouteErrors(
 
     const db = await getDBFromContext()
     const rows = await db
-      .select({ data: savedCoachMaterials.data })
+      .select({ data: savedCoachMaterials.data, updatedAt: savedCoachMaterials.updatedAt })
       .from(savedCoachMaterials)
       .where(eq(savedCoachMaterials.userId, userId))
       .orderBy(asc(savedCoachMaterials.createdAt))
 
-    return NextResponse.json(rows.map((row: { data: string }) => JSON.parse(row.data)))
+    return NextResponse.json(
+      rows.map((row: { data: string; updatedAt: Date }) => ({
+        ...JSON.parse(row.data),
+        updatedAt: row.updatedAt.toISOString(),
+      })),
+    )
   },
 )
