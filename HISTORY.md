@@ -246,4 +246,9 @@ The biggest month of development.
 
 ## July 2024 — 2 commits
 
-Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation. [Archive Demo](https://web.archive.org/web/20241222141238/https://debate-ai.com/)
+Editor prototype milestone. Working editor with **sidebar, file system, and flow integration**, plus **TOC and block splitting**. Indexed **2,000 videos**, built the frontpage UI, and laid the **auth and docs** foundation. 
+
+- [Archived Web Demo](https://web.archive.org/web/20241222141238/https://debate-ai.com/) (2024)
+- [Prototype Demo](https://web.archive.org/web/20140517065121/http://debatesynergy.com/) (2014)
+- [Office Template Demo](https://github.com/debate/debatesynergy-office-template-2010) (2010)
+
