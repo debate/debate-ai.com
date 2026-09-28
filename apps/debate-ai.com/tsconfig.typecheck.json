@@ -13,9 +13,6 @@
         "./node_modules/write-language/dist/*.d.ts"
       ],
       "debate-webview/*": [
-<<<<<<< HEAD
-        "../../packages/debate-ai-webui/src/*"
-=======
         "../../packages/debate-webview/src/*"
       ],
       "debate-data-sync/*": [
@@ -26,7 +23,6 @@
       ],
       "debate-help-docs/routes/*": [
         "./lib/stubs/debate-help-docs-routes.d.ts"
->>>>>>> 6a34523876ceec28c9a2e7865e631765ba41b5f4
       ]
     }
   }
