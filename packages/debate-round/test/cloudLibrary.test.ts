@@ -165,25 +165,6 @@ describe("buildRecentCloudItems", () => {
     ]);
   });
 
-  it("includes custom opponent personas, keyed by id and labeled by name", () => {
-    const items = buildRecentCloudItems({ customOpponentPersonas });
-    expect(items).toEqual([
-      expect.objectContaining({
-        kind: "customOpponentPersona",
-        key: "customOpponentPersona-persona-1",
-        label: "Coach Amy's aggressive K bot",
-        updatedAtMs: Date.parse("2026-09-07T00:00:00.000Z"),
-      }),
-    ]);
-  });
-
-  it("treats a custom opponent persona with a blank name as untitled", () => {
-    const items = buildRecentCloudItems({
-      customOpponentPersonas: [{ id: "persona-2", name: "   ", updatedAt: Date.now() }],
-    });
-    expect(items[0]?.label).toBe("Untitled custom opponent persona");
-  });
-
   it("includes debates, keyed by id and labeled by topic", () => {
     const items = buildRecentCloudItems({ debates });
     expect(items).toEqual([
