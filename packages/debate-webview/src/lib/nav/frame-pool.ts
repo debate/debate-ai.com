@@ -2,8 +2,10 @@
  * @fileoverview The app frame's keep-alive pool.
  *
  * `AppFrameSurface` renders one `<iframe>` per entry, keyed by path, and hides
- * all but the active one — so a destination the dock has already opened comes
- * back instantly, with its scroll position and in-flight state intact.
+ * all but the active one — so every dock destination is preloaded once and
+ * then shown or hidden instantly, with its scroll position and in-flight state
+ * intact. Nothing is ever evicted: the pool only holds dock destinations, so
+ * it is bounded by the dock itself.
  *
  * Split out of the component so the ordering invariant below can be tested;
  * getting it wrong is invisible in review and shows up only as pages that
@@ -11,32 +13,19 @@
  */
 
 /**
- * How many destination documents stay alive at once. Five is the whole dock,
- * so in practice nothing is ever evicted; the cap exists so a session that
- * somehow frames more paths can't grow without bound.
- */
-export const MAX_KEPT_FRAMES = 5
-
-/**
- * Adds `href` to the pool, evicting the oldest entry once it is over
- * {@link MAX_KEPT_FRAMES}.
+ * Adds `href` to the pool if it isn't already there.
  *
  * Insertion order is never rearranged, and that is the point rather than an
  * accident: the pool is rendered as a keyed list, so reordering it would move
  * the iframe elements in the DOM — and moving an iframe reloads its document,
  * which is exactly the cost keeping them alive is meant to avoid. An LRU that
  * promoted the path just used would reload a page on every visit.
- *
- * `keep` — the frame currently on screen — is never the one evicted.
  */
-export function keepAlive(paths: string[], href: string, keep: string | null): string[] {
-  if (paths.includes(href)) return paths
+export function keepAlive(paths: string[], href: string): string[] {
+  return paths.includes(href) ? paths : [...paths, href]
+}
 
-  const next = [...paths, href]
-  while (next.length > MAX_KEPT_FRAMES) {
-    const evictable = next.findIndex((path) => path !== keep && path !== href)
-    if (evictable === -1) break
-    next.splice(evictable, 1)
-  }
-  return next
+/** Adds every one of `hrefs` to the pool, in order, without disturbing it. */
+export function keepAllAlive(paths: string[], hrefs: readonly string[]): string[] {
+  return hrefs.reduce(keepAlive, paths)
 }
