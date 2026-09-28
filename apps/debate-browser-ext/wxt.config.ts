@@ -3,7 +3,7 @@ import { defineConfig, type WxtUnimportOptions } from 'wxt';
 
 /** A file inside the `debate-webview` package. */
 const webui = (path: string) =>
-  fileURLToPath(new URL(`../../packages/debate-ai-webui/${path}`, import.meta.url));
+  fileURLToPath(new URL(`../../packages/debate-webview/${path}`, import.meta.url));
 
 /**
  * The AI provider APIs the article panel calls directly when the reader has

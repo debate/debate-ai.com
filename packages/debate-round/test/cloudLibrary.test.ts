@@ -824,3 +824,15 @@ describe("formatRelativeCloudTime", () => {
     expect(formatRelativeCloudTime(Number.NaN, now)).toBe("");
   });
 });
+
+describe("buildRecentCloudItems deletePath", () => {
+  it("sets a delete path for flows and rounds only", () => {
+    const items = buildRecentCloudItems({
+      documents: [{ id: 1, title: "Doc", updatedAt: "2026-08-28T00:00:00.000Z" }],
+      flows: [{ clientId: 2, label: "Flow", updatedAt: "2026-08-30T00:00:00.000Z" }],
+      rounds: [{ clientId: 3, label: "Round", updatedAt: "2026-08-29T00:00:00.000Z" }],
+    });
+    const byKind = Object.fromEntries(items.map((i) => [i.kind, i.deletePath]));
+    expect(byKind).toEqual({ document: undefined, flow: "/api/flows/2", round: "/api/rounds/3" });
+  });
+});

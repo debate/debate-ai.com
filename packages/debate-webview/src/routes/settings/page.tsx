@@ -15,6 +15,10 @@ import { ToolsLinkCard } from "../../components/settings/ToolsLinkCard"
  * which categories that is, and the allow-list the account mirror validates
  * against).
  *
+ * `SettingsToolsLink` is the one exception: a link back to `/tools`, where
+ * favourite tools and account tool-data sync status live now that this page
+ * doesn't show them — see that component's own doc comment.
+ *
  * Ebb Flow's own settings are not here: the flow editor opens them with
  * `Cmd/Ctrl+,` inside a flow, which is where they apply.
  *

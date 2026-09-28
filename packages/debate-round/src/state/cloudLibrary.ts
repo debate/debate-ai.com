@@ -524,6 +524,13 @@ export interface CloudLibraryItem {
   /** Milliseconds since epoch, normalized from whatever timestamp shape the source row used. */
   updatedAtMs: number;
   /**
+   * API path a `DELETE` removes this item from the signed-in user's account
+   * (e.g. `/api/flows/2`). Only set for kinds whose delete route is wired
+   * into "My Saved Items" (currently flows and rounds); absent means the
+   * item can only be managed inside its own tool's panel.
+   */
+  deletePath?: string;
+  /**
    * True for one of {@link getSampleCloudLibraryItems}' placeholder rows,
    * never present (or `false`) on a real, account-synced item. Lets a caller
    * badge a sample visually and keeps `buildRecentCloudItems`' output
@@ -657,6 +664,7 @@ export function buildRecentCloudItems(
     href: flowHref,
     label: flow.label.trim() || "Untitled flow",
     updatedAtMs: parseCloudTimestamp(flow.updatedAt),
+    deletePath: `/api/flows/${flow.clientId}`,
   }));
 
   const roundItems: CloudLibraryItem[] = (input.rounds ?? []).slice(0, perKindLimit).map((round) => ({
@@ -665,6 +673,7 @@ export function buildRecentCloudItems(
     href: roundHref,
     label: round.label.trim() || "Untitled round",
     updatedAtMs: parseCloudTimestamp(round.updatedAt),
+    deletePath: `/api/rounds/${round.clientId}`,
   }));
 
   const wordCountRoundItems: CloudLibraryItem[] = (input.wordCountRounds ?? [])
