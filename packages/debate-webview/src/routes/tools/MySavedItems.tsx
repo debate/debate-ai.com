@@ -5,8 +5,16 @@
  * the top of the Tools directory, so the SQL-backed save feature (see
  * /settings, packages/debate-help-docs/content/docs/features/flow-cloud-save.mdx, and
  * packages/debate-help-docs/content/docs/features/round-cloud-save.mdx) is actually discoverable from the one
- * page that already lists every tool. Renders nothing when signed out or
- * empty.
+ * page that already lists every tool. Renders nothing when signed out.
+ *
+ * A signed-in user with nothing saved yet used to get nothing here either —
+ * indistinguishable from the widget being broken, and TODO.md's "improve the
+ * ui's and have demo mock data samples for testing these out with ui's" ask
+ * named exactly this kind of gap. That case now renders
+ * `getSampleCloudLibraryItems()` (`debate-round`) instead: a fixed set of
+ * clearly-"Sample"-badged cards, each linking to a real tool page, so a new
+ * user (or anyone testing this UI) sees what the section looks like and has
+ * somewhere to click, rather than a blank space.
  *
  * Previously merged only documents and rounds inline, silently omitting
  * saved flows — the middle of the three data types "save flows docs and
@@ -73,8 +81,15 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
+import { Badge } from "../../lib/ui/primitives/badge"
 import { useSession } from "../../lib/hooks/useSession"
-import { fetchRecentCloudItems, formatRelativeCloudTime, type CloudLibraryItem, type CloudLibraryItemKind } from "debate-round"
+import {
+  fetchRecentCloudItems,
+  formatRelativeCloudTime,
+  getSampleCloudLibraryItems,
+  type CloudLibraryItem,
+  type CloudLibraryItemKind,
+} from "debate-round"
 
 const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   document: FileText,
@@ -142,13 +157,27 @@ export function MySavedItems() {
     }
   }, [isAuthenticated])
 
-  if (!isAuthenticated || !items || items.length === 0) return null
+  if (!isAuthenticated || !items) return null
+
+  // A brand-new signed-in user has no real saved items yet — show a small,
+  // clearly-labeled preview of what this section looks like once they save
+  // something, instead of rendering nothing (indistinguishable from broken).
+  const isPreview = items.length === 0
+  const displayItems = isPreview ? getSampleCloudLibraryItems() : items
+  if (displayItems.length === 0) return null
 
   return (
     <section className="mb-10">
-      <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-muted-foreground">My Saved Items</h2>
+      <h2 className="mb-1 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        {isPreview ? "Try These Tools" : "My Saved Items"}
+      </h2>
+      {isPreview && (
+        <p className="mb-3 text-sm text-muted-foreground">
+          Nothing saved yet — here's a preview of what shows up here once you do.
+        </p>
+      )}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => {
+        {displayItems.map((item) => {
           const Icon = KIND_ICON[item.kind]
           return (
             <Link key={item.key} href={item.href} className="block">
@@ -157,8 +186,15 @@ export function MySavedItems() {
                   <div className="flex items-center gap-2">
                     <Icon className="h-4 w-4 shrink-0 text-foreground" />
                     <CardTitle className="text-sm truncate">{item.label}</CardTitle>
+                    {item.isSample && (
+                      <Badge variant="outline" className="ml-auto shrink-0 text-[10px] text-muted-foreground">
+                        Sample
+                      </Badge>
+                    )}
                   </div>
-                  <CardDescription>{formatRelativeCloudTime(item.updatedAtMs)}</CardDescription>
+                  <CardDescription>
+                    {item.isSample ? "Click to try this tool" : formatRelativeCloudTime(item.updatedAtMs)}
+                  </CardDescription>
                 </CardHeader>
               </Card>
             </Link>
