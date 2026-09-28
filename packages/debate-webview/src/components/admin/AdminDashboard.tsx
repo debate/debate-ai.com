@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type ComponentType } from "react";
-import { FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
+import { DatabaseBackup, FileSearch, Film, Globe, ListVideo, RefreshCw, Upload, Users } from "lucide-react";
 import { cn } from "../../lib/ui/lib/utils";
 import { Button } from "../../lib/ui/primitives/button";
 import { Badge } from "../../lib/ui/primitives/badge";
@@ -29,6 +29,7 @@ import {
   type SeedVideosStatus,
 } from "../../lib/videos/format-seed-videos-result";
 import { CaselistSyncPanel } from "./CaselistSyncPanel";
+import { DbBackupPanel } from "./DbBackupPanel";
 import { DebateCardParquetUpload } from "./DebateCardParquetUpload";
 import { ModeratorsPanel } from "./ModeratorsPanel";
 import { TopicStarterUpload } from "./TopicStarterUpload";
@@ -53,7 +54,7 @@ const STYLE_OPTIONS = [{ value: "all", label: "All styles" }, { value: "1", labe
  * moderators see only the content sections — the video library, video
  * reports and the round-video queue.
  */
-type AdminTabKey = "users" | "library" | "queue" | "youtube" | "cards" | "imports" | "url-detection";
+type AdminTabKey = "users" | "library" | "queue" | "youtube" | "cards" | "imports" | "url-detection" | "backups";
 
 interface AdminTab {
   key: AdminTabKey;
@@ -75,6 +76,7 @@ const ADMIN_TABS: AdminTab[] = [
   { key: "cards", name: "Debate cards", description: "Extract source URLs from card citations, recheck them and the reuse-check log", icon: FileSearch, adminOnly: true },
   { key: "url-detection", name: "URL Detection", description: "View URLs detected by the browser extension from pages users visit", icon: Globe, adminOnly: true },
   { key: "imports", name: "Imports", description: "Topic starters, debate card Parquet shards and the caselist sync", icon: Upload, adminOnly: true },
+  { key: "backups", name: "Backups", description: "SQL dumps of videos, debate cards and history — download or store in R2", icon: DatabaseBackup, adminOnly: true },
 ];
 
 function isAdminTabKey(value: string): value is AdminTabKey {
@@ -1139,6 +1141,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
             <CaselistSyncPanel />
           </>
         )}
+
+        {currentTab.key === "backups" && <DbBackupPanel />}
       </section>
     </main>
   );
