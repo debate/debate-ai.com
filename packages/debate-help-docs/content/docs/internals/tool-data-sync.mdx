@@ -37,8 +37,9 @@ the pattern [flows](flow-cloud-save.md), [rounds](round-cloud-save.md),
   app-wide, in the background. `/settings` → Account → **Tool data** used to
   list every collection's state and offer a **Sync now** button; that page is
   the card editor's settings now (see
-  [User Settings](/docs/features/user-settings)), so the sync is unobservable
-  from inside the app — see **Known gaps**.
+  [User Settings](/docs/features/user-settings)), so that list and button
+  moved to `/tools` instead (`ToolSyncStatusPanel`, see **Known gaps**) —
+  `/settings` links to `/tools` for anyone looking for them there.
 - **Package:** [`debate-data-sync`](https://github.com/debate/debate-ai.com/blob/master/packages/debate-data-sync/README.md)
   (the catalog, the fetch client, the mirror), `apps/debate-ai.com`
   (`/api/tool-records/[collection]`, the `saved_tool_records` D1 table,
