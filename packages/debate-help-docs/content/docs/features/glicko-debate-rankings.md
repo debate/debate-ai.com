@@ -1,3 +1,9 @@
+---
+id: glicko-debate-rankings
+title: "Glicko-2 Debate Rankings"
+sidebar_position: 1
+---
+
 # Glicko-2 Debate Rankings
 
 Glicko-2 is a rating system for estimating competitive strength from head-to-head results. It is a useful fit for debate rankings because teams do not all attend the same tournaments, face equally difficult opponents, or compete equally often.
