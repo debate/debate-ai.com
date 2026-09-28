@@ -17025,6 +17025,8 @@ body.pmd-multi-doc #collab-chip {
   border-radius: 0.6rem;
   pointer-events: none;
   z-index: 4;
+}
+
 /* ═══════════════════════════════════════════════ Narrow chrome ═══
 
    The desktop chrome's two left sidebars are FIXED-WIDTH, and `#app`
