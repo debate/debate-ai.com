@@ -11,6 +11,7 @@ const GEAR: {
   href: string
   image: string
   blurb: string
+  usedHref?: string
 }[] = [
   {
     name: "LenTok Magnetic Neck Phone Holder",
@@ -29,12 +30,38 @@ const GEAR: {
       "Pairs over Bluetooth with up to three devices at once and hot-switches between them, with a big multi-touch trackpad. This is the piece that turns a phone into a real laptop replacement: type speeches and flow at full speed, no dongle needed.",
   },
   {
-    name: "Anker Power Bank 20,000mAh (Built-in USB-C Cable)",
+    name: "VEGER 10,000mAh Power Bank with Built-in Cables & AC Plug",
     role: "All-day power for phone + keyboard",
-    href: "https://amzn.to/3T95PA1",
-    image: "https://m.media-amazon.com/images/I/71Vqv7qJXhL._AC_SL500_.jpg",
+    href: "https://amzn.to/4z64Wrg",
+    image: "https://i.imgur.com/cX16JmV.jpeg",
     blurb:
-      "20,000mAh with a built-in USB-C cable and 87W max output — charges a phone, Bluetooth keyboard, and even a MacBook from one brick. Essential for tournament days when outlets are scarce.",
+      "10,000mAh with a built-in AC wall plug and iOS + USB-C/Micro cables — five outputs total, an LED percentage display, and a TSA-safe 38.5Wh cell you can stow in carry-on. Slim enough to live in a prep case and charges a phone about twice over for those long tournament days when outlets are scarce.",
+  },
+  {
+    name: "LISEN 60W USB-C to USB-C Cable (5-Pack)",
+    role: "Fast-charging cables for phone & keyboard",
+    href: "https://amzn.to/4d4CMEu",
+    image: "https://i.imgur.com/NloJILx.jpeg",
+    blurb:
+      "Sixty-watt Power Delivery cables that top up a phone or the Bluetooth keyboard in well under an hour — five cables in lengths from 3.3 ft to 10 ft so you can always reach an outlet or the power bank while mounted. Braided 48-strand cotton, 480 Mbps data, and metal-reinforced ports so a tangle or yank won't kill them mid-round.",
+  },
+  {
+    name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
+    role: "Giant floating screen, no laptop",
+    href: "https://amzn.to/4rA4rmp",
+    image: "https://i.imgur.com/I4h4WFC.jpeg",
+    blurb:
+      "The premium move: a 174″ virtual monitor that hovers in space, driven by your phone over USB-C. At 88 g it's lighter than most headphones, with 1250-nit Sony Micro-OLED, 120 Hz, and 9-level dimming so you can flow or review evidence in daylight. If you want one screen larger than any laptop but still pocket the phone between rounds, these are it.",
+  },
+  {
+    name: "Samsung Galaxy S20",
+    role: "The phone that runs it all",
+    href: "https://amzn.to/4xLQhQA",
+    usedHref:
+      "https://www.ebay.com/sch/i.html?_oaa=1&_dcat=9355&_udlo=70&_fsrp=1&rt=nc&_from=R40&_nkw=Samsung+s20&_sacat=0&Model=Samsung%2520Galaxy%2520S20%252B%7CSamsung%2520Galaxy%2520S20%252B%25205G%7CSamsung%2520Galaxy%2520S21%252B%7CSamsung%2520Galaxy%2520S21%2520FE%25205G%7CSamsung%2520Galaxy%2520S21%2520Ultra&_udhi=130",
+    image: "https://i.imgur.com/lHC64M8.jpeg",
+    blurb:
+      "Everything on this page runs in the phone browser, so the only real hardware decision is which Samsung to carry. The S20+ gives you a 120 Hz AMOLED display and a battery that lasts a full tournament day, and it folds into the same flow you'd use on a laptop. Buy a fresh unit on Amazon, or save substantially on a checked-returns S20 on eBay — either one is plenty of horsepower for prep, flow, and practice rounds on the road.",
   },
 ]
 
@@ -180,18 +207,30 @@ export default function MobileSetupPage() {
                     <CardTitle className="text-base leading-snug">{item.name}</CardTitle>
                     <CardDescription>{item.blurb}</CardDescription>
                   </CardHeader>
-                  <CardContent className="px-4 pt-2">
+                  <CardContent className="px-4 pt-2 space-y-1">
                     <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
                       View on Amazon
                       <ExternalLink className="h-3.5 w-3.5" />
                     </span>
+                    {item.usedHref && (
+                      <a
+                        href={item.usedHref}
+                        target="_blank"
+                        rel="sponsored noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+                      >
+                        View used on eBay
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    )}
                   </CardContent>
                 </Card>
               </a>
             ))}
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            As an Amazon Associate, this site earns from qualifying purchases made through these links.
+            As an Amazon Associate this site earns from qualifying purchases; it may also earn a referral commission
+            on eBay used-gear links. Both help keep the site running.
           </p>
         </section>
 
