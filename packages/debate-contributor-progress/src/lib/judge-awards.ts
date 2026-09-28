@@ -40,7 +40,7 @@ export const JUDGE_AWARDS: JudgeAwardDefinition[] = [
     kind: "most_improved",
     title: "Most Improved",
     description: "Came back sharper every round — a judge watched you grow over the course of a tournament.",
-    badgeUrl: "https://i.imgur.com/OIAuByu.png",
+    badgeUrl: "https://i.imgur.com/a2IrtIm.png",
   },
   {
     kind: "best_speaker",
@@ -58,7 +58,7 @@ export const JUDGE_AWARDS: JudgeAwardDefinition[] = [
     kind: "best_impact_calculus",
     title: "Best Impact Calculus",
     description: "Told the judge exactly why your impacts outweigh — magnitude, probability and timeframe, weighed out loud.",
-    badgeUrl: "https://i.imgur.com/k8NLKrp.png",
+    badgeUrl: "https://i.imgur.com/smbX1th.png",
   },
   {
     kind: "best_research",
