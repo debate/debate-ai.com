@@ -4,10 +4,17 @@ import {
   formatRelativeCloudTime,
   parseCloudTimestamp,
   type CloudCounselPanelAssessmentSummary,
+  type CloudCustomOpponentPersonaSummary,
   type CloudDebateSummary,
   type CloudDocumentSummary,
   type CloudDrillSetSummary,
+  type CloudEvidenceLibraryEntrySummary,
+  type CloudFlowAnnotationSummary,
   type CloudJudgeDecisionSummary,
+  type CloudLearnDeckSummary,
+  type CloudPracticeRoundSummary,
+  type CloudPrepNoteSummary,
+  type CloudQuickCardSummary,
   type CloudRoundPairingSummary,
   type CloudSpeechOutcomeSummary,
   type CloudSpeechSendLogSummary,
@@ -86,8 +93,29 @@ describe("buildRecentCloudItems", () => {
   const speechSendLogEntries: CloudSpeechSendLogSummary[] = [
     { id: "send-1", preview: "The plan reduces emissions by...", sentAt: Date.parse("2026-09-06T00:00:00.000Z") },
   ];
+  const learnDecks: CloudLearnDeckSummary[] = [
+    { deckId: "deck-1", name: "K Cards", createdAt: "2026-09-07T00:00:00.000Z" },
+  ];
+  const customOpponentPersonas: CloudCustomOpponentPersonaSummary[] = [
+    { id: "persona-1", name: "Coach Amy's K bot", updatedAt: Date.parse("2026-09-08T00:00:00.000Z") },
+  ];
+  const flowAnnotations: CloudFlowAnnotationSummary[] = [
+    { id: "annotation-1", note: "Drop the theory shell here", tag: "theory", createdAt: Date.parse("2026-09-09T00:00:00.000Z") },
+  ];
+  const quickCards: CloudQuickCardSummary[] = [
+    { id: "card-1", name: "Uniqueness overview", updatedAt: Date.parse("2026-09-10T00:00:00.000Z") },
+  ];
+  const prepNotes: CloudPrepNoteSummary[] = [
+    { id: "note-1", text: "Drop the counterplan net benefit", updatedAt: Date.parse("2026-09-11T00:00:00.000Z") },
+  ];
+  const evidenceLibraryEntries: CloudEvidenceLibraryEntrySummary[] = [
+    { id: "entry-1", cite: "Smith 24", argBlock: "Warming DA", createdAt: Date.parse("2026-09-12T00:00:00.000Z") },
+  ];
+  const practiceRounds: CloudPracticeRoundSummary[] = [
+    { roundId: "round-13", createdAt: Date.parse("2026-09-13T00:00:00.000Z") },
+  ];
 
-  it("merges all thirteen kinds and sorts newest first", () => {
+  it("merges all twenty kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -103,10 +131,24 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations,
         sprintSessions,
         speechSendLogEntries,
+        learnDecks,
+        customOpponentPersonas,
+        flowAnnotations,
+        quickCards,
+        prepNotes,
+        evidenceLibraryEntries,
+        practiceRounds,
       },
-      { limit: 13 },
+      { limit: 20 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "practiceRound",
+      "evidenceLibraryEntry",
+      "prepNote",
+      "quickCard",
+      "flowAnnotation",
+      "customOpponentPersona",
+      "learnDeck",
       "speechSendLogEntry",
       "sprintSession",
       "strategyRecommendation",
@@ -291,6 +333,150 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.label).toBe("Untitled speech send");
   });
 
+  it("includes learn decks, keyed by deckId and labeled by name", () => {
+    const items = buildRecentCloudItems({ learnDecks });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "learnDeck",
+        key: "learnDeck-deck-1",
+        label: "K Cards",
+        updatedAtMs: Date.parse("2026-09-07T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a learn deck with a blank name as untitled", () => {
+    const items = buildRecentCloudItems({
+      learnDecks: [{ deckId: "deck-2", name: "   ", createdAt: "2026-09-07T00:00:00.000Z" }],
+    });
+    expect(items[0]?.label).toBe("Untitled deck");
+  });
+
+  it("includes custom opponent personas, keyed by id and labeled by name", () => {
+    const items = buildRecentCloudItems({ customOpponentPersonas });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "customOpponentPersona",
+        key: "customOpponentPersona-persona-1",
+        label: "Coach Amy's K bot",
+        updatedAtMs: Date.parse("2026-09-08T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a custom opponent persona with a blank name as untitled", () => {
+    const items = buildRecentCloudItems({
+      customOpponentPersonas: [{ id: "persona-2", name: "   ", updatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled persona");
+  });
+
+  it("includes flow annotations, keyed by id and labeled by note", () => {
+    const items = buildRecentCloudItems({ flowAnnotations });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "flowAnnotation",
+        key: "flowAnnotation-annotation-1",
+        label: "Drop the theory shell here",
+        updatedAtMs: Date.parse("2026-09-09T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("labels a flow annotation by tag when its note is blank, and untitled when both are", () => {
+    const items = buildRecentCloudItems({
+      flowAnnotations: [
+        { id: "a1", note: "  ", tag: "turn", createdAt: Date.now() },
+        { id: "a2", note: "  ", tag: undefined, createdAt: Date.now() },
+      ],
+    });
+    expect(items.map((i) => i.label)).toEqual(["turn", "Untitled annotation"]);
+  });
+
+  it("includes quick cards, keyed by id and labeled by name", () => {
+    const items = buildRecentCloudItems({ quickCards });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "quickCard",
+        key: "quickCard-card-1",
+        label: "Uniqueness overview",
+        updatedAtMs: Date.parse("2026-09-10T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a quick card with a blank name as untitled", () => {
+    const items = buildRecentCloudItems({
+      quickCards: [{ id: "card-2", name: "   ", updatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled quick card");
+  });
+
+  it("includes prep notes, keyed by id and labeled by text", () => {
+    const items = buildRecentCloudItems({ prepNotes });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "prepNote",
+        key: "prepNote-note-1",
+        label: "Drop the counterplan net benefit",
+        updatedAtMs: Date.parse("2026-09-11T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a prep note with blank text as untitled", () => {
+    const items = buildRecentCloudItems({
+      prepNotes: [{ id: "note-2", text: "   ", updatedAt: Date.now() }],
+    });
+    expect(items[0]?.label).toBe("Untitled prep note");
+  });
+
+  it("includes evidence library entries, keyed by id and labeled by cite", () => {
+    const items = buildRecentCloudItems({ evidenceLibraryEntries });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "evidenceLibraryEntry",
+        key: "evidenceLibraryEntry-entry-1",
+        label: "Smith 24",
+        updatedAtMs: Date.parse("2026-09-12T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("labels an evidence library entry by argBlock when cite is blank, and untitled when both are", () => {
+    const items = buildRecentCloudItems({
+      evidenceLibraryEntries: [
+        { id: "entry-2", cite: "  ", argBlock: "Warming DA", createdAt: Date.now() },
+        { id: "entry-3", cite: "  ", argBlock: "  ", createdAt: Date.now() },
+      ],
+    });
+    expect(items.map((i) => i.label)).toEqual(["Warming DA", "Untitled evidence entry"]);
+  });
+
+  it("treats an evidence library entry with no createdAt as timestamp 0 rather than throwing", () => {
+    const items = buildRecentCloudItems({
+      evidenceLibraryEntries: [{ id: "entry-4", cite: "Smith 24", argBlock: "Warming DA" }],
+    });
+    expect(items[0]?.updatedAtMs).toBe(0);
+  });
+
+  it("includes practice rounds, keyed and labeled by roundId", () => {
+    const items = buildRecentCloudItems({ practiceRounds });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "practiceRound",
+        key: "practiceRound-round-13",
+        label: "round-13",
+        updatedAtMs: Date.parse("2026-09-13T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
+  it("treats a practice round with no createdAt as timestamp 0 rather than throwing", () => {
+    const items = buildRecentCloudItems({ practiceRounds: [{ roundId: "round-1" }] });
+    expect(items[0]?.updatedAtMs).toBe(0);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -313,8 +499,15 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations,
         sprintSessions,
         speechSendLogEntries,
+        learnDecks,
+        customOpponentPersonas,
+        flowAnnotations,
+        quickCards,
+        prepNotes,
+        evidenceLibraryEntries,
+        practiceRounds,
       },
-      { limit: 13 },
+      { limit: 20 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -330,6 +523,13 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.strategyRecommendation).toBe("/strategy");
     expect(byKind.sprintSession).toBe("/research");
     expect(byKind.speechSendLogEntry).toBe("/speech-documents");
+    expect(byKind.learnDeck).toBe("/reason-editor");
+    expect(byKind.customOpponentPersona).toBe("/practice-round");
+    expect(byKind.flowAnnotation).toBe("/annotations");
+    expect(byKind.quickCard).toBe("/reason-editor");
+    expect(byKind.prepNote).toBe("/prep-notes");
+    expect(byKind.evidenceLibraryEntry).toBe("/cards/library");
+    expect(byKind.practiceRound).toBe("/practice-round");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -384,6 +584,39 @@ describe("buildRecentCloudItems", () => {
       { speechSendLogEntryHref: "/custom-speech-documents-route" },
     );
     expect(overriddenSpeechSendLogEntry[0]?.href).toBe("/custom-speech-documents-route");
+
+    const overriddenLearnDeck = buildRecentCloudItems({ learnDecks }, { learnDeckHref: "/custom-reason-editor-route" });
+    expect(overriddenLearnDeck[0]?.href).toBe("/custom-reason-editor-route");
+
+    const overriddenCustomOpponentPersona = buildRecentCloudItems(
+      { customOpponentPersonas },
+      { customOpponentPersonaHref: "/custom-practice-round-route" },
+    );
+    expect(overriddenCustomOpponentPersona[0]?.href).toBe("/custom-practice-round-route");
+
+    const overriddenFlowAnnotation = buildRecentCloudItems(
+      { flowAnnotations },
+      { flowAnnotationHref: "/custom-annotations-route" },
+    );
+    expect(overriddenFlowAnnotation[0]?.href).toBe("/custom-annotations-route");
+
+    const overriddenQuickCard = buildRecentCloudItems({ quickCards }, { quickCardHref: "/custom-reason-editor-route" });
+    expect(overriddenQuickCard[0]?.href).toBe("/custom-reason-editor-route");
+
+    const overriddenPrepNote = buildRecentCloudItems({ prepNotes }, { prepNoteHref: "/custom-prep-notes-route" });
+    expect(overriddenPrepNote[0]?.href).toBe("/custom-prep-notes-route");
+
+    const overriddenEvidenceLibraryEntry = buildRecentCloudItems(
+      { evidenceLibraryEntries },
+      { evidenceLibraryEntryHref: "/custom-cards-library-route" },
+    );
+    expect(overriddenEvidenceLibraryEntry[0]?.href).toBe("/custom-cards-library-route");
+
+    const overriddenPracticeRound = buildRecentCloudItems(
+      { practiceRounds },
+      { practiceRoundHref: "/custom-practice-round-route-2" },
+    );
+    expect(overriddenPracticeRound[0]?.href).toBe("/custom-practice-round-route-2");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -412,8 +645,21 @@ describe("buildRecentCloudItems", () => {
         speechSendLogEntries: [
           { id: "send-1", preview: "   ", sentAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
+        learnDecks: [
+          { deckId: "deck-1", name: "   ", createdAt: "2026-08-30T00:00:00.000Z" },
+        ],
+        customOpponentPersonas: [{ id: "persona-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        flowAnnotations: [
+          { id: "annotation-1", note: "   ", tag: undefined, createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
+        quickCards: [{ id: "card-1", name: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        prepNotes: [{ id: "note-1", text: "   ", updatedAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        evidenceLibraryEntries: [
+          { id: "entry-1", cite: "   ", argBlock: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
+        ],
+        practiceRounds: [{ roundId: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") }],
       },
-      { limit: 13 },
+      { limit: 20 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -429,6 +675,13 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.strategyRecommendation).toBe("Untitled strategy recommendation");
     expect(byKind.sprintSession).toBe("Untitled sprint session");
     expect(byKind.speechSendLogEntry).toBe("Untitled speech send");
+    expect(byKind.learnDeck).toBe("Untitled deck");
+    expect(byKind.customOpponentPersona).toBe("Untitled persona");
+    expect(byKind.flowAnnotation).toBe("Untitled annotation");
+    expect(byKind.quickCard).toBe("Untitled quick card");
+    expect(byKind.prepNote).toBe("Untitled prep note");
+    expect(byKind.evidenceLibraryEntry).toBe("Untitled evidence entry");
+    expect(byKind.practiceRound).toBe("Untitled practice round");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -464,6 +717,13 @@ describe("buildRecentCloudItems", () => {
         strategyRecommendations: [],
         sprintSessions: [],
         speechSendLogEntries: [],
+        learnDecks: [],
+        customOpponentPersonas: [],
+        flowAnnotations: [],
+        quickCards: [],
+        prepNotes: [],
+        evidenceLibraryEntries: [],
+        practiceRounds: [],
       }),
     ).toEqual([]);
   });

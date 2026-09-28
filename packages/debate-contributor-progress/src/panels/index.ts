@@ -15,6 +15,11 @@ export { ContributorProfilePanel } from "./ContributorProfilePanel";
 export { DailyBestCardPanel } from "./DailyBestCardPanel";
 export { DailyQuestsPanel } from "./DailyQuestsPanel";
 export { DebaterLevelPanel } from "./DebaterLevelPanel";
+export {
+  DebaterLevelUpOverlay,
+  LEVEL_UP_AUTO_DISMISS_MS,
+  type DebaterLevelUpOverlayProps,
+} from "./DebaterLevelUpOverlay";
 export { NewsStreamPanel, type NewsStreamSyncAdapter } from "./NewsStreamPanel";
 export { ProgressUnlocksPanel } from "./ProgressUnlocksPanel";
 export { QuestStreaksPanel } from "./QuestStreaksPanel";

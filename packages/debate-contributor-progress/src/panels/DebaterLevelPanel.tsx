@@ -11,6 +11,10 @@
  * vs AI, marking a drill practiced). Practice that happens off-app — like
  * redoing a rebuttal out loud — is logged with the "Log practice" buttons.
  *
+ * An award that crosses a level boundary opens {@link DebaterLevelUpOverlay}
+ * — the animated level-up cutscene — over the panel until it plays out or is
+ * dismissed.
+ *
  * Refreshes on every award in this tab (`DEBATER_XP_AWARDED_EVENT`) and in
  * other tabs (the `storage` event).
  */
@@ -43,11 +47,28 @@ import {
   recordDebaterActivity,
   resetDebaterLevelState,
 } from "../state/debaterLevel"
+import { DebaterLevelUpOverlay } from "./DebaterLevelUpOverlay"
+
+const MILESTONE_BADGES: Record<string, string> = {
+  "milestone-first-card": "https://i.imgur.com/BgMCyP5.png",
+  "milestone-cards-50": "https://i.imgur.com/eJ9jtza.png",
+  "milestone-cards-250": "https://i.imgur.com/grVj3kk.png",
+  "milestone-rebuttals-10": "https://i.imgur.com/UT5V0AZ.png",
+  "milestone-speeches-25": "https://i.imgur.com/odEL3ih.png",
+  "milestone-first-win": "https://i.imgur.com/S9QAmli.png",
+  "milestone-wins-10": "https://i.imgur.com/e2dmeOA.png",
+}
 
 function ChallengeRow({ progress }: { progress: DebaterChallengeProgress }) {
   const { challenge, current, isComplete } = progress
+  const badgeUrl = MILESTONE_BADGES[challenge.id]
   return (
     <li className="flex flex-col gap-1 rounded-lg border p-3">
+      {badgeUrl && (
+        <div className="flex justify-center">
+          <img src={badgeUrl} alt={challenge.title} className="w-16 h-16 object-contain" />
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2">
         <span className="font-medium">{challenge.title}</span>
         {isComplete ? <Pill tone="positive">+{challenge.xpReward} XP earned</Pill> : <Pill tone="info">+{challenge.xpReward} XP</Pill>}
@@ -108,14 +129,13 @@ export function DebaterLevelPanel() {
       }
     >
       {levelUp ? (
-        <div role="status" className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
-          <span>
-            🎉 <strong>Level up!</strong> You reached level {levelUp.newLevel} — {computeLevelProgress(levelUp.state.totalXp).title}.
-          </span>
-          <Button variant="ghost" size="sm" onClick={() => setLevelUp(null)}>
-            Dismiss
-          </Button>
-        </div>
+        <DebaterLevelUpOverlay
+          open
+          previousLevel={levelUp.previousLevel}
+          progress={computeLevelProgress(levelUp.state.totalXp)}
+          xpGained={levelUp.xpGained}
+          onDismiss={() => setLevelUp(null)}
+        />
       ) : null}
 
       <div className="flex flex-col gap-3 rounded-lg border p-4">

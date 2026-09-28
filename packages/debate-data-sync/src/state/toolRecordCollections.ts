@@ -180,8 +180,8 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "judgeParadigmSelections",
     storageKey: "judgeParadigmSelections",
     idField: "roundId",
-    label: "Judge Paradigm Picker",
-    href: "/paradigms",
+    label: "Judge Paradigms",
+    href: "/judge-decision",
     section: "Scouting and judging",
   },
   {
@@ -332,8 +332,8 @@ export const TOOL_RECORD_COLLECTIONS: readonly ToolRecordCollection[] = [
     key: "opponentPersonaSelections",
     storageKey: "opponentPersonaSelections",
     idField: "sessionId",
-    label: "Opponent Persona Picker",
-    href: "/practice-opponent",
+    label: "Opponent Personas",
+    href: "/versus-ai",
     section: "Scouting and judging",
   },
   {

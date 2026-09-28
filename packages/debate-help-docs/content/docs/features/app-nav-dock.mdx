@@ -224,9 +224,15 @@ Two rules hold for every h1:
   *are* rendered are fetched on click rather than on sight.
 
   Resolution is longest-match over the links the tree actually renders:
-  `/cards/library` opens Research, which lists it, and `/doc` opens Research
-  too ("Debate Docs"). A dock destination in no tool section — `/cards`,
-  `/debate` — matches nothing and opens nothing.
+  `/cards/library` opens Research, which lists it, and `/versus-ai` opens
+  Practice ("Debate Versus AI"). A dock destination in no tool section —
+  `/cards`, `/debate`, `/doc`, `/reason-editor` — matches nothing and opens
+  nothing. `/doc` and `/reason-editor` used to sit in Research as "Debate
+  Docs" and "Reason Editor"; they are the dock's own Docs button and a
+  top-level editor, so the rows only restated what the icons above them
+  already said. Both routes keep their sidebars — `/doc` through the dock
+  link list, `/reason-editor` through `EXTRA_SIDEBAR_HREFS`, which is what
+  gives the editor its file-navigation panels.
 
 `SidebarToolSection.href` outlives the heading link: `sidebar-routes.ts`
 still folds it into the set of paths that get the tool sidebar.

@@ -108,7 +108,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const [urlValidationProgress, setUrlValidationProgress] = useState<{ checked: number; valid: number; invalid: number; errors: number; done: boolean } | null>(null);
   const [isExtractingUrls, setIsExtractingUrls] = useState(false);
   const [urlExtractionError, setUrlExtractionError] = useState<string | null>(null);
-  const [urlExtractionProgress, setUrlExtractionProgress] = useState<{ processed: number; withUrl: number; updated: number; done: boolean } | null>(null);
+  const [urlExtractionProgress, setUrlExtractionProgress] = useState<{ processed: number; withUrl: number; updated: number; demoUrls: string[]; done: boolean } | null>(null);
   const [activeTab, setActiveTab] = useState<AdminTabKey>(isAdmin ? "users" : "library");
   const [isRecomputingStacks, setIsRecomputingStacks] = useState(false);
   const [recomputeStacksResult, setRecomputeStacksResult] = useState<string | null>(null);
@@ -401,11 +401,11 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
       let done = false;
 
       while (!done) {
-        const res = await fetch("/api/admin/debate-cards/validate-urls", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ afterId, limit: 500, timeoutMs: 8000 }),
-        });
+           const res = await fetch("/api/admin/debate-cards/validate-urls", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ afterId, limit: 100, timeoutMs: 8000 }),
+         });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.details || data?.error || "URL validation failed");
 
@@ -443,19 +443,23 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
   const handleExtractUrls = async () => {
     setIsExtractingUrls(true);
     setUrlExtractionError(null);
-    setUrlExtractionProgress({ processed: 0, withUrl: 0, updated: 0, done: false });
+    setUrlExtractionProgress({ processed: 0, withUrl: 0, updated: 0, demoUrls: [], done: false });
     try {
       let afterId = 0;
       let processed = 0;
       let withUrl = 0;
       let updated = 0;
       let done = false;
+      // Sample URLs accumulate across pages, capped to the same count the
+      // route returns per page — see DEMO_URL_COUNT in
+      // app/api/admin/debate-cards/extract-urls/route.ts.
+      let demoUrls: string[] = [];
 
       while (!done) {
         const res = await fetch("/api/admin/debate-cards/extract-urls", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ afterId, limit: 500 }),
+          body: JSON.stringify({ afterId, limit: 100 }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data?.details || data?.error || "URL extraction failed");
@@ -465,7 +469,8 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
         updated += data.updated;
         afterId = data.nextAfterId;
         done = data.done;
-        setUrlExtractionProgress({ processed, withUrl, updated, done });
+        if (demoUrls.length < 10) demoUrls = [...demoUrls, ...data.demoUrls].slice(0, 10);
+        setUrlExtractionProgress({ processed, withUrl, updated, demoUrls, done });
       }
     } catch (error) {
       setUrlExtractionError((error as Error).message);
@@ -896,14 +901,32 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   <Button onClick={handleExtractUrls} disabled={isExtractingUrls} variant="outline">
                     {isExtractingUrls ? "Extracting…" : "Extract URLs"}
                   </Button>
-                  {urlExtractionProgress && (
-                    <span className="text-muted-foreground text-sm">
-                      Parsed {urlExtractionProgress.processed.toLocaleString()} cards —{" "}
-                      {urlExtractionProgress.withUrl.toLocaleString()} with a URL,{" "}
-                      {urlExtractionProgress.updated.toLocaleString()} updated
-                      {urlExtractionProgress.done ? " (done)" : "…"}
-                    </span>
-                  )}
+               {urlExtractionProgress && (
+                     <span className="text-muted-foreground text-sm">
+                       Parsed {urlExtractionProgress.processed.toLocaleString()} cards —{" "}
+                       {urlExtractionProgress.withUrl.toLocaleString()} with a URL,{" "}
+                       {urlExtractionProgress.updated.toLocaleString()} updated
+                       {urlExtractionProgress.done ? " (done)" : "…"}
+                     </span>
+                   )}
+                   {urlExtractionProgress && urlExtractionProgress.demoUrls.length > 0 && (
+                     <div className="mt-2 flex flex-col gap-1">
+                       <span className="text-muted-foreground text-xs font-medium">Sample URLs found:</span>
+                       <div className="flex flex-wrap gap-2">
+                         {urlExtractionProgress.demoUrls.map((url, index) => (
+                           <a
+                             key={index}
+                             href={url}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             className="text-xs text-muted-foreground hover:text-foreground hover:underline truncate max-w-full"
+                           >
+                             {url}
+                           </a>
+                         ))}
+                       </div>
+                     </div>
+                   )}
                 </div>
                 {urlExtractionError && <p className="text-destructive text-sm">{urlExtractionError}</p>}
               </CardContent>
@@ -916,7 +939,7 @@ export function AdminDashboard({ isAdmin = true }: { isAdmin?: boolean }) {
                   Rechecks the source URL stored on each card — the one extracted above — with an HTTP
                   HEAD request. Reports which URLs are still accessible (2xx), which return errors
                   (4xx/5xx), and which time out or fail. Cards with no stored URL are skipped, so run
-                  the extraction first. Processes cards in batches of 500; a full corpus can take
+                  the extraction first.                   Processes cards in batches of 100; a full corpus can take
                   several minutes.
                 </CardDescription>
               </CardHeader>

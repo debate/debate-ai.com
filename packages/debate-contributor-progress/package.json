@@ -26,6 +26,7 @@
     "debate-feature-catalog": "workspace:*",
     "debate-research-evidence": "workspace:*",
     "debate-team-collaboration": "workspace:*",
+    "framer-motion": "^13.2.0",
     "lucide-react": "^1.43.0",
     "react-resizable-panels": "^4.12.4",
     "tailwind-merge": "^3.6.0"

@@ -77,8 +77,7 @@ export function deleteOpponentPersonaSelection(sessionId: string): void {
  * Every persisted opponent-persona selection, sorted by `sessionId` for a
  * stable display order — the "(b) a persona-picker UI ... that reads/writes
  * through the persistence store" follow-up named under the "AI Practice
- * Opponent" idea in TODO.md's Product Feature Ideas list. Used by
- * `panels/OpponentPersonaPickerPanel.tsx`.
+ * Opponent" idea in TODO.md's Product Feature Ideas list.
  */
 export function buildOpponentPersonaSelectionsPanelView(): OpponentPersonaSelection[] {
   return [...listOpponentPersonaSelections()].sort((a, b) => a.sessionId.localeCompare(b.sessionId));

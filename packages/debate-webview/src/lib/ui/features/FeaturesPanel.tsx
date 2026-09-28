@@ -214,6 +214,7 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
             </dl>
 </Reveal>
         </div>
+
       </section>
 
       {tickerRows.length > 0 ? (

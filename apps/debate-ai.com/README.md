@@ -21,7 +21,7 @@ owning package before editing anything under `app/`. The map is in the
 | The card editor, `.docx` interop | `/reason-editor`, `/doc` | `debate-editor`, `debate-card-parser` |
 | The live round workspace (FIAT), flow grid | `/debate`, `/practice-round` | `debate-round`, `debate-flow` |
 | Practice drills, AI coach, AI judge | `/drills`, `/coach`, `/judge-decision` | `debate-practice-drills` |
-| A full timed round against an AI opponent | `/versus-ai`, `/practice-opponent`, `/opponents` | `debate-round-practice-ai` |
+| A full timed round against an AI opponent | `/versus-ai`, `/opponents` | `debate-round-practice-ai` |
 | Speech and prep timers, the in-round recorder | `/speech-documents`, `/word-count` | `debate-timer` |
 | The video library (LEARN) | `/videos` | `debate-videos` |
 | Team prep, task inbox, prep room | `/prep-notes`, `/contacts` | `debate-team-collaboration` |

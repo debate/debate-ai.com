@@ -19,7 +19,7 @@ import { authorizeCardImport } from "@/lib/admin/debate-card-import";
 import { getDBFromContext } from "@/lib/database/context";
 import { debateCards } from "@/lib/database/schema";
 
-const DEFAULT_PAGE_ROWS = 500;
+const DEFAULT_PAGE_ROWS = 100;
 const MAX_PAGE_ROWS = 2_000;
 const DEFAULT_TIMEOUT_MS = 8_000;
 const MAX_TIMEOUT_MS = 30_000;

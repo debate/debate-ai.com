@@ -21,20 +21,20 @@ const GEAR: {
       "A MagSafe-compatible gooseneck mount that hangs around your neck and holds the phone at eye level. Speak off your speech doc with both hands free for gestures and pen-and-paper flowing, or turn it around to record practice speeches from your own point of view.",
   },
   {
-    name: "Arteck Wireless Touch Keyboard with Built-in Touchpad",
-    role: "Full-size keyboard + touchpad",
-    href: "https://amzn.to/4dmMB0l",
-    image: "https://m.media-amazon.com/images/I/61HN+x6X+XL._AC_SL500_.jpg",
-    blurb:
-      "A solid stainless, ultra-compact full-size keyboard with a built-in touchpad mouse. It connects through its 2.4G USB receiver, so on a phone pair it via a small USB-C OTG adapter — great as the sturdy desk setup for longer prep sessions.",
-  },
-  {
     name: "Bnnwa Multi-Device Bluetooth Keyboard with Touchpad",
     role: "Bluetooth keyboard for the phone",
     href: "https://amzn.to/4hgaLLt",
     image: "https://m.media-amazon.com/images/I/61hkDb6ZWPL._AC_SL500_.jpg",
     blurb:
       "Pairs over Bluetooth with up to three devices at once and hot-switches between them, with a big multi-touch trackpad. This is the piece that turns a phone into a real laptop replacement: type speeches and flow at full speed, no dongle needed.",
+  },
+  {
+    name: "Anker Power Bank 20,000mAh (Built-in USB-C Cable)",
+    role: "All-day power for phone + keyboard",
+    href: "https://amzn.to/3T95PA1",
+    image: "https://m.media-amazon.com/images/I/71Vqv7qJXhL._AC_SL500_.jpg",
+    blurb:
+      "20,000mAh with a built-in USB-C cable and 87W max output — charges a phone, Bluetooth keyboard, and even a MacBook from one brick. Essential for tournament days when outlets are scarce.",
   },
 ]
 

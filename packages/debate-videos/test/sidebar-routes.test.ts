@@ -163,7 +163,9 @@ describe("Latest News", () => {
 });
 
 describe("the REASON research workspace", () => {
-  it("is still a tree destination, so the sidebar keeps linking to it", () => {
+  it("is still a sidebar destination, though no longer a Research row", () => {
+    // It lost its "Debate Docs" row in favour of the dock's own Docs button,
+    // which is the same route — so the sidebar still has to know about it.
     expect(TOOL_SIDEBAR_HREFS.has("/doc")).toBe(true);
     expect(matchesToolSidebarHref("/doc")).toBe(true);
     expect(matchesToolSidebarHref("/doc/cp-answer-to-states")).toBe(true);
