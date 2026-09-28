@@ -101,39 +101,14 @@ CREATE TABLE `debate_card_imports` (
 	`last_imported_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `debate_cards` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`tag` text DEFAULT '' NOT NULL,
-	`cite` text DEFAULT '' NOT NULL,
-	`fullcite` text DEFAULT '' NOT NULL,
-	`summary` text DEFAULT '' NOT NULL,
-	`spoken` text DEFAULT '' NOT NULL,
-	`fulltext` text DEFAULT '' NOT NULL,
-	`text_length` integer DEFAULT 0 NOT NULL,
-	`markup` text DEFAULT '' NOT NULL,
-	`pocket` text DEFAULT '' NOT NULL,
-	`hat` text DEFAULT '' NOT NULL,
-	`block` text DEFAULT '' NOT NULL,
-	`bucket_id` integer DEFAULT 0 NOT NULL,
-	`duplicate_count` integer DEFAULT 0 NOT NULL,
-	`side` text DEFAULT '' NOT NULL,
-	`caselist_display_name` text DEFAULT '' NOT NULL,
-	`year` integer DEFAULT 0 NOT NULL,
-	`event` text DEFAULT '' NOT NULL,
-	`level` text DEFAULT '' NOT NULL,
-	`source_file` text DEFAULT '' NOT NULL,
-	`source_url` text DEFAULT '' NOT NULL,
-	`imported_at` integer DEFAULT (unixepoch()) NOT NULL
-);
---> statement-breakpoint
-CREATE INDEX `idx_debate_cards_year` ON `debate_cards` (`year`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_event` ON `debate_cards` (`event`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_level` ON `debate_cards` (`level`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_side` ON `debate_cards` (`side`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_caselist` ON `debate_cards` (`caselist_display_name`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_bucket` ON `debate_cards` (`bucket_id`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_source_file` ON `debate_cards` (`source_file`);--> statement-breakpoint
-CREATE INDEX `idx_debate_cards_source_url` ON `debate_cards` (`source_url`);--> statement-breakpoint
+-- `debate_cards` (and its base indexes) is created by 0035_debate_cards.sql;
+-- `source_url` and its index are added later by
+-- 0054_debate_card_source_url.sql. This file used to redeclare both,
+-- duplicating 0035's table. On replay that redeclaration no-opped (the
+-- create became `IF NOT EXISTS` against a table 0035 already created),
+-- but the `source_url` index right after it still ran against that same
+-- table — which has no such column until 0054 — so applying migrations in
+-- order failed here with "no such column: source_url" every time.
 CREATE TABLE `saved_learn_cards` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`user_id` text NOT NULL,

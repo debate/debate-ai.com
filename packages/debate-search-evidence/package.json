@@ -25,6 +25,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "debate-card-parser": "workspace:*",
+    "debate-comments": "workspace:*",
     "fuse.js": "^7.5.0",
     "grab-url": "^1.6.22",
     "hyparquet": "^1.30.0",
