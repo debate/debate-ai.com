@@ -84,13 +84,12 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, BookOpen, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, BookOpen, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Trash2, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { Badge } from "../../lib/ui/primitives/badge"
 import { useSession } from "../../lib/hooks/useSession"
 import {
-  CLOUD_LIBRARY_KIND_LABELS,
-  countCloudItemsByKind,
+  deleteCloudLibraryItem,
   fetchRecentCloudItems,
   filterCloudItemsByKind,
   formatRelativeCloudTime,
@@ -173,6 +172,15 @@ export function MySavedItems() {
     }
   }, [isAuthenticated])
 
+  const handleDelete = async (item: CloudLibraryItem) => {
+    if (!window.confirm(`Delete "${item.label}"? This removes it from your account.`)) return
+    if (await deleteCloudLibraryItem(item)) {
+      setItems((prev) => prev && prev.filter((i) => i.key !== item.key))
+    } else {
+      window.alert("Couldn't delete that item. Please try again.")
+    }
+  }
+
   if (!isAuthenticated || !items) return null
 
   // A brand-new signed-in user has no real saved items yet — show a small,
@@ -227,7 +235,8 @@ export function MySavedItems() {
         {displayItems.map((item) => {
           const Icon = KIND_ICON[item.kind]
           return (
-            <Link key={item.key} href={item.href} className="block">
+            <div key={item.key} className="group relative">
+            <Link href={item.href} className="block">
               <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
                 <CardHeader className="px-4">
                   <div className="flex items-center gap-2">
@@ -245,6 +254,17 @@ export function MySavedItems() {
                 </CardHeader>
               </Card>
             </Link>
+            {item.deletePath && !item.isSample && (
+              <button
+                type="button"
+                aria-label={`Delete ${item.label}`}
+                onClick={() => void handleDelete(item)}
+                className="absolute bottom-3 right-3 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus:opacity-100 group-hover:opacity-100"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+            </div>
           )
         })}
       </div>
