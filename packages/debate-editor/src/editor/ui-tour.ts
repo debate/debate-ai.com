@@ -197,7 +197,7 @@ function buildSteps(opts: { includeCreateDoc: boolean }): TourStep[] {
       id: COMMAND_BAR_STEP_ID,
       title: 'One shortcut to rule them all',
       body:
-        `Press ${mod('Mod-Shift-Space')} now. It opens the command bar — it searches ` +
+        `Press ${mod('Mod-p')} now. It opens the command bar — it searches ` +
         'commands, settings, files, and your quick cards from one box. (Or press Next ' +
         'to move on.)',
       interactive: true,

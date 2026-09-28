@@ -148,7 +148,7 @@ export const APP_FEATURES: FeatureEntry[] = [
     id: "reason-editor",
     title: "Reason Editor",
     description:
-      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-Shift-Space command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
+      "The rich-text card editor: a Google-Docs-style menu bar (File/Edit/Card/Format/Insert/AI/View/Tools/Workspace), a Ctrl/Cmd-P command palette that also jumps to other tools, Verbatim/Cardmirror-compatible shortcuts, an outline nav panel, and a send-to-speech-document command",
     href: "/reason-editor",
     category: "workspaces",
     doc: "legacy-verbatim-shortcuts.md",
