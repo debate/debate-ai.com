@@ -171,6 +171,19 @@
  * reason as that type's `updatedAt` — a round saved before that field
  * existed still parses.
  *
+ * A twenty-first kind, Coach Materials' uploaded grounding documents
+ * (`/coach-materials`), joined next: `saved_coach_materials` already synced a
+ * signed-in user's `CoachMaterial`s (`debate-speech-writer`, one row per
+ * material keyed by its own `id`) via `GET /api/coach-materials`, but the
+ * same "sync wired, discoverability not" gap applied here too — a material
+ * uploaded on one device stayed invisible from this widget on another. Unlike
+ * every other kind above, `CoachMaterial` itself carries no `updatedAt`/
+ * `createdAt` of its own — a genuine gap, not a deliberate omission, since
+ * `PUT /api/coach-materials/[materialId]` already tracks and returns the
+ * row's own `updatedAt` on every upsert — so `GET /api/coach-materials` now
+ * mixes that same column into each listed row and this kind's summary type
+ * reads it from there instead.
+ *
  * Kept framework/fetch-free, matching `state/savedFlows.ts`/
  * `state/savedRounds.ts`'s split — `apps/debate-ai.com` has no vitest
  * project of its own (see `vitest.config.ts`'s `projects` list), so any
@@ -463,6 +476,22 @@ export type CloudEvidenceLibraryEntrySummary = {
  */
 export type CloudPracticeRoundSummary = Pick<PracticeRoundRecord, "roundId" | "createdAt">;
 
+/**
+ * The subset of a `SyncedCoachMaterial` (`debate-speech-writer`'s
+ * `coach-materials-client.ts` — a `CoachMaterial` with the saved row's own
+ * `updatedAt` mixed in, since the domain type itself carries no timestamp) a
+ * caller needs to list one in the merged view — mirrors
+ * `GET /api/coach-materials`'s row shape. Defined locally rather than
+ * importing `SyncedCoachMaterial` itself, matching {@link CloudDebateSummary}'s
+ * own local-type convention: `debate-round` doesn't depend on
+ * `debate-speech-writer` for this purpose (nor the reverse).
+ */
+export type CloudCoachMaterialSummary = {
+  id: string;
+  title: string;
+  updatedAt: string;
+};
+
 export type CloudLibraryItemKind =
   | "document"
   | "flow"
@@ -483,7 +512,8 @@ export type CloudLibraryItemKind =
   | "quickCard"
   | "prepNote"
   | "evidenceLibraryEntry"
-  | "practiceRound";
+  | "practiceRound"
+  | "coachMaterial";
 
 export interface CloudLibraryItem {
   kind: CloudLibraryItemKind;
@@ -493,6 +523,13 @@ export interface CloudLibraryItem {
   label: string;
   /** Milliseconds since epoch, normalized from whatever timestamp shape the source row used. */
   updatedAtMs: number;
+  /**
+   * API path a `DELETE` removes this item from the signed-in user's account
+   * (e.g. `/api/flows/2`). Only set for kinds whose delete route is wired
+   * into "My Saved Items" (currently flows and rounds); absent means the
+   * item can only be managed inside its own tool's panel.
+   */
+  deletePath?: string;
   /**
    * True for one of {@link getSampleCloudLibraryItems}' placeholder rows,
    * never present (or `false`) on a real, account-synced item. Lets a caller
@@ -545,6 +582,7 @@ export interface BuildRecentCloudItemsInput {
   prepNotes?: CloudPrepNoteSummary[];
   evidenceLibraryEntries?: CloudEvidenceLibraryEntrySummary[];
   practiceRounds?: CloudPracticeRoundSummary[];
+  coachMaterials?: CloudCoachMaterialSummary[];
 }
 
 export interface BuildRecentCloudItemsOptions {
@@ -572,6 +610,7 @@ export interface BuildRecentCloudItemsOptions {
   prepNoteHref?: string;
   evidenceLibraryEntryHref?: string;
   practiceRoundHref?: string;
+  coachMaterialHref?: string;
 }
 
 /**
@@ -608,6 +647,7 @@ export function buildRecentCloudItems(
     prepNoteHref = "/prep-notes",
     evidenceLibraryEntryHref = "/cards/library",
     practiceRoundHref = "/practice-round",
+    coachMaterialHref = "/coach-materials",
   } = opts;
 
   const documentItems: CloudLibraryItem[] = (input.documents ?? []).slice(0, perKindLimit).map((doc) => ({
@@ -624,6 +664,7 @@ export function buildRecentCloudItems(
     href: flowHref,
     label: flow.label.trim() || "Untitled flow",
     updatedAtMs: parseCloudTimestamp(flow.updatedAt),
+    deletePath: `/api/flows/${flow.clientId}`,
   }));
 
   const roundItems: CloudLibraryItem[] = (input.rounds ?? []).slice(0, perKindLimit).map((round) => ({
@@ -632,6 +673,7 @@ export function buildRecentCloudItems(
     href: roundHref,
     label: round.label.trim() || "Untitled round",
     updatedAtMs: parseCloudTimestamp(round.updatedAt),
+    deletePath: `/api/rounds/${round.clientId}`,
   }));
 
   const wordCountRoundItems: CloudLibraryItem[] = (input.wordCountRounds ?? [])
@@ -809,6 +851,16 @@ export function buildRecentCloudItems(
       updatedAtMs: parseCloudTimestamp(round.createdAt ?? 0),
     }));
 
+  const coachMaterialItems: CloudLibraryItem[] = (input.coachMaterials ?? [])
+    .slice(0, perKindLimit)
+    .map((material) => ({
+      kind: "coachMaterial" as const,
+      key: `coachMaterial-${material.id}`,
+      href: coachMaterialHref,
+      label: material.title.trim() || "Untitled coach material",
+      updatedAtMs: parseCloudTimestamp(material.updatedAt),
+    }));
+
   return [
     ...documentItems,
     ...flowItems,
@@ -830,6 +882,7 @@ export function buildRecentCloudItems(
     ...prepNoteItems,
     ...evidenceLibraryEntryItems,
     ...practiceRoundItems,
+    ...coachMaterialItems,
   ]
     .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
     .slice(0, limit);

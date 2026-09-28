@@ -16,6 +16,26 @@ Entry: `src/react/index.tsx` — consumed as source, no build step. Tests in
 
 Never reach past these into `src/`.
 
+## It is upstream CardMirror plus a patch
+
+`src/` = upstream CardMirror (the `packages/debate-editor-cm` submodule, at the
+commit in `upstream.json`) + `patches/debate-ai.patch` + files upstream doesn't
+have (the React shell, ribbon tabs, sync clients). See the README's "Upstream
+CardMirror" section.
+
+- **Edited an upstream file?** Run `bun run sync-upstream:save` in this
+  package and commit the patch with it. `test/upstream-sync.test.ts` fails CI
+  otherwise. Never hand-edit the patch.
+- **Taking upstream changes:** move the submodule, `bun run sync-upstream`,
+  resolve `<<<<<<< src` conflicts, `sync-upstream:save`, then run the tests.
+  Commit the submodule bump, `upstream.json`, `patches/` and `src/` together.
+- Prefer putting new debate-ai.com logic in a file of our own over growing
+  the patch. Every patched line is a future merge conflict.
+- After a sync: a new `RIBBON_GROUPS` group must go on a tab in
+  `editor/ribbon-tabs.ts` (its drift guard throws at module load, which kills
+  the embed). A new element in upstream's `index.html` must be copied into
+  `react/ribbon-template.ts`. `test/engine-boot.test.ts` catches both.
+
 ## What must not regress
 
 - **Lossless Verbatim `.docx` round-trip.** Open a Verbatim file, edit, save,

@@ -1,13 +1,13 @@
 "use client"
 
 /**
- * @fileoverview App-wide `Ctrl`/`Cmd`-Shift-Space command palette.
+ * @fileoverview App-wide `Ctrl`/`Cmd`-P command palette.
  *
  * The Reason Editor already has its own Search Everything palette on this
  * shortcut (`packages/debate-editor`'s `quick-card-search-ui.ts`), whose `t`
  * prefix jumps to any of the app's other tools — but that palette only
  * exists inside the CardMirror engine, so every feature doc's "Nav: … in
- * Ctrl/Cmd-Shift-Space's command palette" line was only true while the
+ * Ctrl/Cmd-P's command palette" line was only true while the
  * Reason Editor happened to be open. Everywhere else in the app — `/tools`,
  * `/settings`, `/judges`, the community and coaching hubs — the same
  * shortcut did nothing.
@@ -54,7 +54,7 @@ const QUICK_ACTIONS: Tool[] = [
 ]
 
 /** Routes where the CardMirror editor engine mounts its own, richer
- *  Ctrl/Cmd-Shift-Space palette — this one stands down there rather than
+ *  Ctrl/Cmd-P palette — this one stands down there rather than
  *  fighting over the same shortcut. */
 function ownedByEditor(pathname: string): boolean {
   return pathname === "/reason-editor" || pathname.startsWith("/reason-editor/")
@@ -72,9 +72,11 @@ export function openGlobalCommandPalette(): void {
   window.dispatchEvent(new Event(OPEN_EVENT))
 }
 
-/** True for the palette-opening chord: Ctrl/Cmd + Shift + Space. */
-function isPaletteShortcut(e: KeyboardEvent): boolean {
-  return (e.metaKey || e.ctrlKey) && e.shiftKey && (e.code === "Space" || e.key === " ")
+/** True for the palette-opening chord: Cmd-P on a Mac, Ctrl-P elsewhere —
+ *  the browser's Print shortcut, which the palette takes over (the
+ *  handler preventDefaults it). Shift/Alt variants are left alone. */
+export function isPaletteShortcut(e: Pick<KeyboardEvent, "metaKey" | "ctrlKey" | "shiftKey" | "altKey" | "code" | "key">): boolean {
+  return (e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && (e.code === "KeyP" || e.key.toLowerCase() === "p")
 }
 
 function toolHaystack(tool: Tool): string {
@@ -163,7 +165,7 @@ export function GlobalCommandPalette() {
       <CommandInput
         value={search}
         onValueChange={setSearch}
-        placeholder="Jump to a tool… (Ctrl/Cmd-Shift-Space)"
+        placeholder="Jump to a tool… (Ctrl/Cmd-P)"
       />
       <CommandList>
         <CommandEmpty>No matching tool.</CommandEmpty>

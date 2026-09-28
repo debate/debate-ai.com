@@ -40,6 +40,14 @@ const GEAR: {
       "Sixty-watt Power Delivery cables that top up a phone or the Bluetooth keyboard in well under an hour — five cables in lengths from 3.3 ft to 10 ft so you can always reach an outlet or your phone while mounted. Braided 48-strand cotton, 480 Mbps data, and metal-reinforced ports so a tangle or yank won't kill them mid-round.",
   },
   {
+    name: "Anker 20,000mAh Power Bank",
+    role: "Keep the phone alive all day",
+    href: "https://amzn.to/4ryVFW3",
+    image: "https://i.imgur.com/0H58u2z.jpeg",
+    blurb:
+      "A 20,000 mAh USB-C power bank that recharges a phone two or three times over and still fits in a pocket. With PowerIQ and a USB-C port it tops up the phone and the Bluetooth keyboard from one brick, so a dead battery mid-tournament is never the reason you lose a round.",
+  },
+  {
     name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
     role: "Giant floating screen, no laptop",
     href: "https://amzn.to/4rA4rmp",

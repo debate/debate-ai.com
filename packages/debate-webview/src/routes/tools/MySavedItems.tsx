@@ -62,8 +62,13 @@
  * analytic blocks (`/cards/library`) joined next — already synced per-user
  * (per-browser submissions only, not the shared search index) via the same
  * generic mechanism, the same gap again. Practice Round Simulator's saved
- * rounds (`/practice-round`) joined last — already synced per-user via the
- * same generic `saved_tool_records` mechanism, the same gap again.
+ * rounds (`/practice-round`) joined next — already synced per-user via the
+ * same generic `saved_tool_records` mechanism, the same gap again. Coach
+ * Materials' uploaded grounding documents (`/coach-materials`) joined last —
+ * already saved per-user in `saved_coach_materials`, the same gap again;
+ * unlike every kind above, `GET /api/coach-materials` didn't even return a
+ * timestamp to sort by until now, since `CoachMaterial` itself carries no
+ * `updatedAt` — see `cloudLibrary.ts`'s `CloudCoachMaterialSummary`.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -79,11 +84,12 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { BarChart3, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Type } from "lucide-react"
+import { BarChart3, BookOpen, Bot, CalendarClock, ClipboardList, Crosshair, Dumbbell, FileText, Flag, Landmark, Layers, Library, ListTree, MapPin, NotebookPen, PlayCircle, Scissors, Send, Sparkles, Trash2, Type } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription } from "../../lib/ui/primitives/card"
 import { Badge } from "../../lib/ui/primitives/badge"
 import { useSession } from "../../lib/hooks/useSession"
 import {
+  deleteCloudLibraryItem,
   fetchRecentCloudItems,
   formatRelativeCloudTime,
   getSampleCloudLibraryItems,
@@ -140,6 +146,8 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`,
   // same as `customOpponentPersona` above — both belong to that same tool.
   practiceRound: PlayCircle,
+  // Matches Coach Materials' own icon in `app/tools/tool-groups.ts`.
+  coachMaterial: BookOpen,
 }
 
 export function MySavedItems() {
@@ -156,6 +164,15 @@ export function MySavedItems() {
       cancelled = true
     }
   }, [isAuthenticated])
+
+  const handleDelete = async (item: CloudLibraryItem) => {
+    if (!window.confirm(`Delete "${item.label}"? This removes it from your account.`)) return
+    if (await deleteCloudLibraryItem(item)) {
+      setItems((prev) => prev && prev.filter((i) => i.key !== item.key))
+    } else {
+      window.alert("Couldn't delete that item. Please try again.")
+    }
+  }
 
   if (!isAuthenticated || !items) return null
 
@@ -180,7 +197,8 @@ export function MySavedItems() {
         {displayItems.map((item) => {
           const Icon = KIND_ICON[item.kind]
           return (
-            <Link key={item.key} href={item.href} className="block">
+            <div key={item.key} className="group relative">
+            <Link href={item.href} className="block">
               <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
                 <CardHeader className="px-4">
                   <div className="flex items-center gap-2">
@@ -198,6 +216,17 @@ export function MySavedItems() {
                 </CardHeader>
               </Card>
             </Link>
+            {item.deletePath && !item.isSample && (
+              <button
+                type="button"
+                aria-label={`Delete ${item.label}`}
+                onClick={() => void handleDelete(item)}
+                className="absolute bottom-3 right-3 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus:opacity-100 group-hover:opacity-100"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+            </div>
           )
         })}
       </div>

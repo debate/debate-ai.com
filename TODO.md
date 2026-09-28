@@ -1,5 +1,105 @@
 
-improve the ui's and have demo mock data samples for t4sting these out with ui's
+integrate all the tools and create user settings and link user db SQL with
+ability to save flows docs and debates in SQL and link to users. add tools
+into where needed in the ui for users and develop better tool ui
+
+Investigated before picking a slice: this codebase's tool-sync
+infrastructure is already exceptionally mature — nearly every tool in
+`packages/debate-webview/src/routes/tools/tool-groups.ts` already
+persists to the cloud, either via a dedicated table+hook or the generic
+`TOOL_RECORD_COLLECTIONS` catalog (~60 collections,
+`packages/debate-data-sync/src/state/toolRecordCollections.ts`), each
+D1 table already has a proper `userId` foreign key with cascade delete
+(see `apps/debate-ai.com/lib/database/schema.ts`), and `/tools`' "My
+Saved Items" widget (`MySavedItems.tsx`) already acts as the de facto
+"link flows/docs/debates to users, browsable in one place" surface idea
+#17 named, merging ~20 data kinds via `debate-round`'s
+`state/cloudLibrary.ts`. Do not re-build any of that sync infrastructure
+without re-checking first — see that module's own "joined next" history
+comment for the full, current list of what's already wired.
+
+Done (first slice, Coach Materials): of that ~20-kind list, Coach
+Materials (`saved_coach_materials`, `/coach-materials`) was a genuine
+miss — synced to the account but never surfaced in "My Saved Items,"
+unlike everything else. It's the 21st kind now. Unlike the other 20,
+`CoachMaterial` itself carried no `updatedAt`/`createdAt` field at all,
+so `GET /api/coach-materials` now mixes the saved row's own `updatedAt`
+(already tracked by the PUT route on every upsert) into each listed
+material — see `CloudCoachMaterialSummary` in `cloudLibrary.ts` and
+`SyncedCoachMaterial` in `debate-speech-writer`'s
+`coach-materials-client.ts`. PR: #1002.
+
+Investigated and intentionally deferred as separate, larger slices (not
+done in this PR):
+- `/settings` no longer surfaces account-level tool preferences or sync
+  status — it was deliberately gutted down to CardMirror-editor-only
+  settings (see that page's own doc comment), and `ToolSyncStatusPanel`
+  only renders on `/tools` now. Re-adding a "Tools"/"Data & Sync" section
+  to `/settings` is a reasonable follow-up, but it cuts against that
+  documented intentional redesign, so it needs an explicit product
+  decision (re-duplicate the sync status on both pages, or just link
+  `/settings` → `/tools`?) rather than a unilateral revert.
+- No per-item delete/manage affordance in "My Saved Items" itself
+  (deletion, where it exists, lives inside each tool's own panel) — a
+  real gap, but a UI-design-sized one (bulk delete? per-kind? confirm
+  dialogs for ~21 different record shapes?) rather than a small slice.
+
+Done (fifth slice, /settings → /tools link): picked the lighter of the two
+options the deferred note above raised, rather than re-duplicating
+`ToolSyncStatusPanel`'s sync-status UI on both pages. `/settings` (CardMirror
+editor settings only) had no pointer at all to `/tools`, where saved
+flows/documents/rounds and account sync status actually live now — a user
+looking for either under Settings found nothing. Added `ToolsLinkCard`
+(`packages/debate-webview/src/components/settings/ToolsLinkCard.tsx`), a
+single link card rendered at the top of `/settings`
+(`routes/settings/page.tsx`), with a focused Vitest test
+(`test/components/settings/ToolsLinkCard.test.tsx`). The larger, still-open
+half of that same deferred item — an actual "Tools"/"Data & Sync" section on
+`/settings` itself, i.e. re-duplicating sync status there — still needs the
+product decision noted above and remains a follow-up. The per-item
+delete/manage gap in "My Saved Items" also remains open, unchanged from the
+note above.
+
+Done (sixth slice, per-item delete for flows & rounds in My Saved Items):
+took the smallest useful piece of the still-open "no per-item delete/manage
+affordance" gap — saved flows and rounds, whose `DELETE /api/flows/:clientId`
+and `DELETE /api/rounds/:clientId` routes already existed and were owner-scoped.
+`CloudLibraryItem` gained an optional `deletePath` (set only for those two
+kinds), `deleteCloudLibraryItem` (`debate-round`'s `cloudLibraryClient.ts`)
+issues the DELETE and never rejects, and `MySavedItems.tsx` shows a hover/focus
+trash button with a confirm dialog on real (non-sample) flow/round cards.
+Tests: `test/cloudLibraryClient.test.ts`, `test/cloudLibrary.test.ts`.
+Follow-ups still open: delete for the other ~19 kinds (each has its own
+route/record shape); the "Data & Sync" section on `/settings` (product
+decision); and repo hygiene found while verifying — `bun.lock` on master has
+committed merge-conflict markers (lines 6790–6924, from `8678d95`), so
+`bun install --frozen-lockfile` fails and CI installs can't be reproducible
+until a maintainer regenerates it. Branch:
+`agent/todo-saved-items-delete-flows-rounds`.
+
+Also confirmed still-fixed (no longer follow-ups): both previously-tracked
+test failures — `packages/debate-webview/test/host/routes.test.ts`'s missing
+`/practice-partners` route registration, and
+`apps/debate-ai.com/lib/__tests__/docs-links-consistency.test.ts`'s dead
+docs links — now pass; a prior session's fixes for both are already on this
+branch. The REASON editor file-tree empty-state slice noted as "the last
+open follow-up" a few paragraphs below is also already done (see
+`packages/debate-webview/src/components/reason-docs/FileTree.tsx` and
+`getSampleReasonDocuments`) — that paragraph's wording is stale and kept
+as-is below for the historical record rather than rewritten.
+
+Verified for this slice: `bun run typecheck` (`debate-webview`, clean),
+`bunx vitest run --config apps/debate-ai.com/vitest.config.ts --project
+debate-webview` (53/53 files, 515/515 tests passing). `bun run build:web`
+fails, but confirmed pre-existing and unrelated (reproduces identically with
+this slice's changes fully reverted): a `RangeError: Maximum call stack size
+exceeded` in `fumadocs-mdx`/`mdast-util-to-markdown`'s stringifier while
+processing several `packages/debate-help-docs/content/docs/**` MDX files
+(`task-inbox.mdx`, `turnstile-bot-gate.mdx`,
+`team-collaboration-mode.mdx`, `flow-annotations.mdx`,
+`topic-coverage-dashboard.mdx`, and others) — unrelated to `/settings` or
+`/tools` and a good follow-up for a maintainer familiar with that docs
+pipeline.
 
 Done (first slice): `/tools`' "My Saved Items" widget rendered nothing at
 all for a signed-in user with no cloud-saved data yet — indistinguishable
@@ -75,6 +175,83 @@ follow-ups:
   dead links in `packages/debate-help-docs/content/docs/**` to
   `internals/tool-data-sync.mdx` and a handful of other not-yet-written
   internals pages, plus two `/docs/packages` index links.
+
+Both of the above are now fixed on `master` (`/practice-partners` was
+registered in `482c7cd`; the dead-link count dropped to zero once the linked
+pages were restored) — confirmed by re-running both test files in this PR
+before picking a new slice. The REASON editor's file-tree empty state
+(`a1e8549`) is also already done; its own TODO.md paragraph got dropped by a
+merge-conflict resolution in `66ddc1d` that kept only the concurrent Coach
+Materials paragraph, but the code (`getSampleReasonDocuments`,
+`FileTree.tsx`'s sample-tree branch) is intact on `master` — noted here only
+so a future run doesn't re-implement it from a stale-looking tracker.
+
+Done (fifth slice, `/settings` → `/tools` link): of the two intentionally
+deferred items above, took the smaller, unambiguous option for the first one
+rather than waiting on a product decision. `/settings` (CardMirror-editor
+settings only, see that page's own doc comment) had nothing pointing a
+visitor to `/tools`, where favourite tools and `ToolSyncStatusPanel`'s
+account sync status actually live now — a real gap, not a re-litigation of
+the intentional redesign. Added `SettingsToolsLink`
+(`packages/debate-webview/src/components/settings/SettingsToolsLink.tsx`), a
+small bordered link card rendered at the top of `/settings`, above
+`CardMirrorSettingsPanel`, saying tool preferences/sync status live on the
+Tools page and linking there. Duplicates no state — it only links across.
+Also updated `internals/tool-data-sync.mdx`'s own note about this, which
+still said the sync was "unobservable from inside the app" despite its own
+**Known gaps** entry below marking that ~~Fixed~~ once `ToolSyncStatusPanel`
+landed on `/tools`. The second deferred item (per-item delete/manage in "My
+Saved Items") is still open and still UI-design-sized — not touched here.
+
+Fixed (infra, unrelated to the slice above, found while running the full
+verification gate): `apps/debate-ai.com/drizzle/` had been deleted from the
+tracked tree a *fourth* time (commit `1a2cbbf`, "Delete
+apps/debate-ai.com/drizzle directory" — same pattern as `2566e0d`/`d58d57f`,
+`39076f1`/`53656dd`, and most recently `1fb937a`'s restore before `de88ca2`
+fixed it a third time — always an unreviewed direct-to-mainline commit),
+breaking every test that boots an in-memory D1/libSQL db by replaying those
+migrations (87 tests across 15 files, all `ENOENT`). Restored all 58
+migration files + `meta/` snapshots from the last known-good restore
+(`de88ca2`), then ran `bun run db:generate` to add migration
+`0038_redundant_darkhawk.sql` for schema drift accumulated since then
+without a matching migration (`team_assignments`, `team_students`,
+`usage_counters` — all new, additive tables). `bun run db:generate` now
+reports "No schema changes, nothing to migrate". With this fix: `bun run
+typecheck` (25/25 packages) and `bun run test` (10617 passed, 1 skipped, 0
+failed) both pass clean.
+
+Two more pre-existing, unrelated failures found while running `bun run
+build` for this PR's verification (confirmed present on `master` before this
+PR's changes, by stashing this PR's diff and re-running); both are
+too large to fix as part of this slice and are good candidates for their own
+PRs:
+- **`debate-web-ext` (`apps/debate-browser-ext`) fails to build entirely.**
+  Root cause: `packages/debate-ai-webui` — the `next/link`, `next/navigation`
+  and `next/image` shim package `apps/debate-browser-ext/wxt.config.ts`
+  aliases those imports to when bundling the Options page outside Next.js —
+  was deleted wholesale from the tracked tree (commit `3811cc9`, hundreds of
+  files: the shims plus a full admin-dashboard component set,
+  `src/components/admin/*`). Unlike the drizzle directory, restoring this
+  package is a large, separate change (hundreds of files, real application
+  code that may have drifted from what depends on it since deletion) and
+  deserves its own PR and review, not a drive-by fix bundled with unrelated
+  work. `bun run build` (which excludes `debate-flow`/`debate-flow-ebb`/
+  `debate-help-docs` but not this) fails on this; CI's `test.yml` doesn't run
+  `bun run build` at all, so this hasn't been blocking merges.
+- **`debate-ai-web`'s own production build fails too, separately**: `vinext
+  build` crashes with `RangeError: Maximum call stack size exceeded` inside
+  `fumadocs-mdx`'s markdown stringifier while processing several
+  `packages/debate-help-docs/content/docs/features/*.mdx` pages
+  (`argument-library-collections.mdx`, `app-nav-dock.mdx`,
+  `argument-tree-outline.mdx` seen so far in the log — there may be more).
+  The stack trace is recursive through `mdast-util-to-markdown`'s `strong`
+  (bold) handler, suggesting one of those pages has a malformed or
+  deeply/self-nested `**bold**` construct fumadocs' MDX pipeline can't
+  stringify. Needs someone to bisect which page and construct triggers it
+  (a `git bisect` over `packages/debate-help-docs/content/docs/features/`
+  edits, or trimming each flagged page until the crash stops) and fix the
+  markdown, not the pipeline. Also not caught by CI today for the same
+  reason as the item above.
 
 
 

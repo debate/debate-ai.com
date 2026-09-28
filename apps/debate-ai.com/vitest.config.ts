@@ -32,9 +32,9 @@ export default defineConfig({
       // toolchain and MariaDB. debate-tournaments tests the vendored code.
       "!packages/debate-tournament-tabroom",
       // Git submodules of upstream CardMirror and Tabroom. Each is its own
-      // app with its own toolchain and test setup; the web UI reaches
-      // CardMirror through debate-editor-cm-adapter, while Tabroom is vendored
-      // into debate-tournaments, which tests the parts the app uses.
+      // app with its own toolchain and test setup; CardMirror is rebased into
+      // debate-editor (and re-exported by debate-editor-cm-adapter), Tabroom is
+      // vendored into debate-tournaments, and those test the parts the app uses.
       "!packages/debate-editor-cm",
       "!packages/debate-tournaments-tabroom",
       // A git submodule vendoring the upstream debate-flow repo, same shape

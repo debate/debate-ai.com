@@ -4505,7 +4505,7 @@ export type RibbonCommandId =
   | 'copyCardsWithMatchingCite'
   // Quick Cards (see reference-docs/SPEC-quick-cards.md). Add saves the
   // current selection as a named, tagged snippet (no default binding);
-  // the search palette opens on Mod-Shift-Space.
+  // the search palette opens on Mod-p.
   | 'addQuickCard'
   | 'manageQuickCards'
   | 'openQuickCardSearch'
@@ -5382,7 +5382,9 @@ export const DEFAULT_RIBBON_KEYS: Record<RibbonCommandId, string | string[]> = {
   sendToDropzone: 'Mod-`',
   sendToStarred: '',
   sendToRecipient: '',
-  insertReceivedAtCursor: 'Mod-p',
+  // Mod-p itself opens the command bar (openQuickCardSearch), so the
+  // at-cursor insert takes the shifted chord.
+  insertReceivedAtCursor: 'Mod-Shift-p',
   insertReceivedAtEnd: 'Mod-Alt-p',
   previewReceived: '',
   selectCurrentHeading: 'Alt-a',
@@ -5403,7 +5405,10 @@ export const DEFAULT_RIBBON_KEYS: Record<RibbonCommandId, string | string[]> = {
   copyCardsWithMatchingCite: '',
   addQuickCard: '',
   manageQuickCards: '',
-  openQuickCardSearch: 'Mod-Shift-Space',
+  // Cmd-P / Ctrl-P, like VS Code's Quick Open. The editor's global key
+  // handler preventDefaults every bound chord, so this replaces the
+  // browser's Print dialog while the editor is mounted.
+  openQuickCardSearch: 'Mod-p',
   collabStartSession: '',
   collabJoinSession: '',
   collabCopyShareCode: '',

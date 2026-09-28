@@ -4,6 +4,7 @@ import {
   formatRelativeCloudTime,
   getSampleCloudLibraryItems,
   parseCloudTimestamp,
+  type CloudCoachMaterialSummary,
   type CloudCounselPanelAssessmentSummary,
   type CloudCustomOpponentPersonaSummary,
   type CloudDebateSummary,
@@ -115,8 +116,11 @@ describe("buildRecentCloudItems", () => {
   const practiceRounds: CloudPracticeRoundSummary[] = [
     { roundId: "round-13", createdAt: Date.parse("2026-09-13T00:00:00.000Z") },
   ];
+  const coachMaterials: CloudCoachMaterialSummary[] = [
+    { id: "material-1", title: "Camp Aff Lecture", updatedAt: "2026-09-14T00:00:00.000Z" },
+  ];
 
-  it("merges all twenty kinds and sorts newest first", () => {
+  it("merges all twenty-one kinds and sorts newest first", () => {
     const items = buildRecentCloudItems(
       {
         documents,
@@ -139,10 +143,12 @@ describe("buildRecentCloudItems", () => {
         prepNotes,
         evidenceLibraryEntries,
         practiceRounds,
+        coachMaterials,
       },
-      { limit: 20 },
+      { limit: 21 },
     );
     expect(items.map((i) => i.kind)).toEqual([
+      "coachMaterial",
       "practiceRound",
       "evidenceLibraryEntry",
       "prepNote",
@@ -478,6 +484,18 @@ describe("buildRecentCloudItems", () => {
     expect(items[0]?.updatedAtMs).toBe(0);
   });
 
+  it("includes coach materials, keyed by id and labeled by title", () => {
+    const items = buildRecentCloudItems({ coachMaterials });
+    expect(items).toEqual([
+      expect.objectContaining({
+        kind: "coachMaterial",
+        key: "coachMaterial-material-1",
+        label: "Camp Aff Lecture",
+        updatedAtMs: Date.parse("2026-09-14T00:00:00.000Z"),
+      }),
+    ]);
+  });
+
   it("includes flows — the gap this module closes: the widget previously omitted them entirely", () => {
     const items = buildRecentCloudItems({ documents: [], flows, rounds: [] });
     expect(items).toHaveLength(1);
@@ -507,8 +525,9 @@ describe("buildRecentCloudItems", () => {
         prepNotes,
         evidenceLibraryEntries,
         practiceRounds,
+        coachMaterials,
       },
-      { limit: 20 },
+      { limit: 21 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.href]));
     expect(byKind.document).toBe("/reason-editor");
@@ -531,6 +550,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.prepNote).toBe("/prep-notes");
     expect(byKind.evidenceLibraryEntry).toBe("/cards/library");
     expect(byKind.practiceRound).toBe("/practice-round");
+    expect(byKind.coachMaterial).toBe("/coach-materials");
 
     const overridden = buildRecentCloudItems({ flows }, { flowHref: "/custom-flow-route" });
     expect(overridden[0]?.href).toBe("/custom-flow-route");
@@ -618,6 +638,12 @@ describe("buildRecentCloudItems", () => {
       { practiceRoundHref: "/custom-practice-round-route-2" },
     );
     expect(overriddenPracticeRound[0]?.href).toBe("/custom-practice-round-route-2");
+
+    const overriddenCoachMaterial = buildRecentCloudItems(
+      { coachMaterials },
+      { coachMaterialHref: "/custom-coach-materials-route" },
+    );
+    expect(overriddenCoachMaterial[0]?.href).toBe("/custom-coach-materials-route");
   });
 
   it("falls back to an untitled label per kind when the title/label/roundId/topic/speechKey is blank", () => {
@@ -659,8 +685,9 @@ describe("buildRecentCloudItems", () => {
           { id: "entry-1", cite: "   ", argBlock: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") },
         ],
         practiceRounds: [{ roundId: "   ", createdAt: Date.parse("2026-08-30T00:00:00.000Z") }],
+        coachMaterials: [{ id: "material-1", title: "   ", updatedAt: "2026-08-30T00:00:00.000Z" }],
       },
-      { limit: 20 },
+      { limit: 21 },
     );
     const byKind = Object.fromEntries(items.map((i) => [i.kind, i.label]));
     expect(byKind.document).toBe("Untitled");
@@ -683,6 +710,7 @@ describe("buildRecentCloudItems", () => {
     expect(byKind.prepNote).toBe("Untitled prep note");
     expect(byKind.evidenceLibraryEntry).toBe("Untitled evidence entry");
     expect(byKind.practiceRound).toBe("Untitled practice round");
+    expect(byKind.coachMaterial).toBe("Untitled coach material");
   });
 
   it("caps each kind to perKindLimit before merging", () => {
@@ -725,6 +753,7 @@ describe("buildRecentCloudItems", () => {
         prepNotes: [],
         evidenceLibraryEntries: [],
         practiceRounds: [],
+        coachMaterials: [],
       }),
     ).toEqual([]);
   });
@@ -793,5 +822,17 @@ describe("formatRelativeCloudTime", () => {
 
   it("returns an empty string for a non-finite timestamp", () => {
     expect(formatRelativeCloudTime(Number.NaN, now)).toBe("");
+  });
+});
+
+describe("buildRecentCloudItems deletePath", () => {
+  it("sets a delete path for flows and rounds only", () => {
+    const items = buildRecentCloudItems({
+      documents: [{ id: 1, title: "Doc", updatedAt: "2026-08-28T00:00:00.000Z" }],
+      flows: [{ clientId: 2, label: "Flow", updatedAt: "2026-08-30T00:00:00.000Z" }],
+      rounds: [{ clientId: 3, label: "Round", updatedAt: "2026-08-29T00:00:00.000Z" }],
+    });
+    const byKind = Object.fromEntries(items.map((i) => [i.kind, i.deletePath]));
+    expect(byKind).toEqual({ document: undefined, flow: "/api/flows/2", round: "/api/rounds/3" });
   });
 });
