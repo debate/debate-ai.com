@@ -10,14 +10,21 @@ interface SubscriptionInfo {
     currentPeriodEnd: string | null
     cancelAtPeriodEnd: boolean
   } | null
-  plans: { id: string; name: string; amount: number; checkoutUrl: string }[]
+  plans: { id: string; name: string; amount: number; checkoutUrl: string; features?: string[] }[]
+  free?: { features: string[] }
+  tier?: string
+  usage?: { llmRequests: number; cardAiAnalyses: number; cardSearches: number } | null
 }
+
+const featureListStyle = { margin: 0, paddingLeft: 18, fontSize: 12, lineHeight: 1.6, opacity: 0.8 } as const
 
 /**
  * The signed-in user's current plan and a button per paid plan to upgrade,
  * at the top of the Preferences tab. Plans and their Payment Links (tagged
  * with the account so the webhook can attribute the purchase) come from
- * `/api/stripe/subscription`; renders nothing if that request fails.
+ * `/api/stripe/subscription`; renders nothing if that request fails. Each
+ * plan lists its tiered limits (AI requests, card search, team roster, …),
+ * and a signed-in user sees today's usage.
  */
 export function PlanUpgradeSection() {
   const [info, setInfo] = useState<SubscriptionInfo | null>(null)
@@ -60,7 +67,35 @@ export function PlanUpgradeSection() {
         <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Plan</h4>
       </div>
       <p style={{ margin: "0 0 12px", fontSize: 13, opacity: 0.6 }}>{status}</p>
+      {info.usage && (
+        <p style={{ margin: "0 0 12px", fontSize: 12, opacity: 0.6 }}>
+          Today: {info.usage.llmRequests} AI requests · {info.usage.cardAiAnalyses} card AI analyses ·{" "}
+          {info.usage.cardSearches} card searches
+        </p>
+      )}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        {info.free && (
+          <div
+            style={{
+              flex: "1 1 200px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              padding: 12,
+              borderRadius: 8,
+              background: "rgba(127, 127, 127, 0.08)",
+            }}
+          >
+            <div style={{ fontSize: 14, fontWeight: 600 }}>Free</div>
+            <div style={{ fontSize: 13, opacity: 0.75 }}>$0.00 / month</div>
+            <ul style={featureListStyle}>
+              {info.free.features.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+            {!current && <span style={{ fontSize: 13, fontWeight: 600, opacity: 0.7 }}>Current plan</span>}
+          </div>
+        )}
         {info.plans.map((plan) => {
           const isCurrent = plan.id === current?.plan
           return (
@@ -78,6 +113,13 @@ export function PlanUpgradeSection() {
             >
               <div style={{ fontSize: 14, fontWeight: 600 }}>{plan.name}</div>
               <div style={{ fontSize: 13, opacity: 0.75 }}>${(plan.amount / 100).toFixed(2)} / month</div>
+              {plan.features && (
+                <ul style={featureListStyle}>
+                  {plan.features.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              )}
               {isCurrent ? (
                 <span style={{ fontSize: 13, fontWeight: 600, opacity: 0.7 }}>Current plan</span>
               ) : (

@@ -11,6 +11,8 @@ import { cardAiAnalyses } from "@/lib/database/schema"
 import { getSession } from "@/lib/auth/session"
 import { getEnv } from "@/lib/env"
 import { isMissingTableError } from "@/lib/contacts/server"
+import { limitsFor } from "@/lib/stripe/limits"
+import { consumeDailyUsage, getUserTier, limitMessage, usageSubject } from "@/lib/stripe/usage"
 
 /**
  * Saved AI analyses for the evidence search's "AI Analysis" sidebar
@@ -25,6 +27,10 @@ import { isMissingTableError } from "@/lib/contacts/server"
  * find-flaws-and-extensions one (it is generated at most once per card and
  * then shared by everyone). A custom prompt costs a model call per new
  * prompt, so generating one requires a session.
+ *
+ * Only new generations are metered: each counts toward the caller's
+ * `cardAiAnalysesPerDay` plan limit (`lib/stripe/limits.ts`, per IP when
+ * signed out); reading a saved analysis is free.
  */
 
 const ANTHROPIC_MODEL = "claude-sonnet-4-6"
@@ -79,6 +85,10 @@ export async function POST(request: Request) {
   const openrouterKey = getEnv("OPENROUTER_API_KEY")
   const anthropicKey = getEnv("ANTHROPIC_API_KEY")
   if (!openrouterKey && !anthropicKey) return error("AI features are not configured on this server.", 503)
+
+  const tier = await getUserTier(db, session?.user.id)
+  const usage = await consumeDailyUsage(db, usageSubject(session?.user.id, request), "cardAiAnalyses", limitsFor(tier))
+  if (!usage.allowed) return error(limitMessage("cardAiAnalyses", usage, tier), 429)
 
   let res: Response
   try {
