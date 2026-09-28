@@ -29,6 +29,7 @@
  * it alive across edits with `META_OPERATING_ON_SHADOW`.
  */
 
+import { serializeRangesForClipboard } from './clipboard-slice.js';
 import {
   Plugin,
   PluginKey,
@@ -38,7 +39,6 @@ import {
 } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 import type { EditorView } from 'prosemirror-view';
-import { DOMSerializer } from 'prosemirror-model';
 import type { Node as PMNode, Mark } from 'prosemirror-model';
 import { showToast } from './toast.js';
 
@@ -260,20 +260,11 @@ export function buildSimilarSelectionPlugin(
           }
           const cd = (event as ClipboardEvent).clipboardData;
           if (!cd) return false;
-          const { doc, schema } = view.state;
-          const serializer = DOMSerializer.fromSchema(schema);
-          const textParts: string[] = [];
-          const htmlParts: string[] = [];
-          for (const m of ps.matches) {
-            textParts.push(doc.textBetween(m.from, m.to, '\n', ' '));
-            const wrap = document.createElement('div');
-            wrap.appendChild(
-              serializer.serializeFragment(doc.slice(m.from, m.to).content),
-            );
-            htmlParts.push(wrap.innerHTML);
-          }
-          cd.setData('text/plain', textParts.join('\n'));
-          cd.setData('text/html', htmlParts.join(''));
+          // The shared clipboard path: live views inside a range materialize
+          // (the bare serializer pasted them as dangling views).
+          const { html, text } = serializeRangesForClipboard(view, ps.matches);
+          cd.setData('text/plain', text);
+          cd.setData('text/html', html);
           event.preventDefault();
           return true;
         },

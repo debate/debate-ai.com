@@ -98,23 +98,33 @@ async function postConnect(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
+    // A hung /connect otherwise left the credential un-renewed with
+    // nothing retrying until the next 30-minute tick (2026-09-01
+    // review, T6).
+    signal: typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+      ? AbortSignal.timeout(10_000)
+      : undefined,
   });
   if (!res.ok) {
     let detail = '';
+    let relayShaped = false;
     try {
       const parsed = (await res.json()) as { detail?: unknown };
+      relayShaped = !!parsed && typeof parsed === 'object';
       detail =
         typeof parsed.detail === 'string' ? parsed.detail : JSON.stringify(parsed.detail ?? '');
     } catch {
-      /* non-JSON error body */
+      /* non-JSON error body — a captive portal / interceptor, not the relay */
     }
     const err = new Error(detail || `connect failed (${res.status})`) as Error & {
       status?: number;
       detail?: string;
       detailObj?: Record<string, unknown>;
+      relayShaped?: boolean;
     };
     err.status = res.status;
     err.detail = detail;
+    err.relayShaped = relayShaped;
     // Structured 409 bodies (seatLimit / youWereEvicted) ride through
     // for the settings UI's confirm-evict flow.
     try {
@@ -128,6 +138,36 @@ async function postConnect(
     throw err;
   }
   return (await res.json()) as ConnectResponse;
+}
+
+/** Machine name for the relay's seat picker — the best a browser can
+ *  say about itself: "Google Chrome on macOS", "Safari on iOS". Never
+ *  identifying beyond that; '' when there is no navigator (tests). */
+export function webDeviceLabel(): string {
+  if (typeof navigator === 'undefined') return '';
+  const nav = navigator as Navigator & {
+    userAgentData?: { platform?: string; brands?: Array<{ brand: string }> };
+  };
+  const ua = nav.userAgent || '';
+  const platform =
+    nav.userAgentData?.platform ||
+    (/Windows/i.test(ua) ? 'Windows'
+      : /iPad|iPhone/i.test(ua) ? 'iOS'
+      : /Mac OS X|Macintosh/i.test(ua) ? 'macOS'
+      : /CrOS/i.test(ua) ? 'ChromeOS'
+      : /Android/i.test(ua) ? 'Android'
+      : /Linux/i.test(ua) ? 'Linux'
+      : '');
+  const brands = nav.userAgentData?.brands?.map((b) => b.brand) ?? [];
+  const named = brands.find((b) => !/Not.?A.?Brand|Chromium/i.test(b));
+  const browser =
+    named ||
+    (/Edg\//.test(ua) ? 'Edge'
+      : /Firefox\//.test(ua) ? 'Firefox'
+      : /Chrome\//.test(ua) ? 'Chrome'
+      : /Safari\//.test(ua) ? 'Safari'
+      : 'Browser');
+  return `${browser}${platform ? ` on ${platform}` : ''}`.slice(0, 64);
 }
 
 function store(rc: string, got: ConnectResponse): void {
@@ -145,7 +185,7 @@ function store(rc: string, got: ConnectResponse): void {
 export async function webAccountConnect(
   relayBase: string,
   connectCode: string,
-  opts?: { confirmEvict?: boolean },
+  opts?: { confirmEvict?: boolean; evict?: string },
 ): Promise<WebAccountStatus> {
   const rc = await webRoutingCode();
   const proof = await signWebProof('connect');
@@ -153,6 +193,10 @@ export async function webAccountConnect(
     connectCode: connectCode.trim(),
     routingCode: rc,
     confirmEvict: opts?.confirmEvict === true,
+    // Seat picker: the machine the user chose to unlink (relay ≥
+    // 2026-09-02; older relays ignore it and evict the oldest).
+    ...(opts?.evict ? { evict: opts.evict } : {}),
+    deviceLabel: webDeviceLabel(),
     ...proof,
   });
   store(rc, got);
@@ -162,7 +206,22 @@ export async function webAccountConnect(
 
 /** Code-less renewal: key proof only. Quietly a no-op when there is
  *  nothing to renew or plenty of time left. */
-export async function webAccountRenew(relayBase: string, force = false): Promise<void> {
+/** Single-flight: a forced renewal racing the 30-minute tick issued two
+ *  /connect posts, both stored, and the loser could overwrite the newer
+ *  entitlement with an older one (desktop's pairing-ipc has this guard;
+ *  web did not — 2026-09-01 review, T6). */
+let renewInFlight: Promise<void> | null = null;
+
+export function webAccountRenew(relayBase: string, force = false): Promise<void> {
+  if (renewInFlight) return renewInFlight;
+  const p = webAccountRenewInner(relayBase, force).finally(() => {
+    if (renewInFlight === p) renewInFlight = null;
+  });
+  renewInFlight = p;
+  return p;
+}
+
+async function webAccountRenewInner(relayBase: string, force: boolean): Promise<void> {
   const s = ls();
   if (!s) return;
   const rc = s.getItem(LS_RC) ?? '';
@@ -175,15 +234,19 @@ export async function webAccountRenew(relayBase: string, force = false): Promise
     const got = await postConnect(relayBase, {
       connectCode: '',
       routingCode: rc,
+      deviceLabel: webDeviceLabel(), // refreshes the seat picker's label
       ...proof,
     });
     store(rc, got);
   } catch (err) {
-    const status = (err as { status?: number }).status;
+    const e = err as { status?: number; relayShaped?: boolean };
     // Eviction / lapse-past-grace: the binding is gone, stop
-    // presenting a dead credential. Transient failures keep it — the
-    // next check retries.
-    if (status === 401 || status === 403 || status === 409) webAccountDisconnect();
+    // presenting a dead credential — but only when the RELAY said so
+    // (JSON body). A captive portal's HTML 401 used to unlink the
+    // account. Transient failures keep it — the next check retries.
+    if ((e.status === 401 || e.status === 403 || e.status === 409) && e.relayShaped) {
+      webAccountDisconnect();
+    }
   }
 }
 
@@ -197,7 +260,61 @@ export function webAccountDisconnect(): void {
   fireChanged();
 }
 
+/** USER-initiated unlink: drop the credential locally, then release
+ *  the seat server-side in the background. Local wipe comes FIRST so a
+ *  quick re-connect can't be clobbered by a slow release; the release
+ *  proves key possession (purpose 'disconnect' — the key survives the
+ *  wipe), so it needs no stored token. Best-effort: offline or an
+ *  older relay just leaves the seat held until an evict, which is all
+ *  Disconnect ever did before this existed (field report 2026-08-27).
+ *  The renewal-failure paths keep calling webAccountDisconnect
+ *  directly — there the binding is already gone server-side. */
+export function webAccountUnlink(relayBase: string): void {
+  const s = ls();
+  const rc = s?.getItem(LS_RC) ?? '';
+  const hadLink = !!s?.getItem(LS_TOKEN);
+  webAccountDisconnect();
+  if (!hadLink || !rc || !relayBase) return;
+  void (async () => {
+    try {
+      const proof = await signWebProof('disconnect');
+      await fetch(`${relayBase.replace(/\/+$/, '')}/disconnect`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ routingCode: rc, ...proof }),
+        signal: AbortSignal.timeout(5000),
+      });
+    } catch {
+      /* seat stays held until evicted — same as before this existed */
+    }
+  })();
+}
+
+let wakeCleanup: (() => void) | null = null;
+
 export function scheduleWebRenewal(relayBase: string): void {
+  // Wake sources: a laptop asleep past the 12h margin woke with a dead
+  // entitlement and burned up to 30 minutes of 401s before the timer's
+  // next check (2026-09-01 review, T6). The margin check inside renew
+  // keeps these cheap when nothing is due. Registered whenever absent,
+  // independent of the timer guard below.
+  const canListen =
+    typeof window !== 'undefined' &&
+    typeof window.addEventListener === 'function' &&
+    typeof document !== 'undefined' &&
+    typeof document.addEventListener === 'function';
+  if (wakeCleanup === null && canListen) {
+    const onWake = (): void => void webAccountRenew(relayBase);
+    const onVisible = (): void => {
+      if (document.visibilityState === 'visible') onWake();
+    };
+    window.addEventListener('online', onWake);
+    document.addEventListener('visibilitychange', onVisible);
+    wakeCleanup = () => {
+      window.removeEventListener('online', onWake);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }
   if (renewTimer !== null) return;
   renewTimer = setInterval(() => void webAccountRenew(relayBase), RENEW_CHECK_MS);
   void webAccountRenew(relayBase);
@@ -207,6 +324,9 @@ export function scheduleWebRenewal(relayBase: string): void {
 export function __resetWebAccountForTests(): void {
   if (renewTimer !== null) clearInterval(renewTimer);
   renewTimer = null;
+  wakeCleanup?.();
+  wakeCleanup = null;
+  renewInFlight = null;
   webAccountDisconnect();
   ls()?.removeItem(LS_RC);
 }

@@ -19,6 +19,7 @@ import { WEB_DEFAULT_RELAY_URL } from './relay-endpoint.js';
  *  `routingCode` is non-'' only when the baked token is an entitlement
  *  (machine binding — see relay-protocol.ts). */
 let bakedRelay: { url: string; token: string; routingCode: string } | null = null;
+let bakedRefreshWired = false;
 
 export async function ensureBakedRelay(): Promise<void> {
   if (bakedRelay) return;
@@ -27,6 +28,29 @@ export async function ensureBakedRelay(): Promise<void> {
     bakedRelay = { url: got?.url ?? '', token: got?.token ?? '', routingCode: got?.routingCode ?? '' };
   } catch {
     bakedRelay = { url: '', token: '', routingCode: '' };
+  }
+  // Entitlement renewed / relinked in main → re-pull url/token/routing
+  // so LIVE sessions serve the fresh credential on their next request
+  // (field case 2026-08-29: the 72h entitlement expired mid-session
+  // and a stale snapshot 401'd every room call until app restart —
+  // renewal, and even unlink+relink, couldn't reach it).
+  if (!bakedRefreshWired) {
+    bakedRefreshWired = true;
+    getElectronHost()?.onPairingEntitlementChanged?.(() => void refreshBakedRelay());
+  }
+}
+
+/** Re-fetch the baked defaults (fresh entitlement after a renewal
+ *  broadcast). Keeps the previous values on failure — a transient IPC
+ *  hiccup must not blank a working credential. */
+export async function refreshBakedRelay(): Promise<void> {
+  try {
+    const got = await getElectronHost()?.collabRelayDefaults();
+    if (got) {
+      bakedRelay = { url: got.url ?? '', token: got.token ?? '', routingCode: got.routingCode ?? '' };
+    }
+  } catch {
+    /* keep previous */
   }
 }
 
@@ -55,23 +79,31 @@ export function relayBaseUrl(): string {
 export function relayClientWithGuestPass(pass: string): RoomsClient | null {
   const url = relayBaseUrl();
   if (!url || !pass) return null;
-  return new RoomsClient({ baseUrl: () => url, token: () => pass, routingCode: () => '' });
+  return new RoomsClient({
+    baseUrl: () => url,
+    token: () => pass,
+    routingCode: () => '',
+    guestAuth: true,
+  });
 }
 
-export function relayClient(): RoomsClient | null {
+/** Resolve the CURRENT credential + its paired routing code. Called
+ *  per request (see relayClient) — never snapshot the result into a
+ *  long-lived closure: entitlements expire after ~72h and renew in the
+ *  background, and a frozen snapshot 401'd every room call of a
+ *  long-running session until app restart (field case 2026-08-29).
+ *
+ *  A linked account's entitlement outranks the dev/prototype token:
+ *  it's the real credential class, and it carries the wk1 routing code
+ *  the relay's machine binding expects. Settings-field overrides
+ *  (self-host) still win over everything. The routing code is bound to
+ *  the ENTITLEMENT that minted it — a settings/dev token override is
+ *  never an entitlement, so the header must not ride along there. */
+function resolveCredential(): { token: string; routingCode: string } {
   const dev = collabDevRelay();
-  const url = relayBaseUrl();
-  // A linked web account's entitlement outranks the dev/prototype
-  // token: it's the real credential class, and it carries the wk1
-  // routing code the relay's machine binding expects. Settings-field
-  // overrides (self-host) still win over everything.
   const webToken = webEntitlementToken();
   const settingsToken = settings.get('pairingRelayToken').trim();
   const token = settingsToken || webToken || dev?.token || bakedRelay?.token || '';
-  // The routing code is bound to the ENTITLEMENT that minted it — the
-  // web account's wk1 code, or the one the desktop main process handed
-  // us. A settings/dev token override is never an entitlement, so the
-  // header must not ride along there.
   const routingCode = settingsToken
     ? ''
     : webToken
@@ -79,8 +111,27 @@ export function relayClient(): RoomsClient | null {
       : dev?.token
         ? ''
         : (bakedRelay?.routingCode ?? '');
-  if (!url || !token) return null;
-  return new RoomsClient({ baseUrl: () => url, token: () => token, routingCode: () => routingCode });
+  return { token, routingCode };
+}
+
+export function relayClient(): RoomsClient | null {
+  const url = relayBaseUrl();
+  if (!url || !resolveCredential().token) return null;
+  // LIVE suppliers — the entitlement swap seam the interface
+  // documents. The one construction-time decision is existence (null
+  // when nothing is configured); everything else is read per request
+  // so renewal/relink heals a running session on its next call.
+  return new RoomsClient({
+    baseUrl: () => relayBaseUrl() || url,
+    token: () => resolveCredential().token,
+    routingCode: () => resolveCredential().routingCode,
+    // ONE resolution per request: the separate token/routingCode
+    // suppliers each re-ran the full resolution (~4 storage reads + the
+    // settings reads) — three times per request, at cursor-presence
+    // rates on the typing thread (2026-09-01 review, T13). Still
+    // re-read per request: no memo, no staleness.
+    credentials: () => resolveCredential(),
+  });
 }
 
 /** Tombstone a room on the relay — the home-screen Sessions list's host-side

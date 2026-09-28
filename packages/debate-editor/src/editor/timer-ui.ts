@@ -39,13 +39,15 @@ import {
   startTimer,
   subscribeTimer,
   togglePrepShownSide,
+  isStopwatch,
 } from './timer-state.js';
 
 /** Format ms as MM:SS, clamping to 0 and rounding upward to whole
  *  seconds so a running clock doesn't visually flash 0:00 a half-
- *  second before the actual end. */
-function formatMs(ms: number): string {
-  const s = Math.max(0, Math.ceil(ms / 1000));
+ *  second before the actual end. A count-up (`up`) rounds DOWN, the
+ *  stopwatch convention: 0:01 shows once a full second has elapsed. */
+function formatMs(ms: number, up = false): string {
+  const s = Math.max(0, up ? Math.floor(ms / 1000) : Math.ceil(ms / 1000));
   const m = Math.floor(s / 60);
   const r = s % 60;
   return `${m}:${String(r).padStart(2, '0')}`;
@@ -265,7 +267,12 @@ export function mountTimerUI(opts?: { popout?: boolean }): void {
     if (display.contentEditable === 'true') return; // don't clobber user typing
     const s = getTimerState();
     const now = Date.now();
-    display.textContent = formatMs(getVisibleRemainingMs(s, now));
+    const up = isStopwatch(s);
+    display.textContent = formatMs(getVisibleRemainingMs(s, now), up);
+    // Stopwatch: the CSS puts a small up-arrow before the time so a
+    // count-up can't be mistaken for a countdown reading the same digits.
+    display.classList.toggle('pmd-timer-up', up);
+    display.title = up ? 'Counting up — click to edit when paused' : 'Click to edit when paused';
     // Surface the mode so CSS can give the big display the same aff/neg
     // color / text treatment as the prep buttons (per `data-prep-label`) when
     // prep time is loaded — a presentational `::before` / color, so the text
@@ -304,6 +311,7 @@ export function mountTimerUI(opts?: { popout?: boolean }): void {
     const inFlashWindow =
       flashEnabled &&
       s.running &&
+      !up && // a count-up has no alert points
       visibleMs > 0 &&
       flashSeconds.some((sec) => {
         const threshMs = sec * 1000;
@@ -314,7 +322,7 @@ export function mountTimerUI(opts?: { popout?: boolean }): void {
     // expired in SHARED state, so every window and the pop-out go
     // red together (markTimerExpired's guards absorb the concurrent
     // per-window ticks).
-    if (s.running && visibleMs <= 0) markTimerExpired();
+    if (s.running && !up && visibleMs <= 0) markTimerExpired();
     // Steady alert red until this clock is re-armed (preset / Reset /
     // typed time). Mode-scoped: another clock's display shows its own
     // colors; switching back to the ran-out one is red again.

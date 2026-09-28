@@ -77,7 +77,7 @@ function stampLastSeen(appId: string, when: string): void {
 }
 
 const UNIDENTIFIED_EXPLANATION =
-  'An external app tried to insert text into your documents, but it did not ' +
+  'An external app tried to insert content into your documents, but it did not ' +
   'identify itself, so CardMirror turned it away. This usually means the app ' +
   'predates CardMirror’s app permissions — update the app you were ' +
   'sending from, then try again.';
@@ -101,12 +101,12 @@ export function installExternalConsent(): () => void {
         ? `${req.appName}${req.appVersion ? ` v${req.appVersion}` : ''}`
         : req.appId;
       const choice = await promptForRouteChoice<'allow-always' | 'allow-once' | 'deny'>({
-        message: `${label} wants to insert text into your documents.`,
+        message: `${label} wants to insert content into your documents.`,
         choices: [
           {
             value: 'allow-always',
             label: 'Always Allow',
-            description: 'Let it insert text and jump to sources from now on.',
+            description: 'Let it insert content and jump to sources from now on.',
           },
           {
             value: 'allow-once',
@@ -140,7 +140,7 @@ export function installExternalConsent(): () => void {
       // first time (this is a "why isn't my send working" moment), then
       // toasts — main already rate-limits the stream.
       if (unidentifiedDialogShown) {
-        showToast('An external app tried to insert text without identifying itself — update it to continue.');
+        showToast('An external app tried to insert content without identifying itself — update it to continue.');
       } else {
         unidentifiedDialogShown = true;
         void alertDialog(UNIDENTIFIED_EXPLANATION, { title: 'External app blocked' });

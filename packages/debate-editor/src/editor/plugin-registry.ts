@@ -29,7 +29,10 @@ export type PluginSettingValue = boolean | string | number;
 export interface PluginSettingDef {
   key: string;
   label: string;
-  type: 'boolean' | 'text' | 'number' | 'select';
+  /** `text` renders a single-line input; `multiline` a textarea (for
+   *  list-shaped values — one entry per line by convention). Both hold
+   *  a plain string value. */
+  type: 'boolean' | 'text' | 'multiline' | 'number' | 'select';
   /** Must match `type`; for `select`, must be one of `options`. */
   default: PluginSettingValue;
   /** Required for `select` (the choices), forbidden otherwise. */
@@ -64,7 +67,7 @@ let makeApi: ((pluginId: string) => CardMirrorPluginApi) | null = null;
 
 const PLUGIN_ID_RE = /^[a-z0-9][a-z0-9-]*$/;
 const SETTING_KEY_RE = /^[a-zA-Z0-9][a-zA-Z0-9_-]*$/;
-const SETTING_TYPES = new Set(['boolean', 'text', 'number', 'select']);
+const SETTING_TYPES = new Set(['boolean', 'text', 'multiline', 'number', 'select']);
 
 function isStringArray(v: unknown): v is string[] {
   return Array.isArray(v) && v.every((x) => typeof x === 'string');
@@ -110,7 +113,7 @@ function validateSettings(
       if (options !== undefined) {
         return { ok: false, error: `setting "${key}" has options but is not a select` };
       }
-      const wanted = type === 'text' ? 'string' : type;
+      const wanted = type === 'text' || type === 'multiline' ? 'string' : type;
       if (typeof dflt !== wanted || (type === 'number' && !Number.isFinite(dflt))) {
         return { ok: false, error: `setting "${key}" default must be a ${wanted}` };
       }

@@ -144,7 +144,7 @@ export const RIBBON_TABS: RibbonTab[] = [
     id: 'edit',
     title: 'Edit',
     panels: ['undo-redo-stack', 'comments-ops-panel'],
-    groupTitles: ['Editing utilities', 'Find', 'Search', 'Select', 'Comments'],
+    groupTitles: ['Editing utilities', 'Find', 'Navigate', 'Search', 'Select', 'Comments'],
     panelCommands: [
       'toggleCommentsVisible',
       'addCommentToSelection',

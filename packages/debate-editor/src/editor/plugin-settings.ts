@@ -38,6 +38,7 @@ export function effectivePluginSettingValue(
     case 'boolean':
       return typeof raw === 'boolean' ? raw : def.default;
     case 'text':
+    case 'multiline':
       return typeof raw === 'string' ? raw : def.default;
     case 'number':
       return typeof raw === 'number' && Number.isFinite(raw) ? raw : def.default;

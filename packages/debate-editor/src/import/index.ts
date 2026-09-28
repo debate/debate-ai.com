@@ -5,6 +5,7 @@
 import type { Node as PMNode } from 'prosemirror-model';
 import { Docx } from '../ooxml/docx.js';
 import { repairDoc } from '../doc-repair.js';
+import { dedupeHeadingIds } from '../schema/ids.js';
 import { importDoc, type MediaPart, type MediaPartsMap } from './importer.js';
 import { importComments } from './comments.js';
 import { importNotes } from './footnotes.js';
@@ -72,7 +73,11 @@ export async function fromDocx(
   const endnotesRelsXml = await docx.readText('word/_rels/endnotes.xml.rels');
   // Word tolerates ragged tables (rows with differing cell counts); the
   // editor's table plumbing assumes rectangular ones. Repair on the way in.
-  return checkImportedDoc(
+  // Duplicate pmd-heading bookmarks (Verbatim/LibreOffice/GDocs
+  // duplicate bookmarked paragraphs; Word doesn't) must not become
+  // duplicate heading ids — first occurrence wins, matching every
+  // id-keyed lookup's first-match resolution.
+  return dedupeHeadingIds(checkImportedDoc(
     repairDoc(
       importDoc(
         documentXml,
@@ -86,7 +91,7 @@ export async function fromDocx(
         provenanceOut,
       ),
     ),
-  );
+  ));
 }
 
 /** Enforcement net behind the docx pipeline (audit tier 4): the
@@ -138,15 +143,16 @@ export async function fromDocxFull(
   const endnotesXml = await docx.readText('word/endnotes.xml');
   const footnotesRelsXml = await docx.readText('word/_rels/footnotes.xml.rels');
   const endnotesRelsXml = await docx.readText('word/_rels/endnotes.xml.rels');
-  // Same rectangularity repair + enforcement check as `fromDocx`.
-  const doc = checkImportedDoc(
+  // Same rectangularity repair + enforcement check + heading-id dedupe
+  // as `fromDocx`.
+  const doc = dedupeHeadingIds(checkImportedDoc(
     repairDoc(
       importDoc(documentXml, relsXml, mediaParts, stylesXml, {
         footnotes: importNotes(footnotesXml, footnotesRelsXml, 'w:footnotes', 'w:footnote'),
         endnotes: importNotes(endnotesXml, endnotesRelsXml, 'w:endnotes', 'w:endnote'),
       }),
     ),
-  );
+  ));
   const commentsXml = await docx.readText('word/comments.xml');
   const commentsExtendedXml = await docx.readText('word/commentsExtended.xml');
   const threads = importComments(commentsXml, commentsExtendedXml);

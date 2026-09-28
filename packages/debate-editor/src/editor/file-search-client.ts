@@ -22,35 +22,37 @@
  */
 
 import { getElectronHost } from './host/index.js';
-import type { FileTiebreak } from './file-search.js';
-
-/** One ranked hit — everything a palette file row needs. */
-export interface FileIndexRow {
-  path: string;
-  relPath: string;
-  name: string;
-  mtimeMs: number;
-  pinned: boolean;
-}
-
-export interface FileIndexQueryParams {
-  query: string;
-  roots: string[];
-  exclusions: string[];
-  formats: 'both' | 'cmir' | 'docx';
-  tiebreak: FileTiebreak;
-  pins: string[];
-  /** Float pinned rows above the rest (`f`-mode ordering); the
-   *  everything search keeps pure rank order but still gets ★ flags. */
-  partitionPins: boolean;
-  limit: number;
-}
+import type {
+  FileBrowseParams,
+  FileBrowseResult,
+  FileIndexQueryParams,
+  FileIndexQueryResult,
+  LocateCurrentFileResult,
+} from './file-index-protocol.js';
+export type {
+  FileBrowseLocation,
+  FileBrowseParams,
+  FileBrowseResult,
+  FileBrowseRow,
+  FileIndexQueryParams,
+  FileIndexQueryResult,
+  FileIndexRow,
+  LocateCurrentFileResult,
+} from './file-index-protocol.js';
 
 export interface FileIndexClient {
   /** Report the current roots: prunes departed ones from the persisted
    *  index and kicks scans/revalidation for the rest. */
   configure(roots: string[]): Promise<void>;
-  query(params: FileIndexQueryParams): Promise<{ rows: FileIndexRow[]; total: number }>;
+  query(params: FileIndexQueryParams): Promise<FileIndexQueryResult>;
+  /** Immediate indexed children of one configured-root directory. */
+  browse(params: FileBrowseParams): Promise<FileBrowseResult>;
+  /** Resolve an open file to the deepest configured root containing it. */
+  locateCurrentFile(args: {
+    filePath: string;
+    roots: string[];
+    exclusions: string[];
+  }): Promise<LocateCurrentFileResult>;
   /** mtimes for specific paths (pin warm pass) — excluded paths omitted. */
   entriesForPaths(args: {
     paths: string[];
@@ -167,6 +169,8 @@ function wrapPort(port: MessagePort): FileIndexClient {
   return {
     configure: (roots) => request('configure', { roots }),
     query: (params) => request('query', params),
+    browse: (params) => request('browse', params),
+    locateCurrentFile: (args) => request('locateCurrentFile', args),
     entriesForPaths: (args) => request('entriesForPaths', args),
     onChanged: (handler) => {
       changedHandlers.add(handler);

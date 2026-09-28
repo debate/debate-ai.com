@@ -1,12 +1,14 @@
 # Bundled font licenses
 
-This directory bundles latin-subset woff2 webfonts under three licenses:
+This directory bundles latin-subset woff2 webfonts under four licenses:
 the **SIL Open Font License 1.1** (full text at the bottom of this file;
 copyright notices and "Reserved Font Names" reproduced per family, as the
 OFL requires), the **Apache License 2.0** (full text in `Apache-2.0.txt`),
-and the **DejaVu / Bitstream Vera license** (full text in `DejaVu-License.txt`).
+the **DejaVu / Bitstream Vera license** (full text in `DejaVu-License.txt`),
+and the **Liberation Fonts License** (GPLv2 with the font-embedding
+exception; full text in `Liberation-License.txt`).
 All families were obtained from the Fontsource CDN (jsdelivr / npm
-`@fontsource/<name>`).
+`@fontsource/<name>`), except Liberation Sans Narrow (see its section).
 
 Two groups of fonts live here:
 
@@ -25,6 +27,7 @@ Two groups of fonts live here:
    | Cambria | Caladea | OFL 1.1 |
    | Times New Roman, Liberation Serif | Tinos | OFL 1.1 |
    | Arial, Helvetica, Liberation Sans | Arimo | Apache 2.0 |
+   | Arial Narrow | Liberation Sans Narrow | GPLv2 + font-embedding exception |
    | Georgia | Gelasio | OFL 1.1 |
    | Comic Sans MS | Comic Neue | OFL 1.1 |
    | Verdana, Tahoma, DejaVu Sans | DejaVu Sans | DejaVu / Bitstream Vera |
@@ -99,6 +102,24 @@ Version 2.0 — full text in `Apache-2.0.txt`.
 
 DejaVu fonts: the Bitstream Vera Fonts Copyright (c) 2003 by Bitstream, Inc.,
 with DejaVu changes in the public domain. Full text in `DejaVu-License.txt`.
+
+## Liberation Sans Narrow (substitute for Arial Narrow)
+
+Copyright © 2007-2011 Red Hat, Inc. LIBERATION is a trademark of Red Hat, Inc.
+Licensed under the Liberation Fonts License: GNU GPL v2 with the
+font-embedding exception ("as a special exception, if you create a document
+which uses this font, and embed this font or unaltered portions of this font
+into the document, this font does not by itself cause the resulting document
+to be covered by the GNU General Public License"). Full text in
+`Liberation-License.txt`.
+
+- Source: `liberation-fonts-ttf-1.07.4.tar.gz` from
+  https://releases.pagure.org/liberation-fonts/ (the 1.07.x line is the last
+  to include the Narrow faces; the 2.x Croscore-based line dropped them).
+- Files: `liberation-sans-narrow-{400,700,400-italic,700-italic}.woff2` —
+  the unmodified TTFs repackaged as WOFF2 (same outlines, tables, and
+  coverage; no subsetting), which is why these are full-charset rather than
+  latin-subset like the Fontsource families.
 
 ## SIL Open Font License, Version 1.1
 

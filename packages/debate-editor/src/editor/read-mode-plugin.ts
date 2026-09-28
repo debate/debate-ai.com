@@ -7,7 +7,9 @@
  *
  * The decision is made per text node based on its parent paragraph and
  * its marks:
- *   - In `cite_paragraph`: keep iff carrying `cite_mark` OR `highlight`.
+ *   - In `cite_paragraph`: keep iff carrying `cite_mark` OR `highlight` —
+ *     or, with "Read mode: keep entire cite" on, every text node of a
+ *     cite that has at least one such run (`keepsWholeParagraph`).
  *   - In `card_body` / `paragraph` / `undertag`: keep iff carrying `highlight`.
  *   - Elsewhere (heading paragraphs etc.): no decoration — block-level
  *     CSS handles whether they show.
@@ -39,6 +41,7 @@ import { undo, redo, undoDepth, redoDepth } from 'prosemirror-history';
 import { changedRange, expandToTopLevel } from './decoration-range.js';
 import { isSyncOrigin } from './sync-origin.js';
 import { NORMALIZER_META } from './normalizer-guard.js';
+import { settings } from './settings.js';
 import {
   toggleReadingMarker,
   isReadingMarkerColor,
@@ -186,7 +189,7 @@ export const readModePlugin: Plugin<ReadModeState> = new Plugin<ReadModeState>({
 
 /** Undo — but in read mode, only as far back as the markers dropped since
  *  read mode was entered (never earlier edits). Outside read mode, plain
- *  undo. Bound to Mod-Z. */
+ *  undo. The `undo` ribbon command (default Mod-Z). */
 export const readModeAwareUndo: Command = (state, dispatch, view) => {
   const rm = readModePlugin.getState(state);
   if (rm?.on) {
@@ -198,7 +201,8 @@ export const readModeAwareUndo: Command = (state, dispatch, view) => {
 
 /** Redo — in read mode, only marker edits undone since entry (a dropped
  *  marker clears any earlier redo, so `dirtied` means redo is marker-only).
- *  Outside read mode, plain redo. Bound to Mod-Y / Mod-Shift-Z. */
+ *  Outside read mode, plain redo. The `redo` ribbon command (defaults
+ *  Mod-Y and Mod-Shift-Z). */
 export const readModeAwareRedo: Command = (state, dispatch, view) => {
   const rm = readModePlugin.getState(state);
   if (rm?.on) {
@@ -210,13 +214,37 @@ export const readModeAwareRedo: Command = (state, dispatch, view) => {
 
 /** Read mode keeps a text node visible iff it carries the paragraph's
  *  read-aloud mark — or is a red reading-position marker (so the marker
- *  you drop while reading actually shows). */
+ *  you drop while reading actually shows) — or, with "Read mode: show
+ *  background color" on, carries background color (`shading`), so a
+ *  highlighting pass locked to background stays visible beside a
+ *  re-highlight. The setting is read at decoration time; both shells
+ *  rebuild the set when it flips. */
 function isReadKept(child: PMNode, markNames: readonly string[]): boolean {
+  const keepShading = settings.get('readModeShowBackground');
   return child.marks.some(
     (m) =>
       markNames.includes(m.type.name) ||
+      (keepShading && m.type.name === 'shading') ||
       (m.type.name === 'font_color' && isReadingMarkerColor(m.attrs['color'] as string)),
   );
+}
+
+/** "Read mode: keep entire cite" — a cite paragraph with ANY read-aloud
+ *  run shows all of its text (qualifications, source, date), not just the
+ *  marked runs. A cite with nothing marked still collapses, like a body
+ *  paragraph with nothing highlighted, so an unmarked cite never shows as
+ *  a stray line. "Read mode: show undertags" — every undertag paragraph
+ *  shows whole (the block itself comes back through the host's
+ *  `pmd-rm-show-undertags` class; style.css). Both settings are read at
+ *  decoration time; both shells rebuild the set when either flips. */
+function keepsWholeParagraph(para: PMNode, markNames: readonly string[]): boolean {
+  if (para.type.name === 'undertag') return settings.get('readModeShowUndertags');
+  if (para.type.name !== 'cite_paragraph' || !settings.get('readModeKeepEntireCite')) return false;
+  let any = false;
+  para.forEach((child) => {
+    if (!any && child.isText && !!child.text && isReadKept(child, markNames)) any = true;
+  });
+  return any;
 }
 
 function computeFullSet(doc: PMNode): DecorationSet {
@@ -243,6 +271,17 @@ function readKeptKind(nodeName: string): readonly string[] | 'heading' | null {
     return BODY_KEPT_MARKS;
   }
   return null;
+}
+
+/** Whether read mode keeps this inline text node of `parent` visible.
+ *  Shared with destructive conversions so their audible-text rule cannot
+ *  drift from the display-only mode. */
+export function isReadModeKeptText(child: PMNode, parent: PMNode): boolean {
+  if (!child.isText) return false;
+  const kind = readKeptKind(parent.type.name);
+  if (kind === 'heading') return true;
+  if (kind === null) return false;
+  return isReadKept(child, kind) || keepsWholeParagraph(parent, kind);
 }
 
 /**
@@ -279,10 +318,12 @@ export function nearestReadKeptPos(doc: PMNode, pos: number): number | null {
       }
       return false;
     }
-    // Body / cite text: only runs actually carrying the read-aloud mark.
+    // Body / cite text: only runs actually carrying the read-aloud mark
+    // (or the whole cite, when the setting keeps it).
+    const whole = keepsWholeParagraph(node, kind);
     node.forEach((child, offset) => {
       if (!child.isText || !child.text) return;
-      if (!isReadKept(child, kind)) return;
+      if (!whole && !isReadKept(child, kind)) return;
       const start = nodePos + 1 + offset;
       const end = start + child.nodeSize;
       consider(Math.max(start, Math.min(clamped, end)));
@@ -316,10 +357,11 @@ export function firstReadKeptPos(doc: PMNode, from: number, to: number): number 
       if (node.content.size > 0) found = Math.max(lo, nodePos + 1);
       return false;
     }
+    const whole = keepsWholeParagraph(node, kind);
     node.forEach((child, offset) => {
       if (found !== null) return;
       if (!child.isText || !child.text) return;
-      if (!isReadKept(child, kind)) return;
+      if (!whole && !isReadKept(child, kind)) return;
       const end = nodePos + 1 + offset + child.nodeSize;
       if (end <= lo) return; // entirely above the scan start
       found = Math.max(lo, nodePos + 1 + offset);
@@ -385,9 +427,10 @@ function decorateParagraph(
 ): void {
   interface Item { pos: number; nodeSize: number; keep: boolean }
   const items: Item[] = [];
+  const whole = keepsWholeParagraph(para, markNames);
   para.forEach((child, offset) => {
     if (!child.isText || !child.text) return;
-    const keep = isReadKept(child, markNames);
+    const keep = whole || isReadKept(child, markNames);
     items.push({ pos: paraPos + 1 + offset, nodeSize: child.nodeSize, keep });
   });
   for (let i = 0; i < items.length; i++) {

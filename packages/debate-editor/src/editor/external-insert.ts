@@ -34,7 +34,7 @@
  * insert the placeholder as plain body text.
  */
 
-import { Fragment, Slice, type Node as PMNode } from 'prosemirror-model';
+import { DOMParser as PMDOMParser, Fragment, Slice, type Node as PMNode } from 'prosemirror-model';
 import { type EditorState, type Transaction } from 'prosemirror-state';
 import { ReplaceStep } from 'prosemirror-transform';
 import { newHeadingId } from '../schema/ids.js';
@@ -213,5 +213,115 @@ export function buildExternalInsertTransaction(
       }
     }
   }
+  return tr;
+}
+
+
+// ─── Rich (HTML) inserts ────────────────────────────────────────────
+
+/** Ceiling on an /insert html payload, mirrored by the bridge's
+ *  main-side cap. Bounds the parse cost of a hostile-or-buggy sender;
+ *  real cards are kilobytes. */
+export const EXTERNAL_INSERT_HTML_MAX_BYTES = 2 * 1024 * 1024;
+
+/** Elements whose CONTENT must never leak into the parse as text.
+ *  ProseMirror skips unknown elements but still descends into their
+ *  children, so a <script>'s source text would otherwise arrive as
+ *  document text. Removed from the inert DOM before parsing. */
+const STRIP_SELECTOR = 'script, style, template, iframe, object, embed, noscript';
+
+/**
+ * Build the insertion transaction for an /insert call carrying `html`.
+ *
+ * The HTML parses through the SCHEMA's own parseDOM rules in an inert
+ * document (`document.implementation.createHTMLDocument` — scripts
+ * never execute, resources never load), so only schema-valid content
+ * survives: this is the same trust boundary as every user paste, and
+ * CardMirror-native HTML (our own toDOM serialization, which is what
+ * cooperating apps emit) round-trips at full fidelity by construction
+ * — structure, highlight colors, cite/underline marks, everything.
+ *
+ * Placement is content-aware via `nearestValidInsertPos`, mirroring
+ * drag-and-drop: purely-inline content lands at the caret (inline
+ * when `newParagraph` is false, as its own body block otherwise);
+ * block content — whole cards included — snaps to the nearest valid
+ * slot for its kind, never splitting the cursor's card.
+ *
+ * Returns null when the html yields no usable content — the caller
+ * falls back to the plain-text path, which is also what an OLDER
+ * CardMirror does with the same payload (it never reads `html`), so
+ * sender behavior degrades identically across versions.
+ */
+export function buildExternalRichInsertTransaction(
+  state: EditorState,
+  opts: { html: string; newParagraph: boolean },
+): Transaction | null {
+  const { html, newParagraph } = opts;
+  if (!html || html.length > EXTERNAL_INSERT_HTML_MAX_BYTES) return null;
+  if (typeof document === 'undefined') return null;
+
+  let body: HTMLElement;
+  try {
+    const inert = document.implementation.createHTMLDocument('external-insert');
+    inert.body.innerHTML = html;
+    for (const el of inert.body.querySelectorAll(STRIP_SELECTOR)) el.remove();
+    body = inert.body;
+  } catch {
+    return null;
+  }
+
+  let slice: Slice;
+  try {
+    slice = PMDOMParser.fromSchema(state.schema).parseSlice(body);
+  } catch {
+    return null;
+  }
+  if (slice.content.size === 0) return null;
+
+  // Purely inline content (a styled run, no block structure): honor the
+  // inline/newParagraph contract the text path has.
+  let allInline = true;
+  slice.content.forEach((n) => {
+    if (!n.isInline) allInline = false;
+  });
+  if (allInline) {
+    if (!newParagraph) {
+      const tr = state.tr.replaceSelection(new Slice(slice.content, 0, 0));
+      tr.setStoredMarks([]);
+      return tr;
+    }
+    // Block mode: wrap the run in the body type the cursor's container
+    // wants (same walk as the text path).
+    const $from = state.selection.$from;
+    let bodyTypeName: 'card_body' | 'paragraph' = 'paragraph';
+    for (let d = $from.depth; d > 0; d--) {
+      const t = $from.node(d).type.name;
+      if (t === 'card' || t === 'analytic_unit') {
+        bodyTypeName = 'card_body';
+        break;
+      }
+    }
+    const bodyType = state.schema.nodes[bodyTypeName];
+    if (!bodyType) return null;
+    const block = bodyType.createChecked(null, slice.content);
+    const tr = state.tr.replaceSelection(new Slice(Fragment.from(block), 0, 1));
+    tr.setStoredMarks([]);
+    return tr;
+  }
+
+  // Block content: re-parse as a fitted document so every container is
+  // well-formed (the parser fills required children — a card always
+  // gets its tag), then drop the children at the content-aware slot.
+  let docNode: PMNode;
+  try {
+    docNode = PMDOMParser.fromSchema(state.schema).parse(body);
+  } catch {
+    return null;
+  }
+  if (docNode.content.size === 0) return null;
+  const content = docNode.content;
+  const at = nearestValidInsertPos(state.doc, state.selection.head, content);
+  const tr = state.tr.insert(at, content);
+  tr.setStoredMarks([]);
   return tr;
 }
