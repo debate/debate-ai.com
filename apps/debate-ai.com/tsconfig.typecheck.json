@@ -14,6 +14,15 @@
       ],
       "debate-webview/*": [
         "../../packages/debate-webview/src/*"
+      ],
+      "debate-data-sync": [
+        "../../packages/debate-data-sync/src/index.ts"
+      ],
+      "debate-data-sync/*": [
+        "../../packages/debate-data-sync/src/*"
+      ],
+      "debate-data-sync/data/*": [
+        "../../packages/debate-data-sync/data/*"
       ]
     }
   }

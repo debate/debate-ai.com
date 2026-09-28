@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest"
-import { DebateRoomSignal, handleRoomSocket } from "../../../worker/debate-room"
+import { DebateRoomSignal, handleRoomSocket } from "../debate-room"
 import { MAX_ROOM_CAMERAS, normalizeRoomId } from "debate-round/src/webcam/room-protocol"
 
 /** A server-side socket as the hibernation API hands it to the object. */
