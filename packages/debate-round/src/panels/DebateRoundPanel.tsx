@@ -44,6 +44,8 @@ import { useSpeechRecordingStatus } from "../hooks/useSpeechRecordingStatus"
 import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
+import { useSpeechDocHeadings } from "../hooks/useSpeechDocHeadings"
+import { useTimerSync } from "../hooks/useTimerSync"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
 import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
 import { readFlowHistory } from "../state/flowHistoryEntries"
@@ -157,7 +159,7 @@ export function DebateFlowPage() {
    *
    * @param action - The tool action to run once the ebb tab is mounted.
    */
-  const handleEbbToolAction = (action: EbbFlowToolAction) => {
+const handleEbbToolAction = (action: EbbFlowToolAction) => {
     setEbbActive(true)
     setEbbPendingAction(action)
   }
@@ -216,7 +218,69 @@ export function DebateFlowPage() {
     setFlows(newFlows)
   }
 
+  // ============================================================================
+  // Room Sync State (for speech doc headings and timer sync)
+  // ============================================================================
+  const currentFlowForRoom = flows[selected] || null
+  const roomId = currentFlowForRoom?.roundId ? `round-${currentFlowForRoom.roundId}` : null
+  const { receivedHeadings, broadcastSpeechDocHeadings } = useSpeechDocHeadings(roomId ?? "", "speaker")
+  const { remoteTimers, broadcastTimerState } = useTimerSync(roomId ?? "", "speaker")
+
+  // Broadcast timer state changes to the room
+  useEffect(() => {
+    if (!roomId) return
+    // Broadcast speech timer state
+    for (const [speechName, entry] of Object.entries(timerState.perSpeechTimerStates)) {
+      broadcastTimerState(speechName, {
+        speechName,
+        time: entry.time,
+        resetTime: entry.resetTime,
+        state: entry.state,
+        timestamp: Date.now(),
+      })
+    }
+    // Broadcast prep timers
+    if (timerState.prepState) {
+      broadcastTimerState("Prep (Aff)", {
+        speechName: "Prep (Aff)",
+        time: timerState.prepState.time,
+        resetTime: timerState.prepState.resetTime,
+        state: timerState.prepState.state,
+        timestamp: Date.now(),
+      })
+    }
+    if (timerState.prepSecondaryState) {
+      broadcastTimerState("Prep (Neg)", {
+        speechName: "Prep (Neg)",
+        time: timerState.prepSecondaryState.time,
+        resetTime: timerState.prepSecondaryState.resetTime,
+        state: timerState.prepSecondaryState.state,
+        timestamp: Date.now(),
+      })
+    }
+  }, [timerState.perSpeechTimerStates, timerState.prepState, timerState.prepSecondaryState, roomId, broadcastTimerState])
+
   const speechHandlers = useSpeechHandlers(flows, selected, state.selectedSpeech, updateFlow, rounds)
+
+  // Wrap handleShareSpeech to also broadcast speech doc headings to the room
+  const handleShareSpeechWithHeadings = async () => {
+    const currentFlow = flows[selected]
+    if (!currentFlow) return
+
+    const speechContent = currentFlow.speechDocs?.[state.selectedSpeech] || ""
+    if (!speechContent.trim()) {
+      alert("Cannot share empty speech document")
+      return
+    }
+
+    // Call the original handler
+    await speechHandlers.handleShareSpeech()
+
+    // Broadcast headings to the room if we're in a room
+    if (roomId && speechContent.trim()) {
+      broadcastSpeechDocHeadings(state.selectedSpeech, speechContent)
+    }
+  }
 
   const splitHandlers = useSplitModeHandlers(flows, selected, updateFlow)
 
@@ -562,7 +626,7 @@ export function DebateFlowPage() {
                 onUpdateContent={speechHandlers.handleUpdateSpeechDoc}
                 onViewModeChange={state.setSpeechPanelViewMode}
                 onQuoteViewToggle={() => state.setSpeechPanelQuoteView(!state.speechPanelQuoteView)}
-                onShareSpeech={speechHandlers.handleShareSpeech}
+                onShareSpeech={handleShareSpeechWithHeadings}
               />
             </ResizablePanel>
           </>
@@ -633,6 +697,8 @@ export function DebateFlowPage() {
                 onMicDeviceChange={setMicDeviceId}
                 recordingEnabled={recordingEnabled}
                 onRecordingEnabledChange={setRecordingEnabled}
+                receivedHeadings={receivedHeadings}
+                remoteTimers={remoteTimers}
               />
             </ResizablePanel>
             <ResizableHandle withHandle />
@@ -673,6 +739,8 @@ export function DebateFlowPage() {
                   onMicDeviceChange={setMicDeviceId}
                   recordingEnabled={recordingEnabled}
                   onRecordingEnabledChange={setRecordingEnabled}
+                  receivedHeadings={receivedHeadings}
+                  remoteTimers={remoteTimers}
                 />
               </SheetContent>
             </Sheet>

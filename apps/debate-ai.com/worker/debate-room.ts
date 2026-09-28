@@ -19,6 +19,7 @@ import {
   normalizeRole,
   parseClientMessage,
   type RoomPeer,
+  type RoomEventName,
   type ServerMessage,
 } from "debate-round/src/webcam/room-protocol"
 
