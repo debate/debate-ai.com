@@ -1,70 +1,7 @@
 
 improve the ui's and have demo mock data samples for t4sting these out with ui's 
 
-Research & Evidence
-Evidence Library — Search shared cut cards and reusable analytics by keyword, citation, argument, topic, or tag.
-Argument Library — Browse shared research through topic folders, case areas, and tag-based collections.
-Contributions Feed — Submit, like, save, and endorse community cards, summaries, highlights, and annotations.
-LLM Card Scoring — Score cards for relevance, clarity, uniqueness, evidence quality, and usability.
-Revision Incentives — Reward and rank improvements to weak cards, citations, and stale evidence.
-Review Queue — Move cards through draft, review, requested changes, approval, and publication.
-Topic Coverage Dashboard — Identify missing, thin, covered, and untracked arguments by card and word count.
-Speech Documents — View evidence sent from Reason Editor into designated speech documents.
-Team Prep & Collaboration
-Task Inbox — Review research tasks routed to contributors and organized by topic.
-Collaboration Prep Room — Share a topic-specific prep space for evidence, draft blocks, tasks, and active teammates.
-Team Collaboration Mode — Leave, assign, and track live prep notes during shared topic sprints.
-Prep Notes — Maintain live prep notes grouped into needs-follow-up, open, and covered status.
-Contacts — Keep an account-linked contacts list (requests, blocking, who's online) and share the document you're editing as a live co-editing card straight to a contact's account.
-Notifications — See and mark read notifications for prep-note assignments and activity.
-Team Brainstorm Assist — Submit, seed, organize, and upvote ideas for arguments, impacts, frontlines, and turns.
-Group Challenges — Create squad challenges based on contributions or recorded rebuttal wins.
-Research Progress — Review contribution history, task-completion rates, and per-topic work progress.
-Community & Contributor Progress
-Leaderboard — Rank contributors by helpfulness score, tier, badges, and quest streak.
-News Stream — View product updates, community announcements, Daily Best Card winners, and Contributor Award standings.
-Contributor Awards — See helpfulness-ranked category winners, such as best evidence finder and best explainer.
-Daily Best Card — View the current highest-helpfulness card and prior daily winners.
-Progress — Track contributor tiers, badges, unlocked task levels, and daily-quest streaks.
-Quest Streaks — View current and longest daily-quest streaks plus milestone badges.
-Daily Quests — Track team goals, such as finding solvency cards, against live same-day contributions.
-Practice & AI Rounds
-Practice Drills — Run flow-derived overview, frontline, cross-examination, and collapse drills.
-AI Coach Mode — Generate extension, refutation, collapse, and weighing prompts from a round’s flow.
-AI Judge Decision — Generate an AI decision grounded in the selected judge paradigm and flow summary.
-Word-Count Speeches — Practice speeches under a maximum word count instead of a time limit.
-Online Debate Versus AI — Debate an AI opponent in real turn order using a chosen format and side.
-Practice Round Simulator — Simulate a tournament round with a timer, AI judge paradigm, and AI opponent persona.
-Speech Transcript Summaries — Create per-argument flow summaries with cross-examination questions and extension ideas.
-Argument Tree Outline — Browse and filter a structured outline of every argument in a round’s flow.
-Flow Annotations — Add timestamped annotations to individual flowed arguments while reviewing recordings.
-AI Response-Outcome Charts — Analyze side exposure, vulnerable arguments, and hypothetical response paths in a flow.
-Scouting & Round Strategy
-Judge Profiles — Review saved judges’ side-vote bias, speaker points, speed tolerance, and theory receptiveness.
-Opponent Team Profiles — Scout teams using records, side tendencies, common cases, and frequently used arguments.
-Pre-Round Briefings — Combine judge and opponent scouting, head-to-head records, and team prep notes for an upcoming round.
-Scout-to-Strategy — Convert scouting and judge tendencies into ranked case options and matchup-risk assessments.
-Standings & Coaching
-CX NDCA Standings — View cumulative season standings based on recorded tournament results.
-Team Rankings — Browse debate-team rankings, leaderboards, and Elo ratings.
-Coaching Programs — Run roster-scoped group coaching spaces with topic sprints, challenges, and drills.
-Coach Materials — Upload or dictate grounding material for the team coach AI and preview relevant sources.
 
-
-
-~~on each one have a descirotion of what it does in the panel itself -- like a mninguide~~
-Done: every standalone tool page already showed a one-line description via
-`ToolPageHeader` (the shared header component ~47 tool pages render), sourced
-from the same `/tools` catalog copy in `packages/debate-webview/src/routes/tools/tool-groups.ts`.
-The catalog's fuller "a few concrete things this tool does" `highlights`
-bullets, though, only ever rendered on the `/tools` grid itself — a page's
-own header dropped them, so seeing the full mini-guide meant navigating back
-to the catalog. `ToolPageHeader` now also renders those highlights, in a
-collapsed-by-default "What this tool does" `<details>` disclosure (mirroring
-`word-count/page.tsx`'s own `<details>` convention) — every page that already
-uses the shared header picks this up for free, no per-page changes needed.
-See `packages/debate-webview/src/components/tools/ToolPageHeader.tsx` and
-its test.
 
 
 # Ideas for New Contributors
