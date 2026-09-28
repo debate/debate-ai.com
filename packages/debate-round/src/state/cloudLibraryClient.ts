@@ -124,9 +124,16 @@
  * against the generic tool-records route's bare `PrepNote[]` body.
  *
  * Evidence Library entries (`/api/tool-records/evidenceLibraryEntries`) join
- * last, for the same reason: `listCloudEvidenceLibraryEntries` below is a
+ * next, for the same reason: `listCloudEvidenceLibraryEntries` below is a
  * local raw `fetch` against the generic tool-records route's bare
  * `EvidenceLibraryEntry[]` body.
+ *
+ * Practice Round Simulator's saved rounds (`/api/tool-records/practiceRounds`)
+ * join last, for the same reason as the other generic-tool-records sources
+ * above: `listCloudPracticeRounds` below is a local raw `fetch` against that
+ * route's bare `PracticeRoundRecord[]` body rather than importing this
+ * package's own `state/practiceRounds.ts` (which reads/writes the local
+ * store, not the account-sync route).
  *
  * @module state/cloudLibraryClient
  */
@@ -147,6 +154,7 @@ import {
   type CloudJudgeDecisionSummary,
   type CloudLearnDeckSummary,
   type CloudLibraryItem,
+  type CloudPracticeRoundSummary,
   type CloudPrepNoteSummary,
   type CloudQuickCardSummary,
   type CloudSpeechOutcomeSummary,
@@ -448,11 +456,30 @@ async function listCloudEvidenceLibraryEntries(
 }
 
 /**
+ * Lists the current user's synced Practice Round Simulator rounds. Degrades
+ * to `null` on a signed-out `401` (matching
+ * `GET /api/tool-records/[collection]`'s own auth behavior), a non-2xx
+ * response, or a network error — same "no items of that kind" convention as
+ * the other sources above.
+ */
+async function listCloudPracticeRounds(
+  endpoint = "/api/tool-records/practiceRounds",
+): Promise<CloudPracticeRoundSummary[] | null> {
+  try {
+    const res = await fetch(endpoint);
+    if (!res.ok) return null;
+    return (await res.json()) as CloudPracticeRoundSummary[];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetches documents/flows/rounds/word-count-rounds/debates/speech-outcome-runs/
  * drill-sets/judge-decisions/counsel-panel-assessments/round-pairings/
  * strategy-recommendations/sprint-sessions/speech-send-log-entries/learn-decks/
- * custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries
- * and merges them via `buildRecentCloudItems`. Each source resolves independently and degrades to
+ * custom-opponent-personas/flow-annotations/quick-cards/prep-notes/evidence-library-entries/
+ * practice-rounds and merges them via `buildRecentCloudItems`. Each source resolves independently and degrades to
  * "no items of that kind" on any failure — a network error, a non-2xx
  * response, or a signed-out `401` — rather than rejecting the whole call, so
  * one flaky endpoint never blanks a widget that had perfectly good data from
@@ -479,6 +506,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     quickCards,
     prepNotes,
     evidenceLibraryEntries,
+    practiceRounds,
   ] = await Promise.all([
     listCloudDocuments(),
     listSavedFlows().catch(() => null),
@@ -499,6 +527,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
     listCloudQuickCards(),
     listCloudPrepNotes(),
     listCloudEvidenceLibraryEntries(),
+    listCloudPracticeRounds(),
   ]);
   return buildRecentCloudItems(
     {
@@ -521,6 +550,7 @@ export async function fetchRecentCloudItems(opts?: BuildRecentCloudItemsOptions)
       quickCards: quickCards ?? undefined,
       prepNotes: prepNotes ?? undefined,
       evidenceLibraryEntries: evidenceLibraryEntries ?? undefined,
+      practiceRounds: practiceRounds ?? undefined,
     },
     opts,
   );

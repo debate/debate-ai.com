@@ -51,9 +51,11 @@
  * again. Prep Notes' live per-argument notes (`/prep-notes`) joined next —
  * already synced per-user via the generic `saved_tool_records` mechanism,
  * the same gap again. The Evidence Library's cut cards and reusable
- * analytic blocks (`/cards/library`) joined last — already synced per-user
+ * analytic blocks (`/cards/library`) joined next — already synced per-user
  * (per-browser submissions only, not the shared search index) via the same
- * generic mechanism, the same gap again.
+ * generic mechanism, the same gap again. Practice Round Simulator's saved
+ * rounds (`/practice-round`) joined last — already synced per-user via the
+ * same generic `saved_tool_records` mechanism, the same gap again.
  *
  * Previously also fetched all three endpoints itself via a bare
  * `Promise.all(...).then(r => r.json())` with no error handling. `/api/flows`
@@ -120,6 +122,9 @@ const KIND_ICON: Record<CloudLibraryItemKind, typeof FileText> = {
   // default view of the Research Workspace's `/cards` route. Matches the
   // Research Workspace's own icon in `app/tools/tool-groups.ts`.
   evidenceLibraryEntry: Library,
+  // Matches Practice Round Simulator's own icon in `app/tools/tool-groups.ts`,
+  // same as `customOpponentPersona` above — both belong to that same tool.
+  practiceRound: PlayCircle,
 }
 
 export function MySavedItems() {
