@@ -21,6 +21,7 @@ import { FlowPageSidebar } from "../layout/FlowPageSidebar"
 import { FlowMainContent } from "../layout/FlowMainContent"
 import { SpeechDocPanel } from "../layout/SpeechDocPanel"
 import { SpeechControlsTopBar } from "../layout/SpeechControlsTopBar"
+import { DebateStartPanel } from "./DebateStartPanel"
 
 // Dialogs
 import { FlowHistoryDialog } from "../dialogs/FlowHistoryDialog"
@@ -44,6 +45,8 @@ import { useRoundFromSlug } from "../hooks/useRoundFromSlug"
 import { useSyncUrlWithRound } from "../hooks/useSyncUrlWithRound"
 import { useJumpToPrepNoteBox } from "../hooks/useJumpToPrepNoteBox"
 import { getRoundRecordingShareEmails } from "../round/round-recording-share"
+import { readPinnedDebateIds, togglePinnedDebate } from "../state/pinnedDebates"
+import { readFlowHistory } from "../state/flowHistoryEntries"
 import { selectSidebarRound } from "../utils/sidebar-round"
 
 /**
@@ -58,7 +61,8 @@ export function DebateFlowPage() {
   // ============================================================================
   // Global State (Zustand)
   // ============================================================================
-  const { flows, selected, setFlows, setSelected, setRounds, getRounds } = useFlowStore()
+  const { flows, selected, setFlows, setSelected, setRounds, getRounds, getFlowHistory, loadFromHistory } =
+    useFlowStore()
   const rounds = getRounds()
 
   // ============================================================================
@@ -88,6 +92,63 @@ export function DebateFlowPage() {
   // SpeechControlsTopBar's recording menu, since they act on the same speech.
   const [micDeviceId, setMicDeviceId] = useState<string | undefined>()
   const [recordingEnabled, setRecordingEnabled] = useState(true)
+
+  // ============================================================================
+  // Start Screen Data (pinned + recent debates, read once the page mounts)
+  // ============================================================================
+  const [pinnedIds, setPinnedIds] = useState<number[]>([])
+  const [recentHistory, setRecentHistory] = useState<ReturnType<typeof readFlowHistory>>([])
+
+  /**
+   * Load the pinned round ids and the auto-saved flow history that the start
+   * screen renders. Read after mount rather than during the first render so
+   * this stays client-only (both keys are localStorage) and so a second visit
+   * picks up whatever was pinned or worked on in the meantime.
+   */
+  useEffect(() => {
+    setPinnedIds(readPinnedDebateIds())
+    setRecentHistory(readFlowHistory())
+  }, [])
+
+  /**
+   * Pin or unpin a round from the start screen's featured section.
+   *
+   * @param roundId - The round's local id.
+   */
+  const handleTogglePin = (roundId: number) => {
+    setPinnedIds(togglePinnedDebate(roundId))
+  }
+
+  /**
+   * Open a round from the start screen: bring that round's flows to the front
+   * (archiving every other flow) and select its first one — the same action as
+   * clicking a round in the history dialog, minus the dialog.
+   *
+   * @param round - The round to open.
+   */
+  const handleOpenRound = (round: Round) => {
+    const newFlows = flows.map((f) => ({ ...f, archived: !round.flowIds.includes(f.id) }))
+    const firstFlowIndex = newFlows.findIndex((f) => round.flowIds.includes(f.id))
+    if (firstFlowIndex === -1) return
+    setFlows(newFlows)
+    setSelected(firstFlowIndex)
+    setEbbActive(false)
+  }
+
+  /**
+   * Restore one of the start screen's recent flows from the history log and
+   * open it, leaving the pinned ebb Flow tab.
+   *
+   * @param historyId - The history entry's id.
+   */
+  const handleOpenRecentFlow = (historyId: string) => {
+    if (loadFromHistory(historyId) == null) {
+      // The entry was trimmed since the screen rendered — refresh the list.
+      setRecentHistory(getFlowHistory())
+      return
+    }
+    setEbbActive(false)
+  }
 
   /**
    * Switch to the pinned ebb Flow tab and queue an "ebb Flow tools" action
