@@ -66,8 +66,8 @@ describe("SIDEBAR_MENU_SECTIONS", () => {
   })
 
   it("reaches the help docs", () => {
-    // `/docs` is the statically exported help site staged at `public/docs`,
-    // not a Next route — the menu reaches it as an external-style link.
+    // `/docs` is the help site, rendered without the app shell — the menu
+    // reaches it with a full page load, like an external link.
     expect(SITE_LINKS.map((link) => link.url)).toContain("/docs")
     expect(DOCK_MENU_HREFS.has("/docs")).toBe(true)
   })

@@ -20,6 +20,7 @@ export {
   LEVEL_UP_AUTO_DISMISS_MS,
   type DebaterLevelUpOverlayProps,
 } from "./DebaterLevelUpOverlay";
+export { JudgeAwardsSection, JudgeAwardShowcase } from "./JudgeAwardsSection";
 export { NewsStreamPanel, type NewsStreamSyncAdapter } from "./NewsStreamPanel";
 export { ProgressUnlocksPanel } from "./ProgressUnlocksPanel";
 export { QuestStreaksPanel } from "./QuestStreaksPanel";

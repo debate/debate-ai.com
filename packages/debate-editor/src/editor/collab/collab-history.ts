@@ -80,9 +80,13 @@ export function attachSessionHistory(
   session: CollabSession,
   getDocTitle: () => string,
   hostForTests?: HistoryHostLike,
+  opts: { onFailure?: (consecutive: number) => void } = {},
 ): HistoryHandle {
   const host: HistoryHostLike | null = hostForTests ?? getElectronHost();
   let disposed = false;
+  // Set synchronously by dispose(): an in-flight write's finally must not
+  // re-arm the schedule while the dispose-time write is still draining.
+  let stopping = false;
   let tail: Promise<void> = Promise.resolve();
   let startedAt = Date.now();
   let changeTimes: HistoryChangeTime[] = [];
@@ -92,6 +96,7 @@ export function attachSessionHistory(
   let writtenVersion: Uint8Array | null = null;
   let seeded = false;
   let lastSnapshotBytes = 0;
+  let failures = 0;
 
   const writeInner = async (): Promise<void> => {
     if (disposed || !host) return;
@@ -134,8 +139,13 @@ export function attachSessionHistory(
       await host.writeHistory(envelope);
       writtenVersion = version;
       lastSnapshotBytes = snapshot.byteLength;
+      if (failures > 0) {
+        failures = 0;
+        opts.onFailure?.(0);
+      }
     } catch {
       /* disk full/denied — history degrades, the session still works */
+      opts.onFailure?.(++failures);
     }
   };
 
@@ -145,11 +155,11 @@ export function attachSessionHistory(
   };
 
   // Self-rescheduling timer so the cadence can slow for huge docs.
-  let timer: ReturnType<typeof setTimeout>;
+  let timer: ReturnType<typeof setTimeout> | null = null;
   const schedule = (delay: number): void => {
     timer = setTimeout(() => {
       void write().finally(() => {
-        if (!disposed) {
+        if (!disposed && !stopping) {
           schedule(lastSnapshotBytes > BIG_SNAPSHOT_BYTES ? HISTORY_PERSIST_SLOW_MS : HISTORY_PERSIST_MS);
         }
       });
@@ -157,8 +167,15 @@ export function attachSessionHistory(
   };
   schedule(INITIAL_WRITE_DELAY_MS);
   const onPageHide = (): void => void write();
+  // Only the HIDE transition: visibilitychange also fires on tab-in, and
+  // a write is a synchronous full snapshot export (0.3-0.8s on a 20 MB
+  // master) — alt-tabbing BACK to a big co-edited doc froze the renderer
+  // (2026-09-01 review). pagehide stays unconditional.
+  const onVisibility = (): void => {
+    if (document.visibilityState === 'hidden') void write();
+  };
   window.addEventListener('pagehide', onPageHide);
-  document.addEventListener('visibilitychange', onPageHide);
+  document.addEventListener('visibilitychange', onVisibility);
 
   const handle: HistoryHandle = {
     flush: () => write(),
@@ -166,15 +183,28 @@ export function attachSessionHistory(
       // One last write so the file covers the session's final state,
       // then stop. The file itself is retained unconditionally — a
       // remote tombstone must not be able to destroy the evidence.
+      stopping = true;
       void write().finally(() => {
         disposed = true;
       });
-      clearTimeout(timer);
+      if (timer !== null) clearTimeout(timer);
       window.removeEventListener('pagehide', onPageHide);
-      document.removeEventListener('visibilitychange', onPageHide);
+      document.removeEventListener('visibilitychange', onVisibility);
       liveHandles.delete(session.roomId);
     },
   };
+  // Never clobber a live writer for the same room: with two handles the
+  // first became unreachable (historyHandleFor / dispose only ever saw
+  // the last) while still writing. Keep the first; stop this one.
+  const existing = liveHandles.get(session.roomId);
+  if (existing) {
+    console.warn('[collab-history] a history writer is already live for this room — keeping it');
+    if (timer !== null) clearTimeout(timer);
+    disposed = true;
+    window.removeEventListener('pagehide', onPageHide);
+    document.removeEventListener('visibilitychange', onVisibility);
+    return existing;
+  }
   liveHandles.set(session.roomId, handle);
   return handle;
 }
@@ -343,12 +373,29 @@ export function groupVersionRows(
  *  getOrCreateContainer writes (a cut landing mid-node leaves a map
  *  missing its children/attributes container) are ordinary edits
  *  rather than readonly-checkout violations. */
+/** A reusable materializer over ONE imported source doc: the recover
+ *  dialog materializes per preview click and again on "Open copy", and
+ *  each call re-imported the whole snapshot (plus, on Open copy,
+ *  re-decoded its base64) (2026-09-01 review, PH-A7). The per-version
+ *  checkout itself is unchanged — and still never checkout()s. */
+export function createVersionMaterializer(
+  snapshot: Uint8Array,
+): (frontier: VersionRow['frontier']) => PMNode {
+  const source = new LoroDoc();
+  source.import(snapshot);
+  return (frontier) => materializeFrom(source, frontier);
+}
+
 export function materializeVersion(
   snapshot: Uint8Array,
   frontier: VersionRow['frontier'],
 ): PMNode {
   const source = new LoroDoc();
   source.import(snapshot);
+  return materializeFrom(source, frontier);
+}
+
+function materializeFrom(source: LoroDoc, frontier: VersionRow['frontier']): PMNode {
   const vv = source.frontiersToVV(frontier);
   const prefix = source.exportJsonUpdates(undefined, vv);
   const ldoc = new LoroDoc();

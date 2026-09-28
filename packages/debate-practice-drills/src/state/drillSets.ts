@@ -464,3 +464,52 @@ export function buildDrillSetsPanelView(): DrillSetRecord[] {
     (a, b) => a.roundId.localeCompare(b.roundId) || a.sideKey.localeCompare(b.sideKey),
   );
 }
+
+/**
+ * A small, fixed sample drill set `panels/DrillSetsPanel.tsx` shows in place
+ * of the bare "No practice drills yet." empty state when a user has no
+ * persisted drill sets — the "Practice Drills history" follow-up TODO.md
+ * named as an open gap alongside the REASON editor's file tree, applying the
+ * same sample-data treatment `getSampleEvidenceLibraryEntries`
+ * (`debate-search-evidence`) and `getSampleCloudLibraryItems`
+ * (`debate-round`) already got. One drill per `DrillKind` so a first-time
+ * visitor sees what each drill type looks like before generating their own
+ * from a round's flow. Never persisted — `listDrillSets`/`getDrillSet` never
+ * return this, and the panel renders it only when `drillSets.length === 0`,
+ * not mixed into a real (possibly zero-length) result.
+ */
+export function getSampleDrillSets(): DrillSetRecord[] {
+  return [
+    {
+      roundId: "sample-round",
+      sideKey: "aff",
+      drills: [
+        {
+          kind: "overview",
+          rowIndex: null,
+          prompt:
+            "Write a 2-minute overview weighing your strongest argument against the opponent's best response.",
+          difficulty: "medium",
+        },
+        {
+          kind: "frontline",
+          rowIndex: 0,
+          prompt: 'Write a frontline response to "no solvency deficit".',
+          difficulty: "hard",
+        },
+        {
+          kind: "cross_ex",
+          rowIndex: 1,
+          prompt: 'What cross-examination question exposes the gap in "uniqueness overwhelms the link"?',
+          difficulty: "easy",
+        },
+        {
+          kind: "collapse",
+          rowIndex: null,
+          prompt: "Which argument would you collapse to in the final rebuttal, and why?",
+          difficulty: "medium",
+        },
+      ],
+    },
+  ];
+}

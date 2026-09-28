@@ -50,6 +50,8 @@ import {
 } from 'prosemirror-model';
 import type { EditorView } from 'prosemirror-view';
 import { schema, newHeadingId } from '../schema/index.js';
+import { prepareSelectionForReplace } from './type-over-boundary.js';
+import { settings } from './settings.js';
 import { freshHeadingIds } from './drag-controller.js';
 import { condenseBranchC, condenseMerge } from './condense.js';
 import { buildImageNodeFromBlob, insertImageNode } from './image-insert.js';
@@ -393,7 +395,7 @@ export function clipboardHasMeaningfulText(cd: DataTransfer): boolean {
  *  business. */
 const HEAD_OF_CONTAINER: Record<string, string> = { card: 'tag', analytic_unit: 'analytic' };
 
-function healHeadlessContainersInSlice(slice: Slice): Slice {
+export function healHeadlessContainersInSlice(slice: Slice): Slice {
   const healFragment = (frag: Fragment, openStart: number, openEnd: number): Fragment => {
     let changed = false;
     const kids: PMNode[] = [];
@@ -506,6 +508,38 @@ export function buildPastePlugin(ctx: PastePluginCtx): Plugin<PluginState> {
       // happens to card-fit or split must look like any other paste to
       // them.
       handlePaste(view, event, slice) {
+        // A selection PM's replace cannot fit (head-tail cross-
+        // container shape) must be merge-collapsed BEFORE any paste
+        // branch replaces over it — otherwise replaceSelection throws
+        // "Cannot join …" uncaught and the paste dies silently.
+        if (!prepareSelectionForReplace(view)) return true;
+        // And a SLICE whose open container edges can't fit at this
+        // cursor (copy from mid-analytic-unit pasted inside a card)
+        // makes PM's own default replaceSelection throw. Probe it; on
+        // failure paste a closed + healed rendering of the same
+        // content, and as a last resort swallow with a warning — a
+        // no-op paste beats an uncaught crash that looks identical
+        // to "paste is broken".
+        {
+          let fits = true;
+          try {
+            view.state.tr.replaceSelection(slice);
+          } catch {
+            fits = false;
+          }
+          if (!fits) {
+            event.preventDefault();
+            try {
+              const closed = healHeadlessContainersInSlice(
+                new Slice(slice.content, 0, 0),
+              );
+              view.dispatch(view.state.tr.replaceSelection(closed).scrollIntoView());
+            } catch (err) {
+              console.warn('[cardmirror] paste could not fit at this position:', err);
+            }
+            return true;
+          }
+        }
         // Clipboard image paste — screenshots, copy-image from a
         // browser, etc. Take precedence over text / HTML branches
         // when the clipboard carries `image/*` file data; users
@@ -874,10 +908,16 @@ function buildContainerSplit(
   const last = pastedNodes[pastedNodes.length - 1]!;
   const lastName = last.type.name;
   let trailing: PMNode[] = [];
+  // Size of the last pasted container's OWN children — recorded before
+  // the destination's remainder is absorbed after them, so the
+  // end-of-paste cursor mode can stop at the true pasted/absorbed
+  // boundary instead of after content the user never pasted.
+  let lastOwnKidsSize: number | null = null;
   if (lastName === 'card' || lastName === 'analytic_unit') {
     const fit = lastName === 'card' ? fitForCard : fitForAnalyticUnit;
     const lastKids: PMNode[] = [];
     last.forEach((c) => lastKids.push(c));
+    lastOwnKidsSize = lastKids.reduce((sum, k) => sum + k.nodeSize, 0);
     pastedNodes[pastedNodes.length - 1] = last.copy(
       Fragment.fromArray([...lastKids, ...remainder.map(fit)]),
     );
@@ -890,16 +930,38 @@ function buildContainerSplit(
   const replacement = Fragment.fromArray([originalContainer, ...pastedNodes, ...trailing]);
   let tr = state.tr.replaceWith(containerFrom, containerTo, replacement);
 
-  // Cursor at the end of the FIRST pasted head's text — the F7/setHeading
-  // convention, so the user can immediately edit the heading name.
+  // Cursor placement, per the `pasteCursor` setting.
+  //  'after' (default): the end of the pasted content — like every other
+  //    paste. When the destination's post-cursor remainder was absorbed
+  //    into the last pasted container, "end of pasted" is the boundary
+  //    BEFORE that remainder (content the user never pasted).
+  //  'tag': the end of the FIRST pasted head's text — the F7/setHeading
+  //    convention, so the user can immediately rename the heading.
   const afterOriginal = containerFrom + originalContainer.nodeSize;
-  const firstDoc = pastedNodes[0]!;
-  const head = STRUCTURAL_CONTAINERS.has(firstDoc.type.name) ? firstDoc.firstChild : firstDoc;
-  const cursorPos = STRUCTURAL_CONTAINERS.has(firstDoc.type.name)
-    ? afterOriginal + 2 + (head?.content.size ?? 0) // +1 into container, +1 into head
-    : afterOriginal + 1 + (head?.content.size ?? 0); // +1 into the heading
+  let cursorPos: number;
+  if (settings.get('pasteCursor') === 'tag') {
+    const firstDoc = pastedNodes[0]!;
+    const head = STRUCTURAL_CONTAINERS.has(firstDoc.type.name) ? firstDoc.firstChild : firstDoc;
+    cursorPos = STRUCTURAL_CONTAINERS.has(firstDoc.type.name)
+      ? afterOriginal + 2 + (head?.content.size ?? 0) // +1 into container, +1 into head
+      : afterOriginal + 1 + (head?.content.size ?? 0); // +1 into the heading
+  } else if (lastOwnKidsSize !== null) {
+    const beforeLast = pastedNodes
+      .slice(0, -1)
+      .reduce((sum, n) => sum + n.nodeSize, 0);
+    // +1 enters the last pasted container; stop after its own kids.
+    cursorPos = afterOriginal + beforeLast + 1 + lastOwnKidsSize;
+  } else {
+    cursorPos = afterOriginal + pastedNodes.reduce((sum, n) => sum + n.nodeSize, 0);
+  }
   try {
-    tr = tr.setSelection(TextSelection.create(tr.doc, cursorPos));
+    if (settings.get('pasteCursor') === 'tag') {
+      tr = tr.setSelection(TextSelection.create(tr.doc, cursorPos));
+    } else {
+      // Snap to the nearest valid text position at/before the boundary —
+      // the end of the last pasted textblock.
+      tr = tr.setSelection(Selection.near(tr.doc.resolve(cursorPos), -1));
+    }
   } catch {
     /* schema rejected the position — selection stays where PM left it */
   }

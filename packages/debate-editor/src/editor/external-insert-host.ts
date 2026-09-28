@@ -24,7 +24,12 @@
  */
 
 import type { EditorView } from 'prosemirror-view';
-import { buildExternalInsertTransaction, type ExternalInsertRole } from './external-insert.js';
+import {
+  buildExternalInsertTransaction,
+  buildExternalRichInsertTransaction,
+  EXTERNAL_INSERT_HTML_MAX_BYTES,
+  type ExternalInsertRole,
+} from './external-insert.js';
 
 interface InsertRequest {
   requestId: string;
@@ -37,6 +42,12 @@ interface InsertRequest {
   target?: string;
   /** Cite-emphasis substrings (role `cite`) — see ExternalInsertOpts. */
   citeTokens?: string[];
+  /** Rich payload: CardMirror-native (or arbitrary) HTML. When present
+   *  and it parses to usable content, it supersedes `text`/`role`/
+   *  `citeTokens`; unusable html falls back to the text path — the
+   *  same rendering an older CardMirror (which never reads this
+   *  field) produces. */
+  html?: string;
 }
 
 interface InsertResult {
@@ -110,6 +121,28 @@ function handle(req: InsertRequest, opts: ExternalInsertHostOpts): InsertResult 
       // (the read-mode plugin's gate) → doc-readonly.
       if (!view) return { requestId, ok: false, error: 'no-target-doc' };
       return { requestId, ok: false, error: 'doc-readonly' };
+    }
+    // Rich path first: valid html that parses to content wins; anything
+    // else falls through to the text path (identical to how an older
+    // CardMirror, which never reads `html`, renders this payload).
+    if (
+      typeof req.html === 'string' &&
+      req.html.length > 0 &&
+      req.html.length <= EXTERNAL_INSERT_HTML_MAX_BYTES
+    ) {
+      const richTr = buildExternalRichInsertTransaction(view.state, {
+        html: req.html,
+        newParagraph: req.newParagraph,
+      });
+      if (richTr) {
+        view.dispatch(richTr.scrollIntoView());
+        const richResult: InsertResult = { requestId, ok: true };
+        if (!(typeof req.target === 'string' && req.target)) {
+          const docTitle = opts.getFocusedDocTitle();
+          if (docTitle) richResult.docTitle = docTitle;
+        }
+        return richResult;
+      }
     }
     // citeTokens off the wire: keep only a well-formed string array.
     const citeTokens = Array.isArray(req.citeTokens)

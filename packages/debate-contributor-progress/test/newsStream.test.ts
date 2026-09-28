@@ -375,4 +375,47 @@ describe("account sync (listReadIds / listLikedIds / mergeRemoteViewerState)", (
     expect(listReadIds()).toEqual([]);
     expect(listLikedIds()).toEqual([]);
   });
+
+  it("clears a like once another device's unlike has landed on the account", () => {
+    // First hydrate: the account confirms "x" liked — records it as synced.
+    mergeRemoteViewerState({ read: [], liked: ["x"] });
+    expect(isNewsItemLiked("x")).toBe(true);
+
+    // A second device unlikes "x"; this browser's next hydrate sees it gone.
+    const changed = mergeRemoteViewerState({ read: [], liked: [] });
+    expect(changed).toBe(true);
+    expect(isNewsItemLiked("x")).toBe(false);
+  });
+
+  it("does not clear a local like that was never confirmed synced", () => {
+    // Liked locally but the push never landed (offline/failed) — the
+    // account row still reports no likes at all.
+    toggleNewsItemLiked("y");
+    const changed = mergeRemoteViewerState({ read: [], liked: [] });
+    expect(changed).toBe(false);
+    expect(isNewsItemLiked("y")).toBe(true);
+  });
+
+  it("keeps a like confirmed synced on a later hydrate that still reports it", () => {
+    mergeRemoteViewerState({ read: [], liked: ["x"] });
+    const changed = mergeRemoteViewerState({ read: [], liked: ["x"] });
+    expect(changed).toBe(false);
+    expect(isNewsItemLiked("x")).toBe(true);
+  });
+
+  it("reconciles one unliked id while still unioning in a newly liked one", () => {
+    mergeRemoteViewerState({ read: [], liked: ["x"] });
+    // Another device unliked "x" and liked "z"; both land in this fetch.
+    const changed = mergeRemoteViewerState({ read: [], liked: ["z"] });
+    expect(changed).toBe(true);
+    expect(isNewsItemLiked("x")).toBe(false);
+    expect(isNewsItemLiked("z")).toBe(true);
+  });
+
+  it("leaves liked state alone when the liked field is entirely absent", () => {
+    mergeRemoteViewerState({ read: [], liked: ["x"] });
+    const changed = mergeRemoteViewerState({ read: ["r"] });
+    expect(changed).toBe(true); // from the new "r" read id
+    expect(isNewsItemLiked("x")).toBe(true);
+  });
 });

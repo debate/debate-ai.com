@@ -8,6 +8,9 @@
  * across IPC, no serialization tricks needed.
  */
 
+import type { LearnOp } from '../learn-store.js';
+import type { DiskBase, CloudProvider } from './types.js';
+export type ClaimResult = 'fresh' | 'journaled' | 'changed' | 'unknown';
 import type {
   FileFilter,
   HistoryEnvelope,
@@ -63,6 +66,8 @@ export interface PairingConnectResultIpc {
   email?: string;
   limit?: number;
   wouldEvict?: { routingCode: string; boundAt: string };
+  /** Seat picker list (relay ≥ 2026-09-02); absent on older relays. */
+  candidates?: Array<{ routingCode: string; boundAt: string; lastSeenAt?: string; label?: string }>;
   retryCode?: string;
 }
 
@@ -171,7 +176,16 @@ interface ElectronAPI {
     name: string;
     bytes: Uint8Array;
     handle: string;
+    /** Optional so an older main without the stat-0 flag is tolerated. */
+    emptyOnDisk?: boolean;
   } | null>;
+  /** Optional so an older preload without multi-select is tolerated. */
+  openFiles?(opts: { filters: FileFilter[] }): Promise<Array<{
+    name: string;
+    bytes: Uint8Array;
+    handle: string;
+    emptyOnDisk?: boolean;
+  }>>;
   /** Verbatim Flow bridge (Windows COM → Excel). Optional so an older
    *  preload tolerates its absence. */
   flowAvailable?(): Promise<FlowAvailable>;
@@ -190,6 +204,7 @@ interface ElectronAPI {
    *  release main-side and returns consent-dialog facts; commit writes
    *  after consent; discard drops the staged release on decline. */
   pluginInstallInspect?(ref: string): Promise<Record<string, unknown>>;
+  pluginBrowse?(): Promise<Record<string, unknown>>;
   pluginInstallCommit?(token: string): Promise<Record<string, unknown>>;
   pluginInstallDiscard?(token: string): Promise<void>;
   pluginCommunityInstalls?(on: boolean): Promise<void>;
@@ -208,6 +223,8 @@ interface ElectronAPI {
     bytes: Uint8Array;
     handle: string;
     format: 'cmir' | 'docx';
+    /** Optional so an older main without the stat-0 flag is tolerated. */
+    emptyOnDisk?: boolean;
   } | null>;
   statFile(filePath: string): Promise<{ mtimeMs: number; size: number } | null>;
   readCmirFile(
@@ -262,13 +279,28 @@ interface ElectronAPI {
   writeHistory(envelope: HistoryEnvelopeWrite): Promise<void>;
   listHistory(): Promise<HistoryMeta[]>;
   readHistory(target: { roomId?: string; path?: string }): Promise<HistoryEnvelope | null>;
+  historySnapshot?(
+    docId: string,
+    bytes: Uint8Array,
+    policy: { retentionDays: number; maxDocBytes: number; maxTotalBytes: number },
+    trigger?: 'manual' | 'auto' | 'close',
+  ): Promise<{ stored: boolean; reason?: string }>;
+  historyList?(
+    docId: string,
+  ): Promise<Array<{ id: string; ts: number; size: number; trigger?: 'manual' | 'auto' | 'close' }>>;
+  historyRead?(docId: string, id: string): Promise<Uint8Array | null>;
+  historyUsage?(): Promise<{ totalBytes: number; snapshots: number }>;
+  historyClear?(): Promise<void>;
   deleteHistory(roomId: string): Promise<void>;
   pickHistoryFile(): Promise<string | null>;
   readLearnStore(): Promise<string | null>;
-  writeLearnStore(json: string): Promise<void>;
+  applyLearnOp(op: LearnOp): Promise<string>;
+  onLearnStoreChanged(handler: (json: string) => void): () => void;
   spawnWindow(payload: SpawnWindowPayload | null): Promise<void>;
   getInitialDoc(): Promise<SpawnWindowPayload | null>;
   isFirstWindow(): Promise<boolean>;
+  isAppQuitting?(): boolean;
+  arrangeWindows?(opts: { side: 'left' | 'right'; speechPct: number }): Promise<{ speechFound: boolean; arranged: number }>;
   /** Report this window's workspace mode to main (multi-pane vs
    *  single-pane) so the OS "Open with…" path can reuse a multi-pane
    *  window's slot picker instead of spawning a blank window. */
@@ -293,6 +325,9 @@ interface ElectronAPI {
   /** Push the current filename for a uid so the Select-Speech-Doc
    *  modal can show meaningful row labels across every window. */
   docInfoUpdate(uid: string, filename: string | null): Promise<void>;
+  /** macOS title-bar proxy icon (draggable document icon). Optional
+   *  so a renderer against an older packaged shell skips it. */
+  setRepresentedFile?(path: string | null): Promise<void>;
   /** Cross-window dropzone shelf. List returns current items;
    *  add/remove/clear mutate and broadcast via onDropzoneChanged. */
   dropzoneList(): Promise<
@@ -359,6 +394,8 @@ interface ElectronAPI {
   pairingConnectAccount?(payload: {
     connectCode: string;
     confirmEvict?: boolean;
+    /** Routing code of the seat to unlink (from `candidates`). */
+    evict?: string;
   }): Promise<PairingConnectResultIpc>;
   pairingAccountStatus?(): Promise<PairingAccountStatusIpc>;
   pairingDisconnectAccount?(): Promise<PairingAccountStatusIpc>;
@@ -380,8 +417,14 @@ interface ElectronAPI {
     }>
   >;
   openPathCheck(path: string): Promise<{ takenByOther: boolean }>;
-  openPathRegister(path: string): Promise<void>;
+  openPathRegister(
+    path: string,
+    opts?: { journaledBase?: DiskBase | null },
+  ): Promise<{ claim: ClaimResult; provider: CloudProvider | null } | null>;
   openPathRelease(path: string): Promise<void>;
+  cloudProvider(path: string): Promise<CloudProvider | null>;
+  onDiskChanged(handler: (payload: { path: string; mtimeMs: number; size: number }) => void): () => void;
+  saveConflictedCopy(handle: string, bytes: Uint8Array, userName: string | null): Promise<{ name: string; handle: string }>;
   /** "Show in context": if another window owns `path`, focus it and send
    *  it the anchor to scroll to. `delivered: false` ⇒ spawn a window. */
   focusAnchorInWindow(
@@ -453,6 +496,10 @@ interface ElectronAPI {
   openCrashDumpsFolder(): Promise<void>;
   /** Open the OS file manager at the crash-recovery journals folder. */
   openJournalsFolder(): Promise<void>;
+  showItemInFolder?(handle: string): Promise<void>;
+  /** Native file drag out of the window (status-bar mark). Sent from the
+   *  renderer's dragstart; optional so an older preload is tolerated. */
+  dragFileOut?(path: string, iconDataUrl: string): void;
   /** Renderer accessibility tree toggle. Default off — works around a known
    *  Chromium AX-serialization crash. Machine-local pref; changing it needs an
    *  app restart (`relaunchApp`). `isAccessibilitySupportActive` reports whether
@@ -617,6 +664,11 @@ export class ElectronHost implements Host {
   async pluginInstallInspect(ref: string): Promise<Record<string, unknown>> {
     return (await api().pluginInstallInspect?.(ref)) ?? { ok: false, error: 'unsupported' };
   }
+  async pluginBrowse(): Promise<Record<string, unknown>> {
+    return (
+      (await api().pluginBrowse?.()) ?? { ok: false, error: 'This build has no plugin directory.' }
+    );
+  }
   async pluginInstallCommit(token: string): Promise<Record<string, unknown>> {
     return (await api().pluginInstallCommit?.(token)) ?? { ok: false, error: 'unsupported' };
   }
@@ -674,7 +726,24 @@ export class ElectronHost implements Host {
       name: result.name,
       bytes: result.bytes instanceof Uint8Array ? result.bytes : new Uint8Array(result.bytes),
       handle: result.handle,
+      ...(result.emptyOnDisk === true ? { emptyOnDisk: true } : {}),
     };
+  }
+
+  async openFiles(opts: OpenFileOptions = {}): Promise<OpenedFile[]> {
+    const bridge = api();
+    if (!bridge.openFiles) {
+      const one = await this.openFile(opts);
+      return one ? [one] : [];
+    }
+    const results = await bridge.openFiles({ filters: opts.filters ?? [] });
+    // Same Buffer-like normalization as openFile.
+    return results.map((result) => ({
+      name: result.name,
+      bytes: result.bytes instanceof Uint8Array ? result.bytes : new Uint8Array(result.bytes),
+      handle: result.handle,
+      ...(result.emptyOnDisk === true ? { emptyOnDisk: true } : {}),
+    }));
   }
 
   /** Absolute path of a dropped File (drag-to-open). '' when it can't be
@@ -708,6 +777,7 @@ export class ElectronHost implements Host {
     bytes: Uint8Array;
     handle: string;
     format: 'cmir' | 'docx';
+    emptyOnDisk?: boolean;
   } | null> {
     const result = await api().readFileAtPath(filePath);
     if (!result) return null;
@@ -716,6 +786,7 @@ export class ElectronHost implements Host {
       bytes: result.bytes instanceof Uint8Array ? result.bytes : new Uint8Array(result.bytes),
       handle: result.handle,
       format: result.format,
+      ...(result.emptyOnDisk === true ? { emptyOnDisk: true } : {}),
     };
   }
 
@@ -876,6 +947,31 @@ export class ElectronHost implements Host {
     return api().readHistory(target);
   }
 
+  /** Version-history snapshot store (userData/history). All no-op
+   *  gracefully on an older preload without the surface. */
+  async historySnapshot(
+    docId: string,
+    bytes: Uint8Array,
+    policy: { retentionDays: number; maxDocBytes: number; maxTotalBytes: number },
+    trigger?: 'manual' | 'auto' | 'close',
+  ): Promise<{ stored: boolean; reason?: string }> {
+    return (await api().historySnapshot?.(docId, bytes, policy, trigger)) ?? { stored: false };
+  }
+  async historyList(
+    docId: string,
+  ): Promise<Array<{ id: string; ts: number; size: number; trigger?: 'manual' | 'auto' | 'close' }>> {
+    return (await api().historyList?.(docId)) ?? [];
+  }
+  async historyRead(docId: string, id: string): Promise<Uint8Array | null> {
+    return (await api().historyRead?.(docId, id)) ?? null;
+  }
+  async historyUsage(): Promise<{ totalBytes: number; snapshots: number }> {
+    return (await api().historyUsage?.()) ?? { totalBytes: 0, snapshots: 0 };
+  }
+  async historyClear(): Promise<void> {
+    await api().historyClear?.();
+  }
+
   async deleteHistory(roomId: string): Promise<void> {
     await api().deleteHistory(roomId);
   }
@@ -888,8 +984,12 @@ export class ElectronHost implements Host {
     return api().readLearnStore();
   }
 
-  async writeLearnStore(json: string): Promise<void> {
-    await api().writeLearnStore(json);
+  applyLearnOp(op: LearnOp): Promise<string> {
+    return api().applyLearnOp(op);
+  }
+
+  onLearnStoreChanged(handler: (json: string) => void): () => void {
+    return api().onLearnStoreChanged(handler);
   }
 
   async spawnWindow(payload: SpawnWindowPayload | null): Promise<void> {
@@ -909,6 +1009,18 @@ export class ElectronHost implements Host {
 
   async isFirstWindow(): Promise<boolean> {
     return await api().isFirstWindow();
+  }
+
+  async arrangeWindows(opts: { side: 'left' | 'right'; speechPct: number }): Promise<{ speechFound: boolean; arranged: number } | null> {
+    const fn = api().arrangeWindows;
+    return fn ? await fn(opts) : null;
+  }
+
+  isAppQuitting(): boolean {
+    // An older preload lacks the channel: assume a quit, so a window's
+    // open set is never thrown away by mistake.
+    const fn = api().isAppQuitting;
+    return fn ? fn() : true;
   }
 
   async registerMultipane(isMultiPane: boolean): Promise<void> {
@@ -981,6 +1093,10 @@ export class ElectronHost implements Host {
 
   async docInfoUpdate(uid: string, filename: string | null): Promise<void> {
     await api().docInfoUpdate(uid, filename);
+  }
+
+  async setRepresentedFile(path: string | null): Promise<void> {
+    await api().setRepresentedFile?.(path);
   }
 
   async dropzoneList(): Promise<
@@ -1103,6 +1219,7 @@ export class ElectronHost implements Host {
   async pairingConnectAccount(payload: {
     connectCode: string;
     confirmEvict?: boolean;
+    evict?: string;
   }): Promise<PairingConnectResultIpc> {
     return (
       (await api().pairingConnectAccount?.(payload)) ?? { ok: false, error: 'disabled' }
@@ -1162,8 +1279,30 @@ export class ElectronHost implements Host {
     return await api().openPathCheck(path);
   }
 
-  async openPathRegister(path: string): Promise<void> {
-    await api().openPathRegister(path);
+  async openPathRegister(
+    path: string,
+    opts?: { journaledBase?: DiskBase | null },
+  ): Promise<{ claim: ClaimResult; provider: CloudProvider | null } | null> {
+    const fn = api().openPathRegister;
+    return (await fn(path, opts)) ?? null;
+  }
+
+  /** Cloud-sync provider for a path (null = local). Older mains without
+   *  the handler resolve null. */
+  async cloudProvider(path: string): Promise<CloudProvider | null> {
+    const fn = api().cloudProvider;
+    return typeof fn === 'function' ? await fn(path) : null;
+  }
+
+  /** Main's stat-only poller saw this window's file change on disk. */
+  onDiskChanged(handler: (payload: { path: string; mtimeMs: number; size: number }) => void): () => void {
+    const fn = api().onDiskChanged;
+    return typeof fn === 'function' ? fn(handler) : () => {};
+  }
+
+  /** Keep both: write bytes as a conflicted copy beside `handle`. */
+  saveConflictedCopy(handle: string, bytes: Uint8Array, userName: string | null): Promise<{ name: string; handle: string }> {
+    return api().saveConflictedCopy(handle, bytes, userName);
   }
 
   async openPathRelease(path: string): Promise<void> {
@@ -1286,6 +1425,19 @@ export class ElectronHost implements Host {
     await api().openCrashDumpsFolder();
   }
 
+  /** Reveal a saved document in Finder / Explorer. Optional-chained:
+   *  no-ops gracefully on an older preload without the surface. */
+  async showItemInFolder(handle: string): Promise<void> {
+    await api().showItemInFolder?.(handle);
+  }
+  /** Whether this shell can start a native file drag (preload surface
+   *  present) — the status-bar mark hides itself otherwise. */
+  canDragFileOut(): boolean {
+    return typeof api().dragFileOut === 'function';
+  }
+  dragFileOut(path: string, iconDataUrl: string): void {
+    api().dragFileOut?.(path, iconDataUrl);
+  }
   async openJournalsFolder(): Promise<void> {
     await api().openJournalsFolder();
   }

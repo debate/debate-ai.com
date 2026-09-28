@@ -5,10 +5,11 @@ import { defineConfig } from "vitest/config";
  * Monorepo-wide Vitest config, kept here alongside the web app rather than at
  * the repo root so the root stays free of tool configs.
  *
- * Every workspace package under `packages/*` is registered as a project so a
- * single `npm test` (at the root or in this folder) runs each package's
- * `test/` folder, and a single `npm run coverage` produces one merged
- * `coverage/lcov.info` for Codecov to ingest.
+ * Every workspace package under `packages/*` is registered as a project, and
+ * so are the two apps with tests (this web app and the browser extension), so
+ * a single `bun run test` (at the root or in this folder) runs every suite,
+ * and a single `bun run coverage` produces one merged `coverage/lcov.info`
+ * covering both `packages/` and `apps/` for Codecov to ingest.
  *
  * `root` is pinned to the repo root so the globs below resolve the same way no
  * matter which directory Vitest is invoked from.
@@ -31,9 +32,9 @@ export default defineConfig({
       // toolchain and MariaDB. debate-tournaments tests the vendored code.
       "!packages/debate-tournament-tabroom",
       // Git submodules of upstream CardMirror and Tabroom. Each is its own
-      // app with its own toolchain and test setup; the web UI reaches them
-      // through debate-editor-cm-adapter and debate-tournaments-tabroom-adapter,
-      // whose tests cover the parts it uses.
+      // app with its own toolchain and test setup; the web UI reaches
+      // CardMirror through debate-editor-cm-adapter, while Tabroom is vendored
+      // into debate-tournaments, which tests the parts the app uses.
       "!packages/debate-editor-cm",
       "!packages/debate-tournaments-tabroom",
       // A git submodule vendoring the upstream debate-flow repo, same shape
@@ -46,6 +47,9 @@ export default defineConfig({
       // collides with that project name and fails every `vitest run`
       // outright at startup, monorepo-wide.
       "!packages/debate-flow-ebb",
+      // The browser extension carries its own config (jsdom, its own `@`
+      // alias), so it's registered by path and runs under that config.
+      "apps/debate-browser-ext",
       // The web app has no test/ folder for the glob above to find, but parts
       // of apps/debate-ai.com/lib are plain Node libraries worth unit testing
       // (the D1 read-replication session wrapper, for one). Registered inline
@@ -72,11 +76,20 @@ export default defineConfig({
       provider: "v8",
       reportsDirectory: path.join(repoRoot, "coverage"),
       reporter: ["text", "lcov", "html"],
-      include: ["packages/*/src/**/*.{ts,tsx}"],
+      include: [
+        "packages/*/src/**/*.{ts,tsx}",
+        // The web app's routes, server libraries and Worker entry.
+        "apps/debate-ai.com/{app,lib,worker}/**/*.{ts,tsx}",
+        // The browser extension's source, entrypoints and UI.
+        "apps/debate-browser-ext/{src,lib,entrypoints,components}/**/*.{ts,tsx}",
+      ],
       exclude: [
         "**/*.d.ts",
         "**/node_modules/**",
         "**/test/**",
+        "**/__tests__/**",
+        // Build-time stand-ins for modules the Worker can't load.
+        "apps/debate-ai.com/lib/stubs/**",
         // Data assets and generated JSON carry no logic to cover.
         "packages/debate-data-sync/data/**",
         "packages/debate-data-sync/schemas/**",

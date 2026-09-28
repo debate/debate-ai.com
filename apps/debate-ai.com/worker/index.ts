@@ -13,15 +13,16 @@ import { describeError } from "../lib/database/errors";
 import { applyD1Bookmark, runWithD1Session, runWithPrimaryD1Session } from "../lib/database/d1-session";
 import { runWeeklyYouTubeSync } from "../lib/youtube/weekly-sync";
 import { purgeOldReuseCheckLogRows } from "../lib/evidence-reuse-check/purge-reuse-check-log";
+import { DB_BACKUP_CRON, runWeeklyDbBackup } from "../lib/admin/weekly-db-backup";
 import { handleTurnstileGate, type TurnstileEnv } from "../lib/turnstile";
 import { handleCanonicalHostRedirect } from "../lib/redirects";
 import { youtubeWatchRedirect } from "../lib/youtube/video-redirect";
 import { getAuth } from "../lib/auth";
 import { normalizeRoomId } from "debate-round/src/webcam/room-protocol";
-import { handleRoomSocket } from "./debate-room";
+import { handleRoomSocket } from "../lib/webcam/debate-room";
 
 // Durable Object classes must be exported from the Worker's main module.
-export { DebateRoomSignal } from "./debate-room";
+export { DebateRoomSignal } from "../lib/webcam/debate-room";
 
 interface Env extends TurnstileEnv {
   ASSETS: Fetcher;
@@ -33,7 +34,9 @@ interface Env extends TurnstileEnv {
     };
   };
   debate_db: D1Database;
-  // Webcam-room signalling (worker/debate-room.ts), bound in wrangler.jsonc.
+  // Content-table SQL backups (lib/admin/db-backup-r2.ts), bound in wrangler.jsonc.
+  DB_BACKUPS?: unknown;
+  // Webcam-room signalling (lib/webcam/debate-room.ts), bound in wrangler.jsonc.
   DEBATE_ROOMS?: Parameters<typeof handleRoomSocket>[1];
   // See lib/database/d1-session.ts — "auto" (default), "primary",
   // "unconstrained" or "off". Settable as a plain Variable in the dashboard.
@@ -147,7 +150,19 @@ export default {
   // `reuse_check_log` rows (idea #7's retention/purge policy follow-up) — an
   // unrelated, independent job piggybacking on the one cron trigger this app
   // has, rather than a dedicated schedule of its own.
-  async scheduled(_event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+  //
+  // A second cron (DB_BACKUP_CRON, Sundays) runs only the weekly content
+  // backup to R2 — see lib/admin/weekly-db-backup.ts.
+  async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
+    if (event.cron === DB_BACKUP_CRON) {
+      ctx.waitUntil(
+        runWithPrimaryD1Session(() => runWithContext(env, () => runWeeklyDbBackup())).catch((error) => {
+          console.error("Scheduled DB backup failed:", describeError(error), error);
+        }),
+      );
+      return;
+    }
+
     // Both jobs write, and neither has a client bookmark to resume from, so
     // each runs in its own session started on the primary.
     ctx.waitUntil(

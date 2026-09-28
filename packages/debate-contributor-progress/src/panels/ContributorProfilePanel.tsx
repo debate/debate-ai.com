@@ -3,8 +3,9 @@
  * Leaderboard" bullet's next-named follow-up in TODO.md's Research
  * Crowdsourcing Organizer Features section ("a per-contributor profile
  * drill-down page"). Renders one contributor's cross-feature standing —
- * leaderboard rank, stats, tier/badges, streak, Top Contributor Awards (live
- * standings plus all-time hall-of-fame wins), and endorsement history —
+ * leaderboard rank, stats, tier/badges, streak, judge awards
+ * (`JudgeAwardsSection`), Top Contributor Awards (live standings plus
+ * all-time hall-of-fame wins), and endorsement history —
  * composed by `lib/contributor-profile.ts`'s `buildContributorProfileFromStore`
  * rather than introducing any new scoring/ranking logic here.
  *
@@ -30,6 +31,7 @@ import { isContributionLeaderboardLiveUpdateStorageEvent } from "debate-research
 import type { ContributorEndorsementHistoryEntry } from "debate-research-evidence/src/state/contributions"
 import { buildContributorProfileFromStore, type ContributorProfile } from "../lib/contributor-profile"
 import { TIER_VARIANT } from "./ContributionLeaderboardPanel"
+import { JudgeAwardsSection } from "./JudgeAwardsSection"
 
 /** Today's UTC calendar day as `YYYY-MM-DD`, the `dayKey` format used throughout `gamified-quests.ts`. */
 function todayUtcDayKey(): string {
@@ -107,6 +109,7 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
     return (
       <PanelShell title={profile.contributorId} description="Not yet ranked on the leaderboard">
         <EmptyState title="No activity yet for this contributor." />
+        <JudgeAwardsSection debaterId={profile.contributorId} />
       </PanelShell>
     )
   }
@@ -156,6 +159,8 @@ export function ContributorProfilePanel({ contributorId, signedInContributorId }
           <p className="text-sm text-muted-foreground">No badges earned yet.</p>
         )}
       </PanelSection>
+
+      <JudgeAwardsSection debaterId={profile.contributorId} />
 
       <PanelSection title="Top Contributor Awards">
         {profile.currentAwards.length > 0 && (

@@ -3,7 +3,13 @@ import { act } from "react"
 import { createRoot } from "react-dom/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { AppFrameProvider, AppFrameSurface, useAppFrame } from "../../../src/components/layout/AppFrameProvider"
+import {
+  AppFrameProvider,
+  AppFrameSurface,
+  PRELOAD_ALL_FRAMES_DELAY_MS,
+  useAppFrame,
+} from "../../../src/components/layout/AppFrameProvider"
+import { DOCK_NAV_HREFS } from "../../../src/lib/nav/dock-nav-paths"
 import { configureHost } from "../../../src/host/config"
 
 let mockPathname = "/debate"
@@ -180,6 +186,85 @@ describe("AppFrameProvider and AppFrameSurface", () => {
     expect(iframes[0].style.visibility).toBe("visible")
     expect(iframes[1].getAttribute("src")).toBe("/cards?embed=1")
     expect(iframes[1].style.visibility).toBe("hidden")
+
+    await act(async () => {
+      root.unmount()
+    })
+  })
+
+  it("preloads every dock destination hidden once the browser is idle", async () => {
+    vi.useFakeTimers()
+    try {
+      mockPathname = "/debate"
+      const root = createRoot(container)
+      await act(async () => {
+        root.render(
+          <AppFrameProvider>
+            <AppFrameSurface>
+              <div data-testid="regular-content">Unframed</div>
+            </AppFrameSurface>
+          </AppFrameProvider>,
+        )
+      })
+      expect(container.querySelectorAll("iframe").length).toBe(1)
+
+      await act(async () => {
+        vi.advanceTimersByTime(PRELOAD_ALL_FRAMES_DELAY_MS)
+      })
+
+      const iframes = Array.from(container.querySelectorAll("iframe"))
+      expect(iframes.length).toBe(DOCK_NAV_HREFS.length)
+      // The page already on screen keeps its slot at the front.
+      expect(iframes[0].getAttribute("src")).toBe("/debate?embed=1")
+      for (const href of DOCK_NAV_HREFS) {
+        const iframe = iframes.find((el) => el.getAttribute("src") === `${href}?embed=1`)
+        expect(iframe).toBeDefined()
+        expect(iframe!.style.visibility).toBe(href === "/debate" ? "visible" : "hidden")
+      }
+
+      await act(async () => {
+        root.unmount()
+      })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it("keeps the frames mounted (hidden) while a non-dock route is shown", async () => {
+    mockPathname = "/debate"
+    const root = createRoot(container)
+    // A fresh element each render, so the provider re-reads the mocked path.
+    const tree = () => (
+      <AppFrameProvider>
+        <AppFrameSurface>
+          <div data-testid="regular-content">Unframed</div>
+        </AppFrameSurface>
+      </AppFrameProvider>
+    )
+    await act(async () => {
+      root.render(tree())
+    })
+    const debateFrame = container.querySelector("iframe")
+    expect(debateFrame).not.toBeNull()
+
+    mockPathname = "/settings"
+    await act(async () => {
+      root.render(tree())
+    })
+
+    expect(container.querySelector("[data-testid='regular-content']")).not.toBeNull()
+    // Same element, not a remount: its document was never discarded.
+    expect(container.querySelector("iframe")).toBe(debateFrame)
+    expect(debateFrame!.style.visibility).toBe("hidden")
+    expect(debateFrame!.parentElement!.getAttribute("aria-hidden")).toBe("true")
+
+    mockPathname = "/debate"
+    await act(async () => {
+      root.render(tree())
+    })
+    expect(container.querySelector("[data-testid='regular-content']")).toBeNull()
+    expect(container.querySelector("iframe")).toBe(debateFrame)
+    expect(debateFrame!.style.visibility).toBe("visible")
 
     await act(async () => {
       root.unmount()

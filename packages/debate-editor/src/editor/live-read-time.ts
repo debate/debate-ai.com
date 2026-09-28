@@ -123,6 +123,41 @@ function countCached(doc: PMNode, from: number, to: number): ReadAloudCounts {
  *  the feature is off or nothing applies. Callers join it to the
  *  primary readout with " | " — and label their whole-doc side "Doc:"
  *  while this feature is on, so the two sides read symmetrically. */
+export {
+  DEFAULT_WORD_COUNT_ORDER,
+  WORD_COUNT_ORDERS,
+  isWordCountOrder,
+  orderWordCountSegments,
+  type WordCountOrder,
+  type WordCountSegmentId,
+} from './word-count-order.js';
+
+/** The bar's FIRST segment: the whole document — or, with
+ *  `liveSelectionWordCount` on and a range selected, the selection.
+ *  Null when the whole-doc readout is turned off (`liveDocWordCount`)
+ *  and there is no selection to show instead, so a narrow window can
+ *  give the bar to the container / remaining segments alone. The
+ *  "Doc:" label appears only while the container segment is on, so the
+ *  two sides read symmetrically; with it off the readout is the
+ *  pre-feature bare number. */
+export function primaryReadSegment(
+  counts: ReadAloudCounts,
+  opts: { selection: boolean; selectionLabel: 'Selection' | 'Sel' },
+): string | null {
+  if (!opts.selection && !settings.get('liveDocWordCount')) return null;
+  const words = formatNumber(totalWords(counts));
+  const head = opts.selection
+    ? `${opts.selectionLabel}: ${words}`
+    : settings.get('liveContainerReadTime')
+      ? `Doc: ${words}`
+      : words;
+  const parts = [head];
+  for (const r of settings.get('readers').slice(0, 2)) {
+    parts.push(`${r.name}: ${formatReadTimeFor(counts, r)}`);
+  }
+  return parts.join(' · ');
+}
+
 export function liveContainerSegment(state: EditorState): string | null {
   if (!settings.get('liveContainerReadTime')) return null;
   const sel = state.selection;

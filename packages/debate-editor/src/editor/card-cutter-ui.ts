@@ -750,6 +750,58 @@ function openHighlightDownSheet(view: EditorView, target: FocusedCard): void {
   document.body.appendChild(dialog);
 }
 
+// ── Post-cut review registry: cursor-driven multiplexing ──
+// Several cuts can be under review at once (one panel each). Only ONE
+// panel shows: the one whose card currently contains the cursor, or —
+// while the cursor is elsewhere — the one that contained it last. That
+// panel alone owns the keyboard, and U/D are consumed only when a
+// non-empty selection sits inside ITS card; everywhere else the keys
+// type (or pass through) normally.
+interface ReviewHandle {
+  view: EditorView;
+  setVisible(v: boolean): void;
+}
+const openReviews = new Map<string, ReviewHandle>();
+let activeReviewCardId: string | null = null;
+
+function setActiveReview(cardId: string | null): void {
+  activeReviewCardId = cardId;
+  for (const [id, h] of openReviews) h.setVisible(id === cardId);
+}
+
+/** Selection moved: a cursor inside some open review's card makes that
+ *  review active. A cursor outside every reviewed card changes nothing
+ *  — "last contained" keeps the panel from flickering away while the
+ *  user works nearby. */
+function updateActiveReviewFromSelection(): void {
+  for (const [id, h] of openReviews) {
+    const live = resolveCardById(h.view, id);
+    if (!live) continue;
+    const { from, to } = h.view.state.selection;
+    const touches =
+      (from >= live.cardFrom && from <= live.cardTo) ||
+      (to >= live.cardFrom && to <= live.cardTo);
+    if (touches) {
+      if (activeReviewCardId !== id) setActiveReview(id);
+      return;
+    }
+  }
+}
+
+let reviewSelectionListener: (() => void) | null = null;
+function ensureReviewSelectionListener(): void {
+  if (reviewSelectionListener) return;
+  // selectionchange fires on the DOM selection; ProseMirror mirrors it
+  // into EditorState a beat later, so defer the read one tick.
+  reviewSelectionListener = () => setTimeout(updateActiveReviewFromSelection, 0);
+  document.addEventListener('selectionchange', reviewSelectionListener);
+}
+function dropReviewSelectionListenerIfIdle(): void {
+  if (openReviews.size > 0 || !reviewSelectionListener) return;
+  document.removeEventListener('selectionchange', reviewSelectionListener);
+  reviewSelectionListener = null;
+}
+
 /** Post-cut review — the iteration loop. The cut is already applied;
  *  this panel offers the verdict on it. Accept (the default, ⌘↩ with
  *  nothing typed or flagged) simply closes. Otherwise the user points
@@ -794,10 +846,23 @@ function openPostCutReview(view: EditorView, cardId: string): void {
     document.removeEventListener('keydown', onKey, true);
     document.removeEventListener('keyup', retrackBox, true);
     document.removeEventListener('mouseup', retrackBox, true);
+    openReviews.delete(cardId);
+    if (activeReviewCardId === cardId) {
+      // Surface the most recent remaining review (if any) so pending
+      // reviews never sit invisible with no hint they exist.
+      let nextId: string | null = null;
+      for (const id of openReviews.keys()) nextId = id;
+      setActiveReview(nextId);
+    }
+    dropReviewSelectionListenerIfIdle();
   };
   const inPanelInput = (t: EventTarget | null): boolean =>
     t instanceof HTMLElement && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT');
   const onKey = (e: KeyboardEvent): void => {
+    // Only the ACTIVE (visible) review owns the keyboard — a hidden
+    // panel reacting to Escape/⌘↩/U/D would act on a card the user
+    // isn't looking at.
+    if (activeReviewCardId !== cardId) return;
     if (e.key === 'Escape') {
       e.preventDefault();
       e.stopPropagation();
@@ -815,10 +880,18 @@ function openPostCutReview(view: EditorView, cardId: string): void {
     if (e.metaKey || e.ctrlKey || e.altKey || inPanelInput(e.target)) return;
     const k = e.key.toLowerCase();
     if (k !== 'u' && k !== 'd') return;
+    // Cursor-sensitive consumption: U/D flag ONLY a non-empty selection
+    // inside this review's card. A collapsed cursor, or a selection
+    // outside the card, leaves the keystroke alone — so typing "u"
+    // into the document keeps working while a review is open.
+    const live = resolveCardById(view, cardId);
+    const sel = view.state.selection;
+    if (!live || sel.empty || sel.to < live.cardFrom || sel.from > live.cardTo) return;
     e.preventDefault();
     e.stopPropagation();
     const flag = addCutterFlag(view, k === 'u' ? 'up' : 'down');
     if (!flag) {
+      // Residual: a whitespace-only selection inside the card.
       showToast(`Select text in the card, then press ${k.toUpperCase()}.`);
       return;
     }
@@ -875,6 +948,14 @@ function openPostCutReview(view: EditorView, cardId: string): void {
       showToast('Point at a region (U / D) or type feedback \u2014 or Accept.');
       return;
     }
+    // Scope the send to THIS card: with several reviews open, flags
+    // pointed at another card's regions must not steer this refine.
+    const liveNow = resolveCardById(view, cardId);
+    if (liveNow) {
+      for (const f of pendingCutterFlags()) {
+        if (f.to < liveNow.cardFrom || f.from > liveNow.cardTo) removeCutterFlag(view, f);
+      }
+    }
     // Keep the flags — the refine consumes and clears them.
     close(false);
     const ok = await refineHighlightFocusedCard(view, {
@@ -893,6 +974,21 @@ function openPostCutReview(view: EditorView, cardId: string): void {
   document.addEventListener('keyup', retrackBox, true);
   document.addEventListener('mouseup', retrackBox, true);
   document.body.appendChild(dialog);
+
+  // Register with the cursor-driven multiplexer. A fresh cut's review
+  // takes the foreground (its card is where the user just was); any
+  // panel it displaces comes back when the cursor re-enters its card.
+  openReviews.set(cardId, {
+    view,
+    setVisible: (v) => {
+      dialog.style.display = v ? '' : 'none';
+      if (v) targetBox.show(view, { from: target.cardFrom, to: target.cardTo });
+      else targetBox.hide();
+      if (v) retrackBox();
+    },
+  });
+  setActiveReview(cardId);
+  ensureReviewSelectionListener();
 }
 
 /** One annotation row: direction glyph, the quoted text, and a ✕ that

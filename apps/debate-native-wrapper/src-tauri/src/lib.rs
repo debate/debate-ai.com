@@ -1,5 +1,6 @@
-// Generic Tauri wrapper: opens `generated_scheme::APP_URL` as the main
-// window's content and provides:
+// Generic Tauri wrapper: plays the bundled launch splash (dist/index.html),
+// which then opens `generated_scheme::APP_URL` as the main window's content,
+// and provides:
 // 1. Google OAuth deep-link handoff (`<scheme>://auth-callback?token=...`)
 // 2. Desktop background service with system tray + minimize-to-tray on close
 // 3. Autostart on system boot (LaunchAgent on macOS, Registry on Windows, autostart on Linux)

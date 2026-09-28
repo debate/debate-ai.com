@@ -531,3 +531,45 @@ export function buildEvidenceEntryAnnouncementText(entry: EvidenceLibraryEntry):
   const citing = entry.kind === "card" && entry.cite ? ` citing ${entry.cite}` : "";
   return `New ${noun} for "${entry.argBlock}"${citing}: ${preview}`;
 }
+
+/**
+ * A small, fixed set of placeholder entries `EvidenceLibraryPanel` shows in
+ * place of the bare "No entries match this search." empty state when a
+ * signed-in user's persisted repository is genuinely empty (TODO.md's
+ * "improve the ui's and have demo mock data samples for testing these out
+ * with ui's" ask, and the `MySavedItems`-widget follow-up it names — "every
+ * other tool page that shows an empty state for a new user ... the Evidence
+ * Library" — applied to this tool). One `card` and one `block`, matching
+ * `KIND_VARIANT`'s two badge kinds, so a first-time visitor sees what each
+ * looks like before writing their own. Never persisted and never mixed into
+ * a real search result: `EvidenceLibraryPanel` renders these only when
+ * `hasEntries` is `false`, which already means the real repository (and so
+ * every possible search over it) is empty, so it doesn't also need to check
+ * the current query/filters here.
+ */
+export function getSampleEvidenceLibraryEntries(): EvidenceLibraryEntry[] {
+  return [
+    {
+      id: "sample-card",
+      kind: "card",
+      topic: "Energy Policy",
+      caseArea: "DA",
+      argBlock: "Warming DA",
+      cite: "Smith 24",
+      tags: ["climate", "impact"],
+      wordCount: 0,
+      text: "This is what a cut card looks like once you submit one — the full-text body you paste in above, searchable by keyword, citation, or argument block.",
+    },
+    {
+      id: "sample-block",
+      kind: "block",
+      topic: "Criminal Justice Reform",
+      caseArea: "CP",
+      argBlock: "Federalism Net Benefit",
+      cite: "",
+      tags: ["framework"],
+      wordCount: 0,
+      text: "This is what a reusable analytic block looks like — team-drafted argumentation you can drop into a case, no citation needed. Submit your own using the form above.",
+    },
+  ];
+}

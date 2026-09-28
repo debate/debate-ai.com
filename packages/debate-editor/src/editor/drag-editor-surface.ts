@@ -285,6 +285,11 @@ export class EditorDragSurface implements DragSurface {
   private renderIndicators(draggedLevel: number): void {
     this.removeIndicators();
     if (!this.view || !this.host) return;
+    // Reading view locks all structural edits (its filterTransaction
+    // has no drag exception), so drop targets are pure noise there —
+    // render none. The lock would reject the drop anyway; this keeps
+    // the editor from advertising one.
+    if (this.host.classList.contains('pmd-reader-view')) return;
     const view = this.view;
     const host = this.host;
 
@@ -636,6 +641,9 @@ export class EditorDragSurface implements DragSurface {
       level: this.hovered.level,
       label: this.hovered.label,
     };
+
+    // Drag-to-rearrange disabled: the pickup chord stays inert.
+    if (!settings.get('dragInteractions')) return;
 
     this.dragOriginatedHere = true;
     this.removeHighlight();

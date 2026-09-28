@@ -32,9 +32,9 @@
 /**
  * Where the feature docs are served from by default: same origin as the app
  * (`/docs/features/<name>`, extension stripped) — the live `/features` page's
- * own docs site (`scripts/build-docs.mjs` static-exports
- * `packages/debate-help-docs/content/docs/features/<name>.mdx` into
- * `public/docs`). Renderers with no docs site of their own to link into
+ * own docs site (the app mounts `debate-help-docs` at `app/docs`, which
+ * renders `packages/debate-help-docs/content/docs/features/<name>.mdx`
+ * there). Renderers with no docs site of their own to link into
  * (News Stream's spotlights, say) pass {@link GITHUB_DOCS_BASE_URL} to
  * {@link featureDocUrl} instead.
  */
@@ -446,6 +446,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     category: "practice",
     doc: "practice-round-simulator.md",
     tags: ["simulation", "format", "side"],
+  },
+  {
+    id: "practice-partners",
+    title: "Practice Partners",
+    description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
+    href: "/practice-partners",
+    category: "practice",
+    doc: "practice-partners.md",
+    tags: ["challenge", "volunteer", "judge", "matchmaking"],
   },
   {
     id: "practice-vs-ai",

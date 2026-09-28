@@ -53,6 +53,7 @@ import {
 import { CoachingProgramsPanel } from "debate-team-collaboration"
 import { CoachMaterialsPanel, JudgeProfilesPanel } from "debate-speech-writer"
 import { PrepNotesWithIdentity } from "../research/PrepNotesWithIdentity"
+import { PracticePartnersPanel } from "../practice-partners/PracticePartnersPanel"
 import { useStoreSnapshot } from "../../lib/ui/panels/use-store-snapshot"
 import type { FlowEdit } from "debate-round/src/flow/shared-flow-sync"
 import { panel, type HubSection } from "../hubs/hub-sections"
@@ -139,9 +140,10 @@ export const COACH_SECTIONS: readonly HubSection<SectionId>[] = [
     id: "practice",
     label: "Practice",
     icon: PlayCircle,
-    description: "Run practice rounds between tournaments: simulated rounds, rounds against the AI, and word-count speeches.",
+    description: "Run practice rounds between tournaments: challenge other debaters or volunteer to judge, simulated rounds, rounds against the AI, and word-count speeches.",
     guide: "practice-tools",
     panels: [
+      panel("Practice Partners", "/practice-partners"),
       panel("Practice Round Simulator", "/practice-round"),
       panel("Practice vs AI", "/versus-ai"),
       panel("Word-Count Speeches", "/word-count"),
@@ -309,6 +311,9 @@ export function CoachHub() {
 
         {section === "practice" ? (
           <>
+            <HubPanelAnchor anchor={ANCHORS["Practice Partners"]}>
+              <PracticePartnersPanel />
+            </HubPanelAnchor>
             <HubPanelAnchor anchor={ANCHORS["Practice Round Simulator"]}>
               <PracticeRoundSimulatorPanel />
             </HubPanelAnchor>

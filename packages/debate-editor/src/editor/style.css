@@ -219,6 +219,34 @@
   src: local("Arial Bold Italic"), local("Arial Bold Oblique"), local("Arimo Bold Italic"), local("Arimo Bold Oblique"), url("./fonts/arimo-700-italic.woff2") format("woff2");
 }
 @font-face {
+  font-family: "Arial Narrow";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local("Arial Narrow"), local("ArialNarrow"), local("Liberation Sans Narrow"), url("./fonts/liberation-sans-narrow-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Arial Narrow";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Arial Narrow Bold"), local("ArialNarrow-Bold"), local("Liberation Sans Narrow Bold"), url("./fonts/liberation-sans-narrow-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Arial Narrow";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local("Arial Narrow Italic"), local("ArialNarrow-Italic"), local("Liberation Sans Narrow Italic"), url("./fonts/liberation-sans-narrow-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Arial Narrow";
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: local("Arial Narrow Bold Italic"), local("ArialNarrow-BoldItalic"), local("Liberation Sans Narrow Bold Italic"), url("./fonts/liberation-sans-narrow-700-italic.woff2") format("woff2");
+}
+@font-face {
   font-family: "Helvetica";
   font-style: normal;
   font-weight: 400;
@@ -535,6 +563,18 @@ body {
    AND black on dark, breaking dark mode. `inherit` makes each
    button pick up whatever color the surrounding scope resolved
    to (body's `--pmd-c-text`, the ribbon's, the editor's, etc.). */
+/* No browser focus ring anywhere (user call 2026-09-25). Chromium's
+   `outline: auto` on keyboard focus follows the OS accent color and lands
+   on every focusable thing — pill bars, nav rows, chips — where it says
+   nothing the app's own states don't: text fields draw their own accent
+   outline on focus (the "input focus ring" scaffolding below), dialogs arm
+   a default button, the editor is the caret. Those deliberate
+   `:focus-visible` / `:focus` outlines are more specific than this reset
+   and still apply. */
+:focus,
+:focus-visible {
+  outline: none;
+}
 button {
   color: inherit;
 }
@@ -1525,7 +1565,6 @@ body.pmd-ribbon-tabs-off {
 /* Shared scaffolding (accent fill (2-prop)).
    Diverge by pulling a selector out, not by re-copying. */
 #ribbon #timer-toggle-btn[aria-pressed="true"],
-.pmd-theme-editor-btn[aria-pressed='true'],
 .pmd-pane-focused .pmd-pane-chip,
 :is(#ribbon, body.pmd-timer-popout-page) .pmd-timer-start[aria-pressed="true"] {
   background: var(--pmd-c-accent);
@@ -1574,6 +1613,19 @@ body.pmd-ribbon-tabs-off {
   20%  { transform: scale(1.18); background: var(--pmd-c-success-soft); }
   100% { transform: scale(1);    background: transparent; }
 }
+/* In-flight save: amber pulse on the save button from click until the
+   bytes land (or fail). Applied only when a save outlives the flicker
+   guard, so fast saves jump straight to the ✓ flash. */
+@keyframes pmd-save-saving-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+#ribbon .ribbon-button-stack button.pmd-save-saving {
+  color: var(--pmd-c-warning);
+  background: var(--pmd-c-warning-soft);
+  animation: pmd-save-saving-pulse 1.2s ease-in-out infinite;
+}
+
 #ribbon .ribbon-button-stack button.pmd-save-flash {
   color: var(--pmd-c-success);
   animation: pmd-save-flash-pulse 1400ms ease-out;
@@ -1689,6 +1741,66 @@ body:not(.pmd-multi-doc):not(.pmd-multi-window) #speech-stack { display: none; }
    - On + filename + single-doc — visible (the normal case). */
 html:not(.pmd-doc-name-chip-on) #doc-name-chip { display: none !important; }
 .pmd-doc-name-chip[hidden] { display: none; }
+
+/* Cloud pill (disk-conflict.ts): one per window, in its own tray at the
+   editor's bottom-RIGHT corner — the mirror of `.pmd-pill-tray` (Send /
+   Receive / Dropzone, bottom-left) and the same pill family. Shown only
+   for a document in a cloud-synced folder; amber while the file has
+   changed on disk under the editor. No transitions — a state change
+   must not draw the eye during a speech. */
+.pmd-pill-tray-right {
+  position: fixed;
+  bottom: calc(var(--status-bar-height) + 0.5rem);
+  right: 0.5rem;
+  z-index: 220;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 6px;
+  pointer-events: none;
+}
+.pmd-pill-tray-right > * {
+  pointer-events: auto;
+}
+/* Same two-bar clearance as the left tray in the multi-pane workspace. */
+body.pmd-multi-doc .pmd-pill-tray-right {
+  bottom: calc(var(--status-bar-height) + var(--pmd-pane-footer-height) + 0.5rem);
+}
+.pmd-disk-bar {
+  cursor: pointer;
+}
+.pmd-disk-badge[data-state='changed'] .pmd-pill-bar {
+  color: #8a5a00;
+  border-color: #e0b24a;
+  background: #fff6dc;
+}
+.pmd-disk-badge[data-state='changed'] .pmd-pill-icon { color: #8a5a00; }
+.pmd-disk-badge[data-state='kept-copy'] .pmd-pill-bar {
+  color: #5a4a8a;
+  border-color: #b8a6e6;
+  background: #f1ecfb;
+}
+.pmd-disk-badge[data-state='kept-copy'] .pmd-pill-icon { color: #5a4a8a; }
+@media (prefers-color-scheme: dark) {
+  .pmd-disk-badge[data-state='changed'] .pmd-pill-bar { color: #f0c66a; border-color: #8a6a1a; background: #3a2e0e; }
+  .pmd-disk-badge[data-state='changed'] .pmd-pill-icon { color: #f0c66a; }
+  .pmd-disk-badge[data-state='kept-copy'] .pmd-pill-bar { color: #c9b8f5; border-color: #5f4c9a; background: #2a2340; }
+  .pmd-disk-badge[data-state='kept-copy'] .pmd-pill-icon { color: #c9b8f5; }
+}
+/* The pill overlaps the editor's bottom-right corner: give the last
+   lines the same runway the left tray gets, so scrolling to the end
+   still shows the bottom-most text. Single-doc pads #editor; three-pane
+   pads only the rightmost visible pane (tagged
+   `pmd-pane-cloud-pill-anchored` by positionRightTray — the pill sits
+   over that pane's corner). Both gated on the pill actually showing
+   (`pmd-disk-pill-active`); keep the value in sync with the left
+   tray's `pmd-pill-tray-active` rules. */
+html.pmd-disk-pill-active body:not(.pmd-multi-doc) #editor .ProseMirror {
+  padding-bottom: 4.5rem;
+}
+html.pmd-disk-pill-active .pmd-pane-cloud-pill-anchored .pmd-pane-editor .ProseMirror {
+  padding-bottom: 4.5rem;
+}
 body.pmd-multi-doc #doc-name-chip { display: none; }
 
 /* Speech-doc banner. Shown in single-doc multi-window mode when THIS
@@ -2501,6 +2613,39 @@ body:not(.pmd-multi-doc) #app {
   gap: 0.4rem;
 }
 
+/* Bottom-right CardMirror mark: drag handle for the focused document's
+   file (file-drag-mark.ts sets the image). The same button chrome as
+   the zoom buttons beside it (keep in sync with `.zoom-controls button`),
+   the mark drawn inside at 80%; the grab cursor and the tooltip say what
+   it does. Dimmed like a disabled zoom button while there is no file on
+   disk. */
+#file-drag-mark {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-left: 0.4rem;
+  padding: 0;
+  background: var(--pmd-c-bg);
+  background-position: center;
+  background-size: 80%;
+  background-repeat: no-repeat;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 3px;
+  cursor: grab;
+}
+#file-drag-mark:hover {
+  background-color: var(--pmd-c-hover);
+}
+#file-drag-mark:active {
+  cursor: grabbing;
+}
+#file-drag-mark[data-inert] {
+  opacity: 0.4;
+  cursor: default;
+}
+#file-drag-mark[hidden] {
+  display: none;
+}
 .zoom-controls button {
   font-family: inherit;
   background: var(--pmd-c-bg);
@@ -2744,6 +2889,42 @@ code {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* Favorites: starred sections pinned above the filter (self-ref-favorites.ts). */
+.pmd-selfref-picker-favorites {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid var(--pmd-c-border-soft);
+}
+.pmd-selfref-picker-favorites[hidden] { display: none; }
+.pmd-selfref-picker-favorites-title {
+  padding: 0 12px 2px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pmd-c-text-muted);
+}
+.pmd-selfref-picker-fav { padding-left: 12px; }
+.pmd-selfref-picker-star {
+  margin-left: auto;
+  flex: none;
+  width: 1.5em;
+  text-align: center;
+  border-radius: 3px;
+  font-size: 0.95em;
+  line-height: 1.2;
+  opacity: 0.4;
+  cursor: pointer;
+}
+.pmd-selfref-picker-star[hidden] { display: none; }
+.pmd-selfref-picker-star:hover { opacity: 1; background: var(--pmd-c-hover); }
+.pmd-selfref-picker-star-on { opacity: 1; color: var(--pmd-c-accent); }
+/* A disabled row (the cursor's own section) can still be starred for later. */
+.pmd-selfref-picker-row-disabled .pmd-selfref-picker-star { cursor: pointer; opacity: 0.55; }
+.pmd-selfref-picker-row-disabled .pmd-selfref-picker-star-on { opacity: 1; }
 
 /* Custom autocorrect table (Settings → Editing → Typing). */
 .pmd-autocorrect-editor {
@@ -3763,8 +3944,17 @@ body.pmd-override-shading [data-shading] {
   font-size: 0.85rem;
   cursor: pointer;
 }
+.pmd-theme-editor-btn:not([aria-pressed='true']):hover {
+  background: var(--pmd-c-hover);
+}
+.pmd-theme-editor-btn[aria-pressed='true'] {
+  background: var(--pmd-c-accent);
+  color: var(--pmd-c-text-on-accent);
+}
+.pmd-theme-editor-btn[aria-pressed='true']:hover {
+  background: var(--pmd-c-accent-hover);
+}
 .pmd-theme-editor-btn:last-child { border-right: none; }
-.pmd-theme-editor-btn:hover { background: var(--pmd-c-hover); }
 
 
 /* Multi-slot color editor — highlight / shading display
@@ -4072,6 +4262,39 @@ body.pmd-override-shading [data-shading] {
   text-decoration-color: var(--pmd-c-band-fg-dark);
 }
 
+/* Underlines follow font color (Appearance → Document typography; OFF by
+   default). The line is painted by the element that declares it — the
+   outer underline / emphasis / underlined-cite span, or the hat / block
+   heading itself — in THAT element's color, so colored words get a
+   body-colored line (the classic look). Word does the opposite: its
+   colorless underlines take the run's color. With the flag on, a
+   colored run (`[data-color]` = the font_color mark's span; the 000000
+   "automatic" run inherits and needs nothing) nested inside any of
+   those re-declares the same underline on its own span, painting the
+   line in its own color over the outer one — the band technique above.
+   The dark-mode dark-band override changes the run's DISPLAYED color
+   and currentColor follows it, so nothing turns invisible. */
+:root.pmd-underline-follows-color .ProseMirror
+  :is(.pmd-underline, .pmd-emphasis, u) [data-color]:not([data-color="000000"]),
+:root.pmd-underline-follows-color.pmd-cite-underlined .ProseMirror
+  .pmd-cite [data-color]:not([data-color="000000"]) {
+  text-decoration: underline;
+  text-decoration-thickness: var(--pmd-underline-size, auto);
+  text-decoration-color: currentColor;
+}
+:root.pmd-underline-follows-color .ProseMirror .pmd-block [data-color]:not([data-color="000000"]) {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+:root.pmd-underline-follows-color .ProseMirror .pmd-hat [data-color]:not([data-color="000000"]) {
+  text-decoration: underline double;
+  text-decoration-color: currentColor;
+}
+:root.pmd-underline-follows-color.pmd-hat-underline-single .ProseMirror
+  .pmd-hat [data-color]:not([data-color="000000"]) {
+  text-decoration: underline;
+}
+
 /* Shading is an arbitrary RGB background, so we can't enumerate the
    16 well-known highlight cases above. Instead `font_color`'s
    sibling logic in `src/schema/marks.ts` emits
@@ -4255,7 +4478,6 @@ body.pmd-nav-hidden #nav-pane-pull-tab {
 .pmd-home-recents-clear:hover,
 .pmd-dropzone-row-delete:hover,
 .pmd-dropzone-bar:hover,
-.pmd-dropzone-clear:hover,
 .pmd-qc-add-suggestion:hover,
 .pmd-voice-pill:hover,
 .pmd-receive-bar:hover,
@@ -4498,6 +4720,89 @@ html.pmd-home-active #speech-doc-banner {
      if it must. */
 }
 
+/* Last workspace — above Recent: a Reopen button over the checklist of
+   documents the previous session ended with. Rows borrow the recent
+   row's chip / name / path scaffolding, so a path still left-truncates
+   to keep its tail visible. The list scrolls past ~8 rows (like the
+   sessions list) so a 24-document workspace can't push the utilities
+   off screen. */
+.pmd-home-workspace-section {
+  margin-bottom: 1.1rem;
+}
+.pmd-home-workspace-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.pmd-home-workspace-open {
+  appearance: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--pmd-c-text);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.pmd-home-workspace-open:hover:not(:disabled) {
+  background: var(--pmd-c-hover);
+}
+.pmd-home-workspace-open:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.pmd-home-workspace-select {
+  appearance: none;
+  font: inherit;
+  font-size: 0.78rem;
+  background: transparent;
+  border: none;
+  color: var(--pmd-c-text-muted);
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  flex: 0 0 auto;
+}
+.pmd-home-workspace-select:hover:not(:disabled) {
+  background: var(--pmd-c-hover);
+  color: var(--pmd-c-text);
+}
+.pmd-home-workspace-select:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+.pmd-home-workspace-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 18rem;
+  overflow-y: auto;
+}
+.pmd-home-workspace-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--pmd-c-text);
+}
+.pmd-home-workspace-item:hover {
+  background: var(--pmd-c-hover);
+}
+.pmd-home-workspace-item input {
+  flex: 0 0 auto;
+  margin: 0;
+  cursor: pointer;
+}
+
 /* Collaboration sessions — dedicated section below Recent. Scrolls
    past ~6 rows so a long list never pushes the utilities off screen,
    and a session can never be displaced the way recents rotate. */
@@ -4687,6 +4992,16 @@ html.pmd-undoredo-hidden #undo-redo-stack {
 .pmd-pill-tray > * {
   pointer-events: auto;
 }
+/* Pills sit STATIC inside the tray so every popup's containing block is
+   the tray itself: `left: 0` on a popup is the left edge of the leftmost
+   visible pill, whichever pill opened it — the popups all start in the
+   same place and share the full width. (In the home screen's dock the
+   receive pill keeps `position: relative`, so its popup hangs off the
+   pill.) */
+.pmd-pill-tray > .pmd-pill,
+.pmd-pill-tray > .pmd-dropzone-root {
+  position: static;
+}
 /* Home screen's own dock for the receive pill (the pill node is
    re-parented here while home is visible — collab invites join a NEW
    doc, so they must not require one open). Bottom-centered strip on
@@ -4735,44 +5050,19 @@ html.pmd-pill-tray-active .pmd-pane-pill-anchored .pmd-pane-editor .ProseMirror 
 }
 
 /* ---- Dropzone shelf (cross-window scratch space) ----
-   The visible "pill" is `.pmd-dropzone-bar`. The surrounding
-   root has no chrome of its own when closed — the bar IS the
-   visible element. When open, the root gains its own bg + border
-   to become a panel; the bar stays in place at the panel's
-   bottom edge while the list grows above it. The visual effect
-   is the pill morphing into the bottom of a shelf panel.
+   The visible "pill" is `.pmd-dropzone-bar`; the root has no chrome of
+   its own. Open, the shelf list is a `.pmd-pill-popup` rising from the
+   pill row with the bar as its tab — the same anatomy as the Send and
+   Receive pills (see "Pill popups" below).
    Drag-over: blue accept-state via --pmd-c-drop tokens. */
 .pmd-dropzone-root {
-  /* A flex child of `.pmd-pill-tray` — the tray is the fixed element
-     `positionDropzone` (index.ts) anchors to the editor's bottom-left
-     corner (NOT the nav pane: a nav-bottom pill would sit in the
-     outline's auto-scroll zone). The tray's fallback `bottom` clears
-     the status bar via the same `--status-bar-height` var the bar
-     reads, so a missed positioning pass (a boot where
-     `getBoundingClientRect()` comes back 0×0 and the function
-     early-returns, observed on some Windows machines) can't strand
-     the pill in the status bar's vertical band. */
-  position: relative;
-  right: auto;
-  /* Fallback width cap before `positionDropzone` runs; it then sets an
-     exact inline max-width from the editor's rect so the expanded
-     shelf keeps an equal margin on the right. */
-  max-width: 360px;
-  max-height: 60vh;
+  /* One of the three tray pills (`.pmd-pill` chrome; static inside the
+     tray like the others). The tray's fallback `bottom` clears the status
+     bar via the same `--status-bar-height` var the bar reads, so a missed
+     positioning pass (a boot where `getBoundingClientRect()` comes back
+     0×0, observed on some Windows machines) can't strand the pill in the
+     status bar's vertical band. */
   pointer-events: auto;
-  /* z within the tray, which owns the stacking context (tray z=220,
-     above the status bar's 200). In the spec-correct world the pill
-     and the status bar never overlap, so this only matters if a
-     missed positioning pass lands the pill in the bar's band — then
-     it renders visible and clickable rather than clipped. */
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  /* Left-anchored pill; the bar sizes to content. */
-  align-items: flex-start;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 10px;
   /* No transitions on state changes — the open/closed and
      drop-target morphs read better as instant flips. */
   transition: none;
@@ -4787,17 +5077,11 @@ html.pmd-pill-tray-active .pmd-pane-pill-anchored .pmd-pane-editor .ProseMirror 
 body.pmd-multi-doc .pmd-pill-tray {
   bottom: calc(var(--status-bar-height) + var(--pmd-pane-footer-height) + 0.5rem);
 }
-.pmd-dropzone-root[data-open="true"] {
-  align-items: stretch;
-  background: var(--pmd-c-bg);
-  border-color: var(--pmd-c-border);
-  box-shadow: 0 6px 18px var(--pmd-c-shadow-fade);
-}
 /* Drop-target accept state — applies in both closed and open. Keep
    the element's OPAQUE background (it floats over the editor now, so a
    translucent tint showed the doc through it); signal acceptance with
    the blue border + outline glow only. */
-.pmd-dropzone-root[data-open="true"].pmd-dropzone-root-drop-target {
+.pmd-dropzone-root-drop-target > .pmd-dropzone-list {
   border-color: var(--pmd-c-drop);
   box-shadow: 0 0 0 2px var(--pmd-c-drop-outline);
 }
@@ -4807,19 +5091,8 @@ body.pmd-multi-doc .pmd-pill-tray {
    wide pill). The whole-root background/border animates between
    states; the list shows/hides instantly. */
 .pmd-dropzone-list {
+  /* Geometry and chrome come from .pmd-pill-popup. */
   list-style: none;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  flex: 0 1 auto;
-  min-height: 0;
-  display: none;
-}
-.pmd-dropzone-root[data-open="true"] .pmd-dropzone-list {
-  display: block;
-  max-height: 320px;
-  padding: 0.25rem;
-  border-bottom: 1px solid var(--pmd-c-divider);
 }
 .pmd-dropzone-empty {
   padding: 0.6rem 0.5rem;
@@ -4927,17 +5200,6 @@ body.pmd-multi-doc .pmd-pill-tray {
   transition: none;
 }
 
-.pmd-dropzone-root[data-open="true"] .pmd-dropzone-bar {
-  align-self: stretch;
-  background: transparent;
-  border-color: transparent;
-  border-radius: 0 0 9px 9px;
-  box-shadow: none;
-  color: var(--pmd-c-text);
-}
-.pmd-dropzone-root[data-open="true"] .pmd-dropzone-bar:hover {
-  background: var(--pmd-c-surface-soft);
-}
 /* Drop-target accept state on the BAR — applies in both closed
    and open modes so the pill turns blue regardless. */
 .pmd-dropzone-root-drop-target .pmd-dropzone-bar {
@@ -4955,38 +5217,22 @@ body.pmd-multi-doc .pmd-pill-tray {
   align-items: center;
   flex: 0 0 auto;
 }
-.pmd-dropzone-count {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  background: var(--pmd-c-accent-soft);
-  color: var(--pmd-c-accent);
-  border-radius: 999px;
-  padding: 0 0.4rem;
-  min-width: 1.1rem;
-  text-align: center;
-  line-height: 1.3;
-}
+/* The shelf's item count is the shared `.pmd-pill-badge` (see the pills
+   section) — the same badge as Receive's, grey base included. No `display`
+   of its own, so the `hidden` attribute at zero items works (an author
+   `display` beat the UA rule once and the empty shelf showed "0", field
+   report 2026-09-25). */
 /* Shared scaffolding (flex fill).
    Diverge by pulling a selector out, not by re-copying. */
-.pmd-dropzone-bar-spacer,
 .pmd-qc-manage-row-main,
 .pmd-learn-manage-text,
 .pmd-msettings-reader-row input[type='text'] {
   flex: 1 1 auto;
   min-width: 0;
 }
-.pmd-dropzone-clear {
-  appearance: none;
-  font: inherit;
-  font-size: 0.72rem;
-  background: transparent;
-  border: 1px solid var(--pmd-c-border);
-  border-radius: 4px;
-  padding: 0.1rem 0.4rem;
-  cursor: pointer;
-  color: var(--pmd-c-text-muted);
-}
+/* Shelf popup footer (Clear): the same actions row + action button as
+   the Send / Receive popups — see `.pmd-send-actions` /
+   `.pmd-send-action`. Only rendered while the shelf has items. */
 
 
 .pmd-nav-panel {
@@ -5083,6 +5329,7 @@ body.pmd-nav-resize-active {
    Diverge by pulling a selector out, not by re-copying. */
 .pmd-nav-level-btn-active,
 #read-mode-btn.pmd-active,
+#reader-view-btn.pmd-active,
 .pmd-prompt-btn-primary,
 .pmd-clod-btn-primary,
 .pmd-recovery-sidebar-row-btn-open,
@@ -5435,6 +5682,13 @@ body.pmd-nav-resize-active {
 .pmd-nav-chevron-active:hover {
   color: var(--pmd-c-emphasis-box);
 }
+/* Classic icons: the generic classic chevron-down is the small \25BE
+   (right for dropdown buttons), but beside the nav pane's collapsed
+   \25B6 it reads as a different size. Here only, the expanded twisty
+   uses the large \25BC, the down-pointing mate of \25B6. */
+:root[data-icons="classic"] .pmd-nav-chevron .pmd-icon-chevron-down::before {
+  content: "\25BC ";
+}
 
 .pmd-nav-chevron-leaf {
   visibility: hidden;
@@ -5632,6 +5886,17 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   display: contents;
 }
 
+/* "Read mode: show undertags" (settings.readModeShowUndertags →
+   `pmd-rm-show-undertags` on the editor host, beside the other read-mode
+   setting classes): undertag paragraphs come back as blocks — in cards, in
+   analytic units, and at document level — and the read-mode plugin keeps
+   every run of theirs (keepsWholeParagraph), so the whole undertag shows. */
+.pmd-read-mode.pmd-rm-show-undertags .pmd-card > .pmd-undertag,
+.pmd-read-mode.pmd-rm-show-undertags .pmd-analytic-unit > .pmd-undertag,
+.pmd-read-mode.pmd-rm-show-undertags .ProseMirror > .pmd-undertag {
+  display: block;
+}
+
 /* Tables inside a card/analytic. A table is a non-listed child, so `.pmd-card >
    *` would hide it wholesale — taking any HIGHLIGHTED evidence inside its cells
    with it. Instead flatten it exactly like the card body: `display: contents`
@@ -5726,6 +5991,15 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
 .pmd-read-mode .ProseMirror-trailingBreak {
   display: none;
 }
+/* …except in heading blocks. An EMPTY pocket / hat / block / tag /
+   analytic gets its whole height from that trailing break (it has no
+   text to set a line), so hiding it shrank an empty pocket to its
+   padding in read mode while a filled one kept its full line height
+   (field report 2026-09-05). Headings never flow inline, so the break
+   costs nothing there; `revert` restores the browser's own br display. */
+.pmd-read-mode :is(.pmd-pocket, .pmd-hat, .pmd-block, .pmd-tag, .pmd-analytic) > .ProseMirror-trailingBreak {
+  display: revert;
+}
 
 /* Strip the emphasis border in read mode WHEN the emphasis span has
    no visible (highlighted) child. Without this, emphasis spans that
@@ -5755,7 +6029,8 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
 
 
 
-#read-mode-btn.pmd-active:hover:not(:disabled) {
+#read-mode-btn.pmd-active:hover:not(:disabled),
+#reader-view-btn.pmd-active:hover:not(:disabled) {
   background: var(--pmd-c-accent-hover);
 }
 
@@ -6319,6 +6594,65 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
 .pmd-plugin-settings-dialog {
   width: min(26rem, 92vw);
 }
+.pmd-plugin-browse-dialog {
+  width: min(34rem, 92vw);
+}
+/* Custom-tier cap fields inside the Keep-version-history editor. */
+.pmd-version-history-custom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.4rem 0 0 1.4rem;
+}
+.pmd-version-history-cap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+/* Compound selector on purpose: .pmd-settings-text is declared LATER in
+   this file, so an equal-specificity rule here would lose the cascade
+   and its 12rem flex basis would win — which, in the browse dialog's
+   flex COLUMN, becomes a 12rem HEIGHT. */
+.pmd-settings-text.pmd-plugin-browse-search {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.pmd-plugin-browse-list {
+  margin: 0.5rem 0 0.25rem;
+  max-height: 55vh;
+  overflow-y: auto;
+}
+.pmd-plugin-browse-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--pmd-c-divider-faint);
+}
+.pmd-plugin-browse-row:last-of-type {
+  border-bottom: none;
+}
+.pmd-plugin-browse-text {
+  min-width: 0;
+}
+.pmd-plugin-browse-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.pmd-plugin-browse-desc {
+  font-size: 0.85rem;
+  color: var(--pmd-c-text-muted);
+  margin-top: 0.15rem;
+}
+.pmd-plugin-browse-repo {
+  font-size: 0.78rem;
+  color: var(--pmd-c-text-muted);
+  margin-top: 0.15rem;
+  overflow-wrap: anywhere;
+}
 .pmd-plugin-settings-rows {
   margin: 0.5rem 0 0.25rem;
   max-height: 60vh;
@@ -6341,6 +6675,20 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
 }
 .pmd-plugin-settings-label .pmd-settings-toggle {
   margin-top: 0;
+}
+.pmd-plugin-settings-label-stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.4rem;
+}
+.pmd-settings-text.pmd-plugin-settings-multiline {
+  /* flex-basis would misbehave in the stacked column, same trap as the
+     browse search box; a textarea sizes by rows + width. */
+  flex: 0 0 auto;
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.4;
 }
 .pmd-plugin-settings-row .pmd-settings-row-desc {
   margin: 0.3rem 0 0;
@@ -7031,7 +7379,11 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
   user-select: none;
   opacity: 1;
   transition: opacity 200ms;
-  white-space: nowrap;
+  /* Short toasts render one line (auto width up to the cap); long ones
+     wrap instead of running off the screen. `anywhere` so an unbroken
+     token (a URL, a long filename) can still break. */
+  max-width: min(26rem, calc(100vw - 1.5rem));
+  overflow-wrap: anywhere;
 }
 
 .pmd-toast-fade {
@@ -7161,28 +7513,34 @@ html.pmd-nav-flat .pmd-nav-type-analytic:hover .pmd-nav-label {
 #ribbon .ribbon-doc-menu-btn {
   height: 1.45rem;
   width: auto;
-  padding: 0 0.5rem;
+  /* Compact side padding leaves room for each label and chevron
+     without letting either intrude into the button's padding box. */
+  padding: 0 0.25rem;
   font-size: 0.78rem;
   line-height: 1;
+  justify-content: space-between;
+  gap: 0.12rem;
 }
 
-/* Doc / Card dropdown-arrow chevron — gray to match the color-panel
-   arrows. Only the A▴ / A▾ font-size increment / decrement buttons
-   keep black arrows (they're action buttons, not dropdown triggers).
-   Margin-left because the smaller font-size on the chevron span
-   would otherwise eat the visual space between "Doc" / "Card" and
-   the arrow. */
+/* Table's fixed two-track width is about 1.2px narrower than the
+   intrinsic label + icon + gap at the shared padding. Release that
+   final fraction so both visual insets remain equal. */
+#ribbon .ribbon-doc-menu-btn.ribbon-format-table-btn {
+  padding-inline: 0.2rem;
+}
+
+/* Doc / Card / Table dropdown-arrow chevron — gray to match the
+   color-panel arrows. The button owns the inter-item gap, so this icon
+   can occupy the same stable right-hand position for every label. */
 .ribbon-doc-menu-arrow {
   color: var(--pmd-c-text-secondary);
   font-size: 0.65rem;
-  margin-left: 0.35rem;
 }
-/* The modern chevron icon reads wider / heavier than the classic ▾
-   glyph (which has its own side-bearing), so the Table / Doc / Card
-   dropdowns feel cramped only in modern mode. Pull the arrow closer to
-   its label there to free up room at the button edges. */
+/* `.pmd-icon`'s normal -0.125em baseline correction has no effect when
+   the icon is a flex item. Reapply that optical offset in modern mode;
+   the classic ▾ is a text glyph with its own baseline and side-bearing. */
 :root[data-icons='modern'] .ribbon-doc-menu-arrow {
-  margin-left: 0.12rem;
+  transform: translateY(0.125em);
 }
 
 .pmd-doc-menu {
@@ -9160,6 +9518,26 @@ body:has(#comments-column:not([hidden])) :is(#editor, .pmd-pane-editor) .pmd-com
    drag-pickup box (.pmd-editor-pickup-highlight) but in the purple
    "Thinking…" pill accent. Applied as a node decoration on the
    container, so it boxes the whole card, not the text. View-only. */
+/* Cut in place (shared documents): the unit stays, dimmed and labelled,
+   until the paste moves it — see cut-in-place.ts. Dimming goes through
+   the inherited text color (not opacity) so the label keeps full ink. */
+:is(#editor, .pmd-pane-editor) .pmd-cut-pending {
+  position: relative;
+  color: color-mix(in srgb, currentColor 50%, transparent);
+  outline: 2px dashed var(--pmd-c-comment-thread);
+  outline-offset: -2px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--pmd-c-comment-thread) 6%, transparent);
+}
+:is(#editor, .pmd-pane-editor) .pmd-cut-pending::after {
+  content: attr(data-pmd-cut-label);
+  position: absolute;
+  top: 2px;
+  right: 8px;
+  font: 600 11px/1.4 system-ui, sans-serif;
+  color: var(--pmd-c-comment-thread);
+  pointer-events: none;
+}
 :is(#editor, .pmd-pane-editor) .pmd-ai-working {
   outline: 2px solid var(--pmd-c-comment-thread);
   outline-offset: -2px;
@@ -10363,6 +10741,42 @@ body.pmd-recovery-active.pmd-multi-doc #app {
   border-bottom: 1px solid var(--pmd-c-divider-faint);
   padding: 0.25rem;
 }
+.pmd-qcs-browse-header {
+  padding: 0.45rem 0.75rem 0.35rem;
+  color: var(--pmd-c-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--pmd-c-divider-faint);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pmd-qcs-browse-header[hidden] { display: none; }
+.pmd-qcs-browse-path {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pmd-qcs-browse-current-hint {
+  color: var(--pmd-c-text-muted);
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pmd-qcs-browse-notice {
+  margin: 0.45rem 0.6rem 0;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--pmd-c-border-soft);
+  border-radius: 5px;
+  color: var(--pmd-c-text-muted);
+  background: var(--pmd-c-surface-soft);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
 .pmd-qcs-row {
   padding: 0.4rem 0.5rem;
   border-radius: 5px;
@@ -10408,6 +10822,10 @@ body.pmd-recovery-active.pmd-multi-doc #app {
 .pmd-qcs-badge-fileobject {
   color: var(--pmd-c-text-secondary);
   border-color: var(--pmd-c-text-secondary);
+}
+.pmd-qcs-badge-folder {
+  color: var(--pmd-c-warning);
+  border-color: var(--pmd-c-warning);
 }
 /* Collapse chevron / spacer in the file-search outline browse. */
 .pmd-qcs-twisty {
@@ -10483,6 +10901,10 @@ body.pmd-recovery-active.pmd-multi-doc #app {
   padding: 0.6rem 0.5rem;
   color: var(--pmd-c-text-muted);
   font-size: 0.82rem;
+}
+.pmd-qcs-empty-separator {
+  color: var(--pmd-c-text-secondary);
+  font-weight: 800;
 }
 .pmd-qcs-more {
   padding: 0.45rem 0.5rem;
@@ -11337,7 +11759,8 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
    Cross-window doc picker for the speech-doc designation. Gold
    accents on the header + current-speech-doc row stay consistent
    with the `--pmd-c-speech-*` tokens used by the speech banner. */
-.pmd-select-speech-overlay {
+.pmd-select-speech-overlay,
+.pmd-list-pick-overlay {
   position: fixed;
   inset: 0;
   background: var(--pmd-c-shadow-fade);
@@ -11346,7 +11769,8 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   justify-content: center;
   z-index: 1000;
 }
-.pmd-select-speech-dialog {
+.pmd-select-speech-dialog,
+.pmd-list-pick-dialog {
   background: var(--pmd-c-bg);
   border-radius: 8px;
   box-shadow: 0 8px 32px var(--pmd-c-shadow-deep);
@@ -11357,7 +11781,8 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   flex-direction: column;
   font-family: var(--pmd-ui-font);
 }
-.pmd-select-speech-header {
+.pmd-select-speech-header,
+.pmd-list-pick-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -11367,12 +11792,14 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   color: var(--pmd-c-speech-text);
   flex: 0 0 auto;
 }
-.pmd-select-speech-header h2 {
+.pmd-select-speech-header h2,
+.pmd-list-pick-header h2 {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
 }
-.pmd-select-speech-close {
+.pmd-select-speech-close,
+.pmd-list-pick-close {
   background: transparent;
   border: none;
   font-size: 1.4rem;
@@ -11381,15 +11808,18 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   color: inherit;
   padding: 0 0.4rem;
 }
-.pmd-select-speech-close:hover { opacity: 0.7; }
-.pmd-select-speech-intro {
+.pmd-select-speech-close:hover,
+.pmd-list-pick-close:hover { opacity: 0.7; }
+.pmd-select-speech-intro,
+.pmd-list-pick-intro {
   margin: 0;
   padding: 0.75rem 1rem 0.25rem;
   font-size: 0.85rem;
   color: var(--pmd-c-text-muted);
   flex: 0 0 auto;
 }
-.pmd-select-speech-list {
+.pmd-select-speech-list,
+.pmd-list-pick-list {
   flex: 1 1 auto;
   overflow-y: auto;
   padding: 0.25rem 0.5rem 0.75rem;
@@ -11397,12 +11827,14 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   flex-direction: column;
   gap: 2px;
 }
-.pmd-select-speech-empty {
+.pmd-select-speech-empty,
+.pmd-list-pick-empty {
   margin: 1rem;
   color: var(--pmd-c-text-muted);
   font-size: 0.9rem;
 }
-.pmd-select-speech-row {
+.pmd-select-speech-row,
+.pmd-list-pick-row {
   appearance: none;
   background: transparent;
   border: 1px solid transparent;
@@ -11416,30 +11848,51 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   text-align: left;
   color: var(--pmd-c-text);
 }
-.pmd-select-speech-row:hover {
+.pmd-select-speech-row:hover,
+.pmd-list-pick-row:hover {
   background: var(--pmd-c-hover);
 }
 
+.pmd-list-pick-filter {
+  margin: 0.25rem 1rem 0.25rem;
+  padding: 0.35rem 0.55rem;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--pmd-c-text);
+  background: var(--pmd-c-bg);
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 6px;
+}
+.pmd-list-pick-row:focus-visible {
+  outline: 2px solid var(--pmd-c-accent);
+  outline-offset: -2px;
+}
+.pmd-list-pick-row-muted .pmd-list-pick-row-name {
+  color: var(--pmd-c-text-muted);
+}
 .pmd-select-speech-row-indicator {
   flex: 0 0 1.25rem;
   text-align: center;
   font-size: 1rem;
   line-height: 1;
 }
-.pmd-select-speech-row-text {
+.pmd-select-speech-row-text,
+.pmd-list-pick-row-text {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
-.pmd-select-speech-row-name {
+.pmd-select-speech-row-name,
+.pmd-list-pick-row-name {
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.pmd-select-speech-row-sub {
+.pmd-select-speech-row-sub,
+.pmd-list-pick-row-sub {
   font-size: 0.78rem;
   color: var(--pmd-c-text-muted);
   white-space: nowrap;
@@ -11588,6 +12041,7 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
 .pmd-pane-focused .pmd-pane-chip-close,
 .pmd-pane-focused .pmd-pane-chip-stack,
 .pmd-pane-focused .pmd-pane-chip-nav,
+.pmd-pane-focused .pmd-pane-chip-hide,
 .pmd-pane-focused .pmd-pane-chip-expand {
   color: var(--pmd-c-text-on-accent);
 }
@@ -11613,6 +12067,7 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
  * The chip's accent fill is theme-invariant, so its hover glyph is too:
  * the light-mode black, pinned via --pmd-c-on-accent-hover. */
 .pmd-pane-focused .pmd-pane-chip-nav:hover,
+.pmd-pane-focused .pmd-pane-chip-hide:hover,
 .pmd-pane-focused .pmd-pane-chip-expand:hover {
   color: var(--pmd-c-on-accent-hover);
 }
@@ -11725,6 +12180,20 @@ body.pmd-multi-nav-empty.pmd-multi-doc #status-bar {
   line-height: 1;
 }
 .pmd-pane-chip-expand:hover { color: var(--pmd-c-text-strong); }
+.pmd-pane-chip-hide {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--pmd-c-text-muted);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.pmd-pane-chip-hide[hidden] { display: none; }
+.pmd-pane-chip-hide:hover { color: var(--pmd-c-text-strong); }
 .pmd-pane-chip-nav {
   flex: 0 0 auto;
   width: 18px;
@@ -13226,13 +13695,35 @@ html.pmd-timer-right #timer-panel {
   content: "N: ";
 }
 
-/* Flash-red animation at the configured remaining thresholds. */
+/* Flash-red animation at the configured remaining thresholds.
+   COMPOSITOR-ONLY: the pulse animates the OPACITY of a promoted
+   overlay pseudo-element behind the text — never background/color on
+   the display itself. Paint-property keyframes (with var()s, no less)
+   run on the main thread at ~60fps for the whole flash window, and on
+   a big document those frames interleave with ProseMirror's keystroke
+   style/layout work — field report: typing lagged whenever the timer
+   flashed. Opacity on a will-change layer costs the main thread
+   nothing after the first frame. */
 @keyframes pmd-timer-flash-pulse {
-  0%, 100% { background: var(--pmd-c-bg); color: var(--pmd-c-text); }
-  50%      { background: var(--pmd-c-neg); color: white; }
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 1; }
 }
 .pmd-timer-display.pmd-timer-flash {
+  /* Own stacking context so the z-index:-1 overlay sits behind the
+     time text but above nothing outside the display. */
+  position: relative;
+  z-index: 0;
+}
+.pmd-timer-display.pmd-timer-flash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  background: var(--pmd-c-neg);
   animation: pmd-timer-flash-pulse 600ms ease-in-out infinite;
+  will-change: opacity;
+  pointer-events: none;
 }
 
 /* Ran-out state: steady alert red (the flash pulse's peak color)
@@ -13247,6 +13738,19 @@ html.pmd-timer-right #timer-panel {
   #timer-display.pmd-timer-expired[data-mode]:not([contenteditable="true"]) {
   background: var(--pmd-c-neg);
   color: white;
+}
+
+/* Stopwatch (Start pressed with 0:00 loaded): a small up-arrow before
+   the time says this clock is counting up, so 0:07 elapsed can't be
+   read as 0:07 remaining. Speech mode only, so it never meets the
+   prep-label ::before. */
+:is(#ribbon, body.pmd-timer-popout-page)
+  .pmd-timer-panel
+  #timer-display.pmd-timer-up:not([contenteditable="true"])::before {
+  content: '\25B2'; /* ▲ — escaped: the icon-coverage guard wants ASCII-only content strings */
+  font-size: 0.55em;
+  margin-right: 0.25em;
+  opacity: 0.7;
 }
 
 /* Compact mode: drop the 3 preset buttons; reset moves under
@@ -13471,40 +13975,80 @@ body.pmd-timer-popout-page .pmd-timer-display {
   text-decoration-skip-ink: none;
 }
 
-/* ── Voice pill ─────────────────────────────────────────────
-   Status pill for the voice session (SPEC-voice.md §9): mode dot +
-   parse echo + input-level meter. Same visual language as the
-   dropzone pill (.pmd-dropzone-bar): 30px bar, soft surface, instant
-   state flips, bottom-anchored above the status bar — but right
-   corner, mirroring the dropzone's left. */
+/* ── Voice card ─────────────────────────────────────────────
+   Floating status card for the voice session: mode dot + badge in a
+   drag handle, the armed pen and the parse echo beneath, a full-width
+   input meter along the bottom. Same surface language as the dropzone
+   pill (.pmd-dropzone-bar), but a free-floating square: drag the
+   header anywhere and the spot is remembered (voice/ui.ts). With no
+   remembered spot it sits at the right edge above the corner chips. */
 .pmd-voice-pill {
   position: fixed;
-  bottom: calc(var(--status-bar-height) + 0.5rem);
+  bottom: calc(var(--status-bar-height) + 3.25rem);
   right: 0.5rem;
   z-index: 220; /* same band as the dropzone pill */
   display: none;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0 0.55rem;
-  height: 30px;
-  max-width: 420px;
+  flex-direction: column;
+  width: 172px;
+  min-height: 112px;
+  padding: 0 0 0.35rem;
   font: inherit;
   font-size: 0.78rem;
   color: var(--pmd-c-text-muted);
   background: var(--pmd-c-surface-soft);
   border: 1px solid var(--pmd-c-border-soft);
-  border-radius: 6px;
-  box-shadow: 0 2px 6px var(--pmd-c-shadow-fade);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--pmd-c-shadow-fade);
   user-select: none;
-  cursor: pointer;
   transition: none; /* instant state morphs, matching the dropzone bar */
-}
-
-body.pmd-multi-doc .pmd-voice-pill {
-  bottom: calc(var(--status-bar-height) + var(--pmd-pane-footer-height) + 0.5rem);
 }
 .pmd-voice-pill.pmd-voice-on {
   display: flex;
+}
+.pmd-voice-card-dragging {
+  box-shadow: 0 6px 18px var(--pmd-c-shadow-fade);
+  cursor: grabbing;
+}
+.pmd-voice-card-handle {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.4rem 0.35rem 0.55rem;
+  border-bottom: 1px solid var(--pmd-c-divider-faint);
+  cursor: grab;
+  touch-action: none;
+}
+.pmd-voice-card-dragging .pmd-voice-card-handle {
+  cursor: grabbing;
+}
+.pmd-voice-card-menu-btn {
+  margin-left: auto;
+  flex: 0 0 auto;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--pmd-c-text-muted);
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0 0.3rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.pmd-voice-card-menu-btn:hover {
+  background: var(--pmd-c-hover);
+  color: var(--pmd-c-text);
+}
+.pmd-voice-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.4rem 0.55rem;
+  min-height: 3.2rem;
+  flex: 1 1 auto;
+}
+.pmd-voice-card-body .pmd-voice-pen {
+  align-self: flex-start;
 }
 .pmd-voice-dot {
   width: 9px;
@@ -13538,23 +14082,24 @@ body.pmd-multi-doc .pmd-voice-pill {
   background: var(--pmd-c-success-soft);
   color: var(--pmd-c-success);
 }
-.pmd-voice-pill.pmd-voice-mode-paint .pmd-voice-mode-badge {
-  background: var(--pmd-c-warning-soft);
-  color: var(--pmd-c-warning);
-}
+
 .pmd-voice-pill.pmd-voice-mode-asleep .pmd-voice-mode-badge {
   color: var(--pmd-c-text-faint);
 }
 .pmd-voice-echo {
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-height: 1.3;
+  word-break: break-word;
 }
 .pmd-voice-echo.pmd-voice-rejected {
   color: var(--pmd-c-error);
 }
 .pmd-voice-meter {
-  width: 36px;
+  display: block;
+  margin: 0 0.55rem;
   height: 4px;
   border-radius: 2px;
   flex: 0 0 auto;
@@ -13586,106 +14131,29 @@ body.pmd-multi-doc .pmd-voice-pill {
   border-radius: 999px;
   padding: 0 0.4rem;
 }
-.pmd-voice-pill.pmd-voice-mode-paint .pmd-voice-dot { background: var(--pmd-c-warning); }
-/* Quote-disambiguation badges (§4.1): numbered chips on candidate
-   matches, dismissed by pick/cancel/any other command. */
-.pmd-voice-candidate {
-  background: var(--pmd-c-accent-soft);
-  border-radius: 2px;
-}
-.pmd-voice-candidate-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.05rem;
-  height: 1.05rem;
-  margin-right: 2px;
-  border-radius: 999px;
-  background: var(--pmd-c-accent);
-  color: var(--pmd-c-text-on-accent);
-  font-size: 0.7rem;
-  font-weight: 700;
-  vertical-align: text-bottom;
-  user-select: none;
-}
-/* Ordinal badges in the nav panel (§4.2.1) — pure CSS counters, one
-   per structural type, visible only while voice is listening, so
-   "card <number>" / "block <number>" always resolve against numbers
-   the user can see. Each type counts independently. */
-body.pmd-voice-listening .pmd-nav-list {
-  counter-reset: pmd-voice-card pmd-voice-pocket pmd-voice-hat
-    pmd-voice-block pmd-voice-analytic;
-}
-body.pmd-voice-listening .pmd-nav-item.pmd-nav-type-tag .pmd-nav-label::before {
-  counter-increment: pmd-voice-card;
-  content: counter(pmd-voice-card);
-}
-body.pmd-voice-listening .pmd-nav-item.pmd-nav-type-pocket .pmd-nav-label::before {
-  counter-increment: pmd-voice-pocket;
-  content: counter(pmd-voice-pocket);
-}
-body.pmd-voice-listening .pmd-nav-item.pmd-nav-type-hat .pmd-nav-label::before {
-  counter-increment: pmd-voice-hat;
-  content: counter(pmd-voice-hat);
-}
-body.pmd-voice-listening .pmd-nav-item.pmd-nav-type-block .pmd-nav-label::before {
-  counter-increment: pmd-voice-block;
-  content: counter(pmd-voice-block);
-}
-body.pmd-voice-listening .pmd-nav-item.pmd-nav-type-analytic .pmd-nav-label::before {
-  counter-increment: pmd-voice-analytic;
-  content: counter(pmd-voice-analytic);
-}
-body.pmd-voice-listening .pmd-nav-item .pmd-nav-label::before {
-  display: inline-block;
-  min-width: 1rem;
-  margin-right: 0.3rem;
-  border-radius: 999px;
-  background: var(--pmd-c-accent-soft);
-  color: var(--pmd-c-accent);
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-align: center;
-}
-/* Speak-to-target reach: the near-cursor span whose words feed the
-   recognizer's quote vocabulary. Deliberately near-subliminal — it
-   should read as "warmth around the cursor," not highlighting. */
-:root {
-  --pmd-c-voice-reach: rgba(37, 99, 235, 0.045);
-}
-:root[data-theme="dark"] {
-  --pmd-c-voice-reach: rgba(96, 145, 240, 0.07);
-}
-.pmd-voice-reach {
-  background: var(--pmd-c-voice-reach);
-}
-/* Karaoke paint (§6): provisional ink — visibly tentative, distinct
-   from committed pen marks — and the reading-head indicator. */
-.pmd-voice-paint-provisional {
-  background: var(--pmd-c-accent-soft);
-  box-shadow: inset 0 -2px 0 var(--pmd-c-accent);
-}
-.pmd-voice-paint-head {
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  margin: 0 1px -0.15em 1px;
-  background: var(--pmd-c-warning);
-  animation: pmd-voice-head-pulse 1s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .pmd-voice-paint-head { animation: none; }
-}
-@keyframes pmd-voice-head-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
+
+/* Speech detected: the meter's fill brightens while the VAD hears speech. */
+.pmd-voice-pill.pmd-voice-speech .pmd-voice-meter > div { background: var(--pmd-c-accent); }
+.pmd-voice-menu-actions { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+.pmd-voice-holdkey-editor { display: flex; align-items: center; gap: 0.5rem; }
+.pmd-voice-holdkey-current { padding: 0.15rem 0.45rem; border: 1px solid var(--pmd-c-border-soft); border-radius: 4px; background: var(--pmd-c-hover); }
+.pmd-voice-calibrate-editor { display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-start; }
+/* Calibration dialog (voice/calibrate.ts). */
+.pmd-voice-calibrate { min-width: 420px; max-width: min(560px, 92vw); }
+.pmd-voice-calibrate-intro { margin: 0; font-size: 0.85rem; color: var(--pmd-c-text-muted); line-height: 1.4; }
+.pmd-voice-calibrate-option { font-size: 0.85rem; display: flex; align-items: center; gap: 0.3rem; }
+.pmd-voice-calibrate-prompt { text-align: center; padding: 0.75rem 0; min-height: 7rem; display: flex; flex-direction: column; gap: 0.3rem; align-items: center; }
+.pmd-voice-calibrate-word { font-size: 2.4rem; font-weight: 700; letter-spacing: 0.02em; }
+.pmd-voice-calibrate-role { font-size: 0.85rem; color: var(--pmd-c-text-muted); }
+.pmd-voice-calibrate-progress { font-size: 0.78rem; color: var(--pmd-c-text-faint); }
+.pmd-voice-calibrate-heard { font-size: 0.9rem; min-height: 1.4em; }
+.pmd-voice-calibrate-report { font-size: 0.82rem; color: var(--pmd-c-text-secondary); text-align: left; }
+.pmd-voice-calibrate-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+
 /* Voice pill session menu: mic picker + stop. Same panel language as
    the open dropzone shelf. */
 .pmd-voice-menu {
-  position: fixed;
-  right: 0.5rem;
-  bottom: calc(var(--status-bar-height) + 0.5rem + 36px);
+  position: fixed; /* left/top set by the card (voice/ui.ts placeMenu) */
   z-index: 221;
   min-width: 220px;
   padding: 0.4rem;
@@ -14852,17 +15320,80 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
   align-items: center;
   color: var(--pmd-c-text-muted);
 }
+/* The three pills draw icon-set glyphs (archive / upload / download —
+   one pack, so the in-tray and out-tray match). `.pmd-icon` is 1em
+   square; 16px matches the pill text's optical size. */
+.pmd-pill-icon > .pmd-icon,
+.pmd-dropzone-icon > .pmd-icon {
+  font-size: 16px;
+}
 .pmd-pill-label {
   font-weight: 500;
 }
-.pmd-pill-count {
+/* One count badge for the pills: the dropzone's item count and Receive's
+   "total · N new". Grey base; Receive's unread state recolors it below.
+   Deliberately no `display` — `hidden` (dropzone at zero, Receive when
+   empty) must fall through to the UA rule. */
+.pmd-pill-badge {
   min-width: 1.1em;
-  padding: 0 0.3em;
+  padding: 0 0.45em;
   border-radius: 999px;
   background: var(--pmd-c-hover);
   color: var(--pmd-c-text-muted);
   font-size: 0.72rem;
+  font-weight: 600;
   text-align: center;
+  white-space: nowrap;
+  transition: background-color 320ms ease, color 320ms ease;
+}
+
+/* ---- Pill popups: one anatomy for Dropzone / Send / Receive ----
+   Every pill's expansion is a `.pmd-pill-popup`: an overlay rising from
+   the top of the pill row, its left edge on the tray's left (the leftmost
+   visible pill), at least as wide as the row and up to the editor's width
+   (`--pmd-pill-popup-max`, set inline on the tray by positionDropzone —
+   a narrow window narrows the popup instead of pushing it off screen).
+   The popup floats a small gap above the row; the open pill keeps its
+   own shape with the accent "clicked" border, which is how you tell
+   which pill is open now that they all rise from the same place. In the
+   home screen's dock (receive pill only) the popup hangs off the pill
+   itself: same look, pill-relative. */
+.pmd-pill {
+  --pmd-pill-popup-gap: 8px;
+}
+.pmd-pill-popup {
+  display: none;
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + var(--pmd-pill-popup-gap, 8px));
+  box-sizing: border-box;
+  min-width: 100%;
+  width: min(420px, var(--pmd-pill-popup-max, 380px));
+  max-width: var(--pmd-pill-popup-max, calc(100vw - 16px));
+  max-height: min(340px, 60vh);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem;
+  background: var(--pmd-c-bg);
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px var(--pmd-c-shadow-fade);
+  z-index: 2;
+}
+[data-open="true"] > .pmd-pill-popup {
+  display: block;
+}
+/* Hover: the same accent border on all three bars. */
+.pmd-dropzone-bar:hover,
+.pmd-send-bar:hover,
+.pmd-receive-bar:hover {
+  border-color: var(--pmd-c-accent);
+}
+/* Open: the accent "clicked" outline on the pill only. */
+[data-open="true"] > .pmd-dropzone-bar,
+[data-open="true"] > .pmd-pill-bar {
+  color: var(--pmd-c-text);
+  border-color: var(--pmd-c-accent);
 }
 
 /* Blue arrival flash — the exact accent ring the command bar uses
@@ -14886,32 +15417,13 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
 }
 
 /* ---- Send pill ---- */
-.pmd-send-bar-hot,
-.pmd-send-pill[data-open="true"] .pmd-send-bar {
+/* Drag-hot ring (pointer over the pill, not on a row). Outranks the
+   open-state tab rule so the ring still shows on the tab mid-drag. */
+.pmd-pill-bar.pmd-send-bar-hot {
   border-color: var(--pmd-c-drop);
   box-shadow: 0 0 0 2px var(--pmd-c-drop-outline);
 }
-/* Partner / group list — an upward overlay popover so expanding it never
-   reflows the dropzone or receive pill beside it. */
-.pmd-send-panel {
-  display: none;
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 6px);
-  min-width: 200px;
-  max-width: 320px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding: 0.25rem;
-  background: var(--pmd-c-bg);
-  border: 1px solid var(--pmd-c-border);
-  border-radius: 10px;
-  box-shadow: 0 6px 18px var(--pmd-c-shadow-fade);
-  z-index: 2;
-}
-.pmd-send-pill[data-open="true"] .pmd-send-panel {
-  display: block;
-}
+/* Partner / group list: a .pmd-pill-popup (geometry + chrome there). */
 .pmd-send-section {
   padding: 0.3rem 0.4rem 0.15rem;
   font-size: 0.68rem;
@@ -14924,7 +15436,8 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
    the SAME two footprints as drop zones during a drag (send-by-code /
    recent-senders) — the geometry is shared so the modalities agree. */
 .pmd-send-actions,
-.pmd-receive-actions {
+.pmd-receive-actions,
+.pmd-dropzone-actions {
   display: flex;
   gap: 4px;
   margin-top: 4px;
@@ -14936,8 +15449,11 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
   display: none;
 }
 .pmd-send-action,
-.pmd-receive-action {
+.pmd-receive-action,
+.pmd-dropzone-clear {
   flex: 1 1 0;
+  appearance: none;
+  font: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14954,6 +15470,7 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
 }
 .pmd-send-action:hover,
 .pmd-receive-action:hover,
+.pmd-dropzone-clear:hover,
 .pmd-send-action.pmd-send-action-hot {
   border-color: var(--pmd-c-accent);
   color: var(--pmd-c-accent);
@@ -14962,6 +15479,10 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
 .pmd-send-action-icon {
   display: inline-flex;
   flex-shrink: 0;
+}
+/* Icon-set glyphs in an action button match the inline 15px SVGs. */
+.pmd-send-action-icon > .pmd-icon {
+  font-size: 15px;
 }
 .pmd-send-action-collab-hidden {
   display: none;
@@ -15023,20 +15544,9 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
 }
 
 /* ---- Receive pill ---- */
-/* One combined count badge: "total | N new". Blue while there are unread
-   cards, fading to the muted gray once everything's been seen. */
-.pmd-receive-badge {
-  min-width: 1.1em;
-  padding: 0 0.45em;
-  border-radius: 999px;
-  background: var(--pmd-c-hover);
-  color: var(--pmd-c-text-muted);
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-align: center;
-  white-space: nowrap;
-  transition: background-color 320ms ease, color 320ms ease;
-}
+/* One combined count badge (a `.pmd-pill-badge`): "total | N new". Blue
+   while there are unread cards, fading to the muted gray once
+   everything's been seen. */
 /* Hover feedback on the clickable pill. Resting bg is already
    --pmd-c-hover, so hover steps up to the stronger shade. The :not()
    guard keeps the unread badge's accent fill from being grayed on
@@ -15050,25 +15560,8 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
 }
 /* Inbox list — upward overlay popover, same family as the send panel. */
 .pmd-receive-list {
-  display: none;
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 6px);
+  /* Geometry and chrome come from .pmd-pill-popup. */
   list-style: none;
-  margin: 0;
-  padding: 0.25rem;
-  min-width: 260px;
-  max-width: 380px;
-  max-height: 340px;
-  overflow-y: auto;
-  background: var(--pmd-c-bg);
-  border: 1px solid var(--pmd-c-border);
-  border-radius: 10px;
-  box-shadow: 0 6px 18px var(--pmd-c-shadow-fade);
-  z-index: 2;
-}
-.pmd-receive-pill[data-open="true"] .pmd-receive-list {
-  display: block;
 }
 .pmd-receive-empty {
   padding: 0.6rem 0.5rem;
@@ -15252,8 +15745,10 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
 }
 
 /* Session-invite rows act, they don't insert: a compact Join button in
-   the accent color where the drag affordance would be. */
-.pmd-receive-row-join {
+   the accent color where the drag affordance would be. The same look
+   serves the Preview button every shelf and inbox card row carries. */
+.pmd-receive-row-join,
+.pmd-row-preview {
   flex: 0 0 auto;
   border: 1px solid var(--pmd-c-accent);
   border-radius: 4px;
@@ -15264,9 +15759,15 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
   padding: 2px 8px;
   cursor: pointer;
 }
-.pmd-receive-row-join:hover {
+.pmd-receive-row-join:hover,
+.pmd-row-preview:hover {
   background: var(--pmd-c-accent);
   color: var(--pmd-c-bg, #fff);
+}
+
+.pmd-card-preview-pane {
+  flex: 1;
+  min-height: 0;
 }
 
 
@@ -15952,6 +16453,226 @@ body.pmd-multi-doc .pmd-cardcutter-trim {
   width: auto;
 }
 
+/* Solo version dialog overhaul: wide two-pane layout — version rows
+   with stats/delta/badge on the left, a read-only rendered preview on
+   the right (a real ProseMirror mount wearing .pmd-pane-editor so the
+   document stylesheet applies). */
+.pmd-recover-dialog-wide {
+  max-width: min(1100px, 94vw);
+  width: min(1100px, 94vw);
+  display: flex;
+  flex-direction: column;
+  height: min(760px, 90vh);
+}
+.pmd-recover-body-wide {
+  max-height: none;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.pmd-recover-split {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 0.75rem;
+}
+.pmd-recover-versions {
+  width: 300px;
+  flex: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-right: 0.25rem;
+}
+.pmd-recover-version-row {
+  border: 1px solid var(--pmd-c-border-soft);
+  border-radius: 6px;
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.pmd-recover-version-row:hover {
+  background: var(--pmd-c-hover);
+}
+.pmd-recover-version-row.pmd-recover-version-selected {
+  border-color: var(--pmd-c-accent);
+  background: var(--pmd-c-accent-soft, var(--pmd-c-hover));
+}
+.pmd-recover-version-top {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.pmd-recover-version-time {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--pmd-c-text);
+}
+.pmd-recover-trigger-chip {
+  font-size: 0.68rem;
+  line-height: 1.4;
+  border: 1px solid var(--pmd-c-border);
+  border-radius: 0.6rem;
+  padding: 0 0.4rem;
+  color: var(--pmd-c-text-secondary);
+}
+.pmd-recover-version-size {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--pmd-c-text-faint);
+}
+.pmd-recover-version-stats,
+.pmd-recover-version-delta {
+  font-size: 0.78rem;
+  color: var(--pmd-c-text-secondary);
+}
+.pmd-recover-version-delta:empty,
+.pmd-recover-version-badge:empty {
+  display: none;
+}
+.pmd-recover-version-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pmd-c-accent);
+}
+.pmd-recover-version-row .pmd-recover-open {
+  align-self: flex-start;
+  margin-top: 0.2rem;
+}
+.pmd-recover-preview-pane {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--pmd-c-border-soft);
+  border-radius: 6px;
+  background: var(--pmd-c-bg);
+}
+.pmd-recover-preview-wrap {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+/* Hosts a REAL NavigationPanel (readOnly mode) so the preview's nav
+   is the user's actual nav pane — level buttons, chevrons,
+   double-click collapse, per-type styling, all of it. Overrides scope
+   it to the dialog: fixed width (no resize handle, no --nav-width
+   coupling), no close button (there's nothing to close). */
+.pmd-recover-preview-nav {
+  width: 240px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--pmd-c-border-soft);
+}
+.pmd-recover-preview-nav .pmd-nav-panel {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  position: static;
+  display: flex;
+  flex-direction: column;
+}
+.pmd-recover-preview-nav .pmd-nav-close,
+.pmd-recover-preview-nav .pmd-nav-resize-handle {
+  display: none;
+}
+.pmd-recover-preview-scroll {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+.pmd-recover-preview-empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--pmd-c-text-faint);
+  font-size: 0.85rem;
+}
+.pmd-recover-preview-editor {
+  /* Height comes from content (the pane scrolls); the class's usual
+     100% min-height is for real panes. */
+  min-height: 0;
+  height: auto;
+}
+.pmd-recover-preview-editor .ProseMirror {
+  padding: 1rem 1.25rem;
+  min-height: 0;
+}
+
+/* Card preview (shelf / Receive rows): the wide two-pane recover dialog's
+   chrome with the preview alone filling the body — the real nav pane on
+   the left, the rendered cards on the right — and Copy / Close below. */
+/* The preview's Read mode toggle: a plain button that reads as pressed
+   while on (same active tint the ribbon's inline-format buttons use). */
+.pmd-card-preview-readmode[aria-pressed="true"] {
+  background: var(--pmd-c-button-active);
+  box-shadow: inset 0 0 0 1px var(--pmd-c-border);
+}
+
+.pmd-card-preview-dialog {
+  width: min(1200px, 94vw);
+  max-width: min(1200px, 94vw);
+  height: min(900px, 92vh);
+}
+.pmd-card-preview-dialog:focus {
+  outline: none; /* armed focus (armDialogFocus), no ring */
+}
+.pmd-card-preview-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-width: 0;
+  flex: 1;
+  margin-right: 0.75rem; /* breathing room before the × */
+}
+/* The title takes whatever room is left and is the only thing that
+   truncates; the sender · time line never shrinks. */
+.pmd-card-preview-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pmd-card-preview-subtitle {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  color: var(--pmd-c-text-muted);
+}
+
+/* Session-history flavor of the two-pane dialog: group rows keep
+   their existing chrome, made preview-clickable; digest lines fill
+   lazily after a preview materializes that group's end state. */
+.pmd-recover-versions-session {
+  width: 360px;
+}
+.pmd-recover-group-head-clickable,
+.pmd-recover-row-clickable {
+  cursor: pointer;
+  border-radius: 4px;
+}
+.pmd-recover-group-head-clickable:hover,
+.pmd-recover-row-clickable:hover {
+  background: var(--pmd-c-hover);
+}
+.pmd-recover-group-head-clickable.pmd-recover-version-selected,
+.pmd-recover-row-clickable.pmd-recover-version-selected {
+  background: var(--pmd-c-accent-soft, var(--pmd-c-hover));
+  outline: 1px solid var(--pmd-c-accent);
+}
+.pmd-recover-group-digest {
+  margin-left: 1.4rem;
+}
+.pmd-recover-group-digest:empty {
+  display: none;
+}
+
 /* Session-preparation veil (collab-ui sessionPrepOverlay). */
 .pmd-session-prep {
   z-index: 1200; /* above dialogs — nothing is interactive during the freeze */
@@ -16198,6 +16919,112 @@ body.pmd-multi-doc #collab-chip {
 .pmd-notice-actions {
   display: flex;
   gap: 0.4rem;
+}
+
+/* ---- Reading view (paginated columns) ----
+ * The ProseMirror element becomes a height-capped multicolumn strip
+ * (columns overflow horizontally); the host clips and native
+ * scrollTo flips full pages. Everything is laid out up front —
+ * content-visibility forced ON inside the strip so column math is
+ * exact and flips never trigger layout (the no-hitch rule). */
+.pmd-reader-view {
+  /* The host IS the pager: a scroll container whose scrollbar is
+     hidden; flips are programmatic scrollTo (native tiled raster —
+     a translated will-change strip blew the compositing budget on
+     big docs and fell back to per-flip main-thread paint). */
+  overflow: hidden !important;
+  position: relative;
+}
+.pmd-reader-overlay-host {
+  position: relative;
+}
+:is(#editor, .pmd-pane-editor).pmd-reader-view .ProseMirror {
+  /* Exact page geometry, all JS-measured (reader-view.ts relayout):
+     the box is ONE page wide (the natural content box's width, which
+     already clears the nav pane via --pmd-reader-ml) and column-COUNT
+     divides it — never column-width, whose browser-chosen actual
+     widths would break the stride math. column-fill:auto + capped
+     height makes the extra columns overflow HORIZONTALLY past the
+     box; the host clips and translateX flips between them. */
+  column-count: var(--pmd-reader-cols, 1);
+  column-gap: var(--pmd-reader-gap, 48px);
+  column-fill: auto;
+  height: var(--pmd-reader-h, 100%);
+  width: var(--pmd-reader-page-w, 100%);
+  /* Block padding gives the columns breathing room top and bottom
+     (no clipped descenders at the fold); inline stays 0 so the
+     JS page geometry is exact. */
+  padding: 14px 0 18px;
+  box-sizing: border-box;
+  /* No transform, no will-change: flips are native scrolls of the
+     host — promoting a pages-wide strip to a compositor layer blew
+     the budget on big docs. */
+}
+.pmd-reader-view .ProseMirror.pmd-reader-no-anim,
+/* Exact column math needs everything rendered; and a tag/cite never
+ * strands at a column bottom away from its first body line. */
+.pmd-reader-view .ProseMirror .pmd-card,
+.pmd-reader-view .ProseMirror .pmd-hat,
+.pmd-reader-view .ProseMirror .pmd-block {
+  content-visibility: visible;
+  contain: none;
+}
+.pmd-reader-view .ProseMirror .pmd-tag,
+.pmd-reader-view .ProseMirror .pmd-cite-para {
+  break-after: avoid-column;
+}
+/* Opaque gutters: cover the strip's column bleed on both sides of
+ * the page window and host the flip buttons (a clip-path would clip
+ * the buttons too). */
+.pmd-reader-gutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--pmd-c-bg);
+  z-index: 3;
+}
+/* Word-style edge flip zones + the page indicator. */
+.pmd-reader-edge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2.2rem;
+  border: none;
+  background: transparent;
+  color: var(--pmd-c-text-faint);
+  font-size: 1.6rem;
+  cursor: pointer;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 120ms ease, background 120ms ease;
+}
+.pmd-reader-overlay-host:hover .pmd-reader-edge { opacity: 1; }
+.pmd-reader-edge:hover { background: var(--pmd-c-hover); color: var(--pmd-c-text-strong); }
+.pmd-reader-edge-left { left: 0; }
+.pmd-reader-edge-right { right: 0; }
+.pmd-reader-edge-hidden { visibility: hidden; }
+/* Scroll-extent sentinel (reader-view.ts): keeps the host scrollable to
+ * the last page's boundary when that page is short. Invisible, inert. */
+.pmd-reader-tail {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  visibility: hidden;
+}
+.pmd-reader-page-indicator {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.72rem;
+  color: var(--pmd-c-text-faint);
+  background: var(--pmd-c-bg);
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.6rem;
+  pointer-events: none;
+  z-index: 4;
 }
 
 /* ═══════════════════════════════════════════════ Narrow chrome ═══

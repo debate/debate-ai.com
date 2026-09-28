@@ -74,10 +74,9 @@ export default function RootLayout({
       <body className="theme-root">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {/* The loading overlay sits above the whole app shell — dock, sidebar
-              and framed destinations alike — so the first paint and every major
-              transition show one orb instead of a half-hydrated page. It is
-              a no-op until something calls `beginLoading`, so pages that never
-              ask for it pay for nothing. */}
+              and framed destinations alike — so every page transition that
+              runs past the show delay (0.5 s) shows one orb instead of a page
+              that looks stuck. Quicker transitions never show it. */}
           <LoadingProvider />
           <AppShell>{children}</AppShell>
         </ThemeProvider>

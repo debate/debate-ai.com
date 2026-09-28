@@ -116,6 +116,17 @@
  * history here too — the `storage` event never fires in the tab that made
  * the write, only in other tabs.
  *
+ * When the persisted repository is genuinely empty (`hasEntries === false`),
+ * the results list shows `getSampleEvidenceLibraryEntries()`'s fixed sample
+ * card/block instead of the bare "No entries match this search." empty
+ * state — the `/tools` "My Saved Items" widget's sample-data fix
+ * (`getSampleCloudLibraryItems` in `debate-round`) applied to this tool, per
+ * TODO.md's "every other tool page that shows an empty state for a new
+ * user ... the Evidence Library" follow-up. A search that narrows a
+ * non-empty repository to zero matches still shows the plain "No entries
+ * match this search." state — only `hasEntries` gates the sample view,
+ * since a genuinely empty repository has no matches for any query either.
+ *
  * @module panels/EvidenceLibraryPanel
  */
 
@@ -156,6 +167,7 @@ import {
   buildPageReuseCheckSummaryText,
   computeWordCount,
   getEvidenceStaleness,
+  getSampleEvidenceLibraryEntries,
 } from "../lib/shared-evidence-library"
 import {
   applyTagSuggestion,
@@ -866,7 +878,36 @@ export function EvidenceLibraryPanel({ submitOnly = false }: { submitOnly?: bool
         </PanelSection>
       )}
       <p className="text-sm text-muted-foreground">{buildEvidenceSearchSummaryText(results, summaryQuery)}</p>
-      {results.length === 0 ? (
+      {results.length === 0 && !hasEntries ? (
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">
+            No entries yet — here&apos;s what a card and a block look like once submitted. Try submitting
+            your own using the form above.
+          </p>
+          {getSampleEvidenceLibraryEntries().map((sample) => (
+            <div key={sample.id} className="rounded-lg border border-dashed border-border p-3">
+              <div className="mb-1 flex flex-wrap items-center gap-2">
+                <span className="font-medium text-foreground">{sample.argBlock}</span>
+                <Badge variant={KIND_VARIANT[sample.kind]} className="capitalize">
+                  {sample.kind}
+                </Badge>
+                <Badge variant="outline">Sample</Badge>
+                {sample.topic && <Badge variant="outline">{sample.topic}</Badge>}
+                {sample.caseArea && <Badge variant="outline">{sample.caseArea}</Badge>}
+              </div>
+              <p className="mb-2 text-sm text-muted-foreground">{sample.text}</p>
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                {sample.cite && <span className="font-medium">{sample.cite}</span>}
+                {sample.tags.map((tag) => (
+                  <Badge key={tag} variant="outline" className="text-xs">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : results.length === 0 ? (
         <EmptyState title="No entries match this search." />
       ) : (
         <div className="space-y-2">

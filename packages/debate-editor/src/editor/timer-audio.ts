@@ -37,6 +37,7 @@ import { settings } from './settings.js';
 import {
   getTimerState,
   getVisibleRemainingMs,
+  isStopwatch,
   subscribeTimer,
 } from './timer-state.js';
 
@@ -199,6 +200,10 @@ function reschedule(): void {
   if (!holdingLock) return;
   if (!settings.get('timerSoundEnabled')) return;
   const s = getTimerState();
+  // The stopwatch counts up: no alert points, no end. (Its visible
+  // value is elapsed time, which the countdown schedule would read as
+  // time remaining and beep through.)
+  if (isStopwatch(s)) return;
   const plan = computeBeepSchedule(
     getVisibleRemainingMs(s),
     s.running,

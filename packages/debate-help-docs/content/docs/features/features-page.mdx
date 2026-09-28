@@ -21,7 +21,9 @@ workspaces and standings. This page is the map.
 
 ## What it shows
 
-A header count line, a search box (matching title/description/route/hidden
+The same banner and badge rows as the repository's root `README.md`, a
+header count line, a strip of the five workspace screenshots from the README
+(CARDS, FIAT, LEARN, STREAM, REASON) each linking to its route, a search box (matching title/description/route/hidden
 tags), a jump-to-category row, and eight category sections (Core
 Workspaces, Evidence & Research, Team Collaboration, Flowing & Round
 Analysis, Pre-Round Intelligence, Practice & Coaching, Recognition &
@@ -37,6 +39,9 @@ cards never come up the same colour.
 `debate-feature-catalog`'s `src/feature-catalog.ts` holds the pure data
 (`APP_FEATURES`, `buildFeatureSections`, `searchFeatures`); `FeaturesPanel.tsx`
 renders it. Titles/descriptions are copied from each route's own metadata.
+The README's banner, badges and imgur screenshots are mirrored in
+`features/readme-media.ts`; a test compares it against `README.md` and fails
+when the two drift, so edit the README first and then the mirror.
 
 ## Known gaps
 

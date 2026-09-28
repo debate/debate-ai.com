@@ -166,6 +166,7 @@ export function VideoSidebarTree({
             href={link.href}
             title={link.title}
             count={counts?.[link.id]}
+            exactCount={link.exactCount}
             isActive={activeId === link.id}
           />
         ))}

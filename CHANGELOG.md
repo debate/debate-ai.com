@@ -1,6 +1,69 @@
 
 ### Completed
 
+- **🧯 Restore drizzle migrations and internals/packages docs, deleted a
+  second time by accident.** Another repeat of the standing autonomous-
+  routine prompt ("integrate all the tools into the UI... create user
+  settings and link user db SQL with the ability to save flows/docs/debates
+  in SQL and link to users... add tools into where needed in the UI...
+  develop better tool UI") — as with every recent repeat, that prompt's own
+  asks are already fully built. An Explore pass looking for the next small,
+  still-open gap (the "surface synced X in My Saved Items" and per-record
+  sync-badge veins are both fully exhausted; the qwksearch credential and
+  dailyMissionResults/challengeWinEvents composite-key gaps remain correctly
+  blocked on a product decision) found something more urgent instead: two
+  *regressions*, not gaps.
+
+  `apps/debate-ai.com/drizzle/` (102 migration files, ~60k lines) had been
+  dropped a second time — commit `39076f1` added `drizzle/` to `.gitignore`
+  and removed the directory as a side effect, repeating the exact mistake
+  `d58d57f` had already fixed once after `2566e0d`'s first deletion. Losing
+  the directory broke every test that boots an in-memory D1 client from
+  these files (`resync-rounds.test.ts`, `admin-round-videos.test.ts`), with
+  a bare `ENOENT` looking for `drizzle/0003_dark_zarek.sql` — 20 test files,
+  87 tests failing. Separately, commit `eeaf29a` had deleted
+  `content/docs/internals/` (29 files, including `tool-data-sync.mdx`, which
+  ~15 other feature docs link to) and `content/docs/packages/` (15 files)
+  from `debate-help-docs` — the same regression `78f1128` had already fixed
+  once after `2b62b4a`'s first deletion, complete with a dedicated
+  `docs-links-consistency.test.ts` regression test that nothing had been
+  running against the un-restored tree since.
+
+  Restored both directories verbatim from their last-known-good commits
+  (`39076f1^` and `eeaf29a^` respectively — confirmed byte-identical to what
+  the prior fix commits restored, and confirmed nothing else touched either
+  path in between), and dropped the `drizzle/` line from `.gitignore` so
+  these checked-in migration files can't be accidentally ignored-and-removed
+  a third time.
+
+  Ran the verification gate: `bunx vitest run` on
+  `docs-links-consistency.test.ts`/`resync-rounds.test.ts`/
+  `admin-round-videos.test.ts` (all passing), the root `bun run test` (594/600
+  files, 10376/10377 tests passing — the 5 remaining failures are the
+  standing `debate-rankings`/`debate-editor-cm`/`debate-tournaments-tabroom`
+  submodule gap, confirmed unchanged on the base branch), `debate-help-docs`'
+  own `bun run typecheck` (fumadocs-mdx + tsc, clean), and the root
+  `bun run typecheck` (same pre-existing submodule-rooted failures only,
+  confirmed unchanged on the base branch). `bun install` had rewritten
+  `bun.lock` as a side effect of the uninitialized submodules; reverted with
+  `git checkout -- bun.lock` before committing. `npx turbo build
+  --filter=debate-ai-web` fails identically on the unmodified branch too, on
+  an unrelated pre-existing bug — `glicko-debate-rankings.md` (added by the
+  same `eeaf29a` commit) has no frontmatter at all, and fumadocs-mdx requires
+  a `title` — not touched here since it's a separate defect from the
+  deletions this run fixed. No `lint`/`format:check` script exists anywhere
+  in this repo, so that step was skipped as not applicable.
+
+  **Follow-up (not in scope here):** `glicko-debate-rankings.md`'s missing
+  frontmatter (`title`) breaks the production build and needs a one-line fix
+  by whoever owns that content. Both restored directories have now been
+  accidentally deleted twice each by unrelated commits bundling in an
+  overly-broad `git rm`/`.gitignore` change — worth a maintainer look at
+  whatever local workflow keeps doing this, since a third occurrence is
+  likely without one. The `qwksearch` file-sources credential-sync gap and
+  the `dailyMissionResults`/`challengeWinEvents` composite-key gap flagged by
+  earlier runs remain open for the reasons already recorded.
+
 - **📚 Surface synced Evidence Library entries in "My Saved Items".** Another
   repeat of the standing autonomous-routine prompt ("integrate all the tools
   into the UI... create user settings and link user db SQL with the ability

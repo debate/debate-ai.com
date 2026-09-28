@@ -6,12 +6,15 @@
 "use client"
 
 
+import { useState } from "react"
 import { Card, CardContent } from "../ui/primitives/card"
 import { Button } from "../ui/primitives/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "../ui/primitives/dropdown-menu"
-import { Eye, Check } from "lucide-react"
+import { Eye, Check, ExternalLink, FileText } from "lucide-react"
 import { IntroTextOverview } from "./IntroTextOverview"
+import { SourceArticlePanel } from "./SourceArticlePanel"
 import { citationDetail, extractAuthor, extractYear, stripDuplicateHeader } from "../lib/card-content"
+import { findCardSourceUrl } from "../lib/card-source-url"
 
 /**
  * Type definition for search result data
@@ -95,6 +98,13 @@ interface CardContentViewerProps {
  * that only repeats the author line, and {@link stripDuplicateHeader} removes
  * the opening blocks of the body that the header already says.
  *
+ * When the card names a source web page ({@link findCardSourceUrl}), the header
+ * offers to open it in a new tab or to pull its full text through qwksearch
+ * into a {@link SourceArticlePanel} beside the card — side by side when the
+ * panel is wide enough, stacked below the card when it is not. The article
+ * stays open only while the selected card names the same URL, so moving to a
+ * card from a different source closes it rather than fetching on every click.
+ *
  * @param props - Component props
  * @param props.selectedResult - Currently selected research result, or null for empty state
  * @param props.viewMode - Current view mode controlling how card content is rendered
@@ -113,6 +123,9 @@ interface CardContentViewerProps {
  * ```
  */
 export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordCount }: CardContentViewerProps) {
+  /** The source URL whose article is open beside the card, if any. */
+  const [articleUrl, setArticleUrl] = useState<string | null>(null)
+
   // Show empty state with product info when no card selected
   if (!selectedResult) {
     return <IntroTextOverview />
@@ -124,70 +137,103 @@ export function CardContentViewer({ selectedResult, viewMode, setViewMode, wordC
   const authorLine = [author, year].filter(Boolean).join(" ")
   const cite = citationDetail(selectedResult.cite, authorLine)
   const html = stripDuplicateHeader(selectedResult.html, [selectedResult.tag, authorLine, cite])
+  const sourceUrl = findCardSourceUrl(selectedResult)
+  const showArticle = sourceUrl !== null && articleUrl === sourceUrl
 
   return (
-    <div className="h-full overflow-y-auto p-4 max-w-full overflow-x-hidden">
-      <Card>
-        <CardContent className="p-6 space-y-4">
-          {/* Header with tag and view mode selector */}
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">{selectedResult.tag}</h3>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Eye className="h-4 w-4 mr-2" />
-                  View
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setViewMode("read")}>
-                  {viewMode === "read" && <Check className="h-4 w-4 mr-2" />}
-                  {viewMode !== "read" && <span className="w-4 mr-2" />}
-                  Read
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setViewMode("highlight")}>
-                  {viewMode === "highlight" && <Check className="h-4 w-4 mr-2" />}
-                  {viewMode !== "highlight" && <span className="w-4 mr-2" />}
-                  Embiggen Highlighted
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setViewMode("underline")}>
-                  {viewMode === "underline" && <Check className="h-4 w-4 mr-2" />}
-                  {viewMode !== "underline" && <span className="w-4 mr-2" />}
-                  Embiggen Underlined
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Citation info */}
-          <div className="space-y-2">
-            <p className="text-sm">
-              <span className="font-semibold">{author}</span>
-              {year && (
-                <>
-                  {" "}
-                  <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getYearShade(year)}`}
-                  >
-                    {year}
-                  </span>
-                </>
-              )}
-            </p>
-            {cite && <p className="text-sm text-muted-foreground">{cite}</p>}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{wordCount} words</span>
+    // `size-full`, not `h-full`: the card column below is the element that
+    // fills and scrolls (see test/search-layout-scrolling.test.tsx).
+    <div
+      className={`@container size-full overflow-hidden ${showArticle ? "grid grid-rows-2 @3xl:grid-cols-2 @3xl:grid-rows-1" : ""}`}
+    >
+      <div className="h-full min-h-0 overflow-y-auto p-4 max-w-full overflow-x-hidden">
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            {/* Header with tag and view mode selector */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">{selectedResult.tag}</h3>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Eye className="h-4 w-4 mr-2" />
+                    View
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setViewMode("read")}>
+                    {viewMode === "read" && <Check className="h-4 w-4 mr-2" />}
+                    {viewMode !== "read" && <span className="w-4 mr-2" />}
+                    Read
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setViewMode("highlight")}>
+                    {viewMode === "highlight" && <Check className="h-4 w-4 mr-2" />}
+                    {viewMode !== "highlight" && <span className="w-4 mr-2" />}
+                    Embiggen Highlighted
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setViewMode("underline")}>
+                    {viewMode === "underline" && <Check className="h-4 w-4 mr-2" />}
+                    {viewMode !== "underline" && <span className="w-4 mr-2" />}
+                    Embiggen Underlined
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-          </div>
 
-          {/* Card content with view mode styling */}
-          <div
-            className={`prose prose-sm dark:prose-invert max-w-none editor ${viewMode === "read" ? "show-all" : viewMode === "highlight" ? "highlighted" : "underlined"
-              }`}
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
-        </CardContent>
-      </Card>
+            {/* Citation info */}
+            <div className="space-y-2">
+              <p className="text-sm">
+                <span className="font-semibold">{author}</span>
+                {year && (
+                  <>
+                    {" "}
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getYearShade(year)}`}
+                    >
+                      {year}
+                    </span>
+                  </>
+                )}
+              </p>
+              {cite && <p className="text-sm text-muted-foreground">{cite}</p>}
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <span className="mr-auto">{wordCount} words</span>
+                {sourceUrl && (
+                  <>
+                    <Button variant="outline" size="sm" asChild title={sourceUrl}>
+                      <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4" />
+                        Open page
+                      </a>
+                    </Button>
+                    <Button
+                      variant={showArticle ? "secondary" : "outline"}
+                      size="sm"
+                      aria-pressed={showArticle}
+                      title="Extract the full article and citation with qwksearch and show it beside this card"
+                      onClick={() => setArticleUrl(showArticle ? null : sourceUrl)}
+                    >
+                      <FileText className="h-4 w-4" />
+                      Full article
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Card content with view mode styling */}
+            <div
+              className={`prose prose-sm dark:prose-invert max-w-none editor ${viewMode === "read" ? "show-all" : viewMode === "highlight" ? "highlighted" : "underlined"
+                }`}
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+          </CardContent>
+        </Card>
+      </div>
+      {showArticle && (
+        <div className="min-h-0 overflow-hidden border-t @3xl:border-t-0 @3xl:border-l">
+          <SourceArticlePanel url={sourceUrl} onClose={() => setArticleUrl(null)} />
+        </div>
+      )}
     </div>
   )
 }

@@ -161,10 +161,13 @@ document.
   remembered per-device.
 - `showsReasonDocsPanels` is a hard-coded route list, not something derived
   from the nav data. A new documents route has to be added to it by hand.
-- `SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare
-  `/reason-editor`, dropping any `?doc=`/`?topic=` alongside it. The two
-  never travel together in practice (a share link comes from `/contacts`),
-  but nothing enforces that.
+- ~~`SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare
+  `/reason-editor`, dropping any `?doc=`/`?topic=` alongside it.~~ **Fixed:**
+  `ShareWithContacts.tsx`'s `dropQueryParam` (used by both the `?share=` and
+  `?shareWith=` one-shot params) calls `route-selection.ts#urlWithoutParam`,
+  which drops only the named parameter and keeps the rest of the URL —
+  `?doc=`/`?topic=` alongside a share link now survive being joined. Pinned
+  by `route-selection.test.ts`'s `urlWithoutParam` cases.
 - Conversion runs in the import request, so a 100-file ZIP converts 100
   documents inside one Worker invocation — heavier than the regex pass it
   replaces. A batch large enough to hit the CPU limit fails as a dead

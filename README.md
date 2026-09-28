@@ -12,7 +12,7 @@
     <a href="https://debate-ai.com/docs"><img src="https://img.shields.io/badge/Docs-blue?logo=ReadTheDocs&logoColor=white" alt="Documentation" /></a>
     <a href="https://debate-ai.com/api"><img src="https://img.shields.io/badge/API-blue?logo=fastapi&logoColor=white" alt="API" /></a>
     <a href="https://youtu.be/XB0tzpBUEKQ"><img height="20px" src="https://img.shields.io/badge/YouTube-red?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube" /></a>
-     <a href="https://status.opensourceagi.app"><img
+     <a href="https://status.debate-ai.com"><img
     src="https://uptime.betterstack.com/status-badges/v1/monitor/2yp1i.svg"
     alt="Production uptime"
   ></a>

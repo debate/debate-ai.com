@@ -46,7 +46,7 @@ export type ServerMessage =
   | { type: "room-event"; from: string; event: RoomEventName; payload?: unknown }
   | { type: "error"; code: "room-full" | "bad-message" | "unknown-peer"; message: string };
 
-export const ROOM_EVENTS = ["ready", "mute-state", "camera-state"] as const;
+export const ROOM_EVENTS = ["ready", "mute-state", "camera-state", "speech-doc-headings", "timer-sync"] as const;
 export type RoomEventName = (typeof ROOM_EVENTS)[number];
 
 const ROLES: readonly RoomRole[] = ["speaker", "judge", "observer"];

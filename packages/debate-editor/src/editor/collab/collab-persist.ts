@@ -21,7 +21,24 @@ import {
 } from './collab-store.js';
 
 const PERSIST_MS = 2_500;
+/** Big documents persist less often: every 40th increment rebases onto a
+ *  full snapshot (a synchronous wasm export, 0.3-0.8s on a 20 MB master)
+ *  and IndexedDB structured-clones the whole multi-MB record on EVERY
+ *  write — the same size-adaptive cadence collab-history already uses
+ *  (2026-09-01 review, SC7). */
+const PERSIST_SLOW_MS = 10_000;
+const BIG_SNAPSHOT_BYTES = 4 * 1024 * 1024;
 const COMPACT_EVERY = 40;
+
+export interface PersistCadence {
+  persistMs?: number;
+  slowPersistMs?: number;
+  bigSnapshotBytes?: number;
+  /** Consecutive write failures (storage denied/full) — writeInner
+   *  swallows them by design; this is how the UI learns crash-resume
+   *  has silently stopped working. Reset to 0 on the next success. */
+  onFailure?: (consecutive: number) => void;
+}
 
 function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.length !== b.length) return false;
@@ -48,8 +65,14 @@ export function attachSessionPersistence(
   shareCode: string,
   getDocTitle: () => string,
   getDocId: () => string | null = () => null,
+  cadence: PersistCadence = {},
 ): PersistHandle {
   let disposed = false;
+  const persistMs = cadence.persistMs ?? PERSIST_MS;
+  const slowPersistMs = cadence.slowPersistMs ?? PERSIST_SLOW_MS;
+  const bigSnapshotBytes = cadence.bigSnapshotBytes ?? BIG_SNAPSHOT_BYTES;
+  let lastSnapshotBytes = 0;
+  let failures = 0;
   // Writes are serialized through a promise tail so an explicit
   // flush() AWAITS any in-flight write instead of silently no-oping
   // past it (the attach-time initial write races an immediate flush).
@@ -143,9 +166,15 @@ export function attachSessionPersistence(
           updatedAt: Date.now(),
         };
       }
+      lastSnapshotBytes = record.snapshot.byteLength;
       await saveSessionRecord(record);
+      if (failures > 0) {
+        failures = 0;
+        cadence.onFailure?.(0);
+      }
     } catch {
       /* storage denied/full — persistence degrades, the session still works */
+      cadence.onFailure?.(++failures);
     }
   };
 
@@ -154,17 +183,31 @@ export function attachSessionPersistence(
     return tail;
   };
 
-  const timer = setInterval(() => void write(), PERSIST_MS);
+  // Self-rescheduling so the cadence can slow once the snapshot is big.
+  let timer: ReturnType<typeof setTimeout>;
+  const schedule = (delay: number): void => {
+    timer = setTimeout(() => {
+      void write().finally(() => {
+        if (!disposed) schedule(lastSnapshotBytes > bigSnapshotBytes ? slowPersistMs : persistMs);
+      });
+    }, delay);
+  };
+  schedule(persistMs);
   const onPageHide = (): void => void write();
+  // Hide transition only — the same tab-in write cost collab-history
+  // paid (a compaction tick here is a full snapshot export too).
+  const onVisibility = (): void => {
+    if (document.visibilityState === 'hidden') void write();
+  };
   window.addEventListener('pagehide', onPageHide);
-  document.addEventListener('visibilitychange', onPageHide);
+  document.addEventListener('visibilitychange', onVisibility);
   void write();
 
   const stop = (): void => {
     disposed = true;
-    clearInterval(timer);
+    clearTimeout(timer);
     window.removeEventListener('pagehide', onPageHide);
-    document.removeEventListener('visibilitychange', onPageHide);
+    document.removeEventListener('visibilitychange', onVisibility);
   };
 
   return {

@@ -20,11 +20,13 @@ import { promptForText } from './text-prompt.js';
 import { showToast } from './toast.js';
 import { writeClipboardText } from './clipboard-write.js';
 import { getElectronHost } from './host/index.js';
+import { isRightClickContextMenu } from './context-menu-gate.js';
 
 export const linkContextMenuPlugin: Plugin = new Plugin({
   props: {
     handleDOMEvents: {
       contextmenu(view, event) {
+        if (!isRightClickContextMenu(event)) return false; // the text menu swallows it
         const target = event.target as HTMLElement | null;
         if (!target) return false;
         // The link mark's toDOM produces a bare `<a href="…">`, so
@@ -206,7 +208,7 @@ function maybeCloseLinkContextMenu(e: MouseEvent | KeyboardEvent): void {
   if (!openMenuEl.contains(e.target as Node)) closeLinkContextMenu();
 }
 
-function openLinkExternally(href: string): void {
+export function openLinkExternally(href: string): void {
   const electron = getElectronHost();
   if (electron) {
     void electron.openExternal(href).catch((err) => {

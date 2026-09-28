@@ -12,7 +12,10 @@ function pagePatterns(dir: string): string[] {
   for (const name of readdirSync(dir)) {
     const path = join(dir, name)
     if (statSync(path).isDirectory()) {
-      if (name === "api" || name.startsWith("_")) continue
+      // `docs` is the help site (`debate-help-docs`): rendered only by the web
+      // app, outside the app shell, and always entered with a full page load —
+      // so it has no place in the host's client-side route table.
+      if (name === "api" || name === "docs" || name.startsWith("_")) continue
       out.push(...pagePatterns(path))
     } else if (name === "page.tsx") {
       const rel = relative(APP_DIR, dir).split(sep).join("/")

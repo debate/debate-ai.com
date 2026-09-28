@@ -10,6 +10,7 @@
  * to be pending at a time (browsers serialize them anyway).
  */
 
+import { LearnStore, applyLearnOp, type LearnOp } from '../learn-store.js';
 import type {
   FileFilter,
   Host,
@@ -20,6 +21,9 @@ import type {
   SaveResult,
   SpawnWindowPayload,
 } from './types.js';
+
+const LEARN_STORE_KEY = 'pmd-learn-store';
+const LEARN_STORE_LOCK = 'pmd-learn-store';
 
 const DOCX_MIME =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
@@ -297,7 +301,15 @@ export class BrowserHost implements Host {
     // `ensureWritable`.
     const file = await handle.getFile();
     const buf = await file.arrayBuffer();
-    return { name: handle.name ?? file.name, bytes: new Uint8Array(buf), handle };
+    return {
+      name: handle.name ?? file.name,
+      bytes: new Uint8Array(buf),
+      handle,
+      // A browser File's size is the real on-disk size (the OS hydrates
+      // cloud placeholders before handing them over), so 0 here means
+      // genuinely empty — open as a blank doc (see editor/empty-open.ts).
+      ...(buf.byteLength === 0 ? { emptyOnDisk: true } : {}),
+    };
   }
 
   private openOnce(opts: OpenFileOptions): Promise<OpenedFile | null> {
@@ -345,6 +357,9 @@ export class BrowserHost implements Host {
           resolve({
             name: file.name,
             bytes: new Uint8Array(buf),
+            // Same reasoning as the picker path: a 0-byte read of a
+            // real browser File is genuinely empty, not a placeholder.
+            ...(buf.byteLength === 0 ? { emptyOnDisk: true } : {}),
           });
         } catch (err) {
           reject(err);
@@ -535,18 +550,60 @@ export class BrowserHost implements Host {
 
   async readLearnStore(): Promise<string | null> {
     try {
-      return localStorage.getItem('pmd-learn-store');
+      return localStorage.getItem(LEARN_STORE_KEY);
     } catch {
       return null;
     }
   }
 
-  async writeLearnStore(json: string): Promise<void> {
-    try {
-      localStorage.setItem('pmd-learn-store', json);
-    } catch {
-      /* quota / disabled — non-fatal */
+  /** Read → apply → write under a Web Lock, so two tabs can never
+   *  interleave (the lock is origin-wide; tabs share localStorage). The
+   *  tab that wrote adopts the returned blob; the others learn of the
+   *  change through the `storage` event (`onLearnStoreChanged`). */
+  async applyLearnOp(op: LearnOp): Promise<string> {
+    const run = async (): Promise<string> => {
+      let cur: string | null = null;
+      try {
+        cur = localStorage.getItem(LEARN_STORE_KEY);
+      } catch {
+        /* storage blocked — apply against an empty copy */
+      }
+      if (cur !== null) {
+        try {
+          JSON.parse(cur);
+        } catch {
+          // Never overwrite a blob we could not read: set it aside first.
+          try {
+            localStorage.setItem(`${LEARN_STORE_KEY}.unreadable-${Date.now()}`, cur);
+          } catch {
+            /* best effort */
+          }
+          cur = null;
+        }
+      }
+      const s = new LearnStore();
+      s.loadJson(cur);
+      applyLearnOp(s, op);
+      const json = s.toJson();
+      try {
+        localStorage.setItem(LEARN_STORE_KEY, json);
+      } catch (err) {
+        console.warn('Learn store: not persisted (storage quota or disabled):', err);
+      }
+      return json;
+    };
+    if (typeof navigator !== 'undefined' && typeof navigator.locks?.request === 'function') {
+      return (await navigator.locks.request(LEARN_STORE_LOCK, run)) as string;
     }
+    return run();
+  }
+
+  onLearnStoreChanged(handler: (json: string) => void): () => void {
+    const listener = (e: StorageEvent): void => {
+      if (e.key === LEARN_STORE_KEY && typeof e.newValue === 'string') handler(e.newValue);
+    };
+    window.addEventListener('storage', listener);
+    return () => window.removeEventListener('storage', listener);
   }
 
   async spawnWindow(payload: SpawnWindowPayload | null): Promise<void> {
@@ -601,6 +658,16 @@ export class BrowserHost implements Host {
     } catch {
       return null;
     }
+  }
+
+  isAppQuitting(): boolean {
+    // No app to quit in a browser tab; the workspace store never records
+    // web documents anyway (no serializable handle), so "keep" is inert.
+    return true;
+  }
+
+  async arrangeWindows(): Promise<null> {
+    return null; // a browser cannot place its own windows
   }
 
   async isFirstWindow(): Promise<boolean> {

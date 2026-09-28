@@ -20,7 +20,7 @@ import { Decoration, DecorationSet } from 'prosemirror-view';
 import type { Node as PMNode } from 'prosemirror-model';
 import { AddMarkStep, RemoveMarkStep, ReplaceStep, ReplaceAroundStep } from 'prosemirror-transform';
 import { computeNumbering, type NumberLabel } from './numbering.js';
-import { settings, type NumberingSeparator } from './settings.js';
+import { settings, applyNumberingSeparator } from './settings.js';
 
 interface NumberingState {
   decorations: DecorationSet;
@@ -37,26 +37,17 @@ export const numberingPluginKey = new PluginKey<NumberingState>('cardNumbering')
  *  change (they bake into the decorations, unlike the on/off gate). */
 export const NUMBERING_REFRESH = 'pmd-numbering-refresh';
 
-/** Per-user glyph separators (display-only; the .docx carries a canonical form).
- *  Number and substructure each pick their own separator independently. */
-const FORMAT_SEP: Record<NumberingSeparator, string> = {
-  period: '.',
-  paren: ')',
-  dash: ' -',
-  colon: ':',
-  emdash: '—',
-  endash: '–',
-  doublehyphen: '--',
-  triplehyphen: '---',
-};
-function glyphText(label: NumberLabel): string {
+/** Per-user glyph separators (display-only; the .docx carries a canonical
+ *  form). Number and substructure each pick their own separator
+ *  independently; the glyph table lives in settings.ts beside the type. */
+export function glyphText(label: NumberLabel): string {
   if (label.kind === 'sub') {
     const core = settings.get('cardNumberingSubCapitalized')
       ? label.text.toUpperCase()
       : label.text;
-    return `${core}${FORMAT_SEP[settings.get('cardNumberingSubFormat')]}`;
+    return applyNumberingSeparator(core, settings.get('cardNumberingSubFormat'));
   }
-  return `${label.text}${FORMAT_SEP[settings.get('cardNumberingFormat')]}`;
+  return applyNumberingSeparator(label.text, settings.get('cardNumberingFormat'));
 }
 
 /** The glyph a first-position number / substructure letter renders as under the

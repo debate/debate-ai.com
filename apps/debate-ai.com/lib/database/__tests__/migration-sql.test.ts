@@ -148,7 +148,7 @@ describe("BENIGN_ALTER_ERROR", () => {
  * and check it converges instead of stopping at the first collision.
  */
 describe("replaying every migration onto a partially-migrated database", () => {
-  // Mirrors applyMigration() in scripts/migrate-d1.ts, against SQLite directly
+  // Mirrors applyMigration() in .github/scripts/migrate-d1.ts, against SQLite directly
   // instead of through wrangler.
   const applyAll = (db: DatabaseSync) => {
     let benign = 0;

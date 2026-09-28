@@ -27,6 +27,8 @@ import {
   opensElsewhere,
   topNavigationTarget,
 } from "../../lib/layout/frame-navigation"
+import { startRouteLoading } from "../../lib/ui/use-route-loading"
+import { isSamePage } from "../../lib/ui/route-loading-target"
 
 /** How long a framed document waits for the shell before giving up and doing
  *  the old hard top-level load. Long enough to cover the round trip and a
@@ -179,6 +181,11 @@ export function FrameNavigationHost() {
       // from inside another frame behaves exactly like clicking its icon —
       // including the keep-alive pool. Everything else is a route change.
       if (frame?.openInFrame(path)) return
+      // No click reached this document, so the router hook never saw the
+      // transition start — arm the loading overlay here instead.
+      if (!isSamePage(new URL(path, window.location.origin).pathname, window.location.pathname)) {
+        startRouteLoading()
+      }
       router.push(path)
     }
 

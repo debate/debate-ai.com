@@ -62,6 +62,7 @@ import {
   type FeatureCategory,
   type FeatureEntry,
 } from "debate-feature-catalog/src/feature-catalog";
+import { README_BADGE_ROWS, README_BANNER, README_SHOWCASE } from "./readme-media";
 
 /**
  * A glyph per category, so a section is identifiable before its heading is
@@ -151,6 +152,15 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
 
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
+            <img
+              src={README_BANNER}
+              alt="Debate AI"
+              width={800}
+              className="mx-auto mb-8 w-full max-w-3xl"
+            />
+          </Reveal>
+
+          <Reveal>
             <Pill className="mb-5">
               <LayoutGrid className="size-3.5" />
               PF, LD and Policy — every tool
@@ -212,9 +222,43 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
                 </div>
               ))}
             </dl>
-</Reveal>
-        </div>
+          </Reveal>
 
+          <Reveal delay={340}>
+            {/* The root README's badge block, row for row. */}
+            <div className="mt-8 flex flex-col items-center gap-2" data-testid="readme-badges">
+              {README_BADGE_ROWS.map((row, rowIndex) => (
+                <div key={rowIndex} className="flex flex-wrap items-center justify-center gap-1.5">
+                  {row.map((badge) => {
+                    const image = (
+                      <img
+                        src={badge.src}
+                        alt={badge.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="block w-auto"
+                        style={{ height: badge.height ?? 20 }}
+                      />
+                    );
+                    return badge.href ? (
+                      <a
+                        key={badge.src}
+                        href={badge.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="transition-opacity hover:opacity-80"
+                      >
+                        {image}
+                      </a>
+                    ) : (
+                      <span key={badge.src}>{image}</span>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {tickerRows.length > 0 ? (
@@ -235,6 +279,38 @@ export function FeaturesPanel({ entries = APP_FEATURES, className }: FeaturesPan
           </div>
         </section>
       ) : null}
+
+      <section
+        aria-label="Workspaces"
+        className="mx-auto max-w-6xl px-4 pt-6 pb-16 sm:px-6 lg:px-8"
+      >
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {README_SHOWCASE.map((workspace, index) => (
+            <Reveal key={workspace.name} delay={index * 70}>
+              <SpotlightCard className="h-full" hueShift={cardHueShift(index, hueOffset)}>
+                <a
+                  href={workspace.href}
+                  className="group/workspace flex h-full flex-col items-center p-5 text-center"
+                >
+                  <img
+                    src={workspace.image}
+                    alt={`${workspace.name} — ${workspace.expansion}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="mb-4 aspect-square w-full max-w-[160px] object-contain"
+                  />
+                  <span className="text-sm font-semibold text-foreground transition-colors group-hover/workspace:text-[var(--da-card-accent,var(--da-accent))]">
+                    {workspace.emoji} {workspace.name}
+                  </span>
+                  <span className="mt-1 text-[11px] leading-snug text-pretty text-muted-foreground">
+                    {workspace.expansion}
+                  </span>
+                </a>
+              </SpotlightCard>
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
       <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6 lg:px-8">
         {sections.length > 1 ? (

@@ -3,94 +3,130 @@
 /**
  * @fileoverview Drives the global loading overlay off the router.
  *
- * Two call sites, both answered here rather than by individual pages:
+ * The overlay is armed the moment a page transition *starts* and dropped once
+ * the new route has painted. `LoadingOverlay` only appears after the load has
+ * run past its show delay (`DEFAULT_LOADING_SHOW_DELAY_MS`), so a quick hop
+ * finishes without it ever showing, and a slow one gets the orb instead of a
+ * page that looks stuck on the old route.
  *
- * 1. **First load.** The moment this hook mounts it arms the orb, because the
- *    server-rendered HTML is the page itself and the client bundle still has
- *    to hydrate it. The orb stays up until the document has settled — a couple
- *    of animation frames past `window.load`, and never less than a floor — so
- *    a slow hydrate can't be flashed at the user.
+ * What starts a transition:
  *
- * 2. **Major transitions.** A pathname change that is *not* a dock destination
- *    (the dock frames its own pages, which load inside an iframe and own
- *    their own loading state) arms the orb again and drops it once the new
- *    route has painted. A hard top-level load — a sidebar link, a redirect,
- *    the back button landing outside the frame — is just another first load,
- *    so it is covered by case 1.
+ * - **A link click** to another page of this app (see
+ *   `route-loading-target`). Both client-side `<Link>` hops and hard
+ *   navigations count — for a hard one the orb covers the wait until the
+ *   document unloads.
+ * - **Back / forward** landing on another pathname.
+ * - **A framed document handing a navigation up** to the shell
+ *   (`FrameNavigationHost` calls {@link startRouteLoading}).
  *
- * The overlay is opt-in and depth-counted (see `loading-store`), so a page
- * that never calls `beginLoading` renders bare and two pages loading at once
- * cannot stack two orbs.
+ * What ends it: `pathname` changing, two animation frames later — one full
+ * paint cycle, so the DOM behind the overlay is the new route, not a
+ * placeholder. A transition that never lands (a handler that cancels the
+ * click, a failed fetch) is dropped by a safety timeout rather than leaving
+ * the overlay up for good.
+ *
+ * Dock destinations change `pathname` the instant they are clicked, so the
+ * hop itself clears straight away; the frame that is still loading behind it
+ * holds the overlay on its own (see `AppFrameSurface`).
  */
 
 import { useEffect, useRef } from "react"
 import { usePathname } from "next/navigation"
-import { isDockNavPath } from "../nav/dock-nav-paths"
+import { opensElsewhere } from "../layout/frame-navigation"
 import { beginLoading, finishLoading } from "./loading-store"
+import { isSamePage, routeLoadingTarget } from "./route-loading-target"
 
-/** Minimum time the orb stays up on a transition, in ms. Short hops still
- *  read as intentional loading rather than a flicker. */
-const TRANSITION_MIN_MS = 250
+/** Longest a transition may hold the overlay before it is dropped regardless,
+ *  in ms. Also used by `AppFrameSurface` for a frame that never loads. */
+export const ROUTE_LOADING_TIMEOUT_MS = 8000
 
-/** Minimum time the orb stays up on the app's first load, in ms. Hydration
- *  for this app usually finishes well under it; the floor exists so a slow
- *  cold start never flashes a half-hydrated page. */
-const FIRST_LOAD_MIN_MS = 600
+/** Whether a transition currently holds one level of the overlay's depth. */
+let pending = false
+/** Bumped by every start, so a settle scheduled for an earlier transition
+ *  cannot drop one that began after it. */
+let generation = 0
+let safetyTimer: number | undefined
 
 /**
- * How many animation frames to wait, at minimum, before dropping the orb.
- * Two frames is one full paint cycle: the new route has rendered at least
- * once, so the DOM behind the overlay is not a placeholder.
+ * Arms the overlay for a transition that is starting now. Idempotent while one
+ * is already pending — a second click just restarts the safety timeout.
  */
-function runAfterSettled(minMs: number, cb: () => void) {
-  const start = performance.now()
-  let done = false
-
-  const finish = () => {
-    if (done) return
-    done = true
-    cb()
+export function startRouteLoading() {
+  if (typeof window === "undefined") return
+  generation += 1
+  if (!pending) {
+    pending = true
+    beginLoading()
   }
+  window.clearTimeout(safetyTimer)
+  const gen = generation
+  safetyTimer = window.setTimeout(() => endRouteLoading(gen), ROUTE_LOADING_TIMEOUT_MS)
+}
 
-  // Wait for a real paint after the change lands.
-  const frame = () => {
-    requestAnimationFrame(() => {
-      const elapsed = performance.now() - start
-      const remaining = minMs - elapsed
-      if (remaining > 0) {
-        window.setTimeout(finish, remaining)
-      } else {
-        finish()
-      }
-    })
-  }
-  frame()
+function endRouteLoading(gen: number) {
+  if (!pending || gen !== generation) return
+  pending = false
+  window.clearTimeout(safetyTimer)
+  finishLoading()
+}
+
+/** Drops the pending transition after the new route has painted once. */
+function settleRouteLoading() {
+  if (!pending) return
+  const gen = generation
+  requestAnimationFrame(() => requestAnimationFrame(() => endRouteLoading(gen)))
 }
 
 export function useRouteLoading() {
   const pathname = usePathname()
-  const lastPathRef = useRef<string | null>(null)
-  const isFirstRender = useRef(true)
+  const lastPathRef = useRef(pathname)
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      lastPathRef.current = pathname
-      // First load: arm the orb and drop it once the document has settled.
-      beginLoading()
-      runAfterSettled(FIRST_LOAD_MIN_MS, finishLoading)
-      return
+    // Bubble phase, after the page's own handlers: a framed document's
+    // hand-off (`useFrameNavigationHandoff`) stops the click in the capture
+    // phase, so it never reaches here and the frame does not arm an overlay
+    // for a navigation the shell is about to run. `defaultPrevented` is not
+    // checked — `<Link>` prevents every click it routes.
+    const onClick = (event: MouseEvent) => {
+      if (opensElsewhere(event)) return
+      const anchor = (event.target as Element | null)?.closest?.("a")
+      if (!anchor) return
+      const target = routeLoadingTarget(
+        {
+          href: anchor.getAttribute("href"),
+          target: anchor.getAttribute("target"),
+          download: anchor.hasAttribute("download"),
+        },
+        window.location.href,
+      )
+      if (target) startRouteLoading()
     }
 
+    // The URL has already changed by the time `popstate` fires, so it is
+    // compared against the last pathname the router rendered.
+    const onPopState = () => {
+      if (!isSamePage(window.location.pathname, lastPathRef.current)) startRouteLoading()
+    }
+
+    // A page restored from the back/forward cache comes back exactly as it
+    // was left — including an overlay armed for the navigation that left it.
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) endRouteLoading(generation)
+    }
+
+    document.addEventListener("click", onClick)
+    window.addEventListener("popstate", onPopState)
+    window.addEventListener("pageshow", onPageShow)
+    return () => {
+      document.removeEventListener("click", onClick)
+      window.removeEventListener("popstate", onPopState)
+      window.removeEventListener("pageshow", onPageShow)
+    }
+  }, [])
+
+  useEffect(() => {
     if (pathname === lastPathRef.current) return
     lastPathRef.current = pathname
-
-    // A client-side transition to a non-dock route. Dock destinations are
-    // framed (see AppFrameSurface) and own their own loading state, so they
-    // are not armed here.
-    if (isDockNavPath(pathname)) return
-
-    beginLoading()
-    runAfterSettled(TRANSITION_MIN_MS, finishLoading)
+    settleRouteLoading()
   }, [pathname])
 }

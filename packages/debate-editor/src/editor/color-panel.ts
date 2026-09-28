@@ -584,6 +584,10 @@ function openPicker(
     if (!openPickerEl) return;
     const target = e.target as Node | null;
     if (target && openPickerEl.contains(target)) return;
+    // The trigger is part of the open picker's owned surface. Let its later
+    // click handler perform the same-control toggle; closing here first would
+    // clear `openPickerEl`, so that click would immediately open a new picker.
+    if (target && anchor.contains(target)) return;
     closeOpenPicker();
   };
   const onKey = (e: KeyboardEvent) => {

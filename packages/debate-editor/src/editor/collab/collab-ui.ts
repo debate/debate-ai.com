@@ -16,11 +16,14 @@
  */
 
 import type { EditorView } from 'prosemirror-view';
-import { LoroUndoPlugin, loroSyncPluginKey, loroUndoPluginKey, undo as loroUndo, redo as loroRedo } from 'loro-prosemirror';
+import { LoroUndoPlugin, loroSyncPluginKey, loroUndoPluginKey } from 'loro-prosemirror';
+import { createUndoGuard } from './undo-guard.js';
 import { settings } from '../settings.js';
 import { showToast } from '../toast.js';
+import { surfaceError } from '../error-surface.js';
+import { warmCausalMarkIndex } from './causal-mark-heal.js';
 import { RELAY_FIX_PATH } from '../relay-decline.js';
-import { postNotice } from '../status-notices.js';
+import { clearNotice, postNotice } from '../status-notices.js';
 import { promptForText, promptForRouteChoice, confirmDialog } from '../text-prompt.js';
 import { markSyncOrigin } from '../sync-origin.js';
 import { readModePlugin } from '../read-mode-plugin.js';
@@ -117,12 +120,18 @@ interface ActiveSession {
    *  record, which is deleted on Leave/End/tombstone. */
   history: HistoryHandle;
   wakeCleanup: () => void;
+  /** Removes the pagehide goodbye/flush hook. */
+  unloadCleanup: () => void;
   /** Unsubscribe the meta-map (title) watcher installed by installSeams. */
   metaUnsub: () => void;
   /** Latest connection status for THIS session. The shared status-bar chip only
    *  ever reflects the focused doc's session; storing status per session lets
    *  each multi-pane slot footer render its own visible doc's state. */
   lastStatus: { connected: boolean; queuedUpdates: number } | null;
+  offlineSince: number | null;
+  offlineTimer: ReturnType<typeof setTimeout> | null;
+  /** Container-safe undo ledger (undo-guard.ts); disposed at teardown. */
+  undoGuardDispose: () => void;
 }
 
 const sessions = new Map<string, ActiveSession>();
@@ -194,7 +203,13 @@ setCollabCloseActions({
 // can auto-resume each into the doc that reopens under its uid.
 setCollabHandoffProvider(async () => {
   const list = [...sessions.values()].map((s) => ({ uid: s.ownerUid, roomId: s.session.roomId }));
-  await Promise.all([...sessions.values()].map((s) => s.persist.flush()));
+  // The record AND the history file: history's only other reload hook is
+  // the fire-and-forget pagehide write, which a fast teardown cuts off
+  // mid-write — the same reason persist is flushed here (2026-09-01
+  // review, PH-A5).
+  await Promise.all(
+    [...sessions.values()].flatMap((s) => [s.persist.flush(), s.history.flush()]),
+  );
   return list;
 });
 setCollabSessionCountProvider(() => sessions.size);
@@ -338,6 +353,11 @@ function updateChip(status: { connected: boolean; queuedUpdates: number } | null
 /** One colored dot per person in the room, hover for the name. */
 function renderPresenceDots(container: HTMLElement): void {
   const peers = chipSession()?.cursors.presence() ?? [];
+  // Skip the DOM rebuild when the roster is unchanged (the 3s presence
+  // timer and every chip update land here).
+  const sig = peers.map((p) => `${p.peer}\u0000${p.name}\u0000${p.color}\u0000${p.self ? 1 : 0}`).join('\n');
+  if (container.dataset['sig'] === sig) return;
+  container.dataset['sig'] = sig;
   container.replaceChildren();
   for (const p of peers) {
     const dot = document.createElement('span');
@@ -372,12 +392,40 @@ function collabTagger(tr: Parameters<typeof markSyncOrigin>[0]): void {
  *  stream socket is silently dead until timeouts notice — restart it
  *  the moment the OS tells us. Desktop: powerMonitor via the host
  *  seam; both editions: the browser 'online' event. */
+/** The page is going away — a web tab close or reload, a desktop reload.
+ *  Desktop's close flow already said goodbye and drained (and awaited
+ *  both) before the window unloads, so there this is an idempotent
+ *  leftover; on the web it is the ONLY chance: there is no close flow,
+ *  and a plain fetch started during unload is cancelled by the browser.
+ *  Both requests go keepalive. Best-effort by nature — the persist record
+ *  re-sends unsent ops on resume, and partners expire a silent caret. */
+function installUnloadHooks(session: CollabSession, cursors: CursorsHandle): () => void {
+  const onPageHide = (): void => {
+    cursors.farewell({ keepalive: true });
+    session.flushForUnload();
+  };
+  window.addEventListener('pagehide', onPageHide);
+  return () => window.removeEventListener('pagehide', onPageHide);
+}
+
 function installWakeHooks(session: CollabSession): () => void {
   const onOnline = (): void => session.restart();
   window.addEventListener('online', onOnline);
   const offResume = getElectronHost()?.onPowerResumed?.(() => session.restart()) ?? null;
+  // A throttled background tab is exactly where a socket goes stale
+  // unnoticed; coming back to the tab is a wake too — but on the web
+  // that is every Cmd-Tab, so it reconnects only if the stream is
+  // actually stale or sitting out a backoff (web audit 2026-09-04: an
+  // unconditional restart() aborted a healthy stream on every tab
+  // return). Sleep and network-return keep the unconditional restart:
+  // those sockets are dead in practice.
+  const onVisible = (): void => {
+    if (document.visibilityState === 'visible') session.restartIfStale();
+  };
+  document.addEventListener('visibilitychange', onVisible);
   return () => {
     window.removeEventListener('online', onOnline);
+    document.removeEventListener('visibilitychange', onVisible);
     offResume?.();
   };
 }
@@ -410,8 +458,14 @@ async function sessionPrepOverlay(text: string): Promise<() => void> {
   card.textContent = text;
   overlay.appendChild(card);
   document.body.appendChild(overlay);
+  // Escape hatch: if the flow that owns the release is ever interrupted
+  // between here and its finally, a modal veil must not be permanent.
+  const failsafe = setTimeout(() => overlay.remove(), 120_000);
   await new Promise((r) => setTimeout(r, 30));
-  return () => overlay.remove();
+  return () => {
+    clearTimeout(failsafe);
+    overlay.remove();
+  };
 }
 
 function installSeams(
@@ -435,15 +489,29 @@ function installSeams(
     shareCode,
     () => sessionDocTitle(ownerUid) || sharedDocTitle(session),
     () => docIdResolver?.(ownerUid) ?? null,
+    { onFailure: (n) => noteWriterFailure('collab-persist-failing', 'crash-resume record', n) },
   );
   // Recover Previous Version's durable record: full-history snapshots
   // that survive session end (deliberately including a remote
   // tombstone — an attacker ending the session must not destroy it).
+  // Build the causal-heal history index at idle rather than inside the
+  // first remote frame's appendTransaction (a full op-log decode on a
+  // big doc). Idempotent; the plugin rebuilds on demand regardless.
+  const idle = (fn: () => void): void => {
+    const ric = (window as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number })
+      .requestIdleCallback;
+    if (ric) ric(fn, { timeout: 5000 });
+    else setTimeout(fn, 1500);
+  };
+  idle(() => warmCausalMarkIndex(session.loroDoc));
   const history = attachSessionHistory(
     session,
     () => sessionDocTitle(ownerUid) || sharedDocTitle(session),
+    undefined,
+    { onFailure: (n) => noteWriterFailure('collab-history-failing', 'session history', n) },
   );
   const cursors = installCursorPresence(session, ownerView);
+  const unloadCleanup = installUnloadHooks(session, cursors);
   // One shared timer refreshes the focused session's chip dots AND every slot
   // footer's copresence (peers join/leave/expire between status updates).
   if (presenceTimer === null)
@@ -472,8 +540,12 @@ function installSeams(
     persist,
     history,
     wakeCleanup,
+    unloadCleanup,
     metaUnsub,
     lastStatus: null,
+    offlineSince: null,
+    offlineTimer: null,
+    undoGuardDispose: () => undoGuard.dispose(),
   };
   sessions.set(ownerUid, sess);
   // Cross-window live-session claim: while this session is live, other
@@ -484,6 +556,17 @@ function installSeams(
   claimRoom(session.roomId);
   // A session just appeared — repaint slot footers (this doc's may be visible).
   notifyCollabCopresenceChange();
+  const undoManager = new UndoManager(session.loroDoc, {
+    excludeOriginPrefixes: [COMMENTS_COMMIT_ORIGIN, META_COMMIT_ORIGIN],
+  });
+  // Container-safe undo: an undo/redo that would delete a container a
+  // partner edited since is reversed and explained (see undo-guard.ts).
+  const undoGuard = createUndoGuard({
+    doc: session.loroDoc,
+    undoManager,
+    getView: () => deps.getViewForUid?.(ownerUid) ?? deps.getView(),
+    onBlocked: (message) => showToast(message),
+  });
   registerCollabPluginSource({
     ownerUid,
     plugins: () => [
@@ -494,12 +577,8 @@ function installSeams(
       // comments/replies session-wide when a comment op sat on top of it
       // (audit find, 2026-07-10). The plugin still adds 'sys:init' and wires
       // its own cursor-restore hooks onto this manager.
-      LoroUndoPlugin({
-        doc: session.loroDoc,
-        undoManager: new UndoManager(session.loroDoc, {
-          excludeOriginPrefixes: [COMMENTS_COMMIT_ORIGIN, META_COMMIT_ORIGIN],
-        }),
-      }),
+      LoroUndoPlugin({ doc: session.loroDoc, undoManager }),
+      undoGuard.plugin,
       collabInvariantHealPlugin(),
       // Inserter-intent for the read layers: strips highlight/underline/
       // emphasis/shading inherited by text whose typist never saw the
@@ -512,13 +591,14 @@ function installSeams(
       ...cursors.plugins(),
     ],
     ownsUndo: () => true,
+    canRedo: () => undoManager.canRedo(),
     // Read-mode clamp (M4): swallow undo/redo entirely while reading — the Loro
     // undo transactions carry the binding meta (→ sync-origin) and would
     // otherwise sail through the read-mode lock and revert real edits.
     undo: (state, dispatch, view) =>
-      readModePlugin.getState(state)?.on ? true : loroUndo(state, dispatch, view),
+      readModePlugin.getState(state)?.on ? true : undoGuard.undo(state, dispatch, view),
     redo: (state, dispatch, view) =>
-      readModePlugin.getState(state)?.on ? true : loroRedo(state, dispatch, view),
+      readModePlugin.getState(state)?.on ? true : undoGuard.redo(state, dispatch, view),
   });
   return sess;
 }
@@ -530,6 +610,18 @@ function installSeams(
  *  record-clear promise so terminal callers can await deletion (so a re-read of
  *  the Sessions list doesn't flash a stale row); most callers ignore it. */
 function teardownSession(sess: ActiveSession, keepRecord = false): Promise<void> {
+  // Stop the SESSION itself, not just its UI: the room-full and join/resume
+  // failure paths reached here without an explicit stop, and the orphaned
+  // CollabSession kept its flush / catch-up / audit timers (and the audit's
+  // full-history repost) alive for the window's life against a room this
+  // window was no longer in (2026-09-01 review). stop() is idempotent, so
+  // the End/Leave/close paths that already stopped are unaffected.
+  sess.cursors.farewell(); // departure frame needs the stream — before stop()
+  if (sess.offlineTimer !== null) clearTimeout(sess.offlineTimer);
+  sess.undoGuardDispose();
+  clearNotice('collab-offline');
+  clearNotice('collab-send-stuck');
+  void sess.session.stop().catch(() => {});
   unregisterCollabPluginSource(sess.ownerUid);
   sessions.delete(sess.ownerUid);
   // Release the cross-window live-session claim (registered in installSeams).
@@ -537,6 +629,7 @@ function teardownSession(sess: ActiveSession, keepRecord = false): Promise<void>
   // A session went away — repaint slot footers (this doc's may be visible).
   notifyCollabCopresenceChange();
   sess.wakeCleanup();
+  sess.unloadCleanup();
   sess.metaUnsub();
   sess.commentsSync.dispose();
   sess.cursors.dispose();
@@ -588,11 +681,63 @@ function sessionCallbacks(deps: CollabUiDeps, getSess: () => ActiveSession | nul
       if (!sess) return;
       // Every session records its own status (each slot footer renders its
       // own); the shared chip still reflects only the focused doc's.
+      // Reconnected → re-announce presence (partners saw us absent until
+      // the 15s keepalive otherwise).
+      if (s.connected && !sess.lastStatus?.connected) sess.cursors.rebroadcast();
+      // Prolonged-disconnect notice (see offlineNoticeMs).
+      if (!s.connected && sess.lastStatus?.connected !== false) {
+        sess.offlineSince = Date.now();
+        if (sess.offlineTimer === null) {
+          sess.offlineTimer = setTimeout(() => {
+            sess.offlineTimer = null;
+            const cur = sess.lastStatus;
+            if (cur && !cur.connected && sessions.has(sess.ownerUid)) {
+              const mins = Math.max(1, Math.round((Date.now() - (sess.offlineSince ?? Date.now())) / 60_000));
+              postNotice({
+                severity: 'warning',
+                title: 'Session offline',
+                body:
+                  `This session has been disconnected for about ${mins} minute${mins === 1 ? '' : 's'}` +
+                  (cur.queuedUpdates > 0 ? ` with ${cur.queuedUpdates} edit${cur.queuedUpdates === 1 ? '' : 's'} waiting to send` : '') +
+                  '. Edits are saved locally and keep retrying.',
+                key: 'collab-offline',
+              });
+            }
+          }, offlineNoticeMs);
+        }
+      } else if (s.connected && sess.lastStatus?.connected === false) {
+        if (sess.offlineTimer !== null) {
+          clearTimeout(sess.offlineTimer);
+          sess.offlineTimer = null;
+        }
+        sess.offlineSince = null;
+        clearNotice('collab-offline');
+      }
+      // emitStatus fires from flush() and from every successful post —
+      // several times a second while typing. An unchanged status must
+      // not repaint every slot footer (each calls into the wasm presence
+      // store) and rebuild the presence dots (2026-09-01 review, PH-A11).
+      const prev = sess.lastStatus;
       sess.lastStatus = s;
+      if (prev && prev.connected === s.connected && prev.queuedUpdates === s.queuedUpdates) return;
       if (isChipSession(sess.ownerUid)) updateChip(s);
       notifyCollabCopresenceChange();
     },
     onPresence: (bytes: Uint8Array) => getSess()?.cursors.applyRemote(bytes),
+    onGuestAuthExpired: () => {
+      // Terminal-cause notice for a guest whose (immutable, 7-day) pass
+      // the relay refused: onEnded fires right after this and its toast
+      // says the session ended — this says WHY, and what to do about it.
+      postNotice({
+        severity: 'error',
+        title: 'Session invite expired',
+        body:
+          'Your invite to this session has expired, so it can’t reconnect. ' +
+          'Ask the host for a fresh invite link if the session is still going. ' +
+          'This copy of the document is yours to keep.',
+        key: 'collab-guest-expired',
+      });
+    },
     onAuthRejected: () => {
       // Mid-session 401/403 — without this the endless retry loop reads
       // exactly like being offline (audit find, 2026-07-10). Fired once
@@ -605,6 +750,36 @@ function sessionCallbacks(deps: CollabUiDeps, getSess: () => ActiveSession | nul
           RELAY_FIX_PATH +
           ' Your edits are saved locally and keep retrying.',
         key: 'collab-401',
+      });
+    },
+    onSendStuck: (n: number) => {
+      // Head-of-line blocking used to retry a poison queue entry forever
+      // with exponential backoff and no user-visible outcome (2026-09-01
+      // review, SC14).
+      if (n === 0) {
+        clearNotice('collab-send-stuck');
+        return;
+      }
+      postNotice({
+        severity: 'warning',
+        title: 'Edits aren\u2019t reaching the session',
+        body:
+          `The last ${n} attempts to send your edits were refused by the relay. They are saved ` +
+          'locally and keep retrying; if this persists, save the document and rejoin.',
+        key: 'collab-send-stuck',
+      });
+    },
+    onCrowdedOut: () => {
+      // An established session's reconnects keep 409ing past the relay's
+      // ghost-reap window: the seat is really taken. Explain once; the
+      // stream keeps retrying and reconnects when a seat opens.
+      postNotice({
+        severity: 'warning',
+        title: 'Session is full',
+        body:
+          'Every seat in this session is taken right now. Your edits are saved ' +
+          'locally and you will reconnect automatically when someone leaves.',
+        key: 'collab-crowded',
       });
     },
     onBacklogMerged: (_count: number) => {
@@ -622,10 +797,8 @@ function sessionCallbacks(deps: CollabUiDeps, getSess: () => ActiveSession | nul
       const sess = getSess();
       if (!sess || !sessions.has(sess.ownerUid)) return;
       const wasHost = sess.session.role === 'host';
-      const wasChip = isChipSession(sess.ownerUid);
-      void teardownSession(sess);
-      void wasChip;
-      refreshChipForFocus(); // repaint from live truth — a stale wasChip snapshot left ghost chips (field find, 2026-08-12)
+      void teardownSession(sess).catch((e) => surfaceError('collab teardown', e));
+      refreshChipForFocus(); // repaint from live truth (a stale snapshot left ghost chips — field find, 2026-08-12)
       // Rebuild the OWNER doc's plugin stack — refreshing the focused view
       // left an unfocused owner pane holding dead session plugins (audit
       // find, 2026-07-10).
@@ -648,10 +821,8 @@ function sessionCallbacks(deps: CollabUiDeps, getSess: () => ActiveSession | nul
       // offline chip forever (audit find, 2026-07-10). Tear down but KEEP
       // the record so the user can rejoin from the Sessions list when
       // someone leaves.
-      const wasChip = isChipSession(sess.ownerUid);
-      void teardownSession(sess, /* keepRecord */ true);
-      void wasChip;
-      refreshChipForFocus(); // repaint from live truth — a stale wasChip snapshot left ghost chips (field find, 2026-08-12)
+      void teardownSession(sess, /* keepRecord */ true).catch((e) => surfaceError('collab teardown', e));
+      refreshChipForFocus(); // repaint from live truth (a stale snapshot left ghost chips — field find, 2026-08-12)
       if (deps.refreshPluginsForUid) deps.refreshPluginsForUid(sess.ownerUid);
       else deps.refreshPlugins();
       showToast(
@@ -712,7 +883,10 @@ export async function startSessionFlow(deps: CollabUiDeps): Promise<void> {
     showToast('This document already has a session — end or leave it first');
     return;
   }
-  if (startsInFlight.has(ownerUid)) return;
+  if (startsInFlight.has(ownerUid)) {
+    showToast('Starting the session — one moment');
+    return;
+  }
   startsInFlight.add(ownerUid);
   try {
     await startSessionFlowInner(deps, view, ownerUid);
@@ -839,7 +1013,62 @@ export async function joinSessionFlow(deps: CollabUiDeps): Promise<void> {
  *  doesn't burn the share code. No view is required up front: the flow
  *  creates its own doc via deps.newSessionDoc (multi-pane may be an empty
  *  workspace at this point). */
+/** Silent-degradation surfacing (2026-09-01 review, PH-A9): a full disk
+ *  or a denied IndexedDB quota used to disable crash recovery AND
+ *  Recover Previous Version for the whole session with zero signal —
+ *  both writers swallow storage errors by design. Three consecutive
+ *  failures post a keyed notice; a later success clears it. */
+function noteWriterFailure(key: string, what: string, consecutive: number): void {
+  if (consecutive === 0) {
+    clearNotice(key);
+    return;
+  }
+  if (consecutive < 3) return;
+  postNotice({
+    severity: 'warning',
+    title: `Session ${what} isn\u2019t being saved`,
+    body:
+      `CardMirror could not write the ${what} ${consecutive} times in a row (disk full or ` +
+      'storage denied?). Your live session still works; save the document to be safe.',
+    key,
+  });
+}
+
+/** Prolonged-disconnect notice: offline showed only as chip text, and 5
+ *  seconds read exactly like 40 minutes. After this long disconnected, a
+ *  keyed notice names the queued count; reconnecting clears it. */
+let offlineNoticeMs = 3 * 60_000;
+export function __setOfflineNoticeMsForTests(ms: number | null): void {
+  offlineNoticeMs = ms ?? 3 * 60_000;
+}
+
+/** In-flight join/resume guards, keyed by room. startSessionFlow had one
+ *  (startsInFlight); join and resume did not, so a double-click (or an
+ *  invite pill + a Sessions row) raced past the "already installed?"
+ *  check before the first call had installed anything — two
+ *  ActiveSessions on one room: two persist writers on one IndexedDB
+ *  key, two history writers with one silently orphaned (2026-09-01
+ *  review, PH-A6). Separate sets: a join that finds a record delegates
+ *  to resume for the same room. */
+const joinsInFlight = new Set<string>();
+const resumesInFlight = new Set<string>();
+
 export async function joinSessionWithCode(
+  deps: CollabUiDeps,
+  code: string,
+  opts?: { guestPass?: string | null },
+): Promise<boolean> {
+  const roomId = decodeShareCode(code.trim())?.roomId ?? null;
+  if (roomId && joinsInFlight.has(roomId)) return true; // already joining — consumed
+  if (roomId) joinsInFlight.add(roomId);
+  try {
+    return await joinSessionWithCodeInner(deps, code, opts);
+  } finally {
+    if (roomId) joinsInFlight.delete(roomId);
+  }
+}
+
+async function joinSessionWithCodeInner(
   deps: CollabUiDeps,
   code: string,
   opts?: { guestPass?: string | null },
@@ -967,7 +1196,7 @@ export async function joinSessionWithCode(
     updateChip({ connected: !joinedOffline, queuedUpdates: 0 });
     // Only NOW is the seed spent — the join is committed (for the offline
     // path the seed's content lives on in the session + its persist record).
-    void deletePrefetch(decoded.roomId);
+    void deletePrefetch(decoded.roomId).catch((e) => surfaceError('collab seed cleanup', e));
     showToast(
       joinedOffline
         ? 'Joined from the prefetched copy — will sync when you reconnect'
@@ -976,12 +1205,12 @@ export async function joinSessionWithCode(
     deps.getView()?.focus();
     return true;
   } catch (err) {
-    if (sessRef) void teardownSession(sessRef);
+    if (sessRef) void teardownSession(sessRef).catch((e) => surfaceError('collab teardown', e));
     // A dead room's invite and seed are useless — purge the seed and report
     // consumed so the Receive pill clears the row. Every other failure keeps
     // both, so the user can retry once the network/slot situation changes.
     const ended = err instanceof RoomsError && (err.status === 410 || err.status === 404);
-    if (ended) void deletePrefetch(decoded.roomId);
+    if (ended) void deletePrefetch(decoded.roomId).catch((e) => surfaceError('collab seed cleanup', e));
     showToast(relayFailureMessage(err, { initiating: false, verb: 'join' }));
     return ended;
   }
@@ -998,6 +1227,20 @@ export async function joinSessionWithCode(
  *  with a resumable record, and the Receive pill consumes the invite on
  *  true. */
 export async function resumeSessionFlow(
+  deps: CollabUiDeps,
+  roomId: string,
+  opts?: { existingDoc?: boolean },
+): Promise<boolean> {
+  if (resumesInFlight.has(roomId)) return true; // already resuming — consumed
+  resumesInFlight.add(roomId);
+  try {
+    return await resumeSessionFlowInner(deps, roomId, opts);
+  } finally {
+    resumesInFlight.delete(roomId);
+  }
+}
+
+async function resumeSessionFlowInner(
   deps: CollabUiDeps,
   roomId: string,
   opts?: { existingDoc?: boolean },
@@ -1093,7 +1336,7 @@ export async function resumeSessionFlow(
     // KEEP the record on a failed resume: it existed before this attempt and
     // may hold unsynced edits — the default teardown would delete it (audit
     // find, 2026-07-10). Still resumable from the Sessions list.
-    if (sessRef) void teardownSession(sessRef, /* keepRecord */ true);
+    if (sessRef) void teardownSession(sessRef, /* keepRecord */ true).catch((e) => surfaceError('collab teardown', e));
     showToast(relayFailureMessage(err, { initiating: false, verb: 'resume' }));
     return false;
   }
@@ -1266,10 +1509,10 @@ export async function inviteTargetFlow(
  *  succeeds. */
 async function endOrLeaveSession(sess: ActiveSession): Promise<boolean> {
   const isHost = sess.session.role === 'host';
-  const wasChip = isChipSession(sess.ownerUid);
   // Disconnect first (final drain attempt), THEN tombstone for a host end —
   // and only tear down once the room is actually gone. endRoomOnRelay treats
   // an already-ended/expired room (410/404) as success.
+  sess.cursors.farewell(); // announce departure while the stream is still up
   await sess.session.stop();
   if (isHost) {
     try {
@@ -1287,8 +1530,7 @@ async function endOrLeaveSession(sess: ActiveSession): Promise<boolean> {
   // Registry drop before the record delete, so a late stream frame's
   // onEnded no-ops.
   const cleared = teardownSession(sess);
-  void wasChip;
-      refreshChipForFocus(); // repaint from live truth — a stale wasChip snapshot left ghost chips (field find, 2026-08-12)
+  refreshChipForFocus(); // repaint from live truth (a stale snapshot left ghost chips — field find, 2026-08-12)
   await cleared; // record actually gone before we return
   return true;
 }
@@ -1301,7 +1543,6 @@ async function endOrLeaveSession(sess: ActiveSession): Promise<boolean> {
 async function closeKeepResumableSession(uid: string): Promise<boolean> {
   const sess = sessionFor(uid);
   if (!sess) return true;
-  const wasChip = isChipSession(sess.ownerUid);
   await sess.session.stop(); // disconnect only — the room + record survive
   // Capture the final state (incl. any still-unsynced edits) AFTER the drain so
   // sentVersion is accurate — VERIFIED: the close path drops the recovery
@@ -1312,9 +1553,8 @@ async function closeKeepResumableSession(uid: string): Promise<boolean> {
     sess.session.start(); // reconnect; the session stays live, caller aborts
     return false;
   }
-  void teardownSession(sess, /* keepRecord */ true);
-  void wasChip;
-      refreshChipForFocus(); // repaint from live truth — a stale wasChip snapshot left ghost chips (field find, 2026-08-12)
+  void teardownSession(sess, /* keepRecord */ true).catch((e) => surfaceError('collab teardown', e));
+  refreshChipForFocus(); // repaint from live truth (a stale snapshot left ghost chips — field find, 2026-08-12)
   return true;
 }
 
@@ -1366,7 +1606,12 @@ export function activeSession(): CollabSession | null {
  *  recover module needs no import back into this one. */
 export async function recoverPreviousVersionFlow(
   openDoc?: import('./collab-recover-ui.js').OpenRecoveredDoc,
+  solo?: {
+    docId: string | null;
+    docTitle: string;
+    currentDoc?: import('prosemirror-model').Node | null;
+  },
 ): Promise<void> {
   const m = await import('./collab-recover-ui.js');
-  await m.openRecoverPreviousVersion(activeSession(), openDoc);
+  await m.openRecoverPreviousVersion(activeSession(), openDoc, solo);
 }

@@ -1158,7 +1158,7 @@ export type DetectedUrlInsert = typeof detectedUrls.$inferInsert;
 // Video library — the queryable projection of the `data/videos/*.json` assets
 // (rounds-policy/pf/ld/college, debate-lectures, debate-top-picks) that the
 // YouTube sync writes. `/api/videos` pages over this table instead of shipping
-// the whole ~1.1 MB JSON blob on first paint; `scripts/seed-videos.ts` loads
+// the whole ~1.1 MB JSON blob on first paint; `.github/scripts/seed-videos.ts` loads
 // the JSON into it (local SQLite and Cloudflare D1 share this schema).
 //
 // `style` is the numeric debate format (1 Policy, 2 PF, 3 LD, 4 College) and is
@@ -1953,6 +1953,70 @@ export const stripeSubscriptions = sqliteTable(
 
 export type StripeSubscriptionRow = typeof stripeSubscriptions.$inferSelect;
 
+// Per-day usage counts behind the plan tiers in `lib/stripe/limits.ts` (see
+// `lib/stripe/usage.ts`). `subject` is a user id, or `ip:<address>` for a
+// signed-out caller, so it has no foreign key. `day` is the UTC date
+// (`YYYY-MM-DD`) the count is for.
+export const usageCounters = sqliteTable(
+  "usage_counters",
+  {
+    subject: text("subject").notNull(),
+    metric: text("metric").notNull(),
+    day: text("day").notNull(),
+    count: integer("count").notNull().default(0),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.subject, table.metric, table.day] }),
+  }),
+);
+
+// A Research Team coach's roster: up to `teamStudents` students (see
+// `lib/stripe/limits.ts`), matched to their accounts by lowercased email so a
+// coach can add a student before the student signs up.
+export const teamStudents = sqliteTable(
+  "team_students",
+  {
+    ownerUserId: text("owner_user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    studentEmail: text("student_email").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.ownerUserId, table.studentEmail] }),
+    studentIdx: index("idx_team_students_email").on(table.studentEmail),
+  }),
+);
+
+// Lesson plans and practice drills a Research Team coach assigns to their
+// roster. `studentEmails` is a JSON array of the students it targets, or null
+// for every student on the roster.
+export const teamAssignments = sqliteTable(
+  "team_assignments",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    ownerUserId: text("owner_user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    /** `lesson-plan` or `practice-drill`. */
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull().default(""),
+    studentEmails: text("student_emails"),
+    dueAt: integer("due_at", { mode: "timestamp" }),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    ownerIdx: index("idx_team_assignments_owner").on(table.ownerUserId),
+  }),
+);
+
+export type TeamAssignmentRow = typeof teamAssignments.$inferSelect;
+
 // Card AI analyses — the evidence search's "AI Analysis" sidebar
 // (packages/debate-search-evidence, `useAiAnalysis`). One row per card text
 // and prompt, both identified by SHA-256 hex digests computed client- and
@@ -2130,3 +2194,79 @@ export const forumThreads = sqliteTable(
 );
 
 export type ForumThreadRow = typeof forumThreads.$inferSelect;
+
+// Practice Partners — debaters volunteering to be challenged to a virtual
+// practice round, or to judge one, and the challenges between them. The wire
+// format and the option lists live in `debate-webview/lib/practice-partners`;
+// the queries are `lib/practice-partners/queries.ts`.
+//
+// One profile per account, keyed on the user. The two roles are real columns
+// because the board's read filters on them; the preferences are a JSON payload
+// (`PracticePreferences`) because nothing queries inside them and the option
+// lists will grow. A profile with both roles off stays, hidden, so switching
+// back on does not cost the debater their preferences.
+export const practiceProfiles = sqliteTable(
+  "practice_profiles",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    asCompetitor: integer("as_competitor", { mode: "boolean" }).notNull().default(false),
+    asJudge: integer("as_judge", { mode: "boolean" }).notNull().default(false),
+    /** `PracticePreferences` as JSON — formats, styles, speed, level, availability, note. */
+    preferences: text("preferences").notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    updatedIdx: index("idx_practice_profiles_updated").on(table.updatedAt),
+  }),
+);
+
+export type PracticeProfileRow = typeof practiceProfiles.$inferSelect;
+
+// A challenge from one debater to another, with an optional judge seat. Rows
+// are never deleted by the feature — a declined or cancelled challenge is a
+// status — so the history of who asked whom survives for moderation. The judge
+// is `set null` on account deletion rather than cascading: losing a judge
+// should empty the seat, not delete the round the two debaters agreed to.
+export const practiceChallenges = sqliteTable(
+  "practice_challenges",
+  {
+    /** A UUID minted by the API. */
+    id: text("id").primaryKey(),
+    challengerId: text("challenger_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    opponentId: text("opponent_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    judgeId: text("judge_id").references(() => user.id, { onDelete: "set null" }),
+    /** `invited` | `confirmed`, or null with no judge. */
+    judgeStatus: text("judge_status"),
+    /** `pending` | `accepted` | `declined` | `cancelled`. */
+    status: text("status").notNull().default("pending"),
+    format: text("format").notNull(),
+    topic: text("topic").notNull(),
+    message: text("message").notNull().default(""),
+    proposedAt: integer("proposed_at", { mode: "timestamp" }),
+    /** The webcam room code everyone in the round joins. */
+    roomId: text("room_id").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => ({
+    challengerIdx: index("idx_practice_challenges_challenger").on(table.challengerId, table.status),
+    opponentIdx: index("idx_practice_challenges_opponent").on(table.opponentId, table.status),
+    judgeIdx: index("idx_practice_challenges_judge").on(table.judgeId),
+    // "Rounds needing a judge": accepted, no judge, newest first.
+    openIdx: index("idx_practice_challenges_open").on(table.status, table.judgeId, table.createdAt),
+  }),
+);
+
+export type PracticeChallengeRow = typeof practiceChallenges.$inferSelect;

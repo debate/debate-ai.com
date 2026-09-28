@@ -3,7 +3,7 @@
  * @description Footer component for the documentation landing page.
  */
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button } from "../ui/button"
 import { BookOpen } from "lucide-react"
 import { Github } from "./github-icon"
 
@@ -20,7 +20,7 @@ export function Footer() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/">
+            <Link href="/docs">
               <Button size="lg" className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
                 <BookOpen className="h-4 w-4" />
                 Read the Docs

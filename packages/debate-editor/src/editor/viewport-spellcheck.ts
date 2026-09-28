@@ -21,6 +21,7 @@ import { settings } from './settings.js';
 import { showToast } from './toast.js';
 import { registerOpenContextMenu, clearOpenContextMenu } from './context-menu-registry.js';
 import { loadUserDictionary, saveUserDictionary } from './user-dictionary.js';
+import { isRightClickContextMenu } from './context-menu-gate.js';
 
 const key = new PluginKey<DecorationSet>('viewportSpellcheck');
 
@@ -176,6 +177,7 @@ export function viewportSpellcheckPlugin(): Plugin {
         // actions. Falls through (returns false) for clicks that aren't
         // on a misspelling, so links/images/default menus still win.
         contextmenu(view, event) {
+          if (!isRightClickContextMenu(event)) return false;
           if (!spell || !settings.get('editorSpellcheck')) return false;
           const set = key.getState(view.state);
           if (!set) return false;

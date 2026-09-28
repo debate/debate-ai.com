@@ -7,7 +7,10 @@
  * mutates state directly. Three clocks share the big display —
  * 'speech' (transient round timer) and the persistent 'affPrep' /
  * 'negPrep' balances, which only Reset refills. Field semantics are
- * documented on `TimerState` below.
+ * documented on `TimerState` below. The speech clock also runs as a
+ * STOPWATCH: Start with 0:00 loaded counts up instead of no-op'ing
+ * (2026-09-19), until a preset, a typed time or Reset re-arms a
+ * countdown.
  *
  * Sync: every state mutation goes through `setState`, which writes
  * to localStorage AND posts the new state over a BroadcastChannel;
@@ -69,6 +72,18 @@ export interface TimerState {
    *  deliberately NOT by pause or a mode switch, so the alert
    *  can't be dismissed by accident. */
   expiredMode: TimerMode | null;
+  /** The speech clock is counting UP. Set by Start when the speech
+   *  clock reads 0:00 (a reset clock, a typed 0:00, or a countdown
+   *  that ran out and was paused — overtime); cleared by anything
+   *  that arms a countdown: a preset, a typed time, Reset. While
+   *  set, `speechBaseRemainingMs` is 0 and `speechStopwatchBaseMs`
+   *  holds the elapsed time. Prep clocks never count up: a prep
+   *  balance at 0:00 is spent. */
+  stopwatch: boolean;
+  /** Stopwatch elapsed ms at the last pause; live = base + (now -
+   *  runningSince) while running. The count-up twin of
+   *  `speechBaseRemainingMs`. */
+  speechStopwatchBaseMs: number;
 }
 
 const DEFAULT_PREP_MS = 10 * 60 * 1000;
@@ -86,6 +101,8 @@ function makeInitialState(): TimerState {
     poppedOut: false,
     prepShownSide: 'aff',
     expiredMode: null,
+    stopwatch: false,
+    speechStopwatchBaseMs: 0,
   };
 }
 
@@ -134,6 +151,8 @@ function sanitize(raw: Partial<TimerState>): TimerState {
       raw.expiredMode === 'speech' || raw.expiredMode === 'affPrep' || raw.expiredMode === 'negPrep'
         ? raw.expiredMode
         : null,
+    stopwatch: raw.stopwatch === true,
+    speechStopwatchBaseMs: nonNegInt(raw.speechStopwatchBaseMs, 0),
   };
 }
 
@@ -193,9 +212,22 @@ export function getTimerState(): TimerState {
  *  mode, accounting for live running offset. Visible-only — never
  *  written back to state; that happens on pause. */
 export function getVisibleRemainingMs(s: TimerState = state, now: number = Date.now()): number {
+  if (isStopwatch(s)) {
+    // Counting up: the visible value is the elapsed time.
+    const base = s.speechStopwatchBaseMs;
+    if (!s.running || s.runningSince === null) return base;
+    return base + Math.max(0, now - s.runningSince);
+  }
   const base = baseForMode(s, s.mode);
   if (!s.running || s.runningSince === null) return base;
   return Math.max(0, base - (now - s.runningSince));
+}
+
+/** Whether the ACTIVE clock is the speech stopwatch (counting up). The
+ *  UI, the flash / expiry logic and the audible alerts all key on this:
+ *  a count-up has no end and no alert points. */
+export function isStopwatch(s: TimerState = state): boolean {
+  return s.mode === 'speech' && s.stopwatch;
 }
 
 export function getPrepRemainingMs(s: TimerState, side: 'aff' | 'neg', now: number = Date.now()): number {
@@ -216,10 +248,20 @@ function baseForMode(s: TimerState, mode: TimerMode): number {
 // ─── Actions ──────────────────────────────────────────────────────
 
 /** Begin counting down whatever's currently in `mode`. If we were
- *  already running, no-op. If the base is zero, no-op (nothing to
- *  count down). */
+ *  already running, no-op. A speech clock at 0:00 (or a paused
+ *  stopwatch) counts UP instead — the stopwatch; a prep clock at zero
+ *  is a spent balance and stays a no-op. */
 export function startTimer(): void {
   if (state.running) return;
+  if (state.mode === 'speech' && (state.stopwatch || state.speechBaseRemainingMs <= 0)) {
+    setState({
+      stopwatch: true,
+      running: true,
+      runningSince: Date.now(),
+      ...(state.stopwatch ? {} : { speechStopwatchBaseMs: 0 }),
+    });
+    return;
+  }
   const base = baseForMode(state, state.mode);
   if (base <= 0) return;
   setState({ running: true, runningSince: Date.now() });
@@ -230,6 +272,7 @@ export function startTimer(): void {
  *  make the concurrent per-window calls converge on one idempotent
  *  write instead of a broadcast storm. */
 export function markTimerExpired(): void {
+  if (isStopwatch(state)) return; // a count-up never runs out
   if (state.expiredMode === state.mode) return;
   if (!state.running) return;
   if (getVisibleRemainingMs(state) > 0) return;
@@ -242,6 +285,10 @@ export function pauseTimer(): void {
   if (!state.running) return;
   const now = Date.now();
   const elapsed = state.runningSince ? now - state.runningSince : 0;
+  if (isStopwatch(state)) {
+    setState({ running: false, runningSince: null, speechStopwatchBaseMs: state.speechStopwatchBaseMs + Math.max(0, elapsed) });
+    return;
+  }
   const base = baseForMode(state, state.mode);
   const newBase = Math.max(0, base - elapsed);
   if (state.mode === 'affPrep') {
@@ -265,6 +312,8 @@ export function resetTimer(prepTotalMs: number = state.prepTotalMs): void {
     negPrepBaseRemainingMs: prepTotalMs,
     prepTotalMs,
     expiredMode: null,
+    stopwatch: false,
+    speechStopwatchBaseMs: 0,
   });
 }
 
@@ -280,6 +329,8 @@ export function loadSpeechPreset(minutes: number): void {
     runningSince: null,
     speechBaseRemainingMs: ms,
     expiredMode: null,
+    stopwatch: false,
+    speechStopwatchBaseMs: 0,
   });
 }
 
@@ -339,7 +390,8 @@ export function setActiveRemainingMs(ms: number): void {
   const v = Math.max(0, Math.floor(ms));
   if (state.mode === 'affPrep') setState({ affPrepBaseRemainingMs: v, expiredMode: null });
   else if (state.mode === 'negPrep') setState({ negPrepBaseRemainingMs: v, expiredMode: null });
-  else setState({ speechBaseRemainingMs: v, expiredMode: null });
+  // A typed time arms a countdown, even 0:00 (the next Start counts up from scratch).
+  else setState({ speechBaseRemainingMs: v, expiredMode: null, stopwatch: false, speechStopwatchBaseMs: 0 });
 }
 
 /** Push the configured prep total into state. Called when settings

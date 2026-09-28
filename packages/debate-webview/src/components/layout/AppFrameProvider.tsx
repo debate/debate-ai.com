@@ -17,9 +17,12 @@
  * which Next's app router tracks without refetching), so deep links, the
  * back button and `usePathname()`-driven UI all keep working.
  *
- * Visited frames stay mounted and hidden (see `lib/nav/frame-pool.ts`), so
- * hopping back to a destination is instant and its scroll position, editor
- * buffer and in-flight state survive the trip.
+ * Every dock destination is preloaded into its own hidden frame shortly
+ * after the shell mounts, and no frame is ever unmounted after that (see
+ * `lib/nav/frame-pool.ts`) — not when switching between destinations, and not
+ * while a non-dock route is on screen. Switching is just toggling which frame
+ * is visible, so it is instant and each page's scroll position, editor buffer
+ * and in-flight state survive the trip.
  */
 
 import {
@@ -34,9 +37,11 @@ import {
 } from "react"
 import { usePathname } from "next/navigation"
 
-import { dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
-import { keepAlive } from "../../lib/nav/frame-pool"
+import { DOCK_NAV_HREFS, dockNavLabel, isDockNavPath, toFrameSrc } from "../../lib/nav/dock-nav-paths"
+import { keepAlive, keepAllAlive } from "../../lib/nav/frame-pool"
 import { getHostConfig } from "../../host/config"
+import { beginLoading, finishLoading } from "../../lib/ui/loading-store"
+import { ROUTE_LOADING_TIMEOUT_MS } from "../../lib/ui/use-route-loading"
 
 interface AppFrameContextValue {
   /** The path currently shown in the frame, or `null` when not framing. */
@@ -47,15 +52,20 @@ interface AppFrameContextValue {
   openInFrame: (href: string) => boolean
   /**
    * Warms a destination before it is asked for — called when the pointer
-   * lands on its dock icon. Once the frame stack is live this mounts the
-   * document hidden; before that it can only warm the HTTP cache, since a
-   * frame mounted outside the stack would have to be torn down and reloaded
-   * to join it.
+   * lands on its dock icon. Mounts its frame hidden right away, ahead of the
+   * idle-time preload of the whole dock.
    */
   preloadFrame: (href: string) => void
 }
 
 const AppFrameContext = createContext<AppFrameContextValue | null>(null)
+
+/**
+ * How long after mount the rest of the dock is preloaded. The page on screen
+ * gets the network and main thread first; the hidden frames follow once the
+ * browser is idle, or after this long at the latest.
+ */
+export const PRELOAD_ALL_FRAMES_DELAY_MS = 1500
 
 /** The keep-alive pool, oldest first — read only by {@link AppFrameSurface}. */
 const AppFrameSurfaceContext = createContext<string[]>([])
@@ -77,7 +87,7 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
     if (!getHostConfig().framing || !isDockNavPath(href)) return false
 
     setFramedPath(href)
-    setMountedPaths((paths) => keepAlive(paths, href, href))
+    setMountedPaths((paths) => keepAlive(paths, href))
 
     if (typeof window !== "undefined" && window.location.pathname !== href) {
       // Next's app router patches pushState, so this updates `usePathname()`
@@ -88,27 +98,24 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
     return true
   }, [])
 
-  const prefetchedRef = useRef<Set<string>>(new Set())
+  const preloadFrame = useCallback((href: string) => {
+    if (!getHostConfig().framing || !isDockNavPath(href)) return
+    setMountedPaths((paths) => keepAlive(paths, href))
+  }, [])
 
-  const preloadFrame = useCallback(
-    (href: string) => {
-      if (!getHostConfig().framing || !isDockNavPath(href) || typeof document === "undefined") return
+  // Preload every dock destination into the hidden frame stack once the
+  // browser is idle, so the first click on any dock icon is already instant.
+  useEffect(() => {
+    if (!getHostConfig().framing || typeof window === "undefined") return
+    const preloadAll = () => setMountedPaths((paths) => keepAllAlive(paths, DOCK_NAV_HREFS))
 
-      if (framedPath) {
-        setMountedPaths((paths) => keepAlive(paths, href, framedPath))
-        return
-      }
-
-      if (prefetchedRef.current.has(href)) return
-      prefetchedRef.current.add(href)
-      const link = document.createElement("link")
-      link.rel = "prefetch"
-      link.as = "document"
-      link.href = toFrameSrc(href)
-      document.head.appendChild(link)
-    },
-    [framedPath],
-  )
+    if (typeof window.requestIdleCallback === "function") {
+      const handle = window.requestIdleCallback(preloadAll, { timeout: PRELOAD_ALL_FRAMES_DELAY_MS })
+      return () => window.cancelIdleCallback(handle)
+    }
+    const timer = window.setTimeout(preloadAll, PRELOAD_ALL_FRAMES_DELAY_MS)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   // On mount and whenever pathname changes, frame dock destinations (/debate,
   // /cards, /videos, etc.) so they load embedded inside same-origin iframes,
@@ -118,7 +125,7 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
 
     if (isDockNavPath(pathname)) {
       setFramedPath(pathname)
-      setMountedPaths((paths) => keepAlive(paths, pathname, pathname))
+      setMountedPaths((paths) => keepAlive(paths, pathname))
     } else {
       setFramedPath(null)
     }
@@ -137,38 +144,85 @@ export function AppFrameProvider({ children }: { children: ReactNode }) {
 }
 
 /**
- * The content column. Shows the frame stack once the dock has opened
- * something, and the ordinarily routed page (`children`) before that — so a
- * cold load of `/videos` still renders server-side, with no extra fetch, and
- * only later hops pay for a frame.
+ * The content column. Shows the visible dock frame when a dock destination is
+ * active, and the ordinarily routed page (`children`) otherwise.
+ *
+ * The frame stack is rendered in both cases, in the same slot of the tree, so
+ * React never unmounts it: on a non-dock route every frame is simply hidden,
+ * and coming back to the dock shows the frame exactly as it was left.
  */
 export function AppFrameSurface({ children }: { children: ReactNode }) {
   const frame = useAppFrame()
   const mountedPaths = useContext(AppFrameSurfaceContext)
+  // Frames whose document has fired `load` — a preloaded one included, so
+  // switching to it later is instant and never arms the overlay.
+  const [loadedPaths, setLoadedPaths] = useState<ReadonlySet<string>>(() => new Set())
+  const markLoaded = useCallback((path: string) => {
+    setLoadedPaths((paths) => (paths.has(path) ? paths : new Set(paths).add(path)))
+  }, [])
 
-  if (!frame?.framedPath) return <>{children}</>
+  // The dock's click changes `pathname` at once, which clears the router's
+  // transition, but the frame it opened may still be blank. Hold the global
+  // loading overlay for as long as the visible frame is still loading; it only
+  // shows if that runs past the overlay's show delay.
+  const waitingOnFrame = frame?.framedPath != null && !loadedPaths.has(frame.framedPath)
+  useEffect(() => {
+    if (!waitingOnFrame) return
+    beginLoading()
+    let released = false
+    const release = () => {
+      if (released) return
+      released = true
+      finishLoading()
+    }
+    const timer = window.setTimeout(release, ROUTE_LOADING_TIMEOUT_MS)
+    return () => {
+      window.clearTimeout(timer)
+      release()
+    }
+  }, [waitingOnFrame])
+
+  const framedPath = frame?.framedPath ?? null
 
   return (
-    <div className="relative h-[calc(100dvh-70px)] w-full md:h-screen">
-      {mountedPaths.map((path) => (
-        <iframe
-          key={path}
-          src={toFrameSrc(path)}
-          title={dockNavLabel(path)}
-          // Kept mounted but inert when hidden: `visibility` (not `display`)
-          // so the document isn't torn down or re-laid-out on every switch,
-          // and no pointer/tab access to a frame nobody can see.
-          className="absolute inset-0 h-full w-full border-0"
-          style={{
-            visibility: path === frame.framedPath ? "visible" : "hidden",
-            pointerEvents: path === frame.framedPath ? "auto" : "none",
-          }}
-          aria-hidden={path === frame.framedPath ? undefined : true}
-          tabIndex={path === frame.framedPath ? undefined : -1}
-          allow="autoplay; clipboard-read; clipboard-write; fullscreen; microphone; camera; encrypted-media"
-          allowFullScreen
-        />
-      ))}
-    </div>
+    <>
+      {framedPath ? null : children}
+      <div
+        className={
+          framedPath
+            ? "relative h-[calc(100dvh-70px)] w-full md:h-screen"
+            : // Parked off-screen at full size: the hidden frames keep their
+              // layout (no reflow when they come back) but take no space and
+              // no input while the routed page is shown.
+              "pointer-events-none fixed left-0 top-0 -z-10 h-screen w-screen"
+        }
+        style={framedPath ? undefined : { visibility: "hidden" }}
+        aria-hidden={framedPath ? undefined : true}
+      >
+        {mountedPaths.map((path) => {
+          const visible = path === framedPath
+          return (
+            <iframe
+              key={path}
+              src={toFrameSrc(path)}
+              title={dockNavLabel(path)}
+              // Kept mounted but inert when hidden: `visibility` (not `display`)
+              // so the document isn't torn down or re-laid-out on every switch,
+              // and no pointer/tab access to a frame nobody can see.
+              className="absolute inset-0 h-full w-full border-0"
+              style={{
+                visibility: visible ? "visible" : "hidden",
+                pointerEvents: visible ? "auto" : "none",
+              }}
+              aria-hidden={visible ? undefined : true}
+              tabIndex={visible ? undefined : -1}
+              allow="autoplay; clipboard-read; clipboard-write; fullscreen; microphone; camera; encrypted-media"
+              allowFullScreen
+              onLoad={() => markLoaded(path)}
+            />
+          )
+        })}
+      </div>
+    </>
   )
 }

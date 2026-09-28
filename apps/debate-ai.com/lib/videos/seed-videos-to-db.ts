@@ -2,7 +2,7 @@
  * @fileoverview Loads the bundled video JSON assets into the `videos` table
  * from inside the Worker.
  *
- * The CLI script (`scripts/seed-videos.ts`) needs a machine with wrangler
+ * The CLI script (`.github/scripts/seed-videos.ts`) needs a machine with wrangler
  * credentials; this runs the same shared statements against the request's own
  * D1 binding, so a deploy can be seeded from the admin page instead. Both
  * paths build their SQL with `buildVideoSeedStatements`, so they load

@@ -46,6 +46,7 @@
  */
 
 import { Plugin } from 'prosemirror-state';
+import { withFrozenStyles } from './clipboard-styles.js';
 import { DOMSerializer, Fragment, Slice } from 'prosemirror-model';
 import type { EditorState } from 'prosemirror-state';
 import type { Mark, Node as PMNode } from 'prosemirror-model';
@@ -77,8 +78,10 @@ function pruneStash(): void {
 let copyingState: EditorState | null = null;
 
 /** Clipboard serializer: stock schema serialization, except a
- *  comment_range span also carries its thread as JSON. Built once —
- *  the thread lookup closes over the copy-in-progress state above. */
+ *  comment_range span also carries its thread as JSON, and every element
+ *  gets the copier's appearance as inline styles for other apps
+ *  (clipboard-styles.ts — inert to our own parser). Built once — the
+ *  thread lookup closes over the copy-in-progress state above. */
 function buildClipboardSerializer(): DOMSerializer {
   const base = DOMSerializer.fromSchema(schema);
   const marks = { ...base.marks };
@@ -95,7 +98,7 @@ function buildClipboardSerializer(): DOMSerializer {
       0,
     ];
   };
-  return new DOMSerializer(base.nodes, marks);
+  return withFrozenStyles(new DOMSerializer(base.nodes, marks));
 }
 
 /** Threads waiting for their span to land in the doc, keyed by (new)
