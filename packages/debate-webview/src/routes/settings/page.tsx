@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { CardMirrorSettingsPanel } from "../../components/settings/CardMirrorSettingsPanel"
-import { SettingsToolsLink } from "../../components/settings/SettingsToolsLink"
+import { ToolsLinkCard } from "../../components/settings/ToolsLinkCard"
 
 /**
  * The CardMirror editor's settings, and nothing else.
@@ -21,6 +21,10 @@ import { SettingsToolsLink } from "../../components/settings/SettingsToolsLink"
  *
  * Ebb Flow's own settings are not here: the flow editor opens them with
  * `Cmd/Ctrl+,` inside a flow, which is where they apply.
+ *
+ * `ToolsLinkCard` points to `/tools` for saved-tool data and account sync
+ * status, which moved there when this page was cut down to editor settings
+ * only and was never linked back from here.
  */
 export default function SettingsPage() {
   return (
@@ -36,7 +40,9 @@ export default function SettingsPage() {
         </Link>
       </div>
 
-      <SettingsToolsLink />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <ToolsLinkCard />
+      </div>
 
       <CardMirrorSettingsPanel />
     </div>

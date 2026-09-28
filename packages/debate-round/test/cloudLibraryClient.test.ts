@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchRecentCloudItems } from "../src/state/cloudLibraryClient";
+import { deleteCloudLibraryItem, fetchRecentCloudItems } from "../src/state/cloudLibraryClient";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -223,5 +223,29 @@ describe("fetchRecentCloudItems", () => {
     const items = await fetchRecentCloudItems({ limit: 1 });
 
     expect(items).toHaveLength(1);
+  });
+});
+
+describe("deleteCloudLibraryItem", () => {
+  it("DELETEs the item's path and resolves true on success", async () => {
+    const fetchMock = vi.fn(async () => jsonResponse(200, { success: true }));
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(deleteCloudLibraryItem({ deletePath: "/api/flows/2" })).resolves.toBe(true);
+    expect(fetchMock).toHaveBeenCalledWith("/api/flows/2", { method: "DELETE" });
+  });
+
+  it("resolves false on a non-2xx response or network error", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(401, { error: "Sign in" })));
+    await expect(deleteCloudLibraryItem({ deletePath: "/api/rounds/3" })).resolves.toBe(false);
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("offline"); }));
+    await expect(deleteCloudLibraryItem({ deletePath: "/api/rounds/3" })).resolves.toBe(false);
+  });
+
+  it("never calls the network for samples or items without a deletePath", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    await expect(deleteCloudLibraryItem({ deletePath: "/api/flows/1", isSample: true })).resolves.toBe(false);
+    await expect(deleteCloudLibraryItem({})).resolves.toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });
