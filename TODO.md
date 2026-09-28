@@ -37,6 +37,21 @@ into a real, possibly-empty result. See `getSampleDrillSets` in
 `packages/debate-practice-drills/src/panels/DrillSetsPanel.tsx`. The REASON
 editor's file tree remains the last open follow-up from this ask.
 
+Done (fourth slice, REASON editor file tree): `/reason-editor`'s file-tree
+sidebar showed a bare "No documents yet." for a signed-in user with no
+documents yet, with no demo of what an organized file tree looks like. It now
+shows a small read-only "Example file tree" preview (one folder, two files),
+badged "Sample", under that message whenever the caller's `documents` array
+is empty — a user with any real document (even zero after that) never sees
+it, since the gate is on the real `documents` prop, not the derived tree.
+Sample rows are not interactive (no click/drag/rename/delete) since they
+don't back a real row. See `getSampleReasonDocuments` in
+`packages/debate-webview/src/lib/reason-docs/sample-documents.ts` and its use
+in `packages/debate-webview/src/components/reason-docs/FileTree.tsx`. This
+closes the last open follow-up from the "sample mock data for empty states"
+ask — every other tool page flagged in earlier slices now has this
+treatment.
+
 Known blocker (unrelated to the above): a full monorepo `bun run test` run
 currently fails ~89 tests across 22 files, all with
 `ENOENT: .../apps/debate-ai.com/drizzle/0003_dark_zarek.sql` or similar —
