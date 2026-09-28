@@ -121,6 +121,10 @@ const STATIC_APP_ROUTES = findAppPageRoutes(APP_DIR, "").filter((route) => !rout
  * something the app does for them, and listing it on the `/tools` grid — whose
  * entries each describe a capability with a docs page behind it — would claim a
  * feature guide that does not exist.
+ *
+ * `/rules` and `/topics` are here for the same reason: they are reference
+ * pages in the sidebar tree (the formats-and-rules guide and the resolution
+ * topic-area explorer) — reading material, not tools.
  */
 const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/",
@@ -132,9 +136,11 @@ const ROUTES_WITHOUT_A_CATALOG_ENTRY = new Set([
   "/forums",
   "/legal/privacy",
   "/login",
+  "/rules",
   "/settings",
   "/settings/editor-panel",
   "/settings/preferences",
+  "/topics",
 ])
 
 describe("tool catalog route coverage", () => {

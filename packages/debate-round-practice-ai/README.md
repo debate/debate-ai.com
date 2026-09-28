@@ -22,14 +22,14 @@ in debate-ai.com at [`/versus-ai`](../../apps/debate-ai.com/app/versus-ai/page.t
 and reachable from the app dock.
 
 This package is the Node/TypeScript port of the Go `arguehub` vs-bot server and
-its Vite/React client, both of which still sit alongside it in `backend/` and
-`frontend/` as the reference sources. Nothing in the port calls Go, Mongo or
-Gin: it is plain TypeScript, `fetch`-based, and runs under Next.js or a
-Cloudflare Worker.
+its Vite/React client. The Go server has been removed; the original React
+client still sits alongside the port in `frontend/` as a reference source.
+Nothing in the port calls Go, Mongo or Gin: it is plain TypeScript,
+`fetch`-based, and runs under Next.js or a Cloudflare Worker.
 
 ## What's in it
 
-| Export | Ported from | What it is |
+| Export | Ported from (upstream `arguehub` paths) | What it is |
 | --- | --- | --- |
 | `./backend` | `backend/controllers/debatevsbot_controller.go`, `backend/services/*.go`, `backend/models/debatevsbot.go`, `backend/routes/debatevsbot.go` | The vs-bot server: 13 bot personalities, prompt construction, AI judging, gamification rules, and the four `/vsbot/*` handlers |
 | `./client` | `frontend/src/services/vsbot.ts` | The browser client for those endpoints |
@@ -76,9 +76,10 @@ Cloudflare Worker.
 
 ### Out of scope
 
-Only the Practice vs AI (vs-bot) slice of the Go server is ported. The rest of
-`backend/` — WebSocket rooms, human-vs-human and team debates, matchmaking,
-tournaments, Glicko-2 ratings, auth, admin — is untouched and still Go.
+Only the Practice vs AI (vs-bot) slice of the Go server was ported. The rest of
+it — WebSocket rooms, human-vs-human and team debates, matchmaking,
+tournaments, Glicko-2 ratings, auth, admin — was not, and the Go source has
+been removed from this package; see the upstream `arguehub` project for it.
 
 ## Using it
 
@@ -112,7 +113,6 @@ src/
 ├── client/      # the ported browser client
 ├── ui/          # the ported round screens
 └── index.ts
-backend/         # the original Go source, kept as the port's reference
 frontend/        # the original Vite/React source, kept as the port's reference
 UPSTREAM.md      # the upstream project's own README
 ```

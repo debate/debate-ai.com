@@ -28,8 +28,9 @@ expandable in place to its full transcript.
 
 ## How it works
 
-A port of the Go `arguehub` vs-bot server and its Vite/React client (kept
-as reference sources in the package). The 13 personas carry over field for
+A port of the Go `arguehub` vs-bot server and its Vite/React client (the
+React client is kept as a reference source in the package; the Go server has
+been removed). The 13 personas carry over field for
 field from the Go `GetBotPersonality` switch. Text generation uses
 `ANTHROPIC_API_KEY`, falling back to `GEMINI_API_KEY`; with neither set,
 each persona answers with an in-character "my systems are offline" line.

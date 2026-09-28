@@ -122,7 +122,8 @@ plain `fetch`, no Go/Mongo/Gin, runs under Next.js or a Cloudflare Worker.
 ## debate-search-evidence
 
 Package name `debate-research-evidence`. The evidence card research interface (search bar,
-result list, card content viewer, research and AI-analysis sidebars) plus the shared
+result list, card content viewer with a source-article reader that pulls a card's full
+article through qwksearch, research and AI-analysis sidebars) plus the shared
 evidence/argument library, LLM card scoring, revision incentives, review queue, and topic
 coverage dashboard. The foundation that `debate-contributor-progress` and
 `debate-team-collaboration` split off from and still build on.
