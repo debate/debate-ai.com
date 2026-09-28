@@ -22,6 +22,9 @@
  * and one read is cheaper than getting that derivation wrong twice.
  *
  * Mounted in the Coach workspace's Practice tab and at `/practice-partners`.
+ * `/practice-partners#judge` (the sidebar's "Judge Practice Rounds") scrolls
+ * to the rounds needing a judge — or, for someone not volunteering yet, to
+ * the profile where they turn that on.
  */
 
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -50,16 +53,31 @@ type LoadState = "loading" | "ready" | "signed-out" | "error";
 /** How many declined/cancelled challenges to keep on screen. */
 const CLOSED_SHOWN = 5;
 
+/** Anchor of the "Rounds needing a judge" block. */
+export const JUDGE_ANCHOR = "judge";
+/** Anchor of the profile block, where "volunteer to judge" is switched on. */
+export const PROFILE_ANCHOR = "practice-profile";
+
+/**
+ * Where a `#judge` link lands: the open judge seats for a volunteer judge,
+ * otherwise the profile, so they can volunteer first.
+ */
+export function judgeLinkTarget(isJudge: boolean): string {
+  return isJudge ? JUDGE_ANCHOR : PROFILE_ANCHOR;
+}
+
 /** Actions that mean "this is waiting on you". */
 const ANSWER_ACTIONS = new Set<ChallengeAction>(["accept", "decline", "confirm-judge", "decline-judge"]);
 
 function Block({
+  id,
   title,
   icon,
   description,
   action,
   children,
 }: {
+  id?: string;
   title: string;
   icon: ReactNode;
   description?: string;
@@ -67,7 +85,7 @@ function Block({
   children: ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm">
+    <section id={id} className="flex scroll-mt-4 flex-col gap-3 rounded-xl border border-border bg-card p-4 text-card-foreground shadow-sm">
       <header className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2">
           <span className="mt-0.5 text-muted-foreground" aria-hidden="true">
@@ -172,6 +190,13 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
     return { waiting, upcoming, sent, closed };
   }, [board?.challenges, viewerId, isJudge]);
 
+  // `#judge` can only resolve once the board is on screen, and to a block
+  // that depends on the viewer's profile, so it is scrolled to by hand.
+  useEffect(() => {
+    if (loadState !== "ready" || window.location.hash !== `#${JUDGE_ANCHOR}`) return;
+    document.getElementById(judgeLinkTarget(isJudge))?.scrollIntoView({ block: "start" });
+  }, [loadState, isJudge]);
+
   const pendingOpponentIds = useMemo(
     () =>
       new Set(
@@ -250,6 +275,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
       ) : null}
 
       <Block
+        id={PROFILE_ANCHOR}
         title="Your practice profile"
         icon={<UserRound className="h-4 w-4" />}
         description={
@@ -329,6 +355,7 @@ export function PracticePartnersPanel({ className }: { className?: string }) {
 
       {isJudge ? (
         <Block
+          id={JUDGE_ANCHOR}
           title="Rounds needing a judge"
           icon={<Gavel className="h-4 w-4" />}
           description="Accepted practice rounds with an empty judge seat. Pick one up and both debaters are notified."
