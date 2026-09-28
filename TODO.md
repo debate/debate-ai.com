@@ -44,6 +44,63 @@ done in this PR):
   real gap, but a UI-design-sized one (bulk delete? per-kind? confirm
   dialogs for ~21 different record shapes?) rather than a small slice.
 
+Done (fifth slice, /settings → /tools link): picked the lighter of the two
+options the deferred note above raised, rather than re-duplicating
+`ToolSyncStatusPanel`'s sync-status UI on both pages. `/settings` (CardMirror
+editor settings only) had no pointer at all to `/tools`, where saved
+flows/documents/rounds and account sync status actually live now — a user
+looking for either under Settings found nothing. Added `ToolsLinkCard`
+(`packages/debate-webview/src/components/settings/ToolsLinkCard.tsx`), a
+single link card rendered at the top of `/settings`
+(`routes/settings/page.tsx`), with a focused Vitest test
+(`test/components/settings/ToolsLinkCard.test.tsx`). The larger, still-open
+half of that same deferred item — an actual "Tools"/"Data & Sync" section on
+`/settings` itself, i.e. re-duplicating sync status there — still needs the
+product decision noted above and remains a follow-up. The per-item
+delete/manage gap in "My Saved Items" also remains open, unchanged from the
+note above.
+
+Done (sixth slice, per-item delete for flows & rounds in My Saved Items):
+took the smallest useful piece of the still-open "no per-item delete/manage
+affordance" gap — saved flows and rounds, whose `DELETE /api/flows/:clientId`
+and `DELETE /api/rounds/:clientId` routes already existed and were owner-scoped.
+`CloudLibraryItem` gained an optional `deletePath` (set only for those two
+kinds), `deleteCloudLibraryItem` (`debate-round`'s `cloudLibraryClient.ts`)
+issues the DELETE and never rejects, and `MySavedItems.tsx` shows a hover/focus
+trash button with a confirm dialog on real (non-sample) flow/round cards.
+Tests: `test/cloudLibraryClient.test.ts`, `test/cloudLibrary.test.ts`.
+Follow-ups still open: delete for the other ~19 kinds (each has its own
+route/record shape); the "Data & Sync" section on `/settings` (product
+decision); and repo hygiene found while verifying — `bun.lock` on master has
+committed merge-conflict markers (lines 6790–6924, from `8678d95`), so
+`bun install --frozen-lockfile` fails and CI installs can't be reproducible
+until a maintainer regenerates it. Branch:
+`agent/todo-saved-items-delete-flows-rounds`.
+
+Also confirmed still-fixed (no longer follow-ups): both previously-tracked
+test failures — `packages/debate-webview/test/host/routes.test.ts`'s missing
+`/practice-partners` route registration, and
+`apps/debate-ai.com/lib/__tests__/docs-links-consistency.test.ts`'s dead
+docs links — now pass; a prior session's fixes for both are already on this
+branch. The REASON editor file-tree empty-state slice noted as "the last
+open follow-up" a few paragraphs below is also already done (see
+`packages/debate-webview/src/components/reason-docs/FileTree.tsx` and
+`getSampleReasonDocuments`) — that paragraph's wording is stale and kept
+as-is below for the historical record rather than rewritten.
+
+Verified for this slice: `bun run typecheck` (`debate-webview`, clean),
+`bunx vitest run --config apps/debate-ai.com/vitest.config.ts --project
+debate-webview` (53/53 files, 515/515 tests passing). `bun run build:web`
+fails, but confirmed pre-existing and unrelated (reproduces identically with
+this slice's changes fully reverted): a `RangeError: Maximum call stack size
+exceeded` in `fumadocs-mdx`/`mdast-util-to-markdown`'s stringifier while
+processing several `packages/debate-help-docs/content/docs/**` MDX files
+(`task-inbox.mdx`, `turnstile-bot-gate.mdx`,
+`team-collaboration-mode.mdx`, `flow-annotations.mdx`,
+`topic-coverage-dashboard.mdx`, and others) — unrelated to `/settings` or
+`/tools` and a good follow-up for a maintainer familiar with that docs
+pipeline.
+
 Done (first slice): `/tools`' "My Saved Items" widget rendered nothing at
 all for a signed-in user with no cloud-saved data yet — indistinguishable
 from broken, and no demo of what the widget (or the tools it links) does.
