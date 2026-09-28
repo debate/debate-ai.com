@@ -9,51 +9,44 @@
 
 import { describe, expect, it } from "vitest"
 
-import { keepAlive, MAX_KEPT_FRAMES } from "../../../src/lib/nav/frame-pool"
+import { keepAlive, keepAllAlive } from "../../../src/lib/nav/frame-pool"
 
 describe("keepAlive", () => {
   it("appends a path the pool doesn't have", () => {
-    expect(keepAlive(["/videos"], "/cards", "/cards")).toEqual(["/videos", "/cards"])
+    expect(keepAlive(["/videos"], "/cards")).toEqual(["/videos", "/cards"])
   })
 
   it("returns the pool untouched for a path it already holds", () => {
     // Identity, not just equality: a new array would re-render the frame list
     // for nothing.
     const pool = ["/videos", "/cards"]
-    expect(keepAlive(pool, "/videos", "/videos")).toBe(pool)
+    expect(keepAlive(pool, "/videos")).toBe(pool)
   })
 
   it("never reorders, so revisiting a frame doesn't move (and reload) it", () => {
     // An LRU would promote /videos to the end here. Moving an iframe in the
     // DOM reloads its document, which is the whole cost this pool avoids.
     let pool = ["/videos", "/cards", "/debate"]
-    pool = keepAlive(pool, "/videos", "/videos")
-    pool = keepAlive(pool, "/cards", "/cards")
+    pool = keepAlive(pool, "/videos")
+    pool = keepAlive(pool, "/cards")
     expect(pool).toEqual(["/videos", "/cards", "/debate"])
   })
 
-  it("evicts the oldest once it is over the cap", () => {
-    const full = Array.from({ length: MAX_KEPT_FRAMES }, (_, i) => `/p${i}`)
-    const next = keepAlive(full, "/new", "/new")
-    expect(next).toHaveLength(MAX_KEPT_FRAMES)
-    expect(next[0]).toBe("/p1")
-    expect(next).toContain("/new")
-    expect(next).not.toContain("/p0")
+  it("never evicts, however many frames it holds", () => {
+    const many = Array.from({ length: 20 }, (_, i) => `/p${i}`)
+    const next = keepAlive(many, "/new")
+    expect(next).toHaveLength(21)
+    expect(next[0]).toBe("/p0")
+  })
+})
+
+describe("keepAllAlive", () => {
+  it("appends the missing paths after the existing ones, in order", () => {
+    expect(keepAllAlive(["/cards"], ["/videos", "/cards", "/doc"])).toEqual(["/cards", "/videos", "/doc"])
   })
 
-  it("never evicts the frame that is on screen", () => {
-    // Dropping it would blank the content column mid-session.
-    const full = Array.from({ length: MAX_KEPT_FRAMES }, (_, i) => `/p${i}`)
-    const next = keepAlive(full, "/new", "/p0")
-    expect(next).toContain("/p0")
-    expect(next).toContain("/new")
-    expect(next).not.toContain("/p1")
-  })
-
-  it("still admits the new path when nothing may be evicted", () => {
-    // A one-slot pool holding the visible frame: the incoming path wins a
-    // temporary slot rather than being dropped on the floor.
-    const next = keepAlive(["/videos"], "/cards", "/videos")
-    expect(next).toEqual(["/videos", "/cards"])
+  it("returns the pool untouched when it already holds every path", () => {
+    const pool = ["/videos", "/cards"]
+    expect(keepAllAlive(pool, ["/cards", "/videos"])).toBe(pool)
   })
 })

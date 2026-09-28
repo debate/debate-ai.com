@@ -30,12 +30,12 @@ its editor state on its own initiative, and whatever is in the view when it
 does gets saved as the user's file.
 
 The engine itself is upstream CardMirror (the `packages/debate-editor-cm`
-submodule), rebased into `packages/debate-editor/src/`. The two seams the
+submodule), copied into `packages/debate-editor/src/` at install time. The two seams the
 embed leans on — `adoptEmbeddedDoc` (tells the engine which document the host
 mounted) and the `hostPlugins()` slot in `buildEditorPlugins` (keeps the
 change reporter across every plugin rebuild) — are debate-ai.com edits to
-upstream's `editor/index.ts`, recorded in `packages/debate-editor/patches/debate-ai.patch`
-and carried forward by `scripts/sync-upstream.mjs` on each upstream bump. An
+upstream's `editor/index.ts`, which `packages/debate-editor` therefore tracks as an
+override, and carried forward by `scripts/sync-upstream.mjs --sync` on each upstream bump. An
 upstream sync that moved or dropped either one breaks this page's guarantees,
 so check both after resolving a conflict in `index.ts`.
 
@@ -151,8 +151,8 @@ inside the debounce dropped the edits to the one you left.
 - `packages/debate-editor/test/engine-boot.test.ts` — boots the real engine
   inside `RIBBON_HTML` the way the singleton does, so an upstream sync that
   needs a new element the embed markup lacks fails in CI instead of at load
-- `packages/debate-editor/test/upstream-sync.test.ts` — every edit to an
-  upstream file under `src/` is recorded in `patches/debate-ai.patch`
+- `packages/debate-editor/test/upstream-sync.test.ts` — no generated upstream
+  copy under `src/` was edited without being kept as an override
 
 ## Known gaps
 

@@ -2,10 +2,11 @@
  * @fileoverview "Cameras" section of the round sidebar: brings the debaters'
  * (and judge's) webcams into the round as a small peer-to-peer video room.
  *
- * Everyone who opens the same room code joins the same room; the default code
- * is derived from the round, and can be copied to (or pasted from) the other
- * side. Media flows browser-to-browser via simple-peer; the app Worker's
- * Durable Object only relays connection setup (see room-protocol.ts).
+ * Everyone in the same round joins the same room — its id is derived from the
+ * round, so there is nothing to share or type. Media flows browser-to-browser
+ * via simple-peer; the app Worker's Durable Object only relays connection
+ * setup (see room-protocol.ts). A camera picker chooses which of the
+ * browser's cameras to send, before joining or mid-round.
  *
  * Everyone picks how they join — debater, judge or observer — so a judge can
  * sit in the round virtually. Each tile is labeled with its participant's
@@ -15,9 +16,9 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Camera, CameraOff, ChevronDown, ChevronRight, Copy, Mic, MicOff, PhoneOff, Video } from "lucide-react"
+import { Camera, CameraOff, ChevronDown, ChevronRight, Mic, MicOff, PhoneOff, SwitchCamera, Video } from "lucide-react"
 import { cn } from "../ui/lib/utils"
-import { MAX_ROOM_CAMERAS, normalizeRoomId, roomIdForRound, type RoomRole } from "./room-protocol"
+import { MAX_ROOM_CAMERAS, roomIdForRound, type RoomRole } from "./room-protocol"
 import { useWebcamRoom } from "./useWebcamRoom"
 import { ROOM_ROLE_LABELS, roomTileLabel } from "./room-labels"
 import type { Round } from "../types/flow"
@@ -83,16 +84,42 @@ function VideoTile({
   )
 }
 
+/** Which of the browser's cameras to send. Hidden until one is known. */
+function CameraPicker({
+  cameras,
+  cameraId,
+  onSelect,
+}: {
+  cameras: MediaDeviceInfo[]
+  cameraId: string | null
+  onSelect: (id: string) => void
+}) {
+  if (cameras.length === 0) return null
+  return (
+    <label className="flex items-center gap-1" title="Choose camera">
+      <SwitchCamera className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden />
+      <span className="sr-only">Camera</span>
+      <select
+        value={cameraId ?? ""}
+        onChange={(e) => onSelect(e.target.value)}
+        className="h-7 min-w-0 flex-1 rounded-[var(--border-radius)] border border-border bg-transparent px-1 text-xs"
+      >
+        {cameraId === null && <option value="">Default camera</option>}
+        {cameras.map((c, i) => (
+          <option key={c.deviceId} value={c.deviceId}>
+            {c.label || `Camera ${i + 1}`}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
 export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: string }) {
   const [open, setOpen] = useState(true)
-  const defaultRoom = roomIdForRound(round)
-  const [roomInput, setRoomInput] = useState(defaultRoom)
-  const roomId = normalizeRoomId(roomInput) ?? defaultRoom
+  const roomId = roomIdForRound(round)
   const [joinRole, setJoinRole] = useState<RoomRole>("speaker")
   const room = useWebcamRoom(roomId, { apiBase, role: joinRole })
-  const [copied, setCopied] = useState(false)
-
-  useEffect(() => setRoomInput(defaultRoom), [defaultRoom])
 
   const joined = room.status === "joined" || room.status === "connecting"
   const btn =
@@ -116,28 +143,7 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
 
       {open && (
         <div className="flex flex-col gap-2 pl-2">
-          <div className="flex items-center gap-1">
-            <input
-              value={roomInput}
-              onChange={(e) => setRoomInput(e.target.value)}
-              disabled={joined}
-              aria-label="Room code"
-              className="h-7 min-w-0 flex-1 rounded-[var(--border-radius)] border border-border bg-transparent px-2 text-xs"
-            />
-            <button
-              type="button"
-              className={btn}
-              title="Copy room code"
-              onClick={() => {
-                void navigator.clipboard?.writeText(roomId)
-                setCopied(true)
-                setTimeout(() => setCopied(false), 1500)
-              }}
-            >
-              <Copy className="h-3 w-3" />
-              {copied ? "Copied" : ""}
-            </button>
-          </div>
+          <CameraPicker cameras={room.cameras} cameraId={room.cameraId} onSelect={(id) => void room.selectCamera(id)} />
 
           {joined ? (
             <>
@@ -202,7 +208,7 @@ export function WebcamRoomPanel({ round, apiBase }: { round: Round; apiBase?: st
           {room.error && <p className="text-[11px] text-red-600 dark:text-red-400" role="alert">{room.error}</p>}
           {!joined && (
             <p className="text-[10px] leading-snug text-muted-foreground">
-              Share the room code with your opponent or judge — a judge who can't be there joins as a virtual judge.
+              Everyone in this round joins the same room — a judge who can't be there joins as a virtual judge.
               Video goes directly between browsers; up to{" "}
               {MAX_ROOM_CAMERAS} cameras per room.
             </p>

@@ -1,0 +1,60 @@
+---
+title: "debate-card-parser"
+---
+
+# Debate Card Parser: DOCX/HTML to Structured Cards
+
+Comprehensive toolkit for converting debate research documents (DOCX/HTML) into structured debate cards with rich metadata extraction and analysis.
+It transforms debate research documents (DOCX) into structured JSON, capturing citations, highlights, word counts, and error tracking, while preserving the hierarchical structure of debate briefs. Key metadata is extracted for LLM analysis, enabling LLMs to review the full text, identify logic flaws or unsupported claims, and flag overstatements. LLMs also extend warrants, summarize support, and suggest where each card fits within the Topic Research Unified Tree Hierarchy (TRUTH).
+
+## Usage
+
+### Command Line Interface
+```bash
+# Process single file
+node src/docx-to-html-cli.js input.docx
+
+# Process directory of files
+node src/process-cards-files.js /path/to/html/files
+```
+
+### Programmatic Usage
+
+```typescript
+import { docxToCards, docxToHtml, htmlToCards } from 'debate-card-parser';
+
+// Method 1: Direct DOCX to Cards (recommended)
+const result = await docxToCards(docxFile, 'filename.docx');
+console.log(`Extracted ${result.metadata.quotes} cards`);
+```
+
+## Key Features
+
+- **Hierarchical Preservation**: Maintains debate brief structure (sections → subsections → blocks → cards)
+- **Smart Citation Parsing**: Handles various citation formats and edge cases
+- **Advanced Author Recognition**: 92K human names database, multiple-author detection, organizational author identification
+- **Highlight Extraction**: Preserves marked/underlined text for key evidence
+- **Comprehensive Validation**: Tracks data quality issues and missing fields
+
+## Package layout
+
+Logic lives under `src/`, grouped by role; tests live under `test/`.
+
+```
+debate-card-parser/
+├── src/
+│   ├── extractors/   # citation, text and file-name extraction
+│   ├── human-name/   # 92k-name database, organization + author heuristics
+│   ├── parsers/      # docx → html → cards pipelines
+│   ├── types/        # Card, FormatProfile and related types
+│   ├── utils/        # card finalization, repair and format profiles
+│   └── index.ts      # public entry point
+└── test/             # Vitest suites for the pure parsing helpers
+```
+
+## Tests
+
+```bash
+bun run test        # or: npx vitest run
+bun run coverage    # writes ./coverage for this package alone
+```

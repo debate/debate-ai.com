@@ -20,6 +20,17 @@
 
 import type { CoachMaterial } from "./team-coach-materials";
 
+/**
+ * A `CoachMaterial` as `GET /api/coach-materials` actually returns it: the
+ * saved row's own `updatedAt` (ISO string) mixed in. `CoachMaterial` itself
+ * has no timestamp field — `reviewedAt` only covers a review decision, not a
+ * save — so this is what `debate-round`'s `cloudLibrary.ts` merge needs to
+ * list a synced material without inventing one. `useCoachMaterialsSync.ts`'s
+ * local-storage merge still treats the extra field as absent (it only reads
+ * the `CoachMaterial` fields it already knows about).
+ */
+export type SyncedCoachMaterial = CoachMaterial & { updatedAt: string };
+
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
     const payload = (await res.json()) as { error?: string };
@@ -32,13 +43,13 @@ async function readErrorMessage(res: Response, fallback: string): Promise<string
 /** Lists every coach material synced to the current user's account. Returns `null` when signed out (a `401` response). */
 export async function listSavedCoachMaterials(
   endpoint = "/api/coach-materials",
-): Promise<CoachMaterial[] | null> {
+): Promise<SyncedCoachMaterial[] | null> {
   const res = await fetch(endpoint);
   if (res.status === 401) return null;
   if (!res.ok) {
     throw new Error(await readErrorMessage(res, "Failed to load your synced coach materials."));
   }
-  return (await res.json()) as CoachMaterial[];
+  return (await res.json()) as SyncedCoachMaterial[];
 }
 
 /** Saves (upserts, keyed by `material.id`) a coach material to the current user's account. Throws on failure, `401` included. */

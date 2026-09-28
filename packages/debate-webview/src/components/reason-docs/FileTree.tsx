@@ -39,6 +39,8 @@ import {
   DropdownMenuTrigger,
 } from "../../lib/ui/primitives/dropdown-menu"
 import { Input } from "../../lib/ui/primitives/input"
+import { Badge } from "../../lib/ui/primitives/badge"
+import { getSampleReasonDocuments } from "../../lib/reason-docs/sample-documents"
 import type { ReasonDocument } from "./types"
 
 interface TreeNode {
@@ -296,6 +298,29 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
     )
   }
 
+  /** A read-only preview row for the "no documents yet" sample tree — no
+   *  click/drag/rename/delete affordances, since these rows aren't real. */
+  const renderSampleNode = (node: TreeNode, depth: number): ReactNode => {
+    const { doc } = node
+    return (
+      <div key={doc.id}>
+        <div
+          className="flex items-center gap-1 rounded-md py-1.5 pr-1 text-sm truncate text-muted-foreground"
+          style={{ paddingLeft: 8 + depth * 16 }}
+        >
+          <span className="w-4 shrink-0" />
+          {doc.isFolder ? (
+            <FolderOpenIcon className="h-4 w-4 shrink-0" />
+          ) : (
+            <FileText className="h-4 w-4 shrink-0 opacity-60" />
+          )}
+          <span className="flex-1 truncate">{doc.title}</span>
+        </div>
+        {node.children.map((child) => renderSampleNode(child, depth + 1))}
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn("flex-1 overflow-auto py-1", dragOverRoot && "ring-1 ring-inset ring-primary")}
@@ -306,10 +331,19 @@ export function FileTree({ documents, activeId, onSelect, onAdd, onRename, onDel
       onDragLeave={() => setDragOverRoot(false)}
       onDrop={(e) => handleDrop(e, null)}
     >
-      {tree.length === 0 ? (
-        <p className="px-3 py-4 text-sm text-muted-foreground">
-          No documents yet. Create one, or drop a .docx here to open it in CardMirror.
-        </p>
+      {documents.length === 0 ? (
+        <div className="px-3 py-4">
+          <p className="text-sm text-muted-foreground">
+            No documents yet. Create one, or drop a .docx here to open it in CardMirror.
+          </p>
+          <div className="mt-3 rounded-lg border border-dashed border-border p-2">
+            <div className="mb-1 flex items-center justify-between gap-2 px-1">
+              <span className="text-xs font-semibold text-foreground">Example file tree</span>
+              <Badge variant="outline">Sample</Badge>
+            </div>
+            {buildTree(getSampleReasonDocuments()).map((node) => renderSampleNode(node, 0))}
+          </div>
+        </div>
       ) : (
         tree.map((node) => renderNode(node, 0))
       )}

@@ -92,20 +92,20 @@ describe("the search and filter controls", () => {
     expect(searchInput).toBeGreaterThan(asideEnd);
   });
 
-  it("collapse to one trigger, shared by desktop and mobile", () => {
+  it("render once, shared by desktop and mobile", () => {
     const markup = renderGrid();
     // Two instances is what the sidebar + mobile `StickyHeader` pair used to
     // render, and what made the search term appear to reset when the viewport
     // crossed `md`.
-    expect(markup.split("data-floating-search-trigger").length - 1).toBe(1);
     expect(markup.split('placeholder="Search..."').length - 1).toBe(1);
   });
 
-  it("start collapsed, with the panel hidden rather than unmounted", () => {
+  it("are always visible, with no trigger to click first", () => {
     const markup = renderGrid();
-    expect(markup).toContain('aria-expanded="false"');
-    // Kept in the DOM so the input holds its value across a hover-out.
-    expect(markup).toContain('placeholder="Search..."');
+    expect(markup).not.toContain("data-floating-search-trigger");
+    const searchInput = markup.indexOf('placeholder="Search..."');
+    // No `hidden` ancestor wraps the input.
+    expect(markup.slice(0, searchInput)).not.toMatch(/<div[^>]*\shidden(=""|\s|>)/);
   });
 });
 

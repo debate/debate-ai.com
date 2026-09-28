@@ -16,7 +16,7 @@
  * navigation at all beyond a "Back" link.
  *
  * The search controls are not here, and are not in the grid's `<aside>`
- * either: they float over the results panel (`FloatingVideoSearch`). So this
+ * either: they sit at the top of the results panel. So this
  * column and that one now hold the same things, at the same widths, and the
  * sidebar does not change shape when you cross into one of these pages.
  *

@@ -77,6 +77,7 @@ export const PAGE_ROUTES: AppRoute[] = [
   { pattern: "/opponents", load: () => import("./opponents/page") },
   { pattern: "/outcomes", load: () => import("./outcomes/page") },
   { pattern: "/outline", load: () => import("./outline/page") },
+  { pattern: "/practice-partners", load: () => import("./practice-partners/page") },
   { pattern: "/practice-round", load: () => import("./practice-round/page") },
   { pattern: "/prep-notes", load: () => import("./prep-notes/page") },
   { pattern: "/rank", load: () => import("./rank/page") },
