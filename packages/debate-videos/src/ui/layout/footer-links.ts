@@ -20,9 +20,9 @@ import {
   Calendar,
   FileText,
   LayoutGrid,
+  LockKeyhole,
   MessageCircle,
   Scale,
-  Shield,
   type LucideIcon,
 } from "lucide-react";
 import { SiDiscord, SiGithub, SiReddit, type IconType } from "@icons-pack/react-simple-icons";
@@ -64,7 +64,7 @@ export const FOOTER_LINKS: FooterLink[] = [
   // { url: "https://opencaselist.com", text: "Research", icon: BookMarked, group: "debate" },
   { url: "https://discord.gg/wMxeKZ3c9e", text: "Support", icon: MessageCircle, group: "site" },
   { url: "https://status.debate-ai.com", text: "Status", icon: Activity, group: "site" },
-  { url: "/legal/privacy", text: "Privacy", icon: Shield, group: "site" },
+  { url: "/legal/privacy", text: "Privacy", icon: LockKeyhole, group: "site" },
 ];
 
 /** The links `CategoryDock`'s "Site Links" submenu shows. */
