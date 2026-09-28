@@ -30,6 +30,23 @@ export interface WebcamRoomOptions {
   role?: RoomRole
 }
 
+/** Capture size for every camera; the mesh sends it to each peer. */
+const VIDEO_SIZE = { width: 640, height: 360 }
+
+export function videoConstraints(cameraId: string | null): MediaTrackConstraints {
+  return cameraId ? { ...VIDEO_SIZE, deviceId: { exact: cameraId } } : VIDEO_SIZE
+}
+
+/** The browser's cameras. Labels stay empty until camera permission is granted. */
+export async function listCameras(): Promise<MediaDeviceInfo[]> {
+  if (!navigator.mediaDevices?.enumerateDevices) return []
+  try {
+    return (await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === "videoinput" && d.deviceId)
+  } catch {
+    return []
+  }
+}
+
 const DEFAULT_ICE: RTCIceServer[] = [{ urls: "stun:stun.cloudflare.com:3478" }]
 
 async function loadIceServers(apiBase: string): Promise<RTCIceServer[]> {
@@ -58,10 +75,26 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
   const [participants, setParticipants] = useState<Record<string, RemoteParticipant>>({})
   const [micOn, setMicOn] = useState(true)
   const [camOn, setCamOn] = useState(true)
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([])
+  /** The chosen camera, or null for the browser's default. */
+  const [cameraId, setCameraId] = useState<string | null>(null)
 
   const socketRef = useRef<WebSocket | null>(null)
   const peersRef = useRef(new Map<string, SimplePeer.Instance>())
   const streamRef = useRef<MediaStream | null>(null)
+  const camOnRef = useRef(camOn)
+  camOnRef.current = camOn
+
+  const refreshCameras = useCallback(async () => setCameras(await listCameras()), [])
+
+  useEffect(() => {
+    void refreshCameras()
+    const devices = navigator.mediaDevices
+    if (!devices?.addEventListener) return
+    const onChange = () => void refreshCameras()
+    devices.addEventListener("devicechange", onChange)
+    return () => devices.removeEventListener("devicechange", onChange)
+  }, [refreshCameras])
 
   const upsert = useCallback((id: string, patch: Partial<RemoteParticipant>) => {
     setParticipants((prev) => {
@@ -104,7 +137,7 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     setStatus("connecting")
     try {
       const [stream, iceServers, { default: Peer }] = await Promise.all([
-        navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 360 }, audio: true }),
+        navigator.mediaDevices.getUserMedia({ video: videoConstraints(cameraId), audio: true }),
         loadIceServers(apiBase),
         import("simple-peer/simplepeer.min.js"),
       ])
@@ -112,6 +145,11 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
       setLocalStream(stream)
       setMicOn(true)
       setCamOn(true)
+      // Now that permission is granted the list carries real labels, and the
+      // picker should show whichever camera the browser actually opened.
+      const opened = stream.getVideoTracks()[0]?.getSettings().deviceId
+      if (opened) setCameraId(opened)
+      void refreshCameras()
 
       const connect = (peerId: string, initiator: boolean) => {
         const existing = peersRef.current.get(peerId)
@@ -202,7 +240,53 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     }
     // `send` only reads refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiBase, roomId, role, upsert, drop, leave])
+  }, [apiBase, roomId, role, cameraId, upsert, drop, leave, refreshCameras])
+
+  /**
+   * Pick a camera. Before joining it just records the choice; in the room it
+   * opens the new camera and swaps its track into the local preview and
+   * every peer connection, so nobody has to reconnect.
+   */
+  const selectCamera = useCallback(async (id: string) => {
+    const stream = streamRef.current
+    if (!stream) {
+      setCameraId(id)
+      return
+    }
+    const oldTrack = stream.getVideoTracks()[0]
+    if (oldTrack?.getSettings().deviceId === id) return
+    let newTrack: MediaStreamTrack | undefined
+    try {
+      const captured = await navigator.mediaDevices.getUserMedia({ video: videoConstraints(id) })
+      newTrack = captured.getVideoTracks()[0]
+    } catch (e) {
+      setError(e instanceof Error ? `Could not switch camera: ${e.message}` : "Could not switch camera.")
+      return
+    }
+    if (!newTrack) return
+    // Left the room while the camera was opening.
+    if (streamRef.current !== stream) {
+      newTrack.stop()
+      return
+    }
+    newTrack.enabled = camOnRef.current
+    if (oldTrack) {
+      for (const peer of peersRef.current.values()) {
+        try {
+          peer.replaceTrack(oldTrack, newTrack, stream)
+        } catch {
+          // A peer still negotiating picks the track up from `stream` below.
+        }
+      }
+      stream.removeTrack(oldTrack)
+      oldTrack.stop()
+    }
+    stream.addTrack(newTrack)
+    // A fresh stream object so the preview tile re-binds to the new track.
+    setLocalStream(new MediaStream(stream.getTracks()))
+    setCameraId(id)
+    setError(null)
+  }, [])
 
   const broadcast = (event: RoomEventName, payload: unknown) => send({ type: "room-event", event, payload })
 
@@ -235,6 +319,9 @@ export function useWebcamRoom(roomId: string, { apiBase = "/api/rooms", role = "
     leave,
     toggleMic,
     toggleCam,
+    cameras,
+    cameraId,
+    selectCamera,
     broadcast,
   }
 }
