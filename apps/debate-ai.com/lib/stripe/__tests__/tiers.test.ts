@@ -1,10 +1,8 @@
 /**
  * @fileoverview Plan tiers end to end against a real in-memory SQLite
- * database built from the actual migrations: tier resolution, daily usage
+ * database with the schema's tables: tier resolution, daily usage
  * metering, and the Research Team roster / assignment limits.
  */
-import { readFileSync } from "node:fs"
-import { join } from "node:path"
 import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import { beforeEach, describe, expect, it } from "vitest"
@@ -13,15 +11,63 @@ import { describeLimits, limitsFor, tierForPlan, TIER_LIMITS } from "../limits"
 import { addStudent, assignmentsForStudent, createAssignment, listStudents, requireTeamTier, TeamError } from "../team"
 import { consumeDailyUsage, getDailyUsage, getUserTier } from "../usage"
 
-const migration = (file: string) => readFileSync(join(import.meta.dirname, "../../../drizzle", file), "utf8")
+/**
+ * The tables these helpers touch, as `drizzle-kit generate` emits them from
+ * `lib/database/schema.ts` (migrations are generated, not committed).
+ */
+const TABLES = `
+CREATE TABLE stripe_subscriptions (
+	subscription_id text PRIMARY KEY NOT NULL,
+	user_id text,
+	customer_id text,
+	email text,
+	price_id text,
+	plan text,
+	status text,
+	current_period_end integer,
+	cancel_at_period_end integer DEFAULT false NOT NULL,
+	created_at integer DEFAULT (unixepoch()) NOT NULL,
+	updated_at integer DEFAULT (unixepoch()) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE usage_counters (
+	subject text NOT NULL,
+	metric text NOT NULL,
+	day text NOT NULL,
+	count integer DEFAULT 0 NOT NULL,
+	PRIMARY KEY(subject, metric, day)
+);
+--> statement-breakpoint
+CREATE TABLE team_students (
+	owner_user_id text NOT NULL,
+	student_email text NOT NULL,
+	created_at integer DEFAULT (unixepoch()) NOT NULL,
+	PRIMARY KEY(owner_user_id, student_email),
+	FOREIGN KEY (owner_user_id) REFERENCES user(id) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX idx_team_students_email ON team_students (student_email);
+--> statement-breakpoint
+CREATE TABLE team_assignments (
+	id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	owner_user_id text NOT NULL,
+	kind text NOT NULL,
+	title text NOT NULL,
+	body text DEFAULT '' NOT NULL,
+	student_emails text,
+	due_at integer,
+	created_at integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (owner_user_id) REFERENCES user(id) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX idx_team_assignments_owner ON team_assignments (owner_user_id);
+`
 
 async function freshDb() {
   const client = createClient({ url: ":memory:" })
   await client.execute(`CREATE TABLE user (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE)`)
   await client.execute(`INSERT INTO user VALUES ('coach', 'Coach Kim', 'coach@example.com'), ('pro', 'Pro', 'pro@example.com')`)
-  for (const file of ["0052_stripe_subscriptions.sql", "0055_plan_tiers_and_team.sql"]) {
-    for (const statement of migration(file).split("--> statement-breakpoint")) await client.execute(statement)
-  }
+  for (const statement of TABLES.split("--> statement-breakpoint")) await client.execute(statement)
   await client.execute(
     `INSERT INTO stripe_subscriptions (subscription_id, user_id, plan, status) VALUES
      ('sub_team', 'coach', 'research-team', 'active'), ('sub_pro', 'pro', 'pro-vip', 'active')`,
