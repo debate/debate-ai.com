@@ -30,8 +30,9 @@
  * its cards, highlighting and comments intact.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { Group, Panel, Separator } from "react-resizable-panels"
 import { BookOpen, ChevronDown, ChevronRight, FilePlus2, FolderPlus, Loader2, PanelLeft, PanelsTopLeft, Upload } from "lucide-react"
 import { AnimatedLoader } from "@/components/ui/AnimatedLoader"
 import { cn } from "@/lib/ui/lib/utils"
@@ -42,30 +43,36 @@ import {
   isEditorPathname,
   type ReasonDocsSelection,
 } from "@/lib/reason-docs/route-selection"
+import {
+  PANEL_LABELS,
+  PANEL_MIN_SIZE,
+  isPanel,
+  layoutFor,
+  parseLayout,
+  visiblePanelsOf,
+  type PanelLayout,
+  type SidebarPanel,
+} from "@/lib/reason-docs/panel-layout"
 import { FileTree } from "./FileTree"
 import { OpenTabsPanel } from "./OpenTabsPanel"
 import { TopicStarterTree, type TopicStarterItem } from "./TopicStarterTree"
 import { useReasonDocs } from "./ReasonDocsProvider"
 import type { ReasonDocument } from "./types"
 
-type SidebarPanel = "files" | "topicStarters" | "openTabs"
-
 /** Which panels are shown, stacked top-to-bottom like the REASON sidebar
  *  this is ported from. Files + Open Tabs both visible is that sidebar's
- *  default view. */
+ *  default view. The stack order itself, and how the panels divide the height
+ *  they share, live in `lib/reason-docs/panel-layout.ts`. */
 const DEFAULT_PANELS: SidebarPanel[] = ["files", "openTabs"]
 const PANELS_STORAGE_KEY = "reason-editor-sidebar-panels"
 const SECTION_STORAGE_KEY = "reason-editor-sidebar-open"
+const LAYOUT_STORAGE_KEY = "reason-editor-sidebar-layout"
 
 const PANEL_TOGGLES: { panel: SidebarPanel; label: string; icon: typeof PanelLeft }[] = [
   { panel: "files", label: "Files", icon: PanelLeft },
   { panel: "topicStarters", label: "Topics", icon: BookOpen },
   { panel: "openTabs", label: "Tabs", icon: PanelsTopLeft },
 ]
-
-function isPanel(value: unknown): value is SidebarPanel {
-  return value === "files" || value === "topicStarters" || value === "openTabs"
-}
 
 function loadPanels(): SidebarPanel[] {
   try {
@@ -91,7 +98,31 @@ function loadSectionOpen(): boolean | null {
   }
 }
 
-export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
+/** The panel sizes the reader last dragged to, or `{}` when they never have
+ *  (or when storage is unavailable — see `loadPanels` above). */
+function loadLayout(): PanelLayout {
+  try {
+    return parseLayout(localStorage.getItem(LAYOUT_STORAGE_KEY))
+  } catch {
+    return {}
+  }
+}
+
+export interface ReasonDocsSidebarPanelsProps {
+  className?: string
+  /**
+   * Take the height the container gives instead of the panels' own fixed one.
+   *
+   * Passed on `/cards`, where these panels *are* the sidebar and so own what
+   * is left of the column under the dock. Left off where something else sits
+   * below them in a scrolling column (`/reason-editor`'s sidebar, and the
+   * strip above the editor below `md`): a flexible box there is squeezed to
+   * nothing by the nav tree under it.
+   */
+  fill?: boolean
+}
+
+export function ReasonDocsSidebarPanels({ className, fill = false }: ReasonDocsSidebarPanelsProps) {
   const router = useRouter()
   const pathname = usePathname()
   const {
@@ -117,6 +148,11 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
 
   const [panels, setPanels] = useState<SidebarPanel[]>(DEFAULT_PANELS)
   const [openOverride, setOpenOverride] = useState<boolean | null>(null)
+  /** The reader's last dragged panel sizes, and whether they have been read
+   *  yet — the group opens at the defaults for the server render and is
+   *  remounted on the stored sizes once they are in (see `key` below). */
+  const [storedLayout, setStoredLayout] = useState<PanelLayout>({})
+  const [layoutHydrated, setLayoutHydrated] = useState(false)
   /** What the last upload couldn't take, shown under the tree until the next
    *  one. Silence would leave a reader watching a file that never appears. */
   const [importErrors, setImportErrors] = useState<string[]>([])
@@ -133,14 +169,15 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
   useEffect(() => {
     setPanels(loadPanels())
     setOpenOverride(loadSectionOpen())
+    setStoredLayout(loadLayout())
+    setLayoutHydrated(true)
   }, [])
 
   const onEditorRoute = isEditorPathname(pathname)
   // Expanded by default: this only mounts where the documents *are* the
-  // page's subject (`/cards` and the editor), and on `/cards` the sidebar is
-  // now these panels plus the Research tool list — a collapsed "Documents"
-  // row would leave that column with no file tree in it at all. The user's
-  // own collapse still wins, and sticks.
+  // page's subject (`/cards` and the editor), and on `/cards` these panels are
+  // the whole sidebar — a collapsed "Documents" row would leave that column
+  // empty but for the dock. The user's own collapse still wins, and sticks.
   const isOpen = openOverride ?? true
 
   // Nothing is fetched until the section is actually on screen, so a reader
@@ -253,6 +290,113 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
     [downloadTopicDocument],
   )
 
+  const visiblePanels = useMemo(() => visiblePanelsOf(panels), [panels])
+  const defaultLayout = useMemo(() => layoutFor(visiblePanels, storedLayout), [visiblePanels, storedLayout])
+
+  /**
+   * Remembers a drag, per-device, like the panel choice above it.
+   *
+   * Only a reader's own drag is stored (`isUserInteraction`): the same callback
+   * also fires for the layout the group computes on mount and on a constraint
+   * recompute, and writing those back would overwrite a deliberate split with
+   * whatever the defaults worked out to.
+   */
+  const saveLayout = useCallback((layout: PanelLayout, meta: { isUserInteraction: boolean }) => {
+    if (!meta.isUserInteraction) return
+    setStoredLayout((prev) => {
+      const next = { ...prev, ...layout }
+      try {
+        localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        // See above — the split holds for this visit, it just isn't remembered.
+      }
+      return next
+    })
+  }, [])
+
+  /** Each panel's contents, so the stack below is one pass over the visible
+   *  panels rather than three near-identical branches. Sizing lives on the
+   *  `Panel` wrapper, not here. */
+  const panelBodies: Record<SidebarPanel, ReactNode> = {
+    files: (
+      <>
+        <p className="shrink-0 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Files
+        </p>
+        <FileTree
+          documents={documents}
+          activeId={activeId}
+          onSelect={(id) => {
+            openDocument(id)
+            goToEditor({ kind: "document", id })
+          }}
+          onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
+          onRename={updateTitle}
+          onDelete={(id) => void deleteDocument(id)}
+          onMove={(id, parentId) => void moveDocument(id, parentId)}
+          onUpload={(files, parentId) => void uploadFiles(files, parentId)}
+          onDownload={downloadFile}
+        />
+        {importErrors.length > 0 && (
+          <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
+            {importErrors.map((message) => (
+              <li key={message}>{message}</li>
+            ))}
+          </ul>
+        )}
+        {downloadError && <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{downloadError}</p>}
+      </>
+    ),
+    topicStarters: (
+      <>
+        <p className="shrink-0 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Topic Starters
+        </p>
+        <TopicStarterTree
+          items={topicItems}
+          onSelect={(item) => {
+            selectTopicDocument(item)
+            goToEditor({ kind: "topic", id: item.id })
+          }}
+          onDownload={downloadTopicFile}
+        />
+        {topicDownloadError && (
+          <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
+        )}
+      </>
+    ),
+    openTabs: (
+      <>
+        <div className="flex shrink-0 items-center justify-between px-3 pb-1 pt-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Open Tabs{openTabs.length > 0 && ` (${openTabs.length})`}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              void createDocument(null, false)
+              goToBlankEditor()
+            }}
+            title="New File"
+            className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <FilePlus2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        <OpenTabsPanel
+          documents={documents}
+          openTabs={openTabs}
+          activeId={activeId}
+          onSelect={(id) => {
+            selectTab(id)
+            goToEditor({ kind: "document", id })
+          }}
+          onClose={closeTab}
+        />
+      </>
+    ),
+  }
+
   return (
     <div className={cn("flex min-h-0 flex-col", className)}>
       <div className="flex items-center gap-1 px-1">
@@ -340,106 +484,50 @@ export function ReasonDocsSidebarPanels({ className }: { className?: string }) {
             ))}
           </div>
 
-          {/* A definite height rather than `flex-1`: the sidebar scrolls as a
-              whole, so a flexible panel here would be squeezed to nothing by
-              the nav tree below it. The panels scroll inside this box, which
-              keeps a smaller share of the viewport below `md`, where it rides
-              above the editor instead of sitting in the sidebar. */}
+          {/* Where these panels are the sidebar (`fill`) the box takes what
+              is left of the column and the separators below divide it, so the
+              tree and the tabs are sized by dragging rather than by a number
+              in this file. Everywhere else it keeps a definite height: the
+              sidebar scrolls as a whole there, and a flexible box would be
+              squeezed to nothing by the nav tree under it. Either way the
+              panels scroll inside the box. */}
           {loading ? (
             <div className="flex justify-center py-8">
               <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
             </div>
           ) : (
-            <div className="flex h-[380px] max-h-[30vh] min-h-0 flex-col md:max-h-[45vh]">
-              {panels.includes("files") && (
-                <div className="flex min-h-0 flex-1 flex-col">
-                  <p className="shrink-0 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Files
-                  </p>
-                  <FileTree
-                    documents={documents}
-                    activeId={activeId}
-                    onSelect={(id) => {
-                      openDocument(id)
-                      goToEditor({ kind: "document", id })
-                    }}
-                    onAdd={(parentId, isFolder) => void createDocument(parentId, isFolder)}
-                    onRename={updateTitle}
-                    onDelete={(id) => void deleteDocument(id)}
-                    onMove={(id, parentId) => void moveDocument(id, parentId)}
-                    onUpload={(files, parentId) => void uploadFiles(files, parentId)}
-                    onDownload={downloadFile}
-                  />
-                  {importErrors.length > 0 && (
-                    <ul className="shrink-0 space-y-1 px-3 pb-2 text-xs text-destructive">
-                      {importErrors.map((message) => (
-                        <li key={message}>{message}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {downloadError && (
-                    <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{downloadError}</p>
-                  )}
-                </div>
+            <div
+              className={cn(
+                "flex min-h-0 flex-col",
+                fill ? "flex-1" : "h-[380px] max-h-[30vh] md:max-h-[45vh]",
               )}
-
-              {panels.includes("topicStarters") && (
-                <div className="flex min-h-0 flex-1 flex-col border-t first:border-t-0">
-                  <p className="shrink-0 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Topic Starters
-                  </p>
-                  <TopicStarterTree
-                    items={topicItems}
-                    onSelect={(item) => {
-                      selectTopicDocument(item)
-                      goToEditor({ kind: "topic", id: item.id })
-                    }}
-                    onDownload={downloadTopicFile}
-                  />
-                  {topicDownloadError && (
-                    <p className="shrink-0 px-3 pb-2 text-xs text-destructive">{topicDownloadError}</p>
-                  )}
-                </div>
-              )}
-
-              {panels.includes("openTabs") && (
-                <div
-                  className={cn(
-                    "flex min-h-0 flex-col border-t first:border-t-0",
-                    // Alone it fills the section; stacked under another panel
-                    // it keeps to the lower portion like the source sidebar's
-                    // vertical split.
-                    panels.length === 1 ? "flex-1" : "max-h-[40%] shrink-0",
-                  )}
-                >
-                  <div className="flex shrink-0 items-center justify-between px-3 pb-1 pt-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Open Tabs{openTabs.length > 0 && ` (${openTabs.length})`}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        void createDocument(null, false)
-                        goToBlankEditor()
-                      }}
-                      title="New File"
-                      className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground"
-                    >
-                      <FilePlus2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                  <OpenTabsPanel
-                    documents={documents}
-                    openTabs={openTabs}
-                    activeId={activeId}
-                    onSelect={(id) => {
-                      selectTab(id)
-                      goToEditor({ kind: "document", id })
-                    }}
-                    onClose={closeTab}
-                  />
-                </div>
-              )}
+            >
+              {/* `key` covers the panel set changing, and the stored sizes
+                  arriving after mount: a layout belongs to the set it was
+                  dragged on, so switching a panel on reopens the group at the
+                  sizes saved for *that* set instead of squeezing the new panel
+                  into what the others left. */}
+              <Group
+                key={`${layoutHydrated}:${visiblePanels.join("|")}`}
+                orientation="vertical"
+                defaultLayout={defaultLayout}
+                onLayoutChanged={saveLayout}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {visiblePanels.map((panel, index) => (
+                  <Fragment key={panel}>
+                    {index > 0 && (
+                      <Separator
+                        aria-label={`Resize ${PANEL_LABELS[panel]}`}
+                        className="relative flex h-px w-full shrink-0 bg-border transition-colors after:absolute after:inset-x-0 after:top-1/2 after:h-2 after:-translate-y-1/2 hover:bg-primary/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      />
+                    )}
+                    <Panel id={panel} minSize={PANEL_MIN_SIZE} className="flex h-full min-h-0 flex-col">
+                      {panelBodies[panel]}
+                    </Panel>
+                  </Fragment>
+                ))}
+              </Group>
             </div>
           )}
         </>

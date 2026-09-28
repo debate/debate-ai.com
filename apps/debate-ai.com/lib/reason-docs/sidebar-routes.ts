@@ -51,16 +51,19 @@ export function showsReasonDocsPanels(pathname: string | null | undefined): bool
 
 /**
  * True in the `/cards` subtree, where the sidebar is *only* the document
- * panels and the Research tool list.
+ * panels.
  *
  * Clicking Cards in the dock used to land you on a column carrying the docs
  * panels, the whole Apps/Coaching/Research/Practice tree, the glossary and
  * rankings links and the site footer — four navigations stacked on a page
- * about one of them. On this subtree the tree is narrowed to Research (the
- * section that actually lists the cards pages) and the footer is dropped; the
- * dock stays, since it is what you clicked Cards in and what takes you back to
- * videos. `/reason-editor` keeps the full tree — it is reached *from* those
- * other sections, not one of them.
+ * about one of them. The tree was then narrowed to its Research section, which
+ * still left a submenu of links under the file tree and still made the column
+ * a scroll; it is gone too, and so is the footer. The panels have the column
+ * to themselves and divide its height between them, so the file tree and the
+ * open tabs are resized by dragging the seam rather than by scrolling past
+ * each other. The dock stays, since it is what you clicked Cards in and what
+ * takes you back to videos. `/reason-editor` keeps the full tree — it is
+ * reached *from* those other sections, not one of them.
  */
 export function showsCardsOnlySidebar(pathname: string | null | undefined): boolean {
   if (!pathname) return false

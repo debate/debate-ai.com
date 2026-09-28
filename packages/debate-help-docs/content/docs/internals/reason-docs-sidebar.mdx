@@ -16,6 +16,8 @@ file, loaded in CardMirror, in the main column."
   `OpenTabsPanel`), over `ReasonDocsProvider` in the root layout
 - **URL rules:** `apps/debate-ai.com/lib/reason-docs/route-selection.ts`,
   over the filename paths in `apps/debate-ai.com/lib/reason-docs/doc-path.ts`
+- **Panel stack and its height split:**
+  `apps/debate-ai.com/lib/reason-docs/panel-layout.ts`
 - **Stored file format:** `apps/debate-ai.com/lib/cardmirror/` (`format.ts`,
   `content-format.ts`, `stored-cmir.ts`)
 - **Public lookup by name:** `/api/topic-starters/by-path`
@@ -49,31 +51,67 @@ anything below it starts under the fold.
 
 ## What else the `/cards` sidebar carries
 
-Nothing but the Research tool list. Clicking "Shared" in the dock used to
-land on a column holding four navigations at once — the document panels, the
-whole Apps / Coaching / Research / Practice tree, the glossary and rankings
-links, and the site footer — on a page that is about the first of them.
-`showsCardsOnlySidebar` (same module) marks the `/cards` subtree, and there
-`AppSidebarShell` renders the tree as `ToolNavTree sectionIds={[…]}`: only
-the named sections, no "Apps" node above them and no reference pair below,
-and no footer.
+Nothing. Clicking "Shared" in the dock used to land on a column holding four
+navigations at once — the document panels, the whole Apps / Coaching /
+Research / Practice tree, the glossary and rankings links, and the site
+footer — on a page that is about the first of them. Narrowing the tree to its
+Research section dealt with three of the four and left the fourth: a submenu
+of cards links under the file tree, in a column that still had to be scrolled
+to see both ends of. That submenu is gone too.
 
-Research is the section that lists the cards pages themselves (Evidence
-Library, Argument Library, Topic Coverage, the prep room, the review queue),
-so it is the one kept — and because `/cards` matches the *Apps* node by
-route, `ToolNavTree` falls back to opening the first section it was given
-rather than leaving a heading with nothing under it. The dock stays: it is
-the control the reader clicked "Shared" in, and the way back to `/videos`.
+`showsCardsOnlySidebar` (same module) marks the `/cards` subtree, and there
+`AppSidebarShell` renders the dock and the docs panels and stops — no nav
+tree, no reference links, no footer. The Research entries are not lost: they
+are in the full tree that every other tool route's sidebar carries, one dock
+hop away. The dock itself stays — it is the control the reader clicked
+"Shared" in, and the way back to `/videos`.
 
 `/reason-editor` keeps the full tree — it is reached *from* those other
 sections rather than being one of them.
 
 The section is expanded by default on both routes — they are the only two it
-mounts on, and on `/cards` the sidebar is now these panels plus the Research
-tool list, so a collapsed "Documents" row would leave that column with no
-file tree in it. A reader's own collapse still wins and sticks, per-device,
-in `localStorage`. Nothing is fetched until the section is actually open, so
-collapsing it costs no document request.
+mounts on, and on `/cards` these panels are the whole sidebar, so a collapsed
+"Documents" row would leave that column empty but for the dock. A reader's own
+collapse still wins and sticks, per-device, in `localStorage`. Nothing is
+fetched until the section is actually open, so collapsing it costs no document
+request.
+
+## Dividing the column's height
+
+With nothing under them on `/cards`, the panels take the column's leftover
+height rather than a fixed slice of it — `AppSidebarShell` passes `fill`, and
+that route's `<aside>` stops scrolling as a whole (a scrolling parent has no
+height to hand a flexible child). Each panel then scrolls inside its own
+share.
+
+The shares are the reader's to set. The enabled panels are a vertical
+`react-resizable-panels` group with a draggable separator on every seam, so a
+reader with forty files can give the tree most of the column and leave Open
+Tabs a couple of rows — sizes that used to be fixed in CSS, with the lower
+panel capped at 40%. A panel cannot be dragged below 72px, which is a heading
+plus a row: less than that is a sliver that says nothing and is too thin to
+aim at to drag back.
+
+A drag is remembered per-device in `localStorage`
+(`reason-editor-sidebar-layout`), alongside the panel choice and the collapse
+state. Only a drag is stored — the group reports its computed layout on mount
+and on a constraint recompute through the same callback, and writing those
+back would overwrite a deliberate split. A layout belongs to the panel set it
+was dragged on, so switching a panel on reopens the group at the sizes saved
+for *that* set instead of squeezing the new panel into what the others left;
+a set with no saved sizes opens on the defaults, which weight Files 3 against
+2 for each of the others. The stack order, the weights, the drag floor and the
+parsing of a stored split are `lib/reason-docs/panel-layout.ts`, kept out of
+the component so they can be unit-tested without rendering a sidebar
+(`lib/reason-docs/__tests__/panel-layout.test.ts`); reading `localStorage`
+stays in the component, alongside the panel-choice and collapse-state reads it
+already does.
+
+Off `/cards` the box keeps its definite height (`h-[380px]`, capped against
+the viewport), because something else sits below it in a scrolling column:
+`/reason-editor`'s sidebar has the nav tree under the panels, and below `md`
+they ride as a strip above the editor. The separators work there too — they
+just divide a fixed box instead of the column.
 
 ## Opening a file
 
@@ -255,9 +293,9 @@ naming the failure rather than a blank document.
 
 ## Known gaps
 
-- The docs section starts collapsed on `/cards`, so the files are one click
-  away there rather than on screen. A reader who opens it has that choice
-  remembered per-device.
+- A dragged split is remembered per-device, so it does not follow a reader to
+  another machine — and it is keyed by panel set, so three sets of panels are
+  three separate splits to arrange.
 - `showsReasonDocsPanels` is a hard-coded route list, not something derived
   from the nav data. A new documents route has to be added to it by hand.
 - `SharedCardOpener`'s `?share=<id>` flow replaces the URL with a bare

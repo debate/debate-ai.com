@@ -2,16 +2,13 @@
 
 import type React from "react"
 import { usePathname } from "next/navigation"
-import { RESEARCH_SECTION_ID, ToolNavTree, ToolSidebarFooter } from "debate-videos"
+import { ToolNavTree, ToolSidebarFooter } from "debate-videos"
 import { CategoryDock } from "./CategoryDock"
 import { ReasonDocsSidebarPanels } from "@/components/reason-docs/ReasonDocsSidebarPanels"
 import { ChromeErrorBoundary } from "@/lib/ui/layout/chrome-error-boundary"
+import { cn } from "@/lib/ui/lib/utils"
 import { isGenericToolSidebarRoute } from "@/lib/sidebar-routes"
 import { showsCardsOnlySidebar, showsReasonDocsPanels } from "@/lib/reason-docs/sidebar-routes"
-
-/** The one tool section the `/cards` sidebar keeps. Module-level so the array
- *  identity is stable across renders of the tree below. */
-const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
 
 /**
  * Mirrors the persistent left sidebar the `/videos` pages render
@@ -41,12 +38,15 @@ const CARDS_SIDEBAR_SECTIONS = [RESEARCH_SECTION_ID] as const
  * own, so wrapping it here put two sidebars side by side. It keeps the dock —
  * `CategoryDock`'s floating instance, since there is no column to host one.
  *
- * `/cards` goes one step further and is the docs panels plus the Research tool
- * list only (`showsCardsOnlySidebar`): the Apps / Coaching / Practice sections,
- * the glossary and rankings links and the site footer are all about somewhere
- * else, and stacking them under a file tree made the column a scroll rather
- * than a place. The dock stays — it is the control you clicked "Shared" in,
- * and the way back to videos.
+ * `/cards` goes all the way and is the docs panels alone
+ * (`showsCardsOnlySidebar`): no nav tree, no glossary or rankings links, no
+ * site footer. Those are all about somewhere else, and stacking them under a
+ * file tree made the column a scroll rather than a place. With nothing below
+ * them the panels take the column's own height instead of a fixed slice of it
+ * (`fill`), which is what lets the reader drag the split between the tree and
+ * the tabs — so the column does not scroll as a whole, each panel scrolls
+ * inside its own share. The dock stays: it is the control you clicked
+ * "Shared" in, and the way back to videos.
  */
 export function AppSidebarShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -60,7 +60,16 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
           to this column: the dock is sized to the sidebar rather than to its
           own contents, so it can't reach across the border onto the page —
           a CardMirror editor, on `/reason-editor` and `/doc`. */}
-      <aside data-app-chrome className="hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:overflow-y-auto md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3">
+      <aside
+        data-app-chrome
+        className={cn(
+          "hidden md:flex md:w-[300px] lg:w-[320px] md:shrink-0 md:min-w-0 md:flex-col md:h-screen md:sticky md:top-0 md:border-r md:border-border/60 md:bg-background/40 gap-4 p-3",
+          // On `/cards` the panels own the leftover height and scroll
+          // internally, so the column itself must not scroll — a scrolling
+          // parent has no height to give a `flex-1` child.
+          cardsOnly ? "md:overflow-hidden" : "md:overflow-y-auto",
+        )}
+      >
         {/* Each region is bounded separately. This whole `<aside>` renders
             from the root layout, so before the boundaries a throw in any one
             of these unmounted the entire document — and on the server failed
@@ -77,19 +86,18 @@ export function AppSidebarShell({ children }: { children: React.ReactNode }) {
             are about something else, so their sidebar is only their own nav. */}
         {showsReasonDocsPanels(pathname) && (
           <ChromeErrorBoundary label="ReasonDocsSidebarPanels">
-            <ReasonDocsSidebarPanels className="shrink-0" />
+            <ReasonDocsSidebarPanels
+              className={cardsOnly ? "min-h-0 flex-1" : "shrink-0"}
+              fill={cardsOnly}
+            />
           </ChromeErrorBoundary>
         )}
-        <ChromeErrorBoundary label="ToolNavTree">
-          {cardsOnly ? (
-            <ToolNavTree sectionIds={CARDS_SIDEBAR_SECTIONS} />
-          ) : (
-            <>
-              <ToolNavTree />
-              <ToolSidebarFooter />
-            </>
-          )}
-        </ChromeErrorBoundary>
+        {!cardsOnly && (
+          <ChromeErrorBoundary label="ToolNavTree">
+            <ToolNavTree />
+            <ToolSidebarFooter />
+          </ChromeErrorBoundary>
+        )}
       </aside>
       <div className="min-w-0 flex-1">{children}</div>
     </div>
