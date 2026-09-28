@@ -18,9 +18,4 @@
 	path = packages/debate-tournaments-tabroom
 	url = https://github.com/debate/debate-tournaments.git
 	branch = main
-	ignore = untracked
-
-[submodule "packages/debate-flow-ebb"]
-	path = packages/debate-flow-ebb
-	url = https://github.com/debate/debate-flow.git
-	branch = main
+ignore = untracked

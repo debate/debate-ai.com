@@ -3,8 +3,9 @@ import Link from "next/link"
 import { ArrowLeft, Bluetooth, ExternalLink, FileText, Mic, Send, Smartphone, Timer, Type } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../../../lib/ui/primitives/card"
 
-/** The recommended laptop-less gear. Amazon affiliate short links — images
- *  are the products' own Amazon catalog images (m.media-amazon.com). */
+/** The recommended laptop-less gear. Links are affiliate/referral links
+ *  (Amazon, Visible, eBay); product images come from each store's catalog or
+ *  a supplied image URL. */
 const GEAR: {
   name: string
   role: string
@@ -12,6 +13,7 @@ const GEAR: {
   image: string
   blurb: string
   usedHref?: string
+  buyLabel?: string
 }[] = [
   {
     name: "LenTok Magnetic Neck Phone Holder",
@@ -30,20 +32,12 @@ const GEAR: {
       "Pairs over Bluetooth with up to three devices at once and hot-switches between them, with a big multi-touch trackpad. This is the piece that turns a phone into a real laptop replacement: type speeches and flow at full speed, no dongle needed.",
   },
   {
-    name: "VEGER 10,000mAh Power Bank with Built-in Cables & AC Plug",
-    role: "All-day power for phone + keyboard",
-    href: "https://amzn.to/4z64Wrg",
-    image: "https://i.imgur.com/cX16JmV.jpeg",
-    blurb:
-      "10,000mAh with a built-in AC wall plug and iOS + USB-C/Micro cables — five outputs total, an LED percentage display, and a TSA-safe 38.5Wh cell you can stow in carry-on. Slim enough to live in a prep case and charges a phone about twice over for those long tournament days when outlets are scarce.",
-  },
-  {
     name: "LISEN 60W USB-C to USB-C Cable (5-Pack)",
     role: "Fast-charging cables for phone & keyboard",
     href: "https://amzn.to/4d4CMEu",
     image: "https://i.imgur.com/NloJILx.jpeg",
     blurb:
-      "Sixty-watt Power Delivery cables that top up a phone or the Bluetooth keyboard in well under an hour — five cables in lengths from 3.3 ft to 10 ft so you can always reach an outlet or the power bank while mounted. Braided 48-strand cotton, 480 Mbps data, and metal-reinforced ports so a tangle or yank won't kill them mid-round.",
+      "Sixty-watt Power Delivery cables that top up a phone or the Bluetooth keyboard in well under an hour — five cables in lengths from 3.3 ft to 10 ft so you can always reach an outlet or your phone while mounted. Braided 48-strand cotton, 480 Mbps data, and metal-reinforced ports so a tangle or yank won't kill them mid-round.",
   },
   {
     name: "VITURE Beast XR/AR Glasses (174\" Virtual Display)",
@@ -62,6 +56,23 @@ const GEAR: {
     image: "https://i.imgur.com/lHC64M8.jpeg",
     blurb:
       "Everything on this page runs in the phone browser, so the only real hardware decision is which Samsung to carry. The S20+ gives you a 120 Hz AMOLED display and a battery that lasts a full tournament day, and it folds into the same flow you'd use on a laptop. Buy a fresh unit on Amazon, or save substantially on a checked-returns S20 on eBay — either one is plenty of horsepower for prep, flow, and practice rounds on the road.",
+  },
+  {
+    name: "Visible Unlimited Phone Plan",
+    role: "Phone service & data",
+    href: "https://www.visible.com/get/?69PFJG2",
+    buyLabel: "View on Visible",
+    image: "https://s7d1.scene7.com/is/content/tracfone/New-Save6-Desktop-672x448",
+    blurb:
+      "Unlimited 5G data, talk, and text on Verizon's network — $25/month with taxes included ($35/month for Visible+ on Ultra Wideband, with global coverage). eSIM activation ships overnight, and friend code 69PFJG2 knocks $20 off a service payment, so the phone above can be live before you leave the airport.",
+  },
+  {
+    name: "MATEIN 15.6\" Travel Laptop Backpack (Personal-Item Size)",
+    role: "Carry all your gear",
+    href: "https://amzn.to/4yiIpal",
+    image: "https://i.imgur.com/YEH7Dkv.jpeg",
+    blurb:
+      "A 15.6\" daypack that counts as a personal item — slides under the seat in front, holds the phone, keyboard, cables, and AR glasses with room left over. Water-resistant shell, a hidden anti-theft pocket for cards, and a ventilated back panel so it doesn't sweat through a round. At ~$20 it's the kind of bag you stop noticing you're carrying.",
   },
 ]
 
@@ -185,11 +196,8 @@ export default function MobileSetupPage() {
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {GEAR.map((item) => (
-              <a
+              <div
                 key={item.href}
-                href={item.href}
-                target="_blank"
-                rel="sponsored noopener noreferrer"
                 className="block h-full"
               >
                 <Card className="h-full py-4 transition-colors hover:bg-accent hover:border-accent-foreground/20">
@@ -208,10 +216,15 @@ export default function MobileSetupPage() {
                     <CardDescription>{item.blurb}</CardDescription>
                   </CardHeader>
                   <CardContent className="px-4 pt-2 space-y-1">
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-                      View on Amazon
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
+                    >
+                      {item.buyLabel ?? "View on Amazon"}
                       <ExternalLink className="h-3.5 w-3.5" />
-                    </span>
+                    </a>
                     {item.usedHref && (
                       <a
                         href={item.usedHref}
@@ -225,13 +238,9 @@ export default function MobileSetupPage() {
                     )}
                   </CardContent>
                 </Card>
-              </a>
+              </div>
             ))}
           </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            As an Amazon Associate this site earns from qualifying purchases; it may also earn a referral commission
-            on eBay used-gear links. Both help keep the site running.
-          </p>
         </section>
 
         <section className="mb-10">
