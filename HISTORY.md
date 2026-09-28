@@ -1,6 +1,6 @@
 # Changelog
 
-# MVP Phase (2026)
+# AI Debate Era (MVP, 2026+)
 
 ## September 2026 — 395 commits
 
@@ -236,7 +236,7 @@ The biggest month of development.
 - Implemented new **Debate Flow** and **Debate Videos** pages with supporting components and hooks, and redesigned the **ChampionsPanel**.
 - Restructured documentation into a new `docs/` directory with project vision and feature docs.
 
-# Prototype Phase (pre-2026 era)
+#  Paperless Debate Era (Prototype, 2010-2026)
 
 ## December 2025 — 6 commits
 
