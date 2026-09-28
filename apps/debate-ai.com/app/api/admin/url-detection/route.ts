@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     whereConditions.push(eq(detectedUrls.userId, userId));
   }
   if (sinceDays) {
-    const cutoff = Date.now() - sinceDays * 24 * 60 * 60 * 1000;
+    const cutoff = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000);
     whereConditions.push(gt(detectedUrls.lastVisitedAt, cutoff));
   }
 
