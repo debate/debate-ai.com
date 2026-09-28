@@ -13,6 +13,33 @@ empty state for a new user (the editor's file tree, Practice Drills history,
 the Evidence Library, etc.) is the same gap and a good follow-up, one PR per
 tool rather than a single sweeping change.
 
+Done (second slice, Evidence Library): `/cards/library`'s Shared Evidence
+Library showed a bare "No entries match this search." for a brand-new user
+with zero submitted cards/blocks, indistinguishable from the same message a
+real search-with-no-matches produces. It now shows a sample card and a
+sample block, each badged "Sample", whenever the persisted repository is
+genuinely empty (`hasEntries === false`) — a real "no matches" search on a
+non-empty repository still gets the plain message. See
+`getSampleEvidenceLibraryEntries` in
+`packages/debate-search-evidence/src/lib/shared-evidence-library.ts` and its
+use in `packages/debate-search-evidence/src/panels/EvidenceLibraryPanel.tsx`.
+Practice Drills history and the REASON editor's file tree remain open
+follow-ups, one PR each.
+
+Known blocker (unrelated to the above): a full monorepo `bun run test` run
+currently fails ~89 tests across 22 files, all with
+`ENOENT: .../apps/debate-ai.com/drizzle/0003_dark_zarek.sql` or similar —
+commit `39076f1` (".") added `drizzle/` to `.gitignore` and removed every
+tracked migration file under `apps/debate-ai.com/drizzle/`, which every
+test that spins up an in-memory D1/libSQL db by replaying those migrations
+depends on. This same directory was accidentally deleted and restored once
+already (`2566e0d` / `d58d57f`), so this looks like a repeat of that
+accident rather than an intentional change — worth a maintainer decision
+(restore the tracked migrations, or migrate every affected test to a
+different fixture strategy) rather than a silent restore from an
+autonomous run. Unrelated to `debate-search-evidence`, whose own suite
+(1298 tests) and typecheck are unaffected and pass in full.
+
 
 
 # Ideas for New Contributors
