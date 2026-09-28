@@ -448,6 +448,15 @@ export const APP_FEATURES: FeatureEntry[] = [
     tags: ["simulation", "format", "side"],
   },
   {
+    id: "practice-partners",
+    title: "Practice Partners",
+    description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with",
+    href: "/practice-partners",
+    category: "practice",
+    doc: "practice-partners.md",
+    tags: ["challenge", "volunteer", "judge", "matchmaking"],
+  },
+  {
     id: "practice-vs-ai",
     title: "Practice vs AI",
     description: "Debate a full timed round against an AI opponent, then get a judged scorecard",

@@ -1,0 +1,84 @@
+---
+title: "Practice Partners"
+---
+
+# Practice Partners
+
+Lets debaters find each other for practice rounds between tournaments.
+Volunteer to be challenged, volunteer to judge, or both, and say which
+formats, styles, speed, and level you're comfortable with. Then challenge
+anyone on the board to a virtual round.
+
+- **Route:** `/practice-partners`. Also the first panel in the Coach
+  Workspace's Practice section (`/coach?section=practice`).
+- **Package:** `debate-webview` (UI, wire types, action rules) and
+  `apps/debate-ai.com` (API, queries).
+- **API:** `GET /api/practice-partners`; `PUT /api/practice-partners/profile`;
+  `POST /api/practice-partners/challenges`;
+  `PATCH /api/practice-partners/challenges/[challengeId]`
+
+## What it shows
+
+- **Your practice profile.** This has two switches: **Open to challenges**
+  lists you as a debater, and **Volunteer to judge** lists you as a judge.
+  Under them you set formats (PF, LD, Policy, Parli, Worlds/BP, Congress),
+  the styles you're comfortable with (traditional/lay, progressive/tech,
+  plans/CPs/DAs, kritiks, theory & T, philosophy/framework, truth-testing),
+  speed, experience level, availability, and a note for partners. Turning
+  both switches off hides you from the board but keeps your preferences.
+- **Your challenges.** They're grouped as *Waiting on you* (challenges to
+  answer, judging invitations), *Upcoming rounds* (soonest first), *Sent*,
+  and a few closed ones. An accepted round shows its **room code**. Debaters
+  and the judge paste it into the round workspace's Cameras panel to join
+  the same peer-to-peer webcam room.
+- **Rounds needing a judge.** This only appears for judge volunteers. It
+  lists accepted rounds with an empty judge seat, and picking one up
+  notifies both debaters.
+- **Find a practice partner.** The board, with a Debaters tab and a Judges
+  tab and filters for format and name. It's ranked by how well each person
+  matches your profile. Shared formats count most, then shared styles, then
+  speed and level. Formats and styles you share are highlighted. **Challenge**
+  opens a short form with the format (shared formats first), resolution,
+  optional start time, optional judge (only volunteers who judge that
+  format), and a message.
+
+## How it works
+
+A challenge moves through `pending` → `accepted` | `declined` (the opponent
+answers), or `cancelled`. The challenger can cancel at any time before the
+round. The opponent can call it off once they've accepted. The judge seat is
+empty, `invited` (the challenger named a judge), or `confirmed` (the judge
+said yes, or picked up an unjudged round). The judge can decline an invitation
+or step down later.
+
+Who may do what is one pure function,
+`applyChallengeAction` in `debate-webview/lib/practice-partners/challenge-actions.ts`.
+The PATCH route enforces it, and the board uses it to decide which buttons to
+show. The write only lands if the challenge is still in the state the action
+was computed from. So if two judges pick up the same round at the same time,
+the second gets a 409 instead of overwriting the first.
+
+Each change creates a `practice_challenge` row in the existing notifications
+feed for everyone else in the round, linking back to `/practice-partners`.
+
+**Safety rules.** The board requires an account, and guest (anonymous)
+accounts can't volunteer or send challenges. A block from Contacts in either
+direction hides each person from the other's board, stops them challenging
+each other, and keeps the round off the other's "needing a judge" list. A
+blocked challenge gets the same "not open to challenges" reply as a volunteer
+who has switched off, so the reply doesn't reveal the block. Each debater can
+have at most ten challenges waiting for an answer, and only one per opponent.
+
+**Tables.** `practice_profiles` has one row per user: role flags plus a JSON
+`preferences` payload. `practice_challenges` has one row per challenge. Rows
+are never deleted by the feature; a closed challenge keeps its status.
+
+## Known gaps
+
+- There's no in-app messaging. Beyond the challenge message, debaters arrange
+  details elsewhere, for example through [Contacts](/features/contacts).
+- A proposed time is a single suggestion. There's no counter-proposal. To
+  change it, decline and send a new challenge.
+- Nothing links a finished practice round back to its challenge, so results
+  and judge feedback aren't recorded here yet.
+- The board shows up to 200 volunteers with no pagination.

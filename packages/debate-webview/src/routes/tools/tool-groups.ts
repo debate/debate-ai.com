@@ -4,7 +4,7 @@ import {
   ListTree, Bot, Lightbulb, PlayCircle, BarChart3, Users2, School,
   ThumbsUp, Medal, Target, BookOpen, PieChart, Presentation,
   ListChecks, Flame, CheckSquare, Landmark, MapPin, Sparkles, Bell, Contact,
-  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star,
+  Rss, Gauge, Crosshair, Crown, Send, Smartphone, Star, Handshake,
   type LucideIcon,
 } from "lucide-react"
 
@@ -234,6 +234,11 @@ export const TOOL_GROUPS: { heading: string; tools: Tool[] }[] = [
         href: "/outline", label: "Argument Tree Outline", icon: ListTree,
         description: "Browse a filterable outline of each round's flow, grouped by heading.",
         highlights: ["Filter by kind, side, speech, argument type, contributor, and evidence status", "\"Unanswered only\" toggle to spot open arguments fast"],
+      },
+      {
+        href: "/practice-partners", label: "Practice Partners", icon: Handshake,
+        description: "Challenge other debaters to a virtual practice round, or volunteer to debate or judge in the styles you're comfortable with.",
+        highlights: ["Volunteer as a debater, a judge, or both — with your formats, styles, speed, and level", "Challenges notify the other side; accepted rounds get a shared webcam room code", "Judge volunteers can pick up any accepted round that still needs a judge"],
       },
       {
         href: "/versus-ai", label: "Practice vs AI", icon: Bot,

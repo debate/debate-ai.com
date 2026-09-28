@@ -1,5 +1,5 @@
 {
-  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module.",
+  "//": "Typecheck-only config. write-language points its `exports.types` at its own TypeScript sources, so `tsc` compiles that package and reports errors from its @ai-sdk version skew instead of just checking this app. Its dist/*.d.ts are correct, so map the package there for typechecking; the mapping is kept out of tsconfig.json because Next resolves bundler imports through `paths` too, and a .d.ts is not a runtime module. `.github/scripts/**` is also typechecked from here but sits outside this app, so its bare imports can't walk up into this app's node_modules; `debate-data-sync/*` and `@libsql/client` are mapped explicitly so they resolve the same way they do for app files.",
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "paths": {
@@ -15,14 +15,11 @@
       "debate-webview/*": [
         "../../packages/debate-webview/src/*"
       ],
-      "debate-data-sync": [
-        "../../packages/debate-data-sync/src/index.ts"
-      ],
       "debate-data-sync/*": [
-        "../../packages/debate-data-sync/src/*"
+        "../../packages/debate-data-sync/*"
       ],
-      "debate-data-sync/data/*": [
-        "../../packages/debate-data-sync/data/*"
+      "@libsql/client": [
+        "./node_modules/@libsql/client"
       ]
     }
   }

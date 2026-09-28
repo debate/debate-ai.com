@@ -42,6 +42,7 @@ import {
   Star,
   StickyNote,
   Swords,
+  Handshake,
   Timer,
   TrendingUp,
   Trophy,
@@ -146,6 +147,7 @@ export const SIDEBAR_TOOL_SECTIONS: SidebarToolSection[] = [
     tools: [
       { href: "/practice-round", title: "Practice Round Simulator", icon: Timer },
       { href: "/rules", title: "Formats & Rules", icon: Scale },
+      { href: "/practice-partners", title: "Practice Partners", icon: Handshake },
       { href: "/versus-ai", title: "Debate Versus AI", icon: Swords },
       { href: "/drills", title: "Practice Drills", icon: Repeat },
       { href: "/cards/level", title: "Debater Level", icon: Star },
