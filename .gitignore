@@ -86,3 +86,6 @@ CLAUDE.local.md
 # submodule: packages/debate-tournaments syncs it into .upstream/ itself.
 /packages/debate-tournament-tabroom/
 
+
+# local clone, not a submodule (breaks CI submodule checkout)
+/debate-editor/
